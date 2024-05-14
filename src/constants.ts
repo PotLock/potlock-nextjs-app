@@ -1,0 +1,33 @@
+import { Network } from "@wpdas/naxios";
+import { utils } from "near-api-js";
+
+// NETWORK
+export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
+  "testnet") as Network;
+
+// SYBIL CONTRACT
+export const NADABOT_CONTRACT_ID = process.env
+  .NEXT_PUBLIC_NADABOT_CONTRACT_ID as string;
+
+// SOCIAL DB CONTRACT
+export const SOCIAL_DB_CONTRACT_ID = process.env
+  .NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID as string;
+
+// 1 NEAR
+export const ONE_NEAR = utils.format.parseNearAmount("1")!;
+// 0.5 NEAR
+export const HALF_NEAR = utils.format.parseNearAmount("0.5")!;
+// 0.1 NEAR
+export const ONE_TENTH_NEAR = utils.format.parseNearAmount("0.1")!;
+// 0.01 NEAR
+export const ONE_HUNDREDTH_NEAR = utils.format.parseNearAmount("0.01")!;
+// 0.02 NEAR
+export const TWO_HUNDREDTHS_NEAR = utils.format.parseNearAmount("0.02")!;
+// 300 Gas (full)
+export const FULL_TGAS = "300000000000000";
+// 0 Gas
+export const NO_DEPOSIT_TGAS = "0";
+
+// IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
+export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
+  "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
