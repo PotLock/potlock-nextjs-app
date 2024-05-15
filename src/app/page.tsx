@@ -1,16 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 
-import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button } from "@app/components/ui/button";
+import { Button } from "@app/common/components/button";
 import useGetAccounts from "@app/hook/useGetAccounts";
 import useIsClient from "@app/hook/useIsClient";
 import useWallet from "@app/hook/useWallet";
-import { getAccounts } from "@app/services/api/account";
 import { walletApi } from "@app/services/contracts";
 import * as socialDb from "@app/services/contracts/social";
 import { dispatch, useTypedSelector } from "@app/store";
