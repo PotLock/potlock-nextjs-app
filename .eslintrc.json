@@ -7,11 +7,13 @@
   "env": {
     "node": true
   },
-  "plugins": ["@typescript-eslint", "prettier", "import"],
+  "plugins": ["@typescript-eslint", "prettier", "import", "@tanstack/query"],
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    // Tanstack
+    "plugin:@tanstack/eslint-plugin-query/recommended",
     // configuration for "import" plugin
     "plugin:import/recommended",
     "plugin:import/typescript",

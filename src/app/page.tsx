@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@app/components/ui/button";
+import useGetAccounts from "@app/hook/useGetAccounts";
 import useIsClient from "@app/hook/useIsClient";
 import useWallet from "@app/hook/useWallet";
 import { getAccounts } from "@app/services/api/account";
@@ -36,27 +38,21 @@ export default function Home() {
   // ==== Example of store usage ====
   const { name } = useTypedSelector((state) => state.user);
 
-  const [accounts, setAccounts] = useState<any[]>();
   useEffect(() => {
     // ==== Example of store usage ====
     if (!name) {
       dispatch.user.setUserData({ name: Date.now().toString() });
     }
+  }, [name]);
 
-    // ==== Example of service usage ====
-    (async () => {
-      if (!accounts) {
-        try {
-          const accounts = await getAccounts();
-          setAccounts(accounts || []);
-          console.log(accounts);
-        } catch (error) {
-          console.error("Error fetching accounts");
-          setAccounts([]);
-        }
-      }
-    })();
-  }, [name, accounts]);
+  // ==== Example of service usage with custom hooks & react-query ====
+  const { isPending, data } = useGetAccounts();
+
+  useEffect(() => {
+    if (!isPending) {
+      console.log("Accounts:", data);
+    }
+  }, [isPending, data]);
 
   // ==== Handlers ====
   const changeUserName = useCallback(() => {
