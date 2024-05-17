@@ -13,6 +13,18 @@ export const NADABOT_CONTRACT_ID = process.env
 export const SOCIAL_DB_CONTRACT_ID = process.env
   .NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID as string;
 
+// POTLOCK LISTS CONTRACT
+export const POTLOCK_LISTS_CONTRACT_ID = "lists.potlock.near";
+
+// POTLOCK DONATE CONTRACT
+export const POTLOCK_DONATE_CONTRACT_ID = "donate.potlock.near";
+
+// POTLOCK DONATE CONTRACT
+export const POTLOCK_POT_FACTORY_CONTRACT_ID = "v1.potfactory.potlock.near";
+
+// POTLOCK REGISTERY LIST ID
+const POTLOCK_REGISTERY_LIST_ID = 1;
+
 // 1 NEAR
 export const ONE_NEAR = utils.format.parseNearAmount("1")!;
 // 0.5 NEAR
