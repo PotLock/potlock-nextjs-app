@@ -3,6 +3,11 @@ export enum ApplicationStatus {
   Approved = "Approved",
   Rejected = "Rejected",
 }
+export enum Roles {
+  Admin = "admin",
+  Owner = "owner",
+  Chef = "string",
+}
 
 export type Application = {
   project_id: string;
@@ -13,6 +18,10 @@ export type Application = {
   review_notes: null | string;
 };
 
+export type ApprovedApplication = Omit<Application, "status"> & {
+  status: ApplicationStatus.Approved;
+};
+
 export interface Payout {
   id: string;
   project_id: string;
@@ -20,7 +29,7 @@ export interface Payout {
   paid_at: number;
 }
 
-export interface PotDetail {
+export interface PotConfig {
   owner: string;
   admins: string[];
   chef: string;
