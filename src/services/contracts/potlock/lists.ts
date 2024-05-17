@@ -1,12 +1,8 @@
 import { MemoryCache } from "@wpdas/naxios";
-import { Provider } from "near-api-js/lib/providers";
 
 import {
-  FULL_TGAS,
-  NADABOT_CONTRACT_ID,
-  ONE_HUNDREDTH_NEAR,
   POTLOCK_LISTS_CONTRACT_ID,
-  TWO_HUNDREDTHS_NEAR,
+  POTLOCK_REGISTERY_LIST_ID,
 } from "@app/constants";
 
 import { naxiosInstance } from "..";
@@ -14,6 +10,7 @@ import {
   GetListInput,
   List,
   Registration,
+  RegistrationStatus,
 } from "./interfaces/lists.interfaces";
 
 /**
@@ -28,13 +25,11 @@ export const contractApi = naxiosInstance.contractApi({
 
 /**
  * Get lists
- * @returns
  */
 export const get_lists = () => contractApi.view<{}, List[]>("get_lists");
 
 /**
  * Get single list
- * @returns
  */
 export const get_list = (args: GetListInput) =>
   contractApi.view<typeof args, List>("get_list", {
@@ -43,7 +38,6 @@ export const get_list = (args: GetListInput) =>
 
 /**
  * Get Regsiterations for a list
- * @returns
  */
 export const get_registrations = (args: { list_id: number }) =>
   contractApi.view<typeof args, Registration[]>(
@@ -56,12 +50,36 @@ export const get_registrations = (args: { list_id: number }) =>
 
 /**
  * Get Regsiterations for registrant
- * @returns
  */
-export const get_registration = (args: { registrant_id: string }) =>
-  contractApi.view<typeof args, Registration[]>(
+export const get_registration = async (args: {
+  list_id: number;
+  registrant_id: string;
+}) => {
+  const regsiterations = await contractApi.view<typeof args, Registration[]>(
     "get_registrations_for_registrant",
     {
       args,
     },
+  );
+  const regsiteration = regsiterations.find(
+    (regsiteration) =>
+      regsiteration.list_id === args.list_id || POTLOCK_REGISTERY_LIST_ID,
+  );
+  return regsiteration;
+};
+
+/**
+ * Get if a regsiteration is approved
+ */
+export const is_registration_approved = (args: {
+  account_id: string;
+  list_id?: number;
+  required_status?: RegistrationStatus;
+}) =>
+  contractApi.view<typeof args, boolean>(
+    "is_registered",
+    {
+      args,
+    },
+    { useCache: true },
   );
