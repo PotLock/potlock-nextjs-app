@@ -57,3 +57,19 @@ export interface Challange {
   admin_notes: string;
   resolved: boolean;
 }
+
+export interface PotDonation {
+  id: string;
+  donor_id: string;
+  total_amount: string;
+  net_amount: string;
+  message: string;
+  donated_at: number;
+  project_id: null | string;
+  referrer_id: null | string;
+  referrer_fee: null | string;
+  protocol_fee: string;
+  matching_pool: boolean;
+  chef_id: null | string;
+  chef_fee: null | string;
+}
