@@ -94,13 +94,11 @@ export default function Home() {
 
       <Link href="/project">Go to project page</Link>
 
-      <Button font="bold" onClick={changeUserName}>
+      <Button variant={"brand-tonal"} onClick={changeUserName}>
         Change User Name
       </Button>
 
-      <Button font="bold" onClick={signInHandler}>
-        Sign In
-      </Button>
+      <Button onClick={signInHandler}>Sign In</Button>
     </main>
   );
 }

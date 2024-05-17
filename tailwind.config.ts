@@ -59,6 +59,11 @@ const config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        "button-focus": "var(--focus-shadow)",
+        "button-primary": "var(--button-primary)",
+        "button-tonal": "var(--button-tonal)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
