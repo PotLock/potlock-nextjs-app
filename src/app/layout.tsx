@@ -6,6 +6,7 @@ import "@app/styles/mona-sans-font.css";
 import "@app/styles/globals.css";
 
 import { cn } from "@app/components/lib/utils";
+import Nav from "@app/components/Nav/Nav";
 
 import Providers from "./Providers";
 
@@ -50,7 +51,10 @@ export default function RootLayout({
       <body
         className={`${cn("font-sans antialiased", fontSans.variable)} container`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <Nav />
+          {children}
+        </Providers>
       </body>
     </html>
   );
