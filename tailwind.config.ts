@@ -19,6 +19,9 @@ const config = {
       },
     },
     extend: {
+      fontSize: {
+        xl: "22px", // Customize the text-xl size to 22px
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

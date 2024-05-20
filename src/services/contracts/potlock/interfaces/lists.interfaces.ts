@@ -4,6 +4,7 @@ export enum RegistrationStatus {
   Pending = "Pending",
   Graylisted = "Graylisted",
   Blacklisted = "Blacklisted",
+  Unregistered = "Unregistered",
 }
 
 export interface List {

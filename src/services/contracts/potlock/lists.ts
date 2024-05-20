@@ -52,7 +52,7 @@ export const get_registrations = (args: { list_id: number }) =>
  * Get Regsiterations for registrant
  */
 export const get_registration = async (args: {
-  list_id: number;
+  list_id?: number;
   registrant_id: string;
 }) => {
   const regsiterations = await contractApi.view<typeof args, Registration[]>(

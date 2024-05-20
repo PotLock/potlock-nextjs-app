@@ -5,12 +5,12 @@ import { useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button } from "@app/common/components/button";
+import { Button } from "@app/components/ui/button";
 import useGetAccounts from "@app/hook/useGetAccounts";
 import useIsClient from "@app/hook/useIsClient";
 import useWallet from "@app/hook/useWallet";
 import { walletApi } from "@app/services/contracts";
-import * as socialDb from "@app/services/contracts/social";
+import * as socialDb from "@contracts/social";
 import { dispatch, useTypedSelector } from "@app/store";
 
 export default function Home() {
@@ -23,12 +23,12 @@ export default function Home() {
       console.log("Wallet Status:", wallet);
 
       // ==== Example of contract call ====
-      (async () => {
-        const userProfileInfo = await socialDb.get_user_profile({
-          accountId: "wendersonpires.near",
-        });
-        console.log("User Profile Info:", userProfileInfo);
-      })();
+      // (async () => {
+      //   const userProfileInfo = await socialDb.get_user_profile({
+      //     accountId: "wendersonpires.near",
+      //   });
+      //   console.log("User Profile Info:", userProfileInfo);
+      // })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.isWalletReady]);

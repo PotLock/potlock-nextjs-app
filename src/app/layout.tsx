@@ -4,7 +4,7 @@ import "@near-wallet-selector/modal-ui/styles.css";
 
 import "@app/styles/mona-sans-font.css";
 import "@app/styles/globals.css";
-import { cn } from "@app/common/lib/utils";
+import { cn } from "@app/components/lib/utils";
 
 import Providers from "./Providers";
 
@@ -46,7 +46,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body className={cn("font-sans antialiased", fontSans.variable)}>
+      <body
+        className={`${cn("font-sans antialiased", fontSans.variable)} container`}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>
