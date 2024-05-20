@@ -82,6 +82,15 @@ export const get_human_score = (args: GetHumanScoreInput) =>
     args,
   });
 
+/**
+ * Get if address is human
+ * @returns
+ */
+export const get_is_human = (args: GetHumanScoreInput) =>
+  contractApi.view<typeof args, boolean>("is_human", {
+    args,
+  });
+
 // WRITE METHODS
 /**
  * Anyone can call this method to register a provider. If caller is admin, provider is automatically activated.
