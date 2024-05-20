@@ -1,7 +1,8 @@
 import { MemoryCache } from "@wpdas/naxios";
-import { Config, DirectDonation } from "./interfaces/donate.interfaces";
+
 import { POTLOCK_DONATE_CONTRACT_ID } from "@app/constants";
 
+import { Config, DirectDonation } from "./interfaces/donate.interfaces";
 import { naxiosInstance } from "..";
 
 /**

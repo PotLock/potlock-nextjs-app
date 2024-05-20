@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { statuses } from "./statuses";
-import { RegistrationStatus } from "@contracts/potlock/interfaces/lists.interfaces";
+
 import useRegistration from "@app/hook/useRegistration";
+import { RegistrationStatus } from "@contracts/potlock/interfaces/lists.interfaces";
+
+import { statuses } from "./statuses";
 
 const ProjectBanner = ({ projectId }: { projectId: string }) => {
   const [toggle, setToggle] = useState(false);

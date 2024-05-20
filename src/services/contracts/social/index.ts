@@ -1,7 +1,8 @@
 import { StorageCache } from "@wpdas/naxios";
 
-import { naxiosInstance } from "..";
 import { SOCIAL_DB_CONTRACT_ID } from "@app/constants";
+
+import { naxiosInstance } from "..";
 
 /**
  * NEAR Social DB Contract API
