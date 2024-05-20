@@ -1,20 +1,15 @@
 "use client";
 
 import { UNREGISTERED_PROJECT } from "@app/app/(profile)/project/[projectId]/statuses";
-import { Registration } from "@app/services/contracts/potlock/interfaces/lists.interfaces";
-import { get_registration } from "@app/services/contracts/potlock/lists";
-import {
-  NEARSocialUserProfile,
-  RegistrationSocialProfile,
-  get_user_profile,
-} from "@app/services/contracts/social";
-import { get_is_human } from "@app/services/contracts/sybil.nadabot";
+import { NEARSocialUserProfile, get_user_profile } from "@contracts/social";
 import { get_image } from "@app/utils/imageHelpers";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 import { projectStatusIcons } from "@app/constants/ProjectStatusIcons";
+import useRegistration from "@app/hook/useRegistration";
+import useIsHuman from "@app/hook/useIsHuman";
 
 type Props = {
   accountId: string; // near address (donor | proejct)
@@ -28,35 +23,21 @@ type Props = {
 const BannerHeader = (props: Props) => {
   const { isProject, accountId, profile: _profile } = props;
 
-  const [registration, setRegistration] =
-    useState<Registration>(UNREGISTERED_PROJECT);
   const [profile, setProfile] = useState({
     image: "",
     backgroundImage: "",
   });
-  const [nadaBotVerified, setNadaBotVerified] = useState(false);
-
-  const fetchRegistration = async () => {
-    try {
-      const registration =
-        (await get_registration({
-          registrant_id: accountId,
-        })) || UNREGISTERED_PROJECT;
-      setRegistration(registration);
-    } catch (error) {
-      console.log("error fetching project ", error);
-    }
-  };
-
-  const fetchHumanStatus = async () => {
-    const isHuman = await get_is_human({ account_id: accountId });
-    setNadaBotVerified(isHuman);
-  };
 
   const fetchUserProfile = async () => {
     const profile = await get_user_profile({ accountId });
-    const image = get_image(undefined, profile?.image, "image");
-    const backgroundImage = get_image(undefined, profile?.backgroundImage);
+    const image = get_image({
+      image: profile?.image,
+      type: "image",
+    });
+    const backgroundImage = get_image({
+      image: profile?.backgroundImage,
+      type: "backgroundImage",
+    });
 
     const images = await Promise.all([image, backgroundImage]);
     setProfile({
@@ -65,12 +46,21 @@ const BannerHeader = (props: Props) => {
     });
   };
 
+  // get nadabot status on the donor page
+  const { nadaBotVerified } = !isProject
+    ? useIsHuman(accountId)
+    : {
+        nadaBotVerified: false,
+      };
+
+  // get registration if it is on project page
+  const { registration } = isProject
+    ? useRegistration(accountId)
+    : {
+        registration: UNREGISTERED_PROJECT,
+      };
+
   useEffect(() => {
-    if (isProject) {
-      fetchRegistration();
-    } else {
-      fetchHumanStatus();
-    }
     fetchUserProfile();
   }, []);
 

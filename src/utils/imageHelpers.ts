@@ -1,5 +1,12 @@
-import { naxiosInstance } from "@app/services/contracts";
-import { Image, get_user_profile } from "@app/services/contracts/social";
+import { naxiosInstance } from "@contracts/index";
+import { Image, get_user_profile } from "@contracts/social";
+
+type Props = {
+  accountId?: string;
+  image?: Image;
+  type?: "backgroundImage" | "image";
+  fallbackurl?: string;
+};
 
 type TokenResponse = {
   metadata: {
@@ -19,12 +26,12 @@ type MetadateRes = {
 const rex =
   /^(?:https?:\/\/)(?:[^\/]+\/ipfs\/)?(Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,})(?:\.[^\/]+)?(\/.*)?$/g;
 
-export const get_image = async (
-  accountId?: string,
-  image?: Image,
-  type?: "backgroundImage" | "image",
-  fallbackurl?: string,
-) => {
+export const get_image = async ({
+  accountId,
+  image,
+  type,
+  fallbackurl,
+}: Props) => {
   let socialImage = image;
 
   try {

@@ -1,4 +1,4 @@
-import { RegistrationStatus } from "@app/services/contracts/potlock/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@contracts/potlock/interfaces/lists.interfaces";
 import { ReactNode } from "react";
 
 type ProjectStatusIcons = {

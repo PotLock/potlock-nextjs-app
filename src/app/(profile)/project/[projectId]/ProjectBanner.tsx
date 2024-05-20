@@ -1,35 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { UNREGISTERED_PROJECT, statuses } from "./statuses";
-import {
-  Registration,
-  RegistrationStatus,
-} from "@app/services/contracts/potlock/interfaces/lists.interfaces";
-import { get_registration } from "@app/services/contracts/potlock/lists";
+import { useState } from "react";
+import { statuses } from "./statuses";
+import { RegistrationStatus } from "@contracts/potlock/interfaces/lists.interfaces";
+import useRegistration from "@app/hook/useRegistration";
 
 const ProjectBanner = ({ projectId }: { projectId: string }) => {
   const [toggle, setToggle] = useState(false);
-  const [registration, setRegistration] =
-    useState<Registration>(UNREGISTERED_PROJECT);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchRegistration = async () => {
-      try {
-        const registration =
-          (await get_registration({
-            registrant_id: projectId,
-          })) || UNREGISTERED_PROJECT;
-        setRegistration(registration);
-        setLoading(false);
-      } catch (error) {
-        console.log("error fetching project ", error);
-        setLoading(false);
-      }
-    };
-    fetchRegistration();
-  });
+  const { registration, loading } = useRegistration(projectId);
 
   const registrationStatus = registration
     ? statuses[registration.status]

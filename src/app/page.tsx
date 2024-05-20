@@ -10,7 +10,7 @@ import useGetAccounts from "@app/hook/useGetAccounts";
 import useIsClient from "@app/hook/useIsClient";
 import useWallet from "@app/hook/useWallet";
 import { walletApi } from "@app/services/contracts";
-import * as socialDb from "@app/services/contracts/social";
+import * as socialDb from "@contracts/social";
 import { dispatch, useTypedSelector } from "@app/store";
 
 export default function Home() {
