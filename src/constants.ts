@@ -13,8 +13,6 @@ export const NADABOT_CONTRACT_ID = process.env
 export const SOCIAL_DB_CONTRACT_ID = process.env
   .NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID as string;
 
-export const MAINNET_SOCIAL_DB_CONTRACT_ID = " social.near";
-
 // POTLOCK LISTS CONTRACT
 export const POTLOCK_LISTS_CONTRACT_ID = "lists.potlock.near";
 
