@@ -62,18 +62,22 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │   │   └── utils.ts
     │   ├── project/
     │   │   ├── components/
-    │   │   │   └── ProjectForm.tsx
+    │   │   │   |── ProjectForm.tsx
+    │   │   │   └── ProjectForm.test.tsx
     │   │   ├── hooks/
-    │   │   │   └── useProjectInfo.ts
+    │   │   │   |── useProjectInfo.ts
+    │   │   │   └── useProjectInfo.test.ts
     │   │   ├── services/
     │   │   ├── state.ts
     │       ├── types.d.ts
     │   │   └── utils.ts
     │   └── auth/
     │       ├── components/
-    │       │   └── SignUpForm.tsx
+    │       │   |── SignUpForm.tsx
+    │       │   └── SignUpForm.test.tsx
     │       ├── hooks/
-    │       │   └── useAuth.ts
+    │       │   |── useAuth.ts
+    │       │   |── useAuth.test.ts
     │       │   └── useWallet.ts
     │       ├── services/
     │       ├── state.ts
