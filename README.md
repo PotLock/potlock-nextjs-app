@@ -74,7 +74,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     └── ...
 ```
 
-### Top Level Items
+### Top-Level Items
 
 - **constants**: Constant, unchanged values (e.g. export `export const POTLOCK_REGISTERY_LIST_ID = 1`).
 - **api**: For logic that communicates with the server(s).
@@ -91,7 +91,7 @@ Global/main resources used over the app, all the shared items should be placed h
 
 Each resource must be placed inside the modules folder.
 
-### Modules Sub-items
+### Modules-Level Items
 
 - **components**: React components.
 - **hooks**: Custom React hooks for shared logic.
