@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 
-import { WalletManager } from "@wpdas/naxios/dist/types/managers/wallet-manager";
-
 import { walletApi } from "@contracts/index";
+
+import { Wallet } from "../types";
 
 const useWallet = () => {
   const [isWalletReady, setReady] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [wallet, setWallet] =
-    useState<Omit<WalletManager, "changeWalletStatus" | "status">>();
+  const [wallet, setWallet] = useState<Wallet>();
 
   useEffect(() => {
     (async () => {

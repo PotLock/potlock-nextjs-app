@@ -36,12 +36,17 @@ Group by feature/modules. This structure offers a highly modular approach, defin
 
 ```
 └── src/
-    ├── constants.ts
     ├── api/
     ├── app/
     |   ├── project/...
     |   ├── page.tsx
     |   ├── Providers.tsx
+    ├── constants.ts
+    ├── contracts/
+    |   ├── potlock/
+    │       ├── interfaces/
+    │       │   └── lists.interfaces.ts
+    │       └── lists.ts
     ├── assets/
     ├── store/
     ├── utils/
@@ -77,6 +82,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
 ### Top-Level Items
 
 - **constants**: Constant, unchanged values (e.g. export `export const POTLOCK_REGISTERY_LIST_ID = 1`).
+- **contracts**: Smart Contract services and their interfaces.
 - **api**: For logic that communicates with the server(s).
 - **app**: nextjs app pages. Get to know more about how to route application here: [NextJS Routing](https://nextjs.org/docs/app/building-your-application/routing)
 - **assets**: global app's assets.
@@ -99,3 +105,4 @@ Each resource must be placed inside the modules folder.
 - **services**: Encapsulates main business & application logic.
 - **helpers**: Provides business-specific utilities.
 - **state.ts**: Feature state (rematch/redux).
+- **types.d.ts**: Used to create the shared types and interfaces within this module.
