@@ -5,13 +5,13 @@ import {
   POTLOCK_REGISTERY_LIST_ID,
 } from "@app/constants";
 
-import { naxiosInstance } from "..";
 import {
   GetListInput,
   List,
   Registration,
   RegistrationStatus,
 } from "./interfaces/lists.interfaces";
+import { naxiosInstance } from "..";
 
 /**
  * NEAR Contract API
@@ -26,12 +26,12 @@ export const contractApi = naxiosInstance.contractApi({
 /**
  * Get lists
  */
-export const get_lists = () => contractApi.view<{}, List[]>("get_lists");
+export const getLists = () => contractApi.view<{}, List[]>("get_lists");
 
 /**
  * Get single list
  */
-export const get_list = (args: GetListInput) =>
+export const getList = (args: GetListInput) =>
   contractApi.view<typeof args, List>("get_list", {
     args,
   });
@@ -39,7 +39,7 @@ export const get_list = (args: GetListInput) =>
 /**
  * Get Regsiterations for a list
  */
-export const get_registrations = (args: { list_id: number }) =>
+export const getRegistrations = (args: { list_id: number }) =>
   contractApi.view<typeof args, Registration[]>(
     "get_registrations_for_list",
     {
@@ -51,7 +51,7 @@ export const get_registrations = (args: { list_id: number }) =>
 /**
  * Get Regsiterations for registrant
  */
-export const get_registration = async (args: {
+export const getRegistration = async (args: {
   list_id?: number;
   registrant_id: string;
 }) => {
@@ -71,7 +71,7 @@ export const get_registration = async (args: {
 /**
  * Get if a regsiteration is approved
  */
-export const is_registration_approved = (args: {
+export const isRegistrationApproved = (args: {
   account_id: string;
   list_id?: number;
   required_status?: RegistrationStatus;

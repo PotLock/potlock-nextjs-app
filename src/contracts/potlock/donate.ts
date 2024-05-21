@@ -18,12 +18,12 @@ export const contractApi = naxiosInstance.contractApi({
 /**
  * Get donate contract config
  */
-export const get_config = () => contractApi.view<{}, Config>("get_config");
+export const getConfig = () => contractApi.view<{}, Config>("get_config");
 
 /**
  * Get direct donations
  */
-export const get_donations = (args: { fromIndex?: number; limit?: number }) =>
+export const getDonations = (args: { fromIndex?: number; limit?: number }) =>
   contractApi.view<typeof args, DirectDonation[]>("get_donations", {
     args,
   });
@@ -31,7 +31,7 @@ export const get_donations = (args: { fromIndex?: number; limit?: number }) =>
 /**
  * Get donations for a recipient id
  */
-export const get_donations_for_recipient = (args: { recipient_id: string }) =>
+export const getDonationsForRecipient = (args: { recipient_id: string }) =>
   contractApi.view<typeof args, DirectDonation[]>(
     "get_donations_for_recipient",
     {
@@ -42,7 +42,7 @@ export const get_donations_for_recipient = (args: { recipient_id: string }) =>
 /**
  * Get donations for donor id
  */
-export const get_donations_for_donor = (args: { donor_id: string }) =>
+export const getDonationsForDonor = (args: { donor_id: string }) =>
   contractApi.view<typeof args, DirectDonation[]>("get_donations_for_donor", {
     args,
   });

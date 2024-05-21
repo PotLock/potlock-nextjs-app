@@ -1,5 +1,5 @@
-import { NEARSocialUserProfile, get_user_profile } from "@contracts/social";
-import { get_image } from "@modules/core/helpers/imageHelpers";
+import { NEARSocialUserProfile, getUserProfile } from "@contracts/social";
+import { getImage } from "@modules/core/helpers/imageHelpers";
 
 type Props = {
   profile?: NEARSocialUserProfile;
@@ -15,14 +15,14 @@ export const fetchProfileImages = async ({ profile, accountId }: Props) => {
   let currentProfile = profile;
 
   if (!currentProfile) {
-    currentProfile = await get_user_profile({ accountId });
+    currentProfile = await getUserProfile({ accountId });
   }
 
-  const image = get_image({
+  const image = getImage({
     image: currentProfile?.image,
     type: "image",
   });
-  const backgroundImage = get_image({
+  const backgroundImage = getImage({
     image: currentProfile?.backgroundImage,
     type: "backgroundImage",
   });

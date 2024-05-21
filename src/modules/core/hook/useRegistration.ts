@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { UNREGISTERED_PROJECT } from "@app/app/project/[projectId]/statuses";
 import { Registration } from "@contracts/potlock/interfaces/lists.interfaces";
-import { get_registration } from "@contracts/potlock/lists";
+import { getRegistration } from "@contracts/potlock/lists";
 
 const useRegistration = (projectId: string) => {
   const [registration, setRegistration] =
@@ -14,7 +14,7 @@ const useRegistration = (projectId: string) => {
     const fetchRegistration = async () => {
       try {
         const registration =
-          (await get_registration({
+          (await getRegistration({
             registrant_id: projectId,
           })) || UNREGISTERED_PROJECT;
         setRegistration(registration);

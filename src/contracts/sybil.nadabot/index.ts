@@ -40,13 +40,13 @@ export const contractApi = naxiosInstance.contractApi({
 /**
  * Get Config
  */
-export const get_config = () => contractApi.view<{}, Config>("get_config");
+export const getConfig = () => contractApi.view<{}, Config>("get_config");
 
 /**
  * Get Providers
  * @returns
  */
-export const get_providers = () =>
+export const getProviders = () =>
   contractApi.view<object, ProviderExternal[]>("get_providers", undefined, {
     useCache: true,
   });
@@ -55,7 +55,7 @@ export const get_providers = () =>
  * Get Stamps for Account Id
  * @returns
  */
-export const get_stamps_for_account_id = (args: GetStampsForAccountIdInput) =>
+export const getStampsForAccountId = (args: GetStampsForAccountIdInput) =>
   contractApi.view<typeof args, StampExternal[]>(
     "get_stamps_for_account_id",
     {
@@ -68,7 +68,7 @@ export const get_stamps_for_account_id = (args: GetStampsForAccountIdInput) =>
  * Get Users for Stamps
  * @returns
  */
-export const get_users_for_stamp = (args: GetUsersForStampInput) =>
+export const getUsersForStamp = (args: GetUsersForStampInput) =>
   contractApi.view<typeof args, AccountId[]>("get_users_for_stamp", {
     args,
   });
@@ -77,7 +77,7 @@ export const get_users_for_stamp = (args: GetUsersForStampInput) =>
  * Get Human Score
  * @returns
  */
-export const get_human_score = (args: GetHumanScoreInput) =>
+export const getHumanScore = (args: GetHumanScoreInput) =>
   contractApi.view<typeof args, HumanScoreResponse>("get_human_score", {
     args,
   });
@@ -86,7 +86,7 @@ export const get_human_score = (args: GetHumanScoreInput) =>
  * Get if address is human
  * @returns
  */
-export const get_is_human = (args: GetHumanScoreInput) =>
+export const getIsHuman = (args: GetHumanScoreInput) =>
   contractApi.view<typeof args, boolean>("is_human", {
     args,
   });
@@ -95,7 +95,7 @@ export const get_is_human = (args: GetHumanScoreInput) =>
 /**
  * Anyone can call this method to register a provider. If caller is admin, provider is automatically activated.
  */
-export const register_provider = (args: RegisterProviderInput) =>
+export const registerProvider = (args: RegisterProviderInput) =>
   contractApi.call<typeof args, ProviderExternal>("register_provider", {
     args,
     gas: FULL_TGAS,
@@ -107,12 +107,10 @@ export const register_provider = (args: RegisterProviderInput) =>
  * @param default_human_threshold
  * @returns
  */
-export const admin_set_default_human_threshold = (
-  default_human_threshold: number,
-) =>
+export const adminSetDefaultHumanThreshold = (defaultHumanThreshold: number) =>
   contractApi.call("admin_set_default_human_threshold", {
     args: {
-      default_human_threshold,
+      default_human_threshold: defaultHumanThreshold,
     },
     deposit: ONE_HUNDREDTH_NEAR,
   });
@@ -124,14 +122,14 @@ export const admin_set_default_human_threshold = (
  * @param provider_id
  * @returns
  */
-export const add_stamp = (provider_id: string) =>
+export const addStamp = (providerId: string) =>
   contractApi.call<object, StampExternal | undefined>("add_stamp", {
     args: {
-      provider_id,
+      provider_id: providerId,
     },
     gas: FULL_TGAS,
     deposit: TWO_HUNDREDTHS_NEAR,
-    callbackUrl: `${window.location.href}?verifiedProvider=${provider_id}`,
+    callbackUrl: `${window.location.href}?verifiedProvider=${providerId}`,
   });
 
 /**
@@ -139,7 +137,7 @@ export const add_stamp = (provider_id: string) =>
  * @param args
  * @returns
  */
-export const update_provider = (args: UpdateProviderInput) =>
+export const updateProvider = (args: UpdateProviderInput) =>
   contractApi.call<typeof args, ProviderExternal>("update_provider", {
     args,
     deposit: ONE_HUNDREDTH_NEAR,
@@ -150,7 +148,7 @@ export const update_provider = (args: UpdateProviderInput) =>
  * @param args
  * @returns
  */
-export const admin_activate_provider = (args: ActivateProviderInput) =>
+export const adminActivateProvider = (args: ActivateProviderInput) =>
   contractApi.call<typeof args, Provider>("admin_activate_provider", {
     args,
     deposit: ONE_HUNDREDTH_NEAR,
@@ -161,7 +159,7 @@ export const admin_activate_provider = (args: ActivateProviderInput) =>
  * @param args
  * @returns
  */
-export const admin_deactivate_provider = (args: DeactivateProviderInput) =>
+export const adminDeactivateProvider = (args: DeactivateProviderInput) =>
   contractApi.call<typeof args, Provider>("admin_deactivate_provider", {
     args,
     deposit: ONE_HUNDREDTH_NEAR,
@@ -172,7 +170,7 @@ export const admin_deactivate_provider = (args: DeactivateProviderInput) =>
  * @param args
  * @returns
  */
-export const admin_flag_provider = (args: FlagProviderInput) =>
+export const adminFlagProvider = (args: FlagProviderInput) =>
   contractApi.call<typeof args, Provider>("admin_flag_provider", {
     args,
   });
@@ -182,7 +180,7 @@ export const admin_flag_provider = (args: FlagProviderInput) =>
  * @param args
  * @returns
  */
-export const admin_unflag_provider = (args: UnflagProviderInput) =>
+export const adminUnflagProvider = (args: UnflagProviderInput) =>
   contractApi.call<typeof args, Provider>("admin_unflag_provider", {
     args,
   });
