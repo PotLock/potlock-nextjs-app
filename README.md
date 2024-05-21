@@ -36,7 +36,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
 
 ```
 └── src/
-    ├── constants.ts/
+    ├── constants.ts
     ├── api/
     ├── app/
     |   ├── project/...
