@@ -77,7 +77,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
 
 - **constants**: Constant, unchanged values (e.g. export `export const POTLOCK_REGISTERY_LIST_ID = 1`).
 - **api**: For logic that communicates with the server(s).
-- **app**: nextjs app pages.
+- **app**: nextjs app pages. Get to know more how to routing application here: [NextJS Routing](https://nextjs.org/docs/app/building-your-application/routing)
 - **assets**: global app's assets.
 - **store**: main redux state manager.
 
