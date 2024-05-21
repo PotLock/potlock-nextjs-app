@@ -30,6 +30,12 @@ NEXT_PUBLIC_NADABOT_CONTRACT_ID=v2new.staging.nadabot.near
 NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID=social.near
 ```
 
+## DJango Indexer API
+
+This project is using a indexer service. You can access its docs here: https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints
+
+**URI**: `http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1`
+
 ## Folder Structure
 
 Group by feature/modules. This structure offers a highly modular approach, defining clear boundaries for different aspects of the application within each module:
