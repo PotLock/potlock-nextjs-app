@@ -58,6 +58,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │   │   │   └── button.tsx
     │   │   ├── hooks/
     │   │   ├── helpers/
+    │       ├── types.d.ts
     │   │   └── utils.ts
     │   ├── project/
     │   │   ├── components/
@@ -66,6 +67,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │   │   │   └── useProjectInfo.ts
     │   │   ├── services/
     │   │   ├── state.ts
+    │       ├── types.d.ts
     │   │   └── utils.ts
     │   └── auth/
     │       ├── components/
@@ -75,6 +77,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │       │   └── useWallet.ts
     │       ├── services/
     │       ├── state.ts
+    │       ├── types.d.ts
     │       └── utils.ts
     └── ...
 ```
@@ -88,6 +91,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
 - **assets**: global app's assets.
 - **store**: main redux state manager.
 - **utils**: Utilities for universal logic that is not related to business logic or any technologies, e.g. string manipulations, mathematic calculations, DOM manipulations, HTML-related logic, localStorage, IndexedDB, etc.
+- **types.d.ts**: Used to create the shared types and interfaces within core module.
 
 ### Core Modules (modules/core)
 
