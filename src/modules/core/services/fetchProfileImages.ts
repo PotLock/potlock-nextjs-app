@@ -1,5 +1,5 @@
-import { NEARSocialUserProfile, get_user_profile } from "@app/contracts/social";
-import { get_image } from "@app/modules/core/utils/imageHelpers";
+import { NEARSocialUserProfile, get_user_profile } from "@contracts/social";
+import { get_image } from "@modules/core/helpers/imageHelpers";
 
 type Props = {
   profile?: NEARSocialUserProfile;

@@ -5,8 +5,8 @@ import "@near-wallet-selector/modal-ui/styles.css";
 import "@app/styles/mona-sans-font.css";
 import "@app/styles/globals.css";
 
+import { cn } from "@app/modules/core/utils/cn";
 import Nav from "@modules/core/components/Nav";
-import { cn } from "@modules/core/lib/cn";
 
 import Providers from "./Providers";
 
