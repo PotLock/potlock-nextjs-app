@@ -1,6 +1,5 @@
-import BannerHeader from "@app/components/shared/ProfileBanner";
-
-import ProjectBanner from "./ProjectBanner";
+import BannerHeader from "@modules/profile/components/ProfileBanner";
+import ProjectBanner from "@modules/project/components/ProjectBanner";
 
 export default async function Project({
   params,

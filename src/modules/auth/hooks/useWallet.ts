@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { WalletManager } from "@wpdas/naxios/dist/types/managers/wallet-manager";
 
-import { walletApi } from "@app/services/contracts";
+import { walletApi } from "@contracts/index";
 
 const useWallet = () => {
   const [isWalletReady, setReady] = useState(false);

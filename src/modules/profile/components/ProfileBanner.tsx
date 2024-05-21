@@ -1,17 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
 
-import { projectStatusIcons } from "@app/constants/ProjectStatusIcons";
-import useIsHuman from "@app/hook/useIsHuman";
-import useRegistration from "@app/hook/useRegistration";
-import { get_image } from "@app/utils/imageHelpers";
-import { NEARSocialUserProfile, get_user_profile } from "@contracts/social";
-
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Skeleton } from "../ui/skeleton";
+import { NEARSocialUserProfile } from "@contracts/social";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@modules/core/common/avatar";
+import { Skeleton } from "@modules/core/common/skeleton";
+import useIsHuman from "@modules/core/hook/useIsHuman";
+import useRegistration from "@modules/core/hook/useRegistration";
+import { fetchProfileImages } from "@modules/core/services/fetchProfileImages";
+import { projectStatusIcons } from "@modules/project/components/ProjectStatusIcons";
 
 type Props = {
   accountId: string; // near address (donor | proejct)
@@ -30,27 +33,15 @@ const BannerHeader = (props: Props) => {
     backgroundImage: "",
   });
 
-  const fetchProfileImages = useCallback(async () => {
-    let currentProfile = profile;
+  useEffect(() => {
+    (async () => {
+      const imagesData = await fetchProfileImages({ profile, accountId });
 
-    if (!currentProfile) {
-      currentProfile = await get_user_profile({ accountId });
-    }
-
-    const image = get_image({
-      image: currentProfile?.image,
-      type: "image",
-    });
-    const backgroundImage = get_image({
-      image: currentProfile?.backgroundImage,
-      type: "backgroundImage",
-    });
-
-    const images = await Promise.all([image, backgroundImage]);
-    setProfileImages({
-      image: images[0],
-      backgroundImage: images[1],
-    });
+      setProfileImages({
+        image: imagesData.image,
+        backgroundImage: imagesData.backgroundImage,
+      });
+    })();
   }, [profile, accountId]);
 
   // get nadabot status on the donor page
@@ -62,10 +53,6 @@ const BannerHeader = (props: Props) => {
 
   // get registration if it is on project page
   const { registration } = useRegistration(accountId);
-
-  useEffect(() => {
-    fetchProfileImages();
-  }, [fetchProfileImages]);
 
   return (
     <div className="relative">

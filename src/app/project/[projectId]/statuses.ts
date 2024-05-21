@@ -1,4 +1,4 @@
-import { RegistrationStatus } from "@contracts/potlock/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@app/contracts/potlock/interfaces/lists.interfaces";
 
 type StatusConfig = {
   [key in RegistrationStatus]: {

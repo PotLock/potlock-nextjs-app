@@ -5,13 +5,12 @@ import { useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button } from "@app/components/ui/button";
-import useGetAccounts from "@app/hook/useGetAccounts";
-import useIsClient from "@app/hook/useIsClient";
-import useWallet from "@app/hook/useWallet";
-import { walletApi } from "@app/services/contracts";
-import * as socialDb from "@contracts/social";
 import { dispatch, useTypedSelector } from "@app/store";
+import { walletApi } from "@contracts/index";
+import useWallet from "@modules/auth/hooks/useWallet";
+import { Button } from "@modules/core/common/button";
+import useGetAccounts from "@modules/core/hook/useGetAccounts";
+import useIsClient from "@modules/core/hook/useIsClient";
 
 export default function Home() {
   const isClient = useIsClient();
@@ -34,12 +33,15 @@ export default function Home() {
   }, [wallet.isWalletReady]);
 
   // ==== Example of store usage ====
-  const { name } = useTypedSelector((state) => state.user);
+  const { name } = useTypedSelector((state) => state.auth);
 
   useEffect(() => {
     // ==== Example of store usage ====
     if (!name) {
-      dispatch.user.setUserData({ name: Date.now().toString() });
+      dispatch.auth.setAuthData({
+        name: Date.now().toString(),
+        isSignedIn: false,
+      });
     }
   }, [name]);
 

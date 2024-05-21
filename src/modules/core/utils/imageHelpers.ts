@@ -1,5 +1,5 @@
-import { naxiosInstance } from "@contracts/index";
-import { Image, get_user_profile } from "@contracts/social";
+import { naxiosInstance } from "@app/contracts/index";
+import { Image, get_user_profile } from "@app/contracts/social";
 
 type Props = {
   accountId?: string;
@@ -23,8 +23,8 @@ type MetadateRes = {
   base_uri: string;
 };
 
-const rex =
-  /^(?:https?:\/\/)(?:[^\/]+\/ipfs\/)?(Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,})(?:\.[^\/]+)?(\/.*)?$/g;
+// const rex =
+//   /^(?:https?:\/\/)(?:[^\/]+\/ipfs\/)?(Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,})(?:\.[^\/]+)?(\/.*)?$/g;
 
 export const get_image = async ({
   accountId,
@@ -66,7 +66,7 @@ export const get_image = async ({
         },
       );
 
-      let tokenMedia = tokenMetadata.media || "";
+      const tokenMedia = tokenMetadata.media || "";
 
       let imageUrl = null;
 

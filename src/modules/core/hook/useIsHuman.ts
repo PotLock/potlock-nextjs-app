@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { get_is_human } from "@app/services/contracts/sybil.nadabot";
+import { get_is_human } from "@app/contracts/sybil.nadabot";
 
 const useIsHuman = (accountId: string) => {
   const [nadaBotVerified, setNadaBotVerified] = useState(false);

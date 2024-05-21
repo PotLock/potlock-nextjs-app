@@ -10,12 +10,12 @@ You can access BOS Potlock Version using one of the environments below:
 ## Getting Started
 
 ```bash
-# install dependencies
-npm install;
 # using the right node version
 nvm use;
+# install dependencies
+yarn install;
 # then run the development server (create the .env.local file with its content first)
-npm run dev
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -28,4 +28,44 @@ Create an env file named `.env.local` at the root of the project with the follow
 NEXT_PUBLIC_NETWORK=mainnet
 NEXT_PUBLIC_NADABOT_CONTRACT_ID=v2new.staging.nadabot.near
 NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID=social.near
+```
+
+## Folder Structure
+
+Group by feature/modules. This structure offers a highly modular approach, defining clear boundaries for different aspects of the application within each module:
+
+```
+└── src/
+    ├── app/
+    ├── assets/
+    ├── store/
+    ├── modules/
+    |   ├── core/
+    │   │   ├── components/
+    │   │   ├── common/
+    │   │   │   |── avatar.tsx
+    │   │   │   └── button.tsx
+    │   │   ├── hooks/
+    │   │   ├── lib/
+    │   │   └── utils/
+    │   ├── project/
+    │   │   ├── components/
+    │   │   │   └── ProjectForm.tsx
+    │   │   ├── hooks/
+    │   │   │   └── useProjectInfo.ts
+    │   │   ├── lib/
+    │   │   ├── services/
+    │   │   ├── state.ts
+    │   │   └── utils/
+    │   └── auth/
+    │       ├── components/
+    │       │   └── SignUpForm.tsx
+    │       ├── hooks/
+    │       │   └── useAuth.ts
+    │       │   └── useWallet.ts
+    │       ├── lib/
+    │       ├── services/
+    │       ├── state.ts
+    │       └── utils/
+    └── ...
 ```

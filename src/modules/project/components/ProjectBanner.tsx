@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 
-import useRegistration from "@app/hook/useRegistration";
+import { statuses } from "@app/app/project/[projectId]/statuses";
 import { RegistrationStatus } from "@contracts/potlock/interfaces/lists.interfaces";
-
-import { statuses } from "./statuses";
+import useRegistration from "@modules/core/hook/useRegistration";
 
 const ProjectBanner = ({ projectId }: { projectId: string }) => {
   const [toggle, setToggle] = useState(false);
