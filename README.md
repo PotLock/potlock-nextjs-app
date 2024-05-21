@@ -44,6 +44,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     |   ├── Providers.tsx
     ├── assets/
     ├── store/
+    ├── utils/
     ├── modules/
     |   ├── core/
     │   │   ├── components/
@@ -52,7 +53,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │   │   │   └── button.tsx
     │   │   ├── hooks/
     │   │   ├── helpers/
-    │   │   └── utils/
+    │   │   └── utils.ts
     │   ├── project/
     │   │   ├── components/
     │   │   │   └── ProjectForm.tsx
@@ -60,7 +61,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │   │   │   └── useProjectInfo.ts
     │   │   ├── services/
     │   │   ├── state.ts
-    │   │   └── utils/
+    │   │   └── utils.ts
     │   └── auth/
     │       ├── components/
     │       │   └── SignUpForm.tsx
@@ -69,7 +70,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │       │   └── useWallet.ts
     │       ├── services/
     │       ├── state.ts
-    │       └── utils/
+    │       └── utils.ts
     └── ...
 ```
 
@@ -80,6 +81,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
 - **app**: nextjs app pages. Get to know more about how to route application here: [NextJS Routing](https://nextjs.org/docs/app/building-your-application/routing)
 - **assets**: global app's assets.
 - **store**: main redux state manager.
+- **utils**: Utilities for universal logic that is not related to business logic or any technologies, e.g. string manipulations, mathematic calculations, DOM manipulations, HTML-related logic, localStorage, IndexedDB, etc.
 
 ### Core Modules (modules/core)
 
@@ -93,7 +95,7 @@ Each resource must be placed inside the modules folder.
 
 - **components**: React components.
 - **hooks**: Custom React hooks for shared logic.
-- **utils**: Utilities for universal logic that is not related to business logic or any technologies, e.g. string manipulations, mathematic calculations, DOM manipulations, HTML-related logic, localStorage, IndexedDB, etc.
+- **utils.ts**: Same as the top level utils, but this is specific to modules.
 - **services**: Encapsulates main business & application logic.
 - **helpers**: Provides business-specific utilities.
 - **state.ts**: Feature state (rematch/redux).
