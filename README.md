@@ -36,6 +36,8 @@ Group by feature/modules. This structure offers a highly modular approach, defin
 
 ```
 └── src/
+    ├── constants.ts/
+    ├── api/
     ├── app/
     ├── assets/
     ├── store/
@@ -46,6 +48,7 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │   │   │   |── avatar.tsx
     │   │   │   └── button.tsx
     │   │   ├── hooks/
+    │   │   ├── helpers/
     │   │   ├── lib/
     │   │   └── utils/
     │   ├── project/
@@ -69,3 +72,29 @@ Group by feature/modules. This structure offers a highly modular approach, defin
     │       └── utils/
     └── ...
 ```
+
+### Top Level Items
+
+- **constants**: Constant, unchanged values (e.g. export `export const POTLOCK_REGISTERY_LIST_ID = 1`).
+- **api**: For logic that communicates with the server(s).
+- **app**: nextjs app pages.
+- **assets**: global app's assets.
+- **store**: main redux state manager.
+
+### Core Modules (modules/core)
+
+Global/main resources used over the app, all the shared items should be placed here.
+
+### Feature Modules (modules/resource)
+
+Each resource must be placed inside the modules folder.
+
+### Modules Sub-items
+
+- **components**: React components.
+- **hooks**: Custom React hooks for shared logic.
+- **lib**: Utilities that are related to certain technologies, e.g. DOM manipulations, HTML-related logic, localStorage, IndexedDB, etc.
+- **services**: Encapsulates main business & application logic.
+- **helpers**: Provides business-specific utilities.
+- **state.ts**: Feature state (rematch/redux).
+- **utils**: Utilities for universal logic that is not related to business logic or any technologies, e.g. string manipulations, mathematic calculations, etc.
