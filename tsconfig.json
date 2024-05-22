@@ -19,7 +19,10 @@
     ],
     "paths": {
       "@app/*": ["./src/*"],
-      "@contracts/*": ["./src/services/contracts/*"]
+      "@api/*": ["./src/api/*"],
+      "@contracts/*": ["./src/contracts/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@store/*": ["./src/store/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
