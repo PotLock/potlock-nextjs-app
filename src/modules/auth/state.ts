@@ -3,31 +3,22 @@ import { createModel } from "@rematch/core";
 import { RootModel } from "@app/store/models";
 
 interface AuthState {
-  email?: string;
-  name?: string;
-  isSignedIn: boolean;
+  isAuthenticated: boolean;
 }
-
-type SetUserData = AuthState;
 
 /**
  * Auth State
  */
 const initialState: AuthState = {
-  email: "",
-  name: "",
-  isSignedIn: false,
+  isAuthenticated: false,
 };
 
 export const auth = createModel<RootModel>()({
   state: initialState,
 
   reducers: {
-    SET_DATA(state: AuthState, { name, email, isSignedIn }: SetUserData) {
-      state.name = name || state.name;
-      state.email = email || state.email;
-      state.isSignedIn = isSignedIn || state.isSignedIn;
-      return state;
+    SET_DATA(state: AuthState, { isAuthenticated }: AuthState) {
+      state.isAuthenticated = isAuthenticated;
     },
 
     // Reset to the initial state
@@ -37,7 +28,7 @@ export const auth = createModel<RootModel>()({
   },
 
   effects: (dispatch) => ({
-    setAuthData(props: SetUserData) {
+    setAuthData(props: AuthState) {
       dispatch.auth.SET_DATA(props);
     },
   }),
