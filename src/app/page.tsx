@@ -5,12 +5,12 @@ import { useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { dispatch, useTypedSelector } from "@app/store";
+import useGetAccounts from "@app/modules/core/hooks/useGetAccounts";
+import useIsClient from "@app/modules/core/hooks/useIsClient";
+import { dispatch } from "@app/store";
 import { walletApi } from "@contracts/index";
 import useWallet from "@modules/auth/hooks/useWallet";
 import { Button } from "@modules/core/common/button";
-import useGetAccounts from "@modules/core/hook/useGetAccounts";
-import useIsClient from "@modules/core/hook/useIsClient";
 
 export default function Home() {
   const isClient = useIsClient();
@@ -33,17 +33,17 @@ export default function Home() {
   }, [wallet.isWalletReady]);
 
   // ==== Example of store usage ====
-  const { name } = useTypedSelector((state) => state.auth);
+  // const { name } = useTypedSelector((state) => state.auth);
 
-  useEffect(() => {
-    // ==== Example of store usage ====
-    if (!name) {
-      dispatch.auth.setAuthData({
-        name: Date.now().toString(),
-        isSignedIn: false,
-      });
-    }
-  }, [name]);
+  // useEffect(() => {
+  //   // ==== Example of store usage ====
+  //   if (!name) {
+  //     dispatch.auth.setAuthData({
+  //       name: Date.now().toString(),
+  //       isSignedIn: false,
+  //     });
+  //   }
+  // }, [name]);
 
   // ==== Example of service usage with custom hooks & react-query ====
   const { isPending, data } = useGetAccounts();
@@ -94,7 +94,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Link href="/project">Go to project page</Link>
+      <Link href="/project/alem-lib.near">Go to project page</Link>
 
       <Button variant={"brand-tonal"} onClick={changeUserName}>
         Change User Name

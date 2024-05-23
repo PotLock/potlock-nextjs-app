@@ -17,9 +17,9 @@ const useWallet = () => {
       const isSignedIn = walletApi.walletSelector.isSignedIn();
       setIsSignedIn(isSignedIn);
 
-      if (isSignedIn) {
-        setWallet(walletApi);
-      }
+      // if (isSignedIn) {
+      setWallet(walletApi);
+      // }
 
       setReady(true);
     })();
