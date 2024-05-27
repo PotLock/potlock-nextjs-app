@@ -21,7 +21,7 @@ export const auth = createModel<RootModel>()({
       state.isAuthenticated = isAuthenticated;
     },
 
-    // Reset to the initial state
+    // Rese t to the initial state
     RESET() {
       return initialState;
     },

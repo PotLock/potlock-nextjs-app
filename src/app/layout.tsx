@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Lora as FontSans } from "next/font/google";
+import { Lora } from "next/font/google";
 import "@near-wallet-selector/modal-ui/styles.css";
 
 import "@app/styles/mona-sans-font.css";
@@ -10,9 +10,9 @@ import Nav from "@modules/core/components/Nav";
 
 import Providers from "./Providers";
 
-const fontSans = FontSans({
+const lora = Lora({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-lora",
   weight: ["400", "500", "600", "700"],
 });
 
@@ -49,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
-        className={`${cn("font-sans antialiased", fontSans.variable)} container`}
+        className={`${cn("font-lora antialiased", lora.variable)} container`}
       >
         <Providers>
           <Nav />
