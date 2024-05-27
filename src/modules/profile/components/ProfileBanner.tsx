@@ -9,8 +9,8 @@ import {
   AvatarImage,
 } from "@modules/core/common/avatar";
 import { Skeleton } from "@modules/core/common/skeleton";
-import useIsHuman from "@modules/core/hook/useIsHuman";
-import useRegistration from "@modules/core/hook/useRegistration";
+import useIsHuman from "@app/modules/core/hooks/useIsHuman";
+import useRegistration from "@app/modules/core/hooks/useRegistration";
 import { fetchProfileImages } from "@modules/core/services/fetchProfileImages";
 import { projectStatusIcons } from "@modules/project/components/ProjectStatusIcons";
 import Image from "next/image";

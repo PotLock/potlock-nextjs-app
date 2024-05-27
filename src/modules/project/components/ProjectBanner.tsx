@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { RegistrationStatus } from "@contracts/potlock/interfaces/lists.interfaces";
-import useRegistration from "@modules/core/hook/useRegistration";
+import useRegistration from "@app/modules/core/hooks/useRegistration";
 
 import { statuses } from "@app/app/(profile)/project/[projectId]/statuses";
 
