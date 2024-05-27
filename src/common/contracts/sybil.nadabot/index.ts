@@ -6,7 +6,7 @@ import {
   NADABOT_CONTRACT_ID,
   ONE_HUNDREDTH_NEAR,
   TWO_HUNDREDTHS_NEAR,
-} from "@app/constants";
+} from "@/common/constants";
 
 import { GetHumanScoreInput, HumanScoreResponse } from "./interfaces/is-human";
 import { Config } from "./interfaces/lib";

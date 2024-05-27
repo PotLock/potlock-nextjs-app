@@ -1,6 +1,6 @@
 import { createModel } from "@rematch/core";
 
-import { RootModel } from "@app/store/models";
+import { RootModel } from "@/modules/core/store/models";
 
 interface AuthState {
   isAuthenticated: boolean;

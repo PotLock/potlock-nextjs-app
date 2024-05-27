@@ -5,12 +5,12 @@ import { useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import useGetAccounts from "@app/modules/core/hooks/useGetAccounts";
-import useIsClient from "@app/modules/core/hooks/useIsClient";
-import { dispatch } from "@app/store";
-import { walletApi } from "@contracts/index";
-import useWallet from "@modules/auth/hooks/useWallet";
-import { Button } from "@modules/core/common/button";
+import { walletApi } from "@/common/contracts/index";
+import useGetAccounts from "@/common/hooks/useGetAccounts";
+import useIsClient from "@/common/hooks/useIsClient";
+import { Button } from "@/common/ui/components/button";
+import useWallet from "@/modules/auth/hooks/useWallet";
+import { dispatch } from "@/modules/core/store";
 
 export default function Home() {
   const isClient = useIsClient();

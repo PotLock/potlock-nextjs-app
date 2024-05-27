@@ -4,17 +4,17 @@ import { useEffect, useState } from "react";
 
 import Image from "next/image";
 
-import { NEARSocialUserProfile } from "@contracts/social";
+import { NEARSocialUserProfile } from "@/common/contracts/social";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@modules/core/common/avatar";
-import { Skeleton } from "@modules/core/common/skeleton";
-import useIsHuman from "@app/modules/core/hooks/useIsHuman";
-import useRegistration from "@app/modules/core/hooks/useRegistration";
-import { fetchProfileImages } from "@modules/core/services/fetchProfileImages";
-import { projectStatusIcons } from "@modules/project/components/ProjectStatusIcons";
+} from "@/common/ui/components/avatar";
+import { Skeleton } from "@/common/ui/components/skeleton";
+import useIsHuman from "@/modules/core/hooks/useIsHuman";
+import useRegistration from "@/modules/core/hooks/useRegistration";
+import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
+import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIcons";
 
 type Props = {
   accountId: string; // near address (donor | proejct)

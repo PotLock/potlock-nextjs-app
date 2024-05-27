@@ -3,7 +3,7 @@ import { MemoryCache } from "@wpdas/naxios";
 import {
   POTLOCK_LISTS_CONTRACT_ID,
   POTLOCK_REGISTERY_LIST_ID,
-} from "@app/constants";
+} from "@/common/constants";
 
 import {
   GetListInput,

@@ -1,14 +1,14 @@
+import "@near-wallet-selector/modal-ui/styles.css";
+import "./_layout/mona-sans-font.css";
+import "./_layout/globals.css";
+
 import type { Metadata, Viewport } from "next";
 import { Lora as FontSans } from "next/font/google";
-import "@near-wallet-selector/modal-ui/styles.css";
 
-import "@app/styles/mona-sans-font.css";
-import "@app/styles/globals.css";
+import { cn } from "@/common/ui/utils";
 
-import { cn } from "@app/modules/core/utils";
-import Nav from "@modules/core/components/Nav";
-
-import Providers from "./Providers";
+import Nav from "./_layout/Nav";
+import Providers from "./_layout/RootProvider";
 
 const fontSans = FontSans({
   subsets: ["latin"],

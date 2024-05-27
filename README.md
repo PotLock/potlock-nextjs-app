@@ -12,6 +12,8 @@ You can access BOS Potlock Version using one of the environments below:
 ```bash
 # using the right node version
 nvm use;
+# enable Yarn support
+corepack enable
 # install dependencies
 yarn install;
 # then run the development server (create the .env.local file with its content first)
@@ -32,7 +34,7 @@ NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID=social.near
 
 ## DJango Indexer API
 
-This project is using a indexer service. You can access its docs here: https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints
+This project is using a indexer service. You can access its docs here: <https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints>
 
 **URI**: `http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1`
 
