@@ -9,6 +9,7 @@ const SORT_LIST_PROJEECTS = [
   { label: "Least recent", value: "older" },
 ];
 
+// TODO: add this as a varient to the select
 const SortSelect = ({ selectProps }: { selectProps?: SelectProps }) => {
   return (
     <Select {...(selectProps || {})}>
