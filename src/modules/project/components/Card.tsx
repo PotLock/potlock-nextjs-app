@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Big from "big.js";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,6 +21,7 @@ import {
 import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
 
 import CardSkeleton from "./CardSkeleton";
+import { getTotalAmountNear } from "../utils";
 
 const MAX_DESCRIPTION_LENGTH = 80;
 
@@ -76,25 +76,9 @@ const Card = ({
           donationsPromise,
         ]);
 
-        const getTotalAmountNear = () => {
-          if (payoutDetails) return payoutDetails.totalAmount; // payout is set
-          if (!donations) return "0";
-          let totalDonationAmountNear = Big(0);
-          for (const donation of donations) {
-            if (
-              ("ft_id" in donation && donation.ft_id === "near") || // For DirectDonation
-              potId
-            ) {
-              totalDonationAmountNear = totalDonationAmountNear.plus(
-                Big(donation.total_amount),
-              );
-            }
-          }
-          return totalDonationAmountNear.toString();
-        };
-
-        const totalAmountNear =
-          await yoctosToUsdWithFallback(getTotalAmountNear());
+        const totalAmountNear = await yoctosToUsdWithFallback(
+          getTotalAmountNear(donations, potId, payoutDetails),
+        );
 
         if (profile) {
           const categories = getTagsFromSocialProfileData(profile);
