@@ -8,6 +8,7 @@ import {
 } from "@app/contracts/potlock/interfaces/lists.interfaces";
 import { getRegistrations } from "@app/contracts/potlock/lists";
 // import { Select } from "@app/modules/core/common/select";
+import Filter from "@app/modules/core/components/Filter";
 import SearchBar from "@app/modules/core/components/SearchBar";
 import SortSelect from "@app/modules/core/components/SortSelect";
 
@@ -95,6 +96,7 @@ const AllProjects = () => {
         </div>
         <div className="flex w-full items-center gap-4">
           <SearchBar />
+          <Filter />
           <SortSelect />
         </div>
       </div>

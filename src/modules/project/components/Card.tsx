@@ -113,14 +113,14 @@ const Card = ({
       {isLoading ? (
         <CardSkeleton />
       ) : (
-        <div className="mx-auto flex h-full w-full max-w-[420px]  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300 ">
+        <div className="group mx-auto flex h-full w-full max-w-[420px]  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300 ">
           {/* Background */}
-          <div className="relative h-[145px] w-full">
+          <div className="relative h-[145px] w-full overflow-hidden">
             {profileImages.backgroundImage ? (
               <Image
                 fill
                 // loading="lazy"
-                className="object-cover "
+                className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                 alt="background-image"
                 src={profileImages.backgroundImage}
               />
