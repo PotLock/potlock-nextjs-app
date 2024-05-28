@@ -42,8 +42,6 @@ export const getList = (args: GetListInput) =>
 export const getRegistrations = (
   args: { list_id: number } = { list_id: POTLOCK_REGISTERY_LIST_ID },
 ) => {
-  console.log(args);
-
   return contractApi.view<typeof args, Registration[]>(
     "get_registrations_for_list",
     {

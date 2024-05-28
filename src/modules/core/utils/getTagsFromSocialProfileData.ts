@@ -7,9 +7,18 @@ export const getTagsFromSocialProfileData = (
 
   if (!profileData) return [];
 
-  const tags: string[] = [];
+  let tags: string[] = [];
 
   // Parse plCategories if it exists and is a JSON string
+  if (profileData.plCategories) {
+    try {
+      tags = JSON.parse(profileData.plCategories);
+      tags = Array.from(new Set(tags));
+    } catch (error) {
+      console.error("Failed to parse plCategories JSON string:", error);
+    }
+  }
+
   // Handle deprecated category field
   if (profileData.category) {
     if (typeof profileData.category === "string") {
