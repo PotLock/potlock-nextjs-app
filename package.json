@@ -36,6 +36,7 @@
     "@rematch/persist": "^2.1.2",
     "@tanstack/react-query": "^5.36.1",
     "@wpdas/naxios": "^2.1.0",
+    "big.js": "^6.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "immer": "^9.0.21",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.35.6",
+    "@types/big.js": "^6.2.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

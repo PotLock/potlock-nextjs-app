@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import Image from "next/image";
+
+import useIsHuman from "@app/modules/core/hooks/useIsHuman";
+import useRegistration from "@app/modules/core/hooks/useRegistration";
 import { NEARSocialUserProfile } from "@contracts/social";
 import {
   Avatar,
@@ -9,11 +13,8 @@ import {
   AvatarImage,
 } from "@modules/core/common/avatar";
 import { Skeleton } from "@modules/core/common/skeleton";
-import useIsHuman from "@app/modules/core/hooks/useIsHuman";
-import useRegistration from "@app/modules/core/hooks/useRegistration";
 import { fetchProfileImages } from "@modules/core/services/fetchProfileImages";
 import { projectStatusIcons } from "@modules/project/components/ProjectStatusIcons";
-import Image from "next/image";
 
 import FollowStats from "./FollowStats";
 

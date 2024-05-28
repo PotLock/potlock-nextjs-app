@@ -39,14 +39,19 @@ export const getList = (args: GetListInput) =>
 /**
  * Get Regsiterations for a list
  */
-export const getRegistrations = (args: { list_id: number }) =>
-  contractApi.view<typeof args, Registration[]>(
+export const getRegistrations = (
+  args: { list_id: number } = { list_id: POTLOCK_REGISTERY_LIST_ID },
+) => {
+  console.log(args);
+
+  return contractApi.view<typeof args, Registration[]>(
     "get_registrations_for_list",
     {
       args,
     },
     { useCache: true },
   );
+};
 
 /**
  * Get Regsiterations for registrant
