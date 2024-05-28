@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { dispatch, resetStore } from "@/app/_store";
 import { walletApi } from "@/common/contracts";
 import useIsClient from "@/common/hooks/useIsClient";
 import SuspenseLoading from "@/modules/auth/components/SuspenseLoading";
-import { dispatch, resetStore } from "@/modules/core/store";
 
 import { useAuth } from "../hooks/useAuth";
 import useWallet from "../hooks/useWallet";
