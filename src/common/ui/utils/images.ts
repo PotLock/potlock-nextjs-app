@@ -1,5 +1,5 @@
-import { naxiosInstance } from "@app/contracts/index";
-import { Image, getUserProfile } from "@app/contracts/social";
+import { naxiosInstance } from "@/common/contracts/index";
+import { Image, getUserProfile } from "@/common/contracts/social";
 
 type Props = {
   accountId?: string;

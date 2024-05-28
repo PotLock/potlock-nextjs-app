@@ -18,7 +18,7 @@ import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
 import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import naxios from "@wpdas/naxios";
 
-import { FULL_TGAS, NETWORK, SOCIAL_DB_CONTRACT_ID } from "@app/constants";
+import { FULL_TGAS, NETWORK, SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
 
 // Naxios (Contract/Wallet) Instance
 export const naxiosInstance = new naxios({

@@ -6,12 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { walletApi } from "@app/contracts";
-import { useAuth } from "@app/modules/auth/hooks/useAuth";
-import routesPath from "@app/routes";
-
-import { Button } from "../common/button";
-import useIsClient from "../hooks/useIsClient";
+import { walletApi } from "@/common/contracts";
+import useIsClient from "@/common/hooks/useIsClient";
+import { Button } from "@/common/ui/components/button";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+import routesPath from "@/modules/core/routes";
 
 const AuthButton = () => {
   const { isAuthenticated } = useAuth();

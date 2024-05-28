@@ -3,8 +3,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 
-import { AuthProvider } from "@app/modules/auth/providers/AuthProvider";
-import { store } from "@app/store";
+import { store } from "@/app/_store";
+import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 
 // react-query
 const queryClient = new QueryClient();

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getAccounts } from "@api/account";
+import { getAccounts } from "@/common/api/account";
 
 const useGetAccounts = () => {
   const accounts = useQuery({
