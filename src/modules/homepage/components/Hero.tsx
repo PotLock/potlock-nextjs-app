@@ -1,7 +1,8 @@
 import Link from "next/link";
 
+import { Button } from "@/common/ui/components/button";
+
 import useWallet from "../../auth/hooks/useWallet";
-import { Button } from "../../core/common/button";
 import useRegistration from "../../core/hooks/useRegistration";
 
 const Hero = () => {

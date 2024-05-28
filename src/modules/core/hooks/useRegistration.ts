@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { UNREGISTERED_PROJECT } from "@app/app/(profile)/project/[projectId]/statuses";
-import { Registration } from "@contracts/potlock/interfaces/lists.interfaces";
-import { getRegistration } from "@contracts/potlock/lists";
+import { Registration } from "@/common/contracts/potlock/interfaces/lists.interfaces";
+import { getRegistration } from "@/common/contracts/potlock/lists";
+
+import { UNREGISTERED_PROJECT } from "../constants";
 
 const useRegistration = (projectId: string) => {
   const [registration, setRegistration] =

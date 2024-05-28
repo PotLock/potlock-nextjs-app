@@ -4,17 +4,20 @@ import Big from "big.js";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getDonationsForRecipient } from "@app/contracts/potlock/donate";
-import { PayoutDetailed } from "@app/contracts/potlock/interfaces/pot.interfaces";
-import { getDonationsForProject } from "@app/contracts/potlock/pot";
-import { NEARSocialUserProfile, getUserProfile } from "@app/contracts/social";
-import { Button } from "@app/modules/core/common/button";
-import { Skeleton } from "@app/modules/core/common/skeleton";
-import { fetchProfileImages } from "@app/modules/core/services/fetchProfileImages";
-import { _address } from "@app/modules/core/utils/_address";
-import { getTagsFromSocialProfileData } from "@app/modules/core/utils/getTagsFromSocialProfileData";
-import { yoctosToNear } from "@app/modules/core/utils/yoctosToNear";
-import { yoctosToUsdWithFallback } from "@app/modules/core/utils/yoctosToUsdWithFallback";
+import { getDonationsForRecipient } from "@/common/contracts/potlock/donate";
+import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { getDonationsForProject } from "@/common/contracts/potlock/pot";
+import {
+  NEARSocialUserProfile,
+  getUserProfile,
+} from "@/common/contracts/social";
+import { Button } from "@/common/ui/components/button";
+import { Skeleton } from "@/common/ui/components/skeleton";
+import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
+import { _address } from "@/modules/core/utils/_address";
+import { getTagsFromSocialProfileData } from "@/modules/core/utils/getTagsFromSocialProfileData";
+import { yoctosToNear } from "@/modules/core/utils/yoctosToNear";
+import { yoctosToUsdWithFallback } from "@/modules/core/utils/yoctosToUsdWithFallback";
 
 import CardSkeleton from "./CardSkeleton";
 

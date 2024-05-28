@@ -1,4 +1,4 @@
-import { Category, NEARSocialUserProfile } from "@app/contracts/social";
+import { Category, NEARSocialUserProfile } from "@/common/contracts/social";
 
 export const getTagsFromSocialProfileData = (
   profileData: NEARSocialUserProfile,

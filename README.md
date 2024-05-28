@@ -12,6 +12,8 @@ You can access BOS Potlock Version using one of the environments below:
 ```bash
 # using the right node version
 nvm use;
+# enable Yarn support
+corepack enable
 # install dependencies
 yarn install;
 # then run the development server (create the .env.local file with its content first)
@@ -32,91 +34,90 @@ NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID=social.near
 
 ## DJango Indexer API
 
-This project is using a indexer service. You can access its docs here: https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints
+This project is using a indexer service. You can access its docs here: <https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints>
 
 **URI**: `http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1`
 
-## Folder Structure
+## Project Structure
 
-Group by feature/modules. This structure offers a highly modular approach, defining clear boundaries for different aspects of the application within each module:
+Maintains explicit separation between abstract and business-logic-heavy parts of the codebase.
+This structure offers a highly modular approach, defining clear boundaries for different aspects of the application within each module:
+
+```sh
+[ src/ ]
+│
+├── [ app ] <--- # Entry point of the application. Follows Nextjs App routing specification ( see link 1. )
+│   │
+│  ...
+│   │
+│   └── [ _store ] <--- # Application state root. Uses Redux state management library
+│
+│
+│
+│
+│
+├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings, utility libraries, reusable primitives,
+│   │               # and assets, used in layouts and business logic across the codebase. MUST NOT itself contain business logic.
+│   │               # AKA "shared" ( see link 2. )
+│   │
+│   ├── constants.ts <--- # Static reusable values, e.g.
+│   │                      export const DEFAULT_NETWORK = "testnet"
+│   │                      export const MAX_GAS = 100
+│   │
+│   ├── [ api ] <--- # Facilitates network interaction with backend(s)
+│   │
+│   ├── [ assets ] <--- # Globally used assets, e.g. images or icons
+│   │
+│   ├── [ contracts ] <--- # Smart contract services and interfaces
+│   │
+│   ├── [ hooks ] <--- # Shared React hooks for low-level functionalities
+│   │
+│   ├── [ lib ] <--- # Universal utilities, e.g. string manipulations, mathematic calculations, browser API bindings, etc.
+│   │
+│   └── [ ui ] <--- # Project UI kit
+│       │
+│       ├── [ components ] <--- # React components implementing UI design primitives
+│       │
+│       └── [ utils ] <--- # UI-specific utilities, like DOM manipulations or TailwindCSS class transformers
+│
+│
+│
+│
+│
+└── [ modules ] <--- # Business logic units broken down into categories.
+    │                # Simply put, this is a collection of directories that contain code implementing specific
+    │                # groups of app use cases and are named after functionalities they provide.
+    │
+    ├── auth
+    │
+    ├── [ core ] <--- # Follows the same structure as any other module, but contains business logic,
+    │                 # that is shared between all or some of the other modules
+    │
+    ├── [ profile ] <--- # A feature-specific module
+    │   │
+    │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
+    │   │                       export const POTLOCK_REGISTRY_LIST_ID = 1
+    │   │
+    │   ├── state.ts <--- # Feature state (rematch/redux)
+    │   │
+    │   ├── types.d.ts <--- # Module-specific shared types and interfaces
+    │   │
+    │   ├── [ components ] <--- # Feature-specific React components
+    │   │
+    │   ├── [ hooks ] <--- # Feature-specific React hooks
+    │   │
+    │   ├── [ lib ] <--- # Feature-specific utilities, like value converters or validators
+    │   │
+    │   └── [ services ] <--- # Data-centric # TODO
+    │
+    │
+    ├── ...
+    │
+   ...
 
 ```
-└── src/
-    ├── api/
-    ├── app/
-    |   ├── project/...
-    |   ├── page.tsx
-    |   ├── Providers.tsx
-    ├── constants.ts
-    ├── contracts/
-    |   ├── potlock/
-    │       ├── interfaces/
-    │       │   └── lists.interfaces.ts
-    │       └── lists.ts
-    ├── assets/
-    ├── store/
-    ├── utils/
-    ├── modules/
-    |   ├── core/
-    │   │   ├── components/
-    │   │   ├── common/
-    │   │   │   |── avatar.tsx
-    │   │   │   └── button.tsx
-    │   │   ├── hooks/
-    │   │   ├── helpers/
-    │       ├── types.d.ts
-    │   │   └── utils.ts
-    │   ├── project/
-    │   │   ├── components/
-    │   │   │   |── ProjectForm.tsx
-    │   │   │   └── ProjectForm.test.tsx
-    │   │   ├── hooks/
-    │   │   │   |── useProjectInfo.ts
-    │   │   │   └── useProjectInfo.test.ts
-    │   │   ├── services/
-    │   │   ├── state.ts
-    │       ├── types.d.ts
-    │   │   └── utils.ts
-    │   └── auth/
-    │       ├── components/
-    │       │   |── SignUpForm.tsx
-    │       │   └── SignUpForm.test.tsx
-    │       ├── hooks/
-    │       │   |── useAuth.ts
-    │       │   |── useAuth.test.ts
-    │       │   └── useWallet.ts
-    │       ├── services/
-    │       ├── state.ts
-    │       ├── types.d.ts
-    │       └── utils.ts
-    └── ...
-```
 
-### Top-Level Items
+### Links
 
-- **constants**: Constant, unchanged values (e.g. export `export const POTLOCK_REGISTERY_LIST_ID = 1`).
-- **contracts**: Smart Contract services and their interfaces.
-- **api**: For logic that communicates with the server(s).
-- **app**: nextjs app pages. Get to know more about how to route application here: [NextJS Routing](https://nextjs.org/docs/app/building-your-application/routing)
-- **assets**: global app's assets.
-- **store**: main redux state manager.
-- **utils**: Utilities for universal logic that is not related to business logic or any technologies, e.g. string manipulations, mathematic calculations, DOM manipulations, HTML-related logic, localStorage, IndexedDB, etc.
-- **types.d.ts**: Used to create the shared types and interfaces within core module.
-
-### Core Modules (modules/core)
-
-Global/main resources used over the app, all the shared items should be placed here.
-
-### Feature Modules (modules/resource)
-
-Each resource must be placed inside the modules folder.
-
-### Modules-Level Items
-
-- **components**: React components.
-- **hooks**: Custom React hooks for shared logic.
-- **utils.ts**: Same as the top level utils, but this is specific to modules.
-- **services**: Encapsulates main business & application logic.
-- **helpers**: Provides business-specific utilities.
-- **state.ts**: Feature state (rematch/redux).
-- **types.d.ts**: Used to create the shared types and interfaces within this module.
+1. [Nextjs Routing](https://nextjs.org/docs/app/building-your-application/routing)
+2. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)

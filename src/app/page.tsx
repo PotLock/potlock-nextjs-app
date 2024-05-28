@@ -1,9 +1,9 @@
 "use client";
 
-import DonationStats from "@app/modules/homepage/components/DonationStats";
-import Hero from "@app/modules/homepage/components/Hero";
-import AllProjects from "@app/modules/project/components/AllProjects";
-import FeaturedProjects from "@app/modules/project/components/FeaturedProjects";
+import AllProjects from "@/modules/homepage/components/AllProjects";
+import DonationStats from "@/modules/homepage/components/DonationStats";
+import FeaturedProjects from "@/modules/homepage/components/FeaturedProjects";
+import Hero from "@/modules/homepage/components/Hero";
 
 export default function Home() {
   return (
