@@ -7,18 +7,21 @@ import {
   RegistrationStatus,
 } from "@app/contracts/potlock/interfaces/lists.interfaces";
 import { getRegistrations } from "@app/contracts/potlock/lists";
+// import { Select } from "@app/modules/core/common/select";
+import SearchBar from "@app/modules/core/components/SearchBar";
+import SortSelect from "@app/modules/core/components/SortSelect";
 
 import Card from "./Card";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
 const AllProjects = () => {
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  // const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [filteredRegistrations, setFilteredRegistrations] = useState<
     Registration[]
   >([]);
   const [index, setIndex] = useState(1);
-  const [sort, setSort] = useState("Sort");
+  // const [sort, setSort] = useState("Sort");
 
   // const handleSortChange = (sortType: string) => {
   //   setSort(sortType);
@@ -69,7 +72,7 @@ const AllProjects = () => {
       );
       approvedRegistrations.sort(() => Math.random() - 0.5);
 
-      setRegistrations(registrations);
+      // setRegistrations(registrations);
       setFilteredRegistrations(approvedRegistrations);
     };
     fetchRegistrations();
@@ -90,33 +93,10 @@ const AllProjects = () => {
             {filteredRegistrations.length}
           </span>
         </div>
-        {/* <FilterWrapper>
-          <FilterDropdown
-            {...{
-              onClick: handleTag,
-              multipleOptions: true,
-              options: tagsList,
-              defaultSelected: {
-                Status: ["Approved"],
-              },
-              menuClass: "filter-menu",
-            }}
-          />
-
-          <SearchBar
-            {...{
-              title: sort,
-              numItems: filteredProjects.length,
-              itemName: "project",
-              sortList: Object.values(SORT_FILTERS),
-              FilterMenuClass: `left-side-menu`,
-              setSearchTerm: onSearchChange,
-              handleSortChange: (filter) => {
-                handleSortChange(filter);
-              },
-            }}
-          />
-        </FilterWrapper> */}
+        <div className="flex w-full items-center gap-4">
+          <SearchBar />
+          <SortSelect />
+        </div>
       </div>
       {filteredRegistrations.length ? (
         <InfiniteScroll

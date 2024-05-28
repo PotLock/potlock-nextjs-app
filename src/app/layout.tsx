@@ -48,12 +48,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body
-        className={`${cn("font-lora antialiased", lora.variable)} container`}
-      >
+      <body className={`${cn("font-lora antialiased", lora.variable)}`}>
         <Providers>
-          <Nav />
-          {children}
+          <div className="container">
+            <Nav />
+            {children}
+          </div>
         </Providers>
       </body>
     </html>
