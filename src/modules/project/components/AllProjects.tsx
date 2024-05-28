@@ -11,6 +11,7 @@ import { getRegistrations } from "@app/contracts/potlock/lists";
 import Filter from "@app/modules/core/components/Filter";
 import SearchBar from "@app/modules/core/components/SearchBar";
 import SortSelect from "@app/modules/core/components/SortSelect";
+import { tagsList } from "@app/modules/homepage/components/tagsList";
 
 import Card from "./Card";
 
@@ -96,13 +97,13 @@ const AllProjects = () => {
         </div>
         <div className="flex w-full items-center gap-4">
           <SearchBar />
-          <Filter />
+          <Filter options={tagsList} />
           <SortSelect />
         </div>
       </div>
       {filteredRegistrations.length ? (
         <InfiniteScroll
-          className="mt-8 grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
+          className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
           dataLength={
             filteredRegistrations.slice(0, MAXIMUM_CARDS_PER_INDEX * index)
               .length

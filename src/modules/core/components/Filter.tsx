@@ -1,14 +1,25 @@
+import { PopoverProps } from "@radix-ui/react-popover";
 import Image from "next/image";
 
-import { tagsList } from "./tagsList";
 import { Button } from "../common/button";
 import { Label } from "../common/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../common/popover";
 import { ToggleGroup, ToggleGroupItem } from "../common/toggle-group";
 
-const Filter = () => {
+// Define the item type
+type Item = {
+  label: string;
+  val: string;
+};
+
+// Define the Props type extending PopoverProps
+type Props = PopoverProps & {
+  options: Record<string, Item[]>;
+};
+
+const Filter = ({ options, ...props }: Props) => {
   return (
-    <Popover>
+    <Popover {...props}>
       <PopoverTrigger asChild>
         <Button variant="standard-outline">
           <Image
@@ -26,12 +37,12 @@ const Filter = () => {
           variant="outline"
           type="multiple"
         >
-          {Object.keys(tagsList).map((menuLabel) => (
+          {Object.keys(options).map((menuLabel) => (
             <div className="flex flex-wrap justify-start gap-2" key={menuLabel}>
               <Label className=" w-full text-[#656565] first-of-type:mt-0">
                 Filter by {menuLabel}
               </Label>
-              {tagsList[menuLabel].map(({ label, val }: any) => (
+              {options[menuLabel].map(({ label, val }: any) => (
                 <ToggleGroupItem value={val} aria-label="Toggle" key={val}>
                   {label}
                 </ToggleGroupItem>
