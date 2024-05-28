@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import InfiniteScroll from "react-infinite-scroll-component";
-
 import {
   Registration,
   RegistrationStatus,
 } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { getRegistrations } from "@/common/contracts/potlock/lists";
 import Filter from "@/common/ui/components/Filter";
+import InfiniteScroll from "@/common/ui/components/InfiniteScroll";
 import SearchBar from "@/common/ui/components/SearchBar";
 import SortSelect from "@/common/ui/components/SortSelect";
 
@@ -37,10 +36,6 @@ const AllProjects = () => {
     fetchRegistrations();
   }, []);
 
-  const fetchMoreData = () => {
-    setIndex(index + 1);
-  };
-
   return (
     <div className="flex w-full flex-col px-2 pt-10 md:px-10 md:pb-0 md:pt-12">
       <div className="flex w-full flex-col gap-5">
@@ -61,27 +56,17 @@ const AllProjects = () => {
       {filteredRegistrations.length ? (
         <InfiniteScroll
           className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
-          dataLength={
-            filteredRegistrations.slice(0, MAXIMUM_CARDS_PER_INDEX * index)
-              .length
-          }
-          next={fetchMoreData}
-          scrollThreshold={1}
-          hasMore={
-            index <
-            Math.ceil(filteredRegistrations.length / MAXIMUM_CARDS_PER_INDEX)
-          }
-          loader={<h4>Loading...</h4>}
-        >
-          {filteredRegistrations
-            .slice(0, MAXIMUM_CARDS_PER_INDEX * index)
-            .map((registration) => (
-              <Card
-                projectId={registration.registrant_id}
-                key={registration.id}
-              />
-            ))}
-        </InfiniteScroll>
+          items={filteredRegistrations}
+          index={index}
+          setIndex={setIndex}
+          size={MAXIMUM_CARDS_PER_INDEX}
+          renderItem={(registration: Registration) => (
+            <Card
+              projectId={registration.registrant_id}
+              key={registration.id}
+            />
+          )}
+        />
       ) : (
         <div style={{ alignSelf: "flex-start", margin: "24px 0px" }}>
           No results

@@ -13,11 +13,13 @@ import {
 } from "@/common/contracts/social";
 import { Button } from "@/common/ui/components/button";
 import { Skeleton } from "@/common/ui/components/skeleton";
+import {
+  _address,
+  getTagsFromSocialProfileData,
+  yoctosToNear,
+  yoctosToUsdWithFallback,
+} from "@/common/ui/utils";
 import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
-import { _address } from "@/modules/core/utils/_address";
-import { getTagsFromSocialProfileData } from "@/modules/core/utils/getTagsFromSocialProfileData";
-import { yoctosToNear } from "@/modules/core/utils/yoctosToNear";
-import { yoctosToUsdWithFallback } from "@/modules/core/utils/yoctosToUsdWithFallback";
 
 import CardSkeleton from "./CardSkeleton";
 
