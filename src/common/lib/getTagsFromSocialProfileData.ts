@@ -1,11 +1,14 @@
 import { Category, NEARSocialUserProfile } from "@/common/contracts/social";
 
+const isEmptyObject = (obj: object): boolean =>
+  obj && Object.keys(obj).length === 0;
+
 export const getTagsFromSocialProfileData = (
   profileData: NEARSocialUserProfile,
 ) => {
   // first try to get tags from plCategories, then category (deprecated/old format), then default to empty array
 
-  if (!profileData) return [];
+  if (!profileData || isEmptyObject(profileData)) return [];
 
   let tags: string[] = [];
 

@@ -3,25 +3,14 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getDonationsForRecipient } from "@/common/contracts/potlock/donate";
+import { dispatch } from "@/app/_store";
 import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { getDonationsForProject } from "@/common/contracts/potlock/pot";
-import {
-  NEARSocialUserProfile,
-  getUserProfile,
-} from "@/common/contracts/social";
-import {
-  _address,
-  getTagsFromSocialProfileData,
-  yoctosToNear,
-  yoctosToUsdWithFallback,
-} from "@/common/lib";
+import { _address, yoctosToNear } from "@/common/lib";
 import { Button } from "@/common/ui/components/button";
 import { Skeleton } from "@/common/ui/components/skeleton";
-import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
+import { useUser } from "@/modules/profile/utils";
 
 import CardSkeleton from "./CardSkeleton";
-import { getTotalAmountNear } from "../utils";
 
 const MAX_DESCRIPTION_LENGTH = 80;
 
@@ -38,63 +27,22 @@ const Card = ({
 }) => {
   const allowDonate = _allowDonate === undefined ? true : _allowDonate;
 
-  const [profileImages, setProfileImages] = useState({
-    image: "/assets/images/profile-image.png",
-    backgroundImage: "/assets/images/profile-banner.png",
-  });
-  const [profile, setProfile] = useState<NEARSocialUserProfile>({});
-  const [tags, setTags] = useState<string[]>([]);
-  const [totalAmountNear, setTotalAmountNear] = useState("-");
+  const { profile, profileImages, tags, totalAmountNear } = useUser(projectId);
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const profile = await getUserProfile({
-          accountId: projectId,
-        });
-
-        const imagesDataPrmise = fetchProfileImages({
-          profile,
-          accountId: projectId,
-        });
-
-        const donationsPromise =
-          potId && !payoutDetails
-            ? getDonationsForProject({
-                potId,
-                projectId,
-              })
-            : !potId
-              ? getDonationsForRecipient({
-                  recipient_id: projectId,
-                })
-              : Promise.resolve([]);
-
-        const [imagesData, donations] = await Promise.all([
-          imagesDataPrmise,
-          donationsPromise,
-        ]);
-
-        const totalAmountNear = await yoctosToUsdWithFallback(
-          getTotalAmountNear(donations, potId, payoutDetails),
-        );
-
-        if (profile) {
-          const categories = getTagsFromSocialProfileData(profile);
-          setProfile(profile);
-          setTags(categories);
-        }
-        setTotalAmountNear(totalAmountNear);
-        setProfileImages({
-          image: imagesData.image,
-          backgroundImage: imagesData.backgroundImage,
-        });
+    dispatch.user
+      .loadUser({
+        projectId,
+        payoutDetails,
+        potId,
+      })
+      .then(() => setIsLoading(false))
+      .catch((err) => {
+        console.log("error fetching data for project card ", err);
         setIsLoading(false);
-      } catch {
-        setIsLoading(false);
-      }
-    })();
+      });
   }, [projectId, payoutDetails, potId]);
 
   return (
