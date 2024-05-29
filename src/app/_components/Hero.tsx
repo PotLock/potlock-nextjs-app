@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { Button } from "@/common/ui/components/button";
 
-import useWallet from "../../auth/hooks/useWallet";
-import useRegistration from "../../core/hooks/useRegistration";
+import useWallet from "../../modules/auth/hooks/useWallet";
+import useRegistration from "../../modules/core/hooks/useRegistration";
 
 const Hero = () => {
   const wallet = useWallet();

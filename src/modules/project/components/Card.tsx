@@ -10,14 +10,14 @@ import {
   NEARSocialUserProfile,
   getUserProfile,
 } from "@/common/contracts/social";
-import { Button } from "@/common/ui/components/button";
-import { Skeleton } from "@/common/ui/components/skeleton";
 import {
   _address,
   getTagsFromSocialProfileData,
   yoctosToNear,
   yoctosToUsdWithFallback,
-} from "@/common/ui/utils";
+} from "@/common/lib";
+import { Button } from "@/common/ui/components/button";
+import { Skeleton } from "@/common/ui/components/skeleton";
 import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
 
 import CardSkeleton from "./CardSkeleton";

@@ -10,8 +10,8 @@ import InfiniteScroll from "@/common/ui/components/InfiniteScroll";
 import SearchBar from "@/common/ui/components/SearchBar";
 import SortSelect from "@/common/ui/components/SortSelect";
 
-import Card from "../../project/components/Card";
-import { tagsList } from "../constents";
+import Card from "../../modules/project/components/Card";
+import { tagsList } from "../../modules/project/constants";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
