@@ -15,6 +15,11 @@ const nearSocialDbContractApi = naxiosInstance.contractApi({
 
 interface NEARSocialUserProfileInput {
   keys: string[];
+  options?: {
+    return_type?: "BlockHeight" | "History" | "True";
+    values_only?: boolean;
+    return_deleted?: boolean;
+  };
 }
 
 export interface ExternalFundingSource {
@@ -40,6 +45,23 @@ export interface Image {
   };
 }
 
+export enum Category {
+  "social-impact" = "Social Impact",
+  "non-profit" = "NonProfit",
+  climate = "Climate",
+  "public-good" = "Public Good",
+  "de-sci" = "DeSci",
+  "open-source" = "Open Source",
+  community = "Community",
+  education = "Education",
+}
+
+type OldFormattedCategory =
+  | Category
+  | {
+      text: string;
+    };
+
 export interface NEARSocialUserProfile {
   name?: string;
   linktree?: ProfileLinktree;
@@ -51,12 +73,16 @@ export interface NEARSocialUserProfile {
   // Project
   // required fields
   plPublicGoodReason?: string;
-  plCategories?: string[];
+  plCategories?: string;
   // optional fields
   plGithubRepos?: string[];
   plFundingSources?: ExternalFundingSource[];
   plSmartContracts?: [string, string][];
-  category?: string[];
+  category?:
+    | keyof typeof Category
+    | {
+        text: string;
+      };
 }
 
 //  Registration (Project) social profile
@@ -101,4 +127,30 @@ export const getUserProfile = async (input: { accountId: string }) => {
   );
 
   return response[input.accountId]?.profile;
+};
+
+// TODO: fix graph endoint fetch failer
+export const getSocialData = async ({
+  method,
+  args,
+}: {
+  method: string;
+  args: NEARSocialUserProfileInput;
+}) => {
+  const response = await nearSocialDbContractApi.view<typeof args, any>(
+    method,
+    args,
+  );
+
+  // const response = await nearSocialDbContractApi.view<any, any>(method, {
+  //   args: {
+  //     keys: [`potlock.near/graph/follow/*`],
+  //     options: {
+  //       return_type: "BlockHeight",
+  //       values_only: true,
+  //     },
+  //   },
+  // });
+
+  return response;
 };

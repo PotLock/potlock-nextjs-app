@@ -13,12 +13,19 @@ const config = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1rem",
+        "2xl": "2rem",
+      },
       screens: {
         "2xl": "1400px",
       },
     },
     extend: {
+      backgroundImage: {
+        hero: "url('/assets/images/hero-bg.svg')",
+      },
       fontSize: {
         xl: "22px", // Customize the text-xl size to 22px
       },
@@ -82,7 +89,7 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
+        lora: ["var(--font-lora)", ...fontFamily.sans],
       },
     },
   },

@@ -29,6 +29,11 @@ export interface Payout {
   paid_at: number;
 }
 
+export interface PayoutDetailed extends Payout {
+  totalAmount: string;
+  donorCount: number;
+}
+
 export interface PotConfig {
   owner: string;
   admins: string[];

@@ -51,8 +51,8 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 30 89% 96%;
+    --accent-foreground: 21 82% 53%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -98,6 +98,7 @@
 @layer base {
   * {
     @apply border-border;
+    color: #292929;
   }
   body {
     @apply bg-background text-foreground;
@@ -119,13 +120,13 @@
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 0.7s linear infinite;
-  }
+}
 
-  @keyframes rotation {
+@keyframes rotation {
   0% {
-      transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
-  } 
+}

@@ -2,7 +2,7 @@ import {
   NEARSocialUserProfile,
   getUserProfile,
 } from "@/common/contracts/social";
-import { getImage } from "@/common/ui/utils/images";
+import { getImage } from "@/common/lib/images";
 
 type Props = {
   profile?: NEARSocialUserProfile;

@@ -3,16 +3,16 @@ import "./_layout/mona-sans-font.css";
 import "./_layout/globals.css";
 
 import type { Metadata, Viewport } from "next";
-import { Lora as FontSans } from "next/font/google";
+import { Lora } from "next/font/google";
 
 import { cn } from "@/common/ui/utils";
 
 import Nav from "./_layout/Nav";
 import Providers from "./_layout/RootProvider";
 
-const fontSans = FontSans({
+const lora = Lora({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-lora",
   weight: ["400", "500", "600", "700"],
 });
 
@@ -48,12 +48,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body
-        className={`${cn("font-sans antialiased", fontSans.variable)} container`}
-      >
+      <body className={`${cn("font-lora antialiased", lora.variable)}`}>
         <Providers>
-          <Nav />
-          {children}
+          <div className="container">
+            <Nav />
+            {children}
+          </div>
         </Providers>
       </body>
     </html>

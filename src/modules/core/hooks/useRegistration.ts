@@ -14,12 +14,14 @@ const useRegistration = (projectId: string) => {
   useEffect(() => {
     const fetchRegistration = async () => {
       try {
-        const registration =
-          (await getRegistration({
-            registrant_id: projectId,
-          })) || UNREGISTERED_PROJECT;
-        setRegistration(registration);
-        setLoading(false);
+        if (projectId) {
+          const registration =
+            (await getRegistration({
+              registrant_id: projectId,
+            })) || UNREGISTERED_PROJECT;
+          setRegistration(registration);
+          setLoading(false);
+        }
       } catch (error) {
         console.log("error fetching project ", error);
         setError(error);
@@ -27,7 +29,7 @@ const useRegistration = (projectId: string) => {
       }
     };
     fetchRegistration();
-  }, []);
+  }, [projectId]);
 
   return {
     registration,

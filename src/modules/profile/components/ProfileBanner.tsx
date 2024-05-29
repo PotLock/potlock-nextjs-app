@@ -16,6 +16,8 @@ import useRegistration from "@/modules/core/hooks/useRegistration";
 import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
 import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIcons";
 
+import FollowStats from "./FollowStats";
+
 type Props = {
   accountId: string; // near address (donor | proejct)
   isProject: boolean;
@@ -25,7 +27,7 @@ type Props = {
   containerStyle?: any;
 };
 
-const BannerHeader = (props: Props) => {
+const ProfileBanner = (props: Props) => {
   const { isProject, accountId, profile } = props;
 
   const [profileImages, setProfileImages] = useState({
@@ -111,10 +113,11 @@ const BannerHeader = (props: Props) => {
               }}
             />
           )}
+          <FollowStats accountId={accountId} />
         </div>
       </div>
     </div>
   );
 };
 
-export default BannerHeader;
+export default ProfileBanner;
