@@ -21,17 +21,24 @@ const AllProjects = () => {
     Registration[]
   >([]);
   const [index, setIndex] = useState(1);
+  const [loading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchRegistrations = async () => {
-      const registrations = await getRegistrations();
-      const approvedRegistrations = registrations.filter(
-        (registration) => registration.status == RegistrationStatus.Approved,
-      );
-      approvedRegistrations.sort(() => Math.random() - 0.5);
+      try {
+        const registrations = await getRegistrations();
+        const approvedRegistrations = registrations.filter(
+          (registration) => registration.status == RegistrationStatus.Approved,
+        );
+        approvedRegistrations.sort(() => Math.random() - 0.5);
 
-      // setRegistrations(registrations);
-      setFilteredRegistrations(approvedRegistrations);
+        // setRegistrations(registrations);
+        setFilteredRegistrations(approvedRegistrations);
+        setIsLoading(false);
+      } catch (err) {
+        console.error("faild to fetch projects ", err);
+        setIsLoading(false);
+      }
     };
     fetchRegistrations();
   }, []);
@@ -53,7 +60,9 @@ const AllProjects = () => {
           <SortSelect />
         </div>
       </div>
-      {filteredRegistrations.length ? (
+      {loading ? (
+        <span className="loader mx-auto mt-12" />
+      ) : filteredRegistrations.length ? (
         <InfiniteScroll
           className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
           items={filteredRegistrations}
