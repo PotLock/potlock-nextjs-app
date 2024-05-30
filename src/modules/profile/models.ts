@@ -60,7 +60,7 @@ export const userModel = createModel<RootModel>()({
         potId && !payoutDetails
           ? getDonationsForProject({
               potId,
-              projectId,
+              project_id: projectId,
             })
           : !potId
             ? getDonationsForRecipient({
