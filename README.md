@@ -106,7 +106,7 @@ This structure offers a highly modular approach, defining clear boundaries for d
     │   │
     │   ├── [ hooks ] <--- # Feature-specific React hooks
     │   │
-    │   ├── [ lib ] <--- # Feature-specific utilities, like value converters or validators
+    │   ├── [ utils ] <--- # Feature-specific utilities, like value converters or validators
     │   │
     │   └── [ services ] <--- # Data-centric # TODO
     │

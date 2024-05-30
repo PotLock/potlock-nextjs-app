@@ -1,3 +1,6 @@
 {
-  "recommendations": ["antfu.unocss"]
+  "recommendations": [
+    "antfu.unocss",
+    "aaron-bond.better-comments"
+  ]
 }
