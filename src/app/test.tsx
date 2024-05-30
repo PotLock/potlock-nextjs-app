@@ -6,6 +6,7 @@ import Homepage from "./page";
 
 test("Homepage", () => {
   renderWithStore(<Homepage />);
-  // Example:
-  // expect(screen.getByRole("heading", { level: 1, name: "Home" })).toBeDefined();
+
+  expect(screen.getByText("Donate Randomly")).toBeDefined();
+  expect(screen.getByText("Register Your Project")).toBeDefined();
 });
