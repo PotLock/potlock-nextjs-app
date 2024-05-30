@@ -40,7 +40,7 @@ const Card = ({
       })
       .then(() => setIsLoading(false))
       .catch((err) => {
-        console.log("error fetching data for project card ", err);
+        console.error("error fetching data for project card ", err);
         setIsLoading(false);
       });
   }, [projectId, payoutDetails, potId]);

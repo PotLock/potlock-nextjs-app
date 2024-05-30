@@ -68,7 +68,7 @@ export const getDonationsForDonor = async (args: {
  */
 export const getDonationsForProject = async (args: {
   potId: string;
-  projectId: string;
+  project_id: string;
 }) =>
   contractApi(args.potId).view<typeof args, PotDonation[]>(
     "get_donations_for_project",
@@ -82,7 +82,7 @@ export const getDonationsForProject = async (args: {
  */
 export const getApplicationByProjectId = async (args: {
   potId: string;
-  projectId: string;
+  project_id: string;
 }) =>
   contractApi(args.potId).view<typeof args, Application>(
     "get_application_by_project_id",
@@ -133,14 +133,25 @@ export const getPayouts = async (args: { potId: string }) =>
 /**
  * Challange round payout
  */
-export const challengePayouts = (args: { potId: string; reason: string }) => {
-  const depositFloat = args.reason.length * 0.00003 + 0.003;
+export const challengePayouts = ({
+  potId,
+  reason,
+}: {
+  potId: string;
+  reason: string;
+}) => {
+  const depositFloat = reason.length * 0.00003 + 0.003;
 
-  contractApi(args.potId).call<typeof args, Challange[]>("challenge_payouts", {
-    args,
-    deposit: `${depositFloat}`,
-    gas: "300000000000000",
-  });
+  contractApi(potId).call<{ reason: string }, Challange[]>(
+    "challenge_payouts",
+    {
+      args: {
+        reason: reason,
+      },
+      deposit: `${depositFloat}`,
+      gas: "300000000000000",
+    },
+  );
 };
 
 /**
