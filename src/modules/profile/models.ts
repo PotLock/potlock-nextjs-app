@@ -27,7 +27,7 @@ type UserState = {
 };
 type Users = Record<string, UserState>;
 
-export const userModel = createModel<RootModel>()({
+export const usersModel = createModel<RootModel>()({
   state: {} as Users,
   reducers: {
     update(state, payload: Users) {
@@ -89,6 +89,72 @@ export const userModel = createModel<RootModel>()({
       };
 
       this.update(user);
+    },
+  },
+});
+
+export type ActAsDao = {
+  toggle: boolean;
+  default: string;
+  addresses: string[];
+};
+
+type NavState = {
+  accountId: string;
+  actAsDao: ActAsDao;
+};
+
+const updateList = (list: string[], item: string): string[] => {
+  const index = list.indexOf(item);
+  if (index === -1) {
+    // Item does not exist, add it
+    list.push(item);
+  } else {
+    // Item exists, remove it
+    list.splice(index, 1);
+  }
+  return list;
+};
+
+export const navModel = createModel<RootModel>()({
+  state: {
+    accountId: "",
+    actAsDao: {},
+  } as NavState,
+  reducers: {
+    toggleDao(state, toggle: boolean) {
+      return {
+        ...state,
+        actAsDao: {
+          ...state.actAsDao,
+          toggle,
+        },
+      };
+    },
+    markDaoAsDefault(state, daoAddress: string) {
+      return {
+        ...state,
+        actAsDao: {
+          ...state.actAsDao,
+          default: daoAddress,
+        },
+      };
+    },
+    addOrRemoveDaoAddress(state, daoAddress: string) {
+      const addresses = state.actAsDao.addresses;
+      return {
+        ...state,
+        actAsDao: {
+          ...state.actAsDao,
+          addresses: updateList(addresses, daoAddress),
+        },
+      };
+    },
+    updateAccountId(state, accountId: string) {
+      return {
+        ...state,
+        accountId,
+      };
     },
   },
 });
