@@ -1,18 +1,45 @@
+// import { useCallback } from "react";
+
 import { SelectProps, Trigger } from "@radix-ui/react-select";
 import Image from "next/image";
+// import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "./button";
 import { Select, SelectContent, SelectItem } from "./select";
 
-const SORT_LIST_PROJEECTS = [
-  { label: "Most recent", value: "recent" },
-  { label: "Least recent", value: "older" },
-];
+const SortSelect = ({
+  options,
+  onValueChange,
+  ...selectProps
+}: {
+  options: { label: string; value: string }[];
+  onValueChange?: SelectProps["onValueChange"];
+  selectProps?: SelectProps;
+}) => {
+  // const router = useRouter();
+  // const pathname = usePathname();
+  // const searchParams = useSearchParams();
 
-// TODO: add this as a varient to the select
-const SortSelect = ({ selectProps }: { selectProps?: SelectProps }) => {
+  // const createQueryString = useCallback(
+  //   (name: string, value: string) => {
+  //     const params = new URLSearchParams(searchParams.toString());
+  //     params.set(name, value);
+
+  //     return params.toString();
+  //   },
+  //   [searchParams],
+  // );
+
   return (
-    <Select {...(selectProps || {})}>
+    <Select
+      onValueChange={(value) => {
+        // router.push(pathname + "?" + createQueryString("sort", value), {
+        //   scroll: false,
+        // });
+        onValueChange ? onValueChange(value) : {};
+      }}
+      {...(selectProps || {})}
+    >
       <Trigger asChild className="w-fit">
         <Button variant="standard-outline">
           <Image
@@ -25,7 +52,7 @@ const SortSelect = ({ selectProps }: { selectProps?: SelectProps }) => {
         </Button>
       </Trigger>
       <SelectContent>
-        {SORT_LIST_PROJEECTS.map((option) => (
+        {options.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             {option.label}
           </SelectItem>
