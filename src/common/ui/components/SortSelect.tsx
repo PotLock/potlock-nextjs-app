@@ -16,26 +16,9 @@ const SortSelect = ({
   onValueChange?: SelectProps["onValueChange"];
   selectProps?: SelectProps;
 }) => {
-  // const router = useRouter();
-  // const pathname = usePathname();
-  // const searchParams = useSearchParams();
-
-  // const createQueryString = useCallback(
-  //   (name: string, value: string) => {
-  //     const params = new URLSearchParams(searchParams.toString());
-  //     params.set(name, value);
-
-  //     return params.toString();
-  //   },
-  //   [searchParams],
-  // );
-
   return (
     <Select
       onValueChange={(value) => {
-        // router.push(pathname + "?" + createQueryString("sort", value), {
-        //   scroll: false,
-        // });
         onValueChange ? onValueChange(value) : {};
       }}
       {...(selectProps || {})}
