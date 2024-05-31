@@ -1,4 +1,5 @@
 import { PopoverProps } from "@radix-ui/react-popover";
+import { ToggleGroupMultipleProps } from "@radix-ui/react-toggle-group";
 import Image from "next/image";
 
 import { Button } from "./button";
@@ -12,14 +13,21 @@ type Item = {
   val: string;
 };
 
-// Define the Props type extending PopoverProps
-type Props = PopoverProps & {
-  options: Record<string, Item[]>;
+export type Group = {
+  label: string;
+  props?: Omit<ToggleGroupMultipleProps, "type">;
+  options: Item[];
 };
 
-const Filter = ({ options, ...props }: Props) => {
+// Define the Props type extending PopoverProps
+type Props = {
+  popoverProps?: PopoverProps;
+  groups: Group[];
+};
+
+const Filter = ({ groups, popoverProps }: Props) => {
   return (
-    <Popover {...props}>
+    <Popover {...(popoverProps || {})}>
       <PopoverTrigger asChild>
         <Button variant="standard-outline">
           <Image
@@ -31,25 +39,26 @@ const Filter = ({ options, ...props }: Props) => {
           Filter
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 sm:w-[466px]">
-        <ToggleGroup
-          className="flex flex-col gap-6"
-          variant="outline"
-          type="multiple"
-        >
-          {Object.keys(options).map((menuLabel) => (
-            <div className="flex flex-wrap justify-start gap-2" key={menuLabel}>
-              <Label className=" w-full text-[#656565] first-of-type:mt-0">
-                Filter by {menuLabel}
-              </Label>
-              {options[menuLabel].map(({ label, val }: any) => (
+      <PopoverContent className="flex w-80 flex-col gap-6 sm:w-[466px]">
+        {groups.map(({ label, options, props }) => (
+          <div className="flex flex-col gap-3" key={label}>
+            <Label className=" w-full text-[#656565] first-of-type:mt-0">
+              Filter by {label}
+            </Label>
+            <ToggleGroup
+              className="flex flex-wrap justify-start gap-2"
+              variant="outline"
+              {...(props || {})}
+              type="multiple"
+            >
+              {options.map(({ label, val }: any) => (
                 <ToggleGroupItem value={val} aria-label="Toggle" key={val}>
                   {label}
                 </ToggleGroupItem>
               ))}
-            </div>
-          ))}
-        </ToggleGroup>
+            </ToggleGroup>
+          </div>
+        ))}
       </PopoverContent>
     </Popover>
   );
