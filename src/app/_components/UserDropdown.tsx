@@ -1,32 +1,44 @@
 import React, { useCallback, useEffect, useState } from "react";
 
+import { LogOut } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { walletApi } from "@/common/contracts";
-import { getImage } from "@/common/lib";
+import { NEARSocialUserProfile } from "@/common/contracts/social";
+import { getIsHuman } from "@/common/contracts/sybil.nadabot";
+import { _address } from "@/common/lib";
+import { Button } from "@/common/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/common/ui/components/dropdown-menu";
 import { Skeleton } from "@/common/ui/components/skeleton";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import { statusesIcons } from "@/modules/core/constants";
 import useRegistration from "@/modules/core/hooks/useRegistration";
+import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
 import { DEFAULT_USER } from "@/modules/profile/constants";
+import {
+  updateAccountId,
+  updateNadabotVerification,
+} from "@/modules/profile/utils";
 
-import { dispatch } from "../_store";
+import ActAsDao from "./ActAsDao";
 
 const UserDropdown = () => {
   const [profileImg, setProfileImg] = useState("");
+  const [profile, setProfile] = useState<NEARSocialUserProfile>({});
 
   const wallet = useWallet();
-
   const accountId = wallet?.wallet?.accountId || "";
 
-  const { registration, loading } = useRegistration(accountId);
+  const { registration } = useRegistration(accountId);
+
+  const [status, setStatus] = useState<string>(registration.status);
 
   const logoutHandler = useCallback(() => {
     walletApi.wallet?.signOut();
@@ -34,45 +46,118 @@ const UserDropdown = () => {
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-      const profileImage = await getImage({
+      const { image, profile } = await fetchProfileImages({
         accountId,
-        type: "image",
       });
-      setProfileImg(profileImage);
+      setProfileImg(image);
+      setProfile(profile || {});
     };
-    fetchProfileImage();
+    if (accountId) fetchProfileImage();
+
+    // Add accountId to the nav model
+    updateAccountId(accountId);
   }, [accountId]);
 
   useEffect(() => {
-    //   Add accountId to the nav model
-    dispatch.nav.updateAccountId(accountId);
-  }, [accountId]);
+    // check if account verified on nadabot
+    const fetchHumanStatus = async () => {
+      if (accountId) {
+        const isHuman = await getIsHuman({ account_id: accountId });
+        updateNadabotVerification(isHuman);
+
+        const status = registration.id
+          ? registration.status
+          : isHuman
+            ? "Human"
+            : "";
+
+        setStatus(status);
+      }
+    };
+    fetchHumanStatus();
+  }, [accountId, registration]);
+
+  const ProfileImg = ({ size }: { size: number }) => (
+    <Image
+      src={profileImg}
+      width={size}
+      height={size}
+      onError={() => {
+        setProfileImg(DEFAULT_USER.profileImages.image);
+      }}
+      className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
+      alt="profile-image"
+    />
+  );
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         {profileImg ? (
-          <Image
-            src={profileImg}
-            width={32}
-            height={32}
-            onError={() => {
-              setProfileImg(DEFAULT_USER.profileImages.image);
-            }}
-            className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-            alt="profile-image"
-          />
+          <div className="cursor-pointer ">
+            <ProfileImg size={32} />
+          </div>
         ) : (
           <Skeleton className="h-8 w-8 rounded-full" />
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-0">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+      <DropdownMenuContent align="end" className="12px w-72 p-0">
+        {status && (
+          <DropdownMenuLabel
+            className="flex items-center justify-between px-4 py-2"
+            style={{
+              color: statusesIcons[status]?.color,
+              background: statusesIcons[status]?.background,
+            }}
+          >
+            {registration.status}
+            <Image
+              src={statusesIcons[status]?.icon}
+              width={18}
+              height={18}
+              alt="status-icon"
+            />
+          </DropdownMenuLabel>
+        )}
+        <div className="flex flex-col gap-6 p-4">
+          <DropdownMenuLabel className="flex gap-2 p-0">
+            <ProfileImg size={40} />
+            <div className="flex flex-col">
+              {profile?.name && (
+                <div className="font-semibold">
+                  {_address(profile?.name, 20)}
+                </div>
+              )}
+              <div className="color-[#656565] text-xs">
+                {" "}
+                {_address(accountId, 20)}
+              </div>
+            </div>
+          </DropdownMenuLabel>
+          <ActAsDao />
+          <div className="rounded-md border border-[#DBDBDB]">
+            <Link href={`/user/${accountId}`}>
+              <DropdownMenuItem className="px-3 py-[10px] font-medium">
+                {registration ? "My Project" : "My user"}
+              </DropdownMenuItem>
+            </Link>
+            <Link
+              href={`https://near.social/mob.near/widget/NotificationFeed`}
+              target="_blank"
+            >
+              <DropdownMenuItem className="px-3 py-[10px] font-medium">
+                Notifications
+              </DropdownMenuItem>
+            </Link>
+          </div>
+        </div>
+        <Button
+          onClick={logoutHandler}
+          variant="brand-plain"
+          className="w-full justify-start bg-[#F7F7F7] px-4 py-3"
+        >
+          <LogOut color="#F6767A" /> Signout
+        </Button>
       </DropdownMenuContent>
     </DropdownMenu>
   );

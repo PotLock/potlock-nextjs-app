@@ -50,7 +50,17 @@ export const statuses: StatusConfig = {
   },
 };
 
-export const statusesIcons = {
+type StatusType = {
+  icon: string;
+  color: string;
+  background: string;
+};
+
+type StatusMap = {
+  [key: string]: StatusType;
+};
+
+export const statusesIcons: StatusMap = {
   Approved: {
     icon: ICONS_ROUTE + "approved-icon.svg",
     color: "#0B7A74",
@@ -76,7 +86,7 @@ export const statusesIcons = {
     color: "#fff",
     background: "#292929",
   },
-  "Human Verified": {
+  Human: {
     icon: "/assets/images/nadabot-icon.png",
     color: "#0B7A74",
     background: "#EFFEFA",

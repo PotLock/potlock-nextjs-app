@@ -95,12 +95,13 @@ export const usersModel = createModel<RootModel>()({
 
 export type ActAsDao = {
   toggle: boolean;
-  default: string;
+  defaultAddress: string;
   addresses: string[];
 };
 
 type NavState = {
   accountId: string;
+  isNadabotVerified: boolean;
   actAsDao: ActAsDao;
 };
 
@@ -118,17 +119,20 @@ const updateList = (list: string[], item: string): string[] => {
 
 export const navModel = createModel<RootModel>()({
   state: {
+    // TODO: add is registery admin
     accountId: "",
-    actAsDao: {},
+    isNadabotVerified: false,
+    actAsDao: {
+      defaultAddress: "",
+      toggle: false,
+      addresses: [],
+    },
   } as NavState,
   reducers: {
-    toggleDao(state, toggle: boolean) {
+    update(state, payload) {
       return {
         ...state,
-        actAsDao: {
-          ...state.actAsDao,
-          toggle,
-        },
+        ...payload,
       };
     },
     markDaoAsDefault(state, daoAddress: string) {
@@ -136,7 +140,7 @@ export const navModel = createModel<RootModel>()({
         ...state,
         actAsDao: {
           ...state.actAsDao,
-          default: daoAddress,
+          defaultAddress: daoAddress,
         },
       };
     },
@@ -148,12 +152,6 @@ export const navModel = createModel<RootModel>()({
           ...state.actAsDao,
           addresses: updateList(addresses, daoAddress),
         },
-      };
-    },
-    updateAccountId(state, accountId: string) {
-      return {
-        ...state,
-        accountId,
       };
     },
   },
