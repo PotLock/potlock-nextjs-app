@@ -7,6 +7,6 @@ export default defineConfig({
 
   test: {
     environment: "jsdom",
-    include: ["**/?(*.test|test).?(c|m)[jt]s?(x)"],
+    include: ["**/?(*.test|tests).?(c|m)[jt]s?(x)"],
   },
 });

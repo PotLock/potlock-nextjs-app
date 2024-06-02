@@ -1,9 +1,13 @@
 {
   "editor.formatOnSave": true,
-  "eslint.validate": ["typescript"],
+  "eslint.validate": [
+    "typescript"
+  ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.fixAll": "explicit"
-  }
+  },
+  "cSpell.words": [
+    "data-testid"
+  ]
 }
-

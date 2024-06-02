@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "antfu.unocss",
-    "aaron-bond.better-comments"
+    "aaron-bond.better-comments",
+    "streetsidesoftware.code-spell-checker"
   ]
 }

@@ -6,9 +6,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
-    "test": "vitest",
-    "dev": "next dev",
-    "build": "next build",
+    "test": "vitest run",
+    "watch:test": "yarn && vitest watch",
+    "dev": "yarn && next dev",
+    "build": "yarn && yarn test && next build",
     "start": "next start"
   },
   "dependencies": {
