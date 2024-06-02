@@ -7,7 +7,6 @@ import { dispatch } from "@/app/_store";
 import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { _address, yoctosToNear } from "@/common/lib";
 import { Button } from "@/common/ui/components/button";
-import { Skeleton } from "@/common/ui/components/skeleton";
 import { useUser } from "@/modules/profile/utils";
 
 import CardSkeleton from "./CardSkeleton";
@@ -32,14 +31,14 @@ const Card = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    dispatch.user
+    dispatch.users
       .loadUser({
         projectId,
         payoutDetails,
         potId,
       })
       .then(() => setIsLoading(false))
-      .catch((err) => {
+      .catch((err: Error) => {
         console.error("error fetching data for project card ", err);
         setIsLoading(false);
       });
@@ -53,33 +52,25 @@ const Card = ({
         <div className="group mx-auto flex h-full w-full max-w-[420px]  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300 ">
           {/* Background */}
           <div className="relative h-[145px] w-full overflow-hidden">
-            {profileImages.backgroundImage ? (
-              <Image
-                fill
-                // loading="lazy"
-                className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                alt="background-image"
-                src={profileImages.backgroundImage}
-              />
-            ) : (
-              <Skeleton className="h-full w-full" />
-            )}
+            <Image
+              fill
+              // loading="lazy"
+              className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+              alt="background-image"
+              src={profileImages.backgroundImage}
+            />
           </div>
           {/* Content */}
           <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
             {/* Profile image */}
             <div className="relative -mt-5 h-10 w-10">
-              {profileImages.backgroundImage ? (
-                <Image
-                  fill
-                  loading="lazy"
-                  className="rounded-full bg-white object-cover shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-                  alt="profile-image"
-                  src={profileImages.image}
-                />
-              ) : (
-                <Skeleton className="h-full w-full rounded-full" />
-              )}
+              <Image
+                fill
+                loading="lazy"
+                className="rounded-full bg-white object-cover shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
+                alt="profile-image"
+                src={profileImages.image}
+              />
             </div>
             {/* Name */}
             <div

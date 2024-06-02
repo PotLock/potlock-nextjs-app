@@ -3,10 +3,15 @@ import React from "react";
 import Image from "next/image";
 
 import { Input, InputProps } from "./input";
+import { cn } from "../utils";
 
-const SearchBar = ({ inputProps }: { inputProps?: InputProps }) => {
+type Props = InputProps & {
+  className?: string;
+};
+
+const SearchBar = ({ className, ...inputProps }: Props) => {
   return (
-    <div className="relative flex flex-1">
+    <div className={cn("relative flex flex-1", className)}>
       <div className="pointer-events-none absolute left-3.5 top-2/4 flex h-[18px] w-[18px] -translate-y-2/4">
         <Image
           alt="search"

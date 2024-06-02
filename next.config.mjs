@@ -1,13 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["ipfs.io", "arweave.net"],
+    // allow external source without limiting it to specific domains
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "ipfs.near.social",
-        port: "",
-        pathname: "/**",
+        hostname: "**",
       },
     ],
   },
