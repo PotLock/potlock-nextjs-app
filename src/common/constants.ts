@@ -22,8 +22,8 @@ export const POTLOCK_DONATE_CONTRACT_ID = "donate.potlock.near";
 // POTLOCK DONATE CONTRACT
 export const POTLOCK_POT_FACTORY_CONTRACT_ID = "v1.potfactory.potlock.near";
 
-// POTLOCK REGISTERY LIST ID
-export const POTLOCK_REGISTERY_LIST_ID = 1;
+// POTLOCK REGISTRY LIST ID
+export const POTLOCK_REGISTRY_LIST_ID = 1;
 
 // 1 NEAR
 export const ONE_NEAR = utils.format.parseNearAmount("1")!;
