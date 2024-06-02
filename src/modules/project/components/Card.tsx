@@ -46,7 +46,7 @@ const Card = ({
   }, [projectId, payoutDetails, potId]);
 
   return (
-    <Link href={`user/${projectId}`}>
+    <Link href={`user/${projectId}`} data-testid="project-card">
       {isLoading ? (
         <CardSkeleton />
       ) : (
@@ -82,7 +82,10 @@ const Card = ({
               )}
             </div>
             {/* Name */}
-            <div className="w-full text-base font-semibold text-[#2e2e2e]">
+            <div
+              className="w-full text-base font-semibold text-[#2e2e2e]"
+              data-testid="project-card-title"
+            >
               {_address(profile?.name || "", 30) || _address(projectId, 30)}
             </div>
             {/* Description */}

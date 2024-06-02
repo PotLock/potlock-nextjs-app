@@ -8,5 +8,10 @@ test("Homepage", () => {
   renderWithStore(<Homepage />);
 
   expect(screen.getByText("Donate Randomly")).toBeDefined();
-  expect(screen.getByText("Register Your Project")).toBeDefined();
+
+  const firstFoundProjectTitle = screen
+    .getAllByTestId("project-card-title")
+    .at(0);
+
+  expect(firstFoundProjectTitle?.textContent).toBeTruthy();
 });
