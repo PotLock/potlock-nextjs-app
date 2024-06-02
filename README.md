@@ -27,32 +27,36 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### DJango Indexer API
 
-This project is using an indexer service. You can access its docs here: <https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints>
+This project is using an indexer service.
+You can access its docs here: <https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints>
 
 **URI**: `http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1`
 
 ### Project Structure
 
-Maintains explicit separation between abstract and business-logic-heavy parts of the codebase.
-This structure offers a highly modular approach, defining clear boundaries for different aspects of the application within each module:
+Provides explicit separation between abstract and business-logic-heavy parts of the codebase,
+for which it offers a highly modular approach, defining clear boundaries for different
+aspects of the application within each module:
 
 ```sh
 
 [ src/ ]
 │
-├── [ app ] <--- # Entry point of the application. Follows Nextjs App routing specification ( see link 1. )
+├── [ app ] <--- # Entry point of the application.
+│   │            # Follows Nextjs App routing specification ( see link 1. )
 │   │
 │  ...
 │   │
-│   └── [ _store ] <--- # Application state root. Uses Rematch state management library, based on Redux
+│   └── [ _store ] <--- # Application state root.
+│                       # Uses Rematch state management library, based on Redux.
 │
 │
 │
 │
-│
-├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings, utility libraries,
-│   │               # reusable primitives, and assets, used in layouts and business logic across the codebase.
-│   │               # MUST NOT itself contain business logic. AKA "shared" ( see link 2. )
+├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings,
+│   │               # utility libraries, reusable primitives, and assets, used in layouts and
+│   │               # business logic across the codebase. MUST NOT contain business logic by itself.
+│   │               # AKA "shared" ( see link 2. )
 │   │
 │   ├── constants.ts <--- # Static reusable values, e.g.
 │   │                      export const DEFAULT_NETWORK = "testnet"
@@ -73,14 +77,14 @@ This structure offers a highly modular approach, defining clear boundaries for d
 │       │
 │       ├── [ components ] <--- # React components implementing UI design primitives
 │       │
-│       └── [ utils ] <--- # UI-specific utilities, like DOM manipulations or TailwindCSS class transformers
+│       └── [ utils ] <--- # UI-specific utilities, like DOM manipulations
+│                          # or TailwindCSS class transformers
 │
 │
 │
 │
-│
-└── [ modules ] <--- # Business logic units broken down into categories.
-    │                # Simply put, this is a collection of directories that contain code implementing specific
+└── [ modules ] <--- # Business logic units broken down into categories. Simply put, this is
+    │                # a collection of directories that contain code implementing specific
     │                # groups of app use cases and are named after functionalities they provide.
     │
    ...
@@ -128,11 +132,29 @@ For details, please refer to the corresponding documentation resources:
 - [Vitest API reference](https://vitest.dev/api/)
 - [React Testing Library guideline](https://testing-library.com/docs/react-testing-library/example-intro)
 
-The project convention implies keeping the test scenarios alongside the code they're meant for ( See examples below ).
+#### Commands
 
-#### Pages
+Execute all unit tests:
 
-In order to test a page, put `tests.tsx` within the scope of that page:
+```bash
+yarn test:unit
+```
+
+Run dev server for unit tests:
+
+```bash
+yarn dev:test
+```
+
+#### File colocation
+
+The project convention implies keeping the test scenarios alongside the code they're meant for
+( See examples below ).
+
+##### Pages
+
+Tests for each page must be placed in `tests.tsx`
+within the same directory where `page.tsx` is located:
 
 ```bash
 
@@ -158,7 +180,7 @@ In order to test a page, put `tests.tsx` within the scope of that page:
 
 ```
 
-#### Modules
+##### Modules
 
 For modules, we target specific implementation details:
 
@@ -180,20 +202,4 @@ For modules, we target specific implementation details:
             │
             └── validation.test.ts <--- # Profile validation tests
 
-```
-
-## CI
-
-The following command will consequently install all dependencies, run all tests, and then produce production build.
-
-It will crash in case of any error along the process.
-
-```bash
-yarn build
-```
-
-This will run the application server with the most recent successful production build.
-
-```bash
-yarn start
 ```
