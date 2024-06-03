@@ -78,11 +78,11 @@ const Card = ({
             </div>
             {/* Description */}
             <div className="text-base font-normal text-[#2e2e2e]">
-              {_address(profile.description || "", MAX_DESCRIPTION_LENGTH)}
+              {_address(profile?.description || "", MAX_DESCRIPTION_LENGTH)}
             </div>
             {/* Tags */}
             <div className="flex flex-wrap gap-2 text-base">
-              {tags.map((tag: string, index: number) => (
+              {tags?.map((tag: string, index: number) => (
                 <div
                   className="rounded border border-solid border-[#7b7b7b5c] px-2 py-1 text-base text-[#2e2e2e] shadow-[0px_-0.699999988079071px_0px_#7b7b7b5c_inset]"
                   key={index}

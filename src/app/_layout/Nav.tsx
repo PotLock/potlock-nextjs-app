@@ -12,6 +12,8 @@ import { Button } from "@/common/ui/components/button";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import routesPath from "@/modules/core/routes";
 
+import UserDropdown from "../_components/UserDropdown";
+
 const AuthButton = () => {
   const { isAuthenticated } = useAuth();
   const isClient = useIsClient();
@@ -20,21 +22,18 @@ const AuthButton = () => {
     walletApi.signInModal();
   }, []);
 
-  const logoutHandler = useCallback(() => {
-    walletApi.wallet?.signOut();
-  }, []);
-
   if (!isClient) return;
 
   if (isAuthenticated) {
     return (
-      <Button
-        variant="standard-filled"
-        onClick={logoutHandler}
-        className="bg-[#342823]"
-      >
-        Logout
-      </Button>
+      <UserDropdown />
+      //   <Button
+      //     variant="standard-filled"
+      //     onClick={logoutHandler}
+      //     className="bg-[#342823]"
+      //   >
+      //     Logout
+      //   </Button>
     );
   }
 
