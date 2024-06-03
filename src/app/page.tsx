@@ -11,7 +11,7 @@ export default function Home() {
       <Hero />
       <DonationStats />
       <FeaturedProjects />
-      {/* <AllProjects /> */}
+      <AllProjects />
     </main>
   );
 }
