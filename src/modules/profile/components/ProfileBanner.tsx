@@ -13,7 +13,7 @@ import {
 import { Skeleton } from "@/common/ui/components/skeleton";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 import useRegistration from "@/modules/core/hooks/useRegistration";
-import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
+import { fetchSocialImages } from "@/modules/core/services/socialImages";
 import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIcons";
 
 import FollowStats from "./FollowStats";
@@ -37,7 +37,10 @@ const ProfileBanner = (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      const imagesData = await fetchProfileImages({ profile, accountId });
+      const imagesData = await fetchSocialImages({
+        socialData: profile,
+        accountId,
+      });
 
       setProfileImages({
         image: imagesData.image,
