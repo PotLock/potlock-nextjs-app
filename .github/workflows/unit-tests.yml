@@ -26,6 +26,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
+      - name: Install dependencies
+        run: yarn install --immutable --immutable-cache --check-cache
+
       - name: Execute Unit tests
-      - run: yarn install --immutable --immutable-cache --check-cache
-      - run: yarn test:unit
+        run: yarn test:unit
