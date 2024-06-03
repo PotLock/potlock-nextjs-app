@@ -1,18 +1,28 @@
+// import { useCallback } from "react";
+
 import { SelectProps, Trigger } from "@radix-ui/react-select";
 import Image from "next/image";
+// import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "./button";
 import { Select, SelectContent, SelectItem } from "./select";
 
-const SORT_LIST_PROJEECTS = [
-  { label: "Most recent", value: "recent" },
-  { label: "Least recent", value: "older" },
-];
-
-// TODO: add this as a varient to the select
-const SortSelect = ({ selectProps }: { selectProps?: SelectProps }) => {
+const SortSelect = ({
+  options,
+  onValueChange,
+  ...selectProps
+}: {
+  options: { label: string; value: string }[];
+  onValueChange?: SelectProps["onValueChange"];
+  selectProps?: SelectProps;
+}) => {
   return (
-    <Select {...(selectProps || {})}>
+    <Select
+      onValueChange={(value) => {
+        onValueChange ? onValueChange(value) : {};
+      }}
+      {...(selectProps || {})}
+    >
       <Trigger asChild className="w-fit">
         <Button variant="standard-outline">
           <Image
@@ -25,7 +35,7 @@ const SortSelect = ({ selectProps }: { selectProps?: SelectProps }) => {
         </Button>
       </Trigger>
       <SelectContent>
-        {SORT_LIST_PROJEECTS.map((option) => (
+        {options.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             {option.label}
           </SelectItem>

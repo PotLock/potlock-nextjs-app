@@ -8,17 +8,19 @@ import {
   NEARSocialUserProfile,
   getUserProfile,
 } from "@/common/contracts/social";
-import {
-  getTagsFromSocialProfileData,
-  yoctosToUsdWithFallback,
-} from "@/common/lib";
+import { yoctosToUsdWithFallback } from "@/common/lib";
 
 import { fetchProfileImages } from "../core/services/fetchProfileImages";
-import { getTotalAmountNear } from "../project/utils";
+import {
+  getTagsFromSocialProfileData,
+  getTeamMembersFromProfile,
+  getTotalAmountNear,
+} from "../project/utils";
 
-type UserState = {
+export type UserState = {
   profile: NEARSocialUserProfile;
   tags: string[];
+  team: string[];
   totalAmountNear: string;
   profileImages: {
     image: string;
@@ -78,11 +80,13 @@ export const usersModel = createModel<RootModel>()({
       );
 
       const tags = getTagsFromSocialProfileData(profile || {});
+      const team = getTeamMembersFromProfile(profile);
 
       const user = {
         [projectId]: {
           profile: profile ?? {},
           tags,
+          team,
           totalAmountNear,
           profileImages,
         },
