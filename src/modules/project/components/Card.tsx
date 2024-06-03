@@ -49,7 +49,10 @@ const Card = ({
       {isLoading ? (
         <CardSkeleton />
       ) : (
-        <div className="group mx-auto flex h-full w-full max-w-[420px]  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300 ">
+        <div
+          className="group mx-auto flex h-full w-full max-w-[420px]  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300"
+          data-testid="project-card"
+        >
           {/* Background */}
           <div className="relative h-[145px] w-full overflow-hidden">
             <Image
@@ -60,6 +63,7 @@ const Card = ({
               src={profileImages.backgroundImage}
             />
           </div>
+
           {/* Content */}
           <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
             {/* Profile image */}
@@ -72,14 +76,23 @@ const Card = ({
                 src={profileImages.image}
               />
             </div>
+
             {/* Name */}
-            <div className="w-full text-base font-semibold text-[#2e2e2e]">
+            <div
+              className="w-full text-base font-semibold text-[#2e2e2e]"
+              data-testid="project-card-title"
+            >
               {_address(profile?.name || "", 30) || _address(projectId, 30)}
             </div>
+
             {/* Description */}
-            <div className="text-base font-normal text-[#2e2e2e]">
-              {_address(profile?.description || "", MAX_DESCRIPTION_LENGTH)}
+            <div
+              className="text-base font-normal text-[#2e2e2e]"
+              data-testid="project-card-description"
+            >
+              {_address(profile.description || "", MAX_DESCRIPTION_LENGTH)}
             </div>
+
             {/* Tags */}
             <div className="flex flex-wrap gap-2 text-base">
               {tags?.map((tag: string, index: number) => (
@@ -91,23 +104,30 @@ const Card = ({
                 </div>
               ))}
             </div>
+
             {/* Donations Info */}
             <div className="mt-auto flex items-center gap-4">
               {/* amount */}
               <div className="flex flex-row items-center gap-2">
-                <div className="text-lg font-semibold leading-6 text-[#292929]">
+                <div
+                  className="text-lg font-semibold leading-6 text-[#292929]"
+                  data-testid="project-card-fundraising-amount"
+                >
                   {totalAmountNear}
                 </div>
+
                 <div className="text-sm font-medium leading-4  text-neutral-600">
                   Raised
                 </div>
               </div>
+
               {/* donors count */}
               {payoutDetails && (
                 <div className="flex flex-row items-center gap-2">
                   <div className="text-lg font-semibold leading-6 text-[#292929]">
                     {payoutDetails.donorCount}
                   </div>
+
                   <div className="text-sm font-medium leading-4  text-neutral-600">
                     {payoutDetails.donorCount === 1 ? "Donor" : "Donors"}
                   </div>
@@ -128,11 +148,13 @@ const Card = ({
               </Button>
             )}
           </div>
+
           {payoutDetails && (
             <div className="flex items-center justify-between rounded-[0px_0px_12px_12px] bg-[#ebebeb] px-6 py-2">
               <div className="text-xs uppercase leading-[18px] tracking-[1.1px] text-[#292929]">
                 Estimated matched amount
               </div>
+
               <div className="text-sm font-semibold leading-6 text-[#292929]">
                 {yoctosToNear(payoutDetails.amount) || "- N"}
               </div>

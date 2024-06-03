@@ -7,7 +7,13 @@
   "env": {
     "node": true
   },
-  "plugins": ["@typescript-eslint", "prettier", "import", "@tanstack/query"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "import",
+    "@tanstack/query",
+    "testing-library"
+  ],
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
@@ -21,17 +27,32 @@
     "prettier"
   ],
   "rules": {
-    "camelcase": ["warn", { "properties": "never" }],
+    "camelcase": [
+      "warn",
+      {
+        "properties": "never"
+      }
+    ],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-types": "off",
-    "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
     "sort-imports": [
       "error",
       {
         "ignoreCase": false,
         "ignoreDeclarationSort": true, // don"t want to sort import lines, use eslint-plugin-import instead
         "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
+        "memberSyntaxSortOrder": [
+          "none",
+          "all",
+          "multiple",
+          "single"
+        ],
         "allowSeparatedGroups": true
       }
     ],
@@ -45,14 +66,23 @@
           "builtin", // Built-in imports (come from NodeJS native) go first
           "external", // <- External imports
           "internal", // <- Absolute imports
-          ["sibling", "parent"], // <- Relative imports, the sibling and parent types they can be mingled together
+          [
+            "sibling",
+            "parent"
+          ], // <- Relative imports, the sibling and parent types they can be mingled together
           "index", // <- index imports
           "unknown" // <- unknown
         ],
         "pathGroups": [
-          { "pattern": "react", "group": "external", "position": "before" }
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          }
         ],
-        "pathGroupsExcludedImportTypes": ["react"],
+        "pathGroupsExcludedImportTypes": [
+          "react"
+        ],
         "newlines-between": "always",
         "alphabetize": {
           /* sort in ascending order. Options: ["ignore", "asc", "desc"] */

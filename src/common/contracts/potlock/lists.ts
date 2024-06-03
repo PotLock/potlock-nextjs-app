@@ -2,7 +2,7 @@ import { MemoryCache } from "@wpdas/naxios";
 
 import {
   POTLOCK_LISTS_CONTRACT_ID,
-  POTLOCK_REGISTERY_LIST_ID,
+  POTLOCK_REGISTRY_LIST_ID,
 } from "@/common/constants";
 
 import {
@@ -37,10 +37,10 @@ export const getList = (args: GetListInput) =>
   });
 
 /**
- * Get Regsiterations for a list
+ * Get Registrations for a list
  */
 export const getRegistrations = (
-  args: { list_id: number } = { list_id: POTLOCK_REGISTERY_LIST_ID },
+  args: { list_id: number } = { list_id: POTLOCK_REGISTRY_LIST_ID },
 ) => {
   return contractApi.view<typeof args, Registration[]>(
     "get_registrations_for_list",
@@ -52,27 +52,27 @@ export const getRegistrations = (
 };
 
 /**
- * Get Regsiterations for registrant
+ * Get Registrations for registrant
  */
 export const getRegistration = async (args: {
   list_id?: number;
   registrant_id: string;
 }) => {
-  const regsiterations = await contractApi.view<typeof args, Registration[]>(
+  const registrations = await contractApi.view<typeof args, Registration[]>(
     "get_registrations_for_registrant",
     {
       args,
     },
   );
-  const regsiteration = regsiterations.find(
-    (regsiteration) =>
-      regsiteration.list_id === args.list_id || POTLOCK_REGISTERY_LIST_ID,
+  const registration = registrations.find(
+    (registration) =>
+      registration.list_id === args.list_id || POTLOCK_REGISTRY_LIST_ID,
   );
-  return regsiteration;
+  return registration;
 };
 
 /**
- * Get if a regsiteration is approved
+ * Check if a registration is approved
  */
 export const isRegistrationApproved = (args: {
   account_id: string;

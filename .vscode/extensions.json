@@ -1,3 +1,8 @@
 {
-  "recommendations": ["antfu.unocss"]
+  "recommendations": [
+    "antfu.unocss",
+    "aaron-bond.better-comments",
+    "streetsidesoftware.code-spell-checker",
+    "gruntfuggly.todo-tree"
+  ]
 }
