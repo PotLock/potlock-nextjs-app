@@ -96,3 +96,67 @@ export const usersModel = createModel<RootModel>()({
     },
   },
 });
+
+export type ActAsDao = {
+  toggle: boolean;
+  defaultAddress: string;
+  addresses: string[];
+};
+
+type NavState = {
+  accountId: string;
+  isNadabotVerified: boolean;
+  actAsDao: ActAsDao;
+};
+
+const updateList = (list: string[], item: string): string[] => {
+  const index = list.indexOf(item);
+  if (index === -1) {
+    // Item does not exist, add it
+    list.push(item);
+  } else {
+    // Item exists, remove it
+    list.splice(index, 1);
+  }
+  return list;
+};
+
+export const navModel = createModel<RootModel>()({
+  state: {
+    // TODO: add is registery admin
+    accountId: "",
+    isNadabotVerified: false,
+    actAsDao: {
+      defaultAddress: "",
+      toggle: false,
+      addresses: [],
+    },
+  } as NavState,
+  reducers: {
+    update(state, payload) {
+      return {
+        ...state,
+        ...payload,
+      };
+    },
+    markDaoAsDefault(state, daoAddress: string) {
+      return {
+        ...state,
+        actAsDao: {
+          ...state.actAsDao,
+          defaultAddress: daoAddress,
+        },
+      };
+    },
+    addOrRemoveDaoAddress(state, daoAddress: string) {
+      const addresses = state.actAsDao.addresses;
+      return {
+        ...state,
+        actAsDao: {
+          ...state.actAsDao,
+          addresses: updateList(addresses, daoAddress),
+        },
+      };
+    },
+  },
+});

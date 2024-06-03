@@ -9,6 +9,8 @@ type StatusConfig = {
   };
 };
 
+const ICONS_ROUTE = "/assets/icons/";
+
 export const statuses: StatusConfig = {
   Approved: {
     background: "",
@@ -45,6 +47,49 @@ export const statuses: StatusConfig = {
     text: "UNREGISTERED: This account has not registered as a public good",
     textColor: "#F6F5F3",
     toggleColor: "#C7C7C7",
+  },
+};
+
+type StatusType = {
+  icon: string;
+  color: string;
+  background: string;
+};
+
+type StatusMap = {
+  [key: string]: StatusType;
+};
+
+export const statusesIcons: StatusMap = {
+  Approved: {
+    icon: ICONS_ROUTE + "approved-icon.svg",
+    color: "#0B7A74",
+    background: "#EFFEFA",
+  },
+  Rejected: {
+    icon: ICONS_ROUTE + "rejected-icon.svg",
+    color: "#ED464F",
+    background: "#FEF3F2",
+  },
+  Pending: {
+    icon: ICONS_ROUTE + "pending-icon.svg",
+    color: "#EA6A25",
+    background: "#FEF6EE",
+  },
+  Graylisted: {
+    icon: ICONS_ROUTE + "graylisted-icon.svg",
+    color: "#fff",
+    background: "#7b7b7bd8",
+  },
+  Blacklisted: {
+    icon: ICONS_ROUTE + "blacklisted-icon.svg",
+    color: "#fff",
+    background: "#292929",
+  },
+  Human: {
+    icon: "/assets/images/nadabot-icon.png",
+    color: "#0B7A74",
+    background: "#EFFEFA",
   },
 };
 

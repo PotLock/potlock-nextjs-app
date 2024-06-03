@@ -35,5 +35,6 @@ export const fetchProfileImages = async ({ profile, accountId }: Props) => {
   return {
     image: images[0],
     backgroundImage: images[1],
+    profile: currentProfile,
   };
 };
