@@ -34,13 +34,8 @@ test("Homepage", async () => {
     "project-card-fundraising-amount",
   );
 
-  await waitFor(
-    () =>
-      expect(
-        projectFundraisingAmounts.at(0)?.textContent,
-        "project fundraising amounts",
-      ).toBeDefined(),
-
-    { timeout: 2000 },
-  );
+  expect(
+    projectFundraisingAmounts.at(0)?.textContent,
+    "project fundraising amounts",
+  ).toBeTruthy();
 });
