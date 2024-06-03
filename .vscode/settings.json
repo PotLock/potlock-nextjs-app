@@ -1,9 +1,27 @@
 {
   "editor.formatOnSave": true,
-  "eslint.validate": ["typescript"],
+  "eslint.validate": [
+    "typescript"
+  ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.fixAll": "explicit"
-  }
+  },
+  "cSpell.words": [
+    "bitget",
+    "colocation",
+    "data-testid",
+    "NADABOT",
+    "narwallets",
+    "naxios",
+    "nearfi",
+    "POTLOCK",
+    "ramper",
+    "shadcn",
+    "typecheck",
+    "unocss",
+    "welldone",
+    "wpdas",
+    "xdefi"
+  ]
 }
-
