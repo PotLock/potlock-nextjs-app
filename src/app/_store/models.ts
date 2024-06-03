@@ -5,8 +5,8 @@ import { navModel, usersModel } from "@/modules/profile/models";
 
 export interface RootModel extends Models<RootModel> {
   auth: typeof auth;
-  user: typeof usersModel;
+  users: typeof usersModel;
   nav: typeof navModel;
 }
 
-export const models: RootModel = { auth, user: usersModel, nav: navModel };
+export const models: RootModel = { auth, users: usersModel, nav: navModel };
