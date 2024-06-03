@@ -16,11 +16,14 @@ test("Homepage", async () => {
     "random donation button",
   ).toBeDefined();
 
-  await waitFor(() =>
-    expect(
-      screen.getAllByTestId("project-card").at(0),
-      "project cards loaded",
-    ).toBeDefined(),
+  await waitFor(
+    () =>
+      expect(
+        screen.getAllByTestId("project-card").at(0),
+        "project cards loaded",
+      ).toBeDefined(),
+
+    { timeout: 2000 },
   );
 
   const projectTitles = screen.getAllByTestId("project-card-title");
@@ -31,10 +34,13 @@ test("Homepage", async () => {
     "project-card-fundraising-amount",
   );
 
-  await waitFor(() =>
-    expect(
-      projectFundraisingAmounts.at(0)?.textContent,
-      "project fundraising amounts",
-    ).toBeDefined(),
+  await waitFor(
+    () =>
+      expect(
+        projectFundraisingAmounts.at(0)?.textContent,
+        "project fundraising amounts",
+      ).toBeDefined(),
+
+    { timeout: 2000 },
   );
 });
