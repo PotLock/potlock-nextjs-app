@@ -1,12 +1,8 @@
 import { screen, waitFor } from "@testing-library/react";
-import { expect, test, vi } from "vitest";
+import { expect, test } from "vitest";
 
 import { renderWithStore } from "./_store/testEnv";
 import Homepage from "./page";
-
-// TODO: create separate testing env config and make its variables available globally for all tests
-vi.stubEnv("NEXT_PUBLIC_NETWORK", "mainnet");
-vi.stubEnv("NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID", "social.near");
 
 renderWithStore(<Homepage />);
 
@@ -34,8 +30,13 @@ test("Homepage", async () => {
     "project-card-fundraising-amount",
   );
 
-  expect(
-    projectFundraisingAmounts.at(0)?.textContent,
-    "project fundraising amounts",
-  ).toBeTruthy();
+  await waitFor(
+    () =>
+      expect(
+        projectFundraisingAmounts.at(0)?.textContent,
+        "project fundraising amounts",
+      ).toBeTruthy(),
+
+    { timeout: 2000 },
+  );
 });
