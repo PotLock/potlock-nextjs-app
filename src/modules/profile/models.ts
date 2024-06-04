@@ -6,33 +6,35 @@ import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interf
 import { getDonationsForProject } from "@/common/contracts/potlock/pot";
 import {
   NEARSocialUserProfile,
-  getUserProfile,
+  getSocialProfile,
 } from "@/common/contracts/social";
 import { yoctosToUsdWithFallback } from "@/common/lib";
 
-import { fetchProfileImages } from "../core/services/fetchProfileImages";
+import { fetchSocialImages } from "../core/services/socialImages";
 import {
   getTagsFromSocialProfileData,
   getTeamMembersFromProfile,
   getTotalAmountNear,
 } from "../project/utils";
 
-export type UserState = {
-  profile: NEARSocialUserProfile;
+export type Profile = {
+  socialData: NEARSocialUserProfile;
   tags: string[];
   team: string[];
   totalAmountNear: string;
-  profileImages: {
+
+  socialImages: {
     image: string;
     backgroundImage: string;
   };
 };
-type Users = Record<string, UserState>;
 
-export const usersModel = createModel<RootModel>()({
-  state: {} as Users,
+type ProfileIndex = Record<string, Profile>;
+
+export const profilesModel = createModel<RootModel>()({
+  state: {} as ProfileIndex,
   reducers: {
-    update(state, payload: Users) {
+    update(state, payload: ProfileIndex) {
       return {
         ...state,
         ...payload,
@@ -40,7 +42,7 @@ export const usersModel = createModel<RootModel>()({
     },
   },
   effects: {
-    async loadUser({
+    async loadProfile({
       projectId,
       potId,
       payoutDetails,
@@ -49,12 +51,12 @@ export const usersModel = createModel<RootModel>()({
       potId?: string;
       payoutDetails?: PayoutDetailed;
     }) {
-      const profile = await getUserProfile({
+      const socialData = await getSocialProfile({
         accountId: projectId,
       });
 
-      const profileImagesPromise = fetchProfileImages({
-        profile,
+      const socialImagesResponse = fetchSocialImages({
+        socialData,
         accountId: projectId,
       });
 
@@ -70,8 +72,8 @@ export const usersModel = createModel<RootModel>()({
               })
             : Promise.resolve([]);
 
-      const [profileImages, donations] = await Promise.all([
-        profileImagesPromise,
+      const [socialImages, donations] = await Promise.all([
+        socialImagesResponse,
         donationsPromise,
       ]);
 
@@ -79,20 +81,15 @@ export const usersModel = createModel<RootModel>()({
         getTotalAmountNear(donations, potId, payoutDetails),
       );
 
-      const tags = getTagsFromSocialProfileData(profile || {});
-      const team = getTeamMembersFromProfile(profile);
-
-      const user = {
-        [projectId]: {
-          profile: profile ?? {},
-          tags,
-          team,
-          totalAmountNear,
-          profileImages,
-        },
+      const profile: Profile = {
+        socialData: socialData ?? {},
+        tags: getTagsFromSocialProfileData(socialData || {}),
+        team: getTeamMembersFromProfile(socialData),
+        totalAmountNear,
+        socialImages,
       };
 
-      this.update(user);
+      this.update({ [projectId]: profile });
     },
   },
 });
@@ -123,7 +120,7 @@ const updateList = (list: string[], item: string): string[] => {
 
 export const navModel = createModel<RootModel>()({
   state: {
-    // TODO: add is registery admin
+    // TODO: add is registry admin
     accountId: "",
     isNadabotVerified: false,
     actAsDao: {

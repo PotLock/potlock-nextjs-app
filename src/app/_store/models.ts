@@ -1,12 +1,16 @@
 import { Models } from "@rematch/core";
 
 import { auth } from "@/modules/auth/state";
-import { navModel, usersModel } from "@/modules/profile/models";
+import { navModel, profilesModel } from "@/modules/profile/models";
 
 export interface RootModel extends Models<RootModel> {
   auth: typeof auth;
-  users: typeof usersModel;
+  profiles: typeof profilesModel;
   nav: typeof navModel;
 }
 
-export const models: RootModel = { auth, users: usersModel, nav: navModel };
+export const models: RootModel = {
+  auth,
+  profiles: profilesModel,
+  nav: navModel,
+};

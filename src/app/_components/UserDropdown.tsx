@@ -20,8 +20,8 @@ import { Skeleton } from "@/common/ui/components/skeleton";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { statusesIcons } from "@/modules/core/constants";
 import useRegistration from "@/modules/core/hooks/useRegistration";
-import { fetchProfileImages } from "@/modules/core/services/fetchProfileImages";
-import { DEFAULT_USER } from "@/modules/profile/constants";
+import { fetchSocialImages } from "@/modules/core/services/socialImages";
+import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
 import {
   updateAccountId,
   updateNadabotVerification,
@@ -46,7 +46,7 @@ const UserDropdown = () => {
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-      const { image, profile } = await fetchProfileImages({
+      const { image, profile } = await fetchSocialImages({
         accountId,
       });
       setProfileImg(image);
@@ -83,7 +83,7 @@ const UserDropdown = () => {
       width={size}
       height={size}
       onError={() => {
-        setProfileImg(DEFAULT_USER.profileImages.image);
+        setProfileImg(PROFILE_DEFAULTS.socialImages.image);
       }}
       className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
       alt="profile-image"

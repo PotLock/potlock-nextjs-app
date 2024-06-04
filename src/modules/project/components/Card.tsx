@@ -7,7 +7,7 @@ import { dispatch } from "@/app/_store";
 import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { _address, yoctosToNear } from "@/common/lib";
 import { Button } from "@/common/ui/components/button";
-import { useUser } from "@/modules/profile/utils";
+import { useProfile } from "@/modules/profile/utils";
 
 import CardSkeleton from "./CardSkeleton";
 
@@ -26,13 +26,14 @@ const Card = ({
 }) => {
   const allowDonate = _allowDonate === undefined ? true : _allowDonate;
 
-  const { profile, profileImages, tags, totalAmountNear } = useUser(projectId);
+  const { socialData, socialImages, tags, totalAmountNear } =
+    useProfile(projectId);
 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    dispatch.users
-      .loadUser({
+    dispatch.profiles
+      .loadProfile({
         projectId,
         payoutDetails,
         potId,
@@ -45,7 +46,7 @@ const Card = ({
   }, [projectId, payoutDetails, potId]);
 
   return (
-    <Link href={`user/${projectId}`}>
+    <Link href={`/user/${projectId}`}>
       {isLoading ? (
         <CardSkeleton />
       ) : (
@@ -60,7 +61,7 @@ const Card = ({
               // loading="lazy"
               className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
               alt="background-image"
-              src={profileImages.backgroundImage}
+              src={socialImages.backgroundImage}
             />
           </div>
 
@@ -73,7 +74,7 @@ const Card = ({
                 loading="lazy"
                 className="rounded-full bg-white object-cover shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
                 alt="profile-image"
-                src={profileImages.image}
+                src={socialImages.image}
               />
             </div>
 
@@ -82,7 +83,7 @@ const Card = ({
               className="w-full text-base font-semibold text-[#2e2e2e]"
               data-testid="project-card-title"
             >
-              {_address(profile?.name || "", 30) || _address(projectId, 30)}
+              {_address(socialData?.name || "", 30) || _address(projectId, 30)}
             </div>
 
             {/* Description */}
@@ -90,7 +91,7 @@ const Card = ({
               className="text-base font-normal text-[#2e2e2e]"
               data-testid="project-card-description"
             >
-              {_address(profile.description || "", MAX_DESCRIPTION_LENGTH)}
+              {_address(socialData.description || "", MAX_DESCRIPTION_LENGTH)}
             </div>
 
             {/* Tags */}
