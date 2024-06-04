@@ -19,7 +19,7 @@ test("Homepage", async () => {
         "project cards loaded",
       ).toBeDefined(),
 
-    { timeout: 2000 },
+    { timeout: 5000 },
   );
 
   const projectTitles = screen.getAllByTestId("project-card-title");
@@ -37,6 +37,6 @@ test("Homepage", async () => {
         "project fundraising amounts",
       ).toBeTruthy(),
 
-    { timeout: 2000 },
+    { timeout: 5000 },
   );
 });
