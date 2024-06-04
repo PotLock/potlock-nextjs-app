@@ -1,5 +1,5 @@
 import { naxiosInstance } from "@/common/contracts/index";
-import { Image, getUserProfile } from "@/common/contracts/social";
+import { Image, getSocialProfile } from "@/common/contracts/social";
 
 type Props = {
   accountId?: string;
@@ -41,7 +41,7 @@ export const getImage = async ({
 
   try {
     if (!socialImage && accountId) {
-      const profile = await getUserProfile({ accountId });
+      const profile = await getSocialProfile({ accountId });
       if (!profile) return console.log("error fetching social profile");
 
       socialImage = profile[type || "image"];

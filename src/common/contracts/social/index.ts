@@ -112,7 +112,7 @@ type NEARSocialGetResponse = {
  * Get User Profile Info from NEAR Social DB
  * @returns
  */
-export const getUserProfile = async (input: { accountId: string }) => {
+export const getSocialProfile = async (input: { accountId: string }) => {
   const response = await nearSocialDbContractApi.view<
     NEARSocialUserProfileInput,
     NEARSocialGetResponse

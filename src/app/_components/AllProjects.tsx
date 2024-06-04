@@ -9,7 +9,7 @@ import Filter, { Group } from "@/common/ui/components/Filter";
 import InfiniteScroll from "@/common/ui/components/InfiniteScroll";
 import SearchBar from "@/common/ui/components/SearchBar";
 import SortSelect from "@/common/ui/components/SortSelect";
-import { UserState } from "@/modules/profile/models";
+import { Profile } from "@/modules/profile/models";
 
 import Card from "../../modules/project/components/Card";
 import { categories, statuses } from "../../modules/project/constants";
@@ -76,20 +76,20 @@ const AllProjects = () => {
     }
   };
 
-  const registrationsProfile = useTypedSelector((state) => state.users);
+  const registrationsProfile = useTypedSelector((state) => state.profiles);
 
   // handle search & filter
   useEffect(() => {
     // Search
-    const handleSearch = (registration: Registration, user: UserState) => {
+    const handleSearch = (registration: Registration, profile: Profile) => {
       if (search === "") return true;
       const { registrant_id: registrantId } = registration;
-      const { profile, tags, team } = user || {};
+      const { socialData, tags, team } = profile || {};
       // registration fields to search in
       const fields = [
         registrantId,
-        profile?.description,
-        profile?.name,
+        socialData?.description,
+        socialData?.name,
         tags?.join(" "),
         team?.join(" "),
       ];
@@ -104,8 +104,8 @@ const AllProjects = () => {
       return statusFilter.includes(registration.status);
     };
     // Filter by registration category
-    const handleCategory = (user: UserState) => {
-      const tags = user.tags || [];
+    const handleCategory = (profile: Profile) => {
+      const tags = profile.tags || [];
 
       if (categoryFilter.length === 0) return true;
       return categoryFilter.some((tag: string) => tags.includes(tag));
@@ -113,18 +113,24 @@ const AllProjects = () => {
 
     if (search || categoryFilter.length || statusFilter.length) {
       const filteredRegistrations = registrations.filter((registration) => {
-        const user = registrationsProfile[registration.registrant_id] || {};
+        const profile = registrationsProfile[registration.registrant_id] || {};
 
         return (
-          handleSearch(registration, user) &&
-          handleCategory(user) &&
+          handleSearch(registration, profile) &&
+          handleCategory(profile) &&
           handleStatus(registration)
         );
       });
 
       setFilteredRegistrations(filteredRegistrations);
     }
-  }, [search, categoryFilter, statusFilter, registrations]);
+  }, [
+    search,
+    categoryFilter,
+    statusFilter,
+    registrations,
+    registrationsProfile,
+  ]);
 
   // Fetch Registrations
   useEffect(() => {

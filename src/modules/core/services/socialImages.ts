@@ -1,11 +1,11 @@
 import {
   NEARSocialUserProfile,
-  getUserProfile,
+  getSocialProfile,
 } from "@/common/contracts/social";
 import { getImage } from "@/common/lib/images";
 
 type Props = {
-  profile?: NEARSocialUserProfile;
+  socialData?: NEARSocialUserProfile;
   accountId: string;
 };
 
@@ -14,11 +14,11 @@ type Props = {
  * @param
  * @returns
  */
-export const fetchProfileImages = async ({ profile, accountId }: Props) => {
-  let currentProfile = profile;
+export const fetchSocialImages = async ({ socialData, accountId }: Props) => {
+  let currentProfile = socialData;
 
   if (!currentProfile) {
-    currentProfile = await getUserProfile({ accountId });
+    currentProfile = await getSocialProfile({ accountId });
   }
 
   const image = getImage({
