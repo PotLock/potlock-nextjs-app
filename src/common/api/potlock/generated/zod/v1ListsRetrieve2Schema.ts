@@ -1,10 +1,8 @@
 import { z } from "zod";
-
 import { listSchema } from "./listSchema";
 
-export const v1ListsRetrieve2PathParamsSchema = z.object({
-  list_id: z.number(),
-});
+
+export const v1ListsRetrieve2PathParamsSchema = z.object({ "list_id": z.number() });
 /**
  * @description Returns list details
  */

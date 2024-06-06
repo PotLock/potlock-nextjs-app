@@ -5,8 +5,11 @@ import { utils } from "near-api-js";
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/
  */
 export const POTLOCK_API_ENDPOINT =
-  process.env.NEXT_PUBLIC_API_ENDPOINT ??
-  "http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1";
+  "https://dev.potlock.io" ?? "https://test-dev.potlock.io";
+
+export const REQUEST_CONFIG = {
+  client: { baseURL: POTLOCK_API_ENDPOINT },
+};
 
 // NETWORK
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||

@@ -1,26 +1,29 @@
 import { defineConfig } from "@kubb/core";
 import { pluginOas } from "@kubb/plugin-oas";
+import { pluginSwr } from "@kubb/swagger-swr";
+import { pluginTs } from "@kubb/swagger-ts";
 import { pluginZod } from "@kubb/swagger-zod";
-import { pluginZodios } from "@kubb/swagger-zodios";
 
 export default defineConfig({
-  root: ".",
+  root: "./src/",
 
   input: {
     path: "https://dev.potlock.io/api/schema",
   },
 
   output: {
-    path: "./src/common/api/potlock/generated",
+    path: "./common/api/potlock/generated",
     clean: true,
   },
 
   plugins: [
     pluginOas(),
+    pluginTs(),
     pluginZod(),
 
-    pluginZodios({
-      output: { path: "./zodios.ts" },
+    pluginSwr({
+      output: { path: "./hooks", exportAs: "swrHooks" },
+      parser: "zod",
     }),
   ],
 

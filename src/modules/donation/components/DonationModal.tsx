@@ -15,15 +15,15 @@ import { DonationToPot } from "./DonationToPot";
 export type DonationModalProps = { accountId: AccountId } | { potId: PotId };
 
 export const DonationModal = create((props: DonationModalProps) => {
-  const { hide, remove, visible } = useModal();
+  const self = useModal();
 
   const onCloseClick = useCallback(() => {
-    hide();
-    remove();
-  }, [hide, remove]);
+    self.hide();
+    self.remove();
+  }, [self]);
 
   return (
-    <Dialog open={visible}>
+    <Dialog open={self.visible}>
       <DialogContent>
         <DialogClose aria-label="Close" onClick={onCloseClick}></DialogClose>
 
@@ -40,7 +40,13 @@ export const DonationModal = create((props: DonationModalProps) => {
 export const useDonationModal = (props: DonationModalProps) => {
   const { show } = useModal(DonationModal);
 
-  const openDonationModal = useCallback(() => show(props), [props, show]);
+  const openDonationModal = useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      show(props);
+    },
+    [props, show],
+  );
 
   return { openDonationModal };
 };

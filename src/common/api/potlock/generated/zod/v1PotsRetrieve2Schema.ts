@@ -1,8 +1,8 @@
 import { z } from "zod";
-
 import { potSchema } from "./potSchema";
 
-export const v1PotsRetrieve2PathParamsSchema = z.object({ pot_id: z.string() });
+
+export const v1PotsRetrieve2PathParamsSchema = z.object({ "pot_id": z.string() });
 /**
  * @description Returns pot details
  */
