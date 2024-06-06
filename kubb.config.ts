@@ -7,7 +7,7 @@ export default defineConfig({
   root: ".",
 
   input: {
-    path: "./src/common/api/potlock/index.yaml",
+    path: "https://dev.potlock.io/api/schema",
   },
 
   output: {
