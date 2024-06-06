@@ -1,22 +1,20 @@
 import { useCallback } from "react";
 
-import { create, show, useModal } from "@ebay/nice-modal-react";
+import { create, useModal } from "@ebay/nice-modal-react";
 
-import { AccountId } from "@/common/api/potlock";
+import { AccountId, PotId } from "@/common/api/potlock";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/common/ui/components/dialog";
 
-export type DonationModalProps = {
-  projectId: AccountId;
-};
+import { DonationToAccount } from "./DonationToAccount";
+import { DonationToPot } from "./DonationToPot";
 
-export const DonationModal = create(({ projectId }: DonationModalProps) => {
+export type DonationModalProps = { accountId: AccountId } | { potId: PotId };
+
+export const DonationModal = create((props: DonationModalProps) => {
   const { hide, remove, visible } = useModal();
 
   const onCloseClick = useCallback(() => {
@@ -29,20 +27,20 @@ export const DonationModal = create(({ projectId }: DonationModalProps) => {
       <DialogContent>
         <DialogClose aria-label="Close" onClick={onCloseClick}></DialogClose>
 
-        <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
+        {"accountId" in props && (
+          <DonationToAccount accountId={props.accountId} />
+        )}
 
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription>
-        </DialogHeader>
+        {"potId" in props && <DonationToPot potId={props.potId} />}
       </DialogContent>
     </Dialog>
   );
 });
 
-export const useDonationModal = () => useModal(DonationModal);
+export const useDonationModal = (props: DonationModalProps) => {
+  const { show } = useModal(DonationModal);
 
-export const openDonationModal = (props: DonationModalProps) =>
-  show(DonationModal, props);
+  const openDonationModal = useCallback(() => show(props), [props, show]);
+
+  return { openDonationModal };
+};

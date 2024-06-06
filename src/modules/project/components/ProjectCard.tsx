@@ -26,8 +26,7 @@ export const ProjectCard = ({
   payoutDetails?: PayoutDetailed;
 }) => {
   const allowDonate = _allowDonate === undefined ? true : _allowDonate;
-
-  const donationModal = useDonationModal();
+  const { openDonationModal } = useDonationModal({ accountId: projectId });
 
   const { socialData, socialImages, tags, totalAmountNear } =
     useProfile(projectId);
@@ -143,10 +142,7 @@ export const ProjectCard = ({
               <Button
                 className="w-full"
                 variant={"standard-outline"}
-                onClick={(e) => {
-                  e.preventDefault();
-                  // TODO: Donation modal
-                }}
+                onClick={openDonationModal}
               >
                 Donate
               </Button>
