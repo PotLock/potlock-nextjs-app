@@ -1,8 +1,15 @@
 import { z } from "zod";
+
 import { accountSchema } from "./accountSchema";
 
-
-export const v1DonorsRetrieveQueryParamsSchema = z.object({ "sort": z.string().describe("Sort by field, e.g., most_donated_usd").optional() }).optional();
+export const v1DonorsRetrieveQueryParamsSchema = z
+  .object({
+    sort: z
+      .string()
+      .describe("Sort by field, e.g., most_donated_usd")
+      .optional(),
+  })
+  .optional();
 /**
  * @description Returns a list of donor accounts
  */
@@ -14,4 +21,6 @@ export const v1DonorsRetrieve500Schema = z.any();
 /**
  * @description Returns a list of donor accounts
  */
-export const v1DonorsRetrieveQueryResponseSchema = z.array(z.lazy(() => accountSchema));
+export const v1DonorsRetrieveQueryResponseSchema = z.array(
+  z.lazy(() => accountSchema),
+);

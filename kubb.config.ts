@@ -23,4 +23,8 @@ export default defineConfig({
       output: { path: "./zodios.ts" },
     }),
   ],
+
+  hooks: {
+    done: ["yarn format"],
+  },
 });

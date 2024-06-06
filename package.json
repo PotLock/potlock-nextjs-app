@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit",
     "lint": "next lint",
+    "format": "yarn lint --fix",
+    "typecheck": "tsc --noEmit",
     "generate:api": "kubb --config kubb.config.ts",
     "test:unit": "vitest run",
     "dev:test": "yarn && yarn generate:api && vitest watch",
