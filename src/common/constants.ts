@@ -1,6 +1,13 @@
 import { Network } from "@wpdas/naxios";
 import { utils } from "near-api-js";
 
+/**
+ * Docs: https://dev.potlock.io/api/schema/swagger-ui/
+ */
+export const POTLOCK_API_ENDPOINT =
+  process.env.NEXT_PUBLIC_API_ENDPOINT ??
+  "http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1";
+
 // NETWORK
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
   "testnet") as Network;
