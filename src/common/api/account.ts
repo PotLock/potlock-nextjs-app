@@ -20,3 +20,9 @@ export const getAccounts = async () => {
   const json = await res.json();
   return json as GetAccountsResponse;
 };
+
+export const getAccount = async ({ accountId }: { accountId: string }) => {
+  const res = await fetch(`${URI}/accounts/${accountId}`);
+  const json = await res.json();
+  return json as GetAccountsResponse;
+};

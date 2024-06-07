@@ -18,6 +18,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { wallet } = useWallet();
   const isClient = useIsClient();
 
+  // console.log("wallet", wallet);
+  // console.log("isClient", isClient);
+  // console.log("ready", ready);
+
   // Check wallet
   const checkWallet = useCallback(async () => {
     if (wallet) {
@@ -58,10 +62,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
   }, [checkWallet, wallet]);
-
-  console.log("wallet", wallet);
-  console.log("isClient", wallet);
-  console.log("ready", wallet);
 
   if (!wallet || !isClient || !ready) {
     return <SuspenseLoading />;

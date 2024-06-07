@@ -14,13 +14,16 @@ export const SOCIAL_DB_CONTRACT_ID = process.env
   .NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID as string;
 
 // POTLOCK LISTS CONTRACT
-export const POTLOCK_LISTS_CONTRACT_ID = "lists.potlock.near";
+export const POTLOCK_LISTS_CONTRACT_ID = process.env
+  .NEXT_PUBLIC_POTLOCK_LISTS_CONTRACT_ID as string;
 
 // POTLOCK DONATE CONTRACT
-export const POTLOCK_DONATE_CONTRACT_ID = "donate.potlock.near";
+export const POTLOCK_DONATE_CONTRACT_ID = process.env
+  .NEXT_PUBLIC_POTLOCK_DONATE_CONTRACT_ID as string;
 
 // POTLOCK DONATE CONTRACT
-export const POTLOCK_POT_FACTORY_CONTRACT_ID = "v1.potfactory.potlock.near";
+export const POTLOCK_POT_FACTORY_CONTRACT_ID = process.env
+  .NEXT_PUBLIC_POTLOCK_POT_FACTORY_CONTRACT_ID as string;
 
 // POTLOCK REGISTRY LIST ID
 export const POTLOCK_REGISTRY_LIST_ID = 1;

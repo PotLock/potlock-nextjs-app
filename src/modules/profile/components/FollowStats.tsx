@@ -1,43 +1,30 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-// import { getSocialData } from "@/common/contracts/social";
+import { getFollowers, getFollowing } from "@/common/contracts/social";
 
 const FollowStats = ({ accountId }: { accountId: string }) => {
-  useEffect(() => {
-    console.log("accountId", accountId);
+  const [following, setFollowing] = useState(0);
+  const [followers, setFollowers] = useState(0);
 
+  useEffect(() => {
     const fetchSocialData = async () => {
-      // const following = await getSocialData({
-      //   args: {
-      //     keys: [`${accountId}/graph/follow/*`],
-      //     options: {
-      //       return_type: "BlockHeight",
-      //       values_only: true,
-      //     },
-      //   },
-      //   method: "keys",
-      // });
-      //   const followers = await getSocialData({
-      //     args: {
-      //       keys: [`*/graph/follow/${accountId}`],
-      //       options: {
-      //         return_type: "BlockHeight",
-      //         values_only: true,
-      //       },
-      //     },
-      //     method: "keys",
-      //   });
-      //   console.log("followers", followers);
+      const _following = await getFollowing({ accountId });
+      setFollowing(_following.total);
+      console.log(_following);
+
+      const _followers = await getFollowers({ accountId });
+      setFollowers(_followers.total);
+      console.log(_followers);
     };
-    fetchSocialData();
+
+    if (accountId) {
+      fetchSocialData();
+    }
   }, [accountId]);
 
-  //   return_type: "BlockHeight",
-
-  //   values_only: true,
-
+  // TODO
   return <div>FollowStats</div>;
 };
 

@@ -129,6 +129,66 @@ export const getSocialProfile = async (input: { accountId: string }) => {
   return response[input.accountId]?.profile;
 };
 
+type GetFollowingResponse = {
+  [key: string]: {
+    graph: {
+      follow: {
+        [key: string]: number;
+      };
+    };
+  };
+};
+
+export const getFollowing = async ({ accountId }: { accountId: string }) => {
+  try {
+    const response = await nearSocialDbContractApi.view<
+      any,
+      GetFollowingResponse
+    >("keys", {
+      args: {
+        keys: [`${accountId}/graph/follow/*`],
+        options: {
+          return_type: "BlockHeight",
+          values_only: true,
+        },
+      },
+    });
+
+    const followingAccounts = Object.keys(response[accountId].graph.follow);
+
+    return { accounts: followingAccounts, total: followingAccounts.length };
+  } catch (e) {
+    console.error("getFollowing:", e);
+    return { accounts: [], total: 0 };
+  }
+};
+
+export const getFollowers = async ({ accountId }: { accountId: string }) => {
+  try {
+    const response = await nearSocialDbContractApi.view<any, any>("keys", {
+      args: {
+        keys: [`*/graph/follow/${accountId}`],
+        options: {
+          return_type: "BlockHeight",
+          values_only: true,
+        },
+      },
+    });
+
+    console.log(response);
+    // TODO
+    // return response;
+    return { accounts: [], total: 0 };
+  } catch (e) {
+    console.error("getFollowers:", e);
+    return { accounts: [], total: 0 };
+  }
+
+  // const followingAccounts = Object.keys(response[accountId].graph.follow);
+
+  // return { accounts: followingAccounts, total: followingAccounts.length };
+};
+
 // TODO: fix graph endoint fetch failer
 export const getSocialData = async ({
   method,

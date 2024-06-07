@@ -19,7 +19,7 @@ import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIc
 import FollowStats from "./FollowStats";
 
 type Props = {
-  accountId: string; // near address (donor | proejct)
+  accountId: string; // near address (donor | project)
   isProject: boolean;
   profile?: NEARSocialUserProfile;
   imageStyle?: any;
@@ -37,15 +37,19 @@ const ProfileBanner = (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      const imagesData = await fetchSocialImages({
-        socialData: profile,
-        accountId,
-      });
+      try {
+        const imagesData = await fetchSocialImages({
+          socialData: profile,
+          accountId,
+        });
 
-      setProfileImages({
-        image: imagesData.image,
-        backgroundImage: imagesData.backgroundImage,
-      });
+        setProfileImages({
+          image: imagesData.image,
+          backgroundImage: imagesData.backgroundImage,
+        });
+      } catch (e) {
+        console.error("Fetch Social Images:", e);
+      }
     })();
   }, [profile, accountId]);
 
