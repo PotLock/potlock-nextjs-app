@@ -59,6 +59,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, [checkWallet, wallet]);
 
+  console.log("wallet", wallet);
+  console.log("isClient", wallet);
+  console.log("ready", wallet);
+
   if (!wallet || !isClient || !ready) {
     return <SuspenseLoading />;
   }
