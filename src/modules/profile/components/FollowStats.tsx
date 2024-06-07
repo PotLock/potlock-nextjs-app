@@ -25,7 +25,7 @@ const FollowStats = ({ accountId }: { accountId: string }) => {
   }, [accountId]);
 
   // TODO
-  return <div>FollowStats</div>;
+  return <div>FollowStats WIP</div>;
 };
 
 export default FollowStats;
