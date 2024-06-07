@@ -63,7 +63,7 @@ const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <button
       type="button"
-      className="flex items-center justify-between md:hidden"
+      className="flex items-center justify-between focus:outline-none md:hidden"
       onClick={onClick}
     >
       <svg
