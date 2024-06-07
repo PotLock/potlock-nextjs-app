@@ -3,11 +3,7 @@ import { useCallback } from "react";
 import { create, useModal } from "@ebay/nice-modal-react";
 
 import { AccountId, PotId } from "@/common/api/potlock";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-} from "@/common/ui/components/dialog";
+import { Dialog, DialogContent } from "@/common/ui/components/dialog";
 
 import { DonationToAccount } from "./DonationToAccount";
 import { DonationToPot } from "./DonationToPot";
@@ -17,16 +13,14 @@ export type DonationModalProps = { accountId: AccountId } | { potId: PotId };
 export const DonationModal = create((props: DonationModalProps) => {
   const self = useModal();
 
-  const onCloseClick = useCallback(() => {
+  const close = useCallback(() => {
     self.hide();
     self.remove();
   }, [self]);
 
   return (
     <Dialog open={self.visible}>
-      <DialogContent>
-        <DialogClose aria-label="Close" onClick={onCloseClick}></DialogClose>
-
+      <DialogContent onCloseClick={close}>
         {"accountId" in props && (
           <DonationToAccount accountId={props.accountId} />
         )}
@@ -38,15 +32,16 @@ export const DonationModal = create((props: DonationModalProps) => {
 });
 
 export const useDonationModal = (props: DonationModalProps) => {
-  const { show } = useModal(DonationModal);
+  const modal = useModal(DonationModal);
 
-  const openDonationModal = useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
-      show(props);
-    },
-    [props, show],
-  );
+  return {
+    openDonationModal: useCallback(
+      (event: React.MouseEvent) => {
+        event.preventDefault();
+        modal.show(props);
+      },
 
-  return { openDonationModal };
+      [modal, props],
+    ),
+  };
 };

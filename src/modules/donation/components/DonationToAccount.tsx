@@ -5,7 +5,11 @@ import {
   DialogTitle,
 } from "@/common/ui/components/dialog";
 
-export const DonationToAccount: React.FC<ByAccountId> = ({ accountId }) => {
+export type DonationToAccountProps = ByAccountId & {};
+
+export const DonationToAccount: React.FC<DonationToAccountProps> = ({
+  accountId,
+}) => {
   const { isLoading, data: account, error } = potlock.useAccount({ accountId });
 
   return isLoading ? (
