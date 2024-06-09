@@ -1,8 +1,9 @@
 export const defaultRegistrationStatusEnum = {
-    "Pending": "Pending",
-    "Approved": "Approved",
-    "Rejected": "Rejected",
-    "Graylisted": "Graylisted",
-    "Blacklisted": "Blacklisted"
+  Pending: "Pending",
+  Approved: "Approved",
+  Rejected: "Rejected",
+  Graylisted: "Graylisted",
+  Blacklisted: "Blacklisted",
 } as const;
-export type DefaultRegistrationStatusEnum = (typeof defaultRegistrationStatusEnum)[keyof typeof defaultRegistrationStatusEnum];
+export type DefaultRegistrationStatusEnum =
+  (typeof defaultRegistrationStatusEnum)[keyof typeof defaultRegistrationStatusEnum];

@@ -1,7 +1,8 @@
 export const potApplicationStatusEnum = {
-    "Pending": "Pending",
-    "Approved": "Approved",
-    "Rejected": "Rejected",
-    "InReview": "InReview"
+  Pending: "Pending",
+  Approved: "Approved",
+  Rejected: "Rejected",
+  InReview: "InReview",
 } as const;
-export type PotApplicationStatusEnum = (typeof potApplicationStatusEnum)[keyof typeof potApplicationStatusEnum];
+export type PotApplicationStatusEnum =
+  (typeof potApplicationStatusEnum)[keyof typeof potApplicationStatusEnum];
