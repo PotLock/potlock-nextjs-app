@@ -1,6 +1,16 @@
 import "@near-wallet-selector/modal-ui/styles.css";
+import "@unocss/reset/normalize.css";
+import "@unocss/reset/sanitize/assets.css";
+import "@unocss/reset/sanitize/sanitize.css";
+import "@unocss/reset/tailwind.css";
 import "./_layout/mona-sans-font.css";
 import "./_layout/globals.css";
+
+/**
+ * ?INFO: This is a virtual import managed by Next
+ **/
+// eslint-disable-next-line import/no-unresolved
+import "uno.css";
 
 import type { Metadata, Viewport } from "next";
 import { Lora } from "next/font/google";

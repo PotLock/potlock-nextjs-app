@@ -24,7 +24,7 @@ const ActAsDao = () => {
   const [inputActive, setInputActive] = useState(false);
 
   const { addresses, toggle, defaultAddress } = useTypedSelector(
-    (state) => state.nav,
+    (state) => state.nav.actAsDao,
   );
 
   const { markDaoAsDefault, addOrRemoveDaoAddress } = dispatch.nav;
@@ -41,11 +41,7 @@ const ActAsDao = () => {
             alt="info"
           />
         </Label>
-        <Switch
-          value={toggle}
-          id="act-dao"
-          onClick={() => toggleDao(!toggle)}
-        />
+        <Switch id="act-dao" checked={toggle} onCheckedChange={toggleDao} />
       </div>
       <Accordion className="w-full" type="single" collapsible>
         {addresses?.map((address: string) => (
