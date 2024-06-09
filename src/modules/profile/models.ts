@@ -106,18 +106,6 @@ type NavState = {
   actAsDao: ActAsDao;
 };
 
-const updateList = (list: string[], item: string): string[] => {
-  const index = list.indexOf(item);
-  if (index === -1) {
-    // Item does not exist, add it
-    list.push(item);
-  } else {
-    // Item exists, remove it
-    list.splice(index, 1);
-  }
-  return list;
-};
-
 export const navModel = createModel<RootModel>()({
   state: {
     // TODO: add is registry admin
@@ -130,29 +118,19 @@ export const navModel = createModel<RootModel>()({
     },
   } as NavState,
   reducers: {
+    updateActAsDao(state, payload) {
+      return {
+        ...state,
+        actAsDao: {
+          ...state.actAsDao,
+          ...payload,
+        },
+      };
+    },
     update(state, payload) {
       return {
         ...state,
         ...payload,
-      };
-    },
-    markDaoAsDefault(state, daoAddress: string) {
-      return {
-        ...state,
-        actAsDao: {
-          ...state.actAsDao,
-          defaultAddress: daoAddress,
-        },
-      };
-    },
-    addOrRemoveDaoAddress(state, daoAddress: string) {
-      const addresses = state.actAsDao.addresses;
-      return {
-        ...state,
-        actAsDao: {
-          ...state.actAsDao,
-          addresses: updateList(addresses, daoAddress),
-        },
       };
     },
   },
