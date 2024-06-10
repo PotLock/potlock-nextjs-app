@@ -2,15 +2,16 @@ import { forwardRef } from "react";
 
 import { cn } from "../utils";
 
-export interface InputFieldProps
+export interface TextFieldProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
+  type: "email" | "text" | "number" | "tel" | "url";
   label: string;
   labelExtension?: React.ReactNode;
   fieldExtension?: React.ReactNode;
   appendix?: string;
 }
 
-export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
+export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   (
     {
       className,
@@ -90,4 +91,4 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   },
 );
 
-InputField.displayName = "InputField";
+TextField.displayName = "TextField";

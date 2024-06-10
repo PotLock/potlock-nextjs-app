@@ -4,7 +4,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/common/ui/components/dialog";
-import { InputField } from "@/common/ui/components/input-field";
 import {
   Select,
   SelectContent,
@@ -14,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/common/ui/components/select";
+import { TextField } from "@/common/ui/components/text-field";
 
 export type DonationToAccountProps = ByAccountId & {};
 
@@ -35,7 +35,7 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
           </DialogHeader>
 
           <DialogDescription>
-            <InputField
+            <TextField
               label="Amount"
               labelExtension={
                 <span className="prose" un-text="sm gray-500">
