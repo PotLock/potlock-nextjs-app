@@ -7,7 +7,6 @@ import { dispatch } from "@/app/_store";
 import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { _address, yoctosToNear } from "@/common/lib";
 import { Button } from "@/common/ui/components/button";
-import { useDonationModal } from "@/modules/donation";
 import { useProfile } from "@/modules/profile/utils";
 
 import CardSkeleton from "./CardSkeleton";
@@ -26,7 +25,6 @@ export const ProjectCard = ({
   payoutDetails?: PayoutDetailed;
 }) => {
   const allowDonate = _allowDonate === undefined ? true : _allowDonate;
-  const { openDonationModal } = useDonationModal({ accountId: projectId });
 
   const { socialData, socialImages, tags, totalAmountNear } =
     useProfile(projectId);
@@ -142,7 +140,7 @@ export const ProjectCard = ({
               <Button
                 className="w-full"
                 variant={"standard-outline"}
-                onClick={openDonationModal}
+                onClick={() => {}}
               >
                 Donate
               </Button>
