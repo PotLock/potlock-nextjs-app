@@ -140,7 +140,10 @@ export const ProjectCard = ({
               <Button
                 className="w-full"
                 variant={"standard-outline"}
-                onClick={() => {}}
+                onClick={(e) => {
+                  e.preventDefault();
+                  // TODO: Donation modal
+                }}
               >
                 Donate
               </Button>
