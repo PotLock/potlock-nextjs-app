@@ -6,7 +6,11 @@ import { Provider as ReduxProvider } from "react-redux";
 import { store } from "@/app/_store";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 
-const Providers = ({ children }: { children: React.ReactNode }) => {
+export type RootProviderProps = {
+  children: React.ReactNode;
+};
+
+export const RootProvider: React.FC<RootProviderProps> = ({ children }) => {
   return (
     <NiceModalProvider>
       <ReduxProvider store={store}>
@@ -15,5 +19,3 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     </NiceModalProvider>
   );
 };
-
-export default Providers;

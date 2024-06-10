@@ -18,7 +18,7 @@ import { Lora } from "next/font/google";
 import { cn } from "@/common/ui/utils";
 
 import Nav from "./_layout/Nav";
-import Providers from "./_layout/RootProvider";
+import { RootProvider } from "./_layout/RootProvider";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -59,12 +59,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={`${cn("font-lora antialiased", lora.variable)}`}>
-        <Providers>
+        <RootProvider>
           <div className="container">
             <Nav />
             {children}
           </div>
-        </Providers>
+        </RootProvider>
       </body>
     </html>
   );
