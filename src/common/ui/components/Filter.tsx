@@ -25,7 +25,7 @@ type Props = {
   groups: Group[];
 };
 
-const Filter = ({ groups, popoverProps }: Props) => {
+export const Filter = ({ groups, popoverProps }: Props) => {
   return (
     <Popover {...(popoverProps || {})}>
       <PopoverTrigger asChild>
@@ -63,5 +63,3 @@ const Filter = ({ groups, popoverProps }: Props) => {
     </Popover>
   );
 };
-
-export default Filter;

@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 
 import { walletApi } from "@/common/contracts";
 import useIsClient from "@/common/lib/useIsClient";
-import { Button } from "@/common/ui/components/button";
+import { Button } from "@/common/ui/components";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import routesPath from "@/modules/core/routes";
 

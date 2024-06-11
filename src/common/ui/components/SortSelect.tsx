@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Button } from "./button";
 import { Select, SelectContent, SelectItem } from "./select";
 
-const SortSelect = ({
+export const SortSelect = ({
   options,
   onValueChange,
   ...selectProps
@@ -44,5 +44,3 @@ const SortSelect = ({
     </Select>
   );
 };
-
-export default SortSelect;

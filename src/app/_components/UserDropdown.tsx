@@ -8,15 +8,15 @@ import { walletApi } from "@/common/contracts";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import { getIsHuman } from "@/common/contracts/sybil.nadabot";
 import { _address } from "@/common/lib";
-import { Button } from "@/common/ui/components/button";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/common/ui/components/dropdown-menu";
-import { Skeleton } from "@/common/ui/components/skeleton";
+  Skeleton,
+} from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { statusesIcons } from "@/modules/core/constants";
 import useRegistration from "@/modules/core/hooks/useRegistration";
