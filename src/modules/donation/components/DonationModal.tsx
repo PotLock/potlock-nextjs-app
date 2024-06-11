@@ -22,10 +22,12 @@ export const DonationModal = create((props: DonationModalProps) => {
     <Dialog open={self.visible}>
       <DialogContent onCloseClick={close}>
         {"accountId" in props && (
-          <DonationToAccount accountId={props.accountId} />
+          <DonationToAccount accountId={props.accountId} closeDialog={close} />
         )}
 
-        {"potId" in props && <DonationToPot potId={props.potId} />}
+        {"potId" in props && (
+          <DonationToPot potId={props.potId} closeDialog={close} />
+        )}
       </DialogContent>
     </Dialog>
   );

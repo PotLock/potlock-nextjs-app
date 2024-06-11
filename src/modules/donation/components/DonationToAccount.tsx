@@ -1,3 +1,5 @@
+import { useMemo, useState } from "react";
+
 import { ByAccountId, potlock } from "@/common/api/potlock";
 import {
   Button,
@@ -18,49 +20,46 @@ import {
   TextField,
 } from "@/common/ui/components";
 
-export type DonationToAccountProps = ByAccountId & {};
+export type DonationToAccountProps = ByAccountId & {
+  closeDialog: VoidFunction;
+};
 
 export const DonationToAccount: React.FC<DonationToAccountProps> = ({
   accountId,
+  closeDialog: _,
 }) => {
   const { isLoading, data: account, error } = potlock.useAccount({ accountId });
 
-  return isLoading ? (
-    "Loading..."
-  ) : (
-    <>
-      {error && error.message}
+  const [currentScreenIndex, setCurrentScreenIndex] = useState<
+    "start" | "allocation" | "confirmation" | "done"
+  >("start");
 
-      {account !== undefined && (
-        <>
-          <DialogHeader>
-            <DialogTitle>{`Donation to ${account.near_social_profile_data.name}`}</DialogTitle>
-          </DialogHeader>
-          <DialogHeader className="flex w-full items-center justify-between gap-4 rounded-t-lg bg-red-500 pb-4 text-white">
-            <DialogTitle className="text-lg font-semibold">
-              Donate to projects in [Pot Name]
-            </DialogTitle>
-          </DialogHeader>
-          <DialogDescription className="space-y-4 p-6">
+  const currentScreen = useMemo(() => {
+    switch (currentScreenIndex) {
+      case "start":
+        return (
+          <>
             <div className="font-medium">
               How do you want to allocate funds?
             </div>
+
             <div className="grid gap-2">
-              <div className="flex items-center gap-2">
-                <RadioGroup>
+              <RadioGroup>
+                <div className="flex items-center gap-2">
                   <RadioGroupItem value="direct" id="direct-donation" checked />
                   <Label htmlFor="direct-donation">Direct donation</Label>
-                </RadioGroup>
-              </div>
-              <div className="flex items-center gap-2">
-                <RadioGroup>
+                </div>
+
+                <div className="flex items-center gap-2">
                   <RadioGroupItem value="matched" id="matched-donation" />
+
                   <Label htmlFor="matched-donation">
                     Quadratically matched donation (no pots available)
                   </Label>
-                </RadioGroup>
-              </div>
+                </div>
+              </RadioGroup>
             </div>
+
             <TextField
               label="Amount"
               labelExtension={
@@ -88,10 +87,43 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
               step={0.01}
               appendix="$ 0.00"
             />
+          </>
+        );
+      case "allocation":
+        return <></>;
+      case "confirmation":
+        return <></>;
+      case "done":
+        return <></>;
+      default:
+        return "Error: Unable to proceed with the next step";
+    }
+  }, [currentScreenIndex]);
+
+  return isLoading ? (
+    "Loading..."
+  ) : (
+    <>
+      {error && error.message}
+
+      {account !== undefined && (
+        <>
+          <DialogHeader className="flex w-full justify-between gap-4 rounded-t-lg bg-red-500 pb-4 text-white">
+            <DialogTitle className="text-lg font-semibold">
+              {`Donation to ${account.near_social_profile_data.name}`}
+            </DialogTitle>
+          </DialogHeader>
+
+          <DialogDescription className="space-y-4 p-6">
+            {currentScreen}
           </DialogDescription>
-          <DialogFooter className="flex items-center justify-between gap-4 p-6 pt-4">
-            <Button variant="brand-outline">Add to cart</Button>
-            <Button variant="brand-plain" color="primary">
+
+          <DialogFooter className="flex justify-between gap-4 p-4">
+            <Button variant="brand-outline" color="black">
+              Add to cart
+            </Button>
+
+            <Button variant="brand-filled" color="primary">
               Proceed to donate
             </Button>
           </DialogFooter>

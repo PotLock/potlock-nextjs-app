@@ -5,7 +5,14 @@ import {
   DialogTitle,
 } from "@/common/ui/components";
 
-export const DonationToPot: React.FC<ByPotId> = ({ potId }) => {
+export type DonationToPotProps = ByPotId & {
+  closeDialog: VoidFunction;
+};
+
+export const DonationToPot: React.FC<DonationToPotProps> = ({
+  potId,
+  closeDialog: _,
+}) => {
   const { isLoading, data: pot, error } = potlock.usePot({ potId });
 
   return isLoading ? (
