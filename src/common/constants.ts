@@ -46,3 +46,5 @@ export const NO_DEPOSIT_TGAS = "0";
 // IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
 export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
+
+export const DEFAULT_URL = "https://app.potlock.org/";

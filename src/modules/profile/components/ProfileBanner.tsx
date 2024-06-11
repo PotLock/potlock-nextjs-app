@@ -83,7 +83,7 @@ const ProfileBanner = (props: Props) => {
       <div className="relative z-[6] flex -translate-y-2/4 items-end pl-2 md:pl-16">
         {/*  image */}
 
-        <div className="relative h-[120px] w-[120px] rounded-full bg-white p-1.5">
+        <div className="relative h-[120px] w-[120px] rounded-full bg-white p-1.5 max-[400px]:h-[90px] max-[400px]:w-[90px]">
           {profileImages.image ? (
             <Avatar className="h-full w-full">
               <AvatarImage src={profileImages.image} alt="profile-image" />
@@ -94,11 +94,12 @@ const ProfileBanner = (props: Props) => {
           )}
         </div>
         {/* Status */}
-        <div className="relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-6">
+        <div className="relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-2 md:gap-6">
           {registration.id ? (
             <div className="flex items-center gap-1 overflow-hidden rounded-[20px] bg-white p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100">
               {projectStatusIcons[registration.status].icon}
               <div
+                className="hidden md:block"
                 style={{
                   color: projectStatusIcons[registration.status].color,
                 }}
