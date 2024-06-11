@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { create, useModal } from "@ebay/nice-modal-react";
 
 import { AccountId, PotId } from "@/common/api/potlock";
-import { Dialog, DialogContent } from "@/common/ui/components/dialog";
+import { Dialog, DialogContent } from "@/common/ui/components";
 
 import { DonationToAccount } from "./DonationToAccount";
 import { DonationToPot } from "./DonationToPot";

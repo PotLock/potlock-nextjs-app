@@ -3,7 +3,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/common/ui/components/dialog";
+} from "@/common/ui/components";
 
 export const DonationToPot: React.FC<ByPotId> = ({ potId }) => {
   const { isLoading, data: pot, error } = potlock.usePot({ potId });

@@ -6,10 +6,13 @@ import {
   RegistrationStatus,
 } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { getRegistrations } from "@/common/contracts/potlock/lists";
-import Filter, { Group } from "@/common/ui/components/Filter";
-import InfiniteScroll from "@/common/ui/components/InfiniteScroll";
-import SearchBar from "@/common/ui/components/SearchBar";
-import SortSelect from "@/common/ui/components/SortSelect";
+import {
+  Filter,
+  Group,
+  InfiniteScroll,
+  SearchBar,
+  SortSelect,
+} from "@/common/ui/components";
 import { Profile } from "@/modules/profile/models";
 import { ProjectCard } from "@/modules/project";
 import { categories, statuses } from "@/modules/project/constants";

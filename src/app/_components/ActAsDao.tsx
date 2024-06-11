@@ -9,13 +9,13 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/common/ui/components/accordion";
-import { Button } from "@/common/ui/components/button";
-import { Checkbox } from "@/common/ui/components/checkbox";
-import { DropdownMenuLabel } from "@/common/ui/components/dropdown-menu";
-import { Input } from "@/common/ui/components/input";
-import { Label } from "@/common/ui/components/label";
-import { Switch } from "@/common/ui/components/switch";
+  Button,
+  Checkbox,
+  DropdownMenuLabel,
+  Input,
+  Label,
+  Switch,
+} from "@/common/ui/components";
 import { toggleDao } from "@/modules/profile/utils";
 
 import { dispatch, useTypedSelector } from "../_store";

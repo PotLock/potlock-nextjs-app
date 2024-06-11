@@ -6,7 +6,7 @@ import Link from "next/link";
 import { dispatch } from "@/app/_store";
 import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { _address, yoctosToNear } from "@/common/lib";
-import { Button } from "@/common/ui/components/button";
+import { Button } from "@/common/ui/components";
 import { useDonationModal } from "@/modules/donation";
 import { useProfile } from "@/modules/profile/utils";
 
