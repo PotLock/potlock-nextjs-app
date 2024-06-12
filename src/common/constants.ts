@@ -1,4 +1,5 @@
 import { Network } from "@wpdas/naxios";
+import Big from "big.js";
 import { utils } from "near-api-js";
 
 // NETWORK
@@ -48,3 +49,23 @@ export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
 
 export const DEFAULT_URL = "https://app.potlock.org/";
+
+export const SUPPORTED_FTS = {
+  NEAR: {
+    iconUrl:
+      "https://nftstorage.link/ipfs/bafkreidnqlap4cp5o334lzbhgbabwr6yzkj6albia62l6ipjsasokjm6mi",
+    toIndivisible: (amount: any) => new Big(amount).mul(new Big(10).pow(24)),
+    fromIndivisible: (amount: any, decimals?: any) =>
+      Big(amount)
+        .div(Big(10).pow(24))
+        .toFixed(decimals || 2),
+  },
+  USD: {
+    iconUrl: "$",
+    toIndivisible: (amount: any) => new Big(amount).mul(new Big(10).pow(24)),
+    fromIndivisible: (amount: any, decimals: any) =>
+      Big(amount)
+        .div(Big(10).pow(24))
+        .toFixed(decimals || 2),
+  },
+};

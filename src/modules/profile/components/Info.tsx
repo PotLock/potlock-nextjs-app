@@ -12,10 +12,9 @@ import { Button } from "@/common/ui/components/button";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
 
-import { LinksWrapper, ReferralButton } from "./styles";
-import CopyIcon from "../CopyIcon";
-import Linktree from "../Linktree/Linktree";
-import ProfileTags from "../ProfileTags";
+import CopyIcon from "./CopyIcon";
+import Linktree from "./Linktree";
+import ProfileTags from "./ProfileTags";
 
 type Props = {
   accountId: string;
@@ -53,7 +52,8 @@ const Info = ({ accountId }: Props) => {
         )}
       </div>
       <ProfileTags accountId={accountId} />
-      <LinksWrapper>
+      {/* LinksWrapper */}
+      <div className="mt-4 flex flex-wrap gap-8">
         <Linktree accountId={accountId} />
         {isAuthenticated && (
           <CopyToClipboard
@@ -65,13 +65,23 @@ const Info = ({ accountId }: Props) => {
               }, 2000);
             }}
           >
-            <ReferralButton>
-              {copied ? <CheckIcon /> : <ReferrerIcon />}
-              <div>Earn referral fees</div>
-            </ReferralButton>
+            {/* ReferralButton container */}
+            <div className="group flex cursor-pointer items-center gap-2 group-hover:bg-green-300">
+              {copied ? (
+                <CheckIcon className="w-[18px]" />
+              ) : (
+                <ReferrerIcon
+                  className="group-hover:[accent-dark] w-[18px]"
+                  pathClassName="group-hover:fill-[#292929] transition-all ease-in-out"
+                />
+              )}
+              <p className="font-500 text-sm" style={{ fontWeight: 500 }}>
+                Earn referral fees
+              </p>
+            </div>
           </CopyToClipboard>
         )}
-      </LinksWrapper>
+      </div>
     </div>
   );
 };

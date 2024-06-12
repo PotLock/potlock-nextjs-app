@@ -21,4 +21,6 @@ export interface DirectDonation {
   protocol_fee: string;
   referrer_id: null | string;
   referrer_fee: null | string;
+  base_currency: string;
+  amount?: string;
 }

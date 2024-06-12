@@ -1,10 +1,30 @@
+import { styled } from "styled-components";
+
 import GithubSvg from "@/assets/svgs/github";
 import NearSvg from "@/assets/svgs/near";
 import TwitterSvg from "@/assets/svgs/twitter";
 import WebsiteSvg from "@/assets/svgs/website";
 
-import { LinktreeContainer, LinktreeItemContainer } from "./styled";
-import useProfileData from "../../hooks/useProfileData";
+import useProfileData from "../hooks/useProfileData";
+
+const LinktreeItemContainer = styled.a`
+  display: flex;
+  svg {
+    width: 24px;
+    height: 24px;
+    path,
+    rect {
+      transition: all 300ms ease-in-out;
+    }
+    &#near-logo:hover path {
+      fill: white;
+    }
+    :hover path,
+    :hover rect {
+      fill: #292929;
+    }
+  }
+`;
 
 type Props = {
   accountId: string;
@@ -32,7 +52,8 @@ const Linktree = ({ accountId }: Props) => {
   };
 
   return (
-    <LinktreeContainer>
+    // LinktreeContainer
+    <div className="flex flex-wrap justify-start gap-4">
       {Object.entries(linktree).map(([k, v]) => {
         return k in itemIconUrls && v ? (
           <LinktreeItemContainer
@@ -55,7 +76,7 @@ const Linktree = ({ accountId }: Props) => {
       >
         {itemIconUrls.NEAR}
       </LinktreeItemContainer>
-    </LinktreeContainer>
+    </div>
   );
 };
 
