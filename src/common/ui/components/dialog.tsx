@@ -22,7 +22,7 @@ const DialogOverlay = forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/80",
+      "fixed inset-0 z-50 bg-white/30 backdrop-blur-sm",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",
       " data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
@@ -77,8 +77,65 @@ const DialogContent = forwardRef<
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
+const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
+  <svg
+    width="118"
+    height="152"
+    viewBox="0 0 118 152"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <rect
+      width="20"
+      height="161.118"
+      rx="10"
+      transform="matrix(-0.707107 0.707107 0.707107 0.707107 -39.752 -37)"
+      fill="white"
+      fill-opacity="0.08"
+    />
+
+    <rect
+      width="20"
+      height="245.972"
+      rx="10"
+      transform="matrix(-0.707107 0.707107 0.707107 0.707107 -71.752 -37)"
+      fill="white"
+      fill-opacity="0.08"
+    />
+
+    <rect
+      width="20"
+      height="164.654"
+      rx="10"
+      transform="matrix(-0.707107 0.707107 0.707107 0.707107 -103.752 -37)"
+      fill="white"
+      fill-opacity="0.08"
+    />
+
+    <rect
+      width="20"
+      height="177.702"
+      rx="10"
+      transform="matrix(-0.707107 0.707107 0.707107 0.707107 -7.75195 -37)"
+      fill="white"
+      fill-opacity="0.08"
+    />
+
+    <rect
+      width="20"
+      height="78.4889"
+      rx="10"
+      transform="matrix(-0.707107 0.707107 0.707107 0.707107 24.248 -37)"
+      fill="white"
+      fill-opacity="0.08"
+    />
+  </svg>
+);
+
 const DialogHeader = ({
   className,
+  children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
@@ -87,7 +144,20 @@ const DialogHeader = ({
       className,
     )}
     {...props}
-  />
+  >
+    <div
+      un-position="absolute left-0 top-0"
+      un-w="full"
+      un-flex="~"
+      un-justify="between"
+      un-gap="4"
+    >
+      <DialogHeaderPattern />
+      <DialogHeaderPattern className="rotate-180" />
+    </div>
+
+    {children}
+  </div>
 );
 DialogHeader.displayName = "DialogHeader";
 
@@ -112,7 +182,7 @@ const DialogTitle = forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "prose text-lg font-semibold leading-none tracking-tight",
       className,
     )}
     {...props}
