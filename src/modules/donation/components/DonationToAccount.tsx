@@ -118,17 +118,15 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
 
       {account !== undefined && (
         <>
-          <DialogHeader className="flex w-full justify-between gap-4 rounded-t-lg bg-red-500 p-6 pt-14 text-white">
-            <DialogTitle className="font-600 text-xl">
+          <DialogHeader>
+            <DialogTitle>
               {`Donation to ${account.near_social_profile_data?.name}`}
             </DialogTitle>
           </DialogHeader>
 
-          <DialogDescription className="space-y-4 p-6">
-            {currentScreen}
-          </DialogDescription>
+          <DialogDescription>{currentScreen}</DialogDescription>
 
-          <DialogFooter className="flex justify-between gap-4 p-4">
+          <DialogFooter>
             <Button
               type="button"
               variant="brand-outline"
