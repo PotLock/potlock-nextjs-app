@@ -154,7 +154,7 @@ const DialogHeader = ({
       un-gap="4"
     >
       <DialogHeaderPattern />
-      <DialogHeaderPattern className="rotate-180" />
+      <DialogHeaderPattern className="-scale-x-100 transform" />
     </div>
 
     {children}
