@@ -47,7 +47,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     return (
       <div un-flex="~ col" un-gap="2" className="w-full">
         <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
-          <span className="prose" un-text="sm" un-font="500">
+          <span className="prose" un-text="sm neutral-950" un-font="500">
             {label}
           </span>
 
