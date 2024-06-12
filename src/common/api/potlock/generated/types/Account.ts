@@ -1,3 +1,5 @@
+import { NearSocialProfileData } from "./NearSocialProfileData";
+
 export type Account = {
   /**
    * @description On-chain account address.
@@ -5,24 +7,20 @@ export type Account = {
    */
   id: string;
   /**
-   * @description Total donations received in USD.
-   * @type string | undefined, decimal
+   * @type number, double
    */
-  total_donations_in_usd?: string;
+  total_donations_in_usd: number;
   /**
-   * @description Total donated in USD.
-   * @type string | undefined, decimal
+   * @type number, double
    */
-  total_donations_out_usd?: string;
+  total_donations_out_usd: number;
   /**
-   * @description Total matching pool allocations in USD.
-   * @type string | undefined, decimal
+   * @type number, double
    */
-  total_matching_pool_allocations_usd?: string;
+  total_matching_pool_allocations_usd: number;
   /**
-   * @description Number of donors.
-   * @type integer | undefined
+   * @type integer
    */
-  donors_count?: number;
-  near_social_profile_data?: any;
+  donors_count: number;
+  near_social_profile_data?: NearSocialProfileData;
 };
