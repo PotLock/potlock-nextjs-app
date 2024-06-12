@@ -55,7 +55,12 @@ export const donationSchema = z.object({
     .describe("Chef fee in USD.")
     .nullable()
     .nullish(),
-  tx_hash: z.string().max(64).describe("Transaction hash."),
+  tx_hash: z
+    .string()
+    .max(64)
+    .describe("Transaction hash.")
+    .nullable()
+    .nullish(),
   donor: z.string().describe("Donor."),
   ft: z.string().describe("Donation FT."),
   pot: z.string().describe("Donation pot.").nullable(),

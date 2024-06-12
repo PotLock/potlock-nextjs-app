@@ -1,9 +1,13 @@
+"use client";
+
 import { styled } from "styled-components";
 
 import { Button } from "@/common/ui/components/button";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
 
 import FollowButton from "./FollowButton";
+
+// import FollowButton from "../FollowButton/FollowButton";
 
 export const Container = styled.div`
   display: flex;

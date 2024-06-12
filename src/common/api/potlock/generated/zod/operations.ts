@@ -6,6 +6,18 @@ import {
   v1AccountsActivePotsRetrieveQueryResponseSchema,
 } from "./v1AccountsActivePotsRetrieveSchema";
 import {
+  v1AccountsDonationsReceivedRetrieve404Schema,
+  v1AccountsDonationsReceivedRetrieve500Schema,
+  v1AccountsDonationsReceivedRetrievePathParamsSchema,
+  v1AccountsDonationsReceivedRetrieveQueryResponseSchema,
+} from "./v1AccountsDonationsReceivedRetrieveSchema";
+import {
+  v1AccountsDonationsSentRetrieve404Schema,
+  v1AccountsDonationsSentRetrieve500Schema,
+  v1AccountsDonationsSentRetrievePathParamsSchema,
+  v1AccountsDonationsSentRetrieveQueryResponseSchema,
+} from "./v1AccountsDonationsSentRetrieveSchema";
+import {
   v1AccountsRetrieve2404Schema,
   v1AccountsRetrieve2500Schema,
   v1AccountsRetrieve2PathParamsSchema,
@@ -104,6 +116,32 @@ export const operations = {
       200: v1AccountsActivePotsRetrieveQueryResponseSchema,
       404: v1AccountsActivePotsRetrieve404Schema,
       500: v1AccountsActivePotsRetrieve500Schema,
+    },
+  },
+  v1_accounts_donations_received_retrieve: {
+    request: undefined,
+    parameters: {
+      path: v1AccountsDonationsReceivedRetrievePathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: v1AccountsDonationsReceivedRetrieveQueryResponseSchema,
+      404: v1AccountsDonationsReceivedRetrieve404Schema,
+      500: v1AccountsDonationsReceivedRetrieve500Schema,
+    },
+  },
+  v1_accounts_donations_sent_retrieve: {
+    request: undefined,
+    parameters: {
+      path: v1AccountsDonationsSentRetrievePathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: v1AccountsDonationsSentRetrieveQueryResponseSchema,
+      404: v1AccountsDonationsSentRetrieve404Schema,
+      500: v1AccountsDonationsSentRetrieve500Schema,
     },
   },
   v1_donors_retrieve: {
@@ -249,6 +287,12 @@ export const paths = {
   },
   "/api/v1/accounts/{account_id}/active_pots": {
     get: operations["v1_accounts_active_pots_retrieve"],
+  },
+  "/api/v1/accounts/{account_id}/donations_received": {
+    get: operations["v1_accounts_donations_received_retrieve"],
+  },
+  "/api/v1/accounts/{account_id}/donations_sent": {
+    get: operations["v1_accounts_donations_sent_retrieve"],
   },
   "/api/v1/donors": {
     get: operations["v1_donors_retrieve"],

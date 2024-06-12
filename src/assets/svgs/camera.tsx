@@ -1,5 +1,11 @@
 const CameraSvg = ({ height }: { height?: number }) => (
-  <svg width={height || 48} height={height || 48} viewBox={`0 0 48 48`} fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width={height || 48}
+    height={height || 48}
+    viewBox={`0 0 48 48`}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <mask
       id="mask0_3178_2528"
       style={{ maskType: "alpha" }}

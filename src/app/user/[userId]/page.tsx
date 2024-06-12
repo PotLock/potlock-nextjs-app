@@ -1,4 +1,5 @@
-import DonationsInfo from "@/modules/profile/components/DonationsInfo";
+// import DonationsInfo from "@/modules/profile/components/DonationsInfo";
+
 import Info from "@/modules/profile/components/Info";
 import ProfileBanner from "@/modules/profile/components/ProfileBanner";
 import ProjectBanner from "@/modules/project/components/ProjectBanner";

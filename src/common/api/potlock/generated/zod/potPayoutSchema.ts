@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const potPayoutSchema = z.object({
   id: z.number().describe("Payout id."),
-  amount: z.string().max(64).describe("Payout amount."),
+  amount: z.string().describe("Payout amount."),
   amount_paid_usd: z
     .string()
     .regex(new RegExp("^-?\\d{0,18}(?:\\.\\d{0,2})?$"))
@@ -10,7 +10,7 @@ export const potPayoutSchema = z.object({
     .nullable()
     .nullish(),
   paid_at: z.string().datetime().describe("Payout date."),
-  tx_hash: z.string().max(64).describe("Transaction hash."),
+  tx_hash: z.string().describe("Transaction hash.").nullable().nullish(),
   pot: z.string().describe("Pot that this payout is for."),
   recipient: z.string().describe("Payout recipient."),
   ft: z.string().describe("Payout FT."),

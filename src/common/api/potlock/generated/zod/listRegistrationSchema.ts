@@ -29,7 +29,7 @@ export const listRegistrationSchema = z.object({
     .describe("Transaction hash.")
     .nullable()
     .nullish(),
-  list: z.number().min(0).max(2147483647).describe("List registered."),
+  list: z.number().describe("List registered."),
   registrant: z.string().describe("Account that registered on the list."),
   registered_by: z.string().describe("Account that did the registration."),
 });

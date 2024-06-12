@@ -37,23 +37,19 @@ export const potSchema = z.object({
     .describe("Pot matching round end date."),
   registry_provider: z
     .string()
-    .max(64)
     .describe("Registry provider.")
     .nullable()
     .nullish(),
   min_matching_pool_donation_amount: z
     .string()
-    .max(64)
     .describe("Min matching pool donation amount."),
   sybil_wrapper_provider: z
     .string()
-    .max(64)
     .describe("Sybil wrapper provider.")
     .nullable()
     .nullish(),
   custom_sybil_checks: z
     .string()
-    .max(64)
     .describe("Custom sybil checks.")
     .nullable()
     .nullish(),
@@ -79,20 +75,17 @@ export const potSchema = z.object({
     .min(0)
     .max(2147483647)
     .describe("Chef fee basis points."),
-  total_matching_pool: z.string().max(64).describe("Total matching pool."),
+  total_matching_pool: z.string().describe("Total matching pool."),
   total_matching_pool_usd: z
     .string()
     .regex(new RegExp("^-?\\d{0,18}(?:\\.\\d{0,2})?$")),
-  matching_pool_balance: z.string().max(64).describe("Matching pool balance."),
+  matching_pool_balance: z.string().describe("Matching pool balance."),
   matching_pool_donations_count: z
     .number()
     .min(0)
     .max(2147483647)
     .describe("Matching pool donations count."),
-  total_public_donations: z
-    .string()
-    .max(64)
-    .describe("Total public donations."),
+  total_public_donations: z.string().describe("Total public donations."),
   total_public_donations_usd: z
     .string()
     .regex(new RegExp("^-?\\d{0,18}(?:\\.\\d{0,2})?$")),
@@ -117,7 +110,6 @@ export const potSchema = z.object({
   all_paid_out: z.boolean().describe("All paid out."),
   protocol_config_provider: z
     .string()
-    .max(64)
     .describe("Protocol config provider.")
     .nullable()
     .nullish(),

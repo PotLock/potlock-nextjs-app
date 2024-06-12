@@ -1,5 +1,11 @@
 const NearIcon = (props: any) => (
-  <svg {...props} style={{ width: 16 }} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    {...props}
+    style={{ width: 16 }}
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <g clip-path="url(#clip0_454_78)">
       <circle cx="8" cy="8" r="7.25" stroke="#292929" stroke-width="1.5" />
       <path

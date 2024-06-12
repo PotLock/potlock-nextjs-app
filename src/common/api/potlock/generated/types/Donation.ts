@@ -78,7 +78,7 @@ export type Donation = {
    * @description Transaction hash.
    * @type string
    */
-  tx_hash: string;
+  tx_hash?: string | null;
   /**
    * @description Donor.
    * @type string
