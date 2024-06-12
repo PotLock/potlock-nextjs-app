@@ -39,7 +39,7 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
       case "start":
         return (
           <>
-            <div className="font-medium">
+            <div className="prose" un-font="600" un-text="neutral-950">
               How do you want to allocate funds?
             </div>
 
@@ -63,9 +63,19 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
             <TextField
               label="Amount"
               labelExtension={
-                <span className="prose" un-text="sm gray-500">
-                  200 NEAR available
-                </span>
+                <div un-flex="~" un-gap="1">
+                  <span
+                    className="prose"
+                    un-text="sm neutral-950"
+                    un-font="600"
+                  >
+                    200 NEAR
+                  </span>
+
+                  <span className="prose" un-text="sm  neutral-600">
+                    available
+                  </span>
+                </div>
               }
               fieldExtension={
                 <Select defaultValue="near">
@@ -108,9 +118,9 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
 
       {account !== undefined && (
         <>
-          <DialogHeader className="flex w-full justify-between gap-4 rounded-t-lg bg-red-500 pb-4 text-white">
-            <DialogTitle className="text-lg font-semibold">
-              {`Donation to ${account.near_social_profile_data.name}`}
+          <DialogHeader className="flex w-full justify-between gap-4 rounded-t-lg bg-red-500 p-6 pt-14 text-white">
+            <DialogTitle className="font-600 text-xl">
+              {`Donation to ${account.near_social_profile_data?.name}`}
             </DialogTitle>
           </DialogHeader>
 
@@ -119,11 +129,16 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
           </DialogDescription>
 
           <DialogFooter className="flex justify-between gap-4 p-4">
-            <Button variant="brand-outline" color="black">
+            <Button
+              type="button"
+              variant="brand-outline"
+              color="black"
+              disabled
+            >
               Add to cart
             </Button>
 
-            <Button variant="brand-filled" color="primary">
+            <Button type="button" variant="brand-filled" color="primary">
               Proceed to donate
             </Button>
           </DialogFooter>
