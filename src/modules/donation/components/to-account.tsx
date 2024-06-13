@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { ByAccountId, potlock } from "@/common/api/potlock";
 import {
@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Label,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -20,6 +19,14 @@ import {
   TextField,
 } from "@/common/ui/components";
 
+import { useAccountDonationForm } from "../hooks/account-donation";
+
+export type DonationToAccountStep =
+  | "start"
+  | "allocation"
+  | "confirmation"
+  | "done";
+
 export type DonationToAccountProps = ByAccountId & {
   closeDialog: VoidFunction;
 };
@@ -29,13 +36,30 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
   closeDialog: _,
 }) => {
   const { isLoading, data: account, error } = potlock.useAccount({ accountId });
+  const form = useAccountDonationForm({ accountId });
 
-  const [currentScreenIndex, setCurrentScreenIndex] = useState<
-    "start" | "allocation" | "confirmation" | "done"
-  >("start");
+  const [currentStepIndex, setCurrentStepIndex] =
+    useState<DonationToAccountStep>("start");
+
+  const handleNextStep = useCallback(
+    (step: DonationToAccountStep) => () => {
+      switch (step) {
+        case "start":
+          return setCurrentStepIndex("allocation");
+        case "allocation":
+          return setCurrentStepIndex("confirmation");
+        case "confirmation":
+          return setCurrentStepIndex("done");
+        case "done":
+          return void null;
+      }
+    },
+
+    [],
+  );
 
   const currentScreen = useMemo(() => {
-    switch (currentScreenIndex) {
+    switch (currentStepIndex) {
       case "start":
         return (
           <>
@@ -110,7 +134,7 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
       default:
         return "Error: Unable to proceed with the next step";
     }
-  }, [currentScreenIndex]);
+  }, [currentStepIndex]);
 
   return isLoading ? (
     <span
@@ -135,7 +159,9 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
             </DialogTitle>
           </DialogHeader>
 
-          <DialogDescription>{currentScreen}</DialogDescription>
+          <DialogDescription asChild>
+            <div>{currentScreen}</div>
+          </DialogDescription>
 
           <DialogFooter>
             <Button
@@ -147,7 +173,12 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
               Add to cart
             </Button>
 
-            <Button type="button" variant="brand-filled" color="primary">
+            <Button
+              type="button"
+              variant="brand-filled"
+              color="primary"
+              onClick={handleNextStep(currentStepIndex)}
+            >
               Proceed to donate
             </Button>
           </DialogFooter>

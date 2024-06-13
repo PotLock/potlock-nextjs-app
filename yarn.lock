@@ -1116,6 +1116,11 @@
     sha1 "^1.1.1"
     uuid4 "2.0.3"
 
+"@hookform/resolvers@^3.6.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-3.6.0.tgz#71ae08acf7f7624fb24ea0505de00b9001a63687"
+  integrity sha512-UBcpyOX3+RR+dNnqBd0lchXpoL8p4xC21XP8H6Meb8uve5Br1GCnmg0PcBoKKqPKgGu9GHQ/oygcmPrQhetwqw==
+
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.14.tgz"
@@ -8441,6 +8446,11 @@ react-error-overlay@6.0.9:
   version "6.0.9"
   resolved "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-6.0.9.tgz"
   integrity sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==
+
+react-hook-form@^7.51.5:
+  version "7.51.5"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.51.5.tgz#4afbfb819312db9fea23e8237a3a0d097e128b43"
+  integrity sha512-J2ILT5gWx1XUIJRETiA7M19iXHlG74+6O3KApzvqB/w8S5NQR7AbU8HVZrMALdmDgWpRPYiZJl0zx8Z4L2mP6Q==
 
 react-infinite-scroll-component@^6.1.0:
   version "6.1.0"

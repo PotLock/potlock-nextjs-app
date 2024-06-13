@@ -93,7 +93,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -39.752 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
 
     <rect
@@ -102,7 +102,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -71.752 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
 
     <rect
@@ -111,7 +111,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -103.752 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
 
     <rect
@@ -120,7 +120,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -7.75195 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
 
     <rect
@@ -129,7 +129,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 24.248 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
   </svg>
 );
@@ -192,21 +192,16 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 const DialogDescription = forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(
-  (
-    { className, ...props },
-    ref, // px-4 py-4 sm:px-5
-  ) => (
-    <DialogPrimitive.Description
-      ref={ref}
-      className={cn(
-        "flex flex-col gap-4 px-4 py-4 text-sm text-muted-foreground sm:px-5",
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Description
+    ref={ref}
+    className={cn(
+      "flex flex-col gap-4 px-4 py-4 text-sm text-muted-foreground sm:px-5",
+      className,
+    )}
+    {...props}
+  />
+));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {

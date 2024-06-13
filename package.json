@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
+    "@hookform/resolvers": "^3.6.0",
     "@kubb/cli": "^2.19.5",
     "@kubb/core": "^2.19.5",
     "@kubb/plugin-oas": "^2.19.5",
@@ -74,6 +75,7 @@
     "next": "^14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.51.5",
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "^9.1.2",
     "redux": "^5.0.1",
