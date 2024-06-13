@@ -13,7 +13,7 @@ import CardSkeleton from "./CardSkeleton";
 
 const MAX_DESCRIPTION_LENGTH = 80;
 
-const Card = ({
+export const ProjectCard = ({
   projectId,
   potId,
   allowDonate: _allowDonate,
@@ -166,5 +166,3 @@ const Card = ({
     </Link>
   );
 };
-
-export default Card;

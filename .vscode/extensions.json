@@ -3,6 +3,7 @@
     "antfu.unocss",
     "aaron-bond.better-comments",
     "streetsidesoftware.code-spell-checker",
-    "gruntfuggly.todo-tree"
+    "gruntfuggly.todo-tree",
+    "naumovs.color-highlight"
   ]
 }
