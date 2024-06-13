@@ -47,7 +47,8 @@ const DialogContent = forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "sm:min-w-auto fixed left-[50%] top-[50%] z-50 grid h-full w-full min-w-full items-start sm:h-auto sm:max-w-xl sm:rounded-lg",
+        "sm:min-w-auto fixed left-[50%] top-[50%] z-50 flex h-full w-full min-w-full flex-col",
+        "items-stretch sm:h-auto sm:max-w-xl sm:rounded-lg",
         "translate-x-[-50%] translate-y-[-50%] bg-background shadow-lg",
         "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -92,7 +93,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -39.752 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
 
     <rect
@@ -101,7 +102,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -71.752 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
 
     <rect
@@ -110,7 +111,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -103.752 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
 
     <rect
@@ -119,7 +120,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -7.75195 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
 
     <rect
@@ -128,7 +129,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 24.248 -37)"
       fill="white"
-      fill-opacity="0.08"
+      fillOpacity="0.08"
     />
   </svg>
 );
@@ -140,7 +141,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex h-[max-content] w-full flex-col gap-4 bg-red-500 p-4 pt-16 sm:rounded-t-lg",
+      "pt-15 flex h-[max-content] w-full flex-col gap-4 bg-red-500 px-4 pb-5 sm:rounded-t-lg sm:px-5",
       "text-left text-white",
       className,
     )}
@@ -194,7 +195,10 @@ const DialogDescription = forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("p-4 text-sm text-muted-foreground", className)}
+    className={cn(
+      "flex flex-col gap-4 px-4 py-4 text-sm text-muted-foreground sm:px-5",
+      className,
+    )}
     {...props}
   />
 ));
