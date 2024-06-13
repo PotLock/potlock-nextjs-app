@@ -39,24 +39,26 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
       case "start":
         return (
           <>
-            <div className="prose" un-font="600" un-text="neutral-950">
-              How do you want to allocate funds?
-            </div>
+            <div un-flex="~ col" un-gap="3">
+              <div className="prose" un-font="600" un-text="neutral-950">
+                How do you want to allocate funds?
+              </div>
 
-            <div className="grid gap-2">
               <RadioGroup>
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="direct" id="direct-donation" checked />
-                  <Label htmlFor="direct-donation">Direct donation</Label>
-                </div>
+                <RadioGroupItem
+                  id="donation-options-direct"
+                  label="Direct donation"
+                  value="direct"
+                  checked
+                />
 
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="matched" id="matched-donation" />
-
-                  <Label htmlFor="matched-donation">
-                    Quadratically matched donation (no pots available)
-                  </Label>
-                </div>
+                <RadioGroupItem
+                  id="donation-options-matched"
+                  label="Quadratically matched donation"
+                  hint="(no pots available)"
+                  value="matched"
+                  //disabled
+                />
               </RadioGroup>
             </div>
 
@@ -111,7 +113,16 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
   }, [currentScreenIndex]);
 
   return isLoading ? (
-    "Loading..."
+    <span
+      un-flex="~"
+      un-justify="center"
+      un-items="center"
+      un-w="full"
+      un-h="40"
+      un-text="2xl"
+    >
+      Loading...
+    </span>
   ) : (
     <>
       {error && error.message}

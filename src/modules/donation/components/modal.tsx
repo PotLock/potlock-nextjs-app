@@ -5,8 +5,8 @@ import { create, useModal } from "@ebay/nice-modal-react";
 import { AccountId, PotId } from "@/common/api/potlock";
 import { Dialog, DialogContent } from "@/common/ui/components";
 
-import { DonationToAccount } from "./DonationToAccount";
-import { DonationToPot } from "./DonationToPot";
+import { DonationToAccount } from "./to-account";
+import { DonationToPot } from "./to-pot";
 
 export type DonationModalProps = { accountId: AccountId } | { potId: PotId };
 
