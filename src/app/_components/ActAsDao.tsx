@@ -9,13 +9,13 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/common/ui/components/accordion";
-import { Button } from "@/common/ui/components/button";
-import { Checkbox } from "@/common/ui/components/checkbox";
-import { DropdownMenuLabel } from "@/common/ui/components/dropdown-menu";
-import { Input } from "@/common/ui/components/input";
-import { Label } from "@/common/ui/components/label";
-import { Switch } from "@/common/ui/components/switch";
+  Button,
+  Checkbox,
+  DropdownMenuLabel,
+  Input,
+  Label,
+  Switch,
+} from "@/common/ui/components";
 import { toggleDao } from "@/modules/profile/utils";
 
 import { dispatch, useTypedSelector } from "../_store";
@@ -24,7 +24,7 @@ const ActAsDao = () => {
   const [inputActive, setInputActive] = useState(false);
 
   const { addresses, toggle, defaultAddress } = useTypedSelector(
-    (state) => state.nav,
+    (state) => state.nav.actAsDao,
   );
 
   const { markDaoAsDefault, addOrRemoveDaoAddress } = dispatch.nav;
@@ -41,11 +41,7 @@ const ActAsDao = () => {
             alt="info"
           />
         </Label>
-        <Switch
-          value={toggle}
-          id="act-dao"
-          onClick={() => toggleDao(!toggle)}
-        />
+        <Switch id="act-dao" checked={toggle} onCheckedChange={toggleDao} />
       </div>
       <Accordion className="w-full" type="single" collapsible>
         {addresses?.map((address: string) => (

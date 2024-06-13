@@ -9,8 +9,8 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/common/ui/components/avatar";
-import { Skeleton } from "@/common/ui/components/skeleton";
+  Skeleton,
+} from "@/common/ui/components";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 import { fetchSocialImages } from "@/modules/core/services/socialImages";

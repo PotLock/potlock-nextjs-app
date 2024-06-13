@@ -19,7 +19,7 @@ const useIsHuman = (accountId: string) => {
       }
     };
     fetchHumanStatus();
-  }, []);
+  }, [accountId]);
 
   return {
     nadaBotVerified,

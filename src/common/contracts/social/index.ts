@@ -9,7 +9,6 @@ import { naxiosInstance } from "..";
  */
 const nearSocialDbContractApi = naxiosInstance.contractApi({
   contractId: SOCIAL_DB_CONTRACT_ID,
-
   cache: new StorageCache({ expirationTime: 5 * 60 }), // 5 minutes
 });
 

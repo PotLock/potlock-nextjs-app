@@ -1,4 +1,4 @@
-import { URI } from "./API";
+import { POTLOCK_API_ENDPOINT } from "../../constants";
 
 type Accounts = {
   id: string;
@@ -48,7 +48,7 @@ type GetAccountDonationsReceivedResponse = {
 };
 
 export const getAccounts = async () => {
-  const res = await fetch(`${URI}/accounts`);
+  const res = await fetch(`${POTLOCK_API_ENDPOINT}/accounts`);
   const json = await res.json();
   return json as GetAccountsResponse;
 };
