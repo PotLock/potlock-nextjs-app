@@ -11,7 +11,7 @@ export type DonationState = {
   currentStep: DonationStep;
 };
 
-const setStep = (state: DonationState, step: DonationStep) => ({
+const handleStep = (state: DonationState, step: DonationStep) => ({
   ...state,
   currentStep: step,
 });
@@ -31,17 +31,17 @@ export const donationModel = createModel<RootModel>()({
     handleNextStep(state) {
       switch (state.currentStep) {
         case "allocation":
-          return setStep(state, "confirmation");
+          return handleStep(state, "confirmation");
 
         case "confirmation":
-          return setStep(state, "done");
+          return handleStep(state, "done");
       }
     },
 
     handlePrevStep(state) {
       switch (state.currentStep) {
         case "confirmation":
-          return setStep(state, "allocation");
+          return handleStep(state, "allocation");
       }
     },
   },
