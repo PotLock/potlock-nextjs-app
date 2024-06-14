@@ -1,6 +1,9 @@
 import { createModel } from "@rematch/core";
 
 import { RootModel } from "@/app/_store/models";
+import { ByAccountId, ByPotId } from "@/common/api/potlock";
+
+export type DonationInputs = ByAccountId | ByPotId;
 
 export type DonationStep = "allocation" | "confirmation" | "done";
 

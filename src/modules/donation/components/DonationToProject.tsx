@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { dispatch, useTypedSelector } from "@/app/_store";
+import { dispatch } from "@/app/_store";
 import { ByAccountId, potlock } from "@/common/api/potlock";
 import {
   Button,
@@ -21,17 +21,18 @@ import {
 } from "@/common/ui/components";
 
 import { useProjectDonationForm } from "../hooks/project-donation";
+import { DonationState } from "../models";
 
-export type DonationToProjectProps = ByAccountId & {
-  closeDialog: VoidFunction;
-};
+export type DonationToProjectProps = ByAccountId &
+  DonationState & {
+    closeDialog: VoidFunction;
+  };
 
 export const DonationToProject: React.FC<DonationToProjectProps> = ({
   accountId,
   closeDialog: _,
+  currentStep,
 }) => {
-  const { currentStep } = useTypedSelector(({ donation }) => donation);
-
   const {
     isLoading: isAccountLoading,
     data: account,
@@ -43,11 +44,11 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
 
   const { onSubmit, ...form } = useProjectDonationForm({});
 
-  const currentScreen = useMemo(() => {
+  const content = useMemo(() => {
     switch (currentStep) {
       case "allocation":
         return (
-          <>
+          <div>
             <div un-flex="~ col" un-gap="3">
               <div className="prose" un-font="600" un-text="neutral-950">
                 How do you want to allocate funds?
@@ -108,7 +109,7 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
               step={0.01}
               appendix="$ 0.00"
             />
-          </>
+          </div>
         );
       case "confirmation":
         return <></>;
@@ -136,15 +137,17 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
 
       {account !== undefined && (
         <>
-          <DialogHeader>
-            <DialogTitle>
-              {`Donation to ${account.near_social_profile_data?.name}`}
-            </DialogTitle>
-          </DialogHeader>
+          {currentStep !== "done" && (
+            <DialogHeader>
+              <DialogTitle>
+                {currentStep === "confirmation"
+                  ? "Confirm donation"
+                  : `Donation to ${account.near_social_profile_data?.name}`}
+              </DialogTitle>
+            </DialogHeader>
+          )}
 
-          <DialogDescription asChild>
-            <div>{currentScreen}</div>
-          </DialogDescription>
+          <DialogDescription asChild>{content}</DialogDescription>
 
           <DialogFooter>
             <Button variant="brand-outline" color="black" disabled>

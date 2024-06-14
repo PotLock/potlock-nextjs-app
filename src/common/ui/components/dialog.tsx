@@ -61,18 +61,20 @@ const DialogContent = forwardRef<
     >
       {children}
 
-      <DialogPrimitive.Close
-        onClick={onCloseClick}
-        className={cn(
-          "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity",
-          "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
-          "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
-          "data-[state=open]:text-muted-foreground",
-        )}
-      >
-        <X className="color-white h-7 w-7" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
+      <div un-flex="~" un-justify="between" un-position="absolute top-0">
+        <DialogPrimitive.Close
+          onClick={onCloseClick}
+          className={cn(
+            "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity",
+            "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
+            "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
+            "data-[state=open]:text-muted-foreground",
+          )}
+        >
+          <X className="color-white h-7 w-7" />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
+      </div>
     </DialogPrimitive.Content>
   </DialogPortal>
 ));
