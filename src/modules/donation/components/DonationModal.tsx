@@ -5,8 +5,8 @@ import { create, useModal } from "@ebay/nice-modal-react";
 import { AccountId, PotId } from "@/common/api/potlock";
 import { Dialog, DialogContent } from "@/common/ui/components";
 
-import { DonationToAccount } from "./to-account";
-import { DonationToPot } from "./to-pot";
+import { DonationToPot } from "./DonationToPot";
+import { DonationToProject } from "./DonationToProject";
 
 export type DonationModalProps = { accountId: AccountId } | { potId: PotId };
 
@@ -22,7 +22,7 @@ export const DonationModal = create((props: DonationModalProps) => {
     <Dialog open={self.visible}>
       <DialogContent onCloseClick={close}>
         {"accountId" in props && (
-          <DonationToAccount accountId={props.accountId} closeDialog={close} />
+          <DonationToProject accountId={props.accountId} closeDialog={close} />
         )}
 
         {"potId" in props && (

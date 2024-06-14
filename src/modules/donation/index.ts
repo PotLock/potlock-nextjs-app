@@ -1,1 +1,1 @@
-export { useDonationModal } from "./components/modal";
+export { useDonationModal } from "./components/DonationModal";

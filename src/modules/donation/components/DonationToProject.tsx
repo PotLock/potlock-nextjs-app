@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 
+import { dispatch, useTypedSelector } from "@/app/_store";
 import { ByAccountId, potlock } from "@/common/api/potlock";
 import {
   Button,
@@ -19,48 +20,32 @@ import {
   TextField,
 } from "@/common/ui/components";
 
-import { useAccountDonationForm } from "../hooks/account-donation";
+import { useProjectDonationForm } from "../hooks/project-donation";
 
-export type DonationToAccountStep =
-  | "start"
-  | "allocation"
-  | "confirmation"
-  | "done";
-
-export type DonationToAccountProps = ByAccountId & {
+export type DonationToProjectProps = ByAccountId & {
   closeDialog: VoidFunction;
 };
 
-export const DonationToAccount: React.FC<DonationToAccountProps> = ({
+export const DonationToProject: React.FC<DonationToProjectProps> = ({
   accountId,
   closeDialog: _,
 }) => {
-  const { isLoading, data: account, error } = potlock.useAccount({ accountId });
-  const form = useAccountDonationForm({ accountId });
+  const { currentStep } = useTypedSelector(({ donation }) => donation);
 
-  const [currentStepIndex, setCurrentStepIndex] =
-    useState<DonationToAccountStep>("start");
+  const {
+    isLoading: isAccountLoading,
+    data: account,
+    error: accountError,
+  } = potlock.useAccount({ accountId });
 
-  const handleNextStep = useCallback(
-    (step: DonationToAccountStep) => () => {
-      switch (step) {
-        case "start":
-          return setCurrentStepIndex("allocation");
-        case "allocation":
-          return setCurrentStepIndex("confirmation");
-        case "confirmation":
-          return setCurrentStepIndex("done");
-        case "done":
-          return void null;
-      }
-    },
+  const { data: activePots } = potlock.useAccountActivePots({ accountId });
+  const hasMatchingPots = (activePots?.length ?? 0) > 0;
 
-    [],
-  );
+  const { onSubmit, ...form } = useProjectDonationForm({});
 
   const currentScreen = useMemo(() => {
-    switch (currentStepIndex) {
-      case "start":
+    switch (currentStep) {
+      case "allocation":
         return (
           <>
             <div un-flex="~ col" un-gap="3">
@@ -79,9 +64,9 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
                 <RadioGroupItem
                   id="donation-options-matched"
                   label="Quadratically matched donation"
-                  hint="(no pots available)"
+                  hint={hasMatchingPots ? undefined : "(no pots available)"}
                   value="matched"
-                  //disabled
+                  disabled={!hasMatchingPots}
                 />
               </RadioGroup>
             </div>
@@ -125,8 +110,6 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
             />
           </>
         );
-      case "allocation":
-        return <></>;
       case "confirmation":
         return <></>;
       case "done":
@@ -134,9 +117,9 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
       default:
         return "Error: Unable to proceed with the next step";
     }
-  }, [currentStepIndex]);
+  }, [currentStep, hasMatchingPots]);
 
-  return isLoading ? (
+  return isAccountLoading ? (
     <span
       un-flex="~"
       un-justify="center"
@@ -149,7 +132,7 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
     </span>
   ) : (
     <>
-      {error && error.message}
+      {accountError && accountError.message}
 
       {account !== undefined && (
         <>
@@ -164,20 +147,17 @@ export const DonationToAccount: React.FC<DonationToAccountProps> = ({
           </DialogDescription>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="brand-outline"
-              color="black"
-              disabled
-            >
+            <Button variant="brand-outline" color="black" disabled>
               Add to cart
             </Button>
 
             <Button
-              type="button"
               variant="brand-filled"
-              color="primary"
-              onClick={handleNextStep(currentStepIndex)}
+              onClick={
+                currentStep === "confirmation"
+                  ? onSubmit
+                  : dispatch.donation.handleNextStep
+              }
             >
               Proceed to donate
             </Button>
