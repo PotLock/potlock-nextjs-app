@@ -7,8 +7,6 @@ import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject"
 
 import FollowButton from "./FollowButton";
 
-// import FollowButton from "../FollowButton/FollowButton";
-
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
