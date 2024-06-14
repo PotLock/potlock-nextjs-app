@@ -6,7 +6,7 @@ import { utils } from "near-api-js";
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/
  */
 export const POTLOCK_API_ENDPOINT =
-  "https://dev.potlock.io" ?? "https://test-dev.potlock.io";
+  "https://dev.potlock.io/api/v1" ?? "https://test-dev.potlock.io/api/v1";
 
 export const REQUEST_CONFIG = {
   client: { baseURL: POTLOCK_API_ENDPOINT },

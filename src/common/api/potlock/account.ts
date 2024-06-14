@@ -54,7 +54,7 @@ export const getAccounts = async () => {
 };
 
 export const getAccount = async ({ accountId }: { accountId: string }) => {
-  const res = await fetch(`${URI}/accounts/${accountId}`);
+  const res = await fetch(`${POTLOCK_API_ENDPOINT}/accounts/${accountId}`);
   const json = await res.json();
   return json as GetAccountsResponse;
 };
@@ -64,7 +64,9 @@ export const getAccountDonationsReceived = async ({
 }: {
   accountId: string;
 }) => {
-  const res = await fetch(`${URI}/accounts/${accountId}/donations_received`);
+  const res = await fetch(
+    `${POTLOCK_API_ENDPOINT}/accounts/${accountId}/donations_received`,
+  );
   const json = await res.json();
   return json as GetAccountDonationsReceivedResponse;
 };
