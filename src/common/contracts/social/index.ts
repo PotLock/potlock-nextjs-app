@@ -188,3 +188,39 @@ export const getFollowers = async ({ accountId }: { accountId: string }) => {
 
   // return { accounts: followingAccounts, total: followingAccounts.length };
 };
+
+export const getSocialData = async <R>({ path }: { path: string }) => {
+  try {
+    const response = await nearSocialDbContractApi.view<any, R>("keys", {
+      args: {
+        keys: [path],
+        options: {
+          return_type: "BlockHeight",
+          values_only: true,
+        },
+      },
+    });
+
+    return response;
+  } catch (e) {
+    console.error("getSocialData:", e);
+  }
+};
+
+export const setSocialData = async ({
+  data,
+}: {
+  data: Record<string, any>;
+}) => {
+  try {
+    const response = await nearSocialDbContractApi.call("set", {
+      args: {
+        data,
+      },
+    });
+
+    return response;
+  } catch (e) {
+    console.error("setSocialData", e);
+  }
+};

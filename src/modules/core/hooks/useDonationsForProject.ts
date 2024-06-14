@@ -1,27 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { getAccountDonationsReceived } from "@/common/api/account";
-import { getDonationsForRecipient } from "@/common/contracts/potlock/donate";
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import Big from "big.js";
+
+import {
+  DonationInfo,
+  getAccountDonationsReceived,
+} from "@/common/api/account";
+import { SUPPORTED_FTS } from "@/common/constants";
+import nearToUsdWithFallback from "@/common/lib/nearToUsdWithFallback";
 
 const useDonationsForProject = (projectId: string) => {
-  const [donations, setDonations] = useState<DirectDonation[]>();
+  const [donations, setDonations] = useState<DonationInfo[]>();
 
   useEffect(() => {
     (async () => {
-      // TODO: User Indexer here (/api/v1/accounts/{account_id}/donations_received)
-      const foo = await getAccountDonationsReceived({ accountId: projectId });
-      console.log("Donations Received:", foo);
-
-      const _donations = await getDonationsForRecipient({
-        recipient_id: projectId,
+      const _donations = await getAccountDonationsReceived({
+        accountId: projectId,
       });
 
-      setDonations(_donations);
+      setDonations(_donations.results);
     })();
   }, [projectId]);
 
-  return donations;
+  // Get total donations & Unique donors count
+  const [totalDonationAmountNear, uniqueDonors] = useMemo(() => {
+    if (donations) {
+      let totalNear = Big(0);
+      const uniqueDonors = [
+        ...new Set(donations.map((donation) => donation.donor)),
+      ];
+      donations.forEach((donation) => {
+        if (donation.ft === "near") {
+          totalNear = totalNear.plus(Big(donation.total_amount || "0"));
+        }
+      });
+
+      const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
+        totalNear.toString(),
+      );
+
+      return [totalDonationAmountNear, uniqueDonors?.length];
+    }
+    return [0, 0];
+  }, [donations]);
+
+  const [usdInfo, setUsdInfo] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      const _usdInfo = await nearToUsdWithFallback(
+        Number(totalDonationAmountNear),
+      );
+      setUsdInfo(_usdInfo);
+    })();
+  }, [totalDonationAmountNear]);
+
+  return {
+    donations,
+    uniqueDonors,
+    near: totalDonationAmountNear,
+    usd: usdInfo,
+  };
 };
 
 export default useDonationsForProject;

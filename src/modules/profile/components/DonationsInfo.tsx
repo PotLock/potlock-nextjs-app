@@ -15,6 +15,8 @@ import nearToUsdWithFallback from "@/common/lib/nearToUsdWithFallback";
 import { Button } from "@/common/ui/components/button";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
 
+import FollowButton from "./FollowButton";
+
 // import FollowButton from "../FollowButton/FollowButton";
 
 export const Container = styled.div`
@@ -85,51 +87,16 @@ const DonationsInfo = ({
   // Use specific modal context
   // const { setDonationModalProps } = useDonationModal();
 
-  const donations = useDonationsForProject(accountId);
-
-  // Get total donations & Unique donors count
-  const [totalDonationAmountNear, uniqueDonors] = useMemo(() => {
-    if (donations) {
-      let totalNear = Big(0);
-      const uniqueDonors = [
-        ...new Set(donations.map((donation) => donation.donor_id)),
-      ];
-      donations.forEach((donation) => {
-        if (donation.ft_id === "near" || donation.base_currency === "near") {
-          totalNear = totalNear.plus(
-            Big(donation.total_amount || donation?.amount || "0"),
-          );
-        }
-      });
-
-      const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
-        totalNear.toString(),
-      );
-
-      return [totalDonationAmountNear, uniqueDonors?.length];
-    }
-    return [0, 0];
-  }, [donations]);
-
-  const [usdInfo, setUsdInfo] = useState("");
-
-  useEffect(() => {
-    (async () => {
-      const _usdInfo = await nearToUsdWithFallback(
-        Number(totalDonationAmountNear),
-      );
-      setUsdInfo(_usdInfo);
-    })();
-  }, [totalDonationAmountNear]);
+  const donationsInfo = useDonationsForProject(accountId);
 
   return (
     <Container>
       {/* <Modals /> */}
       <div className="donations-info">
-        <div className="amount">{usdInfo}</div>
+        <div className="amount">{donationsInfo.usd}</div>
         <div className="donors">
-          Raised from <span> {uniqueDonors}</span>{" "}
-          {uniqueDonors === 1 ? "donor" : "donors"}
+          Raised from <span> {donationsInfo.uniqueDonors}</span>{" "}
+          {donationsInfo.uniqueDonors === 1 ? "donor" : "donors"}
         </div>
       </div>
       <div className="btn-wrapper">
@@ -141,7 +108,7 @@ const DonationsInfo = ({
           Donate
         </Button>
         {/* TODO */}
-        {/* <FollowButton accountId={accountId} /> */}
+        <FollowButton accountId={accountId} />
       </div>
     </Container>
   );
