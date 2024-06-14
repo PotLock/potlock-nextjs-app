@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
-import { dispatch } from "@/app/_store";
+import { dispatch, useTypedSelector } from "@/app/_store";
 import { Dialog, DialogContent } from "@/common/ui/components";
 
 import { DonationToPot } from "./DonationToPot";
@@ -20,14 +20,25 @@ export const DonationModal = create((props: DonationModalProps) => {
     self.remove();
   }, [self]);
 
+  const state = useTypedSelector(({ donation }) => donation);
+
   return (
     <Dialog open={self.visible}>
-      <DialogContent onCloseClick={close}>
+      <DialogContent
+        onBackClick={
+          state.currentStep !== "allocation" && state.currentStep !== "done"
+            ? dispatch.donation.handlePrevStep
+            : undefined
+        }
+        onCloseClick={close}
+      >
         {"accountId" in props && (
-          <DonationToProject closeDialog={close} {...props} />
+          <DonationToProject closeDialog={close} {...props} {...state} />
         )}
 
-        {"potId" in props && <DonationToPot closeDialog={close} {...props} />}
+        {"potId" in props && (
+          <DonationToPot closeDialog={close} {...props} {...state} />
+        )}
       </DialogContent>
     </Dialog>
   );
