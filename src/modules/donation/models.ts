@@ -16,12 +16,18 @@ const setStep = (state: DonationState, step: DonationStep) => ({
   currentStep: step,
 });
 
+const donationStateDefaults: DonationState = {
+  currentStep: "allocation",
+};
+
 export const donationModel = createModel<RootModel>()({
-  state: {
-    currentStep: "allocation",
-  } as DonationState,
+  state: donationStateDefaults,
 
   reducers: {
+    reset() {
+      return donationStateDefaults;
+    },
+
     handleNextStep(state) {
       switch (state.currentStep) {
         case "allocation":

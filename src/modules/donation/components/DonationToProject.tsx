@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { dispatch } from "@/app/_store";
+import { dispatch, useTypedSelector } from "@/app/_store";
 import { ByAccountId, potlock } from "@/common/api/potlock";
 import {
   Button,
@@ -21,18 +21,17 @@ import {
 } from "@/common/ui/components";
 
 import { useProjectDonationForm } from "../hooks/project-donation";
-import { DonationState } from "../models";
 
-export type DonationToProjectProps = ByAccountId &
-  DonationState & {
-    closeDialog: VoidFunction;
-  };
+export type DonationToProjectProps = ByAccountId & {
+  closeDialog: VoidFunction;
+};
 
 export const DonationToProject: React.FC<DonationToProjectProps> = ({
   accountId,
   closeDialog: _,
-  currentStep,
 }) => {
+  const { currentStep } = useTypedSelector(({ donation }) => donation);
+
   const {
     isLoading: isAccountLoading,
     data: account,
