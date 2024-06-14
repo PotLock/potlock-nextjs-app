@@ -101,6 +101,7 @@ const DonationsInfo = ({
           );
         }
       });
+
       const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
         totalNear.toString(),
       );
@@ -114,7 +115,6 @@ const DonationsInfo = ({
 
   useEffect(() => {
     (async () => {
-      // TODO: A quantidade de raised está diferente do apresentado no site
       const _usdInfo = await nearToUsdWithFallback(
         Number(totalDonationAmountNear),
       );

@@ -188,29 +188,3 @@ export const getFollowers = async ({ accountId }: { accountId: string }) => {
 
   // return { accounts: followingAccounts, total: followingAccounts.length };
 };
-
-// TODO: fix graph endoint fetch failer
-export const getSocialData = async ({
-  method,
-  args,
-}: {
-  method: string;
-  args: NEARSocialUserProfileInput;
-}) => {
-  const response = await nearSocialDbContractApi.view<typeof args, any>(
-    method,
-    args,
-  );
-
-  // const response = await nearSocialDbContractApi.view<any, any>(method, {
-  //   args: {
-  //     keys: [`potlock.near/graph/follow/*`],
-  //     options: {
-  //       return_type: "BlockHeight",
-  //       values_only: true,
-  //     },
-  //   },
-  // });
-
-  return response;
-};

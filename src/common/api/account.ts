@@ -26,3 +26,13 @@ export const getAccount = async ({ accountId }: { accountId: string }) => {
   const json = await res.json();
   return json as GetAccountsResponse;
 };
+
+export const getAccountDonationsReceived = async ({
+  accountId,
+}: {
+  accountId: string;
+}) => {
+  const res = await fetch(`${URI}/accounts/${accountId}/donations_received`);
+  const json = await res.json();
+  return json as GetAccountsResponse;
+};

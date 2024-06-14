@@ -13,7 +13,7 @@ export default async function Project({
       <ProjectBanner projectId={params.userId} />
       <ProfileBanner isProject={true} accountId={params.userId} />
       <Info accountId={params.userId} />
-      <DonationsInfo accountId={params.userId} potId={params.potId} />
+      {/* <DonationsInfo accountId={params.userId} potId={params.potId} /> */}
     </main>
   );
 }
