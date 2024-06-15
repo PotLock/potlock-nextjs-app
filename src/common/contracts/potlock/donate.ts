@@ -2,7 +2,11 @@ import { MemoryCache } from "@wpdas/naxios";
 
 import { POTLOCK_DONATE_CONTRACT_ID } from "@/common/constants";
 
-import { Config, DirectDonation } from "./interfaces/donate.interfaces";
+import {
+  Config,
+  DirectDonation,
+  DirectDonationArgs,
+} from "./interfaces/donate.interfaces";
 import { naxiosInstance } from "..";
 
 /**
@@ -45,4 +49,13 @@ export const getDonationsForRecipient = (args: { recipient_id: string }) =>
 export const getDonationsForDonor = (args: { donor_id: string }) =>
   contractApi.view<typeof args, DirectDonation[]>("get_donations_for_donor", {
     args,
+  });
+
+export const donateNearDirectly = (
+  args: DirectDonationArgs,
+  depositAmountFloat: string,
+) =>
+  contractApi.call<typeof args, DirectDonation>("donate", {
+    args,
+    deposit: depositAmountFloat,
   });

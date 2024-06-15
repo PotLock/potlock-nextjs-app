@@ -35,6 +35,8 @@ export const POTLOCK_POT_FACTORY_CONTRACT_ID = "v1.potfactory.potlock.near";
 // POTLOCK REGISTRY LIST ID
 export const POTLOCK_REGISTRY_LIST_ID = 1;
 
+export const NEAR_TOKEN_DENOM = "NEAR";
+
 // 1 NEAR
 export const ONE_NEAR = utils.format.parseNearAmount("1")!;
 // 0.5 NEAR

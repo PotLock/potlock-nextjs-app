@@ -22,3 +22,10 @@ export interface DirectDonation {
   referrer_id: null | string;
   referrer_fee: null | string;
 }
+
+export type DirectDonationArgs = {
+  recipient_id: string;
+  message?: string | null;
+  referrer_id?: string | null;
+  bypass_protocol_fee?: boolean | null;
+};
