@@ -1,11 +1,30 @@
 import { createModel } from "@rematch/core";
+import { infer as FromSchema, nativeEnum, object } from "zod";
 
 import { RootModel } from "@/app/_store/models";
 import { ByAccountId, ByPotId } from "@/common/api/potlock";
 
-export type DonationInputs = ByAccountId | ByPotId;
+export type DonationParameters = ByAccountId | ByPotId;
+
+export enum DonationType {
+  direct = "direct",
+  pot = "pot",
+}
+
+export type DonationOption = {
+  title: string;
+  value: DonationType;
+  hint?: string;
+  hintIfDisabled?: string;
+};
 
 export type DonationStep = "allocation" | "confirmation" | "done";
+
+export const donationSchema = object({
+  donationType: nativeEnum(DonationType),
+});
+
+export type DonationInputs = FromSchema<typeof donationSchema>;
 
 export type DonationState = {
   currentStep: DonationStep;

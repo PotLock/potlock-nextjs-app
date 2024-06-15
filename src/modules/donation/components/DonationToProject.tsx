@@ -20,7 +20,7 @@ import {
   TextField,
 } from "@/common/ui/components";
 
-import { useProjectDonationForm } from "../hooks/forms";
+import { useDonationForm } from "../hooks/forms";
 import { DonationState } from "../models";
 
 export type DonationToProjectProps = ByAccountId &
@@ -42,7 +42,7 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
   const { data: activePots } = potlock.useAccountActivePots({ accountId });
   const hasMatchingPots = (activePots?.length ?? 0) > 0;
 
-  const { onSubmit, ...form } = useProjectDonationForm({});
+  const { onSubmit, ...form } = useDonationForm({});
 
   const content = useMemo(() => {
     switch (currentStep) {

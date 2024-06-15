@@ -3,9 +3,9 @@ import { useCallback } from "react";
 import { useModal } from "@ebay/nice-modal-react";
 
 import { DonationModal } from "./components/DonationModal";
-import { DonationInputs } from "./models";
+import { DonationParameters } from "./models";
 
-export const useDonation = (props: DonationInputs) => {
+export const useDonation = (props: DonationParameters) => {
   const modal = useModal(DonationModal);
 
   return {

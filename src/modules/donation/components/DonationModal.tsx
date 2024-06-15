@@ -14,9 +14,9 @@ import {
 
 import { DonationToPot } from "./DonationToPot";
 import { DonationToProject } from "./DonationToProject";
-import { DonationInputs } from "../models";
+import { DonationParameters } from "../models";
 
-export type DonationModalProps = DonationInputs & {};
+export type DonationModalProps = DonationParameters & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
   const self = useModal();
@@ -30,7 +30,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   const state = useTypedSelector(({ donation }) => donation);
 
   return (
-    <Dialog open={self.visible}>
+    <Dialog open={self.visible} onOpenChange={dispatch.donation.reset}>
       <DialogContent
         onBackClick={
           state.currentStep !== "allocation" && state.currentStep !== "done"
