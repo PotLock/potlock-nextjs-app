@@ -1,6 +1,7 @@
 import { createModel } from "@rematch/core";
 import {
   infer as FromSchema,
+  boolean,
   literal,
   nativeEnum,
   number,
@@ -11,6 +12,8 @@ import {
 import { RootModel } from "@/app/_store/models";
 import { ByAccountId, ByPotId } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { donateNearDirectly } from "@/common/contracts/potlock/donate";
+import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
 
 import { DONATION_MAX_MESSAGE_LENGTH, DONATION_MIN_AMOUNT } from "./constants";
 
@@ -68,6 +71,10 @@ export const donationSchema = object({
   message: string()
     .max(DONATION_MAX_MESSAGE_LENGTH)
     .describe("Donation message."),
+
+  bypassProtocolFee: boolean().default(false),
+
+  bypassChefFee: boolean().default(false),
 });
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
@@ -93,7 +100,7 @@ export const donationModel = createModel<RootModel>()({
       return donationStateDefaults;
     },
 
-    handleNextStep(state) {
+    nextStep(state) {
       switch (state.currentStep) {
         case "allocation":
           return handleStep(state, "confirmation");
@@ -103,15 +110,36 @@ export const donationModel = createModel<RootModel>()({
       }
     },
 
-    handlePrevStep(state) {
+    previousStep(state) {
       switch (state.currentStep) {
         case "confirmation":
           return handleStep(state, "allocation");
       }
     },
+
+    success(state, result: DirectDonation) {
+      console.log(result);
+      this.nextStep(state);
+    },
+
+    failure(_, error: Error) {
+      console.error(error);
+    },
   },
 
   effects: (dispatch) => ({
-    submitDonation(inputs: DonationInputs) {},
+    submitDonation({
+      amount,
+      donationType,
+      recipientAccountId,
+    }: DonationInputs) {
+      switch (donationType) {
+        case DonationType.direct:
+          return donateNearDirectly(
+            { recipient_id: recipientAccountId },
+            amount,
+          );
+      }
+    },
   }),
 });

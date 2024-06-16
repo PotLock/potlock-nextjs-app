@@ -1,4 +1,6 @@
 export * from "./useV1AccountsActivePotsRetrieve";
+export * from "./useV1AccountsDonationsReceivedRetrieve";
+export * from "./useV1AccountsDonationsSentRetrieve";
 export * from "./useV1AccountsRetrieve";
 export * from "./useV1AccountsRetrieve2";
 export * from "./useV1DonorsRetrieve";

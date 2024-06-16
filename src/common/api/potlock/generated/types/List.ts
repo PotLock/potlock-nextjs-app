@@ -2,10 +2,15 @@ import { DefaultRegistrationStatusEnum } from "./DefaultRegistrationStatusEnum";
 
 export type List = {
   /**
-   * @description List id.
+   * @description List ID in DB (does not necessarily correspond to on-chain ID).
    * @type integer
    */
-  id: number;
+  readonly id: number;
+  /**
+   * @description List ID in contract
+   * @type integer
+   */
+  on_chain_id: number;
   /**
    * @description List name.
    * @type string

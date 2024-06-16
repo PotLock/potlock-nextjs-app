@@ -1,7 +1,7 @@
 import { Models } from "@rematch/core";
 
 import { auth } from "@/modules/auth/state";
-import { donationModel } from "@/modules/donation/models";
+import { donationModel } from "@/modules/donation";
 import { navModel, profilesModel } from "@/modules/profile/models";
 
 export interface RootModel extends Models<RootModel> {

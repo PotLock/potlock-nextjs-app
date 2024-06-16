@@ -24,12 +24,12 @@ export type PotApplication = {
    * @description Application last update date.
    * @type string, date-time
    */
-  updated_at: string;
+  updated_at?: string | null;
   /**
    * @description Transaction hash.
    * @type string
    */
-  tx_hash: string;
+  tx_hash?: string | null;
   /**
    * @description Pot applied to.
    * @type string

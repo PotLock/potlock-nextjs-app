@@ -159,7 +159,7 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
               onClick={
                 currentStep === "confirmation"
                   ? onSubmit
-                  : dispatch.donation.handleNextStep
+                  : dispatch.donation.nextStep
               }
             >
               Proceed to donate

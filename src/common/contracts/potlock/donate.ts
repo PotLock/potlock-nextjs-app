@@ -53,9 +53,9 @@ export const getDonationsForDonor = (args: { donor_id: string }) =>
 
 export const donateNearDirectly = (
   args: DirectDonationArgs,
-  depositAmountFloat: string,
+  depositAmountFloat: number,
 ) =>
   contractApi.call<typeof args, DirectDonation>("donate", {
     args,
-    deposit: depositAmountFloat,
+    deposit: depositAmountFloat.toString(),
   });
