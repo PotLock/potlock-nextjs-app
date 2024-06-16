@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import { dispatch } from "@/app/_store";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
@@ -18,9 +19,12 @@ export const useDonationForm = (_: DonationFormParameters) => {
   const isFtDonation = watch("tokenId") !== NEAR_TOKEN_DENOM;
   const isSenderHumanVerified = useIsHuman(watch("recipientAccountId"));
 
-  const onSubmit: SubmitHandler<DonationInputs> = useCallback((data) => {
-    console.table(data);
-  }, []);
+  const onSubmit: SubmitHandler<DonationInputs> = useCallback(
+    (data) => dispatch.donation.submit(data),
+    [],
+  );
+
+  console.table(form.getValues());
 
   return {
     isFtDonation,

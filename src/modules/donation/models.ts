@@ -15,7 +15,10 @@ import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
 
-import { DONATION_MAX_MESSAGE_LENGTH, DONATION_MIN_AMOUNT } from "./constants";
+import {
+  DONATION_MAX_MESSAGE_LENGTH,
+  DONATION_MIN_NEAR_AMOUNT,
+} from "./constants";
 
 export type DonationParameters = ByAccountId | ByPotId;
 
@@ -61,7 +64,10 @@ export const donationSchema = object({
   amount: number()
     .positive()
     .finite()
-    .min(DONATION_MIN_AMOUNT)
+    .min(
+      DONATION_MIN_NEAR_AMOUNT,
+      `The minimum donation amount is ${DONATION_MIN_NEAR_AMOUNT} NEAR.`,
+    )
     .refine(
       (n) => !number().int().safeParse(n).success,
       "Must be a floating point number.",
@@ -75,7 +81,9 @@ export const donationSchema = object({
   bypassProtocolFee: boolean().default(false),
 
   bypassChefFee: boolean().default(false),
-});
+}).refine(({ tokenId, amount }) => {
+  return tokenId === NEAR_TOKEN_DENOM || amount > 0.0;
+}, "Incorrect donation amount");
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
@@ -128,17 +136,15 @@ export const donationModel = createModel<RootModel>()({
   },
 
   effects: (dispatch) => ({
-    submitDonation({
-      amount,
-      donationType,
-      recipientAccountId,
-    }: DonationInputs) {
+    submit({ amount, donationType, recipientAccountId }: DonationInputs) {
       switch (donationType) {
         case DonationType.direct:
           return donateNearDirectly(
             { recipient_id: recipientAccountId },
             amount,
-          );
+          )
+            .then(dispatch.success)
+            .catch(dispatch.failure);
       }
     },
   }),

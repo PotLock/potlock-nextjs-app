@@ -1,3 +1,3 @@
-export const DONATION_MIN_AMOUNT = 0.0001;
+export const DONATION_MIN_NEAR_AMOUNT = 0.1;
 
 export const DONATION_MAX_MESSAGE_LENGTH = 100;
