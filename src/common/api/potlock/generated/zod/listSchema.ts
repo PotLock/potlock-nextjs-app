@@ -3,7 +3,16 @@ import { z } from "zod";
 import { defaultRegistrationStatusEnumSchema } from "./defaultRegistrationStatusEnumSchema";
 
 export const listSchema = z.object({
-  id: z.number().min(0).max(2147483647).describe("List id."),
+  id: z
+    .number()
+    .describe(
+      "List ID in DB (does not necessarily correspond to on-chain ID).",
+    ),
+  on_chain_id: z
+    .number()
+    .min(-2147483648)
+    .max(2147483647)
+    .describe("List ID in contract"),
   name: z.string().max(64).describe("List name."),
   description: z
     .string()

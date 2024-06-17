@@ -1,6 +1,6 @@
 import Big from "big.js";
 
-import { formatWithCommas } from "./formatWithCommas";
+import formatWithCommas from "./formatWithCommas";
 
 export const yoctosToNear = (amountYoctos: string, abbreviate?: boolean) => {
   return (

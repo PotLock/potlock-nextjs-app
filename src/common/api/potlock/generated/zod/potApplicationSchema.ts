@@ -16,8 +16,13 @@ export const potApplicationSchema = z.object({
       "Application status.\n\n* `Pending` - Pending\n* `Approved` - Approved\n* `Rejected` - Rejected\n* `InReview` - InReview",
     ),
   submitted_at: z.string().datetime().describe("Application submission date."),
-  updated_at: z.string().datetime().describe("Application last update date."),
-  tx_hash: z.string().max(64).describe("Transaction hash."),
+  updated_at: z
+    .string()
+    .datetime()
+    .describe("Application last update date.")
+    .nullable()
+    .nullish(),
+  tx_hash: z.string().describe("Transaction hash.").nullable().nullish(),
   pot: z.string().describe("Pot applied to."),
   applicant: z.string().describe("Account that applied to the pot."),
 });

@@ -1,4 +1,5 @@
 import { Network } from "@wpdas/naxios";
+import Big from "big.js";
 import { utils } from "near-api-js";
 
 /**
@@ -24,13 +25,16 @@ export const SOCIAL_DB_CONTRACT_ID = process.env
   .NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID as string;
 
 // POTLOCK LISTS CONTRACT
-export const POTLOCK_LISTS_CONTRACT_ID = "lists.potlock.near";
+export const POTLOCK_LISTS_CONTRACT_ID = process.env
+  .NEXT_PUBLIC_POTLOCK_LISTS_CONTRACT_ID as string;
 
 // POTLOCK DONATE CONTRACT
-export const POTLOCK_DONATE_CONTRACT_ID = "donate.potlock.near";
+export const POTLOCK_DONATE_CONTRACT_ID = process.env
+  .NEXT_PUBLIC_POTLOCK_DONATE_CONTRACT_ID as string;
 
 // POTLOCK DONATE CONTRACT
-export const POTLOCK_POT_FACTORY_CONTRACT_ID = "v1.potfactory.potlock.near";
+export const POTLOCK_POT_FACTORY_CONTRACT_ID = process.env
+  .NEXT_PUBLIC_POTLOCK_POT_FACTORY_CONTRACT_ID as string;
 
 // POTLOCK REGISTRY LIST ID
 export const POTLOCK_REGISTRY_LIST_ID = 1;
@@ -53,3 +57,25 @@ export const NO_DEPOSIT_TGAS = "0";
 // IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
 export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
+
+export const DEFAULT_URL = "https://app.potlock.org/";
+
+export const SUPPORTED_FTS = {
+  NEAR: {
+    iconUrl:
+      "https://nftstorage.link/ipfs/bafkreidnqlap4cp5o334lzbhgbabwr6yzkj6albia62l6ipjsasokjm6mi",
+    toIndivisible: (amount: any) => new Big(amount).mul(new Big(10).pow(24)),
+    fromIndivisible: (amount: any, decimals?: any) =>
+      Big(amount)
+        .div(Big(10).pow(24))
+        .toFixed(decimals || 2),
+  },
+  USD: {
+    iconUrl: "$",
+    toIndivisible: (amount: any) => new Big(amount).mul(new Big(10).pow(24)),
+    fromIndivisible: (amount: any, decimals: any) =>
+      Big(amount)
+        .div(Big(10).pow(24))
+        .toFixed(decimals || 2),
+  },
+};

@@ -23,7 +23,7 @@ export type PotPayout = {
    * @description Transaction hash.
    * @type string
    */
-  tx_hash: string;
+  tx_hash?: string | null;
   /**
    * @description Pot that this payout is for.
    * @type string
