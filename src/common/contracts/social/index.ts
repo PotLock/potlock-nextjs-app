@@ -56,12 +56,6 @@ export enum Category {
   education = "Education",
 }
 
-type OldFormattedCategory =
-  | Category
-  | {
-      text: string;
-    };
-
 export interface NEARSocialUserProfile {
   name?: string;
   linktree?: ProfileLinktree;

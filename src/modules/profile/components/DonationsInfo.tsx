@@ -1,23 +1,9 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
-
-// import Button from "@app/components/Button";
-// import constants from "@app/constants";
-// import { useDonationModal } from "@app/hooks/useDonationModal";
-// import useModals from "@app/hooks/useModals";
-// import nearToUsdWithFallback from "@app/utils/nearToUsdWithFallback";
-import Big from "big.js";
 import { styled } from "styled-components";
 
-import { SUPPORTED_FTS } from "@/common/constants";
-import nearToUsdWithFallback from "@/common/lib/nearToUsdWithFallback";
 import { Button } from "@/common/ui/components/button";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
 
 import FollowButton from "./FollowButton";
-
-// import FollowButton from "../FollowButton/FollowButton";
 
 export const Container = styled.div`
   display: flex;
@@ -74,24 +60,11 @@ export const Container = styled.div`
   }
 `;
 
-// const DonationsInfo = ({ accountId, donations }: {accountId: string}) => {
-const DonationsInfo = ({
-  accountId,
-  potId,
-}: {
-  accountId: string;
-  potId?: string;
-}) => {
-  // Start Modals provider
-  // const Modals = useModals();
-  // Use specific modal context
-  // const { setDonationModalProps } = useDonationModal();
-
+const DonationsInfo = ({ accountId }: { accountId: string }) => {
   const donationsInfo = useDonationsForProject(accountId);
 
   return (
     <Container>
-      {/* <Modals /> */}
       <div className="donations-info">
         <div className="amount">{donationsInfo.usd}</div>
         <div className="donors">
@@ -107,7 +80,6 @@ const DonationsInfo = ({
         >
           Donate
         </Button>
-        {/* TODO */}
         <FollowButton accountId={accountId} />
       </div>
     </Container>

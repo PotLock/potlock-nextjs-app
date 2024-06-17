@@ -7,7 +7,6 @@ const nearToUsd = async () => {
 
   if (response.ok) {
     const data = await response.json();
-    console.log(data);
     return data.near.usd;
   }
 

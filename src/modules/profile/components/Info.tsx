@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { useParams } from "next/navigation";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import CheckIcon from "@/assets/svgs/CheckIcon";
@@ -62,7 +61,6 @@ const LinksWrapper = ({ accountId }: Props) => {
 
 const Info = ({ accountId }: Props) => {
   const { wallet } = useWallet();
-  const { potId } = useParams<{ potId?: string }>();
 
   const name = "Near Social Bridge";
   const isOwner = wallet?.accountId === accountId;
@@ -101,7 +99,7 @@ const Info = ({ accountId }: Props) => {
         </div>
 
         {/* Right */}
-        <DonationsInfo accountId={accountId} potId={potId} />
+        <DonationsInfo accountId={accountId} />
       </div>
     </div>
   );

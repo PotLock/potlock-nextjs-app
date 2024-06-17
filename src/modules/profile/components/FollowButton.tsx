@@ -97,6 +97,10 @@ const FollowButton = ({ accountId }: Props) => {
 
   return (
     <Button
+      variant="brand-outline"
+      className="hover:bg-[#dd3345] hover:text-white"
+      // font-600 is not working
+      style={{ fontWeight: 600 }}
       disabled={updating || buttonText === "Following"}
       onClick={onClickHandler}
     >
