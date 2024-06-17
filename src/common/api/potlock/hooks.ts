@@ -17,5 +17,8 @@ export const useAccountActivePots = ({ accountId }: ByAccountId) =>
 
 export const usePots = () => swrHooks.useV1PotsRetrieve(REQUEST_CONFIG);
 
+export const useAccountDonationsReceived = ({ accountId }: ByAccountId) =>
+  swrHooks.useV1AccountsDonationsReceivedRetrieve(accountId, REQUEST_CONFIG);
+
 export const usePot = ({ potId }: ByPotId) =>
   swrHooks.useV1PotsRetrieve2(potId, REQUEST_CONFIG);

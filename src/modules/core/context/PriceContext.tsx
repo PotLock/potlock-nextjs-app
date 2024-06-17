@@ -2,7 +2,7 @@
 
 // import { useQuery } from "@tanstack/react-query";
 
-// import { fetchNearPrice } from "@/common/api/coingecko";
+// import { fetchNearPrice } from "@/common/services";
 
 // interface PriceContextType {
 //   price?: number;
