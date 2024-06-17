@@ -6,6 +6,7 @@ export * from "./checkbox";
 export * from "./dialog";
 export * from "./dropdown-menu";
 export * from "./Filter";
+export * from "./form";
 export * from "./InfiniteScroll";
 export * from "./input";
 export * from "./label";

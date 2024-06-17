@@ -64,41 +64,49 @@ export const donationSchema = object({
   amount: number()
     .positive()
     .finite()
-    .min(
-      DONATION_MIN_NEAR_AMOUNT,
-      `The minimum donation amount is ${DONATION_MIN_NEAR_AMOUNT} NEAR.`,
-    )
+    .lt(0.0, "Cannot be zero.")
     .refine(
       (n) => !number().int().safeParse(n).success,
       "Must be a floating point number.",
     )
+    .default(0.1)
     .describe("Amount of the selected tokens to donate."),
 
   message: string()
     .max(DONATION_MAX_MESSAGE_LENGTH)
+    .nullable()
+    .optional()
     .describe("Donation message."),
 
   bypassProtocolFee: boolean().default(false),
 
   bypassChefFee: boolean().default(false),
-}).refine(({ tokenId, amount }) => {
-  return tokenId === NEAR_TOKEN_DENOM || amount > 0.0;
-}, "Incorrect donation amount");
+}).refine(
+  ({ tokenId, amount }) =>
+    tokenId === NEAR_TOKEN_DENOM
+      ? amount > DONATION_MIN_NEAR_AMOUNT
+      : amount > 0.0,
+
+  `The minimum donation amount is ${DONATION_MIN_NEAR_AMOUNT} NEAR.`,
+);
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
+export const donationInputDefaults: DonationInputs =
+  donationSchema.parse(undefined);
+
 export type DonationState = {
   currentStep: DonationStep;
+};
+
+const donationStateDefaults: DonationState = {
+  currentStep: "allocation",
 };
 
 const handleStep = (state: DonationState, step: DonationStep) => ({
   ...state,
   currentStep: step,
 });
-
-const donationStateDefaults: DonationState = {
-  currentStep: "allocation",
-};
 
 export const donationModel = createModel<RootModel>()({
   state: donationStateDefaults,

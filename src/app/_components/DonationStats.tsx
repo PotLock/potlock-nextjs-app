@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getConfig } from "@/common/contracts/potlock/donate";
-import { yoctosToUsdWithFallback } from "@/common/lib";
+import { yoctosToUsdWithFallback } from "@/modules/core";
 
 const DonationStats = () => {
   const [donateConfig, setDonateConfig] = useState({

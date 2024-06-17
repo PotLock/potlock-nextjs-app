@@ -16,8 +16,9 @@ export const useDonationForm = (_: DonationFormParameters) => {
     resolver: zodResolver(donationSchema),
   });
 
-  const isFtDonation = watch("tokenId") !== NEAR_TOKEN_DENOM;
-  const isSenderHumanVerified = useIsHuman(watch("recipientAccountId"));
+  const values = watch();
+  const isFtDonation = values.tokenId !== NEAR_TOKEN_DENOM;
+  const isSenderHumanVerified = useIsHuman(values.recipientAccountId);
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
     (data) => dispatch.donation.submit(data),
@@ -30,6 +31,7 @@ export const useDonationForm = (_: DonationFormParameters) => {
     isFtDonation,
     isSenderHumanVerified,
     onSubmit: handleSubmit(onSubmit),
+    values,
     ...form,
   };
 };

@@ -21,7 +21,7 @@ import {
 } from "@/common/ui/components";
 
 import { useDonationForm } from "../hooks/forms";
-import { DonationState } from "../models";
+import { DonationState, donationInputDefaults } from "../models";
 
 export type DonationToProjectProps = ByAccountId &
   DonationState & {
@@ -42,7 +42,7 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
   const { data: activePots } = potlock.useAccountActivePots({ accountId });
   const hasMatchingPots = (activePots?.length ?? 0) > 0;
 
-  const { onSubmit, ...form } = useDonationForm({});
+  const { onSubmit, values, ...form } = useDonationForm({});
 
   const content = useMemo(() => {
     switch (currentStep) {
@@ -81,16 +81,16 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
                     un-text="sm neutral-950"
                     un-font="600"
                   >
-                    200 NEAR
+                    {"200 NEAR"}
                   </span>
 
-                  <span className="prose" un-text="sm  neutral-600">
+                  <span className="prose" un-text="sm neutral-600">
                     available
                   </span>
                 </div>
               }
               fieldExtension={
-                <Select defaultValue="near">
+                <Select defaultValue={donationInputDefaults.tokenId}>
                   <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
                     <SelectValue />
                   </SelectTrigger>
@@ -105,7 +105,7 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
               }
               type="number"
               placeholder="0.00"
-              min={0}
+              min={donationInputDefaults.amount}
               step={0.01}
               appendix="$ 0.00"
             />

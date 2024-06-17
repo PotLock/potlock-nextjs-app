@@ -1,7 +1,7 @@
 import Big from "big.js";
 
-import { fetchNearPrice } from "./fetchNearPrice";
-import { formatWithCommas } from "./formatWithCommas";
+import { fetchNearPrice } from "@/common/api/coingecko";
+import { formatWithCommas } from "@/common/lib/formatWithCommas";
 
 export const yoctosToUsdWithFallback = async (
   amountYoctos: string,
