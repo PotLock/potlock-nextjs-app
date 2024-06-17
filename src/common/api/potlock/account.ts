@@ -48,13 +48,15 @@ type GetAccountDonationsReceivedResponse = {
 };
 
 export const getAccounts = async () => {
-  const res = await fetch(`${POTLOCK_API_ENDPOINT}/accounts`);
+  const res = await fetch(`${POTLOCK_API_ENDPOINT}/api/v1/accounts`);
   const json = await res.json();
   return json as GetAccountsResponse;
 };
 
 export const getAccount = async ({ accountId }: { accountId: string }) => {
-  const res = await fetch(`${POTLOCK_API_ENDPOINT}/accounts/${accountId}`);
+  const res = await fetch(
+    `${POTLOCK_API_ENDPOINT}/api/v1/accounts/${accountId}`,
+  );
   const json = await res.json();
   return json as GetAccountsResponse;
 };
@@ -65,7 +67,7 @@ export const getAccountDonationsReceived = async ({
   accountId: string;
 }) => {
   const res = await fetch(
-    `${POTLOCK_API_ENDPOINT}/accounts/${accountId}/donations_received`,
+    `${POTLOCK_API_ENDPOINT}/api/v1/accounts/${accountId}/donations_received`,
   );
   const json = await res.json();
   return json as GetAccountDonationsReceivedResponse;

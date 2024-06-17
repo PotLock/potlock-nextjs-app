@@ -1,9 +1,9 @@
 import { styled } from "styled-components";
 
-import GithubSvg from "@/assets/svgs/github";
-import NearSvg from "@/assets/svgs/near";
-import TwitterSvg from "@/assets/svgs/twitter";
-import WebsiteSvg from "@/assets/svgs/website";
+import GithubSvg from "@/common/assets/svgs/github";
+import NearSvg from "@/common/assets/svgs/near";
+import TwitterSvg from "@/common/assets/svgs/twitter";
+import WebsiteSvg from "@/common/assets/svgs/website";
 
 import useProfileData from "../hooks/useProfileData";
 

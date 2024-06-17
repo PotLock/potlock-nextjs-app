@@ -4,8 +4,8 @@ import { useState } from "react";
 
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import CheckIcon from "@/assets/svgs/CheckIcon";
-import ReferrerIcon from "@/assets/svgs/ReferrerIcon";
+import CheckIcon from "@/common/assets/svgs/CheckIcon";
+import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { DEFAULT_URL } from "@/common/constants";
 import truncate from "@/common/lib/truncate";
 import { Button } from "@/common/ui/components/button";

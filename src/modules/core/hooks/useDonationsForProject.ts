@@ -12,6 +12,9 @@ import nearToUsdWithFallback from "@/common/lib/nearToUsdWithFallback";
 const useDonationsForProject = (projectId: string) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
 
+  // TODO: INFO: useV1AccountsDonationsReceivedRetrieve is not working
+  // const donations = useAccountDonationsReceived({ accountId: projectId });
+
   useEffect(() => {
     (async () => {
       const _donations = await getAccountDonationsReceived({
