@@ -118,7 +118,6 @@ export const operations = {
       500: v1AccountsActivePotsRetrieve500Schema,
     },
   },
-<<<<<<< HEAD
   v1_accounts_donations_received_retrieve: {
     request: undefined,
     parameters: {
@@ -145,8 +144,6 @@ export const operations = {
       500: v1AccountsDonationsSentRetrieve500Schema,
     },
   },
-=======
->>>>>>> main
   v1_donors_retrieve: {
     request: undefined,
     parameters: {
@@ -291,15 +288,12 @@ export const paths = {
   "/api/v1/accounts/{account_id}/active_pots": {
     get: operations["v1_accounts_active_pots_retrieve"],
   },
-<<<<<<< HEAD
   "/api/v1/accounts/{account_id}/donations_received": {
     get: operations["v1_accounts_donations_received_retrieve"],
   },
   "/api/v1/accounts/{account_id}/donations_sent": {
     get: operations["v1_accounts_donations_sent_retrieve"],
   },
-=======
->>>>>>> main
   "/api/v1/donors": {
     get: operations["v1_donors_retrieve"],
   },
