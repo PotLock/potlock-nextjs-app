@@ -168,11 +168,11 @@ export const getFollowers = async ({ accountId }: { accountId: string }) => {
       },
     });
 
-    console.log(response);
     // TODO
     // return response;
     return { accounts: [], total: 0 };
   } catch (e) {
+    // TODO: Error getting followers because of gas limit (it makes sense because of the amount of data it's trying to get)
     console.error("getFollowers:", e);
     return { accounts: [], total: 0 };
   }
