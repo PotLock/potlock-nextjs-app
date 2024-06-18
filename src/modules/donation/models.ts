@@ -20,41 +20,44 @@ import {
   DONATION_MIN_NEAR_AMOUNT,
 } from "./constants";
 
-export type DonationParameters = ByAccountId | ByPotId;
-
-export enum DonationType {
+export enum DonationAllocationType {
   direct = "direct",
   pot = "pot",
 }
 
-export type DonationOption = {
+export type DonationParameters =
+  | (ByAccountId & { allocation: DonationAllocationType.direct })
+  | (ByPotId & { allocation: DonationAllocationType.pot });
+
+export type DonationAllocationOption = {
   title: string;
-  value: DonationType;
+  value: DonationAllocationType;
   hint?: string;
   hintIfDisabled?: string;
 };
 
-export const donationOptions: Record<DonationType, DonationOption> = {
-  [DonationType.direct]: {
+export const donationAllocationOptions: Record<
+  DonationAllocationType,
+  DonationAllocationOption
+> = {
+  [DonationAllocationType.direct]: {
     title: "Direct donation",
-    value: DonationType.direct,
+    value: DonationAllocationType.direct,
   },
 
-  [DonationType.pot]: {
+  [DonationAllocationType.pot]: {
     title: "Quadratically matched donation",
     hintIfDisabled: "(no pots available)",
-    value: DonationType.pot,
+    value: DonationAllocationType.pot,
   },
 };
 
-export type DonationStep = "allocation" | "confirmation" | "done";
+export type DonationStep = "allocation" | "confirmation" | "success";
 
 export const donationSchema = object({
-  recipientAccountId: string(),
-
-  donationType: nativeEnum(DonationType, {
+  donationType: nativeEnum(DonationAllocationType, {
     message: "Incorrect donation type",
-  }).default(DonationType.direct),
+  }).default(DonationAllocationType.direct),
 
   tokenId: literal(NEAR_TOKEN_DENOM)
     .or(string().min(6))
@@ -119,7 +122,7 @@ export const donationModel = createModel<RootModel>()({
           return handleStep(state, "confirmation");
 
         case "confirmation":
-          return handleStep(state, "done");
+          return handleStep(state, "success");
       }
     },
 
@@ -143,7 +146,7 @@ export const donationModel = createModel<RootModel>()({
   effects: (dispatch) => ({
     submit({ amount, donationType, recipientAccountId }: DonationInputs) {
       switch (donationType) {
-        case DonationType.direct:
+        case DonationAllocationType.direct:
           return donateNearDirectly(
             { recipient_id: recipientAccountId },
             amount,

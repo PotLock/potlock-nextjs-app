@@ -33,7 +33,7 @@ export const DonationModal = create((props: DonationModalProps) => {
     <Dialog open={self.visible} onOpenChange={dispatch.donation.reset}>
       <DialogContent
         onBackClick={
-          state.currentStep !== "allocation" && state.currentStep !== "done"
+          state.currentStep !== "allocation" && state.currentStep !== "success"
             ? dispatch.donation.previousStep
             : undefined
         }

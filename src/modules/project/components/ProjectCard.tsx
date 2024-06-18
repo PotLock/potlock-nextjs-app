@@ -26,7 +26,10 @@ export const ProjectCard = ({
   payoutDetails?: PayoutDetailed;
 }) => {
   const allowDonate = _allowDonate === undefined ? true : _allowDonate;
-  const { openDonationModal } = useDonation({ accountId: projectId });
+  const { openDonationModal } = useDonation({
+    allocation: "direct",
+    accountId: projectId,
+  });
 
   const { socialData, socialImages, tags, totalAmountNear } =
     useProfile(projectId);
