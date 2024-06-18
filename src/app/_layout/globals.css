@@ -130,3 +130,9 @@
     transform: rotate(360deg);
   }
 }
+
+.markdown-link {
+  a {
+    color: rgb(123, 123, 123);
+  }
+}

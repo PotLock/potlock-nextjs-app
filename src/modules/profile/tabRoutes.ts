@@ -1,4 +1,5 @@
 import HomeSubPage from "./sub-pages/Home";
+import PotsSubPage from "./sub-pages/Pots";
 import { TabNav } from "./types";
 
 const tabRoutes = [
@@ -10,7 +11,7 @@ const tabRoutes = [
   {
     label: "Pots",
     id: "pots",
-    Component: HomeSubPage,
+    Component: PotsSubPage,
   },
   {
     label: "Funding Raised",
