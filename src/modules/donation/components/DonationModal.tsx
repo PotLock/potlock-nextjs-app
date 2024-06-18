@@ -12,8 +12,7 @@ import {
   DialogHeader,
 } from "@/common/ui/components";
 
-import { DonationToPot } from "./DonationToPot";
-import { DonationToProject } from "./DonationToProject";
+import { DonationFlow } from "./DonationFlow";
 import { DonationParameters } from "../models";
 
 export type DonationModalProps = DonationParameters & {};
@@ -39,15 +38,7 @@ export const DonationModal = create((props: DonationModalProps) => {
         }
         onCloseClick={close}
       >
-        {"accountId" in props && (
-          <DonationToProject closeDialog={close} {...props} {...state} />
-        )}
-
-        {"potId" in props && (
-          <DonationToPot closeDialog={close} {...props} {...state} />
-        )}
-
-        {!("accountId" in props) && !("potId" in props) && (
+        {!("accountId" in props) && !("potId" in props) ? (
           <DialogHeader className="w-full rounded-lg">
             <Alert variant="destructive" className="bg-white">
               <AlertTitle>Runtime error!</AlertTitle>
@@ -57,6 +48,8 @@ export const DonationModal = create((props: DonationModalProps) => {
               </AlertDescription>
             </Alert>
           </DialogHeader>
+        ) : (
+          <DonationFlow closeDialog={close} {...props} {...state} />
         )}
       </DialogContent>
     </Dialog>

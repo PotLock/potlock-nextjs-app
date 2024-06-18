@@ -20,42 +20,57 @@ import {
   DONATION_MIN_NEAR_AMOUNT,
 } from "./constants";
 
-export enum DonationAllocationType {
+export type DonationParameters = ByAccountId | ByPotId;
+
+export enum DonationAllocationStrategyEnum {
   direct = "direct",
   pot = "pot",
 }
 
-export type DonationParameters = ByAccountId | ByPotId;
+export type DonationAllocationStrategy =
+  keyof typeof DonationAllocationStrategyEnum;
 
-export type DonationAllocationOption = {
+export enum DonationPotDistributionStrategyEnum {
+  evenly = "evenly",
+  manually = "manually",
+}
+
+export type DonationPotDistributionStrategy =
+  keyof typeof DonationPotDistributionStrategyEnum;
+
+export type DonationAllocationStrategyOption = {
   title: string;
-  value: DonationAllocationType;
+  value: DonationAllocationStrategy;
   hint?: string;
   hintIfDisabled?: string;
 };
 
-export const donationAllocationOptions: Record<
-  DonationAllocationType,
-  DonationAllocationOption
+export const donationAllocationStrategies: Record<
+  DonationAllocationStrategyEnum,
+  DonationAllocationStrategyOption
 > = {
-  [DonationAllocationType.direct]: {
+  [DonationAllocationStrategyEnum.direct]: {
     title: "Direct donation",
-    value: DonationAllocationType.direct,
+    value: "direct",
   },
 
-  [DonationAllocationType.pot]: {
+  [DonationAllocationStrategyEnum.pot]: {
     title: "Quadratically matched donation",
     hintIfDisabled: "(no pots available)",
-    value: DonationAllocationType.pot,
+    value: "pot",
   },
 };
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
 export const donationSchema = object({
-  donationType: nativeEnum(DonationAllocationType, {
-    message: "Incorrect donation type",
-  }).default(DonationAllocationType.direct),
+  allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {
+    message: "Incorrect allocation strategy.",
+  }).default(DonationAllocationStrategyEnum.direct),
+
+  potDistributionStrategy: nativeEnum(DonationPotDistributionStrategyEnum, {
+    message: "Incorrect donation distribution strategy.",
+  }).default(DonationPotDistributionStrategyEnum.evenly),
 
   tokenId: literal(NEAR_TOKEN_DENOM)
     .or(string().min(6))
@@ -106,6 +121,8 @@ const handleStep = (state: DonationState, step: DonationStep) => ({
   currentStep: step,
 });
 
+export type DonationSubmissionInputs = ByAccountId | ByPotId;
+
 export const donationModel = createModel<RootModel>()({
   state: donationStateDefaults,
 
@@ -142,15 +159,30 @@ export const donationModel = createModel<RootModel>()({
   },
 
   effects: (dispatch) => ({
-    submit({ amount, donationType, recipientAccountId }: DonationInputs) {
-      switch (donationType) {
-        case DonationAllocationType.direct:
-          return donateNearDirectly(
-            { recipient_id: recipientAccountId },
-            amount,
-          )
-            .then(dispatch.success)
-            .catch(dispatch.failure);
+    submit({
+      amount,
+      allocationStrategy,
+      potDistributionStrategy,
+      ...props
+    }: DonationSubmissionInputs & DonationInputs) {
+      if ("accountId" in props) {
+        switch (allocationStrategy) {
+          case DonationAllocationStrategyEnum.direct:
+            return donateNearDirectly({ recipient_id: props.accountId }, amount)
+              .then(dispatch.success)
+              .catch(dispatch.failure);
+
+          case DonationAllocationStrategyEnum.pot:
+            return dispatch.failure;
+        }
+      } else if ("potId" in props) {
+        switch (potDistributionStrategy) {
+          case DonationPotDistributionStrategyEnum.evenly:
+            return dispatch.failure;
+
+          case DonationPotDistributionStrategyEnum.manually:
+            return dispatch.failure;
+        }
       }
     },
   }),
