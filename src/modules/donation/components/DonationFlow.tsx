@@ -7,6 +7,7 @@ import {
   DialogHeader,
   Form,
 } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { RuntimeErrorAlert } from "@/modules/core";
 
 import { DonationConfirmation } from "./DonationConfirmation";
@@ -61,9 +62,16 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
         {content}
 
         <DialogFooter>
-          <Button type="button" variant="brand-outline" color="black" disabled>
-            Add to cart
-          </Button>
+          {currentStep === "allocation" && (
+            <Button
+              type="button"
+              variant="brand-outline"
+              color="black"
+              disabled
+            >
+              Add to cart
+            </Button>
+          )}
 
           <Button
             type={currentStep === "confirmation" ? "submit" : "button"}
@@ -73,8 +81,13 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
                 ? undefined
                 : dispatch.donation.nextStep
             }
+            className={cn({
+              "w-full": currentStep === "confirmation",
+            })}
           >
-            Proceed to donate
+            {currentStep === "confirmation"
+              ? "Confirm donation"
+              : "Proceed to donate"}
           </Button>
         </DialogFooter>
       </form>
