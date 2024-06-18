@@ -1,17 +1,23 @@
 import { UseFormReturn } from "react-hook-form";
 
+import { DialogHeader, DialogTitle } from "@/common/ui/components";
+
 import { DonationInputs } from "../models";
 
 export type DonationConfirmationProps = {
   form: UseFormReturn<DonationInputs>;
 };
 
-export const DonationConfirmation = ({
-  form: _,
-}: DonationConfirmationProps) => {
+export const DonationConfirmation = ({ form }: DonationConfirmationProps) => {
+  const values = form.watch();
+
+  console.log(values);
+
   return (
-    <div>
-      <h1>Confirm donation</h1>
-    </div>
+    <>
+      <DialogHeader>
+        <DialogTitle>{"Confirm donation"}</DialogTitle>
+      </DialogHeader>
+    </>
   );
 };
