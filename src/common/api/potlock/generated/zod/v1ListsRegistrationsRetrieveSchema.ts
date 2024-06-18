@@ -3,7 +3,7 @@ import { z } from "zod";
 import { listRegistrationSchema } from "./listRegistrationSchema";
 
 export const v1ListsRegistrationsRetrievePathParamsSchema = z.object({
-  list_id: z.number(),
+  list_id: z.coerce.number(),
 });
 /**
  * @description Returns registrations for the list

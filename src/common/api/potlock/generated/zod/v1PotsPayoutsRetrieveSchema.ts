@@ -3,7 +3,7 @@ import { z } from "zod";
 import { potPayoutSchema } from "./potPayoutSchema";
 
 export const v1PotsPayoutsRetrievePathParamsSchema = z.object({
-  pot_id: z.string(),
+  pot_id: z.coerce.string(),
 });
 /**
  * @description Returns payouts for the pot

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { donationSchema } from "./donationSchema";
 
 export const v1PotsDonationsRetrievePathParamsSchema = z.object({
-  pot_id: z.string(),
+  pot_id: z.coerce.string(),
 });
 /**
  * @description Returns donations for the pot

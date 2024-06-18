@@ -3,7 +3,7 @@ import { z } from "zod";
 import { accountSchema } from "./accountSchema";
 
 export const v1PotsSponsorsRetrievePathParamsSchema = z.object({
-  pot_id: z.string(),
+  pot_id: z.coerce.string(),
 });
 /**
  * @description Returns sponsors for the pot

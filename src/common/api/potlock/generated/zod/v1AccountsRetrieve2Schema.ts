@@ -3,7 +3,7 @@ import { z } from "zod";
 import { accountSchema } from "./accountSchema";
 
 export const v1AccountsRetrieve2PathParamsSchema = z.object({
-  account_id: z.string(),
+  account_id: z.coerce.string(),
 });
 /**
  * @description Returns account details

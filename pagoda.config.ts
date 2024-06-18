@@ -5,14 +5,15 @@ import { pluginTs } from "@kubb/swagger-ts";
 import { pluginZod } from "@kubb/swagger-zod";
 
 export default defineConfig({
-  root: "./src/",
+  name: "pagoda-eapi",
+  root: "./",
 
   input: {
-    path: "https://dev.potlock.io/api/schema",
+    path: "./pagoda-eapi.schema.json",
   },
 
   output: {
-    path: "./common/api/potlock/generated",
+    path: "./src/common/api/pagoda/generated",
     clean: true,
   },
 

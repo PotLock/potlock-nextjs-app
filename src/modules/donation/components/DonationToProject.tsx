@@ -1,13 +1,17 @@
 import { useMemo } from "react";
 
 import { dispatch } from "@/app/_store";
+import { pagoda } from "@/common/api/pagoda";
 import { ByAccountId, potlock } from "@/common/api/potlock";
+import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { walletApi } from "@/common/contracts";
 import {
   Button,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  Form,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -20,8 +24,9 @@ import {
   TextField,
 } from "@/common/ui/components";
 
+import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
 import { useDonationForm } from "../hooks/forms";
-import { DonationState, donationInputDefaults } from "../models";
+import { DonationState } from "../models";
 
 export type DonationToProjectProps = ByAccountId &
   DonationState & {
@@ -42,13 +47,15 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
   const { data: activePots } = potlock.useAccountActivePots({ accountId });
   const hasMatchingPots = (activePots?.length ?? 0) > 0;
 
-  const { onSubmit, values, ...form } = useDonationForm({});
+  const { availableBalance, form, onSubmit, values } = useDonationForm({});
+
+  console.table(availableBalance);
 
   const content = useMemo(() => {
     switch (currentStep) {
       case "allocation":
         return (
-          <div>
+          <>
             <div un-flex="~ col" un-gap="3">
               <div className="prose" un-font="600" un-text="neutral-950">
                 How do you want to allocate funds?
@@ -90,7 +97,7 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
                 </div>
               }
               fieldExtension={
-                <Select defaultValue={donationInputDefaults.tokenId}>
+                <Select defaultValue={values.tokenId}>
                   <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
                     <SelectValue />
                   </SelectTrigger>
@@ -105,11 +112,15 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
               }
               type="number"
               placeholder="0.00"
-              min={donationInputDefaults.amount}
+              min={
+                values.tokenId === NEAR_TOKEN_DENOM
+                  ? DONATION_MIN_NEAR_AMOUNT
+                  : 0.0
+              }
               step={0.01}
               appendix="$ 0.00"
             />
-          </div>
+          </>
         );
       case "confirmation":
         return <></>;
@@ -118,7 +129,7 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
       default:
         return "Error: Unable to proceed with the next step";
     }
-  }, [currentStep, hasMatchingPots]);
+  }, [currentStep, hasMatchingPots, values.tokenId]);
 
   return isAccountLoading ? (
     <span
@@ -147,7 +158,11 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
             </DialogHeader>
           )}
 
-          <DialogDescription asChild>{content}</DialogDescription>
+          <Form {...form}>
+            <DialogDescription asChild>
+              <form {...{ onSubmit }}>{content}</form>
+            </DialogDescription>
+          </Form>
 
           <DialogFooter>
             <Button variant="brand-outline" color="black" disabled>

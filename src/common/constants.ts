@@ -2,19 +2,48 @@ import { Network } from "@wpdas/naxios";
 import Big from "big.js";
 import { utils } from "near-api-js";
 
+// NETWORK
+export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
+  "testnet") as Network;
+
 /**
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/
  */
 export const POTLOCK_API_ENDPOINT =
-  "https://dev.potlock.io" ?? "https://test-dev.potlock.io";
+  NETWORK === "mainnet"
+    ? "https://dev.potlock.io"
+    : "https://test-dev.potlock.io";
 
-export const REQUEST_CONFIG = {
+/**
+ * Request config for SWR
+ */
+export const POTLOCK_REQUEST_CONFIG = {
   client: { baseURL: POTLOCK_API_ENDPOINT },
 };
 
-// NETWORK
-export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
-  "testnet") as Network;
+/**
+ * Docs: https://console.pagoda.co/apis?tab=enhancedApi#/
+ */
+export const PAGODA_API_ENDPOINT =
+  NETWORK === "mainnet"
+    ? "https://near-mainnet.api.pagoda.co/eapi/v1/"
+    : "https://near-testnet.api.pagoda.co/eapi/v1/";
+
+export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
+
+/**
+ * Request config for SWR
+ */
+export const PAGODA_REQUEST_CONFIG = {
+  client: {
+    baseURL: PAGODA_API_ENDPOINT,
+
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": PAGODA_API_KEY,
+    },
+  },
+};
 
 // SYBIL CONTRACT
 export const NADABOT_CONTRACT_ID = process.env

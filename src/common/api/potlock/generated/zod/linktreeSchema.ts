@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const linktreeSchema = z.object({
-  github: z.string().optional(),
-  twitter: z.string().optional(),
-  website: z.string().optional(),
-  telegram: z.string().optional(),
+  github: z.coerce.string().optional(),
+  twitter: z.coerce.string().optional(),
+  website: z.coerce.string().optional(),
+  telegram: z.coerce.string().optional(),
 });

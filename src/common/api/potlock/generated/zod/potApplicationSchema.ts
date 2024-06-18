@@ -3,8 +3,8 @@ import { z } from "zod";
 import { potApplicationStatusEnumSchema } from "./potApplicationStatusEnumSchema";
 
 export const potApplicationSchema = z.object({
-  id: z.number().describe("Application id."),
-  message: z
+  id: z.coerce.number().describe("Application id."),
+  message: z.coerce
     .string()
     .max(1024)
     .describe("Application message.")
@@ -22,7 +22,7 @@ export const potApplicationSchema = z.object({
     .describe("Application last update date.")
     .nullable()
     .nullish(),
-  tx_hash: z.string().describe("Transaction hash.").nullable().nullish(),
-  pot: z.string().describe("Pot applied to."),
-  applicant: z.string().describe("Account that applied to the pot."),
+  tx_hash: z.coerce.string().describe("Transaction hash.").nullable().nullish(),
+  pot: z.coerce.string().describe("Pot applied to."),
+  applicant: z.coerce.string().describe("Account that applied to the pot."),
 });

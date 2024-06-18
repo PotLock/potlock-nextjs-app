@@ -3,11 +3,13 @@ import { z } from "zod";
 import { potSchema } from "./potSchema";
 
 export const v1AccountsActivePotsRetrievePathParamsSchema = z.object({
-  account_id: z.string(),
+  account_id: z.coerce.string(),
 });
 
 export const v1AccountsActivePotsRetrieveQueryParamsSchema = z
-  .object({ status: z.string().describe("Filter by pot status").optional() })
+  .object({
+    status: z.coerce.string().describe("Filter by pot status").optional(),
+  })
   .optional();
 /**
  * @description Returns paginated active pots for the account

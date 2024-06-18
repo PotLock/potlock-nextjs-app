@@ -3,24 +3,24 @@ import { z } from "zod";
 import { defaultRegistrationStatusEnumSchema } from "./defaultRegistrationStatusEnumSchema";
 
 export const listSchema = z.object({
-  id: z
+  id: z.coerce
     .number()
     .describe(
       "List ID in DB (does not necessarily correspond to on-chain ID).",
     ),
-  on_chain_id: z
+  on_chain_id: z.coerce
     .number()
     .min(-2147483648)
     .max(2147483647)
     .describe("List ID in contract"),
-  name: z.string().max(64).describe("List name."),
-  description: z
+  name: z.coerce.string().max(64).describe("List name."),
+  description: z.coerce
     .string()
     .max(256)
     .describe("List description.")
     .nullable()
     .nullish(),
-  cover_image_url: z
+  cover_image_url: z.coerce
     .string()
     .url()
     .max(200)
@@ -35,6 +35,6 @@ export const listSchema = z.object({
     ),
   created_at: z.string().datetime().describe("List creation date."),
   updated_at: z.string().datetime().describe("List last update date."),
-  owner: z.string().describe("List owner."),
-  admins: z.array(z.string()).describe("List admins."),
+  owner: z.coerce.string().describe("List owner."),
+  admins: z.array(z.coerce.string()).describe("List admins."),
 });

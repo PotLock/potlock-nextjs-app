@@ -3,7 +3,7 @@ import { z } from "zod";
 import { donationSchema } from "./donationSchema";
 
 export const v1AccountsDonationsReceivedRetrievePathParamsSchema = z.object({
-  account_id: z.string(),
+  account_id: z.coerce.string(),
 });
 /**
  * @description Returns paginated donations received by the account

@@ -65,11 +65,11 @@ export const donationSchema = object({
     .positive()
     .finite()
     .lt(0.0, "Cannot be zero.")
+    .default(0.1)
     .refine(
       (n) => !number().int().safeParse(n).success,
       "Must be a floating point number.",
     )
-    .default(0.1)
     .describe("Amount of the selected tokens to donate."),
 
   message: string()
@@ -91,9 +91,6 @@ export const donationSchema = object({
 );
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
-
-export const donationInputDefaults: DonationInputs =
-  donationSchema.parse(undefined);
 
 export type DonationState = {
   currentStep: DonationStep;

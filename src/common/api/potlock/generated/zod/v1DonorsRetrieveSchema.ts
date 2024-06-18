@@ -4,7 +4,7 @@ import { accountSchema } from "./accountSchema";
 
 export const v1DonorsRetrieveQueryParamsSchema = z
   .object({
-    sort: z
+    sort: z.coerce
       .string()
       .describe("Sort by field, e.g., most_donated_usd")
       .optional(),
