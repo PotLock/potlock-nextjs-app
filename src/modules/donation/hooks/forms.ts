@@ -11,17 +11,16 @@ import {
   DonationInputs,
   DonationSubmissionInputs,
   donationSchema,
+  tokenIdSchema,
 } from "../models";
 
 export const useDonationForm = (params: DonationSubmissionInputs) => {
   const form = useForm<DonationInputs>({
     resolver: zodResolver(donationSchema),
+    defaultValues: { tokenId: tokenIdSchema.parse(undefined) },
   });
 
-  const tokenId = form.watch("tokenId");
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
-
-  console.log(tokenId);
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
     (values) => dispatch.donation.submit({ ...values, ...params }),

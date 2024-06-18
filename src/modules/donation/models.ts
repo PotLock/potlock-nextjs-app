@@ -63,6 +63,11 @@ export const donationAllocationStrategies: Record<
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
+export const tokenIdSchema = literal(NEAR_TOKEN_DENOM)
+  .or(string().min(6))
+  .default(NEAR_TOKEN_DENOM)
+  .describe('Either "NEAR" or FT contract account id.');
+
 export const donationSchema = object({
   allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {
     message: "Incorrect allocation strategy.",
@@ -72,10 +77,7 @@ export const donationSchema = object({
     message: "Incorrect donation distribution strategy.",
   }).default(DonationPotDistributionStrategyEnum.evenly),
 
-  tokenId: literal(NEAR_TOKEN_DENOM)
-    .or(string().min(6))
-    .default(NEAR_TOKEN_DENOM)
-    .describe('Either "NEAR" or FT contract account id.'),
+  tokenId: tokenIdSchema,
 
   amount: number()
     .positive()

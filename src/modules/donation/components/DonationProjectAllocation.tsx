@@ -21,9 +21,10 @@ import {
   SelectValue,
   TextField,
 } from "@/common/ui/components";
+import { RuntimeErrorAlert } from "@/modules/core";
 
 import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
-import { DonationInputs } from "../models";
+import { DonationInputs, tokenIdSchema } from "../models";
 
 export type DonationProjectAllocationProps = ByAccountId & {
   form: UseFormReturn<DonationInputs>;
@@ -43,15 +44,23 @@ export const DonationProjectAllocation: React.FC<
     error: accountError,
   } = potlock.useAccount({ accountId });
 
-  const { data: { balance: availableNearBalance = null } = {} } =
-    pagoda.useNearAccountBalance({
-      accountId: walletApi.accountId ?? "unknown",
-    });
+  const {
+    isLoading: isNearBalanceLoading,
+    data: { balance: availableNearBalance = null } = {},
+    error: nearBalanceError,
+  } = pagoda.useNearAccountBalance({
+    accountId: walletApi.accountId ?? "unknown",
+  });
 
-  const { data: { balances: availableFtBalances = null } = {} } =
-    pagoda.useFtAccountBalances({
-      accountId: walletApi.accountId ?? "unknown",
-    });
+  const {
+    isLoading: isFtBalanceLoading,
+    data: { balances: availableFtBalances = null } = {},
+    error: ftBalancesError,
+  } = pagoda.useFtAccountBalances({
+    accountId: walletApi.accountId ?? "unknown",
+  });
+
+  const dataFetchError = accountError ?? nearBalanceError ?? ftBalancesError;
 
   const availableBalance = useMemo(
     () =>
@@ -64,7 +73,7 @@ export const DonationProjectAllocation: React.FC<
     [availableFtBalances, availableNearBalance, isFtDonation, tokenId],
   );
 
-  return isAccountLoading || availableBalance === null ? (
+  return isAccountLoading || isNearBalanceLoading || isFtBalanceLoading ? (
     <span
       un-flex="~"
       un-justify="center"
@@ -77,7 +86,11 @@ export const DonationProjectAllocation: React.FC<
     </span>
   ) : (
     <>
-      {accountError && accountError.message}
+      {dataFetchError && (
+        <DialogHeader className="w-full rounded-lg">
+          <RuntimeErrorAlert customMessage={dataFetchError} />
+        </DialogHeader>
+      )}
 
       {account !== undefined && (
         <>
@@ -114,22 +127,28 @@ export const DonationProjectAllocation: React.FC<
             <TextField
               label="Amount"
               labelExtension={
-                <div un-flex="~" un-gap="1">
-                  <span
-                    className="prose"
-                    un-text="sm neutral-950"
-                    un-font="600"
-                  >
-                    {`${availableBalance.amount} ${availableBalance.metadata.symbol}`}
+                availableBalance === null ? (
+                  <span className="prose" un-text="sm destructive">
+                    Unable to load available balance!
                   </span>
+                ) : (
+                  <div un-flex="~" un-gap="1">
+                    <span
+                      className="prose"
+                      un-text="sm neutral-950"
+                      un-font="600"
+                    >
+                      {`${availableBalance.amount} ${availableBalance.metadata.symbol}`}
+                    </span>
 
-                  <span className="prose" un-text="sm neutral-600">
-                    available
-                  </span>
-                </div>
+                    <span className="prose" un-text="sm neutral-600">
+                      available
+                    </span>
+                  </div>
+                )
               }
               fieldExtension={
-                <Select defaultValue={tokenId}>
+                <Select defaultValue={tokenIdSchema.parse(tokenId)}>
                   <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
                     <SelectValue />
                   </SelectTrigger>
