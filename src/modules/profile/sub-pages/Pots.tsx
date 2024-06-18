@@ -2,10 +2,8 @@
 
 import { useParams } from "next/navigation";
 
-import AboutItem from "../components/AboutItem";
-import Github from "../components/Github";
-import SmartContract from "../components/SmartContract";
-import Team from "../components/Team";
+import PotCard from "@/modules/pot/components/PotCard";
+
 import useProfileData from "../hooks/useProfileData";
 
 const PotsSubPage = () => {
@@ -15,7 +13,7 @@ const PotsSubPage = () => {
   return (
     <div className="mb-18 flex w-full flex-col">
       {/* Header Container */}
-      <p>aleatórios</p>
+      <PotCard />
     </div>
   );
 };

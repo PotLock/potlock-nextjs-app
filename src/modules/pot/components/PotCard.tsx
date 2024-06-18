@@ -2,7 +2,10 @@ import Link from "next/link";
 
 const PotCard = () => {
   return (
-    <Link className="flex h-full min-h-[300px] min-w-[320px] flex-col rounded-[8px] bg-white pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline">
+    <Link
+      href="#"
+      className="flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col rounded-[8px] bg-white pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline"
+    >
       {/* Card Section */}
       <div className="flex h-full w-full flex-col items-start justify-start gap-4 p-8">
         {/* Title */}
