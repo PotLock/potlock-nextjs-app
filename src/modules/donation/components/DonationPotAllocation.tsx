@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { pagoda } from "@/common/api/pagoda";
-import { ByAccountId, ByPotId, potlock } from "@/common/api/potlock";
+import { ByPotId, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
 import {

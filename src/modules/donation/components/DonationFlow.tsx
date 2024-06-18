@@ -3,18 +3,20 @@ import { useMemo } from "react";
 import { dispatch } from "@/app/_store";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
 
+import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationPotAllocation } from "./DonationPotAllocation";
 import { DonationProjectAllocation } from "./DonationProjectAllocation";
+import { DonationSuccess } from "./DonationSuccess";
 import { useDonationForm } from "../hooks/forms";
 import { DonationState, DonationSubmissionInputs } from "../models";
 
 export type DonationFlowProps = DonationSubmissionInputs &
   DonationState & {
-    closeDialog: VoidFunction;
+    closeModal: VoidFunction;
   };
 
 export const DonationFlow: React.FC<DonationFlowProps> = ({
-  closeDialog: _,
+  closeModal,
   currentStep,
   ...props
 }) => {
@@ -33,15 +35,15 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
         );
 
       case "confirmation":
-        return <></>;
+        return <DonationConfirmation {...{ form }} />;
 
       case "success":
-        return <></>;
+        return <DonationSuccess {...{ closeModal }} />;
 
       default:
         return "Error: Unable to proceed with the next step";
     }
-  }, [currentStep, form, props]);
+  }, [closeModal, currentStep, form, props]);
 
   return (
     <Form {...form}>

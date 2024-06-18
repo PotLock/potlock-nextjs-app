@@ -49,7 +49,7 @@ export const DonationModal = create((props: DonationModalProps) => {
             </Alert>
           </DialogHeader>
         ) : (
-          <DonationFlow closeDialog={close} {...props} {...state} />
+          <DonationFlow closeModal={close} {...props} {...state} />
         )}
       </DialogContent>
     </Dialog>
