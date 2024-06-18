@@ -10,6 +10,7 @@
     "generate:api": "kubb --config kubb.config.ts",
     "dev:test": "yarn && yarn generate:api && vitest watch",
     "dev": "yarn && yarn generate:api; next dev",
+    "next:dev": "yarn && next dev",
     "build": "yarn generate:api; next build",
     "start": "next start",
     "test:unit": "vitest run"

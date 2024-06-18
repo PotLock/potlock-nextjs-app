@@ -12,10 +12,10 @@ export type RootProviderProps = {
 
 export const RootProvider: React.FC<RootProviderProps> = ({ children }) => {
   return (
-    <NiceModalProvider>
-      <ReduxProvider store={store}>
+    <ReduxProvider store={store}>
+      <NiceModalProvider>
         <AuthProvider>{children}</AuthProvider>
-      </ReduxProvider>
-    </NiceModalProvider>
+      </NiceModalProvider>
+    </ReduxProvider>
   );
 };
