@@ -62,7 +62,7 @@ const LinksWrapper = ({ accountId }: Props) => {
 
 const Info = ({ accountId }: Props) => {
   const { wallet } = useWallet();
-  const profile = useProfileData(accountId);
+  const { profile } = useProfileData(accountId);
 
   const name = profile?.name || "";
   const isOwner = wallet?.accountId === accountId;

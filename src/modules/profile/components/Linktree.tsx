@@ -31,7 +31,7 @@ type Props = {
 };
 
 const Linktree = ({ accountId }: Props) => {
-  const profile = useProfileData(accountId);
+  const { profile } = useProfileData(accountId);
 
   const linktree = profile?.linktree;
 

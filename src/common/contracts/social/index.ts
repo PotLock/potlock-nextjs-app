@@ -56,6 +56,8 @@ export enum Category {
 }
 
 export interface NEARSocialUserProfile {
+  team?: string;
+  plTeam?: string;
   name?: string;
   linktree?: ProfileLinktree;
   image?: Image;
@@ -68,9 +70,9 @@ export interface NEARSocialUserProfile {
   plPublicGoodReason?: string;
   plCategories?: string;
   // optional fields
-  plGithubRepos?: string[];
+  plGithubRepos?: string;
   plFundingSources?: ExternalFundingSource[];
-  plSmartContracts?: [string, string][];
+  plSmartContracts?: string; //[string, string][];
   category?:
     | keyof typeof Category
     | {
