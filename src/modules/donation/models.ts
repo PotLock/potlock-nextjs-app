@@ -25,9 +25,7 @@ export enum DonationAllocationType {
   pot = "pot",
 }
 
-export type DonationParameters =
-  | (ByAccountId & { allocation: DonationAllocationType.direct })
-  | (ByPotId & { allocation: DonationAllocationType.pot });
+export type DonationParameters = ByAccountId | ByPotId;
 
 export type DonationAllocationOption = {
   title: string;

@@ -31,7 +31,10 @@ export const DonationToProject: React.FC<DonationToProjectProps> = ({
     error: accountError,
   } = potlock.useAccount({ accountId });
 
-  const { form, onSubmit } = useDonationForm({});
+  const { form, onSubmit } = useDonationForm({
+    allocation: "direct",
+    accountId,
+  });
 
   const content = useMemo(() => {
     switch (currentStep) {
