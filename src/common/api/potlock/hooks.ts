@@ -11,6 +11,9 @@ export const useAccounts = () => swrHooks.useV1AccountsRetrieve(REQUEST_CONFIG);
 export const useAccountDonationsReceived = ({ accountId }: ByAccountId) =>
   swrHooks.useV1AccountsDonationsReceivedRetrieve(accountId, REQUEST_CONFIG);
 
+export const useAccountPotApplications = ({ accountId }: ByAccountId) =>
+  swrHooks.useV1AccountsPotApplicationsRetrieve(accountId, REQUEST_CONFIG);
+
 export const usePot = ({ potId }: ByPotId) =>
   swrHooks.useV1PotsRetrieve2(potId, REQUEST_CONFIG);
 

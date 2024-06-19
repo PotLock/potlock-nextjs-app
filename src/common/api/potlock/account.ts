@@ -1,3 +1,4 @@
+import { PotApplication } from "./generated";
 import { POTLOCK_API_ENDPOINT } from "../../constants";
 
 type Accounts = {
@@ -71,4 +72,16 @@ export const getAccountDonationsReceived = async ({
   );
   const json = await res.json();
   return json as GetAccountDonationsReceivedResponse;
+};
+
+export const getAccountPotApplications = async ({
+  accountId,
+}: {
+  accountId: string;
+}) => {
+  const res = await fetch(
+    `${POTLOCK_API_ENDPOINT}/api/v1/accounts/${accountId}/pot_applications`,
+  );
+  const json = await res.json();
+  return json.results as PotApplication[];
 };

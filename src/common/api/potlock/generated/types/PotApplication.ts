@@ -7,6 +7,15 @@ export type PotApplication = {
    */
   readonly id: number;
   /**
+   * @type string
+   */
+  readonly pot: string;
+  /**
+   * @description Account that applied to the pot.
+   * @type string
+   */
+  applicant: string;
+  /**
    * @description Application message.
    * @type string
    */
@@ -30,14 +39,4 @@ export type PotApplication = {
    * @type string
    */
   tx_hash?: string | null;
-  /**
-   * @description Pot applied to.
-   * @type string
-   */
-  pot: string;
-  /**
-   * @description Account that applied to the pot.
-   * @type string
-   */
-  applicant: string;
 };
