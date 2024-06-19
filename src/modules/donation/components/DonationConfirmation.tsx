@@ -11,7 +11,7 @@ export type DonationConfirmationProps = {
 export const DonationConfirmation = ({ form }: DonationConfirmationProps) => {
   const values = form.watch();
 
-  console.log(values);
+  console.table(values);
 
   return (
     <>

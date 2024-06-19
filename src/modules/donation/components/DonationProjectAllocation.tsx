@@ -6,7 +6,6 @@ import { pagoda } from "@/common/api/pagoda";
 import { ByAccountId, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
-import { bigNumToFloat } from "@/common/lib";
 import {
   DialogDescription,
   DialogHeader,
@@ -30,15 +29,14 @@ import {
   RuntimeErrorAlert,
   balanceToFloat,
   balanceToString,
+  useNearUsdDisplayValue,
 } from "@/modules/core";
-import { useYoctoNearUsdDisplayValue } from "@/modules/core/hooks/price";
 
 import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
 import {
   DonationAllocationStrategyEnum,
   DonationInputs,
   donationAllocationStrategies,
-  tokenIdSchema,
 } from "../models";
 
 export type DonationProjectAllocationProps = ByAccountId & {
@@ -48,7 +46,7 @@ export type DonationProjectAllocationProps = ByAccountId & {
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
 > = ({ accountId, form }) => {
-  const tokenId = form.watch("tokenId");
+  const [amount, tokenId] = form.watch(["amount", "tokenId"]);
   const { data: activePots } = potlock.useAccountActivePots({ accountId });
   const hasMatchingPots = (activePots?.length ?? 0) > 0;
   const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
@@ -100,9 +98,7 @@ export const DonationProjectAllocation: React.FC<
     [availableBalance],
   );
 
-  const availableNearBalanceUsdDisplayValue = useYoctoNearUsdDisplayValue(
-    availableNearBalance?.amount ?? "0",
-  );
+  const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount ?? "0");
 
   return isAccountLoading || isNearBalanceLoading || isFtBalanceLoading ? (
     <span
@@ -169,76 +165,86 @@ export const DonationProjectAllocation: React.FC<
               )}
             />
 
-            <TextField
-              label="Amount"
-              labelExtension={
-                availableBalance === null ? (
-                  <span className="prose" un-text="sm destructive">
-                    Unable to load available balance!
-                  </span>
-                ) : (
-                  <div un-flex="~" un-gap="1">
-                    <span
-                      className="prose"
-                      un-text="sm neutral-950"
-                      un-font="600"
-                    >
-                      {balanceToString(availableBalance)}
-                    </span>
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <TextField
+                  label="Amount"
+                  {...field}
+                  labelExtension={
+                    availableBalance === null ? (
+                      <span className="prose" un-text="sm destructive">
+                        Unable to load available balance!
+                      </span>
+                    ) : (
+                      <div un-flex="~" un-gap="1">
+                        <span
+                          className="prose"
+                          un-text="sm neutral-950"
+                          un-font="600"
+                        >
+                          {balanceToString(availableBalance)}
+                        </span>
 
-                    <span className="prose" un-text="sm neutral-600">
-                      available
-                    </span>
-                  </div>
-                )
-              }
-              fieldExtension={
-                <FormField
-                  control={form.control}
-                  name="tokenId"
-                  render={({ field: fieldExtension }) => (
-                    <Select
-                      defaultValue={fieldExtension.value}
-                      onValueChange={fieldExtension.onChange}
-                    >
-                      <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
-                        <SelectValue />
-                      </SelectTrigger>
+                        <span className="prose" un-text="sm neutral-600">
+                          available
+                        </span>
+                      </div>
+                    )
+                  }
+                  fieldExtension={
+                    <FormField
+                      control={form.control}
+                      name="tokenId"
+                      render={({ field: fieldExtension }) => (
+                        <Select
+                          defaultValue={fieldExtension.value}
+                          onValueChange={fieldExtension.onChange}
+                        >
+                          <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
+                            <SelectValue />
+                          </SelectTrigger>
 
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Available tokens</SelectLabel>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Available tokens</SelectLabel>
 
-                          <SelectItem value={NEAR_TOKEN_DENOM}>
-                            {NEAR_TOKEN_DENOM.toUpperCase()}
-                          </SelectItem>
-
-                          {availableFtBalances?.map(
-                            ({
-                              contract_account_id: contractId,
-                              metadata: { symbol },
-                            }) => (
-                              <SelectItem key={contractId} value={contractId}>
-                                {symbol}
+                              <SelectItem value={NEAR_TOKEN_DENOM}>
+                                {NEAR_TOKEN_DENOM.toUpperCase()}
                               </SelectItem>
-                            ),
-                          )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
+
+                              {availableFtBalances?.map(
+                                ({
+                                  contract_account_id: contractId,
+                                  metadata: { symbol },
+                                }) => (
+                                  <SelectItem
+                                    key={contractId}
+                                    value={contractId}
+                                  >
+                                    {symbol}
+                                  </SelectItem>
+                                ),
+                              )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  }
+                  type="number"
+                  placeholder="0.00"
+                  min={
+                    tokenId === NEAR_TOKEN_DENOM
+                      ? DONATION_MIN_NEAR_AMOUNT
+                      : 0.0
+                  }
+                  max={availableBalanceFloat ?? undefined}
+                  step={0.01}
+                  appendix={isFtDonation ? null : nearAmountUsdDisplayValue}
                 />
-              }
-              type="number"
-              placeholder="0.00"
-              min={
-                tokenId === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0
-              }
-              max={availableBalanceFloat ?? undefined}
-              step={0.01}
-              appendix={
-                isFtDonation ? null : availableNearBalanceUsdDisplayValue
-              }
+              )}
             />
           </DialogDescription>
         </>

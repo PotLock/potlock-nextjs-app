@@ -20,6 +20,7 @@ export const useDonationForm = (params: DonationSubmissionInputs) => {
     resolver: zodResolver(donationSchema),
 
     defaultValues: {
+      amount: 0.1,
       tokenId: tokenIdSchema.parse(undefined),
       allocationStrategy: DonationAllocationStrategyEnum.direct,
     },
@@ -31,8 +32,6 @@ export const useDonationForm = (params: DonationSubmissionInputs) => {
     (values) => dispatch.donation.submit({ ...values, ...params }),
     [params],
   );
-
-  console.table(form.getValues());
 
   return {
     isSenderHumanVerified,
