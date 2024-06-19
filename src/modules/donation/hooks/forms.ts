@@ -10,6 +10,7 @@ import useIsHuman from "@/modules/core/hooks/useIsHuman";
 import {
   DonationAllocationStrategyEnum,
   DonationInputs,
+  DonationPotDistributionStrategy,
   DonationSubmissionInputs,
   donationSchema,
   tokenIdSchema,
@@ -20,9 +21,10 @@ export const useDonationForm = (params: DonationSubmissionInputs) => {
     resolver: zodResolver(donationSchema),
 
     defaultValues: {
+      allocationStrategy: DonationAllocationStrategyEnum.direct,
       amount: 0.1,
       tokenId: tokenIdSchema.parse(undefined),
-      allocationStrategy: DonationAllocationStrategyEnum.direct,
+      potDistributionStrategy: DonationPotDistributionStrategy.manually,
     },
   });
 

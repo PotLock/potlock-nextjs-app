@@ -98,7 +98,7 @@ export const DonationProjectAllocation: React.FC<
     [availableBalance],
   );
 
-  const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount ?? "0");
+  const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
   return isAccountLoading || isNearBalanceLoading || isFtBalanceLoading ? (
     <span

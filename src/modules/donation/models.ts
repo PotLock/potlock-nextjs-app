@@ -92,7 +92,6 @@ export const donationSchema = object({
 
   message: string()
     .max(DONATION_MAX_MESSAGE_LENGTH)
-    .nullable()
     .optional()
     .describe("Donation message."),
 

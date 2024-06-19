@@ -17,6 +17,7 @@ export * from "./select";
 export * from "./skeleton";
 export * from "./SortSelect";
 export * from "./switch";
+export * from "./textarea";
 export * from "./text-field";
 export * from "./toggle";
 export * from "./toggle-group";
