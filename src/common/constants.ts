@@ -1,4 +1,5 @@
 import { Network } from "@wpdas/naxios";
+import { AxiosRequestConfig } from "axios";
 import Big from "big.js";
 import { utils } from "near-api-js";
 
@@ -17,8 +18,8 @@ export const POTLOCK_API_ENDPOINT =
 /**
  * Request config for SWR
  */
-export const POTLOCK_REQUEST_CONFIG = {
-  client: { baseURL: POTLOCK_API_ENDPOINT },
+export const POTLOCK_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
+  axios: { baseURL: POTLOCK_API_ENDPOINT },
 };
 
 /**
@@ -34,8 +35,8 @@ export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 /**
  * Request config for SWR
  */
-export const PAGODA_REQUEST_CONFIG = {
-  client: {
+export const PAGODA_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
+  axios: {
     baseURL: PAGODA_API_ENDPOINT,
 
     headers: {

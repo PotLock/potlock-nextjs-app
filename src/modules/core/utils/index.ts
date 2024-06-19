@@ -1,6 +1,6 @@
 import Big from "big.js";
 
-import { NearBalanceResponse } from "@/common/api/pagoda/generated";
+import { NearBalanceResponse } from "@/common/api/pagoda";
 import { bigNumToFloat } from "@/common/lib";
 import formatWithCommas from "@/common/lib/formatWithCommas";
 import { fetchNearPrice } from "@/common/services";

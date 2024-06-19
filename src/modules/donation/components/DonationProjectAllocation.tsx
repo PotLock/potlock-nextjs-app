@@ -115,7 +115,7 @@ export const DonationProjectAllocation: React.FC<
     <>
       {dataFetchError && (
         <DialogHeader className="w-full rounded-lg">
-          <RuntimeErrorAlert customMessage={dataFetchError} />
+          <RuntimeErrorAlert customMessage={dataFetchError.message} />
         </DialogHeader>
       )}
 

@@ -3,7 +3,6 @@ import { useCallback, useState } from "react";
 import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
-import { potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
   Button,
@@ -34,16 +33,6 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
 }) => {
   const values = form.watch();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
-
-  const { data: allAccounts } = potlock.useAccounts();
-
-  console.log("allAccounts", allAccounts);
-
-  const { data: potData } = potlock.usePot({
-    potId: "africa-public-goods.v1.potfactory.potlock.near",
-  });
-
-  console.log("Pot data", potData);
 
   const onAddNoteClick = useCallback(() => {
     setIsMessageFieldVisible(true);

@@ -1,1 +1,0 @@
-{"type":"object","properties":{"media":{"type":"string","format":"uri"},"baseUri":{"type":"string","format":"uri"},"tokenId":{"type":"string"},"contractId":{"type":"string"}},"x-readme-ref-name":"NFT"}
