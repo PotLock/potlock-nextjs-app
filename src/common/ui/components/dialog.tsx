@@ -196,7 +196,7 @@ const DialogFooter = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn("mt-auto flex justify-between gap-4 p-4", className)}
+    className={cn("mt-auto flex justify-between gap-4 p-5", className)}
     {...props}
   />
 );
@@ -222,15 +222,18 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 const DialogDescription = forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
     className={cn(
-      "flex flex-col gap-4 px-4 py-4 text-sm text-muted-foreground sm:px-5",
+      "flex flex-col gap-4 p-5 text-sm text-muted-foreground",
       className,
     )}
     {...props}
-  />
+    asChild
+  >
+    <div>{children}</div>
+  </DialogPrimitive.Description>
 ));
 
 DialogDescription.displayName = DialogPrimitive.Description.displayName;

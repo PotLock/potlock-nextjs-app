@@ -8,6 +8,7 @@ import { walletApi } from "@/common/contracts";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
 import {
+  DonationAllocationStrategyEnum,
   DonationInputs,
   DonationSubmissionInputs,
   donationSchema,
@@ -17,7 +18,11 @@ import {
 export const useDonationForm = (params: DonationSubmissionInputs) => {
   const form = useForm<DonationInputs>({
     resolver: zodResolver(donationSchema),
-    defaultValues: { tokenId: tokenIdSchema.parse(undefined) },
+
+    defaultValues: {
+      tokenId: tokenIdSchema.parse(undefined),
+      allocationStrategy: DonationAllocationStrategyEnum.direct,
+    },
   });
 
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");

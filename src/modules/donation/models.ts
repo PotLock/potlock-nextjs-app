@@ -30,34 +30,34 @@ export enum DonationAllocationStrategyEnum {
 export type DonationAllocationStrategy =
   keyof typeof DonationAllocationStrategyEnum;
 
-export enum DonationPotDistributionStrategyEnum {
+export enum DonationPotDistributionStrategy {
   evenly = "evenly",
   manually = "manually",
 }
 
-export type DonationPotDistributionStrategy =
-  keyof typeof DonationPotDistributionStrategyEnum;
+export type DonationPotDistributionStrategyKey =
+  keyof typeof DonationPotDistributionStrategy;
 
 export type DonationAllocationStrategyOption = {
-  title: string;
+  label: string;
   value: DonationAllocationStrategy;
   hint?: string;
   hintIfDisabled?: string;
 };
 
 export const donationAllocationStrategies: Record<
-  DonationAllocationStrategyEnum,
+  DonationAllocationStrategy,
   DonationAllocationStrategyOption
 > = {
-  [DonationAllocationStrategyEnum.direct]: {
-    title: "Direct donation",
-    value: "direct",
+  direct: {
+    label: "Direct donation",
+    value: DonationAllocationStrategyEnum.direct,
   },
 
-  [DonationAllocationStrategyEnum.pot]: {
-    title: "Quadratically matched donation",
+  pot: {
+    label: "Quadratically matched donation",
     hintIfDisabled: "(no pots available)",
-    value: "pot",
+    value: DonationAllocationStrategyEnum.pot,
   },
 };
 
@@ -73,9 +73,9 @@ export const donationSchema = object({
     message: "Incorrect allocation strategy.",
   }).default(DonationAllocationStrategyEnum.direct),
 
-  potDistributionStrategy: nativeEnum(DonationPotDistributionStrategyEnum, {
+  potDistributionStrategy: nativeEnum(DonationPotDistributionStrategy, {
     message: "Incorrect donation distribution strategy.",
-  }).default(DonationPotDistributionStrategyEnum.evenly),
+  }).default(DonationPotDistributionStrategy.evenly),
 
   tokenId: tokenIdSchema,
 
@@ -179,10 +179,10 @@ export const donationModel = createModel<RootModel>()({
         }
       } else if ("potId" in props) {
         switch (potDistributionStrategy) {
-          case DonationPotDistributionStrategyEnum.evenly:
+          case DonationPotDistributionStrategy.evenly:
             return dispatch.failure;
 
-          case DonationPotDistributionStrategyEnum.manually:
+          case DonationPotDistributionStrategy.manually:
             return dispatch.failure;
         }
       }

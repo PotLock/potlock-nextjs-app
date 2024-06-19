@@ -10,6 +10,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -24,7 +28,12 @@ import {
 import { RuntimeErrorAlert } from "@/modules/core";
 
 import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
-import { DonationInputs, tokenIdSchema } from "../models";
+import {
+  DonationAllocationStrategyEnum,
+  DonationInputs,
+  donationAllocationStrategies,
+  tokenIdSchema,
+} from "../models";
 
 export type DonationProjectAllocationProps = ByAccountId & {
   form: UseFormReturn<DonationInputs>;
@@ -101,28 +110,42 @@ export const DonationProjectAllocation: React.FC<
           </DialogHeader>
 
           <DialogDescription>
-            <div un-flex="~ col" un-gap="3">
-              <div className="prose" un-font="600" un-text="neutral-950">
-                How do you want to allocate funds?
-              </div>
+            <FormField
+              control={form.control}
+              name="allocationStrategy"
+              render={({ field }) => (
+                <FormItem className="flex flex-col gap-3">
+                  <FormLabel>How do you want to allocate funds?</FormLabel>
 
-              <RadioGroup>
-                <RadioGroupItem
-                  id="donation-options-direct"
-                  label="Direct donation"
-                  value="direct"
-                  checked
-                />
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      {Object.values(donationAllocationStrategies).map(
+                        ({ label, hint, hintIfDisabled, value }) => {
+                          const disabled = value === "pot" && !hasMatchingPots;
 
-                <RadioGroupItem
-                  id="donation-options-matched"
-                  label="Quadratically matched donation"
-                  hint={hasMatchingPots ? undefined : "(no pots available)"}
-                  value="matched"
-                  disabled={!hasMatchingPots}
-                />
-              </RadioGroup>
-            </div>
+                          return (
+                            <FormItem key={value}>
+                              <RadioGroupItem
+                                id={`donation-options-${value}`}
+                                checked={
+                                  field.value ===
+                                  DonationAllocationStrategyEnum[value]
+                                }
+                                hint={disabled ? hintIfDisabled : hint}
+                                {...{ disabled, label, value }}
+                              />
+                            </FormItem>
+                          );
+                        },
+                      )}
+                    </RadioGroup>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
             <TextField
               label="Amount"
