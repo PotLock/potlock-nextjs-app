@@ -16,6 +16,7 @@ export * from "./statusF24EnumSchema";
 export * from "./v1AccountsActivePotsRetrieveSchema";
 export * from "./v1AccountsDonationsReceivedRetrieveSchema";
 export * from "./v1AccountsDonationsSentRetrieveSchema";
+export * from "./v1AccountsPotApplicationsRetrieveSchema";
 export * from "./v1AccountsRetrieve2Schema";
 export * from "./v1AccountsRetrieveSchema";
 export * from "./v1DonorsRetrieveSchema";
