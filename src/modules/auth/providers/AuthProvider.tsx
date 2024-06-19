@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { dispatch, resetStore } from "@/app/_store";
 import { walletApi } from "@/common/contracts";
-import useIsClient from "@/common/hooks/useIsClient";
+import useIsClient from "@/common/lib/useIsClient";
 import SuspenseLoading from "@/modules/auth/components/SuspenseLoading";
 
 import { useAuth } from "../hooks/useAuth";
@@ -17,6 +17,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { isAuthenticated } = useAuth();
   const { wallet } = useWallet();
   const isClient = useIsClient();
+
+  // console.log("wallet", wallet);
+  // console.log("isClient", isClient);
+  // console.log("ready", ready);
 
   // Check wallet
   const checkWallet = useCallback(async () => {

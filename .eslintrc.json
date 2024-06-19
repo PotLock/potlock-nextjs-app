@@ -11,15 +11,12 @@
     "@typescript-eslint",
     "prettier",
     "import",
-    "@tanstack/query",
     "testing-library"
   ],
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    // Tanstack
-    "plugin:@tanstack/eslint-plugin-query/recommended",
     // configuration for "import" plugin
     "plugin:import/recommended",
     "plugin:import/typescript",
@@ -90,6 +87,13 @@
           /* ignore case. Options: [true, false] */
           "caseInsensitive": true
         }
+      }
+    ],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
       }
     ]
   }

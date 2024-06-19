@@ -12,7 +12,7 @@ type Props = Partial<ScrollProps> & {
   renderItem: (props: any) => ReactNode;
 };
 
-const InfiniteScroll = ({
+export const InfiniteScroll = ({
   items,
   size,
   index,
@@ -38,5 +38,3 @@ const InfiniteScroll = ({
     </InfiniteScrollWrapper>
   );
 };
-
-export default InfiniteScroll;

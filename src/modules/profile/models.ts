@@ -100,7 +100,7 @@ export type ActAsDao = {
   addresses: string[];
 };
 
-type NavState = {
+export type NavState = {
   accountId: string;
   isNadabotVerified: boolean;
   actAsDao: ActAsDao;

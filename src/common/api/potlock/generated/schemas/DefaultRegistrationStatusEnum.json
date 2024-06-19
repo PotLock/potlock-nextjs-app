@@ -1,0 +1,1 @@
+{"description":"* `Pending` - Pending\n* `Approved` - Approved\n* `Rejected` - Rejected\n* `Graylisted` - Graylisted\n* `Blacklisted` - Blacklisted","type":"string","enum":["Pending","Approved","Rejected","Graylisted","Blacklisted"],"x-readme-ref-name":"DefaultRegistrationStatusEnum"}

@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 
+import { useTypedSelector } from "@/app/_store";
 import {
   Registration,
   RegistrationStatus,
 } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { getRegistrations } from "@/common/contracts/potlock/lists";
-import Filter, { Group } from "@/common/ui/components/Filter";
-import InfiniteScroll from "@/common/ui/components/InfiniteScroll";
-import SearchBar from "@/common/ui/components/SearchBar";
-import SortSelect from "@/common/ui/components/SortSelect";
+import {
+  Filter,
+  Group,
+  InfiniteScroll,
+  SearchBar,
+  SortSelect,
+} from "@/common/ui/components";
 import { Profile } from "@/modules/profile/models";
-
-import Card from "../../modules/project/components/Card";
-import { categories, statuses } from "../../modules/project/constants";
-import { useTypedSelector } from "../_store";
+import { ProjectCard } from "@/modules/project";
+import { categories, statuses } from "@/modules/project/constants";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
@@ -184,7 +186,7 @@ const AllProjects = () => {
           setIndex={setIndex}
           size={MAXIMUM_CARDS_PER_INDEX}
           renderItem={(registration: Registration) => (
-            <Card
+            <ProjectCard
               projectId={registration.registrant_id}
               key={registration.id}
             />
