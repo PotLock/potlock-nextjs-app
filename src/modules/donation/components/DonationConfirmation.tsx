@@ -1,37 +1,53 @@
+import { useCallback, useState } from "react";
+
 import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
+  Button,
   Checkbox,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-  Input,
   Textarea,
 } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { useNearUsdDisplayValue } from "@/modules/core";
 
 import { DonationBreakdown } from "./DonationBreakdown";
 import { DonationInputs } from "../models";
 
 export type DonationConfirmationProps = {
+  allowNotes?: boolean;
   form: UseFormReturn<DonationInputs>;
 };
 
-export const DonationConfirmation = ({ form }: DonationConfirmationProps) => {
+export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
+  allowNotes = false,
+  form,
+}) => {
   const values = form.watch();
+  const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
+
+  const onAddNoteClick = useCallback(() => {
+    setIsMessageFieldVisible(true);
+    form.setValue("message", "", { shouldDirty: true });
+  }, [form]);
+
+  const onDeleteNoteClick = useCallback(() => {
+    setIsMessageFieldVisible(false);
+    form.resetField("message");
+  }, [form]);
 
   const totalNearAmountUsdDisplayValue = useNearUsdDisplayValue(values.amount);
 
   const totalAmountUsdDisplayValue =
-    values.tokenId === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
+    values.token === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
 
   console.table(values);
 
@@ -49,6 +65,7 @@ export const DonationConfirmation = ({ form }: DonationConfirmationProps) => {
 
           <div un-flex="~" un-items="center" un-gap="2">
             <span>N</span>
+
             <span
               className="prose"
               un-text="xl"
@@ -98,25 +115,41 @@ export const DonationConfirmation = ({ form }: DonationConfirmationProps) => {
           </div>
         </div>
 
-        {values.allocationStrategy === "direct" ||
-          (values.potDistributionStrategy === "manually" && (
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem className="flex w-full flex-col items-start gap-3 border-t border-t-neutral-200 pt-5">
-                  <FormLabel className="flex justify-center gap-3.5">
-                    <Pencil className="color-neutral-500 h-3.5 w-3.5" />
-                    <span un-font="500">Add Note</span>
-                  </FormLabel>
+        {allowNotes && (
+          <FormField
+            control={form.control}
+            name="message"
+            render={({ field }) => {
+              const isSpecified = typeof field.value === "string";
 
-                  <FormControl>
+              return (
+                <FormItem className="flex w-full flex-col items-start gap-3 border-t border-t-neutral-200 pt-5">
+                  <Button
+                    onClick={isSpecified ? onDeleteNoteClick : onAddNoteClick}
+                    variant="brand-plain"
+                    className={cn("p-0", {
+                      "color-neutral-500": !isSpecified,
+                      "color-destructive": isSpecified,
+                    })}
+                    asChild
+                  >
+                    <FormLabel className="flex justify-center gap-3.5">
+                      <Pencil width={14} height={14} />
+
+                      <span un-font="500">{`${isSpecified ? "Delete" : "Add"} Note`}</span>
+                    </FormLabel>
+                  </Button>
+
+                  <FormControl
+                    className={cn({ hidden: !isMessageFieldVisible })}
+                  >
                     <Textarea className="resize-none" {...field} />
                   </FormControl>
                 </FormItem>
-              )}
-            />
-          ))}
+              );
+            }}
+          />
+        )}
       </DialogDescription>
     </>
   );

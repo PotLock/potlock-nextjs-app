@@ -46,10 +46,10 @@ export type DonationProjectAllocationProps = ByAccountId & {
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
 > = ({ accountId, form }) => {
-  const [amount, tokenId] = form.watch(["amount", "tokenId"]);
+  const [amount, token] = form.watch(["amount", "token"]);
   const { data: activePots } = potlock.useAccountActivePots({ accountId });
   const hasMatchingPots = (activePots?.length ?? 0) > 0;
-  const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
+  const isFtDonation = token !== NEAR_TOKEN_DENOM;
 
   const {
     isLoading: isAccountLoading,
@@ -79,11 +79,11 @@ export const DonationProjectAllocation: React.FC<
     () =>
       (isFtDonation
         ? availableFtBalances?.find(
-            (ftBalance) => ftBalance.contract_account_id === tokenId,
+            (ftBalance) => ftBalance.contract_account_id === token,
           )
         : availableNearBalance) ?? null,
 
-    [availableFtBalances, availableNearBalance, isFtDonation, tokenId],
+    [availableFtBalances, availableNearBalance, isFtDonation, token],
   );
 
   const availableBalanceFloat = useMemo(
@@ -196,7 +196,7 @@ export const DonationProjectAllocation: React.FC<
                   fieldExtension={
                     <FormField
                       control={form.control}
-                      name="tokenId"
+                      name="token"
                       render={({ field: fieldExtension }) => (
                         <Select
                           defaultValue={fieldExtension.value}
@@ -236,9 +236,7 @@ export const DonationProjectAllocation: React.FC<
                   type="number"
                   placeholder="0.00"
                   min={
-                    tokenId === NEAR_TOKEN_DENOM
-                      ? DONATION_MIN_NEAR_AMOUNT
-                      : 0.0
+                    token === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0
                   }
                   max={availableBalanceFloat ?? undefined}
                   step={0.01}

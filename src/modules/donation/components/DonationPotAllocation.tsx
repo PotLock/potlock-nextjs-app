@@ -33,8 +33,8 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
   potId,
   form,
 }) => {
-  const tokenId = form.watch("tokenId");
-  const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
+  const token = form.watch("token");
+  const isFtDonation = token !== NEAR_TOKEN_DENOM;
 
   const {
     isLoading: isPotLoading,
@@ -56,11 +56,11 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
     () =>
       (isFtDonation
         ? availableFtBalances?.find(
-            (ftBalance) => ftBalance.contract_account_id === tokenId,
+            (ftBalance) => ftBalance.contract_account_id === token,
           )
         : availableNearBalance) ?? null,
 
-    [availableFtBalances, availableNearBalance, isFtDonation, tokenId],
+    [availableFtBalances, availableNearBalance, isFtDonation, token],
   );
 
   return isPotLoading || availableBalance === null ? (
@@ -125,7 +125,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                 </div>
               }
               fieldExtension={
-                <Select defaultValue={tokenId}>
+                <Select defaultValue={token}>
                   <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
                     <SelectValue />
                   </SelectTrigger>
@@ -140,9 +140,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
               }
               type="number"
               placeholder="0.00"
-              min={
-                tokenId === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0
-              }
+              min={token === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0}
               step={0.01}
               appendix="$ 0.00"
             />

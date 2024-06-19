@@ -63,7 +63,7 @@ export const donationAllocationStrategies: Record<
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
-export const tokenIdSchema = literal(NEAR_TOKEN_DENOM)
+export const tokenSchema = literal(NEAR_TOKEN_DENOM)
   .or(string().min(6))
   .default(NEAR_TOKEN_DENOM)
   .describe('Either "NEAR" or FT contract account id.');
@@ -77,7 +77,7 @@ export const donationSchema = object({
     message: "Incorrect donation distribution strategy.",
   }).default(DonationPotDistributionStrategy.evenly),
 
-  tokenId: tokenIdSchema,
+  token: tokenSchema,
 
   amount: number()
     .positive()
@@ -99,8 +99,8 @@ export const donationSchema = object({
 
   bypassChefFee: boolean().default(false),
 }).refine(
-  ({ tokenId, amount }) =>
-    tokenId === NEAR_TOKEN_DENOM
+  ({ token, amount }) =>
+    token === NEAR_TOKEN_DENOM
       ? amount > DONATION_MIN_NEAR_AMOUNT
       : amount > 0.0,
 

@@ -13,7 +13,7 @@ import {
   DonationPotDistributionStrategy,
   DonationSubmissionInputs,
   donationSchema,
-  tokenIdSchema,
+  tokenSchema,
 } from "../models";
 
 export const useDonationForm = (params: DonationSubmissionInputs) => {
@@ -21,10 +21,18 @@ export const useDonationForm = (params: DonationSubmissionInputs) => {
     resolver: zodResolver(donationSchema),
 
     defaultValues: {
-      allocationStrategy: DonationAllocationStrategyEnum.direct,
+      allocationStrategy:
+        DonationAllocationStrategyEnum[
+          "accountId" in params ? "direct" : "pot"
+        ],
+
       amount: 0.1,
-      tokenId: tokenIdSchema.parse(undefined),
-      potDistributionStrategy: DonationPotDistributionStrategy.manually,
+      token: tokenSchema.parse(undefined),
+
+      potDistributionStrategy:
+        DonationPotDistributionStrategy[
+          "accountId" in params ? "manually" : "evenly"
+        ],
     },
   });
 

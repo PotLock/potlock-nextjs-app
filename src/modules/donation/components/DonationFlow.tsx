@@ -42,7 +42,12 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
         );
 
       case "confirmation":
-        return <DonationConfirmation {...{ form }} />;
+        return (
+          <DonationConfirmation
+            allowNotes={"accountId" in props}
+            {...{ form }}
+          />
+        );
 
       case "success":
         return <DonationSuccess {...{ closeModal }} />;
