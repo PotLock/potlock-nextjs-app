@@ -8,7 +8,7 @@ export interface TextFieldProps
   label: string;
   labelExtension?: React.ReactNode;
   fieldExtension?: React.ReactNode;
-  appendix?: string;
+  appendix?: string | null;
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -71,13 +71,17 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           {fieldExtensionElement}
 
           <input
+            className={cn({
+              "rounded-l-lg": fieldExtensionElement === null,
+              "mr-1 rounded-r-lg": appendixElement === null,
+            })}
             un-focus-visible={
               fieldExtensionElement !== null && appendixElement !== null
                 ? "border-inset pl-1.5 border-l-2 border-input outline-none"
                 : undefined
             }
             un-pl={fieldExtensionElement === null ? "3" : "1.5"}
-            un-pr={appendixElement === null ? "3" : "1.5"}
+            un-pr="1.5"
             un-w="full"
             un-h="9"
             un-placeholder="text-muted-foreground"

@@ -45,6 +45,8 @@ export const PAGODA_REQUEST_CONFIG = {
   },
 };
 
+export const COINGECKO_API_ENDPOINT = "https://api.coingecko.com/api/v3";
+
 // SYBIL CONTRACT
 export const NADABOT_CONTRACT_ID = process.env
   .NEXT_PUBLIC_NADABOT_CONTRACT_ID as string;
@@ -69,6 +71,8 @@ export const POTLOCK_POT_FACTORY_CONTRACT_ID = process.env
 export const POTLOCK_REGISTRY_LIST_ID = 1;
 
 export const NEAR_TOKEN_DENOM = "near";
+
+export const NEAR_DEFAULT_TOKEN_DECIMALS = 24;
 
 // 1 NEAR
 export const ONE_NEAR = utils.format.parseNearAmount("1")!;
