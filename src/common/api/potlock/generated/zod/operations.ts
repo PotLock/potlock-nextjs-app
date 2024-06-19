@@ -18,6 +18,13 @@ import {
   v1AccountsDonationsSentRetrieveQueryResponseSchema,
 } from "./v1AccountsDonationsSentRetrieveSchema";
 import {
+  v1AccountsPotApplicationsRetrieve400Schema,
+  v1AccountsPotApplicationsRetrieve404Schema,
+  v1AccountsPotApplicationsRetrieve500Schema,
+  v1AccountsPotApplicationsRetrievePathParamsSchema,
+  v1AccountsPotApplicationsRetrieveQueryResponseSchema,
+} from "./v1AccountsPotApplicationsRetrieveSchema";
+import {
   v1AccountsRetrieve2404Schema,
   v1AccountsRetrieve2500Schema,
   v1AccountsRetrieve2PathParamsSchema,
@@ -142,6 +149,20 @@ export const operations = {
       200: v1AccountsDonationsSentRetrieveQueryResponseSchema,
       404: v1AccountsDonationsSentRetrieve404Schema,
       500: v1AccountsDonationsSentRetrieve500Schema,
+    },
+  },
+  v1_accounts_pot_applications_retrieve: {
+    request: undefined,
+    parameters: {
+      path: v1AccountsPotApplicationsRetrievePathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: v1AccountsPotApplicationsRetrieveQueryResponseSchema,
+      400: v1AccountsPotApplicationsRetrieve400Schema,
+      404: v1AccountsPotApplicationsRetrieve404Schema,
+      500: v1AccountsPotApplicationsRetrieve500Schema,
     },
   },
   v1_donors_retrieve: {
@@ -293,6 +314,9 @@ export const paths = {
   },
   "/api/v1/accounts/{account_id}/donations_sent": {
     get: operations["v1_accounts_donations_sent_retrieve"],
+  },
+  "/api/v1/accounts/{account_id}/pot_applications": {
+    get: operations["v1_accounts_pot_applications_retrieve"],
   },
   "/api/v1/donors": {
     get: operations["v1_donors_retrieve"],

@@ -4,6 +4,8 @@ import { potApplicationStatusEnumSchema } from "./potApplicationStatusEnumSchema
 
 export const potApplicationSchema = z.object({
   id: z.number().describe("Application id."),
+  pot: z.string(),
+  applicant: z.string().describe("Account that applied to the pot."),
   message: z
     .string()
     .max(1024)
@@ -23,6 +25,4 @@ export const potApplicationSchema = z.object({
     .nullable()
     .nullish(),
   tx_hash: z.string().describe("Transaction hash.").nullable().nullish(),
-  pot: z.string().describe("Pot applied to."),
-  applicant: z.string().describe("Account that applied to the pot."),
 });
