@@ -125,18 +125,11 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                 </div>
               }
               fieldExtension={
-                <Select defaultValue={token}>
-                  <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
-                    <SelectValue />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Available tokens</SelectLabel>
-                      <SelectItem value="near">NEAR</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <div un-flex="~" un-items="center" un-justify="center">
+                  <span className="prose" un-text="lg" un-font="600">
+                    NEAR
+                  </span>
+                </div>
               }
               type="number"
               placeholder="0.00"

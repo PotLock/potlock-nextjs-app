@@ -7,15 +7,15 @@ import { DonationInputs } from "../models";
 export type DonationFeeInputs = DonationInputs & {};
 
 export type DonationFees = {
-  projectAllocationPercent: number;
   projectAllocationAmount: number;
-  protocolFeePercent: number;
+  projectAllocationPercent: number;
   protocolFeeAmount: number;
+  protocolFeePercent: number;
   protocolFeeRecipientAccountId?: string;
-  referrerFeePercent: number;
   referrerFeeAmount: number;
-  chefFeePercent: number;
+  referrerFeePercent: number;
   chefFeeAmount: number;
+  chefFeePercent: number;
 };
 
 export const basisPointsToPercent = (basisPoints: number) => basisPoints / 100;
@@ -27,6 +27,9 @@ export const useDonationFees = ({
   bypassChefFee,
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig }: { data?: Config } = {};
+
+  // !TODO: determine the source
+  const referrerId = undefined;
 
   const protocolFeeBasisPoints =
     potlockDonationConfig?.protocol_fee_basis_points ?? 0;
@@ -49,28 +52,28 @@ export const useDonationFees = ({
     (referrerId ? 0 : referralFeeBasisPoints);
 
   return {
+    projectAllocationAmount:
+      (amount * projectAllocationBasisPoints) / TOTAL_FEE_BASIS_POINTS,
+
     projectAllocationPercent: basisPointsToPercent(
       projectAllocationBasisPoints,
     ),
 
-    projectAllocationAmount:
-      (amount * projectAllocationBasisPoints) / TOTAL_FEE_BASIS_POINTS,
-
-    protocolFeePercent: basisPointsToPercent(protocolFeeBasisPoints),
-
     protocolFeeAmount:
       (amount * protocolFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS,
+
+    protocolFeePercent: basisPointsToPercent(protocolFeeBasisPoints),
 
     protocolFeeRecipientAccountId:
       potlockDonationConfig?.protocol_fee_recipient_account,
 
-    referrerFeePercent: basisPointsToPercent(referralFeeBasisPoints),
-
     referrerFeeAmount:
       (amount * referralFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS,
 
-    chefFeePercent: basisPointsToPercent(chefFeeBasisPoints),
+    referrerFeePercent: basisPointsToPercent(referralFeeBasisPoints),
 
     chefFeeAmount: (amount * chefFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS,
+
+    chefFeePercent: basisPointsToPercent(chefFeeBasisPoints),
   };
 };

@@ -13,8 +13,57 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
   form,
 }) => {
   const values = form.watch();
+  // !TODO: determine the source
+  const referrerId = undefined;
 
-  const fees = useDonationFees(values);
+  const {
+    projectAllocationAmount,
+    projectAllocationPercent,
+    protocolFeeAmount,
+    protocolFeePercent,
+    protocolFeeRecipientAccountId,
+    referrerFeeAmount,
+    referrerFeePercent,
+    chefFeeAmount,
+    chefFeePercent,
+  } = useDonationFees(values);
+
+  const totalFees = [
+    {
+      label: "Project allocation",
+      amount: projectAllocationAmount,
+      percentage: projectAllocationPercent,
+      show: true,
+    },
+
+    {
+      label: "Protocol fees",
+      amount: protocolFeeAmount,
+      percentage: protocolFeePercent,
+      show: !values.bypassProtocolFee,
+    },
+
+    {
+      label: "Chef fees",
+      amount: chefFeeAmount,
+      percentage: chefFeePercent,
+      show: !values.bypassChefFee && chefFeeAmount > 0,
+    },
+
+    {
+      label: "Referral fees",
+      amount: referrerFeeAmount,
+      percentage: referrerFeePercent,
+      show: referrerId,
+    },
+
+    {
+      label: "On-chain Storage fee",
+      amount: "<0.01",
+      percentage: "",
+      show: true,
+    },
+  ];
 
   return (
     <>
@@ -29,41 +78,16 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
           un-p="4"
           un-border="~ neutral-300 rounded-lg"
         >
-          <div className="flex justify-between gap-4">
-            <span>Project allocation (92.5%)</span>
+          {totalFees.map(({ label, amount, percentage }) => (
+            <div un-flex="~" un-justify="between" un-gap="4" key={label}>
+              <span className="prose">{`${label} (${percentage}%)`}</span>
 
-            <span className="flex items-center gap-1">
-              <span>46.25</span>
-              <span>N</span>
-            </span>
-          </div>
-
-          <div className="flex justify-between gap-4">
-            <span>Protocol fees (5%)</span>
-
-            <span className="flex items-center gap-1">
-              <span>2.5</span>
-              <span>N</span>
-            </span>
-          </div>
-
-          <div className="flex justify-between gap-4">
-            <span>Chef fees (5%)</span>
-
-            <span className="flex items-center gap-1">
-              <span>2.5</span>
-              <span>N</span>
-            </span>
-          </div>
-
-          <div className="flex justify-between gap-4">
-            <span>Referral fees (2.5%)</span>
-
-            <span className="flex items-center gap-1">
-              <span>1.25</span>
-              <span>N</span>
-            </span>
-          </div>
+              <span className="flex items-center gap-1">
+                <span className="prose">{amount}</span>
+                <span>{values.token}</span>
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -79,7 +103,7 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
                 🌐
               </span>
 
-              <span>impact.sputnik.dao.near</span>
+              <span>{protocolFeeRecipientAccountId}</span>
             </span>
           </label>
         </div>

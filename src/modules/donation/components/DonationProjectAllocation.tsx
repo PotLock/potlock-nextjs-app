@@ -46,7 +46,12 @@ export type DonationProjectAllocationProps = ByAccountId & {
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
 > = ({ accountId, form }) => {
-  const [amount, token] = form.watch(["amount", "token"]);
+  const [amount, token, allocationStrategy] = form.watch([
+    "amount",
+    "token",
+    "allocationStrategy",
+  ]);
+
   const { data: activePots } = potlock.useAccountActivePots({ accountId });
   const hasMatchingPots = (activePots?.length ?? 0) > 0;
   const isFtDonation = token !== NEAR_TOKEN_DENOM;
@@ -214,19 +219,20 @@ export const DonationProjectAllocation: React.FC<
                                 {NEAR_TOKEN_DENOM.toUpperCase()}
                               </SelectItem>
 
-                              {availableFtBalances?.map(
-                                ({
-                                  contract_account_id: contractId,
-                                  metadata: { symbol },
-                                }) => (
-                                  <SelectItem
-                                    key={contractId}
-                                    value={contractId}
-                                  >
-                                    {symbol}
-                                  </SelectItem>
-                                ),
-                              )}
+                              {allocationStrategy === "direct" &&
+                                availableFtBalances?.map(
+                                  ({
+                                    contract_account_id: contractId,
+                                    metadata: { symbol },
+                                  }) => (
+                                    <SelectItem
+                                      key={contractId}
+                                      value={contractId}
+                                    >
+                                      {symbol}
+                                    </SelectItem>
+                                  ),
+                                )}
                             </SelectGroup>
                           </SelectContent>
                         </Select>
