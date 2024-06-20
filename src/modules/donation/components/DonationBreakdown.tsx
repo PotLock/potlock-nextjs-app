@@ -14,7 +14,7 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
 }) => {
   const values = form.watch();
   // !TODO: determine the source
-  const referrerId = undefined;
+  const referrerId: undefined = undefined;
 
   const {
     projectAllocationAmount,
@@ -28,7 +28,7 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
     chefFeePercent,
   } = useDonationFees(values);
 
-  const totalFees = [
+  const computedTotalFees = [
     {
       label: "Project allocation",
       amount: projectAllocationAmount,
@@ -40,7 +40,7 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
       label: "Protocol fees",
       amount: protocolFeeAmount,
       percentage: protocolFeePercent,
-      show: !values.bypassProtocolFee,
+      show: !values.bypassProtocolFee && protocolFeeAmount > 0,
     },
 
     {
@@ -54,14 +54,7 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
       label: "Referral fees",
       amount: referrerFeeAmount,
       percentage: referrerFeePercent,
-      show: referrerId,
-    },
-
-    {
-      label: "On-chain Storage fee",
-      amount: "<0.01",
-      percentage: "",
-      show: true,
+      show: referrerId && referrerFeeAmount > 0,
     },
   ];
 
@@ -78,7 +71,7 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
           un-p="4"
           un-border="~ neutral-300 rounded-lg"
         >
-          {totalFees.map(({ label, amount, percentage }) => (
+          {computedTotalFees.map(({ label, amount, percentage }) => (
             <div un-flex="~" un-justify="between" un-gap="4" key={label}>
               <span className="prose">{`${label} (${percentage}%)`}</span>
 
@@ -88,6 +81,15 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
               </span>
             </div>
           ))}
+
+          <div un-flex="~" un-justify="between" un-gap="4">
+            <span className="prose">{"On-Chain Storage fee"}</span>
+
+            <span className="flex items-center gap-1">
+              <span className="prose">{"< 0.01"}</span>
+              <span>NEAR</span>
+            </span>
+          </div>
         </div>
       </div>
 

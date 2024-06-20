@@ -43,7 +43,7 @@ export const useDonationFees = ({
     potData?.referral_fee_public_round_basis_points ??
     potlockReferralFeeBasisPoints;
 
-  const chefFeeBasisPoints = potData?.chef_fee_basis_points ?? 0.0;
+  const chefFeeBasisPoints = potData?.chef_fee_basis_points ?? 0;
 
   const projectAllocationBasisPoints =
     TOTAL_FEE_BASIS_POINTS -
