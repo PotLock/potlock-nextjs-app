@@ -1,3 +1,4 @@
+import FundingRaised from "./sub-pages/FundingRaised";
 import HomeSubPage from "./sub-pages/Home";
 import PotsSubPage from "./sub-pages/Pots";
 import { TabNav } from "./types";
@@ -16,6 +17,7 @@ const tabRoutes = [
   {
     label: "Funding Raised",
     id: "funding",
+    Component: FundingRaised,
   },
 ] as TabNav[];
 

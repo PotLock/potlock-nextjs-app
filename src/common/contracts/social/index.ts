@@ -71,7 +71,7 @@ export interface NEARSocialUserProfile {
   plCategories?: string;
   // optional fields
   plGithubRepos?: string;
-  plFundingSources?: ExternalFundingSource[];
+  plFundingSources?: string; //ExternalFundingSource[];
   plSmartContracts?: string; //[string, string][];
   category?:
     | keyof typeof Category
