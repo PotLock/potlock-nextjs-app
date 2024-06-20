@@ -5,40 +5,48 @@
  * Indexed data for the PotLock protocol
  * OpenAPI spec version: 1.0.0
  */
-import axios from "axios";
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import useSwr from "swr";
-import type { Key, SWRConfiguration } from "swr";
+import axios from 'axios'
+import type {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse
+} from 'axios'
+import useSwr from 'swr'
+import type {
+  Key,
+  SWRConfiguration
+} from 'swr'
 export type V1DonorsRetrieveParams = {
-  /**
-   * Sort by field, e.g., most_donated_usd
-   */
-  sort?: string;
+/**
+ * Sort by field, e.g., most_donated_usd
+ */
+sort?: string;
 };
 
 export type V1AccountsActivePotsRetrieveParams = {
-  /**
-   * Filter by pot status
-   */
-  status?: string;
+/**
+ * Filter by pot status
+ */
+status?: string;
 };
 
 /**
  * * `Pending` - Pending
- * `Approved` - Approved
- * `Rejected` - Rejected
- * `Graylisted` - Graylisted
- * `Blacklisted` - Blacklisted
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `Graylisted` - Graylisted
+* `Blacklisted` - Blacklisted
  */
-export type StatusF24Enum = (typeof StatusF24Enum)[keyof typeof StatusF24Enum];
+export type StatusF24Enum = typeof StatusF24Enum[keyof typeof StatusF24Enum];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StatusF24Enum = {
-  Pending: "Pending",
-  Approved: "Approved",
-  Rejected: "Rejected",
-  Graylisted: "Graylisted",
-  Blacklisted: "Blacklisted",
+  Pending: 'Pending',
+  Approved: 'Approved',
+  Rejected: 'Rejected',
+  Graylisted: 'Graylisted',
+  Blacklisted: 'Blacklisted',
 } as const;
 
 export interface StatsResponse {
@@ -77,19 +85,19 @@ export interface PotPayout {
 
 /**
  * * `Pending` - Pending
- * `Approved` - Approved
- * `Rejected` - Rejected
- * `InReview` - InReview
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `InReview` - InReview
  */
-export type PotApplicationStatusEnum =
-  (typeof PotApplicationStatusEnum)[keyof typeof PotApplicationStatusEnum];
+export type PotApplicationStatusEnum = typeof PotApplicationStatusEnum[keyof typeof PotApplicationStatusEnum];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PotApplicationStatusEnum = {
-  Pending: "Pending",
-  Approved: "Approved",
-  Rejected: "Rejected",
-  InReview: "InReview",
+  Pending: 'Pending',
+  Approved: 'Approved',
+  Rejected: 'Rejected',
+  InReview: 'InReview',
 } as const;
 
 export interface PotApplication {
@@ -490,21 +498,21 @@ export interface Donation {
 
 /**
  * * `Pending` - Pending
- * `Approved` - Approved
- * `Rejected` - Rejected
- * `Graylisted` - Graylisted
- * `Blacklisted` - Blacklisted
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `Graylisted` - Graylisted
+* `Blacklisted` - Blacklisted
  */
-export type DefaultRegistrationStatusEnum =
-  (typeof DefaultRegistrationStatusEnum)[keyof typeof DefaultRegistrationStatusEnum];
+export type DefaultRegistrationStatusEnum = typeof DefaultRegistrationStatusEnum[keyof typeof DefaultRegistrationStatusEnum];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DefaultRegistrationStatusEnum = {
-  Pending: "Pending",
-  Approved: "Approved",
-  Rejected: "Rejected",
-  Graylisted: "Graylisted",
-  Blacklisted: "Blacklisted",
+  Pending: 'Pending',
+  Approved: 'Approved',
+  Rejected: 'Rejected',
+  Graylisted: 'Graylisted',
+  Blacklisted: 'Blacklisted',
 } as const;
 
 export interface Account {
@@ -538,767 +546,575 @@ export interface Account {
   total_matching_pool_allocations_usd: number;
 }
 
-export const v1AccountsRetrieve = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Account[]>> => {
-  return axios.get(`/api/v1/accounts`, options);
-};
+
+
+
+  
+  export const v1AccountsRetrieve = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Account[]>> => {
+    return axios.get(
+      `/api/v1/accounts`,options
+    );
+  }
+
+
 
 export const getV1AccountsRetrieveKey = () => [`/api/v1/accounts`] as const;
 
-export type V1AccountsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1AccountsRetrieve>>
->;
-export type V1AccountsRetrieveQueryError = AxiosError<void>;
 
-export const useV1AccountsRetrieve = <TError = AxiosError<void>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof v1AccountsRetrieve>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
-  axios?: AxiosRequestConfig;
-}) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+export type V1AccountsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1AccountsRetrieve>>>
+export type V1AccountsRetrieveQueryError = AxiosError<void>
 
-  const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1AccountsRetrieveKey() : null));
+export const useV1AccountsRetrieve = <TError = AxiosError<void>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1AccountsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
+) => {
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1AccountsRetrieveKey() : null);
   const swrFn = () => v1AccountsRetrieve(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1AccountsRetrieve2 = (
-  accountId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Account>> => {
-  return axios.get(`/api/v1/accounts/${accountId}`, options);
-};
+    accountId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Account>> => {
+    return axios.get(
+      `/api/v1/accounts/${accountId}`,options
+    );
+  }
 
-export const getV1AccountsRetrieve2Key = (accountId: string) =>
-  [`/api/v1/accounts/${accountId}`] as const;
 
-export type V1AccountsRetrieve2QueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1AccountsRetrieve2>>
->;
-export type V1AccountsRetrieve2QueryError = AxiosError<void>;
+
+export const getV1AccountsRetrieve2Key = (accountId: string,) => [`/api/v1/accounts/${accountId}`] as const;
+
+
+export type V1AccountsRetrieve2QueryResult = NonNullable<Awaited<ReturnType<typeof v1AccountsRetrieve2>>>
+export type V1AccountsRetrieve2QueryError = AxiosError<void>
 
 export const useV1AccountsRetrieve2 = <TError = AxiosError<void>>(
-  accountId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1AccountsRetrieve2>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  accountId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1AccountsRetrieve2>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!accountId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1AccountsRetrieve2Key(accountId) : null));
+  const isEnabled = swrOptions?.enabled !== false && !!(accountId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1AccountsRetrieve2Key(accountId) : null);
   const swrFn = () => v1AccountsRetrieve2(accountId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1AccountsActivePotsRetrieve = (
-  accountId: string,
-  params?: V1AccountsActivePotsRetrieveParams,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Pot[]>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/active_pots`, {
+    accountId: string,
+    params?: V1AccountsActivePotsRetrieveParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Pot[]>> => {
+    return axios.get(
+      `/api/v1/accounts/${accountId}/active_pots`,{
     ...options,
-    params: { ...params, ...options?.params },
-  });
-};
+        params: {...params, ...options?.params},}
+    );
+  }
 
-export const getV1AccountsActivePotsRetrieveKey = (
-  accountId: string,
-  params?: V1AccountsActivePotsRetrieveParams,
-) =>
-  [
-    `/api/v1/accounts/${accountId}/active_pots`,
-    ...(params ? [params] : []),
-  ] as const;
 
-export type V1AccountsActivePotsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1AccountsActivePotsRetrieve>>
->;
-export type V1AccountsActivePotsRetrieveQueryError = AxiosError<void>;
+
+export const getV1AccountsActivePotsRetrieveKey = (accountId: string,
+    params?: V1AccountsActivePotsRetrieveParams,) => [`/api/v1/accounts/${accountId}/active_pots`, ...(params ? [params]: [])] as const;
+
+
+export type V1AccountsActivePotsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1AccountsActivePotsRetrieve>>>
+export type V1AccountsActivePotsRetrieveQueryError = AxiosError<void>
 
 export const useV1AccountsActivePotsRetrieve = <TError = AxiosError<void>>(
   accountId: string,
-  params?: V1AccountsActivePotsRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1AccountsActivePotsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+    params?: V1AccountsActivePotsRetrieveParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1AccountsActivePotsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!accountId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() =>
-      isEnabled ? getV1AccountsActivePotsRetrieveKey(accountId, params) : null);
-  const swrFn = () =>
-    v1AccountsActivePotsRetrieve(accountId, params, axiosOptions);
+  const isEnabled = swrOptions?.enabled !== false && !!(accountId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1AccountsActivePotsRetrieveKey(accountId,params) : null);
+  const swrFn = () => v1AccountsActivePotsRetrieve(accountId,params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1AccountsDonationsReceivedRetrieve = (
-  accountId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Donation[]>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/donations_received`, options);
-};
+    accountId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Donation[]>> => {
+    return axios.get(
+      `/api/v1/accounts/${accountId}/donations_received`,options
+    );
+  }
 
-export const getV1AccountsDonationsReceivedRetrieveKey = (accountId: string) =>
-  [`/api/v1/accounts/${accountId}/donations_received`] as const;
 
-export type V1AccountsDonationsReceivedRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1AccountsDonationsReceivedRetrieve>>
->;
-export type V1AccountsDonationsReceivedRetrieveQueryError = AxiosError<void>;
 
-export const useV1AccountsDonationsReceivedRetrieve = <
-  TError = AxiosError<void>,
->(
-  accountId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1AccountsDonationsReceivedRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+export const getV1AccountsDonationsReceivedRetrieveKey = (accountId: string,) => [`/api/v1/accounts/${accountId}/donations_received`] as const;
+
+
+export type V1AccountsDonationsReceivedRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1AccountsDonationsReceivedRetrieve>>>
+export type V1AccountsDonationsReceivedRetrieveQueryError = AxiosError<void>
+
+export const useV1AccountsDonationsReceivedRetrieve = <TError = AxiosError<void>>(
+  accountId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1AccountsDonationsReceivedRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!accountId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() =>
-      isEnabled ? getV1AccountsDonationsReceivedRetrieveKey(accountId) : null);
-  const swrFn = () =>
-    v1AccountsDonationsReceivedRetrieve(accountId, axiosOptions);
+  const isEnabled = swrOptions?.enabled !== false && !!(accountId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1AccountsDonationsReceivedRetrieveKey(accountId) : null);
+  const swrFn = () => v1AccountsDonationsReceivedRetrieve(accountId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1AccountsDonationsSentRetrieve = (
-  accountId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Donation[]>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/donations_sent`, options);
-};
+    accountId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Donation[]>> => {
+    return axios.get(
+      `/api/v1/accounts/${accountId}/donations_sent`,options
+    );
+  }
 
-export const getV1AccountsDonationsSentRetrieveKey = (accountId: string) =>
-  [`/api/v1/accounts/${accountId}/donations_sent`] as const;
 
-export type V1AccountsDonationsSentRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1AccountsDonationsSentRetrieve>>
->;
-export type V1AccountsDonationsSentRetrieveQueryError = AxiosError<void>;
+
+export const getV1AccountsDonationsSentRetrieveKey = (accountId: string,) => [`/api/v1/accounts/${accountId}/donations_sent`] as const;
+
+
+export type V1AccountsDonationsSentRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1AccountsDonationsSentRetrieve>>>
+export type V1AccountsDonationsSentRetrieveQueryError = AxiosError<void>
 
 export const useV1AccountsDonationsSentRetrieve = <TError = AxiosError<void>>(
-  accountId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1AccountsDonationsSentRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  accountId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1AccountsDonationsSentRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!accountId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() =>
-      isEnabled ? getV1AccountsDonationsSentRetrieveKey(accountId) : null);
+  const isEnabled = swrOptions?.enabled !== false && !!(accountId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1AccountsDonationsSentRetrieveKey(accountId) : null);
   const swrFn = () => v1AccountsDonationsSentRetrieve(accountId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1AccountsPotApplicationsRetrieve = (
-  accountId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PotApplication[]>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/pot_applications`, options);
-};
+    accountId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<PotApplication[]>> => {
+    return axios.get(
+      `/api/v1/accounts/${accountId}/pot_applications`,options
+    );
+  }
 
-export const getV1AccountsPotApplicationsRetrieveKey = (accountId: string) =>
-  [`/api/v1/accounts/${accountId}/pot_applications`] as const;
 
-export type V1AccountsPotApplicationsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>
->;
-export type V1AccountsPotApplicationsRetrieveQueryError = AxiosError<void>;
+
+export const getV1AccountsPotApplicationsRetrieveKey = (accountId: string,) => [`/api/v1/accounts/${accountId}/pot_applications`] as const;
+
+
+export type V1AccountsPotApplicationsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>>
+export type V1AccountsPotApplicationsRetrieveQueryError = AxiosError<void>
 
 export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
-  accountId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  accountId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!accountId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() =>
-      isEnabled ? getV1AccountsPotApplicationsRetrieveKey(accountId) : null);
-  const swrFn = () =>
-    v1AccountsPotApplicationsRetrieve(accountId, axiosOptions);
+  const isEnabled = swrOptions?.enabled !== false && !!(accountId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1AccountsPotApplicationsRetrieveKey(accountId) : null);
+  const swrFn = () => v1AccountsPotApplicationsRetrieve(accountId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1DonorsRetrieve = (
-  params?: V1DonorsRetrieveParams,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Account[]>> => {
-  return axios.get(`/api/v1/donors`, {
+    params?: V1DonorsRetrieveParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Account[]>> => {
+    return axios.get(
+      `/api/v1/donors`,{
     ...options,
-    params: { ...params, ...options?.params },
-  });
-};
+        params: {...params, ...options?.params},}
+    );
+  }
 
-export const getV1DonorsRetrieveKey = (params?: V1DonorsRetrieveParams) =>
-  [`/api/v1/donors`, ...(params ? [params] : [])] as const;
 
-export type V1DonorsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1DonorsRetrieve>>
->;
-export type V1DonorsRetrieveQueryError = AxiosError<void>;
+
+export const getV1DonorsRetrieveKey = (params?: V1DonorsRetrieveParams,) => [`/api/v1/donors`, ...(params ? [params]: [])] as const;
+
+
+export type V1DonorsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1DonorsRetrieve>>>
+export type V1DonorsRetrieveQueryError = AxiosError<void>
 
 export const useV1DonorsRetrieve = <TError = AxiosError<void>>(
-  params?: V1DonorsRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1DonorsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  params?: V1DonorsRetrieveParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1DonorsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1DonorsRetrieveKey(params) : null));
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1DonorsRetrieveKey(params) : null);
   const swrFn = () => v1DonorsRetrieve(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1ListsRetrieve = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<List[]>> => {
-  return axios.get(`/api/v1/lists`, options);
-};
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<List[]>> => {
+    return axios.get(
+      `/api/v1/lists`,options
+    );
+  }
+
+
 
 export const getV1ListsRetrieveKey = () => [`/api/v1/lists`] as const;
 
-export type V1ListsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1ListsRetrieve>>
->;
-export type V1ListsRetrieveQueryError = AxiosError<void>;
 
-export const useV1ListsRetrieve = <TError = AxiosError<void>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof v1ListsRetrieve>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
-  axios?: AxiosRequestConfig;
-}) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+export type V1ListsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1ListsRetrieve>>>
+export type V1ListsRetrieveQueryError = AxiosError<void>
 
-  const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getV1ListsRetrieveKey() : null));
+export const useV1ListsRetrieve = <TError = AxiosError<void>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1ListsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
+) => {
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1ListsRetrieveKey() : null);
   const swrFn = () => v1ListsRetrieve(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1ListsRetrieve2 = (
-  listId: number,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<List>> => {
-  return axios.get(`/api/v1/lists/${listId}`, options);
-};
+    listId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<List>> => {
+    return axios.get(
+      `/api/v1/lists/${listId}`,options
+    );
+  }
 
-export const getV1ListsRetrieve2Key = (listId: number) =>
-  [`/api/v1/lists/${listId}`] as const;
 
-export type V1ListsRetrieve2QueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1ListsRetrieve2>>
->;
-export type V1ListsRetrieve2QueryError = AxiosError<void>;
+
+export const getV1ListsRetrieve2Key = (listId: number,) => [`/api/v1/lists/${listId}`] as const;
+
+
+export type V1ListsRetrieve2QueryResult = NonNullable<Awaited<ReturnType<typeof v1ListsRetrieve2>>>
+export type V1ListsRetrieve2QueryError = AxiosError<void>
 
 export const useV1ListsRetrieve2 = <TError = AxiosError<void>>(
-  listId: number,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1ListsRetrieve2>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  listId: number, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1ListsRetrieve2>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!listId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1ListsRetrieve2Key(listId) : null));
+  const isEnabled = swrOptions?.enabled !== false && !!(listId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1ListsRetrieve2Key(listId) : null);
   const swrFn = () => v1ListsRetrieve2(listId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1ListsRegistrationsRetrieve = (
-  listId: number,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ListRegistration[]>> => {
-  return axios.get(`/api/v1/lists/${listId}/registrations`, options);
-};
+    listId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ListRegistration[]>> => {
+    return axios.get(
+      `/api/v1/lists/${listId}/registrations`,options
+    );
+  }
 
-export const getV1ListsRegistrationsRetrieveKey = (listId: number) =>
-  [`/api/v1/lists/${listId}/registrations`] as const;
 
-export type V1ListsRegistrationsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1ListsRegistrationsRetrieve>>
->;
-export type V1ListsRegistrationsRetrieveQueryError = AxiosError<void>;
+
+export const getV1ListsRegistrationsRetrieveKey = (listId: number,) => [`/api/v1/lists/${listId}/registrations`] as const;
+
+
+export type V1ListsRegistrationsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1ListsRegistrationsRetrieve>>>
+export type V1ListsRegistrationsRetrieveQueryError = AxiosError<void>
 
 export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
-  listId: number,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1ListsRegistrationsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  listId: number, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1ListsRegistrationsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!listId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1ListsRegistrationsRetrieveKey(listId) : null));
+  const isEnabled = swrOptions?.enabled !== false && !!(listId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1ListsRegistrationsRetrieveKey(listId) : null);
   const swrFn = () => v1ListsRegistrationsRetrieve(listId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1PotsRetrieve = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Pot[]>> => {
-  return axios.get(`/api/v1/pots`, options);
-};
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Pot[]>> => {
+    return axios.get(
+      `/api/v1/pots`,options
+    );
+  }
+
+
 
 export const getV1PotsRetrieveKey = () => [`/api/v1/pots`] as const;
 
-export type V1PotsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1PotsRetrieve>>
->;
-export type V1PotsRetrieveQueryError = AxiosError<unknown>;
 
-export const useV1PotsRetrieve = <TError = AxiosError<unknown>>(options?: {
-  swr?: SWRConfiguration<Awaited<ReturnType<typeof v1PotsRetrieve>>, TError> & {
-    swrKey?: Key;
-    enabled?: boolean;
-  };
-  axios?: AxiosRequestConfig;
-}) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+export type V1PotsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1PotsRetrieve>>>
+export type V1PotsRetrieveQueryError = AxiosError<unknown>
 
-  const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getV1PotsRetrieveKey() : null));
+export const useV1PotsRetrieve = <TError = AxiosError<unknown>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1PotsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
+) => {
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1PotsRetrieveKey() : null);
   const swrFn = () => v1PotsRetrieve(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1PotsRetrieve2 = (
-  potId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Pot>> => {
-  return axios.get(`/api/v1/pots/${potId}/`, options);
-};
+    potId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Pot>> => {
+    return axios.get(
+      `/api/v1/pots/${potId}/`,options
+    );
+  }
 
-export const getV1PotsRetrieve2Key = (potId: string) =>
-  [`/api/v1/pots/${potId}/`] as const;
 
-export type V1PotsRetrieve2QueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1PotsRetrieve2>>
->;
-export type V1PotsRetrieve2QueryError = AxiosError<void>;
+
+export const getV1PotsRetrieve2Key = (potId: string,) => [`/api/v1/pots/${potId}/`] as const;
+
+
+export type V1PotsRetrieve2QueryResult = NonNullable<Awaited<ReturnType<typeof v1PotsRetrieve2>>>
+export type V1PotsRetrieve2QueryError = AxiosError<void>
 
 export const useV1PotsRetrieve2 = <TError = AxiosError<void>>(
-  potId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1PotsRetrieve2>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  potId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1PotsRetrieve2>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!potId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsRetrieve2Key(potId) : null));
+  const isEnabled = swrOptions?.enabled !== false && !!(potId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1PotsRetrieve2Key(potId) : null);
   const swrFn = () => v1PotsRetrieve2(potId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1PotsApplicationsRetrieve = (
-  potId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PotApplication[]>> => {
-  return axios.get(`/api/v1/pots/${potId}/applications`, options);
-};
+    potId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<PotApplication[]>> => {
+    return axios.get(
+      `/api/v1/pots/${potId}/applications`,options
+    );
+  }
 
-export const getV1PotsApplicationsRetrieveKey = (potId: string) =>
-  [`/api/v1/pots/${potId}/applications`] as const;
 
-export type V1PotsApplicationsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1PotsApplicationsRetrieve>>
->;
-export type V1PotsApplicationsRetrieveQueryError = AxiosError<void>;
+
+export const getV1PotsApplicationsRetrieveKey = (potId: string,) => [`/api/v1/pots/${potId}/applications`] as const;
+
+
+export type V1PotsApplicationsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1PotsApplicationsRetrieve>>>
+export type V1PotsApplicationsRetrieveQueryError = AxiosError<void>
 
 export const useV1PotsApplicationsRetrieve = <TError = AxiosError<void>>(
-  potId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1PotsApplicationsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  potId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1PotsApplicationsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!potId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsApplicationsRetrieveKey(potId) : null));
+  const isEnabled = swrOptions?.enabled !== false && !!(potId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1PotsApplicationsRetrieveKey(potId) : null);
   const swrFn = () => v1PotsApplicationsRetrieve(potId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1PotsDonationsRetrieve = (
-  potId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Donation[]>> => {
-  return axios.get(`/api/v1/pots/${potId}/donations`, options);
-};
+    potId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Donation[]>> => {
+    return axios.get(
+      `/api/v1/pots/${potId}/donations`,options
+    );
+  }
 
-export const getV1PotsDonationsRetrieveKey = (potId: string) =>
-  [`/api/v1/pots/${potId}/donations`] as const;
 
-export type V1PotsDonationsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1PotsDonationsRetrieve>>
->;
-export type V1PotsDonationsRetrieveQueryError = AxiosError<void>;
+
+export const getV1PotsDonationsRetrieveKey = (potId: string,) => [`/api/v1/pots/${potId}/donations`] as const;
+
+
+export type V1PotsDonationsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1PotsDonationsRetrieve>>>
+export type V1PotsDonationsRetrieveQueryError = AxiosError<void>
 
 export const useV1PotsDonationsRetrieve = <TError = AxiosError<void>>(
-  potId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1PotsDonationsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  potId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1PotsDonationsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!potId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsDonationsRetrieveKey(potId) : null));
+  const isEnabled = swrOptions?.enabled !== false && !!(potId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1PotsDonationsRetrieveKey(potId) : null);
   const swrFn = () => v1PotsDonationsRetrieve(potId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1PotsPayoutsRetrieve = (
-  potId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PotPayout[]>> => {
-  return axios.get(`/api/v1/pots/${potId}/payouts`, options);
-};
+    potId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<PotPayout[]>> => {
+    return axios.get(
+      `/api/v1/pots/${potId}/payouts`,options
+    );
+  }
 
-export const getV1PotsPayoutsRetrieveKey = (potId: string) =>
-  [`/api/v1/pots/${potId}/payouts`] as const;
 
-export type V1PotsPayoutsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1PotsPayoutsRetrieve>>
->;
-export type V1PotsPayoutsRetrieveQueryError = AxiosError<void>;
+
+export const getV1PotsPayoutsRetrieveKey = (potId: string,) => [`/api/v1/pots/${potId}/payouts`] as const;
+
+
+export type V1PotsPayoutsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1PotsPayoutsRetrieve>>>
+export type V1PotsPayoutsRetrieveQueryError = AxiosError<void>
 
 export const useV1PotsPayoutsRetrieve = <TError = AxiosError<void>>(
-  potId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1PotsPayoutsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  potId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1PotsPayoutsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!potId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsPayoutsRetrieveKey(potId) : null));
+  const isEnabled = swrOptions?.enabled !== false && !!(potId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1PotsPayoutsRetrieveKey(potId) : null);
   const swrFn = () => v1PotsPayoutsRetrieve(potId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1PotsSponsorsRetrieve = (
-  potId: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Account[]>> => {
-  return axios.get(`/api/v1/pots/${potId}/sponsors`, options);
-};
+    potId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Account[]>> => {
+    return axios.get(
+      `/api/v1/pots/${potId}/sponsors`,options
+    );
+  }
 
-export const getV1PotsSponsorsRetrieveKey = (potId: string) =>
-  [`/api/v1/pots/${potId}/sponsors`] as const;
 
-export type V1PotsSponsorsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1PotsSponsorsRetrieve>>
->;
-export type V1PotsSponsorsRetrieveQueryError = AxiosError<void>;
+
+export const getV1PotsSponsorsRetrieveKey = (potId: string,) => [`/api/v1/pots/${potId}/sponsors`] as const;
+
+
+export type V1PotsSponsorsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1PotsSponsorsRetrieve>>>
+export type V1PotsSponsorsRetrieveQueryError = AxiosError<void>
 
 export const useV1PotsSponsorsRetrieve = <TError = AxiosError<void>>(
-  potId: string,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1PotsSponsorsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
+  potId: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1PotsSponsorsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
 ) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
 
-  const isEnabled = swrOptions?.enabled !== false && !!potId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsSponsorsRetrieveKey(potId) : null));
+  const isEnabled = swrOptions?.enabled !== false && !!(potId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1PotsSponsorsRetrieveKey(potId) : null);
   const swrFn = () => v1PotsSponsorsRetrieve(potId, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
 
 export const v1StatsRetrieve = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<StatsResponse>> => {
-  return axios.get(`/api/v1/stats`, options);
-};
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<StatsResponse>> => {
+    return axios.get(
+      `/api/v1/stats`,options
+    );
+  }
+
+
 
 export const getV1StatsRetrieveKey = () => [`/api/v1/stats`] as const;
 
-export type V1StatsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1StatsRetrieve>>
->;
-export type V1StatsRetrieveQueryError = AxiosError<void>;
 
-export const useV1StatsRetrieve = <TError = AxiosError<void>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof v1StatsRetrieve>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
-  axios?: AxiosRequestConfig;
-}) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+export type V1StatsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1StatsRetrieve>>>
+export type V1StatsRetrieveQueryError = AxiosError<void>
 
-  const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getV1StatsRetrieveKey() : null));
+export const useV1StatsRetrieve = <TError = AxiosError<void>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof v1StatsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
+) => {
+  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getV1StatsRetrieveKey() : null);
   const swrFn = () => v1StatsRetrieve(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
-    ...query,
-  };
-};
+    ...query
+  }
+}
+

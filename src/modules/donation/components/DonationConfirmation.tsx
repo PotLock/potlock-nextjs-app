@@ -6,7 +6,6 @@ import { UseFormReturn } from "react-hook-form";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
   Button,
-  Checkbox,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -23,12 +22,10 @@ import { DonationBreakdown } from "./DonationBreakdown";
 import { DonationInputs } from "../models";
 
 export type DonationConfirmationProps = {
-  allowNotes?: boolean;
   form: UseFormReturn<DonationInputs>;
 };
 
 export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
-  allowNotes = false,
   form,
 }) => {
   const values = form.watch();
@@ -44,12 +41,18 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     form.resetField("message");
   }, [form]);
 
-  const totalNearAmountUsdDisplayValue = useNearUsdDisplayValue(values.amount);
+  const totalAmount =
+    values.potDonationDistribution?.reduce(
+      (total, { amount }) => total + amount,
+      0.0,
+    ) ?? values.amount;
+
+  const totalNearAmountUsdDisplayValue = useNearUsdDisplayValue(totalAmount);
 
   const totalAmountUsdDisplayValue =
     values.token === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
 
-  console.table(values);
+  console.table(values.token);
 
   return (
     <>
@@ -64,13 +67,13 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           </span>
 
           <div un-flex="~" un-items="center" un-gap="2">
-            <span>N</span>
+            <span>{values.token}</span>
 
             <span
               className="prose"
               un-text="xl"
               un-font="600"
-            >{`${values.amount} NEAR`}</span>
+            >{`${totalAmount} ${values.token}`}</span>
 
             {totalAmountUsdDisplayValue && (
               <span className="prose" un-text="gray-500 xl">
@@ -80,42 +83,9 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           </div>
         </div>
 
-        <DonationBreakdown data={values} />
+        <DonationBreakdown {...{ form }} />
 
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <Checkbox id="protocol-fees" />
-
-            <label htmlFor="protocol-fees" className="flex items-center gap-2">
-              <span>Remove 5% Protocol Fees</span>
-
-              <span className="flex items-center gap-1">
-                <span role="img" aria-label="icon">
-                  🌐
-                </span>
-
-                <span>impact.sputnik.dao.near</span>
-              </span>
-            </label>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Checkbox id="chef-fees" />
-
-            <label htmlFor="chef-fees" className="flex items-center gap-2">
-              <span>Remove 5% Chef Fees</span>
-
-              <span className="flex items-center gap-1">
-                <span role="img" aria-label="icon">
-                  🌐
-                </span>
-                <span>#build</span>
-              </span>
-            </label>
-          </div>
-        </div>
-
-        {allowNotes && (
+        {values.recipientAccountId && (
           <FormField
             control={form.control}
             name="message"

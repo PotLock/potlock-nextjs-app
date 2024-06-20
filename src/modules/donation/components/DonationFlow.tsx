@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { createElement as h, useMemo } from "react";
 
 import { dispatch } from "@/app/_store";
 import {
@@ -32,25 +32,15 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   const content = useMemo(() => {
     switch (currentStep) {
       case "allocation":
-        return "accountId" in props ? (
-          <DonationProjectAllocation
-            accountId={props.accountId}
-            {...{ form }}
-          />
-        ) : (
-          <DonationPotAllocation potId={props.potId} {...{ form }} />
-        );
+        return "accountId" in props
+          ? h(DonationProjectAllocation, { form, ...props })
+          : h(DonationPotAllocation, { form, ...props });
 
       case "confirmation":
-        return (
-          <DonationConfirmation
-            allowNotes={"accountId" in props}
-            {...{ form }}
-          />
-        );
+        return h(DonationConfirmation, { form });
 
       case "success":
-        return <DonationSuccess {...{ closeModal }} />;
+        return h(DonationSuccess, { closeModal });
 
       default:
         return (

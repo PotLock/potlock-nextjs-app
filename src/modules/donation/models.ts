@@ -1,6 +1,7 @@
 import { createModel } from "@rematch/core";
 import {
   infer as FromSchema,
+  array,
   boolean,
   literal,
   nativeEnum,
@@ -63,12 +64,44 @@ export const donationAllocationStrategies: Record<
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
-export const tokenSchema = literal(NEAR_TOKEN_DENOM)
+export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
   .or(string().min(6))
   .default(NEAR_TOKEN_DENOM)
   .describe('Either "NEAR" or FT contract account id.');
 
+export const donationAmountSchema = number()
+  .positive()
+  .finite()
+  .lt(0.0, "Cannot be zero.")
+  .default(0.1)
+  .refine(
+    (n) => !number().int().safeParse(n).success,
+    "Must be a floating point number.",
+  );
+
 export const donationSchema = object({
+  token: donationTokenSchema,
+
+  amount: donationAmountSchema.describe(
+    "Amount of the selected tokens to donate.",
+  ),
+
+  recipientAccountId: string().optional().describe("Recipient account id."),
+  potAccountId: string().optional().describe("Pot account id."),
+
+  potDonationDistribution: array(
+    object({ account_id: string(), amount: donationAmountSchema }),
+  )
+    .refine((recipients) => recipients.length > 0, {
+      message: "You have to select at least one recipient.",
+    })
+    .optional(),
+
+  message: string()
+    .max(DONATION_MAX_MESSAGE_LENGTH)
+    .optional()
+    .describe("Donation message."),
+
   allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {
     message: "Incorrect allocation strategy.",
   }).default(DonationAllocationStrategyEnum.direct),
@@ -77,26 +110,7 @@ export const donationSchema = object({
     message: "Incorrect donation distribution strategy.",
   }).default(DonationPotDistributionStrategy.evenly),
 
-  token: tokenSchema,
-
-  amount: number()
-    .positive()
-    .finite()
-    .lt(0.0, "Cannot be zero.")
-    .default(0.1)
-    .refine(
-      (n) => !number().int().safeParse(n).success,
-      "Must be a floating point number.",
-    )
-    .describe("Amount of the selected tokens to donate."),
-
-  message: string()
-    .max(DONATION_MAX_MESSAGE_LENGTH)
-    .optional()
-    .describe("Donation message."),
-
   bypassProtocolFee: boolean().default(false),
-
   bypassChefFee: boolean().default(false),
 }).refine(
   ({ token, amount }) =>

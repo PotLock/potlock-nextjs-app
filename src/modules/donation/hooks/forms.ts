@@ -13,7 +13,7 @@ import {
   DonationPotDistributionStrategy,
   DonationSubmissionInputs,
   donationSchema,
-  tokenSchema,
+  donationTokenSchema,
 } from "../models";
 
 export const useDonationForm = (params: DonationSubmissionInputs) => {
@@ -26,8 +26,10 @@ export const useDonationForm = (params: DonationSubmissionInputs) => {
           "accountId" in params ? "direct" : "pot"
         ],
 
+      token: donationTokenSchema.parse(undefined),
       amount: 0.1,
-      token: tokenSchema.parse(undefined),
+      recipientAccountId: "accountId" in params ? params.accountId : undefined,
+      potAccountId: "potId" in params ? params.potId : undefined,
 
       potDistributionStrategy:
         DonationPotDistributionStrategy[
