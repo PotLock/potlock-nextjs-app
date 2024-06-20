@@ -1,7 +1,7 @@
 import type { Account } from "./Account";
 
 /**
- * @description Returns a list of accounts
+ * @description Returns a paginated list of accounts
  */
 export type V1AccountsRetrieve200 = Account[];
 /**
@@ -9,7 +9,7 @@ export type V1AccountsRetrieve200 = Account[];
  */
 export type V1AccountsRetrieve500 = any;
 /**
- * @description Returns a list of accounts
+ * @description Returns a paginated list of accounts
  */
 export type V1AccountsRetrieveQueryResponse = Account[];
 export type V1AccountsRetrieveQuery = {

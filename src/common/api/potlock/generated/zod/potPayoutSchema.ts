@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const potPayoutSchema = z.object({
   id: z.number().describe("Payout id."),
+  pot: z.string(),
+  recipient: z.string(),
   amount: z.string().describe("Payout amount."),
   amount_paid_usd: z
     .string()
@@ -9,9 +11,7 @@ export const potPayoutSchema = z.object({
     .describe("Payout amount in USD.")
     .nullable()
     .nullish(),
+  token: z.string(),
   paid_at: z.string().datetime().describe("Payout date."),
   tx_hash: z.string().describe("Transaction hash.").nullable().nullish(),
-  pot: z.string().describe("Pot that this payout is for."),
-  recipient: z.string().describe("Payout recipient."),
-  ft: z.string().describe("Payout FT."),
 });

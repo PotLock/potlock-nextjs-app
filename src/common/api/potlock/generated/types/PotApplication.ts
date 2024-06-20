@@ -11,10 +11,9 @@ export type PotApplication = {
    */
   readonly pot: string;
   /**
-   * @description Account that applied to the pot.
    * @type string
    */
-  applicant: string;
+  readonly applicant: string;
   /**
    * @description Application message.
    * @type string

@@ -12,6 +12,14 @@ export type List = {
    */
   on_chain_id: number;
   /**
+   * @type string
+   */
+  readonly owner: string;
+  /**
+   * @type string
+   */
+  readonly admins: string;
+  /**
    * @description List name.
    * @type string
    */
@@ -45,14 +53,4 @@ export type List = {
    * @type string, date-time
    */
   updated_at: string;
-  /**
-   * @description List owner.
-   * @type string
-   */
-  owner: string;
-  /**
-   * @description List admins.
-   * @type array
-   */
-  admins: string[];
 };

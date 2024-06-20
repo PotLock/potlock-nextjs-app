@@ -7,7 +7,7 @@ type Props = {
 const Indicator = ({ animate, colorInner, colorOuter }: Props) => {
   return (
     <div
-      className="animate-beacon flex h-[18px] w-[18px] items-center justify-center rounded-full"
+      className="flex h-[18px] w-[18px] animate-beacon items-center justify-center rounded-full"
       style={{
         backgroundColor: colorOuter,
         animationPlayState: animate ? "running" : "paused",

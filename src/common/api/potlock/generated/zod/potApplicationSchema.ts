@@ -5,7 +5,7 @@ import { potApplicationStatusEnumSchema } from "./potApplicationStatusEnumSchema
 export const potApplicationSchema = z.object({
   id: z.number().describe("Application id."),
   pot: z.string(),
-  applicant: z.string().describe("Account that applied to the pot."),
+  applicant: z.string(),
   message: z
     .string()
     .max(1024)

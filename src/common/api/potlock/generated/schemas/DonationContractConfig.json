@@ -1,0 +1,1 @@
+{"type":"object","properties":{"owner":{"type":"string"},"protocol_fee_basis_points":{"type":"integer"},"referral_fee_basis_points":{"type":"integer"},"protocol_fee_recipient_account":{"type":"string"}},"required":["owner","protocol_fee_basis_points","protocol_fee_recipient_account","referral_fee_basis_points"],"x-readme-ref-name":"DonationContractConfig"}

@@ -13,6 +13,8 @@ export const listSchema = z.object({
     .min(-2147483648)
     .max(2147483647)
     .describe("List ID in contract"),
+  owner: z.string(),
+  admins: z.string(),
   name: z.string().max(64).describe("List name."),
   description: z
     .string()
@@ -35,6 +37,4 @@ export const listSchema = z.object({
     ),
   created_at: z.string().datetime().describe("List creation date."),
   updated_at: z.string().datetime().describe("List last update date."),
-  owner: z.string().describe("List owner."),
-  admins: z.array(z.string()).describe("List admins."),
 });

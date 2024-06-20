@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import {
+  DropdownLabel,
   FilterButton,
   FilterIcon,
   FilterItem,
@@ -8,37 +9,23 @@ import {
   Screen,
 } from "./styles";
 
-// TODO: Refactor using tailwind
-
-type Option = {
+export type Option = {
   label: string;
   val: any;
   count?: string | number;
 };
 
 type Props = {
-  sortList: Option[];
-  handleSortChange: (option: Option) => void;
-  sortVal?: any;
-  title?: any;
-  FilterMenuCustomClass?: string;
-  showCount?: boolean;
-  menuStyle?: React.CSSProperties;
-  buttonStyle?: React.CSSProperties;
+  options: Option[];
+  selectedOption: Option;
+  onSelect: (option: Option) => void;
+  title?: string;
+  hideCounter?: boolean;
 };
 
-const Dropdown = (componentProps: Props) => {
+const Dropdown = (props: Props) => {
   const [openFilter, setOpenFilter] = useState(false);
-  const {
-    sortList,
-    sortVal,
-    title,
-    handleSortChange,
-    FilterMenuCustomClass,
-    showCount,
-  } = componentProps;
-  const menuStyle = componentProps.menuStyle || {};
-  const buttonStyle = componentProps.buttonStyle || {};
+  const { options, title, selectedOption, onSelect, hideCounter } = props;
 
   return (
     <>
@@ -47,8 +34,15 @@ const Dropdown = (componentProps: Props) => {
         style={{ position: "relative" }}
         onClick={() => setOpenFilter(!openFilter)}
       >
-        <FilterButton style={buttonStyle || {}}>
-          {sortVal || title || ""}
+        <FilterButton>
+          {selectedOption ? (
+            <DropdownLabel digit={2}>
+              <div className="label">{selectedOption.label}</div>
+              <div className="count">{selectedOption.count}</div>
+            </DropdownLabel>
+          ) : (
+            title || ""
+          )}
           <FilterIcon>
             <svg
               width="16"
@@ -65,21 +59,17 @@ const Dropdown = (componentProps: Props) => {
           </FilterIcon>
         </FilterButton>
         {openFilter && (
-          <FilterMenu
-            onClick={(e: any) => e.stopPropagation()}
-            className={FilterMenuCustomClass || ""}
-            style={menuStyle}
-          >
-            {sortList.map((option) => (
+          <FilterMenu onClick={(e: any) => e.stopPropagation()}>
+            {options.map((option) => (
               <FilterItem
                 key={option.val}
                 onClick={() => {
                   setOpenFilter(false);
-                  handleSortChange(option);
+                  onSelect(option);
                 }}
               >
                 {option.label}{" "}
-                <div className="count">{showCount ? option.count : ""}</div>
+                {!hideCounter && <div className="count">{option.count}</div>}
               </FilterItem>
             ))}
           </FilterMenu>

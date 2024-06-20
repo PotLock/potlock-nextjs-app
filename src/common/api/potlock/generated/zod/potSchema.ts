@@ -3,12 +3,12 @@ import { z } from "zod";
 export const potSchema = z.object({
   id: z.string().describe("Pot account ID."),
   pot_factory: z.string().describe("Pot factory."),
-  deployer: z.string().describe("Pot deployer."),
+  deployer: z.string(),
   deployed_at: z.string().datetime().describe("Pot deployment date."),
   source_metadata: z.any(),
-  owner: z.string().describe("Pot owner."),
-  admins: z.array(z.string()).describe("Pot admins."),
-  chef: z.string().describe("Pot chef.").nullable().nullish(),
+  owner: z.string(),
+  admins: z.string(),
+  chef: z.string(),
   name: z.string().describe("Pot name."),
   description: z.string().describe("Pot description."),
   max_approved_applicants: z

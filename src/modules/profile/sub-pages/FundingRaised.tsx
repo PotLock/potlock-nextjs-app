@@ -48,12 +48,13 @@ const FundingRaised = () => {
       {donations && donations.length > 0 && (
         // TODO: "totalMatched" Fix this. This should be something else
         <PotlockFunding
-          {...{
-            donations,
-            totalDonationAmountNear: totalMatched,
-            uniqueDonors,
-            totalMatched,
-          }}
+          projectId={userId}
+          // {...{
+          //   donations,
+          //   totalDonationAmountNear: totalMatched,
+          //   uniqueDonors,
+          //   totalMatched,
+          // }}
         />
       )}
     </div>

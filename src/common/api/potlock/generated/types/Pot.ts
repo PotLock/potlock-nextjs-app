@@ -10,10 +10,9 @@ export type Pot = {
    */
   pot_factory: string;
   /**
-   * @description Pot deployer.
    * @type string
    */
-  deployer: string;
+  readonly deployer: string;
   /**
    * @description Pot deployment date.
    * @type string, date-time
@@ -21,20 +20,17 @@ export type Pot = {
   deployed_at: string;
   source_metadata: any;
   /**
-   * @description Pot owner.
    * @type string
    */
-  owner: string;
+  readonly owner: string;
   /**
-   * @description Pot admins.
-   * @type array
-   */
-  admins: string[];
-  /**
-   * @description Pot chef.
    * @type string
    */
-  chef?: string | null;
+  readonly admins: string;
+  /**
+   * @type string
+   */
+  readonly chef: string;
   /**
    * @description Pot name.
    * @type string

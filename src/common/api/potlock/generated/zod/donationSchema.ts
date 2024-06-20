@@ -61,10 +61,10 @@ export const donationSchema = z.object({
     .describe("Transaction hash.")
     .nullable()
     .nullish(),
-  donor: z.string().describe("Donor."),
-  ft: z.string().describe("Donation FT."),
-  pot: z.string().describe("Donation pot.").nullable(),
-  recipient: z.string().describe("Donation recipient.").nullable().nullish(),
-  referrer: z.string().describe("Donation referrer.").nullable().nullish(),
-  chef: z.string().describe("Donation chef.").nullable().nullish(),
+  donor: z.string(),
+  token: z.string(),
+  pot: z.string(),
+  recipient: z.string(),
+  referrer: z.string(),
+  chef: z.string(),
 });

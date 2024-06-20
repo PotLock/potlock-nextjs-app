@@ -3,7 +3,7 @@ import { z } from "zod";
 import { accountSchema } from "./accountSchema";
 
 /**
- * @description Returns a list of accounts
+ * @description Returns a paginated list of accounts
  */
 export const v1AccountsRetrieve200Schema = z.array(z.lazy(() => accountSchema));
 /**
@@ -11,7 +11,7 @@ export const v1AccountsRetrieve200Schema = z.array(z.lazy(() => accountSchema));
  */
 export const v1AccountsRetrieve500Schema = z.any();
 /**
- * @description Returns a list of accounts
+ * @description Returns a paginated list of accounts
  */
 export const v1AccountsRetrieveQueryResponseSchema = z.array(
   z.lazy(() => accountSchema),

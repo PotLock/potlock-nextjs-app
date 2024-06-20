@@ -18,6 +18,12 @@ import {
   v1AccountsDonationsSentRetrieveQueryResponseSchema,
 } from "./v1AccountsDonationsSentRetrieveSchema";
 import {
+  v1AccountsPayoutsReceivedRetrieve404Schema,
+  v1AccountsPayoutsReceivedRetrieve500Schema,
+  v1AccountsPayoutsReceivedRetrievePathParamsSchema,
+  v1AccountsPayoutsReceivedRetrieveQueryResponseSchema,
+} from "./v1AccountsPayoutsReceivedRetrieveSchema";
+import {
   v1AccountsPotApplicationsRetrieve400Schema,
   v1AccountsPotApplicationsRetrieve404Schema,
   v1AccountsPotApplicationsRetrieve500Schema,
@@ -34,6 +40,10 @@ import {
   v1AccountsRetrieve500Schema,
   v1AccountsRetrieveQueryResponseSchema,
 } from "./v1AccountsRetrieveSchema";
+import {
+  v1DonateContractConfigRetrieve500Schema,
+  v1DonateContractConfigRetrieveQueryResponseSchema,
+} from "./v1DonateContractConfigRetrieveSchema";
 import {
   v1DonorsRetrieve500Schema,
   v1DonorsRetrieveQueryParamsSchema,
@@ -151,6 +161,19 @@ export const operations = {
       500: v1AccountsDonationsSentRetrieve500Schema,
     },
   },
+  v1_accounts_payouts_received_retrieve: {
+    request: undefined,
+    parameters: {
+      path: v1AccountsPayoutsReceivedRetrievePathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: v1AccountsPayoutsReceivedRetrieveQueryResponseSchema,
+      404: v1AccountsPayoutsReceivedRetrieve404Schema,
+      500: v1AccountsPayoutsReceivedRetrieve500Schema,
+    },
+  },
   v1_accounts_pot_applications_retrieve: {
     request: undefined,
     parameters: {
@@ -163,6 +186,18 @@ export const operations = {
       400: v1AccountsPotApplicationsRetrieve400Schema,
       404: v1AccountsPotApplicationsRetrieve404Schema,
       500: v1AccountsPotApplicationsRetrieve500Schema,
+    },
+  },
+  v1_donate_contract_config_retrieve: {
+    request: undefined,
+    parameters: {
+      path: undefined,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: v1DonateContractConfigRetrieveQueryResponseSchema,
+      500: v1DonateContractConfigRetrieve500Schema,
     },
   },
   v1_donors_retrieve: {
@@ -315,8 +350,14 @@ export const paths = {
   "/api/v1/accounts/{account_id}/donations_sent": {
     get: operations["v1_accounts_donations_sent_retrieve"],
   },
+  "/api/v1/accounts/{account_id}/payouts_received": {
+    get: operations["v1_accounts_payouts_received_retrieve"],
+  },
   "/api/v1/accounts/{account_id}/pot_applications": {
     get: operations["v1_accounts_pot_applications_retrieve"],
+  },
+  "/api/v1/donate_contract_config": {
+    get: operations["v1_donate_contract_config_retrieve"],
   },
   "/api/v1/donors": {
     get: operations["v1_donors_retrieve"],

@@ -37,7 +37,9 @@ const FilterMenu = styled.div`
   gap: 8px;
   border-radius: 6px;
   border: 1px solid rgba(41, 41, 41, 0.36);
-  box-shadow: 0px 12px 20px -4px rgba(123, 123, 123, 0.32), 0px 4px 8px -3px rgba(123, 123, 123, 0.2),
+  box-shadow:
+    0px 12px 20px -4px rgba(123, 123, 123, 0.32),
+    0px 4px 8px -3px rgba(123, 123, 123, 0.2),
     0px 0px 2px 0px rgba(123, 123, 123, 0.36);
   z-index: 3;
 `;
@@ -70,4 +72,30 @@ const Screen = styled.div`
   left: 0;
   top: 0;
 `;
-export { FilterButton, FilterIcon, FilterItem, FilterMenu, Screen };
+
+const DropdownLabel = styled.div<{ digit: number }>`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  .label {
+    font-weight: 500;
+  }
+  .count {
+    display: flex;
+    width: ${({ digit }) => 24 + (digit - 1) * 6}px;
+    height: ${({ digit }) => 24 + (digit - 1) * 6}px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ebebeb;
+  }
+`;
+
+export {
+  FilterButton,
+  FilterIcon,
+  FilterItem,
+  FilterMenu,
+  Screen,
+  DropdownLabel,
+};

@@ -80,33 +80,27 @@ export type Donation = {
    */
   tx_hash?: string | null;
   /**
-   * @description Donor.
    * @type string
    */
-  donor: string;
+  readonly donor: string;
   /**
-   * @description Donation FT.
    * @type string
    */
-  ft: string;
+  readonly token: string;
   /**
-   * @description Donation pot.
    * @type string
    */
-  pot: string | null;
+  readonly pot: string;
   /**
-   * @description Donation recipient.
    * @type string
    */
-  recipient?: string | null;
+  readonly recipient: string;
   /**
-   * @description Donation referrer.
    * @type string
    */
-  referrer?: string | null;
+  readonly referrer: string;
   /**
-   * @description Donation chef.
    * @type string
    */
-  chef?: string | null;
+  readonly chef: string;
 };

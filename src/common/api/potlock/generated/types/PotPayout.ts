@@ -5,6 +5,14 @@ export type PotPayout = {
    */
   readonly id: number;
   /**
+   * @type string
+   */
+  readonly pot: string;
+  /**
+   * @type string
+   */
+  readonly recipient: string;
+  /**
    * @description Payout amount.
    * @type string
    */
@@ -15,6 +23,10 @@ export type PotPayout = {
    */
   amount_paid_usd?: string | null;
   /**
+   * @type string
+   */
+  readonly token: string;
+  /**
    * @description Payout date.
    * @type string, date-time
    */
@@ -24,19 +36,4 @@ export type PotPayout = {
    * @type string
    */
   tx_hash?: string | null;
-  /**
-   * @description Pot that this payout is for.
-   * @type string
-   */
-  pot: string;
-  /**
-   * @description Payout recipient.
-   * @type string
-   */
-  recipient: string;
-  /**
-   * @description Payout FT.
-   * @type string
-   */
-  ft: string;
 };

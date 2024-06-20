@@ -8,7 +8,7 @@ export type V1DonorsRetrieveQueryParams = {
   sort?: string;
 };
 /**
- * @description Returns a list of donor accounts
+ * @description Returns a paginated list of donor accounts
  */
 export type V1DonorsRetrieve200 = Account[];
 /**
@@ -16,7 +16,7 @@ export type V1DonorsRetrieve200 = Account[];
  */
 export type V1DonorsRetrieve500 = any;
 /**
- * @description Returns a list of donor accounts
+ * @description Returns a paginated list of donor accounts
  */
 export type V1DonorsRetrieveQueryResponse = Account[];
 export type V1DonorsRetrieveQuery = {

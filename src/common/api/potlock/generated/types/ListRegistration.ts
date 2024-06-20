@@ -7,6 +7,18 @@ export type ListRegistration = {
    */
   readonly id: number;
   /**
+   * @type string
+   */
+  readonly list: string;
+  /**
+   * @type string
+   */
+  readonly registrant: string;
+  /**
+   * @type string
+   */
+  readonly registered_by: string;
+  /**
    * @description Registration status.\n\n* `Pending` - Pending\n* `Approved` - Approved\n* `Rejected` - Rejected\n* `Graylisted` - Graylisted\n* `Blacklisted` - Blacklisted
    */
   status: StatusF24Enum;
@@ -35,19 +47,4 @@ export type ListRegistration = {
    * @type string
    */
   tx_hash?: string | null;
-  /**
-   * @description List registered.
-   * @type integer
-   */
-  list: number;
-  /**
-   * @description Account that registered on the list.
-   * @type string
-   */
-  registrant: string;
-  /**
-   * @description Account that did the registration.
-   * @type string
-   */
-  registered_by: string;
 };

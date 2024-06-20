@@ -11,7 +11,7 @@ export const v1DonorsRetrieveQueryParamsSchema = z
   })
   .optional();
 /**
- * @description Returns a list of donor accounts
+ * @description Returns a paginated list of donor accounts
  */
 export const v1DonorsRetrieve200Schema = z.array(z.lazy(() => accountSchema));
 /**
@@ -19,7 +19,7 @@ export const v1DonorsRetrieve200Schema = z.array(z.lazy(() => accountSchema));
  */
 export const v1DonorsRetrieve500Schema = z.any();
 /**
- * @description Returns a list of donor accounts
+ * @description Returns a paginated list of donor accounts
  */
 export const v1DonorsRetrieveQueryResponseSchema = z.array(
   z.lazy(() => accountSchema),
