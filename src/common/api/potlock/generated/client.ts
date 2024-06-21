@@ -58,16 +58,13 @@ export interface PotPayout {
    * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
    */
   amount_paid_usd?: string | null;
-  /** Payout FT. */
-  ft: string;
   /** Payout id. */
   readonly id: number;
   /** Payout date. */
   paid_at: string;
-  /** Pot that this payout is for. */
-  pot: string;
-  /** Payout recipient. */
-  recipient: string;
+  readonly pot: string;
+  readonly recipient: string;
+  readonly token: string;
   /**
    * Transaction hash.
    * @nullable
@@ -93,8 +90,7 @@ export const PotApplicationStatusEnum = {
 } as const;
 
 export interface PotApplication {
-  /** Account that applied to the pot. */
-  applicant: string;
+  readonly applicant: string;
   /** Application id. */
   readonly id: number;
   /**
@@ -126,8 +122,7 @@ export interface PotApplication {
 }
 
 export interface Pot {
-  /** Pot admins. */
-  admins: string[];
+  readonly admins: string;
   /** All paid out. */
   all_paid_out: boolean;
   /** Pot application end date. */
@@ -140,11 +135,7 @@ export interface Pot {
    * @nullable
    */
   base_currency?: string | null;
-  /**
-   * Pot chef.
-   * @nullable
-   */
-  chef?: string | null;
+  readonly chef: string;
   /**
    * Chef fee basis points.
    * @minimum 0
@@ -177,8 +168,7 @@ export interface Pot {
   custom_sybil_checks?: string | null;
   /** Pot deployment date. */
   deployed_at: string;
-  /** Pot deployer. */
-  deployer: string;
+  readonly deployer: string;
   /** Pot description. */
   description: string;
   /** Pot account ID. */
@@ -205,8 +195,7 @@ export interface Pot {
   min_matching_pool_donation_amount: string;
   /** Pot name. */
   name: string;
-  /** Pot owner. */
-  owner: string;
+  readonly owner: string;
   /** Pot factory. */
   pot_factory: string;
   /**
@@ -289,12 +278,9 @@ export interface ListRegistration {
   admin_notes?: string | null;
   /** Registration id. */
   readonly id: number;
-  /** List registered. */
-  list: number;
-  /** Account that did the registration. */
-  registered_by: string;
-  /** Account that registered on the list. */
-  registrant: string;
+  readonly list: string;
+  readonly registered_by: string;
+  readonly registrant: string;
   /**
    * Registrant notes.
    * @maxLength 1024
@@ -324,8 +310,7 @@ export interface ListRegistration {
 export interface List {
   /** Admin only registrations. */
   admin_only_registrations: boolean;
-  /** List admins. */
-  admins: string[];
+  readonly admins: string;
   /**
    * Cover image url.
    * @maxLength 200
@@ -361,8 +346,7 @@ export interface List {
    * @maximum 2147483647
    */
   on_chain_id: number;
-  /** List owner. */
-  owner: string;
+  readonly owner: string;
   /** List last update date. */
   updated_at: string;
 }
@@ -380,12 +364,15 @@ export interface Image {
   url?: string;
 }
 
+export interface DonationContractConfig {
+  owner: string;
+  protocol_fee_basis_points: number;
+  protocol_fee_recipient_account: string;
+  referral_fee_basis_points: number;
+}
+
 export interface Donation {
-  /**
-   * Donation chef.
-   * @nullable
-   */
-  chef?: string | null;
+  readonly chef: string;
   /**
    * Chef fee.
    * @maxLength 64
@@ -400,10 +387,7 @@ export interface Donation {
   chef_fee_usd?: string | null;
   /** Donation date. */
   donated_at: string;
-  /** Donor. */
-  donor: string;
-  /** Donation FT. */
-  ft: string;
+  readonly donor: string;
   /** Donation id. */
   readonly id: number;
   /** Matching pool. */
@@ -431,11 +415,7 @@ export interface Donation {
    * @maximum 2147483647
    */
   on_chain_id: number;
-  /**
-   * Donation pot.
-   * @nullable
-   */
-  pot: string | null;
+  readonly pot: string;
   /**
    * Protocol fee.
    * @maxLength 64
@@ -447,16 +427,8 @@ export interface Donation {
    * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
    */
   protocol_fee_usd?: string | null;
-  /**
-   * Donation recipient.
-   * @nullable
-   */
-  recipient?: string | null;
-  /**
-   * Donation referrer.
-   * @nullable
-   */
-  referrer?: string | null;
+  readonly recipient: string;
+  readonly referrer: string;
   /**
    * Referrer fee.
    * @maxLength 64
@@ -469,6 +441,7 @@ export interface Donation {
    * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
    */
   referrer_fee_usd?: string | null;
+  readonly token: string;
   /**
    * Total amount.
    * @maxLength 64
@@ -776,6 +749,53 @@ export const useV1AccountsDonationsSentRetrieve = <TError = AxiosError<void>>(
   };
 };
 
+export const v1AccountsPayoutsReceivedRetrieve = (
+  accountId: string,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<Donation[]>> => {
+  return axios.get(`/api/v1/accounts/${accountId}/payouts_received`, options);
+};
+
+export const getV1AccountsPayoutsReceivedRetrieveKey = (accountId: string) =>
+  [`/api/v1/accounts/${accountId}/payouts_received`] as const;
+
+export type V1AccountsPayoutsReceivedRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1AccountsPayoutsReceivedRetrieve>>
+>;
+export type V1AccountsPayoutsReceivedRetrieveQueryError = AxiosError<void>;
+
+export const useV1AccountsPayoutsReceivedRetrieve = <TError = AxiosError<void>>(
+  accountId: string,
+  options?: {
+    swr?: SWRConfiguration<
+      Awaited<ReturnType<typeof v1AccountsPayoutsReceivedRetrieve>>,
+      TError
+    > & { swrKey?: Key; enabled?: boolean };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!accountId;
+  const swrKey =
+    swrOptions?.swrKey ??
+    (() =>
+      isEnabled ? getV1AccountsPayoutsReceivedRetrieveKey(accountId) : null);
+  const swrFn = () =>
+    v1AccountsPayoutsReceivedRetrieve(accountId, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
 export const v1AccountsPotApplicationsRetrieve = (
   accountId: string,
   options?: AxiosRequestConfig,
@@ -810,6 +830,49 @@ export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
       isEnabled ? getV1AccountsPotApplicationsRetrieveKey(accountId) : null);
   const swrFn = () =>
     v1AccountsPotApplicationsRetrieve(accountId, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export const v1DonateContractConfigRetrieve = (
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<DonationContractConfig>> => {
+  return axios.get(`/api/v1/donate_contract_config`, options);
+};
+
+export const getV1DonateContractConfigRetrieveKey = () =>
+  [`/api/v1/donate_contract_config`] as const;
+
+export type V1DonateContractConfigRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1DonateContractConfigRetrieve>>
+>;
+export type V1DonateContractConfigRetrieveQueryError = AxiosError<void>;
+
+export const useV1DonateContractConfigRetrieve = <
+  TError = AxiosError<void>,
+>(options?: {
+  swr?: SWRConfiguration<
+    Awaited<ReturnType<typeof v1DonateContractConfigRetrieve>>,
+    TError
+  > & { swrKey?: Key; enabled?: boolean };
+  axios?: AxiosRequestConfig;
+}) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+  const swrKey =
+    swrOptions?.swrKey ??
+    (() => (isEnabled ? getV1DonateContractConfigRetrieveKey() : null));
+  const swrFn = () => v1DonateContractConfigRetrieve(axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
