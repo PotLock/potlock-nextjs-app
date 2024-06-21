@@ -1,4 +1,6 @@
-import { Account, Pot } from "./generated";
+import { Account, Pot } from "./generated/client";
+
+export * from "./generated/client";
 
 export type AccountId = Account["id"];
 

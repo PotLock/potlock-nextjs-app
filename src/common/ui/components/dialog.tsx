@@ -3,8 +3,9 @@
 import { forwardRef } from "react";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 
+import { Button } from "./button";
 import { cn } from "../utils";
 
 const Dialog = DialogPrimitive.Root;
@@ -35,13 +36,14 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 export type DialogContentProps = React.ComponentPropsWithoutRef<
   typeof DialogPrimitive.Content
 > & {
-  onCloseClick: () => void;
+  onBackClick?: VoidFunction;
+  onCloseClick: VoidFunction;
 };
 
 const DialogContent = forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, onCloseClick, ...props }, ref) => (
+>(({ className, children, onBackClick, onCloseClick, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -61,18 +63,43 @@ const DialogContent = forwardRef<
     >
       {children}
 
-      <DialogPrimitive.Close
-        onClick={onCloseClick}
-        className={cn(
-          "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity",
-          "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
-          "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
-          "data-[state=open]:text-muted-foreground",
-        )}
+      <div
+        un-w="full"
+        un-flex="~"
+        un-justify="end"
+        un-position="absolute top-4"
+        un-px="4"
       >
-        <X className="color-white h-7 w-7" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
+        {typeof onBackClick === "function" && (
+          <Button
+            variant="standard-plain"
+            size="icon"
+            onClick={onBackClick}
+            className={cn(
+              "mr-auto h-auto w-auto rounded-sm opacity-70 ring-offset-background transition-opacity",
+              "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
+              "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
+              "data-[state=open]:text-muted-foreground",
+            )}
+          >
+            <ArrowLeft className="color-white" width="24" height="24" />
+            <span className="sr-only">Previous step</span>
+          </Button>
+        )}
+
+        <DialogPrimitive.Close
+          onClick={onCloseClick}
+          className={cn(
+            "rounded-sm opacity-70 ring-offset-background transition-opacity",
+            "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
+            "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
+            "data-[state=open]:text-muted-foreground",
+          )}
+        >
+          <X className="color-white" width="24" height="24" />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
+      </div>
     </DialogPrimitive.Content>
   </DialogPortal>
 ));
@@ -93,7 +120,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -39.752 -37)"
       fill="white"
-      fillOpacity="0.08"
+      fillOpacity="0.12"
     />
 
     <rect
@@ -102,7 +129,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -71.752 -37)"
       fill="white"
-      fillOpacity="0.08"
+      fillOpacity="0.12"
     />
 
     <rect
@@ -111,7 +138,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -103.752 -37)"
       fill="white"
-      fillOpacity="0.08"
+      fillOpacity="0.12"
     />
 
     <rect
@@ -120,7 +147,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 -7.75195 -37)"
       fill="white"
-      fillOpacity="0.08"
+      fillOpacity="0.12"
     />
 
     <rect
@@ -129,7 +156,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
       rx="10"
       transform="matrix(-0.707107 0.707107 0.707107 0.707107 24.248 -37)"
       fill="white"
-      fillOpacity="0.08"
+      fillOpacity="0.12"
     />
   </svg>
 );
@@ -141,7 +168,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "pt-15 flex h-[max-content] w-full flex-col gap-4 bg-red-500 px-4 pb-5 sm:rounded-t-lg sm:px-5",
+      "pt-13 flex h-[max-content] w-full flex-col gap-2 bg-[var(--primary-600)] px-4 pb-5 sm:rounded-t-lg sm:px-5",
       "text-left text-white",
       className,
     )}
@@ -161,6 +188,7 @@ const DialogHeader = ({
     {children}
   </div>
 );
+
 DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({
@@ -168,10 +196,11 @@ const DialogFooter = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn("mt-auto flex justify-between gap-4 p-4", className)}
+    className={cn("mt-auto flex justify-between gap-4 p-5", className)}
     {...props}
   />
 );
+
 DialogFooter.displayName = "DialogFooter";
 
 const DialogTitle = forwardRef<
@@ -181,27 +210,32 @@ const DialogTitle = forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "prose font-600 text-xl font-semibold leading-none tracking-tight",
+      "prose font-600 py-1 text-xl font-semibold leading-none tracking-tight",
       className,
     )}
     {...props}
   />
 ));
+
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
 const DialogDescription = forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
     className={cn(
-      "flex flex-col gap-4 px-4 py-4 text-sm text-muted-foreground sm:px-5",
+      "flex flex-col gap-6 p-5 text-sm text-neutral-950",
       className,
     )}
     {...props}
-  />
+    asChild
+  >
+    <div>{children}</div>
+  </DialogPrimitive.Description>
 ));
+
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {

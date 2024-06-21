@@ -74,6 +74,7 @@ const DonationsInfo = ({ accountId }: { accountId: string }) => {
           {donationsInfo.uniqueDonors === 1 ? "donor" : "donors"}
         </div>
       </div>
+
       <div className="btn-wrapper">
         <Button
           onClick={() => {

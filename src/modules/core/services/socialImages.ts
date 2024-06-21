@@ -1,8 +1,8 @@
+import { getImage } from "@/common/api/images";
 import {
   NEARSocialUserProfile,
   getSocialProfile,
 } from "@/common/contracts/social";
-import { getImage } from "@/common/lib/images";
 
 type Props = {
   socialData?: NEARSocialUserProfile;

@@ -1,1 +1,0 @@
-{"description":"* `Pending` - Pending\n* `Approved` - Approved\n* `Rejected` - Rejected\n* `InReview` - InReview","type":"string","enum":["Pending","Approved","Rejected","InReview"],"x-readme-ref-name":"PotApplicationStatusEnum"}

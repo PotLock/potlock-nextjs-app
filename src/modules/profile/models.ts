@@ -8,14 +8,13 @@ import {
   NEARSocialUserProfile,
   getSocialProfile,
 } from "@/common/contracts/social";
-import { yoctosToUsdWithFallback } from "@/common/lib";
-
-import { fetchSocialImages } from "../core/services/socialImages";
+import { yoctosToUsdWithFallback } from "@/common/lib/yoctosToUsdWithFallback";
+import { fetchSocialImages } from "@/modules/core/services/socialImages";
 import {
   getTagsFromSocialProfileData,
   getTeamMembersFromProfile,
   getTotalAmountNear,
-} from "../project/utils";
+} from "@/modules/project/utils";
 
 export type Profile = {
   socialData: NEARSocialUserProfile;

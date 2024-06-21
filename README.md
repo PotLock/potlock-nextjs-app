@@ -30,7 +30,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 This project is using an indexer service.
 You can access its docs here: <https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints>
 
-**URI**: `http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1`
+**URI**: <http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1>
+
+**Swagger UI**: <https://dev.potlock.io/api/schema/swagger-ui/#/>
 
 ### Project Structure
 
