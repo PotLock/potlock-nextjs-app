@@ -3,6 +3,14 @@ import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
 import { swrHooks } from "./generated";
 import { ByAccountId, ByPotId } from "./types";
 
+export const useDonationConfig = () => {
+  const queryResult = swrHooks.useV1DonateContractConfigRetrieve(
+    POTLOCK_REQUEST_CONFIG,
+  );
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
 export const useAccounts = () => {
   const queryResult = swrHooks.useV1AccountsRetrieve(POTLOCK_REQUEST_CONFIG);
 
