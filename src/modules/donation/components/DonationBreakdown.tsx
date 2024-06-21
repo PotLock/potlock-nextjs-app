@@ -1,7 +1,9 @@
 import { UseFormReturn } from "react-hook-form";
 
-import { potlock } from "@/common/api/potlock";
-import { Checkbox } from "@/common/ui/components";
+import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { FormField } from "@/common/ui/components";
+import { CheckboxField } from "@/common/ui/form-fields";
+import { TokenIcon } from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
 
 import { useDonationFees } from "../hooks/fees";
@@ -33,28 +35,33 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
       label: "Project allocation",
       amount: projectAllocationAmount,
       percentage: projectAllocationPercent,
-      show: true,
     },
 
     {
       label: "Protocol fees",
       amount: protocolFeeAmount,
       percentage: protocolFeePercent,
-      show: !values.bypassProtocolFee && protocolFeeAmount > 0,
+      display: protocolFeeAmount > 0,
     },
 
     {
       label: "Chef fees",
       amount: chefFeeAmount,
       percentage: chefFeePercent,
-      show: !values.bypassChefFee && chefFeeAmount > 0,
+      display: chefFeeAmount > 0,
     },
 
     {
       label: "Referral fees",
       amount: referrerFeeAmount,
       percentage: referrerFeePercent,
-      show: values.referrerAccountId && referrerFeeAmount > 0,
+      display: referrerFeeAmount > 0,
+    },
+
+    {
+      label: "On-Chain Storage",
+      amount: "< 0.01",
+      tokenId: NEAR_TOKEN_DENOM,
     },
   ];
 
@@ -71,55 +78,73 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
           un-p="4"
           un-border="~ neutral-300 rounded-lg"
         >
-          {computedTotalFees.map(({ label, amount, percentage }) => (
-            <div un-flex="~" un-justify="between" un-gap="4" key={label}>
-              <span className="prose">{`${label} (${percentage}%)`}</span>
+          {computedTotalFees.map(
+            ({
+              display = true,
+              label,
+              amount,
+              percentage,
+              tokenId = values.tokenId,
+            }) =>
+              display && (
+                <div un-flex="~" un-justify="between" un-gap="4" key={label}>
+                  <span className="prose">
+                    {label + (percentage ? ` (${percentage}%)` : "")}
+                  </span>
 
-              <span className="flex items-center gap-1">
-                <span className="prose">{amount}</span>
-                <span>{values.token}</span>
-              </span>
-            </div>
-          ))}
+                  <span className="flex items-center gap-2">
+                    <span className="prose" un-font="600">
+                      {amount}
+                    </span>
 
-          <div un-flex="~" un-justify="between" un-gap="4">
-            <span className="prose">{"On-Chain Storage fee"}</span>
-
-            <span className="flex items-center gap-1">
-              <span className="prose">{"< 0.01"}</span>
-              <span>NEAR</span>
-            </span>
-          </div>
+                    <TokenIcon {...{ tokenId }} />
+                  </span>
+                </div>
+              ),
+          )}
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
         {protocolFeeRecipientAccountId && (
-          <div className="flex items-center gap-2">
-            <Checkbox id="protocol-fees" />
-
-            <label htmlFor="protocol-fees" className="flex items-center gap-2">
-              <span className="prose">{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
-              <ProfileLink accountId={protocolFeeRecipientAccountId} />
-            </label>
-          </div>
+          <FormField
+            control={form.control}
+            name="bypassProtocolFee"
+            render={({ field }) => (
+              <CheckboxField
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                label={
+                  <>
+                    <span className="prose">{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
+                    <ProfileLink accountId={protocolFeeRecipientAccountId} />
+                  </>
+                }
+              />
+            )}
+          />
         )}
 
-        {values.allocationStrategy === "pot" && (
-          <div className="flex items-center gap-2">
-            <Checkbox id="chef-fees" />
+        {values.potAccountId && (
+          <FormField
+            control={form.control}
+            name="bypassProtocolFee"
+            render={({ field }) => (
+              <CheckboxField
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                label={
+                  <>
+                    <span className="prose">{`Remove ${chefFeePercent}% Chef Fees`}</span>
 
-            <label htmlFor="chef-fees" className="flex items-center gap-2">
-              <span>Remove 5% Chef Fees</span>
-
-              <span className="flex items-center gap-1">
-                <span role="img" aria-label="icon">
-                  🌐
-                </span>
-                <span>#build</span>
-              </span>
-            </label>
-          </div>
+                    {values.potAccountId && (
+                      <ProfileLink accountId={values.potAccountId} />
+                    )}
+                  </>
+                }
+              />
+            )}
+          />
         )}
       </div>
     </>

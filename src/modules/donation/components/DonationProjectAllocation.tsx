@@ -3,9 +3,10 @@ import { useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { pagoda } from "@/common/api/pagoda";
-import { ByAccountId, potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
+import { ByAccountId } from "@/common/types";
 import {
   DialogDescription,
   DialogHeader,
@@ -23,8 +24,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-  TextField,
 } from "@/common/ui/components";
+import { TextField } from "@/common/ui/form-fields";
 import {
   RuntimeErrorAlert,
   balanceToFloat,
@@ -46,15 +47,15 @@ export type DonationProjectAllocationProps = ByAccountId & {
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
 > = ({ accountId, form }) => {
-  const [amount, token, allocationStrategy] = form.watch([
+  const [amount, tokenId, allocationStrategy] = form.watch([
     "amount",
-    "token",
+    "tokenId",
     "allocationStrategy",
   ]);
 
   const { data: activePots } = potlock.useAccountActivePots({ accountId });
   const hasMatchingPots = (activePots?.length ?? 0) > 0;
-  const isFtDonation = token !== NEAR_TOKEN_DENOM;
+  const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
 
   const {
     isLoading: isAccountLoading,
@@ -64,7 +65,7 @@ export const DonationProjectAllocation: React.FC<
 
   const {
     isLoading: isNearBalanceLoading,
-    data: { balance: availableNearBalance = null } = {},
+    data: { balance: availableNearBalance } = {},
     error: nearBalanceError,
   } = pagoda.useNearAccountBalance({
     accountId: walletApi.accountId ?? "unknown",
@@ -72,7 +73,7 @@ export const DonationProjectAllocation: React.FC<
 
   const {
     isLoading: isFtBalanceLoading,
-    data: { balances: availableFtBalances = null } = {},
+    data: { balances: availableFtBalances } = {},
     error: ftBalancesError,
   } = pagoda.useFtAccountBalances({
     accountId: walletApi.accountId ?? "unknown",
@@ -84,11 +85,11 @@ export const DonationProjectAllocation: React.FC<
     () =>
       (isFtDonation
         ? availableFtBalances?.find(
-            (ftBalance) => ftBalance.contract_account_id === token,
+            (ftBalance) => ftBalance.contract_account_id === tokenId,
           )
         : availableNearBalance) ?? null,
 
-    [availableFtBalances, availableNearBalance, isFtDonation, token],
+    [availableFtBalances, availableNearBalance, isFtDonation, tokenId],
   );
 
   const availableBalanceFloat = useMemo(
@@ -201,7 +202,7 @@ export const DonationProjectAllocation: React.FC<
                   fieldExtension={
                     <FormField
                       control={form.control}
-                      name="token"
+                      name="tokenId"
                       render={({ field: fieldExtension }) => (
                         <Select
                           defaultValue={fieldExtension.value}
@@ -242,7 +243,9 @@ export const DonationProjectAllocation: React.FC<
                   type="number"
                   placeholder="0.00"
                   min={
-                    token === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0
+                    tokenId === NEAR_TOKEN_DENOM
+                      ? DONATION_MIN_NEAR_AMOUNT
+                      : 0.0
                   }
                   max={availableBalanceFloat ?? undefined}
                   step={0.01}

@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
+import { pagoda } from "@/common/api/pagoda";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
   Button,
@@ -16,7 +17,7 @@ import {
   Textarea,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useNearUsdDisplayValue } from "@/modules/core";
+import { TokenIcon, useNearUsdDisplayValue } from "@/modules/core";
 
 import { DonationBreakdown } from "./DonationBreakdown";
 import { DonationInputs } from "../models";
@@ -47,10 +48,14 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
       0.0,
     ) ?? values.amount;
 
+  const { data: selectedTokenMetadata } = pagoda.useTokenMetadata({
+    tokenId: values.tokenId,
+  });
+
   const totalNearAmountUsdDisplayValue = useNearUsdDisplayValue(totalAmount);
 
   const totalAmountUsdDisplayValue =
-    values.token === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
+    values.tokenId === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
 
   console.table(values);
 
@@ -67,13 +72,13 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           </span>
 
           <div un-flex="~" un-items="center" un-gap="2">
-            <span>{values.token}</span>
+            <TokenIcon tokenId={values.tokenId} />
 
             <span
               className="prose"
               un-text="xl"
               un-font="600"
-            >{`${totalAmount} ${values.token}`}</span>
+            >{`${totalAmount} ${selectedTokenMetadata?.symbol ?? "⋯"}`}</span>
 
             {totalAmountUsdDisplayValue && (
               <span className="prose" un-text="gray-500 xl">

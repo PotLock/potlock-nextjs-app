@@ -1,7 +1,8 @@
 import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
+import { ByAccountId } from "@/common/types";
 
 import { swrHooks } from "./generated";
-import { ByAccountId, ByPotId } from "./types";
+import { ByPotId } from "./types";
 
 export const useDonationConfig = () => {
   const queryResult = swrHooks.useV1DonateContractConfigRetrieve(

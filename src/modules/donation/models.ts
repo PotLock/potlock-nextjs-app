@@ -11,10 +11,11 @@ import {
 } from "zod";
 
 import { RootModel } from "@/app/_store/models";
-import { ByAccountId, ByPotId } from "@/common/api/potlock";
+import { ByPotId } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import { ByAccountId } from "@/common/types";
 
 import {
   DONATION_MAX_MESSAGE_LENGTH,
@@ -80,7 +81,7 @@ export const donationAmountSchema = number()
   );
 
 export const donationSchema = object({
-  token: donationTokenSchema,
+  tokenId: donationTokenSchema,
 
   amount: donationAmountSchema.describe(
     "Amount of the selected tokens to donate.",
@@ -114,8 +115,8 @@ export const donationSchema = object({
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),
 }).refine(
-  ({ token, amount }) =>
-    token === NEAR_TOKEN_DENOM
+  ({ tokenId, amount }) =>
+    tokenId === NEAR_TOKEN_DENOM
       ? amount > DONATION_MIN_NEAR_AMOUNT
       : amount > 0.0,
 

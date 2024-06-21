@@ -12,15 +12,8 @@ import {
   DialogTitle,
   RadioGroup,
   RadioGroupItem,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-  TextField,
 } from "@/common/ui/components";
+import { TextField } from "@/common/ui/form-fields";
 
 import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
 import { DonationInputs } from "../models";
@@ -33,8 +26,8 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
   potId,
   form,
 }) => {
-  const token = form.watch("token");
-  const isFtDonation = token !== NEAR_TOKEN_DENOM;
+  const tokenId = form.watch("tokenId");
+  const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
 
   const {
     isLoading: isPotLoading,
@@ -56,11 +49,11 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
     () =>
       (isFtDonation
         ? availableFtBalances?.find(
-            (ftBalance) => ftBalance.contract_account_id === token,
+            (ftBalance) => ftBalance.contract_account_id === tokenId,
           )
         : availableNearBalance) ?? null,
 
-    [availableFtBalances, availableNearBalance, isFtDonation, token],
+    [availableFtBalances, availableNearBalance, isFtDonation, tokenId],
   );
 
   return isPotLoading || availableBalance === null ? (
@@ -133,7 +126,9 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
               }
               type="number"
               placeholder="0.00"
-              min={token === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0}
+              min={
+                tokenId === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0
+              }
               step={0.01}
               appendix="$ 0.00"
             />

@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { ByAccountId, potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/potlock";
+import { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 
 export type ProfileLinkProps = ByAccountId & { className?: string };
@@ -18,7 +19,7 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
     <Link
       href={`/user/${accountId}`}
       target="_blank"
-      className={cn("flex items-center gap-1", className)}
+      className={cn("decoration-none flex items-center gap-1", className)}
     >
       {accountSocialData?.image?.url ? (
         <Image
@@ -31,7 +32,9 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
         <span className="prose text-5">🌐</span>
       )}
 
-      <span className="prose">{accountSocialData?.name ?? accountId}</span>
+      <span className="prose" un-decoration="hover:underline">
+        {accountSocialData?.name ?? accountId}
+      </span>
     </Link>
   );
 };
