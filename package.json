@@ -57,7 +57,6 @@
     "@rematch/persist": "^2.1.2",
     "@unocss/reset": "^0.60.4",
     "@wpdas/naxios": "^2.1.0",
-    "@zodios/core": "^10.9.6",
     "axios": "^1.7.2",
     "big.js": "^6.2.1",
     "class-variance-authority": "^0.7.0",
