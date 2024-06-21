@@ -15,7 +15,6 @@ export type TokenIconProps = {
 export const TokenIcon = ({ tokenId }: TokenIconProps) => {
   const { data: token, isLoading } = pagoda.useTokenMetadata({ tokenId });
 
-  console.log(token);
 
   return tokenId === NEAR_TOKEN_DENOM ? (
     <NearIcon />
@@ -30,7 +29,7 @@ export const TokenIcon = ({ tokenId }: TokenIconProps) => {
         />
       ) : (
         <span className="prose text-5">
-          {token?.name ?? !isLoading ? "⋯" : tokenId}
+          {token?.name ?? isLoading ? "⋯" : tokenId}
         </span>
       )}
     </>

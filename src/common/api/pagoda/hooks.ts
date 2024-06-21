@@ -1,4 +1,4 @@
-import { PAGODA_REQUEST_CONFIG } from "@/common/constants";
+import { NEAR_TOKEN_DENOM, PAGODA_REQUEST_CONFIG } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
 import { AccountId, ByAccountId } from "@/common/types";
 
@@ -15,20 +15,28 @@ export const useTokenMetadata = ({ tokenId }: TokenMetadataInputs) => {
   const nearQueryResult = swrHooks.useGetAccountsAccountIdBalancesNEAR(
     walletApi.accountId ?? "unknown",
     undefined,
-    { ...PAGODA_REQUEST_CONFIG, swr: { enabled: tokenId === "near" } },
+
+    {
+      ...PAGODA_REQUEST_CONFIG,
+      swr: { enabled: tokenId === NEAR_TOKEN_DENOM },
+    },
   );
 
   const ftQueryResult = swrHooks.useGetNep141MetadataContractAccountId(
     walletApi.accountId ?? "unknown",
     undefined,
-    { ...PAGODA_REQUEST_CONFIG, swr: { enabled: tokenId !== "near" } },
+
+    {
+      ...PAGODA_REQUEST_CONFIG,
+      swr: { enabled: tokenId !== NEAR_TOKEN_DENOM },
+    },
   );
 
   return {
-    ...(tokenId === "near" ? nearQueryResult : ftQueryResult),
+    ...(tokenId === NEAR_TOKEN_DENOM ? nearQueryResult : ftQueryResult),
 
     data:
-      tokenId === "near"
+      tokenId === NEAR_TOKEN_DENOM
         ? nearQueryResult.data?.data.balance.metadata
         : ftQueryResult.data?.data.metadata,
   };
