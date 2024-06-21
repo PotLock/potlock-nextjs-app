@@ -11,7 +11,7 @@ import {
 
 export type Option = {
   label: string;
-  val: any;
+  type: string;
   count?: string | number;
 };
 
@@ -62,7 +62,7 @@ const Dropdown = (props: Props) => {
           <FilterMenu onClick={(e: any) => e.stopPropagation()}>
             {options.map((option) => (
               <FilterItem
-                key={option.val}
+                key={option.type}
                 onClick={() => {
                   setOpenFilter(false);
                   onSelect(option);

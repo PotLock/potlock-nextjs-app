@@ -29,7 +29,7 @@ export type DonationInfo = {
   net_amount: string;
   net_amount_usd: string;
   on_chain_id: number;
-  pot: any;
+  pot?: any;
   protocol_fee: string;
   protocol_fee_usd: string;
   recipient: string;

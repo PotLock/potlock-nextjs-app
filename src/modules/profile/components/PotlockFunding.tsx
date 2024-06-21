@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react";
 
+import { DonationInfo } from "@/common/api/potlock/account";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
 
+import { Option } from "./Dropdown";
 import Stats, { Stat } from "./Stats";
-import { Option } from "../Dropdown";
 
 type Props = {
   projectId: string;
 };
 
 const PotlockFunding = ({ projectId }: Props) => {
-  const { donations, near, uniqueDonors } = useDonationsForProject(projectId);
-  console.log(donations);
+  const {
+    donations,
+    near,
+    uniqueDonors,
+    directDonations,
+    matchedDonations,
+    totalMatchedNear,
+  } = useDonationsForProject(projectId);
 
   // Stats
   const [sortDropdownItems, setSortDropdownItems] = useState<Option[]>([
     {
       label: "Loading...",
-      val: "",
+      type: "all",
     },
   ]);
 
@@ -27,8 +34,7 @@ const PotlockFunding = ({ projectId }: Props) => {
 
   const stats: Stat[] = [
     {
-      // TODO: Near value is failing sometimes. Cache the usdToNear value, load it once and use many
-      value: (near as string) || "",
+      value: `${near}N`,
       label: "Donated",
     },
     {
@@ -36,45 +42,64 @@ const PotlockFunding = ({ projectId }: Props) => {
       label: "Unique donors",
     },
     {
-      value: "0.00N",
+      value: `${totalMatchedNear}N`,
       label: "Total Matched",
       hideSeparator: true,
     },
   ];
-
-  // TODO: Can't complete this sort items now because the donations_type info is missing
-  const donationTypeDescription = {
-    all: "All donations",
-    direct: "Direct donations",
-    matched: "Matched donations",
-    payout: "Matching pool allocations",
-    sponsorship: "Sponsorships",
-  };
 
   useEffect(() => {
     if (donations) {
       const dropdownItems = [
         {
           label: "All donations",
-          val: "all",
+          type: "all",
           count: donations?.length,
         },
-        // TODO: Can't complete this sort items now because the donations_type info is missing
         {
           label: "Direct donations",
-          val: "direct",
-          count: 0,
+          type: "direct",
+          count: directDonations?.length,
+        },
+        {
+          label: "Matched donations",
+          type: "matched",
+          count: matchedDonations?.length,
         },
       ];
       setSortDropdownItems(dropdownItems);
       setSelectedSortOptions(dropdownItems[0]);
     }
-  }, [donations]);
+  }, [donations, directDonations, matchedDonations]);
 
   const onSelectDropdownOption = (selectedOption: Option) => {
     setSelectedSortOptions(selectedOption);
   };
   // Stats - end
+
+  // List Component
+  // Donations General Data
+  const donationsData: Record<
+    string,
+    { label: string; donations?: DonationInfo[] }
+  > = {
+    all: {
+      label: "All donations",
+      donations,
+    },
+    direct: {
+      label: "Direct donations",
+      donations: directDonations,
+    },
+    matched: {
+      label: "Matched donations",
+      donations: matchedDonations,
+    },
+  };
+
+  // TODO: Use this to show on the list
+  console.log(donationsData[selectedSortOption.type]);
+  // List Component - end
 
   return (
     // Container

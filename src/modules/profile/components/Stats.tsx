@@ -1,5 +1,5 @@
+import Dropdown, { Option } from "./Dropdown";
 import VLine from "./VLine";
-import Dropdown, { Option } from "../Dropdown";
 
 type Props = {
   sortOptions: Option[];

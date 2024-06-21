@@ -11,6 +11,8 @@ import nearToUsdWithFallback from "@/common/lib/nearToUsdWithFallback";
 
 const useDonationsForProject = (projectId: string) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
+  const [directDonations, setDirectDonations] = useState<DonationInfo[]>();
+  const [matchedDonations, setMatchedDonations] = useState<DonationInfo[]>();
 
   // TODO: INFO: useV1AccountsDonationsReceivedRetrieve is not working
   // const donations = useAccountDonationsReceived({ accountId: projectId });
@@ -21,48 +23,83 @@ const useDonationsForProject = (projectId: string) => {
         accountId: projectId,
       });
 
+      const direct: DonationInfo[] = [];
+      const matched: DonationInfo[] = [];
+
+      _donations.results.filter((donation) => {
+        if (donation.pot) {
+          matched.push(donation);
+        } else {
+          direct.push(donation);
+        }
+      });
+
       setDonations(_donations.results);
+      setDirectDonations(direct);
+      setMatchedDonations(matched);
     })();
   }, [projectId]);
 
   // Get total donations & Unique donors count
-  const [totalDonationAmountNear, uniqueDonors] = useMemo(() => {
-    if (donations) {
-      let totalNear = Big(0);
-      const uniqueDonors = [
-        ...new Set(donations.map((donation) => donation.donor)),
-      ];
-      donations.forEach((donation) => {
-        if (donation.ft === "near") {
+  const [totalDonationAmountNear, uniqueDonors, totalMatchedNear] =
+    useMemo(() => {
+      if (donations) {
+        let totalNear = Big(0);
+        let totalMatched = Big(0);
+
+        const uniqueDonors = [
+          ...new Set(donations.map((donation) => donation.donor)),
+        ];
+        donations.forEach((donation) => {
           totalNear = totalNear.plus(Big(donation.total_amount || "0"));
-        }
-      });
 
-      const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
-        totalNear.toString(),
-      );
+          // Total Matched info
+          if (donation.pot) {
+            totalMatched = totalNear.plus(Big(donation.total_amount || "0"));
+          }
+        });
 
-      return [totalDonationAmountNear, uniqueDonors?.length];
-    }
-    return [0, 0];
-  }, [donations]);
+        const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
+          totalNear.toString(),
+        );
+
+        const totalMatchedNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
+          totalMatched.toString(),
+        );
+
+        return [
+          totalDonationAmountNear,
+          uniqueDonors?.length,
+          totalMatchedNear,
+        ];
+      }
+      return [0, "0", "0"];
+    }, [donations]);
 
   const [usdInfo, setUsdInfo] = useState("");
+  const [totalMatchedUsd, setTotalMatchedUsdInfo] = useState("");
 
   useEffect(() => {
-    (async () => {
-      const _usdInfo = await nearToUsdWithFallback(
-        Number(totalDonationAmountNear),
-      );
-      setUsdInfo(_usdInfo);
-    })();
-  }, [totalDonationAmountNear]);
+    const allDonations_usdInfo = nearToUsdWithFallback(
+      Number(totalDonationAmountNear),
+    );
+    setUsdInfo(allDonations_usdInfo);
+
+    const totalMatched_usdInfo = nearToUsdWithFallback(
+      Number(totalMatchedNear),
+    );
+    setTotalMatchedUsdInfo(totalMatched_usdInfo);
+  }, [totalDonationAmountNear, totalMatchedNear]);
 
   return {
     donations,
+    directDonations,
+    matchedDonations,
     uniqueDonors,
     near: totalDonationAmountNear,
     usd: usdInfo,
+    totalMatchedNear,
+    totalMatchedUsd,
   };
 };
 

@@ -1,17 +1,9 @@
 "use client";
 
-const nearToUsd = async () => {
-  const response = await fetch(
-    "https://api.coingecko.com/api/v3/simple/price?ids=near&vs_currencies=usd",
-    { cache: "force-cache" },
-  );
+import { store } from "@/app/_store";
 
-  if (response.ok) {
-    const data = await response.json();
-    return data.near.usd;
-  }
-
-  return "0";
+const nearToUsd = () => {
+  return store.getState().core.nearToUsd;
 };
 
 export default nearToUsd;
