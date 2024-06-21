@@ -14,6 +14,7 @@ export const useDonation = (props: DonationParameters) => {
     openDonationModal: useCallback(
       (event: React.MouseEvent) => {
         event.preventDefault();
+        event.stopPropagation();
         modal.show(props);
       },
 

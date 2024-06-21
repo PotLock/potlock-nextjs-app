@@ -1,6 +1,4 @@
-import { useRouter } from "next/router";
-
-import { Pot, potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/potlock";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 
 import { DonationInputs } from "../models";
@@ -23,17 +21,12 @@ export const basisPointsToPercent = (basisPoints: number) => basisPoints / 100;
 
 export const useDonationFees = ({
   amount,
+  referrerAccountId,
   potAccountId,
   bypassProtocolFee,
   bypassChefFee,
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
-
-  const { query: routeQuery } = useRouter();
-
-  const referrerId = Array.isArray(routeQuery.referrerId)
-    ? routeQuery.referrerId.at(0)
-    : routeQuery.referrerId;
 
   const protocolFeeBasisPoints =
     potlockDonationConfig?.protocol_fee_basis_points ?? 0;
@@ -53,7 +46,7 @@ export const useDonationFees = ({
     TOTAL_FEE_BASIS_POINTS -
     (bypassProtocolFee ? 0 : protocolFeeBasisPoints) -
     (bypassChefFee ? 0 : chefFeeBasisPoints) -
-    (referrerId ? referralFeeBasisPoints : 0);
+    (referrerAccountId ? referralFeeBasisPoints : 0);
 
   return {
     projectAllocationAmount:

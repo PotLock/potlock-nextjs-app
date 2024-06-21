@@ -16,7 +16,14 @@ import {
   donationTokenSchema,
 } from "../models";
 
-export const useDonationForm = (params: DonationSubmissionInputs) => {
+export type DonationFormParams = DonationSubmissionInputs & {
+  referrerAccountId?: string;
+};
+
+export const useDonationForm = ({
+  referrerAccountId,
+  ...params
+}: DonationFormParams) => {
   const form = useForm<DonationInputs>({
     resolver: zodResolver(donationSchema),
 
@@ -29,6 +36,7 @@ export const useDonationForm = (params: DonationSubmissionInputs) => {
       token: donationTokenSchema.parse(undefined),
       amount: 0.1,
       recipientAccountId: "accountId" in params ? params.accountId : undefined,
+      referrerAccountId,
       potAccountId: "potId" in params ? params.potId : undefined,
 
       potDistributionStrategy:

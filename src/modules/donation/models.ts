@@ -87,6 +87,7 @@ export const donationSchema = object({
   ),
 
   recipientAccountId: string().optional().describe("Recipient account id."),
+  referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
 
   potDonationDistribution: array(

@@ -52,7 +52,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   const totalAmountUsdDisplayValue =
     values.token === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
 
-  console.table(values.token);
+  console.table(values);
 
   return (
     <>

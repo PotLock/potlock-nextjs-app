@@ -1,5 +1,7 @@
 import { createElement as h, useMemo } from "react";
 
+import { useSearchParams } from "next/navigation";
+
 import { dispatch } from "@/app/_store";
 import {
   Button,
@@ -27,7 +29,12 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   currentStep,
   ...props
 }) => {
-  const { form, onSubmit } = useDonationForm(props);
+  const searchParams = useSearchParams();
+
+  const { form, onSubmit } = useDonationForm({
+    ...props,
+    referrerAccountId: searchParams.get("referrerId") ?? undefined,
+  });
 
   const content = useMemo(() => {
     switch (currentStep) {
