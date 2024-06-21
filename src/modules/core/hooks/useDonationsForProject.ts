@@ -73,7 +73,7 @@ const useDonationsForProject = (projectId: string) => {
           totalMatchedNear,
         ];
       }
-      return [0, "0", "0"];
+      return ["0", 0, "0"];
     }, [donations]);
 
   const [usdInfo, setUsdInfo] = useState("");
