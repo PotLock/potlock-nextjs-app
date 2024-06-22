@@ -3,14 +3,9 @@ import { createElement as h, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { dispatch } from "@/app/_store";
-import {
-  Button,
-  DialogFooter,
-  DialogHeader,
-  Form,
-} from "@/common/ui/components";
+import { Button, DialogFooter, Form } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { RuntimeErrorAlert } from "@/modules/core";
+import { ModalErrorBody } from "@/modules/core";
 
 import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationPotAllocation } from "./DonationPotAllocation";
@@ -51,9 +46,10 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
       default:
         return (
-          <DialogHeader className="w-full rounded-lg">
-            <RuntimeErrorAlert customMessage="Unable to proceed with the next step." />
-          </DialogHeader>
+          <ModalErrorBody
+            heading="Donation"
+            title="Unable to proceed with the next step."
+          />
         );
     }
   }, [closeModal, currentStep, form, props]);
@@ -83,6 +79,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
                 ? undefined
                 : dispatch.donation.nextStep
             }
+            disabled={!form.formState.isDirty}
             className={cn({
               "w-full": currentStep === "confirmation",
             })}

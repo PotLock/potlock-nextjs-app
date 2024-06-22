@@ -1,14 +1,13 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { walletApi } from "@/common/contracts";
 import useIsClient from "@/common/lib/useIsClient";
-import { Button } from "@/common/ui/components";
+import { SignInButton } from "@/modules/auth";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import routesPath from "@/modules/core/routes";
 
@@ -37,26 +36,9 @@ const AuthButton = () => {
   const { isAuthenticated } = useAuth();
   const isClient = useIsClient();
 
-  const loginHandler = useCallback(() => {
-    walletApi.signInModal();
-  }, []);
-
   if (!isClient) return;
 
-  if (isAuthenticated) {
-    return <UserDropdown />;
-  }
-
-  return (
-    <Button
-      font="semibold"
-      variant="standard-filled"
-      onClick={loginHandler}
-      className="border-none bg-[#342823] shadow-none"
-    >
-      Sign In
-    </Button>
-  );
+  return isAuthenticated ? <UserDropdown /> : <SignInButton />;
 };
 
 const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {

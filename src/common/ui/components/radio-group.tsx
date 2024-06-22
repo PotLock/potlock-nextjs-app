@@ -6,6 +6,7 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Circle } from "lucide-react";
 
 import { Label } from "./label";
+import { Skeleton } from "./skeleton";
 import { cn } from "../utils";
 
 export const RadioGroup = forwardRef<
@@ -27,6 +28,7 @@ export type RadioGroupItemProps = Omit<
   React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>,
   "color"
 > & {
+  isLoading?: boolean;
   id: string;
   label: string;
   hint?: string;
@@ -35,10 +37,12 @@ export type RadioGroupItemProps = Omit<
 export const RadioGroupItem = forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Item>,
   RadioGroupItemProps
->(({ className, checked, disabled, label, hint, ...props }, ref) => {
+>(({ isLoading, className, checked, disabled, label, hint, ...props }, ref) => {
   const inputProps = { checked, disabled, ...props };
 
-  return (
+  return isLoading ? (
+    <Skeleton className="h-12.5 w-full" />
+  ) : (
     <div
       className={cn({
         "border-none bg-neutral-50": disabled,

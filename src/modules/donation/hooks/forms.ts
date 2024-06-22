@@ -34,7 +34,6 @@ export const useDonationForm = ({
         ],
 
       tokenId: donationTokenSchema.parse(undefined),
-      amount: 0.1,
       recipientAccountId: "accountId" in params ? params.accountId : undefined,
       referrerAccountId,
       potAccountId: "potId" in params ? params.potId : undefined,

@@ -93,11 +93,15 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
                   </span>
 
                   <span className="flex items-center gap-2">
-                    <span className="prose" un-font="600">
+                    <span
+                      className="prose line-height-none"
+                      un-font="600"
+                      un-mt="0.6"
+                    >
                       {amount}
                     </span>
 
-                    <TokenIcon {...{ tokenId }} />
+                    <TokenIcon {...{ tokenId }} size="small" />
                   </span>
                 </div>
               ),
