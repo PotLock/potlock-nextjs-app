@@ -26,7 +26,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 }) => {
   const searchParams = useSearchParams();
 
-  const { form, onSubmit } = useDonationForm({
+  const { form, isDisabled, onSubmit } = useDonationForm({
     ...props,
     referrerAccountId: searchParams.get("referrerId") ?? undefined,
   });
@@ -79,7 +79,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
                 ? undefined
                 : dispatch.donation.nextStep
             }
-            disabled={!form.formState.isDirty}
+            disabled={isDisabled}
             className={cn({
               "w-full": currentStep === "confirmation",
             })}

@@ -1,7 +1,7 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 import { dispatch } from "@/app/_store";
 import { walletApi } from "@/common/contracts";
@@ -24,10 +24,8 @@ export const useDonationForm = ({
   referrerAccountId,
   ...params
 }: DonationFormParams) => {
-  const form = useForm<DonationInputs>({
-    resolver: zodResolver(donationSchema),
-
-    defaultValues: {
+  const defaultValues = useMemo<Partial<DonationInputs>>(
+    () => ({
       allocationStrategy:
         DonationAllocationStrategyEnum[
           "accountId" in params ? "direct" : "pot"
@@ -42,9 +40,26 @@ export const useDonationForm = ({
         DonationPotDistributionStrategy[
           "accountId" in params ? "manually" : "evenly"
         ],
-    },
+    }),
+
+    [params, referrerAccountId],
+  );
+
+  const form = useForm<DonationInputs>({
+    resolver: zodResolver(donationSchema),
+    defaultValues,
   });
 
+  const currentValues = useWatch({ control: form.control });
+
+  const hasChanges = Object.keys(currentValues).some((key) => {
+    const defaultValue = defaultValues[key as keyof DonationInputs];
+    const currentValue = currentValues[key as keyof DonationInputs];
+
+    return currentValue !== defaultValue;
+  });
+
+  const isDisabled = !hasChanges || form.formState.isSubmitting;
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
@@ -52,7 +67,13 @@ export const useDonationForm = ({
     [params],
   );
 
+  console.table({ isDisabled, hasChanges });
+  console.table(currentValues);
+  console.table(defaultValues);
+
   return {
+    hasChanges,
+    isDisabled,
     isSenderHumanVerified,
     form,
     onSubmit: form.handleSubmit(onSubmit),
