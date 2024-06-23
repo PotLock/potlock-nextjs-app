@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 import { dispatch } from "@/app/_store";
+import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
+import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
 import {
@@ -51,6 +53,8 @@ export const useDonationForm = ({
   });
 
   const currentValues = useWatch({ control: form.control });
+  const tokenId = currentValues.tokenId ?? NEAR_TOKEN_DENOM;
+  const { balanceFloat } = useAvailableBalance({ tokenId });
 
   const hasChanges = Object.keys(currentValues).some((key) => {
     const defaultValue = defaultValues[key as keyof DonationInputs];
@@ -59,7 +63,12 @@ export const useDonationForm = ({
     return currentValue !== defaultValue;
   });
 
-  const isDisabled = !hasChanges || form.formState.isSubmitting;
+  const isBalanceSufficient =
+    (currentValues?.amount ?? 0) < (balanceFloat ?? 0);
+
+  const isDisabled =
+    !hasChanges || form.formState.isSubmitting || !isBalanceSufficient;
+
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
@@ -73,6 +82,7 @@ export const useDonationForm = ({
 
   return {
     hasChanges,
+    isBalanceSufficient,
     isDisabled,
     isSenderHumanVerified,
     form,

@@ -1,4 +1,5 @@
 import { createModel } from "@rematch/core";
+import { UseFormReturn } from "react-hook-form";
 import {
   infer as FromSchema,
   array,
@@ -16,6 +17,7 @@ import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
 import { ByAccountId } from "@/common/types";
+import { AvailableBalance } from "@/modules/core";
 
 import {
   DONATION_MAX_MESSAGE_LENGTH,
@@ -125,6 +127,16 @@ export const donationSchema = object({
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
+export type DonationAllocationInputs = Pick<
+  AvailableBalance,
+  "balanceFloat"
+> & {
+  isBalanceSufficient: boolean;
+  form: UseFormReturn<DonationInputs>;
+};
+
+export type DonationSubmissionInputs = ByAccountId | ByPotId;
+
 export type DonationState = {
   currentStep: DonationStep;
 };
@@ -137,8 +149,6 @@ const handleStep = (state: DonationState, step: DonationStep) => ({
   ...state,
   currentStep: step,
 });
-
-export type DonationSubmissionInputs = ByAccountId | ByPotId;
 
 export const donationModel = createModel<RootModel>()({
   state: donationStateDefaults,

@@ -1,7 +1,3 @@
-import { useMemo } from "react";
-
-import { UseFormReturn } from "react-hook-form";
-
 import { pagoda } from "@/common/api/pagoda";
 import { potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
@@ -28,25 +24,23 @@ import {
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
 import {
+  AvailableTokenBalance,
   ModalErrorBody,
-  balanceToFloat,
-  balanceToString,
   useNearUsdDisplayValue,
 } from "@/modules/core";
 
 import {
+  DonationAllocationInputs,
   DonationAllocationStrategyEnum,
-  DonationInputs,
   donationAllocationStrategies,
 } from "../models";
 
-export type DonationProjectAllocationProps = ByAccountId & {
-  form: UseFormReturn<DonationInputs>;
-};
+export type DonationProjectAllocationProps = ByAccountId &
+  DonationAllocationInputs & {};
 
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
-> = ({ accountId, form }) => {
+> = ({ isBalanceSufficient, accountId, balanceFloat, form }) => {
   const [amount, tokenId, allocationStrategy] = form.watch([
     "amount",
     "tokenId",
@@ -63,44 +57,9 @@ export const DonationProjectAllocation: React.FC<
     error: accountError,
   } = potlock.useAccount({ accountId });
 
-  const {
-    isLoading: isNearBalanceLoading,
-    data: { balance: availableNearBalance } = {},
-  } = pagoda.useNearAccountBalance({
+  const { data: availableFts } = pagoda.useFtAccountBalances({
     accountId: walletApi.accountId ?? "unknown",
   });
-
-  const {
-    isLoading: isFtBalanceLoading,
-    data: { balances: availableFtBalances } = {},
-  } = pagoda.useFtAccountBalances({
-    accountId: walletApi.accountId ?? "unknown",
-  });
-
-  const isBalanceLoading = isNearBalanceLoading || isFtBalanceLoading;
-
-  const availableBalance = useMemo(
-    () =>
-      (isFtDonation
-        ? availableFtBalances?.find(
-            (ftBalance) => ftBalance.contract_account_id === tokenId,
-          )
-        : availableNearBalance) ?? null,
-
-    [availableFtBalances, availableNearBalance, isFtDonation, tokenId],
-  );
-
-  const availableBalanceFloat = useMemo(
-    () =>
-      availableBalance === null
-        ? null
-        : balanceToFloat(
-            availableBalance?.amount,
-            availableBalance?.metadata.decimals,
-          ),
-
-    [availableBalance],
-  );
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
@@ -137,7 +96,7 @@ export const DonationProjectAllocation: React.FC<
                 >
                   {Object.values(donationAllocationStrategies).map(
                     ({ label, hint, hintIfDisabled, value }) => {
-                      const disabled = value === "pot" && !hasMatchingPots;
+                      const disabled = value === "pot"; // && !hasMatchingPots;
 
                       return (
                         <FormItem key={value}>
@@ -168,40 +127,14 @@ export const DonationProjectAllocation: React.FC<
             <TextField
               label="Amount"
               {...field}
-              labelExtension={
-                availableBalance === null ? (
-                  <>
-                    {isBalanceLoading ? (
-                      <Skeleton className="w-34 h-5" />
-                    ) : (
-                      <span className="prose" un-text="sm destructive">
-                        Unable to load available balance!
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <div un-flex="~" un-gap="1">
-                    <span
-                      className="prose"
-                      un-text="sm neutral-950"
-                      un-font="600"
-                    >
-                      {balanceToString(availableBalance)}
-                    </span>
-
-                    <span className="prose" un-text="sm neutral-600">
-                      available
-                    </span>
-                  </div>
-                )
-              }
+              labelExtension={<AvailableTokenBalance tokenId={tokenId} />}
               fieldExtension={
                 <FormField
                   control={form.control}
                   name="tokenId"
                   render={({ field: fieldExtension }) => (
                     <Select
-                      defaultValue={fieldExtension.value}
+                      value={fieldExtension.value}
                       onValueChange={fieldExtension.onChange}
                     >
                       <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
@@ -217,7 +150,7 @@ export const DonationProjectAllocation: React.FC<
                           </SelectItem>
 
                           {allocationStrategy === "direct" &&
-                            availableFtBalances?.map(
+                            availableFts?.map(
                               ({
                                 contract_account_id: contractId,
                                 metadata: { symbol },
@@ -236,7 +169,7 @@ export const DonationProjectAllocation: React.FC<
               type="number"
               placeholder="0.00"
               min={0.0}
-              max={availableBalanceFloat ?? undefined}
+              max={balanceFloat ?? undefined}
               step={0.01}
               appendix={isFtDonation ? null : nearAmountUsdDisplayValue}
             />

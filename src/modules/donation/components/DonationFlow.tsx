@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { dispatch } from "@/app/_store";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { ModalErrorBody } from "@/modules/core";
+import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
 
 import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationPotAllocation } from "./DonationPotAllocation";
@@ -26,17 +26,23 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 }) => {
   const searchParams = useSearchParams();
 
-  const { form, isDisabled, onSubmit } = useDonationForm({
+  const { isBalanceSufficient, form, isDisabled, onSubmit } = useDonationForm({
     ...props,
     referrerAccountId: searchParams.get("referrerId") ?? undefined,
   });
 
+  const [tokenId] = form.watch(["tokenId"]);
+
+  const { balanceFloat } = useAvailableBalance({ tokenId });
+
   const content = useMemo(() => {
+    const staticAllocationProps = { isBalanceSufficient, balanceFloat, form };
+
     switch (currentStep) {
       case "allocation":
         return "accountId" in props
-          ? h(DonationProjectAllocation, { form, ...props })
-          : h(DonationPotAllocation, { form, ...props });
+          ? h(DonationProjectAllocation, { ...staticAllocationProps, ...props })
+          : h(DonationPotAllocation, { ...staticAllocationProps, ...props });
 
       case "confirmation":
         return h(DonationConfirmation, { form });
@@ -52,7 +58,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
           />
         );
     }
-  }, [closeModal, currentStep, form, props]);
+  }, [balanceFloat, closeModal, currentStep, form, isBalanceSufficient, props]);
 
   return (
     <Form {...form}>

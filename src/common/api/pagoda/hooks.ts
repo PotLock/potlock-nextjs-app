@@ -1,6 +1,6 @@
 import { NEAR_TOKEN_DENOM, PAGODA_REQUEST_CONFIG } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
-import { AccountId, ByAccountId } from "@/common/types";
+import { ByAccountId, ByTokenId } from "@/common/types";
 
 import { swrHooks } from "./generated";
 
@@ -11,7 +11,7 @@ export const useNearAccountBalance = ({ accountId }: ByAccountId) => {
     PAGODA_REQUEST_CONFIG,
   );
 
-  return { ...queryResult, data: queryResult.data?.data };
+  return { ...queryResult, data: queryResult.data?.data.balance };
 };
 
 export const useFtAccountBalances = ({ accountId }: ByAccountId) => {
@@ -21,14 +21,10 @@ export const useFtAccountBalances = ({ accountId }: ByAccountId) => {
     PAGODA_REQUEST_CONFIG,
   );
 
-  return { ...queryResult, data: queryResult.data?.data };
+  return { ...queryResult, data: queryResult.data?.data.balances };
 };
 
-export type TokenMetadataInputs = {
-  /**
-   * Either "NEAR" or FT contract account id.
-   */
-  tokenId: "near" | AccountId;
+export type TokenMetadataInputs = ByTokenId & {
   disabled?: boolean;
 };
 

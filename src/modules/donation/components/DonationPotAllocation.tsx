@@ -1,62 +1,35 @@
-import { useMemo } from "react";
-
-import { UseFormReturn } from "react-hook-form";
-
-import { pagoda } from "@/common/api/pagoda";
 import { ByPotId, potlock } from "@/common/api/potlock";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { walletApi } from "@/common/contracts";
 import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  RadioGroup,
-  RadioGroupItem,
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
+import { AvailableTokenBalance } from "@/modules/core";
 
-import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
-import { DonationInputs } from "../models";
+import { DonationAllocationInputs } from "../models";
 
-export type DonationPotAllocationProps = ByPotId & {
-  form: UseFormReturn<DonationInputs>;
-};
+export type DonationPotAllocationProps = ByPotId &
+  DonationAllocationInputs & {};
 
+/**
+ * TODO: WIP
+ */
 export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
+  isBalanceSufficient: _,
+  balanceFloat,
   potId,
   form,
 }) => {
-  const tokenId = form.watch("tokenId");
-  const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
-
   const {
     isLoading: isPotLoading,
     data: pot,
     error: potError,
   } = potlock.usePot({ potId });
 
-  const { data: { balance: availableNearBalance = null } = {} } =
-    pagoda.useNearAccountBalance({
-      accountId: walletApi.accountId ?? "unknown",
-    });
+  const [tokenId] = form.watch(["tokenId"]);
 
-  const { data: { balances: availableFtBalances = null } = {} } =
-    pagoda.useFtAccountBalances({
-      accountId: walletApi.accountId ?? "unknown",
-    });
-
-  const availableBalance = useMemo(
-    () =>
-      (isFtDonation
-        ? availableFtBalances?.find(
-            (ftBalance) => ftBalance.contract_account_id === tokenId,
-          )
-        : availableNearBalance) ?? null,
-
-    [availableFtBalances, availableNearBalance, isFtDonation, tokenId],
-  );
-
-  return isPotLoading || availableBalance === null ? (
+  return isPotLoading ? (
     <span
       un-flex="~"
       un-justify="center"
@@ -78,45 +51,9 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
           </DialogHeader>
 
           <DialogDescription>
-            <div un-flex="~ col" un-gap="3">
-              <div className="prose" un-font="600" un-text="neutral-950">
-                How do you want to allocate funds?
-              </div>
-
-              <RadioGroup>
-                <RadioGroupItem
-                  id="donation-options-direct"
-                  label="Direct donation"
-                  value="direct"
-                  checked
-                />
-
-                <RadioGroupItem
-                  id="donation-options-matched"
-                  label="Quadratically matched donation"
-                  hint={"(...)"}
-                  value="matched"
-                />
-              </RadioGroup>
-            </div>
-
             <TextField
               label="Amount"
-              labelExtension={
-                <div un-flex="~" un-gap="1">
-                  <span
-                    className="prose"
-                    un-text="sm neutral-950"
-                    un-font="600"
-                  >
-                    {`${availableBalance.amount} ${availableBalance.metadata.symbol}`}
-                  </span>
-
-                  <span className="prose" un-text="sm neutral-600">
-                    available
-                  </span>
-                </div>
-              }
+              labelExtension={<AvailableTokenBalance tokenId={tokenId} />}
               fieldExtension={
                 <div un-flex="~" un-items="center" un-justify="center">
                   <span className="prose" un-text="lg" un-font="600">
@@ -126,9 +63,8 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
               }
               type="number"
               placeholder="0.00"
-              min={
-                tokenId === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0
-              }
+              min={0.0}
+              max={balanceFloat ?? undefined}
               step={0.01}
               appendix="$ 0.00"
             />
