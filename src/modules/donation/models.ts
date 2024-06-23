@@ -4,10 +4,12 @@ import {
   infer as FromSchema,
   array,
   boolean,
+  coerce,
   literal,
   nativeEnum,
   number,
   object,
+  preprocess,
   string,
 } from "zod";
 
@@ -72,15 +74,15 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
   .default(NEAR_TOKEN_DENOM)
   .describe('Either "NEAR" or FT contract account id.');
 
-export const donationAmountSchema = number()
-  .positive()
-  .finite()
-  .gt(0.0, "Cannot be zero.")
-  .default(0.1)
-  .refine(
-    (n) => !number().int().safeParse(n).success,
-    "Must be a floating point number.",
-  );
+export const donationAmountSchema = preprocess(
+  (x) => parseFloat(x as string),
+
+  number({ message: "Must be a positive number." })
+    .positive("Must be a positive number.")
+    .finite()
+    .safe()
+    .refine((n) => number().safeParse(n).success, "Must be a positive number."),
+);
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,

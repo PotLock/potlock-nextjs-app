@@ -49,6 +49,7 @@ export const useDonationForm = ({
 
   const form = useForm<DonationInputs>({
     resolver: zodResolver(donationSchema),
+    mode: "onChange",
     defaultValues,
   });
 
@@ -77,8 +78,7 @@ export const useDonationForm = ({
   );
 
   console.table({ isDisabled, hasChanges });
-  console.table(currentValues);
-  console.table(defaultValues);
+  console.table(form.formState.errors);
 
   return {
     hasChanges,
