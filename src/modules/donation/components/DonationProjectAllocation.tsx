@@ -48,6 +48,7 @@ export const DonationProjectAllocation: React.FC<
   ]);
 
   const { data: activePots } = potlock.useAccountActivePots({ accountId });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasMatchingPots = (activePots?.results.length ?? 0) > 0;
   const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
 
@@ -134,6 +135,7 @@ export const DonationProjectAllocation: React.FC<
                   name="tokenId"
                   render={({ field: fieldExtension }) => (
                     <Select
+                      disabled // TODO: FT donation is not yet finished
                       value={fieldExtension.value}
                       onValueChange={fieldExtension.onChange}
                     >
@@ -172,6 +174,11 @@ export const DonationProjectAllocation: React.FC<
               max={balanceFloat ?? undefined}
               step={0.01}
               appendix={isFtDonation ? null : nearAmountUsdDisplayValue}
+              customErrorMessage={
+                isBalanceSufficient
+                  ? undefined
+                  : "You don’t have enough balance to complete this transaction."
+              }
             />
           )}
         />

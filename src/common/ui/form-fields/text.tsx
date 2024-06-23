@@ -1,5 +1,12 @@
 import { forwardRef } from "react";
 
+import {
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../components";
 import { cn } from "../utils";
 
 export interface TextFieldProps
@@ -9,6 +16,8 @@ export interface TextFieldProps
   labelExtension?: React.ReactNode;
   fieldExtension?: React.ReactNode;
   appendix?: string | null;
+  description?: string;
+  customErrorMessage?: string;
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -20,8 +29,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       labelExtension,
       fieldExtension = null,
       appendix,
+      description,
+      customErrorMessage,
       ...props
     },
+
     ref,
   ) => {
     const appendixElement = appendix ? (
@@ -45,11 +57,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     ) : null;
 
     return (
-      <div un-flex="~ col" un-gap="2" className="w-full">
+      <FormItem className="flex flex-col gap-2">
         <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
-          <span className="prose" un-text="sm neutral-950" un-font="500">
+          <FormLabel className="font-500 text-sm text-neutral-950">
             {label}
-          </span>
+          </FormLabel>
 
           {labelExtension}
         </div>
@@ -70,27 +82,32 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         >
           {fieldExtensionElement}
 
-          <input
-            className={cn({
-              "rounded-l-lg": fieldExtensionElement === null,
-              "mr-1 rounded-r-lg": appendixElement === null,
-            })}
-            un-focus-visible={
-              fieldExtensionElement !== null && appendixElement !== null
-                ? "border-inset pl-1.5 border-l-2 border-input outline-none"
-                : undefined
-            }
-            un-pl={fieldExtensionElement === null ? "3" : "1.5"}
-            un-pr="1.5"
-            un-w="full"
-            un-h="9"
-            un-placeholder="text-muted-foreground"
-            {...fieldProps}
-          />
+          <FormControl>
+            <input
+              {...fieldProps}
+              className={cn({
+                "rounded-l-lg": fieldExtensionElement === null,
+                "mr-1 rounded-r-lg": appendixElement === null,
+              })}
+              un-focus-visible={
+                fieldExtensionElement !== null && appendixElement !== null
+                  ? "border-inset pl-1.5 border-l-2 border-input outline-none"
+                  : undefined
+              }
+              un-pl={fieldExtensionElement === null ? "3" : "1.5"}
+              un-pr="1.5"
+              un-w="full"
+              un-h="9"
+              un-placeholder="text-muted-foreground"
+            />
+          </FormControl>
 
           {appendixElement}
         </div>
-      </div>
+
+        {description && <FormDescription>{description}</FormDescription>}
+        <FormMessage>{customErrorMessage}</FormMessage>
+      </FormItem>
     );
   },
 );

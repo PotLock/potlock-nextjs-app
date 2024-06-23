@@ -60,7 +60,7 @@ export const donationAllocationStrategies: Record<
 
   pot: {
     label: "Quadratically matched donation",
-    hintIfDisabled: "(no pots available)",
+    hintIfDisabled: "(WIP)", // "(no pots available)",
     value: DonationAllocationStrategyEnum.pot,
   },
 };
@@ -75,7 +75,7 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
 export const donationAmountSchema = number()
   .positive()
   .finite()
-  .lt(0.0, "Cannot be zero.")
+  .gt(0.0, "Cannot be zero.")
   .default(0.1)
   .refine(
     (n) => !number().int().safeParse(n).success,
