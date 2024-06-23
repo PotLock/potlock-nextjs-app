@@ -28,25 +28,29 @@ export const useDonationFees = ({
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
 
-  const protocolFeeBasisPoints =
-    potlockDonationConfig?.protocol_fee_basis_points ?? 0;
+  const protocolFeeBasisPoints = bypassProtocolFee
+    ? 0
+    : potlockDonationConfig?.protocol_fee_basis_points ?? 0;
 
   const potlockReferralFeeBasisPoints =
     potlockDonationConfig?.referral_fee_basis_points ?? 0;
 
   const { data: potData } = potlock.usePot({ potId: potAccountId ?? "" });
 
-  const referralFeeBasisPoints =
-    potData?.referral_fee_public_round_basis_points ??
-    potlockReferralFeeBasisPoints;
+  const referralFeeBasisPoints = referrerAccountId
+    ? 0
+    : potData?.referral_fee_public_round_basis_points ??
+      potlockReferralFeeBasisPoints;
 
-  const chefFeeBasisPoints = potData?.chef_fee_basis_points ?? 0;
+  const chefFeeBasisPoints = bypassChefFee
+    ? 0
+    : potData?.chef_fee_basis_points ?? 0;
 
   const projectAllocationBasisPoints =
     TOTAL_FEE_BASIS_POINTS -
-    (bypassProtocolFee ? 0 : protocolFeeBasisPoints) -
-    (bypassChefFee ? 0 : chefFeeBasisPoints) -
-    (referrerAccountId ? referralFeeBasisPoints : 0);
+    protocolFeeBasisPoints -
+    chefFeeBasisPoints -
+    referralFeeBasisPoints;
 
   return {
     projectAllocationAmount:

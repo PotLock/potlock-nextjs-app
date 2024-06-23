@@ -26,17 +26,23 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 }) => {
   const searchParams = useSearchParams();
 
-  const { isBalanceSufficient, form, isDisabled, onSubmit } = useDonationForm({
-    ...props,
-    referrerAccountId: searchParams.get("referrerId") ?? undefined,
-  });
+  const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
+    useDonationForm({
+      ...props,
+      referrerAccountId: searchParams.get("referrerId") ?? undefined,
+    });
 
   const [tokenId] = form.watch(["tokenId"]);
 
   const { balanceFloat } = useAvailableBalance({ tokenId });
 
   const content = useMemo(() => {
-    const staticAllocationProps = { isBalanceSufficient, balanceFloat, form };
+    const staticAllocationProps = {
+      isBalanceSufficient,
+      minAmountError,
+      balanceFloat,
+      form,
+    };
 
     switch (currentStep) {
       case "allocation":
@@ -58,7 +64,15 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
           />
         );
     }
-  }, [balanceFloat, closeModal, currentStep, form, isBalanceSufficient, props]);
+  }, [
+    balanceFloat,
+    closeModal,
+    currentStep,
+    form,
+    isBalanceSufficient,
+    minAmountError,
+    props,
+  ]);
 
   return (
     <Form {...form}>

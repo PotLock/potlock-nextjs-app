@@ -17,7 +17,7 @@ export interface TextFieldProps
   fieldExtension?: React.ReactNode;
   appendix?: string | null;
   description?: string;
-  customErrorMessage?: string;
+  customErrorMessage?: string | null;
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(

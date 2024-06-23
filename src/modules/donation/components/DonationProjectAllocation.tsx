@@ -29,6 +29,7 @@ import {
   useNearUsdDisplayValue,
 } from "@/modules/core";
 
+import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
 import {
   DonationAllocationInputs,
   DonationAllocationStrategyEnum,
@@ -40,7 +41,13 @@ export type DonationProjectAllocationProps = ByAccountId &
 
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
-> = ({ isBalanceSufficient, accountId, balanceFloat, form }) => {
+> = ({
+  isBalanceSufficient,
+  minAmountError,
+  accountId,
+  balanceFloat,
+  form,
+}) => {
   const [amount, tokenId, allocationStrategy] = form.watch([
     "amount",
     "tokenId",
@@ -170,13 +177,15 @@ export const DonationProjectAllocation: React.FC<
               }
               type="number"
               placeholder="0.00"
-              min={0.0}
+              min={
+                tokenId === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0
+              }
               max={balanceFloat ?? undefined}
               step={0.01}
               appendix={isFtDonation ? null : nearAmountUsdDisplayValue}
               customErrorMessage={
                 isBalanceSufficient
-                  ? undefined
+                  ? minAmountError
                   : "You don’t have enough balance to complete this transaction."
               }
             />

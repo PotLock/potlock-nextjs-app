@@ -9,6 +9,7 @@ import { walletApi } from "@/common/contracts";
 import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
+import { DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
 import {
   DonationAllocationStrategyEnum,
   DonationInputs,
@@ -17,6 +18,7 @@ import {
   donationSchema,
   donationTokenSchema,
 } from "../models";
+import { isDonationAmountSufficient } from "../utils/validation";
 
 export type DonationFormParams = DonationSubmissionInputs & {
   referrerAccountId?: string;
@@ -54,6 +56,7 @@ export const useDonationForm = ({
   });
 
   const currentValues = useWatch({ control: form.control });
+  const amount = currentValues.amount ?? 0;
   const tokenId = currentValues.tokenId ?? NEAR_TOKEN_DENOM;
   const { balanceFloat } = useAvailableBalance({ tokenId });
 
@@ -64,13 +67,20 @@ export const useDonationForm = ({
     return currentValue !== defaultValue;
   });
 
-  const isBalanceSufficient =
-    (currentValues?.amount ?? 0) < (balanceFloat ?? 0);
+  const isBalanceSufficient = amount < (balanceFloat ?? 0);
 
   const isDisabled =
-    !hasChanges || form.formState.isSubmitting || !isBalanceSufficient;
+    !hasChanges ||
+    !form.formState.isValid ||
+    form.formState.isSubmitting ||
+    !isBalanceSufficient;
 
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
+
+  const minAmountError =
+    !isDonationAmountSufficient({ amount, tokenId }) && hasChanges
+      ? DONATION_MIN_NEAR_AMOUNT_ERROR
+      : null;
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
     (values) => dispatch.donation.submit({ ...values, ...params }),
@@ -78,7 +88,6 @@ export const useDonationForm = ({
   );
 
   console.table({ isDisabled, hasChanges });
-  console.table(form.formState.errors);
 
   return {
     hasChanges,
@@ -86,6 +95,7 @@ export const useDonationForm = ({
     isDisabled,
     isSenderHumanVerified,
     form,
+    minAmountError,
     onSubmit: form.handleSubmit(onSubmit),
   };
 };

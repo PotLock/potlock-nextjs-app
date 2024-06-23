@@ -16,10 +16,13 @@ import {
   FormLabel,
   Textarea,
 } from "@/common/ui/components";
+import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
 import { TokenIcon, useNearUsdDisplayValue } from "@/modules/core";
+import { ProfileLink } from "@/modules/profile";
 
 import { DonationBreakdown } from "./DonationBreakdown";
+import { useDonationFees } from "../hooks/fees";
 import { DonationInputs } from "../models";
 
 export type DonationConfirmationProps = {
@@ -31,6 +34,9 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
 }) => {
   const values = form.watch();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
+
+  const { protocolFeePercent, protocolFeeRecipientAccountId, chefFeePercent } =
+    useDonationFees(values);
 
   const onAddNoteClick = useCallback(() => {
     setIsMessageFieldVisible(true);
@@ -89,6 +95,49 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
         </div>
 
         <DonationBreakdown {...{ form }} />
+
+        <div className="flex flex-col gap-2">
+          {protocolFeeRecipientAccountId && (
+            <FormField
+              control={form.control}
+              name="bypassProtocolFee"
+              render={({ field }) => (
+                <CheckboxField
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  label={
+                    <>
+                      <span className="prose">{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
+                      <ProfileLink accountId={protocolFeeRecipientAccountId} />
+                    </>
+                  }
+                />
+              )}
+            />
+          )}
+
+          {values.potAccountId && (
+            <FormField
+              control={form.control}
+              name="bypassProtocolFee"
+              render={({ field }) => (
+                <CheckboxField
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  label={
+                    <>
+                      <span className="prose">{`Remove ${chefFeePercent}% Chef Fees`}</span>
+
+                      {values.potAccountId && (
+                        <ProfileLink accountId={values.potAccountId} />
+                      )}
+                    </>
+                  }
+                />
+              )}
+            />
+          )}
+        </div>
 
         {values.recipientAccountId && (
           <FormField

@@ -4,7 +4,6 @@ import {
   infer as FromSchema,
   array,
   boolean,
-  coerce,
   literal,
   nativeEnum,
   number,
@@ -23,8 +22,9 @@ import { AvailableBalance } from "@/modules/core";
 
 import {
   DONATION_MAX_MESSAGE_LENGTH,
-  DONATION_MIN_NEAR_AMOUNT,
+  DONATION_MIN_NEAR_AMOUNT_ERROR,
 } from "./constants";
+import { isDonationAmountSufficient } from "./utils/validation";
 
 export type DonationParameters = ByAccountId | ByPotId;
 
@@ -81,7 +81,7 @@ export const donationAmountSchema = preprocess(
     .positive("Must be a positive number.")
     .finite()
     .safe()
-    .refine((n) => number().safeParse(n).success, "Must be a positive number."),
+    .transform((n) => number().safeParse(n).data ?? 0),
 );
 
 export const donationSchema = object({
@@ -118,14 +118,14 @@ export const donationSchema = object({
 
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),
-}).refine(
-  ({ tokenId, amount }) =>
-    tokenId === NEAR_TOKEN_DENOM
-      ? amount > DONATION_MIN_NEAR_AMOUNT
-      : amount > 0.0,
-
-  `The minimum donation amount is ${DONATION_MIN_NEAR_AMOUNT} NEAR.`,
-);
+}).refine(isDonationAmountSufficient, {
+  /**
+   *? NOTE: Due to an unknown issue,
+   *?  this message doesn't end up in react-hook-form's `formState.errors`.
+   *?  Please make sure it's always manually provided to the corresponding input field.
+   */
+  message: DONATION_MIN_NEAR_AMOUNT_ERROR,
+});
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
@@ -134,6 +134,7 @@ export type DonationAllocationInputs = Pick<
   "balanceFloat"
 > & {
   isBalanceSufficient: boolean;
+  minAmountError: string | null;
   form: UseFormReturn<DonationInputs>;
 };
 
@@ -141,6 +142,7 @@ export type DonationSubmissionInputs = ByAccountId | ByPotId;
 
 export type DonationState = {
   currentStep: DonationStep;
+  successResult?: DirectDonation;
 };
 
 const donationStateDefaults: DonationState = {
@@ -178,8 +180,7 @@ export const donationModel = createModel<RootModel>()({
     },
 
     success(state, result: DirectDonation) {
-      console.log(result);
-      this.nextStep(state);
+      return { ...state, successResult: result };
     },
 
     failure(_, error: Error) {
@@ -188,18 +189,24 @@ export const donationModel = createModel<RootModel>()({
   },
 
   effects: (dispatch) => ({
-    submit({
+    async submit({
       amount,
       allocationStrategy,
       potDistributionStrategy,
       ...props
-    }: DonationSubmissionInputs & DonationInputs) {
+    }: DonationSubmissionInputs & DonationInputs): Promise<void> {
       if ("accountId" in props) {
         switch (allocationStrategy) {
           case DonationAllocationStrategyEnum.direct:
-            return donateNearDirectly({ recipient_id: props.accountId }, amount)
-              .then(dispatch.success)
-              .catch(dispatch.failure);
+            return void donateNearDirectly(
+              { recipient_id: props.accountId },
+              amount,
+            )
+              .then((result) => {
+                dispatch.donation.success(result);
+                dispatch.donation.nextStep();
+              })
+              .catch((error) => dispatch.donation.failure(error));
 
           case DonationAllocationStrategyEnum.pot:
             return dispatch.failure;
