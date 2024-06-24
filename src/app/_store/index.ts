@@ -19,7 +19,7 @@ export const store = init<RootModel, FullModel>({
     // https://rematchjs.org/docs/plugins/immer/
     immerPlugin(),
     // Adds automated loading indicators for effects, so you don't
-    // need to manage state like loading: true by yourself.
+    // need to manage state like loading:  true by yourself.
     // https://rematchjs.org/docs/plugins/loading/
     loadingPlugin({ type: "full" }),
     // Provides automatic Redux state persistence.
