@@ -1,10 +1,9 @@
 import Link from "next/link";
 
-import { potlock } from "@/common/api/potlock";
 import { Button } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import useRegistration from "@/modules/core/hooks/useRegistration";
-import { useDonation } from "@/modules/donation";
+import { DonationRandomButton } from "@/modules/donation";
 
 const Hero = () => {
   const wallet = useWallet();
@@ -12,15 +11,6 @@ const Hero = () => {
 
   const { registration, loading } = useRegistration(accountId);
   const isRegisteredProject = !!registration.id;
-
-  const { isLoading: isAccountListLoading, data: accountList } =
-    potlock.useAccounts();
-
-  const randomProjectAccountId = "unknown";
-
-  const { openDonationModal: openRandomDonationModal } = useDonation({
-    accountId: randomProjectAccountId ?? "unknown",
-  });
 
   return (
     <div className="relative flex w-full flex-col justify-center overflow-hidden rounded-xl border border-solid border-[#f8d3b0] bg-hero bg-cover bg-no-repeat">
@@ -33,16 +23,7 @@ const Hero = () => {
           <br className="hidden md:block" /> participate in funding rounds.
         </h1>
         <div className="mt-6 flex items-center gap-4 text-sm max-md:flex-col md:mt-10 md:gap-8">
-          {isAccountListLoading
-            ? null
-            : randomProjectAccountId && (
-                <Button
-                  className="w-full md:w-[180px]"
-                  onClick={openRandomDonationModal}
-                >
-                  Donate Randomly
-                </Button>
-              )}
+          <DonationRandomButton />
 
           {!loading && (
             <Button

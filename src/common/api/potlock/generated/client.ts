@@ -9,11 +9,25 @@ import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import useSwr from "swr";
 import type { Key, SWRConfiguration } from "swr";
+export type V1ListsRandomRegistrationRetrieveParams = {
+  /**
+   * Filter registrations by status
+   */
+  status?: string;
+};
+
 export type V1DonorsRetrieveParams = {
   /**
    * Sort by field, e.g., most_donated_usd
    */
   sort?: string;
+};
+
+export type V1AccountsPotApplicationsRetrieveParams = {
+  /**
+   * Filter pot applications by status
+   */
+  status?: string;
 };
 
 export type V1AccountsActivePotsRetrieveParams = {
@@ -889,13 +903,23 @@ export const useV1AccountsPayoutsReceivedRetrieve = <TError = AxiosError<void>>(
 
 export const v1AccountsPotApplicationsRetrieve = (
   accountId: string,
+  params?: V1AccountsPotApplicationsRetrieveParams,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<PaginatedPotApplicationsResponse>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/pot_applications`, options);
+  return axios.get(`/api/v1/accounts/${accountId}/pot_applications`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getV1AccountsPotApplicationsRetrieveKey = (accountId: string) =>
-  [`/api/v1/accounts/${accountId}/pot_applications`] as const;
+export const getV1AccountsPotApplicationsRetrieveKey = (
+  accountId: string,
+  params?: V1AccountsPotApplicationsRetrieveParams,
+) =>
+  [
+    `/api/v1/accounts/${accountId}/pot_applications`,
+    ...(params ? [params] : []),
+  ] as const;
 
 export type V1AccountsPotApplicationsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>
@@ -904,6 +928,7 @@ export type V1AccountsPotApplicationsRetrieveQueryError = AxiosError<void>;
 
 export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
   accountId: string,
+  params?: V1AccountsPotApplicationsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>,
@@ -918,9 +943,11 @@ export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
   const swrKey =
     swrOptions?.swrKey ??
     (() =>
-      isEnabled ? getV1AccountsPotApplicationsRetrieveKey(accountId) : null);
+      isEnabled
+        ? getV1AccountsPotApplicationsRetrieveKey(accountId, params)
+        : null);
   const swrFn = () =>
-    v1AccountsPotApplicationsRetrieve(accountId, axiosOptions);
+    v1AccountsPotApplicationsRetrieve(accountId, params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1096,6 +1123,66 @@ export const useV1ListsRetrieve2 = <TError = AxiosError<void>>(
     swrOptions?.swrKey ??
     (() => (isEnabled ? getV1ListsRetrieve2Key(listId) : null));
   const swrFn = () => v1ListsRetrieve2(listId, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export const v1ListsRandomRegistrationRetrieve = (
+  listId: number,
+  params?: V1ListsRandomRegistrationRetrieveParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<ListRegistration>> => {
+  return axios.get(`/api/v1/lists/${listId}/random_registration`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getV1ListsRandomRegistrationRetrieveKey = (
+  listId: number,
+  params?: V1ListsRandomRegistrationRetrieveParams,
+) =>
+  [
+    `/api/v1/lists/${listId}/random_registration`,
+    ...(params ? [params] : []),
+  ] as const;
+
+export type V1ListsRandomRegistrationRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1ListsRandomRegistrationRetrieve>>
+>;
+export type V1ListsRandomRegistrationRetrieveQueryError = AxiosError<void>;
+
+export const useV1ListsRandomRegistrationRetrieve = <TError = AxiosError<void>>(
+  listId: number,
+  params?: V1ListsRandomRegistrationRetrieveParams,
+  options?: {
+    swr?: SWRConfiguration<
+      Awaited<ReturnType<typeof v1ListsRandomRegistrationRetrieve>>,
+      TError
+    > & { swrKey?: Key; enabled?: boolean };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!listId;
+  const swrKey =
+    swrOptions?.swrKey ??
+    (() =>
+      isEnabled
+        ? getV1ListsRandomRegistrationRetrieveKey(listId, params)
+        : null);
+  const swrFn = () =>
+    v1ListsRandomRegistrationRetrieve(listId, params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,

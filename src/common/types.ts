@@ -1,7 +1,7 @@
 import { Account } from "near-api-js";
 
 export interface ConditionalExecution {
-  enabled: boolean;
+  enabled?: boolean;
 }
 
 export type AccountId = Account["accountId"];
@@ -17,4 +17,10 @@ export type TokenId = "near" | AccountId;
 
 export interface ByTokenId {
   tokenId: TokenId;
+}
+
+export type ListId = number;
+
+export interface ByListId {
+  listId: ListId;
 }

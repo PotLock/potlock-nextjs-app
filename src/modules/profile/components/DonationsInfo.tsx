@@ -2,7 +2,7 @@
 
 import { styled } from "styled-components";
 
-import { Button } from "@/common/ui/components/button";
+import { Button } from "@/common/ui/components";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
 import { useDonation } from "@/modules/donation";
 
