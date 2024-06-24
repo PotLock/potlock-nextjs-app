@@ -1,5 +1,9 @@
 import { Account } from "near-api-js";
 
+export interface ConditionalExecution {
+  enabled: boolean;
+}
+
 export type AccountId = Account["accountId"];
 
 export interface ByAccountId {

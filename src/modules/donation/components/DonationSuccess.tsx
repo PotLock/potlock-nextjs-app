@@ -5,7 +5,7 @@ import { UseFormReturn } from "react-hook-form";
 import { potlock } from "@/common/api/potlock";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import { Button, DialogDescription, Skeleton } from "@/common/ui/components";
-import { ModalErrorBody } from "@/modules/core";
+import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 
 import { DonationBreakdown } from "./DonationBreakdown";
 import { useDonationFees } from "../hooks/fees";
@@ -27,7 +27,7 @@ export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
 
   // !TODO: override with values from result
   const fees = useDonationFees({
-    amount: parseFloat(result?.amount ?? "0"),
+    amount: result?.total_amount ?? 0,
     referrerAccountId: result?.referrer_id ?? undefined,
     potAccountId,
     bypassProtocolFee: result?.protocol_fee === 0,
@@ -81,21 +81,29 @@ export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
       </div>
 
       <div un-flex="~ col" un-gap="2" un-items="center">
-        <div className="flex items-center justify-center gap-2">
-          <span className="text-2xl font-bold">50 NEAR</span>
-          <span className="text-gray-500">~$350</span>
-        </div>
+        {isLoading ? (
+          <Skeleton className="h-7 w-44" />
+        ) : (
+          <TotalTokenValue
+            tokenId={result.ft_id}
+            amountBig={result.total_amount}
+          />
+        )}
 
-        <p
-          className="prose"
-          un-flex="~"
-          un-gap="1"
-          un-m="0"
-          un-text="neutral-950"
-        >
-          <span>has been donated to</span>
-          <span un-font="600">{result?.recipient_id}</span>
-        </p>
+        {isLoading ? (
+          <Skeleton className="w-49 h-5" />
+        ) : (
+          <p
+            className="prose"
+            un-flex="~"
+            un-gap="1"
+            un-m="0"
+            un-text="neutral-950"
+          >
+            <span>has been donated to</span>
+            <span un-font="600">{result?.recipient_id}</span>
+          </p>
+        )}
 
         <Link href="#" className="text-red-600">
           View donation

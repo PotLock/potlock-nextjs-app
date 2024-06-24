@@ -18,7 +18,11 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { TokenIcon, useNearUsdDisplayValue } from "@/modules/core";
+import {
+  TokenIcon,
+  TotalTokenValue,
+  useNearUsdDisplayValue,
+} from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
 
 import { DonationBreakdown } from "./DonationBreakdown";
@@ -52,15 +56,6 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
       0.0,
     ) ?? values.amount;
 
-  const { data: selectedTokenMetadata } = pagoda.useTokenMetadata({
-    tokenId: values.tokenId,
-  });
-
-  const totalNearAmountUsdDisplayValue = useNearUsdDisplayValue(totalAmount);
-
-  const totalAmountUsdDisplayValue =
-    values.tokenId === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
-
   const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
     fees;
 
@@ -78,26 +73,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             Total amount
           </span>
 
-          <div un-flex="~" un-items="center" un-gap="2">
-            <TokenIcon tokenId={values.tokenId} />
-
-            <span
-              className="prose line-height-none"
-              un-mt="0.7"
-              un-text="xl"
-              un-font="600"
-            >{`${totalAmount} ${selectedTokenMetadata?.symbol ?? "⋯"}`}</span>
-
-            {totalAmountUsdDisplayValue && (
-              <span
-                className="prose line-height-none"
-                un-mt="0.7"
-                un-text="gray-500 xl"
-              >
-                {totalAmountUsdDisplayValue}
-              </span>
-            )}
-          </div>
+          <TotalTokenValue tokenId={values.tokenId} amountFloat={totalAmount} />
         </div>
 
         <DonationBreakdown tokenId={values.tokenId} {...{ fees }} />
@@ -153,7 +129,11 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
               const isSpecified = typeof field.value === "string";
 
               return (
-                <FormItem className="flex w-full flex-col items-start gap-3 border-t border-t-neutral-200 pt-5">
+                <FormItem
+                  className={
+                    "flex w-full flex-col items-start gap-3 border-t border-t-neutral-200 pt-5"
+                  }
+                >
                   <Button
                     onClick={isSpecified ? onDeleteNoteClick : onAddNoteClick}
                     variant="brand-plain"

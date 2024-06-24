@@ -1,5 +1,5 @@
 import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
-import { ByAccountId } from "@/common/types";
+import { ByAccountId, ConditionalExecution } from "@/common/types";
 
 import { swrHooks } from "./generated";
 import { ByPotId } from "./types";
@@ -12,8 +12,14 @@ export const useDonationConfig = () => {
   return { ...queryResult, data: queryResult.data?.data };
 };
 
-export const useAccounts = () => {
-  const queryResult = swrHooks.useV1AccountsRetrieve(POTLOCK_REQUEST_CONFIG);
+/**
+ * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve
+ */
+export const useAccounts = (params?: ConditionalExecution) => {
+  const queryResult = swrHooks.useV1AccountsRetrieve({
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { enabled: params?.enabled ?? true },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };

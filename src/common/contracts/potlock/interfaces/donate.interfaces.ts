@@ -13,7 +13,7 @@ export interface Config {
 export interface DirectDonation {
   id: string;
   donor_id: string;
-  total_amount: string;
+  total_amount: number;
   ft_id: string;
   message: string;
   donated_at_ms: number;
@@ -22,7 +22,6 @@ export interface DirectDonation {
   referrer_id?: null | string;
   referrer_fee?: null | number;
   base_currency: string;
-  amount?: string;
 }
 
 export type DirectDonationArgs = {
