@@ -9,7 +9,10 @@ import { walletApi } from "@/common/contracts";
 import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
-import { DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
+import {
+  DONATION_MIN_NEAR_AMOUNT,
+  DONATION_MIN_NEAR_AMOUNT_ERROR,
+} from "../constants";
 import {
   DonationAllocationStrategyEnum,
   DonationInputs,
@@ -86,8 +89,6 @@ export const useDonationForm = ({
     (values) => dispatch.donation.submit({ ...values, ...params }),
     [params],
   );
-
-  console.table({ isDisabled, hasChanges });
 
   return {
     hasChanges,

@@ -1,32 +1,28 @@
-import { UseFormReturn } from "react-hook-form";
-
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { ByTokenId } from "@/common/types";
 import { TokenIcon } from "@/modules/core";
 
-import { useDonationFees } from "../hooks/fees";
-import { DonationInputs } from "../models";
+import { DonationFees } from "../hooks/fees";
 
-export type DonationBreakdownProps = {
-  form: UseFormReturn<DonationInputs>;
+export type DonationBreakdownProps = ByTokenId & {
+  fees: DonationFees;
 };
 
 export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
-  form,
-}) => {
-  const values = form.watch();
-
-  const {
+  fees: {
     projectAllocationAmount,
     projectAllocationPercent,
     protocolFeeAmount,
     protocolFeePercent,
-    referrerFeeAmount,
-    referrerFeePercent,
+    referralFeeAmount,
+    referralFeePercent,
     chefFeeAmount,
     chefFeePercent,
-  } = useDonationFees(values);
+  },
 
-  const computedTotalFees = [
+  ...props
+}) => {
+  const totalFees = [
     {
       label: "Project allocation",
       amount: projectAllocationAmount,
@@ -49,9 +45,9 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
 
     {
       label: "Referral fees",
-      amount: referrerFeeAmount,
-      percentage: referrerFeePercent,
-      display: referrerFeeAmount > 0,
+      amount: referralFeeAmount,
+      percentage: referralFeePercent,
+      display: referralFeeAmount > 0,
     },
 
     {
@@ -69,21 +65,21 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
 
       <div
         un-flex="~ col"
-        un-gap="2"
+        un-gap="3"
         un-p="4"
         un-border="~ neutral-300 rounded-lg"
       >
-        {computedTotalFees.map(
+        {totalFees.map(
           ({
             display = true,
             label,
             amount,
             percentage,
-            tokenId = values.tokenId,
+            tokenId = props.tokenId,
           }) =>
             display && (
               <div un-flex="~" un-justify="between" un-gap="4" key={label}>
-                <span className="prose">
+                <span className="prose line-height-none" un-mt="0.6">
                   {label + (percentage ? ` (${percentage}%)` : "")}
                 </span>
 

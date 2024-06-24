@@ -209,15 +209,15 @@ export const donationModel = createModel<RootModel>()({
               .catch((error) => dispatch.donation.failure(error));
 
           case DonationAllocationStrategyEnum.pot:
-            return dispatch.failure;
+            return void dispatch.donation.failure;
         }
       } else if ("potId" in props) {
         switch (potDistributionStrategy) {
           case DonationPotDistributionStrategy.evenly:
-            return dispatch.failure;
+            return void dispatch.donation.failure;
 
           case DonationPotDistributionStrategy.manually:
-            return dispatch.failure;
+            return void dispatch.donation.failure;
         }
       }
     },

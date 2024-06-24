@@ -32,11 +32,9 @@ export type DonationConfirmationProps = {
 export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
 }) => {
-  const values = form.watch();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
-
-  const { protocolFeePercent, protocolFeeRecipientAccountId, chefFeePercent } =
-    useDonationFees(values);
+  const values = form.watch();
+  const fees = useDonationFees(values);
 
   const onAddNoteClick = useCallback(() => {
     setIsMessageFieldVisible(true);
@@ -63,6 +61,9 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   const totalAmountUsdDisplayValue =
     values.tokenId === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
 
+  const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
+    fees;
+
   console.table(values);
 
   return (
@@ -81,23 +82,28 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             <TokenIcon tokenId={values.tokenId} />
 
             <span
-              className="prose"
+              className="prose line-height-none"
+              un-mt="0.7"
               un-text="xl"
               un-font="600"
             >{`${totalAmount} ${selectedTokenMetadata?.symbol ?? "⋯"}`}</span>
 
             {totalAmountUsdDisplayValue && (
-              <span className="prose" un-text="gray-500 xl">
+              <span
+                className="prose line-height-none"
+                un-mt="0.7"
+                un-text="gray-500 xl"
+              >
                 {totalAmountUsdDisplayValue}
               </span>
             )}
           </div>
         </div>
 
-        <DonationBreakdown {...{ form }} />
+        <DonationBreakdown tokenId={values.tokenId} {...{ fees }} />
 
         <div className="flex flex-col gap-2">
-          {protocolFeeRecipientAccountId && (
+          {protocolFeeRecipientAccountId !== undefined && (
             <FormField
               control={form.control}
               name="bypassProtocolFee"

@@ -76,7 +76,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
   return (
     <Form {...form}>
-      <form {...{ onSubmit }}>
+      <form un-flex="~ col" un-h="full" {...{ onSubmit }}>
         {content}
 
         <DialogFooter>
@@ -92,11 +92,11 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
           )}
 
           <Button
-            type={currentStep === "confirmation" ? "submit" : "button"}
+            type="button"
             variant="brand-filled"
             onClick={
               currentStep === "confirmation"
-                ? undefined
+                ? onSubmit
                 : dispatch.donation.nextStep
             }
             disabled={isDisabled}
