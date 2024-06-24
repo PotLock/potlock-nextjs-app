@@ -18,9 +18,9 @@ export interface DirectDonation {
   message: string;
   donated_at_ms: number;
   recipient_id: string;
-  protocol_fee: string;
-  referrer_id: null | string;
-  referrer_fee: null | string;
+  protocol_fee: number;
+  referrer_id?: null | string;
+  referrer_fee?: null | number;
   base_currency: string;
   amount?: string;
 }
@@ -29,5 +29,5 @@ export type DirectDonationArgs = {
   recipient_id: string;
   message?: string | null;
   referrer_id?: string | null;
-  bypass_protocol_fee?: boolean | null;
+  bypass_protocol_fee?: boolean;
 };

@@ -1,17 +1,46 @@
-import { Check, Copy, XIcon } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import Link from "next/link";
+import { UseFormReturn } from "react-hook-form";
 
+import { potlock } from "@/common/api/potlock";
+import TwitterSvg from "@/common/assets/svgs/twitter";
 import { Button, DialogDescription, Skeleton } from "@/common/ui/components";
+import { ModalErrorBody } from "@/modules/core";
 
 import { DonationBreakdown } from "./DonationBreakdown";
-import { DonationState } from "../models";
+import { useDonationFees } from "../hooks/fees";
+import { DonationInputs, DonationState } from "../models";
 
 export type DonationSuccessProps = {
   result?: DonationState["successResult"];
+  form: UseFormReturn<DonationInputs>;
 };
 
-export const DonationSuccess = ({ result }: DonationSuccessProps) => {
-  return (
+export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
+  const [potAccountId] = form.watch(["potAccountId"]);
+
+  const { data: account, error: accountError } = potlock.useAccount({
+    accountId: result?.recipient_id,
+  });
+
+  const isLoading = result === undefined || account === undefined;
+
+  // !TODO: override with values from result
+  const fees = useDonationFees({
+    amount: parseFloat(result?.amount ?? "0"),
+    referrerAccountId: result?.referrer_id ?? undefined,
+    potAccountId,
+    bypassProtocolFee: result?.protocol_fee === 0,
+    bypassChefFee: potAccountId !== undefined,
+  });
+
+  return accountError !== undefined ? (
+    <ModalErrorBody
+      heading="Donation"
+      title="Unable to load recipient data!"
+      message={accountError?.message}
+    />
+  ) : (
     <DialogDescription className="items-center gap-8 p-10">
       <div un-flex="~ col" un-gap="4" un-items="center">
         <div
@@ -28,17 +57,27 @@ export const DonationSuccess = ({ result }: DonationSuccessProps) => {
           <Check className="h-6 w-6 text-red-500" />
         </div>
 
-        <h2 className="prose" un-text="xl" un-font="600">
-          Donation Successful
-        </h2>
+        {isLoading ? (
+          <Skeleton className="w-46 h-7" />
+        ) : (
+          <h2 className="prose" un-text="xl" un-font="600">
+            Donation Successful
+          </h2>
+        )}
 
-        <Button variant="brand-filled" color="primary">
-          <span className="prose" un-font="500">
-            Share to
-          </span>
+        {isLoading ? (
+          <Skeleton className="w-41 h-4.5" />
+        ) : (
+          <Button asChild variant="brand-filled" color="primary" disabled>
+            <Link href="#">
+              <span className="prose" un-font="500">
+                Share to
+              </span>
 
-          <XIcon className="h-4.5 w-4.5" />
-        </Button>
+              <TwitterSvg className="h-4.5 w-4.5" />
+            </Link>
+          </Button>
+        )}
       </div>
 
       <div un-flex="~ col" un-gap="2" un-items="center">
@@ -63,16 +102,20 @@ export const DonationSuccess = ({ result }: DonationSuccessProps) => {
         </Link>
       </div>
 
-      {result ? (
-        <DonationBreakdown tokenId={result.ft_id} />
-      ) : (
+      {isLoading ? (
         <Skeleton className="h-28" />
+      ) : (
+        <DonationBreakdown tokenId={result.ft_id} {...{ fees }} />
       )}
 
-      <div un-flex="~" un-items="center" un-gap="2">
-        <span>{`Txn Hash : ${result?.id}`}</span>
-        <Copy className="h-4 w-4" />
-      </div>
+      {isLoading ? (
+        <Skeleton className="w-41 h-4.5" />
+      ) : (
+        <div un-flex="~" un-items="center" un-gap="2">
+          <span>{`Txn Hash : ${result.id}`}</span>
+          <Copy className="h-4 w-4" />
+        </div>
+      )}
     </DialogDescription>
   );
 };

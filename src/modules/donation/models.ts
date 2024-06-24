@@ -193,13 +193,22 @@ export const donationModel = createModel<RootModel>()({
       amount,
       allocationStrategy,
       potDistributionStrategy,
+      referrerAccountId,
+      bypassProtocolFee,
+      message,
       ...props
     }: DonationSubmissionInputs & DonationInputs): Promise<void> {
       if ("accountId" in props) {
         switch (allocationStrategy) {
           case DonationAllocationStrategyEnum.direct:
             return void donateNearDirectly(
-              { recipient_id: props.accountId },
+              {
+                recipient_id: props.accountId,
+                message,
+                referrer_id: referrerAccountId,
+                bypass_protocol_fee: bypassProtocolFee,
+              },
+
               amount,
             )
               .then((result) => {

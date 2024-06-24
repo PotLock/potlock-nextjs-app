@@ -54,7 +54,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
         return h(DonationConfirmation, { form });
 
       case "success":
-        return h(DonationSuccess, { result });
+        return h(DonationSuccess, { result, form });
 
       default:
         return (

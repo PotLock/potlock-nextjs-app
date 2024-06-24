@@ -3,7 +3,14 @@ import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 
 import { DonationInputs } from "../models";
 
-export type DonationFeeInputs = DonationInputs & {};
+export type DonationFeeInputs = Pick<
+  DonationInputs,
+  | "amount"
+  | "referrerAccountId"
+  | "potAccountId"
+  | "bypassProtocolFee"
+  | "bypassChefFee"
+> & {};
 
 export type DonationFees = {
   projectAllocationAmount: number;

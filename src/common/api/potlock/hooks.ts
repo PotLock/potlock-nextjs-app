@@ -18,11 +18,11 @@ export const useAccounts = () => {
   return { ...queryResult, data: queryResult.data?.data };
 };
 
-export const useAccount = ({ accountId }: ByAccountId) => {
-  const queryResult = swrHooks.useV1AccountsRetrieve2(
-    accountId,
-    POTLOCK_REQUEST_CONFIG,
-  );
+export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
+  const queryResult = swrHooks.useV1AccountsRetrieve2(accountId ?? "unknown", {
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { enabled: Boolean(accountId) },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };
@@ -52,11 +52,11 @@ export const useAccountDonationsReceived = ({ accountId }: ByAccountId) => {
   return { ...queryResult, data: queryResult.data?.data };
 };
 
-export const usePot = ({ potId }: ByPotId) => {
-  const queryResult = swrHooks.useV1PotsRetrieve2(
-    potId,
-    POTLOCK_REQUEST_CONFIG,
-  );
+export const usePot = ({ potId }: Partial<ByPotId>) => {
+  const queryResult = swrHooks.useV1PotsRetrieve2(potId ?? "unknown", {
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { enabled: Boolean(potId) },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };
