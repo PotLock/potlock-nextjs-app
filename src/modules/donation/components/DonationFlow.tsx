@@ -22,6 +22,7 @@ export type DonationFlowProps = DonationSubmissionInputs &
 export const DonationFlow: React.FC<DonationFlowProps> = ({
   closeModal,
   currentStep,
+  successResult: result,
   ...props
 }) => {
   const searchParams = useSearchParams();
@@ -54,7 +55,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
         return h(DonationConfirmation, { form });
 
       case "success":
-        return h(DonationSuccess, { closeModal });
+        return h(DonationSuccess, { result });
 
       default:
         return (
@@ -66,12 +67,12 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     }
   }, [
     balanceFloat,
-    closeModal,
     currentStep,
     form,
     isBalanceSufficient,
     minAmountError,
     props,
+    result,
   ]);
 
   return (
