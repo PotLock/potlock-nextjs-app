@@ -1,7 +1,7 @@
 import { Check, Copy, XIcon } from "lucide-react";
 import Link from "next/link";
 
-import { Button, Skeleton } from "@/common/ui/components";
+import { Button, DialogDescription, Skeleton } from "@/common/ui/components";
 
 import { DonationBreakdown } from "./DonationBreakdown";
 import { DonationState } from "../models";
@@ -12,7 +12,7 @@ export type DonationSuccessProps = {
 
 export const DonationSuccess = ({ result }: DonationSuccessProps) => {
   return (
-    <div un-flex="~ col" un-gap="8" un-items="center" un-p="10">
+    <DialogDescription className="items-center gap-8 p-10">
       <div un-flex="~ col" un-gap="4" un-items="center">
         <div
           un-flex="~"
@@ -69,10 +69,10 @@ export const DonationSuccess = ({ result }: DonationSuccessProps) => {
         <Skeleton className="h-28" />
       )}
 
-      <div className="gap--2 flex items-center">
+      <div un-flex="~" un-items="center" un-gap="2">
         <span>{`Txn Hash : ${result?.id}`}</span>
         <Copy className="h-4 w-4" />
       </div>
-    </div>
+    </DialogDescription>
   );
 };

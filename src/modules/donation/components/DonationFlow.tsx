@@ -20,7 +20,6 @@ export type DonationFlowProps = DonationSubmissionInputs &
   };
 
 export const DonationFlow: React.FC<DonationFlowProps> = ({
-  closeModal,
   currentStep,
   successResult: result,
   ...props
