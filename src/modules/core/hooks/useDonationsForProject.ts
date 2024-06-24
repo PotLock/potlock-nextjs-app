@@ -9,7 +9,7 @@ import {
 import { SUPPORTED_FTS } from "@/common/constants";
 import nearToUsdWithFallback from "@/common/lib/nearToUsdWithFallback";
 
-const useDonationsForProject = (projectId: string) => {
+const useDonationsForProject = (projectId: string, limit?: number) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
   const [directDonations, setDirectDonations] = useState<DonationInfo[]>();
   const [matchedDonations, setMatchedDonations] = useState<DonationInfo[]>();
@@ -21,6 +21,7 @@ const useDonationsForProject = (projectId: string) => {
     (async () => {
       const _donations = await getAccountDonationsReceived({
         accountId: projectId,
+        limit,
       });
 
       const direct: DonationInfo[] = [];

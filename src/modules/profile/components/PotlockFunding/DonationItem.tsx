@@ -1,0 +1,114 @@
+/* eslint-disable @next/next/no-img-element */
+import Big from "big.js";
+import Link from "next/link";
+
+import { DonationInfo } from "@/common/api/potlock/account";
+import { truncate } from "@/common/lib";
+import getTimePassed from "@/common/lib/getTimePassed";
+
+import NearIcon from "./NearIcon";
+// import PotIcon from "./PotIcon";
+import { FundingSrc } from "./styled";
+import useProfileData from "../../hooks/useProfileData";
+
+const addTrailingZeros = (number: number) => {
+  if (number < 100 && number >= 0.1) return number.toFixed(1);
+  return number;
+};
+
+const FALLBACK_URL =
+  "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
+
+const DonationItem = ({
+  donation,
+  projectId,
+}: {
+  donation: DonationInfo;
+  projectId: string;
+}) => {
+  const {
+    donor,
+    total_amount,
+    net_amount: amount,
+    pot,
+    recipient,
+    donated_at,
+    token,
+  } = donation;
+
+  const { id: donor_id } = donor;
+  const pot_id = pot?.id;
+  const base_currency = pot?.base_currency;
+  const { id: recipient_id } = recipient;
+  const paid_at = new Date(donated_at).getTime();
+  const ftId = token.id || base_currency;
+  const decimals = token.decimals;
+  const isPot = !!pot_id;
+
+  const donationAmount = parseFloat(
+    Big(total_amount || amount)
+      .div(Big(10).pow(ftId === "near" ? 24 : decimals || 24))
+      .toFixed(2),
+  );
+
+  const url = isPot
+    ? `?tab=pot&potId=${pot_id}`
+    : projectId
+      ? `?tab=profile&accountId=${donor_id}`
+      : `?tab=project&projectId=${projectId || recipient_id}`;
+
+  // const name = truncate(isPot ? pot.id : donor.id, 15);
+  const name = truncate(donor.id, 15);
+
+  // const { profileImages } = useProfileData(isPot ? pot.id : donor.id);
+  const { profileImages } = useProfileData(donor.id);
+
+  return (
+    <div className="funding-row">
+      <FundingSrc>
+        {/* {isPot ? (
+          <PotIcon className="profile-image" />
+        ) : ( */}
+        <div className="h-[3em] w-[3em]">
+          <img
+            src={profileImages.image || FALLBACK_URL}
+            className="h-full w-full rounded-full object-cover align-middle"
+            alt="Donor profile image"
+          />
+        </div>
+        {/* )} */}
+        <div className="funding-src">
+          <Link href={url} target="_blank">
+            {isPot && (
+              <span className="pot-name">
+                {" "}
+                {projectId ? "Matching Pool" : "Sponsor"} :
+              </span>
+            )}{" "}
+            {name}
+          </Link>
+          <div className="type">
+            {isPot ? "Matched donation" : "Direct donation"}
+          </div>
+        </div>
+      </FundingSrc>
+      <div className="price tab">
+        <div className="near-icon">
+          {ftId === "near" ? (
+            <NearIcon />
+          ) : (
+            <img
+              className="h-[21px] w-[21px]"
+              src={token.icon}
+              alt="Token icon"
+            />
+          )}
+        </div>
+        {addTrailingZeros(donationAmount)}
+      </div>
+      <div className="tab date">{getTimePassed(paid_at, true)} ago</div>
+    </div>
+  );
+};
+
+export default DonationItem;

@@ -37,6 +37,7 @@ export interface ProfileLinktree {
 }
 
 export interface Image {
+  url: string;
   ipfs_cid?: string;
   nft?: {
     contractId: string;
