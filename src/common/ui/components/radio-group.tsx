@@ -79,7 +79,13 @@ export const RadioGroupItem = forwardRef<
         <span un-font="500">{label}</span>
 
         {hint && (
-          <span un-font="500" un-text="neutral-500">
+          <span
+            un-font="500"
+            className={cn({
+              "text-neutral-400": disabled,
+              "text-neutral-500": !disabled,
+            })}
+          >
             {hint}
           </span>
         )}

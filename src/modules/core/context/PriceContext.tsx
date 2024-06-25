@@ -2,7 +2,7 @@
 
 // import { useQuery } from "@tanstack/react-query";
 
-// import { fetchNearPrice } from "../utils/fetchNearPrice";
+// import { fetchNearPrice } from "@/common/services";
 
 // interface PriceContextType {
 //   price?: number;
