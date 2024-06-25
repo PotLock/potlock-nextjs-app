@@ -7,7 +7,8 @@ import {
   getAccountDonationsReceived,
 } from "@/common/api/potlock/account";
 import { SUPPORTED_FTS } from "@/common/constants";
-import nearToUsdWithFallback from "@/common/lib/nearToUsdWithFallback";
+
+import { nearToUsdWithFallback } from "../utils";
 
 const useDonationsForProject = (projectId: string, limit?: number) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
