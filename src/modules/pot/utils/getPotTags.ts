@@ -1,4 +1,4 @@
-import { Pot } from "@/common/api/potlock/generated";
+import { Pot } from "@/common/api/potlock";
 import daysUntil from "@/common/lib/daysUntil";
 
 const getPotTags = (pot: Pot) => {

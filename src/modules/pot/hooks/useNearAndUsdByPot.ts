@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Pot } from "@/common/api/potlock/generated";
+import { Pot } from "@/common/api/potlock";
 import { yoctosToNear, yoctosToUsdWithFallback } from "@/common/lib";
 
 const useNearAndUsdByPot = ({ pot }: { pot?: Pot }) => {

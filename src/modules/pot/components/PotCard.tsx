@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Pot } from "@/common/api/potlock/generated";
+import { Pot } from "@/common/api/potlock";
 import routesPath from "@/modules/core/routes";
 
 import Indicator from "./Indicator";
