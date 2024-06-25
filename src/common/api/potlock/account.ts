@@ -1,4 +1,4 @@
-import { PotApplication } from "./generated";
+import { PotApplication } from "./types";
 import { POTLOCK_API_ENDPOINT } from "../../constants";
 
 type Accounts = {
