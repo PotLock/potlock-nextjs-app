@@ -7,7 +7,7 @@ import Link from "next/link";
 import { walletApi } from "@/common/contracts";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import { getIsHuman } from "@/common/contracts/sybil.nadabot";
-import { _address } from "@/common/lib";
+import { truncate } from "@/common/lib";
 import {
   Button,
   DropdownMenu,
@@ -125,12 +125,12 @@ const UserDropdown = () => {
             <div className="flex flex-col">
               {profile?.name && (
                 <div className="font-semibold">
-                  {_address(profile?.name, 20)}
+                  {truncate(profile?.name, 20)}
                 </div>
               )}
               <div className="color-[#656565] text-xs">
                 {" "}
-                {_address(accountId, 20)}
+                {truncate(accountId, 20)}
               </div>
             </div>
           </DropdownMenuLabel>

@@ -1,7 +1,11 @@
 import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
 
 import { swrHooks } from "./generated";
-import { ByAccountId, ByPotId } from "./types";
+import {
+  ByAccountId,
+  ByPotId,
+  V1AccountsPotApplicationsRetrieveParams,
+} from "./types";
 
 export const useAccounts = () => {
   const queryResult = swrHooks.useV1AccountsRetrieve(POTLOCK_REQUEST_CONFIG);
@@ -22,6 +26,19 @@ export const useAccountActivePots = ({ accountId }: ByAccountId) => {
   const queryResult = swrHooks.useV1AccountsActivePotsRetrieve(
     accountId,
     { status: "live" },
+    POTLOCK_REQUEST_CONFIG,
+  );
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+export const useAccountPotApplications = ({
+  accountId,
+  status,
+}: ByAccountId & V1AccountsPotApplicationsRetrieveParams) => {
+  const queryResult = swrHooks.useV1AccountsPotApplicationsRetrieve(
+    accountId,
+    { status },
     POTLOCK_REQUEST_CONFIG,
   );
 

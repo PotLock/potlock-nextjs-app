@@ -1,4 +1,6 @@
 const truncate = (input: string, maxLength: number) => {
+  if (!input) return "";
+
   if (input.length <= maxLength) {
     return input;
   }

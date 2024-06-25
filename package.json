@@ -10,8 +10,9 @@
     "generate:api-pagoda": "orval --config pagoda-eapi.cjs",
     "generate:api-potlock": "orval --config potlock-indexer.cjs",
     "generate:api": "concurrently 'yarn generate:api-potlock' 'yarn generate:api-pagoda'",
-    "dev:test": "yarn && yarn generate:api && vitest watch",
-    "dev": "yarn && yarn generate:api; next dev",
+    "dev:test": "yarn && vitest watch",
+    "dev": "yarn && next dev",
+    "next:dev": "yarn && next dev",
     "build": "next build",
     "start": "next start",
     "test:unit": "vitest run"

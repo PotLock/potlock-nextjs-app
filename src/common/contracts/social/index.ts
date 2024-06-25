@@ -37,6 +37,7 @@ export interface ProfileLinktree {
 }
 
 export interface Image {
+  url: string;
   ipfs_cid?: string;
   nft?: {
     contractId: string;
@@ -56,6 +57,8 @@ export enum Category {
 }
 
 export interface NEARSocialUserProfile {
+  team?: string;
+  plTeam?: string;
   name?: string;
   linktree?: ProfileLinktree;
   image?: Image;
@@ -68,9 +71,9 @@ export interface NEARSocialUserProfile {
   plPublicGoodReason?: string;
   plCategories?: string;
   // optional fields
-  plGithubRepos?: string[];
-  plFundingSources?: ExternalFundingSource[];
-  plSmartContracts?: [string, string][];
+  plGithubRepos?: string;
+  plFundingSources?: string; //ExternalFundingSource[];
+  plSmartContracts?: string; //[string, string][];
   category?:
     | keyof typeof Category
     | {
