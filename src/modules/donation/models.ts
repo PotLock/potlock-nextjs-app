@@ -17,6 +17,7 @@ import { ByPotId } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import { floatToYoctoNear } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 import { AvailableBalance } from "@/modules/core";
 
@@ -209,7 +210,7 @@ export const donationModel = createModel<RootModel>()({
                 bypass_protocol_fee: bypassProtocolFee,
               },
 
-              amount,
+              floatToYoctoNear(amount),
             )
               .then((result) => {
                 dispatch.donation.success(result);

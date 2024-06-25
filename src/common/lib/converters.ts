@@ -15,5 +15,13 @@ export const bigNumToFloat = (amount: string, decimals: number) => {
   return parseFloat(Big(amount).div(decimalMultiplier).toFixed(2));
 };
 
+export const floatToBigNum = (amount: number, decimals: number) => {
+  const decimalMultiplier = Big(10).pow(decimals);
+  return Big(amount).mul(decimalMultiplier);
+};
+
 export const yoctoNearToFloat = (amountYoctoNear: string) =>
   bigNumToFloat(amountYoctoNear, NEAR_DEFAULT_TOKEN_DECIMALS);
+
+export const floatToYoctoNear = (amountFloat: number) =>
+  floatToBigNum(amountFloat, NEAR_DEFAULT_TOKEN_DECIMALS).toString();
