@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DonationInfo } from "@/common/api/potlock/account";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
+import routesPath from "@/modules/core/routes";
 
 import NearIcon from "./NearIcon";
 // import PotIcon from "./PotIcon";
@@ -36,14 +37,14 @@ const DonationItem = ({
     token,
   } = donation;
 
-  const { id: donor_id } = donor;
-  const pot_id = pot?.id;
-  const base_currency = pot?.base_currency;
-  const { id: recipient_id } = recipient;
-  const paid_at = new Date(donated_at).getTime();
-  const ftId = token.id || base_currency;
+  const { id: donorId } = donor;
+  const potId = pot?.id;
+  const baseCurrency = pot?.base_currency;
+  const { id: recipientId } = recipient;
+  const paidAt = new Date(donated_at).getTime();
+  const ftId = token.id || baseCurrency;
   const decimals = token.decimals;
-  const isPot = !!pot_id;
+  const isPot = !!potId;
 
   const donationAmount = parseFloat(
     Big(total_amount || amount)
@@ -52,10 +53,10 @@ const DonationItem = ({
   );
 
   const url = isPot
-    ? `?tab=pot&potId=${pot_id}`
+    ? `${routesPath.POTS}/${potId}`
     : projectId
-      ? `?tab=profile&accountId=${donor_id}`
-      : `?tab=project&projectId=${projectId || recipient_id}`;
+      ? `${routesPath.PROFILE}/${donorId}`
+      : `${routesPath.PROFILE}/${projectId || recipientId}`;
 
   // const name = truncate(isPot ? pot.id : donor.id, 15);
   const name = truncate(donor.id, 15);
@@ -66,9 +67,6 @@ const DonationItem = ({
   return (
     <div className="funding-row">
       <FundingSrc>
-        {/* {isPot ? (
-          <PotIcon className="profile-image" />
-        ) : ( */}
         <div className="h-[3em] w-[3em]">
           <img
             src={profileImages.image || FALLBACK_URL}
@@ -76,7 +74,6 @@ const DonationItem = ({
             alt="Donor profile image"
           />
         </div>
-        {/* )} */}
         <div className="funding-src">
           <Link href={url} target="_blank">
             {isPot && (
@@ -106,7 +103,7 @@ const DonationItem = ({
         </div>
         {addTrailingZeros(donationAmount)}
       </div>
-      <div className="tab date">{getTimePassed(paid_at, true)} ago</div>
+      <div className="tab date">{getTimePassed(paidAt, true)} ago</div>
     </div>
   );
 };
