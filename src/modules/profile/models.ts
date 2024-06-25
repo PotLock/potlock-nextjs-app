@@ -8,14 +8,13 @@ import {
   NEARSocialUserProfile,
   getSocialProfile,
 } from "@/common/contracts/social";
-import { yoctosToUsdWithFallback } from "@/common/lib";
-
-import { fetchSocialImages } from "../core/services/socialImages";
+import { yoctosToUsdWithFallback } from "@/common/lib/yoctosToUsdWithFallback";
+import { fetchSocialImages } from "@/modules/core/services/socialImages";
 import {
   getTagsFromSocialProfileData,
   getTeamMembersFromProfile,
   getTotalAmountNear,
-} from "../project/utils";
+} from "@/modules/project/utils";
 
 export type Profile = {
   socialData: NEARSocialUserProfile;
@@ -106,18 +105,6 @@ export type NavState = {
   actAsDao: ActAsDao;
 };
 
-const updateList = (list: string[], item: string): string[] => {
-  const index = list.indexOf(item);
-  if (index === -1) {
-    // Item does not exist, add it
-    list.push(item);
-  } else {
-    // Item exists, remove it
-    list.splice(index, 1);
-  }
-  return list;
-};
-
 export const navModel = createModel<RootModel>()({
   state: {
     // TODO: add is registry admin
@@ -130,29 +117,19 @@ export const navModel = createModel<RootModel>()({
     },
   } as NavState,
   reducers: {
+    updateActAsDao(state, payload) {
+      return {
+        ...state,
+        actAsDao: {
+          ...state.actAsDao,
+          ...payload,
+        },
+      };
+    },
     update(state, payload) {
       return {
         ...state,
         ...payload,
-      };
-    },
-    markDaoAsDefault(state, daoAddress: string) {
-      return {
-        ...state,
-        actAsDao: {
-          ...state.actAsDao,
-          defaultAddress: daoAddress,
-        },
-      };
-    },
-    addOrRemoveDaoAddress(state, daoAddress: string) {
-      const addresses = state.actAsDao.addresses;
-      return {
-        ...state,
-        actAsDao: {
-          ...state.actAsDao,
-          addresses: updateList(addresses, daoAddress),
-        },
       };
     },
   },

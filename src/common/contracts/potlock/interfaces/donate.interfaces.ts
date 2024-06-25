@@ -24,3 +24,10 @@ export interface DirectDonation {
   base_currency: string;
   amount?: string;
 }
+
+export type DirectDonationArgs = {
+  recipient_id: string;
+  message?: string | null;
+  referrer_id?: string | null;
+  bypass_protocol_fee?: boolean | null;
+};

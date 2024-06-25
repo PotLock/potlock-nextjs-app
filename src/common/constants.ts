@@ -1,20 +1,52 @@
 import { Network } from "@wpdas/naxios";
+import { AxiosRequestConfig } from "axios";
 import Big from "big.js";
 import { utils } from "near-api-js";
+
+// NETWORK
+export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
+  "testnet") as Network;
 
 /**
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/
  */
 export const POTLOCK_API_ENDPOINT =
-  "https://dev.potlock.io" ?? "https://test-dev.potlock.io";
+  NETWORK === "mainnet"
+    ? "https://dev.potlock.io"
+    : "https://test-dev.potlock.io";
 
-export const REQUEST_CONFIG = {
-  client: { baseURL: POTLOCK_API_ENDPOINT },
+/**
+ * Request config for SWR
+ */
+export const POTLOCK_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
+  axios: { baseURL: POTLOCK_API_ENDPOINT },
 };
 
-// NETWORK
-export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
-  "testnet") as Network;
+/**
+ * Docs: https://console.pagoda.co/apis?tab=enhancedApi#/
+ */
+export const PAGODA_API_ENDPOINT =
+  NETWORK === "mainnet"
+    ? "https://near-mainnet.api.pagoda.co/eapi/v1/"
+    : "https://near-testnet.api.pagoda.co/eapi/v1/";
+
+export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
+
+/**
+ * Request config for SWR
+ */
+export const PAGODA_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
+  axios: {
+    baseURL: PAGODA_API_ENDPOINT,
+
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": PAGODA_API_KEY,
+    },
+  },
+};
+
+export const COINGECKO_API_ENDPOINT = "https://api.coingecko.com/api/v3";
 
 // SYBIL CONTRACT
 export const NADABOT_CONTRACT_ID = process.env
@@ -38,6 +70,10 @@ export const POTLOCK_POT_FACTORY_CONTRACT_ID = process.env
 
 // POTLOCK REGISTRY LIST ID
 export const POTLOCK_REGISTRY_LIST_ID = 1;
+
+export const NEAR_TOKEN_DENOM = "near";
+
+export const NEAR_DEFAULT_TOKEN_DECIMALS = 24;
 
 // 1 NEAR
 export const ONE_NEAR = utils.format.parseNearAmount("1")!;

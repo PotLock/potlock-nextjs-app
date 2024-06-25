@@ -1,5 +1,6 @@
-import { Pot, PotPayout } from "./generated";
-import { POTLOCK_API_ENDPOINT } from "../../constants";
+import { POTLOCK_API_ENDPOINT } from "@/common/constants";
+
+import { Pot, PotPayout } from "./types";
 
 export const getPot = async ({ potId }: { potId: string }) => {
   const res = await fetch(`${POTLOCK_API_ENDPOINT}/api/v1/pots/${potId}/`);
