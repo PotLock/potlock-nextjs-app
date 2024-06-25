@@ -24,4 +24,4 @@ export const yoctoNearToFloat = (amountYoctoNear: string) =>
   bigNumToFloat(amountYoctoNear, NEAR_DEFAULT_TOKEN_DECIMALS);
 
 export const floatToYoctoNear = (amountFloat: number) =>
-  floatToBigNum(amountFloat, NEAR_DEFAULT_TOKEN_DECIMALS).toString();
+  floatToBigNum(amountFloat, NEAR_DEFAULT_TOKEN_DECIMALS).toFixed().toString();

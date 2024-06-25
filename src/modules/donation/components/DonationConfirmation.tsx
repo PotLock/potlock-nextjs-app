@@ -3,8 +3,6 @@ import { useCallback, useState } from "react";
 import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
-import { pagoda } from "@/common/api/pagoda";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
   Button,
   DialogDescription,
@@ -18,11 +16,7 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import {
-  TokenIcon,
-  TotalTokenValue,
-  useNearUsdDisplayValue,
-} from "@/modules/core";
+import { TotalTokenValue } from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
 
 import { DonationBreakdown } from "./DonationBreakdown";
@@ -58,8 +52,6 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
 
   const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
     fees;
-
-  console.table(values);
 
   return (
     <>

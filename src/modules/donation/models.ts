@@ -201,33 +201,36 @@ export const donationModel = createModel<RootModel>()({
     }: DonationSubmissionInputs & DonationInputs): Promise<void> {
       if ("accountId" in props) {
         switch (allocationStrategy) {
-          case DonationAllocationStrategyEnum.direct:
-            return void donateNearDirectly(
-              {
-                recipient_id: props.accountId,
-                message,
-                referrer_id: referrerAccountId,
-                bypass_protocol_fee: bypassProtocolFee,
-              },
+          case DonationAllocationStrategyEnum.direct: {
+            const args = {
+              recipient_id: props.accountId,
+              message,
+              referrer_id: referrerAccountId,
+              bypass_protocol_fee: bypassProtocolFee,
+            };
 
-              floatToYoctoNear(amount),
-            )
+            console.table({ args, amount: floatToYoctoNear(amount) });
+
+            return void donateNearDirectly(args, floatToYoctoNear(amount))
               .then((result) => {
                 dispatch.donation.success(result);
                 dispatch.donation.nextStep();
               })
               .catch((error) => dispatch.donation.failure(error));
+          }
 
           case DonationAllocationStrategyEnum.pot:
             return void dispatch.donation.failure;
         }
       } else if ("potId" in props) {
         switch (potDistributionStrategy) {
-          case DonationPotDistributionStrategy.evenly:
+          case DonationPotDistributionStrategy.evenly: {
             return void dispatch.donation.failure;
+          }
 
-          case DonationPotDistributionStrategy.manually:
+          case DonationPotDistributionStrategy.manually: {
             return void dispatch.donation.failure;
+          }
         }
       }
     },
