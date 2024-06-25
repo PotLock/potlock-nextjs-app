@@ -9,11 +9,25 @@ import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import useSwr from "swr";
 import type { Key, SWRConfiguration } from "swr";
+export type V1ListsRandomRegistrationRetrieveParams = {
+  /**
+   * Filter registrations by status
+   */
+  status?: string;
+};
+
 export type V1DonorsRetrieveParams = {
   /**
    * Sort by field, e.g., most_donated_usd
    */
   sort?: string;
+};
+
+export type V1AccountsPotApplicationsRetrieveParams = {
+  /**
+   * Filter pot applications by status
+   */
+  status?: string;
 };
 
 export type V1AccountsActivePotsRetrieveParams = {
@@ -22,6 +36,34 @@ export type V1AccountsActivePotsRetrieveParams = {
    */
   status?: string;
 };
+
+export interface Token {
+  /**
+   * Token decimals.
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  decimals: number;
+  /**
+   * Token icon (base64 data URL).
+   * @nullable
+   */
+  icon?: string | null;
+  /** Token ID (address). */
+  id: string;
+  /**
+   * Token name.
+   * @maxLength 255
+   * @nullable
+   */
+  name?: string | null;
+  /**
+   * Token symbol.
+   * @maxLength 255
+   * @nullable
+   */
+  symbol?: string | null;
+}
 
 /**
  * * `Pending` - Pending
@@ -49,29 +91,6 @@ export interface StatsResponse {
   total_recipients_count: number;
 }
 
-export interface PotPayout {
-  /** Payout amount. */
-  amount: string;
-  /**
-   * Payout amount in USD.
-   * @nullable
-   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
-   */
-  amount_paid_usd?: string | null;
-  /** Payout id. */
-  readonly id: number;
-  /** Payout date. */
-  paid_at: string;
-  readonly pot: string;
-  readonly recipient: string;
-  readonly token: string;
-  /**
-   * Transaction hash.
-   * @nullable
-   */
-  tx_hash?: string | null;
-}
-
 /**
  * * `Pending` - Pending
  * `Approved` - Approved
@@ -89,40 +108,8 @@ export const PotApplicationStatusEnum = {
   InReview: "InReview",
 } as const;
 
-export interface PotApplication {
-  readonly applicant: string;
-  /** Application id. */
-  readonly id: number;
-  /**
-   * Application message.
-   * @maxLength 1024
-   * @nullable
-   */
-  message?: string | null;
-  readonly pot: string;
-  /** Application status.
-
-* `Pending` - Pending
-* `Approved` - Approved
-* `Rejected` - Rejected
-* `InReview` - InReview */
-  status: PotApplicationStatusEnum;
-  /** Application submission date. */
-  submitted_at: string;
-  /**
-   * Transaction hash.
-   * @nullable
-   */
-  tx_hash?: string | null;
-  /**
-   * Application last update date.
-   * @nullable
-   */
-  updated_at?: string | null;
-}
-
 export interface Pot {
-  readonly admins: string;
+  admins: Account[];
   /** All paid out. */
   all_paid_out: boolean;
   /** Pot application end date. */
@@ -135,7 +122,7 @@ export interface Pot {
    * @nullable
    */
   base_currency?: string | null;
-  readonly chef: string;
+  chef: Account;
   /**
    * Chef fee basis points.
    * @minimum 0
@@ -168,7 +155,7 @@ export interface Pot {
   custom_sybil_checks?: string | null;
   /** Pot deployment date. */
   deployed_at: string;
-  readonly deployer: string;
+  deployer: Account;
   /** Pot description. */
   description: string;
   /** Pot account ID. */
@@ -195,7 +182,7 @@ export interface Pot {
   min_matching_pool_donation_amount: string;
   /** Pot name. */
   name: string;
-  readonly owner: string;
+  owner: Account;
   /** Pot factory. */
   pot_factory: string;
   /**
@@ -243,23 +230,122 @@ export interface Pot {
   total_public_donations_usd: string;
 }
 
-export interface NearSocialProfileData {
-  backgroundImage?: Image;
-  description?: string;
-  image?: Image;
-  linktree?: Linktree;
-  name?: string;
-  /** JSON-stringified array of category strings */
-  plCategories?: string;
-  /** JSON-stringified array of funding source objects */
-  plFundingSources?: string;
-  /** JSON-stringified array of URLs */
-  plGithubRepos?: string;
-  plPublicGoodReason?: string;
-  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
-  plSmartContracts?: string;
-  /** JSON-stringified array of team member account ID strings */
-  plTeam?: string;
+export interface PotPayout {
+  /** Payout amount. */
+  amount: string;
+  /**
+   * Payout amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  amount_paid_usd?: string | null;
+  /** Payout id. */
+  readonly id: number;
+  /** Payout date. */
+  paid_at: string;
+  pot: Pot;
+  recipient: Account;
+  token: Token;
+  /**
+   * Transaction hash.
+   * @nullable
+   */
+  tx_hash?: string | null;
+}
+
+export interface PotApplication {
+  applicant: Account;
+  /** Application id. */
+  readonly id: number;
+  /**
+   * Application message.
+   * @maxLength 1024
+   * @nullable
+   */
+  message?: string | null;
+  pot: Pot;
+  /** Application status.
+
+* `Pending` - Pending
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `InReview` - InReview */
+  status: PotApplicationStatusEnum;
+  /** Application submission date. */
+  submitted_at: string;
+  /**
+   * Transaction hash.
+   * @nullable
+   */
+  tx_hash?: string | null;
+  /**
+   * Application last update date.
+   * @nullable
+   */
+  updated_at?: string | null;
+}
+
+export interface PaginatedPotsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: Pot[];
+}
+
+export interface PaginatedPotPayoutsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: PotPayout[];
+}
+
+export interface PaginatedPotApplicationsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: PotApplication[];
+}
+
+export interface PaginatedListsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: List[];
+}
+
+export interface PaginatedListRegistrationsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: ListRegistration[];
+}
+
+export interface PaginatedDonationsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: Donation[];
+}
+
+export interface PaginatedAccountsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: Account[];
 }
 
 export interface Nft {
@@ -269,48 +355,10 @@ export interface Nft {
   tokenId?: string;
 }
 
-export interface ListRegistration {
-  /**
-   * Admin notes.
-   * @maxLength 1024
-   * @nullable
-   */
-  admin_notes?: string | null;
-  /** Registration id. */
-  readonly id: number;
-  readonly list: string;
-  readonly registered_by: string;
-  readonly registrant: string;
-  /**
-   * Registrant notes.
-   * @maxLength 1024
-   * @nullable
-   */
-  registrant_notes?: string | null;
-  /** Registration status.
-
-* `Pending` - Pending
-* `Approved` - Approved
-* `Rejected` - Rejected
-* `Graylisted` - Graylisted
-* `Blacklisted` - Blacklisted */
-  status: StatusF24Enum;
-  /** Registration submission date. */
-  submitted_at: string;
-  /**
-   * Transaction hash.
-   * @maxLength 64
-   * @nullable
-   */
-  tx_hash?: string | null;
-  /** Registration last update date. */
-  updated_at: string;
-}
-
 export interface List {
   /** Admin only registrations. */
   admin_only_registrations: boolean;
-  readonly admins: string;
+  admins: Account[];
   /**
    * Cover image url.
    * @maxLength 200
@@ -346,8 +394,46 @@ export interface List {
    * @maximum 2147483647
    */
   on_chain_id: number;
-  readonly owner: string;
+  owner: Account;
   /** List last update date. */
+  updated_at: string;
+}
+
+export interface ListRegistration {
+  /**
+   * Admin notes.
+   * @maxLength 1024
+   * @nullable
+   */
+  admin_notes?: string | null;
+  /** Registration id. */
+  readonly id: number;
+  list: List;
+  registered_by: Account;
+  registrant: Account;
+  /**
+   * Registrant notes.
+   * @maxLength 1024
+   * @nullable
+   */
+  registrant_notes?: string | null;
+  /** Registration status.
+
+* `Pending` - Pending
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `Graylisted` - Graylisted
+* `Blacklisted` - Blacklisted */
+  status: StatusF24Enum;
+  /** Registration submission date. */
+  submitted_at: string;
+  /**
+   * Transaction hash.
+   * @maxLength 64
+   * @nullable
+   */
+  tx_hash?: string | null;
+  /** Registration last update date. */
   updated_at: string;
 }
 
@@ -364,6 +450,25 @@ export interface Image {
   url?: string;
 }
 
+export interface NearSocialProfileData {
+  backgroundImage?: Image;
+  description?: string;
+  image?: Image;
+  linktree?: Linktree;
+  name?: string;
+  /** JSON-stringified array of category strings */
+  plCategories?: string;
+  /** JSON-stringified array of funding source objects */
+  plFundingSources?: string;
+  /** JSON-stringified array of URLs */
+  plGithubRepos?: string;
+  plPublicGoodReason?: string;
+  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
+  plSmartContracts?: string;
+  /** JSON-stringified array of team member account ID strings */
+  plTeam?: string;
+}
+
 export interface DonationContractConfig {
   owner: string;
   protocol_fee_basis_points: number;
@@ -372,7 +477,7 @@ export interface DonationContractConfig {
 }
 
 export interface Donation {
-  readonly chef: string;
+  chef: Account;
   /**
    * Chef fee.
    * @maxLength 64
@@ -387,7 +492,7 @@ export interface Donation {
   chef_fee_usd?: string | null;
   /** Donation date. */
   donated_at: string;
-  readonly donor: string;
+  donor: Account;
   /** Donation id. */
   readonly id: number;
   /** Matching pool. */
@@ -415,7 +520,7 @@ export interface Donation {
    * @maximum 2147483647
    */
   on_chain_id: number;
-  readonly pot: string;
+  pot: Pot;
   /**
    * Protocol fee.
    * @maxLength 64
@@ -427,8 +532,8 @@ export interface Donation {
    * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
    */
   protocol_fee_usd?: string | null;
-  readonly recipient: string;
-  readonly referrer: string;
+  recipient: Account;
+  referrer: Account;
   /**
    * Referrer fee.
    * @maxLength 64
@@ -441,7 +546,7 @@ export interface Donation {
    * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
    */
   referrer_fee_usd?: string | null;
-  readonly token: string;
+  token: Token;
   /**
    * Total amount.
    * @maxLength 64
@@ -513,7 +618,7 @@ export interface Account {
 
 export const v1AccountsRetrieve = (
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Account[]>> => {
+): Promise<AxiosResponse<PaginatedAccountsResponse>> => {
   return axios.get(`/api/v1/accounts`, options);
 };
 
@@ -600,7 +705,7 @@ export const v1AccountsActivePotsRetrieve = (
   accountId: string,
   params?: V1AccountsActivePotsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Pot[]>> => {
+): Promise<AxiosResponse<PaginatedPotsResponse>> => {
   return axios.get(`/api/v1/accounts/${accountId}/active_pots`, {
     ...options,
     params: { ...params, ...options?.params },
@@ -657,7 +762,7 @@ export const useV1AccountsActivePotsRetrieve = <TError = AxiosError<void>>(
 export const v1AccountsDonationsReceivedRetrieve = (
   accountId: string,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Donation[]>> => {
+): Promise<AxiosResponse<PaginatedDonationsResponse>> => {
   return axios.get(`/api/v1/accounts/${accountId}/donations_received`, options);
 };
 
@@ -706,7 +811,7 @@ export const useV1AccountsDonationsReceivedRetrieve = <
 export const v1AccountsDonationsSentRetrieve = (
   accountId: string,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Donation[]>> => {
+): Promise<AxiosResponse<PaginatedDonationsResponse>> => {
   return axios.get(`/api/v1/accounts/${accountId}/donations_sent`, options);
 };
 
@@ -752,7 +857,7 @@ export const useV1AccountsDonationsSentRetrieve = <TError = AxiosError<void>>(
 export const v1AccountsPayoutsReceivedRetrieve = (
   accountId: string,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Donation[]>> => {
+): Promise<AxiosResponse<PaginatedPotPayoutsResponse>> => {
   return axios.get(`/api/v1/accounts/${accountId}/payouts_received`, options);
 };
 
@@ -798,13 +903,23 @@ export const useV1AccountsPayoutsReceivedRetrieve = <TError = AxiosError<void>>(
 
 export const v1AccountsPotApplicationsRetrieve = (
   accountId: string,
+  params?: V1AccountsPotApplicationsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PotApplication[]>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/pot_applications`, options);
+): Promise<AxiosResponse<PaginatedPotApplicationsResponse>> => {
+  return axios.get(`/api/v1/accounts/${accountId}/pot_applications`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getV1AccountsPotApplicationsRetrieveKey = (accountId: string) =>
-  [`/api/v1/accounts/${accountId}/pot_applications`] as const;
+export const getV1AccountsPotApplicationsRetrieveKey = (
+  accountId: string,
+  params?: V1AccountsPotApplicationsRetrieveParams,
+) =>
+  [
+    `/api/v1/accounts/${accountId}/pot_applications`,
+    ...(params ? [params] : []),
+  ] as const;
 
 export type V1AccountsPotApplicationsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>
@@ -813,6 +928,7 @@ export type V1AccountsPotApplicationsRetrieveQueryError = AxiosError<void>;
 
 export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
   accountId: string,
+  params?: V1AccountsPotApplicationsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>,
@@ -827,9 +943,11 @@ export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
   const swrKey =
     swrOptions?.swrKey ??
     (() =>
-      isEnabled ? getV1AccountsPotApplicationsRetrieveKey(accountId) : null);
+      isEnabled
+        ? getV1AccountsPotApplicationsRetrieveKey(accountId, params)
+        : null);
   const swrFn = () =>
-    v1AccountsPotApplicationsRetrieve(accountId, axiosOptions);
+    v1AccountsPotApplicationsRetrieve(accountId, params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -889,7 +1007,7 @@ export const useV1DonateContractConfigRetrieve = <
 export const v1DonorsRetrieve = (
   params?: V1DonorsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Account[]>> => {
+): Promise<AxiosResponse<PaginatedAccountsResponse>> => {
   return axios.get(`/api/v1/donors`, {
     ...options,
     params: { ...params, ...options?.params },
@@ -936,7 +1054,7 @@ export const useV1DonorsRetrieve = <TError = AxiosError<void>>(
 
 export const v1ListsRetrieve = (
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<List[]>> => {
+): Promise<AxiosResponse<PaginatedListsResponse>> => {
   return axios.get(`/api/v1/lists`, options);
 };
 
@@ -1018,10 +1136,70 @@ export const useV1ListsRetrieve2 = <TError = AxiosError<void>>(
   };
 };
 
+export const v1ListsRandomRegistrationRetrieve = (
+  listId: number,
+  params?: V1ListsRandomRegistrationRetrieveParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<ListRegistration>> => {
+  return axios.get(`/api/v1/lists/${listId}/random_registration`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getV1ListsRandomRegistrationRetrieveKey = (
+  listId: number,
+  params?: V1ListsRandomRegistrationRetrieveParams,
+) =>
+  [
+    `/api/v1/lists/${listId}/random_registration`,
+    ...(params ? [params] : []),
+  ] as const;
+
+export type V1ListsRandomRegistrationRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1ListsRandomRegistrationRetrieve>>
+>;
+export type V1ListsRandomRegistrationRetrieveQueryError = AxiosError<void>;
+
+export const useV1ListsRandomRegistrationRetrieve = <TError = AxiosError<void>>(
+  listId: number,
+  params?: V1ListsRandomRegistrationRetrieveParams,
+  options?: {
+    swr?: SWRConfiguration<
+      Awaited<ReturnType<typeof v1ListsRandomRegistrationRetrieve>>,
+      TError
+    > & { swrKey?: Key; enabled?: boolean };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!listId;
+  const swrKey =
+    swrOptions?.swrKey ??
+    (() =>
+      isEnabled
+        ? getV1ListsRandomRegistrationRetrieveKey(listId, params)
+        : null);
+  const swrFn = () =>
+    v1ListsRandomRegistrationRetrieve(listId, params, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
 export const v1ListsRegistrationsRetrieve = (
   listId: number,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ListRegistration[]>> => {
+): Promise<AxiosResponse<PaginatedListRegistrationsResponse>> => {
   return axios.get(`/api/v1/lists/${listId}/registrations`, options);
 };
 
@@ -1065,7 +1243,7 @@ export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
 
 export const v1PotsRetrieve = (
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Pot[]>> => {
+): Promise<AxiosResponse<PaginatedPotsResponse>> => {
   return axios.get(`/api/v1/pots`, options);
 };
 
@@ -1150,7 +1328,7 @@ export const useV1PotsRetrieve2 = <TError = AxiosError<void>>(
 export const v1PotsApplicationsRetrieve = (
   potId: string,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PotApplication[]>> => {
+): Promise<AxiosResponse<PaginatedPotApplicationsResponse>> => {
   return axios.get(`/api/v1/pots/${potId}/applications`, options);
 };
 
@@ -1195,7 +1373,7 @@ export const useV1PotsApplicationsRetrieve = <TError = AxiosError<void>>(
 export const v1PotsDonationsRetrieve = (
   potId: string,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Donation[]>> => {
+): Promise<AxiosResponse<PaginatedDonationsResponse>> => {
   return axios.get(`/api/v1/pots/${potId}/donations`, options);
 };
 
@@ -1240,7 +1418,7 @@ export const useV1PotsDonationsRetrieve = <TError = AxiosError<void>>(
 export const v1PotsPayoutsRetrieve = (
   potId: string,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PotPayout[]>> => {
+): Promise<AxiosResponse<PaginatedPotPayoutsResponse>> => {
   return axios.get(`/api/v1/pots/${potId}/payouts`, options);
 };
 
@@ -1285,7 +1463,7 @@ export const useV1PotsPayoutsRetrieve = <TError = AxiosError<void>>(
 export const v1PotsSponsorsRetrieve = (
   potId: string,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Account[]>> => {
+): Promise<AxiosResponse<PaginatedAccountsResponse>> => {
   return axios.get(`/api/v1/pots/${potId}/sponsors`, options);
 };
 
