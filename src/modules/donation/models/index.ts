@@ -40,9 +40,6 @@ export const donationAllocationStrategies: Record<
 
 const donationStateDefaults: DonationState = {
   currentStep: "allocation",
-
-  // TODO: REMOVE AFTER TESTING
-  successResult: directDonationMock,
 };
 
 const handleStep = (state: DonationState, step: DonationStep) => ({

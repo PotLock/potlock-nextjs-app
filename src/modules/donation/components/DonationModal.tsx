@@ -39,6 +39,7 @@ export const DonationModal = create((props: DonationModalProps) => {
           "max-w-130": state.currentStep !== "success",
           "max-w-120": state.currentStep === "success",
         })}
+        contrastActions={state.currentStep === "success"}
         onBackClick={
           state.currentStep !== "allocation" && state.currentStep !== "success"
             ? dispatch.donation.previousStep

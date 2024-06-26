@@ -27,8 +27,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   const searchParams = useSearchParams();
   const transactionHashes = searchParams.get("transactionHashes");
 
-  // TODO: REMOVE AFTER TESTING
-  if (result !== undefined) currentStep = "success";
+
 
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({
