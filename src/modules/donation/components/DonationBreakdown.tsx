@@ -1,5 +1,6 @@
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
+import { TextWithIcon } from "@/common/ui/components";
 import { TokenIcon } from "@/modules/core";
 
 import { DonationFees } from "../hooks/fees";
@@ -58,7 +59,7 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
   ];
 
   return (
-    <div un-flex="~ col" un-gap="2">
+    <div un-flex="~ col" un-gap="2" un-w="full">
       <span className="prose" un-text="neutral-600" un-font="600">
         Breakdown
       </span>
@@ -83,17 +84,9 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
                   {label + (percentage ? ` (${percentage}%)` : "")}
                 </span>
 
-                <span className="flex items-center gap-2">
-                  <span
-                    className="prose line-height-none"
-                    un-font="600"
-                    un-mt="0.6"
-                  >
-                    {amount}
-                  </span>
-
+                <TextWithIcon content={amount} className="font-600">
                   <TokenIcon {...{ tokenId }} size="small" />
-                </span>
+                </TextWithIcon>
               </div>
             ),
         )}

@@ -5,12 +5,9 @@ import { DonationInputs } from "../models";
 
 export type DonationFeeInputs = Pick<
   DonationInputs,
-  | "amount"
-  | "referrerAccountId"
-  | "potAccountId"
-  | "bypassProtocolFee"
-  | "bypassChefFee"
-> & {};
+  "amount" | "referrerAccountId" | "potAccountId"
+> &
+  Partial<Pick<DonationInputs, "bypassProtocolFee" | "bypassChefFee">> & {};
 
 export type DonationFees = {
   projectAllocationAmount: number;
@@ -30,11 +27,11 @@ export const useDonationFees = ({
   amount,
   referrerAccountId,
   potAccountId,
-  bypassProtocolFee,
-  bypassChefFee,
+  bypassProtocolFee = false,
+  bypassChefFee = false,
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
-  const { data: potData } = potlock.usePot({ potId: potAccountId ?? "" });
+  const { data: potData } = potlock.usePot({ potId: potAccountId });
 
   /**
    *? Protocol fee:

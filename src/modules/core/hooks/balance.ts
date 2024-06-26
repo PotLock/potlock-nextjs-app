@@ -3,9 +3,10 @@ import { useMemo } from "react";
 import { pagoda } from "@/common/api/pagoda";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
+import { bigStringToFloat } from "@/common/lib";
 import { ByTokenId } from "@/common/types";
 
-import { balanceToFloat, balanceToString } from "../utils";
+import { balanceToString } from "../utils";
 
 export type AvailableBalance = {
   isBalanceLoading: boolean;
@@ -41,7 +42,7 @@ export const useAvailableBalance = ({
     () =>
       data === null
         ? null
-        : balanceToFloat(data?.amount, data?.metadata.decimals),
+        : bigStringToFloat(data?.amount, data?.metadata.decimals),
 
     [data],
   );

@@ -5,6 +5,7 @@ import { create, useModal } from "@ebay/nice-modal-react";
 import { dispatch, useTypedSelector } from "@/app/_store";
 import { walletApi } from "@/common/contracts";
 import { Button, Dialog, DialogContent } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ModalErrorBody } from "@/modules/core";
 
@@ -34,6 +35,10 @@ export const DonationModal = create((props: DonationModalProps) => {
   return (
     <Dialog open={self.visible}>
       <DialogContent
+        className={cn({
+          "max-w-130": state.currentStep !== "success",
+          "max-w-120": state.currentStep === "success",
+        })}
         onBackClick={
           state.currentStep !== "allocation" && state.currentStep !== "success"
             ? dispatch.donation.previousStep
