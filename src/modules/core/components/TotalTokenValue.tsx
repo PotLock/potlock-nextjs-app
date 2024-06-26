@@ -3,7 +3,7 @@ import {
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";
-import { bigNumToFloat } from "@/common/lib";
+import { bigStringToFloat } from "@/common/lib";
 import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 
@@ -11,22 +11,20 @@ import { TokenIcon } from "./TokenIcon";
 import { useNearUsdDisplayValue } from "../hooks/price";
 
 export type TotalTokenValueProps = ByTokenId &
-  ({ amountFloat: number } | { amountBig: number });
+  ({ amountFloat: number } | { amountBigString: string });
 
 export const TotalTokenValue = ({
   tokenId,
   ...props
 }: TotalTokenValueProps) => {
   const { isLoading: isTokenMetadataLoading, data: tokenMetadata } =
-    pagoda.useTokenMetadata({
-      tokenId,
-    });
+    pagoda.useTokenMetadata({ tokenId });
 
   const amount =
     "amountFloat" in props
       ? props.amountFloat
-      : bigNumToFloat(
-          props.amountBig.toString(),
+      : bigStringToFloat(
+          props.amountBigString,
           tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
         );
 

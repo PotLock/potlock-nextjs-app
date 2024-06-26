@@ -25,11 +25,17 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   ...props
 }) => {
   const searchParams = useSearchParams();
+  const transactionHashes = searchParams.get("transactionHashes");
+
+  // TODO: REMOVE AFTER TESTING
+  if (result !== undefined) currentStep = "success";
 
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({
       ...props,
-      referrerAccountId: searchParams.get("referrerId") ?? undefined,
+
+      referrerAccountId:
+        searchParams.get("referrerId") ?? result?.recipient_id ?? undefined,
     });
 
   const [tokenId] = form.watch(["tokenId"]);
@@ -44,6 +50,8 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       form,
     };
 
+    const staticSuccessProps = { form, result, transactionHashes };
+
     switch (currentStep) {
       case "allocation":
         return "accountId" in props
@@ -51,10 +59,10 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
           : h(DonationPotAllocation, { ...staticAllocationProps, ...props });
 
       case "confirmation":
-        return h(DonationConfirmation, { form });
+        return <DonationConfirmation {...{ form }} />;
 
       case "success":
-        return h(DonationSuccess, { result, form });
+        return <DonationSuccess {...staticSuccessProps} />;
 
       default:
         return (
@@ -72,6 +80,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     minAmountError,
     props,
     result,
+    transactionHashes,
   ]);
 
   return (
@@ -79,36 +88,38 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       <form un-flex="~ col" un-h="full" {...{ onSubmit }}>
         {content}
 
-        <DialogFooter>
-          {currentStep === "allocation" && (
+        {currentStep !== "success" && (
+          <DialogFooter>
+            {currentStep === "allocation" && (
+              <Button
+                type="button"
+                variant="brand-outline"
+                color="black"
+                disabled
+              >
+                Add to cart
+              </Button>
+            )}
+
             <Button
               type="button"
-              variant="brand-outline"
-              color="black"
-              disabled
+              variant="brand-filled"
+              onClick={
+                currentStep === "confirmation"
+                  ? onSubmit
+                  : dispatch.donation.nextStep
+              }
+              disabled={isDisabled}
+              className={cn({
+                "w-full": currentStep === "confirmation",
+              })}
             >
-              Add to cart
+              {currentStep === "confirmation"
+                ? "Confirm donation"
+                : "Proceed to donate"}
             </Button>
-          )}
-
-          <Button
-            type="button"
-            variant="brand-filled"
-            onClick={
-              currentStep === "confirmation"
-                ? onSubmit
-                : dispatch.donation.nextStep
-            }
-            disabled={isDisabled}
-            className={cn({
-              "w-full": currentStep === "confirmation",
-            })}
-          >
-            {currentStep === "confirmation"
-              ? "Confirm donation"
-              : "Proceed to donate"}
-          </Button>
-        </DialogFooter>
+          </DialogFooter>
+        )}
       </form>
     </Form>
   );

@@ -21,11 +21,12 @@ import { floatToYoctoNear } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 import { AvailableBalance } from "@/modules/core";
 
+import { directDonationMock } from "./test";
 import {
   DONATION_MAX_MESSAGE_LENGTH,
   DONATION_MIN_NEAR_AMOUNT_ERROR,
-} from "./constants";
-import { isDonationAmountSufficient } from "./utils/validation";
+} from "../constants";
+import { isDonationAmountSufficient } from "../utils/validation";
 
 export type DonationParameters = ByAccountId | ByPotId;
 
@@ -148,6 +149,7 @@ export type DonationState = {
 
 const donationStateDefaults: DonationState = {
   currentStep: "allocation",
+  successResult: directDonationMock,
 };
 
 const handleStep = (state: DonationState, step: DonationStep) => ({

@@ -4,6 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 
 import { potlock } from "@/common/api/potlock";
 import TwitterSvg from "@/common/assets/svgs/twitter";
+import { yoctoNearToFloat } from "@/common/lib";
 import { Button, DialogDescription, Skeleton } from "@/common/ui/components";
 import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 
@@ -13,11 +14,19 @@ import { DonationInputs, DonationState } from "../models";
 
 export type DonationSuccessProps = {
   result?: DonationState["successResult"];
+  transactionHashes: string | null;
   form: UseFormReturn<DonationInputs>;
 };
 
-export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
+export const DonationSuccess = ({
+  form,
+  result,
+  transactionHashes,
+}: DonationSuccessProps) => {
   const [potAccountId] = form.watch(["potAccountId"]);
+  const totalAmountFloat = yoctoNearToFloat(result?.total_amount ?? "0");
+
+  console.log(transactionHashes);
 
   const { data: account, error: accountError } = potlock.useAccount({
     accountId: result?.recipient_id,
@@ -27,7 +36,7 @@ export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
 
   // !TODO: override with values from result
   const fees = useDonationFees({
-    amount: result?.total_amount ?? 0,
+    amount: totalAmountFloat,
     referrerAccountId: result?.referrer_id ?? undefined,
     potAccountId,
     bypassProtocolFee: result?.protocol_fee === 0,
@@ -54,7 +63,7 @@ export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
           un-p="3"
           un-bg="[var(--primary-600)]"
         >
-          <Check className="h-6 w-6 text-red-500" />
+          <Check className="color-white h-6 w-6" />
         </div>
 
         {isLoading ? (
@@ -68,7 +77,7 @@ export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
         {isLoading ? (
           <Skeleton className="w-41 h-4.5" />
         ) : (
-          <Button asChild variant="brand-filled" color="primary" disabled>
+          <Button asChild variant="standard-filled" className="bg-neutral-950">
             <Link href="#">
               <span className="prose" un-font="500">
                 Share to
@@ -86,7 +95,7 @@ export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
         ) : (
           <TotalTokenValue
             tokenId={result.ft_id}
-            amountBig={result.total_amount}
+            amountBigString={result.total_amount}
           />
         )}
 
@@ -116,11 +125,11 @@ export const DonationSuccess = ({ result, form }: DonationSuccessProps) => {
         <DonationBreakdown tokenId={result.ft_id} {...{ fees }} />
       )}
 
-      {isLoading ? (
-        <Skeleton className="w-41 h-4.5" />
+      {isLoading || transactionHashes === null ? (
+        <Skeleton className="w-41 h-5" />
       ) : (
         <div un-flex="~" un-items="center" un-gap="2">
-          <span>{`Txn Hash : ${result.id}`}</span>
+          <span>{`Txn Hash : ${transactionHashes}`}</span>
           <Copy className="h-4 w-4" />
         </div>
       )}

@@ -3,6 +3,9 @@ import Big from "big.js";
 import formatWithCommas from "./formatWithCommas";
 import { NEAR_DEFAULT_TOKEN_DECIMALS } from "../constants";
 
+/**
+ * @deprecated Use `yoctoNearToFloat`
+ */
 export const yoctosToNear = (amountYoctos: string, abbreviate?: boolean) => {
   return (
     formatWithCommas(Big(amountYoctos).div(1e24).toFixed(2)) +
@@ -10,7 +13,7 @@ export const yoctosToNear = (amountYoctos: string, abbreviate?: boolean) => {
   );
 };
 
-export const bigNumToFloat = (amount: string, decimals: number) => {
+export const bigStringToFloat = (amount: string, decimals: number) => {
   const decimalMultiplier = Big(10).pow(decimals);
   return parseFloat(Big(amount).div(decimalMultiplier).toFixed(2));
 };
@@ -21,7 +24,7 @@ export const floatToBigNum = (amount: number, decimals: number) => {
 };
 
 export const yoctoNearToFloat = (amountYoctoNear: string) =>
-  bigNumToFloat(amountYoctoNear, NEAR_DEFAULT_TOKEN_DECIMALS);
+  bigStringToFloat(amountYoctoNear, NEAR_DEFAULT_TOKEN_DECIMALS);
 
 export const floatToYoctoNear = (amountFloat: number) =>
   floatToBigNum(amountFloat, NEAR_DEFAULT_TOKEN_DECIMALS).toFixed().toString();

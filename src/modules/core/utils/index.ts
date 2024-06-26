@@ -1,10 +1,10 @@
 import { NearBalanceResponse } from "@/common/api/pagoda";
-import { bigNumToFloat } from "@/common/lib";
+import { bigStringToFloat } from "@/common/lib";
 
 export const balanceToFloat = (
   amount: NearBalanceResponse["balance"]["amount"],
   decimals: NearBalanceResponse["balance"]["metadata"]["decimals"],
-) => bigNumToFloat(amount, decimals);
+) => bigStringToFloat(amount, decimals);
 
 export const balanceToString = ({
   amount,

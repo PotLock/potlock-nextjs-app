@@ -11,14 +11,14 @@ export interface Config {
 }
 
 export interface DirectDonation {
-  id: string;
+  id: number;
   donor_id: string;
-  total_amount: number;
+  total_amount: string;
   ft_id: string;
-  message: string;
+  message?: null | string;
   donated_at_ms: number;
   recipient_id: string;
-  protocol_fee: number;
+  protocol_fee: string;
   referrer_id?: null | string;
   referrer_fee?: null | number;
   base_currency: string;

@@ -58,4 +58,5 @@ export const donateNearDirectly = (
   contractApi.call<typeof args, DirectDonation>("donate", {
     args,
     deposit: depositAmountYocto,
+    callbackUrl: window.location.href,
   });
