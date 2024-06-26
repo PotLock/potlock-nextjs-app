@@ -112,13 +112,17 @@ export const DonationSuccess = ({
         {isResultLoading ? (
           <Skeleton className="w-41 h-4.5" />
         ) : (
-          <Button asChild variant="standard-filled" className="bg-neutral-950">
+          <Button
+            asChild
+            variant="standard-filled"
+            className="bg-neutral-950 py-1.5 shadow-none"
+          >
             <Link href="#">
               <span className="prose" un-font="500">
                 Share to
               </span>
 
-              <TwitterSvg className="h-4.5 w-4.5" />
+              <TwitterSvg width={18} height={18} />
             </Link>
           </Button>
         )}
