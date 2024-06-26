@@ -1,5 +1,7 @@
 import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 
+export const TOTAL_FEE_BASIS_POINTS = 10_000;
+
 type StatusConfig = {
   [key in RegistrationStatus]: {
     background: string;

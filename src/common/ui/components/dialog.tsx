@@ -36,6 +36,7 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 export type DialogContentProps = React.ComponentPropsWithoutRef<
   typeof DialogPrimitive.Content
 > & {
+  contrastActions?: boolean;
   onBackClick?: VoidFunction;
   onCloseClick: VoidFunction;
 };
@@ -43,66 +44,91 @@ export type DialogContentProps = React.ComponentPropsWithoutRef<
 const DialogContent = forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, onBackClick, onCloseClick, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "sm:min-w-auto fixed left-[50%] top-[50%] z-50 flex h-full w-full min-w-full flex-col",
-        "items-stretch sm:h-auto sm:max-w-xl sm:rounded-lg",
-        "translate-x-[-50%] translate-y-[-50%] bg-background shadow-lg",
-        "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out",
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-        "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
-        "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
-        className,
-      )}
-      {...props}
-    >
-      {children}
+>(
+  (
+    {
+      className,
+      children,
+      contrastActions = false,
+      onBackClick,
+      onCloseClick,
+      ...props
+    },
 
-      <div
-        un-w="full"
-        un-flex="~"
-        un-justify="end"
-        un-position="absolute top-4"
-        un-px="4"
-      >
-        {typeof onBackClick === "function" && (
-          <Button
-            variant="standard-plain"
-            size="icon"
-            onClick={onBackClick}
-            className={cn(
-              "mr-auto h-auto w-auto rounded-sm opacity-70 ring-offset-background transition-opacity",
-              "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
-              "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
-              "data-[state=open]:text-muted-foreground",
-            )}
-          >
-            <ArrowLeft className="color-white" width="24" height="24" />
-            <span className="sr-only">Previous step</span>
-          </Button>
-        )}
+    ref,
+  ) => {
+    const actionIconClassName = cn({
+      "color-white": !contrastActions,
+      "color-black": contrastActions,
+    });
 
-        <DialogPrimitive.Close
-          onClick={onCloseClick}
+    return (
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogPrimitive.Content
+          ref={ref}
           className={cn(
-            "rounded-sm opacity-70 ring-offset-background transition-opacity",
-            "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
-            "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
-            "data-[state=open]:text-muted-foreground",
+            "sm:min-w-auto fixed left-[50%] top-[50%] z-50 flex h-full w-full min-w-full flex-col",
+            "items-stretch sm:h-auto sm:max-w-xl sm:rounded-lg",
+            "translate-x-[-50%] translate-y-[-50%] bg-background shadow-lg",
+            "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+            "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
+            "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+            className,
           )}
+          {...props}
         >
-          <X className="color-white" width="24" height="24" />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
-      </div>
-    </DialogPrimitive.Content>
-  </DialogPortal>
-));
+          {children}
+
+          <div
+            un-w="full"
+            un-flex="~"
+            un-justify="end"
+            un-position="absolute top-4"
+            un-px="4"
+          >
+            {typeof onBackClick === "function" && (
+              <Button
+                variant="standard-plain"
+                size="icon"
+                onClick={onBackClick}
+                className={cn(
+                  "mr-auto h-auto w-auto rounded-sm opacity-70 ring-offset-background transition-opacity",
+                  "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
+                  "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
+                  "data-[state=open]:text-muted-foreground",
+                )}
+              >
+                <ArrowLeft
+                  className={actionIconClassName}
+                  width="24"
+                  height="24"
+                />
+                <span className="sr-only">Previous step</span>
+              </Button>
+            )}
+
+            <DialogPrimitive.Close
+              onClick={onCloseClick}
+              className={cn(
+                "rounded-sm opacity-70 ring-offset-background transition-opacity",
+                "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
+                "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
+                "data-[state=open]:text-muted-foreground",
+              )}
+            >
+              <X className={actionIconClassName} width="24" height="24" />
+              <span className="sr-only">Close</span>
+            </DialogPrimitive.Close>
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPortal>
+    );
+  },
+);
+
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (

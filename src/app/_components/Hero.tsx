@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Button } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import useRegistration from "@/modules/core/hooks/useRegistration";
+import { DonationRandomButton } from "@/modules/donation";
 
 const Hero = () => {
   const wallet = useWallet();
   const accountId = wallet?.wallet?.accountId || "";
 
   const { registration, loading } = useRegistration(accountId);
-
   const isRegisteredProject = !!registration.id;
 
   return (
@@ -23,12 +23,7 @@ const Hero = () => {
           <br className="hidden md:block" /> participate in funding rounds.
         </h1>
         <div className="mt-6 flex items-center gap-4 text-sm max-md:flex-col md:mt-10 md:gap-8">
-          <Button
-            className="w-full md:w-[180px]"
-            //   onClick={openDonateRandomlyModal}
-          >
-            Donate Randomly
-          </Button>
+          <DonationRandomButton />
 
           {!loading && (
             <Button

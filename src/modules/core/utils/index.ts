@@ -1,17 +1,12 @@
 import { store } from "@/app/_store";
 import { NearBalanceResponse } from "@/common/api/pagoda";
-import { bigNumToFloat, formatWithCommas } from "@/common/lib";
-
-export const balanceToFloat = (
-  amount: NearBalanceResponse["balance"]["amount"],
-  decimals: NearBalanceResponse["balance"]["metadata"]["decimals"],
-) => bigNumToFloat(amount, decimals);
+import { bigStringToFloat, formatWithCommas } from "@/common/lib";
 
 export const balanceToString = ({
   amount,
   metadata,
 }: NearBalanceResponse["balance"]) =>
-  `${balanceToFloat(amount, metadata.decimals)} ${metadata.symbol}`;
+  `${bigStringToFloat(amount, metadata.decimals)} ${metadata.symbol}`;
 
 export const nearToUsd = () => store.getState().core.nearToUsd;
 

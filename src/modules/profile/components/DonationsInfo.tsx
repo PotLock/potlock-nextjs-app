@@ -2,8 +2,9 @@
 
 import { styled } from "styled-components";
 
-import { Button } from "@/common/ui/components/button";
+import { Button } from "@/common/ui/components";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
+import { useDonation } from "@/modules/donation";
 
 import FollowButton from "./FollowButton";
 
@@ -64,6 +65,7 @@ export const Container = styled.div`
 
 const DonationsInfo = ({ accountId }: { accountId: string }) => {
   const donationsInfo = useDonationsForProject(accountId);
+  const { openDonationModal } = useDonation({ accountId });
 
   return (
     <Container>
@@ -76,13 +78,7 @@ const DonationsInfo = ({ accountId }: { accountId: string }) => {
       </div>
 
       <div className="btn-wrapper">
-        <Button
-          onClick={() => {
-            console.log("TODO: Donate");
-          }}
-        >
-          Donate
-        </Button>
+        <Button onClick={openDonationModal}>Donate</Button>
         <FollowButton accountId={accountId} />
       </div>
     </Container>

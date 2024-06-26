@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { expect, test } from "vitest";
 
 import { renderWithStore } from "./_store/testEnv";
@@ -7,10 +7,15 @@ import Homepage from "./page";
 renderWithStore(<Homepage />);
 
 test("Homepage", async () => {
-  expect(
-    screen.getByText("Donate Randomly"),
-    "random donation button",
-  ).toBeDefined();
+  await waitFor(
+    () =>
+      expect(
+        screen.getByText("Donate Randomly"),
+        "random donation button",
+      ).toBeDefined(),
+
+    { timeout: 5000 },
+  );
 
   // await waitFor(
   //   () =>

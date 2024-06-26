@@ -1,6 +1,6 @@
 import { NEARSocialUserProfile } from "@/common/contracts/social";
+import { ClipboardCopyButton } from "@/common/ui/components";
 
-import CopyIcon from "./CopyIcon";
 import getProfileSmartContracts from "../utils/getProfileSmartContracts";
 
 const SmartContract = ({ profile }: { profile?: NEARSocialUserProfile }) => {
@@ -11,7 +11,7 @@ const SmartContract = ({ profile }: { profile?: NEARSocialUserProfile }) => {
       {smartContracts.map(([chain, contract]: any) => {
         return (
           <div className="flex items-center gap-4" key={contract}>
-            <CopyIcon textToCopy={contract} />
+            <ClipboardCopyButton text={contract} />
             <div className="flex flex-col">
               <p className="">{contract}</p>
               <p className="text-sm text-[#7b7b7b]">{chain}</p>

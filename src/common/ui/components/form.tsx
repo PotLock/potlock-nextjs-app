@@ -74,12 +74,12 @@ const FormItemContext = createContext<FormItemContextValue>(
 const FormItem = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+>(({ ...props }, ref) => {
   const id = useId();
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <div ref={ref} {...props} />
     </FormItemContext.Provider>
   );
 });
