@@ -1,4 +1,4 @@
-import { Check, Copy } from "lucide-react";
+import { Check } from "lucide-react";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 
@@ -9,7 +9,7 @@ import {
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";
-import { bigStringToFloat, truncate, yoctoNearToFloat } from "@/common/lib";
+import { bigStringToFloat, truncate } from "@/common/lib";
 import {
   Button,
   ClipboardCopyButton,

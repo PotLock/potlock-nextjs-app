@@ -104,8 +104,6 @@ export const donationModel = createModel<RootModel>()({
               bypass_protocol_fee: bypassProtocolFee,
             };
 
-            console.table({ args, amount: floatToYoctoNear(amount) });
-
             return void donateNearDirectly(args, floatToYoctoNear(amount))
               .then((result) => {
                 dispatch.donation.success(result);
