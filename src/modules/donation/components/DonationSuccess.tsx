@@ -29,6 +29,9 @@ export type DonationSuccessProps = {
   form: UseFormReturn<DonationInputs>;
 };
 
+const staticResultIndicatorClassName =
+  "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
+
 export const DonationSuccess = ({
   form,
   result,
@@ -56,6 +59,9 @@ export const DonationSuccess = ({
     tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
   );
 
+  // TODO:
+  //! pass `result.protocol_fee` and `result.referrer_fee` as optional parameters
+  //! to display the factually correct values
   const fees = useDonationFees({
     amount: totalAmountFloat,
     referrerAccountId: result?.referrer_id ?? undefined,
@@ -71,15 +77,14 @@ export const DonationSuccess = ({
   ) : (
     <DialogDescription className="items-center gap-8 p-10">
       <div un-flex="~ col" un-gap="4" un-items="center">
-        {isResultLoading ? null : (
+        {isResultLoading ? (
+          <Skeleton className={staticResultIndicatorClassName} />
+        ) : (
           <div
+            className={staticResultIndicatorClassName}
             un-flex="~"
             un-items="center"
             un-justify="center"
-            un-border="rounded-full"
-            un-shadow="[0px_0px_0px_6px_#FEE6E5]"
-            un-w="12"
-            un-h="12"
             un-p="3"
             un-bg="[var(--primary-600)]"
           >
@@ -157,9 +162,7 @@ export const DonationSuccess = ({
         <DonationBreakdown tokenId={result.ft_id} {...{ fees }} />
       )}
 
-      {isLoading || transactionHashes === null ? (
-        <Skeleton className="w-41 h-5" />
-      ) : (
+      {transactionHashes && (
         <TextWithIcon content={`Txn Hash : ${truncate(transactionHashes, 7)}`}>
           <ClipboardCopyButton text={transactionHashes} />
         </TextWithIcon>
