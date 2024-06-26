@@ -8,11 +8,11 @@ import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { DEFAULT_URL } from "@/common/constants";
 import truncate from "@/common/lib/truncate";
+import { ClipboardCopyButton } from "@/common/ui/components";
 import { Button } from "@/common/ui/components/button";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
 
-import CopyIcon from "./CopyIcon";
 import DonationsInfo from "./DonationsInfo";
 import Linktree from "./Linktree";
 import ProfileTags from "./ProfileTags";
@@ -86,7 +86,7 @@ const Info = ({ accountId }: Props) => {
                 @ {truncate(accountId, 15)}
               </p>
               {/* Copy Icon */}
-              <CopyIcon textToCopy={accountId} />
+              <ClipboardCopyButton text={accountId} />
             </div>
             {isOwner && (
               <div className="ml-[auto] self-center" style={{}}>

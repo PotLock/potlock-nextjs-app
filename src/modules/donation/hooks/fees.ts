@@ -7,7 +7,9 @@ export type DonationFeeInputs = Pick<
   DonationInputs,
   "amount" | "referrerAccountId" | "potAccountId"
 > &
-  Partial<Pick<DonationInputs, "bypassProtocolFee" | "bypassChefFee">> & {};
+  Partial<Pick<DonationInputs, "bypassProtocolFee" | "bypassChefFee">> & {
+    protocolFeeFinalAmount?: number;
+  };
 
 export type DonationFees = {
   projectAllocationAmount: number;
@@ -27,11 +29,14 @@ export const useDonationFees = ({
   amount,
   referrerAccountId,
   potAccountId,
+  protocolFeeFinalAmount,
   bypassProtocolFee = false,
   bypassChefFee = false,
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
   const { data: potData } = potlock.usePot({ potId: potAccountId });
+
+  // TODO: Recalculate basic points if `protocolFeeFinalAmount` is provided
 
   /**
    *? Protocol fee:
@@ -45,6 +50,7 @@ export const useDonationFees = ({
     : protocolFeeInitialBasisPoints;
 
   const protocolFeeAmount =
+    protocolFeeFinalAmount ??
     (amount * protocolFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
   const protocolFeePercent = basisPointsToPercent(

@@ -20,7 +20,7 @@ export interface DirectDonation {
   recipient_id: string;
   protocol_fee: string;
   referrer_id?: null | string;
-  referrer_fee?: null | number;
+  referrer_fee?: null | string;
   base_currency: string;
 }
 
