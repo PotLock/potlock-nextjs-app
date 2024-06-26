@@ -27,8 +27,6 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   const searchParams = useSearchParams();
   const transactionHashes = searchParams.get("transactionHashes");
 
-
-
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({
       ...props,
