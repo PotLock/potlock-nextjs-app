@@ -9,6 +9,7 @@ export type DonationFeeInputs = Pick<
 > &
   Partial<Pick<DonationInputs, "bypassProtocolFee" | "bypassChefFee">> & {
     protocolFeeFinalAmount?: number;
+    referralFeeFinalAmount?: number;
   };
 
 export type DonationFees = {
@@ -30,13 +31,14 @@ export const useDonationFees = ({
   referrerAccountId,
   potAccountId,
   protocolFeeFinalAmount,
+  referralFeeFinalAmount,
   bypassProtocolFee = false,
   bypassChefFee = false,
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
   const { data: potData } = potlock.usePot({ potId: potAccountId });
 
-  // TODO: Recalculate basic points if `protocolFeeFinalAmount` is provided
+  // TODO: Recalculate basic points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
 
   /**
    *? Protocol fee:
@@ -76,6 +78,7 @@ export const useDonationFees = ({
     : 0;
 
   const referralFeeAmount =
+    referralFeeFinalAmount ??
     (amount * referralFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
   const referralFeePercent = basisPointsToPercent(referralFeeBasisPoints);

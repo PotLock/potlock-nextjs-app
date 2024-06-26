@@ -64,14 +64,17 @@ export const DonationSuccess = ({
     tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
   );
 
-  // TODO:
-  //! pass `result.referrer_fee` as optional parameters
-  //! to display the factually correct values
+  const referralFeeFinalAmountFloat = bigStringToFloat(
+    result?.referrer_fee ?? "0",
+    tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
+  );
+
   const fees = useDonationFees({
     amount: totalAmountFloat,
     referrerAccountId: result?.referrer_id ?? undefined,
     potAccountId,
     protocolFeeFinalAmount: protocolFeeAmountFloat,
+    referralFeeFinalAmount: referralFeeFinalAmountFloat,
   });
 
   return recipientAccountError !== undefined ? (

@@ -1,4 +1,4 @@
-import { MemoryCache } from "@wpdas/naxios";
+import { ChangeMethodArgs, MemoryCache } from "@wpdas/naxios";
 
 import { POTLOCK_DONATE_CONTRACT_ID } from "@/common/constants";
 
@@ -54,9 +54,10 @@ export const getDonationsForDonor = (args: { donor_id: string }) =>
 export const donateNearDirectly = (
   args: DirectDonationArgs,
   depositAmountYocto: string,
+  callbackUrl?: ChangeMethodArgs<DirectDonation>["callbackUrl"],
 ) =>
   contractApi.call<typeof args, DirectDonation>("donate", {
     args,
     deposit: depositAmountYocto,
-    callbackUrl: window.location.href,
+    callbackUrl,
   });
