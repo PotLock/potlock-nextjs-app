@@ -30,7 +30,7 @@ type Props = {
 };
 
 const ProfileTags = ({ accountId }: Props) => {
-  const projectProfile = useProfileData(accountId);
+  const { profile: projectProfile } = useProfileData(accountId);
 
   const [tags, setTags] = useState<string[]>();
   useEffect(() => {

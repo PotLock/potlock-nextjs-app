@@ -16,6 +16,7 @@ import CopyIcon from "./CopyIcon";
 import DonationsInfo from "./DonationsInfo";
 import Linktree from "./Linktree";
 import ProfileTags from "./ProfileTags";
+import useProfileData from "../hooks/useProfileData";
 
 type Props = {
   accountId: string;
@@ -61,12 +62,13 @@ const LinksWrapper = ({ accountId }: Props) => {
 
 const Info = ({ accountId }: Props) => {
   const { wallet } = useWallet();
+  const { profile } = useProfileData(accountId);
 
-  const name = "Near Social Bridge";
+  const name = profile?.name || "";
   const isOwner = wallet?.accountId === accountId;
 
   return (
-    <div className="mb-[66px] flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
+    <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
       {/* NameContainer */}
       <div className="flex w-full flex-wrap gap-8">
         {/* Left */}

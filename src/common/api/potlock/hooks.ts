@@ -2,7 +2,11 @@ import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
 import { ByAccountId, ByListId, ConditionalExecution } from "@/common/types";
 
 import { swrHooks } from "./generated";
-import { ByPotId, V1ListsRandomRegistrationRetrieveParams } from "./types";
+import {
+  ByPotId,
+  V1AccountsPotApplicationsRetrieveParams,
+  V1ListsRandomRegistrationRetrieveParams,
+} from "./types";
 
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve
@@ -46,6 +50,22 @@ export const useAccountActivePots = ({ accountId }: ByAccountId) => {
   const queryResult = swrHooks.useV1AccountsActivePotsRetrieve(
     accountId,
     { status: "live" },
+    POTLOCK_REQUEST_CONFIG,
+  );
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_pot_applications_retrieve
+ */
+export const useAccountPotApplications = ({
+  accountId,
+  status,
+}: ByAccountId & V1AccountsPotApplicationsRetrieveParams) => {
+  const queryResult = swrHooks.useV1AccountsPotApplicationsRetrieve(
+    accountId,
+    { status },
     POTLOCK_REQUEST_CONFIG,
   );
 
