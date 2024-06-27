@@ -16,7 +16,7 @@ const FollowStats = ({
   onFollowingClick,
 }: Props) => {
   const [following, setFollowing] = useState(0);
-  const [followers, setFollowers] = useState(0);
+  const [followers] = useState(0);
 
   useEffect(() => {
     const fetchSocialData = async () => {
@@ -24,9 +24,9 @@ const FollowStats = ({
       setFollowing(_following.total);
       console.log(_following);
 
-      const _followers = await getFollowers({ accountId });
-      setFollowers(_followers.total);
-      console.log(_followers);
+      // const _followers = await getFollowers({ accountId });
+      // setFollowers(_followers.total);
+      // console.log(_followers);
     };
 
     if (accountId) {
