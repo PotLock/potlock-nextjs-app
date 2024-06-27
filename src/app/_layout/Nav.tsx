@@ -14,22 +14,10 @@ import routesPath from "@/modules/core/routes";
 import UserDropdown from "../_components/UserDropdown";
 
 const tabOptions = [
-  {
-    text: "Projects",
-    link: routesPath.PROJECTS_LIST,
-    disabled: false,
-  },
-  { text: "Feed", link: "feed", disabled: false },
-  {
-    text: "Pots",
-    link: routesPath.POTS,
-    disabled: false,
-  },
-  {
-    text: "Donors",
-    link: routesPath.DONORS,
-    disabled: false,
-  },
+  { text: "Projects", link: routesPath.PROJECTS_LIST, disabled: false },
+  // { text: "Feed", link: "feed", disabled: false },
+  { text: "Pots", link: routesPath.POTS, disabled: false },
+  // { text: "Donors", link: routesPath.DONORS, disabled: false },
 ];
 
 const AuthButton = () => {
