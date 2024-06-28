@@ -6,22 +6,29 @@ import { ByAccountId } from "@/common/types";
 export type FollowStatsProps = ByAccountId & {};
 
 export const FollowStats: React.FC<FollowStatsProps> = ({ accountId }) => {
-  const { data: accountFollowersList, error: accountFollowersError } =
-    nearSocial.useAccountFollowers({ accountId });
+  const { data: followerAccountIds } = nearSocial.useFollowerAccountIds({
+    accountId,
+  });
 
-  console.log(accountFollowersError);
+  const { data: followedAccountIds } = nearSocial.useFollowedAccountIds({
+    accountId,
+  });
 
-  return accountFollowersError ? null : (
+  return (
     <div className="flex items-center gap-4 max-[400px]:mt-2 md:gap-8">
-      <Link href="#" className="prose flex gap-1">
-        <span un-font="600">{accountFollowersList?.length}</span>
-        <span>Followers</span>
-      </Link>
+      {followerAccountIds && (
+        <Link href="#" className="prose flex gap-1">
+          <span un-font="600">{followerAccountIds?.length}</span>
+          <span>Followers</span>
+        </Link>
+      )}
 
-      <Link href="#" className="prose flex gap-1">
-        <span un-font="600">{"x"}</span>
-        <span>Following</span>
-      </Link>
+      {followedAccountIds && (
+        <Link href="#" className="prose flex gap-1">
+          <span un-font="600">{followedAccountIds?.length}</span>
+          <span>Following</span>
+        </Link>
+      )}
     </div>
   );
 };
