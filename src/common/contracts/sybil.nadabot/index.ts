@@ -1,3 +1,5 @@
+"use client";
+
 import { MemoryCache } from "@wpdas/naxios";
 import { Provider } from "near-api-js/lib/providers";
 
@@ -129,7 +131,10 @@ export const addStamp = (providerId: string) =>
     },
     gas: FULL_TGAS,
     deposit: TWO_HUNDREDTHS_NEAR,
-    callbackUrl: `${window.location.href}?verifiedProvider=${providerId}`,
+
+    callbackUrl: window?.location?.href
+      ? `${window.location.href}?verifiedProvider=${providerId}`
+      : undefined,
   });
 
 /**
