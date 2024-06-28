@@ -159,32 +159,6 @@ export const getFollowing = async ({ accountId }: { accountId: string }) => {
   }
 };
 
-export const getFollowers = async ({ accountId }: { accountId: string }) => {
-  try {
-    const response = await nearSocialDbContractApi.view<any, any>("keys", {
-      args: {
-        keys: [`*/graph/follow/${accountId}`],
-        options: {
-          return_type: "BlockHeight",
-          values_only: true,
-        },
-      },
-    });
-
-    // TODO
-    // return response;
-    return { accounts: [], total: 0 };
-  } catch (e) {
-    // TODO: Error getting followers because of gas limit (it makes sense because of the amount of data it's trying to get)
-    console.error("getFollowers:", e);
-    return { accounts: [], total: 0 };
-  }
-
-  // const followingAccounts = Object.keys(response[accountId].graph.follow);
-
-  // return { accounts: followingAccounts, total: followingAccounts.length };
-};
-
 export const getSocialData = async <R>({ path }: { path: string }) => {
   try {
     const response = await nearSocialDbContractApi.view<any, R>("keys", {

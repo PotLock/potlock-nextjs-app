@@ -15,7 +15,7 @@ export const useAccountFollowers = ({ accountId }: Partial<ByAccountId>) =>
             keys: [`*/graph/follow/${accountId}`],
             options: { return_type: "BlockHeight", values_only: true },
           })
-          .then((response) => response.data);
+          .then((response) => Object.keys(response.data));
       }
     },
 
