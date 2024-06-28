@@ -15,7 +15,7 @@ export const FollowStats: React.FC<FollowStatsProps> = ({ accountId }) => {
   });
 
   return (
-    <div className="flex items-center gap-4 max-[400px]:mt-2 md:gap-8">
+    <div un-flex="~" un-items="center" un-gap="4 md:8" un-mt="max-[400px]:2">
       {followerAccountIds && (
         <Link href="#" className="prose flex gap-1">
           <span un-font="600">{followerAccountIds?.length}</span>
