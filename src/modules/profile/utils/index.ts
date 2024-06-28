@@ -1,10 +1,4 @@
-import { dispatch, useTypedSelector } from "@/app/_store";
-
-import { PROFILE_DEFAULTS } from "../constants";
-import { Profile } from "../models";
-
-export const useProfile = (projectId: string): Profile =>
-  useTypedSelector((state) => state.profiles[projectId] || PROFILE_DEFAULTS);
+import { dispatch } from "@/app/_store";
 
 export const updateAccountId = (accountId: string) =>
   dispatch.nav.update({
