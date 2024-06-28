@@ -22,6 +22,7 @@
     "@hookform/resolvers": "^3.6.0",
     "@near-wallet-selector/bitget-wallet": "^8.9.5",
     "@near-wallet-selector/coin98-wallet": "^8.9.5",
+    "@near-wallet-selector/core": "^8.9.10",
     "@near-wallet-selector/here-wallet": "^8.9.5",
     "@near-wallet-selector/ledger": "^8.9.5",
     "@near-wallet-selector/math-wallet": "^8.9.5",
