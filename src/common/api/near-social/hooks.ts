@@ -13,7 +13,7 @@ export const useAccountFollowers = ({ accountId }: Partial<ByAccountId>) =>
         return client
           .post(url, {
             keys: [`*/graph/follow/${accountId}`],
-            options: { return_type: "BlockHeight", values_only: true },
+            options: { values_only: true },
           })
           .then((response) => Object.keys(response.data));
       }
