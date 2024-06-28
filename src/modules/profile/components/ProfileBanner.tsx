@@ -16,7 +16,7 @@ import useRegistration from "@/modules/core/hooks/useRegistration";
 import { fetchSocialImages } from "@/modules/core/services/socialImages";
 import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIcons";
 
-import FollowStats from "./FollowStats";
+import { FollowStats } from "./FollowStats";
 
 type Props = {
   accountId: string; // near address (donor | project)
