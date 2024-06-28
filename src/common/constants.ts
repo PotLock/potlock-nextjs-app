@@ -46,8 +46,6 @@ export const PAGODA_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
   },
 };
 
-export const COINGECKO_API_ENDPOINT = "https://api.coingecko.com/api/v3";
-
 // SYBIL CONTRACT
 export const NADABOT_CONTRACT_ID = process.env
   .NEXT_PUBLIC_NADABOT_CONTRACT_ID as string;
