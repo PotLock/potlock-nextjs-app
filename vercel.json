@@ -1,5 +1,8 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "excludeFiles": "./src/app/**"
+    "app/*": {
+      "excludeFiles": "*.page.tsx"
+    }
   }
 }
