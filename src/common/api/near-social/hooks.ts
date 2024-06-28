@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import useSWR, { SWRResponse } from "swr";
 
 import { AccountId, ByAccountId } from "@/common/types";
@@ -17,7 +18,16 @@ export const useFollowerAccountIds = ({
             keys: [`*/graph/follow/${accountId}`],
             options: { values_only: true },
           })
-          .then((response) => Object.keys(response.data));
+          .then(
+            (
+              response: AxiosResponse<
+                Record<
+                  AccountId,
+                  { graph: { follow: { [key: AccountId]: boolean } } }
+                >
+              >,
+            ) => Object.keys(response.data),
+          );
       }
     },
 
@@ -37,8 +47,14 @@ export const useFollowedAccountIds = ({
             keys: [`${accountId}/graph/follow/*`],
             options: { values_only: true },
           })
-          .then((response) =>
-            Object.keys(response.data[accountId].graph.follow),
+          .then(
+            (
+              response: AxiosResponse<{
+                [key: AccountId]: {
+                  graph: { follow: { [key: AccountId]: boolean } };
+                };
+              }>,
+            ) => Object.keys(response.data[accountId].graph.follow),
           );
       }
     },
