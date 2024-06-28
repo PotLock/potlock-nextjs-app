@@ -1,55 +1,42 @@
-import React, { useEffect, useState } from "react";
-
 import Image from "next/image";
 import Link from "next/link";
 
-import { dispatch } from "@/app/_store";
+import { potlock } from "@/common/api/potlock";
 import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { _address, yoctosToNear } from "@/common/lib";
+import { truncate, yoctosToNear } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { useDonation } from "@/modules/donation";
-import { useProfile } from "@/modules/profile/utils";
 
 import CardSkeleton from "./CardSkeleton";
 
 const MAX_DESCRIPTION_LENGTH = 80;
+
+export type ProjectCardProps = {
+  projectId: string;
+  potId?: string;
+  allowDonate?: boolean;
+  payoutDetails?: PayoutDetailed;
+};
 
 export const ProjectCard = ({
   projectId,
   potId,
   allowDonate: _allowDonate,
   payoutDetails,
-}: {
-  projectId: string;
-  potId?: string;
-  allowDonate?: boolean;
-  payoutDetails?: PayoutDetailed;
-}) => {
+}: ProjectCardProps) => {
   const allowDonate = _allowDonate === undefined ? true : _allowDonate;
   const { openDonationModal } = useDonation({ accountId: projectId });
 
-  const { socialData, socialImages, tags, totalAmountNear } =
-    useProfile(projectId);
+  const { isLoading: isAccountLoading, data: account } = potlock.useAccount({
+    accountId: projectId,
+  });
 
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    dispatch.profiles
-      .loadProfile({
-        projectId,
-        payoutDetails,
-        potId,
-      })
-      .then(() => setIsLoading(false))
-      .catch((err: Error) => {
-        console.error("error fetching data for project card ", err);
-        setIsLoading(false);
-      });
-  }, [projectId, payoutDetails, potId]);
+  const { backgroundImage, image, name, description } =
+    account?.near_social_profile_data ?? {};
 
   return (
     <Link href={`/user/${projectId}`}>
-      {isLoading ? (
+      {isAccountLoading ? (
         <CardSkeleton />
       ) : (
         <div
@@ -58,26 +45,30 @@ export const ProjectCard = ({
         >
           {/* Background */}
           <div className="relative h-[145px] w-full overflow-hidden">
-            <Image
-              fill
-              // loading="lazy"
-              className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-              alt="background-image"
-              src={socialImages.backgroundImage}
-            />
+            {backgroundImage?.url && (
+              <Image
+                fill
+                // loading="lazy"
+                className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                alt="background-image"
+                src={backgroundImage.url}
+              />
+            )}
           </div>
 
           {/* Content */}
           <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
             {/* Profile image */}
             <div className="relative -mt-5 h-10 w-10">
-              <Image
-                fill
-                loading="lazy"
-                className="rounded-full bg-white object-cover shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-                alt="profile-image"
-                src={socialImages.image}
-              />
+              {image?.url && (
+                <Image
+                  fill
+                  loading="lazy"
+                  className="rounded-full bg-white object-cover shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
+                  alt="profile-image"
+                  src={image.url}
+                />
+              )}
             </div>
 
             {/* Name */}
@@ -85,7 +76,7 @@ export const ProjectCard = ({
               className="w-full text-base font-semibold text-[#2e2e2e]"
               data-testid="project-card-title"
             >
-              {_address(socialData?.name || "", 30) || _address(projectId, 30)}
+              {truncate(name ?? "", 30) || truncate(projectId, 30)}
             </div>
 
             {/* Description */}
@@ -93,15 +84,15 @@ export const ProjectCard = ({
               className="text-base font-normal text-[#2e2e2e]"
               data-testid="project-card-description"
             >
-              {_address(socialData.description || "", MAX_DESCRIPTION_LENGTH)}
+              {truncate(description ?? "", MAX_DESCRIPTION_LENGTH)}
             </div>
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2 text-base">
-              {tags?.map((tag: string, index: number) => (
+              {["todo:tags"].map((tag: string) => (
                 <div
                   className="rounded border border-solid border-[#7b7b7b5c] px-2 py-1 text-base text-[#2e2e2e] shadow-[0px_-0.699999988079071px_0px_#7b7b7b5c_inset]"
-                  key={index}
+                  key={tag}
                 >
                   {tag}
                 </div>
@@ -116,7 +107,7 @@ export const ProjectCard = ({
                   className="text-lg font-semibold leading-6 text-[#292929]"
                   data-testid="project-card-fundraising-amount"
                 >
-                  {totalAmountNear}
+                  {account?.total_donations_in_usd ?? 0}
                 </div>
 
                 <div className="text-sm font-medium leading-4  text-neutral-600">
@@ -156,7 +147,7 @@ export const ProjectCard = ({
               </div>
 
               <div className="text-sm font-semibold leading-6 text-[#292929]">
-                {yoctosToNear(payoutDetails.amount) || "- N"}
+                {/* yoctosToNear(payoutDetails.amount) || "- N" */}
               </div>
             </div>
           )}
