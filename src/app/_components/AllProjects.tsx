@@ -84,6 +84,7 @@ const AllProjects = () => {
       if (search === "") return true;
       const { registrant_id: registrantId } = registration;
       const { near_social_profile_data } = account || {};
+
       // registration fields to search in
       const fields = [
         registrantId,
@@ -95,6 +96,7 @@ const AllProjects = () => {
 
       return fields.some((item) => (item || "").toLowerCase().includes(search));
     };
+
     // Filter by registration status
     const handleStatus = (registration: Registration) => {
       if (statusFilter.includes("all") || statusFilter.length === 0) {
@@ -102,6 +104,7 @@ const AllProjects = () => {
       }
       return statusFilter.includes(registration.status);
     };
+
     // Filter by registration category
     const handleCategory = (account: Account) => {
       const { near_social_profile_data } = account;
