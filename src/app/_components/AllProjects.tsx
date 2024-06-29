@@ -89,7 +89,7 @@ const AllProjects = () => {
         registrantId,
         near_social_profile_data?.description,
         near_social_profile_data?.name,
-        near_social_profile_data?.tags?.join(" "),
+        // near_social_profile_data?.tags?.join(" "),
         near_social_profile_data?.plTeam,
       ];
 
@@ -104,8 +104,8 @@ const AllProjects = () => {
     };
     // Filter by registration category
     const handleCategory = (account: Account) => {
-      const { near_social_profile_data } = account || {};
-      const tags = near_social_profile_data?.tags || [];
+      const { near_social_profile_data } = account;
+      const tags = [] as string[]; // || near_social_profile_data?.tags;
 
       if (categoryFilter.length === 0) return true;
       return categoryFilter.some((tag: string) => tags.includes(tag));
@@ -117,8 +117,8 @@ const AllProjects = () => {
         const profile = {}; // registrationsProfile[registration.registrant_id] ||;
 
         return (
-          handleSearch(registration, profile) &&
-          handleCategory(profile) &&
+          handleSearch(registration, profile as Account) &&
+          handleCategory(profile as Account) &&
           handleStatus(registration)
         );
       });
