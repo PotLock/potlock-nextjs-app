@@ -1,4 +1,7 @@
 import { Account } from "near-api-js";
+import { SWRConfiguration } from "swr";
+
+export type ClientConfig = { swr?: SWRConfiguration };
 
 export interface ConditionalExecution {
   enabled?: boolean;
