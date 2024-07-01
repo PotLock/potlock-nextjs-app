@@ -6,6 +6,7 @@ import {
   ByPotId,
   V1AccountsPotApplicationsRetrieveParams,
   V1ListsRandomRegistrationRetrieveParams,
+  V1ListsRegistrationsRetrieveParams,
 } from "./types";
 
 /**
@@ -123,6 +124,22 @@ export const useRandomListRegistration = ({
       ...POTLOCK_REQUEST_CONFIG,
       swr: { revalidateIfStale: false, revalidateOnFocus: false },
     },
+  );
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_registrations_retrieve
+ */
+export const useListRegistrations = ({
+  listId,
+  status,
+}: ByListId & V1ListsRegistrationsRetrieveParams) => {
+  const queryResult = swrHooks.useV1ListsRegistrationsRetrieve(
+    listId,
+    { status },
+    POTLOCK_REQUEST_CONFIG,
   );
 
   return { ...queryResult, data: queryResult.data?.data };
