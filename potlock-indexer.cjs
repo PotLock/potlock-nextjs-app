@@ -1,14 +1,16 @@
+const targetPath = "./src/common/api/potlock/generated/client.ts";
+
 module.exports = {
   "potlock-indexer": {
     input: "https://dev.potlock.io/api/schema",
 
     output: {
-      target: "./src/common/api/potlock/generated/client.ts",
+      target: targetPath,
       client: "swr",
     },
 
     hooks: {
-      afterAllFilesWrite: "yarn format",
+      afterAllFilesWrite: `eslint --fix ${targetPath}`,
     },
   },
 };
