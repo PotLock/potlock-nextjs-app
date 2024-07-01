@@ -1,6 +1,4 @@
-import { Profile } from "./models";
-
-export const PROFILE_DEFAULTS: Profile = {
+export const PROFILE_DEFAULTS = {
   socialData: {},
   tags: [],
   team: [],

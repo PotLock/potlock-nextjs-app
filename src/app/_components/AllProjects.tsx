@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useTypedSelector } from "@/app/_store";
+import { Account } from "@/common/api/potlock";
 import {
   Registration,
   RegistrationStatus,
@@ -13,7 +13,6 @@ import {
   SearchBar,
   SortSelect,
 } from "@/common/ui/components";
-import { Profile } from "@/modules/profile/models";
 import { ProjectCard } from "@/modules/project";
 import { categories, statuses } from "@/modules/project/constants";
 
@@ -78,26 +77,26 @@ const AllProjects = () => {
     }
   };
 
-  const registrationsProfile = useTypedSelector((state) => state.profiles);
-
   // handle search & filter
   useEffect(() => {
     // Search
-    const handleSearch = (registration: Registration, profile: Profile) => {
+    const handleSearch = (registration: Registration, account: Account) => {
       if (search === "") return true;
       const { registrant_id: registrantId } = registration;
-      const { socialData, tags, team } = profile || {};
+      const { near_social_profile_data } = account || {};
+
       // registration fields to search in
       const fields = [
         registrantId,
-        socialData?.description,
-        socialData?.name,
-        tags?.join(" "),
-        team?.join(" "),
+        near_social_profile_data?.description,
+        near_social_profile_data?.name,
+        near_social_profile_data?.plCategories,
+        near_social_profile_data?.plTeam,
       ];
 
       return fields.some((item) => (item || "").toLowerCase().includes(search));
     };
+
     // Filter by registration status
     const handleStatus = (registration: Registration) => {
       if (statusFilter.includes("all") || statusFilter.length === 0) {
@@ -105,34 +104,35 @@ const AllProjects = () => {
       }
       return statusFilter.includes(registration.status);
     };
+
     // Filter by registration category
-    const handleCategory = (profile: Profile) => {
-      const tags = profile.tags || [];
+    const handleCategory = (account: Account) => {
+      const { near_social_profile_data } = account;
+      const categories = near_social_profile_data?.plCategories
+        ? JSON.parse(near_social_profile_data?.plCategories)
+        : [];
 
       if (categoryFilter.length === 0) return true;
-      return categoryFilter.some((tag: string) => tags.includes(tag));
+      return categoryFilter.some((category: string) =>
+        categories.includes(category),
+      );
     };
 
     if (search || categoryFilter.length || statusFilter.length) {
       const filteredRegistrations = registrations.filter((registration) => {
-        const profile = registrationsProfile[registration.registrant_id] || {};
+        // TODO: Figure out what's going in here and use Indexer API client
+        const profile = registration.registrant_id;
 
         return (
-          handleSearch(registration, profile) &&
-          handleCategory(profile) &&
+          handleSearch(registration, profile as Account) &&
+          handleCategory(profile as Account) &&
           handleStatus(registration)
         );
       });
 
       setFilteredRegistrations(filteredRegistrations);
     }
-  }, [
-    search,
-    categoryFilter,
-    statusFilter,
-    registrations,
-    registrationsProfile,
-  ]);
+  }, [search, categoryFilter, statusFilter, registrations]);
 
   // Fetch Registrations
   useEffect(() => {
@@ -151,7 +151,7 @@ const AllProjects = () => {
   }, []);
 
   return (
-    <div className="flex w-full flex-col px-2 pt-10 md:px-10 md:pb-0 md:pt-12">
+    <div className="flex w-full flex-col px-2 py-10 md:px-10 md:py-12">
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           All projects
@@ -180,7 +180,7 @@ const AllProjects = () => {
       </div>
       {filteredRegistrations.length ? (
         <InfiniteScroll
-          className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+          className="p-0.5"
           items={filteredRegistrations}
           index={index}
           setIndex={setIndex}
