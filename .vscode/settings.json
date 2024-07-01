@@ -13,6 +13,7 @@
     "camelcase",
     "colocation",
     "data-testid",
+    "foodbank",
     "hookform",
     "kubb",
     "NADABOT",
@@ -29,6 +30,7 @@
     "unocss",
     "welldone",
     "wpdas",
-    "xdefi"
+    "xdefi",
+    "yearofchef"
   ]
 }

@@ -3,13 +3,20 @@ import Link from "next/link";
 
 import { potlock } from "@/common/api/potlock";
 import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { truncate, yoctosToNear } from "@/common/lib";
+import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
+import { useNearUsdDisplayValue } from "@/modules/core";
 import { useDonation } from "@/modules/donation";
 
 import CardSkeleton from "./CardSkeleton";
+import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";
 
-const MAX_DESCRIPTION_LENGTH = 80;
+const rootBoxShadow = `
+  0px 0px 0px 1px rgba(5, 5, 5, 0.08),
+  0px 2px 2px -1px rgba(15, 15, 15, 0.15),
+  0px 4px 4px -2px rgba(5, 5, 5, 0.08)
+`;
 
 export type ProjectCardProps = {
   projectId: string;
@@ -21,18 +28,35 @@ export type ProjectCardProps = {
 export const ProjectCard = ({
   projectId,
   potId,
-  allowDonate: _allowDonate,
+  allowDonate = true,
   payoutDetails,
 }: ProjectCardProps) => {
-  const allowDonate = _allowDonate === undefined ? true : _allowDonate;
   const { openDonationModal } = useDonation({ accountId: projectId });
 
   const { isLoading: isAccountLoading, data: account } = potlock.useAccount({
     accountId: projectId,
   });
 
-  const { backgroundImage, image, name, description } =
+  const estimatedMatchedAmount = useNearUsdDisplayValue(
+    yoctoNearToFloat(payoutDetails?.amount ?? "0"),
+  );
+
+  const { backgroundImage, image, name, description, plCategories } =
     account?.near_social_profile_data ?? {};
+
+  const backgroundImageUrl =
+    backgroundImage?.url ??
+    backgroundImage?.nft?.media ??
+    backgroundImage?.ipfs_cid
+      ? `https://ipfs.near.social/ipfs/${backgroundImage.ipfs_cid}`
+      : null;
+
+  const profileImageUrl =
+    image?.url ?? image?.nft?.media ?? image?.ipfs_cid
+      ? `https://ipfs.near.social/ipfs/${image.ipfs_cid}`
+      : null;
+
+  const categories = plCategories ? JSON.parse(plCategories) : [];
 
   return (
     <Link href={`/user/${projectId}`}>
@@ -40,33 +64,48 @@ export const ProjectCard = ({
         <CardSkeleton />
       ) : (
         <div
-          className="group mx-auto flex h-full w-full max-w-[420px]  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300"
+          className="group"
+          un-mx="auto"
+          un-transition="all duration-300"
+          un-w="full"
+          un-max-w="420px"
+          un-h="full"
+          un-flex="~ col"
+          un-bg="white"
+          un-overflow="overflow-hidden"
+          un-border="rounded-md"
+          style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"
         >
-          {/* Background */}
-          <div className="relative h-[145px] w-full overflow-hidden">
-            {backgroundImage?.url && (
+          {/* Cover */}
+          <div className="relative h-[145px] w-full overflow-hidden rounded-t-md">
+            {backgroundImageUrl && (
               <Image
+                alt={`Background image for ${name}`}
+                className={cn(
+                  "object-cover transition-transform duration-500 ease-in-out",
+                  "group-hover:scale-110",
+                )}
+                src={backgroundImageUrl}
+                loading="lazy"
                 fill
-                // loading="lazy"
-                className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                alt="background-image"
-                src={backgroundImage.url}
               />
             )}
           </div>
 
           {/* Content */}
-          <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
-            {/* Profile image */}
+          <div className="flex flex-1 flex-col gap-5 px-6 pb-6">
             <div className="relative -mt-5 h-10 w-10">
-              {image?.url && (
+              {profileImageUrl && (
                 <Image
-                  fill
+                  alt={`Profile image for ${name}`}
+                  className={cn(
+                    "rounded-full bg-white object-cover",
+                    "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
+                  )}
+                  src={profileImageUrl}
                   loading="lazy"
-                  className="rounded-full bg-white object-cover shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-                  alt="profile-image"
-                  src={image.url}
+                  fill
                 />
               )}
             </div>
@@ -84,38 +123,45 @@ export const ProjectCard = ({
               className="text-base font-normal text-[#2e2e2e]"
               data-testid="project-card-description"
             >
-              {truncate(description ?? "", MAX_DESCRIPTION_LENGTH)}
+              {truncate(description ?? "", MAX_PROJECT_DESCRIPTION_LENGTH)}
             </div>
 
-            {/* Tags */}
+            {/* Categories */}
             <div className="flex flex-wrap gap-2 text-base">
-              {["todo:tags"].map((tag: string) => (
+              {categories.map((category: string) => (
                 <div
-                  className="rounded border border-solid border-[#7b7b7b5c] px-2 py-1 text-base text-[#2e2e2e] shadow-[0px_-0.699999988079071px_0px_#7b7b7b5c_inset]"
-                  key={tag}
+                  className="prose"
+                  un-shadow="[0px_-0.699999988079071px_0px_#7b7b7b5c_inset]"
+                  un-border="rounded 1 solid #7b7b7b5c"
+                  un-px="2"
+                  un-py="1"
+                  un-bg="neutral-50"
+                  un-text="sm neutral-950"
+                  un-font="500"
+                  key={category}
                 >
-                  {tag}
+                  {category}
                 </div>
               ))}
             </div>
 
-            {/* Donations Info */}
+            {/* Donations */}
             <div className="mt-auto flex items-center gap-4">
-              {/* amount */}
-              <div className="flex flex-row items-center gap-2">
-                <div
-                  className="text-lg font-semibold leading-6 text-[#292929]"
-                  data-testid="project-card-fundraising-amount"
-                >
-                  {account?.total_donations_in_usd ?? 0}
-                </div>
+              {account?.total_donations_in_usd && (
+                <div className="flex flex-row items-center gap-2">
+                  <div
+                    className="text-lg font-semibold leading-6 text-[#292929]"
+                    data-testid="project-card-fundraising-amount"
+                  >
+                    {`$${account?.total_donations_in_usd}`}
+                  </div>
 
-                <div className="text-sm font-medium leading-4  text-neutral-600">
-                  Raised
+                  <div className="text-sm font-medium leading-4  text-neutral-600">
+                    Raised
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* donors count */}
               {payoutDetails && (
                 <div className="flex flex-row items-center gap-2">
                   <div className="text-lg font-semibold leading-6 text-[#292929]">
@@ -132,7 +178,7 @@ export const ProjectCard = ({
             {allowDonate && (
               <Button
                 className="w-full"
-                variant={"standard-outline"}
+                variant="standard-outline"
                 onClick={openDonationModal}
               >
                 Donate
@@ -141,14 +187,24 @@ export const ProjectCard = ({
           </div>
 
           {payoutDetails && (
-            <div className="flex items-center justify-between rounded-[0px_0px_12px_12px] bg-[#ebebeb] px-6 py-2">
-              <div className="text-xs uppercase leading-[18px] tracking-[1.1px] text-[#292929]">
-                Estimated matched amount
-              </div>
+            <div
+              className="prose"
+              un-flex="~"
+              un-justify="between"
+              un-items="center"
+              un-py="2"
+              un-px="6"
+              un-rounded="[0px_0px_12px_12px]"
+              un-bg="neutral-50"
+              un-text="sm"
+            >
+              <span un-text="neutral-500" un-font="500">
+                Estimated Matched Amount
+              </span>
 
-              <div className="text-sm font-semibold leading-6 text-[#292929]">
-                {/* yoctosToNear(payoutDetails.amount) || "- N" */}
-              </div>
+              <span un-text="neutral-950 nowrap" un-font="600">
+                {estimatedMatchedAmount}
+              </span>
             </div>
           )}
         </div>

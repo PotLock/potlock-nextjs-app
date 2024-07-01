@@ -3,7 +3,7 @@ import { FocusEvent, FormEvent, useState } from "react";
 import { Box, Plus, Trash } from "lucide-react";
 import Image from "next/image";
 
-import { _address } from "@/common/lib";
+import { truncate } from "@/common/lib";
 import {
   Accordion,
   AccordionContent,
@@ -112,7 +112,7 @@ const ActAsDao = () => {
                       className="text-inherit"
                       color={isActive ? "#33DDCB" : "#656565"}
                     />
-                    {_address(address, 22)}
+                    {truncate(address, 22)}
                   </AccordionTrigger>
                   <AccordionContent className="flex items-center gap-2 px-3 py-[10px]">
                     <Checkbox
