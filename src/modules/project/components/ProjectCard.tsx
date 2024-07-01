@@ -195,15 +195,16 @@ export const ProjectCard = ({
               un-py="2"
               un-px="6"
               un-rounded="[0px_0px_12px_12px]"
-              un-bg="neutral-500"
+              un-bg="neutral-50"
+              un-text="sm"
             >
-              <div un-text="neutral-600" un-font="500">
+              <span un-text="neutral-500" un-font="500">
                 Estimated Matched Amount
-              </div>
+              </span>
 
-              <div un-text="neutral-950" un-font="600">
+              <span un-text="neutral-950 nowrap" un-font="600">
                 {estimatedMatchedAmount}
-              </div>
+              </span>
             </div>
           )}
         </div>
