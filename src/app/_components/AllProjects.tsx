@@ -151,7 +151,7 @@ const AllProjects = () => {
   }, []);
 
   return (
-    <div className="flex w-full flex-col px-2 pt-10 md:px-10 md:pb-0 md:pt-12">
+    <div className="flex w-full flex-col px-2 py-10 md:px-10 md:py-12">
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           All projects
@@ -180,7 +180,7 @@ const AllProjects = () => {
       </div>
       {filteredRegistrations.length ? (
         <InfiniteScroll
-          className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+          className="p-0.5"
           items={filteredRegistrations}
           index={index}
           setIndex={setIndex}

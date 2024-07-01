@@ -1,3 +1,5 @@
+export const MAX_PROJECT_DESCRIPTION_LENGTH = 80;
+
 export const categories = [
   {
     label: "Desci",
