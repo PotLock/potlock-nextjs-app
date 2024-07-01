@@ -1,23 +1,20 @@
-import FundingRaised from "./sub-pages/FundingRaised";
-import HomeSubPage from "./sub-pages/Home";
-import PotsSubPage from "./sub-pages/Pots";
 import { TabNav } from "./types";
 
 const tabRoutes = [
   {
     label: "Home",
     id: "home",
-    Component: HomeSubPage,
+    href: "/home",
   },
   {
     label: "Pots",
     id: "pots",
-    Component: PotsSubPage,
+    href: "/pots",
   },
   {
     label: "Funding Raised",
     id: "funding",
-    Component: FundingRaised,
+    href: "/funding-raised",
   },
 ] as TabNav[];
 
