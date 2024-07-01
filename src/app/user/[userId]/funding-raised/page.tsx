@@ -1,22 +1,19 @@
+"use client";
+
 /* eslint-disable @next/next/no-img-element */
 import { useParams } from "next/navigation";
 
 import { ExternalFundingSource } from "@/common/contracts/social";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
-
-import ExternalFunding from "../components/ExternalFunding";
-import PotlockFunding from "../components/PotlockFunding";
-import useProfileData from "../hooks/useProfileData";
+import ExternalFunding from "@/modules/profile/components/ExternalFunding";
+import PotlockFunding from "@/modules/profile/components/PotlockFunding";
+import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 const Line = () => <div className="my-[3rem] h-[1px] w-full bg-[#c7c7c7]" />;
 
 const FundingRaised = () => {
   const { userId } = useParams<{ userId: string }>();
-  const {
-    donations,
-    uniqueDonors,
-    near: totalMatched,
-  } = useDonationsForProject(userId);
+  const { donations } = useDonationsForProject(userId);
   const { profile } = useProfileData(userId);
 
   const externalFunding: ExternalFundingSource[] = profile?.plFundingSources

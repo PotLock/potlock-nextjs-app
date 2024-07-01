@@ -2,11 +2,11 @@
 
 import { useParams } from "next/navigation";
 
-import AboutItem from "../components/AboutItem";
-import Github from "../components/Github";
-import SmartContract from "../components/SmartContract";
-import Team from "../components/Team";
-import useProfileData from "../hooks/useProfileData";
+import AboutItem from "@/modules/profile/components/AboutItem";
+import Github from "@/modules/profile/components/Github";
+import SmartContract from "@/modules/profile/components/SmartContract";
+import Team from "@/modules/profile/components/Team";
+import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 const HomeSubPage = () => {
   const { userId } = useParams<{ userId: string }>();
