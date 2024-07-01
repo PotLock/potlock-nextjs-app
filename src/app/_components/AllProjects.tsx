@@ -90,7 +90,7 @@ const AllProjects = () => {
         registrantId,
         near_social_profile_data?.description,
         near_social_profile_data?.name,
-        // near_social_profile_data?.tags?.join(" "),
+        near_social_profile_data?.plCategories,
         near_social_profile_data?.plTeam,
       ];
 
@@ -108,16 +108,20 @@ const AllProjects = () => {
     // Filter by registration category
     const handleCategory = (account: Account) => {
       const { near_social_profile_data } = account;
-      const tags = [] as string[]; // || near_social_profile_data?.tags;
+      const categories = near_social_profile_data?.plCategories
+        ? JSON.parse(near_social_profile_data?.plCategories)
+        : [];
 
       if (categoryFilter.length === 0) return true;
-      return categoryFilter.some((tag: string) => tags.includes(tag));
+      return categoryFilter.some((category: string) =>
+        categories.includes(category),
+      );
     };
 
     if (search || categoryFilter.length || statusFilter.length) {
       const filteredRegistrations = registrations.filter((registration) => {
         // TODO: Figure out what's going in here and use Indexer API client
-        const profile = {}; // registrationsProfile[registration.registrant_id] ||;
+        const profile = registration.registrant_id;
 
         return (
           handleSearch(registration, profile as Account) &&

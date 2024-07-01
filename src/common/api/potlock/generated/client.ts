@@ -9,6 +9,13 @@ import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import useSwr from "swr";
 import type { Key, SWRConfiguration } from "swr";
+export type V1ListsRegistrationsRetrieveParams = {
+  /**
+   * Filter registrations by status
+   */
+  status?: string;
+};
+
 export type V1ListsRandomRegistrationRetrieveParams = {
   /**
    * Filter registrations by status
@@ -1198,13 +1205,23 @@ export const useV1ListsRandomRegistrationRetrieve = <TError = AxiosError<void>>(
 
 export const v1ListsRegistrationsRetrieve = (
   listId: number,
+  params?: V1ListsRegistrationsRetrieveParams,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<PaginatedListRegistrationsResponse>> => {
-  return axios.get(`/api/v1/lists/${listId}/registrations`, options);
+  return axios.get(`/api/v1/lists/${listId}/registrations`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getV1ListsRegistrationsRetrieveKey = (listId: number) =>
-  [`/api/v1/lists/${listId}/registrations`] as const;
+export const getV1ListsRegistrationsRetrieveKey = (
+  listId: number,
+  params?: V1ListsRegistrationsRetrieveParams,
+) =>
+  [
+    `/api/v1/lists/${listId}/registrations`,
+    ...(params ? [params] : []),
+  ] as const;
 
 export type V1ListsRegistrationsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1ListsRegistrationsRetrieve>>
@@ -1213,6 +1230,7 @@ export type V1ListsRegistrationsRetrieveQueryError = AxiosError<void>;
 
 export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
   listId: number,
+  params?: V1ListsRegistrationsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1ListsRegistrationsRetrieve>>,
@@ -1226,8 +1244,10 @@ export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
   const isEnabled = swrOptions?.enabled !== false && !!listId;
   const swrKey =
     swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1ListsRegistrationsRetrieveKey(listId) : null));
-  const swrFn = () => v1ListsRegistrationsRetrieve(listId, axiosOptions);
+    (() =>
+      isEnabled ? getV1ListsRegistrationsRetrieveKey(listId, params) : null);
+  const swrFn = () =>
+    v1ListsRegistrationsRetrieve(listId, params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
