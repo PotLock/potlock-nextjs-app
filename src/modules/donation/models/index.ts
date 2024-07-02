@@ -101,8 +101,11 @@ export const donationModel = createModel<RootModel>()({
               bypass_protocol_fee: bypassProtocolFee,
             };
 
-            // TODO: Provide callbackUrl when the modal state is under router's control
-            return void donateNearDirectly(args, floatToYoctoNear(amount))
+            return void donateNearDirectly(
+              args,
+              floatToYoctoNear(amount),
+              window.location.href,
+            )
               .then((result) => {
                 dispatch.donation.success(result);
                 dispatch.donation.nextStep();

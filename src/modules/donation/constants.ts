@@ -1,4 +1,5 @@
-export const DONATION_MIN_NEAR_AMOUNT = 0.1;
+// TODO: change back to 0.1 after debugging
+export const DONATION_MIN_NEAR_AMOUNT = 0.008;
 
 export const DONATION_MIN_NEAR_AMOUNT_ERROR = `The minimum donation amount is ${DONATION_MIN_NEAR_AMOUNT} NEAR`;
 
