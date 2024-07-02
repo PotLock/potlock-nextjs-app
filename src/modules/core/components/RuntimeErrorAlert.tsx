@@ -7,7 +7,7 @@ export type RuntimeErrorAlertProps = {
 };
 
 export const RuntimeErrorAlert: React.FC<RuntimeErrorAlertProps> = ({
-  title = "Runtime error!",
+  title = "Something went wrong!",
   message,
   callToAction,
 }) => (

@@ -1,4 +1,4 @@
-"use server";
+"use client";
 export const fetchNearPrice = async (): Promise<number> => {
   const response = await fetch(
     "https://api.coingecko.com/api/v3/simple/price?ids=near&vs_currencies=usd",
