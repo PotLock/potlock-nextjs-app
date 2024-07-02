@@ -7,14 +7,14 @@ import { useDonation } from "../hooks/feature";
 export const DonationRandomButton = () => {
   const {
     isLoading: isRandomPGRegistryEntryLoading,
-    data: isRandomPGRegistryEntry,
+    data: randomPGRegistryEntry,
     mutate: refetchRandomPGRegistryEntry,
   } = potlock.useRandomListRegistration({
     listId: POTLOCK_REGISTRY_LIST_ID,
     status: "Approved",
   });
 
-  const randomProjectAccountId = isRandomPGRegistryEntry?.registrant.id;
+  const randomProjectAccountId = randomPGRegistryEntry?.registrant.id;
 
   const { openDonationModal: openRandomDonationModal } = useDonation({
     accountId: randomProjectAccountId ?? "unknown",
