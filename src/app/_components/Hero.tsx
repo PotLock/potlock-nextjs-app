@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import useRegistration from "@/modules/core/hooks/useRegistration";
+import routesPath from "@/modules/core/routes";
 import { DonationRandomButton } from "@/modules/donation";
 
 const Hero = () => {
@@ -33,7 +34,9 @@ const Hero = () => {
             >
               <Link
                 href={
-                  isRegisteredProject ? `/user/${accountId}` : "/createproject"
+                  isRegisteredProject
+                    ? `/user/${accountId}`
+                    : routesPath.CREATE_PROJECT
                 }
                 prefetch={true}
               >
