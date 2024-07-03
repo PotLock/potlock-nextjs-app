@@ -1,15 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 // https://www.npmjs.com/package/react-files
 import Files from "react-files";
 
+import { dispatch, useTypedSelector } from "@/app/_store";
 import CameraIcon from "@/common/assets/svgs/CameraIcon";
-import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { Button } from "@/common/ui/components";
 import Spinner from "@/modules/core/components/Spinner";
 import useStatus from "@/modules/core/hooks/usStatus";
-import uploadFileToIPFS from "@/modules/core/services/uploadFileToIPFS";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 type Props = {
@@ -18,44 +17,40 @@ type Props = {
 
 const Profile = ({ accountId }: Props) => {
   const profileData = useProfileData(accountId);
-  const [backgroundImage, setBackgroundImage] = useState("");
-  const [profileImage, setProfileImage] = useState("");
   const bgImageStatus = useStatus();
   const profileImageStatus = useStatus();
 
+  const { backgroundImage, profileImage } = useTypedSelector(
+    (state) => state.createProject,
+  );
+
   // Bg and Profile Images Effect
   useEffect(() => {
-    setProfileImage(profileData.profileImages.image);
-    setBackgroundImage(profileData.profileImages.backgroundImage);
-  }, [profileData.profileImages]);
+    if (!backgroundImage) {
+      dispatch.createProject.setProfileImage(profileData.profileImages.image);
+      dispatch.createProject.setBackgroundImage(
+        profileData.profileImages.backgroundImage,
+      );
+    }
+  }, [profileData.profileImages, backgroundImage]);
 
   if (!accountId) {
     return "";
   }
 
-  const onBgImageChange = (files: File[]) => {
+  const onBgImageChange = async (files: File[]) => {
     if (files) {
       bgImageStatus.setStatus("loading");
-      uploadFileToIPFS(files[0], async (res) => {
-        bgImageStatus.setStatus("ready");
-        if (res.ok) {
-          const data = await res.json();
-          setBackgroundImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
-        }
-      });
+      await dispatch.createProject.uploadBackgroundImage(files);
+      bgImageStatus.setStatus("ready");
     }
   };
 
-  const onAvatarImageChange = (files: File[]) => {
+  const onAvatarImageChange = async (files: File[]) => {
     if (files) {
       profileImageStatus.setStatus("loading");
-      uploadFileToIPFS(files[0], async (res) => {
-        profileImageStatus.setStatus("ready");
-        if (res.ok) {
-          const data = await res.json();
-          setProfileImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
-        }
-      });
+      await dispatch.createProject.uploadProfileImage(files);
+      profileImageStatus.setStatus("ready");
     }
   };
 
