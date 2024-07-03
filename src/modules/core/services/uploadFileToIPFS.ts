@@ -1,14 +1,9 @@
 "use client";
 
-const uploadFileToIPFS = (
-  body: BodyInit,
-  callback: (value: Response) => void,
-) => {
+const uploadFileToIPFS = async (body: BodyInit) =>
   fetch("https://ipfs.near.social/add", {
     method: "POST",
     headers: { Accept: "application/json" },
     body,
-  }).then(callback);
-};
-
+  });
 export default uploadFileToIPFS;

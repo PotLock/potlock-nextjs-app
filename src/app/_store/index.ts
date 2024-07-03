@@ -43,5 +43,5 @@ export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 // reset all
 export const resetStore = () => {
-  // dispatch.auth.RESET();
+  dispatch.createProject.RESET();
 };

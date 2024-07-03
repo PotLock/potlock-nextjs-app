@@ -38,18 +38,15 @@ export const createProject = createModel<RootModel>()({
   },
 
   effects: (dispatch) => ({
-    uploadBackgroundImage(files: File[]) {
-      return new Promise((resolve) => {
-        uploadFileToIPFS(files[0], async (res) => {
-          if (res.ok) {
-            const data = await res.json();
-            dispatch.createProject.UPDATE_BACKGROUND_IMAGE(
-              `${IPFS_NEAR_SOCIAL_URL}${data.cid}`,
-            );
-            resolve(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
-          }
-        });
-      });
+    async uploadBackgroundImage(files: File[]) {
+      const res = await uploadFileToIPFS(files[0]);
+      if (res.ok) {
+        const data = await res.json();
+        dispatch.createProject.UPDATE_BACKGROUND_IMAGE(
+          `${IPFS_NEAR_SOCIAL_URL}${data.cid}`,
+        );
+        return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
+      }
     },
 
     setBackgroundImage(backgroundUrl: string) {
@@ -57,17 +54,14 @@ export const createProject = createModel<RootModel>()({
     },
 
     async uploadProfileImage(files: File[]) {
-      return new Promise((resolve) => {
-        uploadFileToIPFS(files[0], async (res) => {
-          if (res.ok) {
-            const data = await res.json();
-            dispatch.createProject.UPDATE_PROFILE_IMAGE(
-              `${IPFS_NEAR_SOCIAL_URL}${data.cid}`,
-            );
-            resolve(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
-          }
-        });
-      });
+      const res = await uploadFileToIPFS(files[0]);
+      if (res.ok) {
+        const data = await res.json();
+        dispatch.createProject.UPDATE_PROFILE_IMAGE(
+          `${IPFS_NEAR_SOCIAL_URL}${data.cid}`,
+        );
+        return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
+      }
     },
 
     setProfileImage(profileImageUrl: string) {
