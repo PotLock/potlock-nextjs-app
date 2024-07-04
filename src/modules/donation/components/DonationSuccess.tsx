@@ -24,9 +24,10 @@ import { useDonationFees } from "../hooks";
 import { DonationInputs, DonationState } from "../models";
 
 export type DonationSuccessProps = {
-  result?: DonationState["successResult"];
   form: UseFormReturn<DonationInputs>;
+  result?: DonationState["successResult"];
   transactionHash?: string;
+  closeModal: VoidFunction;
 };
 
 const staticResultIndicatorClassName =
@@ -36,6 +37,7 @@ export const DonationSuccess = ({
   form,
   result,
   transactionHash,
+  closeModal,
 }: DonationSuccessProps) => {
   const isResultLoading = result === undefined;
   const [potAccountId] = form.watch(["potAccountId"]);
@@ -162,6 +164,7 @@ export const DonationSuccess = ({
         ) : (
           <Link
             href={`/user/${recipientAccount.id}/funding-raised`}
+            onClick={closeModal}
             className="text-red-600"
           >
             View donation
