@@ -32,7 +32,7 @@ export const donationAllocationStrategies: Record<
 
   pot: {
     label: "Quadratically matched donation",
-    hintIfDisabled: "(WIP)", // "(no pots available)",
+    hintIfDisabled: "(no pots available)",
     value: DonationAllocationStrategyEnum.pot,
   },
 };
