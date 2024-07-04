@@ -3,7 +3,7 @@ import { ByTokenId } from "@/common/types";
 import { TextWithIcon } from "@/common/ui/components";
 import { TokenIcon } from "@/modules/core";
 
-import { DonationFees } from "../hooks/fees";
+import { DonationFees } from "../hooks";
 
 export type DonationBreakdownProps = ByTokenId & {
   fees: DonationFees;

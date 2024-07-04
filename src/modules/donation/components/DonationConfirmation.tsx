@@ -20,7 +20,7 @@ import { TotalTokenValue } from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
 
 import { DonationBreakdown } from "./DonationBreakdown";
-import { useDonationFees } from "../hooks/fees";
+import { useDonationFees } from "../hooks";
 import { DonationInputs } from "../models";
 
 export type DonationConfirmationProps = {

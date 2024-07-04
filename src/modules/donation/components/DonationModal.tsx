@@ -10,10 +10,11 @@ import { cn } from "@/common/ui/utils";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ModalErrorBody } from "@/modules/core";
 
-import { DonationFlow } from "./DonationFlow";
+import { DonationFlow, DonationFlowProps } from "./DonationFlow";
 import { DonationParameters } from "../models";
 
-export type DonationModalProps = DonationParameters & {};
+export type DonationModalProps = DonationParameters &
+  Pick<DonationFlowProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
   const { syncRouteParams } = useSearchParamsNavigation();

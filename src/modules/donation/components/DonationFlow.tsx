@@ -11,17 +11,19 @@ import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationPotAllocation } from "./DonationPotAllocation";
 import { DonationProjectAllocation } from "./DonationProjectAllocation";
 import { DonationSuccess } from "./DonationSuccess";
-import { useDonationForm } from "../hooks/forms";
+import { useDonationForm } from "../hooks";
 import { DonationState, DonationSubmissionInputs } from "../models";
 
 export type DonationFlowProps = DonationSubmissionInputs &
   DonationState & {
     closeModal: VoidFunction;
+    transactionHash?: string;
   };
 
 export const DonationFlow: React.FC<DonationFlowProps> = ({
   currentStep,
   successResult: result,
+  transactionHash,
   ...props
 }) => {
   const searchParams = useSearchParams();

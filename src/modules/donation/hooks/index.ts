@@ -9,23 +9,31 @@ import { useSearchParamsNavigation } from "@/common/lib";
 import { DonationModal } from "../components/DonationModal";
 import { DonationParameters } from "../models";
 
+export * from "./fees";
+export * from "./forms";
+
 export const useDonation = (props: DonationParameters) => {
   const modal = useModal(DonationModal);
 
   const searchParams = useSearchParams();
   const { syncRouteParams } = useSearchParamsNavigation();
   const transactionHash = searchParams.getAll("transactionHashes").at(-1);
-  const accountIdRouteParam = searchParams.get("accountId") ?? undefined;
-  const potIdRouteParam = searchParams.get("potId") ?? undefined;
-
-  const hasTransactionConfirmation =
-    transactionHash && Boolean(accountIdRouteParam ?? potIdRouteParam);
+  const accountIdRouteParam = searchParams.get("donateTo") ?? undefined;
+  const potIdRouteParam = searchParams.get("donateToPot") ?? undefined;
 
   useEffect(() => {
-    if (hasTransactionConfirmation && !modal.visible) {
-      modal.show({ accountId: accountIdRouteParam, potId: potIdRouteParam });
+    if (
+      transactionHash &&
+      Boolean(accountIdRouteParam ?? potIdRouteParam) &&
+      !modal.visible
+    ) {
+      modal.show({
+        accountId: accountIdRouteParam,
+        potId: potIdRouteParam,
+        transactionHash,
+      });
     }
-  }, [accountIdRouteParam, hasTransactionConfirmation, modal, potIdRouteParam]);
+  }, [accountIdRouteParam, modal, potIdRouteParam, transactionHash]);
 
   const openDonationModal = useCallback(
     (event: React.MouseEvent) => {
