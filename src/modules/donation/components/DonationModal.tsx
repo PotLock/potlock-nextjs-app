@@ -4,7 +4,7 @@ import { create, useModal } from "@ebay/nice-modal-react";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
 import { walletApi } from "@/common/contracts";
-import { useSearchParamsNavigation } from "@/common/lib";
+import { useRouteQuerySync } from "@/common/lib";
 import { Button, Dialog, DialogContent } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -17,7 +17,7 @@ export type DonationModalProps = DonationParameters &
   Pick<DonationFlowProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
-  const { syncRouteParams } = useSearchParamsNavigation();
+  const { syncRouteQuery } = useRouteQuerySync();
   const self = useModal();
 
   const close = useCallback(() => {
@@ -25,12 +25,12 @@ export const DonationModal = create((props: DonationModalProps) => {
     dispatch.donation.reset();
     self.remove();
 
-    syncRouteParams({
+    syncRouteQuery({
       donateTo: null,
       donateToPot: null,
       transactionHashes: null,
     });
-  }, [self, syncRouteParams]);
+  }, [self, syncRouteQuery]);
 
   const state = useTypedSelector(({ donation }) => donation);
 

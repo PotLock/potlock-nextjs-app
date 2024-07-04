@@ -1,6 +1,5 @@
 import { Check } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { UseFormReturn } from "react-hook-form";
 
 import { pagoda } from "@/common/api/pagoda";
@@ -27,15 +26,18 @@ import { DonationInputs, DonationState } from "../models";
 export type DonationSuccessProps = {
   result?: DonationState["successResult"];
   form: UseFormReturn<DonationInputs>;
+  transactionHash?: string;
 };
 
 const staticResultIndicatorClassName =
   "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
 
-export const DonationSuccess = ({ form, result }: DonationSuccessProps) => {
+export const DonationSuccess = ({
+  form,
+  result,
+  transactionHash,
+}: DonationSuccessProps) => {
   const isResultLoading = result === undefined;
-  const searchParams = useSearchParams();
-  const transactionHash = searchParams.getAll("transactionHashes").at(-1);
   const [potAccountId] = form.watch(["potAccountId"]);
 
   const { data: recipientAccount, error: recipientAccountError } =

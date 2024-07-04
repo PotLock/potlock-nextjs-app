@@ -5,19 +5,18 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 export type RouteParams = Record<string, string | null>;
 
 /**
- * Provides a method to update the search parameters for the current URL,
- *  without changing the route path itself.
+ * Provides a method to update URL query parameters for the current route.
  *
  * @example
- * const { syncRouteParams } = useSearchParamsNavigation();
+ * const { syncRouteQuery } = useRouteQuerySync();
  *
- * // Sets `accountId` search parameter to "root.near"
- * syncRouteParams({ accountId: "root.near" });
+ * // Sets `accountId` query parameter to "root.near"
+ * syncRouteQuery({ accountId: "root.near" });
  *
- * // Deletes `transactionHashes` search parameter
- * syncRouteParams({ transactionHashes: null });
+ * // Deletes `transactionHashes` query parameter
+ * syncRouteQuery({ transactionHashes: null });
  */
-export const useSearchParamsNavigation = () => {
+export const useRouteQuerySync = () => {
   const router = useRouter();
   const pathname = usePathname();
   const currentQueryString = useSearchParams().toString();
@@ -27,7 +26,7 @@ export const useSearchParamsNavigation = () => {
     [currentQueryString],
   );
 
-  const syncRouteParams = useCallback(
+  const syncRouteQuery = useCallback(
     (newParams: RouteParams) => {
       Object.entries(newParams).forEach(([key, value]) =>
         value
@@ -35,11 +34,11 @@ export const useSearchParamsNavigation = () => {
           : searchParamsDecoded.delete(key),
       );
 
-      router.push(`${pathname}?${searchParamsDecoded.toString()}`);
+      router.replace(`${pathname}?${searchParamsDecoded.toString()}`);
     },
 
     [pathname, router, searchParamsDecoded],
   );
 
-  return { syncRouteParams };
+  return { syncRouteQuery };
 };

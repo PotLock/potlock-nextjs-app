@@ -10,14 +10,14 @@ import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
 import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationPotAllocation } from "./DonationPotAllocation";
 import { DonationProjectAllocation } from "./DonationProjectAllocation";
-import { DonationSuccess } from "./DonationSuccess";
+import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
 import { DonationState, DonationSubmissionInputs } from "../models";
 
 export type DonationFlowProps = DonationSubmissionInputs &
-  DonationState & {
+  DonationState &
+  Pick<DonationSuccessProps, "transactionHash"> & {
     closeModal: VoidFunction;
-    transactionHash?: string;
   };
 
 export const DonationFlow: React.FC<DonationFlowProps> = ({
@@ -48,7 +48,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       form,
     };
 
-    const staticSuccessProps = { form, result };
+    const staticSuccessProps = { form, result, transactionHash };
 
     switch (currentStep) {
       case "allocation":
@@ -78,6 +78,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     minAmountError,
     props,
     result,
+    transactionHash,
   ]);
 
   return (
