@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export type RouteParams = Record<string, string | undefined>;
+export type RouteParams = Record<string, string | null>;
 
 /**
  * Provides a method to update the search parameters for the current URL,
@@ -15,7 +15,7 @@ export type RouteParams = Record<string, string | undefined>;
  * syncRouteParams({ accountId: "root.near" });
  *
  * // Deletes `transactionHashes` search parameter
- * syncRouteParams({ transactionHashes: undefined });
+ * syncRouteParams({ transactionHashes: null });
  */
 export const useSearchParamsNavigation = () => {
   const router = useRouter();
