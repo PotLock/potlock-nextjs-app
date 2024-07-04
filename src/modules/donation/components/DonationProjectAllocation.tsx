@@ -104,7 +104,7 @@ export const DonationProjectAllocation: React.FC<
                 >
                   {Object.values(donationAllocationStrategies).map(
                     ({ label, hint, hintIfDisabled, value }) => {
-                      const disabled = value === "pot"; // && !hasMatchingPots;
+                      const disabled = false; // value === "pot" && !hasMatchingPots;
 
                       return (
                         <FormItem key={value}>
