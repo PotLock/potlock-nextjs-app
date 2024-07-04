@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect } from "react";
 
 // https://www.npmjs.com/package/react-files
 import Files from "react-files";
@@ -9,30 +8,13 @@ import CameraIcon from "@/common/assets/svgs/CameraIcon";
 import { Button } from "@/common/ui/components";
 import Spinner from "@/modules/core/components/Spinner";
 import useStatus from "@/modules/core/hooks/usStatus";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
 
-type Props = {
-  accountId?: string;
-};
-
-const Profile = ({ accountId }: Props) => {
-  const profileData = useProfileData(accountId);
-  const bgImageStatus = useStatus();
-  const profileImageStatus = useStatus();
-
-  const { backgroundImage, profileImage } = useTypedSelector(
+const Profile = () => {
+  const { accountId, backgroundImage, profileImage } = useTypedSelector(
     (state) => state.createProject,
   );
-
-  // Bg and Profile Images Effect
-  useEffect(() => {
-    if (!backgroundImage) {
-      dispatch.createProject.setProfileImage(profileData.profileImages.image);
-      dispatch.createProject.setBackgroundImage(
-        profileData.profileImages.backgroundImage,
-      );
-    }
-  }, [profileData.profileImages, backgroundImage]);
+  const bgImageStatus = useStatus();
+  const profileImageStatus = useStatus();
 
   if (!accountId) {
     return "";

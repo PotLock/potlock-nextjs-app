@@ -3,26 +3,53 @@ import { createModel } from "@rematch/core";
 import { RootModel } from "@/app/_store/models";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 
+import { createProjectSchema } from "./models/schemas";
 import { CreateProjectInputs } from "./models/types";
 import uploadFileToIPFS from "../core/services/uploadFileToIPFS";
 
-type CreateProjectState = CreateProjectInputs;
+type ExtraTypes = {
+  accountId: string;
+};
+type CreateProjectState = CreateProjectInputs & ExtraTypes;
 
 /**
  * Create Project State
  */
 const initialState: CreateProjectState = {
+  // Extra types
+  accountId: "",
+
+  // Inputs
+  name: "",
   isDao: false,
   daoAddress: "",
   projectName: "",
   backgroundImage: "",
   profileImage: "",
+  teamMembers: [],
+  categories: [],
+  description: "",
+  publicGoodReason: "",
+  smartContracts: [],
+  githubRepositories: [],
 };
 
 export const createProject = createModel<RootModel>()({
   state: initialState,
 
   reducers: {
+    setAccountId(state: CreateProjectState, accountId: string) {
+      state.accountId = accountId;
+    },
+
+    setProjectName(state: CreateProjectState, name?: string) {
+      state.name = name || "";
+    },
+
+    setIsDao(state: CreateProjectState, isDao: boolean) {
+      state.isDao = isDao;
+    },
+
     UPDATE_BACKGROUND_IMAGE(state: CreateProjectState, backgroundUrl: string) {
       state.backgroundImage = backgroundUrl;
     },

@@ -22,3 +22,14 @@ export const SubTitle = styled.div`
     font-size: 18px;
   }
 `;
+
+export const LowerBannerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+export const LowerBannerContainerLeft = styled.div`
+  display: flex;
+`;
