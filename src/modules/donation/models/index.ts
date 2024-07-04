@@ -72,7 +72,7 @@ export const donationModel = createModel<RootModel>()({
     },
 
     success(state, result: DirectDonation) {
-      return { ...state, successResult: result };
+      return { ...handleStep(state, "success"), successResult: result };
     },
 
     failure(_, error: Error) {
@@ -101,24 +101,21 @@ export const donationModel = createModel<RootModel>()({
             };
 
             return void donateNearDirectly(args, floatToYoctoNear(amount))
-              .then((result) => {
-                dispatch.donation.success(result);
-                dispatch.donation.nextStep();
-              })
+              .then((result) => dispatch.donation.success(result))
               .catch((error) => dispatch.donation.failure(error));
           }
 
           case DonationAllocationStrategyEnum.pot:
-            return void dispatch.donation.failure;
+            return void dispatch.donation.failure(new Error("Not implemented"));
         }
       } else if ("potId" in props) {
         switch (potDistributionStrategy) {
           case DonationPotDistributionStrategy.evenly: {
-            return void dispatch.donation.failure;
+            return void dispatch.donation.failure(new Error("Not implemented"));
           }
 
           case DonationPotDistributionStrategy.manually: {
-            return void dispatch.donation.failure;
+            return void dispatch.donation.failure(new Error("Not implemented"));
           }
         }
       }
