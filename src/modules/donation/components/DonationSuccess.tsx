@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { UseFormReturn } from "react-hook-form";
 
 import { pagoda } from "@/common/api/pagoda";
@@ -25,19 +26,16 @@ import { DonationInputs, DonationState } from "../models";
 
 export type DonationSuccessProps = {
   result?: DonationState["successResult"];
-  transactionHashes: string | null;
   form: UseFormReturn<DonationInputs>;
 };
 
 const staticResultIndicatorClassName =
   "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
 
-export const DonationSuccess = ({
-  form,
-  result,
-  transactionHashes,
-}: DonationSuccessProps) => {
+export const DonationSuccess = ({ form, result }: DonationSuccessProps) => {
   const isResultLoading = result === undefined;
+  const searchParams = useSearchParams();
+  const transactionHash = searchParams.getAll("transactionHashes").at(-1);
   const [potAccountId] = form.watch(["potAccountId"]);
 
   const { data: recipientAccount, error: recipientAccountError } =
@@ -175,9 +173,9 @@ export const DonationSuccess = ({
         <DonationBreakdown tokenId={result.ft_id} {...{ fees }} />
       )}
 
-      {transactionHashes && (
-        <TextWithIcon content={`Txn Hash : ${truncate(transactionHashes, 7)}`}>
-          <ClipboardCopyButton text={transactionHashes} />
+      {transactionHash && (
+        <TextWithIcon content={`Txn Hash : ${truncate(transactionHash, 7)}`}>
+          <ClipboardCopyButton text={transactionHash} />
         </TextWithIcon>
       )}
     </DialogDescription>

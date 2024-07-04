@@ -10,7 +10,6 @@ import {
   DonationAllocationStrategyEnum,
   DonationPotDistributionStrategy,
 } from "./schemas";
-import { directDonationMock } from "./test";
 import {
   DonationAllocationStrategyOption,
   DonationInputs,
@@ -101,11 +100,7 @@ export const donationModel = createModel<RootModel>()({
               bypass_protocol_fee: bypassProtocolFee,
             };
 
-            return void donateNearDirectly(
-              args,
-              floatToYoctoNear(amount),
-              window.location.href,
-            )
+            return void donateNearDirectly(args, floatToYoctoNear(amount))
               .then((result) => {
                 dispatch.donation.success(result);
                 dispatch.donation.nextStep();

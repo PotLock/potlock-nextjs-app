@@ -4,6 +4,7 @@ import { create, useModal } from "@ebay/nice-modal-react";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
 import { walletApi } from "@/common/contracts";
+import { useSearchParamsNavigation } from "@/common/lib";
 import { Button, Dialog, DialogContent } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -15,13 +16,20 @@ import { DonationParameters } from "../models";
 export type DonationModalProps = DonationParameters & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
+  const { syncRouteParams } = useSearchParamsNavigation();
   const self = useModal();
 
   const close = useCallback(() => {
     self.hide();
     dispatch.donation.reset();
     self.remove();
-  }, [self]);
+
+    syncRouteParams({
+      donateTo: null,
+      donateToPot: null,
+      transactionHashes: null,
+    });
+  }, [self, syncRouteParams]);
 
   const state = useTypedSelector(({ donation }) => donation);
 

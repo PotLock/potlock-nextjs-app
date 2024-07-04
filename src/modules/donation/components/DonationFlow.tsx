@@ -25,7 +25,6 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   ...props
 }) => {
   const searchParams = useSearchParams();
-  const transactionHashes = searchParams.get("transactionHashes");
 
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({
@@ -47,7 +46,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       form,
     };
 
-    const staticSuccessProps = { form, result, transactionHashes };
+    const staticSuccessProps = { form, result };
 
     switch (currentStep) {
       case "allocation":
@@ -77,7 +76,6 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     minAmountError,
     props,
     result,
-    transactionHashes,
   ]);
 
   return (
