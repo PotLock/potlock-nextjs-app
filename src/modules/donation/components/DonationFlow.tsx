@@ -25,6 +25,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   currentStep,
   successResult: result,
   transactionHash,
+  closeModal,
   ...props
 }) => {
   const searchParams = useSearchParams();
@@ -56,7 +57,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       form,
     };
 
-    const staticSuccessProps = { form, result, transactionHash };
+    const staticSuccessProps = { form, result, transactionHash, closeModal };
 
     switch (currentStep) {
       case "allocation":
@@ -80,6 +81,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     }
   }, [
     balanceFloat,
+    closeModal,
     currentStep,
     form,
     isBalanceSufficient,
