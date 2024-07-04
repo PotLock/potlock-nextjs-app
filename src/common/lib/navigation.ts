@@ -21,7 +21,7 @@ export const useRouteQuerySync = () => {
   const pathname = usePathname();
   const currentQueryString = useSearchParams().toString();
 
-  const searchParamsDecoded = useMemo(
+  const queryParams = useMemo(
     () => new URLSearchParams(currentQueryString),
     [currentQueryString],
   );
@@ -29,15 +29,13 @@ export const useRouteQuerySync = () => {
   const syncRouteQuery = useCallback(
     (newParams: RouteParams) => {
       Object.entries(newParams).forEach(([key, value]) =>
-        value
-          ? searchParamsDecoded.set(key, value)
-          : searchParamsDecoded.delete(key),
+        value ? queryParams.set(key, value) : queryParams.delete(key),
       );
 
-      router.replace(`${pathname}?${searchParamsDecoded.toString()}`);
+      router.replace(`${pathname}?${queryParams.toString()}`);
     },
 
-    [pathname, router, searchParamsDecoded],
+    [pathname, router, queryParams],
   );
 
   return { syncRouteQuery };
