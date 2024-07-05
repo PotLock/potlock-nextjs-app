@@ -1,16 +1,17 @@
 import { createModel } from "@rematch/core";
 
 import { RootModel } from "@/app/_store/models";
+import { walletApi } from "@/common/contracts";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
 import { floatToYoctoNear } from "@/common/lib";
+import { getTransactionStatus } from "@/common/services";
 
 import {
   DonationAllocationStrategy,
   DonationAllocationStrategyEnum,
   DonationPotDistributionStrategy,
 } from "./schemas";
-import { directDonationMock } from "./test";
 import {
   DonationAllocationStrategyOption,
   DonationInputs,
@@ -73,7 +74,7 @@ export const donationModel = createModel<RootModel>()({
     },
 
     success(state, result: DirectDonation) {
-      return { ...state, successResult: result };
+      return { ...handleStep(state, "success"), successResult: result };
     },
 
     failure(_, error: Error) {
@@ -101,30 +102,48 @@ export const donationModel = createModel<RootModel>()({
               bypass_protocol_fee: bypassProtocolFee,
             };
 
-            // TODO: Provide callbackUrl when the modal state is under router's control
-            //! otherwise, the modal will be closed after successful Tx confirmation
-            //! if `window.location.href` is used
             return void donateNearDirectly(args, floatToYoctoNear(amount))
-              .then((result) => {
-                dispatch.donation.success(result);
-                dispatch.donation.nextStep();
-              })
+              .then((result) => dispatch.donation.success(result))
               .catch((error) => dispatch.donation.failure(error));
           }
 
           case DonationAllocationStrategyEnum.pot:
-            return void dispatch.donation.failure;
+            return void dispatch.donation.failure(new Error("Not implemented"));
         }
       } else if ("potId" in props) {
         switch (potDistributionStrategy) {
           case DonationPotDistributionStrategy.evenly: {
-            return void dispatch.donation.failure;
+            return void dispatch.donation.failure(new Error("Not implemented"));
           }
 
           case DonationPotDistributionStrategy.manually: {
-            return void dispatch.donation.failure;
+            return void dispatch.donation.failure(new Error("Not implemented"));
           }
         }
+      }
+    },
+
+    async handleSuccessByTxHash(transactionHash: string) {
+      const { accountId: sender_account_id } = walletApi;
+
+      if (sender_account_id) {
+        const { data } = await getTransactionStatus({
+          tx_hash: transactionHash,
+          sender_account_id,
+        });
+
+        const donationResult = JSON.parse(
+          atob(data.result.receipts_outcome[3].outcome.status.SuccessValue),
+        ) as DirectDonation;
+
+        return void dispatch.donation.success(donationResult);
+      } else {
+        return void dispatch.donation.failure(
+          new Error(
+            "Unable to get donation transaction status without user authentication." +
+              "Please login and try again.",
+          ),
+        );
       }
     },
   }),

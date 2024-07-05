@@ -4,28 +4,35 @@ import { create, useModal } from "@ebay/nice-modal-react";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
 import { walletApi } from "@/common/contracts";
+import { useRouteQuerySync } from "@/common/lib";
 import { Button, Dialog, DialogContent } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ModalErrorBody } from "@/modules/core";
 
-import { DonationFlow } from "./DonationFlow";
+import { DonationFlow, DonationFlowProps } from "./DonationFlow";
 import { DonationParameters } from "../models";
 
-export type DonationModalProps = DonationParameters & {};
+export type DonationModalProps = DonationParameters &
+  Pick<DonationFlowProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
   const self = useModal();
+  const donationState = useTypedSelector(({ donation }) => donation);
+  const { isAuthenticated } = useAuth();
+  const { syncRouteQuery } = useRouteQuerySync();
 
   const close = useCallback(() => {
     self.hide();
     dispatch.donation.reset();
     self.remove();
-  }, [self]);
 
-  const state = useTypedSelector(({ donation }) => donation);
-
-  const { isAuthenticated } = useAuth();
+    syncRouteQuery({
+      donateTo: null,
+      donateToPot: null,
+      transactionHashes: null,
+    });
+  }, [self, syncRouteQuery]);
 
   const onSignInClick = useCallback(() => {
     walletApi.signInModal();
@@ -36,12 +43,13 @@ export const DonationModal = create((props: DonationModalProps) => {
     <Dialog open={self.visible}>
       <DialogContent
         className={cn({
-          "max-w-130": state.currentStep !== "success",
-          "max-w-120": state.currentStep === "success",
+          "max-w-130": donationState.currentStep !== "success",
+          "max-w-120": donationState.currentStep === "success",
         })}
-        contrastActions={state.currentStep === "success"}
+        contrastActions={donationState.currentStep === "success"}
         onBackClick={
-          state.currentStep !== "allocation" && state.currentStep !== "success"
+          donationState.currentStep !== "allocation" &&
+          donationState.currentStep !== "success"
             ? dispatch.donation.previousStep
             : undefined
         }
@@ -86,7 +94,7 @@ export const DonationModal = create((props: DonationModalProps) => {
                 title="Unable to detect donation recipient."
               />
             ) : (
-              <DonationFlow closeModal={close} {...props} {...state} />
+              <DonationFlow closeModal={close} {...props} {...donationState} />
             )}
           </>
         )}
