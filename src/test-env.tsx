@@ -14,7 +14,7 @@ const useRouter = mockRouter.useRouter;
 /**
  * https://github.com/scottrippey/next-router-mock/issues/67#issuecomment-1564906960
  */
-export const MockNextNavigation = {
+export const NextNavigationMock = {
   ...mockRouter,
   notFound: vi.fn(),
 
@@ -39,5 +39,4 @@ export const renderWithStore = (ui: React.ReactElement) =>
     wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
   });
 
-vi.mock("next/navigation", () => MockNextNavigation);
 beforeEach(() => mockRouter.memoryRouter.setCurrentUrl("/"));
