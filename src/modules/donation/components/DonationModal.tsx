@@ -17,8 +17,10 @@ export type DonationModalProps = DonationParameters &
   Pick<DonationFlowProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
-  const { syncRouteQuery } = useRouteQuerySync();
   const self = useModal();
+  const donationState = useTypedSelector(({ donation }) => donation);
+  const { isAuthenticated } = useAuth();
+  const { syncRouteQuery } = useRouteQuerySync();
 
   const close = useCallback(() => {
     self.hide();
@@ -32,10 +34,6 @@ export const DonationModal = create((props: DonationModalProps) => {
     });
   }, [self, syncRouteQuery]);
 
-  const state = useTypedSelector(({ donation }) => donation);
-
-  const { isAuthenticated } = useAuth();
-
   const onSignInClick = useCallback(() => {
     walletApi.signInModal();
     close();
@@ -45,12 +43,13 @@ export const DonationModal = create((props: DonationModalProps) => {
     <Dialog open={self.visible}>
       <DialogContent
         className={cn({
-          "max-w-130": state.currentStep !== "success",
-          "max-w-120": state.currentStep === "success",
+          "max-w-130": donationState.currentStep !== "success",
+          "max-w-120": donationState.currentStep === "success",
         })}
-        contrastActions={state.currentStep === "success"}
+        contrastActions={donationState.currentStep === "success"}
         onBackClick={
-          state.currentStep !== "allocation" && state.currentStep !== "success"
+          donationState.currentStep !== "allocation" &&
+          donationState.currentStep !== "success"
             ? dispatch.donation.previousStep
             : undefined
         }
@@ -95,7 +94,7 @@ export const DonationModal = create((props: DonationModalProps) => {
                 title="Unable to detect donation recipient."
               />
             ) : (
-              <DonationFlow closeModal={close} {...props} {...state} />
+              <DonationFlow closeModal={close} {...props} {...donationState} />
             )}
           </>
         )}
