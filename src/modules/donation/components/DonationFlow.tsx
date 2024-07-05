@@ -1,4 +1,4 @@
-import { createElement as h, useEffect, useMemo } from "react";
+import { createElement as h, useMemo } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -28,12 +28,6 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   ...props
 }) => {
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    if (!result && transactionHash) {
-      dispatch.donation.handleSuccessByTxHash(transactionHash);
-    }
-  }, [result, transactionHash]);
 
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({

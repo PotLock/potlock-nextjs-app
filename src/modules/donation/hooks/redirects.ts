@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useModal } from "@ebay/nice-modal-react";
 import { useSearchParams } from "next/navigation";
 
+import { dispatch } from "@/app/_store";
 import { useRouteQuerySync } from "@/common/lib";
 
 import { DonationModal } from "../components/DonationModal";
@@ -21,16 +22,18 @@ export const useDonationSuccessWalletRedirect = () => {
       Boolean(accountIdRouteParam ?? potIdRouteParam) &&
       !modal.visible
     ) {
-      modal.show({
-        accountId: accountIdRouteParam,
-        potId: potIdRouteParam,
-        transactionHash,
-      });
+      dispatch.donation.handleSuccessByTxHash(transactionHash).then(() => {
+        modal.show({
+          accountId: accountIdRouteParam,
+          potId: potIdRouteParam,
+          transactionHash,
+        });
 
-      syncRouteQuery({
-        donateTo: null,
-        donateToPot: null,
-        transactionHashes: null,
+        syncRouteQuery({
+          donateTo: null,
+          donateToPot: null,
+          transactionHashes: null,
+        });
       });
     }
   }, [
