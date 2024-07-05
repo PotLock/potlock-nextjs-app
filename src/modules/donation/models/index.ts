@@ -1,9 +1,11 @@
 import { createModel } from "@rematch/core";
 
 import { RootModel } from "@/app/_store/models";
+import { walletApi } from "@/common/contracts";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
 import { floatToYoctoNear } from "@/common/lib";
+import { getTransactionStatus } from "@/common/services";
 
 import {
   DonationAllocationStrategy,
@@ -118,6 +120,30 @@ export const donationModel = createModel<RootModel>()({
             return void dispatch.donation.failure(new Error("Not implemented"));
           }
         }
+      }
+    },
+
+    async handleSuccessByTxHash(transactionHash: string) {
+      const { accountId: sender_account_id } = walletApi;
+
+      if (sender_account_id) {
+        const { data } = await getTransactionStatus({
+          tx_hash: transactionHash,
+          sender_account_id,
+        });
+
+        const donationResult = JSON.parse(
+          atob(data.result.receipts_outcome[3].outcome.status.SuccessValue),
+        ) as DirectDonation;
+
+        return void dispatch.donation.success(donationResult);
+      } else {
+        return void dispatch.donation.failure(
+          new Error(
+            "Unable to get donation transaction status without user authentication." +
+              "Please login and try again.",
+          ),
+        );
       }
     },
   }),
