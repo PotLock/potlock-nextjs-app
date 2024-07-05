@@ -1,4 +1,4 @@
-import { createElement as h, useEffect, useMemo } from "react";
+import { createElement as h, useMemo } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -13,7 +13,6 @@ import { DonationProjectAllocation } from "./DonationProjectAllocation";
 import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
 import { DonationState, DonationSubmissionInputs } from "../models";
-import { directDonationMock } from "../models/test";
 
 export type DonationFlowProps = DonationSubmissionInputs &
   DonationState &
@@ -29,13 +28,6 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   ...props
 }) => {
   const searchParams = useSearchParams();
-
-  // TODO: Retrieve the real donation data
-  useEffect(() => {
-    if (!result && transactionHash) {
-      dispatch.donation.success(directDonationMock);
-    }
-  }, [result, transactionHash]);
 
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({

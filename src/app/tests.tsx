@@ -1,9 +1,11 @@
 import { screen, waitFor } from "@testing-library/react";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 
-import { renderWithStore } from "./_store/testEnv";
+import { NextNavigationMock, renderWithStore } from "@/test-env";
+
 import Homepage from "./page";
 
+vi.mock("next/navigation", () => NextNavigationMock);
 renderWithStore(<Homepage />);
 
 test("Homepage", async () => {
