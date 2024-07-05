@@ -1,7 +1,8 @@
 import { screen, waitFor } from "@testing-library/react";
 import { expect, test } from "vitest";
 
-import { renderWithStore } from "./_store/testEnv";
+import { renderWithStore } from "@/test-env";
+
 import Homepage from "./page";
 
 renderWithStore(<Homepage />);
