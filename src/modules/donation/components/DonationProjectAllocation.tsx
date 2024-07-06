@@ -54,9 +54,8 @@ export const DonationProjectAllocation: React.FC<
     "allocationStrategy",
   ]);
 
-  const { data: activePots } = potlock.useAccountActivePots({ accountId });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const hasMatchingPots = (activePots?.results.length ?? 0) > 0;
+  const { data: matchingPots } = potlock.useAccountActivePots({ accountId });
+  const hasMatchingPots = (matchingPots?.results.length ?? 0) > 0;
   const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
 
   const {
@@ -70,6 +69,9 @@ export const DonationProjectAllocation: React.FC<
   });
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
+
+  console.log(matchingPots?.results);
+  console.log(allocationStrategy);
 
   return accountError !== undefined ? (
     <ModalErrorBody
@@ -104,7 +106,7 @@ export const DonationProjectAllocation: React.FC<
                 >
                   {Object.values(donationAllocationStrategies).map(
                     ({ label, hint, hintIfDisabled, value }) => {
-                      const disabled = false; // value === "pot" && !hasMatchingPots;
+                      const disabled = value === "pot" && !hasMatchingPots;
 
                       return (
                         <FormItem key={value}>
@@ -127,6 +129,36 @@ export const DonationProjectAllocation: React.FC<
             </FormItem>
           )}
         />
+
+        {allocationStrategy === "pot" && (
+          <FormField
+            control={form.control}
+            name="potAccountId"
+            render={({ field }) => (
+              <Select
+                disabled
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Matching pots</SelectLabel>
+
+                    {matchingPots?.results.map(({ id: potId, name }) => (
+                      <SelectItem key={potId} value={potId}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
