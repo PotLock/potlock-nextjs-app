@@ -12,7 +12,7 @@ import { DonationPotAllocation } from "./DonationPotAllocation";
 import { DonationProjectAllocation } from "./DonationProjectAllocation";
 import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
-import { DonationState, DonationSubmissionInputs } from "../models";
+import { DonationState, DonationSubmissionInputs } from "../types";
 
 export type DonationFlowProps = DonationSubmissionInputs &
   DonationState &

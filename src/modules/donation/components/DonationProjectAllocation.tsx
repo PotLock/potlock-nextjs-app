@@ -30,9 +30,9 @@ import {
 import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
 import {
   DonationAllocationInputs,
-  DonationAllocationStrategyEnum,
   donationAllocationStrategies,
 } from "../models";
+import { DonationAllocationStrategyEnum } from "../types";
 
 export type DonationProjectAllocationProps = ByAccountId &
   DonationAllocationInputs & {};

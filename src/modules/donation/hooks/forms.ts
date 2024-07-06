@@ -9,18 +9,13 @@ import { walletApi } from "@/common/contracts";
 import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
-import {
-  DONATION_MIN_NEAR_AMOUNT,
-  DONATION_MIN_NEAR_AMOUNT_ERROR,
-} from "../constants";
+import { DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
+import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
   DonationAllocationStrategyEnum,
-  DonationInputs,
   DonationPotDistributionStrategy,
   DonationSubmissionInputs,
-  donationSchema,
-  donationTokenSchema,
-} from "../models";
+} from "../types";
 import { isDonationAmountSufficient } from "../utils/validation";
 
 export type DonationFormParams = DonationSubmissionInputs & {

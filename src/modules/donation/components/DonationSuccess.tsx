@@ -21,7 +21,8 @@ import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 
 import { DonationBreakdown } from "./DonationBreakdown";
 import { useDonationFees } from "../hooks";
-import { DonationInputs, DonationState } from "../models";
+import { DonationInputs } from "../models";
+import { DonationState } from "../types";
 
 export type DonationSuccessProps = {
   form: UseFormReturn<DonationInputs>;

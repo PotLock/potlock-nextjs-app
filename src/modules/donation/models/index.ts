@@ -7,21 +7,18 @@ import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.int
 import { floatToYoctoNear } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
 
+import { DonationInputs } from "./schemas";
 import {
   DonationAllocationStrategy,
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
-} from "./schemas";
-import {
   DonationAllocationStrategyOption,
-  DonationInputs,
+  DonationPotDistributionStrategy,
   DonationState,
   DonationStep,
   DonationSubmissionInputs,
-} from "./types";
+} from "../types";
 
 export * from "./schemas";
-export * from "./types";
 
 export const donationAllocationStrategies: Record<
   DonationAllocationStrategy,

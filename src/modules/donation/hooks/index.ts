@@ -7,7 +7,7 @@ import { useRouteQuerySync } from "@/common/lib";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
 import { DonationModal } from "../components/DonationModal";
-import { DonationParameters } from "../models";
+import { DonationParameters } from "../types";
 
 export * from "./fees";
 export * from "./forms";

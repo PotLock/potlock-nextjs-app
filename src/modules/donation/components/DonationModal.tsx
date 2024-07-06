@@ -11,7 +11,7 @@ import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ModalErrorBody } from "@/modules/core";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
-import { DonationParameters } from "../models";
+import { DonationParameters } from "../types";
 
 export type DonationModalProps = DonationParameters &
   Pick<DonationFlowProps, "transactionHash"> & {};
