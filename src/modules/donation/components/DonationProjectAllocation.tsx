@@ -55,7 +55,8 @@ export const DonationProjectAllocation: React.FC<
   ]);
 
   const { data: matchingPots } = potlock.useAccountActivePots({ accountId });
-  const hasMatchingPots = (matchingPots?.results.length ?? 0) > 0;
+  // TODO: Remove `true ??` after testing
+  const hasMatchingPots = true ?? (matchingPots?.results.length ?? 0) > 0;
   const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
 
   const {
@@ -72,6 +73,9 @@ export const DonationProjectAllocation: React.FC<
 
   console.log(matchingPots?.results);
   console.log(allocationStrategy);
+
+  // TODO: Remove after testing
+  const { data: allPots } = potlock.usePots();
 
   return accountError !== undefined ? (
     <ModalErrorBody
@@ -130,16 +134,12 @@ export const DonationProjectAllocation: React.FC<
           )}
         />
 
-        {allocationStrategy === "pot" && (
+        {allocationStrategy === "pot" && hasMatchingPots && (
           <FormField
             control={form.control}
             name="potAccountId"
             render={({ field }) => (
-              <Select
-                disabled
-                value={field.value}
-                onValueChange={field.onChange}
-              >
+              <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
                   <SelectValue />
                 </SelectTrigger>
@@ -148,7 +148,7 @@ export const DonationProjectAllocation: React.FC<
                   <SelectGroup>
                     <SelectLabel>Matching pots</SelectLabel>
 
-                    {matchingPots?.results.map(({ id: potId, name }) => (
+                    {allPots?.results.map(({ id: potId, name }) => (
                       <SelectItem key={potId} value={potId}>
                         {name}
                       </SelectItem>
