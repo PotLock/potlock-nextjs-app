@@ -13,16 +13,14 @@ import {
   FormLabel,
   RadioGroup,
   RadioGroupItem,
-  Select,
-  SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
   Skeleton,
 } from "@/common/ui/components";
-import { TextField } from "@/common/ui/form-fields";
+import {
+  SelectField,
+  SelectFieldOption,
+  TextField,
+} from "@/common/ui/form-fields";
 import {
   AvailableTokenBalance,
   ModalErrorBody,
@@ -96,11 +94,13 @@ export const DonationProjectAllocation: React.FC<
           control={form.control}
           name="allocationStrategy"
           render={({ field }) => (
-            <FormItem className="flex flex-col gap-3">
+            <FormItem className="gap-3">
               {isAccountLoading ? (
                 <Skeleton className="w-59 h-3.5" />
               ) : (
-                <FormLabel>How do you want to allocate funds?</FormLabel>
+                <FormLabel className="font-600">
+                  How do you want to allocate funds?
+                </FormLabel>
               )}
 
               <FormControl>
@@ -139,23 +139,17 @@ export const DonationProjectAllocation: React.FC<
             control={form.control}
             name="potAccountId"
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
-                  <SelectValue />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Matching pots</SelectLabel>
-
-                    {allPots?.results.map(({ id: potId, name }) => (
-                      <SelectItem key={potId} value={potId}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <SelectField
+                label="Select Pot"
+                defaultValue={field.value}
+                onValueChange={field.onChange}
+              >
+                {allPots?.results.map(({ id: potId, name }) => (
+                  <SelectFieldOption key={potId} value={potId}>
+                    {name}
+                  </SelectFieldOption>
+                ))}
+              </SelectField>
             )}
           />
         )}
@@ -173,37 +167,32 @@ export const DonationProjectAllocation: React.FC<
                   control={form.control}
                   name="tokenId"
                   render={({ field: fieldExtension }) => (
-                    <Select
-                      disabled // TODO: FT donation is not yet finished
-                      value={fieldExtension.value}
+                    <SelectField
+                      embedded
+                      label="Available tokens"
+                      //disabled // TODO: FT donation is not yet finished
+                      defaultValue={fieldExtension.value}
                       onValueChange={fieldExtension.onChange}
+                      classes={{
+                        trigger: "h-full w-min rounded-r-none shadow-none",
+                      }}
                     >
-                      <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectItem value={NEAR_TOKEN_DENOM}>
+                        {NEAR_TOKEN_DENOM.toUpperCase()}
+                      </SelectItem>
 
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Available tokens</SelectLabel>
-
-                          <SelectItem value={NEAR_TOKEN_DENOM}>
-                            {NEAR_TOKEN_DENOM.toUpperCase()}
-                          </SelectItem>
-
-                          {allocationStrategy === "direct" &&
-                            availableFts?.map(
-                              ({
-                                contract_account_id: contractId,
-                                metadata: { symbol },
-                              }) => (
-                                <SelectItem key={contractId} value={contractId}>
-                                  {symbol}
-                                </SelectItem>
-                              ),
-                            )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                      {allocationStrategy === "direct" &&
+                        availableFts?.map(
+                          ({
+                            contract_account_id: contractId,
+                            metadata: { symbol },
+                          }) => (
+                            <SelectItem key={contractId} value={contractId}>
+                              {symbol}
+                            </SelectItem>
+                          ),
+                        )}
+                    </SelectField>
                   )}
                 />
               }

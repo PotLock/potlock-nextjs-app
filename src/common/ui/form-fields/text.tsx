@@ -57,7 +57,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     ) : null;
 
     return (
-      <FormItem className="flex flex-col gap-2">
+      <FormItem>
         <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
           <FormLabel className="font-500 text-sm text-neutral-950">
             {label}

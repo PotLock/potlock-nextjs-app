@@ -74,12 +74,16 @@ const FormItemContext = createContext<FormItemContextValue>(
 const FormItem = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ ...props }, ref) => {
+>(({ className, ...props }, ref) => {
   const id = useId();
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} {...props} />
+      <div
+        ref={ref}
+        className={cn("flex flex-col gap-2", className)}
+        {...props}
+      />
     </FormItemContext.Provider>
   );
 });
@@ -95,7 +99,7 @@ const FormLabel = forwardRef<
     <Label
       ref={ref}
       className={cn(
-        "prose font-600",
+        "prose font-500 leading-normal",
         error ? "text-destructive" : "text-neutral-950",
         className,
       )}

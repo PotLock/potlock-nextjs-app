@@ -11,7 +11,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
   ...props
 }) => {
   return (
-    <FormItem className="flex flex-row items-center gap-2">
+    <FormItem className="flex-row items-center">
       <FormControl>
         <Checkbox {...props} />
       </FormControl>
