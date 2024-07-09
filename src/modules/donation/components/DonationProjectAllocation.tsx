@@ -1,9 +1,14 @@
 import { pagoda } from "@/common/api/pagoda";
 import { potlock } from "@/common/api/potlock";
+import { WarningIcon } from "@/common/assets/svgs";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
 import { ByAccountId } from "@/common/types";
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -26,8 +31,12 @@ import {
   ModalErrorBody,
   useNearUsdDisplayValue,
 } from "@/modules/core";
+import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
-import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
+import {
+  DONATION_MIN_NEAR_AMOUNT,
+  DONATION_QUADRATIC_MATCHING_UNVERIFIED_DONOR_WARNING,
+} from "../constants";
 import {
   DonationAllocationInputs,
   donationAllocationStrategies,
@@ -46,6 +55,10 @@ export const DonationProjectAllocation: React.FC<
   balanceFloat,
   form,
 }) => {
+  const { nadaBotVerified: isDonorNadabotVerified } = useIsHuman(
+    walletApi.accountId ?? "unknown",
+  );
+
   const [amount, tokenId, allocationStrategy] = form.watch([
     "amount",
     "tokenId",
@@ -70,7 +83,6 @@ export const DonationProjectAllocation: React.FC<
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
   console.log(matchingPots?.results);
-  console.log(allocationStrategy);
 
   // TODO: Remove after testing
   const { data: allPots } = potlock.usePots();
@@ -133,6 +145,28 @@ export const DonationProjectAllocation: React.FC<
             </FormItem>
           )}
         />
+
+        {allocationStrategy === "pot" && !isDonorNadabotVerified && (
+          <Alert variant="warning">
+            <WarningIcon />
+
+            <AlertTitle className="pr-5">
+              {DONATION_QUADRATIC_MATCHING_UNVERIFIED_DONOR_WARNING}
+            </AlertTitle>
+
+            <AlertDescription>
+              <Button
+                asChild
+                variant="standard-plain"
+                className="text-[var(--primary-600] p-0"
+              >
+                <a target="_blank" href="https://app.nada.bot">
+                  Verify you’re human
+                </a>
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {allocationStrategy === "pot" && hasMatchingPots && (
           <FormField
