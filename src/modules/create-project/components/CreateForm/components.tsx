@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { CSSProperties, useEffect, useState } from "react";
 
+import { useTypedSelector } from "@/app/_store";
 import { Input, InputProps, Textarea } from "@/common/ui/components";
 import {
   MultiSelector,
@@ -11,6 +13,7 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from "@/common/ui/components/multi-select";
+import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 export const Row = ({
   children,
@@ -144,6 +147,71 @@ export const CustomTextForm = ({
         showHint
         {...field}
       />
+    </div>
+  );
+};
+
+const NO_IMAGE =
+  "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
+
+const AccountStackItem = ({
+  accountId,
+  style,
+}: {
+  accountId: string;
+  style?: CSSProperties;
+}) => {
+  const profileInfo = useProfileData(accountId);
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <>
+      {profileInfo.imagesReady && (
+        <img
+          alt="profile image"
+          className="h-[28px] w-[28px] rounded-[50%] bg-white"
+          style={style}
+          src={
+            hasError
+              ? NO_IMAGE
+              : profileInfo.profileImages.image
+                ? profileInfo.profileImages.image
+                : NO_IMAGE
+          }
+          onError={() => setHasError(true)}
+        />
+      )}
+    </>
+  );
+};
+
+const MAX_DISPLAY_MEMBERS = 5;
+
+export const AccountStack = () => {
+  const members = useTypedSelector((state) => state.createProject.teamMembers);
+  const shown = members.slice(0, MAX_DISPLAY_MEMBERS);
+  const hidden = Math.max(members.length - MAX_DISPLAY_MEMBERS, 0);
+
+  return (
+    <div className="flex">
+      {hidden > 0 && (
+        <div className="z-10 flex h-[28px] w-[28px] items-center justify-center rounded-[50%] bg-[#dd3345]">
+          <p className="font-600 text-align-center text-[12px] text-white">
+            {hidden}+
+          </p>
+        </div>
+      )}
+      {shown.map((memberAccountId, index) => (
+        <AccountStackItem
+          key={memberAccountId}
+          accountId={memberAccountId}
+          style={
+            index > 0 || (index === 0 && hidden > 0)
+              ? { marginLeft: -8, zIndex: index * -1 }
+              : {}
+          }
+        />
+      ))}
     </div>
   );
 };

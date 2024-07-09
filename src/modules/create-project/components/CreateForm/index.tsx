@@ -5,7 +5,13 @@ import { Button, FormField } from "@/common/ui/components";
 import Radio from "@/common/ui/components/inputs/Radio";
 import useWallet from "@/modules/auth/hooks/useWallet";
 
-import { CustomInput, CustomTextForm, Row, SelectCategory } from "./components";
+import {
+  AccountStack,
+  CustomInput,
+  CustomTextForm,
+  Row,
+  SelectCategory,
+} from "./components";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
 import { useCreateProjectForm } from "../../hooks/forms";
@@ -65,6 +71,7 @@ const CreateForm = () => {
               : "Add team members"}
           </Button>
         </LowerBannerContainerLeft>
+        <AccountStack />
       </LowerBannerContainer>
 
       <AddTeamMembersModal
