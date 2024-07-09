@@ -1,30 +1,42 @@
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
-import { Button, Input } from "@/common/ui/components";
+import { Button, FormField } from "@/common/ui/components";
 import Radio from "@/common/ui/components/inputs/Radio";
 import useWallet from "@/modules/auth/hooks/useWallet";
 
-import { InputContainer, Label, Row } from "./components";
+import { CustomInput, CustomTextForm, Row, SelectCategory } from "./components";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
 import { useCreateProjectForm } from "../../hooks/forms";
+import AddTeamMembersModal from "../AddTeamMembersModal";
 import InfoSegment from "../InfoSegment/InfoSegment";
 import Profile from "../Profile";
 
 const CreateForm = () => {
-  const { accountId, teamMembers, isDao, daoAddress } = useTypedSelector(
-    (state) => state.createProject,
-  );
+  const projectProps = useTypedSelector((state) => state.createProject);
   const { wallet, isWalletReady } = useWallet();
-  const {
-    form: { register },
-  } = useCreateProjectForm();
+  const { form, errors } = useCreateProjectForm();
+  const values = form.watch();
 
-  const isDaoChangeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const _isDao = e.target.value === "yes";
-    dispatch.createProject.setIsDao(_isDao);
-  }, []);
+  const isDaoChangeHandler = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const _isDao = e.target.value === "yes";
+      dispatch.createProject.setIsDao(_isDao);
+      form.setValue("isDao", _isDao);
+    },
+    [form],
+  );
+
+  const categoryChangeHandler = useCallback(
+    (categories: string[]) => {
+      dispatch.createProject.setCategories(categories);
+      form.setValue("categories", categories);
+    },
+    [form],
+  );
+
+  const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
 
   // must be signed in
   if (isWalletReady && !wallet?.accountId) {
@@ -43,21 +55,32 @@ const CreateForm = () => {
       <Profile />
       <LowerBannerContainer>
         <LowerBannerContainerLeft>
-          <Button variant="brand-plain" className="font-600">
-            {teamMembers.length > 0
+          <Button
+            variant="brand-plain"
+            className="font-600"
+            onClick={() => setAddTeamModalOpen(true)}
+          >
+            {projectProps.teamMembers.length > 0
               ? "Add or remove team members"
               : "Add team members"}
           </Button>
         </LowerBannerContainerLeft>
       </LowerBannerContainer>
 
-      <SubHeader title="Project details" required />
+      <AddTeamMembersModal
+        open={addTeamModalOpen}
+        onCloseClick={() => {
+          setAddTeamModalOpen(false);
+        }}
+      />
+
+      <SubHeader title="Project details" required className="mt-16" />
       {/* DAO */}
       <div className="mb-6 mt-6 flex justify-between">
         <p className="font-500">Would you like to register project as DAO?</p>
         <Radio
           name="is-dao"
-          value={isDao ? "yes" : "no"}
+          value={projectProps.isDao ? "yes" : "no"}
           onChange={isDaoChangeHandler}
           options={[
             { label: "yes", value: "yes" },
@@ -67,18 +90,83 @@ const CreateForm = () => {
       </div>
 
       <Row>
-        <InputContainer>
-          <Label>{isDao ? "DAO address *" : "Project ID *"}</Label>
-          {isDao ? (
-            <Input
-              {...register("daoAddress", { required: true })}
-              value={daoAddress}
+        {/* Project ID | DAO Address */}
+        <FormField
+          control={form.control}
+          name="daoAddress"
+          defaultValue={
+            projectProps.isDao
+              ? projectProps.daoAddress
+              : projectProps.accountId
+          }
+          disabled={!projectProps.isDao}
+          render={({ field }) => (
+            <CustomInput
+              label={projectProps.isDao ? "DAO address *" : "Project ID *"}
+              inputProps={{
+                placeholder: "Enter project name",
+                error: errors.daoAddress?.message,
+                ...field,
+              }}
             />
-          ) : (
-            <Input value={accountId} disabled />
           )}
-        </InputContainer>
+        />
       </Row>
+
+      <Row>
+        <FormField
+          control={form.control}
+          name="name"
+          defaultValue={projectProps.name}
+          render={({ field }) => (
+            <CustomInput
+              label="Project name *"
+              inputProps={{
+                placeholder: "Enter project name",
+                error: errors.name?.message,
+                ...field,
+              }}
+            />
+          )}
+        />
+
+        <SelectCategory
+          onValuesChange={categoryChangeHandler}
+          defaultValues={projectProps.categories}
+        />
+      </Row>
+
+      <Row>
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <CustomTextForm
+              label="Describe your project *"
+              placeholder="Type description"
+              error={errors.description?.message}
+              field={field}
+              currentText={values.description}
+            />
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="publicGoodReason"
+          render={({ field }) => (
+            <CustomTextForm
+              label="Why do you consider yourself a public good? *"
+              placeholder="Type the reason"
+              error={errors.publicGoodReason?.message}
+              field={field}
+              currentText={values.publicGoodReason}
+            />
+          )}
+        />
+      </Row>
+
+      <SubHeader title="Smart contracts" className="mt-16" />
     </div>
   );
 };

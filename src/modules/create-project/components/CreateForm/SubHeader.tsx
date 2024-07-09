@@ -3,11 +3,13 @@ import { SubTitle } from "./styles";
 const SubHeader = ({
   title,
   required,
+  className,
 }: {
   title: string;
   required?: boolean;
+  className?: string;
 }) => (
-  <SubTitle>
+  <SubTitle className={className}>
     {title}
     {required ? (
       <span className="required">Required</span>

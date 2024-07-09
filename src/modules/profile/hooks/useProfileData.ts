@@ -12,6 +12,7 @@ const useProfileData = (accountId?: string) => {
     image: "",
     backgroundImage: "",
   });
+  const [imagesReady, setImagesReady] = useState(false);
 
   // Fetch profile data
   useEffect(() => {
@@ -36,14 +37,19 @@ const useProfileData = (accountId?: string) => {
             image: imagesData.image,
             backgroundImage: imagesData.backgroundImage,
           });
+
+          setImagesReady(true);
         } catch (e) {
           console.error("Fetch Social Images:", e);
+          setImagesReady(true);
         }
+      } else {
+        setImagesReady(true);
       }
     })();
   }, [profile, accountId]);
 
-  return { profile, profileImages };
+  return { profile, profileImages, imagesReady };
 };
 
 export default useProfileData;

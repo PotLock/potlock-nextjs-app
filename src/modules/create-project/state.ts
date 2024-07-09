@@ -50,6 +50,22 @@ export const createProject = createModel<RootModel>()({
       state.isDao = isDao;
     },
 
+    setCategories(state: CreateProjectState, categories: string[]) {
+      state.categories = categories;
+    },
+
+    addTeamMember(state: CreateProjectState, accountId: string) {
+      if (state.teamMembers.indexOf(accountId) === -1) {
+        state.teamMembers = [...state.teamMembers, accountId];
+      }
+    },
+
+    removeTeamMember(state: CreateProjectState, accountId: string) {
+      state.teamMembers = state.teamMembers.filter(
+        (_accountId) => _accountId !== accountId,
+      );
+    },
+
     UPDATE_BACKGROUND_IMAGE(state: CreateProjectState, backgroundUrl: string) {
       state.backgroundImage = backgroundUrl;
     },
