@@ -34,6 +34,7 @@ import {
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
 import {
+  DONATION_INSUFFICIENT_BALANCE_ERROR,
   DONATION_MIN_NEAR_AMOUNT,
   DONATION_QUADRATIC_MATCHING_UNVERIFIED_DONOR_WARNING,
 } from "../constants";
@@ -59,45 +60,43 @@ export const DonationProjectAllocation: React.FC<
     walletApi.accountId ?? "unknown",
   );
 
+  const { data: availableFts } = pagoda.useFtAccountBalances({
+    accountId: walletApi.accountId,
+  });
+
+  const {
+    isLoading: isRecipientDataLoading,
+    data: recipient,
+    error: recipientDataError,
+  } = potlock.useAccount({ accountId });
+
   const [amount, tokenId, allocationStrategy] = form.watch([
     "amount",
     "tokenId",
     "allocationStrategy",
   ]);
 
-  const { data: matchingPots } = potlock.useAccountActivePots({ accountId });
-  // TODO: Remove `true ??` after testing
-  const hasMatchingPots = true ?? (matchingPots?.results.length ?? 0) > 0;
-  const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
-
-  const {
-    isLoading: isAccountLoading,
-    data: account,
-    error: accountError,
-  } = potlock.useAccount({ accountId });
-
-  const { data: availableFts } = pagoda.useFtAccountBalances({
-    accountId: walletApi.accountId ?? "unknown",
-  });
+  const isFtDonation =
+    allocationStrategy !== "pot" && tokenId !== NEAR_TOKEN_DENOM;
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
+  // TODO: Replace after testing
+  const { data: matchingPots } = potlock.usePots(); // const { data: matchingPots } = potlock.useAccountActivePots({ accountId });
+  const hasMatchingPots = (matchingPots?.results.length ?? 0) > 0;
 
   console.log(matchingPots?.results);
 
-  // TODO: Remove after testing
-  const { data: allPots } = potlock.usePots();
-
-  return accountError !== undefined ? (
+  return recipientDataError !== undefined ? (
     <ModalErrorBody
       heading="Donation"
       title="Unable to load recipient data!"
-      message={accountError?.message}
+      message={recipientDataError?.message}
     />
   ) : (
     <>
       <DialogHeader>
         <DialogTitle>
-          {`Donation to ${account?.near_social_profile_data?.name ?? "project"}`}
+          {`Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
         </DialogTitle>
       </DialogHeader>
 
@@ -107,7 +106,7 @@ export const DonationProjectAllocation: React.FC<
           name="allocationStrategy"
           render={({ field }) => (
             <FormItem className="gap-3">
-              {isAccountLoading ? (
+              {isRecipientDataLoading ? (
                 <Skeleton className="w-59 h-3.5" />
               ) : (
                 <FormLabel className="font-600">
@@ -128,7 +127,7 @@ export const DonationProjectAllocation: React.FC<
                         <FormItem key={value}>
                           <RadioGroupItem
                             id={`donation-options-${value}`}
-                            isLoading={isAccountLoading}
+                            isLoading={isRecipientDataLoading}
                             checked={
                               field.value ===
                               DonationAllocationStrategyEnum[value]
@@ -178,7 +177,7 @@ export const DonationProjectAllocation: React.FC<
                 defaultValue={field.value}
                 onValueChange={field.onChange}
               >
-                {allPots?.results.map(({ id: potId, name }) => (
+                {matchingPots?.results.map(({ id: potId, name }) => (
                   <SelectFieldOption key={potId} value={potId}>
                     {name}
                   </SelectFieldOption>
@@ -204,7 +203,7 @@ export const DonationProjectAllocation: React.FC<
                     <SelectField
                       embedded
                       label="Available tokens"
-                      //disabled // TODO: FT donation is not yet finished
+                      disabled // TODO: FT donation is not yet finished
                       defaultValue={fieldExtension.value}
                       onValueChange={fieldExtension.onChange}
                       classes={{
@@ -241,7 +240,7 @@ export const DonationProjectAllocation: React.FC<
               customErrorMessage={
                 isBalanceSufficient
                   ? minAmountError
-                  : "You don’t have enough balance to complete this transaction."
+                  : DONATION_INSUFFICIENT_BALANCE_ERROR
               }
             />
           )}
