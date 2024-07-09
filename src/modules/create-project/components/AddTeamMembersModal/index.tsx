@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { validateNearAddress } from "@wpdas/naxios";
 
@@ -10,9 +10,14 @@ import { AccountItems, GroupIcon } from "./components";
 type Props = {
   open?: boolean;
   onCloseClick?: () => void;
+  onMembersChange?: (members: string[]) => void;
 };
 
-const AddTeamMembersModal = ({ open, onCloseClick }: Props) => {
+const AddTeamMembersModal = ({
+  open,
+  onCloseClick,
+  onMembersChange,
+}: Props) => {
   const members = useTypedSelector((state) => state.createProject.teamMembers);
   const [account, setAccount] = useState("");
   const [invalidNearAcc, setInvalidNearAcc] = useState(false);
@@ -26,6 +31,12 @@ const AddTeamMembersModal = ({ open, onCloseClick }: Props) => {
     dispatch.createProject.addTeamMember(account);
     setAccount("");
   }, [account]);
+
+  useEffect(() => {
+    if (onMembersChange) {
+      onMembersChange(members);
+    }
+  }, [members, onMembersChange]);
 
   return (
     <Dialog open={open}>

@@ -42,6 +42,13 @@ const CreateForm = () => {
     [form],
   );
 
+  const onMembersChangeHandler = useCallback(
+    (members: string[]) => {
+      form.setValue("teamMembers", members);
+    },
+    [form],
+  );
+
   const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
 
   // must be signed in
@@ -79,6 +86,7 @@ const CreateForm = () => {
         onCloseClick={() => {
           setAddTeamModalOpen(false);
         }}
+        onMembersChange={onMembersChangeHandler}
       />
 
       <SubHeader title="Project details" required className="mt-16" />
