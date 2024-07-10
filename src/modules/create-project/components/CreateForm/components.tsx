@@ -10,7 +10,10 @@ import {
   useState,
 } from "react";
 
+import { validateNearAddress } from "@wpdas/naxios";
+import { CircleAlert } from "lucide-react";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
+import { boolean } from "zod";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
 import {
@@ -33,6 +36,8 @@ import {
   MultiSelectorTrigger,
 } from "@/common/ui/components/multi-select";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
+
+import validateEVMAddress from "../../utils/validateEVMAddress";
 
 export const Row = ({
   children,
@@ -239,9 +244,10 @@ type AddChainSelectorProps = {
   onChange: (value: string) => void;
   defaultValue?: string;
   items?: string;
+  disabled?: boolean;
 };
 
-export const CHAIN_OPTIONS: any = {
+export const CHAIN_OPTIONS: Record<string, { isEVM: boolean }> = {
   NEAR: { isEVM: false },
   Solana: { isEVM: false },
   Ethereum: { isEVM: true },
@@ -273,13 +279,14 @@ export const CHAIN_OPTIONS: any = {
 const AddChainSelector = ({
   onChange,
   defaultValue,
+  disabled,
 }: AddChainSelectorProps) => {
   return (
     <div>
       <Label className="m-0" style={{ marginBottom: 7 }}>
-        Add Chain
+        {disabled ? "Chain" : "Add Chain"}
       </Label>
-      <Select onValueChange={onChange} defaultValue={defaultValue}>
+      <Select onValueChange={onChange} value={defaultValue} disabled={disabled}>
         <SelectTrigger>
           <SelectValue placeholder="Select a chain" />
         </SelectTrigger>
@@ -299,37 +306,114 @@ const AddChainSelector = ({
 type SmartContractProps = {
   contractInfo: string[];
   index: number;
+  isPreview?: boolean;
 };
 
-const SmartContract = ({ contractInfo, index }: SmartContractProps) => {
+const SmartContract = ({
+  contractInfo,
+  index,
+  isPreview,
+}: SmartContractProps) => {
   const [chain, setChain] = useState(contractInfo[0]);
   const [address, setAddress] = useState(contractInfo[1]);
   const [error, setError] = useState("");
 
   const onAddHandler = useCallback(() => {
+    if (!chain) {
+      setError("You must select a chain");
+      return;
+    }
+
+    if (!address) {
+      setError("You must type an address");
+      return;
+    }
+
     if (chain && address) {
-      dispatch.createProject.updateSmartContracts([chain, address], index);
+      // validate
+      const isEVM = CHAIN_OPTIONS[chain].isEVM;
+      const isNEAR = chain === "NEAR";
+      const isValid = isNEAR
+        ? validateNearAddress(address)
+        : isEVM
+          ? validateEVMAddress(address)
+          : true;
+
+      if (!isValid) {
+        setError("Invalid address");
+        return;
+      }
+
+      dispatch.createProject.addSmartContract([chain, address], index);
+      setChain("");
+      setAddress("");
     }
   }, [chain, address, index]);
 
+  const onRemoveHandler = useCallback(() => {
+    dispatch.createProject.removeSmartContract(index);
+  }, [index]);
+
   return (
     <>
-      <AddChainSelector onChange={setChain} />
-      <div className="flex">
-        <CustomInput
-          label="Contract address"
-          inputProps={{
-            placeholder: "Enter address",
-            onChange: (e) => {
-              setAddress(e.target.value);
-            },
-          }}
-        />
-        <div className="ml-4 self-end">
-          <Button onClick={onAddHandler} variant="standard-filled">
-            Add
-          </Button>
+      <div className="bg-neutral-3 h-[1px] w-full md:hidden" />
+      <AddChainSelector
+        defaultValue={chain}
+        disabled={isPreview}
+        onChange={(value) => {
+          setChain(value);
+          setError("");
+        }}
+      />
+      <div className="flex flex-col">
+        <div className="flex">
+          <CustomInput
+            label="Contract address"
+            inputProps={{
+              value: address,
+              disabled: isPreview,
+              placeholder: "Enter address",
+              onChange: (e) => {
+                setAddress(e.target.value);
+                setError("");
+              },
+              onKeyDown: (e) => {
+                if (e.key === "Enter") {
+                  onAddHandler();
+                }
+              },
+            }}
+          />
+          {isPreview ? (
+            <div className="ml-4 self-end">
+              <Button
+                onClick={onRemoveHandler}
+                variant="brand-filled"
+                disabled={!!error}
+              >
+                Remove
+              </Button>
+            </div>
+          ) : (
+            <div className="ml-4 self-end">
+              <Button
+                onClick={onAddHandler}
+                variant="standard-filled"
+                disabled={!!error}
+              >
+                Add
+              </Button>
+            </div>
+          )}
         </div>
+        {error && (
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <div className="color-[#ED464F] text-xs">{error}</div>
+            <div>
+              <CircleAlert color="#ffffff" fill="#ED464F" size={18} />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -341,13 +425,19 @@ export const SmartContracts = () => {
   );
 
   if (smartContracts.length > 0) {
-    return smartContracts.map((contractInfo, index) => (
-      <SmartContract
-        key={contractInfo[0]}
-        contractInfo={contractInfo}
-        index={index}
-      />
-    ));
+    return (
+      <>
+        {smartContracts.map((contractInfo, index) => (
+          <SmartContract
+            key={`${contractInfo[0]}_${contractInfo[1]}`}
+            contractInfo={contractInfo}
+            index={index}
+            isPreview
+          />
+        ))}
+        <SmartContract contractInfo={["", ""]} index={smartContracts.length} />
+      </>
+    );
   }
 
   return (

@@ -66,7 +66,7 @@ export const createProject = createModel<RootModel>()({
       );
     },
 
-    updateSmartContracts(
+    addSmartContract(
       state: CreateProjectState,
       smartContract: string[],
       index: number,
@@ -74,6 +74,12 @@ export const createProject = createModel<RootModel>()({
       const previousState = state.smartContracts;
       previousState[index] = smartContract;
       state.smartContracts = previousState;
+    },
+
+    removeSmartContract(state: CreateProjectState, index: number) {
+      state.smartContracts = state.smartContracts.filter(
+        (_, _index) => _index !== index,
+      );
     },
 
     UPDATE_BACKGROUND_IMAGE(state: CreateProjectState, backgroundUrl: string) {
