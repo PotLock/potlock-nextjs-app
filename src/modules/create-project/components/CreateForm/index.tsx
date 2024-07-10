@@ -11,6 +11,7 @@ import {
   CustomTextForm,
   Row,
   SelectCategory,
+  SmartContracts,
 } from "./components";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
@@ -182,6 +183,9 @@ const CreateForm = () => {
       </Row>
 
       <SubHeader title="Smart contracts" className="mt-16" />
+      <Row>
+        <SmartContracts />
+      </Row>
     </div>
   );
 };

@@ -66,6 +66,16 @@ export const createProject = createModel<RootModel>()({
       );
     },
 
+    updateSmartContracts(
+      state: CreateProjectState,
+      smartContract: string[],
+      index: number,
+    ) {
+      const previousState = state.smartContracts;
+      previousState[index] = smartContract;
+      state.smartContracts = previousState;
+    },
+
     UPDATE_BACKGROUND_IMAGE(state: CreateProjectState, backgroundUrl: string) {
       state.backgroundImage = backgroundUrl;
     },

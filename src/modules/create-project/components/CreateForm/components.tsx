@@ -1,10 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { CSSProperties, useEffect, useState } from "react";
+import {
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
-import { useTypedSelector } from "@/app/_store";
-import { Input, InputProps, Textarea } from "@/common/ui/components";
+import { ControllerRenderProps, FieldValues } from "react-hook-form";
+
+import { dispatch, useTypedSelector } from "@/app/_store";
+import {
+  Button,
+  Input,
+  InputProps,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+} from "@/common/ui/components";
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -213,5 +232,125 @@ export const AccountStack = () => {
         />
       ))}
     </div>
+  );
+};
+
+type AddChainSelectorProps = {
+  onChange: (value: string) => void;
+  defaultValue?: string;
+  items?: string;
+};
+
+export const CHAIN_OPTIONS: any = {
+  NEAR: { isEVM: false },
+  Solana: { isEVM: false },
+  Ethereum: { isEVM: true },
+  Polygon: { isEVM: true },
+  Avalanche: { isEVM: true },
+  Optimism: { isEVM: true },
+  Arbitrum: { isEVM: true },
+  BNB: { isEVM: true },
+  Sui: { isEVM: false },
+  Aptos: { isEVM: false },
+  Polkadot: { isEVM: false },
+  Stellar: { isEVM: false },
+  ZkSync: { isEVM: false }, // Note: ZkSync aims for EVM compatibility but might not fully be considered as traditional EVM at the time of writing.
+  Celo: { isEVM: true },
+  Aurora: { isEVM: true },
+  Injective: { isEVM: true },
+  Base: { isEVM: false },
+  Manta: { isEVM: false }, // Listed twice in the original list; included once here.
+  Fantom: { isEVM: true },
+  ZkEVM: { isEVM: true }, // Considering the name, assuming it aims for EVM compatibility.
+  Flow: { isEVM: false },
+  Tron: { isEVM: true },
+  MultiverseX: { isEVM: false }, // Formerly known as Elrond, not traditionally EVM but has some level of compatibility.
+  Scroll: { isEVM: true }, // Assuming EVM compatibility based on the context of ZkEVM.
+  Linea: { isEVM: true }, // Assuming non-EVM due to lack of information.
+  Metis: { isEVM: true },
+};
+
+const AddChainSelector = ({
+  onChange,
+  defaultValue,
+}: AddChainSelectorProps) => {
+  return (
+    <div>
+      <Label className="m-0" style={{ marginBottom: 7 }}>
+        Add Chain
+      </Label>
+      <Select onValueChange={onChange} defaultValue={defaultValue}>
+        <SelectTrigger>
+          <SelectValue placeholder="Select a chain" />
+        </SelectTrigger>
+
+        <SelectContent>
+          {Object.keys(CHAIN_OPTIONS).map((chain) => (
+            <SelectItem key={chain} value={chain}>
+              {chain}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
+
+type SmartContractProps = {
+  contractInfo: string[];
+  index: number;
+};
+
+const SmartContract = ({ contractInfo, index }: SmartContractProps) => {
+  const [chain, setChain] = useState(contractInfo[0]);
+  const [address, setAddress] = useState(contractInfo[1]);
+  const [error, setError] = useState("");
+
+  const onAddHandler = useCallback(() => {
+    if (chain && address) {
+      dispatch.createProject.updateSmartContracts([chain, address], index);
+    }
+  }, [chain, address, index]);
+
+  return (
+    <>
+      <AddChainSelector onChange={setChain} />
+      <div className="flex">
+        <CustomInput
+          label="Contract address"
+          inputProps={{
+            placeholder: "Enter address",
+            onChange: (e) => {
+              setAddress(e.target.value);
+            },
+          }}
+        />
+        <div className="ml-4 self-end">
+          <Button onClick={onAddHandler} variant="standard-filled">
+            Add
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export const SmartContracts = () => {
+  const smartContracts = useTypedSelector(
+    (state) => state.createProject.smartContracts,
+  );
+
+  if (smartContracts.length > 0) {
+    return smartContracts.map((contractInfo, index) => (
+      <SmartContract
+        key={contractInfo[0]}
+        contractInfo={contractInfo}
+        index={index}
+      />
+    ));
+  }
+
+  return (
+    <SmartContract contractInfo={["", ""]} index={smartContracts.length} />
   );
 };
