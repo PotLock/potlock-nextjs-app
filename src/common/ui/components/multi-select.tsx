@@ -250,9 +250,9 @@ const MultiSelectorList = forwardRef<
       )}
     >
       {children}
-      <CommandEmpty>
+      {/* <CommandEmpty>
         <span className="text-muted-foreground">No results found</span>
-      </CommandEmpty>
+      </CommandEmpty> */}
     </CommandList>
   );
 });
@@ -274,10 +274,10 @@ const MultiSelectorItem = forwardRef<
 
   const isIncluded = Options.includes(value);
   return (
-    <CommandItem
+    <div
       ref={ref}
       {...props}
-      onSelect={() => {
+      onClick={() => {
         onValueChange(value);
         setInputValue("");
       }}
@@ -291,7 +291,7 @@ const MultiSelectorItem = forwardRef<
     >
       {children}
       {isIncluded && <Check className="h-4 w-4" />}
-    </CommandItem>
+    </div>
   );
 });
 

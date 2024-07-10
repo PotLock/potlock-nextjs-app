@@ -31,6 +31,10 @@ const CreateForm = () => {
       const _isDao = e.target.value === "yes";
       dispatch.createProject.setIsDao(_isDao);
       form.setValue("isDao", _isDao);
+
+      if (!_isDao) {
+        form.setValue("daoAddress", "");
+      }
     },
     [form],
   );
@@ -49,6 +53,8 @@ const CreateForm = () => {
     },
     [form],
   );
+
+  console.log(projectProps.accountId);
 
   const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
 
@@ -121,8 +127,11 @@ const CreateForm = () => {
               label={projectProps.isDao ? "DAO address *" : "Project ID *"}
               inputProps={{
                 placeholder: "Enter project name",
-                error: errors.daoAddress?.message,
+                error: projectProps.isDao ? errors.daoAddress?.message : "",
                 ...field,
+                ...(!projectProps.isDao
+                  ? { value: projectProps.accountId }
+                  : {}),
               }}
             />
           )}
@@ -186,6 +195,8 @@ const CreateForm = () => {
       <Row>
         <SmartContracts />
       </Row>
+
+      <SubHeader title="Funding sources" className="mt-16" />
     </div>
   );
 };

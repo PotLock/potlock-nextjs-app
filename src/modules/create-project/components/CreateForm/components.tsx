@@ -131,7 +131,7 @@ export const SelectCategory = ({
       <MultiSelectorContent>
         <MultiSelectorList>
           {options.map((option, i) => (
-            <MultiSelectorItem key={option} value={option}>
+            <MultiSelectorItem key={i} value={option}>
               {option}
             </MultiSelectorItem>
           ))}
