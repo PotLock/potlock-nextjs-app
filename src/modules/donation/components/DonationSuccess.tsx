@@ -20,6 +20,7 @@ import {
 import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 
 import { DonationBreakdown } from "./DonationBreakdown";
+import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { useDonationFees } from "../hooks";
 import { DonationInputs } from "../models";
 import { DonationState } from "../types";
@@ -175,6 +176,8 @@ export const DonationSuccess = ({
       ) : (
         <DonationBreakdown tokenId={result.ft_id} {...{ fees }} />
       )}
+
+      {pot && <DonationVerificationWarning />}
 
       {transactionHash && (
         <TextWithIcon content={`Txn Hash : ${truncate(transactionHash, 7)}`}>
