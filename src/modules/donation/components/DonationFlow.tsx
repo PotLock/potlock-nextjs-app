@@ -40,7 +40,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     ...props,
 
     referrerAccountId:
-      searchParams.get("referrerId") ?? result?.recipient_id ?? undefined,
+      searchParams.get("referrerId") ?? result?.referrer_id ?? undefined,
   });
 
   const [tokenId] = form.watch(["tokenId"]);
