@@ -37,8 +37,6 @@ export type DonationSuccessProps = {
 const staticResultIndicatorClassName =
   "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
 
-// -
-
 export const DonationSuccess = ({
   form,
   result,
