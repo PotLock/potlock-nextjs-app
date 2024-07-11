@@ -28,9 +28,13 @@ export const useDonationForm = ({
   referrerAccountId,
   ...params
 }: DonationFormParams) => {
-  const { data: matchingPotsPaginated } = potlock.usePots();
-  // TODO: ⬆️ Replace after testing ⬇️
-  // const { data: matchingPotsPaginated } = potlock.useAccountActivePots({ accountId });
+  const recipientAccountId =
+    "accountId" in params ? params.accountId : undefined;
+
+  const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
+    accountId: recipientAccountId,
+  });
+
   const matchingPots = matchingPotsPaginated?.results ?? [];
 
   const defaultPotAccountId = toChronologicalOrder(
@@ -46,7 +50,7 @@ export const useDonationForm = ({
         ],
 
       tokenId: donationTokenSchema.parse(undefined),
-      recipientAccountId: "accountId" in params ? params.accountId : undefined,
+      recipientAccountId,
       referrerAccountId,
 
       potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
@@ -57,7 +61,7 @@ export const useDonationForm = ({
         ],
     }),
 
-    [defaultPotAccountId, params, referrerAccountId],
+    [defaultPotAccountId, params, recipientAccountId, referrerAccountId],
   );
 
   const form = useForm<DonationInputs>({

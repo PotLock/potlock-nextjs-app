@@ -47,11 +47,11 @@ export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_active_pots_retrieve
  */
-export const useAccountActivePots = ({ accountId }: ByAccountId) => {
+export const useAccountActivePots = ({ accountId }: Partial<ByAccountId>) => {
   const queryResult = swrHooks.useV1AccountsActivePotsRetrieve(
-    accountId,
+    accountId ?? "unknown",
     { status: "live" },
-    POTLOCK_REQUEST_CONFIG,
+    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data };
