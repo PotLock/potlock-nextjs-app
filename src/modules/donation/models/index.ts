@@ -3,7 +3,15 @@ import { createModel } from "@rematch/core";
 import { RootModel } from "@/app/_store/models";
 import { walletApi } from "@/common/contracts";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import {
+  DirectDonation,
+  DirectDonationArgs,
+} from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import {
+  PotDonation,
+  PotDonationArgs,
+} from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { donateNearViaPot } from "@/common/contracts/potlock/pot";
 import { floatToYoctoNear } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
 
@@ -70,7 +78,7 @@ export const donationModel = createModel<RootModel>()({
       }
     },
 
-    success(state, result: DirectDonation) {
+    success(state, result: DirectDonation | PotDonation) {
       return { ...handleStep(state, "success"), successResult: result };
     },
 
@@ -86,13 +94,14 @@ export const donationModel = createModel<RootModel>()({
       potDistributionStrategy,
       referrerAccountId,
       bypassProtocolFee,
+      bypassChefFee,
       message,
       ...props
     }: DonationSubmissionInputs & DonationInputs): Promise<void> {
       if ("accountId" in props) {
         switch (allocationStrategy) {
           case DonationAllocationStrategyEnum.direct: {
-            const args = {
+            const args: DirectDonationArgs = {
               recipient_id: props.accountId,
               message,
               referrer_id: referrerAccountId,
@@ -105,7 +114,27 @@ export const donationModel = createModel<RootModel>()({
           }
 
           case DonationAllocationStrategyEnum.pot: {
-            return void dispatch.donation.failure(new Error("Not implemented"));
+            if (!props.potAccountId) {
+              return void dispatch.donation.failure(
+                new Error("No pot selected"),
+              );
+            }
+
+            const args: PotDonationArgs = {
+              project_id: props.accountId,
+              message,
+              referrer_id: referrerAccountId,
+              bypass_protocol_fee: bypassProtocolFee,
+              custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
+            };
+
+            return void donateNearViaPot(
+              props.potAccountId,
+              args,
+              floatToYoctoNear(amount),
+            )
+              .then((result) => dispatch.donation.success(result))
+              .catch((error) => dispatch.donation.failure(error));
           }
         }
       } else if ("potId" in props) {
@@ -132,7 +161,7 @@ export const donationModel = createModel<RootModel>()({
 
         const donationResult = JSON.parse(
           atob(data.result.receipts_outcome[3].outcome.status.SuccessValue),
-        ) as DirectDonation;
+        ) as DirectDonation | PotDonation;
 
         return void dispatch.donation.success(donationResult);
       } else {

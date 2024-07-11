@@ -1,12 +1,15 @@
 import { MemoryCache } from "@wpdas/naxios";
 
+import { PotId } from "@/common/api/potlock";
+
 import {
   Application,
   ApprovedApplication,
-  Challange,
+  Challenge,
   Payout,
   PotConfig,
   PotDonation,
+  PotDonationArgs,
 } from "./interfaces/pot.interfaces";
 import { naxiosInstance } from "..";
 
@@ -114,7 +117,7 @@ export const getApplications = async (args: { potId: string }) =>
  * Get round payout challanges
  */
 export const getPayoutsChallenges = async (args: { potId: string }) =>
-  contractApi(args.potId).view<typeof args, Challange[]>(
+  contractApi(args.potId).view<typeof args, Challenge[]>(
     "get_payouts_challenges",
     {
       args,
@@ -131,7 +134,7 @@ export const getPayouts = async (args: { potId: string }) =>
 
 // WRITE METHODS
 /**
- * Challange round payout
+ * Challenge round payout
  */
 export const challengePayouts = ({
   potId,
@@ -142,7 +145,7 @@ export const challengePayouts = ({
 }) => {
   const depositFloat = reason.length * 0.00003 + 0.003;
 
-  contractApi(potId).call<{ reason: string }, Challange[]>(
+  contractApi(potId).call<{ reason: string }, Challenge[]>(
     "challenge_payouts",
     {
       args: {
@@ -155,7 +158,7 @@ export const challengePayouts = ({
 };
 
 /**
- * Admin update round payout Challange
+ * Admin update round payout Challenge
  */
 export const adminUpdatePayoutsChallenge = (args: {
   potId: string;
@@ -165,7 +168,7 @@ export const adminUpdatePayoutsChallenge = (args: {
 }) => {
   const depositFloat = args.notes.length * 0.00003;
 
-  contractApi(args.potId).call<typeof args, Challange[]>(
+  contractApi(args.potId).call<typeof args, Challenge[]>(
     "admin_update_payouts_challenge",
     {
       args,
@@ -176,7 +179,7 @@ export const adminUpdatePayoutsChallenge = (args: {
 };
 
 /**
- * Admin update round payout Challange
+ * Admin update round payout Challenge
  */
 export const chefSetPayouts = (args: { potId: string; payouts: Payout[] }) =>
   contractApi(args.potId).call<typeof args, Payout[]>("chef_set_payouts", {
@@ -195,54 +198,13 @@ export const adminProcessPayouts = (args: { potId: string }) =>
     gas: "300000000000000",
   });
 
-/**
- * Get flagged acoounts for round
- */
-// export const get_flagged_accounts = ({
-//   potDetail,
-//   potId,
-// }: {
-//   potDetail: PotConfig;
-//   potId: string;
-// }) => {
-//   const roles = ["owner", "admins", "chef"];
-
-//   const allUsers = {};
-//   roles.forEach((role) => {
-//     const users = potDetail[role];
-//     if (typeof users === "object") {
-//       users.forEach((user) => {
-//         allUsers[user] = role === "admins" ? "admin" : role;
-//       });
-//     } else {
-//       allUsers[users] = role;
-//     }
-//   });
-
-//   const flaggedAccounts = [];
-//   const socialKeys = Object.keys(allUsers).map((user) => `${user}/profile/**`);
-
-//   return new Promise((resolve, reject) => {
-//     getSocialProfile(socialKeys)
-//       .then((profiles) => {
-//         Object.entries(profiles).forEach(([user, { profile }]) => {
-//           const pLBlacklistedAccounts = JSON.parse(
-//             profile.pLBlacklistedAccounts || "{}",
-//           );
-//           const potFlaggedAcc = pLBlacklistedAccounts[potId] || {};
-//           if (!isEmpty(potFlaggedAcc)) {
-//             flaggedAccounts.push({
-//               flaggedBy: user,
-//               role: allUsers[user],
-//               potFlaggedAcc,
-//             });
-//           }
-//         });
-//         resolve(flaggedAccounts);
-//       })
-//       .catch((error) => {
-//         console.error("Error fetching social profiles:", error);
-//         reject(error);
-//       });
-//   });
-// };
+export const donateNearViaPot = (
+  potAccountId: PotId,
+  args: PotDonationArgs,
+  depositAmountYocto: string,
+) =>
+  contractApi(potAccountId).call<typeof args, PotDonation>("donate", {
+    args,
+    deposit: depositAmountYocto,
+    callbackUrl: window.location.href,
+  });
