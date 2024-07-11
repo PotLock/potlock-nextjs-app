@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import {
   FormControl,
   FormDescription,
@@ -39,26 +41,38 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   children,
   ...props
 }) => {
-  const body = (
-    <>
-      <Select {...props}>
-        <FormControl>
-          <SelectTrigger className={classes?.trigger}>
-            <SelectValue {...{ placeholder }} />
-          </SelectTrigger>
-        </FormControl>
+  const body = useMemo(
+    () => (
+      <>
+        <Select {...props}>
+          <FormControl>
+            <SelectTrigger className={classes?.trigger}>
+              <SelectValue {...{ placeholder }} />
+            </SelectTrigger>
+          </FormControl>
 
-        <SelectContent>
-          <SelectGroup>
-            {embedded && <SelectLabel>{label}</SelectLabel>}
-            {children}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+          <SelectContent>
+            <SelectGroup>
+              {embedded && <SelectLabel>{label}</SelectLabel>}
+              {children}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
-      {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage />
-    </>
+        {description && <FormDescription>{description}</FormDescription>}
+        <FormMessage />
+      </>
+    ),
+
+    [
+      children,
+      classes?.trigger,
+      description,
+      embedded,
+      label,
+      placeholder,
+      props,
+    ],
   );
 
   return embedded ? (

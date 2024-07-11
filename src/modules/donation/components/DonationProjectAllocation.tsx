@@ -1,5 +1,5 @@
 import { pagoda } from "@/common/api/pagoda";
-import { potlock } from "@/common/api/potlock";
+import { Pot, potlock } from "@/common/api/potlock";
 import { WarningIcon } from "@/common/assets/svgs";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
@@ -45,7 +45,7 @@ import {
 import { DonationAllocationStrategyEnum } from "../types";
 
 export type DonationProjectAllocationProps = ByAccountId &
-  DonationAllocationInputs & {};
+  DonationAllocationInputs & { matchingPots?: Pot[] };
 
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
@@ -54,6 +54,7 @@ export const DonationProjectAllocation: React.FC<
   minAmountError,
   accountId,
   balanceFloat,
+  matchingPots,
   form,
 }) => {
   const { nadaBotVerified: isDonorNadabotVerified } = useIsHuman(
@@ -80,11 +81,8 @@ export const DonationProjectAllocation: React.FC<
     allocationStrategy !== "pot" && tokenId !== NEAR_TOKEN_DENOM;
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
-  // TODO: Replace after testing
-  const { data: matchingPots } = potlock.usePots(); // const { data: matchingPots } = potlock.useAccountActivePots({ accountId });
-  const hasMatchingPots = (matchingPots?.results.length ?? 0) > 0;
 
-  console.log(matchingPots?.results);
+  const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
 
   return recipientDataError !== undefined ? (
     <ModalErrorBody
@@ -177,7 +175,7 @@ export const DonationProjectAllocation: React.FC<
                 defaultValue={field.value}
                 onValueChange={field.onChange}
               >
-                {matchingPots?.results.map(({ id: potId, name }) => (
+                {matchingPots?.map(({ id: potId, name }) => (
                   <SelectFieldOption key={potId} value={potId}>
                     {name}
                   </SelectFieldOption>

@@ -1,11 +1,13 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 import { dispatch } from "@/app/_store";
+import { potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
+import { toChronologicalOrder } from "@/common/lib";
 import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 
@@ -26,6 +28,16 @@ export const useDonationForm = ({
   referrerAccountId,
   ...params
 }: DonationFormParams) => {
+  const { data: matchingPotsPaginated } = potlock.usePots();
+  // TODO: ⬆️ Replace after testing ⬇️
+  // const { data: matchingPotsPaginated } = potlock.useAccountActivePots({ accountId });
+  const matchingPots = matchingPotsPaginated?.results ?? [];
+
+  const defaultPotAccountId = toChronologicalOrder(
+    "matching_round_end",
+    matchingPots,
+  ).at(0)?.id;
+
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       allocationStrategy:
@@ -36,7 +48,8 @@ export const useDonationForm = ({
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId: "accountId" in params ? params.accountId : undefined,
       referrerAccountId,
-      potAccountId: "potId" in params ? params.potId : undefined,
+
+      potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
 
       potDistributionStrategy:
         DonationPotDistributionStrategy[
@@ -44,13 +57,14 @@ export const useDonationForm = ({
         ],
     }),
 
-    [params, referrerAccountId],
+    [defaultPotAccountId, params, referrerAccountId],
   );
 
   const form = useForm<DonationInputs>({
     resolver: zodResolver(donationSchema),
     mode: "onChange",
     defaultValues,
+    resetOptions: { keepDirtyValues: true },
   });
 
   const currentValues = useWatch({ control: form.control });
@@ -85,11 +99,26 @@ export const useDonationForm = ({
     [params],
   );
 
+  useEffect(() => {
+    /**
+     *? Currently, when `defaultPotAccountId` gets determined,
+     *?  it does not trigger rerender, so we have to do it manually.
+     */
+    if (
+      "accountId" in params &&
+      currentValues.potAccountId === undefined &&
+      defaultPotAccountId
+    ) {
+      form.setValue("potAccountId", defaultPotAccountId);
+    }
+  }, [currentValues, defaultPotAccountId, form, hasChanges, params]);
+
   return {
     hasChanges,
     isBalanceSufficient,
     isDisabled,
     isSenderHumanVerified,
+    matchingPots,
     form,
     minAmountError,
     onSubmit: form.handleSubmit(onSubmit),

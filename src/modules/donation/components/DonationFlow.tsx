@@ -29,13 +29,19 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 }) => {
   const searchParams = useSearchParams();
 
-  const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
-    useDonationForm({
-      ...props,
+  const {
+    isBalanceSufficient,
+    matchingPots,
+    minAmountError,
+    form,
+    isDisabled,
+    onSubmit,
+  } = useDonationForm({
+    ...props,
 
-      referrerAccountId:
-        searchParams.get("referrerId") ?? result?.recipient_id ?? undefined,
-    });
+    referrerAccountId:
+      searchParams.get("referrerId") ?? result?.recipient_id ?? undefined,
+  });
 
   const [tokenId] = form.watch(["tokenId"]);
 
@@ -54,7 +60,11 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     switch (currentStep) {
       case "allocation":
         return "accountId" in props
-          ? h(DonationProjectAllocation, { ...staticAllocationProps, ...props })
+          ? h(DonationProjectAllocation, {
+              matchingPots,
+              ...staticAllocationProps,
+              ...props,
+            })
           : h(DonationPotAllocation, { ...staticAllocationProps, ...props });
 
       case "confirmation":
@@ -77,6 +87,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     currentStep,
     form,
     isBalanceSufficient,
+    matchingPots,
     minAmountError,
     props,
     result,
