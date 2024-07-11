@@ -9,6 +9,8 @@ import {
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";
+import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { bigStringToFloat, truncate } from "@/common/lib";
 import {
   Button,
@@ -46,12 +48,18 @@ export const DonationSuccess = ({
   const { data: pot } = potlock.usePot({ potId: potAccountId });
 
   const { data: recipient, error: recipientDataError } = potlock.useAccount({
-    accountId: result?.recipient_id,
+    accountId:
+      "recipient_id" in (result ?? {})
+        ? (result as DirectDonation).recipient_id
+        : (result as PotDonation).project_id ?? undefined,
   });
 
-  const { data: tokenMetadata } = pagoda.useTokenMetadata({
-    tokenId: result?.ft_id ?? NEAR_TOKEN_DENOM,
-  });
+  const tokenId =
+    "ft_id" in (result ?? {})
+      ? (result as DirectDonation).ft_id
+      : NEAR_TOKEN_DENOM;
+
+  const { data: tokenMetadata } = pagoda.useTokenMetadata({ tokenId });
 
   const isLoading =
     isResultLoading || recipient === undefined || tokenMetadata === undefined;
@@ -135,8 +143,8 @@ export const DonationSuccess = ({
           <Skeleton className="h-7 w-44" />
         ) : (
           <TotalTokenValue
-            tokenId={result.ft_id}
             amountBigString={result.total_amount}
+            {...{ tokenId }}
           />
         )}
 
@@ -174,7 +182,7 @@ export const DonationSuccess = ({
       {isLoading ? (
         <Skeleton className="h-28" />
       ) : (
-        <DonationBreakdown tokenId={result.ft_id} {...{ fees }} />
+        <DonationBreakdown {...{ fees, tokenId }} />
       )}
 
       {pot && <DonationVerificationWarning />}
