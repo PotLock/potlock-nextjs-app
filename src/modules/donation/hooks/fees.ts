@@ -1,13 +1,14 @@
-import { potlock } from "@/common/api/potlock";
+import { Pot, potlock } from "@/common/api/potlock";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 
 import { DonationInputs } from "../models";
 
 export type DonationFeeInputs = Pick<
   DonationInputs,
-  "amount" | "referrerAccountId" | "potAccountId"
+  "amount" | "referrerAccountId"
 > &
   Partial<Pick<DonationInputs, "bypassProtocolFee" | "bypassChefFee">> & {
+    pot?: Pot;
     protocolFeeFinalAmount?: number;
     referralFeeFinalAmount?: number;
   };
@@ -27,16 +28,15 @@ export type DonationFees = {
 export const basisPointsToPercent = (basisPoints: number) => basisPoints / 100;
 
 export const useDonationFees = ({
+  pot,
   amount,
   referrerAccountId,
-  potAccountId,
   protocolFeeFinalAmount,
   referralFeeFinalAmount,
   bypassProtocolFee = false,
   bypassChefFee = false,
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
-  const { data: potData } = potlock.usePot({ potId: potAccountId });
 
   // TODO: Recalculate basic points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
 
@@ -70,7 +70,7 @@ export const useDonationFees = ({
     potlockDonationConfig?.referral_fee_basis_points ?? 0;
 
   const referralFeeInitialBasisPoints =
-    potData?.referral_fee_public_round_basis_points ??
+    pot?.referral_fee_public_round_basis_points ??
     potlockReferralFeeBasisPoints;
 
   const referralFeeBasisPoints = referrerAccountId
@@ -87,7 +87,7 @@ export const useDonationFees = ({
    *? Chef fee:
    */
 
-  const chefFeeInitialBasisPoints = potData?.chef_fee_basis_points ?? 0;
+  const chefFeeInitialBasisPoints = pot?.chef_fee_basis_points ?? 0;
   const chefFeeBasisPoints = bypassChefFee ? 0 : chefFeeInitialBasisPoints;
   const chefFeeAmount = (amount * chefFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
   const chefFeePercent = basisPointsToPercent(chefFeeInitialBasisPoints);

@@ -104,8 +104,9 @@ export const donationModel = createModel<RootModel>()({
               .catch((error) => dispatch.donation.failure(error));
           }
 
-          case DonationAllocationStrategyEnum.pot:
+          case DonationAllocationStrategyEnum.pot: {
             return void dispatch.donation.failure(new Error("Not implemented"));
+          }
         }
       } else if ("potId" in props) {
         switch (potDistributionStrategy) {

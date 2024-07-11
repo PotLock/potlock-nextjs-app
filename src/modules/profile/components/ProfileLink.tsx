@@ -11,9 +11,14 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
   accountId,
   className,
 }) => {
-  const { data: accountData } = potlock.useAccount({ accountId });
+  const { data: account } = potlock.useAccount({ accountId });
 
-  const accountSocialData = accountData?.near_social_profile_data;
+  const { name, image } = account?.near_social_profile_data ?? {};
+
+  const imageUrl =
+    image?.url ?? image?.nft?.media ?? image?.ipfs_cid
+      ? `https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/${image.ipfs_cid}`
+      : null;
 
   return (
     <Link
@@ -21,10 +26,10 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
       target="_blank"
       className={cn("decoration-none flex items-center gap-1", className)}
     >
-      {accountSocialData?.image?.url ? (
+      {imageUrl ? (
         <Image
-          alt={`${accountSocialData.name}'s profile picture`}
-          src={accountSocialData.image?.url}
+          alt={`${name ?? accountId}'s profile picture`}
+          src={imageUrl}
           width={20}
           height={20}
         />
@@ -33,7 +38,7 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
       )}
 
       <span className="prose" un-decoration="hover:underline">
-        {accountSocialData?.name ?? accountId}
+        {name ?? accountId}
       </span>
     </Link>
   );

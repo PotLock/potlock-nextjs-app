@@ -42,20 +42,18 @@ export const DonationSuccess = ({
 }: DonationSuccessProps) => {
   const isResultLoading = result === undefined;
   const [potAccountId] = form.watch(["potAccountId"]);
+  const { data: pot } = potlock.usePot({ potId: potAccountId });
 
-  const { data: recipientAccount, error: recipientAccountError } =
-    potlock.useAccount({
-      accountId: result?.recipient_id,
-    });
+  const { data: recipient, error: recipientDataError } = potlock.useAccount({
+    accountId: result?.recipient_id,
+  });
 
   const { data: tokenMetadata } = pagoda.useTokenMetadata({
     tokenId: result?.ft_id ?? NEAR_TOKEN_DENOM,
   });
 
   const isLoading =
-    isResultLoading ||
-    recipientAccount === undefined ||
-    tokenMetadata === undefined;
+    isResultLoading || recipient === undefined || tokenMetadata === undefined;
 
   const totalAmountFloat = bigStringToFloat(
     result?.total_amount ?? "0",
@@ -73,18 +71,18 @@ export const DonationSuccess = ({
   );
 
   const fees = useDonationFees({
+    pot,
     amount: totalAmountFloat,
     referrerAccountId: result?.referrer_id ?? undefined,
-    potAccountId,
     protocolFeeFinalAmount: protocolFeeAmountFloat,
     referralFeeFinalAmount: referralFeeFinalAmountFloat,
   });
 
-  return recipientAccountError !== undefined ? (
+  return recipientDataError !== undefined ? (
     <ModalErrorBody
       heading="Donation"
       title="Unable to load recipient data!"
-      message={recipientAccountError?.message}
+      message={recipientDataError?.message}
     />
   ) : (
     <DialogDescription className="items-center gap-8 p-10">
@@ -144,19 +142,18 @@ export const DonationSuccess = ({
         {isLoading ? (
           <Skeleton className="w-49 h-5" />
         ) : (
-          <p
-            className="prose"
-            un-flex="~"
-            un-gap="1"
-            un-m="0"
-            un-text="neutral-950"
-          >
-            <span>has been donated to</span>
+          <p className="prose" un-m="0" un-flex="~ col">
+            <span un-flex="~" un-gap="1" un-text="neutral-950">
+              <span>has been donated to</span>
 
-            <span un-font="600">
-              {recipientAccount.near_social_profile_data?.name ??
-                recipientAccount.id}
+              <span un-font="600">
+                {recipient.near_social_profile_data?.name ?? recipient.id}
+              </span>
             </span>
+
+            {pot?.name && (
+              <span un-text="neutral-600">{`Via ${pot.name} Pot`}</span>
+            )}
           </p>
         )}
 
@@ -164,7 +161,7 @@ export const DonationSuccess = ({
           <Skeleton className="w-23.5 h-5" />
         ) : (
           <Link
-            href={`/user/${recipientAccount.id}/funding-raised`}
+            href={`/user/${recipient.id}/funding-raised`}
             onClick={closeModal}
             className="text-red-600"
           >
