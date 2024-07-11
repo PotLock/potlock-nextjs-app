@@ -1,5 +1,7 @@
 import { z } from "zod";
 
-import { createProjectSchema } from "./schemas";
+import { addFundingSourceSchema, createProjectSchema } from "./schemas";
 
 export type CreateProjectInputs = z.infer<typeof createProjectSchema>;
+
+export type AddFundingSourceInputs = z.infer<typeof addFundingSourceSchema>;

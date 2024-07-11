@@ -4,7 +4,7 @@ import { RootModel } from "@/app/_store/models";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 
 import { createProjectSchema } from "./models/schemas";
-import { CreateProjectInputs } from "./models/types";
+import { AddFundingSourceInputs, CreateProjectInputs } from "./models/types";
 import uploadFileToIPFS from "../core/services/uploadFileToIPFS";
 
 type ExtraTypes = {
@@ -64,6 +64,28 @@ export const createProject = createModel<RootModel>()({
       state.teamMembers = state.teamMembers.filter(
         (_accountId) => _accountId !== accountId,
       );
+    },
+
+    addFundingSource(
+      state: CreateProjectState,
+      fundingSourceData: AddFundingSourceInputs,
+    ) {
+      state.fundingSources = [...state.fundingSources, fundingSourceData];
+    },
+
+    removeFundingSource(state: CreateProjectState, index: number) {
+      state.fundingSources = state.fundingSources.filter(
+        (_, _index) => _index !== index,
+      );
+    },
+
+    updateFundingSource(
+      state: CreateProjectState,
+      payload: { fundingSourceData: AddFundingSourceInputs; index: number },
+    ) {
+      const updatedFunding = [...state.fundingSources];
+      updatedFunding[payload.index] = payload.fundingSourceData;
+      state.fundingSources = updatedFunding;
     },
 
     addSmartContract(

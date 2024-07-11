@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { createProjectSchema } from "../models/schemas";
-import { CreateProjectInputs } from "../models/types";
+import { addFundingSourceSchema, createProjectSchema } from "../models/schemas";
+import { AddFundingSourceInputs, CreateProjectInputs } from "../models/types";
 
 export const useCreateProjectForm = () => {
   const form = useForm<CreateProjectInputs>({
@@ -20,5 +20,16 @@ export const useCreateProjectForm = () => {
     form,
     errors: form.formState.errors,
     onSubmit: form.handleSubmit(onSubmit),
+  };
+};
+
+export const useAddFundingSourceForm = () => {
+  const form = useForm<AddFundingSourceInputs>({
+    resolver: zodResolver(addFundingSourceSchema),
+  });
+
+  return {
+    form,
+    errors: form.formState.errors,
   };
 };

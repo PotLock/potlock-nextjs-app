@@ -64,7 +64,7 @@ export const Label = ({
   className,
   style,
 }: {
-  children: JSX.Element | string;
+  children: any;
   className?: string;
   style?: CSSProperties;
 }) => (
@@ -79,10 +79,24 @@ export const Label = ({
 type CustomInputProps = {
   label: string;
   inputProps: InputProps;
+  className?: string;
+  optional?: boolean;
 };
-export const CustomInput = ({ label, inputProps }: CustomInputProps) => (
+export const CustomInput = ({
+  label,
+  inputProps,
+  className,
+  optional,
+}: CustomInputProps) => (
   <InputContainer>
-    <Label className="m-0">{label}</Label>
+    <Label className={`m-0 ${className}`}>
+      {label}
+      {optional && (
+        <span className="font-400 ml-1 text-[14px] text-[#292929]">
+          (optional)
+        </span>
+      )}
+    </Label>
     <Input {...inputProps} />
   </InputContainer>
 );
@@ -149,26 +163,31 @@ type CustomTextFormProps = {
   showHint?: boolean;
   currentText?: string;
   maxCharacters?: number;
+  className?: string;
 };
 
 export const CustomTextForm = ({
+  showHint,
   error,
   placeholder,
   label,
   field,
   currentText,
   maxCharacters = 500,
+  className,
 }: CustomTextFormProps) => {
   return (
     <div>
-      <Label style={{ marginBottom: 6 }}>{label}</Label>
+      <Label style={{ marginBottom: 6 }} className={className}>
+        {label}
+      </Label>
       <Textarea
         className="resize-none"
         placeholder={placeholder}
         error={error}
         currentText={currentText}
         maxCharacters={maxCharacters}
-        showHint
+        showHint={showHint}
         {...field}
       />
     </div>

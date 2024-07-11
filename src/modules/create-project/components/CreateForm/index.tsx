@@ -1,6 +1,7 @@
 import { ChangeEvent, useCallback, useState } from "react";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
+import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
 import Radio from "@/common/ui/components/inputs/Radio";
 import useWallet from "@/modules/auth/hooks/useWallet";
@@ -16,6 +17,8 @@ import {
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
 import { useCreateProjectForm } from "../../hooks/forms";
+import { AddFundingSourceInputs } from "../../models/types";
+import AddFundingSourceModal from "../AddFundingSourceModal";
 import AddTeamMembersModal from "../AddTeamMembersModal";
 import InfoSegment from "../InfoSegment/InfoSegment";
 import Profile from "../Profile";
@@ -54,9 +57,9 @@ const CreateForm = () => {
     [form],
   );
 
-  console.log(projectProps.accountId);
-
   const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
+  const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
+  const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
 
   // must be signed in
   if (isWalletReady && !wallet?.accountId) {
@@ -94,6 +97,15 @@ const CreateForm = () => {
           setAddTeamModalOpen(false);
         }}
         onMembersChange={onMembersChangeHandler}
+      />
+
+      <AddFundingSourceModal
+        open={addFundingModalOpen}
+        editFundingIndex={editFundingIndex}
+        onCloseClick={() => {
+          setAddFundingModalOpen(false);
+          setEditFundingIndex(undefined);
+        }}
       />
 
       <SubHeader title="Project details" required className="mt-16" />
@@ -167,6 +179,7 @@ const CreateForm = () => {
           name="description"
           render={({ field }) => (
             <CustomTextForm
+              showHint
               label="Describe your project *"
               placeholder="Type description"
               error={errors.description?.message}
@@ -181,6 +194,7 @@ const CreateForm = () => {
           name="publicGoodReason"
           render={({ field }) => (
             <CustomTextForm
+              showHint
               label="Why do you consider yourself a public good? *"
               placeholder="Type the reason"
               error={errors.publicGoodReason?.message}
@@ -197,6 +211,14 @@ const CreateForm = () => {
       </Row>
 
       <SubHeader title="Funding sources" className="mt-16" />
+      <div className="mt-6">
+        <button
+          className="font-500 flex items-center gap-2 text-[14px] text-[#dd3345] transition-all hover:opacity-[0.7]"
+          onClick={() => setAddFundingModalOpen(true)}
+        >
+          <PlusIcon width={12} height={12} /> Add funding source
+        </button>
+      </div>
     </div>
   );
 };
