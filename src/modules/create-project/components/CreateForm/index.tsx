@@ -20,6 +20,7 @@ import { useCreateProjectForm } from "../../hooks/forms";
 import { AddFundingSourceInputs } from "../../models/types";
 import AddFundingSourceModal from "../AddFundingSourceModal";
 import AddTeamMembersModal from "../AddTeamMembersModal";
+import FundingSourceTable from "../FundingSourceTable";
 import InfoSegment from "../InfoSegment/InfoSegment";
 import Profile from "../Profile";
 
@@ -211,6 +212,15 @@ const CreateForm = () => {
       </Row>
 
       <SubHeader title="Funding sources" className="mt-16" />
+
+      <FundingSourceTable
+        onEditClick={(fundingIndex: number) => {
+          console.log(fundingIndex);
+          setEditFundingIndex(fundingIndex);
+          setAddFundingModalOpen(true);
+        }}
+      />
+
       <div className="mt-6">
         <button
           className="font-500 flex items-center gap-2 text-[14px] text-[#dd3345] transition-all hover:opacity-[0.7]"

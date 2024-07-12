@@ -21,6 +21,7 @@ export const createProjectSchema = z.object({
     .min(3, "Reason description must contain at least 20 character(s)")
     .max(500, "Reason description must contain at most 500 character(s)"),
   smartContracts: z.array(z.array(z.string())),
+  // fundingSources: z.array(z.any()),
   fundingSources: z.array(
     z.object({
       investorName: z.string(),

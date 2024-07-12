@@ -31,6 +31,7 @@ const initialState: CreateProjectState = {
   description: "",
   publicGoodReason: "",
   smartContracts: [],
+  fundingSources: [],
   githubRepositories: [],
 };
 
@@ -70,7 +71,11 @@ export const createProject = createModel<RootModel>()({
       state: CreateProjectState,
       fundingSourceData: AddFundingSourceInputs,
     ) {
-      state.fundingSources = [...state.fundingSources, fundingSourceData];
+      if (state.fundingSources) {
+        state.fundingSources = [...state.fundingSources, fundingSourceData];
+      } else {
+        state.fundingSources = [fundingSourceData];
+      }
     },
 
     removeFundingSource(state: CreateProjectState, index: number) {
@@ -83,6 +88,7 @@ export const createProject = createModel<RootModel>()({
       state: CreateProjectState,
       payload: { fundingSourceData: AddFundingSourceInputs; index: number },
     ) {
+      console.log(payload);
       const updatedFunding = [...state.fundingSources];
       updatedFunding[payload.index] = payload.fundingSourceData;
       state.fundingSources = updatedFunding;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
 import {
@@ -30,7 +30,7 @@ const AddFundingSourceModal = ({
   const fundingSources = useTypedSelector(
     (state) => state.createProject.fundingSources,
   );
-  const isEdit = !!editFundingIndex;
+  const isEdit = editFundingIndex !== undefined;
 
   const resetForm = useCallback(() => {
     setTimeout(form.reset, 500);
@@ -39,14 +39,17 @@ const AddFundingSourceModal = ({
   const onSubmitFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
       dispatch.createProject.addFundingSource(data);
+      if (onCloseClick) {
+        onCloseClick();
+      }
       resetForm();
     },
-    [resetForm],
+    [resetForm, onCloseClick],
   );
 
   const onSubmitEditedFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
-      if (isEdit && editFundingIndex) {
+      if (isEdit && editFundingIndex !== undefined) {
         dispatch.createProject.updateFundingSource({
           fundingSourceData: data,
           index: editFundingIndex,
@@ -54,8 +57,12 @@ const AddFundingSourceModal = ({
 
         resetForm();
       }
+
+      if (onCloseClick) {
+        onCloseClick();
+      }
     },
-    [editFundingIndex, isEdit, resetForm],
+    [editFundingIndex, isEdit, resetForm, onCloseClick],
   );
 
   const onCloseHandler = useCallback(() => {
@@ -70,7 +77,9 @@ const AddFundingSourceModal = ({
     <Dialog open={open}>
       <DialogContent className="max-w-130" onCloseClick={onCloseHandler}>
         <DialogHeader>
-          <DialogTitle>Add Funding Source</DialogTitle>
+          <DialogTitle>
+            {isEdit ? "Edit Funding Source" : "Add Funding Source"}
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -178,7 +187,7 @@ const AddFundingSourceModal = ({
               variant="standard-filled"
               disabled={!form.formState.isValid}
             >
-              Add Funding Source
+              {isEdit ? "Save Changes" : "Add Funding Source"}
             </Button>
           </form>
         </Form>
