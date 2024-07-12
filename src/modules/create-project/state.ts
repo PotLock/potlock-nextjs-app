@@ -32,7 +32,7 @@ const initialState: CreateProjectState = {
   publicGoodReason: "",
   smartContracts: [],
   fundingSources: [],
-  githubRepositories: [],
+  githubRepositories: [""],
 };
 
 export const createProject = createModel<RootModel>()({
@@ -88,7 +88,6 @@ export const createProject = createModel<RootModel>()({
       state: CreateProjectState,
       payload: { fundingSourceData: AddFundingSourceInputs; index: number },
     ) {
-      console.log(payload);
       const updatedFunding = [...state.fundingSources];
       updatedFunding[payload.index] = payload.fundingSourceData;
       state.fundingSources = updatedFunding;
@@ -108,6 +107,14 @@ export const createProject = createModel<RootModel>()({
       state.smartContracts = state.smartContracts.filter(
         (_, _index) => _index !== index,
       );
+    },
+
+    addRepository(state: CreateProjectState) {
+      state.githubRepositories = [...state.githubRepositories, ""];
+    },
+
+    updateRepositories(state: CreateProjectState, repositories: string[]) {
+      state.githubRepositories = repositories.filter((repo) => repo.length > 0);
     },
 
     UPDATE_BACKGROUND_IMAGE(state: CreateProjectState, backgroundUrl: string) {

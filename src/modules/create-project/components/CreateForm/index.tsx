@@ -23,6 +23,7 @@ import AddTeamMembersModal from "../AddTeamMembersModal";
 import FundingSourceTable from "../FundingSourceTable";
 import InfoSegment from "../InfoSegment/InfoSegment";
 import Profile from "../Profile";
+import Repositories from "../Repositories";
 
 const CreateForm = () => {
   const projectProps = useTypedSelector((state) => state.createProject);
@@ -54,6 +55,14 @@ const CreateForm = () => {
   const onMembersChangeHandler = useCallback(
     (members: string[]) => {
       form.setValue("teamMembers", members);
+    },
+    [form],
+  );
+
+  const onChangeRepositories = useCallback(
+    (repositories: string[]) => {
+      console.log("check", repositories);
+      form.setValue("githubRepositories", repositories);
     },
     [form],
   );
@@ -215,7 +224,6 @@ const CreateForm = () => {
 
       <FundingSourceTable
         onEditClick={(fundingIndex: number) => {
-          console.log(fundingIndex);
           setEditFundingIndex(fundingIndex);
           setAddFundingModalOpen(true);
         }}
@@ -229,6 +237,25 @@ const CreateForm = () => {
           <PlusIcon width={12} height={12} /> Add funding source
         </button>
       </div>
+
+      <SubHeader title="Repositories" required className="mt-16" />
+
+      <Row>
+        <Repositories onChange={onChangeRepositories} />
+      </Row>
+
+      <div className="mt-6">
+        <button
+          className="font-500 flex items-center gap-2 text-[14px] text-[#dd3345] transition-all hover:opacity-[0.7]"
+          onClick={() => {
+            dispatch.createProject.addRepository();
+          }}
+        >
+          <PlusIcon width={12} height={12} /> Add more repo
+        </button>
+      </div>
+
+      <SubHeader title="Social links" className="mt-16" />
     </div>
   );
 };

@@ -81,12 +81,14 @@ type CustomInputProps = {
   inputProps: InputProps;
   className?: string;
   optional?: boolean;
+  prefix?: string;
 };
 export const CustomInput = ({
   label,
   inputProps,
   className,
   optional,
+  prefix,
 }: CustomInputProps) => (
   <InputContainer>
     <Label className={`m-0 ${className}`}>
@@ -97,7 +99,22 @@ export const CustomInput = ({
         </span>
       )}
     </Label>
-    <Input {...inputProps} />
+    {prefix ? (
+      <div className="flex w-full items-center">
+        <p
+          className="color-neutral-600 flex h-[38px] items-center rounded-[4px_0_0_4px] bg-neutral-50 px-4 text-[14px]"
+          style={{ boxShadow: "rgba(0, 0, 0, 0.22) 0px 0px 0px 1px inset" }}
+        >
+          {prefix}
+        </p>
+        <Input
+          {...inputProps}
+          className="b-l-none rounded-l-[0] focus-visible:outline-none focus-visible:ring-transparent focus-visible:ring-offset-1"
+        />
+      </div>
+    ) : (
+      <Input {...inputProps} />
+    )}
   </InputContainer>
 );
 

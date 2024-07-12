@@ -31,7 +31,9 @@ export const createProjectSchema = z.object({
       denomination: z.string(),
     }),
   ),
-  githubRepositories: z.array(z.string()),
+  githubRepositories: z
+    .array(z.string())
+    .min(1, "You must include at least 1 repository"),
 });
 
 export const addFundingSourceSchema = z.object({
