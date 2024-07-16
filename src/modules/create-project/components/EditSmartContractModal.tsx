@@ -28,15 +28,32 @@ const EditSmartContractModal = ({
   contractIndex,
 }: Props) => {
   const contracts = useTypedSelector(
-    (state) => state.createProject.smartContracts || [],
+    (state) => state.createProject.smartContracts || [["", ""]],
   );
-  const [chain, setChain] = useState(contracts[contractIndex][0]);
-  const [address, setAddress] = useState(contracts[contractIndex][1]);
+
+  const [chain, setChain] = useState(
+    contracts[contractIndex] && contracts[contractIndex][0]
+      ? contracts[contractIndex][0]
+      : "",
+  );
+  const [address, setAddress] = useState(
+    contracts[contractIndex] && contracts[contractIndex][1]
+      ? contracts[contractIndex][1]
+      : "",
+  );
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setChain(contracts[contractIndex][0]);
-    setAddress(contracts[contractIndex][1]);
+    setChain(
+      contracts[contractIndex] && contracts[contractIndex][0]
+        ? contracts[contractIndex][0]
+        : "",
+    );
+    setAddress(
+      contracts[contractIndex] && contracts[contractIndex][0]
+        ? contracts[contractIndex][1]
+        : "",
+    );
   }, [contractIndex, contracts]);
 
   const saveHandler = useCallback(() => {

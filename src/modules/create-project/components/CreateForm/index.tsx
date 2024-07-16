@@ -29,6 +29,7 @@ import Profile from "../Profile";
 import Repositories from "../Repositories";
 import { SmartContracts } from "../SmartContracts";
 import SocialLinks from "../SocialLinks";
+import SuccessfulRegister from "../SuccessfullRegister";
 
 const CreateForm = () => {
   const projectProps = useTypedSelector((state) => state.createProject);
@@ -54,7 +55,7 @@ const CreateForm = () => {
     form,
   ]);
 
-  // Store description and public good reason
+  // Store description, public good reason and daoAddress
   useEffect(() => {
     if (values.description) {
       dispatch.createProject.updateDescription(values.description);
@@ -62,7 +63,10 @@ const CreateForm = () => {
     if (values.publicGoodReason) {
       dispatch.createProject.updatePublicGoodReason(values.publicGoodReason);
     }
-  }, [values.description, values.publicGoodReason]);
+    if (values.daoAddress) {
+      dispatch.createProject.setDaoAddress(values.daoAddress);
+    }
+  }, [values.description, values.publicGoodReason, values.daoAddress]);
 
   const isDaoChangeHandler = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +115,14 @@ const CreateForm = () => {
         title="Not logged in!"
         description="You must log in to create a new project!"
       />
+    );
+  }
+
+  if (projectProps.submissionStatus === "done") {
+    return (
+      <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
+        <SuccessfulRegister registeredProject={wallet?.accountId || ""} />
+      </div>
     );
   }
 
@@ -293,7 +305,7 @@ const CreateForm = () => {
               dispatch.createProject.addRepository();
             }}
           >
-            <PlusIcon width={12} height={12} /> Add more repo
+            <PlusIcon width={12} height={12} /> Add more repos
           </button>
         </div>
 

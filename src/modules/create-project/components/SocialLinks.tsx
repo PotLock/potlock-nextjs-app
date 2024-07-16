@@ -19,6 +19,7 @@ const SocialLinks = () => {
       <CustomInput
         label="Twitter / X"
         prefix="x.com/"
+        prefixMinWidth={110}
         inputProps={{
           defaultValue: twitter?.replace("https://x.com/", ""),
           placeholder: "",
@@ -34,6 +35,7 @@ const SocialLinks = () => {
       <CustomInput
         label="Telegram"
         prefix="t.me/"
+        prefixMinWidth={110}
         inputProps={{
           defaultValue: telegram?.replace("https://t.me/", ""),
           placeholder: "",
@@ -49,6 +51,7 @@ const SocialLinks = () => {
       <CustomInput
         label="Github"
         prefix="github.com/"
+        prefixMinWidth={110}
         inputProps={{
           defaultValue: github?.replace("https://github.com/", ""),
           placeholder: "",
@@ -64,6 +67,7 @@ const SocialLinks = () => {
       <CustomInput
         label="Website"
         prefix="https://"
+        prefixMinWidth={110}
         inputProps={{
           defaultValue: website?.replace("https://", ""),
           placeholder: "",

@@ -58,6 +58,7 @@ type CustomInputProps = {
   className?: string;
   optional?: boolean;
   prefix?: string;
+  prefixMinWidth?: number;
 };
 export const CustomInput = ({
   label,
@@ -65,6 +66,7 @@ export const CustomInput = ({
   className,
   optional,
   prefix,
+  prefixMinWidth,
 }: CustomInputProps) => (
   <InputContainer>
     <Label className={`m-0 ${className}`}>
@@ -78,8 +80,11 @@ export const CustomInput = ({
     {prefix ? (
       <div className="flex w-full items-center">
         <p
-          className="color-neutral-600 flex h-[38px] items-center rounded-[4px_0_0_4px] bg-neutral-50 px-4 text-[14px]"
-          style={{ boxShadow: "rgba(0, 0, 0, 0.22) 0px 0px 0px 1px inset" }}
+          className="color-neutral-600 flex h-[38px] items-center rounded-[0.5rem_0_0_0.5rem] bg-neutral-50 px-4 text-center text-[14px]"
+          style={{
+            boxShadow: "rgba(0, 0, 0, 0.22) 0px 0px 0px 1px inset",
+            ...(prefixMinWidth ? { minWidth: prefixMinWidth } : {}),
+          }}
         >
           {prefix}
         </p>
@@ -112,7 +117,6 @@ export const SelectCategory = ({
   onValuesChange: (value: string[]) => void;
   defaultValues?: string[];
 }) => {
-  // TODO: For some reason this is not working when using the mouse. I need to check the extension and fix it.
   const [value, setValue] = useState<string[]>(defaultValues || []);
 
   useEffect(() => {

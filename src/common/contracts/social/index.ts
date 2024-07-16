@@ -109,20 +109,42 @@ type NEARSocialGetResponse = {
  * @returns
  */
 export const getSocialProfile = async (input: { accountId: string }) => {
-  const response = await nearSocialDbContractApi.view<
-    NEARSocialUserProfileInput,
-    NEARSocialGetResponse
-  >(
-    "get",
-    {
-      args: {
-        keys: [`${input.accountId}/profile/**`],
+  try {
+    const response = await nearSocialDbContractApi.view<
+      NEARSocialUserProfileInput,
+      NEARSocialGetResponse
+    >(
+      "get",
+      {
+        args: {
+          keys: [`${input.accountId}/profile/**`],
+        },
       },
-    },
-    { useCache: true },
-  );
+      { useCache: true },
+    );
 
-  return response[input.accountId]?.profile;
+    return response[input.accountId]?.profile || null;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+export const getAccount = async (input: { accountId: string }) => {
+  const response = await nearSocialDbContractApi.view<
+    { account_id: string },
+    {
+      node_id: number;
+      permissions: {}[];
+      shared_storage: any;
+      storage_balance: string;
+      used_bytes: number;
+    } | null
+  >("get_account", {
+    args: { account_id: input.accountId },
+  });
+
+  return response;
 };
 
 export const getSocialData = async <R>({ path }: { path: string }) => {
@@ -140,6 +162,19 @@ export const getSocialData = async <R>({ path }: { path: string }) => {
     return response;
   } catch (e) {
     console.error("getSocialData:", e);
+  }
+};
+
+export const getPolicy = async () => {
+  try {
+    const response = await nearSocialDbContractApi.view<
+      any,
+      { proposal_bond: string }
+    >("get_policy");
+
+    return response;
+  } catch (e) {
+    console.error("getPolicy:", e);
   }
 };
 

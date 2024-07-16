@@ -46,6 +46,7 @@ const Repositories = ({ onChange }: Props) => {
           key={repo}
           label=""
           prefix="github.com/"
+          prefixMinWidth={110}
           inputProps={{
             defaultValue: repo.replace("https://github.com/", ""),
             placeholder: "Enter repository address",

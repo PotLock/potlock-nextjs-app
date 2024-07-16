@@ -8,8 +8,11 @@ import uploadFileToIPFS from "../core/services/uploadFileToIPFS";
 
 type ExtraTypes = {
   accountId: string;
+  submissionError: string;
+  submissionStatus: "pending" | "done" | "sending";
+  isEdit: boolean;
 };
-type CreateProjectState = CreateProjectInputs & ExtraTypes;
+export type CreateProjectState = CreateProjectInputs & ExtraTypes;
 
 /**
  * Create Project State
@@ -17,6 +20,9 @@ type CreateProjectState = CreateProjectInputs & ExtraTypes;
 const initialState: CreateProjectState = {
   // Extra types
   accountId: "",
+  submissionError: "",
+  submissionStatus: "pending",
+  isEdit: false,
 
   // Inputs
   name: "",
@@ -51,6 +57,21 @@ export const createProject = createModel<RootModel>()({
       state.github = links.github || state.github;
     },
 
+    submissionStatus(
+      state: CreateProjectState,
+      status: "pending" | "done" | "sending",
+    ) {
+      state.submissionStatus = status;
+    },
+
+    isEdit(state: CreateProjectState, value: boolean) {
+      state.isEdit = value;
+    },
+
+    setSubmissionError(state: CreateProjectState, error: string) {
+      state.submissionError = error;
+    },
+
     updateDescription(state: CreateProjectState, description: string) {
       state.description = description;
     },
@@ -72,6 +93,10 @@ export const createProject = createModel<RootModel>()({
 
     setIsDao(state: CreateProjectState, isDao: boolean) {
       state.isDao = isDao;
+    },
+
+    setDaoAddress(state: CreateProjectState, daoAddress: string) {
+      state.daoAddress = daoAddress;
     },
 
     setCategories(state: CreateProjectState, categories: string[]) {
