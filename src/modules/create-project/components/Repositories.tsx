@@ -47,10 +47,13 @@ const Repositories = ({ onChange }: Props) => {
           label=""
           prefix="github.com/"
           inputProps={{
-            defaultValue: repo,
+            defaultValue: repo.replace("https://github.com/", ""),
             placeholder: "Enter repository address",
             onBlur: (e) => {
-              onChangeHandler(index, e.target.value);
+              onChangeHandler(
+                index,
+                e.target.value ? `https://github.com/${e.target.value}` : "",
+              );
             },
           }}
         />

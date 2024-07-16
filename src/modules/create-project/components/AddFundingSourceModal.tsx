@@ -28,7 +28,7 @@ const AddFundingSourceModal = ({
 }: Props) => {
   const { form, errors } = useAddFundingSourceForm();
   const fundingSources = useTypedSelector(
-    (state) => state.createProject.fundingSources,
+    (state) => state.createProject.fundingSources || [],
   );
   const isEdit = editFundingIndex !== undefined;
 

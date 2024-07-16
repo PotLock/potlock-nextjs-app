@@ -6,8 +6,7 @@ export const createProjectSchema = z.object({
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must be less than 100 characters"),
   isDao: z.boolean().default(false),
-  daoAddress: z.string().min(3, "Invalid NEAR account ID"),
-  projectName: z.string().min(3, "Name must be at least 3 characters"),
+  daoAddress: z.string().min(3, "Invalid NEAR account ID").optional(),
   backgroundImage: z.string(),
   profileImage: z.string(),
   teamMembers: z.array(z.string()),
@@ -20,20 +19,25 @@ export const createProjectSchema = z.object({
     .string()
     .min(3, "Reason description must contain at least 20 character(s)")
     .max(500, "Reason description must contain at most 500 character(s)"),
-  smartContracts: z.array(z.array(z.string())),
-  // fundingSources: z.array(z.any()),
-  fundingSources: z.array(
-    z.object({
-      investorName: z.string(),
-      date: z.string().optional(),
-      description: z.string(),
-      amountReceived: z.string(),
-      denomination: z.string(),
-    }),
-  ),
+  smartContracts: z.array(z.array(z.string())).optional(),
+  fundingSources: z
+    .array(
+      z.object({
+        investorName: z.string(),
+        date: z.string().optional(),
+        description: z.string(),
+        amountReceived: z.string(),
+        denomination: z.string(),
+      }),
+    )
+    .optional(),
   githubRepositories: z
     .array(z.string())
     .min(1, "You must include at least 1 repository"),
+  website: z.string().optional(),
+  twitter: z.string().optional(),
+  telegram: z.string().optional(),
+  github: z.string().optional(),
 });
 
 export const addFundingSourceSchema = z.object({

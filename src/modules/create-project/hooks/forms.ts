@@ -12,9 +12,17 @@ export const useCreateProjectForm = () => {
     mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<CreateProjectInputs> = useCallback((data) => {
+  const createProjectHandler = useCallback((data: CreateProjectInputs) => {
     console.log(data);
   }, []);
+
+  const onSubmit: SubmitHandler<CreateProjectInputs> = useCallback(
+    (data) => {
+      console.log("DATA:", data);
+      createProjectHandler(data);
+    },
+    [createProjectHandler],
+  );
 
   return {
     form,

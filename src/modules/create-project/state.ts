@@ -3,7 +3,6 @@ import { createModel } from "@rematch/core";
 import { RootModel } from "@/app/_store/models";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 
-import { createProjectSchema } from "./models/schemas";
 import { AddFundingSourceInputs, CreateProjectInputs } from "./models/types";
 import uploadFileToIPFS from "../core/services/uploadFileToIPFS";
 
@@ -23,7 +22,6 @@ const initialState: CreateProjectState = {
   name: "",
   isDao: false,
   daoAddress: "",
-  projectName: "",
   backgroundImage: "",
   profileImage: "",
   teamMembers: [],
@@ -33,12 +31,37 @@ const initialState: CreateProjectState = {
   smartContracts: [],
   fundingSources: [],
   githubRepositories: [""],
+  website: "",
+  twitter: "",
+  telegram: "",
+  github: "",
 };
 
 export const createProject = createModel<RootModel>()({
   state: initialState,
 
   reducers: {
+    updateSocialLinks(
+      state: CreateProjectState,
+      links: Record<string, string>,
+    ) {
+      state.website = links.website || state.website;
+      state.twitter = links.twitter || state.twitter;
+      state.telegram = links.telegram || state.telegram;
+      state.github = links.github || state.github;
+    },
+
+    updateDescription(state: CreateProjectState, description: string) {
+      state.description = description;
+    },
+
+    updatePublicGoodReason(
+      state: CreateProjectState,
+      publicGoodReason: string,
+    ) {
+      state.publicGoodReason = publicGoodReason;
+    },
+
     setAccountId(state: CreateProjectState, accountId: string) {
       state.accountId = accountId;
     },
@@ -79,7 +102,8 @@ export const createProject = createModel<RootModel>()({
     },
 
     removeFundingSource(state: CreateProjectState, index: number) {
-      state.fundingSources = state.fundingSources.filter(
+      const currentFundingSources = state.fundingSources || [];
+      state.fundingSources = currentFundingSources.filter(
         (_, _index) => _index !== index,
       );
     },
@@ -88,7 +112,8 @@ export const createProject = createModel<RootModel>()({
       state: CreateProjectState,
       payload: { fundingSourceData: AddFundingSourceInputs; index: number },
     ) {
-      const updatedFunding = [...state.fundingSources];
+      const currentFundingSources = state.fundingSources || [];
+      const updatedFunding = [...currentFundingSources];
       updatedFunding[payload.index] = payload.fundingSourceData;
       state.fundingSources = updatedFunding;
     },
@@ -98,15 +123,25 @@ export const createProject = createModel<RootModel>()({
       smartContract: string[],
       index: number,
     ) {
-      const previousState = state.smartContracts;
+      const previousState = state.smartContracts || [];
       previousState[index] = smartContract;
       state.smartContracts = previousState;
     },
 
     removeSmartContract(state: CreateProjectState, index: number) {
-      state.smartContracts = state.smartContracts.filter(
+      const currentSmartContracts = state.smartContracts || [];
+      state.smartContracts = currentSmartContracts.filter(
         (_, _index) => _index !== index,
       );
+    },
+
+    editSmartContract(
+      state: CreateProjectState,
+      payload: { data: string[]; contractIndex: number },
+    ) {
+      const currentSmartContracts = state.smartContracts || [];
+      currentSmartContracts[payload.contractIndex] = payload.data;
+      state.smartContracts = currentSmartContracts;
     },
 
     addRepository(state: CreateProjectState) {
