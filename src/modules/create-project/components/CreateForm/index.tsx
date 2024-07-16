@@ -108,6 +108,14 @@ const CreateForm = () => {
   const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
+  const createProjectText = projectProps.isEdit
+    ? projectProps.isDao
+      ? "Add proposal to update project"
+      : "Update your project"
+    : projectProps.isDao
+      ? "Add proposal to create project"
+      : "Create new project";
+
   // must be signed in
   if (isWalletReady && !wallet?.accountId) {
     return (
@@ -121,7 +129,10 @@ const CreateForm = () => {
   if (projectProps.submissionStatus === "done") {
     return (
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
-        <SuccessfulRegister registeredProject={wallet?.accountId || ""} />
+        <SuccessfulRegister
+          registeredProject={wallet?.accountId || ""}
+          isEdit={projectProps.isEdit}
+        />
       </div>
     );
   }
@@ -329,7 +340,7 @@ const CreateForm = () => {
             disabled={!form.formState.isValid}
             onClick={onSubmit}
           >
-            Update your project
+            {createProjectText}
           </Button>
         </div>
       </div>
