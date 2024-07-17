@@ -10,7 +10,7 @@ import Tabs from "@/modules/profile/components/Tabs";
 import tabRoutes from "@/modules/profile/tabRoutes";
 import ProjectBanner from "@/modules/project/components/ProjectBanner";
 
-export default function RootLayout({
+export default function UserLayout({
   children,
   params,
 }: Readonly<{
@@ -23,7 +23,7 @@ export default function RootLayout({
   );
 
   return (
-    <main className="flex flex-col">
+    <main className="container flex flex-col">
       <ProjectBanner projectId={params.userId} />
       <ProfileBanner isProject={true} accountId={params.userId} />
       <Info accountId={params.userId} />

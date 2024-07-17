@@ -64,13 +64,13 @@ const ProfileBanner = (props: Props) => {
   const { registration } = useRegistration(accountId);
 
   return (
-    <div className="relative">
+    <section un-position="relative">
       {/* profile Background  */}
       <div className="relative h-[318px] w-full">
         {profileImages.backgroundImage ? (
           <Image
             fill
-            className="object-cover"
+            className="rounded-xl object-cover"
             alt="background-image"
             src={profileImages.backgroundImage}
           />
@@ -83,7 +83,7 @@ const ProfileBanner = (props: Props) => {
       <div className="relative z-[6] flex -translate-y-2/4 items-end pl-2 md:pl-16">
         {/*  image */}
 
-        <div className="relative h-[120px] w-[120px] rounded-full bg-white p-1.5 max-[400px]:h-[90px] max-[400px]:w-[90px]">
+        <div className="p-1.25 relative h-[120px] w-[120px] rounded-full bg-white max-[400px]:h-[90px] max-[400px]:w-[90px]">
           {profileImages.image ? (
             <Avatar className="h-full w-full">
               <AvatarImage src={profileImages.image} alt="profile-image" />
@@ -124,7 +124,7 @@ const ProfileBanner = (props: Props) => {
           <FollowStats accountId={accountId} />
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
