@@ -1,13 +1,13 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Form } from "react-hook-form";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
-import Radio from "@/common/ui/components/inputs/Radio";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import ErrorModal from "@/modules/core/components/ErrorModal";
 import routesPath from "@/modules/core/routes";
 
 import {
@@ -29,57 +29,51 @@ import Profile from "../Profile";
 import Repositories from "../Repositories";
 import { SmartContracts } from "../SmartContracts";
 import SocialLinks from "../SocialLinks";
-import SuccessfulRegister from "../SuccessfullRegister";
+import SuccessfulRegister from "../SuccessfulRegister";
 
 const CreateForm = () => {
   const projectProps = useTypedSelector((state) => state.createProject);
   const { wallet, isWalletReady } = useWallet();
+  const params = useParams<{ projectId?: string }>();
+  const isOwner = params.projectId === wallet?.accountId;
   const { form, errors, onSubmit } = useCreateProjectForm();
   const values = form.watch();
   const router = useRouter();
 
+  useEffect(() => {
+    // Set initial focus to name input.
+    form.setFocus("name");
+  }, [form]);
+
   // Set default values by profile
   useEffect(() => {
-    form.setValue("name", projectProps.name);
     form.setValue("isDao", false); // default value
     form.setValue("backgroundImage", projectProps.backgroundImage);
     form.setValue("profileImage", projectProps.profileImage);
     form.setValue("description", projectProps.description);
     form.setValue("publicGoodReason", projectProps.publicGoodReason);
+    form.setValue("fundingSources", projectProps.fundingSources);
   }, [
-    projectProps.name,
     projectProps.backgroundImage,
     projectProps.profileImage,
     projectProps.description,
     projectProps.publicGoodReason,
+    projectProps.fundingSources,
     form,
   ]);
 
   // Store description, public good reason and daoAddress
   useEffect(() => {
+    if (values.name) {
+      dispatch.createProject.setProjectName(values.name);
+    }
     if (values.description) {
       dispatch.createProject.updateDescription(values.description);
     }
     if (values.publicGoodReason) {
       dispatch.createProject.updatePublicGoodReason(values.publicGoodReason);
     }
-    if (values.daoAddress) {
-      dispatch.createProject.setDaoAddress(values.daoAddress);
-    }
-  }, [values.description, values.publicGoodReason, values.daoAddress]);
-
-  const isDaoChangeHandler = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const _isDao = e.target.value === "yes";
-      dispatch.createProject.setIsDao(_isDao);
-      form.setValue("isDao", _isDao);
-
-      if (!_isDao) {
-        form.setValue("daoAddress", "");
-      }
-    },
-    [form],
-  );
+  }, [values.description, values.publicGoodReason, values.name]);
 
   const categoryChangeHandler = useCallback(
     (categories: string[]) => {
@@ -103,6 +97,10 @@ const CreateForm = () => {
     [form],
   );
 
+  const resetUrl = useCallback(() => {
+    router.push(routesPath.CREATE_PROJECT);
+  }, [router]);
+
   const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
@@ -116,17 +114,37 @@ const CreateForm = () => {
       ? "Add proposal to create project"
       : "Create new project";
 
+  // Wait for wallet
+  if (!isWalletReady) {
+    return (
+      <InfoSegment title="Checking account." description="Please, wait..." />
+    );
+  }
+
   // must be signed in
-  if (isWalletReady && !wallet?.accountId) {
+  if (!wallet?.accountId) {
     return (
       <InfoSegment
         title="Not logged in!"
-        description="You must log in to create a new project!"
+        description="You must log in first!"
       />
     );
   }
 
-  if (projectProps.submissionStatus === "done") {
+  // If it is Edit & not the owner
+  if (!isOwner && projectProps.isEdit) {
+    return (
+      <InfoSegment
+        title="You're not the owner of this project!"
+        description="You can't edit this project."
+      />
+    );
+  }
+
+  if (
+    projectProps.submissionStatus === "done" &&
+    location.pathname === routesPath.CREATE_PROJECT
+  ) {
     return (
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SuccessfulRegister
@@ -183,47 +201,13 @@ const CreateForm = () => {
           }}
         />
 
-        <SubHeader title="Project details" required className="mt-16" />
-        {/* DAO */}
-        <div className="mb-6 mt-6 flex justify-between">
-          <p className="font-500">Would you like to register project as DAO?</p>
-          <Radio
-            name="is-dao"
-            value={projectProps.isDao ? "yes" : "no"}
-            onChange={isDaoChangeHandler}
-            options={[
-              { label: "yes", value: "yes" },
-              { label: "no", value: "no" },
-            ]}
-          />
-        </div>
+        <ErrorModal
+          open={!!projectProps.submissionError}
+          errorMessage={projectProps.submissionError}
+          onCloseClick={resetUrl}
+        />
 
-        <Row>
-          {/* Project ID | DAO Address */}
-          <FormField
-            control={form.control}
-            name="daoAddress"
-            defaultValue={
-              projectProps.isDao
-                ? projectProps.daoAddress
-                : projectProps.accountId
-            }
-            disabled={!projectProps.isDao}
-            render={({ field }) => (
-              <CustomInput
-                label={projectProps.isDao ? "DAO address *" : "Project ID *"}
-                inputProps={{
-                  placeholder: "Enter project name",
-                  error: projectProps.isDao ? errors.daoAddress?.message : "",
-                  ...field,
-                  ...(!projectProps.isDao
-                    ? { value: projectProps.accountId }
-                    : {}),
-                }}
-              />
-            )}
-          />
-        </Row>
+        <SubHeader title="Project details" required className="mt-16" />
 
         <Row>
           <FormField

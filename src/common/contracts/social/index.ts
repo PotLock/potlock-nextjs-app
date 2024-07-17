@@ -60,7 +60,7 @@ export interface NEARSocialUserProfile {
   team?: string;
   plTeam?: string;
   name?: string;
-  linktree?: ProfileLinktree;
+  linktree?: ProfileLinktree | Record<string, string>;
   image?: Image;
   backgroundImage?: Image;
   description?: string;
@@ -108,7 +108,10 @@ type NEARSocialGetResponse = {
  * Get User Profile Info from NEAR Social DB
  * @returns
  */
-export const getSocialProfile = async (input: { accountId: string }) => {
+export const getSocialProfile = async (input: {
+  accountId: string;
+  useCache?: boolean;
+}) => {
   try {
     const response = await nearSocialDbContractApi.view<
       NEARSocialUserProfileInput,
@@ -120,7 +123,7 @@ export const getSocialProfile = async (input: { accountId: string }) => {
           keys: [`${input.accountId}/profile/**`],
         },
       },
-      { useCache: true },
+      { useCache: input.useCache },
     );
 
     return response[input.accountId]?.profile || null;

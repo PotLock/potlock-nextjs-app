@@ -5,7 +5,7 @@ import CreateForm from "@/modules/create-project/components/CreateForm";
 import Header from "@/modules/create-project/components/Header";
 import useInitProjectState from "@/modules/create-project/hooks/useInitProjectState";
 
-import { useTypedSelector } from "../_store";
+import { useTypedSelector } from "../../_store";
 
 export default function CreateProject() {
   useInitProjectState();
@@ -15,6 +15,7 @@ export default function CreateProject() {
     submissionStatus,
     checkRegistrationStatus,
     checkPreviousProjectDataStatus,
+    isEdit,
   } = useTypedSelector((state) => state.createProject);
 
   const showSpinner =
@@ -25,7 +26,7 @@ export default function CreateProject() {
   return (
     <main className="flex flex-col">
       {showSpinner && <ScreenSpinner />}
-      <Header />
+      <Header edit={isEdit} />
       <CreateForm />
     </main>
   );

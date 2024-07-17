@@ -1,9 +1,10 @@
 import {
   Transaction,
   buildTransaction,
+  calculateDepositByDataSize,
   validateNearAddress,
 } from "@wpdas/naxios";
-import Big from "big.js";
+import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { store } from "@/app/_store";
 import {
@@ -44,9 +45,9 @@ const getSocialData = async (accountId: string) => {
   }
 };
 
-const handleCreateOrUpdateProject = async (isEdit: boolean = false) => {
+const handleCreateOrUpdateProject = async () => {
   const data = store.getState().createProject;
-  console.log(data);
+  console.log("Data:", data);
 
   const accountId = data.isDao ? data.daoAddress : data.accountId;
 
@@ -75,7 +76,7 @@ const handleCreateOrUpdateProject = async (isEdit: boolean = false) => {
     ? deepObjectDiff(existingSocialData, socialData)
     : socialData;
 
-  console.log(diff);
+  console.log("Diff:", diff);
 
   const socialArgs = {
     data: {
@@ -92,29 +93,32 @@ const handleCreateOrUpdateProject = async (isEdit: boolean = false) => {
     const account = await socialDb.getAccount({ accountId });
     console.log("Account:", account);
 
-    let depositFloat = JSON.stringify(socialArgs).length * 0.00015;
+    // let depositFloat = JSON.stringify(socialArgs).length * 0.00015;
+    let depositFloat = calculateDepositByDataSize(socialArgs);
     if (!account) {
-      depositFloat += 0.1;
+      depositFloat = (Number(depositFloat) + 0.1).toString();
     }
 
     // social.near
     const socialTransaction = buildTransaction("set", {
       receiverId: SOCIAL_DB_CONTRACT_ID,
       args: socialArgs,
-      deposit: Big(depositFloat).mul(Big(10).pow(24)).toString(),
+      // deposit: Big(depositFloat).mul(Big(10).pow(24)).toString(),
+      deposit: parseNearAmount(depositFloat)!,
     });
 
     const transactions: Transaction<any>[] = [socialTransaction];
     let daoTransactions: Transaction<any>[] = [];
 
-    // if this is a creation action, we need to add the registry and horizon transactions
-    if (!isEdit) {
+    // if this is a creation action, we need to add the registry
+    if (!data.isEdit) {
       transactions.push(
         // lists.potlock.near
         buildTransaction("register_batch", {
           receiverId: POTLOCK_LISTS_CONTRACT_ID,
           args: potlockRegistryArgs,
-          deposit: Big(0.05).mul(Big(10).pow(24)).toString(),
+          // deposit: Big(0.05).mul(Big(10).pow(24)).toString(),
+          deposit: parseNearAmount("0.05")!,
         }),
       );
     }
@@ -136,7 +140,7 @@ const handleCreateOrUpdateProject = async (isEdit: boolean = false) => {
           method: "add_proposal",
           args: {
             proposal: {
-              description: isEdit
+              description: data.isEdit
                 ? "Update project on Potlock (via NEAR Social)"
                 : "Create project on Potlock (3 steps: Register information on NEAR Social, register on Potlock, and register on NEAR Horizon)",
               kind: {
@@ -154,18 +158,22 @@ const handleCreateOrUpdateProject = async (isEdit: boolean = false) => {
     }
 
     // Final registration step
+    const callbackUrl = `${location.origin}${location.pathname}?done=true`;
     try {
       if (data.isDao) {
-        await naxiosInstance.contractApi().callMultiple(daoTransactions);
-        // console.log(daoTransactions);
+        // await naxiosInstance.contractApi().callMultiple(daoTransactions),
+        //   callbackUrl;
+        console.log(daoTransactions);
       } else {
-        await naxiosInstance.contractApi().callMultiple(transactions);
-        // console.log(transactions);
+        // await naxiosInstance
+        //   .contractApi()
+        //   .callMultiple(transactions, callbackUrl);
+        console.log(transactions);
       }
 
       return {
-        success: true,
-        error: null,
+        success: false,
+        error: "Temp",
       };
     } catch (e) {
       console.error(e);

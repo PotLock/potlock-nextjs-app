@@ -6,23 +6,30 @@ import {
 } from "@/common/contracts/social";
 import { fetchSocialImages } from "@/modules/core/services/socialImages";
 
-const useProfileData = (accountId?: string) => {
+const useProfileData = (accountId?: string, useCache: boolean = true) => {
   const [profile, setProfile] = useState<NEARSocialUserProfile>();
   const [profileImages, setProfileImages] = useState({
     image: "",
     backgroundImage: "",
   });
   const [imagesReady, setImagesReady] = useState(false);
+  const [profileReady, setProfileReady] = useState(false);
 
   // Fetch profile data
   useEffect(() => {
     (async () => {
       if (accountId) {
-        const projectProfileData = await getSocialProfile({ accountId });
-        setProfile(projectProfileData);
+        const projectProfileData = await getSocialProfile({
+          accountId,
+          useCache,
+        });
+        setProfile(projectProfileData || undefined);
+        setProfileReady(true);
+      } else {
+        setProfileReady(true);
       }
     })();
-  }, [accountId]);
+  }, [accountId, useCache]);
 
   useEffect(() => {
     (async () => {
@@ -49,7 +56,7 @@ const useProfileData = (accountId?: string) => {
     })();
   }, [profile, accountId]);
 
-  return { profile, profileImages, imagesReady };
+  return { profile, profileImages, imagesReady, profileReady };
 };
 
 export default useProfileData;

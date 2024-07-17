@@ -6,11 +6,17 @@ import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { AddFundingSourceInputs, CreateProjectInputs } from "./models/types";
 import uploadFileToIPFS from "../core/services/uploadFileToIPFS";
 
+type CheckStatus = "pending" | "done" | "sending";
+type FetchStatus = "pending" | "fetching" | "ready";
+
 type ExtraTypes = {
   accountId: string;
   submissionError: string;
-  submissionStatus: "pending" | "done" | "sending";
+  submissionStatus: CheckStatus;
   isEdit: boolean;
+  isRegistered: boolean;
+  checkRegistrationStatus: FetchStatus;
+  checkPreviousProjectDataStatus: FetchStatus;
 };
 export type CreateProjectState = CreateProjectInputs & ExtraTypes;
 
@@ -23,6 +29,9 @@ const initialState: CreateProjectState = {
   submissionError: "",
   submissionStatus: "pending",
   isEdit: false,
+  isRegistered: false,
+  checkRegistrationStatus: "pending",
+  checkPreviousProjectDataStatus: "pending",
 
   // Inputs
   name: "",
@@ -57,15 +66,27 @@ export const createProject = createModel<RootModel>()({
       state.github = links.github || state.github;
     },
 
-    submissionStatus(
-      state: CreateProjectState,
-      status: "pending" | "done" | "sending",
-    ) {
+    submissionStatus(state: CreateProjectState, status: CheckStatus) {
       state.submissionStatus = status;
+    },
+
+    checkRegistrationStatus(state: CreateProjectState, status: FetchStatus) {
+      state.checkRegistrationStatus = status;
+    },
+
+    checkPreviousProjectDataStatus(
+      state: CreateProjectState,
+      status: FetchStatus,
+    ) {
+      state.checkPreviousProjectDataStatus = status;
     },
 
     isEdit(state: CreateProjectState, value: boolean) {
       state.isEdit = value;
+    },
+
+    isRegistered(state: CreateProjectState, value: boolean) {
+      state.isRegistered = value;
     },
 
     setSubmissionError(state: CreateProjectState, error: string) {
@@ -109,10 +130,21 @@ export const createProject = createModel<RootModel>()({
       }
     },
 
+    setTeamMembers(state: CreateProjectState, members: string[]) {
+      state.teamMembers = members;
+    },
+
     removeTeamMember(state: CreateProjectState, accountId: string) {
       state.teamMembers = state.teamMembers.filter(
         (_accountId) => _accountId !== accountId,
       );
+    },
+
+    setFundingSources(
+      state: CreateProjectState,
+      fundingSources: AddFundingSourceInputs[],
+    ) {
+      state.fundingSources = fundingSources;
     },
 
     addFundingSource(
@@ -143,6 +175,10 @@ export const createProject = createModel<RootModel>()({
       state.fundingSources = updatedFunding;
     },
 
+    setSmartContracts(state: CreateProjectState, smartContracts: string[][]) {
+      state.smartContracts = smartContracts;
+    },
+
     addSmartContract(
       state: CreateProjectState,
       smartContract: string[],
@@ -169,6 +205,10 @@ export const createProject = createModel<RootModel>()({
       state.smartContracts = currentSmartContracts;
     },
 
+    setRepositories(state: CreateProjectState, repositories: string[]) {
+      state.githubRepositories = repositories;
+    },
+
     addRepository(state: CreateProjectState) {
       state.githubRepositories = [...state.githubRepositories, ""];
     },
@@ -185,7 +225,7 @@ export const createProject = createModel<RootModel>()({
       state.profileImage = profileImageUrl;
     },
 
-    // Rese t to the initial state
+    // Reset to the initial state
     RESET() {
       return initialState;
     },

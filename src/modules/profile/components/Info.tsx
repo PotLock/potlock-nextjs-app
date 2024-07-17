@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
@@ -12,6 +13,7 @@ import { ClipboardCopyButton } from "@/common/ui/components";
 import { Button } from "@/common/ui/components/button";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import routesPath from "@/modules/core/routes";
 
 import DonationsInfo from "./DonationsInfo";
 import Linktree from "./Linktree";
@@ -90,9 +92,11 @@ const Info = ({ accountId }: Props) => {
             </div>
             {isOwner && (
               <div className="ml-[auto] self-center" style={{}}>
-                <Button variant="brand-tonal" className="ml-[auto]">
-                  Edit profile
-                </Button>
+                <Link href={`${routesPath.EDIT_PROJECT}/${accountId}`}>
+                  <Button variant="brand-tonal" className="ml-[auto]">
+                    Edit project
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
