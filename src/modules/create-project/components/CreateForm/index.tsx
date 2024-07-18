@@ -135,8 +135,14 @@ const CreateForm = () => {
       : "Create new project";
 
   // Wait for wallet
+  if (!isWalletReady) {
+    return (
+      <InfoSegment title="Checking account." description="Please, wait..." />
+    );
+  }
+
   if (
-    !isWalletReady ||
+    isAuthenticated &&
     projectProps.checkPreviousProjectDataStatus !== "ready"
   ) {
     return (
