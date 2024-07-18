@@ -71,8 +71,9 @@ const CreateForm = () => {
   // Set initial name
   const [initialNameSet, setInitialNameSet] = useState(false);
   useEffect(() => {
-    if (!initialNameSet) {
+    if (!initialNameSet && projectProps.name) {
       form.setValue("name", projectProps.name);
+      form.trigger(); // re-validate
       setInitialNameSet(true);
     }
   }, [initialNameSet, projectProps.name, form]);
