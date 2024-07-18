@@ -9,6 +9,11 @@ import uploadFileToIPFS from "../core/services/uploadFileToIPFS";
 type CheckStatus = "pending" | "done" | "sending";
 type FetchStatus = "pending" | "fetching" | "ready";
 type RegistrationStatus = "Approved" | "InProgress" | "Failed" | null;
+type Proposal = {
+  id: number;
+  status: RegistrationStatus;
+  // There are other props like: description, kind, proposer, submission_time, vote_counts, votes.
+};
 
 type ExtraTypes = {
   accountId: string;
@@ -18,7 +23,7 @@ type ExtraTypes = {
   isRegistered: boolean;
   checkRegistrationStatus: FetchStatus;
   checkPreviousProjectDataStatus: FetchStatus;
-  daoProjectProposalStatus: RegistrationStatus;
+  daoProjectProposal: Proposal | null;
 };
 export type CreateProjectState = CreateProjectInputs & ExtraTypes;
 
@@ -34,7 +39,7 @@ const initialState: CreateProjectState = {
   isRegistered: false,
   checkRegistrationStatus: "pending",
   checkPreviousProjectDataStatus: "pending",
-  daoProjectProposalStatus: null,
+  daoProjectProposal: null,
 
   // Inputs
   name: "",
@@ -69,11 +74,11 @@ export const createProject = createModel<RootModel>()({
       state.github = links.github || state.github;
     },
 
-    setDaoProjectProposalStatus(
+    setDaoProjectProposal(
       state: CreateProjectState,
-      status: RegistrationStatus,
+      daoProjectProposal: Proposal | null,
     ) {
-      state.daoProjectProposalStatus = status;
+      state.daoProjectProposal = daoProjectProposal;
     },
 
     submissionStatus(state: CreateProjectState, status: CheckStatus) {

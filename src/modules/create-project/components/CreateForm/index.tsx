@@ -31,6 +31,7 @@ import Repositories from "../Repositories";
 import { SmartContracts } from "../SmartContracts";
 import SocialLinks from "../SocialLinks";
 import SuccessfulRegister from "../SuccessfulRegister";
+import DAOInProgress from "../DAOInProgress";
 
 const CreateForm = () => {
   const projectProps = useTypedSelector((state) => state.createProject);
@@ -147,6 +148,15 @@ const CreateForm = () => {
     );
   }
 
+  // DAO Status - In Progress
+  if (
+    projectProps.isDao &&
+    projectProps.daoProjectProposal &&
+    projectProps.daoProjectProposal?.status === "InProgress"
+  ) {
+    return <DAOInProgress />;
+  }
+
   if (
     projectProps.submissionStatus === "done" &&
     location.pathname === routesPath.CREATE_PROJECT
@@ -217,7 +227,13 @@ const CreateForm = () => {
           onCloseClick={resetUrl}
         />
 
-        <SubHeader title="Project details" required className="mt-16" />
+        <SubHeader
+          title={
+            projectProps.isDao ? "Project details (DAO)" : "Project details"
+          }
+          required
+          className="mt-16"
+        />
 
         <Row>
           <FormField

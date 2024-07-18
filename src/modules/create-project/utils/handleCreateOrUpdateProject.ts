@@ -142,7 +142,7 @@ const handleCreateOrUpdateProject = async () => {
             proposal: {
               description: data.isEdit
                 ? "Update project on Potlock (via NEAR Social)"
-                : "Create project on Potlock (3 steps: Register information on NEAR Social, register on Potlock, and register on NEAR Horizon)",
+                : "Create project on Potlock (2 steps: Register information on NEAR Social and register on Potlock)",
               kind: {
                 FunctionCall: {
                   receiver_id: tx.receiverId,

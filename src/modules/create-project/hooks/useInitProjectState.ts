@@ -221,12 +221,8 @@ const useInitProjectState = () => {
           )
         : null;
 
-      const proposalStatus = proposal ? proposal.status : null;
-
-      // Set proposal status
-      dispatch.createProject.setDaoProjectProposalStatus(
-        proposalStatus || null,
-      );
+      // Set proposal
+      dispatch.createProject.setDaoProjectProposal(proposal || null);
     })();
   }, [isDao, daoAddress]);
 };
