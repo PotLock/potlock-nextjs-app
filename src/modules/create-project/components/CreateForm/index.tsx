@@ -59,12 +59,14 @@ const CreateForm = () => {
     form.setValue("description", projectProps.description);
     form.setValue("publicGoodReason", projectProps.publicGoodReason);
     form.setValue("fundingSources", projectProps.fundingSources);
+    form.setValue("categories", projectProps.categories);
   }, [
     projectProps.backgroundImage,
     projectProps.profileImage,
     projectProps.description,
     projectProps.publicGoodReason,
     projectProps.fundingSources,
+    projectProps.categories,
     form,
   ]);
 
@@ -133,7 +135,10 @@ const CreateForm = () => {
       : "Create new project";
 
   // Wait for wallet
-  if (!isWalletReady) {
+  if (
+    !isWalletReady ||
+    projectProps.checkPreviousProjectDataStatus !== "ready"
+  ) {
     return (
       <InfoSegment title="Checking account." description="Please, wait..." />
     );
