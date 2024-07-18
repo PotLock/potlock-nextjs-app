@@ -27,3 +27,8 @@ export type ListId = number;
 export interface ByListId {
   listId: ListId;
 }
+
+/**
+ * `"{CONTRACT_ADDRESS}:{METHOD_NAME}"`
+ */
+export type ProviderId = string;
