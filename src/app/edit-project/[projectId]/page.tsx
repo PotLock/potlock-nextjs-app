@@ -1,7 +1,7 @@
 "use client";
 
+import ScreenSpinner from "@/common/ui/components/ScreenSpinner";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import ScreenSpinner from "@/modules/core/components/ScreenSpinner";
 import CreateForm from "@/modules/create-project/components/CreateForm";
 import Header from "@/modules/create-project/components/Header";
 import useInitProjectState from "@/modules/create-project/hooks/useInitProjectState";

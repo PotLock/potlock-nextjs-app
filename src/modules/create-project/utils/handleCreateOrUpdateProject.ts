@@ -15,8 +15,8 @@ import {
 } from "@/common/constants";
 import { naxiosInstance } from "@/common/contracts";
 import * as socialDb from "@/common/contracts/social";
+import deepObjectDiff from "@/common/lib/deepObjectDiff";
 
-import deepObjectDiff from "./deepObjectDiff";
 import getSocialDataFormat from "./getSocialDataFormat";
 
 const MIN_PROPOSAL_DEPOSIT_FALLBACK = "100000000000000000000000"; // 0.1N

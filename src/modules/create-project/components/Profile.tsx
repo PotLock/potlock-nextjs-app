@@ -6,7 +6,7 @@ import Files from "react-files";
 import { dispatch, useTypedSelector } from "@/app/_store";
 import CameraIcon from "@/common/assets/svgs/CameraIcon";
 import { Button } from "@/common/ui/components";
-import Spinner from "@/modules/core/components/Spinner";
+import Spinner from "@/common/ui/components/Spinner";
 import useStatus from "@/modules/core/hooks/usStatus";
 
 const Profile = () => {
