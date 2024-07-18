@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 import routesPath from "@/modules/core/routes";
 import { DonationRandomButton } from "@/modules/donation";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
 
 const Hero = () => {
   const wallet = useWallet();

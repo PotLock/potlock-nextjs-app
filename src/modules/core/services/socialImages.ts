@@ -15,7 +15,7 @@ type Props = {
  * @returns
  */
 export const fetchSocialImages = async ({ socialData, accountId }: Props) => {
-  let currentProfile = socialData;
+  let currentProfile: NEARSocialUserProfile | null | undefined = socialData;
 
   if (!currentProfile) {
     currentProfile = await getSocialProfile({ accountId, useCache: false });

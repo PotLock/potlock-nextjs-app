@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 
 import { dispatch, useTypedSelector } from "@/app/_store";
+import { POTLOCK_LISTS_CONTRACT_ID } from "@/common/constants";
+import { naxiosInstance } from "@/common/contracts";
 import * as potlockLists from "@/common/contracts/potlock/lists";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
-import { naxiosInstance } from "@/common/contracts";
-import { POTLOCK_LISTS_CONTRACT_ID } from "@/common/constants";
 
 const useInitProjectState = () => {
   const { checkRegistrationStatus, accountId } = useTypedSelector(

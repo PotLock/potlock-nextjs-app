@@ -37,7 +37,7 @@ export const getImage = async ({
   type,
   fallbackurl,
 }: Props) => {
-  let socialImage = image;
+  let socialImage: any = image;
 
   try {
     if (!socialImage && accountId) {

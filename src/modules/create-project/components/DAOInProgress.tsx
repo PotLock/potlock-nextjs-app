@@ -1,6 +1,7 @@
+import Link from "next/link";
+
 import { useTypedSelector } from "@/app/_store";
 import { Button } from "@/common/ui/components";
-import Link from "next/link";
 
 const DAOInProgress = () => {
   const { daoProjectProposal, daoAddress } = useTypedSelector(

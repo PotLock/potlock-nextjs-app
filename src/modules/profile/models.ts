@@ -55,7 +55,7 @@ export const profilesModel = createModel<RootModel>()({
       });
 
       const socialImagesResponse = fetchSocialImages({
-        socialData,
+        socialData: socialData ? socialData : undefined,
         accountId: projectId,
       });
 

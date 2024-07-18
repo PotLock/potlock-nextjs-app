@@ -53,7 +53,7 @@ const Item = ({
     <div className="flex flex-row items-center justify-between border-[1px_#f0f0f0_solid] p-[16px_0px]">
       <div className="flex w-full flex-row items-center justify-between gap-4">
         <div className="flex flex-row items-center justify-start gap-4">
-          {profileInfo.imagesReady && (
+          {profileInfo.profileReady && (
             <img
               alt="profile image"
               className="h-[40px] w-[40px] rounded-[50%] bg-white"

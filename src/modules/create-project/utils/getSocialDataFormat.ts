@@ -1,13 +1,6 @@
-// import * as socialDb from "@/common/contracts/social";
-
 import { CreateProjectState } from "../state";
 
 const getSocialDataFormat = (data: CreateProjectState) => {
-  // const daoSocialData =
-  //   data.isDao && data.daoAddress
-  //     ? await socialDb.getSocialProfile({ accountId: data.daoAddress })
-  //     : null;
-
   const body = {
     // Basic Profile details
     profile: {

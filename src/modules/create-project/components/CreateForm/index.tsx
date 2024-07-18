@@ -23,6 +23,7 @@ import SubHeader from "./SubHeader";
 import { useCreateProjectForm } from "../../hooks/forms";
 import AddFundingSourceModal from "../AddFundingSourceModal";
 import AddTeamMembersModal from "../AddTeamMembersModal";
+import DAOInProgress from "../DAOInProgress";
 import EditSmartContractModal from "../EditSmartContractModal";
 import FundingSourceTable from "../FundingSourceTable";
 import InfoSegment from "../InfoSegment/InfoSegment";
@@ -31,7 +32,6 @@ import Repositories from "../Repositories";
 import { SmartContracts } from "../SmartContracts";
 import SocialLinks from "../SocialLinks";
 import SuccessfulRegister from "../SuccessfulRegister";
-import DAOInProgress from "../DAOInProgress";
 
 const CreateForm = () => {
   const projectProps = useTypedSelector((state) => state.createProject);

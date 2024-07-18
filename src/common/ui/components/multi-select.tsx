@@ -276,7 +276,7 @@ const MultiSelectorItem = forwardRef<
   return (
     <div
       ref={ref}
-      {...props}
+      {...(props as any)}
       onClick={() => {
         onValueChange(value);
         setInputValue("");
