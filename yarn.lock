@@ -7682,6 +7682,11 @@ near-seed-phrase@0.2.0:
     near-hd-key "^1.2.1"
     tweetnacl "^1.0.2"
 
+next-router-mock@^0.9.13:
+  version "0.9.13"
+  resolved "https://registry.yarnpkg.com/next-router-mock/-/next-router-mock-0.9.13.tgz#bdee2011ea6c09e490121c354ef917f339767f72"
+  integrity sha512-906n2RRaE6Y28PfYJbaz5XZeJ6Tw8Xz1S6E31GGwZ0sXB6/XjldD1/2azn1ZmBmRk5PQRkzjg+n+RHZe5xQzWA==
+
 next@^14.2.3:
   version "14.2.3"
   resolved "https://registry.yarnpkg.com/next/-/next-14.2.3.tgz#f117dd5d5f20c307e7b8e4f9c1c97d961008925d"

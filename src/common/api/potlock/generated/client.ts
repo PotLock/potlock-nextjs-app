@@ -11,6 +11,10 @@ import useSwr from "swr";
 import type { Key, SWRConfiguration } from "swr";
 export type V1ListsRegistrationsRetrieveParams = {
   /**
+   * Filter registrations by category
+   */
+  category?: string;
+  /**
    * Filter registrations by status
    */
   status?: string;
@@ -248,8 +252,11 @@ export interface PotPayout {
   amount_paid_usd?: string | null;
   /** Payout id. */
   readonly id: number;
-  /** Payout date. */
-  paid_at: string;
+  /**
+   * Payout date.
+   * @nullable
+   */
+  paid_at?: string | null;
   pot: Pot;
   recipient: Account;
   token: Token;

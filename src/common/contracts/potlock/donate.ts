@@ -54,10 +54,9 @@ export const getDonationsForDonor = (args: { donor_id: string }) =>
 export const donateNearDirectly = (
   args: DirectDonationArgs,
   depositAmountYocto: string,
-  callbackUrl?: ChangeMethodArgs<DirectDonation>["callbackUrl"],
 ) =>
   contractApi.call<typeof args, DirectDonation>("donate", {
     args,
     deposit: depositAmountYocto,
-    callbackUrl,
+    callbackUrl: window.location.href,
   });

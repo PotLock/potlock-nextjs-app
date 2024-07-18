@@ -2,19 +2,19 @@ import { potlock } from "@/common/api/potlock";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
 import { Button, Skeleton } from "@/common/ui/components";
 
-import { useDonation } from "../hooks/feature";
+import { useDonation } from "../hooks";
 
 export const DonationRandomButton = () => {
   const {
     isLoading: isRandomPGRegistryEntryLoading,
-    data: isRandomPGRegistryEntry,
+    data: randomPGRegistryEntry,
     mutate: refetchRandomPGRegistryEntry,
   } = potlock.useRandomListRegistration({
     listId: POTLOCK_REGISTRY_LIST_ID,
     status: "Approved",
   });
 
-  const randomProjectAccountId = isRandomPGRegistryEntry?.registrant.id;
+  const randomProjectAccountId = randomPGRegistryEntry?.registrant.id;
 
   const { openDonationModal: openRandomDonationModal } = useDonation({
     accountId: randomProjectAccountId ?? "unknown",

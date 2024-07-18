@@ -10,22 +10,24 @@ import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
 import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationPotAllocation } from "./DonationPotAllocation";
 import { DonationProjectAllocation } from "./DonationProjectAllocation";
-import { DonationSuccess } from "./DonationSuccess";
-import { useDonationForm } from "../hooks/forms";
+import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
+import { useDonationForm } from "../hooks";
 import { DonationState, DonationSubmissionInputs } from "../models";
 
 export type DonationFlowProps = DonationSubmissionInputs &
-  DonationState & {
+  DonationState &
+  Pick<DonationSuccessProps, "transactionHash"> & {
     closeModal: VoidFunction;
   };
 
 export const DonationFlow: React.FC<DonationFlowProps> = ({
   currentStep,
   successResult: result,
+  transactionHash,
+  closeModal,
   ...props
 }) => {
   const searchParams = useSearchParams();
-  const transactionHashes = searchParams.get("transactionHashes");
 
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({
@@ -47,7 +49,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       form,
     };
 
-    const staticSuccessProps = { form, result, transactionHashes };
+    const staticSuccessProps = { form, result, transactionHash, closeModal };
 
     switch (currentStep) {
       case "allocation":
@@ -71,13 +73,14 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     }
   }, [
     balanceFloat,
+    closeModal,
     currentStep,
     form,
     isBalanceSufficient,
     minAmountError,
     props,
     result,
-    transactionHashes,
+    transactionHash,
   ]);
 
   return (

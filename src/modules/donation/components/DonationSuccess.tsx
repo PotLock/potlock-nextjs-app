@@ -20,13 +20,14 @@ import {
 import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 
 import { DonationBreakdown } from "./DonationBreakdown";
-import { useDonationFees } from "../hooks/fees";
+import { useDonationFees } from "../hooks";
 import { DonationInputs, DonationState } from "../models";
 
 export type DonationSuccessProps = {
-  result?: DonationState["successResult"];
-  transactionHashes: string | null;
   form: UseFormReturn<DonationInputs>;
+  result?: DonationState["successResult"];
+  transactionHash?: string;
+  closeModal: VoidFunction;
 };
 
 const staticResultIndicatorClassName =
@@ -35,7 +36,8 @@ const staticResultIndicatorClassName =
 export const DonationSuccess = ({
   form,
   result,
-  transactionHashes,
+  transactionHash,
+  closeModal,
 }: DonationSuccessProps) => {
   const isResultLoading = result === undefined;
   const [potAccountId] = form.watch(["potAccountId"]);
@@ -161,7 +163,8 @@ export const DonationSuccess = ({
           <Skeleton className="w-23.5 h-5" />
         ) : (
           <Link
-            href={`/user/${recipientAccount.id}?tab=donations`}
+            href={`/user/${recipientAccount.id}/funding-raised`}
+            onClick={closeModal}
             className="text-red-600"
           >
             View donation
@@ -175,9 +178,9 @@ export const DonationSuccess = ({
         <DonationBreakdown tokenId={result.ft_id} {...{ fees }} />
       )}
 
-      {transactionHashes && (
-        <TextWithIcon content={`Txn Hash : ${truncate(transactionHashes, 7)}`}>
-          <ClipboardCopyButton text={transactionHashes} />
+      {transactionHash && (
+        <TextWithIcon content={`Txn Hash : ${truncate(transactionHash, 7)}`}>
+          <ClipboardCopyButton text={transactionHash} />
         </TextWithIcon>
       )}
     </DialogDescription>

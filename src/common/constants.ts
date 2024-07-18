@@ -3,6 +3,8 @@ import { AxiosRequestConfig } from "axios";
 import Big from "big.js";
 import { utils } from "near-api-js";
 
+export const RPC_NODE_URL = "https://free.rpc.fastnear.com";
+
 // NETWORK
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
   "testnet") as Network;
