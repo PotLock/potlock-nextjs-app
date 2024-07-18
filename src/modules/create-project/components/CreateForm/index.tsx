@@ -6,6 +6,7 @@ import { Form } from "react-hook-form";
 import { dispatch, useTypedSelector } from "@/app/_store";
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import ErrorModal from "@/modules/core/components/ErrorModal";
 import routesPath from "@/modules/core/routes";
@@ -34,11 +35,15 @@ import SuccessfulRegister from "../SuccessfulRegister";
 const CreateForm = () => {
   const projectProps = useTypedSelector((state) => state.createProject);
   const { wallet, isWalletReady } = useWallet();
+  const { isAuthenticated } = useAuth();
   const params = useParams<{ projectId?: string }>();
-  const isOwner = params.projectId === wallet?.accountId;
   const { form, errors, onSubmit } = useCreateProjectForm();
   const values = form.watch();
   const router = useRouter();
+
+  const isOwner = projectProps.isDao
+    ? params.projectId === projectProps.daoAddress
+    : params.projectId === wallet?.accountId;
 
   useEffect(() => {
     // Set initial focus to name input.
@@ -93,6 +98,7 @@ const CreateForm = () => {
   const onChangeRepositories = useCallback(
     (repositories: string[]) => {
       form.setValue("githubRepositories", repositories);
+      form.trigger(); // re-validate
     },
     [form],
   );
@@ -122,7 +128,7 @@ const CreateForm = () => {
   }
 
   // must be signed in
-  if (!wallet?.accountId) {
+  if (!isAuthenticated) {
     return (
       <InfoSegment
         title="Not logged in!"
@@ -148,7 +154,11 @@ const CreateForm = () => {
     return (
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SuccessfulRegister
-          registeredProject={wallet?.accountId || ""}
+          registeredProject={
+            projectProps.isDao
+              ? projectProps.daoAddress || ""
+              : wallet?.accountId || ""
+          }
           isEdit={projectProps.isEdit}
         />
       </div>
@@ -220,6 +230,7 @@ const CreateForm = () => {
                 inputProps={{
                   placeholder: "Enter project name",
                   error: errors.name?.message,
+                  defaultValue: projectProps.name,
                   ...field,
                 }}
               />

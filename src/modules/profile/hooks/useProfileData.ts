@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
+import { getImage } from "@/common/api/images";
 import {
   NEARSocialUserProfile,
   getSocialProfile,
 } from "@/common/contracts/social";
-import { fetchSocialImages } from "@/modules/core/services/socialImages";
 
 const useProfileData = (accountId?: string, useCache: boolean = true) => {
   const [profile, setProfile] = useState<NEARSocialUserProfile>();
@@ -12,51 +12,42 @@ const useProfileData = (accountId?: string, useCache: boolean = true) => {
     image: "",
     backgroundImage: "",
   });
-  const [imagesReady, setImagesReady] = useState(false);
   const [profileReady, setProfileReady] = useState(false);
 
   // Fetch profile data
   useEffect(() => {
     (async () => {
       if (accountId) {
+        setProfileReady(false);
+        setProfile(undefined);
         const projectProfileData = await getSocialProfile({
           accountId,
           useCache,
         });
+
+        const image = getImage({
+          image: projectProfileData?.image,
+          type: "image",
+        });
+        const backgroundImage = getImage({
+          image: projectProfileData?.backgroundImage,
+          type: "backgroundImage",
+        });
+
+        const images = await Promise.all([image, backgroundImage]);
+
+        setProfileImages({
+          image: images[0],
+          backgroundImage: images[1],
+        });
+
         setProfile(projectProfileData || undefined);
-        setProfileReady(true);
-      } else {
         setProfileReady(true);
       }
     })();
   }, [accountId, useCache]);
 
-  useEffect(() => {
-    (async () => {
-      if (profile && accountId) {
-        try {
-          const imagesData = await fetchSocialImages({
-            socialData: profile,
-            accountId,
-          });
-
-          setProfileImages({
-            image: imagesData.image,
-            backgroundImage: imagesData.backgroundImage,
-          });
-
-          setImagesReady(true);
-        } catch (e) {
-          console.error("Fetch Social Images:", e);
-          setImagesReady(true);
-        }
-      } else {
-        setImagesReady(true);
-      }
-    })();
-  }, [profile, accountId]);
-
-  return { profile, profileImages, imagesReady, profileReady };
+  return { profile, profileImages, profileReady };
 };
 
 export default useProfileData;

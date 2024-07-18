@@ -7,10 +7,10 @@ export const createProjectSchema = z.object({
     .max(100, "Name must be less than 100 characters"),
   isDao: z.boolean().default(false),
   daoAddress: z.string().min(3, "Invalid NEAR account ID").optional(),
-  backgroundImage: z.string(),
-  profileImage: z.string(),
+  backgroundImage: z.string().min(3),
+  profileImage: z.string().min(3),
   teamMembers: z.array(z.string()),
-  categories: z.array(z.string()),
+  categories: z.array(z.string()).min(1),
   description: z
     .string()
     .min(3, "Description must contain at least 20 character(s)")
@@ -32,7 +32,7 @@ export const createProjectSchema = z.object({
     )
     .optional(),
   githubRepositories: z
-    .array(z.string())
+    .array(z.string().min(1))
     .min(1, "You must include at least 1 repository"),
   website: z.string().optional(),
   twitter: z.string().optional(),

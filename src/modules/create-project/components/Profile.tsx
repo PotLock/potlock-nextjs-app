@@ -13,6 +13,7 @@ const Profile = () => {
   const { accountId, backgroundImage, profileImage } = useTypedSelector(
     (state) => state.createProject,
   );
+
   const bgImageStatus = useStatus();
   const profileImageStatus = useStatus();
 

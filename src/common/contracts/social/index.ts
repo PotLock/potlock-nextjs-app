@@ -61,8 +61,8 @@ export interface NEARSocialUserProfile {
   plTeam?: string;
   name?: string;
   linktree?: ProfileLinktree | Record<string, string>;
-  image?: Image;
-  backgroundImage?: Image;
+  image?: Image | string;
+  backgroundImage?: Image | string;
   description?: string;
   tags?: Record<string, string>;
   horizon_tnc?: string;

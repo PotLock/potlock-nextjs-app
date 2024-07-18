@@ -3,7 +3,7 @@ import { Image, getSocialProfile } from "@/common/contracts/social";
 
 type Props = {
   accountId?: string;
-  image?: Image;
+  image?: Image | string;
   type?: "backgroundImage" | "image";
   fallbackurl?: string;
 };

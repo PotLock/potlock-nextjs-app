@@ -9,57 +9,63 @@ import * as potlockLists from "@/common/contracts/potlock/lists";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
+import { naxiosInstance } from "@/common/contracts";
+import { POTLOCK_LISTS_CONTRACT_ID } from "@/common/constants";
 
 const useInitProjectState = () => {
-  const { checkRegistrationStatus } = useTypedSelector(
+  const { checkRegistrationStatus, accountId } = useTypedSelector(
     (state) => state.createProject,
   );
   const {
     actAsDao: { defaultAddress: daoAddress, toggle: isDao },
   } = useTypedSelector((state) => state.nav);
 
-  const { wallet } = useWallet();
+  const { wallet, isWalletReady } = useWallet();
   const searchParams = useSearchParams();
   const params = useParams<{ projectId?: string }>();
-  const accountId = params.projectId || wallet?.accountId;
   const profileData = useProfileData(accountId, false);
 
   // Reset statuses
   useEffect(() => {
-    dispatch.createProject.submissionStatus("pending");
-    dispatch.createProject.checkRegistrationStatus("pending");
-    dispatch.createProject.checkPreviousProjectDataStatus("pending");
+    dispatch.createProject.RESET();
   }, []);
 
   // Set current accountId to the state
   useEffect(() => {
     // Project's id
-    if (isDao && daoAddress) {
-      dispatch.createProject.setAccountId(daoAddress);
-    } else if (accountId) {
-      dispatch.createProject.setAccountId(accountId);
-    }
+    if (isWalletReady) {
+      if (isDao && daoAddress) {
+        dispatch.createProject.setAccountId(daoAddress);
+      } else if (wallet?.accountId) {
+        dispatch.createProject.setAccountId(
+          params.projectId || wallet.accountId,
+        );
+      }
 
-    // Is Dao
-    dispatch.createProject.setIsDao(isDao);
-    // Dao Address
-    dispatch.createProject.setDaoAddress(isDao ? daoAddress : "");
+      // Is Dao
+      dispatch.createProject.setIsDao(isDao);
+      // Dao Address
+      dispatch.createProject.setDaoAddress(isDao ? daoAddress : "");
 
-    if (!daoAddress && accountId) {
-      dispatch.createProject.submissionStatus("pending");
-      dispatch.createProject.checkRegistrationStatus("ready");
-      dispatch.createProject.checkPreviousProjectDataStatus("ready");
+      // if (!daoAddress && accountId) {
+      //   dispatch.createProject.submissionStatus("pending");
+      //   dispatch.createProject.checkRegistrationStatus("ready");
+      //   dispatch.createProject.checkPreviousProjectDataStatus("ready");
+      // }
     }
-  }, [accountId, isDao, daoAddress]);
+  }, [
+    accountId,
+    isDao,
+    daoAddress,
+    wallet?.accountId,
+    isWalletReady,
+    params.projectId,
+  ]);
 
   // Set initial loaded project data
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   useEffect(() => {
-    if (
-      profileData.profileReady &&
-      profileData.imagesReady &&
-      !initialDataLoaded
-    ) {
+    if (profileData.profileReady && !initialDataLoaded) {
       // Set the isEdit status
       dispatch.createProject.isEdit(
         location.pathname.includes(routesPath.EDIT_PROJECT),
@@ -74,15 +80,16 @@ const useInitProjectState = () => {
         return;
       }
 
-      console.log("Loaded Profile:", profile);
-
       // Projects's bg and profile image
-      if (profileImages.image)
-        dispatch.createProject.setProfileImage(profileData.profileImages.image);
-      if (profileImages.backgroundImage)
-        dispatch.createProject.setBackgroundImage(
-          profileData.profileImages.backgroundImage,
-        );
+      // Avatar
+      const avatarImage = profileImages.image || profile.image;
+      if (avatarImage && typeof avatarImage === "string")
+        dispatch.createProject.setProfileImage(avatarImage);
+
+      // Bg
+      const bgImage = profileImages.backgroundImage || profile.backgroundImage;
+      if (bgImage && typeof avatarImage === "string")
+        dispatch.createProject.setBackgroundImage(bgImage as string);
 
       // Project's name
       dispatch.createProject.setProjectName(profile?.name);
@@ -120,8 +127,6 @@ const useInitProjectState = () => {
         dispatch.createProject.updateSocialLinks(
           profile.linktree as Record<string, string>,
         );
-
-      // TODO: isDao?
 
       dispatch.createProject.checkPreviousProjectDataStatus("ready");
 
@@ -177,6 +182,53 @@ const useInitProjectState = () => {
       })();
     }
   }, [accountId, checkRegistrationStatus]);
+
+  // Reset check registration every time the "isDao" flag is changed
+  const [previousDaoFlag] = useState(isDao);
+  useEffect(() => {
+    if (previousDaoFlag !== isDao && daoAddress) {
+      window.location.reload();
+
+      // dispatch.createProject.submissionStatus("pending");
+      // dispatch.createProject.checkRegistrationStatus("ready");
+      // dispatch.createProject.checkPreviousProjectDataStatus("ready");
+      // setInitialDataLoaded(false);
+      // setPreviousDaoFlag(isDao);
+    }
+  }, [isDao, previousDaoFlag, daoAddress]);
+
+  // Get DAO proposals - Current DAO Proposal status
+  useEffect(() => {
+    const checkDao = isDao && daoAddress;
+    (async () => {
+      const proposals = checkDao
+        ? await naxiosInstance
+            .contractApi({ contractId: daoAddress })
+            .view<
+              any,
+              any[]
+            >("get_proposals", { args: { from_index: 0, limit: 1000 } })
+        : null;
+
+      // TODO: For @Lachlan to take a look
+      const proposal = proposals
+        ? proposals.find(
+            (proposal) =>
+              proposal.kind.FunctionCall?.receiver_id ===
+                POTLOCK_LISTS_CONTRACT_ID &&
+              proposal.kind.FunctionCall?.actions[0]?.method_name ===
+                "register_batch",
+          )
+        : null;
+
+      const proposalStatus = proposal ? proposal.status : null;
+
+      // Set proposal status
+      dispatch.createProject.setDaoProjectProposalStatus(
+        proposalStatus || null,
+      );
+    })();
+  }, [isDao, daoAddress]);
 };
 
 export default useInitProjectState;

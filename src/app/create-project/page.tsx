@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import ScreenSpinner from "@/modules/core/components/ScreenSpinner";
 import CreateForm from "@/modules/create-project/components/CreateForm";
 import Header from "@/modules/create-project/components/Header";
@@ -8,6 +9,7 @@ import useInitProjectState from "@/modules/create-project/hooks/useInitProjectSt
 import { useTypedSelector } from "../_store";
 
 export default function CreateProject() {
+  const { isAuthenticated } = useAuth();
   useInitProjectState();
 
   // state used to show spinner during the data post
@@ -17,10 +19,11 @@ export default function CreateProject() {
     checkPreviousProjectDataStatus,
   } = useTypedSelector((state) => state.createProject);
 
-  const showSpinner =
-    submissionStatus === "sending" ||
-    checkRegistrationStatus !== "ready" ||
-    checkPreviousProjectDataStatus !== "ready";
+  const showSpinner = isAuthenticated
+    ? submissionStatus === "sending" ||
+      checkRegistrationStatus !== "ready" ||
+      checkPreviousProjectDataStatus !== "ready"
+    : false;
 
   return (
     <main className="flex flex-col">

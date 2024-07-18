@@ -18,7 +18,7 @@ export const fetchSocialImages = async ({ socialData, accountId }: Props) => {
   let currentProfile = socialData;
 
   if (!currentProfile) {
-    currentProfile = await getSocialProfile({ accountId });
+    currentProfile = await getSocialProfile({ accountId, useCache: false });
   }
 
   const image = getImage({

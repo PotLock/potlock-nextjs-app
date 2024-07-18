@@ -206,7 +206,7 @@ const AccountStackItem = ({
 
   return (
     <>
-      {profileInfo.imagesReady && (
+      {profileInfo.profileReady && (
         <img
           alt="profile image"
           className="h-[28px] w-[28px] rounded-[50%] bg-white"

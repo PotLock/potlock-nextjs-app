@@ -47,7 +47,7 @@ const getSocialData = async (accountId: string) => {
 
 const handleCreateOrUpdateProject = async () => {
   const data = store.getState().createProject;
-  console.log("Data:", data);
+  // console.log("Data:", data);
 
   const accountId = data.isDao ? data.daoAddress : data.accountId;
 
@@ -71,12 +71,12 @@ const handleCreateOrUpdateProject = async () => {
 
   // If there is an existing social data, make the diff between then
   const existingSocialData = await getSocialData(accountId);
-  console.log("existing:", existingSocialData);
+  // console.log("existing:", existingSocialData);
   const diff = existingSocialData
     ? deepObjectDiff(existingSocialData, socialData)
     : socialData;
 
-  console.log("Diff:", diff);
+  // console.log("Diff:", diff);
 
   const socialArgs = {
     data: {
@@ -91,7 +91,7 @@ const handleCreateOrUpdateProject = async () => {
   // First, we have to check the account from social.near to see if it exists. If it doesn't, we need to add 0.1N to the deposit
   try {
     const account = await socialDb.getAccount({ accountId });
-    console.log("Account:", account);
+    // console.log("Account:", account);
 
     // let depositFloat = JSON.stringify(socialArgs).length * 0.00015;
     let depositFloat = calculateDepositByDataSize(socialArgs);
@@ -161,19 +161,19 @@ const handleCreateOrUpdateProject = async () => {
     const callbackUrl = `${location.origin}${location.pathname}?done=true`;
     try {
       if (data.isDao) {
-        // await naxiosInstance.contractApi().callMultiple(daoTransactions),
-        //   callbackUrl;
-        console.log(daoTransactions);
+        await naxiosInstance.contractApi().callMultiple(daoTransactions),
+          callbackUrl;
+        // console.log(daoTransactions);
       } else {
-        // await naxiosInstance
-        //   .contractApi()
-        //   .callMultiple(transactions, callbackUrl);
-        console.log(transactions);
+        await naxiosInstance
+          .contractApi()
+          .callMultiple(transactions, callbackUrl);
+        // console.log(transactions);
       }
 
       return {
-        success: false,
-        error: "Temp",
+        success: true,
+        error: "",
       };
     } catch (e) {
       console.error(e);
