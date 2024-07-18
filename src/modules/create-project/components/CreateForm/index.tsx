@@ -68,6 +68,15 @@ const CreateForm = () => {
     form,
   ]);
 
+  // Set initial name
+  const [initialNameSet, setInitialNameSet] = useState(false);
+  useEffect(() => {
+    if (!initialNameSet) {
+      form.setValue("name", projectProps.name);
+      setInitialNameSet(true);
+    }
+  }, [initialNameSet, projectProps.name, form]);
+
   // Store description, public good reason and daoAddress
   useEffect(() => {
     if (values.name) {
@@ -85,6 +94,7 @@ const CreateForm = () => {
     (categories: string[]) => {
       dispatch.createProject.setCategories(categories);
       form.setValue("categories", categories);
+      form.trigger(); // re-validate
     },
     [form],
   );
@@ -246,7 +256,6 @@ const CreateForm = () => {
                 inputProps={{
                   placeholder: "Enter project name",
                   error: errors.name?.message,
-                  defaultValue: projectProps.name,
                   ...field,
                 }}
               />

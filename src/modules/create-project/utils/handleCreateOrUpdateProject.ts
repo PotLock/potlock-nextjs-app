@@ -99,7 +99,6 @@ const handleCreateOrUpdateProject = async () => {
     const socialTransaction = buildTransaction("set", {
       receiverId: SOCIAL_DB_CONTRACT_ID,
       args: socialArgs,
-      // deposit: Big(depositFloat).mul(Big(10).pow(24)).toString(),
       deposit: parseNearAmount(depositFloat)!,
     });
 

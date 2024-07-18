@@ -28,6 +28,10 @@ const useInitProjectState = () => {
   // Reset statuses
   useEffect(() => {
     dispatch.createProject.RESET();
+
+    return () => {
+      dispatch.createProject.RESET();
+    };
   }, []);
 
   // Set current accountId to the state
@@ -46,12 +50,6 @@ const useInitProjectState = () => {
       dispatch.createProject.setIsDao(isDao);
       // Dao Address
       dispatch.createProject.setDaoAddress(isDao ? daoAddress : "");
-
-      // if (!daoAddress && accountId) {
-      //   dispatch.createProject.submissionStatus("pending");
-      //   dispatch.createProject.checkRegistrationStatus("ready");
-      //   dispatch.createProject.checkPreviousProjectDataStatus("ready");
-      // }
     }
   }, [
     accountId,
