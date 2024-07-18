@@ -55,7 +55,7 @@ export const profilesModel = createModel<RootModel>()({
       });
 
       const socialImagesResponse = fetchSocialImages({
-        socialData,
+        socialData: socialData ? socialData : undefined,
         accountId: projectId,
       });
 
@@ -105,18 +105,25 @@ export type NavState = {
   actAsDao: ActAsDao;
 };
 
+const initialState: NavState = {
+  // TODO: add is registry admin
+  accountId: "",
+  isNadabotVerified: false,
+  actAsDao: {
+    defaultAddress: "",
+    toggle: false,
+    addresses: [],
+  },
+};
+
 export const navModel = createModel<RootModel>()({
-  state: {
-    // TODO: add is registry admin
-    accountId: "",
-    isNadabotVerified: false,
-    actAsDao: {
-      defaultAddress: "",
-      toggle: false,
-      addresses: [],
-    },
-  } as NavState,
+  state: initialState,
   reducers: {
+    // Reset to the initial state
+    RESET() {
+      return initialState;
+    },
+
     updateActAsDao(state, payload) {
       return {
         ...state,

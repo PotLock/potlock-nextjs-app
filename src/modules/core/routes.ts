@@ -1,6 +1,6 @@
 const routesPath = {
-  CREATE_PROJECT: "/createproject",
-  EDIT_PROJECT: "/editproject",
+  CREATE_PROJECT: "/create-project",
+  EDIT_PROJECT: "/edit-project",
   PROJECTS_LIST: "/",
   PROJECT: "/user",
   CART: "/cart",
