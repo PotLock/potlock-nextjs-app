@@ -38,7 +38,7 @@ export type DialogContentProps = React.ComponentPropsWithoutRef<
 > & {
   contrastActions?: boolean;
   onBackClick?: VoidFunction;
-  onCloseClick: VoidFunction;
+  onCloseClick?: VoidFunction;
 };
 
 const DialogContent = forwardRef<

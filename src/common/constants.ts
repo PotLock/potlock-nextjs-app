@@ -90,12 +90,15 @@ export const ONE_HUNDREDTH_NEAR = utils.format.parseNearAmount("0.01")!;
 export const TWO_HUNDREDTHS_NEAR = utils.format.parseNearAmount("0.02")!;
 // 300 Gas (full)
 export const FULL_TGAS = "300000000000000";
+export const FIFTY_TGAS = "50000000000000";
 // 0 Gas
 export const NO_DEPOSIT_TGAS = "0";
 
 // IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
 export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
+
+export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
 
 export const DEFAULT_URL = "https://app.potlock.org/";
 

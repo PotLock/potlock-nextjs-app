@@ -28,13 +28,15 @@ const useDonationsForProject = (projectId: string, limit?: number) => {
       const direct: DonationInfo[] = [];
       const matched: DonationInfo[] = [];
 
-      _donations.results.filter((donation) => {
-        if (donation.pot) {
-          matched.push(donation);
-        } else {
-          direct.push(donation);
-        }
-      });
+      if (_donations.results) {
+        _donations.results.filter((donation) => {
+          if (donation.pot) {
+            matched.push(donation);
+          } else {
+            direct.push(donation);
+          }
+        });
+      }
 
       setDonations(_donations.results);
       setDirectDonations(direct);

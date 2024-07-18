@@ -1,13 +1,16 @@
 import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import useRegistration from "@/modules/core/hooks/useRegistration";
+import routesPath from "@/modules/core/routes";
 import { DonationRandomButton } from "@/modules/donation";
 
 const Hero = () => {
   const wallet = useWallet();
   const accountId = wallet?.wallet?.accountId || "";
+  const { isAuthenticated } = useAuth();
 
   const { registration, loading } = useRegistration(accountId);
   const isRegisteredProject = !!registration.id;
@@ -25,7 +28,7 @@ const Hero = () => {
         <div className="mt-6 flex items-center gap-4 text-sm max-md:flex-col md:mt-10 md:gap-8">
           <DonationRandomButton />
 
-          {!loading && (
+          {isAuthenticated && !loading && (
             <Button
               className="w-full md:w-[180px]"
               variant={"brand-tonal"}
@@ -33,7 +36,9 @@ const Hero = () => {
             >
               <Link
                 href={
-                  isRegisteredProject ? `/user/${accountId}` : "/createproject"
+                  isRegisteredProject
+                    ? `/user/${accountId}`
+                    : routesPath.CREATE_PROJECT
                 }
                 prefetch={true}
               >
