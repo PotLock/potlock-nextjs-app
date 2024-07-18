@@ -76,8 +76,6 @@ const handleCreateOrUpdateProject = async () => {
     ? deepObjectDiff(existingSocialData, socialData)
     : socialData;
 
-  // console.log("Diff:", diff);
-
   const socialArgs = {
     data: {
       [accountId]: diff,
@@ -91,9 +89,7 @@ const handleCreateOrUpdateProject = async () => {
   // First, we have to check the account from social.near to see if it exists. If it doesn't, we need to add 0.1N to the deposit
   try {
     const account = await socialDb.getAccount({ accountId });
-    // console.log("Account:", account);
 
-    // let depositFloat = JSON.stringify(socialArgs).length * 0.00015;
     let depositFloat = calculateDepositByDataSize(socialArgs);
     if (!account) {
       depositFloat = (Number(depositFloat) + 0.1).toString();
@@ -117,7 +113,6 @@ const handleCreateOrUpdateProject = async () => {
         buildTransaction("register_batch", {
           receiverId: POTLOCK_LISTS_CONTRACT_ID,
           args: potlockRegistryArgs,
-          // deposit: Big(0.05).mul(Big(10).pow(24)).toString(),
           deposit: parseNearAmount("0.05")!,
         }),
       );
