@@ -71,7 +71,6 @@ const useInitProjectState = () => {
 
       // Profile
       const { profile, profileImages } = profileData;
-      console.log(profile);
 
       if (!profile) {
         dispatch.createProject.checkPreviousProjectDataStatus("ready");
