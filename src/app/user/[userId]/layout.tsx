@@ -1,5 +1,45 @@
-import dynamic from "next/dynamic";
+"use client";
 
-export default dynamic(() => import("./_layout"), {
-  ssr: false,
-});
+import { useState } from "react";
+
+import { usePathname } from "next/navigation";
+
+import Info from "@/modules/profile/components/Info";
+import ProfileBanner from "@/modules/profile/components/ProfileBanner";
+import Tabs from "@/modules/profile/components/Tabs";
+import tabRoutes from "@/modules/profile/tabRoutes";
+import ProjectBanner from "@/modules/project/components/ProjectBanner";
+
+export default function RootLayout({
+  children,
+  params,
+}: Readonly<{
+  children: React.ReactNode;
+  params: { userId: string };
+}>) {
+  const pathname = usePathname();
+  const [selectedTab, setSelectedTab] = useState(
+    tabRoutes.find((tab) => pathname.includes(tab.href)) || tabRoutes[0],
+  );
+
+  return (
+    <main className="flex flex-col">
+      <ProjectBanner projectId={params.userId} />
+      <ProfileBanner isProject={true} accountId={params.userId} />
+      <Info accountId={params.userId} />
+      <Tabs
+        asLink
+        navOptions={tabRoutes}
+        selectedTab={selectedTab.id}
+        onSelect={(tabId: string) => {
+          setSelectedTab(tabRoutes.find((tabRoute) => tabRoute.id === tabId)!);
+        }}
+      />
+
+      {/* Tab Content */}
+      <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
+        {children}
+      </div>
+    </main>
+  );
+}
