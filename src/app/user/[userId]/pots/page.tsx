@@ -3,12 +3,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 
 import { getAccountPotApplications } from "@/common/api/potlock/account";
 import PotCard from "@/modules/pot/components/PotCard";
 
-const PotsSubPage = () => {
+const UserPotsTab = () => {
   const { userId } = useParams<{ userId: string }>();
 
   // useAccountPotApplications is not working
@@ -57,4 +58,6 @@ const PotsSubPage = () => {
   );
 };
 
-export default PotsSubPage;
+export default dynamic(async () => UserPotsTab, {
+  ssr: false,
+});

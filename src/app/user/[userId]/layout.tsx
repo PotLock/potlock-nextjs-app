@@ -4,11 +4,10 @@ import { useState } from "react";
 
 import { usePathname } from "next/navigation";
 
-import Info from "@/modules/profile/components/Info";
-import ProfileBanner from "@/modules/profile/components/ProfileBanner";
+import { ProfileBanner, ProfileInfo } from "@/modules/profile";
 import Tabs from "@/modules/profile/components/Tabs";
 import tabRoutes from "@/modules/profile/tabRoutes";
-import ProjectBanner from "@/modules/project/components/ProjectBanner";
+import { ProjectBanner } from "@/modules/project";
 
 export default function RootLayout({
   children,
@@ -18,6 +17,7 @@ export default function RootLayout({
   params: { userId: string };
 }>) {
   const pathname = usePathname();
+
   const [selectedTab, setSelectedTab] = useState(
     tabRoutes.find((tab) => pathname.includes(tab.href)) || tabRoutes[0],
   );
@@ -26,7 +26,8 @@ export default function RootLayout({
     <main className="flex flex-col">
       <ProjectBanner projectId={params.userId} />
       <ProfileBanner isProject={true} accountId={params.userId} />
-      <Info accountId={params.userId} />
+      <ProfileInfo accountId={params.userId} />
+
       <Tabs
         asLink
         navOptions={tabRoutes}

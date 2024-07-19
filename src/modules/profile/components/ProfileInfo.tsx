@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
@@ -9,6 +10,7 @@ import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { DEFAULT_URL } from "@/common/constants";
 import truncate from "@/common/lib/truncate";
+import { ByAccountId } from "@/common/types";
 import { ClipboardCopyButton } from "@/common/ui/components";
 import { Button } from "@/common/ui/components/button";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -20,11 +22,7 @@ import Linktree from "./Linktree";
 import ProfileTags from "./ProfileTags";
 import useProfileData from "../hooks/useProfileData";
 
-type Props = {
-  accountId: string;
-};
-
-const LinksWrapper = ({ accountId }: Props) => {
+const LinksWrapper = ({ accountId }: ByAccountId) => {
   const { isAuthenticated } = useAuth();
   const { wallet } = useWallet();
   const [copied, setCopied] = useState(false);
@@ -62,7 +60,9 @@ const LinksWrapper = ({ accountId }: Props) => {
   );
 };
 
-const Info = ({ accountId }: Props) => {
+export type ProfileInfoProps = ByAccountId & {};
+
+const ProfileInfoComponent: React.FC<ProfileInfoProps> = ({ accountId }) => {
   const { wallet } = useWallet();
   const { profile } = useProfileData(accountId);
 
@@ -111,4 +111,8 @@ const Info = ({ accountId }: Props) => {
   );
 };
 
-export default Info;
+ProfileInfoComponent.displayName = "ProfileInfo";
+
+export const ProfileInfo = dynamic(async () => ProfileInfoComponent, {
+  ssr: false,
+});

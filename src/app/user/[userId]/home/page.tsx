@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 
 import AboutItem from "@/modules/profile/components/AboutItem";
@@ -8,7 +9,7 @@ import SmartContract from "@/modules/profile/components/SmartContract";
 import Team from "@/modules/profile/components/Team";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 
-const HomeSubPage = () => {
+const UserHomeTab = () => {
   const { userId } = useParams<{ userId: string }>();
   const { profile } = useProfileData(userId);
 
@@ -38,4 +39,6 @@ const HomeSubPage = () => {
   );
 };
 
-export default HomeSubPage;
+export default dynamic(async () => UserHomeTab, {
+  ssr: false,
+});
