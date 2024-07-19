@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-import dynamic from "next/dynamic";
 import Image from "next/image";
 
 import { NEARSocialUserProfile } from "@/common/contracts/social";
@@ -19,7 +18,7 @@ import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIc
 
 import { FollowStats } from "./FollowStats";
 
-export type ProfileBannerProps = {
+type Props = {
   accountId: string; // near address (donor | project)
   isProject: boolean;
   profile?: NEARSocialUserProfile;
@@ -28,7 +27,7 @@ export type ProfileBannerProps = {
   containerStyle?: any;
 };
 
-const ProfileBannerComponent: React.FC<ProfileBannerProps> = (props) => {
+const ProfileBanner = (props: Props) => {
   const { isProject, accountId, profile } = props;
 
   const [profileImages, setProfileImages] = useState({
@@ -129,8 +128,4 @@ const ProfileBannerComponent: React.FC<ProfileBannerProps> = (props) => {
   );
 };
 
-ProfileBannerComponent.displayName = "ProfileBanner";
-
-export const ProfileBanner = dynamic(async () => ProfileBannerComponent, {
-  ssr: false,
-});
+export default ProfileBanner;

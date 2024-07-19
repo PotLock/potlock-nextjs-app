@@ -1,7 +1,6 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 
 import { ExternalFundingSource } from "@/common/contracts/social";
@@ -12,7 +11,7 @@ import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 const Line = () => <div className="my-[3rem] h-[1px] w-full bg-[#c7c7c7]" />;
 
-const UserFundingRaisedTab = () => {
+const FundingRaised = () => {
   const { userId } = useParams<{ userId: string }>();
   const { donations } = useDonationsForProject(userId);
   const { profile } = useProfileData(userId);
@@ -50,6 +49,4 @@ const UserFundingRaisedTab = () => {
   );
 };
 
-export default dynamic(async () => UserFundingRaisedTab, {
-  ssr: false,
-});
+export default FundingRaised;

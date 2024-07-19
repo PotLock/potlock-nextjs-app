@@ -2,19 +2,11 @@
 
 import { useState } from "react";
 
-import dynamic from "next/dynamic";
-
 import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { statuses } from "@/modules/core/constants";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 
-export type ProjectBannerProps = {
-  projectId: string;
-};
-
-const ProjectBannerComponent: React.FC<ProjectBannerProps> = ({
-  projectId,
-}) => {
+const ProjectBanner = ({ projectId }: { projectId: string }) => {
   const [toggle, setToggle] = useState(false);
 
   const { registration, loading } = useRegistration(projectId);
@@ -88,8 +80,4 @@ const ProjectBannerComponent: React.FC<ProjectBannerProps> = ({
   );
 };
 
-ProjectBannerComponent.displayName = "ProjectBannerComponent";
-
-export const ProjectBanner = dynamic(async () => ProjectBannerComponent, {
-  ssr: false,
-});
+export default ProjectBanner;
