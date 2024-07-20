@@ -7,7 +7,7 @@ import * as mockRouter from "next-router-mock";
 import { Provider } from "react-redux";
 import { beforeEach, vi } from "vitest";
 
-import { store } from "./app/_store";
+import { store } from "@/store";
 
 const useRouter = mockRouter.useRouter;
 

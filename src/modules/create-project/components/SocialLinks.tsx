@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { dispatch, useTypedSelector } from "@/app/_store";
+import { dispatch, useTypedSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";
 

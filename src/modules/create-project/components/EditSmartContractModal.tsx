@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
 
-import { dispatch, useTypedSelector } from "@/app/_store";
 import {
   Button,
   Dialog,
@@ -11,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/common/ui/components";
+import { dispatch, useTypedSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";
 import { AddChainSelector, CHAIN_OPTIONS } from "./SmartContracts";

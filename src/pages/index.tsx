@@ -1,5 +1,3 @@
-"use client";
-
 import AllProjects from "./_components/AllProjects";
 import DonationStats from "./_components/DonationStats";
 import FeaturedProjects from "./_components/FeaturedProjects";

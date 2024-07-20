@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { useTypedSelector } from "@/app/_store";
 import {
   Registration,
   RegistrationStatus,
@@ -16,6 +15,7 @@ import {
 import { Profile } from "@/modules/profile/models";
 import { ProjectCard } from "@/modules/project";
 import { categories, statuses } from "@/modules/project/constants";
+import { useTypedSelector } from "@/store";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
 

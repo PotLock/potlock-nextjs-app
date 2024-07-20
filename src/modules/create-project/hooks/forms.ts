@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { dispatch } from "@/app/_store";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import { dispatch } from "@/store";
 
 import { addFundingSourceSchema, createProjectSchema } from "../models/schemas";
 import { AddFundingSourceInputs, CreateProjectInputs } from "../models/types";

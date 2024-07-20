@@ -2,8 +2,8 @@ import { useCallback } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
-import { dispatch } from "@/app/_store";
 import { useRouteQuerySync } from "@/common/lib";
+import { dispatch } from "@/store";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
 import { DonationModal } from "../components/DonationModal";

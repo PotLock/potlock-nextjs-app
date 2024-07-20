@@ -1,9 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-"use client";
 
 import { CSSProperties, useEffect, useState } from "react";
 
-import { useTypedSelector } from "@/app/_store";
 import { Input, InputProps, Textarea } from "@/common/ui/components";
 import {
   MultiSelector,
@@ -14,6 +12,7 @@ import {
   MultiSelectorTrigger,
 } from "@/common/ui/components/multi-select";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
+import { useTypedSelector } from "@/store";
 
 export const Row = ({
   children,

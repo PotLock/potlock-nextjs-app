@@ -1,5 +1,3 @@
-"use client";
-
 import { setupBitgetWallet } from "@near-wallet-selector/bitget-wallet";
 import { setupCoin98Wallet } from "@near-wallet-selector/coin98-wallet";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";

@@ -2,13 +2,13 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
-import { dispatch, useTypedSelector } from "@/app/_store";
 import { walletApi } from "@/common/contracts";
 import { useRouteQuerySync } from "@/common/lib";
 import { Button, Dialog, DialogContent } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ModalErrorBody } from "@/modules/core";
+import { dispatch, useTypedSelector } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
 import { DonationParameters } from "../models";

@@ -1,8 +1,8 @@
 import Link from "next/link";
 
-import { dispatch } from "@/app/_store";
 import { Button } from "@/common/ui/components";
 import routesPath from "@/modules/core/routes";
+import { dispatch } from "@/store";
 
 const SuccessfulRegister = ({
   registeredProject,

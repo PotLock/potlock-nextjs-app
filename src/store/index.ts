@@ -1,5 +1,3 @@
-"use client";
-
 import { RematchDispatch, RematchRootState, init } from "@rematch/core";
 import immerPlugin from "@rematch/immer";
 import loadingPlugin, { ExtraModelsFromLoading } from "@rematch/loading";

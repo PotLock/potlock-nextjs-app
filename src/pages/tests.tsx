@@ -3,7 +3,7 @@ import { expect, test, vi } from "vitest";
 
 import { NextNavigationMock, renderWithStore } from "@/test-env";
 
-import Homepage from "./page";
+import Homepage from ".";
 
 vi.mock("next/navigation", () => NextNavigationMock);
 renderWithStore(<Homepage />);

@@ -48,15 +48,15 @@ export function doesUserHaveDaoFunctionCallProposalPermissions(
   return allowed;
 }
 
-export const checkIfDaoAddress = (addresss: string): boolean => {
-  return addresss.endsWith(
+export const checkIfDaoAddress = (address: string): boolean => {
+  return address.endsWith(
     process.env.NEXT_PUBLIC_NETWORK
       ? "sputnik-dao.near"
       : "sputnik-dao.testnet", // TODO: not sure about this one
   );
 };
 
-export const valdiateUserInDao = async (
+export const validateUserInDao = async (
   daoAddress: string,
   accountId: string,
 ) => {

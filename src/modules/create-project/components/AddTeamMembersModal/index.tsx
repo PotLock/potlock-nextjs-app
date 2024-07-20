@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 
 import { validateNearAddress } from "@wpdas/naxios";
 
-import { dispatch, useTypedSelector } from "@/app/_store";
 import { Button, Dialog, DialogContent, Input } from "@/common/ui/components";
+import { dispatch, useTypedSelector } from "@/store";
 
 import { AccountItems, GroupIcon } from "./components";
 

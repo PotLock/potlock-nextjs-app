@@ -1,7 +1,7 @@
 import { createModel } from "@rematch/core";
 
-import { RootModel } from "@/app/_store/models";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { RootModel } from "@/store/models";
 
 import { AddFundingSourceInputs, CreateProjectInputs } from "./models/types";
 import uploadFileToIPFS from "../core/services/uploadFileToIPFS";

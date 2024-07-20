@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { useModal } from "@ebay/nice-modal-react";
 import { useSearchParams } from "next/navigation";
 
-import { dispatch } from "@/app/_store";
 import { useRouteQuerySync } from "@/common/lib";
+import { dispatch } from "@/store";
 
 import { DonationModal } from "../components/DonationModal";
 

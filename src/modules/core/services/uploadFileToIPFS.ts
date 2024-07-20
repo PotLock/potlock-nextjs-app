@@ -1,5 +1,3 @@
-"use client";
-
 const uploadFileToIPFS = async (body: BodyInit) =>
   fetch("https://ipfs.near.social/add", {
     method: "POST",

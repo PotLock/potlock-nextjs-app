@@ -6,7 +6,6 @@ import {
 } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
-import { store } from "@/app/_store";
 import {
   FIFTY_TGAS,
   FULL_TGAS,
@@ -16,6 +15,7 @@ import {
 import { naxiosInstance } from "@/common/contracts";
 import * as socialDb from "@/common/contracts/social";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
+import { store } from "@/store";
 
 import getSocialDataFormat from "./getSocialDataFormat";
 

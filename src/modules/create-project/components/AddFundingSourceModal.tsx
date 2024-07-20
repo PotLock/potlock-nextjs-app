@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 
-import { dispatch, useTypedSelector } from "@/app/_store";
 import {
   Button,
   Dialog,
@@ -10,6 +9,7 @@ import {
   Form,
   FormField,
 } from "@/common/ui/components";
+import { dispatch, useTypedSelector } from "@/store";
 
 import { CustomInput, CustomTextForm } from "./CreateForm/components";
 import { useAddFundingSourceForm } from "../hooks/forms";

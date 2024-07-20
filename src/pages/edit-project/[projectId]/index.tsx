@@ -1,12 +1,9 @@
-"use client";
-
 import ScreenSpinner from "@/common/ui/components/ScreenSpinner";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import CreateForm from "@/modules/create-project/components/CreateForm";
 import Header from "@/modules/create-project/components/Header";
 import useInitProjectState from "@/modules/create-project/hooks/useInitProjectState";
-
-import { useTypedSelector } from "../../_store";
+import { useTypedSelector } from "@/store";
 
 export default function CreateProject() {
   const { isAuthenticated } = useAuth();

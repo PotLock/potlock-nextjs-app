@@ -3,7 +3,6 @@ import { useCallback, useState } from "react";
 import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
 
-import { dispatch, useTypedSelector } from "@/app/_store";
 import Delete from "@/common/assets/svgs/Delete";
 import Edit from "@/common/assets/svgs/Edit";
 import {
@@ -14,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/common/ui/components";
+import { dispatch, useTypedSelector } from "@/store";
 
 import { CustomInput, Label } from "./CreateForm/components";
 import validateEVMAddress from "../utils/validateEVMAddress";

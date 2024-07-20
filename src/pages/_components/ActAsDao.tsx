@@ -16,14 +16,13 @@ import {
   Label,
   Switch,
 } from "@/common/ui/components";
+import { validateUserInDao } from "@/modules/core";
 import {
   addOrRemoveDaoAddress,
   markDaoAsDefault,
   toggleDao,
 } from "@/modules/profile/utils";
-
-import { valdiateUserInDao } from "../_lib/Index";
-import { useTypedSelector } from "../_store";
+import { useTypedSelector } from "@/store";
 
 const ActAsDao = () => {
   const [inputActive, setInputActive] = useState(false);
@@ -40,7 +39,7 @@ const ActAsDao = () => {
     e.preventDefault();
     if (!daoAddress && addresses.length) return;
     else setDaoError("Please enter a valid DAO address.");
-    const check = await valdiateUserInDao(daoAddress, accountId);
+    const check = await validateUserInDao(daoAddress, accountId);
     if (check) setDaoError(check);
     else if (addresses.includes(daoAddress)) {
       setDaoError("DAO address already exists.");

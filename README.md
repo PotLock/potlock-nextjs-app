@@ -44,17 +44,6 @@ aspects of the application within each module:
 
 [ src/ ]
 │
-├── [ app ] <--- # Entry point of the application.
-│   │            # Follows Nextjs App routing specification ( see link 1. )
-│   │
-│  ...
-│   │
-│   └── [ _store ] <--- # Application state root.
-│                       # Uses Rematch state management library, based on Redux.
-│
-│
-│
-│
 ├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings,
 │   │               # utility libraries, reusable primitives, and assets, used in layouts and
 │   │               # business logic across the codebase. MUST NOT contain business logic by itself.
@@ -85,43 +74,55 @@ aspects of the application within each module:
 │
 │
 │
-└── [ modules ] <--- # Business logic units broken down into categories. Simply put, this is
-    │                # a collection of directories that contain code implementing specific
-    │                # groups of app use cases and are named after functionalities they provide.
-    │
-   ...
-    │
-    │
-    ├── [ core ] <--- # Follows the same structure as any other module, but contains business logic,
-    │                 # that is shared between all or some of the other modules
-    │
-    ├── [ profile ] <--- # A feature-specific module
-    │   │
-    │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
-    │   │                       export const POTLOCK_REGISTRY_LIST_ID = 1
-    │   │
-    │   ├── models.ts <--- # Feature state definitions ( See link 3. )
-    │   │                  # If this file grows over 300 LoC, consider turning it into a directory
-    │   │                  # with the same name by applying code-splitting techniques.
-    │   │
-    │   ├── types.d.ts <--- # Module-specific shared types and interfaces
-    │   │
-    │   ├── [ components ] <--- # Feature-specific React components
-    │   │
-    │   ├── [ hooks ] <--- # Feature-specific React hooks
-    │   │
-    │   └── [ utils ] <--- # Feature-specific utilities, like value converters or validators
-    │
-    │
-    ├── ...
-    │
-   ...
+├── [ modules ] <--- # Business logic units broken down into categories. Simply put, this is
+│   │                # a collection of directories that contain code implementing specific
+│   │                # groups of app use cases and are named after functionalities they provide.
+│   │
+│  ...
+│   │
+│   │
+│   ├── [ core ] <--- # Follows the same structure as any other module, but contains business logic,
+│   │                 # that is shared between all or some of the other modules
+│   │
+│   ├── [ profile ] <--- # A feature-specific module
+│   │   │
+│   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
+│   │   │                       export const POTLOCK_REGISTRY_LIST_ID = 1
+│   │   │
+│   │   ├── models.ts <--- # Feature state definitions ( See link 3. )
+│   │   │                  # If this file grows over 300 LoC, consider turning it into a directory
+│   │   │                  # with the same name by applying code-splitting techniques.
+│   │   │
+│   │   ├── types.d.ts <--- # Module-specific shared types and interfaces
+│   │   │
+│   │   ├── [ components ] <--- # Feature-specific React components
+│   │   │
+│   │   ├── [ hooks ] <--- # Feature-specific React hooks
+│   │   │
+│   │   └── [ utils ] <--- # Feature-specific utilities, like value converters or validators
+│   │
+│   │
+│   ├── ...
+│   │
+│  ...
+│
+│
+│
+│
+├── [ pages ] <--- # Entry point of the application.
+│                  # Follows Nextjs Pages routing specification ( see link 1. )
+│
+│
+│
+│
+└── [ store ] <--- # Application state root.
+                   # Uses Rematch state management library, based on Redux.
 
 ```
 
 #### Links
 
-1. [Nextjs Routing](https://nextjs.org/docs/app/building-your-application/routing)
+1. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
 2. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
 3. [Rematch models](https://rematchjs.org/docs/api-reference/models)
 
@@ -156,19 +157,19 @@ The project convention implies keeping the test scenarios alongside the code the
 ##### Pages
 
 Tests for each page must be placed in `tests.tsx`
-within the same directory where `page.tsx` is located:
+within the same directory where `index.tsx` of the page is located:
 
 ```bash
 
-─── [ app ]
+─── [ pages ]
     │
-    ├── page.tsx <--- # Homepage ( URL "/" )
+    ├── index.tsx <--- # Homepage ( URL "/" )
     │
     ├── tests.tsx <--- # Tests for Homepage
     │
     ├── [ pots ]
     │   │
-    │   ├── page.tsx <--- # Pots page ( URL "/pots" )
+    │   ├── index.tsx <--- # Pots page ( URL "/pots" )
     │   │
     │   └── tests.tsx <--- # Tests for Pots page
     │
@@ -176,7 +177,7 @@ within the same directory where `page.tsx` is located:
         │
         └── [ [userId] ]
             │
-            ├── page.tsx <--- # User page ( e.g. "/users/builder.near" )
+            ├── index.tsx <--- # User page ( e.g. "/users/builder.near" )
             │
             └── tests.tsx <--- # Tests for User page
 

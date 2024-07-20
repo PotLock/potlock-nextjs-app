@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";

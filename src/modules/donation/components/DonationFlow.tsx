@@ -2,10 +2,10 @@ import { createElement as h, useMemo } from "react";
 
 import { useSearchParams } from "next/navigation";
 
-import { dispatch } from "@/app/_store";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
+import { dispatch } from "@/store";
 
 import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationPotAllocation } from "./DonationPotAllocation";

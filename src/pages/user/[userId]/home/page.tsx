@@ -1,5 +1,3 @@
-"use client";
-
 import { useParams } from "next/navigation";
 
 import AboutItem from "@/modules/profile/components/AboutItem";

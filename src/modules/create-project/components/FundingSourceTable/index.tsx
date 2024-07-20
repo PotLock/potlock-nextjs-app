@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 
-import { dispatch, useTypedSelector } from "@/app/_store";
 import Delete from "@/common/assets/svgs/Delete";
 import Edit from "@/common/assets/svgs/Edit";
+import { dispatch, useTypedSelector } from "@/store";
 
 import { Table } from "./styles";
 

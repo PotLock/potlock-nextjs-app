@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import { useCallback, useState } from "react";
 
-import { dispatch } from "@/app/_store";
 import { Button } from "@/common/ui/components";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
+import { dispatch } from "@/store";
 
 export const GroupIcon = () => (
   <svg

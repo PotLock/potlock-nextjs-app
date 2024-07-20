@@ -3,11 +3,11 @@ import { useCallback, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
-import { dispatch } from "@/app/_store";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
 import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
+import { dispatch } from "@/store";
 
 import {
   DONATION_MIN_NEAR_AMOUNT,
