@@ -11,6 +11,7 @@ import "./_layout/globals.css";
 // eslint-disable-next-line import/no-unresolved
 // import "uno.css";
 
+import { AppProps } from "next/app";
 import { Lora } from "next/font/google";
 import Head from "next/head";
 
@@ -26,11 +27,7 @@ const lora = Lora({
   weight: ["400", "500", "600", "700"],
 });
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
@@ -43,7 +40,7 @@ export default function RootLayout({
           className={`${cn("container font-lora antialiased", lora.variable)}`}
         >
           <Nav />
-          {children}
+          <Component {...pageProps} />
         </div>
       </RootProvider>
     </>
