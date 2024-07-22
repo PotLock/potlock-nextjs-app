@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
@@ -37,10 +37,10 @@ const CreateForm = () => {
   const projectProps = useTypedSelector((state) => state.createProject);
   const { wallet, isWalletReady } = useWallet();
   const { isAuthenticated } = useAuth();
-  const params = useParams<{ projectId?: string }>();
+  const router = useRouter();
+  const params: { projectId?: string } = router.query;
   const { form, errors, onSubmit } = useCreateProjectForm();
   const values = form.watch();
-  const router = useRouter();
 
   const isOwner = projectProps.isDao
     ? params.projectId === projectProps.daoAddress

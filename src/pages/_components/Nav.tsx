@@ -9,7 +9,7 @@ import { SignInButton } from "@/modules/auth";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import routesPath from "@/modules/core/routes";
 
-import UserDropdown from "../_components/UserDropdown";
+import UserDropdown from "./UserDropdown";
 
 const tabOptions = [
   { text: "Projects", link: routesPath.PROJECTS_LIST, disabled: false },

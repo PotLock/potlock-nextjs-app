@@ -44,6 +44,8 @@ aspects of the application within each module:
 
 [ src/ ]
 │
+├── global.d.ts <--- # Globally available type definitions
+│
 ├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings,
 │   │               # utility libraries, reusable primitives, and assets, used in layouts and
 │   │               # business logic across the codebase. MUST NOT contain business logic by itself.
@@ -115,7 +117,7 @@ aspects of the application within each module:
 │
 │
 │
-└── [ store ] <--- # Application state root.
+└── [ store ] <--- # Shared application state root.
                    # Uses Rematch state management library, based on Redux.
 
 ```
@@ -135,6 +137,22 @@ For details, please refer to the corresponding documentation resources:
 - [Vitest API reference](https://vitest.dev/api/)
 - [React Testing Library guideline](https://testing-library.com/docs/react-testing-library/example-intro)
 
+All tests should be located in the `_tests/` directory. ... for each specific page or group of use cases.
+
+```bash
+
+[ _tests/ ]
+│
+├── donation.tests.tsx <--- # Tests for donation scenarios
+│
+├── homepage.tests.tsx <--- # Tests for the homepage
+│
+...
+│
+└── test-env.tsx <--- # Testing environment setup
+
+```
+
 #### Commands
 
 Execute all unit tests:
@@ -147,62 +165,4 @@ Run dev server for unit tests:
 
 ```bash
 yarn dev:test
-```
-
-#### File colocation
-
-The project convention implies keeping the test scenarios alongside the code they're meant for
-( See examples below ).
-
-##### Pages
-
-Tests for each page must be placed in `tests.tsx`
-within the same directory where `index.tsx` of the page is located:
-
-```bash
-
-─── [ pages ]
-    │
-    ├── index.tsx <--- # Homepage ( URL "/" )
-    │
-    ├── tests.tsx <--- # Tests for Homepage
-    │
-    ├── [ pots ]
-    │   │
-    │   ├── index.tsx <--- # Pots page ( URL "/pots" )
-    │   │
-    │   └── tests.tsx <--- # Tests for Pots page
-    │
-    └── [ users ]
-        │
-        └── [ [userId] ]
-            │
-            ├── index.tsx <--- # User page ( e.g. "/users/builder.near" )
-            │
-            └── tests.tsx <--- # Tests for User page
-
-```
-
-##### Modules
-
-For modules, we target specific implementation details:
-
-```bash
-
-─── [ modules ]
-    │
-    └── [ profile ] <--- # Profile module
-        │
-        ├── [ components ]
-        │   │
-        │   ├── ProfileCard.tsx <--- # Profile card component
-        │   │
-        │   └── ProfileCard.test.tsx <--- # Tests for profile card component
-        │
-        └── [ utils ]
-            │
-            ├── validation.ts <--- # Profile validation functions
-            │
-            └── validation.test.ts <--- # Profile validation tests
-
 ```

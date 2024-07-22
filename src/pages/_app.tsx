@@ -3,23 +3,29 @@ import "@unocss/reset/normalize.css";
 import "@unocss/reset/sanitize/assets.css";
 import "@unocss/reset/sanitize/sanitize.css";
 import "@unocss/reset/tailwind.css";
-import "./_layout/mona-sans-font.css";
-import "./_layout/globals.css";
+import "@/common/ui/fonts.css";
+import "@/common/ui/global.css";
+
 /**
- * ?INFO: This is a virtual import managed by Next
+ * TODO: Configure UnoCSS compilation without virtual imports
  **/
 // eslint-disable-next-line import/no-unresolved
 // import "uno.css";
 
+import { useEffect } from "react";
+
+import { Provider as NiceModalProvider } from "@ebay/nice-modal-react";
 import { AppProps } from "next/app";
 import { Lora } from "next/font/google";
 import Head from "next/head";
+import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
+import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
+import { dispatch, store } from "@/store";
 
-import Nav from "./_layout/Nav";
-import { RootProvider } from "./_layout/RootProvider";
+import Nav from "./_components/Nav";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -28,6 +34,10 @@ const lora = Lora({
 });
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    dispatch.core.fetchNearToUsd();
+  }, []);
+
   return (
     <>
       <Head>
@@ -35,14 +45,18 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
         <title>{APP_METADATA.title}</title>
       </Head>
 
-      <RootProvider>
-        <div
-          className={`${cn("container font-lora antialiased", lora.variable)}`}
-        >
-          <Nav />
-          <Component {...pageProps} />
-        </div>
-      </RootProvider>
+      <ReduxProvider {...{ store }}>
+        <NiceModalProvider>
+          <AuthProvider>
+            <div
+              className={`${cn("container font-lora antialiased", lora.variable)}`}
+            >
+              <Nav />
+              <Component {...pageProps} />
+            </div>
+          </AuthProvider>
+        </NiceModalProvider>
+      </ReduxProvider>
     </>
   );
 }

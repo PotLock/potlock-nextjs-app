@@ -1,9 +1,10 @@
+import * as React from "react";
+
 import { screen, waitFor } from "@testing-library/react";
 import { expect, test, vi } from "vitest";
 
-import { NextNavigationMock, renderWithStore } from "@/test-env";
-
-import Homepage from ".";
+import { NextNavigationMock, renderWithStore } from "./test-env";
+import Homepage from "../src/pages";
 
 vi.mock("next/navigation", () => NextNavigationMock);
 renderWithStore(<Homepage />);

@@ -1,13 +1,11 @@
-/**
- *! Note: this module must only be used in tests.
- */
+import * as React from "react";
 
 import { render } from "@testing-library/react";
 import * as mockRouter from "next-router-mock";
 import { Provider } from "react-redux";
 import { beforeEach, vi } from "vitest";
 
-import { store } from "@/store";
+import { store } from "../src/store";
 
 const useRouter = mockRouter.useRouter;
 
