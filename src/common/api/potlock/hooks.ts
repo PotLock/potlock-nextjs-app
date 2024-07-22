@@ -63,11 +63,11 @@ export const useAccountActivePots = ({ accountId }: ByAccountId) => {
 export const useAccountPotApplications = ({
   accountId,
   status,
-}: ByAccountId & V1AccountsPotApplicationsRetrieveParams) => {
+}: Partial<ByAccountId> & V1AccountsPotApplicationsRetrieveParams) => {
   const queryResult = swrHooks.useV1AccountsPotApplicationsRetrieve(
-    accountId,
+    accountId ?? "unknown",
     { status },
-    POTLOCK_REQUEST_CONFIG,
+    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data };

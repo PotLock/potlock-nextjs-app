@@ -49,6 +49,14 @@ export type V1AccountsActivePotsRetrieveParams = {
 };
 
 export interface Token {
+  /** Token ID (address). */
+  account: string;
+  /**
+   * Token id on coingecko.
+   * @maxLength 255
+   * @nullable
+   */
+  coingecko_id?: string | null;
   /**
    * Token decimals.
    * @minimum 0
@@ -60,8 +68,6 @@ export interface Token {
    * @nullable
    */
   icon?: string | null;
-  /** Token ID (address). */
-  id: string;
   /**
    * Token name.
    * @maxLength 255
@@ -120,6 +126,8 @@ export const PotApplicationStatusEnum = {
 } as const;
 
 export interface Pot {
+  /** Pot account ID. */
+  account: string;
   admins: Account[];
   /** All paid out. */
   all_paid_out: boolean;
@@ -169,8 +177,6 @@ export interface Pot {
   deployer: Account;
   /** Pot description. */
   description: string;
-  /** Pot account ID. */
-  id: string;
   /** Matching pool balance. */
   matching_pool_balance: string;
   /**
