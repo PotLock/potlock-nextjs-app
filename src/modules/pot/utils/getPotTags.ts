@@ -15,16 +15,18 @@ const getPotTags = (pot: Pot) => {
   const applicationEndMs = new Date(application_end).getTime();
   const publicRoundStartMs = new Date(matching_round_start).getTime();
   const publicRoundEndMs = new Date(matching_round_end).getTime();
-  const cooldownEndMs = cooldown_end ? new Date(cooldown_end).getTime() : null;
+  const cooldownEndMs = cooldown_end ? new Date(cooldown_end).getTime() : 0;
 
   const now = Date.now();
   const applicationOpen = now >= applicationStartMs && now < applicationEndMs;
   const publicRoundOpen = now >= publicRoundStartMs && now < publicRoundEndMs;
-  const cooldownPending =
-    publicRoundEndMs && now >= publicRoundEndMs && !cooldownEndMs;
-  const cooldownOpen =
-    cooldownEndMs && now >= publicRoundEndMs && now < cooldownEndMs;
-  const payoutsPending = cooldownEndMs && now >= cooldownEndMs && !all_paid_out;
+  const cooldownPending = now >= publicRoundEndMs && !cooldown_end;
+  const cooldownOpen = !cooldown_end
+    ? false
+    : now >= publicRoundEndMs && now < cooldownEndMs;
+  const payoutsPending = !cooldown_end
+    ? false
+    : cooldownEndMs && now >= cooldownEndMs && !all_paid_out;
   const payoutsCompleted = all_paid_out;
 
   const tags = [

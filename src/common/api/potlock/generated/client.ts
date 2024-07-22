@@ -170,7 +170,7 @@ export interface Pot {
   /** Pot description. */
   description: string;
   /** Pot account ID. */
-  id: string;
+  account: string;
   /** Matching pool balance. */
   matching_pool_balance: string;
   /**
