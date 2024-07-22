@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 
 import useIsClient from "@/common/lib/useIsClient";
 import { SignInButton } from "@/modules/auth";
@@ -52,12 +52,12 @@ const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {
 
 const MobileNav = () => {
   const isClient = useIsClient();
-  const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <nav className="flex flex-col gap-4 p-6">
       {tabOptions.map((tab) => {
-        const selected = isClient ? tab.link === pathname : false;
+        const selected = isClient ? tab.link === router.pathname : false;
 
         return (
           <Link
@@ -97,7 +97,7 @@ const CartLink = () => {
 const Nav = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isClient = useIsClient();
-  const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <div>
@@ -125,7 +125,9 @@ const Nav = () => {
           <div className="flex flex-row items-center justify-center">
             <div className="flex flex-row items-center justify-center max-md:hidden">
               {tabOptions.map((tab) => {
-                const selected = isClient ? tab.link === pathname : false;
+                const selected = isClient
+                  ? tab.link === router.pathname
+                  : false;
 
                 return (
                   <Link
