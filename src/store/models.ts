@@ -2,7 +2,7 @@ import { Models } from "@rematch/core";
 
 import { auth } from "@/modules/auth/state";
 import { core } from "@/modules/core/state";
-import { createProject } from "@/modules/create-project/state";
+import { createProject } from "@/modules/project-editor/state";
 import { donationModel } from "@/modules/donation";
 import { navModel, profilesModel } from "@/modules/profile/models";
 

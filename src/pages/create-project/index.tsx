@@ -1,8 +1,8 @@
 import ScreenSpinner from "@/common/ui/components/ScreenSpinner";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import CreateForm from "@/modules/create-project/components/CreateForm";
-import Header from "@/modules/create-project/components/Header";
-import useInitProjectState from "@/modules/create-project/hooks/useInitProjectState";
+import CreateForm from "@/modules/project-editor/components/CreateForm";
+import Header from "@/modules/project-editor/components/Header";
+import useInitProjectState from "@/modules/project-editor/hooks/useInitProjectState";
 import { useTypedSelector } from "@/store";
 
 export default function CreateProject() {
