@@ -1,4 +1,4 @@
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 import AboutItem from "@/modules/profile/components/AboutItem";
 import Github from "@/modules/profile/components/Github";
@@ -7,7 +7,14 @@ import Team from "@/modules/profile/components/Team";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 const HomeSubPage = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const router = useRouter();
+  const { userId: userIdPathParam } = router.query;
+
+  const userId =
+    typeof userIdPathParam === "string"
+      ? userIdPathParam
+      : userIdPathParam?.at(0);
+
   const { profile } = useProfileData(userId);
 
   return (

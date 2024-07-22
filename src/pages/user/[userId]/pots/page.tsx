@@ -10,7 +10,9 @@ const PotsSubPage = () => {
   const { userId: userIdPathParam } = router.query;
 
   const userId =
-    typeof userIdPathParam === "string" ? userIdPathParam : undefined;
+    typeof userIdPathParam === "string"
+      ? userIdPathParam
+      : userIdPathParam?.at(0);
 
   const { data: paginatedPotApplications, isLoading } =
     potlock.useAccountPotApplications({ accountId: userId });

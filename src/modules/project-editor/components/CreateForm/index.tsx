@@ -34,17 +34,23 @@ import SocialLinks from "../SocialLinks";
 import SuccessfulRegister from "../SuccessfulRegister";
 
 const CreateForm = () => {
+  const router = useRouter();
+  const { projectId: projectIdPathParam } = router.query;
+
+  const projectId =
+    typeof projectIdPathParam === "string"
+      ? projectIdPathParam
+      : projectIdPathParam?.at(0);
+
   const projectProps = useTypedSelector((state) => state.createProject);
   const { wallet, isWalletReady } = useWallet();
   const { isAuthenticated } = useAuth();
-  const router = useRouter();
-  const params: { projectId?: string } = router.query;
   const { form, errors, onSubmit } = useCreateProjectForm();
   const values = form.watch();
 
   const isOwner = projectProps.isDao
-    ? params.projectId === projectProps.daoAddress
-    : params.projectId === wallet?.accountId;
+    ? projectId === projectProps.daoAddress
+    : projectId === wallet?.accountId;
 
   useEffect(() => {
     // Set initial focus to name input.

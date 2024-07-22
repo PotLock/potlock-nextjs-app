@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { useParams } from "next/navigation";
+
+import { useRouter } from "next/router";
 
 import { ExternalFundingSource } from "@/common/contracts/social";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
@@ -10,7 +11,14 @@ import useProfileData from "@/modules/profile/hooks/useProfileData";
 const Line = () => <div className="my-[3rem] h-[1px] w-full bg-[#c7c7c7]" />;
 
 const FundingRaised = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const router = useRouter();
+  const { userId: userIdPathParam } = router.query;
+
+  const userId =
+    (typeof userIdPathParam === "string"
+      ? userIdPathParam
+      : userIdPathParam?.at(0)) ?? "unknown";
+
   const { donations } = useDonationsForProject(userId);
   const { profile } = useProfileData(userId);
 
