@@ -4368,21 +4368,6 @@
     fast-glob "^3.3.2"
     magic-string "^0.30.10"
 
-"@unocss/webpack@^0.60.4":
-  version "0.60.4"
-  resolved "https://registry.yarnpkg.com/@unocss/webpack/-/webpack-0.60.4.tgz#ee227cb66606fbd6bf91919c2fc3e8469e76fa44"
-  integrity sha512-TcPuiAZZO+a+xiahrCm7eEHlP8o667n+CWv+kpz4bidY5V8Xyxs1MjzJAPVOk8Kwz86HvQZyf2CG+3powNTwKA==
-  dependencies:
-    "@ampproject/remapping" "^2.3.0"
-    "@rollup/pluginutils" "^5.1.0"
-    "@unocss/config" "0.60.4"
-    "@unocss/core" "0.60.4"
-    chokidar "^3.6.0"
-    fast-glob "^3.3.2"
-    magic-string "^0.30.10"
-    unplugin "^1.10.1"
-    webpack-sources "^3.2.3"
-
 "@vitejs/plugin-react@^4.3.0":
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-4.3.0.tgz#f20ec2369a92d8abaaefa60da8b7157819d20481"
@@ -9668,16 +9653,6 @@ unocss@^0.60.4:
     "@unocss/transformer-variant-group" "0.60.4"
     "@unocss/vite" "0.60.4"
 
-unplugin@^1.10.1:
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/unplugin/-/unplugin-1.10.1.tgz#8ceda065dc71bc67d923dea0920f05c67f2cd68c"
-  integrity sha512-d6Mhq8RJeGA8UfKCu54Um4lFA0eSaRa3XxdAJg8tIdxbu1ubW0hBCZUL7yI2uGyYCRndvbK8FLHzqy2XKfeMsg==
-  dependencies:
-    acorn "^8.11.3"
-    chokidar "^3.6.0"
-    webpack-sources "^3.2.3"
-    webpack-virtual-modules "^0.6.1"
-
 update-browserslist-db@^1.0.13:
   version "1.0.16"
   resolved "https://registry.npmjs.org/update-browserslist-db/-/update-browserslist-db-1.0.16.tgz"
@@ -9824,16 +9799,6 @@ webidl-conversions@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-7.0.0.tgz#256b4e1882be7debbf01d05f0aa2039778ea080a"
   integrity sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==
-
-webpack-sources@^3.2.3:
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.3.tgz#2d4daab8451fd4b240cc27055ff6a0c2ccea0cde"
-  integrity sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==
-
-webpack-virtual-modules@^0.6.1:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/webpack-virtual-modules/-/webpack-virtual-modules-0.6.2.tgz#057faa9065c8acf48f24cb57ac0e77739ab9a7e8"
-  integrity sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==
 
 whatwg-encoding@^3.1.1:
   version "3.1.1"
