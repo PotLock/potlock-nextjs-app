@@ -2,9 +2,9 @@ import { Models } from "@rematch/core";
 
 import { auth } from "@/modules/auth/state";
 import { core } from "@/modules/core/state";
-import { createProject } from "@/modules/project-editor/state";
 import { donationModel } from "@/modules/donation";
 import { navModel, profilesModel } from "@/modules/profile/models";
+import { createProject } from "@/modules/project-editor/state";
 
 export interface RootModel extends Models<RootModel> {
   auth: typeof auth;
