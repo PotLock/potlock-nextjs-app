@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 import { TabNav } from "../types";
 
@@ -12,7 +12,14 @@ type Props = {
 
 const Tabs = ({ navOptions, selectedTab, onSelect, asLink }: Props) => {
   const _selectedTab = selectedTab || navOptions[0].id;
-  const params = useParams();
+
+  const router = useRouter();
+  const { userId: userIdPathParam } = router.query;
+
+  const userId =
+    typeof userIdPathParam === "string"
+      ? userIdPathParam
+      : userIdPathParam?.at(0);
 
   return (
     <div className="mb-[46px] flex w-full flex-row flex-wrap gap-2">
@@ -24,7 +31,7 @@ const Tabs = ({ navOptions, selectedTab, onSelect, asLink }: Props) => {
             if (asLink) {
               return (
                 <Link
-                  href={`/user/${params.userId}${option.href}`}
+                  href={`/user/${userId}${option.href}`}
                   key={option.id}
                   className={`font-500 border-b-solid transition-duration-300 whitespace-nowrap border-b-[2px] px-4 py-[10px] text-sm text-[#7b7b7b] transition-all hover:border-b-[#292929] hover:text-[#292929] ${selected ? "border-b-[#292929] text-[#292929]" : "border-b-[transparent]"}`}
                   onClick={() => {
