@@ -9,20 +9,20 @@ import { DonationModal } from "../components/DonationModal";
 
 export const useDonationSuccessWalletRedirect = () => {
   const modal = useModal(DonationModal);
-  const { searchParams, setSearchParams } = useSearchParams();
-  const accountIdQueryParam = searchParams.donateTo;
-  const potIdQueryParam = searchParams.donateToPot;
-  const transactionHashesQueryParam = searchParams.transactionHashes;
+  const {
+    searchParams: { donateTo, donateToPot, transactionHashes },
+    setSearchParams,
+  } = useSearchParams();
 
   const recipientAccountId =
-    typeof accountIdQueryParam === "string" ? accountIdQueryParam : undefined;
+    typeof donateTo === "string" ? donateTo : undefined;
 
   const potAccountId =
-    typeof potIdQueryParam === "string" ? potIdQueryParam : undefined;
+    typeof donateToPot === "string" ? donateToPot : undefined;
 
-  const transactionHash = Array.isArray(transactionHashesQueryParam)
-    ? transactionHashesQueryParam.at(-1)
-    : undefined;
+  const transactionHash =
+    (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
+    (typeof transactionHashes === "string" ? transactionHashes : undefined);
 
   useEffect(() => {
     if (
