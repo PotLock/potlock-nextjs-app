@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { useParams, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useUrlSearchParams } from "use-url-search-params";
 
 import { POTLOCK_LISTS_CONTRACT_ID } from "@/common/constants";
 import { naxiosInstance } from "@/common/contracts";
@@ -11,16 +12,25 @@ import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { dispatch, useTypedSelector } from "@/store";
 
 const useInitProjectState = () => {
+  const router = useRouter();
+  const { projectId: projectIdPathParam } = router.query;
+
+  const projectId =
+    typeof projectIdPathParam === "string"
+      ? projectIdPathParam
+      : projectIdPathParam?.at(0);
+
   const { checkRegistrationStatus, accountId } = useTypedSelector(
     (state) => state.createProject,
   );
+
+  const [{ done, transactionHashes, errorMessage }] = useUrlSearchParams();
+
   const {
     actAsDao: { defaultAddress: daoAddress, toggle: isDao },
   } = useTypedSelector((state) => state.nav);
 
   const { wallet, isWalletReady } = useWallet();
-  const searchParams = useSearchParams();
-  const params = useParams<{ projectId?: string }>();
   const profileData = useProfileData(accountId, false);
 
   // Reset statuses
@@ -39,9 +49,7 @@ const useInitProjectState = () => {
       if (isDao && daoAddress) {
         dispatch.createProject.setAccountId(daoAddress);
       } else if (wallet?.accountId) {
-        dispatch.createProject.setAccountId(
-          params.projectId || wallet.accountId,
-        );
+        dispatch.createProject.setAccountId(projectId || wallet.accountId);
       }
 
       // Is Dao
@@ -55,7 +63,7 @@ const useInitProjectState = () => {
     daoAddress,
     wallet?.accountId,
     isWalletReady,
-    params.projectId,
+    projectId,
   ]);
 
   // Set initial loaded project data
@@ -132,22 +140,19 @@ const useInitProjectState = () => {
 
   // Looks for error message after failing tx
   useEffect(() => {
-    const errorMessage = searchParams.get("errorMessage");
-    if (errorMessage) {
+    if (typeof errorMessage === "string") {
       dispatch.createProject.submissionStatus("pending");
       dispatch.createProject.setSubmissionError(decodeURI(errorMessage));
     }
-  }, [searchParams]);
+  }, [errorMessage]);
 
   // Looks for success signal
   useEffect(() => {
-    const done = searchParams.get("done");
-    const transactionHashes = searchParams.get("transactionHashes");
     if (done || transactionHashes) {
       dispatch.createProject.submissionStatus("done");
       dispatch.createProject.setSubmissionError("");
     }
-  }, [searchParams]);
+  }, [done, transactionHashes]);
 
   // Check if project is registered
   useEffect(() => {

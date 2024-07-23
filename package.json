@@ -10,10 +10,12 @@
     "generate:api-pagoda": "orval --config pagoda-eapi.cjs",
     "generate:api-potlock": "orval --config potlock-indexer.cjs",
     "generate:api": "concurrently 'yarn generate:api-potlock' 'yarn generate:api-pagoda'",
+    "generate:css": "unocss 'src/**/*.tsx' --out-file=src/common/ui/styles/uno.generated.css",
+    "dev:css": "yarn generate:css --watch",
     "dev:test": "yarn && vitest watch",
-    "dev": "yarn && next dev",
+    "dev": "yarn && yarn generate:css && concurrently 'yarn dev:css' 'next dev'",
     "next:dev": "yarn && next dev",
-    "build": "next build",
+    "build": "yarn generate:css && next build",
     "start": "next start",
     "test:unit": "vitest run"
   },
@@ -80,6 +82,7 @@
     "swr": "^2.2.5",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "use-url-search-params": "^2.5.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -93,7 +96,6 @@
     "@typescript-eslint/parser": "^7.9.0",
     "@unocss/preset-attributify": "^0.60.4",
     "@unocss/preset-wind": "^0.60.4",
-    "@unocss/webpack": "^0.60.4",
     "@vitejs/plugin-react": "^4.3.0",
     "concurrently": "^8.2.2",
     "eslint": "^8",

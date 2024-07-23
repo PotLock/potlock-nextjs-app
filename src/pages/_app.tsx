@@ -3,14 +3,9 @@ import "@unocss/reset/normalize.css";
 import "@unocss/reset/sanitize/assets.css";
 import "@unocss/reset/sanitize/sanitize.css";
 import "@unocss/reset/tailwind.css";
-import "@/common/ui/fonts.css";
-import "@/common/ui/global.css";
-
-/**
- * TODO: Configure UnoCSS compilation without virtual imports
- **/
-// eslint-disable-next-line import/no-unresolved
-// import "uno.css";
+import "@/common/ui/styles/fonts.css";
+import "@/common/ui/styles/theme.css";
+import "@/common/ui/styles/uno.generated.css";
 
 import { useEffect } from "react";
 

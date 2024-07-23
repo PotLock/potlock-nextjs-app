@@ -1,8 +1,13 @@
 import { useCallback, useMemo } from "react";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useUrlSearchParams } from "use-url-search-params";
 
-export type RouteParams = Record<string, string | null>;
+export const useParsedRouteQuery = () => {
+  const [searchParams] = useUrlSearchParams();
+
+  return useMemo(() => new Map(Object.entries(searchParams)), [searchParams]);
+};
 
 /**
  * Provides a method to update URL query parameters for the current route.
@@ -18,24 +23,19 @@ export type RouteParams = Record<string, string | null>;
  */
 export const useRouteQuerySync = () => {
   const router = useRouter();
-  const pathname = usePathname();
-  const currentQueryString = useSearchParams().toString();
 
-  const queryParams = useMemo(
-    () => new URLSearchParams(currentQueryString),
-    [currentQueryString],
-  );
+  const searchParams = useParsedRouteQuery();
 
   const syncRouteQuery = useCallback(
-    (newParams: RouteParams) => {
+    (newParams: Record<string, string | null>) => {
       Object.entries(newParams).forEach(([key, value]) =>
-        value ? queryParams.set(key, value) : queryParams.delete(key),
+        value ? searchParams.set(key, value) : searchParams.delete(key),
       );
 
-      router.replace(`${pathname}?${queryParams.toString()}`);
+      router.replace(router.pathname, Object.fromEntries(searchParams));
     },
 
-    [pathname, router, queryParams],
+    [router, searchParams],
   );
 
   return { syncRouteQuery };
