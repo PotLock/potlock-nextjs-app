@@ -7,6 +7,7 @@ import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useNearUsdDisplayValue } from "@/modules/core";
+import routesPath from "@/modules/core/routes";
 import { useDonation } from "@/modules/donation";
 
 import CardSkeleton from "./CardSkeleton";
@@ -59,7 +60,7 @@ export const ProjectCard = ({
   const categories = plCategories ? JSON.parse(plCategories) : [];
 
   return (
-    <Link href={`/user/${projectId}`}>
+    <Link href={`/${routesPath.PROFILE}/${projectId}`}>
       {isAccountLoading ? (
         <CardSkeleton />
       ) : (
