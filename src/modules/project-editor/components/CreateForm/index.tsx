@@ -190,7 +190,7 @@ const CreateForm = () => {
     location.pathname === routesPath.CREATE_PROJECT
   ) {
     return (
-      <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
+      <div className="md:p-[4rem_0px] m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px]">
         <SuccessfulRegister
           registeredProject={
             projectProps.isDao
@@ -206,7 +206,7 @@ const CreateForm = () => {
   return (
     // Container
     <Form {...form}>
-      <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
+      <div className="md:p-[4rem_0px] m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px]">
         <SubHeader title="Upload banner and profile Image" required />
         <Profile />
         <LowerBannerContainer>
