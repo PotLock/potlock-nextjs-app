@@ -1,11 +1,11 @@
 import { createModel } from "@rematch/core";
 
-import { RootModel } from "@/app/_store/models";
 import { walletApi } from "@/common/contracts";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
 import { floatToYoctoNear } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
+import { RootModel } from "@/store/models";
 
 import {
   DonationAllocationStrategy,

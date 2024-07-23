@@ -39,7 +39,7 @@ export const Filter = ({ groups, popoverProps }: Props) => {
           Filter
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="flex w-80 flex-col gap-6 sm:w-[466px]">
+      <PopoverContent className="sm:w-[466px] flex w-80 flex-col gap-6">
         {groups.map(({ label, options, props }) => (
           <div className="flex flex-col gap-3" key={label}>
             <Label className=" w-full text-[#656565] first-of-type:mt-0">

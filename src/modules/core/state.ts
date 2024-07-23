@@ -1,6 +1,6 @@
 import { createModel } from "@rematch/core";
 
-import { RootModel } from "@/app/_store/models";
+import { RootModel } from "@/store/models";
 
 interface CoreState {
   nearToUsd: number;

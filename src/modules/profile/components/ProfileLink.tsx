@@ -4,6 +4,7 @@ import Link from "next/link";
 import { potlock } from "@/common/api/potlock";
 import { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
+import routesPath from "@/modules/core/routes";
 
 export type ProfileLinkProps = ByAccountId & { className?: string };
 
@@ -17,7 +18,7 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
 
   return (
     <Link
-      href={`/user/${accountId}`}
+      href={`${routesPath.PROFILE}/${accountId}`}
       target="_blank"
       className={cn("decoration-none flex items-center gap-1", className)}
     >

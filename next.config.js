@@ -1,5 +1,3 @@
-import UnoCSS from "@unocss/webpack";
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -11,13 +9,6 @@ const nextConfig = {
       },
     ],
   },
-
-  webpack: ({ plugins, ...config }) => ({
-    ...config,
-    // Required for HMR support for UnoCSS
-    cache: false,
-    plugins: [...plugins, UnoCSS()],
-  }),
 };
 
 export default nextConfig;

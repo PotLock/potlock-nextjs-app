@@ -2,8 +2,8 @@ import { useCallback } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
-import { dispatch } from "@/app/_store";
-import { useRouteQuerySync } from "@/common/lib";
+import { useSearchParams } from "@/common/lib";
+import { dispatch } from "@/store";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
 import { DonationModal } from "../components/DonationModal";
@@ -14,7 +14,7 @@ export * from "./forms";
 
 export const useDonation = (props: DonationParameters) => {
   const modal = useModal(DonationModal);
-  const { syncRouteQuery } = useRouteQuerySync();
+  const { setSearchParams } = useSearchParams();
 
   const openDonationModal = useCallback(
     (event: React.MouseEvent) => {
@@ -23,15 +23,15 @@ export const useDonation = (props: DonationParameters) => {
       dispatch.donation.reset();
 
       if ("accountId" in props) {
-        syncRouteQuery({ donateTo: props.accountId });
+        setSearchParams({ donateTo: props.accountId });
       } else if ("potId" in props) {
-        syncRouteQuery({ donateToPot: props.potId });
+        setSearchParams({ donateToPot: props.potId });
       }
 
       modal.show(props);
     },
 
-    [modal, props, syncRouteQuery],
+    [modal, props, setSearchParams],
   );
 
   useDonationSuccessWalletRedirect();

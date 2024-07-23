@@ -1,35 +1,44 @@
 import { useEffect } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
-import { useSearchParams } from "next/navigation";
 
-import { dispatch } from "@/app/_store";
-import { useRouteQuerySync } from "@/common/lib";
+import { useSearchParams } from "@/common/lib";
+import { dispatch } from "@/store";
 
 import { DonationModal } from "../components/DonationModal";
 
 export const useDonationSuccessWalletRedirect = () => {
   const modal = useModal(DonationModal);
-  const searchParams = useSearchParams();
-  const { syncRouteQuery } = useRouteQuerySync();
-  const transactionHash = searchParams.getAll("transactionHashes").at(-1);
-  const accountIdRouteParam = searchParams.get("donateTo") ?? undefined;
-  const potIdRouteParam = searchParams.get("donateToPot") ?? undefined;
+
+  const {
+    searchParams: { donateTo, donateToPot, transactionHashes },
+    setSearchParams,
+  } = useSearchParams();
+
+  const recipientAccountId =
+    typeof donateTo === "string" ? donateTo : undefined;
+
+  const potAccountId =
+    typeof donateToPot === "string" ? donateToPot : undefined;
+
+  const transactionHash =
+    (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
+    (typeof transactionHashes === "string" ? transactionHashes : undefined);
 
   useEffect(() => {
     if (
       transactionHash &&
-      Boolean(accountIdRouteParam ?? potIdRouteParam) &&
+      Boolean(recipientAccountId ?? potAccountId) &&
       !modal.visible
     ) {
       dispatch.donation.handleSuccessByTxHash(transactionHash).then(() => {
         modal.show({
-          accountId: accountIdRouteParam,
-          potId: potIdRouteParam,
+          accountId: recipientAccountId,
+          potId: potAccountId,
           transactionHash,
         });
 
-        syncRouteQuery({
+        setSearchParams({
           donateTo: null,
           donateToPot: null,
           transactionHashes: null,
@@ -37,10 +46,10 @@ export const useDonationSuccessWalletRedirect = () => {
       });
     }
   }, [
-    accountIdRouteParam,
     modal,
-    potIdRouteParam,
-    syncRouteQuery,
+    potAccountId,
+    recipientAccountId,
+    setSearchParams,
     transactionHash,
   ]);
 };

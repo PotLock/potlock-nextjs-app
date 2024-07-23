@@ -1,4 +1,3 @@
-import { dispatch } from "@/app/_store";
 import {
   Button,
   Dialog,
@@ -6,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/common/ui/components";
+import { dispatch } from "@/store";
 
 type Props = {
   open?: boolean;

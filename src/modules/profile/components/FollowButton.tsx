@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import { getSocialData, setSocialData } from "@/common/contracts/social";

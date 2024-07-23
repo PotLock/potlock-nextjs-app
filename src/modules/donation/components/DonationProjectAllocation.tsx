@@ -54,7 +54,11 @@ export const DonationProjectAllocation: React.FC<
     "allocationStrategy",
   ]);
 
-  const { data: activePots } = potlock.useAccountActivePots({ accountId });
+  const { data: activePots } = potlock.useAccountActivePots({
+    accountId,
+    status: "live",
+  });
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasMatchingPots = (activePots?.results.length ?? 0) > 0;
   const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
