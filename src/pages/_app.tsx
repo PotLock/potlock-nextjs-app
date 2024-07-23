@@ -7,9 +7,10 @@ import "@/common/ui/styles/fonts.css";
 import "@/common/ui/styles/theme.css";
 import "@/common/ui/styles/uno.generated.css";
 
-import { useEffect } from "react";
+import { ReactElement, ReactNode, useEffect } from "react";
 
 import { Provider as NiceModalProvider } from "@ebay/nice-modal-react";
+import { NextPage } from "next";
 import { AppProps } from "next/app";
 import { Lora } from "next/font/google";
 import Head from "next/head";
@@ -28,10 +29,25 @@ const lora = Lora({
   weight: ["400", "500", "600", "700"],
 });
 
-export default function RootLayout({ Component, pageProps }: AppProps) {
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+export default function RootLayout({
+  Component,
+  pageProps,
+}: AppPropsWithLayout) {
   useEffect(() => {
     dispatch.core.fetchNearToUsd();
   }, []);
+
+  const getLayout = Component.getLayout ?? ((page) => page);
+
+  // return getLayout(<Component {...pageProps} />);
 
   return (
     <>
@@ -47,7 +63,8 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
               className={`${cn("container font-lora antialiased", lora.variable)}`}
             >
               <Nav />
-              <Component {...pageProps} />
+              {/* <Component {...pageProps} /> */}
+              {getLayout(<Component {...pageProps} />)}
             </div>
           </AuthProvider>
         </NiceModalProvider>

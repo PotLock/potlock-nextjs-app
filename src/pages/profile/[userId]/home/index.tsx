@@ -1,5 +1,8 @@
+import { ReactElement } from "react";
+
 import { useRouter } from "next/router";
 
+import { ProfileLayout } from "@/modules/profile";
 import AboutItem from "@/modules/profile/components/AboutItem";
 import Github from "@/modules/profile/components/Github";
 import SmartContract from "@/modules/profile/components/SmartContract";
@@ -21,7 +24,7 @@ const HomeSubPage = () => {
     <div className="mb-18 flex w-full flex-col">
       {/* Header Container */}
       <div className="gap-2xl flex flex-col items-start justify-start">
-        <h2 className="font-500 font-lora text-[32px] text-[#2e2e2e] md:text-[40px]">
+        <h2 className="font-500 md:text-[40px] font-lora text-[32px] text-[#2e2e2e]">
           About {profile?.name}
         </h2>
       </div>
@@ -41,6 +44,10 @@ const HomeSubPage = () => {
       />
     </div>
   );
+};
+
+HomeSubPage.getLayout = function getLayout(page: ReactElement) {
+  return <ProfileLayout>{page}</ProfileLayout>;
 };
 
 export default HomeSubPage;
