@@ -19,7 +19,7 @@ export const Row = ({
 }: {
   children: JSX.Element | JSX.Element[];
 }) => (
-  <div className="mt-6 grid grid-cols-2 gap-6 max-md:grid-cols-[100%]">
+  <div className="max-md:grid-cols-[100%] mt-6 grid grid-cols-2 gap-6">
     {children}
   </div>
 );

@@ -138,7 +138,7 @@ const SmartContract = ({
 
   return (
     <>
-      <div className="bg-neutral-3 h-[1px] w-full md:hidden" />
+      <div className="bg-neutral-3 md:hidden h-[1px] w-full" />
       <AddChainSelector
         defaultValue={chain}
         disabled={isPreview}

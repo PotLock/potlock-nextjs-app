@@ -68,7 +68,7 @@ const Info = ({ accountId }: Props) => {
   const isOwner = wallet?.accountId === accountId;
 
   return (
-    <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
+    <div className="md:px-[4.5rem] flex w-full flex-row flex-wrap gap-2 px-[1rem]">
       {/* NameContainer */}
       <div className="flex w-full flex-wrap gap-8">
         {/* Left */}

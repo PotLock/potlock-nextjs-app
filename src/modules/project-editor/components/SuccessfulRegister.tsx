@@ -19,7 +19,7 @@ const SuccessfulRegister = ({
   };
 
   return (
-    <div className="flex w-full flex-col p-0 md:p-[72px_64px_72px_64px]">
+    <div className="md:p-[72px_64px_72px_64px] flex w-full flex-col p-0">
       {isEdit ? (
         <h1 style={{ textAlign: "center" }}>
           You&apos;ve edited your project successfully!

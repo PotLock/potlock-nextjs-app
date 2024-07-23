@@ -25,7 +25,7 @@ const DonationStats = () => {
 
   return (
     <div className="flex w-full flex-col ">
-      <div className="mt-4 flex flex-row flex-wrap items-center gap-4 px-2 py-0 md:gap-6 md:px-10">
+      <div className="md:gap-6 md:px-10 mt-4 flex flex-row flex-wrap items-center gap-4 px-2 py-0">
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
           {donateConfig.amount}
           <div className="text-sm font-normal text-[#656565]">Donated</div>
