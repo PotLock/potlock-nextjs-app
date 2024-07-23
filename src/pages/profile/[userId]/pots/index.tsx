@@ -1,9 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 
+import { ReactElement } from "react";
+
 import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
 import PotCard from "@/modules/pot/components/PotCard";
+import { ProfileLayout } from "@/modules/profile";
 
 const PotsSubPage = () => {
   const router = useRouter();
@@ -20,8 +23,8 @@ const PotsSubPage = () => {
   const potApplications = paginatedPotApplications?.results ?? [];
 
   const NoResults = () => (
-    <div className="flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px] md:flex-col md:px-[105px] md:py-[68px]">
-      <p className="font-italic font-500 mb-4 max-w-[290px] text-center font-lora text-[16px] text-[#292929] md:text-[22px]">
+    <div className="md:flex-col md:px-[105px] md:py-[68px] flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px]">
+      <p className="font-italic font-500 md:text-[22px] mb-4 max-w-[290px] text-center font-lora text-[16px] text-[#292929]">
         This project has not participated in any pots yet.
       </p>
 
@@ -35,7 +38,7 @@ const PotsSubPage = () => {
 
   return (
     <div className="mb-18 flex w-full flex-col">
-      <div className="mx-auto grid w-fit grid-cols-1 gap-[31px] pb-[32px] pt-[2px] lg:w-full lg:grid-cols-2 xl:grid-cols-3">
+      <div className="lg:w-full lg:grid-cols-2 xl:grid-cols-3 mx-auto grid w-fit grid-cols-1 gap-[31px] pb-[32px] pt-[2px]">
         {potApplications.map(({ id, pot }) => (
           <PotCard key={id} {...{ pot }} />
         ))}
@@ -44,6 +47,10 @@ const PotsSubPage = () => {
       {potApplications.length === 0 && !isLoading && <NoResults />}
     </div>
   );
+};
+
+PotsSubPage.getLayout = function getLayout(page: ReactElement) {
+  return <ProfileLayout>{page}</ProfileLayout>;
 };
 
 export default PotsSubPage;

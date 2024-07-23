@@ -18,6 +18,7 @@ import {
   TextWithIcon,
 } from "@/common/ui/components";
 import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
+import routesPath from "@/modules/core/routes";
 
 import { DonationBreakdown } from "./DonationBreakdown";
 import { useDonationFees } from "../hooks";
@@ -163,7 +164,7 @@ export const DonationSuccess = ({
           <Skeleton className="w-23.5 h-5" />
         ) : (
           <Link
-            href={`/profile/${recipientAccount.id}/funding-raised`}
+            href={`/${routesPath.PROFILE}/${recipientAccount.id}/funding-raised`}
             onClick={closeModal}
             className="text-red-600"
           >

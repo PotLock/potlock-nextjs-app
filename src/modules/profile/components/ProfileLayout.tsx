@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 
 import Info from "@/modules/profile/components/Info";
 import ProfileBanner from "@/modules/profile/components/ProfileBanner";
@@ -8,17 +8,22 @@ import Tabs from "@/modules/profile/components/Tabs";
 import tabRoutes from "@/modules/profile/tabRoutes";
 import ProjectBanner from "@/modules/project/components/ProjectBanner";
 
-export default function RootLayout({
-  children,
-  params,
-}: Readonly<{
+type Props = {
   children: React.ReactNode;
-  params: { userId: string };
-}>) {
-  const pathname = usePathname();
+};
+
+export function ProfileLayout({ children }: Props) {
+  const router = useRouter();
+  const params = router.query as { userId?: string };
+  const pathname = router.pathname;
+
   const [selectedTab, setSelectedTab] = useState(
     tabRoutes.find((tab) => pathname.includes(tab.href)) || tabRoutes[0],
   );
+
+  if (!params.userId) {
+    return "";
+  }
 
   return (
     <main className="flex flex-col">
@@ -35,7 +40,7 @@ export default function RootLayout({
       />
 
       {/* Tab Content */}
-      <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
+      <div className="md:px-[4.5rem] flex w-full flex-row flex-wrap gap-2 px-[1rem]">
         {children}
       </div>
     </main>

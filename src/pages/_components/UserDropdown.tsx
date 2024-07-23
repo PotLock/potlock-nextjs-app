@@ -20,6 +20,7 @@ import {
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { statusesIcons } from "@/modules/core/constants";
 import useRegistration from "@/modules/core/hooks/useRegistration";
+import routesPath from "@/modules/core/routes";
 import { fetchSocialImages } from "@/modules/core/services/socialImages";
 import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
 import {
@@ -136,7 +137,7 @@ const UserDropdown = () => {
           </DropdownMenuLabel>
           <ActAsDao />
           <div className="rounded-md border border-[#DBDBDB]">
-            <Link href={`/user/${accountId}`}>
+            <Link href={`/${routesPath.PROFILE}/${accountId}`}>
               <DropdownMenuItem className="px-3 py-[10px] font-medium">
                 {registration ? "My Project" : "My user"}
               </DropdownMenuItem>
