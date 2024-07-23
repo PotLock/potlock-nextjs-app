@@ -1,7 +1,6 @@
 import { createElement as h, useMemo } from "react";
 
-import { useSearchParams } from "next/navigation";
-
+import { useParsedRouteQuery } from "@/common/lib";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
@@ -27,14 +26,17 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   closeModal,
   ...props
 }) => {
-  const searchParams = useSearchParams();
+  const searchParams = useParsedRouteQuery();
+  const referrerIdSearchParam = searchParams.get("referrerId");
 
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({
       ...props,
 
       referrerAccountId:
-        searchParams.get("referrerId") ?? result?.recipient_id ?? undefined,
+        typeof referrerIdSearchParam === "string"
+          ? referrerIdSearchParam
+          : result?.referrer_id ?? undefined,
     });
 
   const [tokenId] = form.watch(["tokenId"]);

@@ -1,31 +1,40 @@
 import { useEffect } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
-import { useSearchParams } from "next/navigation";
 
-import { useRouteQuerySync } from "@/common/lib";
+import { useParsedRouteQuery, useRouteQuerySync } from "@/common/lib";
 import { dispatch } from "@/store";
 
 import { DonationModal } from "../components/DonationModal";
 
 export const useDonationSuccessWalletRedirect = () => {
   const modal = useModal(DonationModal);
-  const searchParams = useSearchParams();
   const { syncRouteQuery } = useRouteQuerySync();
-  const transactionHash = searchParams.getAll("transactionHashes").at(-1);
-  const accountIdRouteParam = searchParams.get("donateTo") ?? undefined;
-  const potIdRouteParam = searchParams.get("donateToPot") ?? undefined;
+  const searchParams = useParsedRouteQuery();
+  const accountIdQueryParam = searchParams.get("donateTo");
+  const potIdQueryParam = searchParams.get("donateToPot");
+  const transactionHashesQueryParam = searchParams.get("transactionHashes");
+
+  const recipientAccountId =
+    typeof accountIdQueryParam === "string" ? accountIdQueryParam : undefined;
+
+  const potAccountId =
+    typeof potIdQueryParam === "string" ? potIdQueryParam : undefined;
+
+  const transactionHash = Array.isArray(transactionHashesQueryParam)
+    ? transactionHashesQueryParam.at(-1)
+    : undefined;
 
   useEffect(() => {
     if (
       transactionHash &&
-      Boolean(accountIdRouteParam ?? potIdRouteParam) &&
+      Boolean(recipientAccountId ?? potAccountId) &&
       !modal.visible
     ) {
       dispatch.donation.handleSuccessByTxHash(transactionHash).then(() => {
         modal.show({
-          accountId: accountIdRouteParam,
-          potId: potIdRouteParam,
+          accountId: recipientAccountId,
+          potId: potAccountId,
           transactionHash,
         });
 
@@ -37,9 +46,9 @@ export const useDonationSuccessWalletRedirect = () => {
       });
     }
   }, [
-    accountIdRouteParam,
     modal,
-    potIdRouteParam,
+    potAccountId,
+    recipientAccountId,
     syncRouteQuery,
     transactionHash,
   ]);
