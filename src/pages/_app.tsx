@@ -47,8 +47,6 @@ export default function RootLayout({
 
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  // return getLayout(<Component {...pageProps} />);
-
   return (
     <>
       <Head>
@@ -63,7 +61,6 @@ export default function RootLayout({
               className={`${cn("container font-lora antialiased", lora.variable)}`}
             >
               <Nav />
-              {/* <Component {...pageProps} /> */}
               {getLayout(<Component {...pageProps} />)}
             </div>
           </AuthProvider>
