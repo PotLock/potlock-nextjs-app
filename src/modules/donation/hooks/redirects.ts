@@ -9,6 +9,7 @@ import { DonationModal } from "../components/DonationModal";
 
 export const useDonationSuccessWalletRedirect = () => {
   const modal = useModal(DonationModal);
+
   const {
     searchParams: { donateTo, donateToPot, transactionHashes },
     setSearchParams,
