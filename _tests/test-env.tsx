@@ -7,8 +7,6 @@ import { beforeEach, vi } from "vitest";
 
 import { store } from "../src/store";
 
-const useRouter = mockRouter.useRouter;
-
 /**
  * https://github.com/scottrippey/next-router-mock/issues/67#issuecomment-1564906960
  */
@@ -19,17 +17,6 @@ export const NextNavigationMock = {
   redirect: vi.fn().mockImplementation((url: string) => {
     mockRouter.memoryRouter.setCurrentUrl(url);
   }),
-
-  usePathname: () => {
-    const router = useRouter();
-    return router.asPath;
-  },
-
-  useSearchParams: () => {
-    const router = useRouter();
-    const path = router.query;
-    return new URLSearchParams(path as any);
-  },
 };
 
 export const renderWithStore = (ui: React.ReactElement) =>

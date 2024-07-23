@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import { useUrlSearchParams } from "use-url-search-params";
 
 import { POTLOCK_LISTS_CONTRACT_ID } from "@/common/constants";
 import { naxiosInstance } from "@/common/contracts";
 import * as potlockLists from "@/common/contracts/potlock/lists";
+import { useSearchParams } from "@/common/lib";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
@@ -24,7 +24,9 @@ const useInitProjectState = () => {
     (state) => state.createProject,
   );
 
-  const [{ done, transactionHashes, errorMessage }] = useUrlSearchParams();
+  const {
+    searchParams: { done, transactionHashes, errorMessage },
+  } = useSearchParams();
 
   const {
     actAsDao: { defaultAddress: daoAddress, toggle: isDao },

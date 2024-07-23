@@ -1,19 +1,27 @@
 import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
-import { ByAccountId, ByListId, ConditionalExecution } from "@/common/types";
+import { ByAccountId, ByListId } from "@/common/types";
 
 import { swrHooks } from "./generated";
 import {
   ByPotId,
+  V1AccountsActivePotsRetrieveParams,
+  V1AccountsDonationsReceivedRetrieveParams,
   V1AccountsPotApplicationsRetrieveParams,
+  V1AccountsRetrieveParams,
+  V1DonateContractConfigRetrieveParams,
   V1ListsRandomRegistrationRetrieveParams,
   V1ListsRegistrationsRetrieveParams,
+  V1PotsRetrieveParams,
 } from "./types";
 
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve
  */
-export const useDonationConfig = () => {
+export const useDonationConfig = (
+  params?: V1DonateContractConfigRetrieveParams,
+) => {
   const queryResult = swrHooks.useV1DonateContractConfigRetrieve(
+    params,
     POTLOCK_REQUEST_CONFIG,
   );
 
@@ -23,10 +31,9 @@ export const useDonationConfig = () => {
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve
  */
-export const useAccounts = (params?: ConditionalExecution) => {
-  const queryResult = swrHooks.useV1AccountsRetrieve({
+export const useAccounts = (params?: V1AccountsRetrieveParams) => {
+  const queryResult = swrHooks.useV1AccountsRetrieve(params, {
     ...POTLOCK_REQUEST_CONFIG,
-    swr: { enabled: params?.enabled ?? true },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
@@ -47,10 +54,13 @@ export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_active_pots_retrieve
  */
-export const useAccountActivePots = ({ accountId }: ByAccountId) => {
+export const useAccountActivePots = ({
+  accountId,
+  ...params
+}: ByAccountId & V1AccountsActivePotsRetrieveParams) => {
   const queryResult = swrHooks.useV1AccountsActivePotsRetrieve(
     accountId,
-    { status: "live" },
+    params,
     POTLOCK_REQUEST_CONFIG,
   );
 
@@ -62,11 +72,11 @@ export const useAccountActivePots = ({ accountId }: ByAccountId) => {
  */
 export const useAccountPotApplications = ({
   accountId,
-  status,
+  ...params
 }: Partial<ByAccountId> & V1AccountsPotApplicationsRetrieveParams) => {
   const queryResult = swrHooks.useV1AccountsPotApplicationsRetrieve(
     accountId ?? "unknown",
-    { status },
+    params,
     { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
@@ -76,8 +86,11 @@ export const useAccountPotApplications = ({
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve
  */
-export const usePots = () => {
-  const queryResult = swrHooks.useV1PotsRetrieve(POTLOCK_REQUEST_CONFIG);
+export const usePots = (params?: V1PotsRetrieveParams) => {
+  const queryResult = swrHooks.useV1PotsRetrieve(
+    params,
+    POTLOCK_REQUEST_CONFIG,
+  );
 
   return { ...queryResult, data: queryResult.data?.data };
 };
@@ -85,9 +98,13 @@ export const usePots = () => {
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_received_retrieve
  */
-export const useAccountDonationsReceived = ({ accountId }: ByAccountId) => {
+export const useAccountDonationsReceived = ({
+  accountId,
+  ...params
+}: ByAccountId & V1AccountsDonationsReceivedRetrieveParams) => {
   const queryResult = swrHooks.useV1AccountsDonationsReceivedRetrieve(
     accountId,
+    params,
     POTLOCK_REQUEST_CONFIG,
   );
 
@@ -114,11 +131,11 @@ export const usePot = ({ potId }: Partial<ByPotId>) => {
  */
 export const useRandomListRegistration = ({
   listId,
-  status,
+  ...params
 }: ByListId & V1ListsRandomRegistrationRetrieveParams) => {
   const queryResult = swrHooks.useV1ListsRandomRegistrationRetrieve(
     listId,
-    { status },
+    params,
 
     {
       ...POTLOCK_REQUEST_CONFIG,
@@ -134,11 +151,11 @@ export const useRandomListRegistration = ({
  */
 export const useListRegistrations = ({
   listId,
-  status,
+  ...params
 }: ByListId & V1ListsRegistrationsRetrieveParams) => {
   const queryResult = swrHooks.useV1ListsRegistrationsRetrieve(
     listId,
-    { status },
+    params,
     POTLOCK_REQUEST_CONFIG,
   );
 
