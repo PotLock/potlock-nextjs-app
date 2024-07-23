@@ -10,25 +10,34 @@ import { useUrlSearchParams } from "use-url-search-params";
  * **Note:** This is meant to be used only with the Next.js's Pages Router.
  *
  * @example
- * const {searchParams, setSearchParams} = useSearchParams();
+ *
+ * const {
+ *   searchParams: { accountId, transactionHashes },
+ *   setSearchParams,
+ * } = useSearchParams();
  *
  * // Sets `accountId` query parameter to "root.near"
  * setSearchParams({ accountId: "root.near" });
  *
- * console.log(searchParams.accountId); -> "root.near"
+ * console.log(accountId); -> "root.near"
  *
  * // Deletes `transactionHashes` query parameter
  * setSearchParams({ transactionHashes: null });
  *
- * console.log(searchParams.transactionHashes); -> undefined
+ * console.log(transactionHashes); -> undefined
  */
 export const useSearchParams = () => {
   const router = useRouter();
   const [parsedSearchQuery] = useUrlSearchParams();
 
-  const searchParamsMap = useMemo(
-    () => new Map(Object.entries(parsedSearchQuery)),
+  const searchParams = useMemo(
+    () => parsedSearchQuery ?? {},
     [parsedSearchQuery],
+  );
+
+  const searchParamsMap = useMemo(
+    () => new Map(Object.entries(searchParams)),
+    [searchParams],
   );
 
   const setSearchParams = useCallback(
@@ -51,5 +60,5 @@ export const useSearchParams = () => {
     [router, searchParamsMap],
   );
 
-  return { searchParams: parsedSearchQuery, setSearchParams };
+  return { searchParams, setSearchParams };
 };
