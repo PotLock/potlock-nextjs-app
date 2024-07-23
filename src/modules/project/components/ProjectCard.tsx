@@ -60,7 +60,7 @@ export const ProjectCard = ({
   const categories = plCategories ? JSON.parse(plCategories) : [];
 
   return (
-    <Link href={`/${routesPath.PROFILE}/${projectId}`}>
+    <Link href={`${routesPath.PROFILE}/${projectId}`}>
       {isAccountLoading ? (
         <CardSkeleton />
       ) : (

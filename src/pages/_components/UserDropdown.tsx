@@ -137,7 +137,7 @@ const UserDropdown = () => {
           </DropdownMenuLabel>
           <ActAsDao />
           <div className="rounded-md border border-[#DBDBDB]">
-            <Link href={`/${routesPath.PROFILE}/${accountId}`}>
+            <Link href={`${routesPath.PROFILE}/${accountId}`}>
               <DropdownMenuItem className="px-3 py-[10px] font-medium">
                 {registration ? "My Project" : "My user"}
               </DropdownMenuItem>

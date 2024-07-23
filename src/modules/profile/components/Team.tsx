@@ -38,7 +38,7 @@ const Members = ({ team }: { team?: string[] }) => {
         <Link
           key={teamMember}
           className="hover:decoration-none flex cursor-pointer flex-col justify-start gap-2"
-          href={`/${routesPath.PROFILE}/${teamMember}`}
+          href={`${routesPath.PROFILE}/${teamMember}`}
           target="_blank"
         >
           <TeamAvatar teamMemberId={teamMember} />

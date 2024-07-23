@@ -37,7 +37,7 @@ const Hero = () => {
               <Link
                 href={
                   isRegisteredProject
-                    ? `/${routesPath.PROFILE}/${accountId}`
+                    ? `${routesPath.PROFILE}/${accountId}`
                     : routesPath.CREATE_PROJECT
                 }
                 prefetch={true}

@@ -18,7 +18,7 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
 
   return (
     <Link
-      href={`/${routesPath.PROFILE}/${accountId}`}
+      href={`${routesPath.PROFILE}/${accountId}`}
       target="_blank"
       className={cn("decoration-none flex items-center gap-1", className)}
     >

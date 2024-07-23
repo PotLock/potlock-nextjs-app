@@ -164,7 +164,7 @@ export const DonationSuccess = ({
           <Skeleton className="w-23.5 h-5" />
         ) : (
           <Link
-            href={`/${routesPath.PROFILE}/${recipientAccount.id}/funding-raised`}
+            href={`${routesPath.PROFILE}/${recipientAccount.id}/funding-raised`}
             onClick={closeModal}
             className="text-red-600"
           >
