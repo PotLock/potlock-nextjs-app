@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 
 import Info from "@/modules/profile/components/Info";
@@ -11,13 +10,13 @@ import ProjectBanner from "@/modules/project/components/ProjectBanner";
 
 type Props = {
   children: React.ReactNode;
-  // params: { userId: string };
 };
 
 export function ProfileLayout({ children }: Props) {
-  const params = useRouter().query as { userId?: string };
+  const router = useRouter();
+  const params = router.query as { userId?: string };
+  const pathname = router.pathname;
 
-  const pathname = usePathname();
   const [selectedTab, setSelectedTab] = useState(
     tabRoutes.find((tab) => pathname.includes(tab.href)) || tabRoutes[0],
   );
