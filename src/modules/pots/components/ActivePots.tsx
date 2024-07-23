@@ -98,8 +98,7 @@ const ActivePots = () => {
       </div>
       {isLoading && <p className="m-[24px_0px] self-start">Loading</p>}
       {!isLoading && activePots.length ? (
-        // TODO: class is broken due to some issue with unoCSS, change "grid-cols-3" to "grid-cols-1" once unoCSS is fixed
-        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-3 gap-8">
+        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
           {activePotCards}
         </div>
       ) : (
@@ -115,8 +114,7 @@ const ActivePots = () => {
           <span className="font-600">{completedPots.length}</span>
         </p>
       </div>
-      {/* TODO: class is broken due to some issue with unoCSS, change "grid-cols-3" to "grid-cols-1" once unoCSS is fixed */}
-      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-3 gap-8">
+      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
         {completedPotCards}
       </div>
     </div>
