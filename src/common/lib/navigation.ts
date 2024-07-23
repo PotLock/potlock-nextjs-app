@@ -1,42 +1,55 @@
 import { useCallback, useMemo } from "react";
 
 import { useRouter } from "next/router";
+import queryString from "query-string";
 import { useUrlSearchParams } from "use-url-search-params";
 
-export const useParsedRouteQuery = () => {
-  const [searchParams] = useUrlSearchParams();
-
-  return useMemo(() => new Map(Object.entries(searchParams)), [searchParams]);
-};
-
 /**
- * Provides a method to update URL query parameters for the current route.
+ * Allows updating and retrieving ( parsed ) URL query parameters for the current route.
+ *
+ * **Note:** This is meant to be used only with the Next.js's Pages Router.
  *
  * @example
- * const { syncRouteQuery } = useRouteQuerySync();
+ * const {searchParams, setSearchParams} = useSearchParams();
  *
  * // Sets `accountId` query parameter to "root.near"
- * syncRouteQuery({ accountId: "root.near" });
+ * setSearchParams({ accountId: "root.near" });
+ *
+ * console.log(searchParams.accountId); -> "root.near"
  *
  * // Deletes `transactionHashes` query parameter
- * syncRouteQuery({ transactionHashes: null });
+ * setSearchParams({ transactionHashes: null });
+ *
+ * console.log(searchParams.transactionHashes); -> undefined
  */
-export const useRouteQuerySync = () => {
+export const useSearchParams = () => {
   const router = useRouter();
+  const [parsedSearchQuery] = useUrlSearchParams();
 
-  const searchParams = useParsedRouteQuery();
-
-  const syncRouteQuery = useCallback(
-    (newParams: Record<string, string | null>) => {
-      Object.entries(newParams).forEach(([key, value]) =>
-        value ? searchParams.set(key, value) : searchParams.delete(key),
-      );
-
-      router.replace(router.pathname, Object.fromEntries(searchParams));
-    },
-
-    [router, searchParams],
+  const searchParamsMap = useMemo(
+    () => new Map(Object.entries(parsedSearchQuery)),
+    [parsedSearchQuery],
   );
 
-  return { syncRouteQuery };
+  const setSearchParams = useCallback(
+    (newParams: Record<string, string | null>) => {
+      Object.entries(newParams).forEach(([key, value]) =>
+        value ? searchParamsMap.set(key, value) : searchParamsMap.delete(key),
+      );
+
+      const searchQuery = queryString.stringify(
+        Object.fromEntries(searchParamsMap),
+      );
+
+      router.replace(
+        searchQuery.length > 0
+          ? [router.pathname, searchQuery].join("?")
+          : router.pathname,
+      );
+    },
+
+    [router, searchParamsMap],
+  );
+
+  return { searchParams: parsedSearchQuery, setSearchParams };
 };

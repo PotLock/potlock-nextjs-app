@@ -2,18 +2,17 @@ import { useEffect } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
-import { useParsedRouteQuery, useRouteQuerySync } from "@/common/lib";
+import { useSearchParams } from "@/common/lib";
 import { dispatch } from "@/store";
 
 import { DonationModal } from "../components/DonationModal";
 
 export const useDonationSuccessWalletRedirect = () => {
   const modal = useModal(DonationModal);
-  const { syncRouteQuery } = useRouteQuerySync();
-  const searchParams = useParsedRouteQuery();
-  const accountIdQueryParam = searchParams.get("donateTo");
-  const potIdQueryParam = searchParams.get("donateToPot");
-  const transactionHashesQueryParam = searchParams.get("transactionHashes");
+  const { searchParams, setSearchParams } = useSearchParams();
+  const accountIdQueryParam = searchParams.donateTo;
+  const potIdQueryParam = searchParams.donateToPot;
+  const transactionHashesQueryParam = searchParams.transactionHashes;
 
   const recipientAccountId =
     typeof accountIdQueryParam === "string" ? accountIdQueryParam : undefined;
@@ -38,7 +37,7 @@ export const useDonationSuccessWalletRedirect = () => {
           transactionHash,
         });
 
-        syncRouteQuery({
+        setSearchParams({
           donateTo: null,
           donateToPot: null,
           transactionHashes: null,
@@ -49,7 +48,7 @@ export const useDonationSuccessWalletRedirect = () => {
     modal,
     potAccountId,
     recipientAccountId,
-    syncRouteQuery,
+    setSearchParams,
     transactionHash,
   ]);
 };
