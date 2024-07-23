@@ -12,7 +12,7 @@ import { filters } from "../utils/filters";
 
 const ActivePots = () => {
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  console.log(categoryFilter);
+  // console.log(categoryFilter);
 
   // Fetch Pots
   const { isLoading, activePots, completedPots } = useFilteredPots();
@@ -71,16 +71,6 @@ const ActivePots = () => {
     },
   ];
 
-  // useEffect(() => {
-  //   let filtered = sortedActivePots;
-
-  //   categoryFilter.forEach((filterKey) => {
-  //     filtered = filtered.filter(filters[filterKey]);
-  //   });
-
-  //   setSortedPots(filtered);
-  // }, [categoryFilter, sortedActivePots]);
-
   let filtered = sortedActivePots;
 
   categoryFilter.forEach((filterKey) => {
@@ -89,9 +79,6 @@ const ActivePots = () => {
 
   const activePotCards = useMemo(() => {
     return filtered.map((pot) => <PotCard key={pot.account} pot={pot} />);
-    // return sortedActivePots.map((pot) => (
-    //   <PotCard key={pot.account} pot={pot} />
-    // ));
   }, [filtered]);
 
   const completedPotCards = useMemo(() => {
@@ -99,7 +86,7 @@ const ActivePots = () => {
   }, [completedPots]);
 
   return (
-    <div className="flex w-full flex-col px-[64px] py-10 md:px-10 md:py-12">
+    <div className="md:px-10 md:py-12 flex w-full flex-col px-[64px] py-10">
       <div className="flex w-full justify-between gap-5">
         <p className="font-600 mb-4 flex items-center gap-4 text-[18px]">
           Active Pots <span className="font-600">{activePots.length}</span>
@@ -112,7 +99,7 @@ const ActivePots = () => {
       {isLoading && <p className="m-[24px_0px] self-start">Loading</p>}
       {!isLoading && activePots.length ? (
         // TODO: class is broken due to some issue with unoCSS, change "grid-cols-3" to "grid-cols-1" once unoCSS is fixed
-        <div className="mt-8 grid w-full grid-cols-3 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-3 gap-8">
           {activePotCards}
         </div>
       ) : (
@@ -129,7 +116,7 @@ const ActivePots = () => {
         </p>
       </div>
       {/* TODO: class is broken due to some issue with unoCSS, change "grid-cols-3" to "grid-cols-1" once unoCSS is fixed */}
-      <div className="mt-8 grid w-full grid-cols-3 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-3 gap-8">
         {completedPotCards}
       </div>
     </div>
