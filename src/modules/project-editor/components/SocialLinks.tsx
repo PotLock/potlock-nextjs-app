@@ -1,5 +1,6 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
+import { extractFromUrl, urlPatters } from "@/modules/core/utils";
 import { dispatch, useTypedSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";
@@ -9,6 +10,19 @@ const SocialLinks = () => {
   const telegram = useTypedSelector((state) => state.createProject.telegram);
   const github = useTypedSelector((state) => state.createProject.github);
   const website = useTypedSelector((state) => state.createProject.website);
+
+  const [twitterValue, setTwitterValue] = useState<string>(
+    twitter?.replace("https://x.com/", "") || "",
+  );
+  const [telegramValue, setTelegramValue] = useState<string>(
+    telegram?.replace("https://t.me/", "") || "",
+  );
+  const [githubValue, setGithubValue] = useState<string>(
+    github?.replace("https://github.com/", "") || "",
+  );
+  const [websiteValue, setWebsiteValue] = useState<string>(
+    website?.replace("https://", "") || "",
+  );
 
   const onChangeHandler = useCallback((socialKey: string, value: string) => {
     dispatch.createProject.updateSocialLinks({ [socialKey]: value });
@@ -21,12 +35,16 @@ const SocialLinks = () => {
         prefix="x.com/"
         prefixMinWidth={110}
         inputProps={{
-          defaultValue: twitter?.replace("https://x.com/", ""),
+          value: twitterValue.replace("https://x.com/", ""),
           placeholder: "",
-          onBlur: (e) => {
+          onChange: (e) =>
+            setTwitterValue(
+              extractFromUrl(e.target.value, urlPatters.twitter) || "",
+            ),
+          onBlur: (_) => {
             onChangeHandler(
               "twitter",
-              e.target.value ? `https://x.com/${e.target.value}` : "",
+              twitterValue ? `https://x.com/${twitterValue}` : "",
             );
           },
         }}
@@ -37,12 +55,16 @@ const SocialLinks = () => {
         prefix="t.me/"
         prefixMinWidth={110}
         inputProps={{
-          defaultValue: telegram?.replace("https://t.me/", ""),
+          value: telegramValue.replace("https://t.me/", ""),
           placeholder: "",
-          onBlur: (e) => {
+          onChange: (e) =>
+            setTelegramValue(
+              extractFromUrl(e.target.value, urlPatters.telegram) || "",
+            ),
+          onBlur: (_) => {
             onChangeHandler(
               "telegram",
-              e.target.value ? `https://t.me/${e.target.value}` : "",
+              telegramValue ? `https://t.me/${telegramValue}` : "",
             );
           },
         }}
@@ -53,12 +75,16 @@ const SocialLinks = () => {
         prefix="github.com/"
         prefixMinWidth={110}
         inputProps={{
-          defaultValue: github?.replace("https://github.com/", ""),
+          value: githubValue.replace("https://github.com/", ""),
           placeholder: "",
-          onBlur: (e) => {
+          onChange: (e) =>
+            setGithubValue(
+              extractFromUrl(e.target.value, urlPatters.github) || "",
+            ),
+          onBlur: (_) => {
             onChangeHandler(
               "github",
-              e.target.value ? `https://github.com/${e.target.value}` : "",
+              githubValue ? `https://github.com/${githubValue}` : "",
             );
           },
         }}
@@ -69,12 +95,16 @@ const SocialLinks = () => {
         prefix="https://"
         prefixMinWidth={110}
         inputProps={{
-          defaultValue: website?.replace("https://", ""),
+          value: websiteValue.replace("https://", ""),
           placeholder: "",
-          onBlur: (e) => {
+          onChange: (e) =>
+            setWebsiteValue(
+              extractFromUrl(e.target.value, urlPatters.website) || "",
+            ),
+          onBlur: (_) => {
             onChangeHandler(
               "website",
-              e.target.value ? `https://${e.target.value}` : "",
+              websiteValue ? `https://${websiteValue}` : "",
             );
           },
         }}

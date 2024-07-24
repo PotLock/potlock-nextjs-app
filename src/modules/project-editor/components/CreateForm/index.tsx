@@ -140,6 +140,12 @@ const CreateForm = () => {
       ? "Add proposal to create project"
       : "Create new project";
 
+  const isRepositoriesValid = projectProps.isRepositoryRequired
+    ? projectProps.githubRepositories
+      ? projectProps.githubRepositories?.length > 0
+      : true
+    : true;
+
   // Wait for wallet
   if (!isWalletReady) {
     return (
@@ -341,7 +347,11 @@ const CreateForm = () => {
           </button>
         </div>
 
-        <SubHeader title="Repositories" required className="mt-16" />
+        <SubHeader
+          title="Repositories"
+          required={projectProps.isRepositoryRequired}
+          className="mt-16"
+        />
 
         <Row>
           <Repositories onChange={onChangeRepositories} />
@@ -375,7 +385,7 @@ const CreateForm = () => {
           </Button>
           <Button
             variant="standard-filled"
-            disabled={!form.formState.isValid}
+            disabled={!form.formState.isValid || !isRepositoriesValid}
             onClick={onSubmit}
           >
             {createProjectText}

@@ -4,7 +4,10 @@ import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RootModel } from "@/store/models";
 
 import { AddFundingSourceInputs, CreateProjectInputs } from "./models/types";
+import routesPath from "../core/routes";
+import { fetchSocialImages } from "../core/services/socialImages";
 import uploadFileToIPFS from "../core/services/uploadFileToIPFS";
+import { updateState } from "../core/utils/updateState";
 
 type CheckStatus = "pending" | "done" | "sending";
 type FetchStatus = "pending" | "fetching" | "ready";
@@ -24,6 +27,7 @@ type ExtraTypes = {
   checkRegistrationStatus: FetchStatus;
   checkPreviousProjectDataStatus: FetchStatus;
   daoProjectProposal: Proposal | null;
+  isRepositoryRequired: boolean;
 };
 export type CreateProjectState = CreateProjectInputs & ExtraTypes;
 
@@ -40,6 +44,7 @@ const initialState: CreateProjectState = {
   checkRegistrationStatus: "pending",
   checkPreviousProjectDataStatus: "pending",
   daoProjectProposal: null,
+  isRepositoryRequired: false,
 
   // Inputs
   name: "",
@@ -136,6 +141,7 @@ export const createProject = createModel<RootModel>()({
     },
 
     setCategories(state: CreateProjectState, categories: string[]) {
+      state.isRepositoryRequired = categories.includes("Open Source");
       state.categories = categories;
     },
 
@@ -240,6 +246,13 @@ export const createProject = createModel<RootModel>()({
       state.profileImage = profileImageUrl;
     },
 
+    SET_INITIAL_DATA(
+      state: CreateProjectState,
+      initialData: Partial<CreateProjectState>,
+    ) {
+      state = updateState(state, initialData);
+    },
+
     // Reset to the initial state
     RESET() {
       return initialState;
@@ -275,6 +288,66 @@ export const createProject = createModel<RootModel>()({
 
     setProfileImage(profileImageUrl: string) {
       dispatch.createProject.UPDATE_PROFILE_IMAGE(profileImageUrl);
+    },
+
+    async loadProjectData(accountId: string) {
+      const data: Partial<CreateProjectState> = {};
+
+      // Set the isEdit status
+      data.isEdit = location.pathname.includes(routesPath.EDIT_PROJECT);
+
+      // Get profile data & profile images
+      const projectProfileData = await fetchSocialImages({
+        accountId,
+      });
+
+      const { profile } = projectProfileData;
+
+      // No profile? End of process!
+      if (!profile) {
+        dispatch.createProject.checkPreviousProjectDataStatus("ready");
+        return;
+      }
+
+      // Bg
+      if (typeof projectProfileData.backgroundImage === "string")
+        data.backgroundImage = projectProfileData.backgroundImage;
+
+      // Avatar
+      if (typeof projectProfileData.image === "string")
+        data.profileImage = projectProfileData.image;
+
+      // Project's name
+      data.name = profile?.name;
+      // Team Members
+      if (profile?.plTeam) data.teamMembers = JSON.parse(profile.plTeam);
+      // Category
+      if (profile?.plCategories)
+        data.categories = JSON.parse(profile.plCategories);
+      // Description
+      data.description = profile?.description;
+      // Reason
+      data.publicGoodReason = profile?.plPublicGoodReason;
+      // Smart Contracts
+      if (profile?.plSmartContracts)
+        data.smartContracts = JSON.parse(profile.plSmartContracts);
+      // Funding sources
+      if (profile?.plFundingSources)
+        data.fundingSources = JSON.parse(profile.plFundingSources);
+      // Repositories
+      if (profile?.plGithubRepos)
+        data.githubRepositories = JSON.parse(profile.plGithubRepos);
+      // Social Links
+      if (profile?.linktree) {
+        data.website = profile.linktree.website;
+        data.twitter = profile.linktree.twitter;
+        data.telegram = profile.linktree.telegram;
+        data.github = profile.linktree.github;
+      }
+
+      // Set initial data
+      dispatch.createProject.SET_INITIAL_DATA(data);
+      dispatch.createProject.checkPreviousProjectDataStatus("ready");
     },
   }),
 });
