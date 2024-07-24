@@ -231,7 +231,8 @@ export const createProject = createModel<RootModel>()({
     },
 
     addRepository(state: CreateProjectState) {
-      state.githubRepositories = [...state.githubRepositories, ""];
+      const repos = state.githubRepositories || [];
+      state.githubRepositories = [...repos, ""];
     },
 
     updateRepositories(state: CreateProjectState, repositories: string[]) {
