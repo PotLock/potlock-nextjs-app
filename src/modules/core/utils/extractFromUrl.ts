@@ -1,7 +1,7 @@
 export const urlPatters = {
-  github: /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^\/]+(?:\/[^\/]+)?)\/?$/,
-  twitter: /^(?:https?:\/\/)?(?:www\.)?x\.com\/([^\/]+(?:\/[^\/]+)?)\/?$/,
-  telegram: /^(?:https?:\/\/)?(?:www\.)?t\.com\/([^\/]+(?:\/[^\/]+)?)\/?$/,
+  github: /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
+  twitter: /^(?:https?:\/\/)?(?:www\.)?x\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
+  telegram: /^(?:https?:\/\/)?(?:www\.)?t\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
   website: /^(?:https?:\/\/)\/?$/,
 };
 
