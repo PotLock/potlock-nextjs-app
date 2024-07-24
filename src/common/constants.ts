@@ -35,11 +35,11 @@ export const APP_METADATA: Metadata & {
   },
 };
 
-export const RPC_NODE_URL = "https://free.rpc.fastnear.com";
-
 // NETWORK
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
   "testnet") as Network;
+
+export const RPC_NODE_URL = `https://${NETWORK.toLowerCase() === "mainnet" ? "rpc.testnet.near.org" : "free.rpc.fastnear.com"}`;
 
 /**
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/
