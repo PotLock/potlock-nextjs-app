@@ -15,7 +15,7 @@ type Props = {
 export const PotCard = ({ pot }: Props) => {
   const { amountNear, amountUsd } = useNearAndUsdByPot({ pot });
 
-  const preLoadingText = `Pot ${pot.id} not found.`;
+  const preLoadingText = `Pot ${pot.account} not found.`;
 
   if (!pot) {
     return (
@@ -36,7 +36,7 @@ export const PotCard = ({ pot }: Props) => {
   return (
     // Card
     <Link
-      href={`${routesPath.POTS}/${pot.id}`}
+      href={`${routesPath.POTS}/${pot.account}`}
       className="flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col rounded-[8px] bg-white pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline"
     >
       {/* Card Section */}

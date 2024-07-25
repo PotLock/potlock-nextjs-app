@@ -1,8 +1,5 @@
-// import { useCallback } from "react";
-
 import { SelectProps, Trigger } from "@radix-ui/react-select";
 import Image from "next/image";
-// import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "./button";
 import { Select, SelectContent, SelectItem } from "./select";

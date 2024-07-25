@@ -145,8 +145,8 @@ export const DonationProjectAllocation: React.FC<
                 defaultValue={field.value}
                 onValueChange={field.onChange}
               >
-                {matchingPots?.map(({ id: potId, name }) => (
-                  <SelectFieldOption key={potId} value={potId}>
+                {matchingPots?.map(({ account: potAccountId, name }) => (
+                  <SelectFieldOption key={potAccountId} value={potAccountId}>
                     {name}
                   </SelectFieldOption>
                 ))}

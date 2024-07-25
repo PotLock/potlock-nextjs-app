@@ -3,13 +3,13 @@ import { useCallback, useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
-import { dispatch } from "@/app/_store";
-import { potlock } from "@/common/api/potlock";
+import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
 import { toChronologicalOrder } from "@/common/lib";
 import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
+import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
 import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
@@ -33,6 +33,7 @@ export const useDonationForm = ({
 
   const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
     accountId: recipientAccountId,
+    status: PotApplicationStatusEnum.Approved,
   });
 
   const matchingPots = matchingPotsPaginated?.results ?? [];
@@ -40,14 +41,16 @@ export const useDonationForm = ({
   const defaultPotAccountId = toChronologicalOrder(
     "matching_round_end",
     matchingPots,
-  ).at(0)?.id;
+  ).at(0)?.account;
 
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       allocationStrategy:
-        DonationAllocationStrategyEnum[
-          "accountId" in params ? "direct" : "pot"
-        ],
+        "accountId" in params
+          ? DonationAllocationStrategyEnum[
+              matchingPots.length > 0 ? "pot" : "direct"
+            ]
+          : DonationAllocationStrategyEnum.pot,
 
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId,
@@ -61,7 +64,13 @@ export const useDonationForm = ({
         ],
     }),
 
-    [defaultPotAccountId, params, recipientAccountId, referrerAccountId],
+    [
+      defaultPotAccountId,
+      matchingPots.length,
+      params,
+      recipientAccountId,
+      referrerAccountId,
+    ],
   );
 
   const form = useForm<DonationInputs>({

@@ -29,7 +29,7 @@ export const InfiniteScroll = ({
   return (
     <InfiniteScrollWrapper
       className={cn(
-        "mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3",
+        "md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8",
         className,
       )}
       dataLength={items.slice(0, size * index).length}
