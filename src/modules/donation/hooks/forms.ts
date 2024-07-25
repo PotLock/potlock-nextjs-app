@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
-import { potlock } from "@/common/api/potlock";
+import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
 import { toChronologicalOrder } from "@/common/lib";
@@ -33,6 +33,7 @@ export const useDonationForm = ({
 
   const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
     accountId: recipientAccountId,
+    status: PotApplicationStatusEnum.Approved,
   });
 
   const matchingPots = matchingPotsPaginated?.results ?? [];
@@ -45,9 +46,11 @@ export const useDonationForm = ({
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       allocationStrategy:
-        DonationAllocationStrategyEnum[
-          "accountId" in params ? "direct" : "pot"
-        ],
+        "accountId" in params
+          ? DonationAllocationStrategyEnum[
+              matchingPots.length > 0 ? "pot" : "direct"
+            ]
+          : DonationAllocationStrategyEnum.pot,
 
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId,
@@ -61,7 +64,13 @@ export const useDonationForm = ({
         ],
     }),
 
-    [defaultPotAccountId, params, recipientAccountId, referrerAccountId],
+    [
+      defaultPotAccountId,
+      matchingPots.length,
+      params,
+      recipientAccountId,
+      referrerAccountId,
+    ],
   );
 
   const form = useForm<DonationInputs>({
