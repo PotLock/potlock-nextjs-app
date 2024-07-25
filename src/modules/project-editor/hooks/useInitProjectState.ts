@@ -8,7 +8,6 @@ import * as potlockLists from "@/common/contracts/potlock/lists";
 import { useSearchParams } from "@/common/lib";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { dispatch, useTypedSelector } from "@/store";
 
 const useInitProjectState = () => {
@@ -20,9 +19,8 @@ const useInitProjectState = () => {
       ? projectIdPathParam
       : projectIdPathParam?.at(0);
 
-  const { checkRegistrationStatus, accountId } = useTypedSelector(
-    (state) => state.createProject,
-  );
+  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
+    useTypedSelector((state) => state.createProject);
 
   const {
     searchParams: { done, transactionHashes, errorMessage },
@@ -33,7 +31,6 @@ const useInitProjectState = () => {
   } = useTypedSelector((state) => state.nav);
 
   const { wallet, isWalletReady } = useWallet();
-  const profileData = useProfileData(accountId, false);
 
   // Reset statuses
   useEffect(() => {
@@ -69,76 +66,13 @@ const useInitProjectState = () => {
   ]);
 
   // Set initial loaded project data
-  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+  // const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   useEffect(() => {
-    if (profileData.profileReady && !initialDataLoaded) {
-      // Set the isEdit status
-      dispatch.createProject.isEdit(
-        location.pathname.includes(routesPath.EDIT_PROJECT),
-      );
-
-      // Profile
-      const { profile, profileImages } = profileData;
-
-      if (!profile) {
-        dispatch.createProject.checkPreviousProjectDataStatus("ready");
-        setInitialDataLoaded(true);
-        return;
-      }
-
-      // Projects's bg and profile image
-      // Avatar
-      const avatarImage = profileImages.image || profile.image;
-      if (avatarImage && typeof avatarImage === "string")
-        dispatch.createProject.setProfileImage(avatarImage);
-
-      // Bg
-      const bgImage = profileImages.backgroundImage || profile.backgroundImage;
-      if (bgImage && typeof avatarImage === "string")
-        dispatch.createProject.setBackgroundImage(bgImage as string);
-
-      // Project's name
-      dispatch.createProject.setProjectName(profile?.name);
-      // Team Members
-      if (profile?.plTeam)
-        dispatch.createProject.setTeamMembers(JSON.parse(profile.plTeam));
-      // Category
-      if (profile?.plCategories)
-        dispatch.createProject.setCategories(JSON.parse(profile.plCategories));
-      // Description
-      if (profile?.description)
-        dispatch.createProject.updateDescription(profile.description);
-      // Reason
-      if (profile?.plPublicGoodReason)
-        dispatch.createProject.updatePublicGoodReason(
-          profile.plPublicGoodReason,
-        );
-      // Smart Contracts
-      if (profile?.plSmartContracts)
-        dispatch.createProject.setSmartContracts(
-          JSON.parse(profile.plSmartContracts),
-        );
-      // Funding sources
-      if (profile?.plFundingSources)
-        dispatch.createProject.setFundingSources(
-          JSON.parse(profile.plFundingSources),
-        );
-      // Repositories
-      if (profile?.plGithubRepos)
-        dispatch.createProject.setRepositories(
-          JSON.parse(profile.plGithubRepos),
-        );
-      // Social Links
-      if (profile?.linktree)
-        dispatch.createProject.updateSocialLinks(
-          profile.linktree as Record<string, string>,
-        );
-
-      dispatch.createProject.checkPreviousProjectDataStatus("ready");
-
-      setInitialDataLoaded(true);
+    if (accountId && checkPreviousProjectDataStatus !== "ready") {
+      // load data
+      dispatch.createProject.loadProjectData(accountId);
     }
-  }, [profileData, initialDataLoaded]);
+  }, [accountId, checkPreviousProjectDataStatus]);
 
   // Looks for error message after failing tx
   useEffect(() => {
@@ -213,7 +147,6 @@ const useInitProjectState = () => {
             >("get_proposals", { args: { from_index: 0, limit: 1000 } })
         : null;
 
-      // TODO: For @Lachlan to take a look
       const proposal = proposals
         ? proposals.find(
             (proposal) =>

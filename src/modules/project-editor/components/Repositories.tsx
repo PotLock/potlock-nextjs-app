@@ -1,8 +1,46 @@
-import { useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
+import { extractFromUrl, urlPatters } from "@/modules/core";
 import { dispatch, useTypedSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";
+
+const Repo = ({
+  repo,
+  index,
+  onChangeHandler,
+}: {
+  repo: string;
+  index: number;
+  onChangeHandler: (repoIndex: number, value: string) => void;
+}) => {
+  const [fieldValue, setValue] = useState<string>(
+    repo?.replace("https://github.com/", "") || "",
+  );
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(extractFromUrl(e.target.value, urlPatters.github) || "");
+  };
+
+  return (
+    <CustomInput
+      label=""
+      prefix="github.com/"
+      prefixMinWidth={110}
+      inputProps={{
+        value: fieldValue.replace("https://github.com/", ""),
+        placeholder: "Enter repository address",
+        onChange,
+        onBlur: (_) => {
+          onChangeHandler(
+            index,
+            fieldValue ? `https://github.com/${fieldValue}` : "",
+          );
+        },
+      }}
+    />
+  );
+};
 
 type Props = {
   onChange?: (repositories: string[]) => void;
@@ -10,7 +48,7 @@ type Props = {
 
 const Repositories = ({ onChange }: Props) => {
   const repositories = useTypedSelector(
-    (state) => state.createProject.githubRepositories,
+    (state) => state.createProject.githubRepositories || [],
   );
 
   const [repos, setRepos] = useState(
@@ -42,21 +80,11 @@ const Repositories = ({ onChange }: Props) => {
   return (
     <>
       {toShow.map((repo, index) => (
-        <CustomInput
+        <Repo
           key={repo}
-          label=""
-          prefix="github.com/"
-          prefixMinWidth={110}
-          inputProps={{
-            defaultValue: repo.replace("https://github.com/", ""),
-            placeholder: "Enter repository address",
-            onBlur: (e) => {
-              onChangeHandler(
-                index,
-                e.target.value ? `https://github.com/${e.target.value}` : "",
-              );
-            },
-          }}
+          repo={repo}
+          index={index}
+          onChangeHandler={onChangeHandler}
         />
       ))}
     </>
