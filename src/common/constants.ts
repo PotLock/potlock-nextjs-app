@@ -2,6 +2,38 @@ import { Network } from "@wpdas/naxios";
 import { AxiosRequestConfig } from "axios";
 import Big from "big.js";
 import { utils } from "near-api-js";
+import { Metadata } from "next";
+
+export const APP_METADATA: Metadata & {
+  title: string;
+  description: NonNullable<Metadata["description"]>;
+  manifest: NonNullable<Metadata["manifest"]>;
+
+  openGraph: {
+    url: NonNullable<Metadata["openGraph"]>["url"];
+    type: "website";
+    images: { url: string };
+  };
+} = {
+  title: "Potlock",
+  description: "Bringing public goods funding to the table, built on NEAR",
+  manifest: "/manifest.json",
+
+  icons: {
+    icon: "/favicon.png",
+    apple: "/logo.png",
+  },
+
+  // Facebook Meta / Twitter Tags
+  openGraph: {
+    url: "https://bos.potlock.org/?tab=project&projectId=opact.near",
+    type: "website",
+
+    images: {
+      url: "https://bos.potlock.org/preview.png",
+    },
+  },
+};
 
 export const RPC_NODE_URL = "https://free.rpc.fastnear.com";
 
@@ -87,12 +119,15 @@ export const ONE_HUNDREDTH_NEAR = utils.format.parseNearAmount("0.01")!;
 export const TWO_HUNDREDTHS_NEAR = utils.format.parseNearAmount("0.02")!;
 // 300 Gas (full)
 export const FULL_TGAS = "300000000000000";
+export const FIFTY_TGAS = "50000000000000";
 // 0 Gas
 export const NO_DEPOSIT_TGAS = "0";
 
 // IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
 export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
+
+export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
 
 export const DEFAULT_URL = "https://app.potlock.org/";
 

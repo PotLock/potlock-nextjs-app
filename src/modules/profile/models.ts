@@ -1,6 +1,5 @@
 import { createModel } from "@rematch/core";
 
-import { RootModel } from "@/app/_store/models";
 import { getDonationsForRecipient } from "@/common/contracts/potlock/donate";
 import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { getDonationsForProject } from "@/common/contracts/potlock/pot";
@@ -15,6 +14,7 @@ import {
   getTeamMembersFromProfile,
   getTotalAmountNear,
 } from "@/modules/project/utils";
+import { RootModel } from "@/store/models";
 
 export type Profile = {
   socialData: NEARSocialUserProfile;
@@ -55,7 +55,7 @@ export const profilesModel = createModel<RootModel>()({
       });
 
       const socialImagesResponse = fetchSocialImages({
-        socialData,
+        socialData: socialData ? socialData : undefined,
         accountId: projectId,
       });
 
@@ -105,18 +105,25 @@ export type NavState = {
   actAsDao: ActAsDao;
 };
 
+const initialState: NavState = {
+  // TODO: add is registry admin
+  accountId: "",
+  isNadabotVerified: false,
+  actAsDao: {
+    defaultAddress: "",
+    toggle: false,
+    addresses: [],
+  },
+};
+
 export const navModel = createModel<RootModel>()({
-  state: {
-    // TODO: add is registry admin
-    accountId: "",
-    isNadabotVerified: false,
-    actAsDao: {
-      defaultAddress: "",
-      toggle: false,
-      addresses: [],
-    },
-  } as NavState,
+  state: initialState,
   reducers: {
+    // Reset to the initial state
+    RESET() {
+      return initialState;
+    },
+
     updateActAsDao(state, payload) {
       return {
         ...state,

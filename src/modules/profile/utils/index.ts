@@ -1,4 +1,4 @@
-import { dispatch, useTypedSelector } from "@/app/_store";
+import { dispatch, useTypedSelector } from "@/store";
 
 import { PROFILE_DEFAULTS } from "../constants";
 import { Profile } from "../models";

@@ -8,7 +8,7 @@ export default defineConfig({
 
   test: {
     environment: "jsdom",
-    include: ["**/?(*.test|tests).?(c|m)[jt]s?(x)"],
+    include: ["_tests/*.tests.ts?(x)"],
     testTimeout: 2000,
   },
 });
