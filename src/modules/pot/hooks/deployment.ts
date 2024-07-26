@@ -23,5 +23,10 @@ export const usePotDeploymentForm = () => {
     resetOptions: { keepDirtyValues: true },
   });
 
-  return { form };
+  const isDisabled =
+    !form.formState.isDirty ||
+    !form.formState.isValid ||
+    form.formState.isSubmitting;
+
+  return { form, isDisabled };
 };

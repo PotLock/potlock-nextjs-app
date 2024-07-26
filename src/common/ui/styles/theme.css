@@ -100,6 +100,7 @@
     @apply border-border;
     /* color: #292929; */
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -126,6 +127,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -135,4 +137,8 @@
   a {
     color: rgb(123, 123, 123);
   }
+}
+
+.bg-hero {
+  background-size: cover;
 }

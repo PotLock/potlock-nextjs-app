@@ -1,10 +1,15 @@
-import { PotDeploymentFlow, PotDeploymentHero } from "@/modules/pot";
+import { PotDeploymentHero, PotEditor } from "@/modules/pot";
 
-export default function PotDeployPage() {
+export default function PotsDeployPage() {
   return (
-    <main un-w="full" un-pb="12" un-flex="~ col" un-gap="12">
+    <main
+      className="2xl-container pb-12"
+      un-w="full"
+      un-flex="~ col"
+      un-gap="12"
+    >
       <PotDeploymentHero />
-      <PotDeploymentFlow />
+      <PotEditor />
     </main>
   );
 }

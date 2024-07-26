@@ -57,7 +57,11 @@ export default function RootLayout({
       <ReduxProvider {...{ store }}>
         <NiceModalProvider>
           <AuthProvider>
-            <div className={`${cn("font-lora antialiased", lora.variable)}`}>
+            <div
+              un-flex="~ col"
+              un-items="center"
+              className={`${cn("font-lora antialiased", lora.variable)}`}
+            >
               <Nav />
               {getLayout(<Component {...pageProps} />)}
             </div>
