@@ -46,7 +46,10 @@ export const SelectField: React.FC<SelectFieldProps> = ({
       <>
         <Select {...props}>
           <FormControl>
-            <SelectTrigger className={classes?.trigger}>
+            <SelectTrigger
+              disabled={props.disabled}
+              className={classes?.trigger}
+            >
               <SelectValue {...{ placeholder }} />
             </SelectTrigger>
           </FormControl>

@@ -12,9 +12,3 @@ declare module "react-files" {
   }): JSX.Element;
   export default Files;
 }
-
-import type { AttributifyAttributes } from "@unocss/preset-attributify";
-
-declare module "react" {
-  interface HTMLAttributes<T> extends AttributifyAttributes {}
-}

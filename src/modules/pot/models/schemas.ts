@@ -9,6 +9,7 @@ export const potDeploymentSchema = object({
 
   chef: string().optional().describe("Chef's account id."),
   pot_name: string().describe("Pot name."),
+  pot_handle: string().optional().describe("Pot handle."),
   pot_description: string().describe("Pot description."),
   max_projects: number().describe("Maximum number of approved projects."),
   application_start_ms: number().describe("Application start timestamp."),
