@@ -18,7 +18,7 @@ const HomeSubPage = () => {
       ? userIdPathParam
       : userIdPathParam?.at(0);
 
-  const { profile } = useProfileData(userId);
+  const { profile, profileType } = useProfileData(userId);
 
   return (
     <div className="mb-18 flex w-full flex-col">
@@ -29,19 +29,24 @@ const HomeSubPage = () => {
         </h2>
       </div>
       <AboutItem title="Overview" text={profile?.description} />
-      <AboutItem
-        title="Why we are a public good"
-        text={profile?.plPublicGoodReason || "None provided"}
-      />
-      <Team profile={profile} />
-      <AboutItem
-        title="Github repo(s)"
-        element={<Github profile={profile} />}
-      />
-      <AboutItem
-        title="Smart contracts"
-        element={<SmartContract profile={profile} />}
-      />
+      {/* INFO: It's needed to have home for regular users as well as pages redirection sends user to /home page (check middleware.ts file) */}
+      {profileType === "project" && (
+        <>
+          <AboutItem
+            title="Why we are a public good"
+            text={profile?.plPublicGoodReason || "None provided"}
+          />
+          <Team profile={profile} />
+          <AboutItem
+            title="Github repo(s)"
+            element={<Github profile={profile} />}
+          />
+          <AboutItem
+            title="Smart contracts"
+            element={<SmartContract profile={profile} />}
+          />
+        </>
+      )}
     </div>
   );
 };

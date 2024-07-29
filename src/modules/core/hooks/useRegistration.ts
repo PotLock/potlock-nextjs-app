@@ -35,6 +35,7 @@ const useRegistration = (projectId: string) => {
     registration,
     loading,
     error,
+    isRegisteredProject: !!registration.id,
   };
 };
 

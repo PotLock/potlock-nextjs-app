@@ -6,14 +6,18 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 import routesPath from "@/modules/core/routes";
 import { DonationRandomButton } from "@/modules/donation";
+import { useTypedSelector } from "@/store";
 
 const Hero = () => {
+  const { defaultAddress, toggle } = useTypedSelector(
+    (state) => state.nav.actAsDao,
+  );
+  const daoAddress = toggle && defaultAddress ? defaultAddress : "";
   const wallet = useWallet();
-  const accountId = wallet?.wallet?.accountId || "";
+  const accountId = daoAddress || wallet?.wallet?.accountId || "";
   const { isAuthenticated } = useAuth();
 
-  const { registration, loading } = useRegistration(accountId);
-  const isRegisteredProject = !!registration.id;
+  const { loading, isRegisteredProject } = useRegistration(accountId);
 
   return (
     <div className="relative flex w-full flex-col justify-center overflow-hidden rounded-xl border border-solid border-[#f8d3b0] bg-hero bg-cover bg-no-repeat">

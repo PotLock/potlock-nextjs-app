@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { DonationInfo } from "@/common/api/potlock/account";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
+import useDonationsSent from "@/modules/core/hooks/useDonationsSent";
 
 import Arrow from "./Arrow";
 import DonationItem from "./DonationItem";
@@ -11,7 +12,8 @@ import Pagination from "../Pagination";
 import Stats, { Stat } from "../Stats";
 
 type Props = {
-  projectId: string;
+  accountId: string;
+  type?: "received" | "donated";
 };
 
 const getDate = (donation: DonationInfo) =>
@@ -19,7 +21,12 @@ const getDate = (donation: DonationInfo) =>
 
 const PER_PAGE = 30; // need to be less than 50
 
-const PotlockFunding = ({ projectId }: Props) => {
+const PotlockFunding = ({ accountId, type = "received" }: Props) => {
+  const projectId = accountId;
+  const receivedDonations = useDonationsForProject(
+    type === "received" ? projectId : "",
+  ); // avoid fetch data if type is not "received"
+  const sentDonations = useDonationsSent(type === "donated" ? accountId : ""); // avoid fetch data if type is not "donated"
   const {
     donations,
     near,
@@ -27,7 +34,7 @@ const PotlockFunding = ({ projectId }: Props) => {
     directDonations,
     matchedDonations,
     totalMatchedNear,
-  } = useDonationsForProject(projectId);
+  } = type === "received" ? receivedDonations : sentDonations;
 
   // Stats
   const [sortDropdownItems, setSortDropdownItems] = useState<Option[]>([
@@ -205,16 +212,19 @@ const PotlockFunding = ({ projectId }: Props) => {
         key={donation.id}
         donation={donation}
         projectId={projectId}
+        type={type}
       />
     ));
-  }, [shownDonationItemsList, projectId]);
+  }, [shownDonationItemsList, projectId, type]);
 
   return (
     // Container
     <div className="flex flex-col gap-[1.5rem]">
-      <h3 className="text-size-2xl font-600">Potlock Funding</h3>
+      {type === "received" && (
+        <h3 className="text-size-2xl font-600">Potlock Funding</h3>
+      )}
       <Stats
-        stats={stats}
+        stats={type === "donated" ? [stats[0]] : stats}
         sortOptions={sortDropdownItems}
         selectedSortOption={selectedSortOption}
         onSelectSortOption={onSelectDropdownOption}

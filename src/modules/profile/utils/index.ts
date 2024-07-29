@@ -4,7 +4,7 @@ import { PROFILE_DEFAULTS } from "../constants";
 import { Profile } from "../models";
 
 export const useProfile = (projectId: string): Profile =>
-  useTypedSelector((state) => state.profiles[projectId] || PROFILE_DEFAULTS);
+  useTypedSelector((state) => state.profile[projectId] || PROFILE_DEFAULTS);
 
 export const updateAccountId = (accountId: string) =>
   dispatch.nav.update({

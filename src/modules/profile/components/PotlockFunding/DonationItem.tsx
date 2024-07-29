@@ -23,9 +23,11 @@ const FALLBACK_URL =
 const DonationItem = ({
   donation,
   projectId,
+  type = "received",
 }: {
   donation: DonationInfo;
   projectId: string;
+  type?: "received" | "donated";
 }) => {
   const {
     donor,
@@ -59,10 +61,14 @@ const DonationItem = ({
       : `${routesPath.PROFILE}/${projectId || recipientId}`;
 
   // const name = truncate(isPot ? pot.id : donor.id, 15);
-  const name = truncate(donor.id, 15);
+  const name = truncate(type === "received" ? donor.id : recipient.id, 15);
 
   // const { profileImages } = useProfileData(isPot ? pot.id : donor.id);
-  const { profileImages } = useProfileData(donor.id);
+  const { profileImages } = useProfileData(
+    type === "received" ? donor.id : recipient.id,
+    true,
+    false,
+  );
 
   return (
     <div className="funding-row">
