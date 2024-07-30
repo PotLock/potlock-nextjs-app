@@ -27,8 +27,41 @@ import {
   updateAccountId,
   updateNadabotVerification,
 } from "@/modules/profile/utils";
+import { useTypedSelector } from "@/store";
 
 import ActAsDao from "./ActAsDao";
+
+const ProfileImg = ({
+  size,
+  profileImg,
+  setProfileImg,
+}: {
+  size: number;
+  profileImg: string;
+  setProfileImg: (value: string) => void;
+}) => (
+  <Image
+    src={profileImg}
+    width={size}
+    height={size}
+    onError={() => {
+      setProfileImg(PROFILE_DEFAULTS.socialImages.image);
+    }}
+    className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
+    alt="profile-image"
+  />
+);
+
+const DAOProfileImg = () => (
+  <div className="flex h-[40px] w-[40px] justify-center rounded-full bg-[#292929] shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]">
+    <Image
+      src="/assets/icons/dao-address-icon.svg"
+      width={17}
+      height={17}
+      alt="profile-image"
+    />
+  </div>
+);
 
 const UserDropdown = () => {
   const [profileImg, setProfileImg] = useState("");
@@ -40,6 +73,8 @@ const UserDropdown = () => {
   const { registration } = useRegistration(accountId);
 
   const [status, setStatus] = useState<string>(registration.status);
+
+  const actAsDao = useTypedSelector((state) => state.nav.actAsDao);
 
   const logoutHandler = useCallback(() => {
     walletApi.wallet?.signOut();
@@ -78,25 +113,22 @@ const UserDropdown = () => {
     fetchHumanStatus();
   }, [accountId, registration]);
 
-  const ProfileImg = ({ size }: { size: number }) => (
-    <Image
-      src={profileImg}
-      width={size}
-      height={size}
-      onError={() => {
-        setProfileImg(PROFILE_DEFAULTS.socialImages.image);
-      }}
-      className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-      alt="profile-image"
-    />
-  );
+  const actAsDaoEnabled = actAsDao.toggle && actAsDao.defaultAddress;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         {profileImg ? (
           <div className="cursor-pointer ">
-            <ProfileImg size={32} />
+            {actAsDaoEnabled ? (
+              <DAOProfileImg />
+            ) : (
+              <ProfileImg
+                size={32}
+                profileImg={profileImg}
+                setProfileImg={setProfileImg}
+              />
+            )}
           </div>
         ) : (
           <Skeleton className="h-8 w-8 rounded-full" />
@@ -122,17 +154,28 @@ const UserDropdown = () => {
         )}
         <div className="flex flex-col gap-6 p-4">
           <DropdownMenuLabel className="flex gap-2 p-0">
-            <ProfileImg size={40} />
+            {actAsDaoEnabled ? (
+              <DAOProfileImg />
+            ) : (
+              <ProfileImg
+                size={40}
+                profileImg={profileImg}
+                setProfileImg={setProfileImg}
+              />
+            )}
             <div className="flex flex-col">
               {profile?.name && (
-                <div className="font-semibold">
-                  {truncate(profile?.name, 20)}
-                </div>
+                <p className="font-semibold">{truncate(profile?.name, 20)}</p>
               )}
-              <div className="color-[#656565] text-xs">
-                {" "}
-                {truncate(accountId, 20)}
-              </div>
+              {actAsDaoEnabled ? (
+                <p className="color-[#656565] text-xs">
+                  {truncate(`Acting as ${actAsDao.defaultAddress}`, 36)}
+                </p>
+              ) : (
+                <p className="color-[#656565] text-xs">
+                  {truncate(accountId, 20)}
+                </p>
+              )}
             </div>
           </DropdownMenuLabel>
           <ActAsDao />

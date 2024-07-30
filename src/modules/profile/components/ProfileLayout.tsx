@@ -2,10 +2,14 @@ import { useState } from "react";
 
 import { useRouter } from "next/router";
 
+import useRegistration from "@/modules/core/hooks/useRegistration";
 import Info from "@/modules/profile/components/Info";
 import ProfileBanner from "@/modules/profile/components/ProfileBanner";
 import Tabs from "@/modules/profile/components/Tabs";
-import tabRoutes from "@/modules/profile/tabRoutes";
+import {
+  tabRoutesProfile,
+  tabRoutesProject,
+} from "@/modules/profile/tabRoutes";
 import ProjectBanner from "@/modules/project/components/ProjectBanner";
 
 type Props = {
@@ -17,25 +21,32 @@ export function ProfileLayout({ children }: Props) {
   const params = router.query as { userId?: string };
   const pathname = router.pathname;
 
+  // Load profile data
+  const { isRegisteredProject } = useRegistration(params.userId || "");
+
+  const tabs = isRegisteredProject ? tabRoutesProject : tabRoutesProfile;
+
   const [selectedTab, setSelectedTab] = useState(
-    tabRoutes.find((tab) => pathname.includes(tab.href)) || tabRoutes[0],
+    tabs.find((tab) => pathname.includes(tab.href)) || tabs[0],
   );
 
   if (!params.userId) {
     return "";
   }
 
+  const isProject = isRegisteredProject;
+
   return (
     <main className="flex flex-col">
-      <ProjectBanner projectId={params.userId} />
-      <ProfileBanner isProject={true} accountId={params.userId} />
-      <Info accountId={params.userId} />
+      {isProject && <ProjectBanner projectId={params.userId} />}
+      <ProfileBanner isProject={isProject} accountId={params.userId} />
+      <Info accountId={params.userId} isProject={isProject} />
       <Tabs
         asLink
-        navOptions={tabRoutes}
+        navOptions={tabs}
         selectedTab={selectedTab.id}
         onSelect={(tabId: string) => {
-          setSelectedTab(tabRoutes.find((tabRoute) => tabRoute.id === tabId)!);
+          setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);
         }}
       />
 

@@ -20,6 +20,10 @@ const Stats = ({
   stats,
   onSelectSortOption,
 }: Props) => {
+  if (stats.length === 1) {
+    stats[0].hideSeparator = true;
+  }
+
   return (
     <div className="m-[24px_0] flex flex-wrap items-center">
       <div className="md:flex hidden">

@@ -2,49 +2,52 @@ import { useEffect, useMemo, useState } from "react";
 
 import Big from "big.js";
 
-import {
-  DonationInfo,
-  getAccountDonationsReceived,
-} from "@/common/api/potlock/account";
+import { Donation } from "@/common/api/potlock";
+import { DonationInfo } from "@/common/api/potlock/account";
+import { useAccountDonationsSent } from "@/common/api/potlock/hooks";
 import { SUPPORTED_FTS } from "@/common/constants";
 
 import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";
 
-const useDonationsForProject = (projectId?: string, limit?: number) => {
+const sortByDate = (
+  donationA: DonationInfo | Donation,
+  donationB: DonationInfo | Donation,
+) =>
+  new Date(donationB.donated_at).getTime() -
+  new Date(donationA.donated_at).getTime();
+
+const useDonationsSent = (accountId?: string) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
   const [directDonations, setDirectDonations] = useState<DonationInfo[]>();
   const [matchedDonations, setMatchedDonations] = useState<DonationInfo[]>();
+  // const { data: oneNearUsdPrice } = coingecko.useOneNearUsdPrice();
+  // const value = oneNearUsdPrice ? amountNearFloat * oneNearUsdPrice : 0.0;
 
-  // TODO: INFO: useV1AccountsDonationsReceivedRetrieve is not working
-  // const donations = useAccountDonationsReceived({ accountId: projectId });
+  const { data: donationsData } = useAccountDonationsSent({
+    accountId: accountId || "",
+    page_size: 9999,
+  });
 
   useEffect(() => {
-    if (projectId) {
-      (async () => {
-        const _donations = await getAccountDonationsReceived({
-          accountId: projectId,
-          limit,
+    if (accountId) {
+      const direct: DonationInfo[] = [];
+      const matched: DonationInfo[] = [];
+
+      if (donationsData?.results) {
+        donationsData.results.forEach((donation) => {
+          if (donation.pot) {
+            matched.push(donation as any);
+          } else {
+            direct.push(donation as any);
+          }
         });
+      }
 
-        const direct: DonationInfo[] = [];
-        const matched: DonationInfo[] = [];
-
-        if (_donations.results) {
-          _donations.results.forEach((donation) => {
-            if (donation.pot) {
-              matched.push(donation);
-            } else {
-              direct.push(donation);
-            }
-          });
-        }
-
-        setDonations(_donations.results);
-        setDirectDonations(direct);
-        setMatchedDonations(matched);
-      })();
+      setDonations(donationsData?.results.sort(sortByDate) as any);
+      setDirectDonations(direct.sort(sortByDate));
+      setMatchedDonations(matched.sort(sortByDate));
     }
-  }, [projectId]);
+  }, [donationsData?.results, accountId]);
 
   // Get total donations & Unique donors count
   const [totalDonationAmountNear, uniqueDonors, totalMatchedNear] =
@@ -97,4 +100,4 @@ const useDonationsForProject = (projectId?: string, limit?: number) => {
   };
 };
 
-export default useDonationsForProject;
+export default useDonationsSent;

@@ -54,7 +54,7 @@ const ActAsDao = () => {
     if (checked) markDaoAsDefault(address);
   };
 
-  const removdeDao = (index: number) => {
+  const removeDao = (index: number) => {
     // Create a new array excluding the item at the specified index
     const newAddresses = addresses.filter((_, i) => i !== index);
     addOrRemoveDaoAddress(newAddresses);
@@ -136,7 +136,7 @@ const ActAsDao = () => {
                       <div>
                         <Trash
                           width={14}
-                          onClick={() => removdeDao(idx)}
+                          onClick={() => removeDao(idx)}
                           strokeWidth={3}
                           color="#A6A6A6"
                         />
