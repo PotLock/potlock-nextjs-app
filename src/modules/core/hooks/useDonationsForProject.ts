@@ -8,7 +8,7 @@ import {
 } from "@/common/api/potlock/account";
 import { SUPPORTED_FTS } from "@/common/constants";
 
-import { nearToUsdWithFallback } from "../utils";
+import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";
 
 const useDonationsForProject = (projectId?: string, limit?: number) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
@@ -30,7 +30,7 @@ const useDonationsForProject = (projectId?: string, limit?: number) => {
         const matched: DonationInfo[] = [];
 
         if (_donations.results) {
-          _donations.results.filter((donation) => {
+          _donations.results.forEach((donation) => {
             if (donation.pot) {
               matched.push(donation);
             } else {
@@ -82,20 +82,8 @@ const useDonationsForProject = (projectId?: string, limit?: number) => {
       return ["0", 0, "0"];
     }, [donations]);
 
-  const [usdInfo, setUsdInfo] = useState("");
-  const [totalMatchedUsd, setTotalMatchedUsdInfo] = useState("");
-
-  useEffect(() => {
-    const allDonations_usdInfo = nearToUsdWithFallback(
-      Number(totalDonationAmountNear),
-    );
-    setUsdInfo(allDonations_usdInfo);
-
-    const totalMatched_usdInfo = nearToUsdWithFallback(
-      Number(totalMatchedNear),
-    );
-    setTotalMatchedUsdInfo(totalMatched_usdInfo);
-  }, [totalDonationAmountNear, totalMatchedNear]);
+  const usdInfo = useNearToUsdWithFallback(Number(totalDonationAmountNear));
+  const totalMatchedUsd = useNearToUsdWithFallback(Number(totalMatchedNear));
 
   return {
     donations,

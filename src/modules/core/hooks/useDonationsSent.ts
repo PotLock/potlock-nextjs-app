@@ -7,7 +7,7 @@ import { DonationInfo } from "@/common/api/potlock/account";
 import { useAccountDonationsSent } from "@/common/api/potlock/hooks";
 import { SUPPORTED_FTS } from "@/common/constants";
 
-import { nearToUsdWithFallback } from "../utils";
+import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";
 
 const sortByDate = (
   donationA: DonationInfo | Donation,
@@ -20,6 +20,8 @@ const useDonationsSent = (accountId?: string) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
   const [directDonations, setDirectDonations] = useState<DonationInfo[]>();
   const [matchedDonations, setMatchedDonations] = useState<DonationInfo[]>();
+  // const { data: oneNearUsdPrice } = coingecko.useOneNearUsdPrice();
+  // const value = oneNearUsdPrice ? amountNearFloat * oneNearUsdPrice : 0.0;
 
   const { data: donationsData } = useAccountDonationsSent({
     accountId: accountId || "",
@@ -32,7 +34,7 @@ const useDonationsSent = (accountId?: string) => {
       const matched: DonationInfo[] = [];
 
       if (donationsData?.results) {
-        donationsData?.results.filter((donation) => {
+        donationsData.results.forEach((donation) => {
           if (donation.pot) {
             matched.push(donation as any);
           } else {
@@ -83,20 +85,8 @@ const useDonationsSent = (accountId?: string) => {
       return ["0", 0, "0"];
     }, [donations]);
 
-  const [usdInfo, setUsdInfo] = useState("");
-  const [totalMatchedUsd, setTotalMatchedUsdInfo] = useState("");
-
-  useEffect(() => {
-    const allDonations_usdInfo = nearToUsdWithFallback(
-      Number(totalDonationAmountNear),
-    );
-    setUsdInfo(allDonations_usdInfo);
-
-    const totalMatched_usdInfo = nearToUsdWithFallback(
-      Number(totalMatchedNear),
-    );
-    setTotalMatchedUsdInfo(totalMatched_usdInfo);
-  }, [totalDonationAmountNear, totalMatchedNear]);
+  const usdInfo = useNearToUsdWithFallback(Number(totalDonationAmountNear));
+  const totalMatchedUsd = useNearToUsdWithFallback(Number(totalMatchedNear));
 
   return {
     donations,
