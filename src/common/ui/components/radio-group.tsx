@@ -50,7 +50,7 @@ export const RadioGroupItem = forwardRef<
           !disabled && checked,
       })}
       un-border="1"
-      un-rounded="lg"
+      un-rounded="md"
       un-flex="~"
       un-items="center"
       un-gap="2"

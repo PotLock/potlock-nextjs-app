@@ -11,7 +11,7 @@ import { DonationPotAllocation } from "./DonationPotAllocation";
 import { DonationProjectAllocation } from "./DonationProjectAllocation";
 import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
-import { DonationState, DonationSubmissionInputs } from "../models";
+import { DonationState, DonationSubmissionInputs } from "../types";
 
 export type DonationFlowProps = DonationSubmissionInputs &
   DonationState &
@@ -30,15 +30,21 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     query: { referrerId: referrerIdSearchParam },
   } = useRouteQuery();
 
-  const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
-    useDonationForm({
-      ...props,
+  const {
+    isBalanceSufficient,
+    matchingPots,
+    minAmountError,
+    form,
+    isDisabled,
+    onSubmit,
+  } = useDonationForm({
+    ...props,
 
-      referrerAccountId:
-        typeof referrerIdSearchParam === "string"
-          ? referrerIdSearchParam
-          : result?.referrer_id ?? undefined,
-    });
+    referrerAccountId:
+      typeof referrerIdSearchParam === "string"
+        ? referrerIdSearchParam
+        : result?.referrer_id ?? undefined,
+  });
 
   const [tokenId] = form.watch(["tokenId"]);
 
@@ -57,7 +63,11 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     switch (currentStep) {
       case "allocation":
         return "accountId" in props
-          ? h(DonationProjectAllocation, { ...staticAllocationProps, ...props })
+          ? h(DonationProjectAllocation, {
+              matchingPots,
+              ...staticAllocationProps,
+              ...props,
+            })
           : h(DonationPotAllocation, { ...staticAllocationProps, ...props });
 
       case "confirmation":
@@ -80,6 +90,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     currentStep,
     form,
     isBalanceSufficient,
+    matchingPots,
     minAmountError,
     props,
     result,

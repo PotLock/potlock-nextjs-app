@@ -17,7 +17,7 @@ export const AvailableTokenBalance = ({ tokenId }: ByTokenId) => {
       )}
     </>
   ) : (
-    <div un-flex="~" un-gap="1">
+    <div un-flex="~" un-gap="2">
       <span className="prose" un-text="sm neutral-950" un-font="600">
         {balanceString}
       </span>

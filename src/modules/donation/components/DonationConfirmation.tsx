@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
+import { potlock } from "@/common/api/potlock";
 import {
   Button,
   DialogDescription,
@@ -32,7 +33,8 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
 }) => {
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
   const values = form.watch();
-  const fees = useDonationFees(values);
+  const { data: pot } = potlock.usePot({ potId: values.potAccountId });
+  const fees = useDonationFees({ ...values, pot });
 
   const onAddNoteClick = useCallback(() => {
     setIsMessageFieldVisible(true);
@@ -71,7 +73,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
         <DonationBreakdown tokenId={values.tokenId} {...{ fees }} />
 
         <div className="flex flex-col gap-2">
-          {protocolFeeRecipientAccountId !== undefined && (
+          {protocolFeePercent > 0 && (
             <FormField
               control={form.control}
               name="bypassProtocolFee"
@@ -82,7 +84,12 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   label={
                     <>
                       <span className="prose">{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
-                      <ProfileLink accountId={protocolFeeRecipientAccountId} />
+
+                      {protocolFeeRecipientAccountId && (
+                        <ProfileLink
+                          accountId={protocolFeeRecipientAccountId}
+                        />
+                      )}
                     </>
                   }
                 />
@@ -90,10 +97,10 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             />
           )}
 
-          {values.potAccountId && (
+          {values.potAccountId && chefFeePercent > 0 && (
             <FormField
               control={form.control}
-              name="bypassProtocolFee"
+              name="bypassChefFee"
               render={({ field }) => (
                 <CheckboxField
                   checked={field.value}
@@ -101,10 +108,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   label={
                     <>
                       <span className="prose">{`Remove ${chefFeePercent}% Chef Fees`}</span>
-
-                      {values.potAccountId && (
-                        <ProfileLink accountId={values.potAccountId} />
-                      )}
+                      {pot?.chef.id && <ProfileLink accountId={pot?.chef.id} />}
                     </>
                   }
                 />

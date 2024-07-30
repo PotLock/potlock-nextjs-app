@@ -4,21 +4,21 @@ import { ByAccountId, ByTokenId } from "@/common/types";
 
 import { swrHooks } from "./generated";
 
-export const useNearAccountBalance = ({ accountId }: ByAccountId) => {
+export const useNearAccountBalance = ({ accountId }: Partial<ByAccountId>) => {
   const queryResult = swrHooks.useGetAccountsAccountIdBalancesNEAR(
-    accountId,
+    accountId ?? "unknown",
     undefined,
-    PAGODA_REQUEST_CONFIG,
+    { ...PAGODA_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data.balance };
 };
 
-export const useFtAccountBalances = ({ accountId }: ByAccountId) => {
+export const useFtAccountBalances = ({ accountId }: Partial<ByAccountId>) => {
   const queryResult = swrHooks.useGetAccountsAccountIdBalancesFT(
-    accountId,
+    accountId ?? "unknown",
     undefined,
-    PAGODA_REQUEST_CONFIG,
+    { ...PAGODA_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data.balances };

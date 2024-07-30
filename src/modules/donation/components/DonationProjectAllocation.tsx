@@ -1,5 +1,5 @@
 import { pagoda } from "@/common/api/pagoda";
-import { potlock } from "@/common/api/potlock";
+import { Pot, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { walletApi } from "@/common/contracts";
 import { ByAccountId } from "@/common/types";
@@ -13,31 +13,33 @@ import {
   FormLabel,
   RadioGroup,
   RadioGroupItem,
-  Select,
-  SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
   Skeleton,
 } from "@/common/ui/components";
-import { TextField } from "@/common/ui/form-fields";
+import {
+  SelectField,
+  SelectFieldOption,
+  TextField,
+} from "@/common/ui/form-fields";
 import {
   AvailableTokenBalance,
   ModalErrorBody,
   useNearUsdDisplayValue,
 } from "@/modules/core";
 
-import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
+import { DonationVerificationWarning } from "./DonationVerificationWarning";
+import {
+  DONATION_INSUFFICIENT_BALANCE_ERROR,
+  DONATION_MIN_NEAR_AMOUNT,
+} from "../constants";
 import {
   DonationAllocationInputs,
-  DonationAllocationStrategyEnum,
   donationAllocationStrategies,
 } from "../models";
+import { DonationAllocationStrategyEnum } from "../types";
 
 export type DonationProjectAllocationProps = ByAccountId &
-  DonationAllocationInputs & {};
+  DonationAllocationInputs & { matchingPots?: Pot[] };
 
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
@@ -46,46 +48,43 @@ export const DonationProjectAllocation: React.FC<
   minAmountError,
   accountId,
   balanceFloat,
+  matchingPots,
   form,
 }) => {
+  const { data: availableFts } = pagoda.useFtAccountBalances({
+    accountId: walletApi.accountId,
+  });
+
+  const {
+    isLoading: isRecipientDataLoading,
+    data: recipient,
+    error: recipientDataError,
+  } = potlock.useAccount({ accountId });
+
   const [amount, tokenId, allocationStrategy] = form.watch([
     "amount",
     "tokenId",
     "allocationStrategy",
   ]);
 
-  const { data: activePots } = potlock.useAccountActivePots({
-    accountId,
-    status: "live",
-  });
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const hasMatchingPots = (activePots?.results.length ?? 0) > 0;
-  const isFtDonation = tokenId !== NEAR_TOKEN_DENOM;
-
-  const {
-    isLoading: isAccountLoading,
-    data: account,
-    error: accountError,
-  } = potlock.useAccount({ accountId });
-
-  const { data: availableFts } = pagoda.useFtAccountBalances({
-    accountId: walletApi.accountId ?? "unknown",
-  });
+  const isFtDonation =
+    allocationStrategy !== "pot" && tokenId !== NEAR_TOKEN_DENOM;
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
-  return accountError !== undefined ? (
+  const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
+
+  return recipientDataError !== undefined ? (
     <ModalErrorBody
       heading="Donation"
       title="Unable to load recipient data!"
-      message={accountError?.message}
+      message={recipientDataError?.message}
     />
   ) : (
     <>
       <DialogHeader>
         <DialogTitle>
-          {`Donation to ${account?.near_social_profile_data?.name ?? "project"}`}
+          {`Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
         </DialogTitle>
       </DialogHeader>
 
@@ -94,11 +93,13 @@ export const DonationProjectAllocation: React.FC<
           control={form.control}
           name="allocationStrategy"
           render={({ field }) => (
-            <FormItem className="flex flex-col gap-3">
-              {isAccountLoading ? (
+            <FormItem className="gap-3">
+              {isRecipientDataLoading ? (
                 <Skeleton className="w-59 h-3.5" />
               ) : (
-                <FormLabel>How do you want to allocate funds?</FormLabel>
+                <FormLabel className="font-600">
+                  How do you want to allocate funds?
+                </FormLabel>
               )}
 
               <FormControl>
@@ -108,13 +109,13 @@ export const DonationProjectAllocation: React.FC<
                 >
                   {Object.values(donationAllocationStrategies).map(
                     ({ label, hint, hintIfDisabled, value }) => {
-                      const disabled = value === "pot"; // && !hasMatchingPots;
+                      const disabled = value === "pot" && !hasMatchingPots;
 
                       return (
                         <FormItem key={value}>
                           <RadioGroupItem
                             id={`donation-options-${value}`}
-                            isLoading={isAccountLoading}
+                            isLoading={isRecipientDataLoading}
                             checked={
                               field.value ===
                               DonationAllocationStrategyEnum[value]
@@ -132,6 +133,28 @@ export const DonationProjectAllocation: React.FC<
           )}
         />
 
+        {allocationStrategy === "pot" && <DonationVerificationWarning />}
+
+        {allocationStrategy === "pot" && hasMatchingPots && (
+          <FormField
+            control={form.control}
+            name="potAccountId"
+            render={({ field }) => (
+              <SelectField
+                label="Select Pot"
+                defaultValue={field.value}
+                onValueChange={field.onChange}
+              >
+                {matchingPots?.map(({ account: potAccountId, name }) => (
+                  <SelectFieldOption key={potAccountId} value={potAccountId}>
+                    {name}
+                  </SelectFieldOption>
+                ))}
+              </SelectField>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
           name="amount"
@@ -145,37 +168,32 @@ export const DonationProjectAllocation: React.FC<
                   control={form.control}
                   name="tokenId"
                   render={({ field: fieldExtension }) => (
-                    <Select
+                    <SelectField
+                      embedded
+                      label="Available tokens"
                       disabled // TODO: FT donation is not yet finished
-                      value={fieldExtension.value}
+                      defaultValue={fieldExtension.value}
                       onValueChange={fieldExtension.onChange}
+                      classes={{
+                        trigger: "h-full w-min rounded-r-none shadow-none",
+                      }}
                     >
-                      <SelectTrigger className="h-full w-min rounded-r-none shadow-none">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectItem value={NEAR_TOKEN_DENOM}>
+                        {NEAR_TOKEN_DENOM.toUpperCase()}
+                      </SelectItem>
 
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Available tokens</SelectLabel>
-
-                          <SelectItem value={NEAR_TOKEN_DENOM}>
-                            {NEAR_TOKEN_DENOM.toUpperCase()}
-                          </SelectItem>
-
-                          {allocationStrategy === "direct" &&
-                            availableFts?.map(
-                              ({
-                                contract_account_id: contractId,
-                                metadata: { symbol },
-                              }) => (
-                                <SelectItem key={contractId} value={contractId}>
-                                  {symbol}
-                                </SelectItem>
-                              ),
-                            )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                      {allocationStrategy === "direct" &&
+                        availableFts?.map(
+                          ({
+                            contract_account_id: contractId,
+                            metadata: { symbol },
+                          }) => (
+                            <SelectItem key={contractId} value={contractId}>
+                              {symbol}
+                            </SelectItem>
+                          ),
+                        )}
+                    </SelectField>
                   )}
                 />
               }
@@ -190,7 +208,7 @@ export const DonationProjectAllocation: React.FC<
               customErrorMessage={
                 isBalanceSufficient
                   ? minAmountError
-                  : "You don’t have enough balance to complete this transaction."
+                  : DONATION_INSUFFICIENT_BALANCE_ERROR
               }
             />
           )}

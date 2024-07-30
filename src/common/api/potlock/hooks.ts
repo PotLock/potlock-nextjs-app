@@ -58,11 +58,11 @@ export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
 export const useAccountActivePots = ({
   accountId,
   ...params
-}: ByAccountId & V1AccountsActivePotsRetrieveParams) => {
+}: Partial<ByAccountId> & V1AccountsActivePotsRetrieveParams) => {
   const queryResult = swrHooks.useV1AccountsActivePotsRetrieve(
-    accountId,
+    accountId ?? "unknown",
     params,
-    POTLOCK_REQUEST_CONFIG,
+    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data };

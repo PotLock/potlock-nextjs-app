@@ -6,7 +6,7 @@ import { cn } from "../utils";
 
 const alertVariants = cva(
   cn(
-    "relative w-full rounded-lg border p-4",
+    "relative w-full rounded-lg border p-4 gap-2",
     "[&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4",
     "[&>svg]:text-foreground",
   ),
@@ -16,12 +16,15 @@ const alertVariants = cva(
       variant: {
         default: "bg-background text-foreground",
 
+        warning: "border-[#F0CF1F] bg-[#FBF9C6] text-[#3F2209]",
+
         destructive: cn(
           "border-destructive/50 text-destructive dark:border-destructive",
           "[&>svg]:text-destructive",
         ),
       },
     },
+
     defaultVariants: {
       variant: "default",
     },
@@ -49,7 +52,7 @@ const AlertTitle = forwardRef<
   <h5
     ref={ref}
     className={cn(
-      "prose mb-1 font-medium leading-none tracking-tight",
+      "prose font-400 important:pl-8 mb-2 leading-5 tracking-normal",
       className,
     )}
     {...props}
@@ -64,7 +67,10 @@ const AlertDescription = forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("prose text-sm [&_p]:leading-relaxed", className)}
+    className={cn(
+      "prose important:pl-8 text-sm [&_p]:leading-relaxed",
+      className,
+    )}
     {...props}
   />
 ));

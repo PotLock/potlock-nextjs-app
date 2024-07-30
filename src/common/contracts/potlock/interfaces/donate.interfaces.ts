@@ -21,12 +21,11 @@ export interface DirectDonation {
   protocol_fee: string;
   referrer_id?: null | string;
   referrer_fee?: null | string;
-  base_currency: string;
 }
 
 export type DirectDonationArgs = {
   recipient_id: string;
-  message?: string | null;
-  referrer_id?: string | null;
-  bypass_protocol_fee?: boolean;
+  message?: null | string;
+  referrer_id?: null | string;
+  bypass_protocol_fee?: null | boolean;
 };

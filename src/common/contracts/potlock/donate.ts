@@ -1,4 +1,4 @@
-import { ChangeMethodArgs, MemoryCache } from "@wpdas/naxios";
+import { MemoryCache } from "@wpdas/naxios";
 
 import { POTLOCK_DONATE_CONTRACT_ID } from "@/common/constants";
 

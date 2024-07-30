@@ -9,6 +9,8 @@ import {
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";
+import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { bigStringToFloat, truncate } from "@/common/lib";
 import {
   Button,
@@ -21,8 +23,10 @@ import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 
 import { DonationBreakdown } from "./DonationBreakdown";
+import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { useDonationFees } from "../hooks";
-import { DonationInputs, DonationState } from "../models";
+import { DonationInputs } from "../models";
+import { DonationState } from "../types";
 
 export type DonationSuccessProps = {
   form: UseFormReturn<DonationInputs>;
@@ -42,20 +46,24 @@ export const DonationSuccess = ({
 }: DonationSuccessProps) => {
   const isResultLoading = result === undefined;
   const [potAccountId] = form.watch(["potAccountId"]);
+  const { data: pot } = potlock.usePot({ potId: potAccountId });
 
-  const { data: recipientAccount, error: recipientAccountError } =
-    potlock.useAccount({
-      accountId: result?.recipient_id,
-    });
-
-  const { data: tokenMetadata } = pagoda.useTokenMetadata({
-    tokenId: result?.ft_id ?? NEAR_TOKEN_DENOM,
+  const { data: recipient, error: recipientDataError } = potlock.useAccount({
+    accountId:
+      "recipient_id" in (result ?? {})
+        ? (result as DirectDonation).recipient_id
+        : (result as PotDonation).project_id ?? undefined,
   });
 
+  const tokenId =
+    "ft_id" in (result ?? {})
+      ? (result as DirectDonation).ft_id
+      : NEAR_TOKEN_DENOM;
+
+  const { data: tokenMetadata } = pagoda.useTokenMetadata({ tokenId });
+
   const isLoading =
-    isResultLoading ||
-    recipientAccount === undefined ||
-    tokenMetadata === undefined;
+    isResultLoading || recipient === undefined || tokenMetadata === undefined;
 
   const totalAmountFloat = bigStringToFloat(
     result?.total_amount ?? "0",
@@ -73,18 +81,18 @@ export const DonationSuccess = ({
   );
 
   const fees = useDonationFees({
+    pot,
     amount: totalAmountFloat,
     referrerAccountId: result?.referrer_id ?? undefined,
-    potAccountId,
     protocolFeeFinalAmount: protocolFeeAmountFloat,
     referralFeeFinalAmount: referralFeeFinalAmountFloat,
   });
 
-  return recipientAccountError !== undefined ? (
+  return recipientDataError !== undefined ? (
     <ModalErrorBody
       heading="Donation"
       title="Unable to load recipient data!"
-      message={recipientAccountError?.message}
+      message={recipientDataError?.message}
     />
   ) : (
     <DialogDescription className="items-center gap-8 p-10">
@@ -136,27 +144,26 @@ export const DonationSuccess = ({
           <Skeleton className="h-7 w-44" />
         ) : (
           <TotalTokenValue
-            tokenId={result.ft_id}
             amountBigString={result.total_amount}
+            {...{ tokenId }}
           />
         )}
 
         {isLoading ? (
           <Skeleton className="w-49 h-5" />
         ) : (
-          <p
-            className="prose"
-            un-flex="~"
-            un-gap="1"
-            un-m="0"
-            un-text="neutral-950"
-          >
-            <span>has been donated to</span>
+          <p className="prose" un-m="0" un-flex="~ col">
+            <span un-flex="~" un-gap="1" un-text="neutral-950">
+              <span>has been donated to</span>
 
-            <span un-font="600">
-              {recipientAccount.near_social_profile_data?.name ??
-                recipientAccount.id}
+              <span un-font="600">
+                {recipient.near_social_profile_data?.name ?? recipient.id}
+              </span>
             </span>
+
+            {pot?.name && (
+              <span un-text="neutral-600">{`Via ${pot.name} Pot`}</span>
+            )}
           </p>
         )}
 
@@ -164,7 +171,7 @@ export const DonationSuccess = ({
           <Skeleton className="w-23.5 h-5" />
         ) : (
           <Link
-            href={`${routesPath.PROFILE}/${recipientAccount.id}/funding-raised`}
+            href={`${routesPath.PROFILE}/${recipient.id}/funding-raised`}
             onClick={closeModal}
             className="text-red-600"
           >
@@ -176,8 +183,10 @@ export const DonationSuccess = ({
       {isLoading ? (
         <Skeleton className="h-28" />
       ) : (
-        <DonationBreakdown tokenId={result.ft_id} {...{ fees }} />
+        <DonationBreakdown {...{ fees, tokenId }} />
       )}
+
+      {pot && <DonationVerificationWarning />}
 
       {transactionHash && (
         <TextWithIcon content={`Txn Hash : ${truncate(transactionHash, 7)}`}>

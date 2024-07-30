@@ -51,13 +51,13 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const fieldProps = { disabled, ref, ...props };
 
     const fieldExtensionElement = fieldExtension ? (
-      <div un-border="rounded-l-lg rounded-r-none" un-h="9.5" un-p="0.5">
+      <div un-border="rounded-l-md rounded-r-none" un-h="9.5" un-p="0.5">
         {fieldExtension}
       </div>
     ) : null;
 
     return (
-      <FormItem className="flex flex-col gap-2">
+      <FormItem>
         <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
           <FormLabel className="font-500 text-sm text-neutral-950">
             {label}
@@ -67,7 +67,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         </div>
 
         <div
-          un-border="~ input rounded-lg"
+          un-border="~ input rounded-md"
           un-w="full"
           un-h="10"
           un-flex="~"
@@ -86,8 +86,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             <input
               {...fieldProps}
               className={cn({
-                "rounded-l-lg": fieldExtensionElement === null,
-                "mr-1 rounded-r-lg": appendixElement === null,
+                "rounded-l-md": fieldExtensionElement === null,
+                "mr-1 rounded-r-md": appendixElement === null,
               })}
               un-focus-visible={
                 fieldExtensionElement !== null && appendixElement !== null

@@ -1,4 +1,6 @@
+import { UseFormReturn } from "react-hook-form";
 import {
+  infer as FromSchema,
   array,
   boolean,
   literal,
@@ -10,28 +12,20 @@ import {
 } from "zod";
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { AvailableBalance } from "@/modules/core";
 
 import {
   DONATION_MAX_MESSAGE_LENGTH,
   DONATION_MIN_NEAR_AMOUNT_ERROR,
 } from "../constants";
-import { isDonationAmountSufficient } from "../utils/validation";
-
-export enum DonationAllocationStrategyEnum {
-  direct = "direct",
-  pot = "pot",
-}
-
-export type DonationAllocationStrategy =
-  keyof typeof DonationAllocationStrategyEnum;
-
-export enum DonationPotDistributionStrategy {
-  evenly = "evenly",
-  manually = "manually",
-}
-
-export type DonationPotDistributionStrategyKey =
-  keyof typeof DonationPotDistributionStrategy;
+import {
+  DonationAllocationStrategyEnum,
+  DonationPotDistributionStrategy,
+} from "../types";
+import {
+  isDonationAmountSufficient,
+  isMatchingPotSelected,
+} from "../utils/validation";
 
 export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
   .or(string().min(6))
@@ -82,11 +76,24 @@ export const donationSchema = object({
 
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),
-}).refine(isDonationAmountSufficient, {
-  /**
-   *? NOTE: Due to an unknown issue,
-   *?  this message doesn't end up in react-hook-form's `formState.errors`.
-   *?  Please make sure it's always manually provided to the corresponding input field.
-   */
-  message: DONATION_MIN_NEAR_AMOUNT_ERROR,
-});
+})
+  .refine(isMatchingPotSelected, { message: "Pot is not selected." })
+  .refine(isDonationAmountSufficient, {
+    /**
+     *? NOTE: Due to an unknown issue,
+     *?  this message doesn't end up in react-hook-form's `formState.errors`.
+     *?  Please make sure it's always manually provided to the corresponding input field.
+     */
+    message: DONATION_MIN_NEAR_AMOUNT_ERROR,
+  });
+
+export type DonationInputs = FromSchema<typeof donationSchema>;
+
+export type DonationAllocationInputs = Pick<
+  AvailableBalance,
+  "balanceFloat"
+> & {
+  isBalanceSufficient: boolean;
+  minAmountError: string | null;
+  form: UseFormReturn<DonationInputs>;
+};
