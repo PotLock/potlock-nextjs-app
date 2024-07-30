@@ -3,6 +3,7 @@ import { Form, FormField } from "@/common/ui/components";
 import {
   SelectField,
   SelectFieldOption,
+  TextAreaField,
   TextField,
 } from "@/common/ui/form-fields";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
@@ -29,18 +30,6 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
 
             <div un-flex="~" un-items="center" un-gap="2">
               <span className="h-10 w-10 rounded-full bg-black" />
-
-              <span
-                un-bg="gray-200"
-                un-h="10"
-                un-w="10"
-                un-rounded="full"
-                un-items="center"
-                un-justify="center"
-                un-text="gray-600"
-              >
-                +2
-              </span>
             </div>
           </section>
 
@@ -51,14 +40,15 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
               <div un-flex="~ col lg:row" un-gap="8">
                 <div className="lg:w-50% w-full">
                   <FormField
-                    control={form.control}
                     name="pot_name"
+                    control={form.control}
                     render={({ field }) => (
                       <TextField
                         label="Pot name"
-                        {...field}
+                        required
                         type="text"
                         placeholder="e.g. DeFi Center"
+                        {...field}
                       />
                     )}
                   />
@@ -66,65 +56,74 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
 
                 <div className="lg:w-50% w-full">
                   <FormField
-                    control={form.control}
                     name="pot_handle"
+                    control={form.control}
                     render={({ field }) => (
                       <TextField
                         label="Custom handle"
-                        labelExtension="(optional)"
-                        {...field}
                         type="text"
                         placeholder="e.g. defi-center"
+                        {...field}
                       />
                     )}
                   />
                 </div>
               </div>
 
-              <div>
-                <label>Description</label>
-
-                <textarea
-                  id="description"
-                  un-w="full"
-                  un-border="1"
-                  un-rounded="md"
-                  un-px="4"
-                  un-py="2"
-                  un-min-h="32"
-                />
-
-                <p un-text="sm" un-mt="1">
-                  0/250
-                </p>
-              </div>
+              <FormField
+                name="pot_description"
+                control={form.control}
+                render={({ field }) => (
+                  <TextAreaField
+                    label="Description"
+                    required
+                    placeholder="Type description"
+                    maxLength={250}
+                    {...field}
+                  />
+                )}
+              />
 
               <div un-flex="~ col lg:row" un-gap="8">
                 <div className="lg:w-50% w-full">
-                  <label>Referral fee (Matching pool)</label>
-
-                  <input
-                    id="referral-fee-matching"
-                    type="text"
-                    un-w="full"
-                    un-border="1"
-                    un-rounded="md"
-                    un-px="4"
-                    un-py="2"
+                  <FormField
+                    name="referral_fee_matching_pool_basis_points"
+                    control={form.control}
+                    render={({ field }) => (
+                      <TextField
+                        label="Referral fee"
+                        labelExtension={
+                          <span className="line-height-none text-sm text-neutral-600">
+                            (Matching pool)
+                          </span>
+                        }
+                        required
+                        type="number"
+                        min={0}
+                        {...field}
+                      />
+                    )}
                   />
                 </div>
 
                 <div className="lg:w-50% w-full">
-                  <label>Referral fee (Public round)</label>
-
-                  <input
-                    id="referral-fee-public"
-                    type="text"
-                    un-w="full"
-                    un-border="1"
-                    un-rounded="md"
-                    un-px="4"
-                    un-py="2"
+                  <FormField
+                    name="referral_fee_public_round_basis_points"
+                    control={form.control}
+                    render={({ field }) => (
+                      <TextField
+                        label="Referral fee"
+                        labelExtension={
+                          <span className="line-height-none text-sm text-neutral-600">
+                            (Public round)
+                          </span>
+                        }
+                        required
+                        type="number"
+                        min={0}
+                        {...field}
+                      />
+                    )}
                   />
                 </div>
               </div>
@@ -201,7 +200,6 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
                     render={({ field }) => (
                       <TextField
                         label="Min matching pool donation"
-                        labelExtension="(optional)"
                         {...field}
                         fieldExtension={
                           <SelectField
@@ -290,7 +288,7 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
                 <input id="project-registration" type="checkbox" un-mr="2" />
 
                 <label un-text="gray-800">
-                  Project Registration. Require approval on PotLock registry
+                  Project Registration. Require approval on PotLock registry.
                 </label>
               </div>
 
@@ -317,7 +315,7 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
                   un-py="2"
                   un-rounded="md"
                 >
-                  Register project
+                  Deploy
                 </button>
 
                 <button

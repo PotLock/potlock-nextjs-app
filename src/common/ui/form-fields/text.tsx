@@ -63,19 +63,24 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             {label}
           </FormLabel>
 
-          {labelExtension}
+          {labelExtension ??
+            (props.required ? null : (
+              <span className="line-height-none text-sm text-neutral-600">
+                (optional)
+              </span>
+            ))}
         </div>
 
         <div
-          un-border="~ input rounded-md"
+          un-border="1 b-2 important:input rounded-md opacity-100"
           un-w="full"
-          un-h="10"
+          un-min-h="10"
           un-flex="~"
           un-items="center"
           un-bg="transparent"
           className={cn(
-            "text-sm shadow-[0px_0px_0px_1px_#00000038_inset,0px_-1px_1px_0px_#00000038_inset]",
-            "ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium",
+            "text-sm ring-offset-background",
+            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}

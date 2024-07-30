@@ -99,7 +99,7 @@ const FormLabel = forwardRef<
     <Label
       ref={ref}
       className={cn(
-        "prose font-500 leading-normal",
+        "font-500 leading-normal",
         error ? "text-destructive" : "text-neutral-950",
         className,
       )}
