@@ -14,15 +14,17 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";
 
 import DonationsInfo from "./DonationsInfo";
+import FollowButton from "./FollowButton";
 import Linktree from "./Linktree";
 import ProfileTags from "./ProfileTags";
 import useProfileData from "../hooks/useProfileData";
 
 type Props = {
   accountId: string;
+  isProject: boolean;
 };
 
-const LinksWrapper = ({ accountId }: Props) => {
+const LinksWrapper = ({ accountId }: { accountId: string }) => {
   const { isAuthenticated } = useAuth();
   const { wallet } = useWallet();
   const [copied, setCopied] = useState(false);
@@ -60,7 +62,7 @@ const LinksWrapper = ({ accountId }: Props) => {
   );
 };
 
-const Info = ({ accountId }: Props) => {
+const Info = ({ accountId, isProject }: Props) => {
   const { wallet } = useWallet();
   const { profile } = useProfileData(accountId);
 
@@ -68,7 +70,9 @@ const Info = ({ accountId }: Props) => {
   const isOwner = wallet?.accountId === accountId;
 
   return (
-    <div className="md:px-[4.5rem] flex w-full flex-row flex-wrap gap-2 px-[1rem]">
+    <div
+      className={`md:px-[4.5rem] flex w-full flex-row flex-wrap gap-2 px-[1rem] ${!isProject ? "mb-12" : ""}`}
+    >
       {/* NameContainer */}
       <div className="flex w-full flex-wrap gap-8">
         {/* Left */}
@@ -103,7 +107,16 @@ const Info = ({ accountId }: Props) => {
         </div>
 
         {/* Right */}
-        <DonationsInfo accountId={accountId} />
+        {isProject ? (
+          <DonationsInfo accountId={accountId} />
+        ) : (
+          <div>
+            <FollowButton
+              accountId={accountId}
+              className="w-[160px] py-[10px]"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ export const core = createModel<RootModel>()({
       state.nearToUsd = nearToUsd;
     },
 
-    // Rese t to the initial state
+    // Reset to the initial state
     RESET() {
       return initialState;
     },

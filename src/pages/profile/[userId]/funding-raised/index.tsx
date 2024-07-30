@@ -52,7 +52,7 @@ const FundingRaised = () => {
       )}
 
       {donations && donations.length > 0 && (
-        <PotlockFunding projectId={userId} />
+        <PotlockFunding accountId={userId} />
       )}
     </div>
   );
