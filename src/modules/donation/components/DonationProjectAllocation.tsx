@@ -175,7 +175,8 @@ export const DonationProjectAllocation: React.FC<
                       defaultValue={fieldExtension.value}
                       onValueChange={fieldExtension.onChange}
                       classes={{
-                        trigger: "h-full w-min rounded-r-none shadow-none",
+                        trigger:
+                          "mr-2px h-full w-min rounded-r-none shadow-none",
                       }}
                     >
                       <SelectItem value={NEAR_TOKEN_DENOM}>

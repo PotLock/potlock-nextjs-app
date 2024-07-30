@@ -38,7 +38,6 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ) => {
     const appendixElement = appendix ? (
       <span
-        un-p="l-1.5 r-3"
         un-flex="~"
         un-items="center"
         un-text="gray-500 sm:sm nowrap"
@@ -51,7 +50,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const fieldProps = { disabled, ref, ...props };
 
     const fieldExtensionElement = fieldExtension ? (
-      <div un-border="rounded-l-md rounded-r-none" un-h="9.5" un-p="0.5">
+      <div
+        un-border="rounded-l-md rounded-r-none"
+        un-flex="~"
+        un-items="center"
+        un-justify="center"
+      >
         {fieldExtension}
       </div>
     ) : null;
@@ -74,7 +78,6 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         <div
           un-border="1 b-2 important:input rounded-md opacity-100"
           un-w="full"
-          un-min-h="10"
           un-flex="~"
           un-items="center"
           un-bg="transparent"
@@ -82,6 +85,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             "text-sm ring-offset-background",
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
+
+            {
+              "pr-4": appendixElement !== null,
+            },
+
             className,
           )}
         >
@@ -90,19 +98,15 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           <FormControl>
             <input
               {...fieldProps}
-              className={cn({
-                "rounded-l-md": fieldExtensionElement === null,
-                "mr-1 rounded-r-md": appendixElement === null,
+              className={cn("min-h-5 rounded-l-md px-4 py-3", {
+                "rounded-r-md": appendixElement === null,
               })}
               un-focus-visible={
                 fieldExtensionElement !== null && appendixElement !== null
-                  ? "border-inset pl-1.5 border-l-2 border-input outline-none"
+                  ? "rounded-l-none border-inset pl-3.5 border-l-2 border-input outline-none"
                   : undefined
               }
-              un-pl={fieldExtensionElement === null ? "3" : "1.5"}
-              un-pr="1.5"
               un-w="full"
-              un-h="9"
               un-placeholder="text-muted-foreground"
             />
           </FormControl>

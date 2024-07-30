@@ -234,16 +234,22 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
 
             <div un-flex="~ col lg:row" un-gap="8">
               <div className="lg:w-40% w-full">
-                <label>Chef fee</label>
-
-                <input
-                  id="chef-fee"
-                  type="text"
-                  un-w="full"
-                  un-border="1"
-                  un-rounded="md"
-                  un-px="4"
-                  un-py="2"
+                <FormField
+                  name="chef_fee_basis_points"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      label="Chef fee"
+                      required
+                      type="text"
+                      fieldExtension={
+                        <span un-pl="4" un-pr="2" un-text="neutral-500">
+                          %
+                        </span>
+                      }
+                      {...field}
+                    />
+                  )}
                 />
               </div>
 
