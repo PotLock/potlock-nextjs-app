@@ -5,7 +5,7 @@ import {
 } from "@/common/contracts/social";
 
 type Props = {
-  socialData?: NEARSocialUserProfile;
+  socialData?: NEARSocialUserProfile | null;
   accountId: string;
 };
 
