@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -29,6 +29,10 @@ export function ProfileLayout({ children }: Props) {
   const [selectedTab, setSelectedTab] = useState(
     tabs.find((tab) => pathname.includes(tab.href)) || tabs[0],
   );
+
+  useEffect(() => {
+    setSelectedTab(tabs.find((tab) => pathname.includes(tab.href)) || tabs[0]);
+  }, [pathname, tabs]);
 
   if (!params.userId) {
     return "";

@@ -34,7 +34,7 @@ const DonationItem = ({
     total_amount,
     net_amount: amount,
     pot,
-    recipient,
+    recipient: _recipient,
     donated_at,
     token,
   } = donation;
@@ -42,6 +42,7 @@ const DonationItem = ({
   const { id: donorId } = donor;
   const potId = pot?.id;
   const baseCurrency = pot?.base_currency;
+  const recipient = _recipient ?? { id: "" };
   const { id: recipientId } = recipient;
   const paidAt = new Date(donated_at).getTime();
   const ftId = token.id || baseCurrency;
