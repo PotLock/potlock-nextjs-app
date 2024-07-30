@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
-import { useSearchParams } from "@/common/lib";
+import { useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
@@ -14,7 +14,7 @@ export * from "./forms";
 
 export const useDonation = (props: DonationParameters) => {
   const modal = useModal(DonationModal);
-  const { setSearchParams } = useSearchParams();
+  const { setSearchParams } = useRouteQuery();
 
   const openDonationModal = useCallback(
     (event: React.MouseEvent) => {

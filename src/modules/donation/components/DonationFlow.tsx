@@ -1,6 +1,6 @@
 import { createElement as h, useMemo } from "react";
 
-import { useSearchParams } from "@/common/lib";
+import { useRouteQuery } from "@/common/lib";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
@@ -26,8 +26,9 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   closeModal,
   ...props
 }) => {
-  const { searchParams } = useSearchParams();
-  const referrerIdSearchParam = searchParams.referrerId;
+  const {
+    query: { referrerId: referrerIdSearchParam },
+  } = useRouteQuery();
 
   const { isBalanceSufficient, minAmountError, form, isDisabled, onSubmit } =
     useDonationForm({

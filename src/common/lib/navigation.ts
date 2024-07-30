@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from "react";
 
 import { useRouter } from "next/router";
-import queryString from "query-string";
-import { useUrlSearchParams } from "use-url-search-params";
 
 /**
  * Allows updating and retrieving ( parsed ) URL query parameters for the current route.
@@ -12,9 +10,9 @@ import { useUrlSearchParams } from "use-url-search-params";
  * @example
  *
  * const {
- *   searchParams: { accountId, transactionHashes },
+ *   query: { accountId, transactionHashes },
  *   setSearchParams,
- * } = useSearchParams();
+ * } = useRouteQuery();
  *
  * // Sets `accountId` query parameter to "root.near"
  * setSearchParams({ accountId: "root.near" });
@@ -26,39 +24,25 @@ import { useUrlSearchParams } from "use-url-search-params";
  *
  * console.log(transactionHashes); -> undefined
  */
-export const useSearchParams = () => {
-  const router = useRouter();
-  const [parsedSearchQuery] = useUrlSearchParams();
+export const useRouteQuery = () => {
+  const { pathname, query, replace } = useRouter();
 
-  const searchParams = useMemo(
-    () => parsedSearchQuery ?? {},
-    [parsedSearchQuery],
-  );
-
-  const searchParamsMap = useMemo(
-    () => new Map(Object.entries(searchParams)),
-    [searchParams],
-  );
+  const params = useMemo(() => new Map(Object.entries(query)), [query]);
 
   const setSearchParams = useCallback(
     (newParams: Record<string, string | null>) => {
       Object.entries(newParams).forEach(([key, value]) =>
-        value ? searchParamsMap.set(key, value) : searchParamsMap.delete(key),
+        value ? params.set(key, value) : params.delete(key),
       );
 
-      const searchQuery = queryString.stringify(
-        Object.fromEntries(searchParamsMap),
-      );
-
-      router.replace(
-        searchQuery.length > 0
-          ? [router.pathname, searchQuery].join("?")
-          : router.pathname,
-      );
+      replace({
+        pathname,
+        query: Object.fromEntries(params),
+      });
     },
 
-    [router, searchParamsMap],
+    [pathname, params, replace],
   );
 
-  return { searchParams, setSearchParams };
+  return { query, setSearchParams };
 };

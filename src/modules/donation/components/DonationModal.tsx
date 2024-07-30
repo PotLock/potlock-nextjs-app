@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { create, useModal } from "@ebay/nice-modal-react";
 
 import { walletApi } from "@/common/contracts";
-import { useSearchParams } from "@/common/lib";
+import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -20,7 +20,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   const self = useModal();
   const donationState = useTypedSelector(({ donation }) => donation);
   const { isAuthenticated } = useAuth();
-  const { setSearchParams } = useSearchParams();
+  const { setSearchParams } = useRouteQuery();
 
   const close = useCallback(() => {
     self.hide();
