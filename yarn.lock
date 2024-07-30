@@ -9737,11 +9737,6 @@ use-sync-external-store@^1.0.0, use-sync-external-store@^1.2.0:
   resolved "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.2.tgz"
   integrity sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==
 
-use-url-search-params@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/use-url-search-params/-/use-url-search-params-2.5.1.tgz#cb3d435827f70a7433f6045e1aa51b6356ae7096"
-  integrity sha512-tzFTatO7b1VJx9rcP1utVU152PAPt5J4uVLCMteOUZFGBe+u8CzFVs3T74yrpZ/bOJLGjRbv46GBrjHq94XlTg==
-
 util-deprecate@^1.0.1, util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"

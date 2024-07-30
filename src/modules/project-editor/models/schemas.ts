@@ -31,9 +31,7 @@ export const createProjectSchema = z.object({
       }),
     )
     .optional(),
-  githubRepositories: z
-    .array(z.string().min(1))
-    .min(1, "You must include at least 1 repository"),
+  githubRepositories: z.array(z.string()).optional(),
   website: z.string().optional(),
   twitter: z.string().optional(),
   telegram: z.string().optional(),
