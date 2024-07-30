@@ -4,19 +4,15 @@ export type PotDeploymentHeroProps = {};
 
 export const PotDeploymentHero: React.FC<PotDeploymentHeroProps> = () => (
   <section
-    className="bg-hero"
-    un-border="[#f8d3b0]"
-    un-w="full"
+    className="md:px-25 md:py-20 w-full gap-6 border-[#f8d3b0] bg-hero px-5 py-16"
     un-flex="~ col"
-    un-gap="6"
-    un-p="x-5 md:x-25 y-16 md:y-20"
     un-text="neutral-950"
   >
-    <span className="prose uppercase" un-font="500" un-text="sm">
+    <span className="prose uppercase" un-font="500" un-text="2.75 md:sm">
       Deploy Pot
     </span>
 
-    <h1 className="prose" un-text="4xl" un-font="bold">
+    <h1 className="prose font-500 md:text-5xl text-8 font-lora">
       Deploy a Quadratic Funding Round
     </h1>
 

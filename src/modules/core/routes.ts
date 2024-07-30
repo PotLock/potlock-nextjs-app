@@ -6,7 +6,7 @@ const routesPath = {
   CART: "/cart",
   FEED: "feed",
   POTS: "/pots",
-  DEPLOY_POT: "deploypot",
+  DEPLOY_POT: "/pots/deploy",
   POT_DETAIL: "pot",
   DONORS: "/donors",
   PROFILE: "/profile",

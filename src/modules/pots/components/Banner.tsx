@@ -6,6 +6,7 @@ import HomeBannerStyle from "@/common/assets/svgs/HomeBannerBackground";
 import * as pots from "@/common/contracts/potlock/pots";
 import { Button } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import routesPath from "@/modules/core/routes";
 
 const Banner = () => {
   const [canDeploy, setCanDeploy] = useState(false);
@@ -39,7 +40,7 @@ const Banner = () => {
         </h1>
         <div className="max-md:flex-col max-md:gap-4 mt-6 mt-[40px] flex items-center gap-8 max-xs:w-full max-xs:p-[12px_0px]">
           {canDeploy && (
-            <Link href={`?tab=deploypot`}>
+            <Link href={routesPath.DEPLOY_POT}>
               <Button>Deploy Pot</Button>
             </Link>
           )}
