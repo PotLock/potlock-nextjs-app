@@ -23,16 +23,18 @@ const FALLBACK_URL =
 const DonationItem = ({
   donation,
   projectId,
+  type = "received",
 }: {
   donation: DonationInfo;
   projectId: string;
+  type?: "received" | "donated";
 }) => {
   const {
     donor,
     total_amount,
     net_amount: amount,
     pot,
-    recipient,
+    recipient: _recipient,
     donated_at,
     token,
   } = donation;
@@ -40,6 +42,7 @@ const DonationItem = ({
   const { id: donorId } = donor;
   const potId = pot?.id;
   const baseCurrency = pot?.base_currency;
+  const recipient = _recipient ?? { id: "" };
   const { id: recipientId } = recipient;
   const paidAt = new Date(donated_at).getTime();
   const ftId = token.id || baseCurrency;
@@ -59,10 +62,14 @@ const DonationItem = ({
       : `${routesPath.PROFILE}/${projectId || recipientId}`;
 
   // const name = truncate(isPot ? pot.id : donor.id, 15);
-  const name = truncate(donor.id, 15);
+  const name = truncate(type === "received" ? donor.id : recipient.id, 15);
 
   // const { profileImages } = useProfileData(isPot ? pot.id : donor.id);
-  const { profileImages } = useProfileData(donor.id);
+  const { profileImages } = useProfileData(
+    type === "received" ? donor.id : recipient.id,
+    true,
+    false,
+  );
 
   return (
     <div className="funding-row">
