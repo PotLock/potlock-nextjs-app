@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
-import { useSearchParams } from "@/common/lib";
+import { useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
 import { DonationModal } from "../components/DonationModal";
@@ -11,9 +11,9 @@ export const useDonationSuccessWalletRedirect = () => {
   const modal = useModal(DonationModal);
 
   const {
-    searchParams: { donateTo, donateToPot, transactionHashes },
+    query: { donateTo, donateToPot, transactionHashes },
     setSearchParams,
-  } = useSearchParams();
+  } = useRouteQuery();
 
   const recipientAccountId =
     typeof donateTo === "string" ? donateTo : undefined;

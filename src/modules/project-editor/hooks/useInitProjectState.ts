@@ -1,30 +1,30 @@
 import { useEffect, useState } from "react";
 
-import { useRouter } from "next/router";
-
 import { POTLOCK_LISTS_CONTRACT_ID } from "@/common/constants";
 import { naxiosInstance } from "@/common/contracts";
 import * as potlockLists from "@/common/contracts/potlock/lists";
-import { useSearchParams } from "@/common/lib";
+import { useRouteQuery } from "@/common/lib";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";
 import { dispatch, useTypedSelector } from "@/store";
 
 const useInitProjectState = () => {
-  const router = useRouter();
-  const { projectId: projectIdPathParam } = router.query;
+  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
+    useTypedSelector((state) => state.createProject);
+
+  const {
+    query: {
+      projectId: projectIdPathParam,
+      done,
+      transactionHashes,
+      errorMessage,
+    },
+  } = useRouteQuery();
 
   const projectId =
     typeof projectIdPathParam === "string"
       ? projectIdPathParam
       : projectIdPathParam?.at(0);
-
-  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
-    useTypedSelector((state) => state.createProject);
-
-  const {
-    searchParams: { done, transactionHashes, errorMessage },
-  } = useSearchParams();
 
   const {
     actAsDao: { defaultAddress: daoAddress, toggle: isDao },
