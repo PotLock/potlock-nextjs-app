@@ -163,17 +163,17 @@ export const DonationProjectAllocation: React.FC<
               label="Amount"
               {...field}
               labelExtension={<AvailableTokenBalance tokenId={tokenId} />}
-              fieldExtension={
+              inputExtension={
                 <FormField
                   control={form.control}
                   name="tokenId"
-                  render={({ field: fieldExtension }) => (
+                  render={({ field: inputExtension }) => (
                     <SelectField
                       embedded
                       label="Available tokens"
                       disabled // TODO: FT donation is not yet finished
-                      defaultValue={fieldExtension.value}
-                      onValueChange={fieldExtension.onChange}
+                      defaultValue={inputExtension.value}
+                      onValueChange={inputExtension.onChange}
                       classes={{
                         trigger:
                           "mr-2px h-full w-min rounded-r-none shadow-none",

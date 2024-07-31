@@ -54,7 +54,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
             <TextField
               label="Amount"
               labelExtension={<AvailableTokenBalance tokenId={tokenId} />}
-              fieldExtension={
+              inputExtension={
                 <div un-flex="~" un-items="center" un-justify="center">
                   <span className="prose" un-text="lg" un-font="600">
                     NEAR

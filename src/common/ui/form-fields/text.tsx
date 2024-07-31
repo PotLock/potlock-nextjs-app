@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 import {
   FormControl,
@@ -9,16 +9,15 @@ import {
 } from "../components";
 import { cn } from "../utils";
 
-export interface TextFieldProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export type TextFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
   type: "email" | "text" | "number" | "tel" | "url";
-  label: string;
+  label?: string;
   labelExtension?: React.ReactNode;
-  fieldExtension?: React.ReactNode;
+  inputExtension?: React.ReactNode;
   appendix?: string | null;
-  description?: string;
+  hint?: string;
   customErrorMessage?: string | null;
-}
+};
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   (
@@ -27,82 +26,115 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       disabled,
       label,
       labelExtension,
-      fieldExtension = null,
+      inputExtension = null,
       appendix,
-      description,
+      hint,
       customErrorMessage,
       ...props
     },
 
     ref,
   ) => {
-    const appendixElement = appendix ? (
-      <span
-        un-flex="~"
-        un-items="center"
-        un-text="gray-500 sm:sm nowrap"
-        className="prose"
-      >
-        {appendix}
-      </span>
-    ) : null;
-
     const fieldProps = { disabled, ref, ...props };
+    const { required } = props;
 
-    const fieldExtensionElement = fieldExtension ? (
-      <div
-        un-border="rounded-l-md rounded-r-none"
-        un-flex="~"
-        un-items="center"
-        un-justify="center"
-      >
-        {fieldExtension}
-      </div>
-    ) : null;
+    const labelElement = useMemo(
+      () =>
+        label ?? labelExtension ? (
+          <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
+            {label && (
+              <FormLabel className="text-sm text-neutral-950">
+                {label}
+              </FormLabel>
+            )}
+
+            {labelExtension ? (
+              <>
+                {typeof labelExtension === "string" ? (
+                  <span className="line-height-none text-sm text-neutral-600">
+                    {labelExtension}
+                  </span>
+                ) : (
+                  labelExtension
+                )}
+              </>
+            ) : (
+              <>
+                {required ? null : (
+                  <span className="line-height-none text-sm text-neutral-600">
+                    (optional)
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        ) : null,
+
+      [label, labelExtension, required],
+    );
+
+    const inputExtensionElement = useMemo(
+      () =>
+        inputExtension ? (
+          <div
+            un-border="rounded-l-md rounded-r-none"
+            un-flex="~"
+            un-items="center"
+            un-justify="center"
+          >
+            {typeof inputExtension === "string" ? (
+              <span un-pl="4" un-pr="2" un-text="neutral-500">
+                {inputExtension}
+              </span>
+            ) : (
+              inputExtension
+            )}
+          </div>
+        ) : null,
+
+      [inputExtension],
+    );
+
+    const appendixElement = useMemo(
+      () =>
+        appendix ? (
+          <span
+            un-flex="~"
+            un-items="center"
+            un-text="gray-500 sm:sm nowrap"
+            className="prose"
+          >
+            {appendix}
+          </span>
+        ) : null,
+
+      [appendix],
+    );
 
     return (
       <FormItem>
-        <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
-          <FormLabel className="font-500 text-sm text-neutral-950">
-            {label}
-          </FormLabel>
-
-          {labelExtension ??
-            (props.required ? null : (
-              <span className="line-height-none text-sm text-neutral-600">
-                (optional)
-              </span>
-            ))}
-        </div>
+        {labelElement}
 
         <div
-          un-border="1 b-2 important:input rounded-md opacity-100"
-          un-w="full"
-          un-flex="~"
-          un-items="center"
-          un-bg="transparent"
           className={cn(
-            "text-sm ring-offset-background",
+            "flex w-full items-center",
+            "border-op-100 border-1 rounded-md border border-b-2 border-input",
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
-
-            {
-              "pr-4": appendixElement !== null,
-            },
-
+            { "pr-4": appendixElement !== null },
             className,
           )}
         >
-          {fieldExtensionElement}
+          {inputExtensionElement}
 
           <FormControl>
             <input
               {...fieldProps}
-              className={cn("min-h-5 rounded-l-md px-4 py-3", {
+              className={cn("max-h-11 rounded-l-md px-4 py-3", {
                 "rounded-r-md": appendixElement === null,
               })}
               un-focus-visible={
-                fieldExtensionElement !== null && appendixElement !== null
+                inputExtensionElement !== null && appendixElement !== null
                   ? "rounded-l-none border-inset pl-3.5 border-l-2 border-input outline-none"
                   : undefined
               }
@@ -114,7 +146,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           {appendixElement}
         </div>
 
-        {description && <FormDescription>{description}</FormDescription>}
+        {hint && <FormDescription>{hint}</FormDescription>}
         <FormMessage>{customErrorMessage}</FormMessage>
       </FormItem>
     );

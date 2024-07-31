@@ -92,12 +92,9 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
                     render={({ field }) => (
                       <TextField
                         label="Referral fee"
-                        labelExtension={
-                          <span className="line-height-none text-sm text-neutral-600">
-                            (Matching pool)
-                          </span>
-                        }
+                        labelExtension="(Matching pool)"
                         required
+                        inputExtension="%"
                         type="number"
                         min={0}
                         {...field}
@@ -113,12 +110,9 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
                     render={({ field }) => (
                       <TextField
                         label="Referral fee"
-                        labelExtension={
-                          <span className="line-height-none text-sm text-neutral-600">
-                            (Public round)
-                          </span>
-                        }
+                        labelExtension="(Public round)"
                         required
+                        inputExtension="%"
                         type="number"
                         min={0}
                         {...field}
@@ -201,7 +195,7 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
                       <TextField
                         label="Min matching pool donation"
                         {...field}
-                        fieldExtension={
+                        inputExtension={
                           <SelectField
                             embedded
                             label="Available tokens"
@@ -233,7 +227,7 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
             <h2 className={classNames.sectionTitle}>Chef details</h2>
 
             <div un-flex="~ col lg:row" un-gap="8">
-              <div className="lg:w-40% w-full">
+              <div className="lg:w-45% w-full">
                 <FormField
                   name="chef_fee_basis_points"
                   control={form.control}
@@ -241,12 +235,9 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
                     <TextField
                       label="Chef fee"
                       required
-                      type="text"
-                      fieldExtension={
-                        <span un-pl="4" un-pr="2" un-text="neutral-500">
-                          %
-                        </span>
-                      }
+                      inputExtension="%"
+                      type="number"
+                      min={0}
                       {...field}
                     />
                   )}
@@ -282,6 +273,20 @@ export const PotEditor: React.FC<PotEditorProps> = () => {
                 un-px="4"
                 un-py="2"
                 className="lg:w-30% w-full"
+              />
+
+              <FormField
+                name="max_projects"
+                control={form.control}
+                render={({ field }) => (
+                  <TextField
+                    required
+                    inputExtension="%"
+                    type="number"
+                    min={0}
+                    {...field}
+                  />
+                )}
               />
             </div>
           </section>

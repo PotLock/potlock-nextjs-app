@@ -14,7 +14,7 @@ import { cn } from "../utils";
 export type TextAreaFieldProps = TextareaProps & {
   label: string;
   labelExtension?: React.ReactNode;
-  description?: string;
+  hint?: string;
   customErrorMessage?: string | null;
 };
 
@@ -23,18 +23,12 @@ export const TextAreaField = forwardRef<
   TextAreaFieldProps
 >(
   (
-    {
-      disabled,
-      label,
-      labelExtension,
-      description,
-      customErrorMessage,
-      ...props
-    },
-
+    { disabled, label, labelExtension, hint, customErrorMessage, ...props },
     ref,
   ) => {
     const fieldProps = { disabled, ref, ...props };
+    const { maxLength, value } = props;
+    const currentLength = typeof value === "string" ? value?.length : 0;
 
     return (
       <FormItem>
@@ -59,7 +53,16 @@ export const TextAreaField = forwardRef<
           />
         </FormControl>
 
-        {description && <FormDescription>{description}</FormDescription>}
+        <FormDescription className="">
+          {hint && <span>{hint}</span>}
+
+          <span className="prose ml-auto">
+            {typeof maxLength === "number"
+              ? `${currentLength}/${maxLength}`
+              : currentLength}
+          </span>
+        </FormDescription>
+
         <FormMessage>{customErrorMessage}</FormMessage>
       </FormItem>
     );
