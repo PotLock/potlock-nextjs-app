@@ -48,7 +48,7 @@ export const ListDetails = () => {
           <span>Account Id</span>
           <span className="text-gray-500">Created 3d ago</span>
         </div>
-        <div className="grid grid-cols-8">
+        <div className="grid-cols-8 md:grid">
           <div className="col-span-5 pr-3">
             <img
               src="https://images.unsplash.com/photo-1472653431158-6364773b2a56?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZXZlbnR8ZW58MHx8MHx8fDA%3D"
