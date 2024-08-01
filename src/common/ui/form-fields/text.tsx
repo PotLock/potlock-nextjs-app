@@ -13,7 +13,7 @@ export type TextFieldProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "className"
 > & {
-  type: "email" | "text" | "number" | "tel" | "url";
+  type: "email" | "text" | "number" | "tel" | "url" | "datetime-local";
   label?: string;
   labelExtension?: React.ReactNode;
   inputExtension?: React.ReactNode;

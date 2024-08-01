@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 
 import { walletApi } from "@/common/contracts";
@@ -8,6 +9,8 @@ import { walletApi } from "@/common/contracts";
 import { PotDeploymentInputs, potDeploymentSchema } from "../models";
 
 export const usePotDeploymentForm = () => {
+  const router = useRouter();
+
   const defaultValues = useMemo<Partial<PotDeploymentInputs>>(
     () => ({
       owner: walletApi.accountId,
@@ -28,5 +31,10 @@ export const usePotDeploymentForm = () => {
     !form.formState.isValid ||
     form.formState.isSubmitting;
 
-  return { form, isDisabled };
+  const onCancel = () => {
+    form.reset();
+    router.back();
+  };
+
+  return { form, isDisabled, onCancel };
 };

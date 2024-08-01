@@ -5,10 +5,12 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  Button,
   Form,
   FormField,
 } from "@/common/ui/components";
 import {
+  CheckboxField,
   SelectField,
   SelectFieldOption,
   TextAreaField,
@@ -22,7 +24,7 @@ import { usePotDeploymentForm } from "../hooks/deployment";
 export type PotEditorProps = Partial<ByPotId> & {};
 
 export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
-  const { form } = usePotDeploymentForm();
+  const { form, onCancel } = usePotDeploymentForm();
 
   return (
     <Form {...form}>
@@ -133,7 +135,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   <TextField
                     label="Application start date"
                     required
-                    type="text"
+                    type="datetime-local"
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -147,7 +149,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   <TextField
                     label="Application end date"
                     required
-                    type="text"
+                    type="datetime-local"
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -163,7 +165,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   <TextField
                     label="Matching round start date"
                     required
-                    type="text"
+                    type="datetime-local"
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -177,7 +179,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   <TextField
                     label="Matching round end date"
                     required
-                    type="text"
+                    type="datetime-local"
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -270,45 +272,66 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
           </PotEditorSection>
 
           <PotEditorSection heading="Verification">
-            <div un-flex="~" un-items="center">
-              <input id="project-registration" type="checkbox" un-mr="2" />
+            <FormField
+              control={form.control}
+              name="isPgRegistrationRequired"
+              render={({ field }) => (
+                <CheckboxField
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  label={
+                    <>
+                      <span un-font="600" un-text="sm">
+                        Project Registration.
+                      </span>
 
-              <label un-text="gray-800">
-                Project Registration. Require approval on PotLock registry.
-              </label>
-            </div>
+                      <span un-text="sm">
+                        Require approval on PotLock registry
+                      </span>
+                    </>
+                  }
+                />
+              )}
+            />
 
-            <div un-flex="~" un-items="center">
-              <input id="donor-sybil" type="checkbox" un-mr="2" />
+            <FormField
+              control={form.control}
+              name="isNadabotVerificationRequired"
+              render={({ field }) => (
+                <CheckboxField
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  label={
+                    <>
+                      <span un-font="600" un-text="sm">
+                        Donor Sybil Resistance.
+                      </span>
 
-              <label un-text="gray-800">
-                <span>Donor Sybil Resistance.</span>
-                <span un-text="blue-500">nada.bot human verified</span>
-              </label>
-            </div>
+                      <span un-text="sm">🤖 nada.bot human verified</span>
+                    </>
+                  }
+                />
+              )}
+            />
           </PotEditorSection>
 
           <PotEditorSection>
             <div un-flex="~ col lg:row-reverse" un-gap="4 lg:8" un-w="full">
-              <button
-                un-bg="gray-800"
-                un-text="white"
-                un-px="4"
-                un-py="2"
-                un-rounded="md"
+              <Button
+                type="submit"
+                variant="standard-filled"
+                className="lg:w-auto w-full"
               >
-                Deploy
-              </button>
+                Deploy Pot
+              </Button>
 
-              <button
-                un-bg="gray-300"
-                un-text="gray-800"
-                un-px="4"
-                un-py="2"
-                un-rounded="md"
+              <Button
+                onClick={onCancel}
+                variant="standard-outline"
+                className="lg:w-auto w-full"
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </PotEditorSection>
         </div>

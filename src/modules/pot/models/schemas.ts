@@ -1,4 +1,11 @@
-import { infer as FromSchema, array, number, object, string } from "zod";
+import {
+  infer as FromSchema,
+  array,
+  boolean,
+  number,
+  object,
+  string,
+} from "zod";
 
 export const potDeploymentSchema = object({
   owner: string().describe("Owner's account id."),
@@ -29,9 +36,19 @@ export const potDeploymentSchema = object({
     .optional()
     .describe("Registry provider's account id."),
 
+  isPgRegistrationRequired: boolean()
+    .optional()
+    .describe(
+      "Whether the projects must be included in PotLock PG registry with approval.",
+    ),
+
   sybil_wrapper_provider: string()
     .optional()
     .describe("Sybil wrapper provider's account id."),
+
+  isNadabotVerificationRequired: boolean()
+    .optional()
+    .describe("Whether the projects must have Nadabot verification."),
 
   referral_fee_matching_pool_basis_points: number().describe(
     "Matching pool referral fee in basis points.",
