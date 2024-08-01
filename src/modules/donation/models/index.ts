@@ -96,13 +96,13 @@ export const donationModel = createModel<RootModel>()({
       bypassProtocolFee,
       bypassChefFee,
       message,
-      ...props
+      ...params
     }: DonationSubmissionInputs & DonationInputs): Promise<void> {
-      if ("accountId" in props) {
+      if ("accountId" in params) {
         switch (allocationStrategy) {
           case DonationAllocationStrategyEnum.direct: {
             const args: DirectDonationArgs = {
-              recipient_id: props.accountId,
+              recipient_id: params.accountId,
               message,
               referrer_id: referrerAccountId,
               bypass_protocol_fee: bypassProtocolFee,
@@ -114,14 +114,14 @@ export const donationModel = createModel<RootModel>()({
           }
 
           case DonationAllocationStrategyEnum.pot: {
-            if (!props.potAccountId) {
+            if (!params.potAccountId) {
               return void dispatch.donation.failure(
                 new Error("No pot selected"),
               );
             }
 
             const args: PotDonationArgs = {
-              project_id: props.accountId,
+              project_id: params.accountId,
               message,
               referrer_id: referrerAccountId,
               bypass_protocol_fee: bypassProtocolFee,
@@ -129,7 +129,7 @@ export const donationModel = createModel<RootModel>()({
             };
 
             return void donateNearViaPot(
-              props.potAccountId,
+              params.potAccountId,
               args,
               floatToYoctoNear(amount),
             )
@@ -137,7 +137,7 @@ export const donationModel = createModel<RootModel>()({
               .catch((error) => dispatch.donation.failure(error));
           }
         }
-      } else if ("potId" in props) {
+      } else if ("potId" in params) {
         switch (potDistributionStrategy) {
           case DonationPotDistributionStrategy.evenly: {
             return void dispatch.donation.failure(new Error("Not implemented"));

@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 import { walletApi } from "@/common/contracts";
+import { dispatch } from "@/store";
 
 import { PotDeploymentInputs, potDeploymentSchema } from "../models";
 
@@ -36,5 +37,10 @@ export const usePotDeploymentForm = () => {
     router.back();
   };
 
-  return { form, isDisabled, onCancel };
+  const onSubmit: SubmitHandler<PotDeploymentInputs> = useCallback(
+    (values) => dispatch.pot.deploy.submit({ ...values }),
+    [],
+  );
+
+  return { form, isDisabled, onCancel, onSubmit: form.handleSubmit(onSubmit) };
 };

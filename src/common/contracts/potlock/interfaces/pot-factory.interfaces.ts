@@ -1,10 +1,10 @@
 import { AccountId, ProviderId } from "@/common/types";
 
-export interface Pot {
+export type Pot = {
   id: string;
   deployed_by: string;
   deployed_at_ms: number;
-}
+};
 
 /**
  * Weighting for a given CustomSybilCheck

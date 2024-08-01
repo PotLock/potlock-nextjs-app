@@ -24,11 +24,11 @@ import { usePotDeploymentForm } from "../hooks/deployment";
 export type PotEditorProps = Partial<ByPotId> & {};
 
 export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
-  const { form, onCancel } = usePotDeploymentForm();
+  const { form, onCancel, onSubmit } = usePotDeploymentForm();
 
   return (
     <Form {...form}>
-      <form un-flex="~ col" un-items="center">
+      <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
         <div className="flex flex-col gap-14 pt-14">
           <PotEditorSection heading="Admins">
             <div un-flex="~" un-items="center" un-gap="2">
