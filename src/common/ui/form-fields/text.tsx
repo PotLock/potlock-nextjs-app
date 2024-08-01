@@ -9,7 +9,10 @@ import {
 } from "../components";
 import { cn } from "../utils";
 
-export type TextFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
+export type TextFieldProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "className"
+> & {
   type: "email" | "text" | "number" | "tel" | "url";
   label?: string;
   labelExtension?: React.ReactNode;
@@ -17,12 +20,17 @@ export type TextFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
   appendix?: string | null;
   hint?: string;
   customErrorMessage?: string | null;
+
+  classNames?: {
+    root?: string;
+    inputWrapper?: string;
+    input?: string;
+  };
 };
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   (
     {
-      className,
       disabled,
       label,
       labelExtension,
@@ -30,6 +38,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       appendix,
       hint,
       customErrorMessage,
+      classNames,
       ...props
     },
 
@@ -83,7 +92,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             un-justify="center"
           >
             {typeof inputExtension === "string" ? (
-              <span un-pl="4" un-pr="2" un-text="neutral-500">
+              <span className="prose pl-4 pr-2 text-neutral-500">
                 {inputExtension}
               </span>
             ) : (
@@ -112,7 +121,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     );
 
     return (
-      <FormItem>
+      <FormItem className={classNames?.root}>
         {labelElement}
 
         <div
@@ -122,7 +131,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
             { "pr-4": appendixElement !== null },
-            className,
+            classNames?.inputWrapper,
           )}
         >
           {inputExtensionElement}

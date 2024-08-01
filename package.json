@@ -10,7 +10,7 @@
     "generate:api-pagoda": "orval --config pagoda-eapi.cjs",
     "generate:api-potlock": "orval --config potlock-indexer.cjs",
     "generate:api": "concurrently 'yarn generate:api-potlock' 'yarn generate:api-pagoda'",
-    "generate:css": "unocss 'src/**/*.tsx' --out-file=src/common/ui/styles/uno.generated.css",
+    "generate:css": "unocss 'src/**/*.tsx' --out-file=src/common/ui/styles/uno.generated.css --write-transformed",
     "dev:css": "yarn generate:css --watch",
     "dev:test": "yarn && vitest watch",
     "dev": "yarn && yarn generate:css && concurrently 'yarn dev:css' 'next dev'",
