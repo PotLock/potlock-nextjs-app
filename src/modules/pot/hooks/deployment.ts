@@ -38,7 +38,7 @@ export const usePotDeploymentForm = () => {
   };
 
   const onSubmit: SubmitHandler<PotDeploymentInputs> = useCallback(
-    (values) => dispatch.pot.deploy.submit({ ...values }),
+    (values) => dispatch.pot.deploy({ ...values }),
     [],
   );
 
