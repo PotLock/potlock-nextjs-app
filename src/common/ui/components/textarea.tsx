@@ -31,9 +31,8 @@ export const Textarea = forwardRef<
       <>
         <textarea
           className={cn(
-            // "border-op-100 border-1"
             "flex min-h-[80px] w-full px-3 py-2",
-            "rounded-md border border-b-2 border-input bg-background ring-offset-background",
+            "rounded-md border border-input bg-background ring-offset-background",
             "text-sm placeholder:text-muted-foreground",
             "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             "focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",

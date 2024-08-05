@@ -40,9 +40,9 @@ const Banner = () => {
         </h1>
         <div className="max-md:flex-col max-md:gap-4 mt-6 mt-[40px] flex items-center gap-8 max-xs:w-full max-xs:p-[12px_0px]">
           {canDeploy && (
-            <Link href={routesPath.DEPLOY_POT}>
-              <Button>Deploy Pot</Button>
-            </Link>
+            <Button asChild>
+              <Link href={routesPath.DEPLOY_POT}>Deploy Pot</Link>
+            </Button>
           )}
           <Link href="https://wtfisqf.com" target="_blank">
             <Button variant={canDeploy ? "brand-tonal" : "brand-filled"}>

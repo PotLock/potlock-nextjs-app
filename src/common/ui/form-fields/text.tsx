@@ -127,7 +127,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         <div
           className={cn(
             "flex w-full items-center",
-            "border-op-100 border-1 rounded-md border border-b-2 border-input",
+            "border-op-100 border-1 rounded-md border border-input",
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
             { "pr-4": appendixElement !== null },
