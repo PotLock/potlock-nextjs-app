@@ -16,9 +16,9 @@ export const test = ({
   const now = Temporal.Now.instant().epochMicroseconds;
 
   return (
-    application_start_ms < now &&
+    application_start_ms > now &&
     application_end_ms > now &&
-    public_round_start_ms < now &&
+    public_round_start_ms > now &&
     public_round_end_ms > now
   );
 };

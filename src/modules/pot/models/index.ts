@@ -70,9 +70,11 @@ export const potModel = createModel<RootModel>()({
         pot_handle,
       };
 
-      return void deploy(args)
-        .then((result) => dispatch.pot.deploymentSuccess(result))
-        .catch((error) => dispatch.pot.deploymentFailure(error));
+      console.log("args", args);
+
+      // return void deploy(args)
+      //   .then((result) => dispatch.pot.deploymentSuccess(result))
+      //   .catch((error) => dispatch.pot.deploymentFailure(error));
     },
 
     async handleSuccessByTxHash(transactionHash: string) {

@@ -1,4 +1,7 @@
 import { Temporal } from "temporal-polyfill";
+import { number, preprocess } from "zod";
+
+export const DATETIME_INCORRECT_FORMAT_ERROR = "datetime format is incorrect";
 
 /**
  * Converts a value in milliseconds to the equivalent number of days.
@@ -60,3 +63,13 @@ export const toChronologicalOrder = <T>(
         Temporal.Instant.compare(one[property], another[property]),
       )
     : list;
+
+export const timestamp = preprocess(
+  (value) => (typeof value === "string" ? Temporal.Instant.from(value) : value),
+
+  number({ message: DATETIME_INCORRECT_FORMAT_ERROR })
+    .int()
+    .positive(DATETIME_INCORRECT_FORMAT_ERROR)
+    .finite(DATETIME_INCORRECT_FORMAT_ERROR)
+    .safe(),
+);

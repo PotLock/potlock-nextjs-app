@@ -10,21 +10,27 @@ import {
 } from "zod";
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { timestamp } from "@/common/lib";
 import {
   DONATION_MIN_NEAR_AMOUNT,
   isDonationAmountSufficient,
 } from "@/modules/donation";
 
-import { test } from "../utils/validation";
+const nowTimestampMs = Temporal.Now.instant().epochMilliseconds;
 
 export const minMatchingPoolDonationAmountSchema = preprocess(
-  (x) => parseFloat(x as string),
+  (value) => parseFloat(value as string),
 
   number({ message: "Must be a positive number." })
     .positive("Must be a positive number.")
     .finite()
     .safe()
     .transform((n) => number().safeParse(n).data ?? 0),
+);
+
+const potDeploymentTimestampParameterSchema = timestamp.refine(
+  (value) => value > nowTimestampMs,
+  { message: "Cannot be in the past" },
 );
 
 export const potDeploymentSchema = object({
@@ -39,10 +45,22 @@ export const potDeploymentSchema = object({
   pot_handle: string().optional().describe("Pot handle."),
   pot_description: string().describe("Pot description."),
   max_projects: number().describe("Maximum number of approved projects."),
-  application_start_ms: number().describe("Application start timestamp."),
-  application_end_ms: number().describe("Application end timestamp."),
-  public_round_start_ms: number().describe("Matching round start timestamp."),
-  public_round_end_ms: number().describe("Matching round end timestamp."),
+
+  application_start_ms: potDeploymentTimestampParameterSchema.describe(
+    "Application start timestamp.",
+  ),
+
+  application_end_ms: potDeploymentTimestampParameterSchema.describe(
+    "Application end timestamp.",
+  ),
+
+  public_round_start_ms: potDeploymentTimestampParameterSchema.describe(
+    "Matching round start timestamp.",
+  ),
+
+  public_round_end_ms: potDeploymentTimestampParameterSchema.describe(
+    "Matching round end timestamp.",
+  ),
 
   min_matching_pool_donation_amount: minMatchingPoolDonationAmountSchema
     .optional()
@@ -79,24 +97,22 @@ export const potDeploymentSchema = object({
   ),
 
   chef_fee_basis_points: number().describe("Chef fee in basis points."),
-})
-  .refine(
-    ({ min_matching_pool_donation_amount }) =>
-      min_matching_pool_donation_amount === undefined
-        ? true
-        : isDonationAmountSufficient({
-            tokenId: NEAR_TOKEN_DENOM,
-            amount: min_matching_pool_donation_amount,
-          }),
-    {
-      /**
-       *? NOTE: Due to an unknown issue,
-       *?  this message doesn't end up in react-hook-form's `formState.errors`.
-       *?  Please make sure it's always manually provided to the corresponding input field.
-       */
-      message: `Minimum donation amount cannot be less than ${DONATION_MIN_NEAR_AMOUNT} ${NEAR_TOKEN_DENOM.toUpperCase()}.`,
-    },
-  )
-  .refine(test, { message: "Invalid timestamps." });
+}).refine(
+  ({ min_matching_pool_donation_amount }) =>
+    min_matching_pool_donation_amount === undefined
+      ? true
+      : isDonationAmountSufficient({
+          tokenId: NEAR_TOKEN_DENOM,
+          amount: min_matching_pool_donation_amount,
+        }),
+  {
+    /**
+     *? NOTE: Due to an unknown issue,
+     *?  this message doesn't end up in react-hook-form's `formState.errors`.
+     *?  Please make sure it's always manually provided to the corresponding input field.
+     */
+    message: `Minimum donation amount cannot be less than ${DONATION_MIN_NEAR_AMOUNT} ${NEAR_TOKEN_DENOM.toUpperCase()}.`,
+  },
+);
 
 export type PotDeploymentInputs = FromSchema<typeof potDeploymentSchema>;
