@@ -141,6 +141,18 @@ export const usePot = ({ potId }: Partial<ByPotId>) => {
 };
 
 /**
+ * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_retrieve
+ */
+export const useList = ({ listId }: Partial<ByListId>) => {
+  const queryResult = swrHooks.useV1ListsRetrieve2(listId ?? 0, {
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { enabled: Boolean(listId) },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_random_registration_retrieve
  *
  * Note: automatic refresh is disabled for optimization.
