@@ -64,7 +64,7 @@ export interface PotConfig {
   protocol_config_provider: string;
 }
 
-export interface Challange {
+export interface Challenge {
   challenger_id: string;
   created_at: number;
   reason: string;
@@ -77,13 +77,21 @@ export interface PotDonation {
   donor_id: string;
   total_amount: string;
   net_amount: string;
-  message: string;
+  message?: string | null;
   donated_at: number;
-  project_id: null | string;
-  referrer_id: null | string;
-  referrer_fee: null | string;
+  project_id?: null | string;
+  referrer_id?: null | string;
+  referrer_fee?: null | string;
   protocol_fee: string;
   matching_pool: boolean;
-  chef_id: null | string;
-  chef_fee: null | string;
+  chef_id?: null | string;
+  chef_fee?: null | string;
 }
+
+export type PotDonationArgs = {
+  project_id?: null | string;
+  message?: null | string;
+  referrer_id?: null | string;
+  bypass_protocol_fee?: null | boolean;
+  custom_chef_fee_basis_points?: null | number;
+};

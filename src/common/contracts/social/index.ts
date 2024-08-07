@@ -37,6 +37,7 @@ export interface ProfileLinktree {
 }
 
 export interface Image {
+  url: string;
   ipfs_cid?: string;
   nft?: {
     contractId: string;
@@ -56,10 +57,12 @@ export enum Category {
 }
 
 export interface NEARSocialUserProfile {
+  team?: string;
+  plTeam?: string;
   name?: string;
-  linktree?: ProfileLinktree;
-  image?: Image;
-  backgroundImage?: Image;
+  linktree?: ProfileLinktree | Record<string, string>;
+  image?: Image | string;
+  backgroundImage?: Image | string;
   description?: string;
   tags?: Record<string, string>;
   horizon_tnc?: string;
@@ -68,9 +71,9 @@ export interface NEARSocialUserProfile {
   plPublicGoodReason?: string;
   plCategories?: string;
   // optional fields
-  plGithubRepos?: string[];
-  plFundingSources?: ExternalFundingSource[];
-  plSmartContracts?: [string, string][];
+  plGithubRepos?: string;
+  plFundingSources?: string; //ExternalFundingSource[];
+  plSmartContracts?: string; //[string, string][];
   category?:
     | keyof typeof Category
     | {
@@ -105,81 +108,46 @@ type NEARSocialGetResponse = {
  * Get User Profile Info from NEAR Social DB
  * @returns
  */
-export const getSocialProfile = async (input: { accountId: string }) => {
-  const response = await nearSocialDbContractApi.view<
-    NEARSocialUserProfileInput,
-    NEARSocialGetResponse
-  >(
-    "get",
-    {
-      args: {
-        keys: [`${input.accountId}/profile/**`],
-      },
-    },
-    { useCache: true },
-  );
-
-  return response[input.accountId]?.profile;
-};
-
-type GetFollowingResponse = {
-  [key: string]: {
-    graph: {
-      follow: {
-        [key: string]: number;
-      };
-    };
-  };
-};
-
-export const getFollowing = async ({ accountId }: { accountId: string }) => {
+export const getSocialProfile = async (input: {
+  accountId: string;
+  useCache?: boolean;
+}) => {
   try {
     const response = await nearSocialDbContractApi.view<
-      any,
-      GetFollowingResponse
-    >("keys", {
-      args: {
-        keys: [`${accountId}/graph/follow/*`],
-        options: {
-          return_type: "BlockHeight",
-          values_only: true,
+      NEARSocialUserProfileInput,
+      NEARSocialGetResponse
+    >(
+      "get",
+      {
+        args: {
+          keys: [`${input.accountId}/profile/**`],
         },
       },
-    });
+      { useCache: input.useCache },
+    );
 
-    const followingAccounts = Object.keys(response[accountId].graph.follow);
-
-    return { accounts: followingAccounts, total: followingAccounts.length };
+    return response[input.accountId]?.profile || null;
   } catch (e) {
-    console.error("getFollowing:", e);
-    return { accounts: [], total: 0 };
+    console.error(e);
+    return null;
   }
 };
 
-export const getFollowers = async ({ accountId }: { accountId: string }) => {
-  try {
-    const response = await nearSocialDbContractApi.view<any, any>("keys", {
-      args: {
-        keys: [`*/graph/follow/${accountId}`],
-        options: {
-          return_type: "BlockHeight",
-          values_only: true,
-        },
-      },
-    });
+export const getAccount = async (input: { accountId: string }) => {
+  const response = await nearSocialDbContractApi.view<
+    { account_id: string },
+    {
+      node_id: number;
+      permissions: {}[];
+      shared_storage: any;
+      storage_balance: string;
+      used_bytes: number;
+    } | null
+  >("get_account", {
+    args: { account_id: input.accountId },
+  });
 
-    // TODO
-    // return response;
-    return { accounts: [], total: 0 };
-  } catch (e) {
-    // TODO: Error getting followers because of gas limit (it makes sense because of the amount of data it's trying to get)
-    console.error("getFollowers:", e);
-    return { accounts: [], total: 0 };
-  }
-
-  // const followingAccounts = Object.keys(response[accountId].graph.follow);
-
-  // return { accounts: followingAccounts, total: followingAccounts.length };
+  return response;
 };
 
 export const getSocialData = async <R>({ path }: { path: string }) => {
@@ -197,6 +165,19 @@ export const getSocialData = async <R>({ path }: { path: string }) => {
     return response;
   } catch (e) {
     console.error("getSocialData:", e);
+  }
+};
+
+export const getPolicy = async () => {
+  try {
+    const response = await nearSocialDbContractApi.view<
+      any,
+      { proposal_bond: string }
+    >("get_policy");
+
+    return response;
+  } catch (e) {
+    console.error("getPolicy:", e);
   }
 };
 

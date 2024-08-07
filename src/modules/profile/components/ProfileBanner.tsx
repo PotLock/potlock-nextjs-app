@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import Image from "next/image";
@@ -16,7 +14,7 @@ import useRegistration from "@/modules/core/hooks/useRegistration";
 import { fetchSocialImages } from "@/modules/core/services/socialImages";
 import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIcons";
 
-import FollowStats from "./FollowStats";
+import { FollowStats } from "./FollowStats";
 
 type Props = {
   accountId: string; // near address (donor | project)
@@ -80,7 +78,7 @@ const ProfileBanner = (props: Props) => {
       </div>
 
       {/* profile image */}
-      <div className="relative z-[6] flex -translate-y-2/4 items-end pl-2 md:pl-16">
+      <div className="md:pl-16 relative z-[6] flex -translate-y-2/4 items-end pl-2">
         {/*  image */}
 
         <div className="relative h-[120px] w-[120px] rounded-full bg-white p-1.5 max-[400px]:h-[90px] max-[400px]:w-[90px]">
@@ -94,12 +92,12 @@ const ProfileBanner = (props: Props) => {
           )}
         </div>
         {/* Status */}
-        <div className="relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-2 md:gap-6">
+        <div className="md:gap-6 relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-2">
           {registration.id ? (
             <div className="flex items-center gap-1 overflow-hidden rounded-[20px] bg-white p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100">
               {projectStatusIcons[registration.status].icon}
               <div
-                className="hidden md:block"
+                className="md:block hidden"
                 style={{
                   color: projectStatusIcons[registration.status].color,
                 }}

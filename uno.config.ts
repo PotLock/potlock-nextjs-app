@@ -1,4 +1,3 @@
-//import presetAttributify from "@unocss/preset-attributify";
 import {
   defineConfig,
   presetAttributify,

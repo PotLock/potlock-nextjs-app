@@ -13,8 +13,12 @@
     "camelcase",
     "colocation",
     "data-testid",
+    "dontcare",
+    "fastnear",
+    "foodbank",
     "hookform",
     "kubb",
+    "linktree",
     "NADABOT",
     "narwallets",
     "naxios",
@@ -29,6 +33,7 @@
     "unocss",
     "welldone",
     "wpdas",
-    "xdefi"
+    "xdefi",
+    "yearofchef"
   ]
 }

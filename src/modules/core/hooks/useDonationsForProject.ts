@@ -7,62 +7,93 @@ import {
   getAccountDonationsReceived,
 } from "@/common/api/potlock/account";
 import { SUPPORTED_FTS } from "@/common/constants";
-import nearToUsdWithFallback from "@/common/lib/nearToUsdWithFallback";
 
-const useDonationsForProject = (projectId: string) => {
+import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";
+
+const useDonationsForProject = (projectId?: string, limit?: number) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
+  const [directDonations, setDirectDonations] = useState<DonationInfo[]>();
+  const [matchedDonations, setMatchedDonations] = useState<DonationInfo[]>();
 
   // TODO: INFO: useV1AccountsDonationsReceivedRetrieve is not working
   // const donations = useAccountDonationsReceived({ accountId: projectId });
 
   useEffect(() => {
-    (async () => {
-      const _donations = await getAccountDonationsReceived({
-        accountId: projectId,
-      });
+    if (projectId) {
+      (async () => {
+        const _donations = await getAccountDonationsReceived({
+          accountId: projectId,
+          limit,
+        });
 
-      setDonations(_donations.results);
-    })();
+        const direct: DonationInfo[] = [];
+        const matched: DonationInfo[] = [];
+
+        if (_donations.results) {
+          _donations.results.forEach((donation) => {
+            if (donation.pot) {
+              matched.push(donation);
+            } else {
+              direct.push(donation);
+            }
+          });
+        }
+
+        setDonations(_donations.results);
+        setDirectDonations(direct);
+        setMatchedDonations(matched);
+      })();
+    }
   }, [projectId]);
 
   // Get total donations & Unique donors count
-  const [totalDonationAmountNear, uniqueDonors] = useMemo(() => {
-    if (donations) {
-      let totalNear = Big(0);
-      const uniqueDonors = [
-        ...new Set(donations.map((donation) => donation.donor)),
-      ];
-      donations.forEach((donation) => {
-        if (donation.ft === "near") {
+  const [totalDonationAmountNear, uniqueDonors, totalMatchedNear] =
+    useMemo(() => {
+      if (donations) {
+        let totalNear = Big(0);
+        let totalMatched = Big(0);
+
+        const uniqueDonors = [
+          ...new Set(donations.map((donation) => donation.donor)),
+        ];
+        donations.forEach((donation) => {
           totalNear = totalNear.plus(Big(donation.total_amount || "0"));
-        }
-      });
 
-      const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
-        totalNear.toString(),
-      );
+          // Total Matched info
+          if (donation.pot) {
+            totalMatched = totalNear.plus(Big(donation.total_amount || "0"));
+          }
+        });
 
-      return [totalDonationAmountNear, uniqueDonors?.length];
-    }
-    return [0, 0];
-  }, [donations]);
+        const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
+          totalNear.toString(),
+        );
 
-  const [usdInfo, setUsdInfo] = useState("");
+        const totalMatchedNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
+          totalMatched.toString(),
+        );
 
-  useEffect(() => {
-    (async () => {
-      const _usdInfo = await nearToUsdWithFallback(
-        Number(totalDonationAmountNear),
-      );
-      setUsdInfo(_usdInfo);
-    })();
-  }, [totalDonationAmountNear]);
+        return [
+          totalDonationAmountNear,
+          uniqueDonors?.length,
+          totalMatchedNear,
+        ];
+      }
+      return ["0", 0, "0"];
+    }, [donations]);
+
+  const usdInfo = useNearToUsdWithFallback(Number(totalDonationAmountNear));
+  const totalMatchedUsd = useNearToUsdWithFallback(Number(totalMatchedNear));
 
   return {
     donations,
+    directDonations,
+    matchedDonations,
     uniqueDonors,
     near: totalDonationAmountNear,
     usd: usdInfo,
+    totalMatchedNear,
+    totalMatchedUsd,
   };
 };
 
