@@ -28,6 +28,11 @@ export const contractApi = naxiosInstance.contractApi({
  */
 export const getLists = () => contractApi.view<{}, List[]>("get_lists");
 
+export const get_admin_list = () =>
+  contractApi.view<{}, List[]>("list_admins_by_list_id", {
+    args: { list_id: POTLOCK_REGISTRY_LIST_ID, accountId: "harrydhillon.near" },
+  });
+
 /**
  * Get single list
  */

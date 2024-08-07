@@ -1,10 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 
 import CreateListHero from "@/app/_components/CreateListHero";
 import { useAccount, useAccounts } from "@/common/api/potlock/hooks";
+import { getList, get_admin_list } from "@/common/contracts/potlock/lists";
 import useWallet from "@/modules/auth/hooks/useWallet";
 
 export default function Page() {
@@ -17,6 +18,16 @@ export default function Page() {
   const onSubmit = (data: any) => {
     console.log(data);
   };
+
+  const [allAdmins, setAllAdmins] = useState<any>([]);
+  console.log({ allAdmins });
+
+  useEffect(() => {
+    (async () => {
+      const { admins } = await getList({ list_id: 1 });
+      setAllAdmins(admins);
+    })();
+  }, []);
 
   const descriptionLength = watch("description")?.length || 0;
 

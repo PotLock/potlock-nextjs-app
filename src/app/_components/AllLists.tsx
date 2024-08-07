@@ -2,10 +2,18 @@ import React, { useEffect, useState } from "react";
 
 import { useTypedSelector } from "@/app/_store";
 import {
+  POTLOCK_LISTS_CONTRACT_ID,
+  POTLOCK_REGISTRY_LIST_ID,
+} from "@/common/constants";
+import {
   Registration,
   RegistrationStatus,
 } from "@/common/contracts/potlock/interfaces/lists.interfaces";
-import { getRegistrations } from "@/common/contracts/potlock/lists";
+import {
+  getList,
+  getLists,
+  getRegistrations,
+} from "@/common/contracts/potlock/lists";
 import {
   Filter,
   Group,
@@ -105,6 +113,10 @@ export const AllLists = () => {
 
   // Fetch Registrations
   useEffect(() => {
+    (async () => {
+      const allLists = await getLists();
+      setRegistrations(allLists);
+    })();
     // implement fetch logic
   }, []);
 
@@ -137,29 +149,10 @@ export const AllLists = () => {
         </div>
       </div>
       <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <ListCard />
-        <ListCard />
-        <ListCard />
+        {registrations.map((item, index) => (
+          <ListCard dataForList={item} key={index} />
+        ))}
       </div>
-      {filteredRegistrations.length ? (
-        <InfiniteScroll
-          className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
-          items={filteredRegistrations}
-          index={index}
-          setIndex={setIndex}
-          size={MAXIMUM_CARDS_PER_INDEX}
-          renderItem={(registration: Registration) => (
-            <ProjectCard
-              projectId={registration.registrant_id}
-              key={registration.id}
-            />
-          )}
-        />
-      ) : (
-        <div style={{ alignSelf: "flex-start", margin: "24px 0px" }}>
-          No results
-        </div>
-      )}
     </div>
   );
 };

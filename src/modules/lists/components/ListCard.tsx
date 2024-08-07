@@ -39,7 +39,7 @@ export const ListCard = ({ dataForList }: { dataForList?: any }) => {
           </div>
           <div className="p-3">
             <p className="font-lora text-lg  leading-tight ">
-              Name of the List Should span 2 lines of text only then truncate
+              {dataForList.name}
             </p>
             <div className="mt-2 flex items-center space-x-2">
               <p className=" font-lora ">By</p>{" "}
@@ -48,7 +48,7 @@ export const ListCard = ({ dataForList }: { dataForList?: any }) => {
                 alt="person"
                 className="h-4 w-4 rounded-full object-cover"
               />
-              <p className=" font-lora ">Account Id</p>
+              <p className=" font-lora ">{dataForList.owner}</p>
             </div>
           </div>
         </div>
