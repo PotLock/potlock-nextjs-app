@@ -6,7 +6,10 @@ import {
   DONATION_MIN_NEAR_AMOUNT,
   isDonationAmountSufficient,
 } from "@/modules/donation";
-import { donationFeeBasicPoints } from "@/modules/donation/models";
+import {
+  donationAmount,
+  donationFeeBasicPoints,
+} from "@/modules/donation/models";
 
 import {
   isPotApplicationStartBeforeEnd,
@@ -47,7 +50,7 @@ export const potDeploymentSchema = object({
     "Matching round end timestamp.",
   ),
 
-  min_matching_pool_donation_amount: safePositiveNumber
+  min_matching_pool_donation_amount: donationAmount
     .optional()
     .describe("Minimum donation amount."),
 

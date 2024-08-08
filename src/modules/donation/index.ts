@@ -1,6 +1,7 @@
 export * from "./constants";
 export * from "./hooks";
+export * from "./models/schemas";
 export * from "./utils/validation";
 
 export { DonationRandomButton } from "./components/buttons";
-export { donationModel, donationFeeBasicPoints } from "./models";
+export { donationModel } from "./models";

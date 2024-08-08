@@ -33,15 +33,7 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
   .default(NEAR_TOKEN_DENOM)
   .describe('Either "NEAR" or FT contract account id.');
 
-export const donationAmountSchema = preprocess(
-  (x) => parseFloat(x as string),
-
-  number({ message: "Must be a positive number." })
-    .positive("Must be a positive number.")
-    .finite()
-    .safe()
-    .transform((n) => number().safeParse(n).data ?? 0),
-);
+export const donationAmount = safePositiveNumber;
 
 // TODO: Add percents to basic points conversion!
 export const donationFeeBasicPoints = safePositiveNumber;
@@ -49,16 +41,14 @@ export const donationFeeBasicPoints = safePositiveNumber;
 export const donationSchema = object({
   tokenId: donationTokenSchema,
 
-  amount: donationAmountSchema.describe(
-    "Amount of the selected tokens to donate.",
-  ),
+  amount: donationAmount.describe("Amount of the selected tokens to donate."),
 
   recipientAccountId: string().optional().describe("Recipient account id."),
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
 
   potDonationDistribution: array(
-    object({ account_id: string(), amount: donationAmountSchema }),
+    object({ account_id: string(), amount: donationAmount }),
   )
     .refine((recipients) => recipients.length > 0, {
       message: "You have to select at least one recipient.",
