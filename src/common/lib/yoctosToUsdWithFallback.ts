@@ -3,6 +3,10 @@ import Big from "big.js";
 import formatWithCommas from "@/common/lib/formatWithCommas";
 import { fetchNearPrice } from "@/common/services";
 
+/**
+ *
+ * @deprecated - Use `@/modules/core/yoctosToUsdWithFallback`
+ */
 export const yoctosToUsdWithFallback = async (
   amountYoctos: string,
   abbreviate?: boolean,

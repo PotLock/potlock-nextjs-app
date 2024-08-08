@@ -37,6 +37,8 @@ export const APP_METADATA: Metadata & {
 
 export const RPC_NODE_URL = "https://free.rpc.fastnear.com";
 
+export const NADA_BOT_URL = "https://app.nada.bot";
+
 // NETWORK
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
   "testnet") as Network;

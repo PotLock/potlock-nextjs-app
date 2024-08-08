@@ -1,3 +1,5 @@
+import Big from "big.js";
+
 import { NearBalanceResponse } from "@/common/api/pagoda";
 import { bigStringToFloat, formatWithCommas } from "@/common/lib";
 import { store } from "@/store";
@@ -19,4 +21,19 @@ export const nearToUsdWithFallback = (
   return nearToUsdInfo
     ? "~$" + formatWithCommas((amountNear * nearToUsdInfo).toFixed(2))
     : formatWithCommas(amountNear.toString()) + (abbreviate ? "N" : " NEAR");
+};
+
+export const yoctosToUsdWithFallback = (
+  amountYoctos: string,
+  abbreviate?: boolean,
+) => {
+  const nearToUsdInfo = nearToUsd();
+
+  return nearToUsdInfo
+    ? "~$" +
+        formatWithCommas(
+          Big(amountYoctos).mul(nearToUsdInfo).div(1e24).toFixed(2),
+        )
+    : formatWithCommas(Big(amountYoctos).div(1e24).toFixed(2)) +
+        (abbreviate ? "N" : " NEAR");
 };
