@@ -24,7 +24,7 @@ import {
 } from "../types";
 import {
   isDonationAmountSufficient,
-  isMatchingPotSelected,
+  isDonationMatchingPotSelected,
 } from "../utils/validation";
 
 export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
@@ -77,7 +77,7 @@ export const donationSchema = object({
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),
 })
-  .refine(isMatchingPotSelected, { message: "Pot is not selected." })
+  .refine(isDonationMatchingPotSelected, { message: "Pot is not selected." })
   .refine(isDonationAmountSufficient, {
     /**
      *? NOTE: Due to an unknown issue,

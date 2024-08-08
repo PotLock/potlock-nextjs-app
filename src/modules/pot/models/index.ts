@@ -5,6 +5,7 @@ import {
   Pot,
   PotDeploymentArgs,
 } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
+import { timestamp } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
 import { RootModel } from "@/store/models";
 
@@ -63,10 +64,37 @@ export const potModel = createModel<RootModel>()({
   effects: (dispatch) => ({
     async deploy({
       pot_handle,
+      application_start_ms,
+      application_end_ms,
+      public_round_start_ms,
+      public_round_end_ms,
+      referral_fee_matching_pool_basis_points,
+      referral_fee_public_round_basis_points,
+      min_matching_pool_donation_amount,
       ...params
     }: PotDeploymentInputs): Promise<void> {
       const args: PotDeploymentArgs = {
-        pot_args: params,
+        pot_args: {
+          application_start_ms: timestamp.parse(application_start_ms),
+          application_end_ms: timestamp.parse(application_end_ms),
+          public_round_start_ms: timestamp.parse(public_round_start_ms),
+          public_round_end_ms: timestamp.parse(public_round_end_ms),
+
+          referral_fee_matching_pool_basis_points,
+
+          referral_fee_public_round_basis_points,
+
+          min_matching_pool_donation_amount,
+
+          source_metadata: {
+            version: "1.0.0",
+            commit_hash: "0x0000000000000000000000000000000000000000",
+            link: "0x0000000000000000000000000000000000000000",
+          },
+
+          ...params,
+        },
+
         pot_handle,
       };
 

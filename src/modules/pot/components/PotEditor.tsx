@@ -34,6 +34,8 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
     onSubmit,
   } = usePotDeploymentForm();
 
+  console.log("form", form.getValues());
+
   return (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
@@ -331,7 +333,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
             <div un-flex="~ col lg:row-reverse" un-gap="4 lg:8" un-w="full">
               <Button
                 type="submit"
-                disabled={isDisabled}
+                //disabled={isDisabled}
                 variant="standard-filled"
                 className="lg:w-auto w-full"
               >

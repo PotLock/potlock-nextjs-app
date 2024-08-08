@@ -16,6 +16,11 @@ import {
   isDonationAmountSufficient,
 } from "@/modules/donation";
 
+import {
+  isPotApplicationStartBeforeEnd,
+  isPotPublicRoundStartBeforeEnd,
+} from "../utils/validation";
+
 const nowTimestampMs = Temporal.Now.instant().epochMilliseconds;
 
 export const minMatchingPoolDonationAmountSchema = preprocess(
@@ -41,7 +46,11 @@ export const potDeploymentSchema = object({
     .describe("List of pot admins' account ids."),
 
   chef: string().optional().describe("Chef's account id."),
-  pot_name: string().describe("Pot name."),
+
+  pot_name: string()
+    .min(3, "Pot name must be at least 3 characters long.")
+    .describe("Pot name."),
+
   pot_handle: string().optional().describe("Pot handle."),
   pot_description: string().describe("Pot description."),
   max_projects: number().describe("Maximum number of approved projects."),
@@ -97,22 +106,29 @@ export const potDeploymentSchema = object({
   ),
 
   chef_fee_basis_points: number().describe("Chef fee in basis points."),
-}).refine(
-  ({ min_matching_pool_donation_amount }) =>
-    min_matching_pool_donation_amount === undefined
-      ? true
-      : isDonationAmountSufficient({
-          tokenId: NEAR_TOKEN_DENOM,
-          amount: min_matching_pool_donation_amount,
-        }),
-  {
-    /**
-     *? NOTE: Due to an unknown issue,
-     *?  this message doesn't end up in react-hook-form's `formState.errors`.
-     *?  Please make sure it's always manually provided to the corresponding input field.
-     */
-    message: `Minimum donation amount cannot be less than ${DONATION_MIN_NEAR_AMOUNT} ${NEAR_TOKEN_DENOM.toUpperCase()}.`,
-  },
-);
+})
+  .refine(isPotApplicationStartBeforeEnd, {
+    message: "Application cannot end before it starts.",
+  })
+  .refine(isPotPublicRoundStartBeforeEnd, {
+    message: "Public round cannot end before it starts.",
+  })
+  .refine(
+    ({ min_matching_pool_donation_amount }) =>
+      min_matching_pool_donation_amount === undefined
+        ? true
+        : isDonationAmountSufficient({
+            tokenId: NEAR_TOKEN_DENOM,
+            amount: min_matching_pool_donation_amount,
+          }),
+    {
+      /**
+       *? NOTE: Due to an unknown issue,
+       *?  this message doesn't end up in react-hook-form's `formState.errors`.
+       *?  Please make sure it's always manually provided to the corresponding input field.
+       */
+      message: `Minimum donation amount cannot be less than ${DONATION_MIN_NEAR_AMOUNT} ${NEAR_TOKEN_DENOM.toUpperCase()}.`,
+    },
+  );
 
 export type PotDeploymentInputs = FromSchema<typeof potDeploymentSchema>;

@@ -3,11 +3,9 @@ import { number, preprocess } from "zod";
 
 export const DATETIME_INCORRECT_FORMAT_ERROR = "datetime format is incorrect";
 
-export const localeStringToInstant = (value: string): Temporal.Instant => {
+export const localeStringToTimestampMs = (value: string): number => {
   try {
-    return Temporal.Instant.fromEpochMilliseconds(
-      Temporal.PlainDateTime.from(value).millisecond,
-    );
+    return new Date(value).getTime();
   } catch {
     const error = new TypeError(`Unable to parse \`${value}\``);
 
@@ -78,14 +76,18 @@ export const toChronologicalOrder = <T>(
     : list;
 
 export const timestamp = preprocess(
-  (value) =>
-    typeof value === "string"
-      ? localeStringToInstant(value).epochMilliseconds
-      : value,
+  (value) => {
+    console.log(
+      typeof value === "string" ? localeStringToTimestampMs(value) : value,
+    );
+
+    return typeof value === "string" ? localeStringToTimestampMs(value) : value;
+  },
 
   number({ message: DATETIME_INCORRECT_FORMAT_ERROR })
     .int()
     .positive(DATETIME_INCORRECT_FORMAT_ERROR)
     .finite(DATETIME_INCORRECT_FORMAT_ERROR)
-    .safe(),
+    .safe()
+    .transform((n) => number().safeParse(n).data ?? 0),
 );
