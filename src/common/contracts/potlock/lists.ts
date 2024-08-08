@@ -4,6 +4,7 @@ import {
   POTLOCK_LISTS_CONTRACT_ID,
   POTLOCK_REGISTRY_LIST_ID,
 } from "@/common/constants";
+import { floatToYoctoNear } from "@/common/lib";
 
 import {
   GetListInput,
@@ -33,11 +34,86 @@ export const get_admin_list = () =>
     args: { list_id: POTLOCK_REGISTRY_LIST_ID, accountId: "harrydhillon.near" },
   });
 
+export const create_list = ({
+  name,
+  description,
+  admins,
+  image_cover_url,
+}: {
+  name: string;
+  description: string;
+  admins: Array<string>;
+  image_cover_url?: string;
+}) =>
+  contractApi.call<{}, List[]>("create_list", {
+    args: {
+      name,
+      description,
+      admins,
+      cover_image_url: image_cover_url ?? "",
+      admin_only_registrations: false,
+      default_registration_status: "Approved",
+    },
+    deposit: floatToYoctoNear(0.015),
+    gas: "300000000000000",
+  });
+
+export const update_list = ({
+  name,
+  description,
+  admins,
+  list_id,
+  image_cover_url,
+}: {
+  name: string;
+  description: string;
+  admins: Array<string>;
+  list_id: number;
+  image_cover_url?: string;
+}) =>
+  contractApi.call<{}, List[]>("update_list", {
+    args: {
+      list_id,
+      name,
+      description,
+      cover_image_url: image_cover_url ?? "",
+      admins,
+      admin_only_registrations: false,
+      default_registration_status: "Approved",
+    },
+    deposit: floatToYoctoNear(0.015),
+    gas: "300000000000000",
+  });
+
 /**
  * Get single list
  */
 export const getList = (args: GetListInput) =>
   contractApi.view<typeof args, List>("get_list", {
+    args,
+  });
+
+export const upvote = (args: { list_id: number }) =>
+  contractApi.call<typeof args, List>("upvote", {
+    args,
+    deposit: floatToYoctoNear(0.01),
+    gas: "300000000000000",
+  });
+
+export const remove_upvote = (args: { list_id: number }) =>
+  contractApi.call<typeof args, List>("remove_upvote", {
+    args,
+    deposit: floatToYoctoNear(0.01),
+    gas: "300000000000000",
+  });
+
+export const get_list_for_owner = (args: { owner_id: string }) =>
+  contractApi.view<typeof args, List>("get_lists_for_owner", {
+    args,
+  });
+
+export const get_upvoted_lists_for_account = (args: { account_id: string }) =>
+  contractApi.view<typeof args, List>("get_upvoted_lists_for_account", {
     args,
   });
 

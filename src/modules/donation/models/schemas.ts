@@ -73,9 +73,6 @@ export const donationSchema = object({
   potDistributionStrategy: nativeEnum(DonationPotDistributionStrategy, {
     message: "Incorrect donation distribution strategy.",
   }).default(DonationPotDistributionStrategy.evenly),
-
-  bypassProtocolFee: boolean().default(false),
-  bypassChefFee: boolean().default(false),
 })
   .refine(isMatchingPotSelected, { message: "Pot is not selected." })
   .refine(isDonationAmountSufficient, {

@@ -1,42 +1,25 @@
 import React, { useEffect, useState } from "react";
 
-import { useTypedSelector } from "@/app/_store";
 import {
-  POTLOCK_LISTS_CONTRACT_ID,
-  POTLOCK_REGISTRY_LIST_ID,
-} from "@/common/constants";
-import {
-  Registration,
-  RegistrationStatus,
-} from "@/common/contracts/potlock/interfaces/lists.interfaces";
-import {
-  getList,
   getLists,
-  getRegistrations,
+  get_list_for_owner,
+  get_upvoted_lists_for_account,
 } from "@/common/contracts/potlock/lists";
-import {
-  Filter,
-  Group,
-  InfiniteScroll,
-  SearchBar,
-  SortSelect,
-} from "@/common/ui/components";
+import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
+import useWallet from "@/modules/auth/hooks/useWallet";
 import { ListCard } from "@/modules/lists/components/ListCard";
 import { Profile } from "@/modules/profile/models";
-import { ProjectCard } from "@/modules/project";
 import { categories, statuses } from "@/modules/project/constants";
+import { useTypedSelector } from "@/store";
 
-const MAXIMUM_CARDS_PER_INDEX = 9;
-
-export const AllLists = () => {
-  const [filteredRegistrations, setFilteredRegistrations] = useState<
-    Registration[]
-  >([]);
-  const [index, setIndex] = useState(1);
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
+const AllLists = () => {
+  const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
+  const [registrations, setRegistrations] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
+  const [currentListType, setCurrentListType] = useState("All Lists");
+  const { wallet } = useWallet();
 
   const SORT_LIST_PROJEECTS = [
     { label: "Most recent", value: "recent" },
@@ -91,15 +74,14 @@ export const AllLists = () => {
 
   // handle search & filter
   useEffect(() => {
-    // Search
-    const handleSearch = (registration: Registration, profile: Profile) => {
+    const handleSearch = (registration: any, profile: Profile) => {
       // implement search login
     };
-    // Filter by registration status
-    const handleStatus = (registration: Registration) => {
+
+    const handleStatus = (registration: any) => {
       // implement filter status logic
     };
-    // Filter by registration category
+
     const handleCategory = (profile: Profile) => {
       // implement filter category logic
     };
@@ -111,25 +93,73 @@ export const AllLists = () => {
     registrationsProfile,
   ]);
 
-  // Fetch Registrations
+  const fetchAllLists = async () => {
+    const allLists: any = await getLists();
+    setRegistrations(allLists);
+    setFilteredRegistrations(allLists);
+    setCurrentListType("All Lists");
+  };
+
+  const fetchMyLists = async () => {
+    const myLists: any = await get_list_for_owner({
+      owner_id: wallet?.accountId ?? "",
+    });
+    setRegistrations(myLists);
+    setFilteredRegistrations(myLists);
+    setCurrentListType("My Lists");
+  };
+
+  const fetchFavourites = async () => {
+    const upvotedLists: any = await get_upvoted_lists_for_account({
+      account_id: wallet?.accountId ?? "",
+    });
+    setRegistrations(upvotedLists);
+    setFilteredRegistrations(upvotedLists);
+    setCurrentListType("My Favourites");
+  };
+
   useEffect(() => {
-    (async () => {
-      const allLists = await getLists();
-      setRegistrations(allLists);
-    })();
-    // implement fetch logic
+    fetchAllLists();
   }, []);
 
   return (
-    <div className="flex w-full flex-col px-2 pt-10 md:px-10 md:pb-0 md:pt-12">
+    <div className="md:px-10 md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
       <div className="flex w-full flex-col gap-5">
-        <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
-          All Lists
-          <span
-            style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
-          >
-            {filteredRegistrations.length}
-          </span>
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
+            {currentListType}
+            <span
+              style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
+            >
+              {filteredRegistrations.length}
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              className={`${
+                currentListType === "All Lists" ? "text-red-500" : ""
+              }`}
+              onClick={fetchAllLists}
+            >
+              All List
+            </button>
+            <button
+              className={`${
+                currentListType === "My Lists" ? "text-red-500" : ""
+              }`}
+              onClick={fetchMyLists}
+            >
+              My Lists
+            </button>
+            <button
+              className={`${
+                currentListType === "My Favourites" ? "text-red-500" : ""
+              }`}
+              onClick={fetchFavourites}
+            >
+              My Favourites
+            </button>
+          </div>
         </div>
         <div className="flex w-full items-center gap-4">
           <SearchBar
@@ -148,8 +178,8 @@ export const AllLists = () => {
           />
         </div>
       </div>
-      <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {registrations.map((item, index) => (
+      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+        {filteredRegistrations.map((item, index) => (
           <ListCard dataForList={item} key={index} />
         ))}
       </div>
