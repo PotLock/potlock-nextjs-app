@@ -3,4 +3,4 @@ export * from "./hooks";
 export * from "./utils/validation";
 
 export { DonationRandomButton } from "./components/buttons";
-export { donationModel } from "./models";
+export { donationModel, donationFeeBasicPoints } from "./models";

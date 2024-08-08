@@ -91,3 +91,8 @@ export const timestamp = preprocess(
     .safe()
     .transform((n) => number().safeParse(n).data ?? 0),
 );
+
+export const futureTimestamp = timestamp.refine(
+  (value) => value > Temporal.Now.instant().epochMilliseconds,
+  { message: "Cannot be in the past" },
+);

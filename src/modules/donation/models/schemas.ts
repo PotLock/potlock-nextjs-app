@@ -12,6 +12,7 @@ import {
 } from "zod";
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { safePositiveNumber } from "@/common/lib";
 import { AvailableBalance } from "@/modules/core";
 
 import {
@@ -41,6 +42,9 @@ export const donationAmountSchema = preprocess(
     .safe()
     .transform((n) => number().safeParse(n).data ?? 0),
 );
+
+// TODO: Add percents to basic points conversion!
+export const donationFeeBasicPoints = safePositiveNumber;
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,

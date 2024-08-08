@@ -1,42 +1,17 @@
-import { Temporal } from "temporal-polyfill";
-import {
-  infer as FromSchema,
-  array,
-  boolean,
-  number,
-  object,
-  preprocess,
-  string,
-} from "zod";
+import { infer as FromSchema, array, boolean, object, string } from "zod";
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { timestamp } from "@/common/lib";
+import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 import {
   DONATION_MIN_NEAR_AMOUNT,
   isDonationAmountSufficient,
 } from "@/modules/donation";
+import { donationFeeBasicPoints } from "@/modules/donation/models";
 
 import {
   isPotApplicationStartBeforeEnd,
   isPotPublicRoundStartBeforeEnd,
 } from "../utils/validation";
-
-const nowTimestampMs = Temporal.Now.instant().epochMilliseconds;
-
-export const minMatchingPoolDonationAmountSchema = preprocess(
-  (value) => parseFloat(value as string),
-
-  number({ message: "Must be a positive number." })
-    .positive("Must be a positive number.")
-    .finite()
-    .safe()
-    .transform((n) => number().safeParse(n).data ?? 0),
-);
-
-const potDeploymentTimestampParameterSchema = timestamp.refine(
-  (value) => value > nowTimestampMs,
-  { message: "Cannot be in the past" },
-);
 
 export const potDeploymentSchema = object({
   owner: string().describe("Owner's account id."),
@@ -53,29 +28,30 @@ export const potDeploymentSchema = object({
 
   pot_handle: string().optional().describe("Pot handle."),
   pot_description: string().describe("Pot description."),
-  max_projects: number().describe("Maximum number of approved projects."),
 
-  application_start_ms: potDeploymentTimestampParameterSchema.describe(
+  max_projects: safePositiveNumber.describe(
+    "Maximum number of approved projects.",
+  ),
+
+  application_start_ms: futureTimestamp.describe(
     "Application start timestamp.",
   ),
 
-  application_end_ms: potDeploymentTimestampParameterSchema.describe(
-    "Application end timestamp.",
-  ),
+  application_end_ms: futureTimestamp.describe("Application end timestamp."),
 
-  public_round_start_ms: potDeploymentTimestampParameterSchema.describe(
+  public_round_start_ms: futureTimestamp.describe(
     "Matching round start timestamp.",
   ),
 
-  public_round_end_ms: potDeploymentTimestampParameterSchema.describe(
+  public_round_end_ms: futureTimestamp.describe(
     "Matching round end timestamp.",
   ),
 
-  min_matching_pool_donation_amount: minMatchingPoolDonationAmountSchema
+  min_matching_pool_donation_amount: safePositiveNumber
     .optional()
     .describe("Minimum donation amount."),
 
-  cooldown_period_ms: number()
+  cooldown_period_ms: safePositiveNumber
     .optional()
     .describe("Cooldown period in milliseconds."),
 
@@ -97,15 +73,17 @@ export const potDeploymentSchema = object({
     .optional()
     .describe("Whether the projects must have Nadabot verification."),
 
-  referral_fee_matching_pool_basis_points: number().describe(
+  referral_fee_matching_pool_basis_points: donationFeeBasicPoints.describe(
     "Matching pool referral fee in basis points.",
   ),
 
-  referral_fee_public_round_basis_points: number().describe(
+  referral_fee_public_round_basis_points: donationFeeBasicPoints.describe(
     "Public round referral fee in basis points.",
   ),
 
-  chef_fee_basis_points: number().describe("Chef fee in basis points."),
+  chef_fee_basis_points: donationFeeBasicPoints.describe(
+    "Chef fee in basis points.",
+  ),
 })
   .refine(isPotApplicationStartBeforeEnd, {
     message: "Application cannot end before it starts.",
