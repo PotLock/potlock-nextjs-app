@@ -16,6 +16,7 @@ import {
   TextAreaField,
   TextField,
 } from "@/common/ui/form-fields";
+import { AccessControlAddAdmin } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 
 import { PotEditorSection } from "./editor-elements";
@@ -24,15 +25,26 @@ import { usePotDeploymentForm } from "../hooks/deployment";
 export type PotEditorProps = Partial<ByPotId> & {};
 
 export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
-  const { form, onCancel, onSubmit } = usePotDeploymentForm();
+  const {
+    form,
+    handleAdminAdd,
+    handleAdminRemove,
+    isDisabled,
+    onCancel,
+    onSubmit,
+  } = usePotDeploymentForm();
 
   return (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
         <div className="flex flex-col gap-14 pt-14">
           <PotEditorSection heading="Admins">
-            <div un-flex="~" un-items="center" un-gap="2">
-              <span className="h-10 w-10 rounded-full bg-black" />
+            <div un-flex="~" un-justify="between" un-items="center">
+              <div un-flex="~" un-items="center" un-gap="2">
+                <span className="h-10 w-10 rounded-full bg-black" />
+              </div>
+
+              <AccessControlAddAdmin onSubmit={handleAdminAdd} />
             </div>
           </PotEditorSection>
 
@@ -319,6 +331,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
             <div un-flex="~ col lg:row-reverse" un-gap="4 lg:8" un-w="full">
               <Button
                 type="submit"
+                disabled={isDisabled}
                 variant="standard-filled"
                 className="lg:w-auto w-full"
               >

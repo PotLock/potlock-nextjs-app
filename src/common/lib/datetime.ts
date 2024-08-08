@@ -3,6 +3,19 @@ import { number, preprocess } from "zod";
 
 export const DATETIME_INCORRECT_FORMAT_ERROR = "datetime format is incorrect";
 
+export const localeStringToInstant = (value: string): Temporal.Instant => {
+  try {
+    return Temporal.Instant.fromEpochMilliseconds(
+      Temporal.PlainDateTime.from(value).millisecond,
+    );
+  } catch {
+    const error = new TypeError(`Unable to parse \`${value}\``);
+
+    console.error(error);
+    throw error;
+  }
+};
+
 /**
  * Converts a value in milliseconds to the equivalent number of days.
  *
@@ -65,7 +78,10 @@ export const toChronologicalOrder = <T>(
     : list;
 
 export const timestamp = preprocess(
-  (value) => (typeof value === "string" ? Temporal.Instant.from(value) : value),
+  (value) =>
+    typeof value === "string"
+      ? localeStringToInstant(value).epochMilliseconds
+      : value,
 
   number({ message: DATETIME_INCORRECT_FORMAT_ERROR })
     .int()
