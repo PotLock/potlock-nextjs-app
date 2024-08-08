@@ -16,7 +16,7 @@ import {
   TextAreaField,
   TextField,
 } from "@/common/ui/form-fields";
-import { AccessControlAddAdmin } from "@/modules/access-control";
+import { AccessControlAdmins } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 
 import { PotEditorSection } from "./editor-elements";
@@ -28,11 +28,13 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   const {
     form,
     handleAdminAdd,
-    handleAdminRemove,
+    // handleAdminRemove,
     isDisabled,
     onCancel,
     onSubmit,
   } = usePotDeploymentForm();
+
+  const { admins: adminAccountIds } = form.watch();
 
   console.log("form", form.getValues());
 
@@ -46,7 +48,10 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 <span className="h-10 w-10 rounded-full bg-black" />
               </div>
 
-              <AccessControlAddAdmin onSubmit={handleAdminAdd} />
+              <AccessControlAdmins
+                admins={adminAccountIds ?? []}
+                onSubmit={handleAdminAdd}
+              />
             </div>
           </PotEditorSection>
 
