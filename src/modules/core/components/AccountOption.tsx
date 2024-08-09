@@ -58,7 +58,7 @@ export const AccountOption = ({
       <AvatarFallback>{accountId}</AvatarFallback>
     </Avatar>
   ) : (
-    <Skeleton className="h-10 w-10 rounded-full" />
+    <Skeleton className="h-10 w-10 rounded-full" {...{ title }} />
   );
 
   return isThumbnail ? (

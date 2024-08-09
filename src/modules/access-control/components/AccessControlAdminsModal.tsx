@@ -102,7 +102,6 @@ export const AccessControlAdminsModal = create(
                   <Button
                     type="submit"
                     variant="standard-filled"
-                    color="black"
                     disabled={isDisabled}
                   >
                     Add
@@ -115,6 +114,7 @@ export const AccessControlAdminsModal = create(
                       key={accountId}
                       secondaryAction={
                         <Button
+                          type="button"
                           onClick={() => props.onRemove(accountId)}
                           variant="standard-plain"
                           className="ml-auto"
