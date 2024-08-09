@@ -4,12 +4,10 @@ import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 import {
   DONATION_MIN_NEAR_AMOUNT,
-  isDonationAmountSufficient,
-} from "@/modules/donation";
-import {
   donationAmount,
   donationFeeBasicPoints,
-} from "@/modules/donation/models";
+  isDonationAmountSufficient,
+} from "@/modules/donation";
 
 import {
   isPotApplicationStartBeforeEnd,

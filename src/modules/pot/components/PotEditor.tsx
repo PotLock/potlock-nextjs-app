@@ -275,7 +275,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               control={form.control}
               render={({ field }) => (
                 <TextField
-                  required
                   type="number"
                   min={0}
                   classNames={{ root: "lg:w-37% w-full" }}

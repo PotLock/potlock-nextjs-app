@@ -11,7 +11,7 @@ import { getTransactionStatus } from "@/common/services";
 import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
 import { RootModel } from "@/store/models";
 
-import { PotDeploymentInputs, potDeploymentSchema } from "./schemas";
+import { PotDeploymentInputs } from "./schemas";
 import { PotDeploymentStep, PotState } from "../types";
 
 export * from "./schemas";
