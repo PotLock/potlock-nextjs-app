@@ -250,7 +250,7 @@ const DialogDescription = forwardRef<
   <DialogPrimitive.Description
     ref={ref}
     className={cn(
-      "flex flex-col gap-6 p-5 text-sm text-neutral-950",
+      "z-2 flex flex-col gap-6 p-5 text-sm text-neutral-950",
       className,
     )}
     {...props}

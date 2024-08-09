@@ -130,7 +130,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             "border-op-100 border-1 rounded-md border border-input",
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            { "pr-4": appendixElement !== null },
+            { "pr-3": appendixElement !== null },
             classNames?.inputWrapper,
           )}
         >
@@ -139,12 +139,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           <FormControl>
             <input
               {...fieldProps}
-              className={cn("max-h-11 rounded-l-md px-4 py-3", {
+              className={cn("max-h-11 rounded-l-md px-3 py-2.5", {
                 "rounded-r-md": appendixElement === null,
               })}
               un-focus-visible={
                 inputExtensionElement !== null && appendixElement !== null
-                  ? "rounded-l-none border-inset pl-3.5 border-l-2 border-input outline-none"
+                  ? "rounded-l-none border-inset pl-2.5 border-l-2 border-input outline-none"
                   : undefined
               }
               un-w="full"

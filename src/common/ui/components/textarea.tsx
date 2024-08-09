@@ -31,7 +31,7 @@ export const Textarea = forwardRef<
       <>
         <textarea
           className={cn(
-            "flex min-h-[80px] w-full px-3 py-2",
+            "flex min-h-[80px] w-full px-3 py-2.5",
             "rounded-md border border-input bg-background ring-offset-background",
             "text-sm placeholder:text-muted-foreground",
             "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",

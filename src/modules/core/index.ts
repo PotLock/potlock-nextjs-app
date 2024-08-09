@@ -1,6 +1,7 @@
 export * from "./utils";
 export * from "./hooks/balance";
 export * from "./hooks/price";
+export * from "./components/AccountOption";
 export * from "./components/AvailableTokenBalance";
 export * from "./components/ModalErrorBody";
 export * from "./components/RuntimeErrorAlert";

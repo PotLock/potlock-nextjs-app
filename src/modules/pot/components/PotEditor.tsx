@@ -28,7 +28,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   const {
     form,
     handleAdminAdd,
-    // handleAdminRemove,
+    handleAdminRemove,
     isDisabled,
     onCancel,
     onSubmit,
@@ -43,16 +43,11 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
         <div className="flex flex-col gap-14 pt-14">
           <PotEditorSection heading="Admins">
-            <div un-flex="~" un-justify="between" un-items="center">
-              <div un-flex="~" un-items="center" un-gap="2">
-                <span className="h-10 w-10 rounded-full bg-black" />
-              </div>
-
-              <AccessControlAdmins
-                admins={adminAccountIds ?? []}
-                onSubmit={handleAdminAdd}
-              />
-            </div>
+            <AccessControlAdmins
+              admins={adminAccountIds ?? []}
+              onSubmit={handleAdminAdd}
+              onRemove={handleAdminRemove}
+            />
           </PotEditorSection>
 
           <PotEditorSection heading="Pot details">
