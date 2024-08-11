@@ -7,6 +7,7 @@ import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { create_list } from "@/common/contracts/potlock/lists";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import uploadFileToIPFS from "@/modules/core/services/uploadFileToIPFS";
+import SuccessModalCreateList from "@/pages/_components/SuccessCreateList";
 
 import CreateListHero from "../../_components/CreateListHero";
 
@@ -32,12 +33,20 @@ interface AddAdminModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddAdmin: (admin: string) => void;
+  admins: string[];
+  checkedState: boolean[];
+  onToggleCheck: (index: number) => void;
+  onRemoveSelected: () => void;
 }
 
 const AddAdminModal: React.FC<AddAdminModalProps> = ({
   isOpen,
   onClose,
   onAddAdmin,
+  admins,
+  checkedState,
+  onToggleCheck,
+  onRemoveSelected,
 }) => {
   const [adminAccount, setAdminAccount] = useState<string>("");
 
@@ -52,30 +61,51 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
-      <div className="rounded-md bg-white p-6">
-        <h2 className="mb-4 text-xl font-semibold">Add Admin</h2>
-        <input
-          type="text"
-          value={adminAccount}
-          onChange={(e) => setAdminAccount(e.target.value)}
-          placeholder=".near account"
-          className="mb-4 w-full rounded-md border px-4 py-2"
-        />
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition hover:bg-gray-200"
-          >
-            Cancel
+      <div className="w-96 max-w-full rounded-md bg-white">
+        <div className="flex items-center justify-between rounded-t-md bg-red-500 p-4 text-white">
+          <h2 className="text-xl font-semibold">Edit Admin list</h2>
+          <button onClick={onClose} className="font-bold text-white">
+            X
           </button>
+        </div>
+        <div className="p-4">
+          <input
+            type="text"
+            value={adminAccount}
+            onChange={(e) => setAdminAccount(e.target.value)}
+            placeholder="Enter NEAR account ID"
+            className="mb-4 w-full rounded-md border px-4 py-2"
+          />
           <button
             type="button"
             onClick={handleAddAdmin}
-            className="rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+            className="mb-4 w-full rounded-md bg-gray-200 px-4 py-2 text-gray-700 transition hover:bg-gray-300"
           >
-            Add Admin
+            Add
           </button>
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-gray-700">{admins.length} Admins</span>
+            <button
+              type="button"
+              onClick={onRemoveSelected}
+              className="text-gray-600 hover:text-gray-800"
+            >
+              Remove all selected
+            </button>
+          </div>
+          <div className="space-y-2">
+            {admins.map((admin, index) => (
+              <div key={index} className="flex items-center space-x-4">
+                <input
+                  type="checkbox"
+                  className="form-checkbox"
+                  checked={checkedState[index]}
+                  onChange={() => onToggleCheck(index)}
+                />
+                <span>{admin}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -98,27 +128,49 @@ export default function Page() {
     watch,
     setValue,
   } = useForm<FormData>();
+  const descriptionLength = watch("description")?.length || 0;
+
   const [admins, setAdmins] = useState<string[]>([]);
+  const [checkedState, setCheckedState] = useState<boolean[]>([]);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const wallet = useWallet();
+  const [listCreateSuccess, setListCreateSuccess] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const dataToReturn = await create_list({ ...data, admins });
     console.log(dataToReturn);
   };
 
-  const descriptionLength = watch("description")?.length || 0;
-
   const handleAddAdmin = (admin: string) => {
     setAdmins((prevAdmins) => [...prevAdmins, admin]);
+    setCheckedState((prevState) => [...prevState, false]);
     setIsModalOpen(false);
   };
 
   const handleRemoveAdmin = (adminToRemove: string) => {
+    const indexToRemove = admins.indexOf(adminToRemove);
     setAdmins((prevAdmins) =>
       prevAdmins.filter((admin) => admin !== adminToRemove),
     );
+    setCheckedState((prevState) =>
+      prevState.filter((_, index) => index !== indexToRemove),
+    );
+  };
+
+  const handleToggleCheck = (index: number) => {
+    const updatedCheckedState = checkedState.map((item, i) =>
+      i === index ? !item : item,
+    );
+    setCheckedState(updatedCheckedState);
+  };
+
+  const handleRemoveSelected = () => {
+    const newAdmins = admins.filter((_, index) => !checkedState[index]);
+    const newCheckedState = checkedState.filter((state) => !state);
+
+    setAdmins(newAdmins);
+    setCheckedState(newCheckedState);
   };
 
   const handleCoverImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -204,40 +256,46 @@ export default function Page() {
             </div>
           </div>
           <h3 className="mb-4 text-xl font-semibold">Permissions</h3>
-          <div className="mb-2 flex items-center">
-            <div>
-              <span className="mr-4 font-semibold text-gray-700">Owner</span>
-              <div className="flex items-center space-x-2">
-                <img
-                  src="https://via.placeholder.com/40"
-                  alt="Owner"
-                  className="h-10 w-10 rounded-full border-2 border-white"
-                />
-                <span className="text-gray-700">
-                  {wallet.wallet?.accountId}
-                </span>
+          <div className="flex items-center space-x-2">
+            <div className="mb-2 flex items-center">
+              <div>
+                <span className="mr-4 font-semibold text-gray-700">Owner</span>
+                <div className="flex items-center space-x-2">
+                  <img
+                    src="https://via.placeholder.com/40"
+                    alt="Owner"
+                    className="h-10 w-10 rounded-full border-2 border-white"
+                  />
+                  <span className="text-gray-700">
+                    {wallet.wallet?.accountId}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="mb-4">
-            <div className="mb-2 flex items-center justify-between">
-              <p className="font-semibold text-gray-700">Admins</p>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                className="rounded-md bg-gray-100 px-4 py-2 text-red-500 transition hover:bg-gray-200"
-              >
-                Add Admin
-              </button>
-            </div>
-            <div className="flex flex-wrap">
-              {admins.map((admin, index) => (
-                <Chip
-                  key={index}
-                  label={admin}
-                  onRemove={() => handleRemoveAdmin(admin)}
-                />
-              ))}
+            <div className="mb-4 translate-y-1">
+              <div className="flex items-end space-x-2">
+                <div>
+                  <div className="mb-2 justify-between">
+                    <p className="font-semibold text-gray-700">Admins</p>
+                  </div>
+                  <div className="flex h-[35px] flex-wrap">
+                    {admins.map((admin, index) => (
+                      <Chip
+                        key={index}
+                        label={admin}
+                        onRemove={() => handleRemoveAdmin(admin)}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(true)}
+                  className="rounded-md bg-gray-100 px-4 py-2 text-red-500 transition hover:bg-gray-200"
+                >
+                  Add Admin
+                </button>
+              </div>
             </div>
           </div>
           <div>
@@ -289,8 +347,20 @@ export default function Page() {
       </div>
       <AddAdminModal
         isOpen={isModalOpen}
+        admins={admins}
+        checkedState={checkedState}
         onClose={() => setIsModalOpen(false)}
         onAddAdmin={handleAddAdmin}
+        onToggleCheck={handleToggleCheck}
+        onRemoveSelected={handleRemoveSelected}
+      />
+      <SuccessModalCreateList
+        isOpen={listCreateSuccess}
+        onClose={() => {
+          setListCreateSuccess(false);
+        }}
+        listName={""}
+        onViewList={() => {}}
       />
     </>
   );
