@@ -28,7 +28,7 @@ export const ListDetails = () => {
 
     fetchListDetails();
   }, [id]);
-  const wallet = useWallet();
+  const { wallet } = useWallet();
 
   if (loading) {
     return <p>Loading...</p>;
@@ -90,8 +90,8 @@ export const ListDetails = () => {
                   </div>
                 </div>
               </div>
-              {(listDetails.admins.includes(wallet.wallet?.accountId) ||
-                listDetails.owner === wallet.wallet?.accountId) && (
+              {(listDetails.admins.includes(wallet?.accountId ?? "") ||
+                listDetails.owner === wallet?.accountId) && (
                 <Link href={`/list/edit/${listDetails?.id}`}>
                   <svg
                     width="18"
