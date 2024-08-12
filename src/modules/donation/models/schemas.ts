@@ -69,7 +69,8 @@ export const donationSchema = object({
   allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {
     message: "Incorrect allocation strategy.",
   }).default(DonationAllocationStrategyEnum.direct),
-
+  bypassProtocalFee: boolean().default(false),
+  bypassCheffFee: boolean().default(false),
   potDistributionStrategy: nativeEnum(DonationPotDistributionStrategy, {
     message: "Incorrect donation distribution strategy.",
   }).default(DonationPotDistributionStrategy.evenly),
