@@ -126,3 +126,5 @@ export const ListDetails = () => {
     </>
   );
 };
+
+export default ListDetails;
