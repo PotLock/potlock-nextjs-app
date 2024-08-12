@@ -1,5 +1,13 @@
 import { createModel } from "@rematch/core";
-import { evolve, pipe } from "rambda";
+import {
+  conditional,
+  evolve,
+  identity,
+  isNonNullish,
+  isNullish,
+  pipe,
+  piped,
+} from "remeda";
 
 import { walletApi } from "@/common/contracts";
 import {
@@ -72,6 +80,16 @@ export const potModel = createModel<RootModel>()({
       const args: PotDeploymentArgs = {
         pot_args: evolve(
           {
+            ...params,
+
+            source_metadata: {
+              version: "1.0.0",
+              commit_hash: "0x0000000000000000000000000000000000000000",
+              link: "0x0000000000000000000000000000000000000000",
+            },
+          },
+
+          {
             application_start_ms: timestamp.parse,
             application_end_ms: timestamp.parse,
             public_round_start_ms: timestamp.parse,
@@ -83,20 +101,10 @@ export const potModel = createModel<RootModel>()({
             referral_fee_public_round_basis_points:
               donationFeeBasicPoints.parse,
 
-            min_matching_pool_donation_amount: pipe(
-              donationAmount.parse,
-              floatToYoctoNear,
-            ),
-          },
-
-          {
-            ...params,
-
-            source_metadata: {
-              version: "1.0.0",
-              commit_hash: "0x0000000000000000000000000000000000000000",
-              link: "0x0000000000000000000000000000000000000000",
-            },
+            min_matching_pool_donation_amount: conditional([
+              isNonNullish,
+              piped(donationAmount.parse, floatToYoctoNear),
+            ]),
           },
         ),
 
