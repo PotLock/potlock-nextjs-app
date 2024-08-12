@@ -1,13 +1,5 @@
 import { createModel } from "@rematch/core";
-import {
-  conditional,
-  evolve,
-  identity,
-  isNonNullish,
-  isNullish,
-  pipe,
-  piped,
-} from "remeda";
+import { conditional, evolve, isNonNullish, piped } from "remeda";
 
 import { walletApi } from "@/common/contracts";
 import {
