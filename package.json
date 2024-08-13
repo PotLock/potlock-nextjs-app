@@ -42,6 +42,7 @@
     "@near-wallet-selector/sender": "^8.9.5",
     "@near-wallet-selector/welldone-wallet": "^8.9.5",
     "@near-wallet-selector/xdefi": "^8.9.5",
+    "@octokit/graphql": "^8.1.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",

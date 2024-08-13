@@ -41,6 +41,9 @@ export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK?.toLowerCase() ||
 
 export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "rpc.testnet.near.org"}`;
 
+export const POTLOCK_CONTRACT_VERSION = "0.1.0";
+export const POTLOCK_CONTRACT_REPO_URL = "https://github.com/PotLock/core";
+
 /**
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/
  */

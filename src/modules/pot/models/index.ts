@@ -1,6 +1,10 @@
 import { createModel } from "@rematch/core";
 import { conditional, evolve, isNonNullish, piped } from "remeda";
 
+import {
+  POTLOCK_CONTRACT_REPO_URL,
+  POTLOCK_CONTRACT_VERSION,
+} from "@/common/constants";
 import { walletApi } from "@/common/contracts";
 import {
   Pot,
@@ -75,9 +79,9 @@ export const potModel = createModel<RootModel>()({
             ...params,
 
             source_metadata: {
-              version: "1.0.0",
+              version: POTLOCK_CONTRACT_VERSION,
               commit_hash: "0x0000000000000000000000000000000000000000",
-              link: "0x0000000000000000000000000000000000000000",
+              link: POTLOCK_CONTRACT_REPO_URL,
             },
           },
 

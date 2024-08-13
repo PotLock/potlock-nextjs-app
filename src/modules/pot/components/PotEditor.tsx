@@ -41,7 +41,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   return (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
-        <div className="flex flex-col gap-14 pt-14">
+        <div className="lg:min-w-4xl flex flex-col gap-14 pt-14">
           <PotEditorSection heading="Admins">
             <AccessControlAdmins
               admins={adminAccountIds ?? []}
