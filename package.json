@@ -18,8 +18,7 @@
     "build": "yarn generate:css && next build",
     "start": "next start",
     "test:unit": "vitest run",
-    "precommit": "yarn format && yarn typecheck",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
