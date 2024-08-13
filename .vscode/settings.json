@@ -26,6 +26,7 @@
     "openapi",
     "potfactory",
     "POTLOCK",
+    "precommit",
     "ramper",
     "sessionid",
     "shadcn",
