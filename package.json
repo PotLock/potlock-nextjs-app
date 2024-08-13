@@ -17,7 +17,9 @@
     "next:dev": "yarn && next dev",
     "build": "yarn generate:css && next build",
     "start": "next start",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "precommit": "yarn format && yarn typecheck",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
@@ -108,6 +110,7 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-testing-library": "^6.2.2",
+    "husky": "^9.1.4",
     "jsdom": "^24.1.0",
     "next-router-mock": "^0.9.13",
     "orval": "^6.30.2",
