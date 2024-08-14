@@ -63,7 +63,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
         </Select>
 
         {description && <FormDescription>{description}</FormDescription>}
-        <FormMessage />
+        {!embedded && <FormMessage />}
       </>
     ),
 

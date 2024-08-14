@@ -65,6 +65,8 @@ export const potModel = createModel<RootModel>()({
     async deploy({
       pot_handle,
       source_metadata: { commit_hash, ...sourceMetadata },
+      isNadabotVerificationRequired,
+      isPgRegistrationRequired,
       ...potInputs
     }: PotDeploymentInputs): Promise<void> {
       if (commit_hash === null) {

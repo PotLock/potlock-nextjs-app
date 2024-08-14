@@ -1,13 +1,7 @@
 import { infer as FromSchema, array, boolean, object, string } from "zod";
 
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
-import {
-  DONATION_MIN_NEAR_AMOUNT,
-  donationAmount,
-  donationFeeBasicPoints,
-  isDonationAmountSufficient,
-} from "@/modules/donation";
+import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
 
 import {
   isPotApplicationStartBeforeEnd,
@@ -97,23 +91,6 @@ export const potDeploymentSchema = object({
   })
   .refine(isPotPublicRoundStartBeforeEnd, {
     message: "Public round cannot end before it starts.",
-  })
-  .refine(
-    ({ min_matching_pool_donation_amount }) =>
-      min_matching_pool_donation_amount === undefined
-        ? true
-        : isDonationAmountSufficient({
-            tokenId: NEAR_TOKEN_DENOM,
-            amount: min_matching_pool_donation_amount,
-          }),
-    {
-      /**
-       *? NOTE: Due to an unknown issue,
-       *?  this message doesn't end up in react-hook-form's `formState.errors`.
-       *?  Please make sure it's always manually provided to the corresponding input field.
-       */
-      message: `Minimum donation amount cannot be less than ${DONATION_MIN_NEAR_AMOUNT} ${NEAR_TOKEN_DENOM.toUpperCase()}.`,
-    },
-  );
+  });
 
 export type PotDeploymentInputs = FromSchema<typeof potDeploymentSchema>;

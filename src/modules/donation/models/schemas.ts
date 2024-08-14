@@ -35,7 +35,7 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
 
 export const donationAmount = safePositiveNumber;
 
-// TODO: Add percents to basic points conversion!
+// TODO: Convert percents to basic points!
 export const donationFeeBasicPoints = safePositiveNumber;
 
 export const donationSchema = object({

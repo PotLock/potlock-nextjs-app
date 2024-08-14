@@ -11,6 +11,7 @@ import {
 import { walletApi } from "@/common/contracts";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
+import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 import { dispatch } from "@/store";
 
 import { PotDeploymentInputs, potDeploymentSchema } from "../models";
@@ -31,6 +32,8 @@ export const usePotDeploymentForm = () => {
       },
 
       owner: walletApi.accountId,
+      min_matching_pool_donation_amount: DONATION_MIN_NEAR_AMOUNT,
+      max_projects: 25,
     }),
 
     [latestSourceCodeCommitHash],

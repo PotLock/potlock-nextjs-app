@@ -48,7 +48,7 @@ export const AccessControlAdminsModal = create(
             .refine(
               async (accountId) =>
                 accountId.length > 5
-                  ? await getAccount({ accountId })
+                  ? await getAccount({ accountId }) // TODO: Use naxiosInstance.rpcApi() to get account info!
                       .then((accountInfo) => accountInfo !== null)
                       .catch(() => false)
                   : true,

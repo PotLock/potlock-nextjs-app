@@ -36,7 +36,14 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
 
   const { admins: adminAccountIds } = form.watch();
 
-  console.log("form", form.getValues());
+  console.log("values", form.getValues());
+
+  console.table({
+    isValid: form.formState.isValid,
+    isDirty: form.formState.isDirty,
+  });
+
+  console.log("errors", form.formState.errors);
 
   return (
     <Form {...form}>
