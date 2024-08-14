@@ -8,6 +8,7 @@ import { walletApi } from "@/common/contracts";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import { getIsHuman } from "@/common/contracts/sybil.nadabot";
 import { truncate } from "@/common/lib";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
 import {
   Button,
   DropdownMenu,
@@ -21,7 +22,6 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import { statusesIcons } from "@/modules/core/constants";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 import routesPath from "@/modules/core/routes";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
 import {
   updateAccountId,
