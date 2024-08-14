@@ -41,6 +41,11 @@ export const calculate_min_deployment_deposit = (
 export const deploy_pot = async (args: PotDeploymentArgs): Promise<Pot> => {
   console.log("potFactory.deploy_pot", args);
 
+  console.log(
+    "potFactory.deploy_pot.deposit",
+    await calculate_min_deployment_deposit(args),
+  );
+
   return contractApi.call<typeof args, Pot>("deploy_pot", {
     args,
     deposit: await calculate_min_deployment_deposit(args),

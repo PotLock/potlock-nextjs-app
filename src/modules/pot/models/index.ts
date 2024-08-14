@@ -87,6 +87,11 @@ export const potModel = createModel<RootModel>()({
               {
                 ...potInputs,
                 source_metadata: { commit_hash, ...sourceMetadata },
+                registry_provider: isPgRegistrationRequired ? null : undefined, // TODO set the actual value
+
+                sybil_wrapper_provider: isNadabotVerificationRequired
+                  ? null
+                  : undefined, // TODO set the actual value
               },
 
               {
