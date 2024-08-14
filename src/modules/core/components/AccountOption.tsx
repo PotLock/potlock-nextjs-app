@@ -9,7 +9,7 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 
-import { fetchSocialImages } from "../services/socialImages";
+import { fetchSocialImages } from "../../../common/services/near-socialdb";
 
 export type AccountOptionProps = ByAccountId &
   Pick<React.HTMLAttributes<HTMLDivElement>, "title"> & {

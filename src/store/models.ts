@@ -1,10 +1,10 @@
 import { Models } from "@rematch/core";
 
 import { auth } from "@/modules/auth/state";
-import { core } from "@/modules/core/state";
+import { core } from "@/modules/core/model";
 import { donationModel } from "@/modules/donation";
 import { potModel } from "@/modules/pot";
-import { navModel, profilesModel } from "@/modules/profile/models";
+import { navModel, profilesModel } from "@/modules/profile";
 import { createProject } from "@/modules/project-editor/state";
 
 export interface RootModel extends Models<RootModel> {

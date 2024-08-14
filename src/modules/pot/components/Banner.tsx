@@ -3,24 +3,25 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import HomeBannerStyle from "@/common/assets/svgs/HomeBannerBackground";
-import * as pots from "@/common/contracts/potlock/pots";
+import { potFactory } from "@/common/contracts/potlock";
 import { Button } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";
 
 const Banner = () => {
-  const [canDeploy, setCanDeploy] = useState(false);
   const { wallet } = useWallet();
 
+  const [isPotDeploymentAvailable, updatePotDeploymentAvailability] =
+    useState(false);
+
   useEffect(() => {
-    (async () => {
-      if (wallet?.accountId) {
-        const _canDeploy = await pots.canUserDeployPot({
+    if (wallet?.accountId) {
+      potFactory
+        .isDeploymentAvailable({
           accountId: wallet.accountId,
-        });
-        setCanDeploy(_canDeploy);
-      }
-    })();
+        })
+        .then(updatePotDeploymentAvailability);
+    }
   }, [wallet?.accountId]);
 
   return (
@@ -39,13 +40,17 @@ const Banner = () => {
           Contributions Amplified.
         </h1>
         <div className="max-md:flex-col max-md:gap-4 mt-6 mt-[40px] flex items-center gap-8 max-xs:w-full max-xs:p-[12px_0px]">
-          {canDeploy && (
+          {isPotDeploymentAvailable && (
             <Button asChild>
               <Link href={routesPath.DEPLOY_POT}>Deploy Pot</Link>
             </Button>
           )}
           <Link href="https://wtfisqf.com" target="_blank">
-            <Button variant={canDeploy ? "brand-tonal" : "brand-filled"}>
+            <Button
+              variant={
+                isPotDeploymentAvailable ? "brand-tonal" : "brand-filled"
+              }
+            >
               Learn More
             </Button>
           </Link>

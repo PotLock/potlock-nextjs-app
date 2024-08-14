@@ -1,13 +1,13 @@
 import { createModel } from "@rematch/core";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import uploadFileToIPFS from "@/common/services/ipfs";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
+import routesPath from "@/modules/core/routes";
+import { updateState } from "@/modules/core/utils/updateState";
 import { RootModel } from "@/store/models";
 
 import { AddFundingSourceInputs, CreateProjectInputs } from "./models/types";
-import routesPath from "../core/routes";
-import { fetchSocialImages } from "../core/services/socialImages";
-import uploadFileToIPFS from "../core/services/uploadFileToIPFS";
-import { updateState } from "../core/utils/updateState";
 
 type CheckStatus = "pending" | "done" | "sending";
 type FetchStatus = "pending" | "fetching" | "ready";

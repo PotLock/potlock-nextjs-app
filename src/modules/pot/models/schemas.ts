@@ -15,6 +15,12 @@ import {
 } from "../utils/validation";
 
 export const potDeploymentSchema = object({
+  source_metadata: object({
+    commit_hash: string().nullable(),
+    link: string(),
+    version: string(),
+  }),
+
   owner: string().describe("Owner's account id."),
 
   admins: array(string())

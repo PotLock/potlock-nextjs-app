@@ -11,7 +11,7 @@ import {
 } from "@/common/ui/components";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 import useRegistration from "@/modules/core/hooks/useRegistration";
-import { fetchSocialImages } from "@/modules/core/services/socialImages";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIcons";
 
 import { FollowStats } from "./FollowStats";

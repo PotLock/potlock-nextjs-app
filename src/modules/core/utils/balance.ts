@@ -8,13 +8,13 @@ export const balanceToString = ({
 }: NearBalanceResponse["balance"]) =>
   `${bigStringToFloat(amount, metadata.decimals)} ${metadata.symbol}`;
 
-export const nearToUsd = () => store.getState().core.nearToUsd;
+export const oneNearUsdPrice = () => store.getState().core.oneNearUsdPrice;
 
 export const nearToUsdWithFallback = (
   amountNear: number,
   abbreviate?: boolean,
 ) => {
-  const nearToUsdInfo = nearToUsd();
+  const nearToUsdInfo = oneNearUsdPrice();
 
   return nearToUsdInfo
     ? "~$" + formatWithCommas((amountNear * nearToUsdInfo).toFixed(2))

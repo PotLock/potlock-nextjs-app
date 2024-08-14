@@ -41,9 +41,7 @@ export default function RootLayout({
   Component,
   pageProps,
 }: AppPropsWithLayout) {
-  useEffect(() => {
-    dispatch.core.fetchNearToUsd();
-  }, []);
+  useEffect(() => void dispatch.core.init(), []);
 
   const getLayout = Component.getLayout ?? ((page) => page);
 

@@ -1,15 +1,9 @@
 import { createModel } from "@rematch/core";
 import { conditional, evolve, isNonNullish, piped } from "remeda";
 
-import {
-  POTLOCK_CONTRACT_REPO_URL,
-  POTLOCK_CONTRACT_VERSION,
-} from "@/common/constants";
 import { walletApi } from "@/common/contracts";
-import {
-  Pot,
-  PotDeploymentArgs,
-} from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
+import { potFactory } from "@/common/contracts/potlock";
+import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
 import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
@@ -70,48 +64,49 @@ export const potModel = createModel<RootModel>()({
   effects: (dispatch) => ({
     async deploy({
       pot_handle,
-
-      ...params
+      source_metadata: { commit_hash, ...sourceMetadata },
+      ...potInputs
     }: PotDeploymentInputs): Promise<void> {
-      const args: PotDeploymentArgs = {
-        pot_args: evolve(
-          {
-            ...params,
+      if (commit_hash === null) {
+        return void dispatch.pot.deploymentFailure(
+          new Error(
+            "Unable to retrieve pot contract source code commit hash. " +
+              "Please check your internet connection and reload the page.",
+          ),
+        );
+      } else {
+        return void potFactory
+          .deploy_pot({
+            pot_args: evolve(
+              {
+                source_metadata: { commit_hash, ...sourceMetadata },
+                ...potInputs,
+              },
 
-            source_metadata: {
-              version: POTLOCK_CONTRACT_VERSION,
-              commit_hash: "0x0000000000000000000000000000000000000000",
-              link: POTLOCK_CONTRACT_REPO_URL,
-            },
-          },
+              {
+                application_start_ms: timestamp.parse,
+                application_end_ms: timestamp.parse,
+                public_round_start_ms: timestamp.parse,
+                public_round_end_ms: timestamp.parse,
 
-          {
-            application_start_ms: timestamp.parse,
-            application_end_ms: timestamp.parse,
-            public_round_start_ms: timestamp.parse,
-            public_round_end_ms: timestamp.parse,
+                referral_fee_matching_pool_basis_points:
+                  donationFeeBasicPoints.parse,
 
-            referral_fee_matching_pool_basis_points:
-              donationFeeBasicPoints.parse,
+                referral_fee_public_round_basis_points:
+                  donationFeeBasicPoints.parse,
 
-            referral_fee_public_round_basis_points:
-              donationFeeBasicPoints.parse,
+                min_matching_pool_donation_amount: conditional([
+                  isNonNullish,
+                  piped(donationAmount.parse, floatToYoctoNear),
+                ]),
+              },
+            ),
 
-            min_matching_pool_donation_amount: conditional([
-              isNonNullish,
-              piped(donationAmount.parse, floatToYoctoNear),
-            ]),
-          },
-        ),
-
-        pot_handle,
-      };
-
-      console.log("args", args);
-
-      // return void deploy(args)
-      //   .then((result) => dispatch.pot.deploymentSuccess(result))
-      //   .catch((error) => dispatch.pot.deploymentFailure(error));
+            pot_handle,
+          })
+          .then(dispatch.pot.deploymentSuccess)
+          .catch(dispatch.pot.deploymentFailure);
+      }
     },
 
     async handleSuccessByTxHash(transactionHash: string) {
@@ -131,7 +126,7 @@ export const potModel = createModel<RootModel>()({
       } else {
         return void dispatch.pot.deploymentFailure(
           new Error(
-            "Unable to get pot deployment status without user authentication." +
+            "Unable to get pot deployment status without user authentication. " +
               "Please login and try again.",
           ),
         );

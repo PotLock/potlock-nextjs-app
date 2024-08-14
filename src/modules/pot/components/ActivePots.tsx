@@ -5,9 +5,9 @@ import Big from "big.js";
 import { Pot } from "@/common/api/potlock";
 import { Filter, Group, SortSelect } from "@/common/ui/components";
 import PotCard from "@/modules/pot/components/PotCard";
+import useFilteredPots from "@/modules/pot/hooks/useFilteredPots";
 
 import { sortOptions, statuses } from "../constants";
-import useFilteredPots from "../hooks/useFilteredPots";
 import { filters } from "../utils/filters";
 
 const ActivePots = () => {

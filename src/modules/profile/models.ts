@@ -8,7 +8,7 @@ import {
   getSocialProfile,
 } from "@/common/contracts/social";
 import { yoctosToUsdWithFallback } from "@/common/lib/yoctosToUsdWithFallback";
-import { fetchSocialImages } from "@/modules/core/services/socialImages";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
 import {
   getTagsFromSocialProfileData,
   getTeamMembersFromProfile,

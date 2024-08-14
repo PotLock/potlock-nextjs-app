@@ -21,7 +21,7 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import { statusesIcons } from "@/modules/core/constants";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 import routesPath from "@/modules/core/routes";
-import { fetchSocialImages } from "@/modules/core/services/socialImages";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
 import {
   updateAccountId,
