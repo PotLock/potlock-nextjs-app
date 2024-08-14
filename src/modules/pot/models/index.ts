@@ -85,8 +85,8 @@ export const potModel = createModel<RootModel>()({
           .deploy_pot({
             pot_args: evolve(
               {
-                source_metadata: { commit_hash, ...sourceMetadata },
                 ...potInputs,
+                source_metadata: { commit_hash, ...sourceMetadata },
               },
 
               {

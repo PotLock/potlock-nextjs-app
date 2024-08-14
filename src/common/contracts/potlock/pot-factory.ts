@@ -1,4 +1,5 @@
 import { MemoryCache } from "@wpdas/naxios";
+import Big from "big.js";
 
 import { naxiosInstance } from "@/common/api/near";
 import { POTLOCK_POT_FACTORY_CONTRACT_ID } from "@/common/constants";
@@ -23,12 +24,26 @@ type Config = {
 
 export const get_config = () => contractApi.view<{}, Config>("get_config");
 
-export const deploy_pot = (args: PotDeploymentArgs) => {
+export const calculate_min_deployment_deposit = (
+  args: PotDeploymentArgs,
+): Promise<string> =>
+  contractApi
+    .call<typeof args, string>("calculate_min_deployment_deposit", { args })
+    .then((amount) =>
+      Big(amount)
+        .plus(
+          // add extra 0.02 NEAR as buffer
+          Big("20000000000000000000000"),
+        )
+        .toString(),
+    );
+
+export const deploy_pot = async (args: PotDeploymentArgs): Promise<Pot> => {
   console.log("potFactory.deploy_pot", args);
 
   return contractApi.call<typeof args, Pot>("deploy_pot", {
     args,
-    // deposit: depositAmountYocto, // TODO: calculate deposit!
+    deposit: await calculate_min_deployment_deposit(args),
     callbackUrl: window.location.href,
   });
 };
