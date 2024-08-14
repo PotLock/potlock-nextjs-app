@@ -2,11 +2,12 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AccountView } from "near-api-js/lib/providers/provider";
 import { useForm } from "react-hook-form";
 import { object, string } from "zod";
 
+import { nearRpc } from "@/common/api/near";
 import DeleteIcon from "@/common/assets/svgs/DeleteIcon";
-import { getAccount } from "@/common/contracts/social";
 import { AccountId, ByAccountId } from "@/common/types";
 import {
   Button,
@@ -46,10 +47,15 @@ export const AccessControlAdminsModal = create(
               "Account with this ID is already listed",
             )
             .refine(
-              async (accountId) =>
-                accountId.length > 5
-                  ? await getAccount({ accountId }) // TODO: Use naxiosInstance.rpcApi() to get account info!
-                      .then((accountInfo) => accountInfo !== null)
+              async (account_id) =>
+                account_id.length > 4
+                  ? await nearRpc
+                      .query<AccountView>({
+                        request_type: "view_account",
+                        finality: "final",
+                        account_id,
+                      })
+                      .then((accountInfo) => accountInfo)
                       .catch(() => false)
                   : true,
 

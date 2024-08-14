@@ -1,6 +1,6 @@
 import { createModel } from "@rematch/core";
 
-import { walletApi } from "@/common/contracts";
+import { walletApi } from "@/common/api/near";
 import { donateNearDirectly } from "@/common/contracts/potlock/donate";
 import {
   DirectDonation,

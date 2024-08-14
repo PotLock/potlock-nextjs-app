@@ -1,7 +1,11 @@
 import { createModel } from "@rematch/core";
+import {
+  ExecutionStatusBasic,
+  FinalExecutionStatusBasic,
+} from "near-api-js/lib/providers/provider";
 import { conditional, evolve, isNonNullish, piped } from "remeda";
 
-import { walletApi } from "@/common/contracts";
+import { nearRpc, walletApi } from "@/common/api/near";
 import { potFactory } from "@/common/contracts/potlock";
 import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
@@ -111,20 +115,32 @@ export const potModel = createModel<RootModel>()({
       }
     },
 
-    async handleSuccessByTxHash(transactionHash: string) {
+    async handleDeploymentOutcomeByTxHash(transactionHash: string) {
       const { accountId: sender_account_id } = walletApi;
 
       if (sender_account_id) {
-        const { data } = await getTransactionStatus({
-          tx_hash: transactionHash,
+        const { receipts_outcome } = await nearRpc.txStatus(
+          transactionHash,
           sender_account_id,
-        });
+        );
 
-        const potDeploymentResult = JSON.parse(
-          atob(data.result.receipts_outcome[3].outcome.status.SuccessValue),
-        ) as Pot;
+        const { status: txStatus } = receipts_outcome.at(3)?.outcome ?? {};
 
-        return void dispatch.pot.deploymentSuccess(potDeploymentResult);
+        if (typeof txStatus === "string") {
+          switch (txStatus) {
+            case ExecutionStatusBasic.Failure: {
+              return void dispatch.pot.deploymentFailure(
+                new Error("Unable to get pot deployment status."),
+              );
+            }
+          }
+        } else if (typeof txStatus?.SuccessValue === "string") {
+          const potDeploymentResult = JSON.parse(
+            atob(txStatus.SuccessValue),
+          ) as Pot;
+
+          return void dispatch.pot.deploymentSuccess(potDeploymentResult);
+        }
       } else {
         return void dispatch.pot.deploymentFailure(
           new Error(

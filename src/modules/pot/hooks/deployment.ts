@@ -4,11 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
+import { walletApi } from "@/common/api/near";
 import {
   POTLOCK_CONTRACT_REPO_URL,
   POTLOCK_CONTRACT_VERSION,
 } from "@/common/constants";
-import { walletApi } from "@/common/contracts";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";

@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { walletApi } from "@/common/contracts";
+import { walletApi } from "@/common/api/near";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import { getIsHuman } from "@/common/contracts/sybil.nadabot";
 import { truncate } from "@/common/lib";

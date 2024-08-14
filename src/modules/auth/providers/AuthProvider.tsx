@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { walletApi } from "@/common/contracts";
+import { walletApi } from "@/common/api/near";
 import useIsClient from "@/common/lib/useIsClient";
 import SuspenseLoading from "@/modules/auth/components/SuspenseLoading";
 import { dispatch, resetStore } from "@/store";

@@ -1,10 +1,10 @@
 import { MemoryCache } from "@wpdas/naxios";
 
+import { naxiosInstance } from "@/common/api/near";
 import { POTLOCK_POT_FACTORY_CONTRACT_ID } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 
 import { Pot, PotDeploymentArgs } from "./interfaces/pot-factory.interfaces";
-import { naxiosInstance } from "..";
 
 /**
  * Contract API

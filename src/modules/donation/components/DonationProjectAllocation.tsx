@@ -1,7 +1,7 @@
+import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
 import { Pot, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { walletApi } from "@/common/contracts";
 import { ByAccountId } from "@/common/types";
 import {
   DialogDescription,

@@ -60,3 +60,5 @@ export const naxiosInstance = new naxios({
  * NEAR Wallet API
  */
 export const walletApi = naxiosInstance.walletApi();
+
+export const nearRpc = naxiosInstance.rpcApi();

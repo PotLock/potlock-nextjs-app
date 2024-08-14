@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
+import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { walletApi } from "@/common/contracts";
 import { bigStringToFloat } from "@/common/lib";
 import { ByTokenId } from "@/common/types";
 
