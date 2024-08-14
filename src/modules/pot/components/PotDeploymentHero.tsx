@@ -19,11 +19,7 @@ export const PotDeploymentHero: React.FC<PotDeploymentHeroProps> = () => (
     <span un-flex="~" un-gap="2" un-items="center">
       <InfoIcon />
 
-      <a
-        href="https://docs.potlock.io/user-guides/matched-donations-or-donate-through-a-pot"
-        target="_blank"
-        un-decoration="underline"
-      >
+      <a href="https://wtfisqf.com" target="_blank" un-decoration="underline">
         Learn more about quadratic funding
       </a>
     </span>

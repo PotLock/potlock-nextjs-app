@@ -45,7 +45,10 @@ const Banner = () => {
               <Link href={routesPath.DEPLOY_POT}>Deploy Pot</Link>
             </Button>
           )}
-          <Link href="https://wtfisqf.com" target="_blank">
+          <Link
+            href="https://docs.potlock.io/user-guides/matched-donations-or-donate-through-a-pot"
+            target="_blank"
+          >
             <Button
               variant={
                 isPotDeploymentAvailable ? "brand-tonal" : "brand-filled"
