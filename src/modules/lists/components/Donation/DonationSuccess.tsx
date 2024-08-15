@@ -100,7 +100,7 @@ const DonationSuccess = ({ totalAmount, breakdown, txnHash, onClose }: any) => (
       <h3 className="text-sm font-medium text-gray-700">Breakdown</h3>
       <div className="mt-2 rounded-lg border border-gray-200 p-4">
         <ul>
-          {breakdown.map((item, index) => (
+          {breakdown.map((item: any, index: number) => (
             <li
               key={index}
               className="mb-2 flex justify-between text-sm text-gray-700 last:mb-0"
