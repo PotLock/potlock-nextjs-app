@@ -32,6 +32,8 @@ export const usePotDeploymentForm = () => {
 
       owner: walletApi.accountId,
       max_projects: 25,
+      isPgRegistrationRequired: false,
+      isNadabotVerificationRequired: true,
     }),
 
     [latestSourceCodeCommitHash],

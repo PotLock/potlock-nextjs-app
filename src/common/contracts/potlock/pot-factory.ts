@@ -24,11 +24,14 @@ type Config = {
 
 export const get_config = () => contractApi.view<{}, Config>("get_config");
 
-export const calculate_min_deployment_deposit = (
-  args: PotDeploymentArgs,
-): Promise<string> =>
+export const calculate_min_deployment_deposit = ({
+  pot_args,
+}: PotDeploymentArgs): Promise<string> =>
   contractApi
-    .call<typeof args, string>("calculate_min_deployment_deposit", { args })
+    .view<
+      { args: typeof pot_args },
+      string
+    >("calculate_min_deployment_deposit", { args: { args: pot_args } })
     .then((amount) =>
       Big(amount)
         .plus(
@@ -39,13 +42,6 @@ export const calculate_min_deployment_deposit = (
     );
 
 export const deploy_pot = async (args: PotDeploymentArgs): Promise<Pot> => {
-  console.log("potFactory.deploy_pot", args);
-
-  console.log(
-    "potFactory.deploy_pot.deposit",
-    await calculate_min_deployment_deposit(args),
-  );
-
   return contractApi.call<typeof args, Pot>("deploy_pot", {
     args,
     deposit: await calculate_min_deployment_deposit(args),

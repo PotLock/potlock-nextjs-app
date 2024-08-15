@@ -3,7 +3,7 @@ import {
   ExecutionStatusBasic,
   FinalExecutionStatusBasic,
 } from "near-api-js/lib/providers/provider";
-import { conditional, evolve, isNonNullish, piped } from "remeda";
+import { conditional, evolve, identity, isNonNullish, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import {
@@ -114,10 +114,10 @@ export const potModel = createModel<RootModel>()({
                 referral_fee_public_round_basis_points:
                   donationFeeBasicPoints.parse,
 
-                min_matching_pool_donation_amount: conditional([
-                  isNonNullish,
-                  piped(donationAmount.parse, floatToYoctoNear),
-                ]),
+                min_matching_pool_donation_amount: conditional(
+                  [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
+                  conditional.defaultCase(() => undefined),
+                ),
 
                 chef_fee_basis_points: donationFeeBasicPoints.parse,
               },
