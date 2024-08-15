@@ -28,7 +28,7 @@ export const SortSelect = ({
             width={18}
             height={18}
           />
-          Sort
+          <p className="md:block hidden">Sort</p>
         </Button>
       </Trigger>
       <SelectContent>

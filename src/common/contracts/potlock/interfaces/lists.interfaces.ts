@@ -37,3 +37,15 @@ export interface Registration {
 export interface GetListInput {
   list_id: string;
 }
+
+export interface ApplyToList {
+  list_id: string;
+  notes?: string;
+  registrations: Array<{
+    registrant_id: string;
+    status: string;
+    submitted_ms: number;
+    updated_ms: number;
+    notes: string;
+  }>;
+}

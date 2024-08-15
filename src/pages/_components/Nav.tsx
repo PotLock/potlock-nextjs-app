@@ -15,6 +15,7 @@ const tabOptions = [
   { text: "Projects", link: routesPath.PROJECTS_LIST, disabled: false },
   // { text: "Feed", link: "feed", disabled: false },
   { text: "Pots", link: routesPath.POTS, disabled: false },
+  { text: "List", link: routesPath.LIST, disabled: false },
   // { text: "Donors", link: routesPath.DONORS, disabled: false },
 ];
 

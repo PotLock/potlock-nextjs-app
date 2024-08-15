@@ -329,7 +329,7 @@ export default function Page() {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(true)}
-                    className="rounded-md bg-gray-100 px-4 py-2 text-red-500 transition hover:bg-gray-200"
+                    className="rounded-md px-4 py-2 text-red-500 transition hover:bg-gray-200"
                   >
                     Add Admin
                   </button>

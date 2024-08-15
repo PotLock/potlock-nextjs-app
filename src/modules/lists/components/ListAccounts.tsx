@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  getLists,
-  get_list_for_owner,
-  get_upvoted_lists_for_account,
-} from "@/common/contracts/potlock/lists";
+import { useRouter } from "next/router";
+
+import { potlock } from "@/common/api/potlock";
 import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { ListCard } from "@/modules/lists/components/ListCard";
@@ -12,13 +10,20 @@ import { Profile } from "@/modules/profile/models";
 import { categories, statuses } from "@/modules/project/constants";
 import { useTypedSelector } from "@/store";
 
-const AllLists = () => {
+import { AccountCard } from "./AccountCard";
+
+export const ListAccounts = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
-  const [currentListType, setCurrentListType] = useState("All Lists");
+  const [currentListType, setCurrentListType] = useState(
+    "Accounts in the list",
+  );
   const { wallet } = useWallet();
 
   const SORT_LIST_PROJEECTS = [
@@ -75,7 +80,7 @@ const AllLists = () => {
   // handle search & filter
   useEffect(() => {
     const handleSearch = (registration: any) => {
-      return registration.name.toLowerCase().includes(search);
+      return registration?.name?.toLowerCase?.().includes(search);
     };
 
     const handleStatus = (registration: any) => {
@@ -97,36 +102,32 @@ const AllLists = () => {
     setFilteredRegistrations(filtered);
   }, [search, categoryFilter, statusFilter, registrations]);
 
-  const fetchAllLists = async () => {
-    const allLists: any = await getLists();
-    setRegistrations(allLists);
-    setFilteredRegistrations(allLists);
-    setCurrentListType("All Lists");
-  };
+  const { data, isLoading } = potlock.useListRegistrations({
+    listId: parseInt(id as string),
+  });
+  console.log({ fetch });
 
-  const fetchMyLists = async () => {
-    const myLists: any = await get_list_for_owner({
-      owner_id: wallet?.accountId ?? "",
-    });
-    setRegistrations(myLists);
-    setFilteredRegistrations(myLists);
-    setCurrentListType("My Lists");
-  };
-
-  const fetchFavourites = async () => {
-    const upvotedLists: any = await get_upvoted_lists_for_account({
-      account_id: wallet?.accountId ?? "",
-    });
-    setRegistrations(upvotedLists);
-    setFilteredRegistrations(upvotedLists);
-    setCurrentListType("My Favourites");
-  };
+  //   const fetchAllLists = async () => {
+  //     const allLists: any = await potlock.
+  //     setRegistrations(allLists);
+  //     setFilteredRegistrations(allLists);
+  //     setCurrentListType("Accounts in the list");
+  //   };
 
   useEffect(() => {
-    fetchAllLists();
-  }, []);
+    setRegistrations((data?.results as any) ?? []);
+    setFilteredRegistrations((data?.results as any) ?? []);
+  }, [data]);
 
   console.log({ filteredRegistrations });
+
+  if (isLoading) {
+    return (
+      <div className="p-10">
+        <span className="loader"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="md:px-10 md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
@@ -137,34 +138,8 @@ const AllLists = () => {
             <span
               style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
             >
-              {filteredRegistrations.length}
+              {filteredRegistrations?.length}
             </span>
-          </div>
-          <div className="md:flex hidden items-center gap-4">
-            <button
-              className={`${
-                currentListType === "All Lists" ? "text-red-500" : ""
-              }`}
-              onClick={fetchAllLists}
-            >
-              All List
-            </button>
-            <button
-              className={`${
-                currentListType === "My Lists" ? "text-red-500" : ""
-              }`}
-              onClick={fetchMyLists}
-            >
-              My Lists
-            </button>
-            <button
-              className={`${
-                currentListType === "My Favourites" ? "text-red-500" : ""
-              }`}
-              onClick={fetchFavourites}
-            >
-              My Favourites
-            </button>
           </div>
         </div>
         <div className="flex w-full items-center gap-4">
@@ -185,12 +160,13 @@ const AllLists = () => {
         </div>
       </div>
       <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
-        {filteredRegistrations.map((item, index) => (
-          <ListCard dataForList={item} key={index} />
+        {(filteredRegistrations ?? [])?.map((item, index) => (
+          <AccountCard dataForList={item} key={index} />
         ))}
+        {filteredRegistrations?.length === 0 && <p>No Registrations present</p>}
       </div>
     </div>
   );
 };
 
-export default AllLists;
+export default ListAccounts;

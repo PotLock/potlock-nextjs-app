@@ -1,12 +1,16 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import nearAPI from "near-api-js";
+import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { create_list } from "@/common/contracts/potlock/lists";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import uploadFileToIPFS from "@/modules/core/services/uploadFileToIPFS";
+import { createListSchema } from "@/modules/lists/models/schema";
 import SuccessModalCreateList from "@/pages/_components/SuccessCreateList";
 
 import CreateListHero from "../../_components/CreateListHero";
@@ -127,8 +131,11 @@ export default function Page() {
     formState: { errors },
     watch,
     setValue,
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    resolver: zodResolver(createListSchema),
+  });
   const descriptionLength = watch("description")?.length || 0;
+  const { query } = useRouter();
 
   const [admins, setAdmins] = useState<string[]>([]);
   const [checkedState, setCheckedState] = useState<boolean[]>([]);
@@ -136,6 +143,45 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const wallet = useWallet();
   const [listCreateSuccess, setListCreateSuccess] = useState<boolean>(false);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     async function getTransactionDetails(
+  //       transactionHash: string,
+  //       accountId: string,
+  //     ) {
+  //       // Initialize connection to the NEAR mainnet (or testnet)
+  //       const config = {
+  //         networkId: "mainnet", // or 'testnet'
+  //         nodeUrl: "https://rpc.mainnet.near.org", // or 'https://rpc.testnet.near.org'
+  //         walletUrl: "https://wallet.mainnet.near.org",
+  //         helperUrl: "https://helper.mainnet.near.org",
+  //         explorerUrl: "https://explorer.mainnet.near.org",
+  //       };
+
+  //       const near = await nearAPI?.connect(config);
+
+  //       // Use the NEAR RPC method to get the transaction status
+  //       try {
+  //         const transactionDetails =
+  //           await near.connection.provider.txStatusReceipts(
+  //             transactionHash,
+  //             accountId,
+  //           );
+  //         console.log({ transactionDetails });
+  //       } catch (error) {
+  //         console.error("Error fetching transaction details:", error);
+  //       }
+  //     }
+  //     const { transactionHashes } = query ?? {};
+  //     if (transactionHashes && wallet.wallet?.accountId) {
+  //       const transactionDetails = await getTransactionDetails(
+  //         transactionHashes as string,
+  //         wallet?.wallet?.accountId,
+  //       );
+  //     }
+  //   })();
+  // }, [query, wallet]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const dataToReturn = await create_list({ ...data, admins });
@@ -264,9 +310,9 @@ export default function Page() {
                   <img
                     src="https://via.placeholder.com/40"
                     alt="Owner"
-                    className="h-10 w-10 rounded-full border-2 border-white"
+                    className="h-6 w-6 rounded-full border-2 border-white"
                   />
-                  <span className="text-gray-700">
+                  <span className="text-xs text-gray-700">
                     {wallet.wallet?.accountId}
                   </span>
                 </div>
@@ -275,26 +321,40 @@ export default function Page() {
             <div className="mb-4 translate-y-1">
               <div className="flex items-end space-x-2">
                 <div>
-                  <div className="mb-2 justify-between">
+                  <div className="translate-y-1 justify-between">
                     <p className="font-semibold text-gray-700">Admins</p>
                   </div>
                   <div className="flex h-[35px] flex-wrap">
-                    {admins.map((admin, index) => (
-                      <Chip
-                        key={index}
-                        label={admin}
-                        onRemove={() => handleRemoveAdmin(admin)}
-                      />
-                    ))}
+                    {admins.length !== 0 ? (
+                      admins.map((admin, index) => (
+                        <Chip
+                          key={index}
+                          label={admin}
+                          onRemove={() => handleRemoveAdmin(admin)}
+                        />
+                      ))
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => setIsModalOpen(true)}
+                          className="bpx-4 rounded-m py-2 text-red-500 transition"
+                        >
+                          Add Admin
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(true)}
-                  className="rounded-md bg-gray-100 px-4 py-2 text-red-500 transition hover:bg-gray-200"
-                >
-                  Add Admin
-                </button>
+                {admins.length !== 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    className="bpx-4 rounded-m py-2 text-red-500 transition"
+                  >
+                    Add Admin
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -323,7 +383,7 @@ export default function Page() {
                 onClick={() =>
                   document.getElementById("uploadCoverImage")?.click()
                 }
-                className="absolute bottom-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
+                className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span> Add cover photo
               </button>

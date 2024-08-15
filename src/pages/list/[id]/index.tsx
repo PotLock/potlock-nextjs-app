@@ -1,14 +1,15 @@
 "use client";
 import React from "react";
 
-import AllLists from "../../_components/AllLists";
-import { ListDetails } from "../../_components/ListDetails";
+import ListAccounts from "@/modules/lists/components/ListAccounts";
+
+import { ListDetails } from "../../../modules/lists/components/ListDetails";
 
 export default function Page() {
   return (
     <>
       <ListDetails />
-      <AllLists />
+      <ListAccounts />
     </>
   );
 }

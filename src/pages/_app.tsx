@@ -6,6 +6,7 @@ import "@unocss/reset/tailwind.css";
 import "@/common/ui/styles/fonts.css";
 import "@/common/ui/styles/theme.css";
 import "@/common/ui/styles/uno.generated.css";
+import "./global.css";
 
 import { ReactElement, ReactNode, useEffect } from "react";
 

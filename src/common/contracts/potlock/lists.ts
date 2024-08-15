@@ -7,6 +7,7 @@ import {
 import { floatToYoctoNear } from "@/common/lib";
 
 import {
+  ApplyToList,
   GetListInput,
   List,
   Registration,
@@ -90,6 +91,13 @@ export const update_list = ({
  */
 export const getList = (args: GetListInput) =>
   contractApi.view<typeof args, List>("get_list", {
+    args,
+  });
+
+export const registerBatch = (args: ApplyToList) =>
+  contractApi.call<typeof args, ApplyToList>("register_batch", {
+    deposit: floatToYoctoNear(0.015),
+    gas: "300000000000000",
     args,
   });
 

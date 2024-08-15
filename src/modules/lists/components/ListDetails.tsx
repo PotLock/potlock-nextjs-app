@@ -5,13 +5,19 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import { List } from "@/common/contracts/potlock/interfaces/lists.interfaces";
-import { getList } from "@/common/contracts/potlock/lists";
+import { getList, registerBatch } from "@/common/contracts/potlock/lists";
 import useWallet from "@/modules/auth/hooks/useWallet";
+
+import ApplyToListModal from "./ApplyToListModal";
+import DonationFlow from "./DonationFlow";
 
 export const ListDetails = () => {
   const { id } = useParams();
   const [listDetails, setListDetails] = useState<List | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
+  const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
+  const { wallet } = useWallet();
 
   useEffect(() => {
     const fetchListDetails = async () => {
@@ -28,7 +34,23 @@ export const ListDetails = () => {
 
     fetchListDetails();
   }, [id]);
-  const { wallet } = useWallet();
+
+  const applyToListModal = (note: string) => {
+    registerBatch({
+      list_id: parseInt(id as any) as any,
+      notes: note,
+      registrations: [
+        {
+          registrant_id: wallet?.accountId ?? "",
+          status: "Pending",
+          submitted_ms: Date.now(),
+          updated_ms: Date.now(),
+          notes: "",
+        },
+      ],
+    });
+    //
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -47,7 +69,7 @@ export const ListDetails = () => {
 
   return (
     <>
-      <div>
+      <div className="md:px-10">
         <p className="text-2xl font-semibold">{listDetails.name}</p>
         <div className="flex items-center space-x-2">
           By{" "}
@@ -113,16 +135,42 @@ export const ListDetails = () => {
               )}
             </div>
             <div className="flex space-x-4">
-              <button className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600">
+              <button
+                onClick={() => {
+                  setIsDonateModalOpen(true);
+                }}
+                className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
+              >
                 Donate to list
               </button>
-              <button className="rounded-md border bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-100">
+              <button
+                onClick={() => {
+                  setIsApplyToListModalOpen(true);
+                }}
+                className="rounded-md border bg-[#FEF6EE] px-4 py-2 text-gray-700 transition hover:bg-gray-100"
+              >
                 Apply to list
               </button>
             </div>
           </div>
         </div>
       </div>
+      <ApplyToListModal
+        isOpen={isApplyToListModalOpen}
+        onClose={() => {
+          setIsApplyToListModalOpen(false);
+        }}
+        onApply={applyToListModal}
+      />
+      {isDonateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <DonationFlow
+            onClose={() => {
+              setIsDonateModalOpen(false);
+            }}
+          />
+        </div>
+      )}
     </>
   );
 };

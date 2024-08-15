@@ -1,0 +1,11 @@
+input[type="checkbox"]:checked {
+  accent-color: red !important;
+}
+
+input[type="checkbox"]:checked::before {
+  background-color: red !important;
+}
+
+input[type="radio"]:checked {
+  accent-color: red !important;
+}
