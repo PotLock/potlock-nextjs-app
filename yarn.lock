@@ -4487,10 +4487,10 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wpdas/naxios@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@wpdas/naxios/-/naxios-2.1.1.tgz#989e3910fb78c8de54bc0344489f186cfa0ce83b"
-  integrity sha512-k/7ihC3JU2rqUXXcjSrIA/6+uSvSl4jFUayS+Pen9xy0EbNAIkT7eedSxgMIT0AhvyzdiRaDZeRRocSsmAWD3g==
+"@wpdas/naxios@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@wpdas/naxios/-/naxios-2.2.0.tgz#686bbca31aca47ea329c04a0c2a66382dd23f974"
+  integrity sha512-Q7P7/ZDNiPSGdFPOo5tgGwuhyfSbH4TAuoE4v2amVPMUxTcY4rG0SkfFgRhWZBAmsYddfBuFz+XUHhmf9XkXPw==
   dependencies:
     "@near-wallet-selector/core" "^8.9.1"
     "@near-wallet-selector/modal-ui" "^8.9.1"

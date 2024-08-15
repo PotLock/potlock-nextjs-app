@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import ReactMarkdown from "react-markdown";
 
 import { Pot } from "@/common/api/potlock";
@@ -6,6 +8,7 @@ import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { useDonation } from "@/modules/donation";
 
+import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import { usePotStatusesForAccountId } from "../hooks";
 
 type Props = {
@@ -16,9 +19,16 @@ const Header = ({ potDetail }: Props) => {
   const { isSignedIn } = useWallet();
   const potStatuses = usePotStatusesForAccountId({ potDetail });
   const { openDonationModal } = useDonation({ potId: potDetail.account });
+  const [fundModalOpen, setFundModalOpen] = useState(false);
 
   return (
     <div className="lg:flex-col md:p-[32px_2rem_80px] mt-8 flex flex-wrap gap-8 p-[3rem_0]">
+      {/* Modals */}
+      <FundMatchingPoolModal
+        open={fundModalOpen}
+        onCloseClick={() => setFundModalOpen(false)}
+      />
+
       {/* Left Content*/}
       <div className="flex grow flex-col gap-6">
         {/* Title */}
@@ -44,15 +54,12 @@ const Header = ({ potDetail }: Props) => {
         {/* ButtonsWrapper */}
         <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
           {potStatuses.canDonate && (
-            // TODO: @carina to review
             <Button onClick={openDonationModal}>Donate</Button>
           )}
           {potStatuses.canFund && (
             <Button
               variant="tonal-filled"
-              onClick={() => {
-                alert("TODO: Fund Matching Modal");
-              }}
+              onClick={() => setFundModalOpen(true)}
             >
               Fund matching pool
             </Button>
