@@ -21,6 +21,7 @@ import {
   DonationAllocationStrategyEnum,
   DonationPotDistributionStrategy,
 } from "../types";
+import { donationFeePercentsToBasisPoints } from "../utils/converters";
 import {
   isDonationAmountSufficient,
   isDonationMatchingPotSelected,
@@ -33,8 +34,11 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
 
 export const donationAmount = safePositiveNumber;
 
-// TODO: Convert percents to basic points!
-export const donationFeeBasicPoints = safePositiveNumber;
+export const donationFeeBasicPoints = safePositiveNumber.transform((percents) =>
+  donationFeePercentsToBasisPoints(
+    safePositiveNumber.safeParse(percents).data ?? 0,
+  ),
+);
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,

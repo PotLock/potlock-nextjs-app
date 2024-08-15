@@ -5,6 +5,8 @@ import { ContractMetadata } from "@/common/types";
 import { useTypedSelector } from "@/store";
 import { RootModel } from "@/store/models";
 
+export * from "./schemas";
+
 interface CoreState {
   contractMetadata: ContractMetadata;
   oneNearUsdPrice: number;

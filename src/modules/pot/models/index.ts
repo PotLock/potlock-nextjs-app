@@ -6,10 +6,15 @@ import {
 import { conditional, evolve, isNonNullish, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
+import {
+  NADABOT_CONTRACT_ID,
+  POTLOCK_LISTS_CONTRACT_ID,
+} from "@/common/constants";
 import { potFactory } from "@/common/contracts/potlock";
 import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
+import { ProviderId } from "@/common/types";
 import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
 import { RootModel } from "@/store/models";
 
@@ -87,11 +92,14 @@ export const potModel = createModel<RootModel>()({
               {
                 ...potInputs,
                 source_metadata: { commit_hash, ...sourceMetadata },
-                registry_provider: isPgRegistrationRequired ? null : undefined, // TODO set the actual value
+
+                registry_provider: isPgRegistrationRequired
+                  ? POTLOCK_LISTS_CONTRACT_ID
+                  : undefined,
 
                 sybil_wrapper_provider: isNadabotVerificationRequired
-                  ? null
-                  : undefined, // TODO set the actual value
+                  ? `${NADABOT_CONTRACT_ID}:is_human`
+                  : undefined,
               },
 
               {
@@ -110,6 +118,8 @@ export const potModel = createModel<RootModel>()({
                   isNonNullish,
                   piped(donationAmount.parse, floatToYoctoNear),
                 ]),
+
+                chef_fee_basis_points: donationFeeBasicPoints.parse,
               },
             ),
 

@@ -20,7 +20,7 @@ import {
   FormField,
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
-import { AccountOption } from "@/modules/core";
+import { AccountOption, validAccountId } from "@/modules/core";
 
 export type AccessControlAdminsModalProps = {
   admins: AccountId[];
@@ -40,27 +40,10 @@ export const AccessControlAdminsModal = create(
     const form = useForm<ByAccountId>({
       resolver: zodResolver(
         object({
-          accountId: string()
-            .min(5, "Account ID is too short")
-            .refine(
-              (accountId) => !admins.includes(accountId),
-              "Account with this ID is already listed",
-            )
-            .refine(
-              async (account_id) =>
-                account_id.length > 4
-                  ? await nearRpc
-                      .query<AccountView>({
-                        request_type: "view_account",
-                        finality: "final",
-                        account_id,
-                      })
-                      .then((accountInfo) => accountInfo)
-                      .catch(() => false)
-                  : true,
-
-              { message: "Account does not exist" },
-            ),
+          accountId: validAccountId.refine(
+            (accountId) => !admins.includes(accountId),
+            "Account with this ID is already listed",
+          ),
         }),
       ),
 

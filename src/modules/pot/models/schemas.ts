@@ -1,6 +1,7 @@
 import { infer as FromSchema, array, boolean, object, string } from "zod";
 
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
+import { validAccountId } from "@/modules/core";
 import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
 
 import {
@@ -21,7 +22,7 @@ export const potDeploymentSchema = object({
     .optional()
     .describe("List of pot admins' account ids."),
 
-  chef: string().optional().describe("Chef's account id."),
+  chef: validAccountId.optional().describe("Chef's account id."),
 
   pot_name: string()
     .min(3, "Pot name must be at least 3 characters long.")

@@ -7,4 +7,4 @@ export * from "./components/ModalErrorBody";
 export * from "./components/RuntimeErrorAlert";
 export * from "./components/TokenIcon";
 export * from "./components/TotalTokenValue";
-export { core, useCoreState } from "./model";
+export * from "./models";
