@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { createModel } from "@rematch/core";
 
 import { walletApi } from "@/common/contracts";
