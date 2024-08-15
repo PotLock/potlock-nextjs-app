@@ -25,6 +25,7 @@ const Header = ({ potDetail }: Props) => {
     <div className="lg:flex-col md:p-[32px_2rem_80px] mt-8 flex flex-wrap gap-8 p-[3rem_0]">
       {/* Modals */}
       <FundMatchingPoolModal
+        potDetail={potDetail}
         open={fundModalOpen}
         onCloseClick={() => setFundModalOpen(false)}
       />

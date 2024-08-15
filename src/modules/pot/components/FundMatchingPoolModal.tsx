@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
 
+import { Pot } from "@/common/api/potlock";
+import { yoctoNearToFloat } from "@/common/lib";
 import {
   Avatar,
   AvatarImage,
@@ -19,6 +21,7 @@ import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { dispatch, useTypedSelector } from "@/store";
 
 type Props = {
+  potDetail: Pot;
   open?: boolean;
   onCloseClick?: () => void;
   errorMessage?: string;
@@ -51,7 +54,12 @@ const CustomAvatar = ({ accountId }: { accountId: string }) => {
   );
 };
 
-const FundMatchingPoolModal = ({ open, onCloseClick, errorMessage }: Props) => {
+const FundMatchingPoolModal = ({
+  open,
+  onCloseClick,
+  potDetail,
+  errorMessage,
+}: Props) => {
   const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
 
   // AccountID (Address)
@@ -59,6 +67,13 @@ const FundMatchingPoolModal = ({ open, onCloseClick, errorMessage }: Props) => {
     actAsDao.toggle && actAsDao.defaultAddress
       ? actAsDao.defaultAddress
       : accountId;
+
+  const hasMinimumAmount = ["0", "1"].includes(
+    potDetail.min_matching_pool_donation_amount,
+  );
+  const yoctoMinimumAmout = yoctoNearToFloat(
+    potDetail.min_matching_pool_donation_amount,
+  );
 
   const closeHandler = () => {
     dispatch.createProject.submissionStatus("pending");
@@ -77,19 +92,10 @@ const FundMatchingPoolModal = ({ open, onCloseClick, errorMessage }: Props) => {
         </DialogHeader>
 
         <div className="flex flex-col p-6">
-          {/* Fund as Dao checkbox */}
-          <div className="flex items-center space-x-2">
-            <Checkbox id="asDao" />
-            <label
-              htmlFor="asDao"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Fund as DAO
-            </label>
-          </div>
-
+          {/*NEAR Input */}
           <p className="my-2 break-words text-[16px] font-normal leading-[20px] text-[#525252]">
-            Enter matching pool contribution amount in NEAR (no minimum)
+            Enter matching pool contribution amount in NEAR{" "}
+            {hasMinimumAmount ? "(no minimum)" : `(Min. ${yoctoMinimumAmout})`}
           </p>
 
           {/* Amount NEAR input */}
