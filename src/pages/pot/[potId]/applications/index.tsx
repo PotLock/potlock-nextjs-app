@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 import { PotLayout } from "@/modules/pot";
 
-const ApplicationsSubPage = () => {
+const ApplicationsTab = () => {
   return (
     <main className="flex flex-col">
       <p>Applications Page</p>
@@ -10,8 +10,8 @@ const ApplicationsSubPage = () => {
   );
 };
 
-ApplicationsSubPage.getLayout = function getLayout(page: ReactElement) {
+ApplicationsTab.getLayout = function getLayout(page: ReactElement) {
   return <PotLayout>{page}</PotLayout>;
 };
 
-export default ApplicationsSubPage;
+export default ApplicationsTab;

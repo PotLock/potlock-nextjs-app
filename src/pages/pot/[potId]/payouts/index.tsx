@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 import { PotLayout } from "@/modules/pot";
 
-const PayoutsSubPage = () => {
+const PayoutsTab = () => {
   return (
     <main className="flex flex-col">
       <p>Payouts Page</p>
@@ -10,8 +10,8 @@ const PayoutsSubPage = () => {
   );
 };
 
-PayoutsSubPage.getLayout = function getLayout(page: ReactElement) {
+PayoutsTab.getLayout = function getLayout(page: ReactElement) {
   return <PotLayout>{page}</PotLayout>;
 };
 
-export default PayoutsSubPage;
+export default PayoutsTab;

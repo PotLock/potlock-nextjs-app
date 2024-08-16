@@ -7,9 +7,9 @@ import { NADA_BOT_URL } from "@/common/constants";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { Alert, useIsHuman } from "@/modules/core";
 import { Header, HeaderStatus } from "@/modules/pot";
-import { potTabRoutes } from "@/pages/pot/potTabRoutes";
 
 import Tabs from "./Tabs";
+import { potTabRoutes } from "../potTabRoutes";
 
 type Props = {
   children: React.ReactNode;

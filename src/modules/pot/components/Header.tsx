@@ -3,6 +3,7 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 
 import { Pot } from "@/common/api/potlock";
+import { VolunteerIcon } from "@/common/assets/svgs";
 import { yoctoNearToFloat } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
@@ -72,7 +73,7 @@ const Header = ({ potDetail }: Props) => {
           <div className="flex items-center gap-[12px] text-[14px]">
             <ClipboardCopyButton
               text={potStatuses.referrerPotLink}
-              iconType="volunteer"
+              customIcon={<VolunteerIcon />}
             />
             <p>Earn referral fees</p>
           </div>

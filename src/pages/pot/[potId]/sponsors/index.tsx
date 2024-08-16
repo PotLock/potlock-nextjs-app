@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 import { PotLayout } from "@/modules/pot";
 
-const SponsorsSubPage = () => {
+const SponsorsTab = () => {
   return (
     <main className="flex flex-col">
       <p>Sponsors Page</p>
@@ -10,8 +10,8 @@ const SponsorsSubPage = () => {
   );
 };
 
-SponsorsSubPage.getLayout = function getLayout(page: ReactElement) {
+SponsorsTab.getLayout = function getLayout(page: ReactElement) {
   return <PotLayout>{page}</PotLayout>;
 };
 
-export default SponsorsSubPage;
+export default SponsorsTab;
