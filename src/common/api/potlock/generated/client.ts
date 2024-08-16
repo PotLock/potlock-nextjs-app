@@ -164,6 +164,17 @@ export type V1AccountsPayoutsReceivedRetrieveParams = {
   page_size?: number;
 };
 
+export type V1AccountsListRegistrationsRetrieveParams = {
+  /**
+   * Page number for pagination
+   */
+  page?: number;
+  /**
+   * Number of results per page
+   */
+  page_size?: number;
+};
+
 export type V1AccountsDonationsSentRetrieveParams = {
   /**
    * Page number for pagination
@@ -1099,6 +1110,68 @@ export const useV1AccountsDonationsSentRetrieve = <TError = AxiosError<void>>(
         : null);
   const swrFn = () =>
     v1AccountsDonationsSentRetrieve(accountId, params, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export const v1AccountsListRegistrationsRetrieve = (
+  accountId: string,
+  params?: V1AccountsListRegistrationsRetrieveParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PaginatedListRegistrationsResponse>> => {
+  return axios.get(`/api/v1/accounts/${accountId}/list-registrations`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getV1AccountsListRegistrationsRetrieveKey = (
+  accountId: string,
+  params?: V1AccountsListRegistrationsRetrieveParams,
+) =>
+  [
+    `/api/v1/accounts/${accountId}/list-registrations`,
+    ...(params ? [params] : []),
+  ] as const;
+
+export type V1AccountsListRegistrationsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1AccountsListRegistrationsRetrieve>>
+>;
+export type V1AccountsListRegistrationsRetrieveQueryError = AxiosError<void>;
+
+export const useV1AccountsListRegistrationsRetrieve = <
+  TError = AxiosError<void>,
+>(
+  accountId: string,
+  params?: V1AccountsListRegistrationsRetrieveParams,
+  options?: {
+    swr?: SWRConfiguration<
+      Awaited<ReturnType<typeof v1AccountsListRegistrationsRetrieve>>,
+      TError
+    > & { swrKey?: Key; enabled?: boolean };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!accountId;
+  const swrKey =
+    swrOptions?.swrKey ??
+    (() =>
+      isEnabled
+        ? getV1AccountsListRegistrationsRetrieveKey(accountId, params)
+        : null);
+  const swrFn = () =>
+    v1AccountsListRegistrationsRetrieve(accountId, params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
