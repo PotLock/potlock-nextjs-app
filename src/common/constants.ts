@@ -43,7 +43,7 @@ export const NADA_BOT_URL = "https://app.nada.bot";
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
   "testnet") as Network;
 
-export const RPC_NODE_URL = `https://${NETWORK.toLowerCase() === "mainnet" ? "free.rpc.fastnear.com" : "rpc.testnet.near.org"}`;
+// export const RPC_NODE_URL = `https://${NETWORK.toLowerCase() === "mainnet" ? "free.rpc.fastnear.com" : "rpc.testnet.near.org"}`;
 
 /**
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/
