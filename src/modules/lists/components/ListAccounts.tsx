@@ -144,7 +144,7 @@ export const ListAccounts = () => {
         </div>
         <div className="flex w-full items-center gap-4">
           <SearchBar
-            placeholder="Search projects"
+            placeholder="Search Accounts"
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
           {/* <Filter

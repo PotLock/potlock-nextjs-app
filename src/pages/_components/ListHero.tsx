@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/common/ui/components";
 
 export const ListHero = () => {
+  const { push } = useRouter();
   return (
     <div className="relative flex w-full flex-col justify-center overflow-hidden rounded-xl border border-solid border-[#f8d3b0] bg-hero bg-cover bg-no-repeat">
       <div className="md:px-10 md:py-16 relative z-[1] flex flex-col  justify-center px-5 py-12">
@@ -13,6 +15,7 @@ export const ListHero = () => {
         <div className="max-md:flex-col md:mt-10 md:gap-8 mt-6 flex items-center gap-4 text-sm">
           <Button
             className="md:w-[180px] w-full"
+            onClick={() => push("/list/create")}
             //   onClick={openDonateRandomlyModal}
           >
             Create List

@@ -149,27 +149,31 @@ const AllLists = () => {
             >
               All List
             </button>
-            <button
-              className={`${
-                currentListType === "My Lists" ? "text-red-500" : ""
-              }`}
-              onClick={fetchMyLists}
-            >
-              My Lists
-            </button>
-            <button
-              className={`${
-                currentListType === "My Favourites" ? "text-red-500" : ""
-              }`}
-              onClick={fetchFavourites}
-            >
-              My Favourites
-            </button>
+            {Boolean(wallet?.accountId) && (
+              <>
+                <button
+                  className={`${
+                    currentListType === "My Lists" ? "text-red-500" : ""
+                  }`}
+                  onClick={fetchMyLists}
+                >
+                  My Lists
+                </button>
+                <button
+                  className={`${
+                    currentListType === "My Favourites" ? "text-red-500" : ""
+                  }`}
+                  onClick={fetchFavourites}
+                >
+                  My Favourites
+                </button>
+              </>
+            )}
           </div>
         </div>
         <div className="flex w-full items-center gap-4">
           <SearchBar
-            placeholder="Search projects"
+            placeholder="Search Lists"
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
           {/* <Filter

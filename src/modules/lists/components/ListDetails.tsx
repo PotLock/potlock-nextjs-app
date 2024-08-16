@@ -78,7 +78,9 @@ export const ListDetails = () => {
             src="https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHVzZXJ8ZW58MHx8MHx8fDA%3D"
             alt="Owner"
           />
-          <span>{listDetails.owner}</span>
+          <Link href={`/profile/${listDetails.owner}`}>
+            {listDetails.owner}
+          </Link>
           <span className="text-gray-500">
             Created {new Date(listDetails.created_at).toLocaleDateString()}
           </span>
@@ -134,24 +136,26 @@ export const ListDetails = () => {
                 </Link>
               )}
             </div>
-            <div className="flex space-x-4">
-              <button
-                onClick={() => {
-                  setIsDonateModalOpen(true);
-                }}
-                className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
-              >
-                Donate to list
-              </button>
-              <button
-                onClick={() => {
-                  setIsApplyToListModalOpen(true);
-                }}
-                className="rounded-md border bg-[#FEF6EE] px-4 py-2 text-gray-700 transition hover:bg-gray-100"
-              >
-                Apply to list
-              </button>
-            </div>
+            {Boolean(wallet?.accountId) && (
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => {
+                    setIsDonateModalOpen(true);
+                  }}
+                  className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
+                >
+                  Donate to list
+                </button>
+                <button
+                  onClick={() => {
+                    setIsApplyToListModalOpen(true);
+                  }}
+                  className="rounded-md border bg-[#FEF6EE] px-4 py-2 text-gray-700 transition hover:bg-gray-100"
+                >
+                  Apply to list
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

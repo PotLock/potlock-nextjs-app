@@ -1,10 +1,13 @@
 "use client";
 import React, { ChangeEvent, useEffect, useState } from "react";
 
+import { AccountView } from "near-api-js/lib/providers/provider";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { string } from "zod";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { naxiosInstance } from "@/common/contracts";
 import {
   create_list,
   getList,
@@ -56,11 +59,55 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({
   onRemoveSelected,
 }) => {
   const [adminAccount, setAdminAccount] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isValidating, setIsValidating] = useState<boolean>(false);
+  const [isAccountValid, setIsAccountValid] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const validateAccount = async () => {
+      if (!adminAccount) {
+        setErrorMessage("Account ID cannot be empty.");
+        setIsAccountValid(false);
+        return;
+      }
+
+      setIsValidating(true);
+      try {
+        const response = await naxiosInstance.rpcApi().query<AccountView>({
+          request_type: "view_account",
+          finality: "final",
+          account_id: adminAccount,
+        });
+
+        if (response) {
+          setIsAccountValid(true);
+          setErrorMessage("");
+        } else {
+          setIsAccountValid(false);
+          setErrorMessage("Invalid account ID. Please check and try again.");
+        }
+      } catch (error) {
+        setIsAccountValid(false);
+        setErrorMessage("Error validating account ID. Please try again later.");
+      } finally {
+        setIsValidating(false);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      if (adminAccount) {
+        validateAccount();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer); // Clear timeout if input changes before 500ms
+  }, [adminAccount]);
 
   const handleAddAdmin = () => {
-    if (adminAccount) {
+    if (isAccountValid && adminAccount) {
       onAddAdmin(adminAccount);
       setAdminAccount("");
+      setIsAccountValid(null); // Reset validation state
     }
   };
 
@@ -83,12 +130,18 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({
             placeholder="Enter NEAR account ID"
             className="mb-4 w-full rounded-md border px-4 py-2"
           />
+          {errorMessage && <p className="mb-4 text-red-500">{errorMessage}</p>}
           <button
             type="button"
             onClick={handleAddAdmin}
-            className="mb-4 w-full rounded-md bg-gray-200 px-4 py-2 text-gray-700 transition hover:bg-gray-300"
+            className={`mb-4 w-full rounded-md px-4 py-2 transition ${
+              isAccountValid
+                ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                : "cursor-not-allowed bg-gray-300 text-gray-500"
+            }`}
+            disabled={!isAccountValid}
           >
-            Add
+            {isValidating ? "Validating..." : "Add"}
           </button>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-gray-700">{admins.length} Admins</span>

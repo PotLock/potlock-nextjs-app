@@ -33,7 +33,7 @@ export const SortSelect = ({
       </Trigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
+          <SelectItem key={option.value} className="pr-6" value={option.value}>
             {option.label}
           </SelectItem>
         ))}
