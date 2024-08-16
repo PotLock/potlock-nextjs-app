@@ -16,7 +16,7 @@ export const usePotStatusesForAccountId = (props: { potDetail: Pot }) => {
     now < getDateTime(potDetail.matching_round_end);
   const canDonate = publicRoundOpen && wallet?.accountId;
   const canFund = now < getDateTime(potDetail.matching_round_end);
-  const canApply = true;
+  const canApply = true; // TODO
 
   return {
     matchingPoolUsdBalance,

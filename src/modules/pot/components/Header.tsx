@@ -65,6 +65,7 @@ const Header = ({ potDetail }: Props) => {
               Fund matching pool
             </Button>
           )}
+          {potStatuses.canApply && <Button>Apply to pot</Button>}
         </div>
         {/* Referral */}
         {isSignedIn && (
