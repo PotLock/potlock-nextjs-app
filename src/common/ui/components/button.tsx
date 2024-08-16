@@ -57,6 +57,13 @@ const buttonVariants = cva(
           "p-0 hover:text-[color:var(--neutral-500)]",
           "disabled:text-[#a6a6a6] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset] disabled:bg-[var(--neutral-100)]",
         ),
+
+        // Tonal
+        "tonal-filled": cn(
+          "text-[#292929] bg-[#FEF6EE]",
+          "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.84)_inset,0px_1px_1px_1px_rgba(166,166,166,0.4)_inset,0px_0px_0px_2px_rgba(166,166,166,0.4)_inset,0px_1px_2px_0px_rgba(15,15,15,0.15),0px_1px_3px_-1px_rgba(5,5,5,0.08)]",
+          "disabled:text-[#a6a6a6] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset] disabled:bg-[var(--neutral-100)]",
+        ),
       },
 
       size: {

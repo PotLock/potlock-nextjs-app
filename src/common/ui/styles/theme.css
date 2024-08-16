@@ -134,5 +134,6 @@
 .markdown-link {
   a {
     color: rgb(123, 123, 123);
+    font-weight: 600;
   }
 }

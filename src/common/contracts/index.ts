@@ -1,4 +1,5 @@
 import { setupBitgetWallet } from "@near-wallet-selector/bitget-wallet";
+import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
 import { setupCoin98Wallet } from "@near-wallet-selector/coin98-wallet";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupLedger } from "@near-wallet-selector/ledger";
@@ -42,6 +43,7 @@ export const naxiosInstance = new naxios({
     setupCoin98Wallet(),
     setupMathWallet(),
     setupMintbaseWallet(),
+    setupBitteWallet(),
     setupNearFi(),
     setupWelldoneWallet(),
     setupXDEFI(),
@@ -60,3 +62,8 @@ export const naxiosInstance = new naxios({
  * NEAR Wallet API
  */
 export const walletApi = naxiosInstance.walletApi();
+
+/**
+ * NEAR RPC API Provider3
+ */
+export const rpcApi = naxiosInstance.rpcApi();
