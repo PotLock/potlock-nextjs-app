@@ -2,11 +2,9 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AccountView } from "near-api-js/lib/providers/provider";
 import { useForm } from "react-hook-form";
-import { object, string } from "zod";
+import { object } from "zod";
 
-import { nearRpc } from "@/common/api/near";
 import DeleteIcon from "@/common/assets/svgs/DeleteIcon";
 import { AccountId, ByAccountId } from "@/common/types";
 import {
