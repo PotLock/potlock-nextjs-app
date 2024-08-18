@@ -1,1 +1,1 @@
-export { AccessControlAdmins } from "./components/buttons";
+export { AccessControlAccounts } from "./components/buttons";

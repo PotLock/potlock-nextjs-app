@@ -16,7 +16,7 @@ import {
   TextAreaField,
   TextField,
 } from "@/common/ui/form-fields";
-import { AccessControlAdmins } from "@/modules/access-control";
+import { AccessControlAccounts } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 
 import { PotEditorSection } from "./editor-elements";
@@ -36,22 +36,14 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
 
   const { admins: adminAccountIds } = form.watch();
 
-  console.log("values", form.getValues());
-
-  console.table({
-    isValid: form.formState.isValid,
-    isDirty: form.formState.isDirty,
-  });
-
-  console.log("errors", form.formState.errors);
-
   return (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
         <div className="lg:min-w-4xl flex flex-col gap-14 pt-14">
           <PotEditorSection heading="Admins">
-            <AccessControlAdmins
-              admins={adminAccountIds ?? []}
+            <AccessControlAccounts
+              title="Admins"
+              accountIds={adminAccountIds ?? []}
               onSubmit={handleAdminAdd}
               onRemove={handleAdminRemove}
             />

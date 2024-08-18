@@ -2,22 +2,22 @@ import { GroupIcon } from "@/common/assets/svgs";
 import { Button } from "@/common/ui/components";
 import { AccountOption } from "@/modules/core";
 
-import { AccessControlAdminsModalProps } from "./AccessControlAdminsModal";
-import { useAccessControlAdminsModal } from "../hooks/modals";
+import { AccessControlAccountsModalProps } from "./AccessControlAccountsModal";
+import { useAccessControlAccountManager } from "../hooks/modals";
 
-export type AccessControlAdminsProps = AccessControlAdminsModalProps & {};
+export type AccessControlAccountsProps = AccessControlAccountsModalProps & {};
 
-export const AccessControlAdmins: React.FC<AccessControlAdminsProps> = (
+export const AccessControlAccounts: React.FC<AccessControlAccountsProps> = (
   props,
 ) => {
-  const { openAdminsModal } = useAccessControlAdminsModal(props);
-  const { admins } = props;
+  const { openAdminsModal } = useAccessControlAccountManager(props);
+  const { title, accountIds } = props;
 
   return (
     <div un-flex="~" un-justify="between" un-items="center">
-      {admins.length > 0 ? (
+      {accountIds.length > 0 ? (
         <div un-flex="~" un-items="center" un-gap="2">
-          {admins.map((accountId) => (
+          {accountIds.map((accountId) => (
             <AccountOption
               isThumbnail
               key={accountId}
@@ -32,7 +32,7 @@ export const AccessControlAdmins: React.FC<AccessControlAdminsProps> = (
         <GroupIcon />
 
         <span className="prose line-height-none font-500">
-          {`${admins.length > 0 ? "Edit" : "Add"} Admins`}
+          {`${accountIds.length > 0 ? "Edit" : "Add"} ${title}`}
         </span>
       </Button>
     </div>

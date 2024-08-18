@@ -20,14 +20,15 @@ import {
 import { TextField } from "@/common/ui/form-fields";
 import { AccountOption, validAccountId } from "@/modules/core";
 
-export type AccessControlAdminsModalProps = {
-  admins: AccountId[];
+export type AccessControlAccountsModalProps = {
+  title: string;
+  accountIds: AccountId[];
   onSubmit: (accountId: AccountId) => void;
   onRemove: (accountId: AccountId) => void;
 };
 
-export const AccessControlAdminsModal = create(
-  ({ admins, ...props }: AccessControlAdminsModalProps) => {
+export const AccessControlAccountsModal = create(
+  ({ title, accountIds, ...props }: AccessControlAccountsModalProps) => {
     const self = useModal();
 
     const close = useCallback(() => {
@@ -39,7 +40,7 @@ export const AccessControlAdminsModal = create(
       resolver: zodResolver(
         object({
           accountId: validAccountId.refine(
-            (accountId) => !admins.includes(accountId),
+            (accountId) => !accountIds.includes(accountId),
             "Account with this ID is already listed",
           ),
         }),
@@ -49,23 +50,18 @@ export const AccessControlAdminsModal = create(
       resetOptions: { keepDirtyValues: true },
     });
 
-    const isDisabled =
-      form.formState.isSubmitting ||
-      !form.formState.isDirty ||
-      !form.formState.isValid;
+    const isDisabled = form.formState.isSubmitting || !form.formState.isValid;
 
     const onSubmit = form.handleSubmit(({ accountId }) => {
       props.onSubmit(accountId);
       void self.hide();
     });
 
-    console.log({ isValid: form.formState.isValid, props });
-
     return (
       <Dialog open={self.visible}>
         <DialogContent className="max-w-130" onCloseClick={close}>
           <DialogHeader>
-            <DialogTitle>{"Admins"}</DialogTitle>
+            <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
 
           <DialogDescription>
@@ -96,7 +92,7 @@ export const AccessControlAdminsModal = create(
                 </div>
 
                 <div un-flex="~ col">
-                  {admins.map((accountId) => (
+                  {accountIds.map((accountId) => (
                     <AccountOption
                       key={accountId}
                       secondaryAction={

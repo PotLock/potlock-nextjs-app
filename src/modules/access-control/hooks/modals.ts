@@ -3,14 +3,14 @@ import { useCallback } from "react";
 import { useModal } from "@ebay/nice-modal-react";
 
 import {
-  AccessControlAdminsModal,
-  AccessControlAdminsModalProps,
-} from "../components/AccessControlAdminsModal";
+  AccessControlAccountsModal,
+  AccessControlAccountsModalProps,
+} from "../components/AccessControlAccountsModal";
 
-export const useAccessControlAdminsModal = (
-  params: AccessControlAdminsModalProps,
+export const useAccessControlAccountManager = (
+  params: AccessControlAccountsModalProps,
 ) => {
-  const modal = useModal(AccessControlAdminsModal);
+  const modal = useModal(AccessControlAccountsModal);
 
   const openAdminsModal = useCallback(
     (event: React.MouseEvent) => {
