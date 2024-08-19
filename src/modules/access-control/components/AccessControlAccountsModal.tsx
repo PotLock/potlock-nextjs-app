@@ -3,9 +3,9 @@ import { useCallback } from "react";
 import { create, useModal } from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { MdDeleteOutline } from "react-icons/md";
 import { object } from "zod";
 
-import DeleteIcon from "@/common/assets/svgs/DeleteIcon";
 import { AccountId, ByAccountId } from "@/common/types";
 import {
   Button,
@@ -36,7 +36,7 @@ export const AccessControlAccountsModal = create(
       self.remove();
     }, [self]);
 
-    const form = useForm<ByAccountId>({
+    const newAccountForm = useForm<ByAccountId>({
       resolver: zodResolver(
         object({
           accountId: validAccountId.refine(
@@ -50,9 +50,11 @@ export const AccessControlAccountsModal = create(
       resetOptions: { keepDirtyValues: true },
     });
 
-    const isDisabled = form.formState.isSubmitting || !form.formState.isValid;
+    const isDisabled =
+      newAccountForm.formState.isSubmitting ||
+      !newAccountForm.formState.isValid;
 
-    const onSubmit = form.handleSubmit(({ accountId }) => {
+    const onAccountSubmit = newAccountForm.handleSubmit(({ accountId }) => {
       props.onSubmit(accountId);
       void self.hide();
     });
@@ -65,12 +67,18 @@ export const AccessControlAccountsModal = create(
           </DialogHeader>
 
           <DialogDescription>
-            <Form {...form}>
-              <form un-flex="~ col" un-h="full" {...{ onSubmit }}>
-                <div un-flex="~" un-gap="3" un-pb="5" un-items="start">
+            <div un-flex="~ col" un-h="full">
+              <Form {...newAccountForm}>
+                <form
+                  onSubmit={onAccountSubmit}
+                  un-flex="~"
+                  un-gap="3"
+                  un-pb="5"
+                  un-items="start"
+                >
                   <FormField
                     name="accountId"
-                    control={form.control}
+                    control={newAccountForm.control}
                     render={({ field }) => (
                       <TextField
                         required
@@ -89,32 +97,32 @@ export const AccessControlAccountsModal = create(
                   >
                     Add
                   </Button>
-                </div>
+                </form>
+              </Form>
 
-                <div un-flex="~ col">
-                  {accountIds.map((accountId) => (
-                    <AccountOption
-                      key={accountId}
-                      secondaryAction={
-                        <Button
-                          type="button"
-                          onClick={() => props.onRemove(accountId)}
-                          variant="standard-plain"
-                          className="ml-auto"
-                        >
-                          <DeleteIcon width={20} height={18} />
+              <div un-flex="~ col">
+                {accountIds.map((accountId) => (
+                  <AccountOption
+                    key={accountId}
+                    secondaryAction={
+                      <Button
+                        type="button"
+                        onClick={() => props.onRemove(accountId)}
+                        variant="standard-plain"
+                        className="ml-auto"
+                      >
+                        <MdDeleteOutline width={20} height={18} />
 
-                          <span className="prose font-500 line-height-none">
-                            Remove
-                          </span>
-                        </Button>
-                      }
-                      {...{ accountId }}
-                    />
-                  ))}
-                </div>
-              </form>
-            </Form>
+                        <span className="prose font-500 line-height-none">
+                          Remove
+                        </span>
+                      </Button>
+                    }
+                    {...{ accountId }}
+                  />
+                ))}
+              </div>
+            </div>
           </DialogDescription>
         </DialogContent>
       </Dialog>
