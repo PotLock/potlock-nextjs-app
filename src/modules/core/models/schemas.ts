@@ -2,6 +2,7 @@ import { AccountView } from "near-api-js/lib/providers/provider";
 import { string } from "zod";
 
 import { nearRpc } from "@/common/api/near";
+import { NETWORK } from "@/common/constants";
 
 export const validAccountId = string()
   .min(5, "Account ID is too short")
@@ -18,5 +19,5 @@ export const validAccountId = string()
             .catch(() => false)
         : true,
 
-    { message: "Account does not exist" },
+    { message: `Account does not exist on ${NETWORK}` },
   );

@@ -1,14 +1,15 @@
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
-import { object } from "zod";
+import { array, object, string } from "zod";
 
 import { AccountId, ByAccountId } from "@/common/types";
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -22,13 +23,12 @@ import { AccountOption, validAccountId } from "@/modules/core";
 
 export type AccessControlAccountsModalProps = {
   title: string;
-  accountIds: AccountId[];
-  onSubmit: (accountId: AccountId) => void;
-  onRemove: (accountId: AccountId) => void;
+  value: AccountId[];
+  onSubmit: (accountIds: AccountId[]) => void;
 };
 
 export const AccessControlAccountsModal = create(
-  ({ title, accountIds, ...props }: AccessControlAccountsModalProps) => {
+  ({ title, value: accountIds, onSubmit }: AccessControlAccountsModalProps) => {
     const self = useModal();
 
     const close = useCallback(() => {
@@ -36,7 +36,9 @@ export const AccessControlAccountsModal = create(
       self.remove();
     }, [self]);
 
-    const newAccountForm = useForm<ByAccountId>({
+    const [selectedAccounts, setSelectedAccounts] = useState<AccountId[]>([]);
+
+    const form = useForm<ByAccountId>({
       resolver: zodResolver(
         object({
           accountId: validAccountId.refine(
@@ -47,17 +49,33 @@ export const AccessControlAccountsModal = create(
       ),
 
       mode: "onChange",
-      resetOptions: { keepDirtyValues: true },
     });
 
-    const isDisabled =
-      newAccountForm.formState.isSubmitting ||
-      !newAccountForm.formState.isValid;
+    const isAccountFormDisabled =
+      form.formState.isSubmitting || !form.formState.isValid;
 
-    const onAccountSubmit = newAccountForm.handleSubmit(({ accountId }) => {
-      props.onSubmit(accountId);
-      void self.hide();
-    });
+    const onAccountSubmit = form.handleSubmit(({ accountId }) =>
+      onSubmit([...accountIds, accountId]),
+    );
+
+    const handleAccountRemove = useCallback(
+      (accountId: AccountId) => () =>
+        onSubmit(
+          accountIds.filter((listedAccountId) => accountId !== listedAccountId),
+        ),
+
+      [accountIds, onSubmit],
+    );
+
+    const handleSelectedAccountsRemove = useCallback(
+      () =>
+        onSubmit(
+          accountIds.filter(
+            (accountId) => !selectedAccounts.includes(accountId),
+          ),
+        ),
+      [accountIds, onSubmit, selectedAccounts],
+    );
 
     return (
       <Dialog open={self.visible}>
@@ -68,7 +86,7 @@ export const AccessControlAccountsModal = create(
 
           <DialogDescription>
             <div un-flex="~ col" un-h="full">
-              <Form {...newAccountForm}>
+              <Form {...form}>
                 <form
                   onSubmit={onAccountSubmit}
                   un-flex="~"
@@ -78,7 +96,7 @@ export const AccessControlAccountsModal = create(
                 >
                   <FormField
                     name="accountId"
-                    control={newAccountForm.control}
+                    control={form.control}
                     render={({ field }) => (
                       <TextField
                         required
@@ -93,7 +111,7 @@ export const AccessControlAccountsModal = create(
                   <Button
                     type="submit"
                     variant="standard-filled"
-                    disabled={isDisabled}
+                    disabled={isAccountFormDisabled}
                   >
                     Add
                   </Button>
@@ -104,10 +122,14 @@ export const AccessControlAccountsModal = create(
                 {accountIds.map((accountId) => (
                   <AccountOption
                     key={accountId}
+                    primaryAction={
+                      <Checkbox
+                        checked={selectedAccounts.includes(accountId)}
+                      />
+                    }
                     secondaryAction={
                       <Button
-                        type="button"
-                        onClick={() => props.onRemove(accountId)}
+                        onClick={handleAccountRemove(accountId)}
                         variant="standard-plain"
                         className="ml-auto"
                       >

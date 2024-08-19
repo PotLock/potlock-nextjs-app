@@ -46,26 +46,18 @@ export const usePotDeploymentForm = () => {
     resetOptions: { keepDirtyValues: true },
   });
 
-  const currentValues = useWatch({ control: form.control });
+  const formValues = useWatch({ control: form.control });
 
   const isDisabled =
-    currentValues.source_metadata === null ||
+    formValues.source_metadata === null ||
     !form.formState.isDirty ||
     !form.formState.isValid ||
     form.formState.isSubmitting;
 
-  const handleAdminAdd = (accountId: AccountId) => {
-    form.setValue("admins", [...(currentValues.admins ?? []), accountId]);
-  };
-
-  const handleAdminRemove = (accountId: AccountId) => {
-    form.setValue(
-      "admins",
-      (currentValues.admins ?? []).filter(
-        (adminAccountId) => accountId !== adminAccountId,
-      ),
-    );
-  };
+  const handleAdminsUpdate = useCallback(
+    (accountIds: AccountId[]) => form.setValue("admins", accountIds),
+    [form],
+  );
 
   const onCancel = () => {
     form.reset();
@@ -79,8 +71,8 @@ export const usePotDeploymentForm = () => {
 
   return {
     form,
-    handleAdminAdd,
-    handleAdminRemove,
+    formValues,
+    handleAdminsUpdate,
     isDisabled,
     onCancel,
     onSubmit: form.handleSubmit(onSubmit),

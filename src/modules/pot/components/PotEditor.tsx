@@ -27,14 +27,12 @@ export type PotEditorProps = Partial<ByPotId> & {};
 export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
   const {
     form,
-    handleAdminAdd,
-    handleAdminRemove,
+    formValues,
+    handleAdminsUpdate,
     isDisabled,
     onCancel,
     onSubmit,
   } = usePotDeploymentForm();
-
-  const { admins: adminAccountIds } = form.watch();
 
   return (
     <Form {...form}>
@@ -43,9 +41,8 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
           <PotEditorSection heading="Admins">
             <AccessControlAccounts
               title="Admins"
-              accountIds={adminAccountIds ?? []}
-              onSubmit={handleAdminAdd}
-              onRemove={handleAdminRemove}
+              value={formValues.admins ?? []}
+              onSubmit={handleAdminsUpdate}
             />
           </PotEditorSection>
 
