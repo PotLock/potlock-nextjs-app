@@ -77,6 +77,8 @@ export const AccessControlAccountsModal = create(
       [accountIds, onSubmit, selectedAccounts],
     );
 
+    console.log(accountIds);
+
     return (
       <Dialog open={self.visible}>
         <DialogContent className="max-w-130" onCloseClick={close}>

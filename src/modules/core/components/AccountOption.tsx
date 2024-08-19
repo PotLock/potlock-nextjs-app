@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { NEARSocialUserProfile } from "@/common/contracts/social";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId, ByAccountId } from "@/common/types";
 import {
   Avatar,
@@ -8,8 +9,6 @@ import {
   AvatarImage,
   Skeleton,
 } from "@/common/ui/components";
-
-import { fetchSocialImages } from "../../../common/services/near-socialdb";
 
 export type AccountOptionProps = ByAccountId &
   Pick<React.HTMLAttributes<HTMLDivElement>, "title"> & {

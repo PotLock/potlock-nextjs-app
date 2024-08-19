@@ -7,12 +7,13 @@ import {
   AccessControlAccountsModalProps,
 } from "../components/AccessControlAccountsModal";
 
+// TODO: Remove if not needed
 export const useAccessControlAccountManager = (
   params: AccessControlAccountsModalProps,
 ) => {
   const modal = useModal(AccessControlAccountsModal);
 
-  const openAdminsModal = useCallback(
+  const openAccountsModal = useCallback(
     (event: React.MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
@@ -22,5 +23,5 @@ export const useAccessControlAccountManager = (
     [modal, params],
   );
 
-  return { openAdminsModal };
+  return { openAccountsModal };
 };
