@@ -9,7 +9,7 @@ import SmartContract from "@/modules/profile/components/SmartContract";
 import Team from "@/modules/profile/components/Team";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 
-const HomeSubPage = () => {
+const HomeTab = () => {
   const router = useRouter();
   const { userId: userIdPathParam } = router.query;
 
@@ -51,8 +51,8 @@ const HomeSubPage = () => {
   );
 };
 
-HomeSubPage.getLayout = function getLayout(page: ReactElement) {
+HomeTab.getLayout = function getLayout(page: ReactElement) {
   return <ProfileLayout>{page}</ProfileLayout>;
 };
 
-export default HomeSubPage;
+export default HomeTab;

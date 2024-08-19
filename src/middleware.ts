@@ -13,5 +13,15 @@ export async function middleware(request: NextRequest) {
   }
   // PROFILE - END
 
+  // POT - INIT
+  const isPotPage = request.nextUrl.pathname.startsWith("/pot/");
+  if (isPotPage && request.nextUrl.pathname.endsWith(".near")) {
+    return NextResponse.rewrite(`${request.url}/projects`);
+  }
+  if (isPotPage && request.nextUrl.pathname.endsWith(".near/")) {
+    return NextResponse.rewrite(`${request.url}projects`);
+  }
+  // POT - END
+
   return NextResponse.next();
 }

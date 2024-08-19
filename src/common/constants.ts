@@ -35,6 +35,8 @@ export const APP_METADATA: Metadata & {
   },
 };
 
+export const NADA_BOT_URL = "https://app.nada.bot";
+
 // NETWORK
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK?.toLowerCase() ||
   "testnet") as Network;

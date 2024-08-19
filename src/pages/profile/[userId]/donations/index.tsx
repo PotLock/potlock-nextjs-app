@@ -8,7 +8,7 @@ import { useAccountDonationsSent } from "@/common/api/potlock/hooks";
 import { ProfileLayout } from "@/modules/profile";
 import PotlockFunding from "@/modules/profile/components/PotlockFunding";
 
-const Donations = () => {
+const DonationsTab = () => {
   const router = useRouter();
   const { userId: userIdPathParam } = router.query;
 
@@ -44,8 +44,8 @@ const Donations = () => {
   );
 };
 
-Donations.getLayout = function getLayout(page: ReactElement) {
+DonationsTab.getLayout = function getLayout(page: ReactElement) {
   return <ProfileLayout>{page}</ProfileLayout>;
 };
 
-export default Donations;
+export default DonationsTab;
