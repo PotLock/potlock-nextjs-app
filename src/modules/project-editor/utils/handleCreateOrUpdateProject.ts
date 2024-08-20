@@ -9,31 +9,17 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 import {
   FIFTY_TGAS,
   FULL_TGAS,
+  MIN_PROPOSAL_DEPOSIT_FALLBACK,
   POTLOCK_LISTS_CONTRACT_ID,
   SOCIAL_DB_CONTRACT_ID,
 } from "@/common/constants";
 import { naxiosInstance } from "@/common/contracts";
+import { getDaoPolicy } from "@/common/contracts/common";
 import * as socialDb from "@/common/contracts/social";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
 import { store } from "@/store";
 
 import getSocialDataFormat from "./getSocialDataFormat";
-
-const MIN_PROPOSAL_DEPOSIT_FALLBACK = "100000000000000000000000"; // 0.1N
-
-const getPolicy = async (accountId: string) => {
-  try {
-    const resp = await naxiosInstance
-      .contractApi({
-        contractId: accountId,
-      })
-      .view<any, { proposal_bond?: string }>("get_policy");
-
-    return resp;
-  } catch (_) {
-    return null;
-  }
-};
 
 const getSocialData = async (accountId: string) => {
   try {
@@ -56,7 +42,7 @@ const handleCreateOrUpdateProject = async () => {
   }
 
   // If Dao, get dao policy
-  const daoPolicy = data.isDao ? await getPolicy(accountId) : null;
+  const daoPolicy = data.isDao ? await getDaoPolicy(accountId) : null;
 
   // Validate DAO Address
   const isDaoAddressValid = data.isDao
@@ -155,8 +141,9 @@ const handleCreateOrUpdateProject = async () => {
     const callbackUrl = `${location.origin}${location.pathname}?done=true`;
     try {
       if (data.isDao) {
-        await naxiosInstance.contractApi().callMultiple(daoTransactions),
-          callbackUrl;
+        await naxiosInstance
+          .contractApi()
+          .callMultiple(daoTransactions, callbackUrl);
         // console.log(daoTransactions);
       } else {
         await naxiosInstance
