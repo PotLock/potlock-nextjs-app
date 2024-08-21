@@ -49,7 +49,7 @@ export const AccessControlAccounts: React.FC<AccessControlAccountsProps> = (
           <GroupIcon />
 
           <span className="prose line-height-none font-500">
-            {`${accountIds.length > 0 ? "Edit" : "Add"} ${title}`}
+            {`${accountIds.length > 0 ? "Change" : "Add"} ${title}`}
           </span>
         </Button>
       </div>
