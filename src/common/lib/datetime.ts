@@ -1,7 +1,7 @@
 import { Temporal } from "temporal-polyfill";
 import { number, preprocess } from "zod";
 
-export const DATETIME_INCORRECT_FORMAT_ERROR = "datetime format is incorrect";
+export const DATETIME_INCORRECT_FORMAT_ERROR = "Incorrect datetime";
 
 export const localeStringToTimestampMs = (value: string): number => {
   try {
