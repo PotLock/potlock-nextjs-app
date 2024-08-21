@@ -145,7 +145,7 @@ export const AccessControlAccountsModal = create(
               un-p="x-5 y-2"
               un-bg="neutral-50"
             >
-              <div un-flex="~" un-items="center" un-gap="4">
+              <div className="flex items-center gap-4">
                 <Checkbox
                   checked={selectedAccounts.length === accountIds.length}
                   onCheckedChange={allAccountsSelectToggle}
