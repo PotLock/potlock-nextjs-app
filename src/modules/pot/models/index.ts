@@ -1,9 +1,6 @@
 import { createModel } from "@rematch/core";
-import {
-  ExecutionStatusBasic,
-  FinalExecutionStatusBasic,
-} from "near-api-js/lib/providers/provider";
-import { conditional, evolve, identity, isNonNullish, piped } from "remeda";
+import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
+import { conditional, evolve, isNonNullish, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import {
@@ -13,8 +10,6 @@ import {
 import { potFactory } from "@/common/contracts/potlock";
 import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
-import { getTransactionStatus } from "@/common/services";
-import { ProviderId } from "@/common/types";
 import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
 import { RootModel } from "@/store/models";
 

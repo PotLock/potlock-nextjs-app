@@ -11,6 +11,9 @@ export type TxExecutionStatus =
   | "EXECUTED"
   | "FINAL";
 
+/**
+ * @deprecated use `nearRpc.txStatus()`
+ */
 export const getTransactionStatus = ({
   wait_until = "EXECUTED_OPTIMISTIC",
   ...params
