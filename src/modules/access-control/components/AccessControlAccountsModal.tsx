@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
-import { array, object, string } from "zod";
+import { object } from "zod";
 
 import { AccountId, ByAccountId } from "@/common/types";
 import {
@@ -80,22 +80,19 @@ export const AccessControlAccountsModal = create(
       [accountIds, onSubmit],
     );
 
-    const handleSelectedAccountsRemove = useCallback(
-      () =>
-        onSubmit(
-          accountIds.filter(
-            (accountId) => !selectedAccounts.includes(accountId),
-          ),
-        ),
+    const handleSelectedAccountsRemove = useCallback(() => {
+      onSubmit(
+        accountIds.filter((accountId) => !selectedAccounts.includes(accountId)),
+      );
 
-      [accountIds, onSubmit, selectedAccounts],
-    );
+      setSelectedAccounts([]);
+    }, [accountIds, onSubmit, selectedAccounts]);
 
     console.log(accountIds, selectedAccounts);
 
     return (
       <Dialog open={self.visible}>
-        <DialogContent className="max-w-130" onCloseClick={close}>
+        <DialogContent className="max-w-125 max-h-150" onCloseClick={close}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
@@ -132,7 +129,10 @@ export const AccessControlAccountsModal = create(
             </Form>
           </DialogDescription>
 
-          <div un-flex="~ col">
+          <div
+            un-flex="~ col"
+            style={{ display: accountIds.length > 0 ? undefined : "none" }}
+          >
             <div
               un-flex="~"
               un-justify="between"
@@ -176,7 +176,7 @@ export const AccessControlAccountsModal = create(
                   <Button
                     onClick={handleAccountRemove(accountId)}
                     variant="standard-plain"
-                    className="ml-auto"
+                    className="ml-auto pe-0"
                   >
                     <MdDeleteOutline width={18} height={18} />
 

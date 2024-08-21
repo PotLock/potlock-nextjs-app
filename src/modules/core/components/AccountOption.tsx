@@ -63,16 +63,16 @@ export const AccountOption = ({
   return isThumbnail ? (
     avatarElement
   ) : (
-    <div un-flex="~" un-items="center" un-gap="4" un-bg="hover:[#FEF6EE]">
+    <div
+      un-flex="~"
+      un-items="center"
+      un-gap="4"
+      un-p="y-3 x-5"
+      un-bg="hover:[#FEF6EE]"
+    >
       {primaryAction}
 
-      <div
-        un-cursor="pointer"
-        un-py="3"
-        un-flex="~"
-        un-items="center"
-        un-gap="2"
-      >
+      <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
         {avatarElement}
 
         <span className="prose">{accountId}</span>

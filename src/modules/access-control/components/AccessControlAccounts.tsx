@@ -1,4 +1,4 @@
-import { useId, useMemo } from "react";
+import { useCallback, useId, useMemo } from "react";
 
 import { show } from "@ebay/nice-modal-react";
 
@@ -16,11 +16,9 @@ export type AccessControlAccountsProps = AccessControlAccountsModalProps & {};
 export const AccessControlAccounts: React.FC<AccessControlAccountsProps> = (
   props,
 ) => {
-  const modalId = useId();
-
-  const openAccountsModal = () => show(modalId);
-
   const { title, value: accountIds } = props;
+  const modalId = useId();
+  const openAccountsModal = useCallback(() => show(modalId), [modalId]);
 
   const accountList = useMemo(
     () =>
@@ -47,7 +45,7 @@ export const AccessControlAccounts: React.FC<AccessControlAccountsProps> = (
       <div un-flex="~" un-justify="between" un-items="center">
         {accountList}
 
-        <Button onClick={openAccountsModal} variant="brand-plain">
+        <Button type="button" onClick={openAccountsModal} variant="brand-plain">
           <GroupIcon />
 
           <span className="prose line-height-none font-500">
