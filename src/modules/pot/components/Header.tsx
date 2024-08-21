@@ -8,8 +8,10 @@ import { yoctoNearToFloat } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { useDonation } from "@/modules/donation";
+import { useTypedSelector } from "@/store";
 
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
+import NewApplicationModal from "./NewApplicationModal";
 import { usePotStatusesForAccountId } from "../hooks";
 
 type Props = {
@@ -18,9 +20,18 @@ type Props = {
 
 const Header = ({ potDetail }: Props) => {
   const { isSignedIn } = useWallet();
-  const potStatuses = usePotStatusesForAccountId({ potDetail });
+  const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
+
+  // AccountID (Address)
+  const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
+
+  const potStatuses = usePotStatusesForAccountId({
+    potDetail,
+    accountId: asDao ? actAsDao.defaultAddress : accountId,
+  });
   const { openDonationModal } = useDonation({ potId: potDetail.account });
   const [fundModalOpen, setFundModalOpen] = useState(false);
+  const [applyModalOpen, setApplyModalOpen] = useState(false);
 
   return (
     <div className="lg:flex-col md:p-[32px_2rem_80px] mt-8 flex flex-wrap gap-8 p-[3rem_0]">
@@ -29,6 +40,11 @@ const Header = ({ potDetail }: Props) => {
         potDetail={potDetail}
         open={fundModalOpen}
         onCloseClick={() => setFundModalOpen(false)}
+      />
+      <NewApplicationModal
+        potDetail={potDetail}
+        open={applyModalOpen}
+        onCloseClick={() => setApplyModalOpen(false)}
       />
 
       {/* Left Content*/}
@@ -56,7 +72,7 @@ const Header = ({ potDetail }: Props) => {
         {/* ButtonsWrapper */}
         <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
           {potStatuses.canDonate && (
-            <Button onClick={openDonationModal}>Donate</Button>
+            <Button onClick={openDonationModal}>Donate to Project</Button>
           )}
           {potStatuses.canFund && (
             <Button
@@ -66,7 +82,11 @@ const Header = ({ potDetail }: Props) => {
               Fund matching pool
             </Button>
           )}
-          {potStatuses.canApply && <Button>Apply to pot</Button>}
+          {potStatuses.canApply && (
+            <Button onClick={() => setApplyModalOpen(true)}>
+              Apply to pot
+            </Button>
+          )}
         </div>
         {/* Referral */}
         {isSignedIn && (

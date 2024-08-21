@@ -22,7 +22,7 @@ import { Badge } from "@/common/ui/components/badge";
 import Spinner from "@/common/ui/components/Spinner";
 import routesPath from "@/modules/core/routes";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
-import { dispatch, useTypedSelector } from "@/store";
+import { useTypedSelector } from "@/store";
 
 import { useFundMatchingPoolForm, useProtocolConfig } from "../hooks";
 
@@ -84,15 +84,6 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
     potDetail.min_matching_pool_donation_amount,
   );
 
-  const closeHandler = () => {
-    dispatch.createProject.submissionStatus("pending");
-    dispatch.createProject.setSubmissionError("");
-
-    if (onCloseClick) {
-      onCloseClick();
-    }
-  };
-
   // Get Protocol Config
   const protocolConfig = useProtocolConfig(potDetail);
   const bypassProtocolPercentage = protocolConfig?.basis_points
@@ -125,7 +116,7 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
 
   return (
     <Dialog open={open}>
-      <DialogContent className="max-w-130" onCloseClick={closeHandler}>
+      <DialogContent className="max-w-130" onCloseClick={onCloseClick}>
         <DialogHeader>
           <DialogTitle>Fund Matching Pool</DialogTitle>
         </DialogHeader>

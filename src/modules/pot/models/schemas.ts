@@ -11,3 +11,10 @@ export const fundMatchingPoolSchema = z.object({
   bypassProtocolFee: z.boolean().default(false),
   bypassChefFee: z.boolean().default(false),
 });
+
+export const newApplicationSchema = z.object({
+  message: z
+    .string()
+    .min(3)
+    .max(1000, "Message must be less than 100 characters"),
+});
