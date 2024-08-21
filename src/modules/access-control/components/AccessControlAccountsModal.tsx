@@ -39,18 +39,6 @@ export const AccessControlAccountsModal = create(
 
     const [selectedAccounts, setSelectedAccounts] = useState<AccountId[]>([]);
 
-    const handleAccountSelection = useCallback(
-      (accountId: AccountId) => () => {
-        setSelectedAccounts(
-          selectedAccounts.includes(accountId)
-            ? selectedAccounts.filter((id) => id !== accountId)
-            : [...selectedAccounts, accountId],
-        );
-      },
-
-      [selectedAccounts],
-    );
-
     const form = useForm<ByAccountId>({
       resolver: zodResolver(
         object({
@@ -80,15 +68,30 @@ export const AccessControlAccountsModal = create(
       [accountIds, onSubmit],
     );
 
-    const handleSelectedAccountsRemove = useCallback(() => {
+    const handleAccountSelect = useCallback(
+      (accountId: AccountId) => () => {
+        setSelectedAccounts(
+          selectedAccounts.includes(accountId)
+            ? selectedAccounts.filter((id) => id !== accountId)
+            : [...selectedAccounts, accountId],
+        );
+      },
+
+      [selectedAccounts],
+    );
+
+    const allAccountsSelectToggle = useCallback(
+      () => setSelectedAccounts(accountIds),
+      [accountIds],
+    );
+
+    const selectedAccountsRemove = useCallback(() => {
       onSubmit(
         accountIds.filter((accountId) => !selectedAccounts.includes(accountId)),
       );
 
       setSelectedAccounts([]);
     }, [accountIds, onSubmit, selectedAccounts]);
-
-    console.log(accountIds, selectedAccounts);
 
     return (
       <Dialog open={self.visible}>
@@ -140,15 +143,23 @@ export const AccessControlAccountsModal = create(
               un-p="x-5 y-2"
               un-bg="neutral-50"
             >
-              <span className="prose font-500 text-neutral-600">
-                {`${accountIds.length} Admins` +
-                  (selectedAccounts.length > 0
-                    ? `, ${selectedAccounts.length} selected`
-                    : "")}
-              </span>
+              <div un-flex="~" un-gap="4">
+                <Checkbox
+                  checked={selectedAccounts.length === accountIds.length}
+                  onCheckedChange={allAccountsSelectToggle}
+                  className="px-0.75"
+                />
+
+                <span className="prose font-500 text-neutral-600">
+                  {`${accountIds.length} Admins` +
+                    (selectedAccounts.length > 0
+                      ? `, ${selectedAccounts.length} selected`
+                      : "")}
+                </span>
+              </div>
 
               <Button
-                onClick={handleSelectedAccountsRemove}
+                onClick={selectedAccountsRemove}
                 variant="brand-plain"
                 className={cn("font-500 p-0", {
                   invisible: selectedAccounts.length === 0,
@@ -168,7 +179,7 @@ export const AccessControlAccountsModal = create(
                 primaryAction={
                   <Checkbox
                     checked={selectedAccounts.includes(accountId)}
-                    onCheckedChange={handleAccountSelection(accountId)}
+                    onCheckedChange={handleAccountSelect(accountId)}
                     className="px-0.75"
                   />
                 }
