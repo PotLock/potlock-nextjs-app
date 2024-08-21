@@ -14,6 +14,7 @@ export * from "./input";
 export * from "./label";
 export * from "./popover";
 export * from "./radio-group";
+export * from "./scroll-area";
 export * from "./SearchBar";
 export * from "./select";
 export * from "./skeleton";

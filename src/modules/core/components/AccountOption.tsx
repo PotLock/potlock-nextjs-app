@@ -67,6 +67,7 @@ export const AccountOption = ({
       un-flex="~"
       un-items="center"
       un-gap="4"
+      un-w="full"
       un-p="y-3 x-5"
       un-bg="hover:[#FEF6EE]"
     >

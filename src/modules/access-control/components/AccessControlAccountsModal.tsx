@@ -17,6 +17,8 @@ import {
   DialogTitle,
   Form,
   FormField,
+  ScrollArea,
+  ScrollBar,
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
@@ -95,7 +97,7 @@ export const AccessControlAccountsModal = create(
 
     return (
       <Dialog open={self.visible}>
-        <DialogContent className="max-w-125 max-h-150" onCloseClick={close}>
+        <DialogContent className="max-w-115 max-h-150" onCloseClick={close}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
@@ -143,7 +145,7 @@ export const AccessControlAccountsModal = create(
               un-p="x-5 y-2"
               un-bg="neutral-50"
             >
-              <div un-flex="~" un-gap="4">
+              <div un-flex="~" un-items="center" un-gap="4">
                 <Checkbox
                   checked={selectedAccounts.length === accountIds.length}
                   onCheckedChange={allAccountsSelectToggle}
@@ -173,32 +175,38 @@ export const AccessControlAccountsModal = create(
               </Button>
             </div>
 
-            {accountIds.map((accountId) => (
-              <AccountOption
-                key={accountId}
-                primaryAction={
-                  <Checkbox
-                    checked={selectedAccounts.includes(accountId)}
-                    onCheckedChange={handleAccountSelect(accountId)}
-                    className="px-0.75"
-                  />
-                }
-                secondaryAction={
-                  <Button
-                    onClick={handleAccountRemove(accountId)}
-                    variant="standard-plain"
-                    className="ml-auto pe-0"
-                  >
-                    <MdDeleteOutline width={18} height={18} />
+            <ScrollArea className="w-full whitespace-nowrap rounded-b-lg">
+              <div un-flex="~ col" un-w="full">
+                {accountIds.map((accountId) => (
+                  <AccountOption
+                    key={accountId}
+                    primaryAction={
+                      <Checkbox
+                        checked={selectedAccounts.includes(accountId)}
+                        onCheckedChange={handleAccountSelect(accountId)}
+                        className="px-0.75"
+                      />
+                    }
+                    secondaryAction={
+                      <Button
+                        onClick={handleAccountRemove(accountId)}
+                        variant="standard-plain"
+                        className="ml-auto pe-0"
+                      >
+                        <MdDeleteOutline width={18} height={18} />
 
-                    <span className="prose font-500 line-height-none">
-                      Remove
-                    </span>
-                  </Button>
-                }
-                {...{ accountId }}
-              />
-            ))}
+                        <span className="prose font-500 line-height-none">
+                          Remove
+                        </span>
+                      </Button>
+                    }
+                    {...{ accountId }}
+                  />
+                ))}
+              </div>
+
+              <ScrollBar orientation="vertical" />
+            </ScrollArea>
           </div>
         </DialogContent>
       </Dialog>
