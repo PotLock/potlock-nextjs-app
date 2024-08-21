@@ -24,3 +24,17 @@ export * from "./textarea";
 export * from "./toggle";
 export * from "./toggle-group";
 export * from "./typography";
+
+/**
+ * Organisms
+ *
+ * See https://atomicdesign.bradfrost.com/chapter-2/#organisms
+ */
+export * from "./organisms/editor";
+
+/**
+ * Templates
+ *
+ * See https://atomicdesign.bradfrost.com/chapter-2/#templates
+ */
+export * from "./templates/page-with-banner";

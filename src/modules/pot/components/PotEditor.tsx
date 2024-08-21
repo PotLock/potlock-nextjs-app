@@ -6,6 +6,7 @@ import {
   AlertDescription,
   AlertTitle,
   Button,
+  EditorSection,
   Form,
   FormField,
 } from "@/common/ui/components";
@@ -19,7 +20,6 @@ import {
 import { AccessControlAccounts } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 
-import { PotEditorSection } from "./editor-elements";
 import { usePotDeploymentForm } from "../hooks/deployment";
 
 export type PotEditorProps = Partial<ByPotId> & {};
@@ -38,15 +38,15 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
         <div className="lg:min-w-4xl flex flex-col gap-14 pt-14">
-          <PotEditorSection heading="Admins">
+          <EditorSection heading="Admins">
             <AccessControlAccounts
               title="Admins"
               value={formValues.admins ?? []}
               onSubmit={handleAdminsUpdate}
             />
-          </PotEditorSection>
+          </EditorSection>
 
-          <PotEditorSection heading="Pot details">
+          <EditorSection heading="Pot details">
             <div un-flex="~ col lg:row" un-gap="8">
               <FormField
                 name="pot_name"
@@ -229,9 +229,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 )}
               />
             </div>
-          </PotEditorSection>
+          </EditorSection>
 
-          <PotEditorSection heading="Chef details">
+          <EditorSection heading="Chef details">
             <div un-flex="~ col lg:row" un-gap="8">
               <FormField
                 name="chef_fee_basis_points"
@@ -263,9 +263,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 )}
               />
             </div>
-          </PotEditorSection>
+          </EditorSection>
 
-          <PotEditorSection heading="Max. approved projects">
+          <EditorSection heading="Max. approved projects">
             <FormField
               name="max_projects"
               control={form.control}
@@ -278,9 +278,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 />
               )}
             />
-          </PotEditorSection>
+          </EditorSection>
 
-          <PotEditorSection heading="Verification">
+          <EditorSection heading="Verification">
             <FormField
               control={form.control}
               name="isPgRegistrationRequired"
@@ -322,9 +322,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 />
               )}
             />
-          </PotEditorSection>
+          </EditorSection>
 
-          <PotEditorSection>
+          <EditorSection>
             <div un-flex="~ col lg:row-reverse" un-gap="4 lg:8" un-w="full">
               <Button
                 type="submit"
@@ -343,7 +343,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 Cancel
               </Button>
             </div>
-          </PotEditorSection>
+          </EditorSection>
         </div>
       </form>
     </Form>
