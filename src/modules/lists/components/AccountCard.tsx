@@ -11,7 +11,7 @@ export const AccountCard = ({ dataForList }: any) => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <Link href={`/list/${dataForList?.id}`}>
+    <div>
       {isLoading ? (
         <CardSkeleton />
       ) : (
@@ -41,7 +41,8 @@ export const AccountCard = ({ dataForList }: any) => {
           {/* Content Section */}
           <div className="p-3">
             <p className="font-lora text-lg font-semibold leading-tight">
-              {dataForList.name ?? "Account Name"}
+              {dataForList.registrant?.near_social_profile_data?.name ??
+                "Account Name"}
             </p>
             <p className="mt-2 text-sm text-gray-600">
               {dataForList.description ??
@@ -64,13 +65,13 @@ export const AccountCard = ({ dataForList }: any) => {
             {/* Donation Info */}
             <div className="mt-4 flex items-center justify-between">
               <p className="text-lg font-bold">
-                $24,000{" "}
+                ${dataForList.registrant.total_donations_in_usd}{" "}
                 <span className="text-sm font-normal text-gray-500">
                   RAISED FROM
                 </span>
               </p>
               <p className="text-lg font-bold">
-                29{" "}
+                {dataForList.registrant.donors_count}{" "}
                 <span className="text-sm font-normal text-gray-500">
                   DONORS
                 </span>
@@ -86,6 +87,6 @@ export const AccountCard = ({ dataForList }: any) => {
           </div>
         </div>
       )}
-    </Link>
+    </div>
   );
 };

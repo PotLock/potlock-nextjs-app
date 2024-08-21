@@ -80,7 +80,7 @@ export const ListAccounts = () => {
   // handle search & filter
   useEffect(() => {
     const handleSearch = (registration: any) => {
-      return registration?.name?.toLowerCase?.().includes(search);
+      return true;
     };
 
     const handleStatus = (registration: any) => {
