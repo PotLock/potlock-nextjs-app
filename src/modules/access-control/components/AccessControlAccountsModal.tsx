@@ -81,7 +81,7 @@ export const AccessControlAccountsModal = create(
     );
 
     const allAccountsSelectToggle = useCallback(
-      () => setSelectedAccounts(accountIds),
+      () => setSelectedAccounts(accountIds.length > 0 ? [] : accountIds),
       [accountIds],
     );
 
