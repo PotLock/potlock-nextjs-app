@@ -7,7 +7,7 @@ const routesPath = {
   FEED: "feed",
   POTS: "/pots",
   POT_DETAIL: "/pot",
-  DEPLOY_POT: "/pot/deploy",
+  DEPLOY_POT: "/deploy",
   DONORS: "/donors",
   PROFILE: "/profile",
   EDIT_PROFILE: "/editprofile",
