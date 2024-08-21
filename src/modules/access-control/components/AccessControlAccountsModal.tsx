@@ -41,6 +41,29 @@ export const AccessControlAccountsModal = create(
 
     const [selectedAccounts, setSelectedAccounts] = useState<AccountId[]>([]);
 
+    const allAccountsSelectToggle = useCallback(
+      () =>
+        setSelectedAccounts(
+          selectedAccounts.length > 0 &&
+            selectedAccounts.length === accountIds.length
+            ? []
+            : accountIds,
+        ),
+      [accountIds, selectedAccounts.length],
+    );
+
+    const handleAccountSelect = useCallback(
+      (accountId: AccountId) => () => {
+        setSelectedAccounts(
+          selectedAccounts.includes(accountId)
+            ? selectedAccounts.filter((id) => id !== accountId)
+            : [...selectedAccounts, accountId],
+        );
+      },
+
+      [selectedAccounts],
+    );
+
     const form = useForm<ByAccountId>({
       resolver: zodResolver(
         object({
@@ -68,23 +91,6 @@ export const AccessControlAccountsModal = create(
         ),
 
       [accountIds, onSubmit],
-    );
-
-    const handleAccountSelect = useCallback(
-      (accountId: AccountId) => () => {
-        setSelectedAccounts(
-          selectedAccounts.includes(accountId)
-            ? selectedAccounts.filter((id) => id !== accountId)
-            : [...selectedAccounts, accountId],
-        );
-      },
-
-      [selectedAccounts],
-    );
-
-    const allAccountsSelectToggle = useCallback(
-      () => setSelectedAccounts(accountIds.length > 0 ? [] : accountIds),
-      [accountIds],
     );
 
     const selectedAccountsRemove = useCallback(() => {
