@@ -6,6 +6,7 @@ import { nearRpc, walletApi } from "@/common/api/near";
 import {
   NADABOT_CONTRACT_ID,
   POTLOCK_LISTS_CONTRACT_ID,
+  PROVIDER_ID_DELIMITER,
 } from "@/common/constants";
 import { potFactory } from "@/common/contracts/potlock";
 import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
@@ -93,7 +94,7 @@ export const potModel = createModel<RootModel>()({
                   : undefined,
 
                 sybil_wrapper_provider: isNadabotVerificationRequired
-                  ? `${NADABOT_CONTRACT_ID}:is_human`
+                  ? NADABOT_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
                   : undefined,
               },
 
