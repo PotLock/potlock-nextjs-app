@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 
 import { Pot } from "@/common/api/potlock";
-import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import {
+  Application,
+  Challenge,
+} from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import * as potService from "@/common/contracts/potlock/pot";
 import { getDateTime, yoctosToUsdWithFallback } from "@/modules/core";
 
@@ -17,9 +20,14 @@ export const usePotStatusesForAccountId = (props: {
 
   // Check if current accountId is a existing application
   const [existingApplication, setExistingApplication] = useState<Application>();
+  const [payoutsChallenges, setPayoutsChallenges] = useState<Challenge[]>([]);
+
+  // Fetch needed data
   useEffect(() => {
+    // INFO: Using this because the Indexer service doesn't provide these APIs
     if (props.accountId && props.potDetail) {
       (async () => {
+        // Get Application By Project ID
         try {
           const _existingApp = await potService.getApplicationByProjectId({
             potId: props.potDetail.account,
@@ -30,6 +38,16 @@ export const usePotStatusesForAccountId = (props: {
           console.log(
             `Application ${props.accountId} does not exist on pot ${props.potDetail.account}`,
           );
+        }
+
+        // Get Payouts Challenges for pot
+        try {
+          const _payoutsChallenges = await potService.getPayoutsChallenges({
+            potId: props.potDetail.account,
+          });
+          setPayoutsChallenges(_payoutsChallenges);
+        } catch (e) {
+          console.error(e);
         }
       })();
     }
@@ -57,11 +75,14 @@ export const usePotStatusesForAccountId = (props: {
   const canApply =
     applicationOpen && !existingApplication && !userIsChefOrGreater;
 
-  // const canChallengePayouts = true; // TODO
   const canChallengePayouts = potDetail.cooldown_end
     ? now > getDateTime(potDetail.matching_round_end) &&
       now < getDateTime(potDetail.cooldown_end)
     : false;
+
+  const existingChallengeForUser = payoutsChallenges.find(
+    (challenge) => challenge.challenger_id === props.accountId,
+  );
 
   return {
     matchingPoolUsdBalance,
@@ -71,5 +92,9 @@ export const usePotStatusesForAccountId = (props: {
     canFund,
     canApply,
     canChallengePayouts,
+    /**
+     * Is there a existing challenge created by this user/dao?
+     */
+    existingChallengeForUser,
   };
 };

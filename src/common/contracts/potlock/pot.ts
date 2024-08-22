@@ -1,4 +1,4 @@
-import { MemoryCache } from "@wpdas/naxios";
+import { calculateDepositByDataSize, MemoryCache } from "@wpdas/naxios";
 
 import { PotId } from "@/common/api/potlock";
 
@@ -12,6 +12,8 @@ import {
   PotDonationArgs,
 } from "./interfaces/pot.interfaces";
 import { naxiosInstance } from "..";
+import { FULL_TGAS } from "@/common/constants";
+import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 /**
  * NEAR Contract API
@@ -119,9 +121,6 @@ export const getApplications = async (args: { potId: string }) =>
 export const getPayoutsChallenges = async (args: { potId: string }) =>
   contractApi(args.potId).view<typeof args, Challenge[]>(
     "get_payouts_challenges",
-    {
-      args,
-    },
   );
 
 /**
@@ -143,16 +142,15 @@ export const challengePayouts = ({
   potId: string;
   reason: string;
 }) => {
-  const depositFloat = reason.length * 0.00003 + 0.003;
+  const args = { reason };
+  const deposit = parseNearAmount(calculateDepositByDataSize(args))!;
 
-  contractApi(potId).call<{ reason: string }, Challenge[]>(
+  return contractApi(potId).call<{ reason: string }, Challenge[]>(
     "challenge_payouts",
     {
-      args: {
-        reason: reason,
-      },
-      deposit: `${depositFloat}`,
-      gas: "300000000000000",
+      args,
+      deposit,
+      gas: FULL_TGAS,
     },
   );
 };
@@ -173,7 +171,7 @@ export const adminUpdatePayoutsChallenge = (args: {
     {
       args,
       deposit: `${depositFloat}`,
-      gas: "300000000000000",
+      gas: FULL_TGAS,
     },
   );
 };
@@ -185,7 +183,7 @@ export const chefSetPayouts = (args: { potId: string; payouts: Payout[] }) =>
   contractApi(args.potId).call<typeof args, Payout[]>("chef_set_payouts", {
     args,
     deposit: "1",
-    gas: "300000000000000",
+    gas: FULL_TGAS,
   });
 
 /**
@@ -195,7 +193,7 @@ export const adminProcessPayouts = (args: { potId: string }) =>
   contractApi(args.potId).call<typeof args, Payout[]>("admin_process_payouts", {
     args,
     deposit: "1",
-    gas: "300000000000000",
+    gas: FULL_TGAS,
   });
 
 export const donateNearViaPot = (

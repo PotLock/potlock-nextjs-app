@@ -1,11 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Transaction,
-  buildTransaction,
-  calculateDepositByDataSize,
-} from "@wpdas/naxios";
+import { calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
@@ -15,7 +11,6 @@ import {
   FULL_TGAS,
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
   ONE_TGAS,
-  SUPPORTED_FTS,
 } from "@/common/constants";
 import { naxiosInstance } from "@/common/contracts";
 import { getDaoPolicy } from "@/common/contracts/common";
@@ -24,7 +19,12 @@ import {
   fundMatchingPoolSchema,
   newApplicationSchema,
 } from "../models/schemas";
-import { FundMatchingPoolInputs, NewApplicationInputs } from "../models/types";
+import {
+  ChallengeInputs,
+  FundMatchingPoolInputs,
+  NewApplicationInputs,
+} from "../models/types";
+import * as potService from "@/common/contracts/potlock/pot";
 
 export const useFundMatchingPoolForm = ({
   accountId,
@@ -224,6 +224,47 @@ export const useNewApplicationForm = ({
       } catch (e) {
         console.error(e);
       } finally {
+        setInProgress(false);
+      }
+    },
+    [accountId, asDao, potDetail.account, potDetail.name],
+  );
+
+  return {
+    form,
+    errors: form.formState.errors,
+    inProgress,
+    onSubmit,
+  };
+};
+
+export const useChallengeForm = ({
+  accountId,
+  potDetail,
+  asDao,
+}: {
+  accountId: string;
+  potDetail: Pot;
+  referrerId?: string;
+  asDao: boolean;
+}) => {
+  const form = useForm<ChallengeInputs>({
+    resolver: zodResolver(newApplicationSchema),
+  });
+
+  const [inProgress, setInProgress] = useState(false);
+
+  const onSubmit: FormSubmitHandler<ChallengeInputs> = useCallback(
+    async (formData) => {
+      setInProgress(true);
+
+      try {
+        await potService.challengePayouts({
+          potId: potDetail.account,
+          reason: formData.data.message,
+        });
+      } catch (e) {
+        console.error(e);
         setInProgress(false);
       }
     },

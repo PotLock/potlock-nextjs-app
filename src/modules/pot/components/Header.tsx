@@ -10,6 +10,7 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import { useDonation } from "@/modules/donation";
 import { useTypedSelector } from "@/store";
 
+import ChallengeModal from "./ChallengeModal";
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import NewApplicationModal from "./NewApplicationModal";
 import { usePotStatusesForAccountId } from "../hooks";
@@ -32,6 +33,7 @@ const Header = ({ potDetail }: Props) => {
   const { openDonationModal } = useDonation({ potId: potDetail.account });
   const [fundModalOpen, setFundModalOpen] = useState(false);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
+  const [challengeModalOpen, setChallengeModalOpen] = useState(false);
 
   return (
     <div className="lg:flex-col md:p-[32px_2rem_80px] mt-8 flex flex-wrap gap-8 p-[3rem_0]">
@@ -45,6 +47,12 @@ const Header = ({ potDetail }: Props) => {
         potDetail={potDetail}
         open={applyModalOpen}
         onCloseClick={() => setApplyModalOpen(false)}
+      />
+      <ChallengeModal
+        potDetail={potDetail}
+        open={challengeModalOpen}
+        previousChallenge={potStatuses.existingChallengeForUser}
+        onCloseClick={() => setChallengeModalOpen(false)}
       />
 
       {/* Left Content*/}
@@ -85,6 +93,13 @@ const Header = ({ potDetail }: Props) => {
           {potStatuses.canApply && (
             <Button onClick={() => setApplyModalOpen(true)}>
               Apply to pot
+            </Button>
+          )}
+          {potStatuses.canChallengePayouts && (
+            <Button onClick={() => setChallengeModalOpen(true)}>
+              {potStatuses.existingChallengeForUser
+                ? "Update challenge"
+                : "Challenge payouts"}
             </Button>
           )}
         </div>

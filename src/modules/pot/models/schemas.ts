@@ -16,5 +16,12 @@ export const newApplicationSchema = z.object({
   message: z
     .string()
     .min(3)
-    .max(1000, "Message must be less than 100 characters"),
+    .max(1000, "Application message must be less than 1000 characters"),
+});
+
+export const challengeSchema = z.object({
+  message: z
+    .string()
+    .min(3)
+    .max(1000, "Challenge reason must be less than 1000 characters"),
 });
