@@ -1,6 +1,8 @@
-import { calculateDepositByDataSize, MemoryCache } from "@wpdas/naxios";
+import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
+import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { PotId } from "@/common/api/potlock";
+import { FULL_TGAS } from "@/common/constants";
 
 import {
   Application,
@@ -12,8 +14,6 @@ import {
   PotDonationArgs,
 } from "./interfaces/pot.interfaces";
 import { naxiosInstance } from "..";
-import { FULL_TGAS } from "@/common/constants";
-import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 /**
  * NEAR Contract API

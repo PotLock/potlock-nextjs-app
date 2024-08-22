@@ -14,6 +14,7 @@ import {
 } from "@/common/constants";
 import { naxiosInstance } from "@/common/contracts";
 import { getDaoPolicy } from "@/common/contracts/common";
+import * as potService from "@/common/contracts/potlock/pot";
 
 import {
   fundMatchingPoolSchema,
@@ -24,7 +25,6 @@ import {
   FundMatchingPoolInputs,
   NewApplicationInputs,
 } from "../models/types";
-import * as potService from "@/common/contracts/potlock/pot";
 
 export const useFundMatchingPoolForm = ({
   accountId,

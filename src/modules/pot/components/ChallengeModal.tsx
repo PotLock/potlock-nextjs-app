@@ -1,6 +1,7 @@
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/potlock";
+import { Challenge } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import {
   Button,
   Dialog,
@@ -14,7 +15,6 @@ import Spinner from "@/common/ui/components/Spinner";
 import { useTypedSelector } from "@/store";
 
 import { useChallengeForm } from "../hooks";
-import { Challenge } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 
 type Props = {
   potDetail: Pot;
