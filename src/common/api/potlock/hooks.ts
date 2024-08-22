@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
 import { ByAccountId, ByListId } from "@/common/types";
 
@@ -15,7 +17,6 @@ import {
   V1PotsApplicationsRetrieveParams,
   V1PotsRetrieveParams,
 } from "./types";
-import { useEffect, useState } from "react";
 
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve

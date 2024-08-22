@@ -1,9 +1,10 @@
 import { ReactElement, useEffect, useState } from "react";
 
-import { PotLayout } from "@/modules/pot";
 import { useRouter } from "next/router";
-import * as potServices from "@/common/contracts/potlock/pot";
+
 import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import * as potServices from "@/common/contracts/potlock/pot";
+import { PotLayout } from "@/modules/pot";
 // import { usePotApplications } from "@/common/api/potlock/hooks";
 
 const ProjectsTab = () => {
