@@ -1,5 +1,5 @@
+import { walletApi } from "@/common/api/near";
 import { NEAR_TOKEN_DENOM, PAGODA_REQUEST_CONFIG } from "@/common/constants";
-import { walletApi } from "@/common/contracts";
 import { ByAccountId, ByTokenId } from "@/common/types";
 
 import { swrHooks } from "./generated";

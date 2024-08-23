@@ -1,4 +1,4 @@
-// TODO: Use "javascript-time-ago" module here
+// TODO: Move to datetime.ts and refactor using Temporal
 
 const getTimePassed = (timestamp: number, abbreviate?: boolean) => {
   // Calculate the difference in milliseconds

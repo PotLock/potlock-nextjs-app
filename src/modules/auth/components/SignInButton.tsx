@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { walletApi } from "@/common/contracts";
+import { walletApi } from "@/common/api/near";
 import { Button } from "@/common/ui/components";
 
 export const SignInButton: React.FC = () => {

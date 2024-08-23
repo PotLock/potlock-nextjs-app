@@ -1,4 +1,18 @@
 import { Temporal } from "temporal-polyfill";
+import { number, preprocess } from "zod";
+
+export const DATETIME_INCORRECT_FORMAT_ERROR = "Incorrect datetime";
+
+export const localeStringToTimestampMs = (value: string): number => {
+  try {
+    return new Date(value).getTime();
+  } catch {
+    const error = new TypeError(`Unable to parse \`${value}\``);
+
+    console.error(error);
+    throw error;
+  }
+};
 
 /**
  * Converts a value in milliseconds to the equivalent number of days.
@@ -60,3 +74,25 @@ export const toChronologicalOrder = <T>(
         Temporal.Instant.compare(one[property], another[property]),
       )
     : list;
+
+export const timestamp = preprocess(
+  (value) => {
+    console.log(
+      typeof value === "string" ? localeStringToTimestampMs(value) : value,
+    );
+
+    return typeof value === "string" ? localeStringToTimestampMs(value) : value;
+  },
+
+  number({ message: DATETIME_INCORRECT_FORMAT_ERROR })
+    .int()
+    .positive(DATETIME_INCORRECT_FORMAT_ERROR)
+    .finite(DATETIME_INCORRECT_FORMAT_ERROR)
+    .safe()
+    .transform((n) => number().safeParse(n).data ?? 0),
+);
+
+export const futureTimestamp = timestamp.refine(
+  (value) => value > Temporal.Now.instant().epochMilliseconds,
+  { message: "Cannot be in the past" },
+);

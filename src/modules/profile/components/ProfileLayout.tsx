@@ -41,7 +41,7 @@ export function ProfileLayout({ children }: Props) {
   const isProject = isRegisteredProject;
 
   return (
-    <main className="flex flex-col">
+    <main className="container flex flex-col">
       {isProject && <ProjectBanner projectId={params.userId} />}
       <ProfileBanner isProject={isProject} accountId={params.userId} />
       <Info accountId={params.userId} isProject={isProject} />

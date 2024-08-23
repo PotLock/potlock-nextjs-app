@@ -1,17 +1,17 @@
 import { ReactElement } from "react";
 
-import { PotLayout } from "@/modules/pot";
+import { PotEditor, PotLayout } from "@/modules/pot";
 
-const SettingsTab = () => {
+const PotSettingsTab = () => {
   return (
-    <main className="flex flex-col">
-      <p>Settings Page</p>
-    </main>
+    <div className="flex flex-col">
+      <PotEditor />
+    </div>
   );
 };
 
-SettingsTab.getLayout = function getLayout(page: ReactElement) {
+PotSettingsTab.getLayout = function getLayout(page: ReactElement) {
   return <PotLayout>{page}</PotLayout>;
 };
 
-export default SettingsTab;
+export default PotSettingsTab;

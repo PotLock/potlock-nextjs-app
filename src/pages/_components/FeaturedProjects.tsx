@@ -1,10 +1,10 @@
+import { NETWORK } from "@/common/constants";
 import { ProjectCard } from "@/modules/project";
 
-const featuredProjectIds = [
-  "v1.foodbank.near",
-  "potlock.near",
-  "yearofchef.near",
-];
+const featuredProjectIds =
+  NETWORK === "mainnet"
+    ? ["v1.foodbank.near", "potlock.near", "yearofchef.near"]
+    : ["root.akaia.testnet"];
 
 const FeaturedProjects = () => {
   return (

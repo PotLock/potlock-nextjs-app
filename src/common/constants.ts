@@ -35,15 +35,16 @@ export const APP_METADATA: Metadata & {
   },
 };
 
-export const RPC_NODE_URL = "https://free.rpc.fastnear.com";
-
 export const NADA_BOT_URL = "https://app.nada.bot";
 
 // NETWORK
-export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
+export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK?.toLowerCase() ||
   "testnet") as Network;
 
-// export const RPC_NODE_URL = `https://${NETWORK.toLowerCase() === "mainnet" ? "free.rpc.fastnear.com" : "rpc.testnet.near.org"}`;
+export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "rpc.testnet.near.org"}`;
+
+export const POTLOCK_CONTRACT_VERSION = "0.1.0";
+export const POTLOCK_CONTRACT_REPO_URL = "https://github.com/PotLock/core";
 
 /**
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/
@@ -106,6 +107,9 @@ export const POTLOCK_POT_FACTORY_CONTRACT_ID = process.env
 
 // POTLOCK REGISTRY LIST ID
 export const POTLOCK_REGISTRY_LIST_ID = 1;
+
+// Separates contract_id and method_name in ProviderId
+export const PROVIDER_ID_DELIMITER = ":";
 
 export const NEAR_TOKEN_DENOM = "near";
 

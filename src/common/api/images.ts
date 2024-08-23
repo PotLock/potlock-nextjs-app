@@ -1,4 +1,4 @@
-import { naxiosInstance } from "@/common/contracts/index";
+import { naxiosInstance } from "@/common/api/near";
 import { Image, getSocialProfile } from "@/common/contracts/social";
 
 type Props = {

@@ -1,5 +1,6 @@
 import { MemoryCache } from "@wpdas/naxios";
 
+import { naxiosInstance } from "@/common/api/near";
 import { PotId } from "@/common/api/potlock";
 
 import {
@@ -11,7 +12,6 @@ import {
   PotDonation,
   PotDonationArgs,
 } from "./interfaces/pot.interfaces";
-import { naxiosInstance } from "..";
 
 /**
  * NEAR Contract API

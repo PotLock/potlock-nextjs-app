@@ -12,7 +12,7 @@ type Props = {
   pot: Pot;
 };
 
-const PotCard = ({ pot }: Props) => {
+export const PotCard = ({ pot }: Props) => {
   const { amountNear, amountUsd } = useNearAndUsdByPot({ pot });
 
   const preLoadingText = `Pot ${pot.account} not found.`;

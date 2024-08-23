@@ -12,7 +12,7 @@ export default defineConfig({
   presets: [
     presetUno(),
     presetAutoprefixer(),
-    presetAttributify({ prefix: "un-", prefixOnly: true }),
+    presetAttributify(),
     presetTypography(),
     presetAnimations(),
 

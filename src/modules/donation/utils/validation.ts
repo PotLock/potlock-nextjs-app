@@ -19,7 +19,7 @@ export type DonationMatchingPotValidationInputs = {
   potAccountId?: string;
 };
 
-export const isMatchingPotSelected = ({
+export const isDonationMatchingPotSelected = ({
   allocationStrategy,
   potAccountId,
 }: DonationMatchingPotValidationInputs) =>

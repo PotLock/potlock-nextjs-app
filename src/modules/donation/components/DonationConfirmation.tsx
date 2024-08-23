@@ -83,7 +83,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   onCheckedChange={field.onChange}
                   label={
                     <>
-                      <span className="prose">{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
+                      <span>{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
 
                       {protocolFeeRecipientAccountId && (
                         <ProfileLink
@@ -107,7 +107,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   onCheckedChange={field.onChange}
                   label={
                     <>
-                      <span className="prose">{`Remove ${chefFeePercent}% Chef Fees`}</span>
+                      <span>{`Remove ${chefFeePercent}% Chef Fees`}</span>
                       {pot?.chef.id && <ProfileLink accountId={pot?.chef.id} />}
                     </>
                   }
