@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getConfig } from "@/common/contracts/potlock/donate";
-import { yoctosToUsdWithFallback } from "@/common/lib/yoctosToUsdWithFallback";
+import { yoctosToUsdWithFallback } from "@/modules/core";
 
 const DonationStats = () => {
   const [donateConfig, setDonateConfig] = useState({
@@ -9,19 +9,16 @@ const DonationStats = () => {
     count: "-",
   });
 
-  useEffect(() => {
-    const fetchDonateConfig = async () => {
-      const config = await getConfig();
-      const nearAnount = await yoctosToUsdWithFallback(
-        config.net_donations_amount,
-      );
-      setDonateConfig({
-        amount: nearAnount,
-        count: config.total_donations_count,
-      });
-    };
-    fetchDonateConfig();
-  }, []);
+  useEffect(
+    () =>
+      void getConfig().then((config) =>
+        setDonateConfig({
+          amount: yoctosToUsdWithFallback(config.net_donations_amount),
+          count: config.total_donations_count,
+        }),
+      ),
+    [],
+  );
 
   return (
     <div className="flex w-full flex-col ">

@@ -109,7 +109,7 @@ export const POTLOCK_POT_FACTORY_CONTRACT_ID = process.env
 export const POTLOCK_REGISTRY_LIST_ID = 1;
 
 // Separates contract_id and method_name in ProviderId
-export const PROVIDER_ID_DELIMITER = ":" as const;
+export const PROVIDER_ID_DELIMITER = ":";
 
 export const NEAR_TOKEN_DENOM = "near";
 

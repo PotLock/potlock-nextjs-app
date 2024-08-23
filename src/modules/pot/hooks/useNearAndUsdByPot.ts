@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 
+import { pipe } from "remeda";
+
 import { Pot } from "@/common/api/potlock";
-import { yoctosToNear, yoctosToUsdWithFallback } from "@/common/lib";
+import { yoctosToNear } from "@/common/lib";
+import { yoctosToUsdWithFallback } from "@/modules/core";
 
 const useNearAndUsdByPot = ({ pot }: { pot?: Pot }) => {
   const [amountNear, setAmountNear] = useState(
@@ -11,10 +14,7 @@ const useNearAndUsdByPot = ({ pot }: { pot?: Pot }) => {
 
   useEffect(() => {
     if (pot) {
-      yoctosToUsdWithFallback(pot.matching_pool_balance).then((usdInfo) => {
-        setAmountUsd(usdInfo);
-      });
-
+      pipe(pot.matching_pool_balance, yoctosToUsdWithFallback, setAmountUsd);
       setAmountNear(yoctosToNear(pot.matching_pool_balance, true));
     }
   }, [pot]);

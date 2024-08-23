@@ -7,8 +7,8 @@ import {
   NEARSocialUserProfile,
   getSocialProfile,
 } from "@/common/contracts/social";
-import { yoctosToUsdWithFallback } from "@/common/lib/yoctosToUsdWithFallback";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { yoctosToUsdWithFallback } from "@/modules/core";
 import {
   getTagsFromSocialProfileData,
   getTeamMembersFromProfile,
@@ -81,7 +81,7 @@ export const profilesModel = createModel<RootModel>()({
         donationsPromise,
       ]);
 
-      const totalAmountNear = await yoctosToUsdWithFallback(
+      const totalAmountNear = yoctosToUsdWithFallback(
         getTotalAmountNear(donations, potId, payoutDetails),
       );
 
