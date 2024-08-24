@@ -255,7 +255,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 render={({ field }) => (
                   <TextField
                     label="Assign Chef"
-                    required
                     type="text"
                     classNames={{ root: "lg:w-63% w-full" }}
                     {...field}
