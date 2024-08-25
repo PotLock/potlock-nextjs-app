@@ -4,9 +4,9 @@ import { conditional, evolve, isNonNullish, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import {
-  SYBIL_CONTRACT_ID,
   LISTS_CONTRACT_ID,
   PROVIDER_ID_DELIMITER,
+  SYBIL_CONTRACT_ID,
 } from "@/common/constants";
 import { potFactory } from "@/common/contracts/potlock";
 import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";

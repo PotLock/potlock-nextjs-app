@@ -150,8 +150,7 @@ const useInitProjectState = () => {
       const proposal = proposals
         ? proposals.find(
             (proposal) =>
-              proposal.kind.FunctionCall?.receiver_id ===
-                LISTS_CONTRACT_ID &&
+              proposal.kind.FunctionCall?.receiver_id === LISTS_CONTRACT_ID &&
               proposal.kind.FunctionCall?.actions[0]?.method_name ===
                 "register_batch",
           )

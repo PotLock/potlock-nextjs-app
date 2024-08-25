@@ -4,8 +4,8 @@ import { Provider } from "near-api-js/lib/providers";
 import { naxiosInstance } from "@/common/api/near";
 import {
   FULL_TGAS,
-  SYBIL_CONTRACT_ID,
   ONE_HUNDREDTH_NEAR,
+  SYBIL_CONTRACT_ID,
   TWO_HUNDREDTHS_NEAR,
 } from "@/common/constants";
 
