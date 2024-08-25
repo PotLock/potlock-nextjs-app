@@ -63,6 +63,7 @@ export const potModel = createModel<RootModel>()({
 
     deploymentFailure(_, error: Error) {
       console.error(error);
+      throw error;
     },
   },
 
