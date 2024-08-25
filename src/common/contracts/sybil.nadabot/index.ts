@@ -4,7 +4,7 @@ import { Provider } from "near-api-js/lib/providers";
 import { naxiosInstance } from "@/common/api/near";
 import {
   FULL_TGAS,
-  NADABOT_CONTRACT_ID,
+  SYBIL_CONTRACT_ID,
   ONE_HUNDREDTH_NEAR,
   TWO_HUNDREDTHS_NEAR,
 } from "@/common/constants";
@@ -31,7 +31,7 @@ import {
  * NEAR Contract API
  */
 export const contractApi = naxiosInstance.contractApi({
-  contractId: NADABOT_CONTRACT_ID,
+  contractId: SYBIL_CONTRACT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });
 

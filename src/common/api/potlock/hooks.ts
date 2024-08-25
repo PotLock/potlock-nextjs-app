@@ -1,6 +1,6 @@
-import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
 import { ByAccountId, ByListId } from "@/common/types";
 
+import { POTLOCK_REQUEST_CONFIG } from "./config";
 import { swrHooks } from "./generated";
 import {
   ByPotId,

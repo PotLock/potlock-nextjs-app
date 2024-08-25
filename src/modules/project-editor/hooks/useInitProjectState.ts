@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { naxiosInstance } from "@/common/api/near";
-import { POTLOCK_LISTS_CONTRACT_ID } from "@/common/constants";
+import { LISTS_CONTRACT_ID } from "@/common/constants";
 import * as potlockLists from "@/common/contracts/potlock/lists";
 import { useRouteQuery } from "@/common/lib";
 import useWallet from "@/modules/auth/hooks/useWallet";
@@ -151,7 +151,7 @@ const useInitProjectState = () => {
         ? proposals.find(
             (proposal) =>
               proposal.kind.FunctionCall?.receiver_id ===
-                POTLOCK_LISTS_CONTRACT_ID &&
+                LISTS_CONTRACT_ID &&
               proposal.kind.FunctionCall?.actions[0]?.method_name ===
                 "register_batch",
           )

@@ -2,7 +2,7 @@ import { MemoryCache } from "@wpdas/naxios";
 import Big from "big.js";
 
 import { naxiosInstance } from "@/common/api/near";
-import { POTLOCK_POT_FACTORY_CONTRACT_ID } from "@/common/constants";
+import { POT_FACTORY_CONTRACT_ID } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 
 import { Pot, PotDeploymentArgs } from "./interfaces/pot-factory.interfaces";
@@ -11,7 +11,7 @@ import { Pot, PotDeploymentArgs } from "./interfaces/pot-factory.interfaces";
  * Contract API
  */
 export const contractApi = naxiosInstance.contractApi({
-  contractId: POTLOCK_POT_FACTORY_CONTRACT_ID,
+  contractId: POT_FACTORY_CONTRACT_ID,
   cache: new MemoryCache({ expirationTime: 5 }), // 10 seg
 });
 

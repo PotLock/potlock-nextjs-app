@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { usePot } from "@/common/api/potlock/hooks";
-import { NADA_BOT_URL } from "@/common/constants";
+import { SYBIL_FRONTEND_URL } from "@/common/constants";
 import { PageWithBanner } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { Alert, useIsHuman } from "@/modules/core";
@@ -51,7 +51,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           <Alert
             text="Your contribution won't be matched unless verified as human before the matching round ends."
             buttonLabel="Verify you're human"
-            buttonHref={NADA_BOT_URL}
+            buttonHref={SYBIL_FRONTEND_URL}
           />
         </div>
       )}

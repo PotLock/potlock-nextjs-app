@@ -4,8 +4,8 @@ import { conditional, evolve, isNonNullish, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import {
-  NADABOT_CONTRACT_ID,
-  POTLOCK_LISTS_CONTRACT_ID,
+  SYBIL_CONTRACT_ID,
+  LISTS_CONTRACT_ID,
   PROVIDER_ID_DELIMITER,
 } from "@/common/constants";
 import { potFactory } from "@/common/contracts/potlock";
@@ -90,11 +90,11 @@ export const potModel = createModel<RootModel>()({
                 source_metadata: { commit_hash, ...sourceMetadata },
 
                 registry_provider: isPgRegistrationRequired
-                  ? POTLOCK_LISTS_CONTRACT_ID
+                  ? LISTS_CONTRACT_ID
                   : undefined,
 
                 sybil_wrapper_provider: isNadabotVerificationRequired
-                  ? NADABOT_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
+                  ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
                   : undefined,
               },
 

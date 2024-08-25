@@ -1,7 +1,8 @@
 import { walletApi } from "@/common/api/near";
-import { NEAR_TOKEN_DENOM, PAGODA_REQUEST_CONFIG } from "@/common/constants";
+import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByAccountId, ByTokenId } from "@/common/types";
 
+import { PAGODA_REQUEST_CONFIG } from "./config";
 import { swrHooks } from "./generated";
 
 export const useNearAccountBalance = ({ accountId }: Partial<ByAccountId>) => {

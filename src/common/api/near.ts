@@ -19,12 +19,9 @@ import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
 import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import naxios from "@wpdas/naxios";
 
-import {
-  FULL_TGAS,
-  NETWORK,
-  RPC_NODE_URL,
-  SOCIAL_DB_CONTRACT_ID,
-} from "@/common/constants";
+import { FULL_TGAS, NETWORK, SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
+
+export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "rpc.testnet.near.org"}`;
 
 // Naxios (Contract/Wallet) Instance
 export const naxiosInstance = new naxios({

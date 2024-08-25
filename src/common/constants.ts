@@ -35,77 +35,34 @@ export const APP_METADATA: Metadata & {
   },
 };
 
-export const NADA_BOT_URL = "https://app.nada.bot";
-
-// NETWORK
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK?.toLowerCase() ||
   "testnet") as Network;
 
-export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "rpc.testnet.near.org"}`;
+export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 
 export const POTLOCK_CONTRACT_VERSION = "0.1.0";
 export const POTLOCK_CONTRACT_REPO_URL = "https://github.com/PotLock/core";
 
-/**
- * Docs: https://dev.potlock.io/api/schema/swagger-ui/
- */
-export const POTLOCK_API_ENDPOINT =
+export const SYBIL_CONTRACT_ID =
+  NETWORK === "mainnet" ? "v1.nadabot.near" : "v1.nadabot.testnet";
+
+export const SYBIL_FRONTEND_URL = "https://app.nada.bot";
+
+export const SOCIAL_DB_CONTRACT_ID =
+  NETWORK === "mainnet" ? "social.near" : "v1.social08.testnet";
+
+export const LISTS_CONTRACT_ID =
+  NETWORK === "mainnet" ? "lists.potlock.near" : "lists.potlock.testnet";
+
+export const DONATION_CONTRACT_ID =
+  NETWORK === "mainnet" ? "donate.potlock.near" : "donate.potlock.testnet";
+
+export const POT_FACTORY_CONTRACT_ID =
   NETWORK === "mainnet"
-    ? "https://dev.potlock.io"
-    : "https://test-dev.potlock.io";
+    ? "v1.potfactory.potlock.near"
+    : "v1.potfactory.potlock.testnet";
 
-/**
- * Request config for SWR
- */
-export const POTLOCK_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
-  axios: { baseURL: POTLOCK_API_ENDPOINT },
-};
-
-/**
- * Docs: https://console.pagoda.co/apis?tab=enhancedApi#/
- */
-export const PAGODA_API_ENDPOINT =
-  NETWORK === "mainnet"
-    ? "https://near-mainnet.api.pagoda.co/eapi/v1/"
-    : "https://near-testnet.api.pagoda.co/eapi/v1/";
-
-export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
-
-/**
- * Request config for SWR
- */
-export const PAGODA_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
-  axios: {
-    baseURL: PAGODA_API_ENDPOINT,
-
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": PAGODA_API_KEY,
-    },
-  },
-};
-
-// SYBIL CONTRACT
-export const NADABOT_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_NADABOT_CONTRACT_ID as string;
-
-// SOCIAL DB CONTRACT
-export const SOCIAL_DB_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID as string;
-
-// POTLOCK LISTS CONTRACT
-export const POTLOCK_LISTS_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_POTLOCK_LISTS_CONTRACT_ID as string;
-
-// POTLOCK DONATE CONTRACT
-export const POTLOCK_DONATE_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_POTLOCK_DONATE_CONTRACT_ID as string;
-
-// POTLOCK DONATE CONTRACT
-export const POTLOCK_POT_FACTORY_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_POTLOCK_POT_FACTORY_CONTRACT_ID as string;
-
-// POTLOCK REGISTRY LIST ID
+// List ID of PotLock Public Goods Registry
 export const POTLOCK_REGISTRY_LIST_ID = 1;
 
 // Separates contract_id and method_name in ProviderId
