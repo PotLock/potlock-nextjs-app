@@ -4,7 +4,7 @@ import { APP_METADATA } from "@/common/constants";
 
 export default function Document() {
   return (
-    <Html lang="en" className="dark">
+    <Html lang="en">
       <Head>
         <meta name="description" content={APP_METADATA.description} />
         <meta name="image" content={APP_METADATA.openGraph.images.url} />
