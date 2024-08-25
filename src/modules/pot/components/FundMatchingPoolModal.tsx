@@ -1,6 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
-
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
@@ -10,6 +7,7 @@ import { yoctoNearToFloat } from "@/common/lib";
 import {
   Button,
   Checkbox,
+  CustomAvatar,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -21,7 +19,6 @@ import {
 import { Badge } from "@/common/ui/components/badge";
 import Spinner from "@/common/ui/components/Spinner";
 import routesPath from "@/modules/core/routes";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { useTypedSelector } from "@/store";
 
 import { useFundMatchingPoolForm, useProtocolConfig } from "../hooks";
@@ -30,33 +27,6 @@ type Props = {
   potDetail: Pot;
   open?: boolean;
   onCloseClick?: () => void;
-};
-
-const NO_IMAGE =
-  "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
-
-const CustomAvatar = ({ accountId }: { accountId?: string }) => {
-  const profileInfo = useProfileData(accountId);
-  const [hasError, setHasError] = useState(false);
-
-  if (!profileInfo.profileReady || !accountId) {
-    return (
-      <img
-        alt="avatar"
-        className="h-[12px] w-[12px] rounded-[50%] bg-white"
-        src={NO_IMAGE}
-      />
-    );
-  }
-
-  return (
-    <img
-      alt="avatar"
-      className="h-[12px] w-[12px] rounded-[50%] bg-white"
-      src={hasError ? NO_IMAGE : profileInfo.profileImages.image}
-      onError={() => setHasError(true)}
-    />
-  );
 };
 
 const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
