@@ -13,13 +13,14 @@ import {
   SortSelect,
 } from "@/common/ui/components";
 import { Profile } from "@/modules/profile/models";
-import { ProjectCard } from "@/modules/project";
-import { categories, statuses } from "@/modules/project/constants";
 import { useTypedSelector } from "@/store";
+
+import { ProjectCard } from "./ProjectCard";
+import { categories, statuses } from "../constants";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
-const AllProjects = () => {
+export const ProjectsOverview = () => {
   const [filteredRegistrations, setFilteredRegistrations] = useState<
     Registration[]
   >([]);
@@ -200,5 +201,3 @@ const AllProjects = () => {
     </div>
   );
 };
-
-export default AllProjects;

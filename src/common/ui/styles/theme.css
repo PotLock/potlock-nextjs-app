@@ -165,3 +165,7 @@
 .bg-hero {
   background-size: cover;
 }
+
+:root.dark .bg-hero > :first-child {
+  background: #000
+}

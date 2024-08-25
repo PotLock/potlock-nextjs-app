@@ -4,7 +4,7 @@ import { APP_METADATA } from "@/common/constants";
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html lang="en" className="dark">
       <Head>
         <meta name="description" content={APP_METADATA.description} />
         <meta name="image" content={APP_METADATA.openGraph.images.url} />
@@ -23,6 +23,8 @@ export default function Document() {
           href="https://fonts.cdnfonts.com"
           crossOrigin="anonymous"
         />
+
+        <style>{"html.dark {background: #000;}"}</style>
       </Head>
 
       <body>

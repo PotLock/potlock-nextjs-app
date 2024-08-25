@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getConfig } from "@/common/contracts/potlock/donate";
 import { yoctosToUsdWithFallback } from "@/modules/core";
 
-const DonationStats = () => {
+export const ProjectFundingStats = () => {
   const [donateConfig, setDonateConfig] = useState({
     amount: "-",
     count: "-",
@@ -37,5 +37,3 @@ const DonationStats = () => {
     </div>
   );
 };
-
-export default DonationStats;

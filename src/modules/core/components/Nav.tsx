@@ -9,7 +9,7 @@ import { SignInButton } from "@/modules/auth";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import routesPath from "@/modules/core/routes";
 
-import UserDropdown from "./UserDropdown";
+import { UserDropdown } from "./UserDropdown";
 
 const tabOptions = [
   { text: "Projects", link: routesPath.PROJECTS_LIST, disabled: false },
@@ -94,7 +94,7 @@ const CartLink = () => {
   );
 };
 
-const Nav = () => {
+export const Nav = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isClient = useIsClient();
   const router = useRouter();
