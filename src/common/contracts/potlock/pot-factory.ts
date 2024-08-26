@@ -37,6 +37,9 @@ export const calculate_min_deployment_deposit = ({
     .then((amount) => {
       const amountYoctoNear = BigInt(amount).toString();
 
+      console.log(amount);
+      console.log(yoctoNearToFloat(amountYoctoNear));
+
       const deposit = parseNearAmount(
         (yoctoNearToFloat(amountYoctoNear) + 0.02).toString(),
       );

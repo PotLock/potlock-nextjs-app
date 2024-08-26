@@ -327,7 +327,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
             <div un-flex="~ col lg:row-reverse" un-gap="4 lg:8" un-w="full">
               <Button
                 type="submit"
-                disabled={isDisabled}
+                // disabled={isDisabled}
                 variant="standard-filled"
                 className="lg:w-auto w-full"
               >
