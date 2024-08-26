@@ -1,6 +1,12 @@
+import { useEffect } from "react";
+
+import { parseNearAmount } from "near-api-js/lib/utils/format";
+
+import { naxiosInstance } from "@/common/api/near";
 import { ByPotId } from "@/common/api/potlock";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { yoctoNearToFloat } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
@@ -33,6 +39,67 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
     onCancel,
     onSubmit,
   } = usePotDeploymentForm();
+
+  useEffect(() => {
+    //   const amount = 4.45663e24;
+    // const bigInt = BigInt(amount).toString();
+    // const extraForBuffer = 0.02; // Near "20000000000000000000000" yocto
+    // const deposit = parseNearAmount(
+    //   (yoctoNearToFloat(bigInt) + extraForBuffer).toString(),
+    // );
+
+    // console.log(
+    //   yoctoNearToFloat(bigInt),
+    //   yoctoNearToFloat("4456629999999999981649920"),
+    //   yoctoNearToFloat("20000000000000000000000"),
+    //   deposit,
+    // );
+
+    const dataArgs = {
+      owner: "root.akaia.testnet",
+      pot_name: "AKAIA stuff",
+      pot_description: "test",
+      max_projects: 25,
+      application_start_ms: 1727359500000,
+      application_end_ms: 1729951500000,
+      public_round_start_ms: 1732629900000,
+      public_round_end_ms: 1735221960000,
+      referral_fee_matching_pool_basis_points: 50000,
+      referral_fee_public_round_basis_points: 50000,
+      chef_fee_basis_points: 10000,
+      sybil_wrapper_provider: "v1.nadabot.testnet:is_human",
+
+      source_metadata: {
+        commit_hash: "cda438fd3f7a0aea06a4e435d7ecebfeb6e172a5",
+        link: "https://github.com/PotLock/core",
+        version: "0.1.0",
+      },
+    };
+
+    naxiosInstance
+      .contractApi({ contractId: "v1.potfactory.potlock.testnet" })
+      .view<{ args: typeof dataArgs }, string>(
+        "calculate_min_deployment_deposit",
+        { args: { args: dataArgs } },
+      )
+      .then((amount) => {
+        // const bigInt = BigInt(amount).toString();
+        // const extraForBuffer = 0.02; // Near "20000000000000000000000" yocto
+        // const deposit = parseNearAmount(
+        //   (yoctoNearToFloat(bigInt) + extraForBuffer).toString(),
+        // );
+
+        const amountYocto = BigInt(amount).toString();
+
+        const deposit = parseNearAmount(
+          (yoctoNearToFloat(amountYocto) + 0.02).toString(),
+        );
+
+        console.log(deposit);
+
+        return deposit;
+      });
+  }, []);
 
   return (
     <Form {...form}>

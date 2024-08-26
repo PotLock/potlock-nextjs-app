@@ -85,61 +85,40 @@ export const potModel = createModel<RootModel>()({
       } else {
         return void potFactory
           .deploy_pot({
-            // pot_args: evolve(
-            //   {
-            //     ...potInputs,
-            //     source_metadata: { commit_hash, ...sourceMetadata },
+            pot_args: evolve(
+              {
+                ...potInputs,
+                source_metadata: { commit_hash, ...sourceMetadata },
 
-            //     registry_provider: isPgRegistrationRequired
-            //       ? LISTS_CONTRACT_ID
-            //       : undefined,
+                registry_provider: isPgRegistrationRequired
+                  ? LISTS_CONTRACT_ID
+                  : undefined,
 
-            //     sybil_wrapper_provider: isNadabotVerificationRequired
-            //       ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
-            //       : undefined,
-            //   },
-
-            //   {
-            //     application_start_ms: timestamp.parse,
-            //     application_end_ms: timestamp.parse,
-            //     public_round_start_ms: timestamp.parse,
-            //     public_round_end_ms: timestamp.parse,
-
-            //     referral_fee_matching_pool_basis_points:
-            //       donationFeeBasicPoints.parse,
-
-            //     referral_fee_public_round_basis_points:
-            //       donationFeeBasicPoints.parse,
-
-            //     min_matching_pool_donation_amount: conditional(
-            //       [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
-            //       conditional.defaultCase(() => undefined),
-            //     ),
-
-            //     chef_fee_basis_points: donationFeeBasicPoints.parse,
-            //   },
-            // ),
-
-            pot_args: {
-              owner: "root.akaia.testnet",
-              pot_name: "AKAIA stuff",
-              pot_description: "test",
-              max_projects: 25,
-              application_start_ms: 1727359500000,
-              application_end_ms: 1729951500000,
-              public_round_start_ms: 1732629900000,
-              public_round_end_ms: 1735221960000,
-              referral_fee_matching_pool_basis_points: 50000,
-              referral_fee_public_round_basis_points: 50000,
-              chef_fee_basis_points: 10000,
-              sybil_wrapper_provider: "v1.nadabot.testnet:is_human",
-
-              source_metadata: {
-                commit_hash: "cda438fd3f7a0aea06a4e435d7ecebfeb6e172a5",
-                link: "https://github.com/PotLock/core",
-                version: "0.1.0",
+                sybil_wrapper_provider: isNadabotVerificationRequired
+                  ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
+                  : undefined,
               },
-            },
+
+              {
+                application_start_ms: timestamp.parse,
+                application_end_ms: timestamp.parse,
+                public_round_start_ms: timestamp.parse,
+                public_round_end_ms: timestamp.parse,
+
+                referral_fee_matching_pool_basis_points:
+                  donationFeeBasicPoints.parse,
+
+                referral_fee_public_round_basis_points:
+                  donationFeeBasicPoints.parse,
+
+                min_matching_pool_donation_amount: conditional(
+                  [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
+                  conditional.defaultCase(() => undefined),
+                ),
+
+                chef_fee_basis_points: donationFeeBasicPoints.parse,
+              },
+            ),
 
             pot_handle,
           })
