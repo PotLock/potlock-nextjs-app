@@ -35,13 +35,13 @@ export const calculate_min_deployment_deposit = ({
       string
     >("calculate_min_deployment_deposit", { args: { args: pot_args } })
     .then((amount) => {
-      const amountYoctoNear = BigInt(amount).toString();
+      const amountYocto = BigInt(amount).toString();
 
-      return (
-        parseNearAmount(
-          (yoctoNearToFloat(amountYoctoNear) + 0.02).toString(),
-        ) ?? undefined
+      const deposit = parseNearAmount(
+        (yoctoNearToFloat(amountYocto) + 0.02).toString(),
       );
+
+      return deposit ?? undefined;
     });
 
 export const deploy_pot = async (args: PotDeploymentArgs): Promise<Pot> => {
