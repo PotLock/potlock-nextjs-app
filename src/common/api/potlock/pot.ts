@@ -1,6 +1,7 @@
 import { POTLOCK_API_ENDPOINT } from "@/common/constants";
+import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 
-import { Donation, Pot, PotPayout } from "./types";
+import { Donation, Pot, PotApplication, PotPayout } from "./types";
 
 export const getPot = async ({ potId }: { potId: string }) => {
   const res = await fetch(`${POTLOCK_API_ENDPOINT}/api/v1/pots/${potId}/`);
@@ -54,4 +55,25 @@ export const getPotDonations = async ({
   );
   const json = await res.json();
   return json as GetPotDonationsResponse;
+};
+
+type GetPotApplicationsResponse = {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: PotApplication[];
+};
+
+export const getPotApplications = async ({
+  potId,
+  pageSize,
+}: {
+  potId: string;
+  pageSize?: number;
+}) => {
+  const res = await fetch(
+    `${POTLOCK_API_ENDPOINT}/api/v1/pots/${potId}/applications${pageSize ? `?page_size=${9999}` : ""}`,
+  );
+  const json = await res.json();
+  return json as GetPotApplicationsResponse;
 };

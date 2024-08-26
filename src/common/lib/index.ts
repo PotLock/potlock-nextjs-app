@@ -4,3 +4,4 @@ export * from "./yoctosToUsdWithFallback";
 export * from "./converters";
 export * from "./navigation";
 export * from "./time";
+export * from "./daysAgo";

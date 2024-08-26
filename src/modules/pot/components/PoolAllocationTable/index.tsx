@@ -6,7 +6,6 @@ import { useOrderedDonations } from "../../hooks";
 const PoolAllocationTable = ({ potDetail }: { potDetail: Pot }) => {
   const {
     orderedPayouts,
-    uniquePayoutsDonors,
     totalAmountNearPayouts,
     orderedDonations,
     uniqueDonationDonors,
@@ -20,7 +19,7 @@ const PoolAllocationTable = ({ potDetail }: { potDetail: Pot }) => {
       <Table
         title="matching pool allocations"
         totalAmount={totalAmountNearPayouts.toString()}
-        totalUniqueDonors={uniquePayoutsDonors}
+        totalUniqueDonors={uniqueDonationDonors}
         donations={orderedPayouts.slice(0, 5)}
       />
     );

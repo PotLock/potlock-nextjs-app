@@ -21,6 +21,7 @@ import {
   newApplicationSchema,
 } from "../models/schemas";
 import {
+  ApplicationReviewInputs,
   ChallengeInputs,
   FundMatchingPoolInputs,
   NewApplicationInputs,
@@ -269,6 +270,55 @@ export const useChallengeForm = ({
       }
     },
     [accountId, asDao, potDetail.account, potDetail.name],
+  );
+
+  return {
+    form,
+    errors: form.formState.errors,
+    inProgress,
+    onSubmit,
+  };
+};
+
+export const useApplicationReviewForm = ({
+  potDetail,
+  projectId,
+  status,
+}: {
+  potDetail: Pot;
+  projectId: string;
+  status: "Approved" | "Rejected" | "";
+}) => {
+  const form = useForm<ApplicationReviewInputs>({
+    resolver: zodResolver(newApplicationSchema),
+  });
+
+  const [inProgress, setInProgress] = useState(false);
+
+  const onSubmit: FormSubmitHandler<ApplicationReviewInputs> = useCallback(
+    async (formData) => {
+      setInProgress(true);
+
+      const args = {
+        project_id: projectId,
+        status,
+        notes: formData.data.message,
+      };
+
+      try {
+        await naxiosInstance
+          .contractApi({ contractId: potDetail.account })
+          .call("chef_set_application_status", {
+            args,
+            deposit: parseNearAmount(calculateDepositByDataSize(args))!,
+            gas: FULL_TGAS,
+          });
+      } catch (e) {
+        console.error(e);
+        setInProgress(false);
+      }
+    },
+    [potDetail.account, projectId, status],
   );
 
   return {

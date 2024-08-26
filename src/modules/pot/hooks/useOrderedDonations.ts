@@ -19,6 +19,8 @@ export const useOrderedDonations = (potDetail: Pot) => {
   const [totalAmountNearDonations, setTotalAmountNearDonations] = useState(0);
   const [totalAmountNearPayouts, setTotalAmountNearPayouts] = useState(0);
 
+  // Flagged Addresses are the ones that should not be included
+
   useEffect(() => {
     // INFO: The generated swr was not working
     (async () => {
@@ -27,6 +29,8 @@ export const useOrderedDonations = (potDetail: Pot) => {
         potId: potDetail.account,
         pageSize: 9999,
       });
+
+      // console.log("donationsData:", donationsData);
 
       // join donators
       const joinedDonations: Record<string, JoinDonation> = {};
@@ -39,9 +43,9 @@ export const useOrderedDonations = (potDetail: Pot) => {
         );
 
         // Should Near be included?
-        // if (key === "nf-payments.near") {
-        //   return;
-        // }
+        if (key === "nf-payments.near") {
+          return;
+        }
 
         if (!joinedDonations[key]) {
           joinedDonations[key] = {
@@ -77,7 +81,7 @@ export const useOrderedDonations = (potDetail: Pot) => {
         potId: potDetail.account,
         pageSize: 9999,
       });
-      console.log("Payouts", payouts);
+      // console.log("Payouts", payouts);
 
       // Join payouts to the donors
       const joinedPayouts: Record<string, JoinDonation> = {};
@@ -90,9 +94,9 @@ export const useOrderedDonations = (potDetail: Pot) => {
         );
 
         // Should Near be included?
-        // if (key === "nf-payments.near") {
-        //   return;
-        // }
+        if (key === "nf-payments.near") {
+          return;
+        }
 
         // INFO: Should payouts include donations? (user "joinedDonations" if so), but it doesn't look to be the case
         if (!joinedPayouts[key]) {

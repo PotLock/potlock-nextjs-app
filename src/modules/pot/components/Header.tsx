@@ -13,7 +13,7 @@ import { useTypedSelector } from "@/store";
 import ChallengeModal from "./ChallengeModal";
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import NewApplicationModal from "./NewApplicationModal";
-import PoolAllocationTable from "./PoolAllocationTable/PoolAllocationTable";
+import PoolAllocationTable from "./PoolAllocationTable";
 import { usePotStatusesForAccountId } from "../hooks";
 
 type Props = {

@@ -25,3 +25,10 @@ export const challengeSchema = z.object({
     .min(3)
     .max(1000, "Challenge reason must be less than 1000 characters"),
 });
+
+export const applicationReviewSchema = z.object({
+  message: z
+    .string()
+    .min(3)
+    .max(1000, "Review must be less than 1000 characters"),
+});

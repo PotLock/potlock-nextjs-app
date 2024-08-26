@@ -3,7 +3,7 @@ import { ReactElement, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import * as potServices from "@/common/contracts/potlock/pot";
+import * as potContract from "@/common/contracts/potlock/pot";
 import { InfiniteScroll, SearchBar } from "@/common/ui/components";
 import { PotLayout } from "@/modules/pot";
 import { Profile } from "@/modules/profile/models";
@@ -30,7 +30,7 @@ const ProjectsTab = () => {
   useEffect(() => {
     if (query.potId) {
       (async () => {
-        const _projects = await potServices.getApplications({
+        const _projects = await potContract.getApplications({
           potId: query.potId,
         });
 
