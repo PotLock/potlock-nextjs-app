@@ -16,17 +16,8 @@ export const yoctosToNear = (amountYoctos: string, abbreviate?: boolean) => {
 export const bigNumFromString = (amount: string, decimals: number) =>
   Big(amount).mul(Big(10).pow(decimals));
 
-export const yoctoNearToBigNum = (amountYoctoNear: string) =>
-  bigNumFromString(amountYoctoNear, NEAR_DEFAULT_TOKEN_DECIMALS);
-
 export const bigStringToFloat = (amount: string, decimals: number) =>
   parseFloat(bigNumFromString(amount, decimals).toFixed(2));
-
-export const bigToYoctoNear = (amount: Big) =>
-  amount.mul(Big(10).pow(24)).toFixed();
-
-export const yoctoNearToBig = (amountYoctoNear: string) =>
-  Big(amountYoctoNear).div(Big(10).pow(24));
 
 export const floatToBigNum = (amount: number, decimals: number) =>
   Big(amount).mul(Big(10).pow(decimals));
