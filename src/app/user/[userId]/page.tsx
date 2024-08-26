@@ -2,6 +2,7 @@
 
 import Info from "@/modules/profile/components/Info";
 import ProfileBanner from "@/modules/profile/components/ProfileBanner";
+import ProfileBody from "@/modules/profile/components/ProfileBody";
 import ProjectBanner from "@/modules/project/components/ProjectBanner";
 
 export default async function Project({
@@ -15,6 +16,7 @@ export default async function Project({
       <ProfileBanner isProject={true} accountId={params.userId} />
       <Info accountId={params.userId} />
       {/* <DonationsInfo accountId={params.userId} potId={params.potId} /> */}
+      <ProfileBody />
     </main>
   );
 }

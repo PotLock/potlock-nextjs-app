@@ -217,3 +217,17 @@ export const setSocialData = async ({
     console.error("setSocialData", e);
   }
 };
+
+export const getPostFeeds = async ({ accountId }: { accountId: string }) => {
+  try {
+    const response = await nearSocialDbContractApi.view<any, any>("get", {
+      args: {
+        keys: [`*/${accountId}/post/main`],
+        blockHeight: "125830955",
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error Fetching Feeds", error);
+  }
+};
