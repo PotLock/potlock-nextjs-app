@@ -34,28 +34,16 @@ export const calculate_min_deployment_deposit = ({
       { args: typeof pot_args },
       string
     >("calculate_min_deployment_deposit", { args: { args: pot_args } })
-    .then((amount) => {
-      const amountYoctoNear = BigInt(amount).toString();
+    .then((amount) =>
+      Big(amount).plus(Big("20000000000000000000000")).toFixed(),
+    );
 
-      console.log(amount);
-      console.log(yoctoNearToFloat(amountYoctoNear));
-
-      const deposit = parseNearAmount(
-        (yoctoNearToFloat(amountYoctoNear) + 0.02).toString(),
-      );
-
-      return deposit ?? undefined;
-    });
-
-export const deploy_pot = async (args: PotDeploymentArgs): Promise<Pot> => {
-  console.log(await calculate_min_deployment_deposit(args));
-
-  return contractApi.call<typeof args, Pot>("deploy_pot", {
+export const deploy_pot = async (args: PotDeploymentArgs): Promise<Pot> =>
+  contractApi.call<typeof args, Pot>("deploy_pot", {
     args,
     deposit: await calculate_min_deployment_deposit(args),
     callbackUrl: window.location.href,
   });
-};
 
 export const isDeploymentAvailable = async ({ accountId }: ByAccountId) => {
   const config = await get_config();
