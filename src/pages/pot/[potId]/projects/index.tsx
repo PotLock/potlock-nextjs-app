@@ -78,9 +78,9 @@ const ProjectsTab = () => {
   return (
     <div className="md:py-12 flex w-full flex-col py-10">
       <div className="flex w-full flex-col gap-5">
-        <div className="font-600 text-[18px] leading-6 tracking-[1.12px] text-[#292929]">
+        <div className="font-600 text-[18px] text-[#292929]">
           All Projects
-          <span className="ml-2">{potProjects.length}</span>
+          <span className="ml-4">{potProjects.length}</span>
         </div>
         <div className="flex w-full items-center gap-4">
           <SearchBar

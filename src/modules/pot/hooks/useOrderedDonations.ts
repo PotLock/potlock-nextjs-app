@@ -10,7 +10,7 @@ export type JoinDonation = {
   nearAmount: number;
 };
 
-export const useOrderedDonations = (potDetail: Pot) => {
+export const useOrderedDonations = (potId: string) => {
   const [donations, setDonations] = useState<Donation[]>([]);
   // INFO: Also know as sponsors
   const [orderedDonations, setOrderedDonations] = useState<JoinDonation[]>([]);
@@ -18,6 +18,7 @@ export const useOrderedDonations = (potDetail: Pot) => {
   const [orderedPayouts, setOrderedPayouts] = useState<JoinDonation[]>([]);
   const [totalAmountNearDonations, setTotalAmountNearDonations] = useState(0);
   const [totalAmountNearPayouts, setTotalAmountNearPayouts] = useState(0);
+  const [ready, setReady] = useState(false);
 
   // Flagged Addresses are the ones that should not be included
 
@@ -26,26 +27,27 @@ export const useOrderedDonations = (potDetail: Pot) => {
     (async () => {
       // Donations
       const donationsData = await getPotDonations({
-        potId: potDetail.account,
+        potId,
         pageSize: 9999,
       });
+
+      // remove Near Payments
+      const filteredDonations = donationsData.results.filter(
+        (donation) =>
+          (donation.donor.id || donation.pot.account) !== "nf-payments.near",
+      );
 
       // console.log("donationsData:", donationsData);
 
       // join donators
       const joinedDonations: Record<string, JoinDonation> = {};
-      donationsData.results.forEach((donation) => {
+      filteredDonations.forEach((donation) => {
         const key = donation.donor.id || donation.pot.account;
         const nearAmount = formatWithCommas(
           SUPPORTED_FTS[donation.token.name!.toUpperCase()].fromIndivisible(
             donation.net_amount,
           ),
         );
-
-        // Should Near be included?
-        if (key === "nf-payments.near") {
-          return;
-        }
 
         if (!joinedDonations[key]) {
           joinedDonations[key] = {
@@ -57,7 +59,7 @@ export const useOrderedDonations = (potDetail: Pot) => {
         }
       });
 
-      setDonations(donationsData.results);
+      setDonations(filteredDonations);
 
       const donationList: JoinDonation[] = [];
       Object.keys(joinedDonations).forEach((donor) => {
@@ -78,25 +80,25 @@ export const useOrderedDonations = (potDetail: Pot) => {
 
       // Payouts -------------------
       const payouts = await getPotPayouts({
-        potId: potDetail.account,
+        potId,
         pageSize: 9999,
       });
-      // console.log("Payouts", payouts);
+
+      // remove Near Payments
+      const filteredPayouts = payouts.results.filter(
+        (payout) =>
+          (payout.recipient.id || payout.pot.account) !== "nf-payments.near",
+      );
 
       // Join payouts to the donors
       const joinedPayouts: Record<string, JoinDonation> = {};
-      payouts.results.forEach((payout) => {
+      filteredPayouts.forEach((payout) => {
         const key = payout.recipient.id || payout.pot.account;
         const nearAmount = formatWithCommas(
           SUPPORTED_FTS[payout.token.name!.toUpperCase()].fromIndivisible(
             payout.amount,
           ),
         );
-
-        // Should Near be included?
-        if (key === "nf-payments.near") {
-          return;
-        }
 
         // INFO: Should payouts include donations? (user "joinedDonations" if so), but it doesn't look to be the case
         if (!joinedPayouts[key]) {
@@ -109,7 +111,7 @@ export const useOrderedDonations = (potDetail: Pot) => {
         }
       });
 
-      setAllPayouts(payouts.results);
+      setAllPayouts(filteredPayouts);
 
       const payoutsList: JoinDonation[] = [];
       Object.keys(joinedPayouts).forEach((donor) => {
@@ -128,8 +130,10 @@ export const useOrderedDonations = (potDetail: Pot) => {
         totalNearPayout += donation.nearAmount;
       });
       setTotalAmountNearPayouts(totalNearPayout);
+
+      setReady(true);
     })();
-  }, [potDetail.account]);
+  }, [potId]);
 
   return {
     donations,
@@ -140,5 +144,6 @@ export const useOrderedDonations = (potDetail: Pot) => {
     totalAmountNearPayouts,
     uniqueDonationDonors: orderedDonations.length,
     uniquePayoutsDonors: orderedPayouts.length,
+    ready,
   };
 };

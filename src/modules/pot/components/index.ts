@@ -5,3 +5,4 @@ export { default as Tag } from "./Tag";
 export { default as TimeLeft } from "./TimeLeft";
 export { default as HeaderStatus } from "./HeaderStatus/HeaderStatus";
 export { default as PotLayout } from "./PotLayout";
+export { default as DonationsTable } from "./DonationsTable";

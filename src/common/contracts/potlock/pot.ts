@@ -3,6 +3,7 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { PotId } from "@/common/api/potlock";
 import { FULL_TGAS } from "@/common/constants";
+import { yoctoNearToFloat } from "@/common/lib";
 
 import {
   Application,
@@ -154,6 +155,24 @@ export const challengePayouts = ({
     },
   );
 };
+
+// export const calculate_min_deployment_deposit = ({
+//   pot_args,
+// }: PotDeploymentArgs): Promise<string> =>
+//   contractApi
+//     .view<
+//       { args: typeof pot_args },
+//       string
+//     >("calculate_min_deployment_deposit", { args: { args: pot_args } })
+//     .then((amount) => {
+//       const bigInt = BigInt(amount).toString();
+//       const extraForBuffer = 0.02; // Near "20000000000000000000000" yocto
+//       const deposit = parseNearAmount(
+//         (yoctoNearToFloat(bigInt) + extraForBuffer).toString(),
+//       );
+
+//       return deposit;
+//     });
 
 /**
  * Admin update round payout Challenge

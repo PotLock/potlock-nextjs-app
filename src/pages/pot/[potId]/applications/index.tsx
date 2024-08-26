@@ -1,8 +1,7 @@
-// INFO: code partially refactored (original extracted from Além by Mohamed)
+// INFO: code partially refactored (original extracted from Além)
 
 import { ReactElement, useCallback, useEffect, useState } from "react";
 
-import { FinalExecutionStatus } from "near-api-js/lib/providers";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -26,7 +25,6 @@ import routesPath from "@/modules/core/routes";
 import { PotLayout, applicationsFiltersTags } from "@/modules/pot";
 import ApplicationReviewModal from "@/modules/pot/components/ApplicationReviewModal";
 import Dropdown from "@/modules/pot/components/Dropdown/Dropdown";
-import getTransactionsFromHashes from "@/modules/pot/utils/getTransactionsFromHashes";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { useTypedSelector } from "@/store";
 
@@ -44,9 +42,9 @@ import {
 
 const ApplicationsTab = () => {
   const router = useRouter();
-  const { potId, transactionHashes } = router.query as {
+  const { potId } = router.query as {
     potId: string;
-    transactionHashes: string;
+    // transactionHashes: string;
   };
   const { data: potDetail } = usePot({ potId });
   const [applications, setApplications] = useState<Application[]>([]);
@@ -79,27 +77,28 @@ const ApplicationsTab = () => {
   }, [potId]);
 
   // Handle update application status for web wallet
-  useEffect(() => {
-    if (accountId && transactionHashes) {
-      getTransactionsFromHashes(transactionHashes, accountId).then(
-        (transactions) => {
-          const transaction = transactions[0].transaction;
+  // INFO: Not needed. There's a global transaction successful modal. But leaving it here just in case
+  // useEffect(() => {
+  //   if (accountId && transactionHashes) {
+  //     getTransactionsFromHashes(transactionHashes, accountId).then(
+  //       (transactions) => {
+  //         const transaction = transactions[0].transaction;
 
-          const methodName = transaction.actions[0].FunctionCall.method_name;
-          const successVal = (transactions[0].status as FinalExecutionStatus)
-            ?.SuccessValue;
-          const result = JSON.parse(
-            Buffer.from(successVal!, "base64").toString("utf-8"),
-          );
+  //         const methodName = transaction.actions[0].FunctionCall.method_name;
+  //         const successVal = (transactions[0].status as FinalExecutionStatus)
+  //           ?.SuccessValue;
+  //         const result = JSON.parse(
+  //           Buffer.from(successVal!, "base64").toString("utf-8"),
+  //         );
 
-          if (methodName === "chef_set_application_status" && result) {
-            // TODO: Toast
-            // toast(result.status);
-          }
-        },
-      );
-    }
-  }, [accountId, transactionHashes]);
+  //         if (methodName === "chef_set_application_status" && result) {
+  //           // TODO: Toast
+  //           // toast(result.status);
+  //         }
+  //       },
+  //     );
+  //   }
+  // }, [accountId, transactionHashes]);
 
   // Admin - Edit Project
   const [projectId, setProjectId] = useState("");

@@ -1,12 +1,20 @@
 import { ReactElement } from "react";
 
-import { PotLayout } from "@/modules/pot";
+import { useRouter } from "next/router";
+
+import { DonationsTable, PotLayout } from "@/modules/pot";
 
 const DonationsTab = () => {
+  const router = useRouter();
+  const { potId } = router.query as {
+    potId: string;
+  };
+
   return (
-    <main className="flex flex-col">
-      <p>Donations Page</p>
-    </main>
+    // Container
+    <div className="md:py-12 flex w-full flex-col py-10">
+      <DonationsTable potId={potId} />
+    </div>
   );
 };
 

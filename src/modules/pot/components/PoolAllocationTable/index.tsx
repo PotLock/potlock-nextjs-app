@@ -10,7 +10,7 @@ const PoolAllocationTable = ({ potDetail }: { potDetail: Pot }) => {
     orderedDonations,
     uniqueDonationDonors,
     totalAmountNearDonations,
-  } = useOrderedDonations(potDetail);
+  } = useOrderedDonations(potDetail.account);
 
   const { public_donations_count } = potDetail;
 
