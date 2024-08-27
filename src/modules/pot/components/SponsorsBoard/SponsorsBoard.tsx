@@ -29,7 +29,7 @@ const Sponsor = ({
         target="_blank"
         className="name"
       >
-        {truncate(profile?.name || donorId, 15)}
+        {truncate(profile?.name || donorId, 20)}
       </Link>
       <p>{truncate(profile?.description || "", colIdx === 2 ? 120 : 35)}</p>
       <div className="footer">
