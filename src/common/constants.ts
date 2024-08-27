@@ -4,8 +4,6 @@ import Big from "big.js";
 import { utils } from "near-api-js";
 import { Metadata } from "next";
 
-import { yoctoNearToFloat } from "./lib";
-
 export const APP_METADATA: Metadata & {
   title: string;
   description: NonNullable<Metadata["description"]>;

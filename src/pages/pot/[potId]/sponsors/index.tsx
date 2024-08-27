@@ -1,12 +1,9 @@
 import { ReactElement, useEffect, useState } from "react";
 
-import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { useRouter } from "next/router";
 
-import { Donation } from "@/common/api/potlock";
 import { usePot } from "@/common/api/potlock/hooks";
 import { SUPPORTED_FTS } from "@/common/constants";
-import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
 import Spinner from "@/common/ui/components/Spinner";
 import {

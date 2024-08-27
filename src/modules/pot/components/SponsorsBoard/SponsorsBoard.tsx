@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { Donation } from "@/common/api/potlock";
-import { SUPPORTED_FTS } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import { CustomAvatar } from "@/common/ui/components";
 import routesPath from "@/modules/core/routes";
