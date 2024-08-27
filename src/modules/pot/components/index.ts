@@ -1,10 +1,11 @@
 export { default as Header } from "./Header";
+export { default as HeaderStatus } from "./HeaderStatus/HeaderStatus";
 export { default as Indicator } from "./Indicator";
 export { default as PotCard } from "./PotCard";
+export * from "./PotEditor";
+export * from "./PotLayout";
 export { default as Tag } from "./Tag";
 export { default as TimeLeft } from "./TimeLeft";
-export { default as HeaderStatus } from "./HeaderStatus/HeaderStatus";
-export { default as PotLayout } from "./PotLayout";
 export { default as DonationsTable } from "./DonationsTable";
 export { default as SponsorsBoard } from "./SponsorsBoard/SponsorsBoard";
 export { default as SponsorsTable } from "./SponsorsTable/SponsorsTable";

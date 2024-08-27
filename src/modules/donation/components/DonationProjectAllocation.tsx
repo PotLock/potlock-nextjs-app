@@ -1,7 +1,7 @@
+import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
 import { Pot, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { walletApi } from "@/common/contracts";
 import { ByAccountId } from "@/common/types";
 import {
   DialogDescription,
@@ -163,19 +163,20 @@ export const DonationProjectAllocation: React.FC<
               label="Amount"
               {...field}
               labelExtension={<AvailableTokenBalance tokenId={tokenId} />}
-              fieldExtension={
+              inputExtension={
                 <FormField
                   control={form.control}
                   name="tokenId"
-                  render={({ field: fieldExtension }) => (
+                  render={({ field: inputExtension }) => (
                     <SelectField
                       embedded
                       label="Available tokens"
                       disabled // TODO: FT donation is not yet finished
-                      defaultValue={fieldExtension.value}
-                      onValueChange={fieldExtension.onChange}
+                      defaultValue={inputExtension.value}
+                      onValueChange={inputExtension.onChange}
                       classes={{
-                        trigger: "h-full w-min rounded-r-none shadow-none",
+                        trigger:
+                          "mr-2px h-full w-min rounded-r-none shadow-none",
                       }}
                     >
                       <SelectItem value={NEAR_TOKEN_DENOM}>

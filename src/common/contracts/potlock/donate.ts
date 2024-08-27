@@ -1,5 +1,6 @@
 import { MemoryCache } from "@wpdas/naxios";
 
+import { naxiosInstance } from "@/common/api/near";
 import { POTLOCK_DONATE_CONTRACT_ID } from "@/common/constants";
 
 import {
@@ -7,7 +8,6 @@ import {
   DirectDonation,
   DirectDonationArgs,
 } from "./interfaces/donate.interfaces";
-import { naxiosInstance } from "..";
 
 /**
  * NEAR Contract API

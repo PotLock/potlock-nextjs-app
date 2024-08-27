@@ -100,8 +100,11 @@ const Nav = () => {
   const router = useRouter();
 
   return (
-    <div>
-      <nav className="max-sm:px-1 md:h-[96px] md:pr-2 container z-50 flex content-between items-center justify-between self-stretch bg-white px-[40px] pb-6 pt-6">
+    <>
+      <nav
+        un-w="full"
+        className="max-sm:px-1 md:h-[96px] md:pr-2 container z-50 flex content-between items-center justify-between self-stretch bg-white px-[40px] pb-6 pt-6"
+      >
         {/* Left */}
         <div className="flex">
           <div className="mr-12 flex flex-row items-center justify-center">
@@ -153,9 +156,10 @@ const Nav = () => {
           />
         </div>
       </nav>
+
       {/* Mobile Nav */}
       <div className="md:hidden">{showMobileMenu && <MobileNav />}</div>
-    </div>
+    </>
   );
 };
 

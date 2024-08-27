@@ -39,7 +39,6 @@ const SponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] }) => {
           <div className="rank">Rank</div>
           <div className="address">Donor</div>
           <div>Amount</div>
-          {/* {nearToUsd && !isInPot && <div>Amount (USD)</div>} */}
         </div>
         {sponsors
           .slice((currentPage - 1) * perPage, currentPage * perPage)

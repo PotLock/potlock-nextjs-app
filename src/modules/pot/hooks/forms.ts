@@ -5,6 +5,7 @@ import { calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
+import { naxiosInstance } from "@/common/api/near";
 import { Pot } from "@/common/api/potlock";
 import {
   FIFTY_TGAS,
@@ -12,7 +13,6 @@ import {
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
   ONE_TGAS,
 } from "@/common/constants";
-import { naxiosInstance } from "@/common/contracts";
 import { getDaoPolicy } from "@/common/contracts/common";
 import * as potService from "@/common/contracts/potlock/pot";
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Toggle } from "@/common/assets/svgs";
 import { truncate } from "@/common/lib";
 import { CustomAvatar } from "@/common/ui/components";
-import { nearToUsd } from "@/modules/core";
+import { oneNearUsdPrice } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { JoinDonation } from "@/modules/pot/hooks";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
@@ -24,7 +24,7 @@ const Table = ({
   title: string;
 }) => {
   const [usdToggle, setUsdToggle] = useState(false);
-  const nearToUsdValue = nearToUsd();
+  const nearToUsdValue = oneNearUsdPrice();
 
   return (
     <Container>
@@ -79,7 +79,7 @@ type DonationProps = {
 const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
   const profile = useProfileData(donorId);
   const matchedAmount = usdToggle
-    ? (nearAmount * nearToUsd()).toFixed(2)
+    ? (nearAmount * oneNearUsdPrice()).toFixed(2)
     : nearAmount.toFixed(2);
 
   const url = `${routesPath.PROJECT}/${donorId}`;

@@ -7,6 +7,10 @@ export interface ConditionalExecution {
   enabled?: boolean;
 }
 
+export type ContractMetadata = {
+  latestSourceCodeCommitHash: null | string;
+};
+
 export type AccountId = Account["accountId"];
 
 export interface ByAccountId {
@@ -27,3 +31,8 @@ export type ListId = number;
 export interface ByListId {
   listId: ListId;
 }
+
+/**
+ * `"{CONTRACT_ADDRESS}:{METHOD_NAME}"`
+ */
+export type ProviderId = string;

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import { usePot } from "@/common/api/potlock/hooks";
 import { NADA_BOT_URL } from "@/common/constants";
+import { PageWithBanner } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { Alert, useIsHuman } from "@/modules/core";
 import ErrorModal from "@/modules/core/components/ErrorModal";
@@ -13,11 +14,11 @@ import { Header, HeaderStatus } from "@/modules/pot";
 import Tabs from "./Tabs";
 import { potTabRoutes } from "../potTabRoutes";
 
-type Props = {
+export type PotLayoutProps = {
   children: React.ReactNode;
 };
 
-const PotLayout = ({ children }: Props) => {
+export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const router = useRouter();
   const query = router.query as {
     potId: string;
@@ -53,7 +54,7 @@ const PotLayout = ({ children }: Props) => {
   }
 
   return (
-    <main className="container flex flex-col">
+    <PageWithBanner>
       {/* Modals */}
       <SuccessModal
         successMessage="Transaction sent successfully"
@@ -97,8 +98,6 @@ const PotLayout = ({ children }: Props) => {
       <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">
         {children}
       </div>
-    </main>
+    </PageWithBanner>
   );
 };
-
-export default PotLayout;

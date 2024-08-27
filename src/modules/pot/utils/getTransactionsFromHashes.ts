@@ -1,4 +1,4 @@
-import { naxiosInstance } from "@/common/contracts";
+import { naxiosInstance } from "@/common/api/near";
 
 export default function getTransactionsFromHashes(
   transactionHashes: string,

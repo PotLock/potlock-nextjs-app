@@ -1,6 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 import { Provider } from "near-api-js/lib/providers";
 
+import { naxiosInstance } from "@/common/api/near";
 import {
   FULL_TGAS,
   NADABOT_CONTRACT_ID,
@@ -25,7 +26,6 @@ import {
   GetUsersForStampInput,
   StampExternal,
 } from "./interfaces/stamps";
-import { naxiosInstance } from "..";
 
 /**
  * NEAR Contract API

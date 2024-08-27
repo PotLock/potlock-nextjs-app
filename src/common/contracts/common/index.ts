@@ -1,4 +1,4 @@
-import { naxiosInstance } from "..";
+import { naxiosInstance } from "@/common/api/near";
 
 export const getDaoPolicy = async (accountId: string) => {
   try {

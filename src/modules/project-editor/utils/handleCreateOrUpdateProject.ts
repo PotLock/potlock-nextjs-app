@@ -6,6 +6,7 @@ import {
 } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
+import { naxiosInstance } from "@/common/api/near";
 import {
   FIFTY_TGAS,
   FULL_TGAS,
@@ -13,7 +14,6 @@ import {
   POTLOCK_LISTS_CONTRACT_ID,
   SOCIAL_DB_CONTRACT_ID,
 } from "@/common/constants";
-import { naxiosInstance } from "@/common/contracts";
 import { getDaoPolicy } from "@/common/contracts/common";
 import * as socialDb from "@/common/contracts/social";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
