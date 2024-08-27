@@ -55,49 +55,51 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
   return (
     <PageWithBanner>
-      {/* Modals */}
-      <SuccessModal
-        successMessage="Transaction sent successfully"
-        open={successModalOpen}
-        onCloseClick={() => setSuccessModalOpen(false)}
-      />
-      <ErrorModal
-        errorMessage={decodeURIComponent(query.errorMessage || "")}
-        open={errorModalOpen}
-        onCloseClick={() => setErrorModalOpen(false)}
-      />
+      <main className="container mt-4 flex flex-col">
+        {/* Modals */}
+        <SuccessModal
+          successMessage="Transaction sent successfully"
+          open={successModalOpen}
+          onCloseClick={() => setSuccessModalOpen(false)}
+        />
+        <ErrorModal
+          errorMessage={decodeURIComponent(query.errorMessage || "")}
+          open={errorModalOpen}
+          onCloseClick={() => setErrorModalOpen(false)}
+        />
 
-      <HeaderStatus potDetail={potDetail} />
+        <HeaderStatus potDetail={potDetail} />
 
-      {/* Not a human alert */}
-      {!loading && !nadaBotVerified && (
-        <div className="px-8">
-          <Alert
-            text="Your contribution won't be matched unless verified as human before the matching round ends."
-            buttonLabel="Verify you're human"
-            buttonHref={NADA_BOT_URL}
-          />
+        {/* Not a human alert */}
+        {!loading && !nadaBotVerified && (
+          <div className="px-8">
+            <Alert
+              text="Your contribution won't be matched unless verified as human before the matching round ends."
+              buttonLabel="Verify you're human"
+              buttonHref={NADA_BOT_URL}
+            />
+          </div>
+        )}
+
+        <Header potDetail={potDetail} />
+
+        {/* Pot Tabs */}
+        <Tabs
+          asLink
+          navOptions={potTabRoutes}
+          selectedTab={selectedTab.id}
+          onSelect={(tabId: string) => {
+            setSelectedTab(
+              potTabRoutes.find((tabRoute) => tabRoute.id === tabId)!,
+            );
+          }}
+        />
+
+        {/* Tab Content */}
+        <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">
+          {children}
         </div>
-      )}
-
-      <Header potDetail={potDetail} />
-
-      {/* Pot Tabs */}
-      <Tabs
-        asLink
-        navOptions={potTabRoutes}
-        selectedTab={selectedTab.id}
-        onSelect={(tabId: string) => {
-          setSelectedTab(
-            potTabRoutes.find((tabRoute) => tabRoute.id === tabId)!,
-          );
-        }}
-      />
-
-      {/* Tab Content */}
-      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">
-        {children}
-      </div>
+      </main>
     </PageWithBanner>
   );
 };
