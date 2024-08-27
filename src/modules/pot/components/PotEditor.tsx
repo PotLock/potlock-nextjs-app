@@ -104,6 +104,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                     inputExtension="%"
                     type="number"
                     min={0}
+                    max={100}
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -121,6 +122,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                     inputExtension="%"
                     type="number"
                     min={0}
+                    max={100}
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -243,6 +245,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                     inputExtension="%"
                     type="number"
                     min={0}
+                    max={100}
                     classNames={{ root: "lg:w-37% w-full" }}
                     {...field}
                   />
