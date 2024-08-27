@@ -9,11 +9,9 @@ const NO_IMAGE =
 
 export const CustomAvatar = ({
   accountId,
-  size = 12,
   className,
 }: {
   accountId?: string;
-  size?: number;
   className?: string;
 }) => {
   const profileInfo = useProfileData(accountId);
@@ -23,7 +21,7 @@ export const CustomAvatar = ({
     return (
       <img
         alt="avatar"
-        className={`h-[${size}px] w-[${size}px] rounded-[50%] bg-white ${className}`}
+        className={`h-[12px] w-[12px] rounded-[50%] bg-white ${className}`}
         src={NO_IMAGE}
       />
     );
@@ -32,7 +30,7 @@ export const CustomAvatar = ({
   return (
     <img
       alt="avatar"
-      className={`h-[${size}px] w-[${size}px] rounded-[50%] bg-white ${className}`}
+      className={`h-[12px] w-[12px] rounded-[50%] bg-white ${className}`}
       src={hasError ? NO_IMAGE : profileInfo.profileImages.image}
       onError={() => setHasError(true)}
     />

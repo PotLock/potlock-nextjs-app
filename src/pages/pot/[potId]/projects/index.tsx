@@ -35,10 +35,11 @@ const ProjectsTab = () => {
         });
 
         // Set only the approved ones
-        setPotProjects(
-          _projects.filter((application) => application.status === "Approved"),
+        const approvedProjects = _projects.filter(
+          (application) => application.status === "Approved",
         );
-        setFilteredPotProjects(_projects);
+        setPotProjects(approvedProjects);
+        setFilteredPotProjects(approvedProjects);
       })();
     }
   }, [query.potId]);

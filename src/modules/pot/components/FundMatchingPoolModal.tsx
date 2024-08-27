@@ -153,7 +153,10 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                 target="_blank"
               >
                 <Badge variant="secondary" className="gap-1">
-                  <CustomAvatar accountId={protocolConfig?.account_id} />{" "}
+                  <CustomAvatar
+                    accountId={protocolConfig?.account_id}
+                    className="h-[12px] w-[12px]"
+                  />{" "}
                   {protocolConfig?.account_id}
                 </Badge>
               </Link>
@@ -183,7 +186,10 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                   target="_blank"
                 >
                   <Badge variant="secondary" className="gap-1">
-                    <CustomAvatar accountId={potDetail.chef.id} />{" "}
+                    <CustomAvatar
+                      accountId={potDetail.chef.id}
+                      className="h-[12px] w-[12px]"
+                    />{" "}
                     {potDetail.chef.id}
                   </Badge>
                 </Link>

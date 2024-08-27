@@ -38,8 +38,7 @@ const DonationItem = ({
 
   const { id: donorId } = donor;
   const baseCurrency = pot?.base_currency;
-  const recipient = _recipient ?? { id: "" };
-  const { id: recipientId } = recipient;
+  const recipientId = donation.recipient?.id;
   const paidAt = new Date(donated_at).getTime();
   const ftId = token.account || baseCurrency;
   const decimals = token.decimals;
@@ -54,13 +53,13 @@ const DonationItem = ({
     ? `${routesPath.PROFILE}/${donorId}`
     : `${routesPath.PROFILE}/${projectId || recipientId}`;
 
-  const recipientUrl = `${routesPath.PROJECT}/${donation.recipient.id}`;
+  const recipientUrl = `${routesPath.PROJECT}/${recipientId}`;
 
   const name = truncate(donorId, 15);
-  const recipientName = truncate(donation.recipient.id, 15);
+  const recipientName = truncate(recipientId, 15);
 
   const donorProfile = useProfileData(donorId, true, false);
-  const recipientProfile = useProfileData(donation.recipient.id, true, false);
+  const recipientProfile = useProfileData(recipientId, true, false);
 
   return (
     <div

@@ -88,7 +88,7 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
     <Row>
       <div>#{index + 1}</div>
       <Link className="address" href={url}>
-        <CustomAvatar size={18} accountId={donorId} />
+        <CustomAvatar accountId={donorId} className="h-[18px] w-[18px]" />
         {truncate(profile.profile?.name || donorId, 15)}
       </Link>
       <div>
