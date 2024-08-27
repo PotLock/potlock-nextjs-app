@@ -59,11 +59,11 @@ export const usePotDeploymentForm = () => {
         .error?.issues.reduce((schemaErrors, { code, message, path }) => {
           const fieldPath = path.at(0);
 
-          console.table({ code, message, fieldPath });
-
           return potCrossFieldValidationTargets.includes(
             fieldPath as keyof PotDeploymentInputs,
-          ) && typeof fieldPath === "string"
+          ) &&
+            typeof fieldPath === "string" &&
+            code === "custom"
             ? { ...schemaErrors, [fieldPath]: { message, type: code } }
             : schemaErrors;
         }, {}) ?? {},
@@ -71,13 +71,14 @@ export const usePotDeploymentForm = () => {
     [formValues],
   );
 
-  const errors: FieldErrors<PotDeploymentInputs> = {
-    ...form.formState.errors,
-    ...crossFieldErrors,
-  };
+  const refinedForm = {
+    ...form,
 
-  console.log("cross field errors", crossFieldErrors);
-  console.log("combined errors", errors);
+    formState: {
+      ...form.formState,
+      errors: { ...form.formState.errors, ...crossFieldErrors },
+    },
+  };
 
   const isDisabled =
     formValues.source_metadata === null ||
@@ -101,9 +102,8 @@ export const usePotDeploymentForm = () => {
   );
 
   return {
-    form,
+    form: refinedForm,
     formValues,
-    crossFieldErrors,
     handleAdminsUpdate,
     isDisabled,
     onCancel,

@@ -51,11 +51,19 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       () =>
         label ?? labelExtension ? (
           <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
-            {label && (
-              <FormLabel className="text-sm text-neutral-950">
-                {label}
-              </FormLabel>
-            )}
+            <div un-flex="~" un-items="center" un-gap="1">
+              {label && (
+                <FormLabel className="text-sm text-neutral-950">
+                  {label}
+                </FormLabel>
+              )}
+
+              {required && (
+                <span className="line-height-none text-xl text-destructive">
+                  *
+                </span>
+              )}
+            </div>
 
             {labelExtension ? (
               <>
@@ -68,13 +76,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
                 )}
               </>
             ) : (
-              <>
-                {required ? null : (
-                  <span className="line-height-none text-sm text-neutral-600">
-                    (optional)
-                  </span>
-                )}
-              </>
+              !required && (
+                <span className="line-height-none text-sm text-neutral-600">
+                  (optional)
+                </span>
+              )
             )}
           </div>
         ) : null,
