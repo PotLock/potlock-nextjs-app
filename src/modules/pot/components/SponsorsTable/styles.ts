@@ -10,7 +10,7 @@ export const Container = styled.div`
   border-radius: 6px;
   border: 1px solid #7b7b7b;
   overflow: hidden;
-  .transcation {
+  .transaction {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -43,7 +43,7 @@ export const Container = styled.div`
     }
   }
   @media only screen and (max-width: 768px) {
-    .transcation {
+    .transaction {
       font-size: 12px;
       .header {
         padding: 0.5rem;
@@ -55,7 +55,7 @@ export const Container = styled.div`
     }
   }
   @media only screen and (max-width: 480px) {
-    .transcation .address {
+    .transaction .address {
       width: 135px;
       flex: 1;
     }

@@ -17,24 +17,16 @@ import { Container, NoResult, Percentage, TrRow } from "./styles";
 import { CustomDonationType } from "../../models/types";
 
 const SponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] }) => {
-  // const isInPot = tab === "pot";
-  // const isInPot = true;
-
   const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 30; // need to be less than 50
+  const perPage = 30; // INFO: need to be less than 50
 
   useEffect(() => {
     setCurrentPage(1);
   }, []);
 
-  // let totalDonations = 0;
-  // sponsors.forEach((donation: any) => {
-  //   totalDonations += donation.amount;
-  // });
-
   return sponsors.length ? (
     <Container>
-      <div className="transcation">
+      <div className="transaction">
         <div className="header">
           <div className="rank">Rank</div>
           <div className="address">Donor</div>
@@ -54,7 +46,6 @@ const SponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] }) => {
                 </div>
 
                 <Link
-                  // href={hrefWithParams(`?tab=profile&accountId=${donorId}`)}
                   href={`${routesPath.PROFILE}/${donorId}`}
                   className="address"
                   target="_blank"

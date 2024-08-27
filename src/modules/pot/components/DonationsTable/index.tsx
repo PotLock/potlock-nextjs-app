@@ -19,6 +19,7 @@ const PER_PAGE = 30; // need to be less than 50
 
 const DonationsTable = ({ potId }: Props) => {
   const { donations, ready } = useOrderedDonations(potId);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Filter (amount | date)
   const [currentFilter, setCurrentFilter] = useState<"date" | "price">("date");
@@ -27,6 +28,9 @@ const DonationsTable = ({ potId }: Props) => {
     price: false, // false === ascending
   });
   const [filteredDonations, setFilteredDonations] = useState(donations || []);
+  const [shownDonationItemsList, setShownDonationItemsList] = useState<
+    Donation[]
+  >([]);
 
   useEffect(() => {
     // Set donations initially sorted by date (newer first)
@@ -61,8 +65,6 @@ const DonationsTable = ({ potId }: Props) => {
   };
 
   // Page control - Search
-  const [currentPage, setCurrentPage] = useState(1);
-
   const searchDonations = (searchTerm: string) => {
     const filteredApplications = donations.filter((item) => {
       const searchIn = [
@@ -80,10 +82,6 @@ const DonationsTable = ({ potId }: Props) => {
   };
 
   // Shown items
-  const [shownDonationItemsList, setShownDonationItemsList] = useState<
-    Donation[]
-  >([]);
-
   useEffect(() => {
     setShownDonationItemsList(
       filteredDonations.slice(

@@ -5,10 +5,9 @@ import { ReactElement, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-// not working
+// info: not working
 // import { usePotApplications } from "@/common/api/potlock/hooks";
 import { usePot } from "@/common/api/potlock/hooks";
-// import { getPotApplications } from "@/common/api/potlock/pot";
 import { SearchIcon } from "@/common/assets/svgs";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
@@ -37,7 +36,6 @@ import {
 } from "@/modules/pot/styles/application-styles";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { useTypedSelector } from "@/store";
-// import { PotApplication } from "@/common/api/potlock";
 
 const ApplicationsTab = () => {
   const router = useRouter();
@@ -63,12 +61,6 @@ const ApplicationsTab = () => {
   useEffect(() => {
     // Fetch applications
     (async () => {
-      // API is not providing the admin's review notes
-      // const applicationsData = await getPotApplications({ potId });
-      // set applications
-      // setApplications(applicationsData.results);
-      // setFilteredApplications(applicationsData.results);
-
       const applicationsData = await potContract.getApplications({ potId });
       setApplications(applicationsData);
       setFilteredApplications(applicationsData);
