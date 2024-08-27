@@ -35,7 +35,12 @@ const DonationsTable = ({ potId }: Props) => {
   useEffect(() => {
     // Set donations initially sorted by date (newer first)
     setFilteredDonations(
-      donations.sort((a, b) => getDate(b.donated_at) - getDate(a.donated_at)),
+      donations
+        .sort((a, b) => getDate(b.donated_at) - getDate(a.donated_at))
+        .filter((donation) => {
+          // INFO: Ignore if recipient is null
+          return !!donation.recipient;
+        }),
     );
   }, [donations]);
 

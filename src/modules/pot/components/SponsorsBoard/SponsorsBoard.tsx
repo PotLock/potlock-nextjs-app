@@ -31,10 +31,12 @@ const Sponsor = ({
       >
         {truncate(profile?.name || donorId, 15)}
       </Link>
-      <div>{truncate(profile?.description || "", colIdx === 2 ? 120 : 35)}</div>
+      <p>{truncate(profile?.description || "", colIdx === 2 ? 120 : 35)}</p>
       <div className="footer">
-        <div className="amount">{amount.toFixed(2)} NEAR</div>
-        <div className="percentage">{percentageShare}%</div>
+        <p className={`amount ${colIdx === 2 ? "font-lora" : ""}`}>
+          {amount.toFixed(2)} NEAR
+        </p>
+        <p className="percentage">{percentageShare}%</p>
       </div>
     </div>
   );

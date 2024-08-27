@@ -35,16 +35,11 @@ export const useOrderedDonations = (
       });
 
       const filteredDonations = donationsData.results.filter((donation) => {
-        // INFO: Ignore if recipient is null
-        if (!donation.recipient) return false;
-
         // Skip Near Payments?
         return !includeNearFoundationPayment
           ? (donation.donor.id || donation.pot.account) !== "nf-payments.near"
           : true;
       });
-
-      // console.log("donationsData:", donationsData);
 
       // join donators
       const joinedDonations: Record<string, JoinDonation> = {};
