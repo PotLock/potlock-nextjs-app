@@ -240,9 +240,7 @@ export const useNewApplicationForm = ({
 };
 
 export const useChallengeForm = ({
-  accountId,
   potDetail,
-  asDao,
 }: {
   accountId: string;
   potDetail: Pot;
@@ -269,7 +267,7 @@ export const useChallengeForm = ({
         setInProgress(false);
       }
     },
-    [accountId, asDao, potDetail.account, potDetail.name],
+    [potDetail.account],
   );
 
   return {

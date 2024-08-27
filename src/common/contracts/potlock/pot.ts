@@ -3,7 +3,6 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { PotId } from "@/common/api/potlock";
 import { FULL_TGAS } from "@/common/constants";
-import { yoctoNearToFloat } from "@/common/lib";
 
 import {
   Application,

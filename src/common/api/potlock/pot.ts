@@ -1,5 +1,4 @@
 import { POTLOCK_API_ENDPOINT } from "@/common/constants";
-import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 
 import { Donation, Pot, PotApplication, PotPayout } from "./types";
 

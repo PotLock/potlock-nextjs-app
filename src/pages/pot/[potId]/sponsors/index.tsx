@@ -2,7 +2,6 @@ import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { usePot } from "@/common/api/potlock/hooks";
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
 import Spinner from "@/common/ui/components/Spinner";
@@ -23,7 +22,6 @@ const SponsorsTab = () => {
   };
 
   const { donations } = useOrderedDonations(potId, true);
-  const { data: potDetail } = usePot({ potId });
   const [sponsorshipDonations, setSponsorshipDonations] = useState<
     CustomDonationType[]
   >([]);

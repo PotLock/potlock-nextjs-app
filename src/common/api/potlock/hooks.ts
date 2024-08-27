@@ -117,7 +117,7 @@ export const usePotApplications = (
 
       setData(queryResult.data);
     })();
-  }, []);
+  }, [params, potId]);
 
   return { data };
 };
