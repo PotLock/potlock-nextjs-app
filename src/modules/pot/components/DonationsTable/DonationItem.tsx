@@ -31,7 +31,6 @@ const DonationItem = ({
     total_amount,
     net_amount: amount,
     pot,
-    recipient: _recipient,
     donated_at,
     token,
   } = donation;
