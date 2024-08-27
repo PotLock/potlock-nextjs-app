@@ -44,7 +44,6 @@ export const Container = styled.div`
       }
       .amount {
         font-size: 32px;
-        font-family: "Lora";
       }
     }
     .profile-image {

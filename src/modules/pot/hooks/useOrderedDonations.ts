@@ -34,14 +34,12 @@ export const useOrderedDonations = (
         pageSize: 9999,
       });
 
-      // remove Near Payments
-      const filteredDonations = donationsData.results.filter((donation) =>
-        !includeNearFoundationPayment
+      const filteredDonations = donationsData.results.filter((donation) => {
+        // Skip Near Payments?
+        return !includeNearFoundationPayment
           ? (donation.donor.id || donation.pot.account) !== "nf-payments.near"
-          : true,
-      );
-
-      // console.log("donationsData:", donationsData);
+          : true;
+      });
 
       // join donators
       const joinedDonations: Record<string, JoinDonation> = {};
