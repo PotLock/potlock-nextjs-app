@@ -17,12 +17,14 @@ import { getDaoPolicy } from "@/common/contracts/common";
 import * as potService from "@/common/contracts/potlock/pot";
 
 import {
+  challengeResolveSchema,
   fundMatchingPoolSchema,
   newApplicationSchema,
 } from "../models/schemas";
 import {
   ApplicationReviewInputs,
   ChallengeInputs,
+  ChallengeResolveInputs,
   FundMatchingPoolInputs,
   NewApplicationInputs,
 } from "../models/types";
@@ -317,6 +319,53 @@ export const useApplicationReviewForm = ({
       }
     },
     [potDetail.account, projectId, status],
+  );
+
+  return {
+    form,
+    errors: form.formState.errors,
+    inProgress,
+    onSubmit,
+  };
+};
+
+export const useChallengeResolveForm = ({
+  potId,
+  challengerId,
+}: {
+  potId: string;
+  challengerId: string;
+}) => {
+  const form = useForm<ChallengeResolveInputs>({
+    resolver: zodResolver(challengeResolveSchema),
+  });
+
+  const [inProgress, setInProgress] = useState(false);
+
+  const onSubmit: FormSubmitHandler<ChallengeResolveInputs> = useCallback(
+    async (formData) => {
+      setInProgress(true);
+
+      const args = {
+        challenger_id: challengerId,
+        notes: formData.data.message,
+        resolve_challenge: formData.data.resolve,
+      };
+
+      try {
+        await naxiosInstance
+          .contractApi({ contractId: potId })
+          .call("admin_update_payouts_challenge", {
+            args,
+            deposit: parseNearAmount(calculateDepositByDataSize(args))!,
+            gas: FULL_TGAS,
+          });
+      } catch (e) {
+        console.error(e);
+        setInProgress(false);
+      }
+    },
+    [potId, challengerId],
   );
 
   return {

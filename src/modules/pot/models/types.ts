@@ -4,6 +4,7 @@ import { Donation } from "@/common/api/potlock";
 
 import {
   applicationReviewSchema,
+  challengeResolveSchema,
   challengeSchema,
   fundMatchingPoolSchema,
   newApplicationSchema,
@@ -16,6 +17,8 @@ export type NewApplicationInputs = z.infer<typeof newApplicationSchema>;
 export type ChallengeInputs = z.infer<typeof challengeSchema>;
 
 export type ApplicationReviewInputs = z.infer<typeof applicationReviewSchema>;
+
+export type ChallengeResolveInputs = z.infer<typeof challengeResolveSchema>;
 
 export type ConfigProtocol = {
   basis_points: number;

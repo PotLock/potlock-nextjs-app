@@ -12,6 +12,7 @@ import routesPath from "@/modules/core/routes";
 import { useTypedSelector } from "@/store";
 
 import { Challenge, Container, Line, Table, Title } from "./styles";
+import ChallengeResolveModal from "../ChallengeResolveModal";
 
 const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
   const { actAsDao, accountId: _accId } = useTypedSelector(
@@ -78,15 +79,8 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
         </Title>
         <Table className={`${!toggleChallenges ? "hidden" : ""}`}>
           {payoutsChallenges.map(
-            ({
-              challenger_id,
-              admin_notes,
-              created_at,
-              reason,
-              resolved,
-            }: any) => (
+            ({ challenger_id, admin_notes, created_at, reason, resolved }) => (
               <Challenge key={challenger_id}>
-                {/* <div className="vertical-line" /> */}
                 <div className="content">
                   <div className="header">
                     <CustomAvatar
@@ -145,16 +139,14 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
           )}
         </Table>
         {/* Admin update challenge modal */}
-        {/* {adminModalChallengerId && (
-          <ChallangeResolveModal
-            adminModalChallengerId={adminModalChallengerId}
-            onClose={() =>
-              State.update({
-                adminModalChallengerId: "",
-              })
-            }
-          />
-        )} */}
+
+        <ChallengeResolveModal
+          open={adminModalChallengerId !== ""}
+          payoutsChallenges={payoutsChallenges}
+          potId={potDetail?.account || ""}
+          adminModalChallengerId={adminModalChallengerId}
+          onCloseClick={() => setAdminModalChallengerId("")}
+        />
       </Container>
       <Line />
     </>
