@@ -6,3 +6,5 @@ export { default as TimeLeft } from "./TimeLeft";
 export { default as HeaderStatus } from "./HeaderStatus/HeaderStatus";
 export { default as PotLayout } from "./PotLayout";
 export { default as DonationsTable } from "./DonationsTable";
+export { default as SponsorsBoard } from "./SponsorsBoard/SponsorsBoard";
+export { default as SponsorsTable } from "./SponsorsTable/SponsorsTable";

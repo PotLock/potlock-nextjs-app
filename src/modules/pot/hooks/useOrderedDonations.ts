@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 
-import { Donation, Pot, PotPayout } from "@/common/api/potlock";
+import { Donation, PotPayout } from "@/common/api/potlock";
 import { getPotDonations, getPotPayouts } from "@/common/api/potlock/pot";
 import { SUPPORTED_FTS } from "@/common/constants";
-import { formatWithCommas } from "@/common/lib";
+import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
 
 export type JoinDonation = {
   id: string;
   nearAmount: number;
 };
 
-export const useOrderedDonations = (potId: string) => {
+export const useOrderedDonations = (
+  potId: string,
+  includeNearFoundationPayment = false,
+) => {
   const [donations, setDonations] = useState<Donation[]>([]);
   // INFO: Also know as sponsors
   const [orderedDonations, setOrderedDonations] = useState<JoinDonation[]>([]);
@@ -32,9 +35,10 @@ export const useOrderedDonations = (potId: string) => {
       });
 
       // remove Near Payments
-      const filteredDonations = donationsData.results.filter(
-        (donation) =>
-          (donation.donor.id || donation.pot.account) !== "nf-payments.near",
+      const filteredDonations = donationsData.results.filter((donation) =>
+        !includeNearFoundationPayment
+          ? (donation.donor.id || donation.pot.account) !== "nf-payments.near"
+          : true,
       );
 
       // console.log("donationsData:", donationsData);
@@ -43,19 +47,24 @@ export const useOrderedDonations = (potId: string) => {
       const joinedDonations: Record<string, JoinDonation> = {};
       filteredDonations.forEach((donation) => {
         const key = donation.donor.id || donation.pot.account;
-        const nearAmount = formatWithCommas(
-          SUPPORTED_FTS[donation.token.name!.toUpperCase()].fromIndivisible(
-            donation.net_amount,
-          ),
-        );
+        const nearAmount =
+          donation.token.name!.toUpperCase() === "NEAR"
+            ? yoctoNearToFloat(donation.net_amount)
+            : parseFloat(
+                formatWithCommas(
+                  SUPPORTED_FTS[
+                    donation.token.name!.toUpperCase()
+                  ].fromIndivisible(donation.net_amount),
+                ),
+              );
 
         if (!joinedDonations[key]) {
           joinedDonations[key] = {
             id: key,
-            nearAmount: parseFloat(nearAmount),
+            nearAmount: nearAmount,
           };
         } else {
-          joinedDonations[key].nearAmount += parseFloat(nearAmount);
+          joinedDonations[key].nearAmount += nearAmount;
         }
       });
 
@@ -85,29 +94,35 @@ export const useOrderedDonations = (potId: string) => {
       });
 
       // remove Near Payments
-      const filteredPayouts = payouts.results.filter(
-        (payout) =>
-          (payout.recipient.id || payout.pot.account) !== "nf-payments.near",
+      const filteredPayouts = payouts.results.filter((payout) =>
+        !includeNearFoundationPayment
+          ? (payout.recipient.id || payout.pot.account) !== "nf-payments.near"
+          : true,
       );
 
       // Join payouts to the donors
       const joinedPayouts: Record<string, JoinDonation> = {};
       filteredPayouts.forEach((payout) => {
         const key = payout.recipient.id || payout.pot.account;
-        const nearAmount = formatWithCommas(
-          SUPPORTED_FTS[payout.token.name!.toUpperCase()].fromIndivisible(
-            payout.amount,
-          ),
-        );
+        const nearAmount =
+          payout.token.name!.toUpperCase() === "NEAR"
+            ? yoctoNearToFloat(payout.amount)
+            : parseFloat(
+                formatWithCommas(
+                  SUPPORTED_FTS[
+                    payout.token.name!.toUpperCase()
+                  ].fromIndivisible(payout.amount),
+                ),
+              );
 
         // INFO: Should payouts include donations? (user "joinedDonations" if so), but it doesn't look to be the case
         if (!joinedPayouts[key]) {
           joinedPayouts[key] = {
             id: key,
-            nearAmount: parseFloat(nearAmount),
+            nearAmount: nearAmount,
           };
         } else {
-          joinedPayouts[key].nearAmount += parseFloat(nearAmount);
+          joinedPayouts[key].nearAmount += nearAmount;
         }
       });
 
@@ -133,7 +148,7 @@ export const useOrderedDonations = (potId: string) => {
 
       setReady(true);
     })();
-  }, [potId]);
+  }, [potId, includeNearFoundationPayment]);
 
   return {
     donations,

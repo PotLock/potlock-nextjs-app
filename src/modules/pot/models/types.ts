@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { Donation } from "@/common/api/potlock";
+
 import {
   applicationReviewSchema,
   challengeSchema,
@@ -18,4 +20,9 @@ export type ApplicationReviewInputs = z.infer<typeof applicationReviewSchema>;
 export type ConfigProtocol = {
   basis_points: number;
   account_id: string;
+};
+
+export type CustomDonationType = Donation & {
+  amount: number;
+  percentage_share: string;
 };
