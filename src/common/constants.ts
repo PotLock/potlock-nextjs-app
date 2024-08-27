@@ -131,6 +131,10 @@ export const FIFTY_TGAS = "50000000000000";
 // 0 Gas
 export const NO_DEPOSIT_TGAS = "0";
 
+export const MIN_PROPOSAL_DEPOSIT_FALLBACK = "100000000000000000000000"; // 0.1N
+
+export const ONE_TGAS = Big(1_000_000_000_000);
+
 // IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
 export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
@@ -139,7 +143,14 @@ export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
 
 export const DEFAULT_URL = "https://app.potlock.org/";
 
-export const SUPPORTED_FTS = {
+export const SUPPORTED_FTS: Record<
+  string,
+  {
+    iconUrl: string;
+    toIndivisible: (amount: any) => Big.Big;
+    fromIndivisible: (amount: any, decimals?: any) => string;
+  }
+> = {
   NEAR: {
     iconUrl:
       "https://nftstorage.link/ipfs/bafkreidnqlap4cp5o334lzbhgbabwr6yzkj6albia62l6ipjsasokjm6mi",

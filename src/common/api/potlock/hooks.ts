@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { POTLOCK_REQUEST_CONFIG } from "@/common/constants";
 import { ByAccountId, ByListId } from "@/common/types";
 
@@ -12,6 +14,7 @@ import {
   V1DonateContractConfigRetrieveParams,
   V1ListsRandomRegistrationRetrieveParams,
   V1ListsRegistrationsRetrieveParams,
+  V1PotsApplicationsRetrieveParams,
   V1PotsRetrieveParams,
 } from "./types";
 
@@ -94,6 +97,29 @@ export const usePots = (params?: V1PotsRetrieveParams) => {
   );
 
   return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_applications_retrieve
+ * NOTE: Not working. Getting 404 (Not Found)
+ */
+export const usePotApplications = (
+  potId: string,
+  params?: V1PotsApplicationsRetrieveParams,
+) => {
+  const [data, setData] = useState<swrHooks.PaginatedPotApplicationsResponse>();
+  useEffect(() => {
+    (async () => {
+      const queryResult = await swrHooks.v1PotsApplicationsRetrieve(
+        potId,
+        params,
+      );
+
+      setData(queryResult.data);
+    })();
+  }, [params, potId]);
+
+  return { data };
 };
 
 /**

@@ -24,6 +24,7 @@ export * from "./textarea";
 export * from "./toggle";
 export * from "./toggle-group";
 export * from "./typography";
+export * from "./custom-avatar";
 
 /**
  * Organisms

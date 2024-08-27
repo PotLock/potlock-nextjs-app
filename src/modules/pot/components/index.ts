@@ -6,3 +6,7 @@ export * from "./PotEditor";
 export * from "./PotLayout";
 export { default as Tag } from "./Tag";
 export { default as TimeLeft } from "./TimeLeft";
+export { default as DonationsTable } from "./DonationsTable";
+export { default as SponsorsBoard } from "./SponsorsBoard/SponsorsBoard";
+export { default as SponsorsTable } from "./SponsorsTable/SponsorsTable";
+export { default as PayoutsChallenges } from "./PayoutsChallenges/PayoutsChallenges";

@@ -44,7 +44,7 @@ const useDonationsForProject = (projectId?: string, limit?: number) => {
         setMatchedDonations(matched);
       })();
     }
-  }, [projectId]);
+  }, [projectId, limit]);
 
   // Get total donations & Unique donors count
   const [totalDonationAmountNear, uniqueDonors, totalMatchedNear] =
