@@ -1,8 +1,6 @@
 import { Form } from "react-hook-form";
 
-import { Pot } from "@/common/api/potlock";
 import { Challenge } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { getPayoutsChallenges } from "@/common/contracts/potlock/pot";
 import {
   Button,
   Checkbox,
