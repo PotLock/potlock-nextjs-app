@@ -13,7 +13,6 @@ import {
   PotLayout,
   useOrderedDonations,
 } from "@/modules/pot";
-
 import {
   AlertSvg,
   Container,
@@ -30,7 +29,7 @@ import {
   SearchIcon,
   TableContainer,
   WarningText,
-} from "./styles";
+} from "@/modules/pot/styles/payouts-styles";
 
 const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 

@@ -12,8 +12,10 @@ import {
   useOrderedDonations,
 } from "@/modules/pot";
 import { CustomDonationType } from "@/modules/pot/models/types";
-
-import { Container, TableContainer } from "./styles";
+import {
+  Container,
+  TableContainer,
+} from "@/modules/pot/styles/sponsors-styles";
 
 const SponsorsTab = () => {
   const router = useRouter();

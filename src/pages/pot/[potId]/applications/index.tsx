@@ -25,9 +25,6 @@ import routesPath from "@/modules/core/routes";
 import { PotLayout, applicationsFiltersTags } from "@/modules/pot";
 import ApplicationReviewModal from "@/modules/pot/components/ApplicationReviewModal";
 import Dropdown from "@/modules/pot/components/Dropdown/Dropdown";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
-import { useTypedSelector } from "@/store";
-
 import {
   ApplicationRow,
   ApplicationsWrapper,
@@ -37,7 +34,9 @@ import {
   Filter,
   SearchBar,
   Status,
-} from "./styles";
+} from "@/modules/pot/styles/application-styles";
+import useProfileData from "@/modules/profile/hooks/useProfileData";
+import { useTypedSelector } from "@/store";
 // import { PotApplication } from "@/common/api/potlock";
 
 const ApplicationsTab = () => {
