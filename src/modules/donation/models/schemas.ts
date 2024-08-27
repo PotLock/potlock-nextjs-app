@@ -85,6 +85,7 @@ export const donationSchema = object({
      *?  Please make sure it's always manually provided to the corresponding input field.
      */
     message: DONATION_MIN_NEAR_AMOUNT_ERROR,
+    path: ["amount"],
   });
 
 export type DonationInputs = FromSchema<typeof donationSchema>;

@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 import { walletApi } from "@/common/api/near";
 import {
@@ -13,7 +13,11 @@ import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
 import { dispatch } from "@/store";
 
-import { PotDeploymentInputs, potDeploymentSchema } from "../models";
+import {
+  PotDeploymentInputs,
+  potCrossFieldValidationTargets,
+  potDeploymentSchema,
+} from "../models";
 
 export const usePotDeploymentForm = () => {
   const router = useRouter();
@@ -48,6 +52,33 @@ export const usePotDeploymentForm = () => {
 
   const formValues = useWatch({ control: form.control });
 
+  const crossFieldErrors = useMemo<FieldErrors<PotDeploymentInputs>>(
+    () =>
+      potDeploymentSchema
+        .safeParse(formValues as PotDeploymentInputs)
+        .error?.issues.reduce((schemaErrors, { code, message, path }) => {
+          const fieldPath = path.at(0);
+
+          console.table({ code, message, fieldPath });
+
+          return potCrossFieldValidationTargets.includes(
+            fieldPath as keyof PotDeploymentInputs,
+          ) && typeof fieldPath === "string"
+            ? { ...schemaErrors, [fieldPath]: { message, type: code } }
+            : schemaErrors;
+        }, {}) ?? {},
+
+    [formValues],
+  );
+
+  const errors: FieldErrors<PotDeploymentInputs> = {
+    ...form.formState.errors,
+    ...crossFieldErrors,
+  };
+
+  console.log("cross field errors", crossFieldErrors);
+  console.log("combined errors", errors);
+
   const isDisabled =
     formValues.source_metadata === null ||
     !form.formState.isDirty ||
@@ -72,6 +103,7 @@ export const usePotDeploymentForm = () => {
   return {
     form,
     formValues,
+    crossFieldErrors,
     handleAdminsUpdate,
     isDisabled,
     onCancel,
