@@ -5,7 +5,7 @@ import {
   Application,
   Challenge,
 } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import * as potService from "@/common/contracts/potlock/pot";
+import * as potContract from "@/common/contracts/potlock/pot";
 import { getDateTime, yoctosToUsdWithFallback } from "@/modules/core";
 
 export const usePotStatusesForAccountId = (props: {
@@ -29,7 +29,7 @@ export const usePotStatusesForAccountId = (props: {
       (async () => {
         // Get Application By Project ID
         try {
-          const _existingApp = await potService.getApplicationByProjectId({
+          const _existingApp = await potContract.getApplicationByProjectId({
             potId: props.potDetail.account,
             project_id: props.accountId,
           });
@@ -42,7 +42,7 @@ export const usePotStatusesForAccountId = (props: {
 
         // Get Payouts Challenges for pot
         try {
-          const _payoutsChallenges = await potService.getPayoutsChallenges({
+          const _payoutsChallenges = await potContract.getPayoutsChallenges({
             potId: props.potDetail.account,
           });
           setPayoutsChallenges(_payoutsChallenges);

@@ -127,7 +127,7 @@ export const getPayoutsChallenges = async (args: { potId: string }) =>
  * Get round payouts
  */
 export const getPayouts = async (args: { potId: string }) =>
-  contractApi(args.potId).view<typeof args, Payout[]>("get_payouts ", {
+  contractApi(args.potId).view<typeof args, Payout[]>("get_payouts", {
     args,
   });
 

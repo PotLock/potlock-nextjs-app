@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 export const Container = styled.div`
   width: 100%;
   display: flex;
+  margin-bottom: 4rem;
   gap: 2rem;
   .dropdown {
     display: none;
