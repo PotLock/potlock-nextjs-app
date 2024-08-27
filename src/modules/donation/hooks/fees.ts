@@ -37,7 +37,7 @@ export const useDonationFees = ({
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
 
-  // TODO: Recalculate basic points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
+  // TODO: Recalculate basis points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
 
   /**
    *? Protocol fee:

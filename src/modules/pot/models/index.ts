@@ -11,7 +11,7 @@ import {
 import { potFactory } from "@/common/contracts/potlock";
 import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
-import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
+import { donationAmount, donationFeeBasisPoints } from "@/modules/donation";
 import { RootModel } from "@/store/models";
 
 import { PotDeploymentInputs } from "./schemas";
@@ -106,17 +106,17 @@ export const potModel = createModel<RootModel>()({
                 public_round_end_ms: timestamp.parse,
 
                 referral_fee_matching_pool_basis_points:
-                  donationFeeBasicPoints.parse,
+                  donationFeeBasisPoints.parse,
 
                 referral_fee_public_round_basis_points:
-                  donationFeeBasicPoints.parse,
+                  donationFeeBasisPoints.parse,
 
                 min_matching_pool_donation_amount: conditional(
                   [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
                   conditional.defaultCase(() => undefined),
                 ),
 
-                chef_fee_basis_points: donationFeeBasicPoints.parse,
+                chef_fee_basis_points: donationFeeBasisPoints.parse,
               },
             ),
 

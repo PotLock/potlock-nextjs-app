@@ -1,3 +1,19 @@
+export const POT_MIN_NAME_LENGTH = 3;
+
+export const POT_MAX_NAME_LENGTH = 64;
+
+export const POT_MAX_DESCRIPTION_LENGTH = 256;
+
+export const POT_MAX_APPROVED_PROJECTS = 100;
+
+export const POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS = 1000;
+
+export const POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS = 1000;
+
+export const POT_MAX_CHEF_FEE_BASIS_POINTS = 1000;
+
+export const POT_MIN_COOLDOWN_PERIOD_MS = 604800000;
+
 export const statuses = [
   {
     label: "Application open",

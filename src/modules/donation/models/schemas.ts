@@ -34,11 +34,15 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
 
 export const donationAmount = safePositiveNumber;
 
-export const donationFeeBasicPoints = safePositiveNumber.transform((percents) =>
-  donationFeePercentsToBasisPoints(
-    safePositiveNumber.safeParse(percents).data ?? 0,
-  ),
-);
+export const donationFeeBasisPoints = safePositiveNumber
+  .refine((percents) => percents <= 100, {
+    message: "Fee cannot exceed 100%.",
+  })
+  .transform((percents) =>
+    donationFeePercentsToBasisPoints(
+      safePositiveNumber.safeParse(percents).data ?? 0,
+    ),
+  );
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,
