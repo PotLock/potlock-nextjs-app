@@ -20,6 +20,7 @@ import {
 import { AccessControlAccounts } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 
+import { POT_MAX_DESCRIPTION_LENGTH } from "../constants";
 import { usePotDeploymentForm } from "../hooks/deployment";
 
 export type PotEditorProps = Partial<ByPotId> & {};
@@ -33,6 +34,8 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
     onCancel,
     onSubmit,
   } = usePotDeploymentForm();
+
+  console.log("formValues", formValues);
 
   return (
     <Form {...form}>
@@ -86,7 +89,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                   label="Description"
                   required
                   placeholder="Type description"
-                  maxLength={250}
+                  maxLength={POT_MAX_DESCRIPTION_LENGTH}
                   {...field}
                 />
               )}
@@ -297,7 +300,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                       </span>
 
                       <span un-text="sm">
-                        Require approval on PotLock registry
+                        Require approval on PotLock registry (recommended)
                       </span>
                     </>
                   }
@@ -318,7 +321,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                         Donor Sybil Resistance.
                       </span>
 
-                      <span un-text="sm">🤖 nada.bot human verified</span>
+                      <span un-text="sm">
+                        🤖 nada.bot human verification (recommended)
+                      </span>
                     </>
                   }
                 />

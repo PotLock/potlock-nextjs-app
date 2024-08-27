@@ -11,6 +11,7 @@ import {
 } from "@/common/constants";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
+import { donationFeeBasisPointsToPercents } from "@/modules/donation";
 import { dispatch } from "@/store";
 
 import {
@@ -36,7 +37,15 @@ export const usePotDeploymentForm = () => {
 
       owner: walletApi.accountId,
       max_projects: 25,
-      isPgRegistrationRequired: false,
+
+      referral_fee_matching_pool_basis_points:
+        donationFeeBasisPointsToPercents(100),
+
+      referral_fee_public_round_basis_points:
+        donationFeeBasisPointsToPercents(100),
+
+      chef_fee_basis_points: donationFeeBasisPointsToPercents(100),
+      isPgRegistrationRequired: true,
       isNadabotVerificationRequired: true,
     }),
 
