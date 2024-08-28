@@ -91,7 +91,7 @@ export const potModel = createModel<RootModel>()({
                 source_metadata: { commit_hash, ...sourceMetadata },
 
                 registry_provider: isPgRegistrationRequired
-                  ? LISTS_CONTRACT_ID
+                  ? LISTS_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_registered"
                   : undefined,
 
                 sybil_wrapper_provider: isNadabotVerificationRequired
