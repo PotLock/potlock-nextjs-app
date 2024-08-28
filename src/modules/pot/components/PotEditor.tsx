@@ -35,8 +35,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
     onSubmit,
   } = usePotDeploymentForm();
 
-  console.log("formValues", formValues);
-
   return (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
