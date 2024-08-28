@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 const FilterButton = styled.div`
   white-space: nowrap;
@@ -72,30 +72,4 @@ const Screen = styled.div`
   left: 0;
   top: 0;
 `;
-
-const DropdownLabel = styled.div<{ digit: number }>`
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  .label {
-    font-weight: 500;
-  }
-  .count {
-    display: flex;
-    width: ${({ digit }) => 24 + (digit - 1) * 6}px;
-    height: ${({ digit }) => 24 + (digit - 1) * 6}px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #ebebeb;
-  }
-`;
-
-export {
-  FilterButton,
-  FilterIcon,
-  FilterItem,
-  FilterMenu,
-  Screen,
-  DropdownLabel,
-};
+export { FilterButton, FilterIcon, FilterItem, FilterMenu, Screen };

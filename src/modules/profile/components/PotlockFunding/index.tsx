@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { DonationInfo } from "@/common/api/potlock/account";
+import { Option } from "@/modules/core/components/Dropdown";
+import Pagination from "@/modules/core/components/Pagination";
+import Stats, { Stat } from "@/modules/core/components/Stats";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
 import useDonationsSent from "@/modules/core/hooks/useDonationsSent";
 
 import Arrow from "./Arrow";
 import DonationItem from "./DonationItem";
 import { FundingListContainer, SearchBar, Sort } from "./styled";
-import { Option } from "../Dropdown";
-import Pagination from "../Pagination";
-import Stats, { Stat } from "../Stats";
 
 type Props = {
   accountId: string;

@@ -42,7 +42,7 @@ const TimeLeft = ({ daysLeft }: { daysLeft: number }) => {
         clearInterval(intervalId);
       }
     }, 1000);
-  }, []);
+  }, [daysLeft]);
 
   return timeLeft;
 };

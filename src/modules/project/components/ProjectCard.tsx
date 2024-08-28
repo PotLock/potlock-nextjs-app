@@ -28,7 +28,6 @@ export type ProjectCardProps = {
 
 export const ProjectCard = ({
   projectId,
-  potId,
   allowDonate = true,
   payoutDetails,
 }: ProjectCardProps) => {
