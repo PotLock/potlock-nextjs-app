@@ -10,8 +10,8 @@ import { naxiosInstance } from "@/common/api/near";
 import {
   FIFTY_TGAS,
   FULL_TGAS,
+  LISTS_CONTRACT_ID,
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
-  POTLOCK_LISTS_CONTRACT_ID,
   SOCIAL_DB_CONTRACT_ID,
 } from "@/common/constants";
 import { getDaoPolicy } from "@/common/contracts/common";
@@ -96,7 +96,7 @@ const handleCreateOrUpdateProject = async () => {
       transactions.push(
         // lists.potlock.near
         buildTransaction("register_batch", {
-          receiverId: POTLOCK_LISTS_CONTRACT_ID,
+          receiverId: LISTS_CONTRACT_ID,
           args: potlockRegistryArgs,
           deposit: parseNearAmount("0.05")!,
         }),

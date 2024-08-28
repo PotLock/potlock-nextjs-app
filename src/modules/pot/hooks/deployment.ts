@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 import { walletApi } from "@/common/api/near";
 import {
@@ -11,9 +11,14 @@ import {
 } from "@/common/constants";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
+import { donationFeeBasisPointsToPercents } from "@/modules/donation";
 import { dispatch } from "@/store";
 
-import { PotDeploymentInputs, potDeploymentSchema } from "../models";
+import {
+  PotDeploymentInputs,
+  potCrossFieldValidationTargets,
+  potDeploymentSchema,
+} from "../models";
 
 export const usePotDeploymentForm = () => {
   const router = useRouter();
@@ -32,7 +37,15 @@ export const usePotDeploymentForm = () => {
 
       owner: walletApi.accountId,
       max_projects: 25,
-      isPgRegistrationRequired: false,
+
+      referral_fee_matching_pool_basis_points:
+        donationFeeBasisPointsToPercents(100),
+
+      referral_fee_public_round_basis_points:
+        donationFeeBasisPointsToPercents(100),
+
+      chef_fee_basis_points: donationFeeBasisPointsToPercents(100),
+      isPgRegistrationRequired: true,
       isNadabotVerificationRequired: true,
     }),
 
@@ -47,6 +60,34 @@ export const usePotDeploymentForm = () => {
   });
 
   const formValues = useWatch({ control: form.control });
+
+  const crossFieldErrors = useMemo<FieldErrors<PotDeploymentInputs>>(
+    () =>
+      potDeploymentSchema
+        .safeParse(formValues as PotDeploymentInputs)
+        .error?.issues.reduce((schemaErrors, { code, message, path }) => {
+          const fieldPath = path.at(0);
+
+          return potCrossFieldValidationTargets.includes(
+            fieldPath as keyof PotDeploymentInputs,
+          ) &&
+            typeof fieldPath === "string" &&
+            code === "custom"
+            ? { ...schemaErrors, [fieldPath]: { message, type: code } }
+            : schemaErrors;
+        }, {}) ?? {},
+
+    [formValues],
+  );
+
+  const refinedForm = {
+    ...form,
+
+    formState: {
+      ...form.formState,
+      errors: { ...form.formState.errors, ...crossFieldErrors },
+    },
+  };
 
   const isDisabled =
     formValues.source_metadata === null ||
@@ -70,7 +111,7 @@ export const usePotDeploymentForm = () => {
   );
 
   return {
-    form,
+    form: refinedForm,
     formValues,
     handleAdminsUpdate,
     isDisabled,

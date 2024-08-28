@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { naxiosInstance } from "@/common/api/near";
-import { POTLOCK_DONATE_CONTRACT_ID } from "@/common/constants";
+import { DONATION_CONTRACT_ID } from "@/common/constants";
 
 import {
   Config,
@@ -13,7 +13,7 @@ import {
  * NEAR Contract API
  */
 export const contractApi = naxiosInstance.contractApi({
-  contractId: POTLOCK_DONATE_CONTRACT_ID,
+  contractId: DONATION_CONTRACT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });
 

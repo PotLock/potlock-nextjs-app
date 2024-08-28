@@ -4,14 +4,14 @@ import { conditional, evolve, isNonNullish, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import {
-  NADABOT_CONTRACT_ID,
-  POTLOCK_LISTS_CONTRACT_ID,
+  LISTS_CONTRACT_ID,
   PROVIDER_ID_DELIMITER,
+  SYBIL_CONTRACT_ID,
 } from "@/common/constants";
 import { potFactory } from "@/common/contracts/potlock";
 import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
-import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
+import { donationAmount, donationFeeBasisPoints } from "@/modules/donation";
 import { RootModel } from "@/store/models";
 
 import { PotDeploymentInputs } from "./schemas";
@@ -63,6 +63,7 @@ export const potModel = createModel<RootModel>()({
 
     deploymentFailure(_, error: Error) {
       console.error(error);
+      throw error;
     },
   },
 
@@ -90,11 +91,11 @@ export const potModel = createModel<RootModel>()({
                 source_metadata: { commit_hash, ...sourceMetadata },
 
                 registry_provider: isPgRegistrationRequired
-                  ? POTLOCK_LISTS_CONTRACT_ID
+                  ? LISTS_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_registered"
                   : undefined,
 
                 sybil_wrapper_provider: isNadabotVerificationRequired
-                  ? NADABOT_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
+                  ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
                   : undefined,
               },
 
@@ -104,18 +105,10 @@ export const potModel = createModel<RootModel>()({
                 public_round_start_ms: timestamp.parse,
                 public_round_end_ms: timestamp.parse,
 
-                referral_fee_matching_pool_basis_points:
-                  donationFeeBasicPoints.parse,
-
-                referral_fee_public_round_basis_points:
-                  donationFeeBasicPoints.parse,
-
                 min_matching_pool_donation_amount: conditional(
                   [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
                   conditional.defaultCase(() => undefined),
                 ),
-
-                chef_fee_basis_points: donationFeeBasicPoints.parse,
               },
             ),
 

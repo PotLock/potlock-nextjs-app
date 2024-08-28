@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { LogOut } from "lucide-react";
 import Image from "next/image";
@@ -63,7 +63,7 @@ const DAOProfileImg = () => (
   </div>
 );
 
-const UserDropdown = () => {
+export const UserDropdown = () => {
   const [profileImg, setProfileImg] = useState("");
   const [profile, setProfile] = useState<NEARSocialUserProfile>({});
 
@@ -206,5 +206,3 @@ const UserDropdown = () => {
     </DropdownMenu>
   );
 };
-
-export default UserDropdown;

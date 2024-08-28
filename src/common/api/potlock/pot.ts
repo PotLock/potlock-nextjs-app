@@ -1,5 +1,4 @@
-import { POTLOCK_API_ENDPOINT } from "@/common/constants";
-
+import { POTLOCK_API_ENDPOINT } from "./config";
 import { Donation, Pot, PotApplication, PotPayout } from "./types";
 
 export const getPot = async ({ potId }: { potId: string }) => {

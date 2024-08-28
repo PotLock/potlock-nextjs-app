@@ -33,15 +33,26 @@ export const TextAreaField = forwardRef<
     return (
       <FormItem>
         <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
-          <FormLabel className="font-500 text-sm text-neutral-950">
-            {label}
-          </FormLabel>
+          <div un-flex="~" un-items="center" un-gap="1">
+            {label && (
+              <FormLabel className="font-500 text-sm text-neutral-950">
+                {label}
+              </FormLabel>
+            )}
 
-          {labelExtension ?? props.required ? null : (
-            <span className="line-height-none text-sm text-neutral-600">
-              (optional)
-            </span>
-          )}
+            {props.required && (
+              <span className="line-height-none text-xl text-destructive">
+                *
+              </span>
+            )}
+          </div>
+
+          {labelExtension ??
+            (!props.required && (
+              <span className="line-height-none text-sm text-neutral-600">
+                (optional)
+              </span>
+            ))}
         </div>
 
         <FormControl>

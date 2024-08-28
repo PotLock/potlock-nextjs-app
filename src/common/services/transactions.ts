@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { RPC_NODE_URL } from "@/common/constants";
+import { RPC_NODE_URL } from "@/common/api/near";
 import { AccountId } from "@/common/types";
 
 export type TxExecutionStatus =

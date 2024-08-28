@@ -76,13 +76,8 @@ export const toChronologicalOrder = <T>(
     : list;
 
 export const timestamp = preprocess(
-  (value) => {
-    console.log(
-      typeof value === "string" ? localeStringToTimestampMs(value) : value,
-    );
-
-    return typeof value === "string" ? localeStringToTimestampMs(value) : value;
-  },
+  (value) =>
+    typeof value === "string" ? localeStringToTimestampMs(value) : value,
 
   number({ message: DATETIME_INCORRECT_FORMAT_ERROR })
     .int()

@@ -19,9 +19,8 @@ import { Provider as ReduxProvider } from "react-redux";
 import { APP_METADATA } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
+import { Nav } from "@/modules/core";
 import { dispatch, store } from "@/store";
-
-import Nav from "./_components/Nav";
 
 const lora = Lora({
   subsets: ["latin"],

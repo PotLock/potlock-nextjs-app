@@ -2,10 +2,30 @@ import { infer as FromSchema, array, boolean, object, string, z } from "zod";
 
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 import { validAccountId } from "@/modules/core";
-import { donationAmount, donationFeeBasicPoints } from "@/modules/donation";
+import {
+  donationAmount,
+  donationFeeBasisPoints,
+  donationFeeBasisPointsToPercents,
+} from "@/modules/donation";
 
 import {
+  POT_MAX_APPROVED_PROJECTS,
+  POT_MAX_CHEF_FEE_BASIS_POINTS,
+  POT_MAX_DESCRIPTION_LENGTH,
+  POT_MAX_NAME_LENGTH,
+  POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS,
+  POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS,
+  POT_MIN_COOLDOWN_PERIOD_MS,
+  POT_MIN_NAME_LENGTH,
+} from "../constants";
+import {
   isPotApplicationStartBeforeEnd,
+  isPotChefFeeValid,
+  isPotCooldownPeriodValid,
+  isPotMatchingPoolReferralFeeValid,
+  isPotMaxProjectsValid,
+  isPotPublicRoundReferralFeeValid,
+  isPotPublicRoundStartAfterApplicationEnd,
   isPotPublicRoundStartBeforeEnd,
 } from "../utils/validation";
 
@@ -66,15 +86,30 @@ export const potDeploymentSchema = object({
   chef: validAccountId.optional().describe("Chef's account id."),
 
   pot_name: string()
-    .min(3, "Pot name must be at least 3 characters long.")
+    .min(
+      POT_MIN_NAME_LENGTH,
+      `Must be at least ${POT_MIN_NAME_LENGTH} characters long.`,
+    )
+    .max(
+      POT_MAX_NAME_LENGTH,
+      `Must be less than ${POT_MAX_NAME_LENGTH} characters long.`,
+    )
     .describe("Pot name."),
 
   pot_handle: string().optional().describe("Pot handle."),
-  pot_description: string().describe("Pot description."),
 
-  max_projects: safePositiveNumber.describe(
-    "Maximum number of approved projects.",
-  ),
+  pot_description: string()
+    .max(
+      POT_MAX_DESCRIPTION_LENGTH,
+      `Cannot be longer than ${POT_MAX_DESCRIPTION_LENGTH} characters.`,
+    )
+    .describe("Pot description."),
+
+  max_projects: safePositiveNumber
+    .refine(isPotMaxProjectsValid, {
+      message: `Cannot exceed ${POT_MAX_APPROVED_PROJECTS}`,
+    })
+    .describe("Maximum number of approved projects."),
 
   application_start_ms: futureTimestamp.describe(
     "Application start timestamp.",
@@ -95,6 +130,9 @@ export const potDeploymentSchema = object({
     .describe("Minimum donation amount."),
 
   cooldown_period_ms: safePositiveNumber
+    .refine(isPotCooldownPeriodValid, {
+      message: `Cooldown period must be at least ${POT_MIN_COOLDOWN_PERIOD_MS} ms`,
+    })
     .optional()
     .describe("Cooldown period in milliseconds."),
 
@@ -116,23 +154,52 @@ export const potDeploymentSchema = object({
     .optional()
     .describe("Whether the projects must have Nadabot verification."),
 
-  referral_fee_matching_pool_basis_points: donationFeeBasicPoints.describe(
-    "Matching pool referral fee in basis points.",
-  ),
+  referral_fee_matching_pool_basis_points: donationFeeBasisPoints
+    .refine(isPotMatchingPoolReferralFeeValid, {
+      message: `Cannot exceed ${donationFeeBasisPointsToPercents(
+        POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS,
+      )}%.`,
+    })
+    .describe("Matching pool referral fee in basis points."),
 
-  referral_fee_public_round_basis_points: donationFeeBasicPoints.describe(
-    "Public round referral fee in basis points.",
-  ),
+  referral_fee_public_round_basis_points: donationFeeBasisPoints
+    .refine(isPotPublicRoundReferralFeeValid, {
+      message: `Cannot exceed ${donationFeeBasisPointsToPercents(
+        POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS,
+      )}%.`,
+    })
+    .describe("Public round referral fee in basis points."),
 
-  chef_fee_basis_points: donationFeeBasicPoints.describe(
-    "Chef fee in basis points.",
-  ),
+  chef_fee_basis_points: donationFeeBasisPoints
+    .refine(isPotChefFeeValid, {
+      message: `Cannot exceed ${donationFeeBasisPointsToPercents(
+        POT_MAX_CHEF_FEE_BASIS_POINTS,
+      )}%.`,
+    })
+    .describe("Chef fee in basis points."),
 })
+  /**
+   *! Heads up!
+   *!  Make sure that any fields targeted here are listed in `potCrossFieldValidationTargets`
+   *!  and have their corresponding error paths specified correctly.
+   */
   .refine(isPotApplicationStartBeforeEnd, {
     message: "Application cannot end before it starts.",
+    path: ["application_end_ms"],
   })
   .refine(isPotPublicRoundStartBeforeEnd, {
     message: "Public round cannot end before it starts.",
+    path: ["public_round_end_ms"],
+  })
+  .refine(isPotPublicRoundStartAfterApplicationEnd, {
+    message: "Public round can only start after application period ends.",
+    path: ["public_round_start_ms"],
   });
 
 export type PotDeploymentInputs = FromSchema<typeof potDeploymentSchema>;
+
+export const potCrossFieldValidationTargets: (keyof PotDeploymentInputs)[] = [
+  "application_end_ms",
+  "public_round_end_ms",
+  "public_round_start_ms",
+];

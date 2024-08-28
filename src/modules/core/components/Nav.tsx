@@ -9,7 +9,7 @@ import { SignInButton } from "@/modules/auth";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import routesPath from "@/modules/core/routes";
 
-import UserDropdown from "./UserDropdown";
+import { UserDropdown } from "./UserDropdown";
 
 const tabOptions = [
   { text: "Projects", link: routesPath.PROJECTS_LIST, disabled: false },
@@ -94,7 +94,7 @@ const CartLink = () => {
   );
 };
 
-const Nav = () => {
+export const Nav = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isClient = useIsClient();
   const router = useRouter();
@@ -103,7 +103,7 @@ const Nav = () => {
     <>
       <nav
         un-w="full"
-        className="max-sm:px-1 md:h-[96px] md:pr-2 container z-50 flex content-between items-center justify-between self-stretch bg-white px-[40px] pb-6 pt-6"
+        className="max-sm:px-1 md:h-[96px] md:pr-2 container z-50 flex content-between items-center justify-between self-stretch bg-transparent px-[40px] pb-6 pt-6"
       >
         {/* Left */}
         <div className="flex">
