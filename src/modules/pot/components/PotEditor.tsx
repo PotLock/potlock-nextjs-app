@@ -311,7 +311,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
               name="isNadabotVerificationRequired"
               render={({ field }) => (
                 <CheckboxField
-                  disabled
                   checked={field.value}
                   onCheckedChange={field.onChange}
                   label={
@@ -321,7 +320,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                       </span>
 
                       <span un-text="sm">
-                        🤖 nada.bot human verification (coming soon)
+                        🤖 nada.bot human verification (recommended)
                       </span>
                     </>
                   }

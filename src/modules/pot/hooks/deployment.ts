@@ -46,7 +46,7 @@ export const usePotDeploymentForm = () => {
 
       chef_fee_basis_points: donationFeeBasisPointsToPercents(100),
       isPgRegistrationRequired: true,
-      isNadabotVerificationRequired: false,
+      isNadabotVerificationRequired: true,
     }),
 
     [latestSourceCodeCommitHash],
