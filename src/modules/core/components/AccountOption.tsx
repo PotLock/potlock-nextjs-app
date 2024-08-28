@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
-import { NEARSocialUserProfile } from "@/common/contracts/social";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId, ByAccountId } from "@/common/types";
 import {
   Avatar,
@@ -9,6 +7,7 @@ import {
   AvatarImage,
   Skeleton,
 } from "@/common/ui/components";
+import { useProfileData } from "@/modules/profile";
 
 export type AccountOptionProps = ByAccountId &
   Pick<React.HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -18,6 +17,9 @@ export type AccountOptionProps = ByAccountId &
     secondaryAction?: React.ReactNode;
   };
 
+const NO_IMAGE =
+  "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
+
 export const AccountOption = ({
   isThumbnail = false,
   accountId,
@@ -25,39 +27,33 @@ export const AccountOption = ({
   secondaryAction,
   title,
 }: AccountOptionProps) => {
-  const [profileImages, setProfileImages] = useState<Pick<
-    NEARSocialUserProfile,
-    "image" | "backgroundImage"
-  > | null>(null);
+  const { profileImages, profileReady } = useProfileData(accountId);
 
-  useEffect(() => {
-    if (profileImages !== null) {
-      fetchSocialImages({ accountId }).then(setProfileImages);
-    }
-  }, [accountId, profileImages]);
+  const avatarElement = useMemo(
+    () =>
+      profileReady ? (
+        <Avatar className="h-10 w-10" {...{ title }}>
+          <AvatarImage
+            src={profileImages.image}
+            alt={`Avatar of ${accountId}`}
+            width={40}
+            height={40}
+          />
 
-  const { image } = profileImages ?? {};
+          <AvatarFallback>
+            <AvatarImage
+              src={NO_IMAGE}
+              alt={`${accountId} does not have an avatar`}
+              width={40}
+              height={40}
+            />
+          </AvatarFallback>
+        </Avatar>
+      ) : (
+        <Skeleton className="h-10 w-10 rounded-full" {...{ title }} />
+      ),
 
-  const imageUrl =
-    typeof image === "string"
-      ? image
-      : image?.url ??
-        (image?.ipfs_cid
-          ? `https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/${image.ipfs_cid}`
-          : null);
-
-  const avatarElement = imageUrl ? (
-    <Avatar className="h-10 w-10" {...{ title }}>
-      <AvatarImage
-        src={imageUrl}
-        alt={`Avatar of ${accountId}`}
-        width={40}
-        height={40}
-      />
-      <AvatarFallback>{accountId}</AvatarFallback>
-    </Avatar>
-  ) : (
-    <Skeleton className="h-10 w-10 rounded-full" {...{ title }} />
+    [accountId, profileImages.image, profileReady, title],
   );
 
   return isThumbnail ? (
