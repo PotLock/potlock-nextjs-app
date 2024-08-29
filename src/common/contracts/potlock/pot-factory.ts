@@ -1,10 +1,8 @@
 import { MemoryCache } from "@wpdas/naxios";
 import Big from "big.js";
-import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { naxiosInstance } from "@/common/api/near";
-import { POT_FACTORY_CONTRACT_ID } from "@/common/constants";
-import { yoctoNearToFloat } from "@/common/lib";
+import { FULL_TGAS, POT_FACTORY_CONTRACT_ID } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 
 import { Pot, PotDeploymentArgs } from "./interfaces/pot-factory.interfaces";
@@ -42,6 +40,7 @@ export const deploy_pot = async (args: PotDeploymentArgs): Promise<Pot> =>
   contractApi.call<typeof args, Pot>("deploy_pot", {
     args,
     deposit: await calculate_min_deployment_deposit(args),
+    gas: FULL_TGAS,
     callbackUrl: window.location.href,
   });
 
