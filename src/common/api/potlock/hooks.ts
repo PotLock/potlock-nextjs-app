@@ -91,10 +91,10 @@ export const useAccountPotApplications = ({
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve
  */
 export const usePots = (params?: V1PotsRetrieveParams) => {
-  const queryResult = swrHooks.useV1PotsRetrieve(
-    params,
-    POTLOCK_REQUEST_CONFIG,
-  );
+  const queryResult = swrHooks.useV1PotsRetrieve(params, {
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { refreshInterval: 3000 },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };
