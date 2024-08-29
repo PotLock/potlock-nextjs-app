@@ -8,7 +8,7 @@ export default function Document() {
       <Head>
         <meta name="description" content={APP_METADATA.description} />
         <meta name="image" content={APP_METADATA.openGraph.images.url} />
-        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/favicon.ico" sizes="all" />
 
         {/* Open Graph */}
         <meta property="og:title" content={APP_METADATA.title} />
