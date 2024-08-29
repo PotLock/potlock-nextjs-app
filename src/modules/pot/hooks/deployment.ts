@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
 import {
@@ -61,21 +62,30 @@ export const usePotDeploymentForm = () => {
 
   const formValues = useWatch({ control: form.control });
 
-  const crossFieldErrors = useMemo<FieldErrors<PotDeploymentInputs>>(
-    () =>
-      potDeploymentSchema
-        .safeParse(formValues as PotDeploymentInputs)
-        .error?.issues.reduce((schemaErrors, { code, message, path }) => {
-          const fieldPath = path.at(0);
+  const [crossFieldErrors, setCrossFieldErrors] = useState<
+    FieldErrors<PotDeploymentInputs>
+  >({});
 
-          return potCrossFieldValidationTargets.includes(
-            fieldPath as keyof PotDeploymentInputs,
-          ) &&
-            typeof fieldPath === "string" &&
-            code === "custom"
-            ? { ...schemaErrors, [fieldPath]: { message, type: code } }
-            : schemaErrors;
-        }, {}) ?? {},
+  useEffect(
+    () =>
+      void potDeploymentSchema
+        .parseAsync(formValues as PotDeploymentInputs)
+        .then(() => setCrossFieldErrors({}))
+        .catch((error: ZodError) =>
+          setCrossFieldErrors(
+            error?.issues.reduce((schemaErrors, { code, message, path }) => {
+              const fieldPath = path.at(0);
+
+              return potCrossFieldValidationTargets.includes(
+                fieldPath as keyof PotDeploymentInputs,
+              ) &&
+                typeof fieldPath === "string" &&
+                code === "custom"
+                ? { ...schemaErrors, [fieldPath]: { message, type: code } }
+                : schemaErrors;
+            }, {}),
+          ),
+        ),
 
     [formValues],
   );

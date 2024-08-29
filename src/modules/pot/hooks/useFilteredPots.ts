@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { Pot } from "@/common/api/potlock";
-import { usePots } from "@/common/api/potlock/hooks";
+import { Pot, potlock } from "@/common/api/potlock";
 
 const useFilteredPots = () => {
-  const { data: pots, isLoading } = usePots();
+  const { data: pots, isLoading } = potlock.usePots();
   const [activePots, setActivePots] = useState<Pot[]>([]);
   const [completedPots, setCompletedPots] = useState<Pot[]>([]);
 
@@ -15,7 +14,7 @@ const useFilteredPots = () => {
       const completed = pots.results.filter((pot) => pot.all_paid_out);
       setCompletedPots(completed);
     }
-  }, [pots]);
+  }, [pots, pots?.count]);
 
   return {
     isLoading,
