@@ -3,9 +3,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { pick } from "remeda";
 import { ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
+import { ByPotId } from "@/common/api/potlock";
 import {
   POTLOCK_CONTRACT_REPO_URL,
   POTLOCK_CONTRACT_VERSION,
@@ -21,8 +23,13 @@ import {
   potDeploymentSchema,
 } from "../models";
 
-export const usePotDeploymentForm = () => {
+export type PotEditorFormArgs = Partial<ByPotId>;
+
+export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
+  const isNewPot = typeof potId !== "string";
   const router = useRouter();
+
+  console.log(potId);
 
   const {
     contractMetadata: { latestSourceCodeCommitHash },
@@ -53,14 +60,14 @@ export const usePotDeploymentForm = () => {
     [latestSourceCodeCommitHash],
   );
 
-  const form = useForm<PotDeploymentInputs>({
+  const self = useForm<PotDeploymentInputs>({
     resolver: zodResolver(potDeploymentSchema),
     mode: "onChange",
     defaultValues,
     resetOptions: { keepDirtyValues: true },
   });
 
-  const formValues = useWatch({ control: form.control });
+  const values = useWatch(pick(self, ["control"]));
 
   const [crossFieldErrors, setCrossFieldErrors] = useState<
     FieldErrors<PotDeploymentInputs>
@@ -69,7 +76,7 @@ export const usePotDeploymentForm = () => {
   useEffect(
     () =>
       void potDeploymentSchema
-        .parseAsync(formValues as PotDeploymentInputs)
+        .parseAsync(values as PotDeploymentInputs)
         .then(() => setCrossFieldErrors({}))
         .catch((error: ZodError) =>
           setCrossFieldErrors(
@@ -87,33 +94,27 @@ export const usePotDeploymentForm = () => {
           ),
         ),
 
-    [formValues],
+    [values],
   );
-
-  const refinedForm = {
-    ...form,
-
-    formState: {
-      ...form.formState,
-      errors: { ...form.formState.errors, ...crossFieldErrors },
-    },
-  };
 
   const isDisabled =
-    formValues.source_metadata === null ||
-    !form.formState.isDirty ||
-    !form.formState.isValid ||
-    form.formState.isSubmitting;
+    values.source_metadata === null ||
+    !self.formState.isDirty ||
+    !self.formState.isValid ||
+    self.formState.isSubmitting;
 
   const handleAdminsUpdate = useCallback(
-    (accountIds: AccountId[]) => form.setValue("admins", accountIds),
-    [form],
+    (accountIds: AccountId[]) => self.setValue("admins", accountIds),
+    [self],
   );
 
-  const onCancel = () => {
-    form.reset();
-    router.back();
-  };
+  const onCancel = useCallback(() => {
+    self.reset();
+
+    if (isNewPot) {
+      router.back();
+    }
+  }, [self, isNewPot, router]);
 
   const onSubmit: SubmitHandler<PotDeploymentInputs> = useCallback(
     (inputs) => dispatch.pot.deploy(inputs),
@@ -121,11 +122,20 @@ export const usePotDeploymentForm = () => {
   );
 
   return {
-    form: refinedForm,
-    formValues,
+    form: {
+      ...self,
+
+      formState: {
+        ...self.formState,
+        errors: { ...self.formState.errors, ...crossFieldErrors },
+      },
+    },
+
+    values,
     handleAdminsUpdate,
     isDisabled,
+    isNewPot,
     onCancel,
-    onSubmit: form.handleSubmit(onSubmit),
+    onSubmit: self.handleSubmit(onSubmit),
   };
 };

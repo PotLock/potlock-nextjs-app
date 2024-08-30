@@ -196,10 +196,10 @@ export const potDeploymentSchema = object({
     path: ["public_round_start_ms"],
   });
 
-export type PotDeploymentInputs = FromSchema<typeof potDeploymentSchema>;
-
 export const potCrossFieldValidationTargets: (keyof PotDeploymentInputs)[] = [
   "application_end_ms",
   "public_round_end_ms",
   "public_round_start_ms",
 ];
+
+export type PotDeploymentInputs = FromSchema<typeof potDeploymentSchema>;

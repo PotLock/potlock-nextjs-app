@@ -1,4 +1,4 @@
-export { usePotDeploymentForm } from "./deployment";
+export { usePotEditorForm } from "./editor";
 export * from "./forms";
 export { default as useFilteredPots } from "./useFilteredPots";
 export { default as useNearAndUsdByPot } from "./useNearAndUsdByPot";

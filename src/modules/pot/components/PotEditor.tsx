@@ -1,4 +1,3 @@
-import { ByPotId } from "@/common/api/potlock";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
@@ -21,19 +20,20 @@ import { AccessControlAccounts } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 
 import { POT_MAX_DESCRIPTION_LENGTH } from "../constants";
-import { usePotDeploymentForm } from "../hooks/deployment";
+import { PotEditorFormArgs, usePotEditorForm } from "../hooks/editor";
 
-export type PotEditorProps = Partial<ByPotId> & {};
+export type PotEditorProps = PotEditorFormArgs & {};
 
-export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
+export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   const {
     form,
-    formValues,
+    values,
     handleAdminsUpdate,
     isDisabled,
+    isNewPot,
     onCancel,
     onSubmit,
-  } = usePotDeploymentForm();
+  } = usePotEditorForm({ potId });
 
   return (
     <Form {...form}>
@@ -42,7 +42,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
           <EditorSection heading="Admins">
             <AccessControlAccounts
               title="Admins"
-              value={formValues.admins ?? []}
+              value={values.admins ?? []}
               onSubmit={handleAdminsUpdate}
             />
           </EditorSection>
@@ -337,7 +337,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 variant="standard-filled"
                 className="lg:w-auto w-full"
               >
-                Deploy Pot
+                {isNewPot ? "Deploy Pot" : "Save changes"}
               </Button>
 
               <Button
@@ -345,7 +345,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 variant="standard-outline"
                 className="lg:w-auto w-full"
               >
-                Cancel
+                {isNewPot ? "Cancel" : "Discard"}
               </Button>
             </div>
           </EditorSection>
