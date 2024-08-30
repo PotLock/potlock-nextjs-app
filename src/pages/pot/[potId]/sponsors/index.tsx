@@ -33,14 +33,15 @@ const SponsorsTab = () => {
     let total = 0;
     donations.forEach((donation) => {
       const key = donation.donor.id || donation.pot.account;
+      const tokenName = donation.token.name || donation.token.account || "NEAR";
       const nearAmount =
-        donation.token.name!.toUpperCase() === "NEAR"
+        tokenName.toUpperCase() === "NEAR"
           ? yoctoNearToFloat(donation.net_amount)
           : parseFloat(
               formatWithCommas(
-                SUPPORTED_FTS[
-                  donation.token.name!.toUpperCase()
-                ].fromIndivisible(donation.net_amount),
+                SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(
+                  donation.net_amount,
+                ),
               ),
             );
 
