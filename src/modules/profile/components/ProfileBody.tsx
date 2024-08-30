@@ -4,15 +4,17 @@ import { useState } from "react";
 
 import Link from "next/link";
 
+import { ProfileFeedsProps } from "@/common/contracts/potlock/interfaces/post.interfaces";
+
 import ProfileFeeds from "./ProfileFeeds";
 
-const ProfileBody = () => {
-  const [selected, setSelected] = useState("home");
+const ProfileBody: React.FC<ProfileFeedsProps> = ({ accountId }) => {
+  const [selected, setSelected] = useState("feed");
   const navOptions = [
-    { id: "home", label: "Home", href: "home" },
+    // { id: "home", label: "Home", href: "home" },
     { id: "feed", label: "Social Feed", href: "feed" },
-    { id: "pots", label: "Pots", href: "pots" },
-    { id: "funds", label: "Fund Raising", href: "funds" },
+    // { id: "pots", label: "Pots", href: "pots" },
+    // { id: "funds", label: "Fund Raising", href: "funds" },
   ];
 
   return (
@@ -33,7 +35,7 @@ const ProfileBody = () => {
           </Link>
         ))}
       </div>
-      {selected === "feed" && <ProfileFeeds />}
+      {selected === "feed" && <ProfileFeeds accountId={accountId} />}
     </>
   );
 };

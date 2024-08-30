@@ -3,6 +3,11 @@ import { StorageCache } from "@wpdas/naxios";
 import { SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
 
 import { naxiosInstance } from "..";
+import {
+  FeedsResult,
+  IndexPostResultItem,
+  PostContent,
+} from "../potlock/interfaces/post.interfaces";
 
 /**
  * NEAR Social DB Contract API
@@ -218,16 +223,119 @@ export const setSocialData = async ({
   }
 };
 
-export const getPostFeeds = async ({ accountId }: { accountId: string }) => {
+export const fetchGlobalFeeds = async ({
+  client,
+  accountIds,
+  offset = 20,
+}: any) => {
+  // First, use index to get the list of posts
+  const indexResult = (await client.index({
+    action: "post",
+    key: "main",
+    limit: offset.toString(),
+    accountId: accountIds,
+    order: "desc",
+  })) as unknown as IndexPostResultItem[];
+
+  // Fetch each post individually with its specific block height
+  return await Promise.all(
+    indexResult.map(async (item) => {
+      const getResult = (await client.get({
+        keys: [`${item.accountId}/post/main`],
+        blockHeight: item.blockHeight,
+      })) as FeedsResult;
+
+      const postContent = getResult[item.accountId]?.post?.main;
+      let parsedContent: PostContent;
+      try {
+        parsedContent = JSON.parse(postContent);
+      } catch (e) {
+        console.error("Error parsing post content:", e);
+        parsedContent = { text: "Error: Could not parse post content" };
+      }
+
+      return {
+        accountId: item.accountId,
+        blockHeight: item.blockHeight,
+        content: parsedContent.text || "No content available",
+      };
+    }),
+  );
+};
+
+export const fetchAccountFeedPosts = async ({
+  client,
+  accountId,
+  offset = 20,
+}: any) => {
+  // First, use index to get the list of posts
+  const indexResult = (await client.index({
+    action: "post",
+    key: "main",
+    limit: offset.toString(),
+    accountId,
+    order: "desc",
+  })) as unknown as IndexPostResultItem[];
+
+  // Fetch each post individually with its specific block height
+  return await Promise.all(
+    indexResult.map(async (item) => {
+      const getResult = (await client.get({
+        keys: [`${accountId}/post/main`],
+        blockHeight: item.blockHeight,
+      })) as FeedsResult;
+
+      const postContent = getResult[accountId]?.post?.main;
+      let parsedContent: PostContent;
+      try {
+        parsedContent = JSON.parse(postContent);
+      } catch (e) {
+        console.error("Error parsing post content:", e);
+        parsedContent = { text: "Error: Could not parse post content" };
+      }
+
+      return {
+        accountId: accountId,
+        blockHeight: item.blockHeight,
+        content: parsedContent.text || "No content available",
+      };
+    }),
+  );
+};
+
+export const fetchSinglePost = async ({
+  client,
+  accountId,
+  blockHeight,
+}: {
+  client: any;
+  accountId: string;
+  blockHeight: number;
+}): Promise<{ accountId: string; blockHeight: number; content: string }> => {
   try {
-    const response = await nearSocialDbContractApi.view<any, any>("get", {
-      args: {
-        keys: [`*/${accountId}/post/main`],
-        blockHeight: "125830955",
-      },
-    });
-    return response;
+    // Fetch the post using the accountId and blockHeight
+    const getResult = (await client.get({
+      keys: [`${accountId}/post/main`],
+      blockHeight: blockHeight,
+    })) as FeedsResult;
+
+    const postContent = getResult[accountId]?.post?.main;
+    let parsedContent: PostContent;
+
+    try {
+      parsedContent = JSON.parse(postContent);
+    } catch (e) {
+      console.error("Error parsing post content:", e);
+      parsedContent = { text: "Error: Could not parse post content" };
+    }
+
+    return {
+      accountId: accountId,
+      blockHeight: blockHeight,
+      content: parsedContent.text || "No content available",
+    };
   } catch (error) {
-    console.error("Error Fetching Feeds", error);
+    console.error("Error fetching single post:", error);
+    throw new Error("Could not fetch the post");
   }
 };

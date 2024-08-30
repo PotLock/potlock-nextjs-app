@@ -16,7 +16,7 @@ export default async function Project({
       <ProfileBanner isProject={true} accountId={params.userId} />
       <Info accountId={params.userId} />
       {/* <DonationsInfo accountId={params.userId} potId={params.potId} /> */}
-      <ProfileBody />
+      <ProfileBody accountId={params.userId} />
     </main>
   );
 }
