@@ -79,7 +79,11 @@ const FormItem = forwardRef<
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <div
+        ref={ref}
+        className={cn("flex flex-col gap-2", className)}
+        {...props}
+      />
     </FormItemContext.Provider>
   );
 });
@@ -95,7 +99,7 @@ const FormLabel = forwardRef<
     <Label
       ref={ref}
       className={cn(
-        "prose font-600",
+        "font-500 leading-normal",
         error ? "text-destructive" : "text-neutral-950",
         className,
       )}
@@ -139,7 +143,10 @@ const FormDescription = forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn(
+        "flex justify-between text-sm text-muted-foreground",
+        className,
+      )}
       {...props}
     />
   );

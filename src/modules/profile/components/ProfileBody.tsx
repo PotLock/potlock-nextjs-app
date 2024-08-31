@@ -19,7 +19,7 @@ const ProfileBody: React.FC<ProfileFeedsProps> = ({ accountId }) => {
 
   return (
     <>
-      <div className="flex w-full justify-start gap-8 overflow-x-scroll border-b border-gray-300 px-16 md:overflow-visible md:px-4">
+      <div className="md:overflow-visible md:px-4 flex w-full justify-start gap-8 overflow-x-scroll border-b border-gray-300 px-16">
         {navOptions.map((option: any) => (
           <Link href={`?nav=${option.href}`} key={option.id} passHref>
             <div

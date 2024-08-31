@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { fetchTimeByBlockHeight } from "@/common/lib/blockHeightToTime";
-import { fetchSocialImages } from "@/modules/core/services/socialImages";
+import truncate from "@/common/lib/truncate";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
 
 import FeedCardOptionsSelect from "./FeedCardOptionsSelect";
 import { PROFILE_DEFAULTS } from "../constants";
-import truncate from "@/common/lib/truncate";
 
 interface PostType {
   post: {
@@ -38,27 +37,10 @@ const FeedCard = ({ post }: PostType) => {
     if (post.accountId) fetchProfileImage();
   }, [post.accountId]);
 
-  const handleCopyLink = () => {
-    // Logic to copy the link to the clipboard
-    navigator.clipboard
-      .writeText(
-        `${window.location.href}/${post.accountId}/${post.blockHeight}`,
-      )
-      .then(() => {
-        alert("Link copied to clipboard!");
-      });
-  };
-
-  const handleShareTweet = () => {
-    // Logic to share the post as a tweet
-    const tweetUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}`;
-    window.open(tweetUrl, "_blank");
-  };
-
   return (
     <div
       onClick={() => router.push(`/feed/${post.accountId}/${post.blockHeight}`)}
-      className="mb-4 w-full cursor-pointer rounded-lg bg-white p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg"
+      className="w-100 md:w-full mb-4 cursor-pointer rounded-lg bg-white p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg"
     >
       <div className="mb-4 flex items-center justify-between">
         <div className="flex">
@@ -66,7 +48,7 @@ const FeedCard = ({ post }: PostType) => {
             role="button"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/user/${post.accountId}`);
+              router.push(`/profile/${post.accountId}`);
             }}
             className="  flex items-center space-x-2 hover:underline"
           >

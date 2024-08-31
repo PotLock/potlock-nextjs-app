@@ -1,61 +1,34 @@
-"use client";
+import Link from "next/link";
 
-import { useEffect, useState } from "react";
+import { nearSocial } from "@/common/api/near-social";
+import { ByAccountId } from "@/common/types";
 
-import { getFollowers, getFollowing } from "@/common/contracts/social";
+export type FollowStatsProps = ByAccountId & {};
 
-type Props = {
-  accountId: string;
-  onFollowerClick?: () => void;
-  onFollowingClick?: () => void;
-};
+export const FollowStats: React.FC<FollowStatsProps> = ({ accountId }) => {
+  const { data: followerAccountIds } = nearSocial.useFollowerAccountIds({
+    accountId,
+  });
 
-const FollowStats = ({
-  accountId,
-  onFollowerClick,
-  onFollowingClick,
-}: Props) => {
-  const [following, setFollowing] = useState(0);
-  const [followers, setFollowers] = useState(0);
+  const { data: followedAccountIds } = nearSocial.useFollowedAccountIds({
+    accountId,
+  });
 
-  useEffect(() => {
-    const fetchSocialData = async () => {
-      const _following = await getFollowing({ accountId });
-      setFollowing(_following.total);
-      console.log(_following);
-
-      const _followers = await getFollowers({ accountId });
-      setFollowers(_followers.total);
-      console.log(_followers);
-    };
-
-    if (accountId) {
-      fetchSocialData();
-    }
-  }, [accountId]);
-
-  // TODO
   return (
-    <div className="flex items-center gap-4 text-sm max-[400px]:mt-2 md:gap-8">
-      <button
-        className="bg-[rgb(33, 37, 41)] flex gap-2"
-        onClick={onFollowerClick}
-      >
-        <span style={{ fontWeight: 600 }}>{followers}</span>
-        Follower
-      </button>
+    <div un-flex="~" un-items="center" un-gap="4 md:8" un-mt="max-[400px]:2">
+      {followerAccountIds && (
+        <Link href="#" className="prose flex gap-1">
+          <span un-font="600">{followerAccountIds?.length}</span>
+          <span>Followers</span>
+        </Link>
+      )}
 
-      <button
-        className="bg-[rgb(33, 37, 41)] flex gap-2"
-        onClick={onFollowerClick}
-      >
-        <span style={{ fontWeight: 600 }} onClick={onFollowingClick}>
-          {following}
-        </span>
-        Following
-      </button>
+      {followedAccountIds && (
+        <Link href="#" className="prose flex gap-1">
+          <span un-font="600">{followedAccountIds?.length}</span>
+          <span>Following</span>
+        </Link>
+      )}
     </div>
   );
 };
-
-export default FollowStats;

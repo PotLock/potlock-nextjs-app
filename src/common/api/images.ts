@@ -1,9 +1,9 @@
-import { naxiosInstance } from "@/common/contracts/index";
+import { naxiosInstance } from "@/common/api/near";
 import { Image, getSocialProfile } from "@/common/contracts/social";
 
 type Props = {
   accountId?: string;
-  image?: Image;
+  image?: Image | string;
   type?: "backgroundImage" | "image";
   fallbackurl?: string;
 };
@@ -37,7 +37,7 @@ export const getImage = async ({
   type,
   fallbackurl,
 }: Props) => {
-  let socialImage = image;
+  let socialImage: any = image;
 
   try {
     if (!socialImage && accountId) {

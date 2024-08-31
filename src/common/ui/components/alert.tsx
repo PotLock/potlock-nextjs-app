@@ -6,7 +6,7 @@ import { cn } from "../utils";
 
 const alertVariants = cva(
   cn(
-    "relative w-full rounded-lg border p-4",
+    "flex flex-col relative w-full rounded-lg border p-4 gap-2",
     "[&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4",
     "[&>svg]:text-foreground",
   ),
@@ -15,6 +15,8 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-background text-foreground",
+        neutral: "border-neutral-200 bg-neutral-50",
+        warning: "border-[#F0CF1F] bg-[#FBF9C6] text-[#3F2209]",
 
         destructive: cn(
           "border-destructive/50 text-destructive dark:border-destructive",
@@ -22,23 +24,30 @@ const alertVariants = cva(
         ),
       },
     },
+
     defaultVariants: {
       variant: "default",
     },
   },
 );
 
-const Alert = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, ...props }, ref) => (
-  <div
-    ref={ref}
-    role="alert"
-    className={cn(alertVariants({ variant }), className)}
-    {...props}
-  />
-));
+export type AlertProps = React.HTMLAttributes<HTMLDivElement> &
+  VariantProps<typeof alertVariants> & { compact?: boolean };
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(
+  ({ className, variant, compact = false, ...props }, ref) => (
+    <div
+      ref={ref}
+      role="alert"
+      className={cn(
+        alertVariants({ variant }),
+        { "flex-row": compact },
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 
 Alert.displayName = "Alert";
 
@@ -49,7 +58,7 @@ const AlertTitle = forwardRef<
   <h5
     ref={ref}
     className={cn(
-      "prose mb-1 font-medium leading-none tracking-tight",
+      "prose font-500 important:pl-8 leading-5 tracking-normal text-neutral-950",
       className,
     )}
     {...props}
@@ -58,13 +67,22 @@ const AlertTitle = forwardRef<
 
 AlertTitle.displayName = "AlertTitle";
 
+export type AlertDescriptionProps =
+  React.HTMLAttributes<HTMLParagraphElement> & {
+    inline?: boolean;
+  };
+
 const AlertDescription = forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
+  AlertDescriptionProps
+>(({ className, inline = false, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("prose text-sm [&_p]:leading-relaxed", className)}
+    className={cn(
+      "prose font-500 text-sm text-neutral-600 [&_p]:leading-relaxed",
+      { "important:pl-0": inline, "important:pl-8": !inline },
+      className,
+    )}
     {...props}
   />
 ));

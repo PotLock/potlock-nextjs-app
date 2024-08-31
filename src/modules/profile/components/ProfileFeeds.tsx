@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 import React, { useEffect, useRef, useState } from "react";
 
 import { Social } from "@builddao/near-social-js";
@@ -70,16 +72,31 @@ const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
     };
   }, [loadingRef.current]);
 
+  const NoResults = () => (
+    <div className="md:flex-col md:px-[105px] md:py-[68px] flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px]">
+      <p className="font-italic font-500 md:text-[22px] mb-4 max-w-[290px] text-center font-lora text-[16px] text-[#292929]">
+        This project has no Feeds yet.
+      </p>
+
+      <img
+        className="w-[50%]"
+        src="https://ipfs.near.social/ipfs/bafkreibcjfkv5v2e2n3iuaaaxearps2xgjpc6jmuam5tpouvi76tvfr2de"
+        alt="pots"
+      />
+    </div>
+  );
+
   return (
-    <div className="my-8" style={{ overflowY: "auto", maxHeight: "80vh" }}>
+    <div className="my-8 h-full max-h-80 w-full">
       {posts.map((post, index) => (
         <Post key={index} post={post} />
       ))}
       {posts.length > 1 && (
-        <div ref={loadingRef} className="mt-4 text-center">
+        <div ref={loadingRef} className="mt-4 min-h-12 text-center">
           {isLoading ? "Loading more posts..." : ""}
         </div>
       )}
+      {posts.length === 0 && <NoResults />}
     </div>
   );
 };
