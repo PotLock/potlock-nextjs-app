@@ -1,11 +1,14 @@
+import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 import { conditional, evolve, isNonNullish, piped } from "remeda";
 
+import { nearRpc, walletApi } from "@/common/api/near";
 import {
   LISTS_CONTRACT_ID,
   PROVIDER_ID_DELIMITER,
   SYBIL_CONTRACT_ID,
 } from "@/common/constants";
 import { potFactory } from "@/common/contracts/potlock";
+import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
 import { donationAmount } from "@/modules/donation";
 import { RootDispatcher } from "@/store";
@@ -25,7 +28,7 @@ export const handleDeploymentStep = (
   deployment: { ...state.deployment, currentStep: step },
 });
 
-export const attachDeploymentEffect =
+export const attachDeploymentHandler =
   (dispatch: RootDispatcher) =>
   async ({
     pot_handle,
@@ -75,5 +78,43 @@ export const attachDeploymentEffect =
         })
         .then(dispatch.pot.deploymentSuccess)
         .catch(dispatch.pot.deploymentFailure);
+    }
+  };
+
+export const attachDeploymentOutcomeHandler =
+  (dispatch: RootDispatcher) =>
+  async (transactionHash: string): Promise<void> => {
+    const { accountId: sender_account_id } = walletApi;
+
+    if (sender_account_id) {
+      const { receipts_outcome } = await nearRpc.txStatus(
+        transactionHash,
+        sender_account_id,
+      );
+
+      const { status } = receipts_outcome.at(5)?.outcome ?? {};
+
+      if (typeof status === "string") {
+        switch (status) {
+          case ExecutionStatusBasic.Failure: {
+            return void dispatch.pot.deploymentFailure(
+              new Error("Unable to get pot deployment status."),
+            );
+          }
+        }
+      } else if (typeof status?.SuccessValue === "string") {
+        const potData = JSON.parse(atob(status.SuccessValue)) as Pot;
+
+        console.log(potData);
+
+        return void dispatch.pot.deploymentSuccess(potData);
+      }
+    } else {
+      return void dispatch.pot.deploymentFailure(
+        new Error(
+          "Unable to get pot deployment status without user authentication. " +
+            "Please login and try again.",
+        ),
+      );
     }
   };

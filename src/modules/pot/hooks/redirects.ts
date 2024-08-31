@@ -21,9 +21,11 @@ export const useDeploymentSuccessWalletRedirect = () => {
 
   useEffect(() => {
     if (transactionHash && !successModal.visible) {
+      console.log("test");
+
       void dispatch.pot
         .handleDeploymentOutcome(transactionHash)
-        .then(() =>
+        .finally(() =>
           successModal
             .show()
             .finally(() => setSearchParams({ transactionHashes: null })),

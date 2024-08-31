@@ -1,12 +1,13 @@
 import { createModel } from "@rematch/core";
-import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
+import { prop } from "remeda";
 
-import { nearRpc, walletApi } from "@/common/api/near";
 import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
+import { useTypedSelector } from "@/store";
 import { RootModel } from "@/store/models";
 
 import {
-  attachDeploymentEffect,
+  attachDeploymentHandler,
+  attachDeploymentOutcomeHandler,
   handleDeploymentStep,
   potDeploymentStateDefaults,
 } from "./deployment";
@@ -54,42 +55,9 @@ export const potModel = createModel<RootModel>()({
   },
 
   effects: (dispatch) => ({
-    deploy: attachDeploymentEffect(dispatch),
-
-    async handleDeploymentOutcome(transactionHash: string) {
-      const { accountId: sender_account_id } = walletApi;
-
-      if (sender_account_id) {
-        const { receipts_outcome } = await nearRpc.txStatus(
-          transactionHash,
-          sender_account_id,
-        );
-
-        const { status } = receipts_outcome.at(5)?.outcome ?? {};
-
-        if (typeof status === "string") {
-          switch (status) {
-            case ExecutionStatusBasic.Failure: {
-              return void dispatch.pot.deploymentFailure(
-                new Error("Unable to get pot deployment status."),
-              );
-            }
-          }
-        } else if (typeof status?.SuccessValue === "string") {
-          const potData = JSON.parse(atob(status.SuccessValue)) as Pot;
-
-          console.log(potData);
-
-          return void dispatch.pot.deploymentSuccess(potData);
-        }
-      } else {
-        return void dispatch.pot.deploymentFailure(
-          new Error(
-            "Unable to get pot deployment status without user authentication. " +
-              "Please login and try again.",
-          ),
-        );
-      }
-    },
+    submitDeployment: attachDeploymentHandler(dispatch),
+    handleDeploymentOutcome: attachDeploymentOutcomeHandler(dispatch),
   }),
 });
+
+export const usePotState = () => useTypedSelector(prop("pot"));
