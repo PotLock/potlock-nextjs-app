@@ -79,7 +79,7 @@ export const donationModel = createModel<RootModel>()({
     },
 
     success(state, result: DirectDonation | PotDonation) {
-      return { ...handleStep(state, "success"), successResult: result };
+      return { ...handleStep(state, "success"), finalOutcome: result };
     },
 
     failure(_, error: Error) {
@@ -150,7 +150,7 @@ export const donationModel = createModel<RootModel>()({
       }
     },
 
-    async handleSuccessByTxHash(transactionHash: string) {
+    async handleOutcome(transactionHash: string) {
       const { accountId: sender_account_id } = walletApi;
 
       if (sender_account_id) {
@@ -159,11 +159,11 @@ export const donationModel = createModel<RootModel>()({
           sender_account_id,
         });
 
-        const donationResult = JSON.parse(
+        const donationData = JSON.parse(
           atob(data.result.receipts_outcome[3].outcome.status.SuccessValue),
         ) as DirectDonation | PotDonation;
 
-        return void dispatch.donation.success(donationResult);
+        return void dispatch.donation.success(donationData);
       } else {
         return void dispatch.donation.failure(
           new Error(

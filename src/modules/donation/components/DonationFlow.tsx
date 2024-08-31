@@ -21,7 +21,7 @@ export type DonationFlowProps = DonationSubmissionInputs &
 
 export const DonationFlow: React.FC<DonationFlowProps> = ({
   currentStep,
-  successResult: result,
+  finalOutcome: result,
   transactionHash,
   closeModal,
   ...props

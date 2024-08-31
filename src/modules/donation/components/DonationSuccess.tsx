@@ -30,7 +30,7 @@ import { DonationState } from "../types";
 
 export type DonationSuccessProps = {
   form: UseFormReturn<DonationInputs>;
-  result?: DonationState["successResult"];
+  result?: DonationState["finalOutcome"];
   transactionHash?: string;
   closeModal: VoidFunction;
 };

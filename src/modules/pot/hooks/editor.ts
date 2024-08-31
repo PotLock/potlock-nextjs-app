@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { pick } from "remeda";
 import { ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
@@ -67,7 +66,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     resetOptions: { keepDirtyValues: true },
   });
 
-  const values = useWatch(pick(self, ["control"]));
+  const values = useWatch(self);
 
   const [crossFieldErrors, setCrossFieldErrors] = useState<
     FieldErrors<PotDeploymentInputs>

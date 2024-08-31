@@ -8,7 +8,7 @@ import { dispatch } from "@/store";
 import { DonationModal } from "../components/DonationModal";
 
 export const useDonationSuccessWalletRedirect = () => {
-  const modal = useModal(DonationModal);
+  const donationModal = useModal(DonationModal);
 
   const {
     query: { donateTo, donateToPot, transactionHashes },
@@ -25,28 +25,31 @@ export const useDonationSuccessWalletRedirect = () => {
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
     (typeof transactionHashes === "string" ? transactionHashes : undefined);
 
-  useEffect(() => {
-    if (
-      transactionHash &&
-      Boolean(recipientAccountId ?? potAccountId) &&
-      !modal.visible
-    ) {
-      dispatch.donation.handleSuccessByTxHash(transactionHash).then(() => {
-        modal.show({
-          accountId: recipientAccountId,
-          potId: potAccountId,
-          transactionHash,
-        });
+  const isTransactionOutcomeDetected =
+    transactionHash && Boolean(recipientAccountId ?? potAccountId);
 
-        setSearchParams({
-          donateTo: null,
-          donateToPot: null,
-          transactionHashes: null,
-        });
-      });
+  useEffect(() => {
+    if (isTransactionOutcomeDetected && !donationModal.visible) {
+      void dispatch.donation.handleOutcome(transactionHash).then(() =>
+        donationModal
+          .show({
+            accountId: recipientAccountId,
+            potId: potAccountId,
+            transactionHash,
+          })
+          .finally(() =>
+            setSearchParams({
+              donateTo: null,
+              donateToPot: null,
+              transactionHashes: null,
+            }),
+          ),
+      );
     }
   }, [
-    modal,
+    isTransactionOutcomeDetected,
+    donationModal,
+    donationModal.visible,
     potAccountId,
     recipientAccountId,
     setSearchParams,

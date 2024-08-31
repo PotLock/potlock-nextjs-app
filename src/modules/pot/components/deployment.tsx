@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
-import { ByPotId } from "@/common/api/potlock";
 import {
   Button,
   Dialog,
@@ -10,10 +9,10 @@ import {
   DialogDescription,
 } from "@/common/ui/components";
 
-export type PotDeploymentSuccessModalProps = ByPotId & {};
+export type PotDeploymentSuccessModalProps = {};
 
 export const PotDeploymentSuccessModal = create(
-  ({ potId }: PotDeploymentSuccessModalProps) => {
+  (_: PotDeploymentSuccessModalProps) => {
     const self = useModal();
 
     const close = useCallback(() => {
