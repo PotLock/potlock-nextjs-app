@@ -33,7 +33,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { loading, nadaBotVerified } = useIsHuman(wallet?.accountId);
 
   // Modals
-  const [successModalOpen, setSuccessModalOpen] = useState(
+  const [resultModalOpen, setSuccessModalOpen] = useState(
     !!query.done && !query.errorMessage,
   );
   const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
@@ -59,7 +59,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         {/* Modals */}
         <SuccessModal
           successMessage="Transaction sent successfully"
-          open={successModalOpen}
+          open={resultModalOpen}
           onCloseClick={() => setSuccessModalOpen(false)}
         />
         <ErrorModal

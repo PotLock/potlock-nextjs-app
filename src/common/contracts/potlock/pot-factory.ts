@@ -5,7 +5,12 @@ import { naxiosInstance } from "@/common/api/near";
 import { FULL_TGAS, POT_FACTORY_CONTRACT_ID } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 
-import { Pot, PotDeploymentArgs } from "./interfaces/pot-factory.interfaces";
+import {
+  PotDeploymentArgs,
+  PotDeploymentResult,
+} from "./interfaces/pot-factory.interfaces";
+
+export type { PotDeploymentResult };
 
 /**
  * Contract API
@@ -36,8 +41,10 @@ export const calculate_min_deployment_deposit = ({
       Big(amount).plus(Big("20000000000000000000000")).toFixed(),
     );
 
-export const deploy_pot = async (args: PotDeploymentArgs): Promise<Pot> =>
-  contractApi.call<typeof args, Pot>("deploy_pot", {
+export const deploy_pot = async (
+  args: PotDeploymentArgs,
+): Promise<PotDeploymentResult> =>
+  contractApi.call<typeof args, PotDeploymentResult>("deploy_pot", {
     args,
     deposit: await calculate_min_deployment_deposit(args),
     gas: FULL_TGAS,

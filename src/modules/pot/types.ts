@@ -1,10 +1,10 @@
-import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
+import { PotDeploymentResult } from "@/common/contracts/potlock";
 
-export type PotDeploymentStep = "configuration" | "success";
+export type PotDeploymentStep = "configuration" | "result";
 
 export type PotState = {
   deployment: {
     currentStep: PotDeploymentStep;
-    finalOutcome?: Pot;
+    finalOutcome: { data?: PotDeploymentResult; error?: Error };
   };
 };

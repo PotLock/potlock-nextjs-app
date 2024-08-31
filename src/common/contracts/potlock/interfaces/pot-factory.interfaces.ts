@@ -1,7 +1,8 @@
+import { PotId } from "@/common/api/potlock";
 import { AccountId, ProviderId } from "@/common/types";
 
-export type Pot = {
-  id: string;
+export type PotDeploymentResult = {
+  id: PotId;
   deployed_by: string;
   deployed_at_ms: number;
 };

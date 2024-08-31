@@ -1,5 +1,12 @@
 import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
-import { conditional, evolve, isNonNullish, piped } from "remeda";
+import {
+  conditional,
+  evolve,
+  isNonNullish,
+  merge,
+  mergeAll,
+  piped,
+} from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import {
@@ -8,7 +15,7 @@ import {
   SYBIL_CONTRACT_ID,
 } from "@/common/constants";
 import { potFactory } from "@/common/contracts/potlock";
-import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
+import { PotDeploymentResult } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
 import { donationAmount } from "@/modules/donation";
 import { RootDispatcher } from "@/store";
@@ -18,15 +25,21 @@ import { PotDeploymentStep, PotState } from "../types";
 
 export const potDeploymentStateDefaults: PotState["deployment"] = {
   currentStep: "configuration",
+  finalOutcome: {},
 };
 
 export const handleDeploymentStep = (
   state: PotState,
   step: PotDeploymentStep,
-) => ({
-  ...state,
-  deployment: { ...state.deployment, currentStep: step },
-});
+  deploymentStateUpdate?: Partial<PotState["deployment"]>,
+) =>
+  merge(state, {
+    deployment: mergeAll([
+      state.deployment,
+      deploymentStateUpdate ?? {},
+      { currentStep: step },
+    ]),
+  });
 
 export const attachDeploymentHandler =
   (dispatch: RootDispatcher) =>
@@ -84,13 +97,15 @@ export const attachDeploymentHandler =
 export const attachDeploymentOutcomeHandler =
   (dispatch: RootDispatcher) =>
   async (transactionHash: string): Promise<void> => {
-    const { accountId: sender_account_id } = walletApi;
+    const { accountId: owner_account_id } = walletApi;
 
-    if (sender_account_id) {
+    if (owner_account_id) {
       const { receipts_outcome } = await nearRpc.txStatus(
         transactionHash,
-        sender_account_id,
+        owner_account_id,
       );
+
+      console.log(receipts_outcome);
 
       const { status } = receipts_outcome.at(5)?.outcome ?? {};
 
@@ -103,7 +118,9 @@ export const attachDeploymentOutcomeHandler =
           }
         }
       } else if (typeof status?.SuccessValue === "string") {
-        const potData = JSON.parse(atob(status.SuccessValue)) as Pot;
+        const potData = JSON.parse(
+          atob(status.SuccessValue),
+        ) as PotDeploymentResult;
 
         console.log(potData);
 

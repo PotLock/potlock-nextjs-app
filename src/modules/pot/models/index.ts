@@ -1,7 +1,7 @@
 import { createModel } from "@rematch/core";
-import { prop } from "remeda";
+import { merge, prop } from "remeda";
 
-import { Pot } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
+import { PotDeploymentResult } from "@/common/contracts/potlock";
 import { useTypedSelector } from "@/store";
 import { RootModel } from "@/store/models";
 
@@ -23,35 +23,25 @@ export const potModel = createModel<RootModel>()({
   state: potStateDefaults,
 
   reducers: {
-    reset() {
-      return potStateDefaults;
-    },
+    reset: () => potStateDefaults,
 
-    deploymentReset(state) {
-      return {
-        ...state,
+    deploymentReset: (state) =>
+      merge(state, {
         deployment: potDeploymentStateDefaults,
-      };
-    },
+      }),
 
     nextDeploymentStep(state) {
       switch (state.deployment.currentStep) {
         case "configuration":
-          return handleDeploymentStep(state, "success");
+          return handleDeploymentStep(state, "result");
       }
     },
 
-    deploymentSuccess(state, result: Pot) {
-      return {
-        ...handleDeploymentStep(state, "success"),
-        finalOutcome: result,
-      };
-    },
+    deploymentSuccess: (state, data: PotDeploymentResult) =>
+      handleDeploymentStep(state, "result", { finalOutcome: { data } }),
 
-    deploymentFailure(_, error: Error) {
-      console.error(error);
-      throw error;
-    },
+    deploymentFailure: (state, error: Error) =>
+      handleDeploymentStep(state, "result", { finalOutcome: { error } }),
   },
 
   effects: (dispatch) => ({

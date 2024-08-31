@@ -30,7 +30,7 @@ export const useDonationSuccessWalletRedirect = () => {
 
   useEffect(() => {
     if (isTransactionOutcomeDetected && !donationModal.visible) {
-      void dispatch.donation.handleOutcome(transactionHash).then(() =>
+      void dispatch.donation.handleOutcome(transactionHash).finally(() =>
         donationModal
           .show({
             accountId: recipientAccountId,
