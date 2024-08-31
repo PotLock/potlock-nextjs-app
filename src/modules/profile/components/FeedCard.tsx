@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useState } from "react";
 
 import Image from "next/image";
@@ -96,7 +98,7 @@ const FeedCard = ({ post }: PostType) => {
             ),
             img: (node) => (
               <div className="mt-4 flex w-full items-center justify-center">
-                <Image src={node.src} alt="" width={500} height={300} />
+                <img src={node.src} alt="" width={500} height={300} />
               </div>
             ),
           }}

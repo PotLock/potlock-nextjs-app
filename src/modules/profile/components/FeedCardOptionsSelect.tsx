@@ -4,7 +4,18 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 import DotsIcons from "@/common/assets/svgs/DotsIcon";
 
-const FeedCardOptionsSelect = ({ post }) => {
+interface Post {
+  accountId: string;
+  blockHeight: bigint;
+}
+
+interface FeedCardOptionsSelectProps {
+  post: Post;
+}
+
+const FeedCardOptionsSelect: React.FC<FeedCardOptionsSelectProps> = ({
+  post,
+}) => {
   const feedRoute = `${window.location.href}/${post.accountId}/${post.blockHeight}`;
   const [copyLinkText, setCopyLinkText] = useState("Copy Link");
 

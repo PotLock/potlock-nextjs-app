@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -107,7 +109,7 @@ const SinglePost = () => {
           ),
           img: ({ node, ...props }) => (
             <div className="mt-4 flex w-full items-center justify-center">
-              <Image {...props} alt="image" width={500} height={300} />
+              <img {...props} alt="image" width={500} height={300} />
             </div>
           ),
         }}
