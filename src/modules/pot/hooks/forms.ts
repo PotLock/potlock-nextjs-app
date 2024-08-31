@@ -48,14 +48,6 @@ export const useFundMatchingPoolForm = ({
 
   const onSubmit: FormSubmitHandler<FundMatchingPoolInputs> = useCallback(
     async (formData) => {
-      console.log(
-        "useFundMatchingPoolForm -> Submit",
-        formData.data,
-        referrerId,
-        accountId,
-        potDetail,
-      );
-
       const args = {
         message: formData.data.message,
         matching_pool: true,
@@ -115,7 +107,6 @@ export const useFundMatchingPoolForm = ({
               gas: FULL_TGAS,
               callbackUrl,
             });
-          // console.log(daoTransactionArgs);
         } else {
           await naxiosInstance
             .contractApi({ contractId: potDetail.account }) // INFO: In this case, the accountId is a regular pot account
@@ -213,7 +204,6 @@ export const useNewApplicationForm = ({
               gas: FULL_TGAS,
               callbackUrl,
             });
-          // console.log(daoTransactionArgs);
         } else {
           await naxiosInstance
             .contractApi({ contractId: potDetail.account }) // INFO: In this case, the accountId is a regular pot account

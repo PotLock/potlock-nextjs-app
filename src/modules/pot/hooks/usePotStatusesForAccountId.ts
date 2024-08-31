@@ -35,7 +35,7 @@ export const usePotStatusesForAccountId = (props: {
           });
           setExistingApplication(_existingApp);
         } catch (e) {
-          console.log(
+          console.error(
             `Application ${props.accountId} does not exist on pot ${props.potDetail.account}`,
           );
         }

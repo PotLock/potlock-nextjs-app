@@ -12,7 +12,6 @@ import { filters } from "../utils/filters";
 
 const ActivePots = () => {
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  // console.log(categoryFilter);
 
   // Fetch Pots
   const { isLoading, activePots, completedPots } = useFilteredPots();

@@ -29,8 +29,6 @@ export function doesUserHaveDaoFunctionCallProposalPermissions(
   policy: Policy,
 ) {
   const userRoles = policy.roles.filter((role: any) => {
-    console.log("policy", policy);
-
     if (role.kind === "Everyone") return true;
     return role.kind.Group && role.kind.Group.includes(accountId);
   });
@@ -69,7 +67,6 @@ export const validateUserInDao = async (
   });
 
   const policy = await daoContractApi.view<{}, Policy>("get_policy");
-  console.log("policy", policy);
 
   const hasPermission = doesUserHaveDaoFunctionCallProposalPermissions(
     accountId,

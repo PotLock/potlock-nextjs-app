@@ -18,10 +18,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { wallet } = useWallet();
   const isClient = useIsClient();
 
-  // console.log("wallet", wallet);
-  // console.log("isClient", isClient);
-  // console.log("ready", ready);
-
   // Check wallet
   const checkWallet = useCallback(async () => {
     if (wallet) {
