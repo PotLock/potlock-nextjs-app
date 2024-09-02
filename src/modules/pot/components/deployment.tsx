@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
-import { Link } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { ByPotId } from "@/common/api/potlock";
@@ -75,7 +75,7 @@ const PotDeploymentSuccess: React.FC<ByPotId> = ({ potId }) => {
         un-justify="center"
         un-text="center"
       >
-        <h1 className="prose text-8 font-500 text-primary-600">
+        <h1 className="prose text-8 font-500 text-primary-600 font-lora">
           Successfully deployed!
         </h1>
 
@@ -113,7 +113,11 @@ export const PotDeploymentResultModal = create(
 
     return (
       <Dialog open={self.visible}>
-        <DialogContent className="max-w-151" onCloseClick={close}>
+        <DialogContent
+          onCloseClick={close}
+          contrastActions
+          className="max-w-151"
+        >
           {error !== undefined ? (
             <PotDeploymentError />
           ) : (

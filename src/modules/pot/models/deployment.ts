@@ -105,8 +105,6 @@ export const attachDeploymentOutcomeHandler =
         owner_account_id,
       );
 
-      console.log(receipts_outcome);
-
       const { status } = receipts_outcome.at(5)?.outcome ?? {};
 
       if (typeof status === "string") {
