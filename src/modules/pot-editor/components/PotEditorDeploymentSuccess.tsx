@@ -1,11 +1,15 @@
 import Link from "next/link";
 
-import { ByPotId } from "@/common/api/potlock";
 import { ChefHat } from "@/common/assets/svgs";
 import { Button, DialogDescription } from "@/common/ui/components";
 import routesPath from "@/modules/core/routes";
+import { PotData } from "@/modules/pot";
 
-export const PotEditorDeploymentSuccess: React.FC<ByPotId> = ({ potId }) => {
+export type PotDeploymentSuccessProps = { potData: PotData };
+
+export const PotEditorDeploymentSuccess: React.FC<
+  PotDeploymentSuccessProps
+> = ({ potData }) => {
   return (
     <DialogDescription className="gap-8">
       <div
@@ -32,14 +36,13 @@ export const PotEditorDeploymentSuccess: React.FC<ByPotId> = ({ potId }) => {
 
         <p className="prose text-4 font-400 line-height-6 text-gray-600">
           {"You've successfully deployed " +
-            // TODO: retrieve pot's name and use it here instead of the ID.
-            potId +
+            potData.pot_name +
             ", you can always make adjustments in the pot settings page."}
         </p>
       </div>
 
       <Button asChild variant="brand-filled" className="w-full">
-        <Link href={`${routesPath.POT_DETAIL}/${potId}`}>View Pot</Link>
+        <Link href={`${routesPath.POT_DETAIL}/${potData.id}`}>View Pot</Link>
       </Button>
     </DialogDescription>
   );

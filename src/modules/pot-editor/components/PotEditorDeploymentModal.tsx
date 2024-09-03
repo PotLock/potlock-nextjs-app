@@ -30,14 +30,14 @@ export const PotEditorDeploymentModal = create(
           contrastActions
           className="max-w-151"
         >
-          {error !== undefined ? (
-            <PotEditorDeploymentError />
+          {data === undefined ? (
+            <Spinner />
           ) : (
             <>
-              {data === undefined ? (
-                <Spinner />
+              {error !== null || data === null ? (
+                <PotEditorDeploymentError />
               ) : (
-                <PotEditorDeploymentSuccess potId={data?.id} />
+                <PotEditorDeploymentSuccess potData={data} />
               )}
             </>
           )}

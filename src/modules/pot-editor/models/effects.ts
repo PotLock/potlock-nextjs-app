@@ -7,7 +7,11 @@ import {
   PROVIDER_ID_DELIMITER,
   SYBIL_CONTRACT_ID,
 } from "@/common/constants";
-import { PotDeploymentResult, potFactory } from "@/common/contracts/potlock";
+import {
+  PotDeploymentResult,
+  pot,
+  potFactory,
+} from "@/common/contracts/potlock";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
 import { donationAmount } from "@/modules/donation";
 import { PotInputs } from "@/modules/pot";
@@ -60,7 +64,7 @@ export const effects = (dispatch: RootDispatcher) => ({
 
           pot_handle,
         })
-        .then(dispatch.pot.deploymentSuccess)
+        .then(dispatch.pot.handleDeploymentSuccess)
         .catch(dispatch.pot.deploymentFailure);
     }
   },
@@ -81,7 +85,7 @@ export const effects = (dispatch: RootDispatcher) => ({
               }
             }
           } else if (typeof status?.SuccessValue === "string") {
-            return void dispatch.pot.deploymentSuccess(
+            return void dispatch.pot.handleDeploymentSuccess(
               JSON.parse(atob(status.SuccessValue)) as PotDeploymentResult,
             );
           } else {
@@ -98,4 +102,11 @@ export const effects = (dispatch: RootDispatcher) => ({
       );
     }
   },
+
+  handleDeploymentSuccess: ({ id }: PotDeploymentResult) =>
+    void pot
+      .getConfig({ potId: id })
+      .then((potConfig) =>
+        dispatch.pot.deploymentSuccess({ id, ...potConfig }),
+      ),
 });

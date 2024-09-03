@@ -1,7 +1,7 @@
 import { createModel } from "@rematch/core";
 import { merge, mergeAll, prop } from "remeda";
 
-import { PotDeploymentResult } from "@/common/contracts/potlock";
+import { PotData } from "@/modules/pot";
 import { useTypedSelector } from "@/store";
 import { RootModel } from "@/store/models";
 
@@ -43,10 +43,14 @@ export const potEditorModel = createModel<RootModel>()({
       }
     },
 
-    deploymentSuccess: (state, data: PotDeploymentResult) =>
-      handleDeploymentStep(state, "result", { finalOutcome: { data } }),
+    deploymentSuccess: (state, data: PotData) =>
+      handleDeploymentStep(state, "result", {
+        finalOutcome: { data, error: null },
+      }),
 
     deploymentFailure: (state, error: Error) =>
-      handleDeploymentStep(state, "result", { finalOutcome: { error } }),
+      handleDeploymentStep(state, "result", {
+        finalOutcome: { data: null, error },
+      }),
   },
 });
