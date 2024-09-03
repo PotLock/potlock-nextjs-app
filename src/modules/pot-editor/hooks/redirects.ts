@@ -23,7 +23,9 @@ export const useDeploymentSuccessWalletRedirect = () => {
 
   useEffect(() => {
     if (isTransactionOutcomeDetected && !resultModal.visible) {
-      void dispatch.potEditor
+      dispatch.potEditor.reset();
+
+      dispatch.potEditor
         .handleDeploymentOutcome(transactionHash)
         .finally(() => {
           resultModal.show();

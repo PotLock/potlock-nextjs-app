@@ -93,7 +93,7 @@ export const effects = (dispatch: RootDispatcher) => ({
               }
             }
           } else if (typeof status?.SuccessValue === "string") {
-            return void dispatch.potEditor.handleDeploymentSuccess(
+            dispatch.potEditor.handleDeploymentSuccess(
               JSON.parse(atob(status.SuccessValue)) as PotDeploymentResult,
             );
           } else {
@@ -102,7 +102,7 @@ export const effects = (dispatch: RootDispatcher) => ({
         })
         .catch(dispatch.potEditor.deploymentFailure);
     } else {
-      return void dispatch.potEditor.deploymentFailure(
+      dispatch.potEditor.deploymentFailure(
         new Error(
           "Unable to get pot deployment status without user authentication. " +
             "Please login and try again.",
@@ -111,7 +111,7 @@ export const effects = (dispatch: RootDispatcher) => ({
     }
   },
 
-  handleDeploymentSuccess: ({ id }: PotDeploymentResult) =>
+  handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
     void pot
       .getConfig({ potId: id })
       .then((potConfig) =>

@@ -8,7 +8,6 @@ import {
   LabeledIcon,
   Spinner,
 } from "@/common/ui/components";
-import { dispatch } from "@/store";
 
 import { PotEditorDeploymentError } from "./PotEditorDeploymentError";
 import { PotEditorDeploymentSuccess } from "./PotEditorDeploymentSuccess";
@@ -21,7 +20,6 @@ export const PotEditorDeploymentModal = create(
     const self = useModal();
 
     const close = useCallback(() => {
-      dispatch.potEditor.reset();
       self.hide();
       self.remove();
     }, [self]);
