@@ -6,16 +6,12 @@ import { PotEditor } from "@/modules/pot-editor";
 
 const PotSettingsTab = () => {
   const {
-    query: { potId: potIdParam },
+    query: { potId },
   } = useRouteQuery();
-
-  const potId = typeof potIdParam === "string" ? potIdParam : undefined;
-
-  console.log(potId);
 
   return (
     <div className="flex flex-col">
-      <PotEditor {...{ potId }} />
+      <PotEditor potId={typeof potId === "string" ? potId : "unknown"} />
     </div>
   );
 };
