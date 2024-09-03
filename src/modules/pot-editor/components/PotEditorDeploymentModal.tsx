@@ -1,8 +1,14 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
-import { Dialog, DialogContent, Spinner } from "@/common/ui/components";
+import {
+  Dialog,
+  DialogContent,
+  LabeledIcon,
+  Spinner,
+} from "@/common/ui/components";
+import { dispatch } from "@/store";
 
 import { PotEditorDeploymentError } from "./PotEditorDeploymentError";
 import { PotEditorDeploymentSuccess } from "./PotEditorDeploymentSuccess";
@@ -15,6 +21,7 @@ export const PotEditorDeploymentModal = create(
     const self = useModal();
 
     const close = useCallback(() => {
+      dispatch.potEditor.reset();
       self.hide();
       self.remove();
     }, [self]);
@@ -22,6 +29,17 @@ export const PotEditorDeploymentModal = create(
     const {
       finalOutcome: { data, error },
     } = usePotEditorState();
+
+    const content = useMemo(
+      () =>
+        error !== null || !data ? (
+          <PotEditorDeploymentError message={error?.message} />
+        ) : (
+          <PotEditorDeploymentSuccess onViewPotClick={close} potData={data} />
+        ),
+
+      [close, data, error],
+    );
 
     return (
       <Dialog open={self.visible}>
@@ -31,15 +49,17 @@ export const PotEditorDeploymentModal = create(
           className="max-w-151"
         >
           {data === undefined ? (
-            <Spinner />
+            <div className="h-106 flex w-full flex-col items-center justify-center">
+              <LabeledIcon
+                caption="Loading pot deployment status..."
+                positioning="icon-text"
+                classNames={{ root: "gap-4", caption: "font-400 text-2xl" }}
+              >
+                <Spinner width={24} height={24} />
+              </LabeledIcon>
+            </div>
           ) : (
-            <>
-              {error !== null || data === null ? (
-                <PotEditorDeploymentError />
-              ) : (
-                <PotEditorDeploymentSuccess potData={data} />
-              )}
-            </>
+            content
           )}
         </DialogContent>
       </Dialog>

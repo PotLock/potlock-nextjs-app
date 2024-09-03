@@ -17,8 +17,12 @@ import { donationAmount } from "@/modules/donation";
 import { PotInputs } from "@/modules/pot";
 import { RootDispatcher } from "@/store";
 
+const UnknownDeploymentStatusError = new Error(
+  "Unable to get pot deployment status.",
+);
+
 export const effects = (dispatch: RootDispatcher) => ({
-  submitDeployment: async ({
+  deployPot: async ({
     pot_handle,
     source_metadata: { commit_hash, ...sourceMetadata },
     isNadabotVerificationRequired,
@@ -26,7 +30,7 @@ export const effects = (dispatch: RootDispatcher) => ({
     ...potInputs
   }: PotInputs): Promise<void> => {
     if (commit_hash === null) {
-      return void dispatch.pot.deploymentFailure(
+      return void dispatch.potEditor.deploymentFailure(
         new Error(
           "Unable to retrieve pot contract source code commit hash. " +
             "Please check your internet connection and reload the page.",
@@ -64,8 +68,8 @@ export const effects = (dispatch: RootDispatcher) => ({
 
           pot_handle,
         })
-        .then(dispatch.pot.handleDeploymentSuccess)
-        .catch(dispatch.pot.deploymentFailure);
+        .then(dispatch.potEditor.handleDeploymentSuccess)
+        .catch(dispatch.potEditor.deploymentFailure);
     }
   },
 
@@ -75,26 +79,30 @@ export const effects = (dispatch: RootDispatcher) => ({
     if (owner_account_id) {
       nearRpc
         .txStatus(transactionHash, owner_account_id)
-        .then(({ receipts_outcome }) => {
-          const { status } = receipts_outcome.at(5)?.outcome ?? {};
+        .then((response) => {
+          const { status } = response.receipts_outcome.at(5)?.outcome ?? {};
 
           if (typeof status === "string") {
             switch (status) {
               case ExecutionStatusBasic.Failure: {
-                throw new Error("Unable to get pot deployment status.");
+                throw UnknownDeploymentStatusError;
+              }
+
+              default: {
+                throw UnknownDeploymentStatusError;
               }
             }
           } else if (typeof status?.SuccessValue === "string") {
-            return void dispatch.pot.handleDeploymentSuccess(
+            return void dispatch.potEditor.handleDeploymentSuccess(
               JSON.parse(atob(status.SuccessValue)) as PotDeploymentResult,
             );
           } else {
-            throw new Error("Unable to get pot deployment status.");
+            throw UnknownDeploymentStatusError;
           }
         })
-        .catch(dispatch.pot.deploymentFailure);
+        .catch(dispatch.potEditor.deploymentFailure);
     } else {
-      return void dispatch.pot.deploymentFailure(
+      return void dispatch.potEditor.deploymentFailure(
         new Error(
           "Unable to get pot deployment status without user authentication. " +
             "Please login and try again.",
@@ -107,6 +115,6 @@ export const effects = (dispatch: RootDispatcher) => ({
     void pot
       .getConfig({ potId: id })
       .then((potConfig) =>
-        dispatch.pot.deploymentSuccess({ id, ...potConfig }),
+        dispatch.potEditor.deploymentSuccess({ id, ...potConfig }),
       ),
 });

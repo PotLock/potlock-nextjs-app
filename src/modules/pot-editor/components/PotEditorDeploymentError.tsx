@@ -3,12 +3,16 @@ import { useRouter } from "next/router";
 import { Button } from "@/common/ui/components";
 import { ModalErrorBody } from "@/modules/core";
 
-export const PotEditorDeploymentError: React.FC = () => {
+export type PotEditorDeploymentErrorProps = { message?: string };
+
+export const PotEditorDeploymentError: React.FC<
+  PotEditorDeploymentErrorProps
+> = ({ message }) => {
   const router = useRouter();
 
   return (
     <ModalErrorBody
-      title="Unable to retrieve deployment status"
+      title={message ?? "Unable to retrieve deployment status"}
       callToAction={
         <div
           un-flex="~"

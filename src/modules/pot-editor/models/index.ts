@@ -6,7 +6,7 @@ import { useTypedSelector } from "@/store";
 import { RootModel } from "@/store/models";
 
 import { effects } from "./effects";
-import { PotDeploymentStep, PotEditorState } from "../types";
+import { PotEditorDeploymentStep, PotEditorState } from "../types";
 
 export const potEditorModelKey = "potEditor";
 
@@ -15,12 +15,12 @@ export const usePotEditorState = () =>
 
 const potDeploymentStateDefaults: PotEditorState = {
   currentStep: "configuration",
-  finalOutcome: {},
+  finalOutcome: { error: null },
 };
 
 const handleDeploymentStep = (
   state: PotEditorState,
-  step: PotDeploymentStep,
+  step: PotEditorDeploymentStep,
   deploymentStateUpdate?: Partial<PotEditorState>,
 ) => mergeAll([state, deploymentStateUpdate ?? {}, { currentStep: step }]);
 

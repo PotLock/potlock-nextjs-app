@@ -16,8 +16,8 @@ import {
   Button,
   ClipboardCopyButton,
   DialogDescription,
+  LabeledIcon,
   Skeleton,
-  TextWithIcon,
 } from "@/common/ui/components";
 import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
@@ -189,9 +189,9 @@ export const DonationSuccess = ({
       {pot && <DonationVerificationWarning />}
 
       {transactionHash && (
-        <TextWithIcon content={`Txn Hash : ${truncate(transactionHash, 7)}`}>
+        <LabeledIcon caption={`Txn Hash : ${truncate(transactionHash, 7)}`}>
           <ClipboardCopyButton text={transactionHash} />
-        </TextWithIcon>
+        </LabeledIcon>
       )}
     </DialogDescription>
   );

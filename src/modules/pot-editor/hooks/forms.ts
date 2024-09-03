@@ -115,8 +115,12 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
   }, [self, isNewPot, router]);
 
   const onSubmit: SubmitHandler<PotInputs> = useCallback(
-    (inputs) => dispatch.pot.submitDeployment(inputs),
-    [],
+    (inputs) => {
+      if (isNewPot) {
+        dispatch.potEditor.deployPot(inputs);
+      }
+    },
+    [isNewPot],
   );
 
   return {

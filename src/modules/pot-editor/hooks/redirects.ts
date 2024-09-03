@@ -23,10 +23,12 @@ export const useDeploymentSuccessWalletRedirect = () => {
 
   useEffect(() => {
     if (isTransactionOutcomeDetected && !resultModal.visible) {
-      void dispatch.pot.handleDeploymentOutcome(transactionHash).finally(() => {
-        resultModal.show();
-        setSearchParams({ transactionHashes: null });
-      });
+      void dispatch.potEditor
+        .handleDeploymentOutcome(transactionHash)
+        .finally(() => {
+          resultModal.show();
+          setSearchParams({ transactionHashes: null });
+        });
     }
   }, [
     isTransactionOutcomeDetected,

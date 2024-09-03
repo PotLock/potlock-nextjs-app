@@ -66,7 +66,7 @@ export const usePotStatusesForAccountId = (props: {
     props.potDetail.owner.id === props.accountId;
 
   const userIsChefOrGreater =
-    userIsAdminOrGreater || props.potDetail.chef.id === props.accountId;
+    userIsAdminOrGreater || props.potDetail.chef?.id === props.accountId;
 
   const applicationOpen =
     now >= getDateTime(potDetail.application_start) &&
