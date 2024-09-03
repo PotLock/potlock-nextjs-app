@@ -1,6 +1,9 @@
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { PageWithBanner } from "@/common/ui/components";
-import { PotEditor, useDeploymentSuccessWalletRedirect } from "@/modules/pot";
+import {
+  PotEditor,
+  useDeploymentSuccessWalletRedirect,
+} from "@/modules/pot-editor";
 
 export default function PotDeployPage() {
   useDeploymentSuccessWalletRedirect();

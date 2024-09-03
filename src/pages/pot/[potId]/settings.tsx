@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 
-import { PotEditor, PotLayout } from "@/modules/pot";
+import { PotLayout } from "@/modules/pot";
+import { PotEditor } from "@/modules/pot-editor";
 
 const PotSettingsTab = () => {
   return (

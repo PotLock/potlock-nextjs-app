@@ -14,13 +14,12 @@ import {
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
 import { donationFeeBasisPointsToPercents } from "@/modules/donation";
-import { dispatch } from "@/store";
-
 import {
-  PotDeploymentInputs,
+  PotInputs,
   potCrossFieldValidationTargets,
-  potDeploymentSchema,
-} from "../models";
+  potSchema,
+} from "@/modules/pot";
+import { dispatch } from "@/store";
 
 export type PotEditorFormArgs = Partial<ByPotId>;
 
@@ -34,7 +33,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     contractMetadata: { latestSourceCodeCommitHash },
   } = useCoreState();
 
-  const defaultValues = useMemo<Partial<PotDeploymentInputs>>(
+  const defaultValues = useMemo<Partial<PotInputs>>(
     () => ({
       source_metadata: {
         version: POTLOCK_CONTRACT_VERSION,
@@ -59,8 +58,8 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     [latestSourceCodeCommitHash],
   );
 
-  const self = useForm<PotDeploymentInputs>({
-    resolver: zodResolver(potDeploymentSchema),
+  const self = useForm<PotInputs>({
+    resolver: zodResolver(potSchema),
     mode: "onChange",
     defaultValues,
     resetOptions: { keepDirtyValues: true },
@@ -69,13 +68,13 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
   const values = useWatch(self);
 
   const [crossFieldErrors, setCrossFieldErrors] = useState<
-    FieldErrors<PotDeploymentInputs>
+    FieldErrors<PotInputs>
   >({});
 
   useEffect(
     () =>
-      void potDeploymentSchema
-        .parseAsync(values as PotDeploymentInputs)
+      void potSchema
+        .parseAsync(values as PotInputs)
         .then(() => setCrossFieldErrors({}))
         .catch((error: ZodError) =>
           setCrossFieldErrors(
@@ -83,7 +82,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
               const fieldPath = path.at(0);
 
               return potCrossFieldValidationTargets.includes(
-                fieldPath as keyof PotDeploymentInputs,
+                fieldPath as keyof PotInputs,
               ) &&
                 typeof fieldPath === "string" &&
                 code === "custom"
@@ -115,7 +114,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     }
   }, [self, isNewPot, router]);
 
-  const onSubmit: SubmitHandler<PotDeploymentInputs> = useCallback(
+  const onSubmit: SubmitHandler<PotInputs> = useCallback(
     (inputs) => dispatch.pot.submitDeployment(inputs),
     [],
   );

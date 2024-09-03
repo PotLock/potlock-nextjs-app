@@ -18,9 +18,9 @@ import {
 } from "@/common/ui/form-fields";
 import { AccessControlAccounts } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
+import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
-import { POT_MAX_DESCRIPTION_LENGTH } from "../constants";
-import { PotEditorFormArgs, usePotEditorForm } from "../hooks/editor";
+import { PotEditorFormArgs, usePotEditorForm } from "../hooks/forms";
 
 export type PotEditorProps = PotEditorFormArgs & {};
 

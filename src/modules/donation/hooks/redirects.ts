@@ -30,21 +30,19 @@ export const useDonationSuccessWalletRedirect = () => {
 
   useEffect(() => {
     if (isTransactionOutcomeDetected && !donationModal.visible) {
-      void dispatch.donation.handleOutcome(transactionHash).finally(() =>
-        donationModal
-          .show({
-            accountId: recipientAccountId,
-            potId: potAccountId,
-            transactionHash,
-          })
-          .finally(() =>
-            setSearchParams({
-              donateTo: null,
-              donateToPot: null,
-              transactionHashes: null,
-            }),
-          ),
-      );
+      void dispatch.donation.handleOutcome(transactionHash).finally(() => {
+        donationModal.show({
+          accountId: recipientAccountId,
+          potId: potAccountId,
+          transactionHash,
+        });
+
+        setSearchParams({
+          donateTo: null,
+          donateToPot: null,
+          transactionHashes: null,
+        });
+      });
     }
   }, [
     isTransactionOutcomeDetected,

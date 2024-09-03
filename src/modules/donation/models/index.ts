@@ -4,7 +4,7 @@ import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.int
 import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { RootModel } from "@/store/models";
 
-import { attachDonationHandler, attachDonationOutcomeHandler } from "./effects";
+import { effects } from "./effects";
 import {
   DonationAllocationStrategy,
   DonationAllocationStrategyEnum,
@@ -42,6 +42,7 @@ const handleStep = (state: DonationState, step: DonationStep) => ({
 
 export const donationModel = createModel<RootModel>()({
   state: donationStateDefaults,
+  effects,
 
   reducers: {
     reset() {
@@ -73,9 +74,4 @@ export const donationModel = createModel<RootModel>()({
       console.error(error);
     },
   },
-
-  effects: (dispatch) => ({
-    submit: attachDonationHandler(dispatch),
-    handleOutcome: attachDonationOutcomeHandler(dispatch),
-  }),
 });

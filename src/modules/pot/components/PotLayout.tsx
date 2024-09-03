@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { usePot } from "@/common/api/potlock/hooks";
+import { potlock } from "@/common/api/potlock";
 import { SYBIL_FRONTEND_URL } from "@/common/constants";
 import { PageWithBanner } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
@@ -12,7 +12,7 @@ import SuccessModal from "@/modules/core/components/SuccessModal";
 import { Header, HeaderStatus } from "@/modules/pot";
 
 import Tabs from "./Tabs";
-import { potTabRoutes } from "../potTabRoutes";
+import { POT_TABS_CONFIG } from "../constants";
 
 export type PotLayoutProps = {
   children: React.ReactNode;
@@ -28,7 +28,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const pathname = router.pathname;
 
   const { potId } = query;
-  const { data: potDetail } = usePot({ potId });
+  const { data: potDetail } = potlock.usePot({ potId });
   const { wallet } = useWallet();
   const { loading, nadaBotVerified } = useIsHuman(wallet?.accountId);
 
@@ -39,13 +39,14 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
 
   const [selectedTab, setSelectedTab] = useState(
-    potTabRoutes.find((tab) => pathname.includes(tab.href)) || potTabRoutes[0],
+    POT_TABS_CONFIG.find((tab) => pathname.includes(tab.href)) ||
+      POT_TABS_CONFIG[0],
   );
 
   useEffect(() => {
     setSelectedTab(
-      potTabRoutes.find((tab) => pathname.includes(tab.href)) ||
-        potTabRoutes[0],
+      POT_TABS_CONFIG.find((tab) => pathname.includes(tab.href)) ||
+        POT_TABS_CONFIG[0],
     );
   }, [pathname]);
 
@@ -86,11 +87,11 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         {/* Pot Tabs */}
         <Tabs
           asLink
-          navOptions={potTabRoutes}
+          navOptions={POT_TABS_CONFIG}
           selectedTab={selectedTab.id}
           onSelect={(tabId: string) => {
             setSelectedTab(
-              potTabRoutes.find((tabRoute) => tabRoute.id === tabId)!,
+              POT_TABS_CONFIG.find((tabRoute) => tabRoute.id === tabId)!,
             );
           }}
         />

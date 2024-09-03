@@ -20,9 +20,8 @@ import {
   DonationSubmissionInputs,
 } from "../types";
 
-export const attachDonationHandler =
-  (dispatch: RootDispatcher) =>
-  async ({
+export const effects = (dispatch: RootDispatcher) => ({
+  submit: async ({
     amount,
     allocationStrategy,
     potDistributionStrategy,
@@ -80,10 +79,9 @@ export const attachDonationHandler =
         }
       }
     }
-  };
+  },
 
-export const attachDonationOutcomeHandler =
-  (dispatch: RootDispatcher) => async (transactionHash: string) => {
+  handleOutcome: async (transactionHash: string) => {
     const { accountId: sender_account_id } = walletApi;
 
     if (sender_account_id) {
@@ -105,4 +103,5 @@ export const attachDonationOutcomeHandler =
         ),
       );
     }
-  };
+  },
+});

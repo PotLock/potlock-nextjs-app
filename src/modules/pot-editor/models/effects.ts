@@ -1,12 +1,5 @@
 import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
-import {
-  conditional,
-  evolve,
-  isNonNullish,
-  merge,
-  mergeAll,
-  piped,
-} from "remeda";
+import { conditional, evolve, isNonNullish, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import {
@@ -14,42 +7,20 @@ import {
   PROVIDER_ID_DELIMITER,
   SYBIL_CONTRACT_ID,
 } from "@/common/constants";
-import { potFactory } from "@/common/contracts/potlock";
-import { PotDeploymentResult } from "@/common/contracts/potlock/interfaces/pot-factory.interfaces";
+import { PotDeploymentResult, potFactory } from "@/common/contracts/potlock";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
 import { donationAmount } from "@/modules/donation";
+import { PotInputs } from "@/modules/pot";
 import { RootDispatcher } from "@/store";
 
-import { PotDeploymentInputs } from "./schemas";
-import { PotDeploymentStep, PotState } from "../types";
-
-export const potDeploymentStateDefaults: PotState["deployment"] = {
-  currentStep: "configuration",
-  finalOutcome: {},
-};
-
-export const handleDeploymentStep = (
-  state: PotState,
-  step: PotDeploymentStep,
-  deploymentStateUpdate?: Partial<PotState["deployment"]>,
-) =>
-  merge(state, {
-    deployment: mergeAll([
-      state.deployment,
-      deploymentStateUpdate ?? {},
-      { currentStep: step },
-    ]),
-  });
-
-export const attachDeploymentHandler =
-  (dispatch: RootDispatcher) =>
-  async ({
+export const effects = (dispatch: RootDispatcher) => ({
+  submitDeployment: async ({
     pot_handle,
     source_metadata: { commit_hash, ...sourceMetadata },
     isNadabotVerificationRequired,
     isPgRegistrationRequired,
     ...potInputs
-  }: PotDeploymentInputs): Promise<void> => {
+  }: PotInputs): Promise<void> => {
     if (commit_hash === null) {
       return void dispatch.pot.deploymentFailure(
         new Error(
@@ -92,38 +63,32 @@ export const attachDeploymentHandler =
         .then(dispatch.pot.deploymentSuccess)
         .catch(dispatch.pot.deploymentFailure);
     }
-  };
+  },
 
-export const attachDeploymentOutcomeHandler =
-  (dispatch: RootDispatcher) =>
-  async (transactionHash: string): Promise<void> => {
+  handleDeploymentOutcome: async (transactionHash: string): Promise<void> => {
     const { accountId: owner_account_id } = walletApi;
 
     if (owner_account_id) {
-      const { receipts_outcome } = await nearRpc.txStatus(
-        transactionHash,
-        owner_account_id,
-      );
+      nearRpc
+        .txStatus(transactionHash, owner_account_id)
+        .then(({ receipts_outcome }) => {
+          const { status } = receipts_outcome.at(5)?.outcome ?? {};
 
-      const { status } = receipts_outcome.at(5)?.outcome ?? {};
-
-      if (typeof status === "string") {
-        switch (status) {
-          case ExecutionStatusBasic.Failure: {
-            return void dispatch.pot.deploymentFailure(
-              new Error("Unable to get pot deployment status."),
+          if (typeof status === "string") {
+            switch (status) {
+              case ExecutionStatusBasic.Failure: {
+                throw new Error("Unable to get pot deployment status.");
+              }
+            }
+          } else if (typeof status?.SuccessValue === "string") {
+            return void dispatch.pot.deploymentSuccess(
+              JSON.parse(atob(status.SuccessValue)) as PotDeploymentResult,
             );
+          } else {
+            throw new Error("Unable to get pot deployment status.");
           }
-        }
-      } else if (typeof status?.SuccessValue === "string") {
-        const potData = JSON.parse(
-          atob(status.SuccessValue),
-        ) as PotDeploymentResult;
-
-        console.log(potData);
-
-        return void dispatch.pot.deploymentSuccess(potData);
-      }
+        })
+        .catch(dispatch.pot.deploymentFailure);
     } else {
       return void dispatch.pot.deploymentFailure(
         new Error(
@@ -132,4 +97,5 @@ export const attachDeploymentOutcomeHandler =
         ),
       );
     }
-  };
+  },
+});

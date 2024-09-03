@@ -6,7 +6,7 @@ import { Pot } from "@/common/api/potlock";
 import { Filter, Group, SortSelect } from "@/common/ui/components";
 
 import { PotCard } from "./PotCard";
-import { sortOptions, statuses } from "../constants";
+import { POT_SORT_OPTIONS, POT_STATUSES } from "../constants";
 import { useFilteredPots } from "../hooks";
 import { filters } from "../utils/filters";
 
@@ -62,7 +62,7 @@ const ActivePots = () => {
   const tagsList: Group[] = [
     {
       label: "Status",
-      options: statuses,
+      options: POT_STATUSES,
       props: {
         value: categoryFilter,
         onValueChange: (value) => setCategoryFilter(value),
@@ -92,7 +92,7 @@ const ActivePots = () => {
         </p>
         <div className="flex items-center gap-4">
           <Filter groups={tagsList} />
-          <SortSelect options={sortOptions} onValueChange={handleSort} />
+          <SortSelect options={POT_SORT_OPTIONS} onValueChange={handleSort} />
         </div>
       </div>
       {isLoading && <p className="m-[24px_0px] self-start">Loading</p>}

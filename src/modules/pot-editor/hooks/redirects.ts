@@ -5,10 +5,10 @@ import { useModal } from "@ebay/nice-modal-react";
 import { useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
-import { PotDeploymentResultModal } from "../components/deployment";
+import { PotEditorDeploymentModal } from "../components/PotEditorDeploymentModal";
 
 export const useDeploymentSuccessWalletRedirect = () => {
-  const resultModal = useModal(PotDeploymentResultModal);
+  const resultModal = useModal(PotEditorDeploymentModal);
 
   const {
     query: { transactionHashes },
@@ -19,17 +19,21 @@ export const useDeploymentSuccessWalletRedirect = () => {
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
     (typeof transactionHashes === "string" ? transactionHashes : undefined);
 
+  const isTransactionOutcomeDetected = transactionHash !== undefined;
+
   useEffect(() => {
-    if (transactionHash && !resultModal.visible) {
-      void dispatch.pot
-        .handleDeploymentOutcome(transactionHash)
-        .finally(() =>
-          resultModal
-            .show()
-            .finally(() => setSearchParams({ transactionHashes: null })),
-        );
+    if (isTransactionOutcomeDetected && !resultModal.visible) {
+      void dispatch.pot.handleDeploymentOutcome(transactionHash).finally(() => {
+        resultModal.show();
+        setSearchParams({ transactionHashes: null });
+      });
     }
-  }, [setSearchParams, resultModal, transactionHash]);
+  }, [
+    isTransactionOutcomeDetected,
+    resultModal,
+    setSearchParams,
+    transactionHash,
+  ]);
 };
 
 // TODO: https://github.com/PotLock/potlock-nextjs-app/issues/86

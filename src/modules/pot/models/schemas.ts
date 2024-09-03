@@ -70,7 +70,7 @@ export const challengeResolveSchema = z.object({
   resolve: z.boolean().default(false),
 });
 
-export const potDeploymentSchema = object({
+export const potSchema = object({
   source_metadata: object({
     commit_hash: string().nullable(),
     link: string(),
@@ -196,10 +196,10 @@ export const potDeploymentSchema = object({
     path: ["public_round_start_ms"],
   });
 
-export const potCrossFieldValidationTargets: (keyof PotDeploymentInputs)[] = [
+export type PotInputs = FromSchema<typeof potSchema>;
+
+export const potCrossFieldValidationTargets: (keyof PotInputs)[] = [
   "application_end_ms",
   "public_round_end_ms",
   "public_round_start_ms",
 ];
-
-export type PotDeploymentInputs = FromSchema<typeof potDeploymentSchema>;
