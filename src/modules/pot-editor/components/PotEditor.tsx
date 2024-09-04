@@ -17,6 +17,7 @@ import {
   TextAreaField,
   TextField,
 } from "@/common/ui/form-fields";
+import { cn } from "@/common/ui/utils";
 import { AccessControlAccounts } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
@@ -36,6 +37,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
     onSubmit,
   } = usePotEditorForm({ potId });
 
+  console.table({ isNewPot });
   console.log(values);
 
   return (
@@ -61,25 +63,29 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     required
                     type="text"
                     placeholder="e.g. DeFi Center"
-                    classNames={{ root: "lg:w-50% w-full" }}
+                    classNames={{
+                      root: cn("lg:w-50% w-full", { "lg:w-full": !isNewPot }),
+                    }}
                     {...field}
                   />
                 )}
               />
 
-              <FormField
-                name="pot_handle"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Custom handle"
-                    type="text"
-                    placeholder="e.g. defi-center"
-                    classNames={{ root: "lg:w-50% w-full" }}
-                    {...field}
-                  />
-                )}
-              />
+              {isNewPot && (
+                <FormField
+                  name="pot_handle"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      label="Custom handle"
+                      type="text"
+                      placeholder="e.g. defi-center"
+                      classNames={{ root: "lg:w-50% w-full" }}
+                      {...field}
+                    />
+                  )}
+                />
+              )}
             </div>
 
             <FormField
@@ -143,13 +149,45 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               </AlertDescription>
             </Alert>
 
+            {isNewPot && (
+              <div un-flex="~ col lg:row" un-gap="8">
+                <FormField
+                  name="application_start_ms"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      label="Application start date"
+                      required
+                      type="datetime-local"
+                      classNames={{ root: "lg:w-50% w-full" }}
+                      {...field}
+                    />
+                  )}
+                />
+
+                <FormField
+                  name="application_end_ms"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      label="Application end date"
+                      required
+                      type="datetime-local"
+                      classNames={{ root: "lg:w-50% w-full" }}
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+            )}
+
             <div un-flex="~ col lg:row" un-gap="8">
               <FormField
-                name="application_start_ms"
+                name="public_round_start_ms"
                 control={form.control}
                 render={({ field: { value, ...field } }) => (
                   <TextField
-                    label="Application start date"
+                    label="Matching round start date"
                     required
                     type="datetime-local"
                     value={
@@ -157,36 +195,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                         ? timestampMsToLocaleString(value)
                         : value
                     }
-                    classNames={{ root: "lg:w-50% w-full" }}
-                    {...field}
-                  />
-                )}
-              />
-
-              <FormField
-                name="application_end_ms"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Application end date"
-                    required
-                    type="datetime-local"
-                    classNames={{ root: "lg:w-50% w-full" }}
-                    {...field}
-                  />
-                )}
-              />
-            </div>
-
-            <div un-flex="~ col lg:row" un-gap="8">
-              <FormField
-                name="public_round_start_ms"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Matching round start date"
-                    required
-                    type="datetime-local"
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
