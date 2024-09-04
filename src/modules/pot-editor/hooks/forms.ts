@@ -23,7 +23,7 @@ import {
 } from "@/modules/pot";
 import { dispatch } from "@/store";
 
-import { potIndexedDataToPotInputs } from "../utils/converters";
+import { potIndexedDataToPotInputs } from "../utils/normalization";
 
 export type PotEditorFormArgs = Partial<ByPotId>;
 

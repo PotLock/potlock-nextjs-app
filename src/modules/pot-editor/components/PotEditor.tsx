@@ -1,5 +1,6 @@
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { timestampMsToLocaleString } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
@@ -34,6 +35,8 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
     onCancel,
     onSubmit,
   } = usePotEditorForm({ potId });
+
+  console.log(values);
 
   return (
     <Form {...form}>
@@ -144,11 +147,16 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               <FormField
                 name="application_start_ms"
                 control={form.control}
-                render={({ field }) => (
+                render={({ field: { value, ...field } }) => (
                   <TextField
                     label="Application start date"
                     required
                     type="datetime-local"
+                    value={
+                      typeof value === "number"
+                        ? timestampMsToLocaleString(value)
+                        : value
+                    }
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />

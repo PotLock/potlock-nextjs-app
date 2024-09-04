@@ -1,28 +1,18 @@
 import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
-import { conditional, evolve, isNonNullish, omit, piped } from "remeda";
+import { omit } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import { ByPotId } from "@/common/api/potlock";
-import {
-  LISTS_CONTRACT_ID,
-  PROVIDER_ID_DELIMITER,
-  SYBIL_CONTRACT_ID,
-} from "@/common/constants";
 import {
   PotDeploymentResult,
   pot,
   potFactory,
 } from "@/common/contracts/potlock";
-import { floatToYoctoNear, timestamp } from "@/common/lib";
-import {
-  donationAmount,
-  donationFeeBasisPoints,
-  donationFeePercentsToBasisPoints,
-} from "@/modules/donation";
+import { floatToYoctoNear } from "@/common/lib";
 import { PotInputs } from "@/modules/pot";
 import { RootDispatcher } from "@/store";
 
-import { potInputsToPotArgs } from "../utils/converters";
+import { potInputsToPotArgs } from "../utils/normalization";
 
 const UnknownDeploymentStatusError = new Error(
   "Unable to get pot deployment status.",
@@ -33,8 +23,6 @@ export const effects = (dispatch: RootDispatcher) => ({
     potId,
     pot_handle,
     source_metadata: { commit_hash, ...sourceMetadata },
-    isNadabotVerificationRequired,
-    isPgRegistrationRequired,
     ...potInputs
   }: PotInputs & Partial<ByPotId>): Promise<void> => {
     const isNewPot = typeof potId !== "string";
