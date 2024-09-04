@@ -3,12 +3,12 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { fetchAccountFeedPosts } from "@/common/api/near-social";
+
+import { FeedCard } from "./FeedCard";
 import {
   IndexPostResultItem,
   ProfileFeedsProps,
-} from "@/common/contracts/potlock/interfaces/post.interfaces";
-
-import { FeedCard } from "./FeedCard";
+} from "@/common/contracts/social/types";
 
 export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
   const [posts, setPosts] = useState<IndexPostResultItem[]>([]);

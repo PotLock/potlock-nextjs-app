@@ -3,12 +3,6 @@ import { StorageCache } from "@wpdas/naxios";
 import { naxiosInstance } from "@/common/api/near";
 import { SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
 
-import {
-  FeedsResult,
-  IndexPostResultItem,
-  PostContent,
-} from "../potlock/interfaces/post.interfaces";
-
 /**
  * NEAR Social DB Contract API
  */

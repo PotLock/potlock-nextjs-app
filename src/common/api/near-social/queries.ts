@@ -2,7 +2,7 @@ import {
   FeedsResult,
   IndexPostResultItem,
   PostContent,
-} from "@/common/contracts/potlock/interfaces/post.interfaces";
+} from "@/common/contracts/social/types";
 
 import { nearSocialClient } from "./client";
 

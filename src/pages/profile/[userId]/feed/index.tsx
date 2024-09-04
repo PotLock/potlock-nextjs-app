@@ -2,9 +2,9 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
+import { useRouteQuery } from "@/common/lib";
 import { ProfileLayout } from "@/modules/profile";
 import { ProfileFeeds } from "@/modules/profile/components/ProfileFeeds";
-import { useRouteQuery } from "@/common/lib";
 
 const ProfileFeedsTab = () => {
   const {
