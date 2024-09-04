@@ -1,5 +1,5 @@
 import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
-import { conditional, evolve, isNonNullish, piped } from "remeda";
+import { conditional, evolve, isNonNullish, omit, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import { ByPotId } from "@/common/api/potlock";
@@ -14,9 +14,15 @@ import {
   potFactory,
 } from "@/common/contracts/potlock";
 import { floatToYoctoNear, timestamp } from "@/common/lib";
-import { donationAmount } from "@/modules/donation";
+import {
+  donationAmount,
+  donationFeeBasisPoints,
+  donationFeePercentsToBasisPoints,
+} from "@/modules/donation";
 import { PotInputs } from "@/modules/pot";
 import { RootDispatcher } from "@/store";
+
+import { potInputsToPotArgs } from "../utils/converters";
 
 const UnknownDeploymentStatusError = new Error(
   "Unable to get pot deployment status.",
@@ -41,42 +47,24 @@ export const effects = (dispatch: RootDispatcher) => ({
         ),
       );
     } else {
-      const potArgs = evolve(
-        {
-          ...potInputs,
-          source_metadata: { commit_hash, ...sourceMetadata },
-
-          registry_provider: isPgRegistrationRequired
-            ? LISTS_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_registered"
-            : undefined,
-
-          sybil_wrapper_provider: isNadabotVerificationRequired
-            ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
-            : undefined,
-        },
-
-        {
-          application_start_ms: timestamp.parse,
-          application_end_ms: timestamp.parse,
-          public_round_start_ms: timestamp.parse,
-          public_round_end_ms: timestamp.parse,
-
-          min_matching_pool_donation_amount: conditional(
-            [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
-            conditional.defaultCase(() => undefined),
-          ),
-        },
-      );
+      const pot_args = potInputsToPotArgs({
+        ...potInputs,
+        source_metadata: { commit_hash, ...sourceMetadata },
+      });
 
       if (isNewPot) {
+        console.log(pot_args);
+
         potFactory
-          .deploy_pot({ pot_args: potArgs, pot_handle })
+          .deploy_pot({ pot_args, pot_handle })
           .then(dispatch.potEditor.handleDeploymentSuccess)
           .catch(dispatch.potEditor.deploymentFailure);
       } else {
+        console.log(omit(pot_args, ["custom_sybil_checks"]));
+
         pot.admin_dangerously_set_pot_config(
           potId,
-          { update_args: potArgs },
+          { update_args: omit(pot_args, ["custom_sybil_checks"]) },
           floatToYoctoNear(0),
         );
       }
