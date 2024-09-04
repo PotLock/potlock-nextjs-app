@@ -2,30 +2,23 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-import { Social } from "@builddao/near-social-js";
-
+import { fetchAccountFeedPosts } from "@/common/api/near-social";
 import {
   IndexPostResultItem,
   ProfileFeedsProps,
 } from "@/common/contracts/potlock/interfaces/post.interfaces";
-import { fetchAccountFeedPosts } from "@/common/contracts/social";
 
-import Post from "./FeedCard";
+import { FeedCard } from "./FeedCard";
 
-const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
+export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
   const [posts, setPosts] = useState<IndexPostResultItem[]>([]);
   const [offset, setOffset] = useState(40);
   const [isLoading, setIsLoading] = useState(false);
   const loadingRef = useRef<HTMLDivElement | null>(null);
 
-  const client = new Social({
-    contractId: process.env.NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID,
-    network: process.env.NEXT_PUBLIC_NETWORK,
-  });
-
   useEffect(() => {
     setIsLoading(true);
-    fetchAccountFeedPosts({ client, accountId }).then((res: any) => {
+    fetchAccountFeedPosts({ accountId }).then((res: any) => {
       setIsLoading(false);
       setPosts(res);
     });
@@ -36,7 +29,6 @@ const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
     setIsLoading(true);
 
     const fetchedPosts = await fetchAccountFeedPosts({
-      client,
       accountId,
       offset,
     });
@@ -88,8 +80,8 @@ const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
 
   return (
     <div className="my-8 h-full max-h-80 w-full">
-      {posts.map((post, index) => (
-        <Post key={index} post={post} />
+      {posts.map((post) => (
+        <FeedCard key={post.blockHeight} post={post} />
       ))}
       {posts.length > 1 && (
         <div ref={loadingRef} className="mt-4 min-h-12 text-center">
@@ -100,5 +92,3 @@ const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
     </div>
   );
 };
-
-export default ProfileFeeds;

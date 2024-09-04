@@ -3,11 +3,13 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { ProfileLayout } from "@/modules/profile";
-import ProfileFeeds from "@/modules/profile/components/ProfileFeeds";
+import { ProfileFeeds } from "@/modules/profile/components/ProfileFeeds";
+import { useRouteQuery } from "@/common/lib";
 
 const ProfileFeedsTab = () => {
-  const router = useRouter();
-  const { userId: userIdPathParam } = router.query;
+  const {
+    query: { userId: userIdPathParam },
+  } = useRouteQuery();
   const userId =
     (typeof userIdPathParam === "string"
       ? userIdPathParam

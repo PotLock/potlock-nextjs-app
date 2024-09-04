@@ -1,17 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 
-"use client";
-
 import React, { useEffect, useState } from "react";
 
-import { Social } from "@builddao/near-social-js";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { fetchSinglePost } from "@/common/contracts/social";
-import { fetchTimeByBlockHeight } from "@/common/lib/blockHeightToTime";
+import {
+  fetchSinglePost,
+  fetchTimeByBlockHeight,
+} from "@/common/api/near-social";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
 
@@ -28,34 +27,36 @@ const SinglePost = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [time, setTime] = useState("");
 
-  const client = new Social({
-    contractId: process.env.NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID,
-    network: process.env.NEXT_PUBLIC_NETWORK,
-  });
-
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchPost = () => {
       if (account && block) {
         setIsLoading(true);
-        try {
-          const fetchedPost = await fetchSinglePost({
-            client,
-            accountId: account as string,
-            blockHeight: Number(block),
+
+        fetchSinglePost({
+          accountId: account as string,
+          blockHeight: Number(block),
+        })
+          .then((fetchedPost) => {
+            setPost(fetchedPost);
+            // Fetch the profile image
+            return fetchSocialImages({
+              accountId: account as string,
+            });
+          })
+          .then(({ image }) => {
+            const timePromise = fetchTimeByBlockHeight(Number(block));
+            return Promise.all([timePromise, image]);
+          })
+          .then(([time, image]) => {
+            setTime(time);
+            setProfileImg(image);
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+          .finally(() => {
+            setIsLoading(false);
           });
-          setPost(fetchedPost);
-          // Fetch the profile image
-          const { image } = await fetchSocialImages({
-            accountId: account as string,
-          });
-          const time = await fetchTimeByBlockHeight(Number(block));
-          setTime(time);
-          setProfileImg(image);
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setIsLoading(false);
-        }
       }
     };
 

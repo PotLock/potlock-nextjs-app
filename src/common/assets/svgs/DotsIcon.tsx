@@ -1,4 +1,4 @@
-const DotsIcons = (props: any) => (
+export const DotsIcons = (props: any) => (
   <svg
     {...props}
     width="24"
@@ -13,5 +13,3 @@ const DotsIcons = (props: any) => (
     />
   </svg>
 );
-
-export default DotsIcons;

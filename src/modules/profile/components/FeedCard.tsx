@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { fetchTimeByBlockHeight } from "@/common/lib/blockHeightToTime";
+import { fetchTimeByBlockHeight } from "@/common/api/near-social";
 import truncate from "@/common/lib/truncate";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 
@@ -22,7 +22,7 @@ interface PostType {
   };
 }
 
-const FeedCard = ({ post }: PostType) => {
+export const FeedCard = ({ post }: PostType) => {
   const [profileImg, setProfileImg] = useState<string>("");
   const [time, setTime] = useState("");
   const router = useRouter();
@@ -39,19 +39,27 @@ const FeedCard = ({ post }: PostType) => {
     if (post.accountId) fetchProfileImage();
   }, [post.accountId]);
 
+  const handleCardClick = useCallback(() => {
+    router.push(`/feed/${post.accountId}/${post.blockHeight}`);
+  }, [post]);
+
+  const handleProfileClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      router.push(`/profile/${post.accountId}`);
+    },
+    [router, post.accountId],
+  );
   return (
     <div
-      onClick={() => router.push(`/feed/${post.accountId}/${post.blockHeight}`)}
+      onClick={handleCardClick}
       className="w-100 md:w-full mb-4 cursor-pointer rounded-lg bg-white p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg"
     >
       <div className="mb-4 flex items-center justify-between">
         <div className="flex">
           <div
             role="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/profile/${post.accountId}`);
-            }}
+            onClick={handleProfileClick}
             className="  flex items-center space-x-2 hover:underline"
           >
             <Image
@@ -109,5 +117,3 @@ const FeedCard = ({ post }: PostType) => {
     </div>
   );
 };
-
-export default FeedCard;

@@ -1,62 +1,59 @@
-"use client";
 /* eslint-disable @next/next/no-img-element */
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Social } from "@builddao/near-social-js";
-
+import { fetchGlobalFeeds } from "@/common/api/near-social";
+import { ListRegistration, potlock } from "@/common/api/potlock";
+import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
 import { getRegistrations } from "@/common/contracts/potlock/lists";
-import { fetchGlobalFeeds } from "@/common/contracts/social";
-import FeedCard from "@/modules/profile/components/FeedCard";
+import { FeedCard } from "@/modules/profile/components/FeedCard";
 
 const GlobalFeedsPage = () => {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
-  const [registration, setRegistrations] = useState<any[]>([]);
+  const [registration, setRegistrations] = useState<ListRegistration[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
 
-  const [error, setError] = useState<string | null>(null);
   const loadingRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(40);
 
-  const client = new Social({
-    contractId: process.env.NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID,
-    network: process.env.NEXT_PUBLIC_NETWORK,
+  const { data, isLoading } = potlock.useListRegistrations({
+    listId: POTLOCK_REGISTRY_LIST_ID,
   });
 
   useEffect(() => {
-    const fetchRegistrationsAndFeeds = async () => {
-      setLoading(true);
-      try {
-        // Fetch registrations
-        const registrations = await getRegistrations();
-        setRegistrations(registrations);
-        const accountIds = registrations.map(
-          (account) => account.registrant_id,
-        );
-        const posts = await fetchGlobalFeeds({
-          client,
-          accountId: accountIds,
+    const fetchRegistrationsAndFeeds = () => {
+      setLoading(isLoading);
+
+      // Fetch registrations and feeds
+      const results = data?.results || [];
+      setRegistrations(results);
+      const accountIds = results.map((account) => account.registrant.id);
+
+      fetchGlobalFeeds({
+        accountId: accountIds,
+      })
+        .then((posts) => {
+          setLoadingMore(isLoading);
+          setFeedPosts(posts); // Flatten the array if necessary
+          setLoading(isLoading);
+        })
+        .catch((err) => {
+          console.error("Error fetching registrations or feeds:", err);
+        })
+        .finally(() => {
+          setLoading(isLoading); // Ensure loading state is updated
         });
-        // Wait for all posts to be fetched
-        setLoadingMore(false);
-        setFeedPosts(posts); // Flatten the array if necessary
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching registrations or feeds:", err);
-        setError("Failed to fetch feeds.");
-      }
     };
 
     fetchRegistrationsAndFeeds();
   }, []);
 
-  const loadMorePosts = async () => {
+  const loadMorePosts = useCallback(async () => {
     if (loadingMore) return; // Prevent multiple calls while loading
     setLoadingMore(true);
 
     const fetchedPosts = await fetchGlobalFeeds({
-      client,
       accountId: registration,
       offset,
     });
@@ -73,7 +70,7 @@ const GlobalFeedsPage = () => {
     setFeedPosts((prevPosts) => [...prevPosts, ...newPosts]);
     setOffset((prevOffset) => prevOffset + 20);
     setLoadingMore(false);
-  };
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -110,8 +107,8 @@ const GlobalFeedsPage = () => {
   return (
     <div className="h-full max-h-full w-full max-w-[1300px] overflow-auto p-8">
       <div className="space-y-4">
-        {feedPosts.map((post, index) => (
-          <FeedCard key={index} post={post} />
+        {feedPosts.map((post) => (
+          <FeedCard key={post.blockHeight} post={post} />
         ))}
       </div>
       {feedPosts.length > 1 && (
