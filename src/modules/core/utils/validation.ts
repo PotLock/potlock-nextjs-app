@@ -1,4 +1,4 @@
-import { naxiosInstance } from "@/common/contracts";
+import { naxiosInstance } from "@/common/api/near";
 
 type Role = {
   name: string;

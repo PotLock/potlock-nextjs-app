@@ -58,48 +58,62 @@
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
-    --input: 0 0% 92%;
+    --input: 0 0% 65%;
     --ring: 0 0% 78%;
 
     --radius: 0.5rem;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+  .dark, :root.dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 0 100% 68%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 0 0% 63%;
+    --muted-foreground: 0 0% 63%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 120 100% 50%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 100% 68%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 100% 68%;
+
+    /* Button */
+    /* Shadow */
+    --focus-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
+      0px 1px 1px 1px rgba(89, 89, 89, 0.3) inset,
+      0px 0px 0px 2px rgba(89, 89, 89, 0.3) inset, 0px 0px 0px 2px #000,
+      0px 0px 0px 4px rgba(255, 255, 255, 0.84);
+    --button-primary: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
+      0px 1px 1px 1px rgba(246, 118, 122, 0.5) inset,
+      0px 0px 0px 2px rgba(246, 118, 122, 0.5) inset,
+      0px 1.5px 0px 0px rgba(255, 255, 255, 0.84);
+    --button-tonal: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
+      0px 1px 1px 1px #000 inset, 0px 0px 0px 2px #000 inset,
+      0px 1.5px 0px 0px rgba(255, 255, 255, 0.84);
   }
 }
 
 @layer base {
   * {
     @apply border-border;
-    /* color: #292929; */
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -122,10 +136,16 @@
   animation: rotation 0.7s linear infinite;
 }
 
+.dark .loader {
+  border-color: #fff;
+  border-bottom-color: transparent;
+}
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -134,5 +154,18 @@
 .markdown-link {
   a {
     color: rgb(123, 123, 123);
+    font-weight: 600;
   }
+}
+
+.dark .markdown-link a {
+  color: rgb(163, 163, 163);
+}
+
+.bg-hero {
+  background-size: cover;
+}
+
+:root.dark .bg-hero > :first-child {
+  background: #000
 }

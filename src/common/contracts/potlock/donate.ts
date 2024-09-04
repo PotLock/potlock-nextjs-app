@@ -1,19 +1,19 @@
 import { MemoryCache } from "@wpdas/naxios";
 
-import { POTLOCK_DONATE_CONTRACT_ID } from "@/common/constants";
+import { naxiosInstance } from "@/common/api/near";
+import { DONATION_CONTRACT_ID } from "@/common/constants";
 
 import {
   Config,
   DirectDonation,
   DirectDonationArgs,
 } from "./interfaces/donate.interfaces";
-import { naxiosInstance } from "..";
 
 /**
  * NEAR Contract API
  */
 export const contractApi = naxiosInstance.contractApi({
-  contractId: POTLOCK_DONATE_CONTRACT_ID,
+  contractId: DONATION_CONTRACT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });
 

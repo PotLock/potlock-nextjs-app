@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
-import { walletApi } from "@/common/contracts";
+import { walletApi } from "@/common/api/near";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";

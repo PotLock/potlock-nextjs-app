@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { RPC_NODE_URL } from "@/common/constants";
+import { RPC_NODE_URL } from "@/common/api/near";
 import { AccountId } from "@/common/types";
 
 export type TxExecutionStatus =
@@ -11,6 +11,9 @@ export type TxExecutionStatus =
   | "EXECUTED"
   | "FINAL";
 
+/**
+ * @deprecated use `nearRpc.txStatus()`
+ */
 export const getTransactionStatus = ({
   wait_until = "EXECUTED_OPTIMISTIC",
   ...params

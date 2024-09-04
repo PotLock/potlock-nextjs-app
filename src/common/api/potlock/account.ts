@@ -1,5 +1,5 @@
+import { POTLOCK_API_ENDPOINT } from "./config";
 import { PotApplication } from "./types";
-import { POTLOCK_API_ENDPOINT } from "../../constants";
 
 type Accounts = {
   id: string;

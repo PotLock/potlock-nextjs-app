@@ -13,7 +13,7 @@ import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 const Line = () => <div className="my-[3rem] h-[1px] w-full bg-[#c7c7c7]" />;
 
-const FundingRaised = () => {
+const FundingRaisedTab = () => {
   const router = useRouter();
   const { userId: userIdPathParam } = router.query;
 
@@ -58,8 +58,8 @@ const FundingRaised = () => {
   );
 };
 
-FundingRaised.getLayout = function getLayout(page: ReactElement) {
+FundingRaisedTab.getLayout = function getLayout(page: ReactElement) {
   return <ProfileLayout>{page}</ProfileLayout>;
 };
 
-export default FundingRaised;
+export default FundingRaisedTab;

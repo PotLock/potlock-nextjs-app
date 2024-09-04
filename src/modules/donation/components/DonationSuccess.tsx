@@ -130,7 +130,7 @@ export const DonationSuccess = ({
           >
             <Link href="#">
               <span className="prose" un-font="500">
-                Share to
+                Share on
               </span>
 
               <TwitterSvg width={18} height={18} />

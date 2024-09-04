@@ -6,15 +6,15 @@ import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { string } from "zod";
 
+import { naxiosInstance } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { naxiosInstance } from "@/common/contracts";
 import {
   create_list,
   getList,
   update_list,
 } from "@/common/contracts/potlock/lists";
+import uploadFileToIPFS from "@/common/services/ipfs";
 import useWallet from "@/modules/auth/hooks/useWallet";
-import uploadFileToIPFS from "@/modules/core/services/uploadFileToIPFS";
 import SuccessModalCreateList from "@/pages/_components/SuccessCreateList";
 
 import CreateListHero from "../../../_components/CreateListHero";

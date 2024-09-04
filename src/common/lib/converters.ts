@@ -13,15 +13,14 @@ export const yoctosToNear = (amountYoctos: string, abbreviate?: boolean) => {
   );
 };
 
-export const bigStringToFloat = (amount: string, decimals: number) => {
-  const decimalMultiplier = Big(10).pow(decimals);
-  return parseFloat(Big(amount).div(decimalMultiplier).toFixed(2));
-};
+export const bigNumFromString = (amount: string, decimals: number) =>
+  Big(amount).div(Big(10).pow(decimals));
 
-export const floatToBigNum = (amount: number, decimals: number) => {
-  const decimalMultiplier = Big(10).pow(decimals);
-  return Big(amount).mul(decimalMultiplier);
-};
+export const bigStringToFloat = (amount: string, decimals: number) =>
+  parseFloat(bigNumFromString(amount, decimals).toFixed(2));
+
+export const floatToBigNum = (amount: number, decimals: number) =>
+  Big(amount).mul(Big(10).pow(decimals));
 
 export const yoctoNearToFloat = (amountYoctoNear: string) =>
   bigStringToFloat(amountYoctoNear, NEAR_DEFAULT_TOKEN_DECIMALS);

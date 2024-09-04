@@ -1,5 +1,5 @@
+import { walletApi } from "@/common/api/near";
 import { WarningIcon } from "@/common/assets/svgs";
-import { walletApi } from "@/common/contracts";
 import {
   Alert,
   AlertDescription,

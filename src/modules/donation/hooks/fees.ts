@@ -4,6 +4,7 @@ import { Pot, potlock } from "@/common/api/potlock";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 
 import { DonationInputs } from "../models";
+import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
 export type DonationFeeInputs = Pick<
   DonationInputs,
@@ -27,8 +28,6 @@ export type DonationFees = {
   chefFeePercent: number;
 };
 
-export const basisPointsToPercent = (basisPoints: number) => basisPoints / 100;
-
 export const useDonationFees = ({
   pot,
   amount,
@@ -40,7 +39,7 @@ export const useDonationFees = ({
 }: DonationFeeInputs): DonationFees => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
 
-  // TODO: Recalculate basic points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
+  // TODO: Recalculate basis points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
 
   /**
    *? Protocol fee:
@@ -57,7 +56,7 @@ export const useDonationFees = ({
     protocolFeeFinalAmount ??
     (amount * protocolFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
-  const protocolFeePercent = basisPointsToPercent(
+  const protocolFeePercent = donationFeeBasisPointsToPercents(
     protocolFeeInitialBasisPoints,
   );
 
@@ -83,7 +82,9 @@ export const useDonationFees = ({
     referralFeeFinalAmount ??
     (amount * referralFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
-  const referralFeePercent = basisPointsToPercent(referralFeeBasisPoints);
+  const referralFeePercent = donationFeeBasisPointsToPercents(
+    referralFeeBasisPoints,
+  );
 
   /**
    *? Chef fee:
@@ -92,7 +93,10 @@ export const useDonationFees = ({
   const chefFeeInitialBasisPoints = pot?.chef_fee_basis_points ?? 0;
   const chefFeeBasisPoints = bypassChefFee ? 0 : chefFeeInitialBasisPoints;
   const chefFeeAmount = (amount * chefFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
-  const chefFeePercent = basisPointsToPercent(chefFeeInitialBasisPoints);
+
+  const chefFeePercent = donationFeeBasisPointsToPercents(
+    chefFeeInitialBasisPoints,
+  );
 
   /**
    *? Project allocation:
@@ -107,7 +111,7 @@ export const useDonationFees = ({
   const projectAllocationAmount =
     (amount * projectAllocationBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
-  const projectAllocationPercent = basisPointsToPercent(
+  const projectAllocationPercent = donationFeeBasisPointsToPercents(
     projectAllocationBasisPoints,
   );
 

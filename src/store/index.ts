@@ -11,6 +11,12 @@ type FullModel = ExtraModelsFromLoading<RootModel, { type: "full" }>;
 
 export const store = init<RootModel, FullModel>({
   models,
+  redux: {
+    devtoolOptions: {
+      trace: true,
+      traceLimit: 25,
+    },
+  },
   plugins: [
     // Wraps your reducers with immer, providing ability to safely do mutable
     // changes resulting in immutable state.

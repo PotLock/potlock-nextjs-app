@@ -3,9 +3,9 @@ import { useCallback, useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
+import { walletApi } from "@/common/api/near";
 import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { walletApi } from "@/common/contracts";
 import { toChronologicalOrder } from "@/common/lib";
 import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";

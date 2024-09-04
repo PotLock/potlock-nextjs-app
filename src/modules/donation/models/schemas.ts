@@ -5,13 +5,12 @@ import {
   boolean,
   literal,
   nativeEnum,
-  number,
   object,
-  preprocess,
   string,
 } from "zod";
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { safePositiveNumber } from "@/common/lib";
 import { AvailableBalance } from "@/modules/core";
 
 import {
@@ -22,9 +21,10 @@ import {
   DonationAllocationStrategyEnum,
   DonationPotDistributionStrategy,
 } from "../types";
+import { donationFeePercentsToBasisPoints } from "../utils/converters";
 import {
   isDonationAmountSufficient,
-  isMatchingPotSelected,
+  isDonationMatchingPotSelected,
 } from "../utils/validation";
 
 export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
@@ -32,29 +32,29 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
   .default(NEAR_TOKEN_DENOM)
   .describe('Either "NEAR" or FT contract account id.');
 
-export const donationAmountSchema = preprocess(
-  (x) => parseFloat(x as string),
+export const donationAmount = safePositiveNumber;
 
-  number({ message: "Must be a positive number." })
-    .positive("Must be a positive number.")
-    .finite()
-    .safe()
-    .transform((n) => number().safeParse(n).data ?? 0),
-);
+export const donationFeeBasisPoints = safePositiveNumber
+  .refine((percents) => percents <= 100, {
+    message: "Fee cannot exceed 100%.",
+  })
+  .transform((percents) =>
+    donationFeePercentsToBasisPoints(
+      safePositiveNumber.safeParse(percents).data ?? 0,
+    ),
+  );
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,
 
-  amount: donationAmountSchema.describe(
-    "Amount of the selected tokens to donate.",
-  ),
+  amount: donationAmount.describe("Amount of the selected tokens to donate."),
 
   recipientAccountId: string().optional().describe("Recipient account id."),
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
 
   potDonationDistribution: array(
-    object({ account_id: string(), amount: donationAmountSchema }),
+    object({ account_id: string(), amount: donationAmount }),
   )
     .refine((recipients) => recipients.length > 0, {
       message: "You have to select at least one recipient.",
@@ -77,7 +77,7 @@ export const donationSchema = object({
   // bypassProtocolFee: boolean().default(false),
   // bypassChefFee: boolean().default(false),
 })
-  .refine(isMatchingPotSelected, { message: "Pot is not selected." })
+  .refine(isDonationMatchingPotSelected, { message: "Pot is not selected." })
   .refine(isDonationAmountSufficient, {
     /**
      *? NOTE: Due to an unknown issue,
@@ -85,6 +85,7 @@ export const donationSchema = object({
      *?  Please make sure it's always manually provided to the corresponding input field.
      */
     message: DONATION_MIN_NEAR_AMOUNT_ERROR,
+    path: ["amount"],
   });
 
 export type DonationInputs = FromSchema<typeof donationSchema>;

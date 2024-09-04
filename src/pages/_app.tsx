@@ -20,9 +20,8 @@ import { Provider as ReduxProvider } from "react-redux";
 import { APP_METADATA } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
+import { Nav } from "@/modules/core";
 import { dispatch, store } from "@/store";
-
-import Nav from "./_components/Nav";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -42,9 +41,7 @@ export default function RootLayout({
   Component,
   pageProps,
 }: AppPropsWithLayout) {
-  useEffect(() => {
-    dispatch.core.fetchNearToUsd();
-  }, []);
+  useEffect(() => void dispatch.core.init(), []);
 
   const getLayout = Component.getLayout ?? ((page) => page);
 
@@ -59,7 +56,9 @@ export default function RootLayout({
         <NiceModalProvider>
           <AuthProvider>
             <div
-              className={`${cn("container font-lora antialiased", lora.variable)}`}
+              un-flex="~ col"
+              un-items="center"
+              className={`${cn("font-lora antialiased", lora.variable)}`}
             >
               <Nav />
               {getLayout(<Component {...pageProps} />)}

@@ -3,7 +3,7 @@ import { FormControl, FormItem, FormLabel } from "../components/form";
 
 export type CheckboxFieldProps = Pick<
   React.ComponentProps<typeof Checkbox>,
-  "checked" | "onCheckedChange"
+  "checked" | "disabled" | "onCheckedChange"
 > & { label: React.ReactNode };
 
 export const CheckboxField: React.FC<CheckboxFieldProps> = ({

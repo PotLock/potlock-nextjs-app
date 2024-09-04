@@ -10,9 +10,7 @@ export default function Document() {
         {/* Meta tags for description and image */}
         <meta name="description" content={APP_METADATA.description} />
         <meta name="image" content={APP_METADATA.openGraph.images.url} />
-
-        {/* Favicon link */}
-        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/favicon.ico" sizes="all" />
 
         {/* Open Graph meta tags for social sharing */}
         <meta property="og:title" content={APP_METADATA.title} />
@@ -28,6 +26,8 @@ export default function Document() {
           href="https://fonts.cdnfonts.com"
           crossOrigin="anonymous"
         />
+
+        <style>{"html.dark {background: #000;}"}</style>
       </Head>
 
       <body>

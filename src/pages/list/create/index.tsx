@@ -6,11 +6,11 @@ import nearAPI from "near-api-js";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import { naxiosInstance } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { naxiosInstance } from "@/common/contracts";
 import { create_list } from "@/common/contracts/potlock/lists";
+import uploadFileToIPFS from "@/common/services/ipfs";
 import useWallet from "@/modules/auth/hooks/useWallet";
-import uploadFileToIPFS from "@/modules/core/services/uploadFileToIPFS";
 import { createListSchema } from "@/modules/lists/models/schema";
 import SuccessModalCreateList from "@/pages/_components/SuccessCreateList";
 
