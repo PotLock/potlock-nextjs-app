@@ -13,6 +13,7 @@ import {
   PotConfig,
   PotDonation,
   PotDonationArgs,
+  UpdatePotArgs,
 } from "./interfaces/pot.interfaces";
 
 /**
@@ -196,7 +197,7 @@ export const adminProcessPayouts = (args: { potId: string }) =>
     gas: FULL_TGAS,
   });
 
-export const donateNearViaPot = (
+export const donate = (
   potAccountId: PotId,
   args: PotDonationArgs,
   depositAmountYocto: string,
@@ -206,3 +207,18 @@ export const donateNearViaPot = (
     deposit: depositAmountYocto,
     callbackUrl: window.location.href,
   });
+
+export const admin_dangerously_set_pot_config = (
+  potAccountId: PotId,
+  args: { update_args: UpdatePotArgs },
+  depositAmountYocto: string,
+) =>
+  contractApi(potAccountId).call<typeof args, PotConfig>(
+    "admin_dangerously_set_pot_config",
+
+    {
+      args,
+      deposit: depositAmountYocto,
+      callbackUrl: window.location.href,
+    },
+  );

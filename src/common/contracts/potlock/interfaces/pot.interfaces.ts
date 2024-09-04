@@ -67,6 +67,28 @@ export interface PotConfig {
   protocol_config_provider?: null | ProviderId;
 }
 
+export type UpdatePotArgs = {
+  owner?: null | AccountId;
+  admins?: null | AccountId[];
+  chef?: null | AccountId;
+  pot_name?: null | string;
+  pot_description?: null | string;
+  max_projects?: null | number;
+  application_start_ms?: null | number;
+  application_end_ms?: null | number;
+  public_round_start_ms?: null | number;
+  public_round_end_ms?: null | number;
+  registry_provider?: null | ProviderId;
+  min_matching_pool_donation_amount?: null | string;
+  sybil_wrapper_provider?: null | ProviderId;
+  /** JSON string */
+  custom_sybil_checks?: null | string;
+  custom_min_threshold_score?: null | number;
+  referral_fee_matching_pool_basis_points?: null | number;
+  referral_fee_public_round_basis_points?: null | number;
+  chef_fee_basis_points?: null | number;
+};
+
 export interface Challenge {
   challenger_id: string;
   created_at: number;

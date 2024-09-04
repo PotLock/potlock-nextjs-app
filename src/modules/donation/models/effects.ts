@@ -1,5 +1,5 @@
 import { walletApi } from "@/common/api/near";
-import { donateNearDirectly } from "@/common/contracts/potlock/donate";
+import { donate, pot } from "@/common/contracts/potlock";
 import {
   DirectDonation,
   DirectDonationArgs,
@@ -8,7 +8,6 @@ import {
   PotDonation,
   PotDonationArgs,
 } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { donateNearViaPot } from "@/common/contracts/potlock/pot";
 import { floatToYoctoNear } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
 import { RootDispatcher } from "@/store";
@@ -41,7 +40,8 @@ export const effects = (dispatch: RootDispatcher) => ({
             bypass_protocol_fee: bypassProtocolFee,
           };
 
-          return void donateNearDirectly(args, floatToYoctoNear(amount))
+          return void donate
+            .donate(args, floatToYoctoNear(amount))
             .then((result) => dispatch.donation.success(result))
             .catch((error) => dispatch.donation.failure(error));
         }
@@ -59,11 +59,8 @@ export const effects = (dispatch: RootDispatcher) => ({
             custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
           };
 
-          return void donateNearViaPot(
-            params.potAccountId,
-            args,
-            floatToYoctoNear(amount),
-          )
+          return void pot
+            .donate(params.potAccountId, args, floatToYoctoNear(amount))
             .then(dispatch.donation.success)
             .catch((error) => dispatch.donation.failure(error));
         }
@@ -81,7 +78,7 @@ export const effects = (dispatch: RootDispatcher) => ({
     }
   },
 
-  handleOutcome: async (transactionHash: string) => {
+  handleOutcome: async (transactionHash: string): Promise<void> => {
     const { accountId: sender_account_id } = walletApi;
 
     if (sender_account_id) {
@@ -94,9 +91,9 @@ export const effects = (dispatch: RootDispatcher) => ({
         atob(data.result.receipts_outcome[3].outcome.status.SuccessValue),
       ) as DirectDonation | PotDonation;
 
-      return void dispatch.donation.success(donationData);
+      dispatch.donation.success(donationData);
     } else {
-      return void dispatch.donation.failure(
+      dispatch.donation.failure(
         new Error(
           "Unable to get donation transaction status without user authentication." +
             "Please login and try again.",

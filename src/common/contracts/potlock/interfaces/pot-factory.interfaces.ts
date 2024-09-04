@@ -64,8 +64,3 @@ export type PotArgs = {
   protocol_config_provider?: null | ProviderId;
   source_metadata: ContractSourceMetadata;
 };
-
-export type PotDeploymentArgs = {
-  pot_args: PotArgs;
-  pot_handle?: null | string;
-};

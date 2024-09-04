@@ -2,6 +2,7 @@ import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 import { conditional, evolve, isNonNullish, piped } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
+import { ByPotId } from "@/common/api/potlock";
 import {
   LISTS_CONTRACT_ID,
   PROVIDER_ID_DELIMITER,
@@ -22,54 +23,63 @@ const UnknownDeploymentStatusError = new Error(
 );
 
 export const effects = (dispatch: RootDispatcher) => ({
-  deployPot: async ({
+  save: async ({
+    potId,
     pot_handle,
     source_metadata: { commit_hash, ...sourceMetadata },
     isNadabotVerificationRequired,
     isPgRegistrationRequired,
     ...potInputs
-  }: PotInputs): Promise<void> => {
+  }: PotInputs & Partial<ByPotId>): Promise<void> => {
+    const isNewPot = typeof potId !== "string";
+
     if (commit_hash === null) {
-      return void dispatch.potEditor.deploymentFailure(
+      dispatch.potEditor.deploymentFailure(
         new Error(
           "Unable to retrieve pot contract source code commit hash. " +
             "Please check your internet connection and reload the page.",
         ),
       );
     } else {
-      return void potFactory
-        .deploy_pot({
-          pot_args: evolve(
-            {
-              ...potInputs,
-              source_metadata: { commit_hash, ...sourceMetadata },
+      const potArgs = evolve(
+        {
+          ...potInputs,
+          source_metadata: { commit_hash, ...sourceMetadata },
 
-              registry_provider: isPgRegistrationRequired
-                ? LISTS_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_registered"
-                : undefined,
+          registry_provider: isPgRegistrationRequired
+            ? LISTS_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_registered"
+            : undefined,
 
-              sybil_wrapper_provider: isNadabotVerificationRequired
-                ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
-                : undefined,
-            },
+          sybil_wrapper_provider: isNadabotVerificationRequired
+            ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
+            : undefined,
+        },
 
-            {
-              application_start_ms: timestamp.parse,
-              application_end_ms: timestamp.parse,
-              public_round_start_ms: timestamp.parse,
-              public_round_end_ms: timestamp.parse,
+        {
+          application_start_ms: timestamp.parse,
+          application_end_ms: timestamp.parse,
+          public_round_start_ms: timestamp.parse,
+          public_round_end_ms: timestamp.parse,
 
-              min_matching_pool_donation_amount: conditional(
-                [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
-                conditional.defaultCase(() => undefined),
-              ),
-            },
+          min_matching_pool_donation_amount: conditional(
+            [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
+            conditional.defaultCase(() => undefined),
           ),
+        },
+      );
 
-          pot_handle,
-        })
-        .then(dispatch.potEditor.handleDeploymentSuccess)
-        .catch(dispatch.potEditor.deploymentFailure);
+      if (isNewPot) {
+        potFactory
+          .deploy_pot({ pot_args: potArgs, pot_handle })
+          .then(dispatch.potEditor.handleDeploymentSuccess)
+          .catch(dispatch.potEditor.deploymentFailure);
+      } else {
+        pot.admin_dangerously_set_pot_config(
+          potId,
+          { update_args: potArgs },
+          floatToYoctoNear(0),
+        );
+      }
     }
   },
 

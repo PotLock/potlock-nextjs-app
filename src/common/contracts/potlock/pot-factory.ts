@@ -6,7 +6,7 @@ import { FULL_TGAS, POT_FACTORY_CONTRACT_ID } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 
 import {
-  PotDeploymentArgs,
+  PotArgs,
   PotDeploymentResult,
 } from "./interfaces/pot-factory.interfaces";
 
@@ -29,24 +29,22 @@ type Config = {
 
 export const get_config = () => contractApi.view<{}, Config>("get_config");
 
-export const calculate_min_deployment_deposit = ({
-  pot_args,
-}: PotDeploymentArgs): Promise<undefined | string> =>
+export const calculate_min_deployment_deposit = (args: {
+  args: PotArgs;
+}): Promise<undefined | string> =>
   contractApi
-    .view<
-      { args: typeof pot_args },
-      string
-    >("calculate_min_deployment_deposit", { args: { args: pot_args } })
+    .view<typeof args, string>("calculate_min_deployment_deposit", { args })
     .then((amount) =>
       Big(amount).plus(Big("20000000000000000000000")).toFixed(),
     );
 
-export const deploy_pot = async (
-  args: PotDeploymentArgs,
-): Promise<PotDeploymentResult> =>
+export const deploy_pot = async (args: {
+  pot_args: PotArgs;
+  pot_handle?: null | string;
+}): Promise<PotDeploymentResult> =>
   contractApi.call<typeof args, PotDeploymentResult>("deploy_pot", {
     args,
-    deposit: await calculate_min_deployment_deposit(args),
+    deposit: await calculate_min_deployment_deposit({ args: args.pot_args }),
     gas: FULL_TGAS,
     callbackUrl: window.location.href,
   });
