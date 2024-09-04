@@ -14,8 +14,8 @@ import {
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
   SOCIAL_DB_CONTRACT_ID,
 } from "@/common/constants";
-import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import * as socialDb from "@/common/contracts/social";
+import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
 import { store } from "@/store";
 

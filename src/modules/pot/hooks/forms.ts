@@ -13,8 +13,8 @@ import {
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
   ONE_TGAS,
 } from "@/common/constants";
-import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import * as potService from "@/common/contracts/potlock/pot";
+import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 
 import {
   challengeResolveSchema,
