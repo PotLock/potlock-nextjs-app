@@ -1,7 +1,8 @@
+import { useCallback } from "react";
+
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/common/ui/components";
-import { useCallback } from "react";
 
 export const ListHero = () => {
   const { push } = useRouter();

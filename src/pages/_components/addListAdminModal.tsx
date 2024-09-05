@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { naxiosInstance } from "@/common/api/near";
 
 interface AddAdminModalProps {

@@ -1,3 +1,9 @@
+import { ChangeEvent, useEffect, useState } from "react";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import {
   create_list,
@@ -5,16 +11,12 @@ import {
   update_list,
 } from "@/common/contracts/potlock/lists";
 import uploadFileToIPFS from "@/common/services/ipfs";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { createListSchema } from "@/modules/lists/models/schema";
 import SuccessModalCreateList from "@/pages/_components/SuccessCreateList";
-import { zodResolver } from "@hookform/resolvers/zod";
 
-import { SubmitHandler, useForm } from "react-hook-form";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { ChangeEvent, useEffect, useState } from "react";
 import { AddListAdminModal } from "./addListAdminModal";
-import { useParams } from "next/navigation";
 
 interface FormData {
   name: string;
@@ -72,7 +74,6 @@ export const ListFormDetails: React.FC = () => {
         const response: any = await getList({
           list_id: parseInt(id as string) as any,
         });
-        console.log(response);
         setValue("name", response.name);
         setValue("owner", response.owner);
         setValue("description", response.description);

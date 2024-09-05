@@ -6,11 +6,11 @@ import Link from "next/link";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 import { remove_upvote, upvote } from "@/common/contracts/potlock/lists";
+import { truncate } from "@/common/lib";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
+import useWallet from "@/modules/auth/hooks/useWallet";
 
 import CardSkeleton from "../../project/components/CardSkeleton";
-import useWallet from "@/modules/auth/hooks/useWallet";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { truncate } from "@/common/lib";
 
 export const ListCard = ({ dataForList }: { dataForList?: any }) => {
   const [isLoading, setIsLoading] = useState(false);
