@@ -21,7 +21,7 @@ const AllLists = () => {
   const [currentListType, setCurrentListType] = useState("All Lists");
   const { wallet } = useWallet();
 
-  const SORT_LIST_PROJEECTS = [
+  const SORT_LIST_PROJECTS = [
     { label: "Most recent", value: "recent" },
     { label: "Least recent", value: "older" },
   ];
@@ -119,19 +119,37 @@ const AllLists = () => {
     });
     setRegistrations(upvotedLists);
     setFilteredRegistrations(upvotedLists);
-    setCurrentListType("My Favourites");
+    setCurrentListType("My Favorites");
   };
 
   useEffect(() => {
     fetchAllLists();
   }, []);
 
-  console.log({ filteredRegistrations });
+  const buttons = [
+    {
+      label: "All List",
+      fetchFunction: fetchAllLists,
+      type: "All Lists",
+    },
+    {
+      label: "My Lists",
+      fetchFunction: fetchMyLists,
+      type: "My Lists",
+      condition: Boolean(wallet?.accountId),
+    },
+    {
+      label: "My Favorites",
+      fetchFunction: fetchFavourites,
+      type: "My Favorites",
+      condition: Boolean(wallet?.accountId),
+    },
+  ];
 
   return (
     <div className="md:px-10 md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
       <div className="flex w-full flex-col gap-5">
-        <div className="flex items-center justify-between">
+        <div className="md:flex-row md:items-center md:gap-0 flex flex-col justify-between gap-3">
           <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             {currentListType}
             <span
@@ -140,34 +158,18 @@ const AllLists = () => {
               {filteredRegistrations.length}
             </span>
           </div>
-          <div className="md:flex hidden items-center gap-4">
-            <button
-              className={`${
-                currentListType === "All Lists" ? "text-red-500" : ""
-              }`}
-              onClick={fetchAllLists}
-            >
-              All List
-            </button>
-            {Boolean(wallet?.accountId) && (
-              <>
-                <button
-                  className={`${
-                    currentListType === "My Lists" ? "text-red-500" : ""
-                  }`}
-                  onClick={fetchMyLists}
-                >
-                  My Lists
-                </button>
-                <button
-                  className={`${
-                    currentListType === "My Favourites" ? "text-red-500" : ""
-                  }`}
-                  onClick={fetchFavourites}
-                >
-                  My Favourites
-                </button>
-              </>
+          <div className="md:gap-1 flex items-center gap-3">
+            {buttons.map(
+              ({ label, fetchFunction, type, condition = true }) =>
+                condition && (
+                  <button
+                    key={type}
+                    className={`border px-3 py-1 transition-all duration-200 ease-in-out ${currentListType === type ? "rounded-sm border-[#F8D3B0] bg-[#fff6ee]  text-[#EA6A25]" : "border-[#F7F7F7] bg-[#f6f6f7] text-black"}`}
+                    onClick={fetchFunction}
+                  >
+                    {label}
+                  </button>
+                ),
             )}
           </div>
         </div>
@@ -182,10 +184,7 @@ const AllLists = () => {
             // }}
             groups={tagsList}
           /> */}
-          <SortSelect
-            options={SORT_LIST_PROJEECTS}
-            onValueChange={handleSort}
-          />
+          <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
         </div>
       </div>
       <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">

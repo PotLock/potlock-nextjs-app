@@ -105,7 +105,6 @@ export const ListAccounts = () => {
   const { data, isLoading } = potlock.useListRegistrations({
     listId: parseInt(id as string),
   });
-  console.log({ fetch });
 
   //   const fetchAllLists = async () => {
   //     const allLists: any = await potlock.
@@ -118,8 +117,6 @@ export const ListAccounts = () => {
     setRegistrations((data?.results as any) ?? []);
     setFilteredRegistrations((data?.results as any) ?? []);
   }, [data]);
-
-  console.log({ filteredRegistrations });
 
   if (isLoading) {
     return (

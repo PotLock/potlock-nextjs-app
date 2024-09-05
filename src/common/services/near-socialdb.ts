@@ -37,3 +37,4 @@ export const fetchSocialImages = async ({
     profile: currentProfile,
   };
 };
+

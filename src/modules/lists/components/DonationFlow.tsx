@@ -4,12 +4,12 @@ import React, { useState } from "react";
 import { buildTransaction } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
+import { naxiosInstance } from "@/common/api/near";
 import useWallet from "@/modules/auth/hooks/useWallet";
 
 import ConfirmDonation from "./Donation/ConfirmDonation";
 import DonationSuccess from "./Donation/DonationSuccess";
 import FundAllocation from "./Donation/FundAllocation";
-import { naxiosInstance } from "@/common/api/near";
 
 const DonationFlow = ({ onClose }: any) => {
   const [step, setStep] = useState(1); // Track the current step in the process

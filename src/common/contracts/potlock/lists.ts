@@ -44,14 +44,14 @@ export const create_list = ({
   name: string;
   description: string;
   admins: Array<string>;
-  image_cover_url?: string;
+  image_cover_url?: string | null;
 }) =>
   contractApi.call<{}, List[]>("create_list", {
     args: {
       name,
       description,
       admins,
-      cover_image_url: image_cover_url ?? "",
+      cover_image_url: image_cover_url ?? null,
       admin_only_registrations: false,
       default_registration_status: "Approved",
     },
