@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { omit, prop } from "remeda";
 import { ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
@@ -12,7 +10,6 @@ import {
   POTLOCK_CONTRACT_REPO_URL,
   POTLOCK_CONTRACT_VERSION,
 } from "@/common/constants";
-import { yoctoNearToFloat } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
 import { donationFeeBasisPointsToPercents } from "@/modules/donation";
@@ -29,7 +26,6 @@ export type PotEditorFormArgs = Partial<ByPotId>;
 
 export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
   const isNewPot = typeof potId !== "string";
-  const router = useRouter();
 
   const {
     contractMetadata: { latestSourceCodeCommitHash },
@@ -120,14 +116,6 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     [self],
   );
 
-  const onCancel = useCallback(() => {
-    self.reset();
-
-    if (isNewPot) {
-      router.back();
-    }
-  }, [self, isNewPot, router]);
-
   const onSubmit: SubmitHandler<PotInputs> = useCallback(
     (inputs) => {
       if (isNewPot) {
@@ -147,11 +135,10 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
       },
     },
 
-    values,
     handleAdminsUpdate,
     isDisabled,
     isNewPot,
-    onCancel,
     onSubmit: self.handleSubmit(onSubmit),
+    values,
   };
 };

@@ -1,3 +1,7 @@
+import { useCallback, useState } from "react";
+
+import { useRouter } from "next/router";
+
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { timestampMsToLocaleString } from "@/common/lib";
@@ -27,15 +31,22 @@ import { PotEditorFormArgs, usePotEditorForm } from "../hooks/forms";
 export type PotEditorProps = PotEditorFormArgs & {};
 
 export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
-  const {
-    form,
-    values,
-    handleAdminsUpdate,
-    isDisabled,
-    isNewPot,
-    onCancel,
-    onSubmit,
-  } = usePotEditorForm({ potId });
+  const router = useRouter();
+
+  const { form, handleAdminsUpdate, isDisabled, isNewPot, onSubmit, values } =
+    usePotEditorForm({ potId });
+
+  const [isInEditMode, setEditMode] = useState(isNewPot);
+  const enterEditMode = useCallback(() => setEditMode(true), []);
+  const exitEditMode = useCallback(() => setEditMode(false), []);
+
+  const onCancelClick = useCallback(() => {
+    form.reset();
+
+    if (isNewPot) {
+      router.back();
+    } else exitEditMode();
+  }, [exitEditMode, form, isNewPot, router]);
 
   console.table({ isNewPot });
   console.log(values);
@@ -357,7 +368,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               </Button>
 
               <Button
-                onClick={onCancel}
+                onClick={onCancelClick}
                 variant="standard-outline"
                 className="lg:w-auto w-full"
               >

@@ -17,6 +17,7 @@ import {
   donationAmount,
   donationFeeBasisPoints,
   donationFeeBasisPointsToPercents,
+  donationFeePercentsToBasisPoints,
 } from "@/modules/donation";
 import { PotInputs } from "@/modules/pot";
 
@@ -99,8 +100,8 @@ export const potInputsToPotArgs = ({
         conditional.defaultCase(() => undefined),
       ),
 
-      referral_fee_matching_pool_basis_points: donationFeeBasisPoints.parse,
-      referral_fee_public_round_basis_points: donationFeeBasisPoints.parse,
-      chef_fee_basis_points: donationFeeBasisPoints.parse,
+      referral_fee_matching_pool_basis_points: donationFeePercentsToBasisPoints,
+      referral_fee_public_round_basis_points: donationFeePercentsToBasisPoints,
+      chef_fee_basis_points: donationFeePercentsToBasisPoints,
     },
   );
