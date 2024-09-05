@@ -22,31 +22,27 @@ const GlobalFeedsPage = () => {
   });
 
   useEffect(() => {
-    const fetchRegistrationsAndFeeds = () => {
-      setLoading(isLoading);
+    setLoading(true);
 
-      // Fetch registrations and feeds
-      const results = data?.results || [];
-      setRegistrations(results);
-      const accountIds = results.map((account) => account.registrant.id);
+    // Fetch registrations and feeds
+    const results = data?.results || [];
+    setRegistrations(results);
+    const accountIds = results.map((account) => account.registrant.id);
 
-      fetchGlobalFeeds({
-        accountId: accountIds,
+    fetchGlobalFeeds({
+      accountId: accountIds,
+    })
+      .then((posts) => {
+        setLoadingMore(isLoading);
+        setFeedPosts(posts); // Flatten the array if necessary
+        setLoading(isLoading);
       })
-        .then((posts) => {
-          setLoadingMore(isLoading);
-          setFeedPosts(posts); // Flatten the array if necessary
-          setLoading(isLoading);
-        })
-        .catch((err) => {
-          console.error("Error fetching registrations or feeds:", err);
-        })
-        .finally(() => {
-          setLoading(isLoading); // Ensure loading state is updated
-        });
-    };
-
-    fetchRegistrationsAndFeeds();
+      .catch((err) => {
+        console.error("Error fetching registrations or feeds:", err);
+      })
+      .finally(() => {
+        setLoading(isLoading); // Ensure loading state is updated
+      });
   }, []);
 
   const loadMorePosts = useCallback(async () => {
@@ -116,7 +112,7 @@ const GlobalFeedsPage = () => {
           <div className="">Loading...</div>
         </div>
       )}
-      {loading && <NoResults />}
+      {feedPosts.length === 0 && <NoResults />}
     </div>
   );
 };

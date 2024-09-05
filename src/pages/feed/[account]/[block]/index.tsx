@@ -28,39 +28,35 @@ const SinglePost = () => {
   const [time, setTime] = useState("");
 
   useEffect(() => {
-    const fetchPost = () => {
-      if (account && block) {
-        setIsLoading(true);
+    if (account && block) {
+      setIsLoading(true);
 
-        fetchSinglePost({
-          accountId: account as string,
-          blockHeight: Number(block),
-        })
-          .then((fetchedPost) => {
-            setPost(fetchedPost);
-            // Fetch the profile image
-            return fetchSocialImages({
-              accountId: account as string,
-            });
-          })
-          .then(({ image }) => {
-            const timePromise = fetchTimeByBlockHeight(Number(block));
-            return Promise.all([timePromise, image]);
-          })
-          .then(([time, image]) => {
-            setTime(time);
-            setProfileImg(image);
-          })
-          .catch((err) => {
-            console.error(err);
-          })
-          .finally(() => {
-            setIsLoading(false);
+      fetchSinglePost({
+        accountId: account as string,
+        blockHeight: Number(block),
+      })
+        .then((fetchedPost) => {
+          setPost(fetchedPost);
+          // Fetch the profile image
+          return fetchSocialImages({
+            accountId: account as string,
           });
-      }
-    };
-
-    fetchPost();
+        })
+        .then(({ image }) => {
+          const timePromise = fetchTimeByBlockHeight(Number(block));
+          return Promise.all([timePromise, image]);
+        })
+        .then(([time, image]) => {
+          setTime(time);
+          setProfileImg(image);
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   }, [account, block]);
 
   if (isLoading) {
