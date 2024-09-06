@@ -26,6 +26,7 @@ import { AccessControlAccounts } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
+import { POT_EDITOR_FIELDS } from "../constants";
 import { PotEditorFormArgs, usePotEditorForm } from "../hooks/forms";
 
 export type PotEditorProps = PotEditorFormArgs & {};
@@ -55,9 +56,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
         <div className="lg:min-w-4xl flex flex-col gap-14 pt-14">
-          <EditorSection heading="Admins">
+          <EditorSection heading={POT_EDITOR_FIELDS.admins.title}>
             <AccessControlAccounts
-              title="Admins"
+              title={POT_EDITOR_FIELDS.admins.title}
               value={values.admins ?? []}
               onSubmit={handleAdminsUpdate}
             />
@@ -70,7 +71,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Pot name"
+                    label={POT_EDITOR_FIELDS.pot_name.title}
                     required
                     type="text"
                     placeholder="e.g. DeFi Center"
@@ -88,7 +89,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   control={form.control}
                   render={({ field }) => (
                     <TextField
-                      label="Custom handle"
+                      label={POT_EDITOR_FIELDS.pot_handle.title}
                       type="text"
                       placeholder="e.g. defi-center"
                       classNames={{ root: "lg:w-50% w-full" }}
@@ -104,7 +105,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               control={form.control}
               render={({ field }) => (
                 <TextAreaField
-                  label="Description"
+                  label={POT_EDITOR_FIELDS.pot_description.title}
                   required
                   placeholder="Type description"
                   maxLength={POT_MAX_DESCRIPTION_LENGTH}
@@ -119,8 +120,14 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Referral fee"
-                    labelExtension="(Matching pool)"
+                    label={
+                      POT_EDITOR_FIELDS.referral_fee_matching_pool_basis_points
+                        .title
+                    }
+                    labelExtension={
+                      POT_EDITOR_FIELDS.referral_fee_matching_pool_basis_points
+                        .subtitle
+                    }
                     required
                     inputExtension="%"
                     type="number"
@@ -137,8 +144,14 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Referral fee"
-                    labelExtension="(Public round)"
+                    label={
+                      POT_EDITOR_FIELDS.referral_fee_public_round_basis_points
+                        .title
+                    }
+                    labelExtension={
+                      POT_EDITOR_FIELDS.referral_fee_public_round_basis_points
+                        .subtitle
+                    }
                     required
                     inputExtension="%"
                     type="number"
@@ -153,10 +166,10 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
 
             <Alert compact variant="neutral">
               <InfoIcon width={18} height={18} />
-              <AlertTitle>Protocol fee is 2%</AlertTitle>
+              <AlertTitle>{"Protocol fee is 2%"}</AlertTitle>
 
               <AlertDescription inline>
-                This fee is fixed by the platform
+                {"This fee is fixed by the platform"}
               </AlertDescription>
             </Alert>
 
@@ -167,7 +180,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   control={form.control}
                   render={({ field }) => (
                     <TextField
-                      label="Application start date"
+                      label={POT_EDITOR_FIELDS.application_start_ms.title}
                       required
                       type="datetime-local"
                       classNames={{ root: "lg:w-50% w-full" }}
@@ -181,7 +194,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   control={form.control}
                   render={({ field }) => (
                     <TextField
-                      label="Application end date"
+                      label={POT_EDITOR_FIELDS.application_end_ms.title}
                       required
                       type="datetime-local"
                       classNames={{ root: "lg:w-50% w-full" }}
@@ -198,7 +211,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 control={form.control}
                 render={({ field: { value, ...field } }) => (
                   <TextField
-                    label="Matching round start date"
+                    label={POT_EDITOR_FIELDS.public_round_start_ms.title}
                     required
                     type="datetime-local"
                     value={
@@ -217,7 +230,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Matching round end date"
+                    label={POT_EDITOR_FIELDS.public_round_end_ms.title}
                     required
                     type="datetime-local"
                     classNames={{ root: "lg:w-50% w-full" }}
@@ -233,7 +246,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 name="min_matching_pool_donation_amount"
                 render={({ field }) => (
                   <TextField
-                    label="Min matching pool donation"
+                    label={
+                      POT_EDITOR_FIELDS.min_matching_pool_donation_amount.title
+                    }
                     {...field}
                     inputExtension={
                       <SelectField
@@ -268,7 +283,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Chef fee"
+                    label={POT_EDITOR_FIELDS.chef_fee_basis_points.title}
                     required
                     inputExtension="%"
                     type="number"
@@ -295,7 +310,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
             </div>
           </EditorSection>
 
-          <EditorSection heading="Max. approved projects">
+          <EditorSection heading={POT_EDITOR_FIELDS.max_projects.title}>
             <FormField
               name="max_projects"
               control={form.control}
@@ -321,11 +336,12 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   label={
                     <>
                       <span un-font="600" un-text="sm">
-                        Project Registration.
+                        {POT_EDITOR_FIELDS.isPgRegistrationRequired.title}
                       </span>
 
                       <span un-text="sm">
-                        Require approval on PotLock registry (recommended)
+                        {`${POT_EDITOR_FIELDS.isPgRegistrationRequired.subtitle}
+                        (recommended)`}
                       </span>
                     </>
                   }
@@ -335,7 +351,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
 
             <FormField
               control={form.control}
-              name="isNadabotVerificationRequired"
+              name="isSybilResistanceEnabled"
               render={({ field }) => (
                 <CheckboxField
                   checked={field.value}
@@ -343,11 +359,11 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                   label={
                     <>
                       <span un-font="600" un-text="sm">
-                        Donor Sybil Resistance.
+                        {POT_EDITOR_FIELDS.isSybilResistanceEnabled.title}
                       </span>
 
                       <span un-text="sm">
-                        🤖 nada.bot human verification (recommended)
+                        {"🤖 nada.bot human verification (recommended)"}
                       </span>
                     </>
                   }

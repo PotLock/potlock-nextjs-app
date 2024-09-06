@@ -61,7 +61,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
 
       chef_fee_basis_points: donationFeeBasisPointsToPercents(100),
       isPgRegistrationRequired: true,
-      isNadabotVerificationRequired: true,
+      isSybilResistanceEnabled: true,
       ...existingValues,
     }),
 

@@ -4,6 +4,7 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { naxiosInstance } from "@/common/api/near";
 import { PotId } from "@/common/api/potlock";
 import { FULL_TGAS } from "@/common/constants";
+import { floatToYoctoNear } from "@/common/lib";
 
 import {
   Application,
@@ -211,14 +212,13 @@ export const donate = (
 export const admin_dangerously_set_pot_config = (
   potAccountId: PotId,
   args: { update_args: UpdatePotArgs },
-  depositAmountYocto: string,
 ) =>
   contractApi(potAccountId).call<typeof args, PotConfig>(
     "admin_dangerously_set_pot_config",
 
     {
       args,
-      deposit: depositAmountYocto,
+      deposit: floatToYoctoNear(0),
       callbackUrl: window.location.href,
     },
   );

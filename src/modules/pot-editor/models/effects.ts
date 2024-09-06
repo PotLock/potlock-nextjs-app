@@ -8,7 +8,6 @@ import {
   pot,
   potFactory,
 } from "@/common/contracts/potlock";
-import { floatToYoctoNear } from "@/common/lib";
 import { PotInputs } from "@/modules/pot";
 import { RootDispatcher } from "@/store";
 
@@ -50,11 +49,9 @@ export const effects = (dispatch: RootDispatcher) => ({
       } else {
         console.log(omit(pot_args, ["custom_sybil_checks"]));
 
-        pot.admin_dangerously_set_pot_config(
-          potId,
-          { update_args: omit(pot_args, ["custom_sybil_checks"]) },
-          floatToYoctoNear(0),
-        );
+        pot.admin_dangerously_set_pot_config(potId, {
+          update_args: omit(pot_args, ["custom_sybil_checks"]),
+        });
       }
     }
   },

@@ -1,3 +1,6 @@
+import { Pot } from "@/common/api/potlock";
+import { PotInputs } from "@/modules/pot";
+
 export const POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES = [
   "all_paid_out" as const,
   "base_currency" as const,
@@ -18,3 +21,78 @@ export const POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES = [
   "total_public_donations" as const,
   "total_public_donations_usd" as const,
 ];
+
+export const POT_EDITOR_FIELDS: Record<
+  keyof Omit<
+    PotInputs,
+    | "cooldown_period_ms"
+    | "registry_provider"
+    | "sybil_wrapper_provider"
+    | "source_metadata"
+  >,
+  { index?: keyof Pot; title: string; subtitle?: string }
+> = {
+  owner: { index: "owner", title: "Owner" },
+  admins: { index: "admins", title: "Admins" },
+  chef: { index: "chef", title: "Assigned Chef" },
+  pot_name: { index: "name", title: "Name" },
+  pot_handle: { title: "Custom handle" },
+  pot_description: { index: "description", title: "Description" },
+
+  max_projects: {
+    index: "max_approved_applicants",
+    title: "Max. approved projects",
+  },
+
+  application_start_ms: {
+    index: "application_start",
+    title: "Application start date",
+  },
+
+  application_end_ms: {
+    index: "application_end",
+    title: "Application end date",
+  },
+
+  public_round_start_ms: {
+    index: "matching_round_start",
+    title: "Matching round start date",
+  },
+
+  public_round_end_ms: {
+    index: "matching_round_end",
+    title: "Matching round end date",
+  },
+
+  min_matching_pool_donation_amount: {
+    index: "min_matching_pool_donation_amount",
+    title: "Min matching pool donation",
+  },
+
+  isPgRegistrationRequired: {
+    title: "Project Registration.",
+    subtitle: "Require approval on PotLock registry",
+  },
+
+  isSybilResistanceEnabled: {
+    title: "Donor Sybil Resistance.",
+    subtitle: "🤖 nada.bot human verified",
+  },
+
+  referral_fee_matching_pool_basis_points: {
+    index: "referral_fee_matching_pool_basis_points",
+    title: "Referral fee",
+    subtitle: "(Matching Pool)",
+  },
+
+  referral_fee_public_round_basis_points: {
+    index: "referral_fee_public_round_basis_points",
+    title: "Referral fee",
+    subtitle: "(Public Round)",
+  },
+
+  chef_fee_basis_points: {
+    index: "chef_fee_basis_points",
+    title: "Chef fee",
+  },
+};

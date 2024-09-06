@@ -7,17 +7,10 @@ import {
   SYBIL_CONTRACT_ID,
 } from "@/common/constants";
 import { ContractSourceMetadata, PotArgs } from "@/common/contracts/potlock";
-import {
-  floatToYoctoNear,
-  timestamp,
-  timestampMsToLocaleString,
-  yoctoNearToFloat,
-} from "@/common/lib";
+import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
 import {
   donationAmount,
-  donationFeeBasisPoints,
   donationFeeBasisPointsToPercents,
-  donationFeePercentsToBasisPoints,
 } from "@/modules/donation";
 import { PotInputs } from "@/modules/pot";
 
@@ -60,7 +53,7 @@ export const potIndexedDataToPotInputs = ({
       registry_provider: registry_provider ?? undefined,
       isPgRegistrationRequired: typeof registry_provider === "string",
       sybil_wrapper_provider: sybil_wrapper_provider ?? undefined,
-      isNadabotVerificationRequired: typeof sybil_wrapper_provider === "string",
+      isSybilResistanceEnabled: typeof sybil_wrapper_provider === "string",
 
       min_matching_pool_donation_amount:
         typeof min_matching_pool_donation_amount === "string"
@@ -73,7 +66,7 @@ export const potIndexedDataToPotInputs = ({
 
 export const potInputsToPotArgs = ({
   isPgRegistrationRequired,
-  isNadabotVerificationRequired,
+  isSybilResistanceEnabled,
   ...potInputs
 }: PotInputs & { source_metadata: ContractSourceMetadata }): PotArgs =>
   evolve(
@@ -84,7 +77,7 @@ export const potInputsToPotArgs = ({
         ? LISTS_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_registered"
         : undefined,
 
-      sybil_wrapper_provider: isNadabotVerificationRequired
+      sybil_wrapper_provider: isSybilResistanceEnabled
         ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
         : undefined,
     },
@@ -99,9 +92,5 @@ export const potInputsToPotArgs = ({
         [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
         conditional.defaultCase(() => undefined),
       ),
-
-      referral_fee_matching_pool_basis_points: donationFeePercentsToBasisPoints,
-      referral_fee_public_round_basis_points: donationFeePercentsToBasisPoints,
-      chef_fee_basis_points: donationFeePercentsToBasisPoints,
     },
   );

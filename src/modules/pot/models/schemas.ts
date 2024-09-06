@@ -12,6 +12,7 @@ import {
   POT_MAX_APPROVED_PROJECTS,
   POT_MAX_CHEF_FEE_BASIS_POINTS,
   POT_MAX_DESCRIPTION_LENGTH,
+  POT_MAX_HANDLE_LENGTH,
   POT_MAX_NAME_LENGTH,
   POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS,
   POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS,
@@ -96,7 +97,13 @@ export const potSchema = object({
     )
     .describe("Pot name."),
 
-  pot_handle: string().optional().describe("Pot handle."),
+  pot_handle: string()
+    .max(
+      POT_MAX_HANDLE_LENGTH,
+      `Cannot be longer than ${POT_MAX_HANDLE_LENGTH} characters.`,
+    )
+    .optional()
+    .describe("Pot handle."),
 
   pot_description: string()
     .max(
@@ -150,7 +157,7 @@ export const potSchema = object({
     .optional()
     .describe("Sybil wrapper provider's account id."),
 
-  isNadabotVerificationRequired: boolean()
+  isSybilResistanceEnabled: boolean()
     .optional()
     .describe("Whether the projects must have Nadabot verification."),
 
