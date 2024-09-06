@@ -2,6 +2,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
@@ -18,7 +19,6 @@ import { createListSchema } from "@/modules/lists/models/schema";
 import SuccessModalCreateList from "@/pages/_components/SuccessCreateList";
 
 import { AddListAdminModal } from "./addListAdminModal";
-import { useRouter } from "next/router";
 
 interface FormData {
   name: string;

@@ -8,6 +8,6 @@ export const createListSchema = z.object({
   description: z
     .string()
     .max(250, "Description must be less than 100 characters"),
-    approveApplications: z.boolean().optional(), 
-    allowApplications: z.boolean().optional(), 
+  approveApplications: z.boolean().optional(),
+  allowApplications: z.boolean().optional(),
 });

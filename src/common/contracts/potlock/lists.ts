@@ -64,7 +64,7 @@ export const update_list = ({
   description,
   admins,
   list_id,
-  approveApplications, 
+  approveApplications,
   allowApplications,
   image_cover_url,
 }: {
@@ -73,7 +73,7 @@ export const update_list = ({
   admins: Array<string>;
   list_id: number;
   approveApplications?: boolean;
-  allowApplications?: boolean;  
+  allowApplications?: boolean;
   image_cover_url?: string;
 }) =>
   contractApi.call<{}, List[]>("update_list", {
@@ -105,9 +105,12 @@ export const registerBatch = (args: ApplyToList) =>
     args,
   });
 
- export const delete_list = (args: { list_id: number }) => 
-  contractApi.call<typeof args, List>('delete_list', { 
-    args, deposit: floatToYoctoNear(0.01), gas: "300000000000000" });
+export const delete_list = (args: { list_id: number }) =>
+  contractApi.call<typeof args, List>("delete_list", {
+    args,
+    deposit: floatToYoctoNear(0.01),
+    gas: "300000000000000",
+  });
 
 export const upvote = (args: { list_id: number }) =>
   contractApi.call<typeof args, List>("upvote", {

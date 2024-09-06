@@ -11,6 +11,7 @@ import { ListCard } from "@/modules/lists/components/ListCard";
 import { Profile } from "@/modules/profile/models";
 import { categories, statuses } from "@/modules/project/constants";
 import { useTypedSelector } from "@/store";
+
 import { ListCardSkeleton } from "./ListCardSkeleton";
 
 const AllLists = () => {
