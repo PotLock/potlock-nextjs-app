@@ -73,10 +73,7 @@ export const RadioGroupItem = forwardRef<
 
       <Label
         htmlFor={props.id}
-        className={cn("flex gap-1", {
-          "text-neutral-400": disabled,
-          "text-neutral-950": !disabled,
-        })}
+        className={cn("flex gap-1", { "text-neutral-400": disabled })}
       >
         <span un-font="500">{label}</span>
 

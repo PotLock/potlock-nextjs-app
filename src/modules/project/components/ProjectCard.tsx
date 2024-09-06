@@ -136,7 +136,7 @@ export const ProjectCard = ({
                   un-px="2"
                   un-py="1"
                   un-bg="neutral-50"
-                  un-text="sm neutral-950"
+                  un-text="sm"
                   un-font="500"
                   key={category}
                 >
@@ -202,7 +202,7 @@ export const ProjectCard = ({
                 Estimated Matched Amount
               </span>
 
-              <span un-text="neutral-950 nowrap" un-font="600">
+              <span className="font-600 text-nowrap">
                 {estimatedMatchedAmount}
               </span>
             </div>

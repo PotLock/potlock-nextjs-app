@@ -23,7 +23,7 @@ export const PotEditorDeploymentSuccess: React.FC<
         Successfully deployed!
       </h1>
 
-      <p className="prose text-4 font-400 line-height-6 text-neutral-950">
+      <p className="prose text-4 font-400 line-height-6">
         {"You've successfully deployed " +
           potData.pot_name +
           ", you can always make adjustments in the pot settings page."}

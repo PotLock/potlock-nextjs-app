@@ -100,7 +100,7 @@ const FormLabel = forwardRef<
       ref={ref}
       className={cn(
         "font-500 leading-normal",
-        error ? "text-destructive" : "text-neutral-950",
+        { "text-destructive": error },
         className,
       )}
       htmlFor={formItemId}

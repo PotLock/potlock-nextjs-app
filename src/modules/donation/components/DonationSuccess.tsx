@@ -153,7 +153,7 @@ export const DonationSuccess = ({
           <Skeleton className="w-49 h-5" />
         ) : (
           <p className="prose" un-m="0" un-flex="~ col">
-            <span un-flex="~" un-gap="1" un-text="neutral-950">
+            <span className="prose flex gap-1">
               <span>has been donated to</span>
 
               <span un-font="600">

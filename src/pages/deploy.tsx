@@ -11,9 +11,8 @@ export default function PotDeployPage() {
   return (
     <PageWithBanner>
       <section
-        className="md:px-25 md:py-20 mb-10 w-full gap-6 border-[#f8d3b0] bg-hero px-5 py-16"
+        className="md:px-25 md:py-20 mb-6 w-full gap-6 border-[#f8d3b0] bg-hero px-5 py-16"
         un-flex="~ col"
-        un-text="neutral-950"
       >
         <span className="prose uppercase" un-font="500" un-text="2.75 md:sm">
           Deploy Pot

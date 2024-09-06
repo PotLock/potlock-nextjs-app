@@ -249,10 +249,7 @@ const DialogDescription = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn(
-      "z-2 flex flex-col gap-6 p-5 text-sm text-neutral-950",
-      className,
-    )}
+    className={cn("z-2 flex flex-col gap-6 p-5 text-sm", className)}
     {...props}
     asChild
   >

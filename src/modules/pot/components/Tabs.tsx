@@ -20,7 +20,7 @@ const Tabs = ({ navOptions, selectedTab, onSelect, asLink }: Props) => {
     typeof potIdPathParam === "string" ? potIdPathParam : potIdPathParam?.at(0);
 
   return (
-    <div className="mb-[46px] flex w-full flex-row flex-wrap gap-2">
+    <div className="mb-8 flex w-full flex-row flex-wrap gap-2">
       <div className={`md:px-8 w-full px-8`}>
         <div className="border-b-solid flex w-full justify-start gap-8 overflow-y-auto border-b-[1px] border-b-[#c7c7c7] pt-8">
           {navOptions.map((option) => {

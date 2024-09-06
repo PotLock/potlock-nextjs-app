@@ -57,7 +57,11 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   ) : (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
-        <div className="lg:min-w-4xl flex flex-col gap-14 pt-14">
+        <h2 className="prose font-600 mb-12 mr-auto text-xl">
+          {!isNewPot && "Edit Pot Settings"}
+        </h2>
+
+        <div className="lg:min-w-4xl flex flex-col gap-14">
           <EditorSection heading={POT_EDITOR_FIELDS.admins.title}>
             <AccessControlList
               isEditable

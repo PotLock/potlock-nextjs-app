@@ -23,12 +23,10 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
   children,
 }) => (
   <div un-flex="~" un-justify="between" un-items="center" un-gap="8">
-    <span className="prose md:w-73 font-600 w-full text-sm text-neutral-950">
-      {heading}
-    </span>
+    <span className="prose md:w-73 font-600 w-full text-sm">{heading}</span>
 
     {children ? (
-      <span className="prose text-sm text-neutral-950">{children}</span>
+      <span className="prose text-sm">{children}</span>
     ) : (
       <Skeleton className="w-102 h-5" />
     )}
@@ -48,7 +46,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
   const isDataAvailable = data !== undefined && adminAccountIds !== undefined;
 
   return (
-    <div un-w="full" un-max-w="183" un-flex="~ col" un-gap="8">
+    <div className="max-w-183 flex w-full flex-col gap-8">
       <div un-flex="~ wrap" un-gap="8">
         <div un-pr="4" un-flex="~ col" un-gap="2">
           <span className="prose font-500 text-sm text-neutral-500">
@@ -81,7 +79,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
           )}
         </div>
 
-        <div un-ml="md:auto" un-flex="~ col" un-justify="center">
+        <div className="md:ml-auto flex flex-col justify-center">
           <Button type="button" onClick={onEditClick} variant="brand-plain">
             <Pencil width={14} height={14} />
 
