@@ -20,7 +20,7 @@ export const PotEditorDeploymentSuccess: React.FC<
 
     <div className="flex w-full flex-col items-center justify-center gap-6 text-center">
       <h1 className="prose text-8 font-500 text-primary-600 font-lora">
-        Successfully deployed!
+        {"Successfully deployed!"}
       </h1>
 
       <p className="prose text-4 font-400 line-height-6">
@@ -36,7 +36,7 @@ export const PotEditorDeploymentSuccess: React.FC<
       variant="brand-filled"
       className="w-full"
     >
-      <Link href={`${routesPath.POT_DETAIL}/${potData.id}`}>View Pot</Link>
+      <Link href={`${routesPath.POT_DETAIL}/${potData.id}`}>{"View Pot"}</Link>
     </Button>
   </DialogDescription>
 );

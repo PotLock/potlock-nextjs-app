@@ -94,3 +94,17 @@ export const potInputsToPotArgs = ({
       ),
     },
   );
+
+export const potIndexedFieldToString = (
+  key: keyof Pot,
+  value: Pot[keyof Pot],
+) => {
+  switch (typeof value) {
+    case "number":
+      return value.toString();
+    case "string":
+      return value;
+    default:
+      return undefined;
+  }
+};

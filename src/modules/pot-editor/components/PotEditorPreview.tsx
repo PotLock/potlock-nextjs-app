@@ -1,7 +1,7 @@
 import { Pencil } from "lucide-react";
 import { entries, omit, prop } from "remeda";
 
-import { ByPotId, Pot, potlock } from "@/common/api/potlock";
+import { ByPotId, potlock } from "@/common/api/potlock";
 import {
   Button,
   DataLoadingPlaceholder,
@@ -15,15 +15,19 @@ import { POT_EDITOR_FIELDS } from "../constants";
 
 type PotEditorPreviewSectionProps = {
   heading: string;
+  subheading?: string;
   children?: React.ReactNode;
 };
 
 const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
   heading,
+  subheading,
   children,
 }) => (
   <div un-flex="~" un-justify="between" un-items="center" un-gap="8">
-    <span className="prose md:w-73 font-600 w-full text-sm">{heading}</span>
+    <span className="prose md:w-73 font-600 w-full text-sm">
+      {subheading ? `${heading} (${subheading})` : heading}
+    </span>
 
     {children ? (
       <span className="prose text-sm">{children}</span>
