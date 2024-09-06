@@ -100,7 +100,7 @@ export const ListDetails = () => {
               <div className="mb-6 flex flex-col items-start space-y-2">
                 <span className="mr-4 font-semibold text-gray-700">Admins</span>
                 <div className="flex space-x-1">
-                  {admins.map((admin) => (
+                  {admins.slice(0, 4).map((admin) => (
                     <img
                       key={admin.id}
                       className="h-10 w-10 rounded-full border-2 border-white object-cover"
@@ -108,9 +108,11 @@ export const ListDetails = () => {
                       alt={admin.name}
                     />
                   ))}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-red-500 text-sm font-semibold text-white">
-                    {listDetails.admins.length}+
-                  </div>
+                  {listDetails.admins.length > 4 && (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-red-500 text-sm font-semibold text-white">
+                      {listDetails.admins.length - 4}+
+                    </div>
+                  )}
                 </div>
               </div>
               {(listDetails.admins.includes(wallet?.accountId ?? "") ||

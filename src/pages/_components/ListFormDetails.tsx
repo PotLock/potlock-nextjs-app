@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
@@ -7,6 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import {
   create_list,
+  delete_list,
   getList,
   update_list,
 } from "@/common/contracts/potlock/lists";
@@ -17,6 +18,7 @@ import { createListSchema } from "@/modules/lists/models/schema";
 import SuccessModalCreateList from "@/pages/_components/SuccessCreateList";
 
 import { AddListAdminModal } from "./addListAdminModal";
+import { useRouter } from "next/router";
 
 interface FormData {
   name: string;
@@ -30,6 +32,12 @@ interface FormData {
 interface ChipProps {
   label: string;
   onRemove: () => void;
+}
+
+interface CreateSuccess {
+  open: boolean;
+  type?: "UPDATE_LIST" | "CREATE_LIST";
+  data?: any;
 }
 
 const Chip: React.FC<ChipProps> = ({ label, onRemove }) => (
@@ -56,6 +64,7 @@ export const ListFormDetails: React.FC = () => {
     resolver: zodResolver(createListSchema),
   });
   const { id } = useParams();
+  const { push, back } = useRouter();
   const onEditPage = !!id;
 
   const descriptionLength = watch("description")?.length || 0;
@@ -65,7 +74,9 @@ export const ListFormDetails: React.FC = () => {
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [listCreateSuccess, setListCreateSuccess] = useState<boolean>(false);
+  const [listCreateSuccess, setListCreateSuccess] = useState<CreateSuccess>({
+    open: false,
+  });
   const { wallet } = useWallet();
 
   useEffect(() => {
@@ -77,8 +88,8 @@ export const ListFormDetails: React.FC = () => {
         setValue("name", response.name);
         setValue("owner", response.owner);
         setValue("description", response.description);
-        setValue("allowApplications", response.allowApplications);
-        setValue("approveApplications", response.approveApplications);
+        setValue("allowApplications", response.default_registration_status);
+        setValue("approveApplications", response.admin_only_registrations);
         setAdmins(response.admins);
         setCoverImage(response.cover_image_url);
       } catch (error) {
@@ -101,6 +112,24 @@ export const ListFormDetails: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (onEditPage) {
+      update_list({
+        ...data,
+        admins,
+        list_id: parseInt(id as any),
+        image_cover_url: coverImage || undefined,
+      })
+        .then((updatedData) => {
+          setListCreateSuccess({
+            open: true,
+            type: "UPDATE_LIST",
+            data: updatedData,
+          });
+        })
+        .catch((error) => {
+          // Handle error for update_list
+          console.error("Error updating list:", error);
+        });
+    } else {
       create_list({
         ...data,
         admins,
@@ -108,25 +137,15 @@ export const ListFormDetails: React.FC = () => {
       })
         .then((dataToReturn) => {
           // Handle success for create_list
-          console.log("List created successfully:", dataToReturn);
+          setListCreateSuccess({
+            open: true,
+            type: "CREATE_LIST",
+            data: dataToReturn,
+          });
         })
         .catch((error) => {
           // Handle error for create_list
           console.error("Error creating list:", error);
-        });
-    } else {
-      update_list({
-        ...data,
-        admins,
-        list_id: parseInt(id as any),
-      })
-        .then((updatedData) => {
-          // Handle success for update_list
-          console.log("List updated successfully:", updatedData);
-        })
-        .catch((error) => {
-          // Handle error for update_list
-          console.error("Error updating list:", error);
         });
     }
   };
@@ -174,6 +193,21 @@ export const ListFormDetails: React.FC = () => {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
+
+  const handleViewList = useCallback(() => {
+    if (listCreateSuccess.data.id) push(`/list/${listCreateSuccess.data?.id}`);
+  }, []);
+
+  const handleDeleteList = () => {
+    delete_list({ list_id: parseInt(id as any) })
+      .then(() => {
+        push("/list");
+      })
+      .catch((error) => {
+        console.error("Error deleting list", error);
+      });
+  };
+
   return (
     <>
       <div className="mx-auto max-w-[896px] p-6 font-sans">
@@ -328,19 +362,30 @@ export const ListFormDetails: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="md:justify-end md:flex-row md:space-y-0 md:space-x-4 flex flex-col-reverse justify-center">
+          <div
+            className={`md:flex-row flex w-full flex-col justify-between ${onEditPage ? "flex-col-reverse" : "md:justify-end flex-col"} `}
+          >
             <button
-              type="button"
-              className="mb-4 rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition hover:bg-gray-200"
+              onClick={handleDeleteList}
+              className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9] ${onEditPage ? "" : "hidden"}`}
             >
-              Cancel
+              Delete List
             </button>
-            <button
-              type="submit"
-              className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800"
-            >
-              {onEditPage ? "Save List" : "Save Changes"}
-            </button>
+            <div className="md:justify-end md:flex-row md:space-y-0 md:space-x-4 flex flex-col-reverse justify-center">
+              <button
+                type="button"
+                className="mb-4 rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition hover:bg-gray-200"
+                onClick={back}
+              >
+                {onEditPage ? "Discard" : "Cancel"}
+              </button>
+              <button
+                type="submit"
+                className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800"
+              >
+                {onEditPage ? "Save Settings" : "Save List"}
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -354,12 +399,13 @@ export const ListFormDetails: React.FC = () => {
         onRemoveSelected={handleRemoveSelected}
       />
       <SuccessModalCreateList
-        isOpen={listCreateSuccess}
+        isOpen={listCreateSuccess.open}
         onClose={() => {
-          setListCreateSuccess(false);
+          setListCreateSuccess({ open: false });
         }}
-        listName={""}
-        onViewList={() => {}}
+        isUpdate={listCreateSuccess.type === "UPDATE_LIST"}
+        listName={listCreateSuccess.data?.name}
+        onViewList={handleViewList}
       />
     </>
   );

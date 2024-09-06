@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { naxiosInstance } from "@/common/api/near";
+import { AccessControlAccounts } from "@/modules/access-control";
 
 interface AddAdminModalProps {
   isOpen: boolean;
@@ -85,6 +86,11 @@ export const AddListAdminModal: React.FC<AddAdminModalProps> = ({
             X
           </button>
         </div>
+        <AccessControlAccounts
+          title="Admins"
+          value={admins}
+          onSubmit={() => {}}
+        />
         <div className="p-4">
           <input
             type="text"

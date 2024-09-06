@@ -11,6 +11,7 @@ import { ListCard } from "@/modules/lists/components/ListCard";
 import { Profile } from "@/modules/profile/models";
 import { categories, statuses } from "@/modules/project/constants";
 import { useTypedSelector } from "@/store";
+import { ListCardSkeleton } from "./ListCardSkeleton";
 
 const AllLists = () => {
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
@@ -19,6 +20,7 @@ const AllLists = () => {
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
   const [currentListType, setCurrentListType] = useState("All Lists");
+  const [loading, setLoading] = useState(false);
   const { wallet } = useWallet();
 
   const SORT_LIST_PROJECTS = [
@@ -98,7 +100,9 @@ const AllLists = () => {
   }, [search, categoryFilter, statusFilter, registrations]);
 
   const fetchAllLists = async () => {
+    setLoading(true);
     const allLists: any = await getLists();
+    setLoading(false);
     setRegistrations(allLists);
     setFilteredRegistrations(allLists);
     setCurrentListType("All Lists");
@@ -188,9 +192,13 @@ const AllLists = () => {
         </div>
       </div>
       <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
-        {filteredRegistrations.map((item, index) => (
-          <ListCard dataForList={item} key={index} />
-        ))}
+        {loading
+          ? Array.from({ length: 6 }, (_, index) => (
+              <ListCardSkeleton key={index} />
+            ))
+          : filteredRegistrations.map((item, index) => (
+              <ListCard dataForList={item} key={index} />
+            ))}
       </div>
     </div>
   );

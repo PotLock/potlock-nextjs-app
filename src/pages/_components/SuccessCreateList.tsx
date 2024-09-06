@@ -6,12 +6,14 @@ interface SuccessModalProps {
   onClose: () => void;
   listName: string;
   onViewList: () => void;
+  isUpdate: boolean;
 }
 
 export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
   isOpen,
   onClose,
   listName,
+  isUpdate,
   onViewList,
 }) => {
   if (!isOpen) return null;
@@ -37,11 +39,11 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
             />
           </div>
           <h2 className="mb-2 text-2xl font-semibold text-red-600">
-            List Successfully Deployed!
+            List Successfully {isUpdate ? "Updated" : "Deployed"}!
           </h2>
           <p className="mb-6 text-center text-gray-700">
-            You’ve successfully deployed {listName}, you can always make
-            adjustments in the pot settings page.
+            You’ve successfully {isUpdate ? "Updated" : "Deployed"} {listName},
+            you can always make adjustments in the pot settings page.
           </p>
           <button
             onClick={onViewList}
