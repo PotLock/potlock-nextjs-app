@@ -11,7 +11,7 @@ export default function PotDeployPage() {
   return (
     <PageWithBanner>
       <section
-        className="md:px-25 md:py-20 w-full gap-6 border-[#f8d3b0] bg-hero px-5 py-16"
+        className="md:px-25 md:py-20 mb-10 w-full gap-6 border-[#f8d3b0] bg-hero px-5 py-16"
         un-flex="~ col"
         un-text="neutral-950"
       >

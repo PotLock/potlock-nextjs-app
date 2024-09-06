@@ -1,7 +1,17 @@
 import { Pencil } from "lucide-react";
+import { entries, omit, prop } from "remeda";
 
-import { ByPotId, potlock } from "@/common/api/potlock";
-import { Button, Skeleton } from "@/common/ui/components";
+import { ByPotId, Pot, potlock } from "@/common/api/potlock";
+import {
+  Button,
+  DataLoadingPlaceholder,
+  Skeleton,
+} from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
+import { AccessControlList } from "@/modules/access-control";
+import { AccountOption } from "@/modules/core";
+
+import { POT_EDITOR_FIELDS } from "../constants";
 
 type PotEditorPreviewSectionProps = {
   heading: string;
@@ -13,34 +23,65 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
   children,
 }) => (
   <div un-flex="~" un-justify="between" un-items="center" un-gap="8">
-    <span className="prose text-neutral-950">{heading}</span>
+    <span className="prose md:w-73 font-600 w-full text-sm text-neutral-950">
+      {heading}
+    </span>
 
     {children ? (
-      <span className="prose text-neutral-950">{children}</span>
+      <span className="prose text-sm text-neutral-950">{children}</span>
     ) : (
       <Skeleton className="w-102 h-5" />
     )}
   </div>
 );
 
-export type PotEditorPreviewProps = ByPotId & { onEditClick: () => void };
+export type PotEditorPreviewProps = Partial<ByPotId> & {
+  onEditClick: () => void;
+};
 
 export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
   potId,
   onEditClick,
 }) => {
   const { isLoading, data } = potlock.usePot({ potId });
+  const adminAccountIds = data?.admins.map(prop("id"));
+  const isDataAvailable = data !== undefined && adminAccountIds !== undefined;
 
   return (
-    <div un-flex="~ col" un-gap="8">
-      <div un-flex="~" un-gap="8">
+    <div un-w="full" un-max-w="183" un-flex="~ col" un-gap="8">
+      <div un-flex="~ wrap" un-gap="8">
         <div un-pr="4" un-flex="~ col" un-gap="2">
           <span className="prose font-500 text-sm text-neutral-500">
             {"Owner"}
           </span>
+
+          {isDataAvailable ? (
+            <AccountOption
+              accountId={data?.owner.id ?? "unknown"}
+              isRounded
+              classNames={{ root: "p-0 pr-2", avatar: "w-6 h-6" }}
+            />
+          ) : (
+            <Skeleton className="w-50 h-8 rounded-full" />
+          )}
         </div>
 
-        <div un-flex="~" un-justify="between">
+        <div un-w="50" un-flex="~ col" un-gap="2">
+          <span className="prose font-500 text-sm text-neutral-500">
+            {"Admins"}
+          </span>
+
+          {isDataAvailable ? (
+            <>
+              <span className="prose">{"No admins"}</span>
+              <AccessControlList value={adminAccountIds} />
+            </>
+          ) : (
+            <Skeleton className="w-50 h-8 rounded-full" />
+          )}
+        </div>
+
+        <div un-ml="md:auto" un-flex="~ col" un-justify="center">
           <Button type="button" onClick={onEditClick} variant="brand-plain">
             <Pencil width={14} height={14} />
 
@@ -51,7 +92,29 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
         </div>
       </div>
 
-      <div un-flex="~ column" un-gap="4"></div>
+      <div
+        className={cn(
+          "min-h-150 rounded-3 md:p-6 flex flex-col gap-4 border border-neutral-200 p-4",
+        )}
+      >
+        {!isDataAvailable && isLoading && (
+          <DataLoadingPlaceholder text="Loading pot data..." />
+        )}
+
+        {isDataAvailable &&
+          entries(omit(POT_EDITOR_FIELDS, ["owner", "admins"])).map(
+            ([key, { index = "none", title }]) => {
+              const entry = data[index as keyof typeof data];
+              const value = typeof entry === "boolean" ? entry && title : entry;
+
+              return (
+                <PotEditorPreviewSection key={key} heading={title}>
+                  {value as string}
+                </PotEditorPreviewSection>
+              );
+            },
+          )}
+      </div>
     </div>
   );
 };

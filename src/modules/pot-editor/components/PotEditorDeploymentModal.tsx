@@ -3,10 +3,9 @@ import { useCallback, useMemo } from "react";
 import { create, useModal } from "@ebay/nice-modal-react";
 
 import {
+  DataLoadingPlaceholder,
   Dialog,
   DialogContent,
-  LabeledIcon,
-  Spinner,
 } from "@/common/ui/components";
 
 import { PotEditorDeploymentError } from "./PotEditorDeploymentError";
@@ -47,15 +46,10 @@ export const PotEditorDeploymentModal = create(
           className="max-w-151"
         >
           {data === undefined ? (
-            <div className="h-106 flex w-full flex-col items-center justify-center">
-              <LabeledIcon
-                caption="Loading pot deployment status..."
-                positioning="icon-text"
-                classNames={{ root: "gap-4", caption: "font-400 text-2xl" }}
-              >
-                <Spinner width={24} height={24} />
-              </LabeledIcon>
-            </div>
+            <DataLoadingPlaceholder
+              text="Loading pot deployment status..."
+              className="h-106"
+            />
           ) : (
             content
           )}

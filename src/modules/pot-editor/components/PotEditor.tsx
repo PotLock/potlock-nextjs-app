@@ -22,10 +22,11 @@ import {
   TextField,
 } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { AccessControlAccounts } from "@/modules/access-control";
+import { AccessControlList } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
+import { PotEditorPreview } from "./PotEditorPreview";
 import { POT_EDITOR_FIELDS } from "../constants";
 import { PotEditorFormArgs, usePotEditorForm } from "../hooks/forms";
 
@@ -49,15 +50,17 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
     } else exitEditMode();
   }, [exitEditMode, form, isNewPot, router]);
 
-  console.table({ isNewPot });
   console.log(values);
 
-  return (
+  return !isInEditMode ? (
+    <PotEditorPreview onEditClick={enterEditMode} {...{ potId }} />
+  ) : (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
         <div className="lg:min-w-4xl flex flex-col gap-14 pt-14">
           <EditorSection heading={POT_EDITOR_FIELDS.admins.title}>
-            <AccessControlAccounts
+            <AccessControlList
+              isEditable
               title={POT_EDITOR_FIELDS.admins.title}
               value={values.admins ?? []}
               onSubmit={handleAdminsUpdate}

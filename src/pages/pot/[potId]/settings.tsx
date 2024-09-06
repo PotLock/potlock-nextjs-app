@@ -10,7 +10,7 @@ const PotSettingsTab = () => {
   } = useRouteQuery();
 
   return (
-    <div className="flex flex-col">
+    <div className="flex w-full flex-col">
       <PotEditor potId={typeof potId === "string" ? potId : "unknown"} />
     </div>
   );

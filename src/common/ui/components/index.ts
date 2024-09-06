@@ -28,6 +28,13 @@ export * from "./typography";
 export * from "./custom-avatar";
 
 /**
+ * Molecules
+ *
+ * See https://atomicdesign.bradfrost.com/chapter-2/#molecules
+ */
+export * from "./molecules/data-loading-placeholder";
+
+/**
  * Organisms
  *
  * See https://atomicdesign.bradfrost.com/chapter-2/#organisms
