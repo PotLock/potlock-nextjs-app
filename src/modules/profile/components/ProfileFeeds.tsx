@@ -61,7 +61,7 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
         className="space-y-4"
         dataLength={40}
         scrollThreshold={1}
-        hasMore={2 < 5}
+        hasMore={true}
         next={loadMorePosts}
         loader={
           <div ref={loadingRef} className="mt-4 min-h-12 text-center">
