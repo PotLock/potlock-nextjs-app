@@ -33,13 +33,6 @@ export const potEditorModel = createModel<RootModel>()({
   reducers: {
     reset: () => potEditorStateDefaults,
 
-    nextStep(state) {
-      switch (state.currentStep) {
-        case "configuration":
-          return handleStep(state, "result");
-      }
-    },
-
     deploymentSuccess: (state, data: PotData) =>
       handleStep(state, "result", {
         finalOutcome: { data, error: null },

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { pick } from "remeda";
 import { infer as FromSchema, ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
@@ -156,24 +155,6 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
 
     [isNewPot, potId, self],
   );
-
-  useEffect(() => {
-    console.table(pick(self.formState, ["isValid"]));
-    console.log("common", self.formState.errors);
-    console.log("crossfield", crossFieldErrors);
-
-    console.log(values);
-
-    Object.values({ ...self.formState.errors, ...crossFieldErrors }).forEach(
-      ({ message }) => console.error(message),
-    );
-  }, [
-    crossFieldErrors,
-    self.formState,
-    self.formState.errors,
-    self.formState.isValid,
-    values,
-  ]);
 
   return {
     form: {
