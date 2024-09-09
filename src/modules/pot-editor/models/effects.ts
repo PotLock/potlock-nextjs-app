@@ -28,8 +28,6 @@ export const effects = (dispatch: RootDispatcher) => ({
     Partial<ByPotId>): Promise<void> => {
     const isNewPot = typeof potId !== "string";
 
-    console.log(isNewPot);
-
     if (commit_hash === null) {
       dispatch.potEditor.deploymentFailure(
         new Error(
@@ -46,8 +44,6 @@ export const effects = (dispatch: RootDispatcher) => ({
       });
 
       if (isNewPot) {
-        console.log(pot_args);
-
         potFactory
           .deploy_pot({
             pot_args,
@@ -56,8 +52,6 @@ export const effects = (dispatch: RootDispatcher) => ({
           .then(dispatch.potEditor.handleDeploymentSuccess)
           .catch(dispatch.potEditor.deploymentFailure);
       } else {
-        console.log(omit(pot_args, ["custom_sybil_checks"]));
-
         pot.admin_dangerously_set_pot_config(potId, {
           update_args: omit(pot_args, ["custom_sybil_checks"]),
         });

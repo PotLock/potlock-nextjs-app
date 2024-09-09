@@ -144,9 +144,10 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
       dispatch.potEditor.save(
         isNewPot
           ? (inputs as PotEditorDeploymentInputs)
-          : (inputs as PotEditorSettings),
+          : { potId, ...(inputs as PotEditorSettings) },
       ),
-    [isNewPot],
+
+    [isNewPot, potId],
   );
 
   useEffect(() => {
