@@ -7,6 +7,11 @@ export const tabRoutesProject = [
     href: "/home",
   },
   {
+    label: "Feed",
+    id: "feed",
+    href: "/feed",
+  },
+  {
     label: "Pots",
     id: "pots",
     href: "/pots",
