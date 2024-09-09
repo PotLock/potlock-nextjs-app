@@ -1,6 +1,9 @@
-import { Pencil } from "lucide-react";
-import { entries, omit, prop } from "remeda";
+import { useMemo } from "react";
 
+import { Pencil } from "lucide-react";
+import { entries, isStrictEqual, omit, pick, piped, prop } from "remeda";
+
+import { walletApi } from "@/common/api/near";
 import { ByPotId, potlock } from "@/common/api/potlock";
 import {
   Button,
@@ -32,12 +35,12 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
   ) : (
     <>
       {children ? (
-        <div un-flex="~" un-justify="between" un-items="center" un-gap="8">
+        <div className="md:flex-row md:gap-8 flex flex-col items-center justify-between gap-1">
           <span className="prose md:w-73 font-600 w-full text-sm">
             {subheading ? `${heading} (${subheading})` : heading}
           </span>
 
-          {<span className="prose text-sm">{children}</span>}
+          {<span className="prose md:w-102 w-full text-sm">{children}</span>}
         </div>
       ) : null}
     </>
@@ -55,9 +58,39 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
   const adminAccountIds = data?.admins.map(prop("id"));
   const isDataAvailable = data !== undefined && adminAccountIds !== undefined;
 
+  const isEditingAllowed =
+    walletApi.accountId !== undefined &&
+    isDataAvailable &&
+    [...data.admins, data.owner].some(
+      piped(prop("id"), isStrictEqual(walletApi.accountId)),
+    );
+
+  const tableContent = useMemo(
+    () =>
+      isDataAvailable
+        ? entries(omit(POT_EDITOR_FIELDS, ["owner", "admins"])).map(
+            ([key, { index = "none", ...attrs }]) => (
+              <PotEditorPreviewSection
+                key={key}
+                heading={attrs.title}
+                {...{ isLoading }}
+              >
+                {potIndexedFieldToString(
+                  key,
+                  data[index as keyof typeof data],
+                  attrs,
+                )}
+              </PotEditorPreviewSection>
+            ),
+          )
+        : null,
+
+    [data, isDataAvailable, isLoading],
+  );
+
   return (
     <div className="max-w-183 flex w-full flex-col gap-8">
-      <div un-flex="~ wrap" un-gap="8">
+      <div className="flex flex-wrap gap-8">
         <div un-pr="4" un-flex="~ col" un-gap="2">
           <span className="prose font-500 text-sm text-neutral-500">
             {"Owner"}
@@ -95,7 +128,10 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
           )}
         </div>
 
-        <div className="md:ml-auto flex flex-col justify-center">
+        <div
+          className="ml-auto flex flex-col justify-center"
+          style={{ display: isEditingAllowed ? undefined : "none" }}
+        >
           <Button type="button" onClick={onEditClick} variant="brand-plain">
             <Pencil width={14} height={14} />
 
@@ -108,29 +144,14 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
 
       <div
         className={cn(
-          "min-h-114 rounded-3 md:p-6 flex flex-col gap-4 border border-neutral-200 p-4",
+          "min-h-114 rounded-3 md:p-6 md:gap-4 flex flex-col gap-6 border border-neutral-200 p-4",
         )}
       >
         {!isDataAvailable && isLoading && (
           <DataLoadingPlaceholder text="Loading pot data..." />
         )}
 
-        {isDataAvailable &&
-          entries(omit(POT_EDITOR_FIELDS, ["owner", "admins"])).map(
-            ([key, { index = "none", title }]) => (
-              <PotEditorPreviewSection
-                key={key}
-                heading={title}
-                {...{ isLoading }}
-              >
-                {potIndexedFieldToString(
-                  key,
-                  data[index as keyof typeof data],
-                  title,
-                )}
-              </PotEditorPreviewSection>
-            ),
-          )}
+        {tableContent}
       </div>
     </div>
   );

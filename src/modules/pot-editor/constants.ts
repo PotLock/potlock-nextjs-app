@@ -53,11 +53,6 @@ export const POT_EDITOR_FIELDS: PotEditorFieldRegistry = {
     title: "Min matching pool donation",
   },
 
-  isPgRegistrationRequired: {
-    title: "Project Registration.",
-    subtitle: "Require approval on PotLock registry",
-  },
-
   referral_fee_matching_pool_basis_points: {
     index: "referral_fee_matching_pool_basis_points",
     title: "Referral fee",
@@ -82,8 +77,25 @@ export const POT_EDITOR_FIELDS: PotEditorFieldRegistry = {
     title: "Max. approved projects",
   },
 
+  registry_provider: {
+    index: "registry_provider",
+    title: "Project Registration",
+    subtitle: "Requires approval on PotLock registry",
+  },
+
+  isPgRegistrationRequired: {
+    title: "Project Registration.",
+    subtitle: "Require approval on PotLock registry",
+  },
+
+  sybil_wrapper_provider: {
+    index: "sybil_wrapper_provider",
+    title: "Donor Sybil Resistance",
+    subtitle: "🤖 nada.bot human verified",
+  },
+
   isSybilResistanceEnabled: {
     title: "Donor Sybil Resistance.",
-    subtitle: "🤖 nada.bot human verified",
+    subtitle: "🤖 nada.bot human verification",
   },
 };

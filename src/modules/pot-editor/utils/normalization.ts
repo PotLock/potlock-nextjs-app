@@ -36,7 +36,7 @@ import { PotInputs } from "@/modules/pot";
 
 import { POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES } from "../constants";
 import { PotEditorSettings } from "../models";
-import { PotEditorFieldKey } from "../types";
+import { PotEditorField, PotEditorFieldKey } from "../types";
 
 export const potConfigToSettings = ({
   chef,
@@ -148,9 +148,13 @@ export const potInputsToPotArgs = ({
 export const potIndexedFieldToString = (
   key: PotEditorFieldKey,
   value: Pot[keyof Pot],
-  title: string,
+  { subtitle }: PotEditorField,
 ): null | string => {
   switch (typeof value) {
+    case "boolean": {
+      return value ? subtitle ?? null : "No";
+    }
+
     case "number": {
       if (key.includes("fee")) {
         return `${donationFeeBasisPointsToPercents(value)} %`;
@@ -164,6 +168,8 @@ export const potIndexedFieldToString = (
           localeStringToTimestampMs,
           millisecondsToLocaleString,
         );
+      } else if (key.includes("provider")) {
+        return typeof value === "string" ? subtitle ?? null : "No";
       } else {
         switch (key) {
           case "min_matching_pool_donation_amount":
@@ -182,9 +188,6 @@ export const potIndexedFieldToString = (
         return value.filter(isNonNullish).join(", ");
       } else return null;
     }
-
-    case "boolean":
-      return value ? title : "No";
 
     default:
       return null;

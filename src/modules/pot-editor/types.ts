@@ -14,10 +14,7 @@ export type PotEditorState = {
 
 export type PotEditorFieldKey = keyof Omit<
   PotInputs,
-  | "cooldown_period_ms"
-  | "registry_provider"
-  | "sybil_wrapper_provider"
-  | "source_metadata"
+  "cooldown_period_ms" | "source_metadata"
 >;
 
 export type PotEditorField = {
