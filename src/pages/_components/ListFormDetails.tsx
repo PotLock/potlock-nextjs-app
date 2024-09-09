@@ -67,7 +67,7 @@ export const ListFormDetails: React.FC = () => {
   const [transferAccountField, setTransferAccountField] = useState<string>("");
   const [transferAccountError, setTransferAccountError] = useState<
     string | undefined
-  >(" ");
+  >("");
   const [listConfirmModal, setOpenListConfirmModal] =
     useState<ListConfirmationModalProps>({
       open: false,
@@ -205,7 +205,7 @@ export const ListFormDetails: React.FC = () => {
   };
 
   const handleTransferOwner = () => {
-    if (transferAccountError) return;
+    if (transferAccountError && !transferAccountField) return;
     transfer_list_ownership({
       list_id: parseInt(id as any),
       new_owner_id: transferAccountField,
@@ -329,9 +329,14 @@ export const ListFormDetails: React.FC = () => {
                 value={transferAccountField}
               />
               <button
-                disabled={!!transferAccountError}
+                disabled={!!transferAccountError || !transferAccountField}
                 type="button"
-                onClick={handleTransferOwner}
+                onClick={() =>
+                  setOpenListConfirmModal({
+                    open: true,
+                    type: "TRANSFER_OWNERSHIP",
+                  })
+                }
                 className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 Transfer
@@ -402,8 +407,13 @@ export const ListFormDetails: React.FC = () => {
       <ListConfirmationModal
         open={listConfirmModal.open}
         type={listConfirmModal.type}
+        transferAccount={transferAccountField}
         onClose={() => setOpenListConfirmModal({ open: false })}
-        onSubmitButton={handleDeleteList}
+        onSubmitButton={
+          listConfirmModal.type === "DELETE"
+            ? handleDeleteList
+            : handleTransferOwner
+        }
       />
       <SuccessModalCreateList
         isOpen={listCreateSuccess.open}

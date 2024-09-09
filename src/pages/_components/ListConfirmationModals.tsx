@@ -78,7 +78,7 @@ export const ListConfirmationModal: React.FC<ListConfirmationModalProps> = ({
 }) => {
   const [modalText, setModalText] = useState<{
     header: string;
-    paragraph: string;
+    paragraph: string | JSX.Element;
   }>({ header: "", paragraph: "" });
 
   useEffect(() => {
@@ -91,7 +91,12 @@ export const ListConfirmationModal: React.FC<ListConfirmationModalProps> = ({
     } else if (type === "TRANSFER_OWNERSHIP") {
       setModalText({
         header: "Transfer ownership",
-        paragraph: `Are you sure you want to transfer ownership to ${transferAccount}? This action cannot be undone.`,
+        paragraph: (
+          <>
+            Are you sure you want to transfer ownership to{" "}
+            <strong>{transferAccount}?</strong> This action cannot be undone.
+          </>
+        ),
       });
     }
   }, [type]);
@@ -101,7 +106,7 @@ export const ListConfirmationModal: React.FC<ListConfirmationModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
       <div className="w-96 max-w-full rounded-md bg-white shadow-lg">
-        <div className="flex justify-end p-4">
+        <div className="flex justify-end p-4 pb-0">
           <button
             onClick={onClose}
             className="font-bold text-gray-500 hover:text-gray-700"
@@ -109,7 +114,7 @@ export const ListConfirmationModal: React.FC<ListConfirmationModalProps> = ({
             X
           </button>
         </div>
-        <div className="flex flex-col items-center p-4">
+        <div className="flex flex-col items-center p-4 pb-10 pt-0">
           <div className="mb-4">
             <Image
               src="/assets/icons/modal-danger.svg"
