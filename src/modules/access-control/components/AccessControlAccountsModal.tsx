@@ -28,10 +28,18 @@ export type AccessControlAccountsModalProps = {
   title: string;
   value: AccountId[];
   onSubmit: (accountIds: AccountId[]) => void;
+  onSaveSettings?: () => void;
+  showOnSaveButton?: boolean;
 };
 
 export const AccessControlAccountsModal = create(
-  ({ title, value: accountIds, onSubmit }: AccessControlAccountsModalProps) => {
+  ({
+    title,
+    value: accountIds,
+    onSubmit,
+    showOnSaveButton,
+    onSaveSettings,
+  }: AccessControlAccountsModalProps) => {
     const self = useModal();
 
     const close = useCallback(() => {
@@ -214,6 +222,17 @@ export const AccessControlAccountsModal = create(
               <ScrollBar orientation="vertical" />
             </ScrollArea>
           </div>
+          {showOnSaveButton && (
+            <div className="m-4 flex justify-center">
+              <Button
+                type="button"
+                variant="brand-filled"
+                onClick={onSaveSettings}
+              >
+                Save Changes
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     );

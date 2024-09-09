@@ -7,6 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import {
+  add_admins_to_list,
   create_list,
   delete_list,
   getList,
@@ -14,11 +15,15 @@ import {
 } from "@/common/contracts/potlock/lists";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { AccessControlAccounts } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { createListSchema } from "@/modules/lists/models/schema";
-import SuccessModalCreateList from "@/pages/_components/SuccessCreateList";
 
-import { AddListAdminModal } from "./addListAdminModal";
+import {
+  ListConfirmationModal,
+  ListConfirmationModalProps,
+  SuccessModalCreateList,
+} from "./ListConfirmationModals";
 
 interface FormData {
   name: string;
@@ -40,19 +45,6 @@ interface CreateSuccess {
   data?: any;
 }
 
-const Chip: React.FC<ChipProps> = ({ label, onRemove }) => (
-  <div className="m-1 inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-    {label}
-    <button
-      type="button"
-      onClick={onRemove}
-      className="ml-2 text-gray-500 hover:text-gray-700"
-    >
-      ✕
-    </button>
-  </div>
-);
-
 export const ListFormDetails: React.FC = () => {
   const {
     register,
@@ -70,10 +62,12 @@ export const ListFormDetails: React.FC = () => {
   const descriptionLength = watch("description")?.length || 0;
 
   const [admins, setAdmins] = useState<string[]>([]);
-  const [checkedState, setCheckedState] = useState<boolean[]>([]);
   const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [listConfirmModal, setOpenListConfirmModal] =
+    useState<ListConfirmationModalProps>({
+      open: false,
+    });
   const [listCreateSuccess, setListCreateSuccess] = useState<CreateSuccess>({
     open: false,
   });
@@ -110,7 +104,14 @@ export const ListFormDetails: React.FC = () => {
     if (wallet?.accountId) fetchProfileImage();
   }, [wallet]);
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
+  const onSubmit: SubmitHandler<FormData> = async (data, event) => {
+    // Due to conflicting submit buttons (admin and list), this is to make sure only list submit form is submitted.
+    if (
+      (event?.nativeEvent as SubmitEvent)?.submitter?.id !==
+      "list-submit-button"
+    )
+      return;
+
     if (onEditPage) {
       update_list({
         ...data,
@@ -150,37 +151,6 @@ export const ListFormDetails: React.FC = () => {
     }
   };
 
-  const handleAddAdmin = (admin: string) => {
-    setAdmins((prevAdmins) => [...prevAdmins, admin]);
-    setCheckedState((prevState) => [...prevState, false]);
-    setIsModalOpen(false);
-  };
-
-  const handleRemoveAdmin = (adminToRemove: string) => {
-    const indexToRemove = admins.indexOf(adminToRemove);
-    setAdmins((prevAdmins) =>
-      prevAdmins.filter((admin) => admin !== adminToRemove),
-    );
-    setCheckedState((prevState) =>
-      prevState.filter((_, index) => index !== indexToRemove),
-    );
-  };
-
-  const handleToggleCheck = (index: number) => {
-    const updatedCheckedState = checkedState.map((item, i) =>
-      i === index ? !item : item,
-    );
-    setCheckedState(updatedCheckedState);
-  };
-
-  const handleRemoveSelected = () => {
-    const newAdmins = admins.filter((_, index) => !checkedState[index]);
-    const newCheckedState = checkedState.filter((state) => !state);
-
-    setAdmins(newAdmins);
-    setCheckedState(newCheckedState);
-  };
-
   const handleCoverImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
@@ -202,6 +172,19 @@ export const ListFormDetails: React.FC = () => {
     delete_list({ list_id: parseInt(id as any) })
       .then(() => {
         push("/list");
+      })
+      .catch((error) => {
+        console.error("Error deleting list", error);
+      });
+  };
+
+  const handleSaveAdminsSettings = () => {
+    add_admins_to_list({
+      list_id: parseInt(id as any),
+      admins,
+    })
+      .then((data) => {
+        console.log("Added admins to list", data);
       })
       .catch((error) => {
         console.error("Error deleting list", error);
@@ -293,41 +276,20 @@ export const ListFormDetails: React.FC = () => {
             </div>
             <div className=" translate-y-1">
               <div className="flex items-end  space-x-2">
-                <div>
+                <div className="flex flex-col gap-2">
                   <div className="translate-y-1 justify-between">
                     <p className="font-semibold text-gray-700">Admins</p>
                   </div>
-                  <div className="flex h-[35px] flex-wrap">
-                    {admins.length !== 0 ? (
-                      admins.map((admin, index) => (
-                        <Chip
-                          key={index}
-                          label={admin}
-                          onRemove={() => handleRemoveAdmin(admin)}
-                        />
-                      ))
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => setIsModalOpen(true)}
-                          className="bpx-4 rounded-m py-2 text-red-500 transition"
-                        >
-                          Add Admin
-                        </button>
-                      </>
-                    )}
+                  <div className="flex h-[35px]  flex-wrap">
+                    <AccessControlAccounts
+                      title="Admins"
+                      value={admins}
+                      showOnSaveButton={admins.length > 0}
+                      onSubmit={(admins) => setAdmins(admins)}
+                      onSaveSettings={handleSaveAdminsSettings}
+                    />
                   </div>
                 </div>
-                {admins.length !== 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(true)}
-                    className="bpx-4 rounded-m py-2 text-red-500 transition"
-                  >
-                    Add Admin
-                  </button>
-                )}
               </div>
             </div>
           </div>
@@ -366,7 +328,9 @@ export const ListFormDetails: React.FC = () => {
             className={`md:flex-row flex w-full flex-col justify-between ${onEditPage ? "flex-col-reverse" : "md:justify-end flex-col"} `}
           >
             <button
-              onClick={handleDeleteList}
+              onClick={() =>
+                setOpenListConfirmModal({ open: true, type: "DELETE" })
+              }
               className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9] ${onEditPage ? "" : "hidden"}`}
             >
               Delete List
@@ -381,6 +345,7 @@ export const ListFormDetails: React.FC = () => {
               </button>
               <button
                 type="submit"
+                id="list-submit-button"
                 className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800"
               >
                 {onEditPage ? "Save Settings" : "Save List"}
@@ -389,14 +354,11 @@ export const ListFormDetails: React.FC = () => {
           </div>
         </form>
       </div>
-      <AddListAdminModal
-        isOpen={isModalOpen}
-        admins={admins}
-        checkedState={checkedState}
-        onClose={() => setIsModalOpen(false)}
-        onAddAdmin={handleAddAdmin}
-        onToggleCheck={handleToggleCheck}
-        onRemoveSelected={handleRemoveSelected}
+      <ListConfirmationModal
+        open={listConfirmModal.open}
+        type={listConfirmModal.type}
+        onClose={() => setOpenListConfirmModal({ open: false })}
+        onSubmitButton={handleDeleteList}
       />
       <SuccessModalCreateList
         isOpen={listCreateSuccess.open}
