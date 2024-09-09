@@ -11,6 +11,7 @@ import {
   POTLOCK_CONTRACT_REPO_URL,
   POTLOCK_CONTRACT_VERSION,
 } from "@/common/constants";
+import { PotConfig } from "@/common/contracts/potlock";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
 import { donationFeeBasisPointsToPercents } from "@/modules/donation";
@@ -25,7 +26,10 @@ import {
   potEditorSettingsCrossFieldValidationTargets,
   potEditorSettingsSchema,
 } from "../models";
-import { potIndexedDataToPotInputs } from "../utils/normalization";
+import {
+  potConfigToSettings,
+  potIndexedDataToPotInputs,
+} from "../utils/normalization";
 
 export type PotEditorFormArgs =
   | (ByPotId & {
@@ -140,14 +144,17 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   );
 
   const onSubmit: SubmitHandler<Values> = useCallback(
-    (inputs) =>
-      dispatch.potEditor.save(
-        isNewPot
-          ? (inputs as PotEditorDeploymentInputs)
-          : { potId, ...(inputs as PotEditorSettings) },
-      ),
+    (values) =>
+      dispatch.potEditor.save({
+        onUpdate: (config: PotConfig) =>
+          self.reset(potConfigToSettings(config)),
 
-    [isNewPot, potId],
+        ...(isNewPot
+          ? (values as PotEditorDeploymentInputs)
+          : { potId, ...(values as PotEditorSettings) }),
+      }),
+
+    [isNewPot, potId, self],
   );
 
   useEffect(() => {

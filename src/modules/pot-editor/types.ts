@@ -1,14 +1,13 @@
-import { Pot, PotId } from "@/common/api/potlock";
-import { PotConfig } from "@/common/contracts/potlock";
-import { PotInputs } from "@/modules/pot";
+import { Pot } from "@/common/api/potlock";
+import { PotData, PotInputs } from "@/modules/pot";
 
-export type PotEditorDeploymentStep = "configuration" | "result";
+export type PotEditorStep = "configuration" | "result";
 
 export type PotEditorState = {
-  currentStep: PotEditorDeploymentStep;
+  currentStep: PotEditorStep;
 
   finalOutcome: {
-    data?: null | (PotConfig & { id: PotId });
+    data?: null | PotData;
     error: null | Error;
   };
 };

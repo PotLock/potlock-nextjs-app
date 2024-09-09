@@ -4,6 +4,7 @@ import { omit } from "remeda";
 import { nearRpc, walletApi } from "@/common/api/near";
 import { ByPotId } from "@/common/api/potlock";
 import {
+  PotConfig,
   PotDeploymentResult,
   pot,
   potFactory,
@@ -17,14 +18,26 @@ const UnknownDeploymentStatusError = new Error(
   "Unable to get pot deployment status.",
 );
 
+type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
+  Partial<ByPotId> & {
+    onUpdate: (config: PotConfig) => void;
+  };
+
 export const effects = (dispatch: RootDispatcher) => ({
+  handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
+    void pot
+      .getConfig({ potId: id })
+      .then((potConfig) =>
+        dispatch.potEditor.deploymentSuccess({ id, ...potConfig }),
+      ),
+
   save: async ({
+    onUpdate,
     potId,
     pot_handle,
     source_metadata: { commit_hash, ...sourceMetadata },
     ...potInputs
-  }: (PotEditorDeploymentInputs | PotEditorSettings) &
-    Partial<ByPotId>): Promise<void> => {
+  }: PotEditorSaveInputs): Promise<void> => {
     const isNewPot = typeof potId !== "string";
 
     if (commit_hash === null) {
@@ -35,7 +48,7 @@ export const effects = (dispatch: RootDispatcher) => ({
         ),
       );
     } else {
-      // TODO: unmask and fix this
+      // TODO: provide compatible types
       // @ts-expect-error runtime should be fine
       const pot_args = potInputsToPotArgs({
         ...potInputs,
@@ -51,9 +64,12 @@ export const effects = (dispatch: RootDispatcher) => ({
           .then(dispatch.potEditor.handleDeploymentSuccess)
           .catch(dispatch.potEditor.deploymentFailure);
       } else {
-        pot.admin_dangerously_set_pot_config(potId, {
-          update_args: omit(pot_args, ["custom_sybil_checks"]),
-        });
+        pot
+          .admin_dangerously_set_pot_config(potId, {
+            update_args: omit(pot_args, ["custom_sybil_checks"]),
+          })
+          .then(onUpdate)
+          .catch(dispatch.potEditor.updateFailure);
       }
     }
   },
@@ -95,11 +111,4 @@ export const effects = (dispatch: RootDispatcher) => ({
       );
     }
   },
-
-  handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
-    void pot
-      .getConfig({ potId: id })
-      .then((potConfig) =>
-        dispatch.potEditor.deploymentSuccess({ id, ...potConfig }),
-      ),
 });

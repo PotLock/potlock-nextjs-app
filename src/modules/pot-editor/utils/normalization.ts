@@ -15,7 +15,11 @@ import {
   PROVIDER_ID_DELIMITER,
   SYBIL_CONTRACT_ID,
 } from "@/common/constants";
-import { ContractSourceMetadata, PotArgs } from "@/common/contracts/potlock";
+import {
+  ContractSourceMetadata,
+  PotArgs,
+  PotConfig,
+} from "@/common/contracts/potlock";
 import {
   floatToYoctoNear,
   formatDatetimeLocal,
@@ -31,7 +35,29 @@ import {
 import { PotInputs } from "@/modules/pot";
 
 import { POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES } from "../constants";
+import { PotEditorSettings } from "../models";
 import { PotEditorFieldKey } from "../types";
+
+export const potConfigToSettings = ({
+  chef,
+  registry_provider,
+  sybil_wrapper_provider,
+  ...config
+}: PotConfig): Partial<PotEditorSettings> =>
+  evolve(
+    {
+      chef: chef ?? undefined,
+      registry_provider: registry_provider ?? undefined,
+      isPgRegistrationRequired: typeof registry_provider === "string",
+      sybil_wrapper_provider: sybil_wrapper_provider ?? undefined,
+      isSybilResistanceEnabled: typeof sybil_wrapper_provider === "string",
+      ...config,
+    },
+
+    {
+      min_matching_pool_donation_amount: yoctoNearToFloat,
+    },
+  );
 
 export const potIndexedDataToPotInputs = ({
   owner,

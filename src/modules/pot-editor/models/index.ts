@@ -6,7 +6,7 @@ import { useTypedSelector } from "@/store";
 import { RootModel } from "@/store/models";
 
 import { effects } from "./effects";
-import { PotEditorDeploymentStep, PotEditorState } from "../types";
+import { PotEditorState, PotEditorStep } from "../types";
 
 export * from "./schemas";
 
@@ -15,43 +15,43 @@ export const potEditorModelKey = "potEditor";
 export const usePotEditorState = () =>
   useTypedSelector(prop(potEditorModelKey));
 
-const potDeploymentStateDefaults: PotEditorState = {
+const potEditorStateDefaults: PotEditorState = {
   currentStep: "configuration",
   finalOutcome: { error: null },
 };
 
-const handleDeploymentStep = (
+const handleStep = (
   state: PotEditorState,
-  step: PotEditorDeploymentStep,
-  deploymentStateUpdate?: Partial<PotEditorState>,
-) => mergeAll([state, deploymentStateUpdate ?? {}, { currentStep: step }]);
+  step: PotEditorStep,
+  stateUpdate?: Partial<PotEditorState>,
+) => mergeAll([state, stateUpdate ?? {}, { currentStep: step }]);
 
 export const potEditorModel = createModel<RootModel>()({
-  state: potDeploymentStateDefaults,
+  state: potEditorStateDefaults,
   effects,
 
   reducers: {
-    reset: () => potDeploymentStateDefaults,
+    reset: () => potEditorStateDefaults,
 
-    deploymentReset: (state) =>
-      merge(state, {
-        deployment: potDeploymentStateDefaults,
-      }),
-
-    nextDeploymentStep(state) {
+    nextStep(state) {
       switch (state.currentStep) {
         case "configuration":
-          return handleDeploymentStep(state, "result");
+          return handleStep(state, "result");
       }
     },
 
     deploymentSuccess: (state, data: PotData) =>
-      handleDeploymentStep(state, "result", {
+      handleStep(state, "result", {
         finalOutcome: { data, error: null },
       }),
 
     deploymentFailure: (state, error: Error) =>
-      handleDeploymentStep(state, "result", {
+      handleStep(state, "result", {
+        finalOutcome: { data: null, error },
+      }),
+
+    updateFailure: (state, error: Error) =>
+      merge(state, {
         finalOutcome: { data: null, error },
       }),
   },
