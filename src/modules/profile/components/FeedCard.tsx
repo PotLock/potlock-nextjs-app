@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 import { fetchTimeByBlockHeight } from "@/common/api/near-social";
 import truncate from "@/common/lib/truncate";
@@ -53,7 +52,7 @@ export const FeedCard = ({ post }: PostType) => {
   return (
     <div
       onClick={handleCardClick}
-      className="w-100 md:w-full mb-4 cursor-pointer rounded-lg bg-white p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg"
+      className="md:w-100 md:w-full mb-4 cursor-pointer rounded-lg bg-white p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg"
     >
       <div className="mb-4 flex items-center justify-between">
         <div className="flex">
@@ -91,7 +90,6 @@ export const FeedCard = ({ post }: PostType) => {
 
       <div className="mt-2 text-black">
         <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
           components={{
             a: ({ node, ...props }) => (
               <a
