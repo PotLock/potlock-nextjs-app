@@ -1,5 +1,4 @@
-import { Pot } from "@/common/api/potlock";
-import { PotInputs } from "@/modules/pot";
+import { PotEditorFieldRegistry } from "./types";
 
 export const POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES = [
   "all_paid_out" as const,
@@ -22,27 +21,12 @@ export const POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES = [
   "total_public_donations_usd" as const,
 ];
 
-export const POT_EDITOR_FIELDS: Record<
-  keyof Omit<
-    PotInputs,
-    | "cooldown_period_ms"
-    | "registry_provider"
-    | "sybil_wrapper_provider"
-    | "source_metadata"
-  >,
-  { index?: keyof Pot; title: string; subtitle?: string }
-> = {
+export const POT_EDITOR_FIELDS: PotEditorFieldRegistry = {
   owner: { index: "owner", title: "Owner" },
   admins: { index: "admins", title: "Admins" },
-  chef: { index: "chef", title: "Assigned Chef" },
   pot_name: { index: "name", title: "Name" },
   pot_handle: { title: "Custom handle" },
   pot_description: { index: "description", title: "Description" },
-
-  max_projects: {
-    index: "max_approved_applicants",
-    title: "Max. approved projects",
-  },
 
   application_start_ms: {
     index: "application_start",
@@ -74,11 +58,6 @@ export const POT_EDITOR_FIELDS: Record<
     subtitle: "Require approval on PotLock registry",
   },
 
-  isSybilResistanceEnabled: {
-    title: "Donor Sybil Resistance.",
-    subtitle: "🤖 nada.bot human verified",
-  },
-
   referral_fee_matching_pool_basis_points: {
     index: "referral_fee_matching_pool_basis_points",
     title: "Referral fee",
@@ -94,5 +73,17 @@ export const POT_EDITOR_FIELDS: Record<
   chef_fee_basis_points: {
     index: "chef_fee_basis_points",
     title: "Chef fee",
+  },
+
+  chef: { index: "chef", title: "Assigned Chef" },
+
+  max_projects: {
+    index: "max_approved_applicants",
+    title: "Max. approved projects",
+  },
+
+  isSybilResistanceEnabled: {
+    title: "Donor Sybil Resistance.",
+    subtitle: "🤖 nada.bot human verified",
   },
 };

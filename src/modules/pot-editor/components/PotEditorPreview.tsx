@@ -12,30 +12,36 @@ import { AccessControlList } from "@/modules/access-control";
 import { AccountOption } from "@/modules/core";
 
 import { POT_EDITOR_FIELDS } from "../constants";
+import { potIndexedFieldToString } from "../utils/normalization";
 
 type PotEditorPreviewSectionProps = {
+  isLoading: boolean;
   heading: string;
   subheading?: string;
   children?: React.ReactNode;
 };
 
 const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
+  isLoading,
   heading,
   subheading,
   children,
-}) => (
-  <div un-flex="~" un-justify="between" un-items="center" un-gap="8">
-    <span className="prose md:w-73 font-600 w-full text-sm">
-      {subheading ? `${heading} (${subheading})` : heading}
-    </span>
+}) =>
+  isLoading ? (
+    <Skeleton className="w-102 h-5" />
+  ) : (
+    <>
+      {children ? (
+        <div un-flex="~" un-justify="between" un-items="center" un-gap="8">
+          <span className="prose md:w-73 font-600 w-full text-sm">
+            {subheading ? `${heading} (${subheading})` : heading}
+          </span>
 
-    {children ? (
-      <span className="prose text-sm">{children}</span>
-    ) : (
-      <Skeleton className="w-102 h-5" />
-    )}
-  </div>
-);
+          {<span className="prose text-sm">{children}</span>}
+        </div>
+      ) : null}
+    </>
+  );
 
 export type PotEditorPreviewProps = Partial<ByPotId> & {
   onEditClick: () => void;
@@ -96,7 +102,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
 
       <div
         className={cn(
-          "min-h-150 rounded-3 md:p-6 flex flex-col gap-4 border border-neutral-200 p-4",
+          "min-h-114 rounded-3 md:p-6 flex flex-col gap-4 border border-neutral-200 p-4",
         )}
       >
         {!isDataAvailable && isLoading && (
@@ -105,16 +111,19 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
 
         {isDataAvailable &&
           entries(omit(POT_EDITOR_FIELDS, ["owner", "admins"])).map(
-            ([key, { index = "none", title }]) => {
-              const entry = data[index as keyof typeof data];
-              const value = typeof entry === "boolean" ? entry && title : entry;
-
-              return (
-                <PotEditorPreviewSection key={key} heading={title}>
-                  {value as string}
-                </PotEditorPreviewSection>
-              );
-            },
+            ([key, { index = "none", title }]) => (
+              <PotEditorPreviewSection
+                key={key}
+                heading={title}
+                {...{ isLoading }}
+              >
+                {potIndexedFieldToString(
+                  key,
+                  data[index as keyof typeof data],
+                  title,
+                )}
+              </PotEditorPreviewSection>
+            ),
           )}
       </div>
     </div>

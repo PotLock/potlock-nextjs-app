@@ -3,6 +3,7 @@ import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
 import { Pot } from "@/common/api/potlock";
 import {
   LISTS_CONTRACT_ID,
+  NEAR_TOKEN_DENOM,
   PROVIDER_ID_DELIMITER,
   SYBIL_CONTRACT_ID,
 } from "@/common/constants";
@@ -15,6 +16,7 @@ import {
 import { PotInputs } from "@/modules/pot";
 
 import { POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES } from "../constants";
+import { PotEditorFieldKey } from "../types";
 
 export const potIndexedDataToPotInputs = ({
   owner,
@@ -96,15 +98,39 @@ export const potInputsToPotArgs = ({
   );
 
 export const potIndexedFieldToString = (
-  key: keyof Pot,
+  key: PotEditorFieldKey,
   value: Pot[keyof Pot],
-) => {
+  title: string,
+): null | string => {
   switch (typeof value) {
-    case "number":
-      return value.toString();
-    case "string":
-      return value;
+    case "number": {
+      if (key.includes("fee")) {
+        return `${value} %`;
+      } else return value.toLocaleString();
+    }
+
+    case "string": {
+      switch (key) {
+        case "min_matching_pool_donation_amount":
+          return `${yoctoNearToFloat(value)} ${NEAR_TOKEN_DENOM}`;
+
+        default:
+          return value;
+      }
+    }
+
+    case "object": {
+      if (value === null) {
+        return value;
+      } else if (Array.isArray(value)) {
+        return value.filter(isNonNullish).join(", ");
+      } else return null;
+    }
+
+    case "boolean":
+      return value ? title : "No";
+
     default:
-      return undefined;
+      return null;
   }
 };
