@@ -1,4 +1,12 @@
-import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
+import {
+  conditional,
+  evolve,
+  isNonNullish,
+  omit,
+  pipe,
+  piped,
+  prop,
+} from "remeda";
 
 import { Pot } from "@/common/api/potlock";
 import {
@@ -10,8 +18,9 @@ import {
 import { ContractSourceMetadata, PotArgs } from "@/common/contracts/potlock";
 import {
   floatToYoctoNear,
+  localeStringToTimestampMs,
+  millisecondsToLocaleString,
   timestamp,
-  timestampMsToLocaleString,
   yoctoNearToFloat,
 } from "@/common/lib";
 import {
@@ -111,19 +120,24 @@ export const potIndexedFieldToString = (
     case "number": {
       if (key.includes("fee")) {
         return `${donationFeeBasisPointsToPercents(value)} %`;
-      } else if (key.includes("ms")) {
-        console.log(value);
-        return timestampMsToLocaleString(value);
       } else return value === 0 ? null : value.toLocaleString();
     }
 
     case "string": {
-      switch (key) {
-        case "min_matching_pool_donation_amount":
-          return `${yoctoNearToFloat(value)} ${NEAR_TOKEN_DENOM.toUpperCase()}`;
+      if (key.includes("ms")) {
+        console.log(
+          pipe(value, localeStringToTimestampMs, millisecondsToLocaleString),
+        );
 
-        default:
-          return value;
+        return value;
+      } else {
+        switch (key) {
+          case "min_matching_pool_donation_amount":
+            return `${yoctoNearToFloat(value)} ${NEAR_TOKEN_DENOM.toUpperCase()}`;
+
+          default:
+            return value;
+        }
       }
     }
 
