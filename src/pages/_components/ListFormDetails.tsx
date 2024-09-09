@@ -1,22 +1,27 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AccountView } from "near-api-js/lib/providers/provider";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { nearRpc } from "@/common/api/near";
+import { IPFS_NEAR_SOCIAL_URL, NETWORK } from "@/common/constants";
 import {
   add_admins_to_list,
   create_list,
   delete_list,
   getList,
+  transfer_list_ownership,
   update_list,
 } from "@/common/contracts/potlock/lists";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { Input } from "@/common/ui/components";
 import { AccessControlAccounts } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import { validAccountId, validateAccountId } from "@/modules/core";
 import { createListSchema } from "@/modules/lists/models/schema";
 
 import {
@@ -32,11 +37,6 @@ interface FormData {
   approveApplications: boolean;
   image_cover_url?: string;
   owner?: string;
-}
-
-interface ChipProps {
-  label: string;
-  onRemove: () => void;
 }
 
 interface CreateSuccess {
@@ -64,6 +64,10 @@ export const ListFormDetails: React.FC = () => {
   const [admins, setAdmins] = useState<string[]>([]);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [transferAccountField, setTransferAccountField] = useState<string>("");
+  const [transferAccountError, setTransferAccountError] = useState<
+    string | undefined
+  >(" ");
   const [listConfirmModal, setOpenListConfirmModal] =
     useState<ListConfirmationModalProps>({
       open: false,
@@ -191,6 +195,29 @@ export const ListFormDetails: React.FC = () => {
       });
   };
 
+  const handleChangeTransferOwnerField = async (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { value } = event.target;
+    setTransferAccountField(value);
+    const data = await validateAccountId(value);
+    setTransferAccountError(data);
+  };
+
+  const handleTransferOwner = () => {
+    if (transferAccountError) return;
+    transfer_list_ownership({
+      list_id: parseInt(id as any),
+      new_owner_id: transferAccountField,
+    })
+      .then((data) => {
+        console.log("Transferred list ownership", data);
+      })
+      .catch((error) => {
+        console.error("Error Transferring Owner", error);
+      });
+  };
+
   return (
     <>
       <div className="mx-auto max-w-[896px] p-6 font-sans">
@@ -291,6 +318,24 @@ export const ListFormDetails: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <div>
+            <h3>Transfer Ownership</h3>
+            <div className="flex gap-2">
+              <Input
+                onChange={handleChangeTransferOwnerField}
+                error={transferAccountError}
+                value={transferAccountField}
+              />
+              <button
+                disabled={!!transferAccountError}
+                type="button"
+                onClick={handleTransferOwner}
+                className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                Transfer
+              </button>
             </div>
           </div>
           <div>

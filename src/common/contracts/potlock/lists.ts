@@ -129,6 +129,16 @@ export const add_admins_to_list = (args: {
     gas: "300000000000000",
   });
 
+export const transfer_list_ownership = (args: {
+  list_id: number;
+  new_owner_id: string;
+}) =>
+  contractApi.call<typeof args, List>("owner_change_owner", {
+    args,
+    deposit: floatToYoctoNear(0.01),
+    gas: "300000000000000",
+  });
+
 export const remove_upvote = (args: { list_id: number }) =>
   contractApi.call<typeof args, List>("remove_upvote", {
     args,
