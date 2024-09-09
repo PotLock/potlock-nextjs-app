@@ -58,7 +58,7 @@ const AlertTitle = forwardRef<
   <h5
     ref={ref}
     className={cn(
-      "prose font-500 important:pl-8 leading-5 tracking-normal text-neutral-950",
+      "prose font-500 important:pl-8 leading-5 tracking-normal",
       className,
     )}
     {...props}

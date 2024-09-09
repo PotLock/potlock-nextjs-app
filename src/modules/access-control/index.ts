@@ -1,1 +1,1 @@
-export * from "./components/AccessControlAccounts";
+export * from "./components/AccessControlList";

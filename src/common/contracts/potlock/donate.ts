@@ -28,9 +28,7 @@ export const getConfig = () => contractApi.view<{}, Config>("get_config");
  * Get direct donations
  */
 export const getDonations = (args: { fromIndex?: number; limit?: number }) =>
-  contractApi.view<typeof args, DirectDonation[]>("get_donations", {
-    args,
-  });
+  contractApi.view<typeof args, DirectDonation[]>("get_donations", { args });
 
 /**
  * Get donations for a recipient id
@@ -38,9 +36,7 @@ export const getDonations = (args: { fromIndex?: number; limit?: number }) =>
 export const getDonationsForRecipient = (args: { recipient_id: string }) =>
   contractApi.view<typeof args, DirectDonation[]>(
     "get_donations_for_recipient",
-    {
-      args,
-    },
+    { args },
   );
 
 /**
@@ -51,10 +47,7 @@ export const getDonationsForDonor = (args: { donor_id: string }) =>
     args,
   });
 
-export const donateNearDirectly = (
-  args: DirectDonationArgs,
-  depositAmountYocto: string,
-) =>
+export const donate = (args: DirectDonationArgs, depositAmountYocto: string) =>
   contractApi.call<typeof args, DirectDonation>("donate", {
     args,
     deposit: depositAmountYocto,

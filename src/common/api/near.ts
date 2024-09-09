@@ -21,7 +21,7 @@ import naxios from "@wpdas/naxios";
 
 import { FULL_TGAS, NETWORK, SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
 
-export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "rpc.testnet.near.org"}`;
+export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "test.rpc.fastnear.com"}`;
 
 // Naxios (Contract/Wallet) Instance
 export const naxiosInstance = new naxios({

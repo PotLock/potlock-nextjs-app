@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { usePot } from "@/common/api/potlock/hooks";
+import { potlock } from "@/common/api/potlock";
 import { SYBIL_FRONTEND_URL } from "@/common/constants";
 import { PageWithBanner } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
@@ -12,7 +12,7 @@ import SuccessModal from "@/modules/core/components/SuccessModal";
 import { Header, HeaderStatus } from "@/modules/pot";
 
 import Tabs from "./Tabs";
-import { potTabRoutes } from "../potTabRoutes";
+import { POT_TABS_CONFIG } from "../constants";
 
 export type PotLayoutProps = {
   children: React.ReactNode;
@@ -28,24 +28,25 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const pathname = router.pathname;
 
   const { potId } = query;
-  const { data: potDetail } = usePot({ potId });
+  const { data: potDetail } = potlock.usePot({ potId });
   const { wallet } = useWallet();
   const { loading, nadaBotVerified } = useIsHuman(wallet?.accountId);
 
   // Modals
-  const [successModalOpen, setSuccessModalOpen] = useState(
+  const [resultModalOpen, setSuccessModalOpen] = useState(
     !!query.done && !query.errorMessage,
   );
   const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
 
   const [selectedTab, setSelectedTab] = useState(
-    potTabRoutes.find((tab) => pathname.includes(tab.href)) || potTabRoutes[0],
+    POT_TABS_CONFIG.find((tab) => pathname.includes(tab.href)) ||
+      POT_TABS_CONFIG[0],
   );
 
   useEffect(() => {
     setSelectedTab(
-      potTabRoutes.find((tab) => pathname.includes(tab.href)) ||
-        potTabRoutes[0],
+      POT_TABS_CONFIG.find((tab) => pathname.includes(tab.href)) ||
+        POT_TABS_CONFIG[0],
     );
   }, [pathname]);
 
@@ -55,51 +56,49 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
   return (
     <PageWithBanner>
-      <main className="container mt-4 flex flex-col">
-        {/* Modals */}
-        <SuccessModal
-          successMessage="Transaction sent successfully"
-          open={successModalOpen}
-          onCloseClick={() => setSuccessModalOpen(false)}
-        />
-        <ErrorModal
-          errorMessage={decodeURIComponent(query.errorMessage || "")}
-          open={errorModalOpen}
-          onCloseClick={() => setErrorModalOpen(false)}
-        />
+      {/* Modals */}
+      <SuccessModal
+        successMessage="Transaction sent successfully"
+        open={resultModalOpen}
+        onCloseClick={() => setSuccessModalOpen(false)}
+      />
+      <ErrorModal
+        errorMessage={decodeURIComponent(query.errorMessage || "")}
+        open={errorModalOpen}
+        onCloseClick={() => setErrorModalOpen(false)}
+      />
 
-        <HeaderStatus potDetail={potDetail} />
+      <HeaderStatus potDetail={potDetail} />
 
-        {/* Not a human alert */}
-        {!loading && !nadaBotVerified && (
-          <div className="px-8">
-            <Alert
-              text="Your contribution won't be matched unless verified as human before the matching round ends."
-              buttonLabel="Verify you're human"
-              buttonHref={SYBIL_FRONTEND_URL}
-            />
-          </div>
-        )}
-
-        <Header potDetail={potDetail} />
-
-        {/* Pot Tabs */}
-        <Tabs
-          asLink
-          navOptions={potTabRoutes}
-          selectedTab={selectedTab.id}
-          onSelect={(tabId: string) => {
-            setSelectedTab(
-              potTabRoutes.find((tabRoute) => tabRoute.id === tabId)!,
-            );
-          }}
-        />
-
-        {/* Tab Content */}
-        <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">
-          {children}
+      {/* Not a human alert */}
+      {!loading && !nadaBotVerified && (
+        <div className="px-8">
+          <Alert
+            text="Your contribution won't be matched unless verified as human before the matching round ends."
+            buttonLabel="Verify you're human"
+            buttonHref={SYBIL_FRONTEND_URL}
+          />
         </div>
-      </main>
+      )}
+
+      <Header potDetail={potDetail} />
+
+      {/* Pot Tabs */}
+      <Tabs
+        asLink
+        navOptions={POT_TABS_CONFIG}
+        selectedTab={selectedTab.id}
+        onSelect={(tabId: string) => {
+          setSelectedTab(
+            POT_TABS_CONFIG.find((tabRoute) => tabRoute.id === tabId)!,
+          );
+        }}
+      />
+
+      {/* Tab Content */}
+      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">
+        {children}
+      </div>
     </PageWithBanner>
   );
 };

@@ -1,3 +1,4 @@
+import { ONE_YOCTO } from "@builddao/near-social-js";
 import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
@@ -13,6 +14,7 @@ import {
   PotConfig,
   PotDonation,
   PotDonationArgs,
+  UpdatePotArgs,
 } from "./interfaces/pot.interfaces";
 
 /**
@@ -196,7 +198,7 @@ export const adminProcessPayouts = (args: { potId: string }) =>
     gas: FULL_TGAS,
   });
 
-export const donateNearViaPot = (
+export const donate = (
   potAccountId: PotId,
   args: PotDonationArgs,
   depositAmountYocto: string,
@@ -206,3 +208,17 @@ export const donateNearViaPot = (
     deposit: depositAmountYocto,
     callbackUrl: window.location.href,
   });
+
+export const admin_dangerously_set_pot_config = (
+  potAccountId: PotId,
+  args: { update_args: UpdatePotArgs },
+) =>
+  contractApi(potAccountId).call<typeof args, PotConfig>(
+    "admin_dangerously_set_pot_config",
+
+    {
+      args,
+      deposit: ONE_YOCTO,
+      callbackUrl: window.location.href,
+    },
+  );

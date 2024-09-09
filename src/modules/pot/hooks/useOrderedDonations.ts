@@ -79,8 +79,6 @@ export const useOrderedDonations = (
       );
       setOrderedDonations(sortedDonationsList);
 
-      // console.log("sortedDonationsList:", sortedDonationsList);
-
       let totalNearDonation = 0;
       sortedDonationsList.forEach((donation) => {
         totalNearDonation += donation.nearAmount;
@@ -137,7 +135,6 @@ export const useOrderedDonations = (
       const sortedPayoutList = payoutsList.sort(
         (a, b) => b.nearAmount - a.nearAmount,
       );
-      // console.log("sortedPayoutList:", sortedPayoutList);
 
       setOrderedPayouts(sortedPayoutList);
 

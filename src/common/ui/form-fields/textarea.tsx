@@ -35,9 +35,7 @@ export const TextAreaField = forwardRef<
         <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
           <div un-flex="~" un-items="center" un-gap="1">
             {label && (
-              <FormLabel className="font-500 text-sm text-neutral-950">
-                {label}
-              </FormLabel>
+              <FormLabel className="font-500 text-sm">{label}</FormLabel>
             )}
 
             {props.required && (

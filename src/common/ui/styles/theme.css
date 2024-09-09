@@ -62,6 +62,7 @@
     --ring: 0 0% 78%;
 
     --radius: 0.5rem;
+    --un-prose-body: 0 0% 16%;
   }
 
   .dark, :root.dark {

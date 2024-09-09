@@ -16,8 +16,8 @@ import {
   Button,
   ClipboardCopyButton,
   DialogDescription,
+  LabeledIcon,
   Skeleton,
-  TextWithIcon,
 } from "@/common/ui/components";
 import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
@@ -30,7 +30,7 @@ import { DonationState } from "../types";
 
 export type DonationSuccessProps = {
   form: UseFormReturn<DonationInputs>;
-  result?: DonationState["successResult"];
+  result?: DonationState["finalOutcome"];
   transactionHash?: string;
   closeModal: VoidFunction;
 };
@@ -153,7 +153,7 @@ export const DonationSuccess = ({
           <Skeleton className="w-49 h-5" />
         ) : (
           <p className="prose" un-m="0" un-flex="~ col">
-            <span un-flex="~" un-gap="1" un-text="neutral-950">
+            <span className="prose flex gap-1">
               <span>has been donated to</span>
 
               <span un-font="600">
@@ -189,9 +189,9 @@ export const DonationSuccess = ({
       {pot && <DonationVerificationWarning />}
 
       {transactionHash && (
-        <TextWithIcon content={`Txn Hash : ${truncate(transactionHash, 7)}`}>
+        <LabeledIcon caption={`Txn Hash : ${truncate(transactionHash, 7)}`}>
           <ClipboardCopyButton text={transactionHash} />
-        </TextWithIcon>
+        </LabeledIcon>
       )}
     </DialogDescription>
   );

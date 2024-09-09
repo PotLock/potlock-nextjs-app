@@ -1,6 +1,6 @@
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
-import { TextWithIcon } from "@/common/ui/components";
+import { LabeledIcon } from "@/common/ui/components";
 import { TokenIcon } from "@/modules/core";
 
 import { DonationFees } from "../hooks";
@@ -84,9 +84,12 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
                   {label + (percentage ? ` (${percentage}%)` : "")}
                 </span>
 
-                <TextWithIcon content={amount} className="font-600">
+                <LabeledIcon
+                  caption={amount}
+                  classNames={{ caption: "font-600" }}
+                >
                   <TokenIcon {...{ tokenId }} size="small" />
-                </TextWithIcon>
+                </LabeledIcon>
               </div>
             ),
         )}
