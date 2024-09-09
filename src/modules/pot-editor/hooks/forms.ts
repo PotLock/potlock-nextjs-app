@@ -150,7 +150,11 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   );
 
   useEffect(() => {
-    console.table(pick(self.formState, ["isValid", "errors"]));
+    console.table(pick(self.formState, ["isValid"]));
+    console.log("common", self.formState.errors);
+    console.log("crossfield", crossFieldErrors);
+
+    console.log(values);
 
     Object.values({ ...self.formState.errors, ...crossFieldErrors }).forEach(
       ({ message }) => console.error(message),
@@ -160,6 +164,7 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
     self.formState,
     self.formState.errors,
     self.formState.isValid,
+    values,
   ]);
 
   return {
