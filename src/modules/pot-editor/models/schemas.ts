@@ -11,7 +11,8 @@ import {
 export const potEditorDeploymentSchema = potSchema
   /**
    *! Heads up!
-   *!  Make sure that any fields targeted here are listed in `potCrossFieldValidationTargets`
+   *!  Make sure that any fields targeted here are listed in
+   *!  `potEditorDeploymentCrossFieldValidationTargets`
    *!  and have their corresponding error paths specified correctly.
    */
   .refine(isPotApplicationStartBeforeEnd, {
@@ -31,6 +32,9 @@ export type PotEditorDeploymentInputs = FromSchema<
   typeof potEditorSettingsSchema
 >;
 
+export const potEditorDeploymentCrossFieldValidationTargets: (keyof PotEditorDeploymentInputs)[] =
+  ["application_end_ms", "public_round_end_ms", "public_round_start_ms"];
+
 export const potEditorSettingsSchema = potSchema
   .extend({
     application_start_ms: futureTimestamp
@@ -43,7 +47,8 @@ export const potEditorSettingsSchema = potSchema
   })
   /**
    *! Heads up!
-   *!  Make sure that any fields targeted here are listed in `potCrossFieldValidationTargets`
+   *!  Make sure that any fields targeted here are listed in
+   *!  `potEditorSettingsCrossFieldValidationTargets`
    *!  and have their corresponding error paths specified correctly.
    */
   .refine(isPotApplicationStartBeforeEnd, {
@@ -55,7 +60,7 @@ export const potEditorSettingsSchema = potSchema
     path: ["public_round_end_ms"],
   });
 
-export type PotSettings = FromSchema<typeof potEditorSettingsSchema>;
+export type PotEditorSettings = FromSchema<typeof potEditorSettingsSchema>;
 
-export const potCrossFieldValidationTargets: (keyof PotEditorDeploymentInputs)[] =
-  ["application_end_ms", "public_round_end_ms", "public_round_start_ms"];
+export const potEditorSettingsCrossFieldValidationTargets: (keyof PotEditorSettings)[] =
+  ["public_round_end_ms", "public_round_start_ms"];

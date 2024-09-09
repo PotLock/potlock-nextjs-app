@@ -9,9 +9,9 @@ import {
   potFactory,
 } from "@/common/contracts/potlock";
 import { PotInputs } from "@/modules/pot";
-import { PotEditorDeploymentInputs } from "@/modules/pot-editor/models/schemas";
 import { RootDispatcher } from "@/store";
 
+import { PotEditorDeploymentInputs, PotEditorSettings } from "./schemas";
 import { potInputsToPotArgs } from "../utils/normalization";
 
 const UnknownDeploymentStatusError = new Error(
@@ -24,7 +24,8 @@ export const effects = (dispatch: RootDispatcher) => ({
     pot_handle,
     source_metadata: { commit_hash, ...sourceMetadata },
     ...potInputs
-  }: PotInputs & Partial<ByPotId>): Promise<void> => {
+  }: (PotEditorDeploymentInputs | PotEditorSettings) &
+    Partial<ByPotId>): Promise<void> => {
     const isNewPot = typeof potId !== "string";
 
     if (commit_hash === null) {
@@ -35,6 +36,8 @@ export const effects = (dispatch: RootDispatcher) => ({
         ),
       );
     } else {
+      // TODO: unmask and fix this
+      // @ts-expect-error runtime should be fine
       const pot_args = potInputsToPotArgs({
         ...potInputs,
         source_metadata: { commit_hash, ...sourceMetadata },

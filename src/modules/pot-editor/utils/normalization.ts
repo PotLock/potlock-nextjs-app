@@ -45,21 +45,22 @@ export const potIndexedDataToPotInputs = ({
   matching_round_end,
   registry_provider,
   sybil_wrapper_provider,
-  min_matching_pool_donation_amount,
   ...indexedPotData
-}: Pot) =>
-  omit(
+}: Pot) => {
+  const potData = evolve(indexedPotData, {
+    referral_fee_matching_pool_basis_points: donationFeeBasisPointsToPercents,
+    referral_fee_public_round_basis_points: donationFeeBasisPointsToPercents,
+    chef_fee_basis_points: donationFeeBasisPointsToPercents,
+
+    min_matching_pool_donation_amount: conditional(
+      [isNonNullish, yoctoNearToFloat],
+      conditional.defaultCase(() => undefined),
+    ),
+  });
+
+  return omit(
     {
-      ...evolve(indexedPotData, {
-        referral_fee_matching_pool_basis_points:
-          donationFeeBasisPointsToPercents,
-
-        referral_fee_public_round_basis_points:
-          donationFeeBasisPointsToPercents,
-
-        chef_fee_basis_points: donationFeeBasisPointsToPercents,
-      }),
-
+      ...potData,
       owner: owner.id,
       admins: admins.map(prop("id")),
       chef: chef?.id,
@@ -72,15 +73,17 @@ export const potIndexedDataToPotInputs = ({
       isPgRegistrationRequired: typeof registry_provider === "string",
       sybil_wrapper_provider: sybil_wrapper_provider ?? undefined,
       isSybilResistanceEnabled: typeof sybil_wrapper_provider === "string",
-
-      min_matching_pool_donation_amount:
-        typeof min_matching_pool_donation_amount === "string"
-          ? yoctoNearToFloat(min_matching_pool_donation_amount)
-          : undefined,
     },
 
-    POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES,
+    {
+      ...POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES,
+
+      ...(potData.min_matching_pool_donation_amount === undefined
+        ? ["min_matching_pool_donation_amount"]
+        : []),
+    },
   );
+};
 
 export const potInputsToPotArgs = ({
   isPgRegistrationRequired,

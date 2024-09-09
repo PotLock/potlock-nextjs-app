@@ -4,7 +4,7 @@ import { useRouteQuery } from "@/common/lib";
 import { PotLayout } from "@/modules/pot";
 import { PotEditor } from "@/modules/pot-editor";
 
-const PotSettingsTab = () => {
+const PotEditorSettingsTab = () => {
   const {
     query: { potId },
   } = useRouteQuery();
@@ -16,8 +16,8 @@ const PotSettingsTab = () => {
   );
 };
 
-PotSettingsTab.getLayout = function getLayout(page: ReactElement) {
+PotEditorSettingsTab.getLayout = function getLayout(page: ReactElement) {
   return <PotLayout>{page}</PotLayout>;
 };
 
-export default PotSettingsTab;
+export default PotEditorSettingsTab;

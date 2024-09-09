@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { pick } from "remeda";
-import { ZodError } from "zod";
+import { infer as FromSchema, ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
 import { ByPotId, potlock } from "@/common/api/potlock";
@@ -11,22 +11,33 @@ import {
   POTLOCK_CONTRACT_REPO_URL,
   POTLOCK_CONTRACT_VERSION,
 } from "@/common/constants";
+import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
 import { donationFeeBasisPointsToPercents } from "@/modules/donation";
-import { PotInputs, potSchema } from "@/modules/pot";
+import { PotInputs } from "@/modules/pot";
 import { dispatch } from "@/store";
 
 import {
-  potCrossFieldValidationTargets,
+  PotEditorDeploymentInputs,
+  PotEditorSettings,
+  potEditorDeploymentCrossFieldValidationTargets,
   potEditorDeploymentSchema,
+  potEditorSettingsCrossFieldValidationTargets,
   potEditorSettingsSchema,
 } from "../models";
 import { potIndexedDataToPotInputs } from "../utils/normalization";
 
-export type PotEditorFormArgs = Partial<ByPotId>;
+export type PotEditorFormArgs =
+  | (ByPotId & {
+      schema: typeof potEditorSettingsSchema;
+    })
+  | { schema: typeof potEditorDeploymentSchema };
 
-export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
-  const isNewPot = typeof potId !== "string";
+export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
+  const potId = "potId" in props ? props.potId : undefined;
+  const isNewPot = "potId" in props && typeof potId !== "string";
+
+  type Values = FromSchema<typeof schema>;
 
   const {
     contractMetadata: { latestSourceCodeCommitHash },
@@ -34,7 +45,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
 
   const { data: existingPotData } = potlock.usePot({ potId });
 
-  const existingValues = useMemo<Partial<PotInputs>>(
+  const existingValues = useMemo<Partial<Values>>(
     () =>
       existingPotData === undefined
         ? {}
@@ -43,7 +54,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     [existingPotData],
   );
 
-  const defaultValues = useMemo<Partial<PotInputs>>(
+  const defaultValues = useMemo<Partial<Values>>(
     () => ({
       source_metadata: {
         version: POTLOCK_CONTRACT_VERSION,
@@ -53,6 +64,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
 
       owner: walletApi.accountId,
       max_projects: 25,
+      min_matching_pool_donation_amount: 0.1,
 
       referral_fee_matching_pool_basis_points:
         donationFeeBasisPointsToPercents(100),
@@ -69,10 +81,8 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     [existingValues, latestSourceCodeCommitHash],
   );
 
-  const self = useForm<PotInputs>({
-    resolver: zodResolver(
-      isNewPot ? potEditorDeploymentSchema : potEditorSettingsSchema,
-    ),
+  const self = useForm<Values>({
+    resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues,
     resetOptions: { keepDirtyValues: true },
@@ -80,23 +90,29 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
 
   const values = useWatch(self);
 
-  const [crossFieldErrors, setCrossFieldErrors] = useState<
-    FieldErrors<PotInputs>
-  >({});
+  const handleAdminsUpdate = useCallback(
+    (accountIds: AccountId[]) => self.setValue("admins", accountIds),
+    [self],
+  );
+
+  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<Values>>(
+    {},
+  );
 
   useEffect(
     () =>
-      void potSchema
-        .parseAsync(values as PotInputs)
+      void schema
+        .parseAsync(values as Values)
         .then(() => setCrossFieldErrors({}))
         .catch((error: ZodError) =>
           setCrossFieldErrors(
             error?.issues.reduce((schemaErrors, { code, message, path }) => {
               const fieldPath = path.at(0);
 
-              return potCrossFieldValidationTargets.includes(
-                fieldPath as keyof PotInputs,
-              ) &&
+              return (isNewPot
+                ? potEditorDeploymentCrossFieldValidationTargets
+                : potEditorSettingsCrossFieldValidationTargets
+              ).includes(fieldPath as keyof PotInputs) &&
                 typeof fieldPath === "string" &&
                 code === "custom"
                 ? { ...schemaErrors, [fieldPath]: { message, type: code } }
@@ -105,7 +121,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
           ),
         ),
 
-    [values],
+    [isNewPot, schema, values],
   );
 
   const isDisabled = useMemo(
@@ -123,12 +139,13 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     ],
   );
 
-  const onSubmit: SubmitHandler<PotInputs> = useCallback(
-    (inputs) => {
-      if (isNewPot) {
-        dispatch.potEditor.save(inputs);
-      }
-    },
+  const onSubmit: SubmitHandler<Values> = useCallback(
+    (inputs) =>
+      dispatch.potEditor.save(
+        isNewPot
+          ? (inputs as PotEditorDeploymentInputs)
+          : (inputs as PotEditorSettings),
+      ),
     [isNewPot],
   );
 
@@ -155,6 +172,7 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
       },
     },
 
+    handleAdminsUpdate,
     isDisabled,
     isNewPot,
     onSubmit: self.handleSubmit(onSubmit),

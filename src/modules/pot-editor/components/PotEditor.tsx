@@ -2,9 +2,9 @@ import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
+import { ByPotId } from "@/common/api/potlock";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { millisecondsToDatetimeLocal } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
@@ -23,21 +23,32 @@ import {
 } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/modules/access-control";
-import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
+import {
+  DONATION_MIN_NEAR_AMOUNT,
+  donationFeeBasisPointsToPercents,
+} from "@/modules/donation";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
 import { PotEditorPreview } from "./PotEditorPreview";
 import { POT_EDITOR_FIELDS } from "../constants";
-import { PotEditorFormArgs, usePotEditorForm } from "../hooks/forms";
+import { usePotEditorForm } from "../hooks/forms";
+import { potEditorDeploymentSchema, potEditorSettingsSchema } from "../models";
 
-export type PotEditorProps = PotEditorFormArgs & {};
+export type PotEditorProps = Partial<ByPotId> & {};
 
 export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
+  const isNewPot = typeof potId !== "string";
   const router = useRouter();
 
-  const { form, isDisabled, isNewPot, onSubmit } = usePotEditorForm({
-    potId,
-  });
+  const { form, values, handleAdminsUpdate, isDisabled, onSubmit } =
+    usePotEditorForm(
+      isNewPot
+        ? { schema: potEditorDeploymentSchema }
+        : {
+            potId,
+            schema: potEditorSettingsSchema,
+          },
+    );
 
   const [isInEditMode, setEditMode] = useState(isNewPot);
   const enterEditMode = useCallback(() => setEditMode(true), []);
@@ -62,17 +73,11 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
 
         <div className="lg:min-w-4xl flex flex-col gap-14">
           <EditorSection heading={POT_EDITOR_FIELDS.admins.title}>
-            <FormField
-              name="admins"
-              control={form.control}
-              render={({ field }) => (
-                <AccessControlList
-                  isEditable
-                  title={POT_EDITOR_FIELDS.admins.title}
-                  value={field.value ?? []}
-                  onSubmit={field.onChange}
-                />
-              )}
+            <AccessControlList
+              isEditable
+              title={POT_EDITOR_FIELDS.admins.title}
+              value={values.admins ?? []}
+              onSubmit={handleAdminsUpdate}
             />
           </EditorSection>
 
@@ -145,6 +150,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     type="number"
                     min={0}
                     max={100}
+                    step={1}
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -169,6 +175,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     type="number"
                     min={0}
                     max={100}
+                    step={1}
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -296,6 +303,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     type="number"
                     min={0}
                     max={100}
+                    step={1}
                     classNames={{ root: "lg:w-37% w-full" }}
                     {...field}
                   />
