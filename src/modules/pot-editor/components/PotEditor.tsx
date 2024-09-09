@@ -35,8 +35,9 @@ export type PotEditorProps = PotEditorFormArgs & {};
 export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   const router = useRouter();
 
-  const { form, handleAdminsUpdate, isDisabled, isNewPot, onSubmit, values } =
-    usePotEditorForm({ potId });
+  const { form, isDisabled, isNewPot, onSubmit, values } = usePotEditorForm({
+    potId,
+  });
 
   const [isInEditMode, setEditMode] = useState(isNewPot);
   const enterEditMode = useCallback(() => setEditMode(true), []);
@@ -50,7 +51,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
     } else exitEditMode();
   }, [exitEditMode, form, isNewPot, router]);
 
-  console.log(values);
+  console.log(values.public_round_start_ms);
 
   return !isInEditMode ? (
     <PotEditorPreview onEditClick={enterEditMode} {...{ potId }} />
@@ -63,11 +64,17 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
 
         <div className="lg:min-w-4xl flex flex-col gap-14">
           <EditorSection heading={POT_EDITOR_FIELDS.admins.title}>
-            <AccessControlList
-              isEditable
-              title={POT_EDITOR_FIELDS.admins.title}
-              value={values.admins ?? []}
-              onSubmit={handleAdminsUpdate}
+            <FormField
+              name="admins"
+              control={form.control}
+              render={({ field }) => (
+                <AccessControlList
+                  isEditable
+                  title={POT_EDITOR_FIELDS.admins.title}
+                  value={field.value ?? []}
+                  onSubmit={field.onChange}
+                />
+              )}
             />
           </EditorSection>
 

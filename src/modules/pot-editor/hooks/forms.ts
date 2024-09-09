@@ -10,7 +10,6 @@ import {
   POTLOCK_CONTRACT_REPO_URL,
   POTLOCK_CONTRACT_VERSION,
 } from "@/common/constants";
-import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
 import { donationFeeBasisPointsToPercents } from "@/modules/donation";
 import {
@@ -111,11 +110,6 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
     !self.formState.isValid ||
     self.formState.isSubmitting;
 
-  const handleAdminsUpdate = useCallback(
-    (accountIds: AccountId[]) => self.setValue("admins", accountIds),
-    [self],
-  );
-
   const onSubmit: SubmitHandler<PotInputs> = useCallback(
     (inputs) => {
       if (isNewPot) {
@@ -135,7 +129,6 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
       },
     },
 
-    handleAdminsUpdate,
     isDisabled,
     isNewPot,
     onSubmit: self.handleSubmit(onSubmit),

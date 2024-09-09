@@ -8,7 +8,12 @@ import {
   SYBIL_CONTRACT_ID,
 } from "@/common/constants";
 import { ContractSourceMetadata, PotArgs } from "@/common/contracts/potlock";
-import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
+import {
+  floatToYoctoNear,
+  timestamp,
+  timestampMsToLocaleString,
+  yoctoNearToFloat,
+} from "@/common/lib";
 import {
   donationAmount,
   donationFeeBasisPointsToPercents,
@@ -105,14 +110,17 @@ export const potIndexedFieldToString = (
   switch (typeof value) {
     case "number": {
       if (key.includes("fee")) {
-        return `${value} %`;
-      } else return value.toLocaleString();
+        return `${donationFeeBasisPointsToPercents(value)} %`;
+      } else if (key.includes("ms")) {
+        console.log(value);
+        return timestampMsToLocaleString(value);
+      } else return value === 0 ? null : value.toLocaleString();
     }
 
     case "string": {
       switch (key) {
         case "min_matching_pool_donation_amount":
-          return `${yoctoNearToFloat(value)} ${NEAR_TOKEN_DENOM}`;
+          return `${yoctoNearToFloat(value)} ${NEAR_TOKEN_DENOM.toUpperCase()}`;
 
         default:
           return value;
