@@ -28,6 +28,8 @@ export const effects = (dispatch: RootDispatcher) => ({
     Partial<ByPotId>): Promise<void> => {
     const isNewPot = typeof potId !== "string";
 
+    console.log(isNewPot);
+
     if (commit_hash === null) {
       dispatch.potEditor.deploymentFailure(
         new Error(

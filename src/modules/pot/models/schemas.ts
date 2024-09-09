@@ -133,13 +133,6 @@ export const potSchema = object({
     .optional()
     .describe("Minimum donation amount."),
 
-  cooldown_period_ms: safePositiveNumber
-    .refine(isPotCooldownPeriodValid, {
-      message: `Cooldown period must be at least ${POT_MIN_COOLDOWN_PERIOD_MS} ms`,
-    })
-    .optional()
-    .describe("Cooldown period in milliseconds."),
-
   registry_provider: string()
     .optional()
     .describe("Registry provider's account id."),
