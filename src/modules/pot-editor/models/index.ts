@@ -8,6 +8,8 @@ import { RootModel } from "@/store/models";
 import { effects } from "./effects";
 import { PotEditorDeploymentStep, PotEditorState } from "../types";
 
+export * from "./schemas";
+
 export const potEditorModelKey = "potEditor";
 
 export const usePotEditorState = () =>

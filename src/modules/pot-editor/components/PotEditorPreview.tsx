@@ -81,8 +81,14 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
 
           {isDataAvailable ? (
             <>
-              <span className="prose">{"No admins"}</span>
-              <AccessControlList value={adminAccountIds} />
+              {adminAccountIds.length > 0 ? (
+                <AccessControlList
+                  value={adminAccountIds}
+                  classNames={{ avatar: "w-6 h-6" }}
+                />
+              ) : (
+                <span className="prose">{"No admins"}</span>
+              )}
             </>
           ) : (
             <Skeleton className="w-50 h-8 rounded-full" />

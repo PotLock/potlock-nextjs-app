@@ -9,6 +9,7 @@ import {
   potFactory,
 } from "@/common/contracts/potlock";
 import { PotInputs } from "@/modules/pot";
+import { PotEditorDeploymentInputs } from "@/modules/pot-editor/models/schemas";
 import { RootDispatcher } from "@/store";
 
 import { potInputsToPotArgs } from "../utils/normalization";
@@ -43,7 +44,10 @@ export const effects = (dispatch: RootDispatcher) => ({
         console.log(pot_args);
 
         potFactory
-          .deploy_pot({ pot_args, pot_handle })
+          .deploy_pot({
+            pot_args,
+            pot_handle,
+          })
           .then(dispatch.potEditor.handleDeploymentSuccess)
           .catch(dispatch.potEditor.deploymentFailure);
       } else {

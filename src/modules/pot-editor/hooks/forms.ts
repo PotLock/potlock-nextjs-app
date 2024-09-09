@@ -13,13 +13,14 @@ import {
 } from "@/common/constants";
 import { useCoreState } from "@/modules/core";
 import { donationFeeBasisPointsToPercents } from "@/modules/donation";
-import {
-  PotInputs,
-  potCrossFieldValidationTargets,
-  potSchema,
-} from "@/modules/pot";
+import { PotInputs, potSchema } from "@/modules/pot";
 import { dispatch } from "@/store";
 
+import {
+  potCrossFieldValidationTargets,
+  potEditorDeploymentSchema,
+  potEditorSettingsSchema,
+} from "../models";
 import { potIndexedDataToPotInputs } from "../utils/normalization";
 
 export type PotEditorFormArgs = Partial<ByPotId>;
@@ -69,7 +70,9 @@ export const usePotEditorForm = ({ potId }: PotEditorFormArgs) => {
   );
 
   const self = useForm<PotInputs>({
-    resolver: zodResolver(potSchema),
+    resolver: zodResolver(
+      isNewPot ? potEditorDeploymentSchema : potEditorSettingsSchema,
+    ),
     mode: "onChange",
     defaultValues,
     resetOptions: { keepDirtyValues: true },

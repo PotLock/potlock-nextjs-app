@@ -4,21 +4,26 @@ import { show } from "@ebay/nice-modal-react";
 
 import { GroupIcon } from "@/common/assets/svgs";
 import { Button } from "@/common/ui/components";
-import { AccountOption } from "@/modules/core";
+import { AccountOption, AccountOptionProps } from "@/modules/core";
 
 import {
   AccessControlListModal,
   AccessControlListModalProps,
 } from "./AccessControlListModal";
 
-export type AccessControlListProps =
-  | (AccessControlListModalProps & {
-      isEditable?: true;
-    })
-  | (Pick<AccessControlListModalProps, "value"> & { isEditable?: false });
+export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &
+  (
+    | (AccessControlListModalProps & {
+        isEditable?: true;
+      })
+    | (Pick<AccessControlListModalProps, "value"> & {
+        isEditable?: false;
+      })
+  );
 
 export const AccessControlList: React.FC<AccessControlListProps> = ({
   isEditable = false,
+  classNames,
   ...props
 }) => {
   const { value: accountIds } = props;
@@ -35,13 +40,14 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
               isThumbnail
               key={accountId}
               title={accountId}
+              classNames={{ avatar: classNames?.avatar }}
               {...{ accountId }}
             />
           ))}
         </div>
       ) : null,
 
-    [accountIds],
+    [accountIds, classNames?.avatar],
   );
 
   return (
