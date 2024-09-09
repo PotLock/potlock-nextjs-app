@@ -2,10 +2,11 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
+import InfiniteScrollWrapper from "react-infinite-scroll-component";
+
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { ListRegistration, potlock } from "@/common/api/potlock";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
-import { getRegistrations } from "@/common/contracts/potlock/lists";
 import { FeedCard } from "@/modules/profile/components/FeedCard";
 
 const GlobalFeedsPage = () => {
@@ -46,6 +47,7 @@ const GlobalFeedsPage = () => {
   }, []);
 
   const loadMorePosts = useCallback(async () => {
+    console.log(loadingMore);
     if (loadingMore) return; // Prevent multiple calls while loading
     setLoadingMore(true);
 
@@ -53,38 +55,16 @@ const GlobalFeedsPage = () => {
       accountId: registration,
       offset,
     });
-
-    // Create a Set of existing post block heights to filter out duplicates
-    const existingPostIds = new Set(feedPosts.map((post) => post.blockHeight));
+    setLoadingMore(false);
 
     // Filter out previously fetched posts
-    const newPosts = fetchedPosts.filter(
-      (post) => !existingPostIds.has(post.blockHeight),
-    );
+    const newPosts = fetchedPosts.slice(offset - 20);
 
     // Update state with new posts and increment offset
     setFeedPosts((prevPosts) => [...prevPosts, ...newPosts]);
     setOffset((prevOffset) => prevOffset + 20);
     setLoadingMore(false);
   }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        loadMorePosts();
-      }
-    });
-
-    if (loadingRef.current) {
-      observer.observe(loadingRef.current);
-    }
-
-    return () => {
-      if (loadingRef.current) {
-        observer.unobserve(loadingRef.current);
-      }
-    };
-  }, [loadingRef]);
 
   const NoResults = () => (
     <div className="md:flex-col md:px-[105px] md:py-[68px] flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px]">
@@ -102,17 +82,23 @@ const GlobalFeedsPage = () => {
 
   return (
     <div className="h-full max-h-full w-full max-w-[1300px] overflow-auto p-8">
-      <div className="space-y-4">
+      <InfiniteScrollWrapper
+        className="space-y-4"
+        dataLength={1000}
+        scrollThreshold={1}
+        hasMore={true}
+        next={loadMorePosts}
+        loader={
+          <div ref={loadingRef} className="mt-4 min-h-12 text-center">
+            <div className="">Loading...</div>
+          </div>
+        }
+      >
         {feedPosts.map((post) => (
           <FeedCard key={post.blockHeight} post={post} />
         ))}
-      </div>
-      {feedPosts.length > 1 && (
-        <div ref={loadingRef} className="mt-4 min-h-12 text-center">
-          <div className="">Loading...</div>
-        </div>
-      )}
-      {feedPosts.length === 0 && <NoResults />}
+      </InfiniteScrollWrapper>
+      {feedPosts.length === 0 && loading && <NoResults />}
     </div>
   );
 };
