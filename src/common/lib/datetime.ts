@@ -14,9 +14,12 @@ export const localeStringToTimestampMs = (value: string): number => {
   }
 };
 
-export const timestampMsToLocaleString = (value: number): string => {
+export const formatDatetimeLocal = (value: string): string =>
+  value.slice(0, 16);
+
+export const millisecondsToDatetimeLocal = (value: number): string => {
   try {
-    return new Date(value).toLocaleString();
+    return formatDatetimeLocal(new Date(value).toISOString());
   } catch {
     const error = new TypeError(`Unable to parse \`${value}\``);
 

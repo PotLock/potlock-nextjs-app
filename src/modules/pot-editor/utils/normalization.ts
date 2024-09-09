@@ -18,7 +18,9 @@ import {
 import { ContractSourceMetadata, PotArgs } from "@/common/contracts/potlock";
 import {
   floatToYoctoNear,
+  formatDatetimeLocal,
   localeStringToTimestampMs,
+  millisecondsToDatetimeLocal,
   millisecondsToLocaleString,
   timestamp,
   yoctoNearToFloat,
@@ -45,7 +47,7 @@ export const potIndexedDataToPotInputs = ({
   sybil_wrapper_provider,
   min_matching_pool_donation_amount,
   ...indexedPotData
-}: Pot): Partial<PotInputs> =>
+}: Pot) =>
   omit(
     {
       ...evolve(indexedPotData, {
@@ -64,8 +66,8 @@ export const potIndexedDataToPotInputs = ({
       pot_name: name,
       pot_description: description,
       max_projects: max_approved_applicants,
-      public_round_start_ms: timestamp.parse(matching_round_start),
-      public_round_end_ms: timestamp.parse(matching_round_end),
+      public_round_start_ms: formatDatetimeLocal(matching_round_start),
+      public_round_end_ms: formatDatetimeLocal(matching_round_end),
       registry_provider: registry_provider ?? undefined,
       isPgRegistrationRequired: typeof registry_provider === "string",
       sybil_wrapper_provider: sybil_wrapper_provider ?? undefined,

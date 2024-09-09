@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { timestampMsToLocaleString } from "@/common/lib";
+import { millisecondsToDatetimeLocal } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
@@ -35,7 +35,7 @@ export type PotEditorProps = PotEditorFormArgs & {};
 export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   const router = useRouter();
 
-  const { form, isDisabled, isNewPot, onSubmit, values } = usePotEditorForm({
+  const { form, isDisabled, isNewPot, onSubmit } = usePotEditorForm({
     potId,
   });
 
@@ -50,8 +50,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
       router.back();
     } else exitEditMode();
   }, [exitEditMode, form, isNewPot, router]);
-
-  console.log(values.public_round_start_ms);
 
   return !isInEditMode ? (
     <PotEditorPreview onEditClick={enterEditMode} {...{ potId }} />
@@ -223,16 +221,11 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               <FormField
                 name="public_round_start_ms"
                 control={form.control}
-                render={({ field: { value, ...field } }) => (
+                render={({ field }) => (
                   <TextField
                     label={POT_EDITOR_FIELDS.public_round_start_ms.title}
                     required
                     type="datetime-local"
-                    value={
-                      typeof value === "number"
-                        ? timestampMsToLocaleString(value)
-                        : value
-                    }
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
