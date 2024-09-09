@@ -125,11 +125,11 @@ export const potIndexedFieldToString = (
 
     case "string": {
       if (key.includes("ms")) {
-        console.log(
-          pipe(value, localeStringToTimestampMs, millisecondsToLocaleString),
+        return pipe(
+          value,
+          localeStringToTimestampMs,
+          millisecondsToLocaleString,
         );
-
-        return value;
       } else {
         switch (key) {
           case "min_matching_pool_donation_amount":

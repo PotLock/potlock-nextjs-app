@@ -27,7 +27,7 @@ export const timestampMsToLocaleString = (value: number): string => {
 
 export const millisecondsToLocaleString = (value: number): string => {
   try {
-    return Temporal.Instant.fromEpochMilliseconds(value).toString();
+    return Temporal.Instant.fromEpochMilliseconds(value).toLocaleString();
   } catch {
     const error = new TypeError(`Unable to parse \`${value}\``);
 
