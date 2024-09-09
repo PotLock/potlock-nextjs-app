@@ -23,10 +23,7 @@ import {
 } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/modules/access-control";
-import {
-  DONATION_MIN_NEAR_AMOUNT,
-  donationFeeBasisPointsToPercents,
-} from "@/modules/donation";
+import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
 import { PotEditorPreview } from "./PotEditorPreview";

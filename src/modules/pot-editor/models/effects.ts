@@ -8,7 +8,6 @@ import {
   pot,
   potFactory,
 } from "@/common/contracts/potlock";
-import { PotInputs } from "@/modules/pot";
 import { RootDispatcher } from "@/store";
 
 import { PotEditorDeploymentInputs, PotEditorSettings } from "./schemas";

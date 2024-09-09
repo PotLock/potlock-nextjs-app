@@ -20,7 +20,6 @@ import {
   floatToYoctoNear,
   formatDatetimeLocal,
   localeStringToTimestampMs,
-  millisecondsToDatetimeLocal,
   millisecondsToLocaleString,
   timestamp,
   yoctoNearToFloat,
