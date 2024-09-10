@@ -152,7 +152,7 @@ export const potIndexedFieldToString = (
 ): null | string => {
   switch (typeof value) {
     case "boolean": {
-      return value ? subtitle ?? null : "No";
+      return value ? (subtitle ?? null) : "No";
     }
 
     case "number": {
@@ -169,7 +169,7 @@ export const potIndexedFieldToString = (
           millisecondsToLocaleString,
         );
       } else if (key.includes("provider")) {
-        return typeof value === "string" ? subtitle ?? null : "No";
+        return typeof value === "string" ? (subtitle ?? null) : "No";
       } else {
         switch (key) {
           case "min_matching_pool_donation_amount":

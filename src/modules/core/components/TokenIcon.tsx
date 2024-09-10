@@ -55,7 +55,7 @@ export const TokenIcon = ({
             />
           ) : (
             <span className={cn("prose", placeholderClass)}>
-              {token?.symbol ?? isLoading ? "⋯" : "🪙"}
+              {(token?.symbol ?? isLoading) ? "⋯" : "🪙"}
             </span>
           )}
         </>

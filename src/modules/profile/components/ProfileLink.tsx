@@ -17,7 +17,7 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
   const { name, image } = account?.near_social_profile_data ?? {};
 
   const imageUrl =
-    image?.url ?? image?.nft?.media ?? image?.ipfs_cid
+    (image?.url ?? image?.nft?.media ?? image?.ipfs_cid)
       ? `https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/${image.ipfs_cid}`
       : null;
 

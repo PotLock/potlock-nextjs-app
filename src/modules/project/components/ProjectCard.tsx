@@ -45,14 +45,14 @@ export const ProjectCard = ({
     account?.near_social_profile_data ?? {};
 
   const backgroundImageUrl =
-    backgroundImage?.url ??
+    (backgroundImage?.url ??
     backgroundImage?.nft?.media ??
-    backgroundImage?.ipfs_cid
+    backgroundImage?.ipfs_cid)
       ? `https://ipfs.near.social/ipfs/${backgroundImage.ipfs_cid}`
       : null;
 
   const profileImageUrl =
-    image?.url ?? image?.nft?.media ?? image?.ipfs_cid
+    (image?.url ?? image?.nft?.media ?? image?.ipfs_cid)
       ? `https://ipfs.near.social/ipfs/${image.ipfs_cid}`
       : null;
 
