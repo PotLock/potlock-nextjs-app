@@ -60,6 +60,8 @@ export const ListFormDetails: React.FC = () => {
   const [listCreateSuccess, setListCreateSuccess] = useState<CreateSuccess>({
     open: false,
   });
+  const [loadingImageUpload, setLoadingImageUpload] = useState(false);
+
   const {
     admins,
     setAdmins,
@@ -160,19 +162,21 @@ export const ListFormDetails: React.FC = () => {
   const handleCoverImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
+      setLoadingImageUpload(true);
       const res = await uploadFileToIPFS(e.target.files[0]);
       if (res.ok) {
         const data = await res.json();
         setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
         setValue("image_cover_url", `${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
+        setLoadingImageUpload(false);
       }
       reader.readAsDataURL(e.target.files[0]);
     }
   };
 
-  const handleViewList = useCallback(() => {
-    if (listCreateSuccess.data.id) push(`/list/${listCreateSuccess.data?.id}`);
-  }, []);
+  const handleViewList = () => {
+    if (listCreateSuccess.data.id) push(`/list/${listCreateSuccess.data.id}`);
+  };
 
   return (
     <>
@@ -270,7 +274,7 @@ export const ListFormDetails: React.FC = () => {
                       isEditable
                       title="Admins"
                       value={admins}
-                      showOnSaveButton={admins.length > 0}
+                      showOnSaveButton={admins.length > 0 && onEditPage}
                       classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={(admins) => setAdmins(admins)}
                       onSaveSettings={handleSaveAdminsSettings}
@@ -332,7 +336,8 @@ export const ListFormDetails: React.FC = () => {
                 }
                 className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
-                <span className="mr-2">📷</span> Add cover photo
+                <span className="mr-2">📷</span>{" "}
+                {loadingImageUpload ? "Uploading..." : "Add cover photo"}
               </button>
             </div>
           </div>

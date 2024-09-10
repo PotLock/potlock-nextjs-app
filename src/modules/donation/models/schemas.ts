@@ -80,8 +80,8 @@ export const donationSchema = object({
     message: "Incorrect donation distribution strategy.",
   }).default(DonationPotDistributionStrategy.evenly),
 
-  // bypassProtocolFee: boolean().default(false),
-  // bypassChefFee: boolean().default(false),
+  bypassProtocolFee: boolean().default(false),
+  bypassChefFee: boolean().default(false),
 })
   .refine(isDonationMatchingPotSelected, { message: "Pot is not selected." })
   .refine(isDonationAmountSufficient, {
