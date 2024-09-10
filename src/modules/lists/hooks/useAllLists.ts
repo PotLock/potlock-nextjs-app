@@ -29,7 +29,7 @@ export const useAllLists = (
   }, [setCurrentListType]);
 
   const fetchMyLists = useCallback(async () => {
-      setCurrentListType("My Lists");
+    setCurrentListType("My Lists");
     if (!wallet?.accountId) return; // Ensure accountId is available
     try {
       const myLists: any = await get_list_for_owner({
