@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Link from "next/link";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
@@ -6,10 +6,13 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { remove_upvote, upvote } from "@/common/contracts/potlock/lists";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { useRouter } from "next/router";
+import Image from "next/image";
 
 export const ListCard = ({ dataForList }: { dataForList?: any }) => {
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [profileImage, setProfileImage] = useState("");
+  const { push } = useRouter();
 
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -21,7 +24,10 @@ export const ListCard = ({ dataForList }: { dataForList?: any }) => {
     if (dataForList.owner) fetchProfileImage();
   }, [dataForList.owner]);
 
-  const handleUpvote = () => {
+  const handleRoute = useCallback(() => push(`/list/${dataForList?.id}`), []);
+
+  const handleUpvote = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     if (isUpvoted) {
       remove_upvote({ list_id: dataForList?.id });
     } else {
@@ -31,18 +37,19 @@ export const ListCard = ({ dataForList }: { dataForList?: any }) => {
   };
 
   return (
-    <Link href={`/list/${dataForList?.id}`}>
+    <div>
       <div
-        className="overflow-hidden rounded-md bg-white  shadow-md transition-all duration-300  hover:translate-y-[-1rem]"
+        className="cursor-pointer overflow-hidden rounded-md bg-white  shadow-md transition-all duration-300  hover:translate-y-[-1rem]"
+        onClick={handleRoute}
         data-testid="list-card"
       >
         <div className="relative">
-          <img
+          <Image
+            alt="listImage"
             className="h-[150px] w-full object-cover"
-            src={
-              dataForList?.cover_image_url ??
-              "https://images.unsplash.com/photo-1526234577630-77b606b3421b?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Y2hpbGRyZW58ZW58MHx8MHx8fDA%3D"
-            }
+            src={dataForList?.cover_image_url ?? "/assets/images/listCard.png"}
+            width={500}
+            height={150}
           />
           <div className="absolute right-0 top-0 h-[150px] w-[150px] bg-black bg-opacity-50">
             <div className="flex h-[150px] w-full items-center justify-center  text-white">
@@ -78,6 +85,6 @@ export const ListCard = ({ dataForList }: { dataForList?: any }) => {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };

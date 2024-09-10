@@ -13,7 +13,9 @@ import {
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { Input } from "@/common/ui/components";
+import { AccessControlList } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import { useListForm } from "@/modules/lists/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
 
 import {
@@ -21,8 +23,6 @@ import {
   ListConfirmationModalProps,
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
-import { useListForm } from "@/modules/lists/hooks/useListForm";
-import { AccessControlList } from "@/modules/access-control";
 
 interface FormData {
   name: string;

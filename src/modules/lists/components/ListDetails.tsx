@@ -89,6 +89,10 @@ export const ListDetails = () => {
     return <p>No list details available.</p>;
   }
 
+  const isAdmin =
+    listDetails.admins.includes(wallet?.accountId ?? "") ||
+    listDetails.owner === wallet?.accountId;
+
   return (
     <>
       <div className="md:px-10">
@@ -138,8 +142,7 @@ export const ListDetails = () => {
                   )}
                 </div>
               </div>
-              {(listDetails.admins.includes(wallet?.accountId ?? "") ||
-                listDetails.owner === wallet?.accountId) && (
+              {isAdmin && (
                 <div
                   onClick={openAccountsModal}
                   className="cursor-pointer rounded p-2  hover:opacity-50"
@@ -169,35 +172,37 @@ export const ListDetails = () => {
                     Apply to list
                   </button>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <div className="cursor-pointer rounded p-2  opacity-50 hover:bg-red-100">
-                      <DotsIcons />
-                    </div>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="rounded border bg-white shadow-md">
-                    <DropdownMenuItem
-                      onClick={onEditList}
-                      className="cursor-pointer p-2 hover:bg-gray-200"
-                    >
-                      <PenIcon className="mr-1 max-w-[22px]" />
-                      <span>Edit list details</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer p-2 hover:bg-gray-200">
-                      <AdminUserIcon className="mr-1 max-w-[22px]" />
-                      Add/Remove accounts
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        setIsListConfirmationModalOpen({ open: true })
-                      }
-                      className="cursor-pointer p-2 hover:bg-gray-200"
-                    >
-                      <DeleteListIcon className="mr-1 max-w-[22px]" />
-                      <span className="text-red-500">Delete List</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {isAdmin && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div className="cursor-pointer rounded p-2  opacity-50 hover:bg-red-100">
+                        <DotsIcons />
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="rounded border bg-white shadow-md">
+                      <DropdownMenuItem
+                        onClick={onEditList}
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                      >
+                        <PenIcon className="mr-1 max-w-[22px]" />
+                        <span>Edit list details</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer p-2 hover:bg-gray-200">
+                        <AdminUserIcon className="mr-1 max-w-[22px]" />
+                        Add/Remove accounts
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          setIsListConfirmationModalOpen({ open: true })
+                        }
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                      >
+                        <DeleteListIcon className="mr-1 max-w-[22px]" />
+                        <span className="text-red-500">Delete List</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
             )}
           </div>

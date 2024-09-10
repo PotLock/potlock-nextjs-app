@@ -9,7 +9,6 @@ import {
 } from "@/common/contracts/potlock/lists";
 import { validateAccountId } from "@/modules/core";
 
-
 export const useListForm = () => {
   const { push, query } = useRouter();
   const [transferAccountField, setTransferAccountField] = useState<string>("");

@@ -1,7 +1,16 @@
-import { useState, useCallback } from 'react';
-import { getLists, get_list_for_owner, get_upvoted_lists_for_account } from "@/common/contracts/potlock/lists"; // Adjust the import based on your project structure
+import { useCallback, useState } from "react";
 
-export const useAllLists = (wallet: any, setCurrentListType: (type: string) => void, setFilteredRegistrations: (type: any) => void) => {
+import {
+  getLists,
+  get_list_for_owner,
+  get_upvoted_lists_for_account,
+} from "@/common/contracts/potlock/lists"; // Adjust the import based on your project structure
+
+export const useAllLists = (
+  wallet: any,
+  setCurrentListType: (type: string) => void,
+  setFilteredRegistrations: (type: any) => void,
+) => {
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
