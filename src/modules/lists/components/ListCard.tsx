@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 import { remove_upvote, upvote } from "@/common/contracts/potlock/lists";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { useRouter } from "next/router";
-import Image from "next/image";
 
 export const ListCard = ({ dataForList }: { dataForList?: any }) => {
   const [isUpvoted, setIsUpvoted] = useState(false);

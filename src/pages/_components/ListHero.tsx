@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/common/ui/components";
-import { useAllLists } from "@/modules/lists/hooks/useAllLists";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import { useAllLists } from "@/modules/lists/hooks/useAllLists";
 
 export const ListHero = ({
   setCurrentListType,
