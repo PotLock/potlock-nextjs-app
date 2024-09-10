@@ -2,7 +2,6 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AccountView } from "near-api-js/lib/providers/provider";
-import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -29,6 +28,7 @@ import {
   ListConfirmationModalProps,
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
+import { useListForm } from "@/modules/core/hooks/useListForm";
 
 interface FormData {
   name: string;
@@ -55,19 +55,10 @@ export const ListFormDetails: React.FC = () => {
   } = useForm<FormData>({
     resolver: zodResolver(createListSchema),
   });
-  const { id } = useParams();
-  const { push, back } = useRouter();
-  const onEditPage = !!id;
 
   const descriptionLength = watch("description")?.length || 0;
-
-  const [admins, setAdmins] = useState<string[]>([]);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [transferAccountField, setTransferAccountField] = useState<string>("");
-  const [transferAccountError, setTransferAccountError] = useState<
-    string | undefined
-  >("");
   const [listConfirmModal, setOpenListConfirmModal] =
     useState<ListConfirmationModalProps>({
       open: false,
@@ -75,6 +66,22 @@ export const ListFormDetails: React.FC = () => {
   const [listCreateSuccess, setListCreateSuccess] = useState<CreateSuccess>({
     open: false,
   });
+  const {
+    admins,
+    setAdmins,
+    handleDeleteList,
+    handleSaveAdminsSettings,
+    handleTransferOwner,
+    transferAccountError,
+    transferAccountField,
+    handleChangeTransferOwnerField,
+  } = useListForm();
+
+  const {
+    query: { id },
+  } = useRouter();
+  const { push, back } = useRouter();
+  const onEditPage = !!id;
   const { wallet } = useWallet();
 
   useEffect(() => {
@@ -171,52 +178,6 @@ export const ListFormDetails: React.FC = () => {
   const handleViewList = useCallback(() => {
     if (listCreateSuccess.data.id) push(`/list/${listCreateSuccess.data?.id}`);
   }, []);
-
-  const handleDeleteList = () => {
-    delete_list({ list_id: parseInt(id as any) })
-      .then(() => {
-        push("/list");
-      })
-      .catch((error) => {
-        console.error("Error deleting list", error);
-      });
-  };
-
-  const handleSaveAdminsSettings = () => {
-    add_admins_to_list({
-      list_id: parseInt(id as any),
-      admins,
-    })
-      .then((data) => {
-        console.log("Added admins to list", data);
-      })
-      .catch((error) => {
-        console.error("Error deleting list", error);
-      });
-  };
-
-  const handleChangeTransferOwnerField = async (
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    const { value } = event.target;
-    setTransferAccountField(value);
-    const data = await validateAccountId(value);
-    setTransferAccountError(data);
-  };
-
-  const handleTransferOwner = () => {
-    if (transferAccountError && !transferAccountField) return;
-    transfer_list_ownership({
-      list_id: parseInt(id as any),
-      new_owner_id: transferAccountField,
-    })
-      .then((data) => {
-        console.log("Transferred list ownership", data);
-      })
-      .catch((error) => {
-        console.error("Error Transferring Owner", error);
-      });
-  };
 
   return (
     <>

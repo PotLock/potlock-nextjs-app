@@ -10,6 +10,7 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import ConfirmDonation from "./Donation/ConfirmDonation";
 import DonationSuccess from "./Donation/DonationSuccess";
 import FundAllocation from "./Donation/FundAllocation";
+import { DONATION_CONTRACT_ID } from "@/common/constants";
 
 const DonationFlow = ({ onClose }: any) => {
   const [step, setStep] = useState(1); // Track the current step in the process
@@ -32,9 +33,10 @@ const DonationFlow = ({ onClose }: any) => {
     breakdown.map((item: any) => {
       allTransactions.push(
         buildTransaction("donate", {
-          receiverId: "donate.potlock.near",
+          receiverId: DONATION_CONTRACT_ID,
           args: {
             message: "",
+            recipient_id: DONATION_CONTRACT_ID,
             referrer_id: wallet?.accountId,
             bypass_protocol_fee: true,
           },
@@ -42,9 +44,10 @@ const DonationFlow = ({ onClose }: any) => {
         }),
       );
     });
+    console.log(allTransactions);
     await naxiosInstance
       .contractApi({
-        contractId: "donate.potlock.near",
+        contractId: DONATION_CONTRACT_ID,
       })
       .callMultiple(allTransactions),
       nextStep(); // Move to the success screen

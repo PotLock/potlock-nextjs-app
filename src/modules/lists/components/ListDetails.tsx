@@ -1,28 +1,56 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useId, useState } from "react";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+import {
+  AdminUserIcon,
+  DeleteListIcon,
+  DotsIcons,
+  PenIcon,
+} from "@/common/assets/svgs";
 import { List } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { getList, registerBatch } from "@/common/contracts/potlock/lists";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 
 import ApplyToListModal from "./ApplyToListModal";
 import DonationFlow from "./DonationFlow";
+import { useRouter } from "next/router";
+import { ListConfirmationModal } from "@/pages/_components/ListConfirmationModals";
+import { show } from "@ebay/nice-modal-react";
+import { AccessControlAccountsModal } from "@/modules/access-control/components/AccessControlAccountsModal";
+import { useListForm } from "@/modules/core/hooks/useListForm";
+import { AccountOption } from "@/modules/core";
 
 export const ListDetails = () => {
-  const { id } = useParams();
+  const {
+    push,
+    query: { id },
+  } = useRouter();
   const [listDetails, setListDetails] = useState<List | null>(null);
   const [loading, setLoading] = useState(true);
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
+  const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
+    useState({ open: false });
   const { wallet } = useWallet();
+  const modalId = useId();
+  const openAccountsModal = useCallback(() => show(modalId), [modalId]);
+  const { handleDeleteList, handleSaveAdminsSettings, admins, setAdmins } =
+    useListForm();
 
   useEffect(() => {
     const fetchListDetails = async () => {
       try {
         const response = await getList({ list_id: parseInt(id as any) as any });
+        setAdmins(response.admins);
         setListDetails(response);
       } catch (error) {
         console.error("Error fetching list details:", error);
@@ -51,6 +79,8 @@ export const ListDetails = () => {
     //
   };
 
+  const onEditList = useCallback(() => push(`/list/edit/${id}`), []);
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -58,13 +88,6 @@ export const ListDetails = () => {
   if (!listDetails) {
     return <p>No list details available.</p>;
   }
-
-  const admins = listDetails.admins.map((admin, index) => ({
-    id: index,
-    name: admin,
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dXNlcnxlbnwwfHwwfHx8MA%3D%3D", // Placeholder image
-  }));
 
   return (
     <>
@@ -101,11 +124,11 @@ export const ListDetails = () => {
                 <span className="mr-4 font-semibold text-gray-700">Admins</span>
                 <div className="flex space-x-1">
                   {admins.slice(0, 4).map((admin) => (
-                    <img
-                      key={admin.id}
-                      className="h-10 w-10 rounded-full border-2 border-white object-cover"
-                      src={admin.image}
-                      alt={admin.name}
+                    <AccountOption
+                      title={admin}
+                      key={admin}
+                      isThumbnail
+                      {...{ accountId: admin }}
                     />
                   ))}
                   {listDetails.admins.length > 4 && (
@@ -117,44 +140,64 @@ export const ListDetails = () => {
               </div>
               {(listDetails.admins.includes(wallet?.accountId ?? "") ||
                 listDetails.owner === wallet?.accountId) && (
-                <Link href={`/list/edit/${listDetails?.id}`}>
-                  <svg
-                    width="18"
-                    height="19"
-                    viewBox="0 0 18 19"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M0 18.5025H3.75L14.81 7.4425L11.06 3.6925L0 14.7525V18.5025ZM2 15.5825L11.06 6.5225L11.98 7.4425L2.92 16.5025H2V15.5825Z"
-                      fill="#A6A6A6"
-                    />
-                    <path
-                      d="M15.37 0.7925C14.98 0.4025 14.35 0.4025 13.96 0.7925L12.13 2.6225L15.88 6.3725L17.71 4.5425C18.1 4.1525 18.1 3.5225 17.71 3.1325L15.37 0.7925Z"
-                      fill="#A6A6A6"
-                    />
-                  </svg>
-                </Link>
+                <div
+                  onClick={openAccountsModal}
+                  className="cursor-pointer rounded p-2  hover:opacity-50"
+                >
+                  <PenIcon />
+                </div>
               )}
             </div>
+
             {Boolean(wallet?.accountId) && (
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => {
-                    setIsDonateModalOpen(true);
-                  }}
-                  className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
-                >
-                  Donate to list
-                </button>
-                <button
-                  onClick={() => {
-                    setIsApplyToListModalOpen(true);
-                  }}
-                  className="rounded-md border bg-[#FEF6EE] px-4 py-2 text-gray-700 transition hover:bg-gray-100"
-                >
-                  Apply to list
-                </button>
+              <div className="relative flex items-start justify-between">
+                <div className="flex space-x-4">
+                  <button
+                    onClick={() => {
+                      setIsDonateModalOpen(true);
+                    }}
+                    className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
+                  >
+                    Donate to list
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsApplyToListModalOpen(true);
+                    }}
+                    className="rounded-md border bg-[#FEF6EE] px-4 py-2 text-gray-700 transition hover:bg-gray-100"
+                  >
+                    Apply to list
+                  </button>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="cursor-pointer rounded p-2  opacity-50 hover:bg-red-100">
+                      <DotsIcons />
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="rounded border bg-white shadow-md">
+                    <DropdownMenuItem
+                      onClick={onEditList}
+                      className="cursor-pointer p-2 hover:bg-gray-200"
+                    >
+                      <PenIcon className="mr-1 max-w-[22px]" />
+                      <span>Edit list details</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer p-2 hover:bg-gray-200">
+                      <AdminUserIcon className="mr-1 max-w-[22px]" />
+                      Add/Remove accounts
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setIsListConfirmationModalOpen({ open: true })
+                      }
+                      className="cursor-pointer p-2 hover:bg-gray-200"
+                    >
+                      <DeleteListIcon className="mr-1 max-w-[22px]" />
+                      <span className="text-red-500">Delete List</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
           </div>
@@ -176,6 +219,20 @@ export const ListDetails = () => {
           />
         </div>
       )}
+      <ListConfirmationModal
+        open={isListConfirmationModalOpen.open}
+        type={"DELETE"}
+        onClose={() => setIsListConfirmationModalOpen({ open: false })}
+        onSubmitButton={handleDeleteList}
+      />
+      <AccessControlAccountsModal
+        id={modalId}
+        title="Edit Admin list"
+        onSubmit={(admins) => setAdmins(admins)}
+        value={admins}
+        showOnSaveButton={admins.length > 0}
+        onSaveSettings={handleSaveAdminsSettings}
+      />
     </>
   );
 };
