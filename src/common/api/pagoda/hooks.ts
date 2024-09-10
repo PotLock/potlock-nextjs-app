@@ -5,16 +5,6 @@ import { ByAccountId, ByTokenId } from "@/common/types";
 import { PAGODA_REQUEST_CONFIG } from "./config";
 import { swrHooks } from "./generated";
 
-export const useNearAccountBalance = ({ accountId }: Partial<ByAccountId>) => {
-  const queryResult = swrHooks.useGetAccountsAccountIdBalancesNEAR(
-    accountId ?? "unknown",
-    undefined,
-    { ...PAGODA_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
-  );
-
-  return { ...queryResult, data: queryResult.data?.data.balance };
-};
-
 export const useFtAccountBalances = ({ accountId }: Partial<ByAccountId>) => {
   const queryResult = swrHooks.useGetAccountsAccountIdBalancesFT(
     accountId ?? "unknown",
