@@ -21,6 +21,7 @@ import { Input } from "@/common/ui/components";
 import { AccessControlAccounts } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { validAccountId, validateAccountId } from "@/modules/core";
+import { useListForm } from "@/modules/core/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
 
 import {
@@ -28,7 +29,6 @@ import {
   ListConfirmationModalProps,
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
-import { useListForm } from "@/modules/core/hooks/useListForm";
 
 interface FormData {
   name: string;

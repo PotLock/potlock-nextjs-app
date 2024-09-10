@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useCallback, useEffect, useId, useState } from "react";
 
+import { show } from "@ebay/nice-modal-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 import {
   AdminUserIcon,
@@ -18,16 +20,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
+import { AccessControlAccountsModal } from "@/modules/access-control/components/AccessControlAccountsModal";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import { AccountOption } from "@/modules/core";
+import { useListForm } from "@/modules/core/hooks/useListForm";
+import { ListConfirmationModal } from "@/pages/_components/ListConfirmationModals";
 
 import ApplyToListModal from "./ApplyToListModal";
 import DonationFlow from "./DonationFlow";
-import { useRouter } from "next/router";
-import { ListConfirmationModal } from "@/pages/_components/ListConfirmationModals";
-import { show } from "@ebay/nice-modal-react";
-import { AccessControlAccountsModal } from "@/modules/access-control/components/AccessControlAccountsModal";
-import { useListForm } from "@/modules/core/hooks/useListForm";
-import { AccountOption } from "@/modules/core";
 
 export const ListDetails = () => {
   const {
