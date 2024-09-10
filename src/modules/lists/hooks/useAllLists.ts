@@ -29,6 +29,7 @@ export const useAllLists = (
   }, [setCurrentListType]);
 
   const fetchMyLists = useCallback(async () => {
+      setCurrentListType("My Lists");
     if (!wallet?.accountId) return; // Ensure accountId is available
     try {
       const myLists: any = await get_list_for_owner({
@@ -36,7 +37,6 @@ export const useAllLists = (
       });
       setRegistrations(myLists);
       setFilteredRegistrations(myLists);
-      setCurrentListType("My Lists");
     } catch (error) {
       console.error("Error fetching my lists:", error);
     }

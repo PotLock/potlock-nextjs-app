@@ -1,10 +1,10 @@
-import { ChangeEvent, useCallback, useEffect, useId, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { IPFS_NEAR_SOCIAL_URL, NETWORK } from "@/common/constants";
+import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import {
   create_list,
   getList,
@@ -79,7 +79,6 @@ export const ListFormDetails: React.FC = () => {
   const { push, back } = useRouter();
   const onEditPage = !!id;
   const { wallet } = useWallet();
-  const modalId = useId();
 
   useEffect(() => {
     const fetchListDetails = async () => {
@@ -245,7 +244,7 @@ export const ListFormDetails: React.FC = () => {
             </div>
           </div>
           <h3 className="mb-4 mt-8 text-xl font-semibold">Permissions</h3>
-          <div className="md:flex-row md:items-start md:space-y-0 flex flex-col items-start space-x-6 space-y-8">
+          <div className="md:flex-row md:items-start md:space-y-0 md:space-x-6 md:space-y-8 flex flex-col items-start">
             <div className="flex items-center">
               <div className="p-2">
                 <span className="mr-4 mt-2 font-semibold text-gray-700">
