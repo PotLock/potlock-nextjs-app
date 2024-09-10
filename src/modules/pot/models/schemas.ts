@@ -12,6 +12,7 @@ import {
   POT_MAX_APPROVED_PROJECTS,
   POT_MAX_CHEF_FEE_BASIS_POINTS,
   POT_MAX_DESCRIPTION_LENGTH,
+  POT_MAX_HANDLE_LENGTH,
   POT_MAX_NAME_LENGTH,
   POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS,
   POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS,
@@ -19,14 +20,11 @@ import {
   POT_MIN_NAME_LENGTH,
 } from "../constants";
 import {
-  isPotApplicationStartBeforeEnd,
   isPotChefFeeValid,
   isPotCooldownPeriodValid,
   isPotMatchingPoolReferralFeeValid,
   isPotMaxProjectsValid,
   isPotPublicRoundReferralFeeValid,
-  isPotPublicRoundStartAfterApplicationEnd,
-  isPotPublicRoundStartBeforeEnd,
 } from "../utils/validation";
 
 export const fundMatchingPoolSchema = z.object({
@@ -70,7 +68,7 @@ export const challengeResolveSchema = z.object({
   resolve: z.boolean().default(false),
 });
 
-export const potDeploymentSchema = object({
+export const potSchema = object({
   source_metadata: object({
     commit_hash: string().nullable(),
     link: string(),
@@ -96,7 +94,13 @@ export const potDeploymentSchema = object({
     )
     .describe("Pot name."),
 
-  pot_handle: string().optional().describe("Pot handle."),
+  pot_handle: string()
+    .max(
+      POT_MAX_HANDLE_LENGTH,
+      `Cannot be longer than ${POT_MAX_HANDLE_LENGTH} characters.`,
+    )
+    .optional()
+    .describe("Pot handle."),
 
   pot_description: string()
     .max(
@@ -129,13 +133,6 @@ export const potDeploymentSchema = object({
     .optional()
     .describe("Minimum donation amount."),
 
-  cooldown_period_ms: safePositiveNumber
-    .refine(isPotCooldownPeriodValid, {
-      message: `Cooldown period must be at least ${POT_MIN_COOLDOWN_PERIOD_MS} ms`,
-    })
-    .optional()
-    .describe("Cooldown period in milliseconds."),
-
   registry_provider: string()
     .optional()
     .describe("Registry provider's account id."),
@@ -150,7 +147,7 @@ export const potDeploymentSchema = object({
     .optional()
     .describe("Sybil wrapper provider's account id."),
 
-  isNadabotVerificationRequired: boolean()
+  isSybilResistanceEnabled: boolean()
     .optional()
     .describe("Whether the projects must have Nadabot verification."),
 
@@ -177,29 +174,6 @@ export const potDeploymentSchema = object({
       )}%.`,
     })
     .describe("Chef fee in basis points."),
-})
-  /**
-   *! Heads up!
-   *!  Make sure that any fields targeted here are listed in `potCrossFieldValidationTargets`
-   *!  and have their corresponding error paths specified correctly.
-   */
-  .refine(isPotApplicationStartBeforeEnd, {
-    message: "Application cannot end before it starts.",
-    path: ["application_end_ms"],
-  })
-  .refine(isPotPublicRoundStartBeforeEnd, {
-    message: "Public round cannot end before it starts.",
-    path: ["public_round_end_ms"],
-  })
-  .refine(isPotPublicRoundStartAfterApplicationEnd, {
-    message: "Public round can only start after application period ends.",
-    path: ["public_round_start_ms"],
-  });
+});
 
-export type PotDeploymentInputs = FromSchema<typeof potDeploymentSchema>;
-
-export const potCrossFieldValidationTargets: (keyof PotDeploymentInputs)[] = [
-  "application_end_ms",
-  "public_round_end_ms",
-  "public_round_start_ms",
-];
+export type PotInputs = FromSchema<typeof potSchema>;

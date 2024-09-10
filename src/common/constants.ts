@@ -1,5 +1,4 @@
 import { Network } from "@wpdas/naxios";
-import { AxiosRequestConfig } from "axios";
 import Big from "big.js";
 import { utils } from "near-api-js";
 import { Metadata } from "next";
@@ -46,7 +45,8 @@ export const POTLOCK_CONTRACT_REPO_URL = "https://github.com/PotLock/core";
 export const SYBIL_CONTRACT_ID =
   NETWORK === "mainnet" ? "v1.nadabot.near" : "v1.nadabot.testnet";
 
-export const SYBIL_FRONTEND_URL = "https://app.nada.bot";
+export const SYBIL_FRONTEND_URL =
+  NETWORK === "mainnet" ? "https://app.nada.bot" : "https://testnet.nada.bot";
 
 export const SOCIAL_DB_CONTRACT_ID =
   NETWORK === "mainnet" ? "social.near" : "v1.social08.testnet";

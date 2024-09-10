@@ -111,7 +111,7 @@ const DialogContent = forwardRef<
             <DialogPrimitive.Close
               onClick={onCloseClick}
               className={cn(
-                "rounded-sm opacity-70 ring-offset-background transition-opacity",
+                "z-100 rounded-sm opacity-70 ring-offset-background transition-opacity",
                 "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
                 "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
                 "data-[state=open]:text-muted-foreground",
@@ -249,10 +249,7 @@ const DialogDescription = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn(
-      "z-2 flex flex-col gap-6 p-5 text-sm text-neutral-950",
-      className,
-    )}
+    className={cn("z-2 flex flex-col gap-6 p-5 text-sm", className)}
     {...props}
     asChild
   >

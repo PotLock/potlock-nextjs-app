@@ -23,7 +23,6 @@ const useRegistration = (projectId: string) => {
           setLoading(false);
         }
       } catch (error) {
-        console.log("error fetching project ", error);
         setError(error);
         setLoading(false);
       }

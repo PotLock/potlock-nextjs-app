@@ -54,9 +54,9 @@ const ApplicationsTab = () => {
   const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 
-  const owner = potDetail?.owner.id;
+  const owner = potDetail?.owner?.id || "";
   const admins = potDetail?.admins.map((adm) => adm.id) || [];
-  const chef = potDetail?.chef.id;
+  const chef = potDetail?.chef?.id || "";
 
   useEffect(() => {
     // Fetch applications

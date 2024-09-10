@@ -1,3 +1,7 @@
+import { useCallback, useState } from "react";
+
+import { useRouter } from "next/router";
+
 import { ByPotId } from "@/common/api/potlock";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
@@ -17,32 +21,59 @@ import {
   TextAreaField,
   TextField,
 } from "@/common/ui/form-fields";
-import { AccessControlAccounts } from "@/modules/access-control";
+import { cn } from "@/common/ui/utils";
+import { AccessControlList } from "@/modules/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
+import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
-import { POT_MAX_DESCRIPTION_LENGTH } from "../constants";
-import { usePotDeploymentForm } from "../hooks/deployment";
+import { PotEditorPreview } from "./PotEditorPreview";
+import { POT_EDITOR_FIELDS } from "../constants";
+import { usePotEditorForm } from "../hooks/forms";
+import { potEditorDeploymentSchema, potEditorSettingsSchema } from "../models";
 
 export type PotEditorProps = Partial<ByPotId> & {};
 
-export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
-  const {
-    form,
-    formValues,
-    handleAdminsUpdate,
-    isDisabled,
-    onCancel,
-    onSubmit,
-  } = usePotDeploymentForm();
+export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
+  const isNewPot = typeof potId !== "string";
+  const router = useRouter();
 
-  return (
+  const { form, values, handleAdminsUpdate, isDisabled, onSubmit } =
+    usePotEditorForm(
+      isNewPot
+        ? { schema: potEditorDeploymentSchema }
+        : {
+            potId,
+            schema: potEditorSettingsSchema,
+          },
+    );
+
+  const [isInEditMode, setEditMode] = useState(isNewPot);
+  const enterEditMode = useCallback(() => setEditMode(true), []);
+  const exitEditMode = useCallback(() => setEditMode(false), []);
+
+  const onCancelClick = useCallback(() => {
+    form.reset();
+
+    if (isNewPot) {
+      router.back();
+    } else exitEditMode();
+  }, [exitEditMode, form, isNewPot, router]);
+
+  return !isInEditMode ? (
+    <PotEditorPreview onEditClick={enterEditMode} {...{ potId }} />
+  ) : (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
-        <div className="lg:min-w-4xl flex flex-col gap-14 pt-14">
-          <EditorSection heading="Admins">
-            <AccessControlAccounts
-              title="Admins"
-              value={formValues.admins ?? []}
+        <h2 className="prose font-600 mb-12 mr-auto text-xl">
+          {!isNewPot && "Edit Pot Settings"}
+        </h2>
+
+        <div className="lg:min-w-4xl flex flex-col gap-14">
+          <EditorSection heading={POT_EDITOR_FIELDS.admins.title}>
+            <AccessControlList
+              isEditable
+              title={POT_EDITOR_FIELDS.admins.title}
+              value={values.admins ?? []}
               onSubmit={handleAdminsUpdate}
             />
           </EditorSection>
@@ -54,29 +85,33 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Pot name"
+                    label={POT_EDITOR_FIELDS.pot_name.title}
                     required
                     type="text"
                     placeholder="e.g. DeFi Center"
-                    classNames={{ root: "lg:w-50% w-full" }}
+                    classNames={{
+                      root: cn("lg:w-50% w-full", { "lg:w-full": !isNewPot }),
+                    }}
                     {...field}
                   />
                 )}
               />
 
-              <FormField
-                name="pot_handle"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Custom handle"
-                    type="text"
-                    placeholder="e.g. defi-center"
-                    classNames={{ root: "lg:w-50% w-full" }}
-                    {...field}
-                  />
-                )}
-              />
+              {isNewPot && (
+                <FormField
+                  name="pot_handle"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      label={POT_EDITOR_FIELDS.pot_handle.title}
+                      type="text"
+                      placeholder="e.g. defi-center"
+                      classNames={{ root: "lg:w-50% w-full" }}
+                      {...field}
+                    />
+                  )}
+                />
+              )}
             </div>
 
             <FormField
@@ -84,7 +119,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
               control={form.control}
               render={({ field }) => (
                 <TextAreaField
-                  label="Description"
+                  label={POT_EDITOR_FIELDS.pot_description.title}
                   required
                   placeholder="Type description"
                   maxLength={POT_MAX_DESCRIPTION_LENGTH}
@@ -99,13 +134,20 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Referral fee"
-                    labelExtension="(Matching pool)"
+                    label={
+                      POT_EDITOR_FIELDS.referral_fee_matching_pool_basis_points
+                        .title
+                    }
+                    labelExtension={
+                      POT_EDITOR_FIELDS.referral_fee_matching_pool_basis_points
+                        .subtitle
+                    }
                     required
                     inputExtension="%"
                     type="number"
                     min={0}
                     max={100}
+                    step={1}
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -117,13 +159,20 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Referral fee"
-                    labelExtension="(Public round)"
+                    label={
+                      POT_EDITOR_FIELDS.referral_fee_public_round_basis_points
+                        .title
+                    }
+                    labelExtension={
+                      POT_EDITOR_FIELDS.referral_fee_public_round_basis_points
+                        .subtitle
+                    }
                     required
                     inputExtension="%"
                     type="number"
                     min={0}
                     max={100}
+                    step={1}
                     classNames={{ root: "lg:w-50% w-full" }}
                     {...field}
                   />
@@ -133,42 +182,44 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
 
             <Alert compact variant="neutral">
               <InfoIcon width={18} height={18} />
-              <AlertTitle>Protocol fee is 2%</AlertTitle>
+              <AlertTitle>{"Protocol fee is 2%"}</AlertTitle>
 
               <AlertDescription inline>
-                This fee is fixed by the platform
+                {"This fee is fixed by the platform"}
               </AlertDescription>
             </Alert>
 
-            <div un-flex="~ col lg:row" un-gap="8">
-              <FormField
-                name="application_start_ms"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Application start date"
-                    required
-                    type="datetime-local"
-                    classNames={{ root: "lg:w-50% w-full" }}
-                    {...field}
-                  />
-                )}
-              />
+            {isNewPot && (
+              <div un-flex="~ col lg:row" un-gap="8">
+                <FormField
+                  name="application_start_ms"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      label={POT_EDITOR_FIELDS.application_start_ms.title}
+                      required
+                      type="datetime-local"
+                      classNames={{ root: "lg:w-50% w-full" }}
+                      {...field}
+                    />
+                  )}
+                />
 
-              <FormField
-                name="application_end_ms"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Application end date"
-                    required
-                    type="datetime-local"
-                    classNames={{ root: "lg:w-50% w-full" }}
-                    {...field}
-                  />
-                )}
-              />
-            </div>
+                <FormField
+                  name="application_end_ms"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      label={POT_EDITOR_FIELDS.application_end_ms.title}
+                      required
+                      type="datetime-local"
+                      classNames={{ root: "lg:w-50% w-full" }}
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+            )}
 
             <div un-flex="~ col lg:row" un-gap="8">
               <FormField
@@ -176,7 +227,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Matching round start date"
+                    label={POT_EDITOR_FIELDS.public_round_start_ms.title}
                     required
                     type="datetime-local"
                     classNames={{ root: "lg:w-50% w-full" }}
@@ -190,7 +241,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Matching round end date"
+                    label={POT_EDITOR_FIELDS.public_round_end_ms.title}
                     required
                     type="datetime-local"
                     classNames={{ root: "lg:w-50% w-full" }}
@@ -206,7 +257,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 name="min_matching_pool_donation_amount"
                 render={({ field }) => (
                   <TextField
-                    label="Min matching pool donation"
+                    label={
+                      POT_EDITOR_FIELDS.min_matching_pool_donation_amount.title
+                    }
                     {...field}
                     inputExtension={
                       <SelectField
@@ -241,12 +294,13 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 control={form.control}
                 render={({ field }) => (
                   <TextField
-                    label="Chef fee"
+                    label={POT_EDITOR_FIELDS.chef_fee_basis_points.title}
                     required
                     inputExtension="%"
                     type="number"
                     min={0}
                     max={100}
+                    step={1}
                     classNames={{ root: "lg:w-37% w-full" }}
                     {...field}
                   />
@@ -268,7 +322,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
             </div>
           </EditorSection>
 
-          <EditorSection heading="Max. approved projects">
+          <EditorSection heading={POT_EDITOR_FIELDS.max_projects.title}>
             <FormField
               name="max_projects"
               control={form.control}
@@ -294,11 +348,12 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                   label={
                     <>
                       <span un-font="600" un-text="sm">
-                        Project Registration.
+                        {POT_EDITOR_FIELDS.isPgRegistrationRequired.title}
                       </span>
 
                       <span un-text="sm">
-                        Require approval on PotLock registry (recommended)
+                        {`${POT_EDITOR_FIELDS.isPgRegistrationRequired.subtitle}
+                        (recommended)`}
                       </span>
                     </>
                   }
@@ -308,7 +363,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
 
             <FormField
               control={form.control}
-              name="isNadabotVerificationRequired"
+              name="isSybilResistanceEnabled"
               render={({ field }) => (
                 <CheckboxField
                   checked={field.value}
@@ -316,11 +371,11 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                   label={
                     <>
                       <span un-font="600" un-text="sm">
-                        Donor Sybil Resistance.
+                        {POT_EDITOR_FIELDS.isSybilResistanceEnabled.title}
                       </span>
 
                       <span un-text="sm">
-                        🤖 nada.bot human verification (recommended)
+                        {"🤖 nada.bot human verification (recommended)"}
                       </span>
                     </>
                   }
@@ -337,15 +392,15 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId: _ }) => {
                 variant="standard-filled"
                 className="lg:w-auto w-full"
               >
-                Deploy Pot
+                {isNewPot ? "Deploy Pot" : "Save changes"}
               </Button>
 
               <Button
-                onClick={onCancel}
+                onClick={onCancelClick}
                 variant="standard-outline"
                 className="lg:w-auto w-full"
               >
-                Cancel
+                {isNewPot ? "Cancel" : "Discard"}
               </Button>
             </div>
           </EditorSection>

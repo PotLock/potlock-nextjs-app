@@ -14,6 +14,31 @@ export const localeStringToTimestampMs = (value: string): number => {
   }
 };
 
+export const formatDatetimeLocal = (value: string): string =>
+  value.slice(0, 16);
+
+export const millisecondsToDatetimeLocal = (value: number): string => {
+  try {
+    return formatDatetimeLocal(new Date(value).toISOString());
+  } catch {
+    const error = new TypeError(`Unable to parse \`${value}\``);
+
+    console.error(error);
+    throw error;
+  }
+};
+
+export const millisecondsToLocaleString = (value: number): string => {
+  try {
+    return Temporal.Instant.fromEpochMilliseconds(value).toLocaleString();
+  } catch {
+    const error = new TypeError(`Unable to parse \`${value}\``);
+
+    console.error(error);
+    throw error;
+  }
+};
+
 /**
  * Converts a value in milliseconds to the equivalent number of days.
  *
