@@ -26,8 +26,8 @@ import { AccountOption } from "@/modules/core";
 
 import ApplyToListModal from "./ApplyToListModal";
 import DonationFlow from "./DonationFlow";
-import { useListForm } from "../hooks/useListForm";
 import { ListConfirmationModal } from "./ListConfirmationModals";
+import { useListForm } from "../hooks/useListForm";
 
 export const ListDetails = () => {
   const {
