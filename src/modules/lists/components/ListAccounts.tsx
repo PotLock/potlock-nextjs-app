@@ -59,6 +59,8 @@ export const ListAccounts = () => {
     },
   ];
 
+  console.log(filteredRegistrations);
+
   const handleSort = (sortType: string) => {
     const projects = [...filteredRegistrations];
     switch (sortType) {

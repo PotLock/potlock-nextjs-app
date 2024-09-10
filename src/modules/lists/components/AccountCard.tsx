@@ -42,15 +42,14 @@ export const AccountCard = ({ dataForList }: any) => {
           <div className="p-3">
             <p className="font-lora text-lg font-semibold leading-tight">
               {dataForList.registrant?.near_social_profile_data?.name ??
-                "Account Name"}
+                dataForList.registrant?.id}
             </p>
             <p className="mt-2 text-sm text-gray-600">
-              {dataForList.description ??
-                "Lorem ipsum dolor sit amet consectetur. Duis fermentum turpis vitae mi augue erat et lectus. Aucto..."}
+              {dataForList.description ?? ""}
             </p>
 
             {/* Labels */}
-            <div className="mt-3 flex space-x-2">
+            {/* <div className="mt-3 flex space-x-2">
               <span className="rounded-md bg-gray-200 px-2 py-1 text-sm">
                 Label
               </span>
@@ -60,7 +59,7 @@ export const AccountCard = ({ dataForList }: any) => {
               <span className="rounded-md bg-gray-200 px-2 py-1 text-sm">
                 Label
               </span>
-            </div>
+            </div> */}
 
             {/* Donation Info */}
             <div className="mt-4 flex items-center justify-between">

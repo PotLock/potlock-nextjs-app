@@ -37,14 +37,16 @@ export const ListHero = ({
             Create List
           </Button>
 
-          <Button
-            className="md:w-[180px] w-full"
-            variant={"brand-tonal"}
-            // asChild
-            onClick={fetchMyLists}
-          >
-            View My Lists
-          </Button>
+          {wallet?.accountId && (
+            <Button
+              className="md:w-[180px] w-full"
+              variant={"brand-tonal"}
+              // asChild
+              onClick={fetchMyLists}
+            >
+              View My Lists
+            </Button>
+          )}
         </div>
       </div>
     </div>
