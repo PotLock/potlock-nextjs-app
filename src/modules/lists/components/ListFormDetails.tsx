@@ -18,10 +18,9 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
 
-import {
+import SuccessModalCreateList, {
   ListConfirmationModal,
   ListConfirmationModalProps,
-  SuccessModalCreateList,
 } from "./ListConfirmationModals";
 
 interface FormData {

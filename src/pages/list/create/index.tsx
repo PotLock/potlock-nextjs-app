@@ -1,13 +1,11 @@
+import CreateListtHero from "@/modules/lists/components/CreateListHero";
+import { ListFormDetails } from "@/modules/lists/components/ListFormDetails";
 import React from "react";
-
-import { ListFormDetails } from "@/pages/_components/ListFormDetails";
-
-import CreateListHero from "../../_components/CreateListHero";
 
 export default function Page() {
   return (
     <div className="container">
-      <CreateListHero onEditPage={false} />
+      <CreateListtHero onEditPage={false} />
       <ListFormDetails />
     </div>
   );

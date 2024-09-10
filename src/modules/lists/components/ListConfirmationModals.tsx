@@ -13,7 +13,7 @@ interface SuccessModalProps {
   isUpdate: boolean;
 }
 
-export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
+const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
   isOpen,
   onClose,
   listName,
@@ -60,6 +60,8 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
     </div>
   );
 };
+
+export default SuccessModalCreateList;
 
 export interface ListConfirmationModalProps {
   open: boolean;

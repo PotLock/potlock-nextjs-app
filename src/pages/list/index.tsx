@@ -1,7 +1,6 @@
+import AllLists from "@/modules/lists/components/AllLists";
+import ListHero from "@/modules/lists/components/ListHero";
 import React, { useState } from "react";
-
-import AllLists from "../_components/AllLists";
-import { ListHero } from "../_components/ListHero";
 
 export default function Page() {
   const [currentListType, setCurrentListType] = useState<string>("All Lists");

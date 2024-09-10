@@ -23,11 +23,11 @@ import {
 import { AccessControlAccountsModal } from "@/modules/access-control/components/AccessControlListModal";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
-import { ListConfirmationModal } from "@/pages/_components/ListConfirmationModals";
 
 import ApplyToListModal from "./ApplyToListModal";
 import DonationFlow from "./DonationFlow";
 import { useListForm } from "../hooks/useListForm";
+import { ListConfirmationModal } from "./ListConfirmationModals";
 
 export const ListDetails = () => {
   const {
