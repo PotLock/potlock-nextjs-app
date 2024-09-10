@@ -32,12 +32,12 @@ export const ListHero = ({
           Lists allows anyone to create fundraising initiatives for
           groundbreaking public goods.
         </h1>
-        <div className="max-md:flex-col md:mt-10 md:gap-8 mt-6 flex items-center gap-4 text-sm">
-          <Button className="md:w-[180px] w-full" onClick={handleCreateList}>
-            Create List
-          </Button>
 
-          {wallet?.accountId && (
+        {wallet?.accountId && (
+          <div className="max-md:flex-col md:mt-10 md:gap-8 mt-6 flex items-center gap-4 text-sm">
+            <Button className="md:w-[180px] w-full" onClick={handleCreateList}>
+              Create List
+            </Button>
             <Button
               className="md:w-[180px] w-full"
               variant={"brand-tonal"}
@@ -46,8 +46,8 @@ export const ListHero = ({
             >
               View My Lists
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

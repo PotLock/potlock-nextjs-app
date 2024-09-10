@@ -243,9 +243,9 @@ export const ListFormDetails: React.FC = () => {
             </div>
           </div>
           <h3 className="mb-4 mt-8 text-xl font-semibold">Permissions</h3>
-          <div className="md:flex-row md:items-start md:space-y-0 md:space-x-6 md:space-y-8 flex flex-col items-start">
+          <div className="md:flex-row md:items-start md:space-y-0  flex flex-col items-start">
             <div className="flex items-center">
-              <div className="p-2">
+              <div className="p-2 pl-0">
                 <span className="mr-4 mt-2 font-semibold text-gray-700">
                   Owner
                 </span>
