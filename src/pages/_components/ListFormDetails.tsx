@@ -1,27 +1,19 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useId, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AccountView } from "near-api-js/lib/providers/provider";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { nearRpc } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL, NETWORK } from "@/common/constants";
 import {
-  add_admins_to_list,
   create_list,
-  delete_list,
   getList,
-  transfer_list_ownership,
   update_list,
 } from "@/common/contracts/potlock/lists";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { Input } from "@/common/ui/components";
-import { AccessControlAccounts } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
-import { validAccountId, validateAccountId } from "@/modules/core";
-import { useListForm } from "@/modules/core/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
 
 import {
@@ -29,6 +21,8 @@ import {
   ListConfirmationModalProps,
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
+import { useListForm } from "@/modules/lists/hooks/useListForm";
+import { AccessControlList } from "@/modules/access-control";
 
 interface FormData {
   name: string;
@@ -83,6 +77,7 @@ export const ListFormDetails: React.FC = () => {
   const { push, back } = useRouter();
   const onEditPage = !!id;
   const { wallet } = useWallet();
+  const modalId = useId();
 
   useEffect(() => {
     const fetchListDetails = async () => {
@@ -246,11 +241,13 @@ export const ListFormDetails: React.FC = () => {
             </div>
           </div>
           <h3 className="mb-4 mt-8 text-xl font-semibold">Permissions</h3>
-          <div className="md:flex-row md:items-center md:space-y-0 flex flex-col items-start space-x-6 space-y-8">
+          <div className="md:flex-row md:items-start md:space-y-0 flex flex-col items-start space-x-6 space-y-8">
             <div className="flex items-center">
-              <div>
-                <span className="mr-4 font-semibold text-gray-700">Owner</span>
-                <div className="flex items-center space-x-2">
+              <div className="p-2">
+                <span className="mr-4 mt-2 font-semibold text-gray-700">
+                  Owner
+                </span>
+                <div className="flex items-center space-x-2 p-2">
                   <img
                     src={profileImage || "https://via.placeholder.com/40"}
                     alt="Owner"
@@ -269,10 +266,12 @@ export const ListFormDetails: React.FC = () => {
                     <p className="font-semibold text-gray-700">Admins</p>
                   </div>
                   <div className="flex h-[35px]  flex-wrap">
-                    <AccessControlAccounts
+                    <AccessControlList
+                      isEditable
                       title="Admins"
                       value={admins}
                       showOnSaveButton={admins.length > 0}
+                      classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={(admins) => setAdmins(admins)}
                       onSaveSettings={handleSaveAdminsSettings}
                     />
@@ -281,29 +280,31 @@ export const ListFormDetails: React.FC = () => {
               </div>
             </div>
           </div>
-          <div>
-            <h3>Transfer Ownership</h3>
-            <div className="flex gap-2">
-              <Input
-                onChange={handleChangeTransferOwnerField}
-                error={transferAccountError}
-                value={transferAccountField}
-              />
-              <button
-                disabled={!!transferAccountError || !transferAccountField}
-                type="button"
-                onClick={() =>
-                  setOpenListConfirmModal({
-                    open: true,
-                    type: "TRANSFER_OWNERSHIP",
-                  })
-                }
-                className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                Transfer
-              </button>
+          {onEditPage && (
+            <div>
+              <h3>Transfer Ownership</h3>
+              <div className="flex gap-2">
+                <Input
+                  onChange={handleChangeTransferOwnerField}
+                  error={transferAccountError}
+                  value={transferAccountField}
+                />
+                <button
+                  disabled={!!transferAccountError || !transferAccountField}
+                  type="button"
+                  onClick={() =>
+                    setOpenListConfirmModal({
+                      open: true,
+                      type: "TRANSFER_OWNERSHIP",
+                    })
+                  }
+                  className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  Transfer
+                </button>
+              </div>
             </div>
-          </div>
+          )}
           <div>
             <h3 className="mb-2 mt-10 text-xl font-semibold">
               Upload list cover image{" "}

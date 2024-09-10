@@ -32,7 +32,7 @@ export type DonationPotDistributionStrategyKey =
 
 export type DonationState = {
   currentStep: DonationStep;
-  successResult?: DirectDonation | PotDonation;
+  finalOutcome?: DirectDonation | PotDonation;
 };
 
 export type DonationSubmissionInputs = ByAccountId | ByPotId;

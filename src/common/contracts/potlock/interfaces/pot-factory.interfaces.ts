@@ -1,7 +1,8 @@
+import { PotId } from "@/common/api/potlock";
 import { AccountId, ProviderId } from "@/common/types";
 
-export type Pot = {
-  id: string;
+export type PotDeploymentResult = {
+  id: PotId;
   deployed_by: string;
   deployed_at_ms: number;
 };
@@ -62,9 +63,4 @@ export type PotArgs = {
   chef_fee_basis_points: number;
   protocol_config_provider?: null | ProviderId;
   source_metadata: ContractSourceMetadata;
-};
-
-export type PotDeploymentArgs = {
-  pot_args: PotArgs;
-  pot_handle?: null | string;
 };

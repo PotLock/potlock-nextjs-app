@@ -4,12 +4,12 @@ import { useModal } from "@ebay/nice-modal-react";
 
 import {
   AccessControlAccountsModal,
-  AccessControlAccountsModalProps,
-} from "../components/AccessControlAccountsModal";
+  AccessControlListModalProps,
+} from "../components/AccessControlListModal";
 
 // TODO: Remove if not needed
 export const useAccessControlAccountManager = (
-  params: AccessControlAccountsModalProps,
+  params: AccessControlListModalProps,
 ) => {
   const modal = useModal(AccessControlAccountsModal);
 

@@ -6,12 +6,14 @@ import {
   literal,
   nativeEnum,
   object,
+  preprocess,
   string,
 } from "zod";
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { safePositiveNumber } from "@/common/lib";
 import { AvailableBalance } from "@/modules/core";
+import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 
 import {
   DONATION_MAX_MESSAGE_LENGTH,
@@ -21,7 +23,10 @@ import {
   DonationAllocationStrategyEnum,
   DonationPotDistributionStrategy,
 } from "../types";
-import { donationFeePercentsToBasisPoints } from "../utils/converters";
+import {
+  donationFeeBasisPointsToPercents,
+  donationFeePercentsToBasisPoints,
+} from "../utils/converters";
 import {
   isDonationAmountSufficient,
   isDonationMatchingPotSelected,
@@ -34,15 +39,16 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
 
 export const donationAmount = safePositiveNumber;
 
-export const donationFeeBasisPoints = safePositiveNumber
-  .refine((percents) => percents <= 100, {
-    message: "Fee cannot exceed 100%.",
-  })
-  .transform((percents) =>
-    donationFeePercentsToBasisPoints(
-      safePositiveNumber.safeParse(percents).data ?? 0,
-    ),
-  );
+export const donationFeeBasisPoints = preprocess(
+  (value) =>
+    typeof value === "string"
+      ? donationFeePercentsToBasisPoints(safePositiveNumber.parse(value))
+      : value,
+
+  safePositiveNumber,
+).refine((basisPoints) => basisPoints <= TOTAL_FEE_BASIS_POINTS, {
+  message: `Fee cannot exceed ${donationFeeBasisPointsToPercents(TOTAL_FEE_BASIS_POINTS)}%.`,
+});
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,

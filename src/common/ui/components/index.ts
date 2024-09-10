@@ -19,12 +19,20 @@ export * from "./SearchBar";
 export * from "./select";
 export * from "./skeleton";
 export * from "./SortSelect";
+export * from "./Spinner";
 export * from "./switch";
 export * from "./textarea";
 export * from "./toggle";
 export * from "./toggle-group";
 export * from "./typography";
 export * from "./custom-avatar";
+
+/**
+ * Molecules
+ *
+ * See https://atomicdesign.bradfrost.com/chapter-2/#molecules
+ */
+export * from "./molecules/data-loading-placeholder";
 
 /**
  * Organisms

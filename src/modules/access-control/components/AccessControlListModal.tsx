@@ -24,7 +24,7 @@ import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
 import { AccountOption, validAccountId } from "@/modules/core";
 
-export type AccessControlAccountsModalProps = {
+export type AccessControlListModalProps = {
   title: string;
   value: AccountId[];
   onSubmit: (accountIds: AccountId[]) => void;
@@ -39,7 +39,7 @@ export const AccessControlAccountsModal = create(
     onSubmit,
     showOnSaveButton,
     onSaveSettings,
-  }: AccessControlAccountsModalProps) => {
+  }: AccessControlListModalProps) => {
     const self = useModal();
 
     const close = useCallback(() => {

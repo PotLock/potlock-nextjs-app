@@ -3,9 +3,23 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/common/ui/components";
+import { useAllLists } from "@/modules/lists/hooks/useAllLists";
+import useWallet from "@/modules/auth/hooks/useWallet";
 
-export const ListHero = () => {
+export const ListHero = ({
+  setCurrentListType,
+  setFilteredRegistrations,
+}: {
+  setCurrentListType: (type: string) => void;
+  setFilteredRegistrations: (type: any) => void;
+}) => {
   const { push } = useRouter();
+  const { wallet } = useWallet();
+  const { fetchMyLists } = useAllLists(
+    wallet,
+    setCurrentListType,
+    setFilteredRegistrations,
+  );
 
   const handleCreateList = useCallback(() => {
     push("/list/create");
@@ -27,6 +41,7 @@ export const ListHero = () => {
             className="md:w-[180px] w-full"
             variant={"brand-tonal"}
             // asChild
+            onClick={fetchMyLists}
           >
             View My Lists
           </Button>

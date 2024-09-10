@@ -20,14 +20,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
-import { AccessControlAccountsModal } from "@/modules/access-control/components/AccessControlAccountsModal";
+import { AccessControlAccountsModal } from "@/modules/access-control/components/AccessControlListModal";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
-import { useListForm } from "@/modules/core/hooks/useListForm";
 import { ListConfirmationModal } from "@/pages/_components/ListConfirmationModals";
 
 import ApplyToListModal from "./ApplyToListModal";
 import DonationFlow from "./DonationFlow";
+import { useListForm } from "../hooks/useListForm";
 
 export const ListDetails = () => {
   const {

@@ -82,7 +82,7 @@ const Header = ({ potDetail }: Props) => {
           {/* ButtonsWrapper */}
           <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
             {potStatuses.canDonate && (
-              <Button onClick={openDonationModal}>Donate to Project</Button>
+              <Button onClick={openDonationModal}>Donate to Projects</Button>
             )}
             {potStatuses.canFund && (
               <Button

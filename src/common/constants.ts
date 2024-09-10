@@ -1,5 +1,4 @@
 import { Network } from "@wpdas/naxios";
-import { AxiosRequestConfig } from "axios";
 import Big from "big.js";
 import { utils } from "near-api-js";
 import { Metadata } from "next";

@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  getLists,
-  get_list_for_owner,
-  get_upvoted_lists_for_account,
-} from "@/common/contracts/potlock/lists";
-import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
+import { Group, SearchBar, SortSelect } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { ListCard } from "@/modules/lists/components/ListCard";
 import { Profile } from "@/modules/profile/models";
@@ -13,16 +8,29 @@ import { categories, statuses } from "@/modules/project/constants";
 import { useTypedSelector } from "@/store";
 
 import { ListCardSkeleton } from "./ListCardSkeleton";
+import { useAllLists } from "@/modules/lists/hooks/useAllLists";
 
-const AllLists = () => {
-  const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
-  const [registrations, setRegistrations] = useState<any[]>([]);
+const AllLists = ({
+  currentListType,
+  setCurrentListType,
+  filteredRegistrations,
+  setFilteredRegistrations,
+}: {
+  currentListType: string;
+  setCurrentListType: (type: string) => void;
+  filteredRegistrations: any[];
+  setFilteredRegistrations: (type: any) => void;
+}) => {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
-  const [currentListType, setCurrentListType] = useState("All Lists");
-  const [loading, setLoading] = useState(false);
   const { wallet } = useWallet();
+
+  const { fetchAllLists, registrations, loading, buttons } = useAllLists(
+    wallet,
+    setCurrentListType,
+    setFilteredRegistrations,
+  );
 
   const SORT_LIST_PROJECTS = [
     { label: "Most recent", value: "recent" },
@@ -100,56 +108,9 @@ const AllLists = () => {
     setFilteredRegistrations(filtered);
   }, [search, categoryFilter, statusFilter, registrations]);
 
-  const fetchAllLists = async () => {
-    setLoading(true);
-    const allLists: any = await getLists();
-    setLoading(false);
-    setRegistrations(allLists);
-    setFilteredRegistrations(allLists);
-    setCurrentListType("All Lists");
-  };
-
-  const fetchMyLists = async () => {
-    const myLists: any = await get_list_for_owner({
-      owner_id: wallet?.accountId ?? "",
-    });
-    setRegistrations(myLists);
-    setFilteredRegistrations(myLists);
-    setCurrentListType("My Lists");
-  };
-
-  const fetchFavourites = async () => {
-    const upvotedLists: any = await get_upvoted_lists_for_account({
-      account_id: wallet?.accountId ?? "",
-    });
-    setRegistrations(upvotedLists);
-    setFilteredRegistrations(upvotedLists);
-    setCurrentListType("My Favorites");
-  };
-
   useEffect(() => {
     fetchAllLists();
   }, []);
-
-  const buttons = [
-    {
-      label: "All List",
-      fetchFunction: fetchAllLists,
-      type: "All Lists",
-    },
-    {
-      label: "My Lists",
-      fetchFunction: fetchMyLists,
-      type: "My Lists",
-      condition: Boolean(wallet?.accountId),
-    },
-    {
-      label: "My Favorites",
-      fetchFunction: fetchFavourites,
-      type: "My Favorites",
-      condition: Boolean(wallet?.accountId),
-    },
-  ];
 
   return (
     <div className="md:px-10 md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
@@ -206,3 +167,6 @@ const AllLists = () => {
 };
 
 export default AllLists;
+function setFilteredRegistrations(type: any): void {
+  throw new Error("Function not implemented.");
+}

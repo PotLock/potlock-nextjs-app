@@ -14,8 +14,8 @@ import {
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
   SOCIAL_DB_CONTRACT_ID,
 } from "@/common/constants";
-import { getDaoPolicy } from "@/common/contracts/common";
 import * as socialDb from "@/common/contracts/social";
+import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
 import { store } from "@/store";
 
@@ -33,7 +33,6 @@ const getSocialData = async (accountId: string) => {
 
 const handleCreateOrUpdateProject = async () => {
   const data = store.getState().createProject;
-  // console.log("Data:", data);
 
   const accountId = data.isDao ? data.daoAddress : data.accountId;
 
@@ -57,7 +56,7 @@ const handleCreateOrUpdateProject = async () => {
 
   // If there is an existing social data, make the diff between then
   const existingSocialData = await getSocialData(accountId);
-  // console.log("existing:", existingSocialData);
+
   const diff = existingSocialData
     ? deepObjectDiff(existingSocialData, socialData)
     : socialData;
@@ -144,12 +143,10 @@ const handleCreateOrUpdateProject = async () => {
         await naxiosInstance
           .contractApi()
           .callMultiple(daoTransactions, callbackUrl);
-        // console.log(daoTransactions);
       } else {
         await naxiosInstance
           .contractApi()
           .callMultiple(transactions, callbackUrl);
-        // console.log(transactions);
       }
 
       return {

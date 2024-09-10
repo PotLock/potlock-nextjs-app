@@ -8,7 +8,7 @@ import { dispatch } from "@/store";
 import { DonationModal } from "../components/DonationModal";
 
 export const useDonationSuccessWalletRedirect = () => {
-  const modal = useModal(DonationModal);
+  const donationModal = useModal(DonationModal);
 
   const {
     query: { donateTo, donateToPot, transactionHashes },
@@ -25,14 +25,13 @@ export const useDonationSuccessWalletRedirect = () => {
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
     (typeof transactionHashes === "string" ? transactionHashes : undefined);
 
+  const isTransactionOutcomeDetected =
+    transactionHash && Boolean(recipientAccountId ?? potAccountId);
+
   useEffect(() => {
-    if (
-      transactionHash &&
-      Boolean(recipientAccountId ?? potAccountId) &&
-      !modal.visible
-    ) {
-      dispatch.donation.handleSuccessByTxHash(transactionHash).then(() => {
-        modal.show({
+    if (isTransactionOutcomeDetected && !donationModal.visible) {
+      void dispatch.donation.handleOutcome(transactionHash).finally(() => {
+        donationModal.show({
           accountId: recipientAccountId,
           potId: potAccountId,
           transactionHash,
@@ -46,7 +45,9 @@ export const useDonationSuccessWalletRedirect = () => {
       });
     }
   }, [
-    modal,
+    isTransactionOutcomeDetected,
+    donationModal,
+    donationModal.visible,
     potAccountId,
     recipientAccountId,
     setSearchParams,

@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -7,8 +7,8 @@ import {
   delete_list,
   transfer_list_ownership,
 } from "@/common/contracts/potlock/lists";
+import { validateAccountId } from "@/modules/core";
 
-import { validateAccountId } from "../models";
 
 export const useListForm = () => {
   const { push, query } = useRouter();
