@@ -3,8 +3,8 @@ import { forwardRef } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ArrowLeft, X } from "lucide-react";
 
-import { Button } from "./button";
-import { cn } from "../utils";
+import { cn } from "../../utils";
+import { Button } from "../atoms/button";
 
 const Dialog = DialogPrimitive.Root;
 

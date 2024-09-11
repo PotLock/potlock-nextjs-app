@@ -4,10 +4,10 @@ import Link from "next/link";
 
 import { Toggle } from "@/common/assets/svgs";
 import { truncate } from "@/common/lib";
-import { CustomAvatar } from "@/common/ui/components";
 import { oneNearUsdPrice } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { JoinDonation } from "@/modules/pot/hooks";
+import { CustomAvatar } from "@/modules/profile";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 import { Container, Row } from "./styles";

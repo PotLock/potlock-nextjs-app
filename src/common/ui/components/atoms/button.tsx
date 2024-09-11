@@ -3,7 +3,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
 
-import { cn } from "../utils";
+import { cn } from "../../utils";
 
 // TODO: add correct hover effects
 const buttonVariants = cva(

@@ -5,20 +5,20 @@ import { Form } from "react-hook-form";
 import { Pot } from "@/common/api/potlock";
 import { yoctoNearToFloat } from "@/common/lib";
 import {
+  Badge,
   Button,
   Checkbox,
-  CustomAvatar,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   FormField,
   Input,
+  Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { Badge } from "@/common/ui/components/badge";
-import Spinner from "@/common/ui/components/Spinner";
 import routesPath from "@/modules/core/routes";
+import { CustomAvatar } from "@/modules/profile";
 import { useTypedSelector } from "@/store";
 
 import { useFundMatchingPoolForm, useProtocolConfig } from "../hooks";
