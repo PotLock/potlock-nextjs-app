@@ -24,10 +24,8 @@ const AllLists = ({
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
-  const { wallet } = useWallet();
 
   const { fetchAllLists, registrations, loading, buttons } = useAllLists(
-    wallet,
     setCurrentListType,
     setFilteredRegistrations,
   );

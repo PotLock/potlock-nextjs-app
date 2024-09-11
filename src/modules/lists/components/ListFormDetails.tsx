@@ -22,6 +22,7 @@ import SuccessModalCreateList, {
   ListConfirmationModal,
   ListConfirmationModalProps,
 } from "./ListConfirmationModals";
+import { walletApi } from "@/common/api/near";
 
 interface FormData {
   name: string;
@@ -103,11 +104,11 @@ export const ListFormDetails: React.FC = () => {
   useEffect(() => {
     const fetchProfileImage = async () => {
       const { image } = await fetchSocialImages({
-        accountId: wallet?.accountId || "",
+        accountId: walletApi.accountId || "",
       });
       setProfileImage(image);
     };
-    if (wallet?.accountId) fetchProfileImage();
+    if (walletApi?.accountId) fetchProfileImage();
   }, [wallet]);
 
   const onSubmit: SubmitHandler<FormData> = async (data, event) => {
@@ -256,7 +257,7 @@ export const ListFormDetails: React.FC = () => {
                     className="h-6 w-6 rounded-full border-2 border-white"
                   />
                   <span className="text-xs text-gray-700">
-                    {onEditPage ? watch("owner") : wallet?.accountId}
+                    {onEditPage ? watch("owner") : walletApi?.accountId}
                   </span>
                 </div>
               </div>

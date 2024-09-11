@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/common/ui/components";
-import useWallet from "@/modules/auth/hooks/useWallet";
 import { useAllLists } from "@/modules/lists/hooks/useAllLists";
+import { walletApi } from "@/common/api/near";
 
 export const ListHero = ({
   setCurrentListType,
@@ -14,9 +14,7 @@ export const ListHero = ({
   setFilteredRegistrations: (type: any) => void;
 }) => {
   const { push } = useRouter();
-  const { wallet } = useWallet();
   const { fetchMyLists } = useAllLists(
-    wallet,
     setCurrentListType,
     setFilteredRegistrations,
   );
@@ -32,8 +30,7 @@ export const ListHero = ({
           Lists allows anyone to create fundraising initiatives for
           groundbreaking public goods.
         </h1>
-
-        {wallet?.accountId && (
+        {walletApi?.accountId && (
           <div className="max-md:flex-col md:mt-10 md:gap-8 mt-6 flex items-center gap-4 text-sm">
             <Button className="md:w-[180px] w-full" onClick={handleCreateList}>
               Create List
@@ -41,7 +38,6 @@ export const ListHero = ({
             <Button
               className="md:w-[180px] w-full"
               variant={"brand-tonal"}
-              // asChild
               onClick={fetchMyLists}
             >
               View My Lists

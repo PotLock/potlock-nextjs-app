@@ -5,14 +5,15 @@ import {
   get_list_for_owner,
   get_upvoted_lists_for_account,
 } from "@/common/contracts/potlock/lists"; // Adjust the import based on your project structure
+import { walletApi } from "@/common/api/near";
 
 export const useAllLists = (
-  wallet: any,
   setCurrentListType: (type: string) => void,
   setFilteredRegistrations: (type: any) => void,
 ) => {
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const wallet = walletApi
 
   const fetchAllLists = useCallback(async () => {
     setLoading(true);
@@ -66,13 +67,13 @@ export const useAllLists = (
       label: "My Lists",
       fetchFunction: fetchMyLists,
       type: "My Lists",
-      condition: Boolean(wallet?.accountId),
+      condition: Boolean(walletApi?.accountId),
     },
     {
       label: "My Favorites",
       fetchFunction: fetchFavourites,
       type: "My Favorites",
-      condition: Boolean(wallet?.accountId),
+      condition: Boolean(walletApi?.accountId),
     },
   ];
 
