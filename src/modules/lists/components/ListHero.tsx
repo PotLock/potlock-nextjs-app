@@ -2,9 +2,9 @@ import { useCallback } from "react";
 
 import { useRouter } from "next/navigation";
 
+import { walletApi } from "@/common/api/near";
 import { Button } from "@/common/ui/components";
 import { useAllLists } from "@/modules/lists/hooks/useAllLists";
-import { walletApi } from "@/common/api/near";
 
 export const ListHero = ({
   setCurrentListType,

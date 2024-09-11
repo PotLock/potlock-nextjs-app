@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 
+import { walletApi } from "@/common/api/near";
 import {
   getLists,
   get_list_for_owner,
   get_upvoted_lists_for_account,
 } from "@/common/contracts/potlock/lists"; // Adjust the import based on your project structure
-import { walletApi } from "@/common/api/near";
 
 export const useAllLists = (
   setCurrentListType: (type: string) => void,
@@ -13,7 +13,7 @@ export const useAllLists = (
 ) => {
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const wallet = walletApi
+  const wallet = walletApi;
 
   const fetchAllLists = useCallback(async () => {
     setLoading(true);

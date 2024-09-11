@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import { walletApi } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import {
   create_list,
@@ -22,7 +23,6 @@ import SuccessModalCreateList, {
   ListConfirmationModal,
   ListConfirmationModalProps,
 } from "./ListConfirmationModals";
-import { walletApi } from "@/common/api/near";
 
 interface FormData {
   name: string;

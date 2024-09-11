@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 
-import CardSkeleton from "../../project/components/CardSkeleton";
 import {
   IPFS_NEAR_SOCIAL_THUMBNAIL_URL,
   IPFS_NEAR_SOCIAL_URL,
 } from "@/common/constants";
 import { truncate } from "@/common/lib";
+
+import CardSkeleton from "../../project/components/CardSkeleton";
 
 export const AccountCard = ({ dataForList }: any) => {
   const profile = dataForList.registrant?.near_social_profile_data;
