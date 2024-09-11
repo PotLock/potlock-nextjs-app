@@ -2,10 +2,10 @@ import { PopoverProps } from "@radix-ui/react-popover";
 import { ToggleGroupMultipleProps } from "@radix-ui/react-toggle-group";
 import Image from "next/image";
 
-import { Button } from "./button";
-import { Label } from "./label";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
+import { Button } from "../atoms/button";
+import { Label } from "../label";
+import { Popover, PopoverContent, PopoverTrigger } from "../popover";
+import { ToggleGroup, ToggleGroupItem } from "../toggle-group";
 
 // Define the item type
 type Item = {

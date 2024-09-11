@@ -10,7 +10,7 @@ import {
   MultiSelectorItem,
   MultiSelectorList,
   MultiSelectorTrigger,
-} from "@/common/ui/components/multi-select";
+} from "@/common/ui/components/molecules/multi-select";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { useTypedSelector } from "@/store";
 

@@ -263,9 +263,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     {...field}
                     inputExtension={
                       <SelectField
-                        embedded
                         label="Available tokens"
                         defaultValue={NEAR_TOKEN_DENOM}
+                        embedded
                         disabled
                         classes={{
                           trigger: "h-full w-min rounded-r-none shadow-none",
@@ -280,6 +280,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     placeholder="0.00"
                     min={DONATION_MIN_NEAR_AMOUNT}
                     step={0.01}
+                    required
                     classNames={{ root: "lg:w-50% w-full" }}
                   />
                 )}
@@ -375,7 +376,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                       </span>
 
                       <span un-text="sm">
-                        {"🤖 nada.bot human verification (recommended)"}
+                        {`${POT_EDITOR_FIELDS.isSybilResistanceEnabled.subtitle} (recommended)`}
                       </span>
                     </>
                   }

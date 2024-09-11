@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "../hooks/useProfileData";
 
 const NO_IMAGE =
   "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
