@@ -1,18 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 
+import Image from "next/image";
+
+import { ListNoteIcon } from "@/common/assets/svgs/ListNote";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
-
-import { statusesIcons } from "@/modules/core/constants";
-import Image from "next/image";
-import { ListNoteIcon } from "@/common/assets/svgs/ListNote";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
+import { statusesIcons } from "@/modules/core/constants";
 
 export const AccountCard = ({ dataForList }: any) => {
   const profile = dataForList.registrant?.near_social_profile_data;
