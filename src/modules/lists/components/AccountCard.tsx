@@ -1,16 +1,22 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React from "react";
 
-import {
-  IPFS_NEAR_SOCIAL_THUMBNAIL_URL,
-  IPFS_NEAR_SOCIAL_URL,
-} from "@/common/constants";
+import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
 
-import CardSkeleton from "../../project/components/CardSkeleton";
+import { statusesIcons } from "@/modules/core/constants";
+import Image from "next/image";
+import { ListNoteIcon } from "@/common/assets/svgs/ListNote";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/common/ui/components";
 
 export const AccountCard = ({ dataForList }: any) => {
   const profile = dataForList.registrant?.near_social_profile_data;
+  console.log(dataForList);
 
   const NO_IMAGE =
     "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
@@ -24,11 +30,13 @@ export const AccountCard = ({ dataForList }: any) => {
         {/* Image Section */}
         <div className="relative">
           <div className="h-[150px] bg-gray-400">
-            {/* <img
-                className="h-[150px] w-full object-cover"
-                src={dataForList?.cover_image_url}
-                alt="cover"
-              /> */}
+            {profile?.backgroundImage?.ipfs_cid && (
+              <img
+                src={`${IPFS_NEAR_SOCIAL_URL}${profile?.backgroundImage?.ipfs_cid}`}
+                alt="person"
+                className="h-full w-full rounded-full object-cover"
+              />
+            )}
           </div>
           <div className="mb-[-25px] h-[40px] w-[40px] translate-x-2 translate-y-[-25px] rounded-full bg-white shadow-md">
             <img
@@ -79,7 +87,37 @@ export const AccountCard = ({ dataForList }: any) => {
             </p>
           </div>
 
-          <div className="mt-4"></div>
+          <div className="mt-4 flex items-center justify-between">
+            <div
+              className="flex w-max items-center justify-between  gap-2 rounded-sm px-2 py-2 "
+              style={{
+                color: statusesIcons[dataForList?.status]?.color,
+                background: statusesIcons[dataForList?.status]?.background,
+              }}
+            >
+              <Image
+                src={statusesIcons[dataForList?.status]?.icon}
+                width={18}
+                height={18}
+                alt="status-icon"
+              />
+              <span className="text-[14px]">{dataForList?.status}</span>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div>
+                  <ListNoteIcon className="cursor-pointer hover:opacity-50" />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem className="max-h-[150px] max-w-[250px] items-start bg-white p-2 text-start">
+                  <div className=" text-black">
+                    {dataForList?.registrant_notes ?? "No Note"}
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </div>

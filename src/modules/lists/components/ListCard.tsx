@@ -52,9 +52,9 @@ export const ListCard = ({ dataForList }: { dataForList?: any }) => {
             height={150}
           />
           <div className="absolute right-0 top-0 h-[150px] w-[150px] bg-black bg-opacity-50">
-            <div className="flex h-[150px] w-full items-center justify-center  text-white">
+            {/* <div className="flex h-[150px] w-full items-center justify-center  text-white">
               30 More
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="p-3">
