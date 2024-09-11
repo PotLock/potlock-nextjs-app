@@ -117,9 +117,9 @@ export const UserDropdown = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger className="rounded-full">
         {profileImg ? (
-          <div className="cursor-pointer ">
+          <>
             {actAsDaoEnabled ? (
               <DAOProfileImg />
             ) : (
@@ -129,7 +129,7 @@ export const UserDropdown = () => {
                 setProfileImg={setProfileImg}
               />
             )}
-          </div>
+          </>
         ) : (
           <Skeleton className="h-8 w-8 rounded-full" />
         )}

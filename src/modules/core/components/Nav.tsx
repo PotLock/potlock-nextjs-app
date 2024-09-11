@@ -123,17 +123,16 @@ export const Nav = () => {
                 );
               })}
             </div>
-
-            <CartLink />
           </div>
         </div>
+
         {/* Right */}
-        <div className="flex gap-4">
+        <div className="flex items-center gap-8">
+          <CartLink />
           <AuthButton />
+
           <MobileMenuButton
-            onClick={() => {
-              setShowMobileMenu(!showMobileMenu);
-            }}
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
           />
         </div>
       </nav>
