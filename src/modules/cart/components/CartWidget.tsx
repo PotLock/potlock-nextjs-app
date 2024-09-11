@@ -24,7 +24,7 @@ export const CartWidget: React.FC<CartWidgetProps> = () => {
   const totalAmount = (matchingAmount + directAmount) * totalFeeBasisPoints;
 
   const breakdown = (
-    <Card className="md:w-80 h-auto w-full">
+    <Card className="md:w-80 h-fit w-full">
       <CardHeader>
         <CardTitle>Breakdown Summary</CardTitle>
       </CardHeader>
