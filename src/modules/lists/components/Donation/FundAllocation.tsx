@@ -199,7 +199,7 @@ const FundAllocation = ({
             isNaN(amount) ||
             amount === 0 ||
             amount > Number(balanceFloat) ||
-            selectAllProjects.length === 0
+            selectAllProjects.length > 0
           }
           onClick={() => handleAddToCart(amount, selectedProjects)}
         >
