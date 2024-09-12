@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import HomeBannerStyle from "@/common/assets/svgs/HomeBannerBackground";
 import { potFactory } from "@/common/contracts/potlock";
 import { Button } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
@@ -25,17 +24,12 @@ const Banner = () => {
   }, [wallet?.accountId]);
 
   return (
-    <div
-      className="relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden"
-      style={{
-        ...HomeBannerStyle,
-      }}
-    >
+    <div className="relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden bg-hero">
       <div className="z-1 max-md:p-[64px_20px] relative flex flex-col justify-center p-[64px]">
         <h3 className="font-500 mb-6 mt-0 text-sm uppercase tracking-[1.12px]">
           Explore Pots
         </h3>
-        <h1 className="font-500 max-md:text-[36px] m-0 font-lora text-[40px] tracking-tighter">
+        <h1 className="font-500 max-md:text-[36px] m-0 font-lora text-[40px] tracking-tight">
           Donate to Matching Rounds <br className="max-md:hidden" /> to Get Your
           Contributions Amplified.
         </h1>
