@@ -279,13 +279,7 @@ export const ListDetails = () => {
         value={isLoading ? [] : registrants}
         showOnSaveButton={registrants?.length > 0}
         countText="Account(s)"
-        onSaveSettings={() =>
-          handleRegisterBatch(
-            id as string,
-            registrants,
-            listDetails?.default_registration_status,
-          )
-        }
+        onSaveSettings={() => handleRegisterBatch(id as string, registrants)}
       />
     </>
   );

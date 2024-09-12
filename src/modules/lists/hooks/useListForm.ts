@@ -30,16 +30,12 @@ export const useListForm = () => {
       });
   };
 
-  const handleRegisterBatch = (
-    list_id: string,
-    registrants: string[],
-    status: string,
-  ) => {
+  const handleRegisterBatch = (list_id: string, registrants: string[]) => {
     registerBatch({
       list_id: parseInt(list_id as any) as any,
       registrations: registrants.map((data: string) => ({
         registrant_id: data,
-        status: status,
+        status: "Approved",
         submitted_ms: Date.now(),
         updated_ms: Date.now(),
         notes: "",

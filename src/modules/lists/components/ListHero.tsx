@@ -26,7 +26,7 @@ export const ListHero = ({
   return (
     <div className="relative flex w-full flex-col justify-center overflow-hidden rounded-xl border border-solid border-[#f8d3b0] bg-hero bg-cover bg-no-repeat">
       <div className="md:px-10 md:py-16 relative z-[1] flex flex-col  justify-center px-5 py-12">
-        <h1 className="lett md:w-[80%]  md:text-[40px] m-0 text-4xl font-medium leading-[48px] tracking-tight">
+        <h1 className="lett md:w-[80%] md:text-[40px]  m-0 font-lora text-4xl font-medium leading-[48px] tracking-tight">
           Lists allows anyone to create fundraising initiatives for
           groundbreaking public goods.
         </h1>

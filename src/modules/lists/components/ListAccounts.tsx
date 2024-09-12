@@ -17,6 +17,7 @@ export const ListAccounts = () => {
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [accountsWithAccess, setAccountsWithAccess] = useState<string[]>([]);
   // const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
   const [currentListType, setCurrentListType] = useState(
@@ -107,9 +108,25 @@ export const ListAccounts = () => {
     listId: parseInt(id as string),
   });
 
+  const { data: listData, isLoading: loadingListData } = potlock.useList({
+    listId: parseInt(id as string),
+  });
+
+  useEffect(() => {
+    if (!loadingListData && listData) {
+      const accountsWithAccess = [
+        ...(listData.admins?.map((item) => item.id) || []),
+        listData.owner?.id,
+      ].filter(Boolean);
+
+      setAccountsWithAccess(accountsWithAccess);
+    }
+  }, [listData, loadingListData]);
+
   useEffect(() => {
     setRegistrations((data?.results as any) ?? []);
     setFilteredRegistrations((data?.results as any) ?? []);
+    // setAccountsWithAccess(data?.results?.map((item) => item.registrant?.id));
   }, [data]);
 
   if (isLoading) {
@@ -152,7 +169,11 @@ export const ListAccounts = () => {
       </div>
       <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
         {(filteredRegistrations ?? [])?.map((item, index) => (
-          <AccountCard dataForList={item} key={index} />
+          <AccountCard
+            accountsWithAccess={accountsWithAccess}
+            dataForList={item}
+            key={index}
+          />
         ))}
         {filteredRegistrations?.length === 0 && <p>No Registrations present</p>}
       </div>

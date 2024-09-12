@@ -1,24 +1,62 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { useState } from "react";
 
+import { Trigger } from "@radix-ui/react-select";
 import Image from "next/image";
 
+import { walletApi } from "@/common/api/near";
+import { ListRegistration } from "@/common/api/potlock";
+import DownArrow from "@/common/assets/svgs/DownArrow";
 import { ListNoteIcon } from "@/common/assets/svgs/ListNote";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
 } from "@/common/ui/components";
 import { statusesIcons } from "@/modules/core/constants";
+import { statuses } from "@/modules/project/constants";
 
-export const AccountCard = ({ dataForList }: any) => {
+export const AccountCard = ({
+  dataForList,
+  accountsWithAccess,
+}: {
+  dataForList: ListRegistration;
+  accountsWithAccess: string[];
+}) => {
+  const [statusChange, setStatusChange] = useState({ open: false, status: "" });
   const profile = dataForList.registrant?.near_social_profile_data;
 
   const NO_IMAGE =
     "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
+
+  const statusDisplay = (
+    <div
+      className="flex w-max items-center justify-between  gap-2 rounded-sm px-2 py-2 "
+      style={{
+        color: statusesIcons[dataForList?.status]?.color,
+        background: statusesIcons[dataForList?.status]?.background,
+      }}
+    >
+      <Image
+        src={statusesIcons[dataForList?.status]?.icon}
+        width={18}
+        height={18}
+        alt="status-icon"
+      />
+      <span className="text-[14px]">{dataForList?.status}</span>
+    </div>
+  );
 
   return (
     <div>
@@ -56,7 +94,7 @@ export const AccountCard = ({ dataForList }: any) => {
             {profile?.name ?? dataForList.registrant?.id}
           </p>
           <p className="mt-2 h-14 overflow-hidden text-sm text-gray-600">
-            {truncate(profile?.description, 150) ?? "N/A"}
+            {truncate(profile?.description as string, 150) ?? "N/A"}
           </p>
 
           {/* Labels */}
@@ -85,23 +123,33 @@ export const AccountCard = ({ dataForList }: any) => {
               <span className="text-sm font-normal text-gray-500">DONORS</span>
             </p>
           </div>
-
           <div className="mt-4 flex items-center justify-between">
-            <div
-              className="flex w-max items-center justify-between  gap-2 rounded-sm px-2 py-2 "
-              style={{
-                color: statusesIcons[dataForList?.status]?.color,
-                background: statusesIcons[dataForList?.status]?.background,
-              }}
-            >
-              <Image
-                src={statusesIcons[dataForList?.status]?.icon}
-                width={18}
-                height={18}
-                alt="status-icon"
-              />
-              <span className="text-[14px]">{dataForList?.status}</span>
-            </div>
+            {accountsWithAccess?.includes(walletApi?.accountId || "") ? (
+              <Select
+                onValueChange={(value) =>
+                  setStatusChange({ open: true, status: value })
+                }
+                defaultValue={dataForList.status}
+              >
+                <Trigger asChild>
+                  <div className="flex transition-all duration-300 ease-in-out hover:opacity-60">
+                    {statusDisplay}
+                    <DownArrow />
+                  </div>
+                </Trigger>
+                <SelectContent>
+                  {statuses
+                    .filter((item) => item.val !== "all")
+                    .map((item) => (
+                      <SelectItem value={item.val} key={item.val}>
+                        {item.val}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              statusDisplay
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div>
@@ -119,6 +167,31 @@ export const AccountCard = ({ dataForList }: any) => {
           </div>
         </div>
       </div>
+      <Dialog open={statusChange.open}>
+        <DialogContent
+          onCloseClick={() => setStatusChange({ open: false, status: "" })}
+        >
+          <DialogHeader>
+            <DialogTitle>Update Account Status</DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col p-6">
+            <p className="text-center">
+              Are you sure you want to change the status of this Account to{" "}
+              <strong>{statusChange.status}?</strong>
+            </p>
+            <div className="m-8 flex justify-center gap-4">
+              <Button variant="standard-outline">Yes, I do</Button>
+              <Button
+                onClick={() => setStatusChange({ open: false, status: "" })}
+                variant="standard-outline"
+              >
+                No, I don&apos;t
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
