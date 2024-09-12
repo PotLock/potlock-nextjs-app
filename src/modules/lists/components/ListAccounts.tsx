@@ -3,9 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
-import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
-import useWallet from "@/modules/auth/hooks/useWallet";
-import { ListCard } from "@/modules/lists/components/ListCard";
+import { Group, SearchBar, SortSelect } from "@/common/ui/components";
 import { Profile } from "@/modules/profile/models";
 import { categories, statuses } from "@/modules/project/constants";
 import { useTypedSelector } from "@/store";
@@ -24,7 +22,6 @@ export const ListAccounts = () => {
   const [currentListType, setCurrentListType] = useState(
     "Accounts in the list",
   );
-  const { wallet } = useWallet();
 
   const SORT_LIST_PROJEECTS = [
     { label: "Most recent", value: "recent" },
@@ -59,8 +56,6 @@ export const ListAccounts = () => {
     },
   ];
 
-  console.log(filteredRegistrations);
-
   const handleSort = (sortType: string) => {
     const projects = [...filteredRegistrations];
     switch (sortType) {
@@ -77,7 +72,7 @@ export const ListAccounts = () => {
     }
   };
 
-  const registrationsProfile = useTypedSelector((state) => state.profiles);
+  // const registrationsProfile = useTypedSelector((state) => state.profiles);
 
   // handle search & filter
   useEffect(() => {

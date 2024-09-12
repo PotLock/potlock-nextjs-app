@@ -84,7 +84,7 @@ export const update_list = ({
       cover_image_url: image_cover_url ?? "",
       admins,
       admin_only_registrations: allowApplications || false,
-      default_registration_status: "Approved",
+      default_registration_status: approveApplications ? "Approved" : "Pending",
     },
     deposit: floatToYoctoNear(0.015),
     gas: "300000000000000",
@@ -104,6 +104,12 @@ export const registerBatch = (args: ApplyToList) =>
     gas: "300000000000000",
     args,
   });
+
+// export const update_registered_project = (args: Registration) =>  contractApi.call<typeof args, Registration>("update_registration", {
+//   deposit: floatToYoctoNear(0.015),
+//   gas: "300000000000000",
+//   args,
+// });
 
 export const delete_list = (args: { list_id: number }) =>
   contractApi.call<typeof args, List>("delete_list", {

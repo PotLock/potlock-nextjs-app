@@ -16,7 +16,6 @@ import { statusesIcons } from "@/modules/core/constants";
 
 export const AccountCard = ({ dataForList }: any) => {
   const profile = dataForList.registrant?.near_social_profile_data;
-  console.log(dataForList);
 
   const NO_IMAGE =
     "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";

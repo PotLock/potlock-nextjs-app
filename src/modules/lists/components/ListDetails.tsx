@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 
+import { walletApi } from "@/common/api/near";
 import {
   AdminUserIcon,
   DeleteListIcon,
@@ -90,8 +91,8 @@ export const ListDetails = () => {
   }
 
   const isAdmin =
-    listDetails.admins.includes(wallet?.accountId ?? "") ||
-    listDetails.owner === wallet?.accountId;
+    listDetails.admins.includes(walletApi?.accountId ?? "") ||
+    listDetails.owner === walletApi?.accountId;
 
   return (
     <>
@@ -152,7 +153,7 @@ export const ListDetails = () => {
               )}
             </div>
 
-            {Boolean(wallet?.accountId) && (
+            {Boolean(walletApi?.accountId) && (
               <div className="relative flex items-start justify-between">
                 <div className="flex space-x-4">
                   <button
@@ -163,14 +164,16 @@ export const ListDetails = () => {
                   >
                     Donate to list
                   </button>
-                  <button
-                    onClick={() => {
-                      setIsApplyToListModalOpen(true);
-                    }}
-                    className="rounded-md border bg-[#FEF6EE] px-4 py-2 text-gray-700 transition hover:bg-gray-100"
-                  >
-                    Apply to list
-                  </button>
+                  {!listDetails?.admin_only_registrations && (
+                    <button
+                      onClick={() => {
+                        setIsApplyToListModalOpen(true);
+                      }}
+                      className="rounded-md border bg-[#FEF6EE] px-4 py-2 text-gray-700 transition hover:bg-gray-100"
+                    >
+                      Apply to list
+                    </button>
+                  )}
                 </div>
                 {isAdmin && (
                   <DropdownMenu>
