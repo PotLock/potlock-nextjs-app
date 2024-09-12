@@ -81,32 +81,24 @@ export const ListAccounts = () => {
   };
   // const registrationsProfile = useTypedSelector((state) => state.profiles);
 
-  // handle search & filter
+  const handleFilter = (registration: any) => {
+    const matchesSearch = search
+      ? registration.registrant?.near_social_profile_data?.name
+          ?.toLowerCase()
+          .includes(search.toLowerCase()) ||
+        registration.registrant?.id?.toString().includes(search)
+      : true; // If no search term, consider it a match
+
+    const matchesStatus = true; // Implement your status filter logic here
+    const matchesCategory = true; // Implement your category filter logic here
+
+    return matchesSearch && matchesStatus && matchesCategory;
+  };
+
   useEffect(() => {
-    const handleSearch = (registration: any) => {
-      return registration.registrant?.near_social_profile_data?.name
-        ?.toLowerCase()
-        .includes(search);
-    };
-
-    const handleStatus = (registration: any) => {
-      // Implement filter status logic (if required)
-      return true; // Placeholder to ensure other logic can run smoothly
-    };
-
-    const handleCategory = (profile: Profile) => {
-      // Implement filter category logic (if required)
-      return true; // Placeholder to ensure other logic can run smoothly
-    };
-
-    const filtered = registrations.filter(
-      (registration) =>
-        handleSearch(registration) &&
-        handleStatus(registration) &&
-        handleCategory(registration),
-    );
+    const filtered = registrations.filter(handleFilter);
     setFilteredRegistrations(filtered);
-  }, [search, categoryFilter, statusFilter, registrations]);
+  }, [search, registrations]);
 
   const { data, isLoading } = potlock.useListRegistrations({
     listId: parseInt(id as string),
