@@ -60,24 +60,33 @@ export const ListAccounts = () => {
     const projects = [...filteredRegistrations];
     switch (sortType) {
       case "recent":
-        projects.sort((a, b) => b.created_at - a.created_at);
+        projects.sort(
+          (a, b) =>
+            new Date(b.submitted_at).getTime() -
+            new Date(a.submitted_at).getTime(),
+        );
         setFilteredRegistrations(projects);
         break;
       case "older":
-        projects.sort((a, b) => a.created_at - b.created_at);
+        projects.sort(
+          (a, b) =>
+            new Date(a.submitted_at).getTime() -
+            new Date(b.submitted_at).getTime(),
+        );
         setFilteredRegistrations(projects);
         break;
       default:
         break;
     }
   };
-
   // const registrationsProfile = useTypedSelector((state) => state.profiles);
 
   // handle search & filter
   useEffect(() => {
     const handleSearch = (registration: any) => {
-      return true;
+      return registration.registrant?.near_social_profile_data?.name
+        ?.toLowerCase()
+        .includes(search);
     };
 
     const handleStatus = (registration: any) => {
@@ -102,13 +111,6 @@ export const ListAccounts = () => {
   const { data, isLoading } = potlock.useListRegistrations({
     listId: parseInt(id as string),
   });
-
-  //   const fetchAllLists = async () => {
-  //     const allLists: any = await potlock.
-  //     setRegistrations(allLists);
-  //     setFilteredRegistrations(allLists);
-  //     setCurrentListType("Accounts in the list");
-  //   };
 
   useEffect(() => {
     setRegistrations((data?.results as any) ?? []);
