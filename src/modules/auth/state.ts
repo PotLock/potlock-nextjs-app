@@ -1,6 +1,6 @@
 import { createModel } from "@rematch/core";
 
-import { RootModel } from "@/store/models";
+import { AppModel } from "@/store/models";
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -13,7 +13,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
 };
 
-export const auth = createModel<RootModel>()({
+export const auth = createModel<AppModel>()({
   state: initialState,
 
   reducers: {

@@ -1,4 +1,4 @@
-export interface Config {
+export interface DirectDonationConfig {
   owner: string;
   protocol_fee_basis_points: number;
   referral_fee_basis_points: number;

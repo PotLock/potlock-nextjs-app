@@ -11,7 +11,7 @@ import { dispatch, useTypedSelector } from "@/store";
 
 const Profile = () => {
   const { accountId, backgroundImage, profileImage } = useTypedSelector(
-    (state) => state.createProject,
+    (state) => state.projectEditor,
   );
 
   const bgImageStatus = useStatus();
@@ -24,7 +24,7 @@ const Profile = () => {
   const onBgImageChange = async (files: File[]) => {
     if (files) {
       bgImageStatus.setStatus("loading");
-      await dispatch.createProject.uploadBackgroundImage(files);
+      await dispatch.projectEditor.uploadBackgroundImage(files);
       bgImageStatus.setStatus("ready");
     }
   };
@@ -32,7 +32,7 @@ const Profile = () => {
   const onAvatarImageChange = async (files: File[]) => {
     if (files) {
       profileImageStatus.setStatus("loading");
-      await dispatch.createProject.uploadProfileImage(files);
+      await dispatch.projectEditor.uploadProfileImage(files);
       profileImageStatus.setStatus("ready");
     }
   };

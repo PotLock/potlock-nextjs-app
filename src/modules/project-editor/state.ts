@@ -5,7 +5,7 @@ import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import routesPath from "@/modules/core/routes";
 import { updateState } from "@/modules/core/utils/updateState";
-import { RootModel } from "@/store/models";
+import { AppModel } from "@/store/models";
 
 import { AddFundingSourceInputs, CreateProjectInputs } from "./models/types";
 
@@ -65,7 +65,7 @@ const initialState: CreateProjectState = {
   github: "",
 };
 
-export const createProject = createModel<RootModel>()({
+export const projectEditor = createModel<AppModel>()({
   state: initialState,
 
   reducers: {
@@ -265,7 +265,7 @@ export const createProject = createModel<RootModel>()({
       const res = await uploadFileToIPFS(files[0]);
       if (res.ok) {
         const data = await res.json();
-        dispatch.createProject.UPDATE_BACKGROUND_IMAGE(
+        dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(
           `${IPFS_NEAR_SOCIAL_URL}${data.cid}`,
         );
         return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
@@ -273,14 +273,14 @@ export const createProject = createModel<RootModel>()({
     },
 
     setBackgroundImage(backgroundUrl: string) {
-      dispatch.createProject.UPDATE_BACKGROUND_IMAGE(backgroundUrl);
+      dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(backgroundUrl);
     },
 
     async uploadProfileImage(files: File[]) {
       const res = await uploadFileToIPFS(files[0]);
       if (res.ok) {
         const data = await res.json();
-        dispatch.createProject.UPDATE_PROFILE_IMAGE(
+        dispatch.projectEditor.UPDATE_PROFILE_IMAGE(
           `${IPFS_NEAR_SOCIAL_URL}${data.cid}`,
         );
         return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
@@ -288,7 +288,7 @@ export const createProject = createModel<RootModel>()({
     },
 
     setProfileImage(profileImageUrl: string) {
-      dispatch.createProject.UPDATE_PROFILE_IMAGE(profileImageUrl);
+      dispatch.projectEditor.UPDATE_PROFILE_IMAGE(profileImageUrl);
     },
 
     async loadProjectData(accountId: string) {
@@ -306,7 +306,7 @@ export const createProject = createModel<RootModel>()({
 
       // No profile? End of process!
       if (!profile) {
-        dispatch.createProject.checkPreviousProjectDataStatus("ready");
+        dispatch.projectEditor.checkPreviousProjectDataStatus("ready");
         return;
       }
 
@@ -347,8 +347,8 @@ export const createProject = createModel<RootModel>()({
       }
 
       // Set initial data
-      dispatch.createProject.SET_INITIAL_DATA(data);
-      dispatch.createProject.checkPreviousProjectDataStatus("ready");
+      dispatch.projectEditor.SET_INITIAL_DATA(data);
+      dispatch.projectEditor.checkPreviousProjectDataStatus("ready");
     },
   }),
 });

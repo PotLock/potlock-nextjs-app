@@ -48,7 +48,7 @@ type Props = {
 
 const Repositories = ({ onChange }: Props) => {
   const repositories = useTypedSelector(
-    (state) => state.createProject.githubRepositories || [],
+    (state) => state.projectEditor.githubRepositories || [],
   );
 
   const [repos, setRepos] = useState(
@@ -64,7 +64,7 @@ const Repositories = ({ onChange }: Props) => {
       const updatedState = [...repositories];
       updatedState[repoIndex] = value;
       setRepos(updatedState);
-      dispatch.createProject.updateRepositories(updatedState);
+      dispatch.projectEditor.updateRepositories(updatedState);
     },
     [repositories],
   );

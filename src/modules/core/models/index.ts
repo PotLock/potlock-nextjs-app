@@ -3,7 +3,7 @@ import { prop } from "remeda";
 
 import { ContractMetadata } from "@/common/types";
 import { useTypedSelector } from "@/store";
-import { RootModel } from "@/store/models";
+import { AppModel } from "@/store/models";
 
 export * from "./schemas";
 
@@ -20,7 +20,7 @@ const initialState: CoreState = {
   oneNearUsdPrice: 0,
 };
 
-export const core = createModel<RootModel>()({
+export const core = createModel<AppModel>()({
   state: initialState,
 
   reducers: {

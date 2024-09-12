@@ -6,10 +6,10 @@ import { dispatch, useTypedSelector } from "@/store";
 import { CustomInput } from "./CreateForm/components";
 
 const SocialLinks = () => {
-  const twitter = useTypedSelector((state) => state.createProject.twitter);
-  const telegram = useTypedSelector((state) => state.createProject.telegram);
-  const github = useTypedSelector((state) => state.createProject.github);
-  const website = useTypedSelector((state) => state.createProject.website);
+  const twitter = useTypedSelector((state) => state.projectEditor.twitter);
+  const telegram = useTypedSelector((state) => state.projectEditor.telegram);
+  const github = useTypedSelector((state) => state.projectEditor.github);
+  const website = useTypedSelector((state) => state.projectEditor.website);
 
   const [twitterValue, setTwitterValue] = useState<string>(
     twitter?.replace("https://x.com/", "") || "",
@@ -25,7 +25,7 @@ const SocialLinks = () => {
   );
 
   const onChangeHandler = useCallback((socialKey: string, value: string) => {
-    dispatch.createProject.updateSocialLinks({ [socialKey]: value });
+    dispatch.projectEditor.updateSocialLinks({ [socialKey]: value });
   }, []);
 
   return (

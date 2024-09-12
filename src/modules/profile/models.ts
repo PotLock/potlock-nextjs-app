@@ -14,7 +14,7 @@ import {
   getTeamMembersFromProfile,
   getTotalAmountNear,
 } from "@/modules/project/utils";
-import { RootModel } from "@/store/models";
+import { AppModel } from "@/store/models";
 
 export type Profile = {
   socialData: NEARSocialUserProfile;
@@ -30,7 +30,7 @@ export type Profile = {
 
 type ProfileIndex = Record<string, Profile>;
 
-export const profilesModel = createModel<RootModel>()({
+export const profilesModel = createModel<AppModel>()({
   state: {} as ProfileIndex,
   reducers: {
     update(state, payload: ProfileIndex) {
@@ -121,7 +121,7 @@ const initialState: NavState = {
   },
 };
 
-export const navModel = createModel<RootModel>()({
+export const navModel = createModel<AppModel>()({
   state: initialState,
   reducers: {
     // Reset to the initial state

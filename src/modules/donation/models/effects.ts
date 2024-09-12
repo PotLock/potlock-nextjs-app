@@ -10,7 +10,7 @@ import {
 } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import { floatToYoctoNear } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
-import { RootDispatcher } from "@/store";
+import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
 import {
@@ -19,7 +19,7 @@ import {
   DonationSubmissionInputs,
 } from "../types";
 
-export const effects = (dispatch: RootDispatcher) => ({
+export const effects = (dispatch: AppDispatcher) => ({
   submit: async ({
     amount,
     allocationStrategy,

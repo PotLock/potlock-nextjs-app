@@ -15,7 +15,7 @@ export default function CreateProject() {
     checkRegistrationStatus,
     checkPreviousProjectDataStatus,
     isEdit,
-  } = useTypedSelector((state) => state.createProject);
+  } = useTypedSelector((state) => state.projectEditor);
 
   const showSpinner = isAuthenticated
     ? submissionStatus === "sending" ||
