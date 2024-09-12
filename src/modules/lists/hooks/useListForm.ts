@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import {
   add_admins_to_list,
   delete_list,
+  registerBatch,
   transfer_list_ownership,
 } from "@/common/contracts/potlock/lists";
 import { validateAccountId } from "@/modules/core";
@@ -27,6 +28,23 @@ export const useListForm = () => {
       .catch((error) => {
         console.error("Error deleting list", error);
       });
+  };
+
+  const handleRegisterBatch = (
+    list_id: string,
+    registrants: string[],
+    status: string,
+  ) => {
+    registerBatch({
+      list_id: parseInt(list_id as any) as any,
+      registrations: registrants.map((data: string) => ({
+        registrant_id: data,
+        status: status,
+        submitted_ms: Date.now(),
+        updated_ms: Date.now(),
+        notes: "",
+      })),
+    });
   };
 
   const handleSaveAdminsSettings = () => {
@@ -75,6 +93,7 @@ export const useListForm = () => {
     transferAccountField,
     transferAccountError,
     setTransferAccountField,
+    handleRegisterBatch,
     setTransferAccountError,
     admins,
     setAdmins,

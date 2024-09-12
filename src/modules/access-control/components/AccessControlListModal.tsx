@@ -30,6 +30,7 @@ export type AccessControlListModalProps = {
   onSubmit: (accountIds: AccountId[]) => void;
   onSaveSettings?: () => void;
   showOnSaveButton?: boolean;
+  countText?: string;
 };
 
 export const AccessControlAccountsModal = create(
@@ -39,6 +40,7 @@ export const AccessControlAccountsModal = create(
     onSubmit,
     showOnSaveButton,
     onSaveSettings,
+    countText = "Admins",
   }: AccessControlListModalProps) => {
     const self = useModal();
 
@@ -167,7 +169,7 @@ export const AccessControlAccountsModal = create(
                 />
 
                 <span className="prose font-500 text-neutral-600">
-                  {`${accountIds.length} Admins` +
+                  {`${accountIds.length} ${countText}` +
                     (selectedAccounts.length > 0
                       ? `, ${selectedAccounts.length} selected`
                       : "")}

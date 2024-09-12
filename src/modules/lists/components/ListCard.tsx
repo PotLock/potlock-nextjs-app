@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
@@ -24,7 +23,10 @@ export const ListCard = ({ dataForList }: { dataForList?: any }) => {
     if (dataForList.owner) fetchProfileImage();
   }, [dataForList.owner]);
 
-  const handleRoute = useCallback(() => push(`/list/${dataForList?.id}`), []);
+  const handleRoute = useCallback(
+    () => push(`/list/${dataForList?.id}`),
+    [dataForList?.id],
+  );
 
   const handleUpvote = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

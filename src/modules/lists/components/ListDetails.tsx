@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 
 import { walletApi } from "@/common/api/near";
+import { potlock } from "@/common/api/potlock";
 import {
   AdminUserIcon,
   DeleteListIcon,
@@ -39,19 +40,46 @@ export const ListDetails = () => {
   const [loading, setLoading] = useState(true);
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
+  const [registrants, setRegistrants] = useState<string[]>([]);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
     useState({ open: false });
   const { wallet } = useWallet();
-  const modalId = useId();
-  const openAccountsModal = useCallback(() => show(modalId), [modalId]);
-  const { handleDeleteList, handleSaveAdminsSettings, admins, setAdmins } =
-    useListForm();
+
+  const adminsModalId = useId();
+  const registrantsModalId = useId();
+
+  // Modals
+  const openRegistrantsModal = useCallback(
+    () => show(registrantsModalId),
+    [registrantsModalId],
+  );
+  const openAccountsModal = useCallback(
+    () => show(adminsModalId),
+    [adminsModalId],
+  );
+
+  const {
+    handleDeleteList,
+    handleSaveAdminsSettings,
+    handleRegisterBatch,
+    admins,
+    setAdmins,
+  } = useListForm();
+
+  const { data, isLoading } = potlock.useListRegistrations({
+    listId: parseInt(id as string),
+  });
 
   useEffect(() => {
     const fetchListDetails = async () => {
       try {
         const response = await getList({ list_id: parseInt(id as any) as any });
         setAdmins(response.admins);
+        setRegistrants(
+          (data?.results?.map(
+            (data: any) => data?.registrant?.id,
+          ) as string[]) || [],
+        );
         setListDetails(response);
       } catch (error) {
         console.error("Error fetching list details:", error);
@@ -70,17 +98,16 @@ export const ListDetails = () => {
       registrations: [
         {
           registrant_id: wallet?.accountId ?? "",
-          status: "Pending",
+          status: listDetails?.default_registration_status ?? "Pending",
           submitted_ms: Date.now(),
           updated_ms: Date.now(),
           notes: "",
         },
       ],
     });
-    //
   };
 
-  const onEditList = useCallback(() => push(`/list/edit/${id}`), []);
+  const onEditList = useCallback(() => push(`/list/edit/${id}`), [id]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -190,7 +217,10 @@ export const ListDetails = () => {
                         <PenIcon className="mr-1 max-w-[22px]" />
                         <span>Edit list details</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer p-2 hover:bg-gray-200">
+                      <DropdownMenuItem
+                        onClick={openRegistrantsModal}
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                      >
                         <AdminUserIcon className="mr-1 max-w-[22px]" />
                         Add/Remove accounts
                       </DropdownMenuItem>
@@ -234,12 +264,27 @@ export const ListDetails = () => {
         onSubmitButton={handleDeleteList}
       />
       <AccessControlAccountsModal
-        id={modalId}
+        id={adminsModalId}
         title="Edit Admin list"
         onSubmit={(admins) => setAdmins(admins)}
         value={admins}
         showOnSaveButton={admins.length > 0}
         onSaveSettings={handleSaveAdminsSettings}
+      />
+      <AccessControlAccountsModal
+        id={registrantsModalId}
+        title="Edit Accounts"
+        onSubmit={(modal) => setRegistrants(modal)}
+        value={isLoading ? [] : registrants}
+        showOnSaveButton={registrants?.length > 0}
+        countText="Account(s)"
+        onSaveSettings={() =>
+          handleRegisterBatch(
+            id as string,
+            registrants,
+            listDetails?.default_registration_status,
+          )
+        }
       />
     </>
   );

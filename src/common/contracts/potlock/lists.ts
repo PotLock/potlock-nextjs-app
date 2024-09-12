@@ -100,7 +100,7 @@ export const getList = (args: GetListInput) =>
 
 export const registerBatch = (args: ApplyToList) =>
   contractApi.call<typeof args, ApplyToList>("register_batch", {
-    deposit: floatToYoctoNear(0.015),
+    deposit: floatToYoctoNear(0.015 * args.registrations.length),
     gas: "300000000000000",
     args,
   });
