@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
-import { Group, SearchBar, SortSelect } from "@/common/ui/components";
+import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
 import { Profile } from "@/modules/profile/models";
 import { categories, statuses } from "@/modules/project/constants";
 import { useTypedSelector } from "@/store";
@@ -17,7 +17,7 @@ export const ListAccounts = () => {
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  // const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
   const [currentListType, setCurrentListType] = useState(
     "Accounts in the list",
@@ -29,14 +29,14 @@ export const ListAccounts = () => {
   ];
 
   const tagsList: Group[] = [
-    {
-      label: "Category",
-      options: categories,
-      props: {
-        value: categoryFilter,
-        onValueChange: (value) => setCategoryFilter(value),
-      },
-    },
+    // {
+    //   label: "Category",
+    //   options: categories,
+    //   props: {
+    //     value: categoryFilter,
+    //     onValueChange: (value) => setCategoryFilter(value),
+    //   },
+    // },
     {
       label: "Status",
       options: statuses,
@@ -89,7 +89,10 @@ export const ListAccounts = () => {
         registration.registrant?.id?.toString().includes(search)
       : true; // If no search term, consider it a match
 
-    const matchesStatus = true; // Implement your status filter logic here
+    const matchesStatus =
+      statusFilter.includes("all") || statusFilter.length === 0
+        ? true
+        : statusFilter.includes(registration.status); // Implement your status filter logic here
     const matchesCategory = true; // Implement your category filter logic here
 
     return matchesSearch && matchesStatus && matchesCategory;
@@ -98,7 +101,7 @@ export const ListAccounts = () => {
   useEffect(() => {
     const filtered = registrations.filter(handleFilter);
     setFilteredRegistrations(filtered);
-  }, [search, registrations]);
+  }, [search, registrations, statusFilter]);
 
   const { data, isLoading } = potlock.useListRegistrations({
     listId: parseInt(id as string),
@@ -135,12 +138,12 @@ export const ListAccounts = () => {
             placeholder="Search Accounts"
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
-          {/* <Filter
+          <Filter
             // toggleProps={{
             //   onValueChange: handleTag,
             // }}
             groups={tagsList}
-          /> */}
+          />
           <SortSelect
             options={SORT_LIST_PROJEECTS}
             onValueChange={handleSort}

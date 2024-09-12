@@ -160,6 +160,7 @@ export const ListDetails = () => {
                       title={admin}
                       key={admin}
                       isThumbnail
+                      classNames={{ avatar: "w-7 h-7" }}
                       {...{ accountId: admin }}
                     />
                   ))}
