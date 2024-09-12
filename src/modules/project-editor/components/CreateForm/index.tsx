@@ -42,7 +42,7 @@ const CreateForm = () => {
       ? projectIdPathParam
       : projectIdPathParam?.at(0);
 
-  const projectProps = useTypedSelector((state) => state.createProject);
+  const projectProps = useTypedSelector((state) => state.projectEditor);
   const { wallet, isWalletReady } = useWallet();
   const { isAuthenticated } = useAuth();
   const { form, errors, onSubmit } = useCreateProjectForm();
@@ -89,19 +89,19 @@ const CreateForm = () => {
   // Store description, public good reason and daoAddress
   useEffect(() => {
     if (values.name) {
-      dispatch.createProject.setProjectName(values.name);
+      dispatch.projectEditor.setProjectName(values.name);
     }
     if (values.description) {
-      dispatch.createProject.updateDescription(values.description);
+      dispatch.projectEditor.updateDescription(values.description);
     }
     if (values.publicGoodReason) {
-      dispatch.createProject.updatePublicGoodReason(values.publicGoodReason);
+      dispatch.projectEditor.updatePublicGoodReason(values.publicGoodReason);
     }
   }, [values.description, values.publicGoodReason, values.name]);
 
   const categoryChangeHandler = useCallback(
     (categories: string[]) => {
-      dispatch.createProject.setCategories(categories);
+      dispatch.projectEditor.setCategories(categories);
       form.setValue("categories", categories);
       form.trigger(); // re-validate
     },
@@ -132,7 +132,7 @@ const CreateForm = () => {
   const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
-  const createProjectText = projectProps.isEdit
+  const projectEditorText = projectProps.isEdit
     ? projectProps.isDao
       ? "Add proposal to update project"
       : "Update your project"
@@ -361,7 +361,7 @@ const CreateForm = () => {
           <button
             className="font-500 flex items-center gap-2 text-[14px] text-[#dd3345] transition-all hover:opacity-[0.7]"
             onClick={() => {
-              dispatch.createProject.addRepository();
+              dispatch.projectEditor.addRepository();
             }}
           >
             <PlusIcon width={12} height={12} /> Add more repos
@@ -388,7 +388,7 @@ const CreateForm = () => {
             disabled={!form.formState.isValid || !isRepositoriesValid}
             onClick={onSubmit}
           >
-            {createProjectText}
+            {projectEditorText}
           </Button>
         </div>
       </div>

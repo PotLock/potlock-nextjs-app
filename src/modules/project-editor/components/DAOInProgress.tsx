@@ -5,7 +5,7 @@ import { useTypedSelector } from "@/store";
 
 const DAOInProgress = () => {
   const { daoProjectProposal, daoAddress } = useTypedSelector(
-    (state) => state.createProject,
+    (state) => state.projectEditor,
   );
 
   if (!daoProjectProposal || !daoAddress) {

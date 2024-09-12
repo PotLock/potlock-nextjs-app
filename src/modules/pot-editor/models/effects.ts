@@ -9,7 +9,7 @@ import {
   pot,
   potFactory,
 } from "@/common/contracts/potlock";
-import { RootDispatcher } from "@/store";
+import { AppDispatcher } from "@/store";
 
 import { PotEditorDeploymentInputs, PotEditorSettings } from "./schemas";
 import { potInputsToPotArgs } from "../utils/normalization";
@@ -23,7 +23,7 @@ type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
     onUpdate: (config: PotConfig) => void;
   };
 
-export const effects = (dispatch: RootDispatcher) => ({
+export const effects = (dispatch: AppDispatcher) => ({
   handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
     void pot
       .getConfig({ potId: id })

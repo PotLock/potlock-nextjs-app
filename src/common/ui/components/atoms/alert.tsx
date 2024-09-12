@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 
 import { type VariantProps, cva } from "class-variance-authority";
 
-import { cn } from "../utils";
+import { cn } from "../../utils";
 
 const alertVariants = cva(
   cn(

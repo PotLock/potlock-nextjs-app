@@ -18,7 +18,7 @@ const AddTeamMembersModal = ({
   onCloseClick,
   onMembersChange,
 }: Props) => {
-  const members = useTypedSelector((state) => state.createProject.teamMembers);
+  const members = useTypedSelector((state) => state.projectEditor.teamMembers);
   const [account, setAccount] = useState("");
   const [invalidNearAcc, setInvalidNearAcc] = useState(false);
 
@@ -28,7 +28,7 @@ const AddTeamMembersModal = ({
       return;
     }
 
-    dispatch.createProject.addTeamMember(account);
+    dispatch.projectEditor.addTeamMember(account);
     setAccount("");
   }, [account]);
 

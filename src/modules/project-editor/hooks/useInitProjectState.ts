@@ -10,7 +10,7 @@ import { dispatch, useTypedSelector } from "@/store";
 
 const useInitProjectState = () => {
   const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
-    useTypedSelector((state) => state.createProject);
+    useTypedSelector((state) => state.projectEditor);
 
   const {
     query: {
@@ -34,10 +34,10 @@ const useInitProjectState = () => {
 
   // Reset statuses
   useEffect(() => {
-    dispatch.createProject.RESET();
+    dispatch.projectEditor.RESET();
 
     return () => {
-      dispatch.createProject.RESET();
+      dispatch.projectEditor.RESET();
     };
   }, []);
 
@@ -46,15 +46,15 @@ const useInitProjectState = () => {
     // Project's id
     if (isWalletReady) {
       if (isDao && daoAddress) {
-        dispatch.createProject.setAccountId(daoAddress);
+        dispatch.projectEditor.setAccountId(daoAddress);
       } else if (wallet?.accountId) {
-        dispatch.createProject.setAccountId(projectId || wallet.accountId);
+        dispatch.projectEditor.setAccountId(projectId || wallet.accountId);
       }
 
       // Is Dao
-      dispatch.createProject.setIsDao(isDao);
+      dispatch.projectEditor.setIsDao(isDao);
       // Dao Address
-      dispatch.createProject.setDaoAddress(isDao ? daoAddress : "");
+      dispatch.projectEditor.setDaoAddress(isDao ? daoAddress : "");
     }
   }, [
     accountId,
@@ -70,30 +70,30 @@ const useInitProjectState = () => {
   useEffect(() => {
     if (accountId && checkPreviousProjectDataStatus !== "ready") {
       // load data
-      dispatch.createProject.loadProjectData(accountId);
+      dispatch.projectEditor.loadProjectData(accountId);
     }
   }, [accountId, checkPreviousProjectDataStatus]);
 
   // Looks for error message after failing tx
   useEffect(() => {
     if (typeof errorMessage === "string") {
-      dispatch.createProject.submissionStatus("pending");
-      dispatch.createProject.setSubmissionError(decodeURI(errorMessage));
+      dispatch.projectEditor.submissionStatus("pending");
+      dispatch.projectEditor.setSubmissionError(decodeURI(errorMessage));
     }
   }, [errorMessage]);
 
   // Looks for success signal
   useEffect(() => {
     if (done || transactionHashes) {
-      dispatch.createProject.submissionStatus("done");
-      dispatch.createProject.setSubmissionError("");
+      dispatch.projectEditor.submissionStatus("done");
+      dispatch.projectEditor.setSubmissionError("");
     }
   }, [done, transactionHashes]);
 
   // Check if project is registered
   useEffect(() => {
     if (accountId && checkRegistrationStatus === "pending") {
-      dispatch.createProject.checkRegistrationStatus("fetching");
+      dispatch.projectEditor.checkRegistrationStatus("fetching");
 
       (async () => {
         try {
@@ -102,19 +102,19 @@ const useInitProjectState = () => {
           });
 
           // If register found, set that it's registered already
-          dispatch.createProject.isRegistered(!!register);
+          dispatch.projectEditor.isRegistered(!!register);
           // Auto set the project to DONE status if it's already registered & this is create project page
           if (
             register &&
             location.pathname.includes(routesPath.CREATE_PROJECT)
           ) {
-            dispatch.createProject.submissionStatus("done");
-            dispatch.createProject.setSubmissionError("");
+            dispatch.projectEditor.submissionStatus("done");
+            dispatch.projectEditor.setSubmissionError("");
           }
 
-          dispatch.createProject.checkRegistrationStatus("ready");
+          dispatch.projectEditor.checkRegistrationStatus("ready");
         } catch (_) {
-          dispatch.createProject.checkRegistrationStatus("pending");
+          dispatch.projectEditor.checkRegistrationStatus("pending");
         }
       })();
     }
@@ -126,9 +126,9 @@ const useInitProjectState = () => {
     if (previousDaoFlag !== isDao && daoAddress) {
       window.location.reload();
 
-      // dispatch.createProject.submissionStatus("pending");
-      // dispatch.createProject.checkRegistrationStatus("ready");
-      // dispatch.createProject.checkPreviousProjectDataStatus("ready");
+      // dispatch.projectEditor.submissionStatus("pending");
+      // dispatch.projectEditor.checkRegistrationStatus("ready");
+      // dispatch.projectEditor.checkPreviousProjectDataStatus("ready");
       // setInitialDataLoaded(false);
       // setPreviousDaoFlag(isDao);
     }
@@ -157,7 +157,7 @@ const useInitProjectState = () => {
         : null;
 
       // Set proposal
-      dispatch.createProject.setDaoProjectProposal(proposal || null);
+      dispatch.projectEditor.setDaoProjectProposal(proposal || null);
     })();
   }, [isDao, daoAddress]);
 };

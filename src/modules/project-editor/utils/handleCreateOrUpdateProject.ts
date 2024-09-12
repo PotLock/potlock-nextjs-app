@@ -32,7 +32,7 @@ const getSocialData = async (accountId: string) => {
 };
 
 const handleCreateOrUpdateProject = async () => {
-  const data = store.getState().createProject;
+  const data = store.getState().projectEditor;
 
   const accountId = data.isDao ? data.daoAddress : data.accountId;
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getSocialData, setSocialData } from "@/common/contracts/social";
-import { Button } from "@/common/ui/components/button";
+import { Button } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 
 type Props = {

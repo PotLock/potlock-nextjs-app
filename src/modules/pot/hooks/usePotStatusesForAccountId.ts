@@ -73,7 +73,9 @@ export const usePotStatusesForAccountId = (props: {
     now < getDateTime(potDetail.application_end);
 
   const canApply =
-    applicationOpen && !existingApplication && !userIsChefOrGreater;
+    applicationOpen &&
+    existingApplication === undefined &&
+    !userIsChefOrGreater;
 
   const canChallengePayouts = potDetail.cooldown_end
     ? now > getDateTime(potDetail.matching_round_end) &&

@@ -83,7 +83,7 @@ type AccountItemProps = {
 
 export const AccountItems = ({ accountIds }: AccountItemProps) => {
   const removeAccountHandler = useCallback((accountId: string) => {
-    dispatch.createProject.removeTeamMember(accountId);
+    dispatch.projectEditor.removeTeamMember(accountId);
   }, []);
 
   return (

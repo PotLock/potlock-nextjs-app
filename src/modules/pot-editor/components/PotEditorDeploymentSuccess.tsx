@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { ChefHat } from "@/common/assets/svgs";
+import { ChefHatIcon } from "@/common/assets/svgs";
 import { Button, DialogDescription } from "@/common/ui/components";
 import routesPath from "@/modules/core/routes";
 import { PotData } from "@/modules/pot";
@@ -15,7 +15,7 @@ export const PotEditorDeploymentSuccess: React.FC<
 > = ({ onViewPotClick, potData }) => (
   <DialogDescription className="gap-8">
     <div className="flex w-full flex-col items-center border-b-[1px] border-neutral-100 py-4">
-      <ChefHat />
+      <ChefHatIcon />
     </div>
 
     <div className="flex w-full flex-col items-center justify-center gap-6 text-center">

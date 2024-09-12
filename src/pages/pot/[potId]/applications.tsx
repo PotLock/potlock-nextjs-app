@@ -13,7 +13,7 @@ import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import * as potContract from "@/common/contracts/potlock/pot";
 import { daysAgo, truncate } from "@/common/lib";
-import { Button, CustomAvatar } from "@/common/ui/components";
+import { Button } from "@/common/ui/components";
 import {
   Tooltip,
   TooltipContent,
@@ -34,6 +34,7 @@ import {
   SearchBar,
   Status,
 } from "@/modules/pot/styles/application-styles";
+import { CustomAvatar } from "@/modules/profile";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { useTypedSelector } from "@/store";
 

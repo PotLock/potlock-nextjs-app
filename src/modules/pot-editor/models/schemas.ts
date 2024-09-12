@@ -1,4 +1,4 @@
-import { infer as FromSchema, undefined } from "zod";
+import { infer as FromSchema } from "zod";
 
 import { futureTimestamp } from "@/common/lib";
 import {

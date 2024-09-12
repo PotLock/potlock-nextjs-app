@@ -28,7 +28,7 @@ const EditSmartContractModal = ({
   contractIndex,
 }: Props) => {
   const contracts = useTypedSelector(
-    (state) => state.createProject.smartContracts || [["", ""]],
+    (state) => state.projectEditor.smartContracts || [["", ""]],
   );
 
   const [chain, setChain] = useState(
@@ -71,7 +71,7 @@ const EditSmartContractModal = ({
     }
 
     // Update contract info in the store
-    dispatch.createProject.editSmartContract({
+    dispatch.projectEditor.editSmartContract({
       data: [chain, address],
       contractIndex,
     });

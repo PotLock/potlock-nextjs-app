@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 import { truncate } from "@/common/lib";
-import { CustomAvatar } from "@/common/ui/components";
 import routesPath from "@/modules/core/routes";
+import { CustomAvatar } from "@/modules/profile";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 import { Container } from "./styles";

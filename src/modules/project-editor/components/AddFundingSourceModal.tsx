@@ -28,7 +28,7 @@ const AddFundingSourceModal = ({
 }: Props) => {
   const { form, errors } = useAddFundingSourceForm();
   const fundingSources = useTypedSelector(
-    (state) => state.createProject.fundingSources || [],
+    (state) => state.projectEditor.fundingSources || [],
   );
   const isEdit = editFundingIndex !== undefined;
 
@@ -38,7 +38,7 @@ const AddFundingSourceModal = ({
 
   const onSubmitFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
-      dispatch.createProject.addFundingSource(data);
+      dispatch.projectEditor.addFundingSource(data);
       if (onCloseClick) {
         onCloseClick();
       }
@@ -50,7 +50,7 @@ const AddFundingSourceModal = ({
   const onSubmitEditedFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
       if (isEdit && editFundingIndex !== undefined) {
-        dispatch.createProject.updateFundingSource({
+        dispatch.projectEditor.updateFundingSource({
           fundingSourceData: data,
           index: editFundingIndex,
         });

@@ -129,9 +129,9 @@ export const potSchema = object({
     "Matching round end timestamp.",
   ),
 
-  min_matching_pool_donation_amount: donationAmount
-    .optional()
-    .describe("Minimum donation amount."),
+  min_matching_pool_donation_amount: donationAmount.describe(
+    "Minimum donation amount.",
+  ),
 
   registry_provider: string()
     .optional()
