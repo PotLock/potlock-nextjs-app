@@ -55,7 +55,6 @@ export const useDonationForm = ({
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId,
       referrerAccountId,
-
       potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
 
       potDistributionStrategy:
