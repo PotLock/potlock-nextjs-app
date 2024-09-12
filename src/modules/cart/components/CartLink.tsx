@@ -2,11 +2,14 @@ import Link from "next/link";
 import { values } from "remeda";
 
 import { CartIcon } from "@/common/assets/svgs";
-import { Button } from "@/common/ui/components";
+import { Button, ButtonProps } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { useCart } from "@/modules/cart/hooks";
 import routesPath from "@/modules/core/routes";
 
-export const CartLink = () => {
+export type CartLinkProps = Pick<ButtonProps, "disabled"> & {};
+
+export const CartLink: React.FC<CartLinkProps> = ({ disabled }) => {
   const { orders } = useCart();
   const numberOfOrders = values(orders).length;
 
@@ -15,9 +18,11 @@ export const CartLink = () => {
       asChild
       variant="standard-plain"
       size="icon"
-      className="rounded-full p-1"
+      title={disabled ? "On maintenance" : undefined}
+      className={cn("rounded-full p-1", { "cursor-not-allowed": disabled })}
+      {...{ disabled }}
     >
-      <Link href={routesPath.CART}>
+      <Link href={disabled ? "" : routesPath.CART}>
         <CartIcon width={24} height={24} />
 
         {numberOfOrders > 0 && (

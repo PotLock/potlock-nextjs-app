@@ -128,7 +128,7 @@ export const Nav = () => {
 
         {/* Right */}
         <div className="flex items-center gap-8">
-          <CartLink />
+          <CartLink disabled />
           <AuthButton />
 
           <MobileMenuButton
