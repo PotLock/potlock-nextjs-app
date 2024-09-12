@@ -4,9 +4,9 @@ import { naxiosInstance } from "@/common/api/near";
 import { DONATION_CONTRACT_ID } from "@/common/constants";
 
 import {
-  Config,
   DirectDonation,
   DirectDonationArgs,
+  DirectDonationConfig,
 } from "./interfaces/donate.interfaces";
 
 /**
@@ -22,7 +22,8 @@ export const contractApi = naxiosInstance.contractApi({
 /**
  * Get donate contract config
  */
-export const getConfig = () => contractApi.view<{}, Config>("get_config");
+export const getConfig = () =>
+  contractApi.view<{}, DirectDonationConfig>("get_config");
 
 /**
  * Get direct donations

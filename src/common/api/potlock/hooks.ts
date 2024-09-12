@@ -160,7 +160,7 @@ export const useAccountDonationsSent = ({
 export const usePot = ({ potId }: Partial<ByPotId>) => {
   const queryResult = swrHooks.useV1PotsRetrieve2(potId ?? "unknown", {
     ...POTLOCK_REQUEST_CONFIG,
-    swr: { enabled: Boolean(potId) },
+    swr: { enabled: Boolean(potId), refreshInterval: 3000 },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

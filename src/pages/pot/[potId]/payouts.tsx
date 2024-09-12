@@ -2,12 +2,11 @@ import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { usePot } from "@/common/api/potlock/hooks";
+import { potlock } from "@/common/api/potlock";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
-import { Payout } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { Payout } from "@/common/contracts/potlock";
 import { getPayouts } from "@/common/contracts/potlock/pot";
 import { yoctoNearToFloat } from "@/common/lib";
-import { CustomAvatar } from "@/common/ui/components";
 import {
   PayoutsChallenges,
   PotLayout,
@@ -30,6 +29,7 @@ import {
   TableContainer,
   WarningText,
 } from "@/modules/pot/styles/payouts-styles";
+import { CustomAvatar } from "@/modules/profile";
 
 const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 
@@ -39,7 +39,7 @@ const PayoutsTab = () => {
     potId: string;
   };
 
-  const { data: potDetail } = usePot({ potId });
+  const { data: potDetail } = potlock.usePot({ potId });
   const { donations: allDonations } = useOrderedDonations(potId);
 
   const [allPayouts, setAllPayouts] = useState<Payout[]>([]);

@@ -2,7 +2,7 @@ import { createModel } from "@rematch/core";
 
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
 import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { RootModel } from "@/store/models";
+import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
 import {
@@ -40,7 +40,7 @@ const handleStep = (state: DonationState, step: DonationStep) => ({
   currentStep: step,
 });
 
-export const donationModel = createModel<RootModel>()({
+export const donationModel = createModel<AppModel>()({
   state: donationStateDefaults,
   effects,
 

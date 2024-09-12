@@ -2,14 +2,18 @@ import { RematchDispatch, RematchRootState, init } from "@rematch/core";
 import immerPlugin from "@rematch/immer";
 import loadingPlugin, { ExtraModelsFromLoading } from "@rematch/loading";
 import persistPlugin from "@rematch/persist";
-import { TypedUseSelectorHook, useSelector } from "react-redux";
+import {
+  TypedUseSelectorHook,
+  useDispatch as useReduxDispatch,
+  useSelector,
+} from "react-redux";
 import storage from "redux-persist/lib/storage";
 
-import { RootModel, models } from "./models";
+import { AppModel, models } from "./models";
 
-type FullModel = ExtraModelsFromLoading<RootModel, { type: "full" }>;
+type FullModel = ExtraModelsFromLoading<AppModel, { type: "full" }>;
 
-export const store = init<RootModel, FullModel>({
+export const store = init<AppModel, FullModel>({
   models,
   redux: {
     devtoolOptions: {
@@ -28,26 +32,22 @@ export const store = init<RootModel, FullModel>({
     loadingPlugin({ type: "full" }),
     // Provides automatic Redux state persistence.
     // https://rematchjs.org/docs/plugins/persist/
-    persistPlugin({
-      key: "root",
-      storage,
-    }),
+    persistPlugin({ key: "potlock", storage }),
   ],
 });
 
 export type Store = typeof store;
-export type RootDispatcher = RematchDispatch<RootModel>;
-export type RootState = RematchRootState<RootModel, FullModel>;
+export type AppDispatcher = RematchDispatch<AppModel>;
+export type AppState = RematchRootState<AppModel, FullModel>;
 
-// dispatch
 export const { dispatch } = store;
 
-// selector
-export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const useDispatch = () => useReduxDispatch<AppDispatcher>();
 
-// reset all
+export const useTypedSelector: TypedUseSelectorHook<AppState> = useSelector;
+
 export const resetStore = () => {
-  dispatch.createProject.RESET();
+  dispatch.projectEditor.RESET();
   dispatch.nav.RESET();
   dispatch.profiles.RESET();
 };

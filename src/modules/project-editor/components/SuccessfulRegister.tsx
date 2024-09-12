@@ -13,9 +13,9 @@ const SuccessfulRegister = ({
 }) => {
   const refreshStatus = () => {
     // Reset
-    dispatch.createProject.submissionStatus("pending");
-    dispatch.createProject.setBackgroundImage("");
-    dispatch.createProject.setProfileImage("");
+    dispatch.projectEditor.submissionStatus("pending");
+    dispatch.projectEditor.setBackgroundImage("");
+    dispatch.projectEditor.setProfileImage("");
   };
 
   return (

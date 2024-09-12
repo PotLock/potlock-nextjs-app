@@ -91,7 +91,7 @@ export const POT_EDITOR_FIELDS: PotEditorFieldRegistry = {
   sybil_wrapper_provider: {
     index: "sybil_wrapper_provider",
     title: "Donor Sybil Resistance",
-    subtitle: "🤖 nada.bot human verified",
+    subtitle: "🤖 nada.bot human score",
   },
 
   isSybilResistanceEnabled: {

@@ -7,8 +7,8 @@ import AdminIcon from "@/common/assets/svgs/AdminIcon";
 import { Challenge as ChallengeType } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import * as potContract from "@/common/contracts/potlock/pot";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { CustomAvatar } from "@/common/ui/components";
 import routesPath from "@/modules/core/routes";
+import { CustomAvatar } from "@/modules/profile";
 import { useTypedSelector } from "@/store";
 
 import { Challenge, Container, Line, Table, Title } from "./styles";

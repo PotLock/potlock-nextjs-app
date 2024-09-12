@@ -1,8 +1,8 @@
 import { SelectProps, Trigger } from "@radix-ui/react-select";
 import Image from "next/image";
 
-import { Button } from "./button";
-import { Select, SelectContent, SelectItem } from "./select";
+import { Button } from "../atoms/button";
+import { Select, SelectContent, SelectItem } from "../atoms/select";
 
 export const SortSelect = ({
   options,

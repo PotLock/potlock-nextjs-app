@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { truncate } from "@/common/lib";
-import { CustomAvatar } from "@/common/ui/components";
 import {
   Tooltip,
   TooltipContent,
@@ -12,6 +11,7 @@ import {
 } from "@/common/ui/components/tooltip";
 import Pagination from "@/modules/core/components/Pagination";
 import routesPath from "@/modules/core/routes";
+import { CustomAvatar } from "@/modules/profile";
 
 import { Container, NoResult, Percentage, TrRow } from "./styles";
 import { CustomDonationType } from "../../models/types";
