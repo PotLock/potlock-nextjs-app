@@ -13,6 +13,7 @@ import {
   List,
   Registration,
   RegistrationStatus,
+  UpdateRegistration,
 } from "./interfaces/lists.interfaces";
 
 /**
@@ -105,7 +106,14 @@ export const registerBatch = (args: ApplyToList) =>
     args,
   });
 
-// export const update_registered_project = (args: Registration) =>  contractApi.call<typeof args, Registration>("update_registration", {
+export const update_registered_project = (args: UpdateRegistration) =>
+  contractApi.call<typeof args, UpdateRegistration>("update_registration", {
+    deposit: floatToYoctoNear(0.015),
+    gas: "300000000000000",
+    args,
+  });
+
+// export const update_registered_project = (args: Registration) =>  contractApi.call<typeof args, ApplyToList>("update_registration", {
 //   deposit: floatToYoctoNear(0.015),
 //   gas: "300000000000000",
 //   args,

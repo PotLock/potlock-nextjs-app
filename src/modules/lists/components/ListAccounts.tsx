@@ -19,7 +19,7 @@ export const ListAccounts = () => {
   const [search, setSearch] = useState("");
   const [accountsWithAccess, setAccountsWithAccess] = useState<string[]>([]);
   // const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
+  const [statusFilter, setsStatusFilter] = useState<string[]>(["all"]);
   const [currentListType, setCurrentListType] = useState(
     "Accounts in the list",
   );

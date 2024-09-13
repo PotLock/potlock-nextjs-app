@@ -49,3 +49,9 @@ export interface ApplyToList {
     notes: string;
   }>;
 }
+
+export interface UpdateRegistration {
+  registration_id: number;
+  status: RegistrationStatus;
+  notes?: string;
+}
