@@ -17,8 +17,8 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
+import { AccountAvatar } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { CustomAvatar } from "@/modules/profile";
 import { useTypedSelector } from "@/store";
 
 import { useFundMatchingPoolForm, useProtocolConfig } from "../hooks";
@@ -153,7 +153,7 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                 target="_blank"
               >
                 <Badge variant="secondary" className="gap-1">
-                  <CustomAvatar
+                  <AccountAvatar
                     accountId={protocolConfig?.account_id}
                     className="h-[12px] w-[12px]"
                   />{" "}
@@ -186,7 +186,7 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                   target="_blank"
                 >
                   <Badge variant="secondary" className="gap-1">
-                    <CustomAvatar
+                    <AccountAvatar
                       accountId={potDetail.chef.id}
                       className="h-[12px] w-[12px]"
                     />{" "}

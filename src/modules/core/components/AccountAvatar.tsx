@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 
-import useProfileData from "../hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/useProfileData";
 
 const NO_IMAGE =
   "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
 
-export const CustomAvatar = ({
+export const AccountAvatar = ({
   accountId,
   className,
 }: {
@@ -17,21 +17,16 @@ export const CustomAvatar = ({
   const profileInfo = useProfileData(accountId);
   const [hasError, setHasError] = useState(false);
 
-  if (!profileInfo.profileReady || !accountId) {
-    return (
-      <img
-        alt="avatar"
-        className={`h-[12px] w-[12px] rounded-[50%] bg-white ${className}`}
-        src={NO_IMAGE}
-      />
-    );
-  }
+  const imageSrc =
+    typeof profileInfo.profile?.image === "string"
+      ? profileInfo.profile.image
+      : profileInfo.profile?.image?.url ?? profileInfo.profileImages.image;
 
   return (
     <img
       alt="avatar"
       className={`h-[12px] w-[12px] rounded-[50%] bg-white ${className}`}
-      src={hasError ? NO_IMAGE : profileInfo.profileImages.image}
+      src={hasError ? NO_IMAGE : imageSrc}
       onError={() => setHasError(true)}
     />
   );

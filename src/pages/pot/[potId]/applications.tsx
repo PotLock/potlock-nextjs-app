@@ -20,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/common/ui/components/tooltip";
+import { AccountAvatar } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { PotLayout, applicationsFiltersTags } from "@/modules/pot";
 import ApplicationReviewModal from "@/modules/pot/components/ApplicationReviewModal";
@@ -34,7 +35,6 @@ import {
   SearchBar,
   Status,
 } from "@/modules/pot/styles/application-styles";
-import { CustomAvatar } from "@/modules/profile";
 import useProfileData from "@/modules/profile/hooks/useProfileData";
 import { useTypedSelector } from "@/store";
 
@@ -306,7 +306,7 @@ const ApplicationData = ({
       <input type="checkbox" className="toggle-check" />
       <div className="header">
         <div className="header-info">
-          <CustomAvatar accountId={project_id} className="profile-image" />
+          <AccountAvatar accountId={project_id} className="profile-image" />
           {profile?.name && (
             <div className="name">{truncate(profile?.name, 15)}</div>
           )}
