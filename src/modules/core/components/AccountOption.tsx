@@ -86,7 +86,7 @@ export const AccountOption = ({
         <span className="prose">{accountId}</span>
       </div>
 
-      {secondaryAction}
+      {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}
     </div>
   );
 };

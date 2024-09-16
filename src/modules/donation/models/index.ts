@@ -9,6 +9,9 @@ import {
   DonationAllocationStrategy,
   DonationAllocationStrategyEnum,
   DonationAllocationStrategyOption,
+  DonationPotDistributionStrategy,
+  DonationPotDistributionStrategyEnum,
+  DonationPotDistributionStrategyOption,
   DonationState,
   DonationStep,
 } from "../types";
@@ -28,6 +31,21 @@ export const donationAllocationStrategies: Record<
     label: "Quadratically matched donation",
     hintIfDisabled: "(no pots available)",
     value: DonationAllocationStrategyEnum.pot,
+  },
+};
+
+export const donationPotDistributionStrategies: Record<
+  DonationPotDistributionStrategy,
+  DonationPotDistributionStrategyOption
+> = {
+  evenly: {
+    label: "Evenly",
+    value: DonationPotDistributionStrategyEnum.evenly,
+  },
+
+  manually: {
+    label: "Manually",
+    value: DonationPotDistributionStrategyEnum.manually,
   },
 };
 

@@ -21,7 +21,7 @@ import {
 } from "../constants";
 import {
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
+  DonationPotDistributionStrategyEnum,
 } from "../types";
 import {
   donationFeeBasisPointsToPercents,
@@ -76,9 +76,9 @@ export const donationSchema = object({
     message: "Incorrect allocation strategy.",
   }).default(DonationAllocationStrategyEnum.direct),
 
-  potDistributionStrategy: nativeEnum(DonationPotDistributionStrategy, {
+  potDistributionStrategy: nativeEnum(DonationPotDistributionStrategyEnum, {
     message: "Incorrect donation distribution strategy.",
-  }).default(DonationPotDistributionStrategy.evenly),
+  }).default(DonationPotDistributionStrategyEnum.evenly),
 
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),

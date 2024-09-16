@@ -15,7 +15,7 @@ import { AppDispatcher } from "@/store";
 import { DonationInputs } from "./schemas";
 import {
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
+  DonationPotDistributionStrategyEnum,
   DonationSubmissionInputs,
 } from "../types";
 
@@ -86,7 +86,7 @@ export const effects = (dispatch: AppDispatcher) => ({
 
                 amountYoctoNear:
                   potDistributionStrategy ===
-                  DonationPotDistributionStrategy.manually
+                  DonationPotDistributionStrategyEnum.manually
                     ? floatToYoctoNear(amount)
                     : floatToYoctoNear(batchDonationItem.amount),
               },

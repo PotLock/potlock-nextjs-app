@@ -15,7 +15,7 @@ import { DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
 import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
+  DonationPotDistributionStrategyEnum,
   DonationSubmissionInputs,
 } from "../types";
 import { isDonationAmountSufficient } from "../utils/validation";
@@ -58,7 +58,7 @@ export const useDonationForm = ({
       potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
 
       potDistributionStrategy:
-        DonationPotDistributionStrategy[
+        DonationPotDistributionStrategyEnum[
           "accountId" in params ? "manually" : "evenly"
         ],
     }),
@@ -72,14 +72,14 @@ export const useDonationForm = ({
     ],
   );
 
-  const form = useForm<DonationInputs>({
+  const self = useForm<DonationInputs>({
     resolver: zodResolver(donationSchema),
     mode: "onChange",
     defaultValues,
     resetOptions: { keepDirtyValues: true },
   });
 
-  const currentValues = useWatch({ control: form.control });
+  const currentValues = useWatch({ control: self.control });
   const amount = currentValues.amount ?? 0;
   const tokenId = currentValues.tokenId ?? NEAR_TOKEN_DENOM;
   const { balanceFloat } = useAvailableBalance({ tokenId });
@@ -95,8 +95,8 @@ export const useDonationForm = ({
 
   const isDisabled =
     !hasChanges ||
-    !form.formState.isValid ||
-    form.formState.isSubmitting ||
+    !self.formState.isValid ||
+    self.formState.isSubmitting ||
     !isBalanceSufficient;
 
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
@@ -121,9 +121,11 @@ export const useDonationForm = ({
       currentValues.potAccountId === undefined &&
       defaultPotAccountId
     ) {
-      form.setValue("potAccountId", defaultPotAccountId);
+      self.setValue("potAccountId", defaultPotAccountId);
     }
-  }, [currentValues, defaultPotAccountId, form, hasChanges, params]);
+  }, [currentValues, defaultPotAccountId, self, hasChanges, params]);
+
+  console.log(currentValues);
 
   return {
     hasChanges,
@@ -131,8 +133,8 @@ export const useDonationForm = ({
     isDisabled,
     isSenderHumanVerified,
     matchingPots,
-    form,
+    form: self,
     minAmountError,
-    onSubmit: form.handleSubmit(onSubmit),
+    onSubmit: self.handleSubmit(onSubmit),
   };
 };
