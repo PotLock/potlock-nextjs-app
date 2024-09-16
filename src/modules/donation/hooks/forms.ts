@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { omit } from "remeda";
 
 import { walletApi } from "@/common/api/near";
 import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
@@ -125,7 +126,7 @@ export const useDonationForm = ({
     }
   }, [currentValues, defaultPotAccountId, self, hasChanges, params]);
 
-  console.log(currentValues);
+  console.table(omit(currentValues, ["potAccountId"]));
 
   return {
     hasChanges,

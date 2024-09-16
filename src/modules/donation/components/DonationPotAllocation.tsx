@@ -91,24 +91,21 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                     defaultValue={field.value}
                   >
                     {values(donationPotDistributionStrategies).map(
-                      ({ label, hint, hintIfDisabled, value }) => {
-                        const disabled = field.disabled;
-
-                        return (
-                          <FormItem key={value}>
-                            <RadioGroupItem
-                              id={`donation-options-${value}`}
-                              isLoading={isPotLoading}
-                              checked={
-                                field.value ===
-                                DonationPotDistributionStrategyEnum[value]
-                              }
-                              hint={disabled ? hintIfDisabled : hint}
-                              {...{ disabled, label, value }}
-                            />
-                          </FormItem>
-                        );
-                      },
+                      ({ label, hint, hintIfDisabled, value }) => (
+                        <FormItem key={value}>
+                          <RadioGroupItem
+                            id={`donation-options-${value}`}
+                            isLoading={isPotLoading}
+                            checked={
+                              field.value ===
+                              DonationPotDistributionStrategyEnum[value]
+                            }
+                            hint={field.disabled ? hintIfDisabled : hint}
+                            disabled={field.disabled}
+                            {...{ label, value }}
+                          />
+                        </FormItem>
+                      ),
                     )}
                   </RadioGroup>
                 </FormControl>
