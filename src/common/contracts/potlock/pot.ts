@@ -11,6 +11,7 @@ import {
   ApprovedApplication,
   Challenge,
   Payout,
+  PotBatchDonationItem,
   PotConfig,
   PotDonation,
   PotDonationArgs,
@@ -208,6 +209,19 @@ export const donate = (
     deposit: depositAmountYocto,
     callbackUrl: window.location.href,
   });
+
+export const donateBatch = (
+  potAccountId: PotId,
+  txInputs: PotBatchDonationItem[],
+) =>
+  contractApi(potAccountId).callMultiple<PotDonationArgs>(
+    txInputs.map(({ amountYoctoNear, ...txInput }) => ({
+      method: "donate",
+      deposit: amountYoctoNear,
+      gas: FULL_TGAS,
+      ...txInput,
+    })),
+  );
 
 export const admin_dangerously_set_pot_config = (
   potAccountId: PotId,

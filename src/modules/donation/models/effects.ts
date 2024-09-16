@@ -1,13 +1,13 @@
 import { walletApi } from "@/common/api/near";
-import { donate, pot } from "@/common/contracts/potlock";
 import {
   DirectDonation,
   DirectDonationArgs,
-} from "@/common/contracts/potlock/interfaces/donate.interfaces";
-import {
+  PotBatchDonationItem,
   PotDonation,
   PotDonationArgs,
-} from "@/common/contracts/potlock/interfaces/pot.interfaces";
+  donate,
+  pot,
+} from "@/common/contracts/potlock";
 import { floatToYoctoNear } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
 import { AppDispatcher } from "@/store";
@@ -24,6 +24,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     amount,
     allocationStrategy,
     potDistributionStrategy,
+    potDonationDistribution,
     referrerAccountId,
     bypassProtocolFee,
     bypassChefFee,
@@ -65,16 +66,41 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
-    } else if ("potId" in params) {
-      switch (potDistributionStrategy) {
-        case DonationPotDistributionStrategy.evenly: {
-          return void dispatch.donation.failure(new Error("Not implemented"));
-        }
+    } else if ("potId" in params && potDonationDistribution !== undefined) {
+      return void pot
+        .donateBatch(
+          params.potId,
 
-        case DonationPotDistributionStrategy.manually: {
-          return void dispatch.donation.failure(new Error("Not implemented"));
-        }
-      }
+          potDonationDistribution.reduce(
+            (txs, batchDonationItem) => [
+              ...txs,
+
+              {
+                args: {
+                  referrer_id: referrerAccountId,
+                  project_id: batchDonationItem.account_id,
+
+                  bypass_protocol_fee: bypassProtocolFee,
+                  ...(bypassChefFee ? { custom_chef_fee_basis_points: 0 } : {}),
+                },
+
+                amountYoctoNear:
+                  potDistributionStrategy ===
+                  DonationPotDistributionStrategy.manually
+                    ? floatToYoctoNear(amount)
+                    : floatToYoctoNear(batchDonationItem.amount),
+              },
+            ],
+
+            [] as PotBatchDonationItem[],
+          ),
+        )
+        .then(/* dispatch.donation.success */ console.log)
+        .catch(dispatch.donation.failure);
+    } else {
+      return void dispatch.donation.failure(
+        new Error("Unable to determine donation type."),
+      );
     }
   },
 
