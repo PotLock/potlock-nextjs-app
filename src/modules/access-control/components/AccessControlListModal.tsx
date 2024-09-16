@@ -97,6 +97,15 @@ export const AccessControlAccountsModal = create(
       onSubmit([...accountIds, accountId]),
     );
 
+    const handleAccountRemove = useCallback(
+      (accountId: AccountId) => () =>
+        onSubmit(
+          accountIds.filter((listedAccountId) => accountId !== listedAccountId),
+        ),
+
+      [accountIds, onSubmit],
+    );
+
     const selectedAccountsRemove = useCallback(() => {
       onSubmit(
         accountIds.filter((accountId) => !selectedAccounts.includes(accountId)),
@@ -107,12 +116,15 @@ export const AccessControlAccountsModal = create(
 
     return (
       <Dialog open={self.visible}>
-        <DialogContent className="max-w-115 max-h-150" onCloseClick={close}>
+        <DialogContent
+          className="max-w-115 max-h-150 scroll-y-auto"
+          onCloseClick={close}
+        >
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
 
-          <DialogDescription>
+          <DialogDescription className="max-h-150 overflow-y-auto">
             <Form {...form}>
               <form
                 onSubmit={onAccountSubmit}
@@ -199,7 +211,7 @@ export const AccessControlAccountsModal = create(
                     }
                     secondaryAction={
                       <Button
-                        onClick={() => handleRemoveAdmin([accountId])}
+                        onClick={handleAccountRemove(accountId)}
                         variant="standard-plain"
                         className="ml-auto pe-0"
                       >
