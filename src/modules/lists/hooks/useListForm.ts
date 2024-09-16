@@ -9,6 +9,7 @@ import {
   remove_admins_from_list,
   transfer_list_ownership,
 } from "@/common/contracts/potlock/lists";
+import { AccountId } from "@/common/types";
 import { validateAccountId } from "@/modules/core";
 
 export const useListForm = () => {
@@ -59,7 +60,7 @@ export const useListForm = () => {
       });
   };
 
-  const handleSaveAdminsSettings = () => {
+  const handleSaveAdminsSettings = (admins: AccountId[]) => {
     if (!id) return; // Ensure id is available
     add_admins_to_list({
       list_id: parseInt(id as string),

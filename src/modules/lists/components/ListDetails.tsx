@@ -16,6 +16,7 @@ import {
 } from "@/common/assets/svgs";
 import { List } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { getList, registerBatch } from "@/common/contracts/potlock/lists";
+import { AccountId } from "@/common/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +32,11 @@ import DonationFlow from "./DonationFlow";
 import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
 
+interface SavedUsersType {
+  accounts?: AccountId[];
+  admins?: AccountId[];
+}
+
 export const ListDetails = () => {
   const {
     push,
@@ -40,11 +46,15 @@ export const ListDetails = () => {
   const [loading, setLoading] = useState(true);
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
-  const [registrants, setRegistrants] = useState<string[]>([]);
+  const [registrants, setRegistrants] = useState<AccountId[]>([]);
   const [isApplicationSuccessful, setIsApplicationSuccessful] =
     useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
     useState({ open: false });
+  const [savedUsers, setSavedUsers] = useState<SavedUsersType>({
+    accounts: [],
+    admins: [],
+  });
   const { wallet } = useWallet();
 
   const adminsModalId = useId();
@@ -73,21 +83,27 @@ export const ListDetails = () => {
   });
 
   useEffect(() => {
-    const fetchListDetails = async () => {
-      try {
-        const response = await getList({ list_id: parseInt(id as any) as any });
-        setAdmins(response.admins);
-        setRegistrants(
-          (data?.results?.map(
-            (data: any) => data?.registrant?.id,
-          ) as string[]) || [],
-        );
-        setListDetails(response);
-      } catch (error) {
-        console.error("Error fetching list details:", error);
-      } finally {
-        setLoading(false);
-      }
+    const fetchListDetails = () => {
+      setLoading(true); // Set loading to true at the beginning
+      getList({ list_id: parseInt(id as any) as any })
+        .then((response) => {
+          setAdmins(response.admins);
+          setRegistrants(
+            data?.results?.map((data: any) => data?.registrant?.id) || [],
+          );
+          setListDetails(response);
+          setSavedUsers({
+            admins: response.admins ?? [],
+            accounts:
+              data?.results?.map((data: any) => data?.registrant?.id) || [],
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching list details:", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     };
 
     fetchListDetails();
@@ -151,7 +167,7 @@ export const ListDetails = () => {
             <img
               src={
                 listDetails.cover_image_url || "https://via.placeholder.com/800"
-              } // Placeholder image if cover_image_url is null
+              }
               alt="cover"
               className="md:w-[896px] md:h-[264px] mt-3 h-[180px] w-full rounded-md object-cover"
             />
@@ -161,7 +177,7 @@ export const ListDetails = () => {
             <div className="mb-4 flex items-center justify-between">
               <div className="mb-6 flex flex-col items-start space-y-2">
                 <span className="mr-4 font-semibold text-gray-700">Admins</span>
-                <div className="flex space-x-1">
+                <div className="flex items-center gap-2">
                   {admins.slice(0, 4).map((admin) => (
                     <AccountOption
                       title={admin}
@@ -172,7 +188,7 @@ export const ListDetails = () => {
                     />
                   ))}
                   {listDetails.admins.length > 4 && (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-red-500 text-sm font-semibold text-white">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white">
                       {listDetails.admins.length - 4}+
                     </div>
                   )}
@@ -273,18 +289,33 @@ export const ListDetails = () => {
         id={adminsModalId}
         title="Edit Admin list"
         onSubmit={(admins) => setAdmins(admins)}
+        contractAdmins={savedUsers.admins}
+        type="ADMIN"
         value={admins}
         showOnSaveButton={admins.length > 0}
-        onSaveSettings={handleSaveAdminsSettings}
+        onSaveSettings={() =>
+          handleSaveAdminsSettings(
+            admins?.filter((account) => !savedUsers.admins?.includes(account)),
+          )
+        }
       />
       <AccessControlAccountsModal
         id={registrantsModalId}
         title="Edit Accounts"
         onSubmit={(modal) => setRegistrants(modal)}
+        type="ACCOUNT"
         value={isLoading ? [] : registrants}
+        contractAdmins={savedUsers.accounts}
         showOnSaveButton={registrants?.length > 0}
         countText="Account(s)"
-        onSaveSettings={() => handleRegisterBatch(id as string, registrants)}
+        onSaveSettings={() =>
+          handleRegisterBatch(
+            id as string,
+            registrants?.filter(
+              (account) => !savedUsers.accounts?.includes(account),
+            ),
+          )
+        }
       />
     </>
   );

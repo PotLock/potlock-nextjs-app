@@ -276,7 +276,7 @@ export const ListFormDetails: React.FC = () => {
                       showOnSaveButton={admins.length > 0 && onEditPage}
                       classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={(admins) => setAdmins(admins)}
-                      onSaveSettings={handleSaveAdminsSettings}
+                      onSaveSettings={() => handleSaveAdminsSettings(admins)}
                     />
                   </div>
                 </div>

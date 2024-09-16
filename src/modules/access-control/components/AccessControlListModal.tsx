@@ -32,6 +32,8 @@ export type AccessControlListModalProps = {
   onSaveSettings?: () => void;
   showOnSaveButton?: boolean;
   countText?: string;
+  type?: "ADMIN" | "ACCOUNT";
+  contractAdmins?: AccountId[];
 };
 
 export const AccessControlAccountsModal = create(
@@ -42,6 +44,7 @@ export const AccessControlAccountsModal = create(
     showOnSaveButton,
     onSaveSettings,
     countText = "Admins",
+    contractAdmins,
   }: AccessControlListModalProps) => {
     const self = useModal();
 
@@ -116,15 +119,12 @@ export const AccessControlAccountsModal = create(
 
     return (
       <Dialog open={self.visible}>
-        <DialogContent
-          className="max-w-115 max-h-150 scroll-y-auto"
-          onCloseClick={close}
-        >
+        <DialogContent className="max-w-115 " onCloseClick={close}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
 
-          <DialogDescription className="max-h-150 overflow-y-auto">
+          <DialogDescription className="">
             <Form {...form}>
               <form
                 onSubmit={onAccountSubmit}
@@ -154,93 +154,97 @@ export const AccessControlAccountsModal = create(
                 </Button>
               </form>
             </Form>
-          </DialogDescription>
-
-          <div
-            un-flex="~ col"
-            style={{ display: accountIds.length > 0 ? undefined : "none" }}
-          >
             <div
-              un-flex="~"
-              un-justify="between"
-              un-gap="4"
-              un-p="x-5 y-2"
-              un-bg="neutral-50"
+              un-flex="~ col"
+              style={{ display: accountIds.length > 0 ? undefined : "none" }}
             >
-              <div className="flex items-center gap-4">
-                <Checkbox
-                  checked={selectedAccounts.length === accountIds.length}
-                  onCheckedChange={allAccountsSelectToggle}
-                  className="px-0.75"
-                />
-
-                <span className="prose font-500 text-neutral-600">
-                  {`${accountIds.length} ${countText}` +
-                    (selectedAccounts.length > 0
-                      ? `, ${selectedAccounts.length} selected`
-                      : "")}
-                </span>
-              </div>
-
-              <Button
-                onClick={selectedAccountsRemove}
-                variant="brand-plain"
-                className={cn("font-500 p-0", {
-                  invisible: selectedAccounts.length === 0,
-                })}
+              <div
+                un-flex="~"
+                un-justify="between"
+                un-gap="4"
+                un-p="x-5 y-2"
+                un-bg="neutral-50"
               >
-                <MdDeleteOutline width={18} height={18} />
-
-                <span className="prose line-height-none">
-                  Remove all selected
-                </span>
-              </Button>
-            </div>
-
-            <ScrollArea className="w-full whitespace-nowrap rounded-b-lg">
-              <div un-flex="~ col" un-w="full">
-                {accountIds.map((accountId) => (
-                  <AccountOption
-                    key={accountId}
-                    primaryAction={
-                      <Checkbox
-                        checked={selectedAccounts.includes(accountId)}
-                        onCheckedChange={handleAccountSelect(accountId)}
-                        className="px-0.75"
-                      />
-                    }
-                    secondaryAction={
-                      <Button
-                        onClick={handleAccountRemove(accountId)}
-                        variant="standard-plain"
-                        className="ml-auto pe-0"
-                      >
-                        <MdDeleteOutline width={18} height={18} />
-
-                        <span className="prose font-500 line-height-none">
-                          Remove
-                        </span>
-                      </Button>
-                    }
-                    {...{ accountId }}
+                <div className="flex items-center gap-4">
+                  <Checkbox
+                    checked={selectedAccounts.length === accountIds.length}
+                    onCheckedChange={allAccountsSelectToggle}
+                    className="px-0.75"
                   />
-                ))}
+
+                  <span className="prose font-500 text-neutral-600">
+                    {`${accountIds.length} ${countText}` +
+                      (selectedAccounts.length > 0
+                        ? `, ${selectedAccounts.length} selected`
+                        : "")}
+                  </span>
+                </div>
+
+                <Button
+                  onClick={selectedAccountsRemove}
+                  variant="brand-plain"
+                  className={cn("font-500 p-0", {
+                    invisible: selectedAccounts.length === 0,
+                  })}
+                >
+                  <MdDeleteOutline width={18} height={18} />
+
+                  <span className="prose line-height-none">
+                    Remove all selected
+                  </span>
+                </Button>
               </div>
 
-              <ScrollBar orientation="vertical" />
-            </ScrollArea>
-          </div>
-          {showOnSaveButton && (
-            <div className="m-4 flex justify-center">
-              <Button
-                type="button"
-                variant="brand-filled"
-                onClick={onSaveSettings}
-              >
-                Save Changes
-              </Button>
+              <ScrollArea className="max-h-80 w-full overflow-y-auto whitespace-nowrap rounded-b-lg">
+                <div un-flex="~ col" un-w="full">
+                  {accountIds.map((accountId) => (
+                    <AccountOption
+                      key={accountId}
+                      primaryAction={
+                        <Checkbox
+                          checked={selectedAccounts.includes(accountId)}
+                          onCheckedChange={handleAccountSelect(accountId)}
+                          className="px-0.75"
+                        />
+                      }
+                      secondaryAction={
+                        <Button
+                          onClick={
+                            !contractAdmins?.includes(accountId)
+                              ? handleAccountRemove(accountId)
+                              : () => handleRemoveAdmin([accountId])
+                          }
+                          variant="standard-plain"
+                          className="ml-auto pe-0"
+                        >
+                          <MdDeleteOutline width={18} height={18} />
+
+                          <span className="prose font-500 line-height-none">
+                            Remove
+                          </span>
+                        </Button>
+                      }
+                      {...{ accountId }}
+                    />
+                  ))}
+                </div>
+
+                <ScrollBar orientation="vertical" />
+              </ScrollArea>
             </div>
-          )}
+            {showOnSaveButton &&
+              accountIds.some((data) => !contractAdmins?.includes(data)) && (
+                <div className="m-4 flex justify-center">
+                  <Button
+                    type="button"
+                    variant="brand-filled"
+                    onClick={onSaveSettings}
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+              )}
+          </DialogDescription>
         </DialogContent>
       </Dialog>
     );
