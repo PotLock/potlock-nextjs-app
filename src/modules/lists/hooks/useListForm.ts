@@ -40,7 +40,9 @@ export const useListForm = () => {
         updated_ms: Date.now(),
         notes: "",
       })),
-    });
+    })
+      .then((data) => data)
+      .catch((error) => console.error(error));
   };
 
   const handleSaveAdminsSettings = () => {

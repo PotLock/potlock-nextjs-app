@@ -41,6 +41,8 @@ export const ListDetails = () => {
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
   const [registrants, setRegistrants] = useState<string[]>([]);
+  const [isApplicationSuccessful, setIsApplicationSuccessful] =
+    useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
     useState({ open: false });
   const { wallet } = useWallet();
@@ -104,7 +106,12 @@ export const ListDetails = () => {
           notes: "",
         },
       ],
-    });
+    })
+      .then((data) => {
+        console.log(data);
+        setIsApplicationSuccessful(true);
+      })
+      .catch((error) => console.error("Error applying to list:", error));
   };
 
   const onEditList = useCallback(() => push(`/list/edit/${id}`), [id]);
@@ -225,7 +232,7 @@ export const ListDetails = () => {
                         <AdminUserIcon className="mr-1 max-w-[22px]" />
                         Add/Remove accounts
                       </DropdownMenuItem>
-                      <DropdownMenuItem
+                      {/* <DropdownMenuItem
                         onClick={() =>
                           setIsListConfirmationModalOpen({ open: true })
                         }
@@ -233,7 +240,7 @@ export const ListDetails = () => {
                       >
                         <DeleteListIcon className="mr-1 max-w-[22px]" />
                         <span className="text-red-500">Delete List</span>
-                      </DropdownMenuItem>
+                      </DropdownMenuItem> */}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
@@ -248,15 +255,13 @@ export const ListDetails = () => {
           setIsApplyToListModalOpen(false);
         }}
         onApply={applyToListModal}
+        isSuccessful={isApplicationSuccessful}
       />
       {isDonateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <DonationFlow
-            onClose={() => {
-              setIsDonateModalOpen(false);
-            }}
-          />
-        </div>
+        <DonationFlow
+          isOpen={isDonateModalOpen}
+          onClose={() => setIsDonateModalOpen(false)}
+        />
       )}
       <ListConfirmationModal
         open={isListConfirmationModalOpen.open}

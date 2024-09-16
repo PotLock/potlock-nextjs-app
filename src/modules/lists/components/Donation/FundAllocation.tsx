@@ -10,7 +10,6 @@ import { useAvailableBalance } from "@/modules/core";
 const FundAllocation = ({
   projects,
   handleAddToCart,
-  onClose,
   selectedProjects,
   setSelectedProjects,
   setProjects,
@@ -46,26 +45,12 @@ const FundAllocation = ({
     setSelectedProjects(projects);
   };
 
+  const NO_IMAGE =
+    "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
+
   return (
-    <div className="overflow-hidden rounded-lg bg-white shadow-md">
-      <div className="flex items-center justify-between bg-red-500 p-4">
-        <h2 className="text-xl font-semibold text-white">Donate to list</h2>
-        <button onClick={onClose} className="text-white hover:text-white">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 14 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M14 1.41L12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41Z"
-              fill="#F7F7F7"
-            />
-          </svg>
-        </button>
-      </div>
-      <div className="mt-6 px-5">
+    <div>
+      <div className="">
         <h3 className="text-sm font-medium text-gray-700">
           How do you want to allocate funds?
         </h3>
@@ -87,17 +72,18 @@ const FundAllocation = ({
             </label>
           </div>
           <div
-            className={`mt-2 rounded-md border p-2 ${allocationMethod === "manually" && "border-red-500"}`}
+            className={`mt-2 rounded-md border p-2 opacity-50 ${allocationMethod === "manually" && "border-red-500"}`}
           >
             <label className="flex items-center">
               <input
                 type="radio"
                 value="manually"
                 checked={allocationMethod === "manually"}
+                disabled
                 onChange={() => setAllocationMethod("manually")}
-                className="form-radio h-4 w-4 text-red-600"
+                className="form-radio h-4 w-4 text-red-600 disabled:opacity-70"
               />
-              <span className="ml-2 text-sm">
+              <span className="ml-2 text-sm opacity-70">
                 Manually (Specify amount for each project)
               </span>
             </label>
@@ -166,9 +152,12 @@ const FundAllocation = ({
                 />
                 <img
                   src={
-                    IPFS_NEAR_SOCIAL_URL +
-                      project.registrant?.near_social_profile_data?.image
-                        ?.ipfs_cid || "https://via.placeholder.com/32"
+                    project.registrant?.near_social_profile_data?.image
+                      ?.ipfs_cid
+                      ? IPFS_NEAR_SOCIAL_URL +
+                        project.registrant?.near_social_profile_data?.image
+                          ?.ipfs_cid
+                      : NO_IMAGE
                   }
                   alt="project"
                   className="ml-3 h-8 w-8 rounded-full"
@@ -197,9 +186,9 @@ const FundAllocation = ({
           className="rounded-md bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={
             isNaN(amount) ||
-            amount === 0 ||
+            amount <= 0 ||
             amount > Number(balanceFloat) ||
-            selectAllProjects.length > 0
+            selectedProjects.length === 0
           }
           onClick={() => handleAddToCart(amount, selectedProjects)}
         >

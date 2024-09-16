@@ -343,14 +343,14 @@ export const ListFormDetails: React.FC = () => {
           <div
             className={`md:flex-row flex w-full flex-col justify-between ${onEditPage ? "flex-col-reverse" : "md:justify-end flex-col"} `}
           >
-            <button
+            {/* <button
               onClick={() =>
                 setOpenListConfirmModal({ open: true, type: "DELETE" })
               }
               className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9] ${onEditPage ? "" : "hidden"}`}
             >
               Delete List
-            </button>
+            </button> */}
             <div className="md:justify-end md:flex-row md:space-y-0 md:space-x-4 flex flex-col-reverse justify-center">
               <button
                 type="button"

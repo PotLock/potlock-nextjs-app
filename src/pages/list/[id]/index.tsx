@@ -7,7 +7,7 @@ import { ListDetails } from "../../../modules/lists/components/ListDetails";
 
 export default function Page() {
   return (
-    <div className="container">
+    <div className="container pb-10">
       <ListDetails />
       <ListAccounts />
     </div>

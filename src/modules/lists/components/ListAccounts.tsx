@@ -4,9 +4,7 @@ import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
 import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
-import { Profile } from "@/modules/profile/models";
-import { categories, statuses } from "@/modules/project/constants";
-import { useTypedSelector } from "@/store";
+import { statuses } from "@/modules/project/constants";
 
 import { AccountCard } from "./AccountCard";
 
@@ -30,14 +28,6 @@ export const ListAccounts = () => {
   ];
 
   const tagsList: Group[] = [
-    // {
-    //   label: "Category",
-    //   options: categories,
-    //   props: {
-    //     value: categoryFilter,
-    //     onValueChange: (value) => setCategoryFilter(value),
-    //   },
-    // },
     {
       label: "Status",
       options: statuses,
