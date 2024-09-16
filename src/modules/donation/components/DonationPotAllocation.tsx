@@ -65,7 +65,12 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
   const isLoading = isPotLoading || isPotApplicationListLoading;
   const error = potError ?? potApplicationsError;
 
-  const [amount, tokenId] = form.watch(["amount", "tokenId"]);
+  const [amount, tokenId, potDistributionStrategy] = form.watch([
+    "amount",
+    "tokenId",
+    "potDistributionStrategy",
+  ]);
+
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
   const formLayout = useMemo(
@@ -115,61 +120,65 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
 
           <DonationVerificationWarning />
 
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <TextField
-                label="Amount"
-                {...field}
-                labelExtension={<AvailableTokenBalance {...{ tokenId }} />}
-                inputExtension={
-                  <FormField
-                    control={form.control}
-                    name="tokenId"
-                    render={({ field: inputExtension }) => (
-                      <SelectField
-                        embedded
-                        label="Available tokens"
-                        disabled //? FT donation is not supported in pots
-                        defaultValue={inputExtension.value}
-                        onValueChange={inputExtension.onChange}
-                        classes={{
-                          trigger:
-                            "mr-2px h-full w-min rounded-r-none shadow-none",
-                        }}
-                      >
-                        <SelectFieldOption value={NEAR_TOKEN_DENOM}>
-                          {NEAR_TOKEN_DENOM.toUpperCase()}
-                        </SelectFieldOption>
-                      </SelectField>
-                    )}
-                  />
-                }
-                type="number"
-                placeholder="0.00"
-                min={yoctoNearToFloat(pot.min_matching_pool_donation_amount)}
-                max={balanceFloat ?? undefined}
-                step={0.01}
-                appendix={nearAmountUsdDisplayValue}
-                customErrorMessage={
-                  isBalanceSufficient
-                    ? null
-                    : DONATION_INSUFFICIENT_BALANCE_ERROR
-                }
-              />
-            )}
-          />
+          {potDistributionStrategy === "evenly" && (
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <TextField
+                  label="Amount"
+                  {...field}
+                  labelExtension={<AvailableTokenBalance {...{ tokenId }} />}
+                  inputExtension={
+                    <FormField
+                      control={form.control}
+                      name="tokenId"
+                      render={({ field: inputExtension }) => (
+                        <SelectField
+                          embedded
+                          label="Available tokens"
+                          disabled //? FT donation is not supported in pots
+                          defaultValue={inputExtension.value}
+                          onValueChange={inputExtension.onChange}
+                          classes={{
+                            trigger:
+                              "mr-2px h-full w-min rounded-r-none shadow-none",
+                          }}
+                        >
+                          <SelectFieldOption value={NEAR_TOKEN_DENOM}>
+                            {NEAR_TOKEN_DENOM.toUpperCase()}
+                          </SelectFieldOption>
+                        </SelectField>
+                      )}
+                    />
+                  }
+                  type="number"
+                  placeholder="0.00"
+                  min={yoctoNearToFloat(pot.min_matching_pool_donation_amount)}
+                  max={balanceFloat ?? undefined}
+                  step={0.01}
+                  appendix={nearAmountUsdDisplayValue}
+                  customErrorMessage={
+                    isBalanceSufficient
+                      ? null
+                      : DONATION_INSUFFICIENT_BALANCE_ERROR
+                  }
+                />
+              )}
+            />
+          )}
 
           {potApplications.map(({ applicant }) => (
             <AccountOption
               key={applicant.id}
               accountId={applicant.id}
               secondaryAction={
-                <FormField
-                  name="potDistribution"
-                  render={({ field }) => <CheckboxField {...field} />}
-                />
+                potDistributionStrategy === "evenly" ? (
+                  <FormField
+                    name="potDistribution"
+                    render={({ field }) => <CheckboxField {...field} />}
+                  />
+                ) : null
               }
             />
           ))}
@@ -184,6 +193,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
       nearAmountUsdDisplayValue,
       pot,
       potApplications,
+      potDistributionStrategy,
       tokenId,
     ],
   );
