@@ -120,7 +120,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
 
           <DonationVerificationWarning />
 
-          {potDistributionStrategy === "evenly" && (
+          {potDistributionStrategy === "evenly" ? (
             <FormField
               control={form.control}
               name="amount"
@@ -166,22 +166,28 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                 />
               )}
             />
+          ) : (
+            <div>
+              <span className="prose">{"Total allocated"}</span>
+            </div>
           )}
 
-          {potApplications.map(({ applicant }) => (
-            <AccountOption
-              key={applicant.id}
-              accountId={applicant.id}
-              secondaryAction={
-                potDistributionStrategy === "evenly" ? (
-                  <FormField
-                    name="potDistribution"
-                    render={({ field }) => <CheckboxField {...field} />}
-                  />
-                ) : null
-              }
-            />
-          ))}
+          <div un-flex="~ col" un-items="center" un-gap="1">
+            {potApplications.map(({ applicant }) => (
+              <AccountOption
+                key={applicant.id}
+                accountId={applicant.id}
+                secondaryAction={
+                  potDistributionStrategy === "evenly" ? (
+                    <FormField
+                      name="potDistribution"
+                      render={({ field }) => <CheckboxField {...field} />}
+                    />
+                  ) : null
+                }
+              />
+            ))}
+          </div>
         </DialogDescription>
       ) : null,
 

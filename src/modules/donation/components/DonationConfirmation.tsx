@@ -108,7 +108,10 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   label={
                     <>
                       <span>{`Remove ${chefFeePercent}% Chef Fees`}</span>
-                      {pot?.chef.id && <ProfileLink accountId={pot?.chef.id} />}
+
+                      {pot?.chef?.id && (
+                        <ProfileLink accountId={pot?.chef?.id} />
+                      )}
                     </>
                   }
                 />
