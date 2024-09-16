@@ -18,8 +18,10 @@ import { setupSender } from "@near-wallet-selector/sender";
 import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
 import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import naxios from "@wpdas/naxios";
+import { AccountView } from "near-api-js/lib/providers/provider";
 
 import { FULL_TGAS, NETWORK, SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
+import { AccountId } from "@/common/types";
 
 export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "test.rpc.fastnear.com"}`;
 
@@ -64,3 +66,17 @@ export const walletApi = naxiosInstance.walletApi();
  * NEAR RPC API Provider3
  */
 export const nearRpc = naxiosInstance.rpcApi();
+
+export const near = {
+  isAccountValid: async (account_id: AccountId) =>
+    account_id.length > 4
+      ? await nearRpc
+          .query<AccountView>({
+            request_type: "view_account",
+            finality: "final",
+            account_id,
+          })
+          .then(Boolean)
+          .catch(() => false)
+      : false,
+};

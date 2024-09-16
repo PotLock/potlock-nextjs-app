@@ -12,9 +12,13 @@ import {
   SelectFieldOption,
   TextField,
 } from "@/common/ui/form-fields";
-import { AvailableTokenBalance, useNearUsdDisplayValue } from "@/modules/core";
-import { DonationVerificationWarning } from "@/modules/donation";
+import {
+  AccountOption,
+  AvailableTokenBalance,
+  useNearUsdDisplayValue,
+} from "@/modules/core";
 
+import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import { DonationAllocationInputs } from "../models";
 
@@ -33,11 +37,22 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
     error: potError,
   } = potlock.usePot({ potId });
 
-  const [amount, tokenId] = form.watch(["amount", "tokenId"]);
+  const {
+    isLoading: isPotApplicationListLoading,
+    data: { results: potApplications } = { results: [] },
+    error: potApplicationsError,
+  } = potlock.usePotApplications({
+    potId,
+    page_size: 100,
+  });
 
+  const isLoading = isPotLoading || isPotApplicationListLoading;
+  const error = potError?.message ?? potApplicationsError?.message;
+
+  const [amount, tokenId] = form.watch(["amount", "tokenId"]);
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
-  return isPotLoading ? (
+  return isLoading ? (
     <span
       un-flex="~"
       un-justify="center"
@@ -50,7 +65,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
     </span>
   ) : (
     <>
-      {potError && potError.message}
+      {error}
 
       {pot !== undefined && (
         <>
@@ -106,6 +121,10 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                 />
               )}
             />
+
+            {potApplications.map(({ applicant }) => (
+              <AccountOption key={applicant.id} accountId={applicant.id} />
+            ))}
           </DialogDescription>
         </>
       )}
