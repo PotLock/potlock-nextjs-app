@@ -178,7 +178,7 @@ export const ListDetails = () => {
                   )}
                 </div>
               </div>
-              {isAdmin && (
+              {listDetails?.owner === walletApi?.accountId && (
                 <div
                   onClick={openAccountsModal}
                   className="cursor-pointer rounded p-2  hover:opacity-50"
