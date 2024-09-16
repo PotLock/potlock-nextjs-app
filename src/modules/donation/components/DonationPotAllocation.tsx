@@ -61,24 +61,6 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
           <DialogDescription>
             <DonationVerificationWarning />
 
-            <TextField
-              label="Amount"
-              labelExtension={<AvailableTokenBalance {...{ tokenId }} />}
-              inputExtension={
-                <div un-flex="~" un-items="center" un-justify="center">
-                  <span className="prose" un-text="lg" un-font="600">
-                    NEAR
-                  </span>
-                </div>
-              }
-              type="number"
-              placeholder="0.00"
-              min={0.0}
-              max={balanceFloat ?? undefined}
-              step={0.01}
-              appendix="$ 0.00"
-            />
-
             <FormField
               control={form.control}
               name="amount"
