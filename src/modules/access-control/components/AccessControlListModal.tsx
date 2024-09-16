@@ -23,6 +23,7 @@ import {
 import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
 import { AccountOption, validAccountId } from "@/modules/core";
+import { useListForm } from "@/modules/lists/hooks/useListForm";
 
 export type AccessControlListModalProps = {
   title: string;
@@ -48,6 +49,8 @@ export const AccessControlAccountsModal = create(
       self.hide();
       self.remove();
     }, [self]);
+
+    const { handleRemoveAdmin } = useListForm();
 
     const [selectedAccounts, setSelectedAccounts] = useState<AccountId[]>([]);
 
@@ -92,15 +95,6 @@ export const AccessControlAccountsModal = create(
 
     const onAccountSubmit = form.handleSubmit(({ accountId }) =>
       onSubmit([...accountIds, accountId]),
-    );
-
-    const handleAccountRemove = useCallback(
-      (accountId: AccountId) => () =>
-        onSubmit(
-          accountIds.filter((listedAccountId) => accountId !== listedAccountId),
-        ),
-
-      [accountIds, onSubmit],
     );
 
     const selectedAccountsRemove = useCallback(() => {
@@ -205,7 +199,7 @@ export const AccessControlAccountsModal = create(
                     }
                     secondaryAction={
                       <Button
-                        onClick={handleAccountRemove(accountId)}
+                        onClick={() => handleRemoveAdmin([accountId])}
                         variant="standard-plain"
                         className="ml-auto pe-0"
                       >

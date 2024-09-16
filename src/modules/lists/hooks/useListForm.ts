@@ -6,6 +6,7 @@ import {
   add_admins_to_list,
   delete_list,
   registerBatch,
+  remove_admins_from_list,
   transfer_list_ownership,
 } from "@/common/contracts/potlock/lists";
 import { validateAccountId } from "@/modules/core";
@@ -43,6 +44,19 @@ export const useListForm = () => {
     })
       .then((data) => data)
       .catch((error) => console.error(error));
+  };
+
+  const handleRemoveAdmin = (admins: Array<string>) => {
+    remove_admins_from_list({
+      list_id: parseInt(id as string),
+      admins,
+    })
+      .then((data) => {
+        console.log("Removed admins to list", data);
+      })
+      .catch((error) => {
+        console.error("Error adding admins to list", error);
+      });
   };
 
   const handleSaveAdminsSettings = () => {
@@ -92,6 +106,7 @@ export const useListForm = () => {
     transferAccountError,
     setTransferAccountField,
     handleRegisterBatch,
+    handleRemoveAdmin,
     setTransferAccountError,
     admins,
     setAdmins,

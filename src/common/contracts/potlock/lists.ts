@@ -113,12 +113,6 @@ export const update_registered_project = (args: UpdateRegistration) =>
     args,
   });
 
-// export const update_registered_project = (args: Registration) =>  contractApi.call<typeof args, ApplyToList>("update_registration", {
-//   deposit: floatToYoctoNear(0.015),
-//   gas: "300000000000000",
-//   args,
-// });
-
 export const delete_list = (args: { list_id: number }) =>
   contractApi.call<typeof args, List>("delete_list", {
     args,
@@ -138,6 +132,16 @@ export const add_admins_to_list = (args: {
   admins: Array<string>;
 }) =>
   contractApi.call<typeof args, List>("owner_add_admins", {
+    args,
+    deposit: floatToYoctoNear(0.01),
+    gas: "300000000000000",
+  });
+
+export const remove_admins_from_list = (args: {
+  list_id: number;
+  admins: Array<string>;
+}) =>
+  contractApi.call<typeof args, List>("owner_remove_admins", {
     args,
     deposit: floatToYoctoNear(0.01),
     gas: "300000000000000",
