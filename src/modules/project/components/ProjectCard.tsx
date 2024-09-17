@@ -88,15 +88,13 @@ export const ProjectCard = ({
           <div className="flex flex-1 flex-col gap-5 px-6 pb-6">
             <div className="relative -mt-5 h-10 w-10">
               {avatarSrc && (
-                <Image
+                <img
                   alt={`Profile image for ${name}`}
                   className={cn(
-                    "rounded-full bg-white object-cover",
+                    "h-full w-full rounded-full bg-white object-cover",
                     "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
                   )}
                   src={avatarSrc}
-                  loading="lazy"
-                  fill
                 />
               )}
             </div>

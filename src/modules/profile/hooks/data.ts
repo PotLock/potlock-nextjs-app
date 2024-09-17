@@ -88,14 +88,15 @@ export const useProfileData = (
   );
 
   return {
+    /** @deprecated use `avatarSrc` and `backgroundSrc` */
+    profileImages,
     avatarSrc,
     backgroundSrc,
-    profile,
-    profileImages,
-    profileReady,
     donationsSent: donationsData?.results,
-    registration,
+    profile,
+    profileReady,
     profileType,
+    registration,
   };
 };
 
