@@ -109,12 +109,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const appendixElement = useMemo(
       () =>
         appendix ? (
-          <span
-            un-flex="~"
-            un-items="center"
-            un-text="gray-500 sm:sm nowrap"
-            className="prose"
-          >
+          <span className="prose sm:text-sm flex items-center text-nowrap text-gray-500">
             {appendix}
           </span>
         ) : null,
@@ -141,8 +136,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           <FormControl>
             <input
               {...fieldProps}
-              className={cn("max-h-11 rounded-l-md px-3 py-2.5", {
-                "rounded-r-md": appendixElement === null,
+              className={cn("max-h-11 rounded-md px-3 py-2.5", {
+                "mr-2.5": appendixElement !== null,
               })}
               un-focus-visible={
                 inputExtensionElement !== null && appendixElement !== null
