@@ -35,7 +35,7 @@ import {
   SearchBar,
   Status,
 } from "@/modules/pot/styles/application-styles";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 import { useTypedSelector } from "@/store";
 
 const ApplicationsTab = () => {

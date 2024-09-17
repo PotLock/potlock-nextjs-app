@@ -1,12 +1,7 @@
 import { useMemo } from "react";
 
 import { AccountId, ByAccountId } from "@/common/types";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Skeleton,
-} from "@/common/ui/components";
+import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/modules/profile";
 

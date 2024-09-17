@@ -3,7 +3,7 @@ import Link from "next/link";
 import { truncate } from "@/common/lib";
 import { AccountAvatar } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 
 import { Container } from "./styles";
 import { CustomDonationType } from "../../models/types";

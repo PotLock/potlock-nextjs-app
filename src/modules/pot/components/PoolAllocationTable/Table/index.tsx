@@ -7,7 +7,7 @@ import { truncate } from "@/common/lib";
 import { AccountAvatar, oneNearUsdPrice } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { JoinDonation } from "@/modules/pot/hooks";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 
 import { Container, Row } from "./styles";
 
