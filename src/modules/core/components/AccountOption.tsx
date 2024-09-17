@@ -73,7 +73,7 @@ export const AccountOption = ({
   ) : (
     <div
       className={cn(
-        "flex w-full items-center gap-4 px-5 py-3 hover:bg-neutral-50",
+        "flex w-full items-center gap-4 px-5 py-2 hover:bg-[#FEF6EE]",
         { "rounded-full": isRounded },
         classNames?.root,
       )}

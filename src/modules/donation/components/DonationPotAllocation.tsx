@@ -15,6 +15,7 @@ import {
   FormLabel,
   RadioGroup,
   RadioGroupItem,
+  ScrollArea,
   Skeleton,
 } from "@/common/ui/components";
 import {
@@ -73,7 +74,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
-  const formLayout = useMemo(
+  const generalSection = useMemo(
     () =>
       pot ? (
         <DialogDescription>
@@ -171,23 +172,6 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
               <span className="prose">{"Total allocated"}</span>
             </div>
           )}
-
-          <div un-flex="~ col" un-items="center" un-gap="1">
-            {potApplications.map(({ applicant }) => (
-              <AccountOption
-                key={applicant.id}
-                accountId={applicant.id}
-                secondaryAction={
-                  potDistributionStrategy === "evenly" ? (
-                    <FormField
-                      name="potDistribution"
-                      render={({ field }) => <CheckboxField {...field} />}
-                    />
-                  ) : null
-                }
-              />
-            ))}
-          </div>
         </DialogDescription>
       ) : null,
 
@@ -198,10 +182,29 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
       isPotLoading,
       nearAmountUsdDisplayValue,
       pot,
-      potApplications,
       potDistributionStrategy,
       tokenId,
     ],
+  );
+
+  const projectList = useMemo(
+    () =>
+      potApplications.map(({ applicant }) => (
+        <AccountOption
+          key={applicant.id}
+          accountId={applicant.id}
+          secondaryAction={
+            potDistributionStrategy === "evenly" ? (
+              <FormField
+                name="potDistribution"
+                render={({ field }) => <CheckboxField {...field} />}
+              />
+            ) : null
+          }
+        />
+      )),
+
+    [potApplications, potDistributionStrategy],
   );
 
   return error ? (
@@ -231,7 +234,13 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
         </DialogHeader>
       )}
 
-      {formLayout}
+      {generalSection}
+
+      <ScrollArea className="h-[180px] w-full">
+        <div un-flex="~ col" un-items="center" un-gap="1">
+          {projectList}
+        </div>
+      </ScrollArea>
     </>
   );
 };
