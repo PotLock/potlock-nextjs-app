@@ -237,7 +237,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
       {generalSection}
 
       <ScrollArea className="h-[180px] w-full">
-        <div un-flex="~ col" un-items="center" un-gap="1">
+        <div un-flex="~ col" un-items="center" un-gap="0.5">
           {projectList}
         </div>
       </ScrollArea>

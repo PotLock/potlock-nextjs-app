@@ -37,21 +37,20 @@ const useProfileData = (
       if (accountId) {
         setProfileReady(false);
         setProfile(undefined);
+
         const projectProfileData = await getSocialProfile({
           accountId,
           useCache,
         });
 
-        const image = getImage({
-          image: projectProfileData?.image,
-          type: "image",
-        });
-        const backgroundImage = getImage({
-          image: projectProfileData?.backgroundImage,
-          type: "backgroundImage",
-        });
+        const images = await Promise.all([
+          getImage({ image: projectProfileData?.image, type: "image" }),
 
-        const images = await Promise.all([image, backgroundImage]);
+          getImage({
+            image: projectProfileData?.backgroundImage,
+            type: "backgroundImage",
+          }),
+        ]);
 
         setProfileImages({
           image: images[0],
