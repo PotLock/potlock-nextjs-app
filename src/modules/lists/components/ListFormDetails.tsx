@@ -23,6 +23,7 @@ import SuccessModalCreateList, {
   ListConfirmationModal,
   ListConfirmationModalProps,
 } from "./ListConfirmationModals";
+import { AccountId } from "@/common/types";
 
 interface FormData {
   name: string;
@@ -61,6 +62,9 @@ export const ListFormDetails: React.FC = () => {
     open: false,
   });
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
+  const [savedAdmins, setSavedAdmins] = useState<{ account: AccountId }[]>([
+    { account: "" },
+  ]);
 
   const {
     admins,
@@ -92,6 +96,9 @@ export const ListFormDetails: React.FC = () => {
         setValue("allowApplications", response.default_registration_status);
         setValue("approveApplications", response.admin_only_registrations);
         setAdmins(response.admins);
+        setSavedAdmins(
+          response.admins?.map((admin: AccountId) => ({ account: admin })),
+        );
         setCoverImage(response.cover_image_url);
       } catch (error) {
         console.error("Error fetching list details:", error);
@@ -273,7 +280,13 @@ export const ListFormDetails: React.FC = () => {
                       isEditable
                       title="Admins"
                       value={admins}
-                      showOnSaveButton={admins.length > 0 && onEditPage}
+                      contractAdmins={savedAdmins}
+                      type="ADMIN"
+                      showOnSaveButton={
+                        admins.length > 0 &&
+                        onEditPage &&
+                        watch("owner") === walletApi?.accountId
+                      }
                       classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={(admins) => setAdmins(admins)}
                       onSaveSettings={() => handleSaveAdminsSettings(admins)}
@@ -283,7 +296,7 @@ export const ListFormDetails: React.FC = () => {
               </div>
             </div>
           </div>
-          {onEditPage && (
+          {onEditPage && watch("owner") === walletApi?.accountId && (
             <div>
               <h3>Transfer Ownership</h3>
               <div className="flex gap-2">

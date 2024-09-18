@@ -106,6 +106,22 @@ export const registerBatch = (args: ApplyToList) =>
     args,
   });
 
+export const unregister_from_list = (args: {
+  list_id: number;
+  registration_id: number;
+}) =>
+  contractApi.call<
+    typeof args,
+    {
+      list_id: number;
+      registration_id: number;
+    }
+  >("unregister", {
+    deposit: floatToYoctoNear(0.015),
+    gas: "300000000000000",
+    args,
+  });
+
 export const update_registered_project = (args: UpdateRegistration) =>
   contractApi.call<typeof args, UpdateRegistration>("update_registration", {
     deposit: floatToYoctoNear(0.015),

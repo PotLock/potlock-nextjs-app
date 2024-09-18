@@ -8,12 +8,7 @@ import { useRouter } from "next/router";
 
 import { walletApi } from "@/common/api/near";
 import { potlock } from "@/common/api/potlock";
-import {
-  AdminUserIcon,
-  DeleteListIcon,
-  DotsIcons,
-  PenIcon,
-} from "@/common/assets/svgs";
+import { AdminUserIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { List } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { getList, registerBatch } from "@/common/contracts/potlock/lists";
 import { AccountId } from "@/common/types";
@@ -33,8 +28,8 @@ import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
 
 interface SavedUsersType {
-  accounts?: AccountId[];
-  admins?: AccountId[];
+  accounts?: { account: AccountId; id?: number }[];
+  admins?: { account: AccountId }[];
 }
 
 export const ListDetails = () => {
@@ -89,13 +84,16 @@ export const ListDetails = () => {
         .then((response) => {
           setAdmins(response.admins);
           setRegistrants(
-            data?.results?.map((data: any) => data?.registrant?.id) || [],
+            data?.results?.map((data: any) => `${data?.registrant?.id}`) || [],
           );
           setListDetails(response);
           setSavedUsers({
-            admins: response.admins ?? [],
+            admins: response.admins?.map((admin) => ({ account: admin })) ?? [],
             accounts:
-              data?.results?.map((data: any) => data?.registrant?.id) || [],
+              data?.results?.map((data: any) => ({
+                account: data?.registrant?.id,
+                id: data?.id,
+              })) || [],
           });
         })
         .catch((error) => {
@@ -124,7 +122,6 @@ export const ListDetails = () => {
       ],
     })
       .then((data) => {
-        console.log(data);
         setIsApplicationSuccessful(true);
       })
       .catch((error) => console.error("Error applying to list:", error));
@@ -312,7 +309,10 @@ export const ListDetails = () => {
           handleRegisterBatch(
             id as string,
             registrants?.filter(
-              (account) => !savedUsers.accounts?.includes(account),
+              (registrant) =>
+                !savedUsers?.accounts?.some(
+                  (savedAccount) => savedAccount?.account === registrant,
+                ),
             ),
           )
         }
