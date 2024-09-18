@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
 import { object } from "zod";
 
+import SuccessRedIcon from "@/common/assets/svgs/SuccessRedIcon";
 import { AccountId, ByAccountId } from "@/common/types";
 import {
   Button,
@@ -27,7 +28,6 @@ import {
   ListFormModalType,
   useListForm,
 } from "@/modules/lists/hooks/useListForm";
-import SuccessRedIcon from "@/common/assets/svgs/SuccessRedIcon";
 
 export type AccessControlListModalProps = {
   title: string;

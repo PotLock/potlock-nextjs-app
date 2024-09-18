@@ -13,6 +13,7 @@ import {
 } from "@/common/contracts/potlock/lists";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { AccessControlList } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
@@ -23,7 +24,6 @@ import SuccessModalCreateList, {
   ListConfirmationModal,
   ListConfirmationModalProps,
 } from "./ListConfirmationModals";
-import { AccountId } from "@/common/types";
 
 interface FormData {
   name: string;
