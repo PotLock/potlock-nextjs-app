@@ -29,3 +29,8 @@ export type DirectDonationArgs = {
   referrer_id?: null | string;
   bypass_protocol_fee?: null | boolean;
 };
+
+export type DirectBatchDonationItem = {
+  args: DirectDonationArgs;
+  amountYoctoNear: string;
+};

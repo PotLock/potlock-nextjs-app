@@ -1,7 +1,11 @@
 import { ByPotId } from "@/common/api/potlock";
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
-import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { ByAccountId } from "@/common/types";
+import {
+  DirectBatchDonationItem,
+  DirectDonation,
+  PotBatchDonationItem,
+  PotDonation,
+} from "@/common/contracts/potlock";
+import { ByAccountId, ByTokenId } from "@/common/types";
 
 export type DonationParameters = ByAccountId | ByPotId;
 
@@ -43,3 +47,7 @@ export type DonationState = {
 };
 
 export type DonationSubmissionInputs = ByAccountId | ByPotId;
+
+export type DonationTransactionBlueprint =
+  | (ByPotId & PotBatchDonationItem)
+  | (Partial<ByTokenId> & DirectBatchDonationItem);
