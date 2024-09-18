@@ -354,7 +354,7 @@ export const ListFormDetails: React.FC = () => {
             </div>
           </div>
           <div
-            className={`md:flex-row flex w-full flex-col justify-between ${onEditPage ? "flex-col-reverse" : "md:justify-end flex-col"} `}
+            className={`md:flex-row flex w-full flex-col justify-between ${"md:justify-end flex-col"} `}
           >
             {/* <button
               onClick={() =>
