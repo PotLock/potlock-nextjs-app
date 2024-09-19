@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import useProfileData from "@/modules/profile/hooks/data";
+import { useProfileData } from "@/modules/profile";
 
 export const AccountAvatar = ({
   accountId,

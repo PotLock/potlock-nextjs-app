@@ -14,7 +14,6 @@ import { AppDispatcher } from "@/store";
 import { DonationInputs } from "./schemas";
 import {
   DonationAllocationStrategyEnum,
-  DonationPotBatchCallDraft,
   DonationSubmissionInputs,
 } from "../types";
 import { potDonationInputsToBatchDonationDraft } from "../utils/normalization";

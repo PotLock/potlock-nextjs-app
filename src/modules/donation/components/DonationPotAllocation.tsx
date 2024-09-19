@@ -43,11 +43,17 @@ export type DonationPotAllocationProps = ByPotId &
   DonationAllocationInputs & {};
 
 export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
+  form,
   isBalanceSufficient,
   balanceFloat,
   potId,
-  form,
 }) => {
+  const [amount, tokenId, potDistributionStrategy] = form.watch([
+    "amount",
+    "tokenId",
+    "potDistributionStrategy",
+  ]);
+
   const {
     isLoading: isPotLoading,
     data: pot,
@@ -58,19 +64,10 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
     isLoading: isPotApplicationListLoading,
     data: { results: potApplications } = { results: [] },
     error: potApplicationsError,
-  } = potlock.usePotApplications({
-    potId,
-    page_size: 100,
-  });
+  } = potlock.usePotApplications({ potId, page_size: 100 });
 
   const isLoading = isPotLoading || isPotApplicationListLoading;
   const error = potError ?? potApplicationsError;
-
-  const [amount, tokenId, potDistributionStrategy] = form.watch([
-    "amount",
-    "tokenId",
-    "potDistributionStrategy",
-  ]);
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
@@ -189,27 +186,72 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
 
   const projectList = useMemo(
     () =>
-      potApplications.map(({ applicant }) => (
-        <AccountOption
-          key={applicant.id}
-          accountId={applicant.id}
-          secondaryAction={
-            potDistributionStrategy === "evenly" ? (
-              <FormField
-                name="potDistribution"
-                render={({ field }) => <CheckboxField {...field} />}
-              />
-            ) : (
-              <FormField
-                name="potDistribution"
-                render={({ field }) => <CheckboxField {...field} />}
-              />
-            )
-          }
-        />
-      )),
+      pot
+        ? potApplications.map(({ applicant }) => (
+            <AccountOption
+              key={applicant.id}
+              accountId={applicant.id}
+              secondaryAction={
+                potDistributionStrategy === "evenly" ? (
+                  <FormField
+                    name="potDonationRecipients"
+                    control={form.control}
+                    render={({ field: { onChange, value = [], ...field } }) => (
+                      <CheckboxField
+                        {...field}
+                        checked={value.some(
+                          ({ account_id }) => account_id === applicant.id,
+                        )}
+                        onCheckedChange={(checked) =>
+                          onChange(
+                            checked
+                              ? value.concat([{ account_id: applicant.id }])
+                              : value.filter(
+                                  ({ account_id }) =>
+                                    account_id !== applicant.id,
+                                ),
+                          )
+                        }
+                      />
+                    )}
+                  />
+                ) : (
+                  <FormField
+                    name="potDistribution"
+                    render={({ field }) => (
+                      <TextField
+                        type="number"
+                        placeholder="0.00"
+                        min={yoctoNearToFloat(
+                          pot.min_matching_pool_donation_amount,
+                        )}
+                        max={balanceFloat ?? undefined}
+                        step={0.01}
+                        appendix={nearAmountUsdDisplayValue}
+                        customErrorMessage={
+                          isBalanceSufficient
+                            ? null
+                            : DONATION_INSUFFICIENT_BALANCE_ERROR
+                        }
+                        {...field}
+                      />
+                    )}
+                  />
+                )
+              }
+            />
+          ))
+        : null,
 
-    [potApplications, potDistributionStrategy],
+    [
+      balanceFloat,
+      form.control,
+      isBalanceSufficient,
+      nearAmountUsdDisplayValue,
+      pot,
+      potApplications,
+      potDistributionStrategy,
+    ],
   );
 
   return error ? (

@@ -48,13 +48,19 @@ export type DonationProjectAllocationProps = ByAccountId &
 export const DonationProjectAllocation: React.FC<
   DonationProjectAllocationProps
 > = ({
+  form,
   isBalanceSufficient,
   minAmountError,
   accountId,
   balanceFloat,
   matchingPots,
-  form,
 }) => {
+  const [amount, tokenId, allocationStrategy] = form.watch([
+    "amount",
+    "tokenId",
+    "allocationStrategy",
+  ]);
+
   const { data: availableFts } = pagoda.useFtAccountBalances({
     accountId: walletApi.accountId,
   });
@@ -64,12 +70,6 @@ export const DonationProjectAllocation: React.FC<
     data: recipient,
     error: recipientDataError,
   } = potlock.useAccount({ accountId });
-
-  const [amount, tokenId, allocationStrategy] = form.watch([
-    "amount",
-    "tokenId",
-    "allocationStrategy",
-  ]);
 
   const isFtDonation =
     allocationStrategy !== "pot" && tokenId !== NEAR_TOKEN_DENOM;

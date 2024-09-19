@@ -12,7 +12,10 @@ import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 import { dispatch } from "@/store";
 
-import { DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
+import {
+  DONATION_MIN_NEAR_AMOUNT,
+  DONATION_MIN_NEAR_AMOUNT_ERROR,
+} from "../constants";
 import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
   DonationAllocationStrategyEnum,
@@ -46,6 +49,8 @@ export const useDonationForm = ({
 
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
+      amount: DONATION_MIN_NEAR_AMOUNT,
+
       allocationStrategy:
         "accountId" in params
           ? DonationAllocationStrategyEnum[
@@ -80,14 +85,14 @@ export const useDonationForm = ({
     resetOptions: { keepDirtyValues: true },
   });
 
-  const currentValues = useWatch({ control: self.control });
-  const amount = currentValues.amount ?? 0;
-  const tokenId = currentValues.tokenId ?? NEAR_TOKEN_DENOM;
+  const values = useWatch(self);
+  const amount = values.amount ?? 0;
+  const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
   const { balanceFloat } = useAvailableBalance({ tokenId });
 
-  const hasChanges = Object.keys(currentValues).some((key) => {
+  const hasChanges = Object.keys(values).some((key) => {
     const defaultValue = defaultValues[key as keyof DonationInputs];
-    const currentValue = currentValues[key as keyof DonationInputs];
+    const currentValue = values[key as keyof DonationInputs];
 
     return currentValue !== defaultValue;
   });
@@ -108,7 +113,7 @@ export const useDonationForm = ({
       : null;
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
-    (values) => dispatch.donation.submit({ ...values, ...params }),
+    (inputs) => dispatch.donation.submit({ ...inputs, ...params }),
     [params],
   );
 
@@ -119,23 +124,25 @@ export const useDonationForm = ({
      */
     if (
       "accountId" in params &&
-      currentValues.potAccountId === undefined &&
+      values.potAccountId === undefined &&
       defaultPotAccountId
     ) {
       self.setValue("potAccountId", defaultPotAccountId);
     }
-  }, [currentValues, defaultPotAccountId, self, hasChanges, params]);
+  }, [values, defaultPotAccountId, self, hasChanges, params]);
 
-  console.table(omit(currentValues, ["potAccountId"]));
+  console.table(omit(values, ["potAccountId"]));
 
   return {
+    form: self,
+    defaultValues,
     hasChanges,
     isBalanceSufficient,
     isDisabled,
     isSenderHumanVerified,
-    matchingPots,
-    form: self,
-    minAmountError,
     onSubmit: self.handleSubmit(onSubmit),
+    matchingPots,
+    minAmountError,
+    inputs: values,
   };
 };
