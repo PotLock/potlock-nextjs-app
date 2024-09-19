@@ -194,7 +194,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
               secondaryAction={
                 potDistributionStrategy === "evenly" ? (
                   <FormField
-                    name="potDonationRecipients"
+                    name="potDonationPlan"
                     control={form.control}
                     render={({ field: { onChange, value = [], ...field } }) => (
                       <CheckboxField
@@ -217,9 +217,11 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                   />
                 ) : (
                   <FormField
-                    name="potDistribution"
-                    render={({ field }) => (
+                    name="potDonationPlan"
+                    control={form.control}
+                    render={({ field: { onChange, value = [], ...field } }) => (
                       <TextField
+                        {...field}
                         type="number"
                         placeholder="0.00"
                         min={yoctoNearToFloat(
@@ -227,13 +229,17 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                         )}
                         max={balanceFloat ?? undefined}
                         step={0.01}
+                        value={
+                          value.find(
+                            ({ account_id }) => account_id === applicant.id,
+                          )?.amount
+                        }
                         appendix={nearAmountUsdDisplayValue}
                         customErrorMessage={
                           isBalanceSufficient
                             ? null
                             : DONATION_INSUFFICIENT_BALANCE_ERROR
                         }
-                        {...field}
                       />
                     )}
                   />

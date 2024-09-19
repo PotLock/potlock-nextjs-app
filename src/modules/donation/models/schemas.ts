@@ -57,7 +57,7 @@ export const donationSchema = object({
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
 
-  potDonationRecipients: array(
+  potDonationPlan: array(
     object({ account_id: string(), amount: donationAmount.optional() }),
   )
     .refine((recipients) => recipients.length > 0, {

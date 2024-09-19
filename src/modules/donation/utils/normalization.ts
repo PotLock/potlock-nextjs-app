@@ -14,7 +14,7 @@ export const potDonationInputsToBatchDonationDraft = ({
   amount,
   potAccountId,
   potDistributionStrategy,
-  potDonationRecipients = [],
+  potDonationPlan = [],
   referrerAccountId,
   bypassProtocolFee,
   bypassChefFee,
@@ -26,7 +26,7 @@ export const potDonationInputsToBatchDonationDraft = ({
     potAccountId,
 
     entries: reduce(
-      potDonationRecipients,
+      potDonationPlan,
 
       (txs, { account_id, amount: donationAmount = 0 }) =>
         isDistributionManual && donationAmount === 0

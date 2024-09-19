@@ -25,7 +25,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     const {
       amount,
       allocationStrategy,
-      potDonationRecipients,
+      potDonationPlan,
       referrerAccountId,
       bypassProtocolFee,
       bypassChefFee,
@@ -68,7 +68,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
-    } else if ("potId" in params && potDonationRecipients !== undefined) {
+    } else if ("potId" in params && potDonationPlan !== undefined) {
       const batchTxDraft = potDonationInputsToBatchDonationDraft({
         potAccountId: params.potId,
         ...inputs,
