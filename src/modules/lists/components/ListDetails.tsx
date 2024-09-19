@@ -10,7 +10,12 @@ import { walletApi } from "@/common/api/near";
 import { potlock } from "@/common/api/potlock";
 import { AdminUserIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { List } from "@/common/contracts/potlock/interfaces/lists.interfaces";
-import { getList, registerBatch } from "@/common/contracts/potlock/lists";
+import {
+  getList,
+  registerBatch,
+  remove_upvote,
+  upvote,
+} from "@/common/contracts/potlock/lists";
 import { AccountId } from "@/common/types";
 import {
   DropdownMenu,
@@ -26,6 +31,8 @@ import ApplyToListModal from "./ApplyToListModal";
 import DonationFlow from "./DonationFlow";
 import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { SocialsShare } from "@/common/ui/components/SocialShare";
 
 interface SavedUsersType {
   accounts?: { account: AccountId; id?: number }[];
@@ -42,6 +49,7 @@ export const ListDetails = () => {
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
   const [registrants, setRegistrants] = useState<AccountId[]>([]);
+  const [isUpvoted, setIsUpvoted] = useState(false);
   const [isApplicationSuccessful, setIsApplicationSuccessful] =
     useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
@@ -141,37 +149,52 @@ export const ListDetails = () => {
     listDetails.admins.includes(walletApi?.accountId ?? "") ||
     listDetails.owner === walletApi?.accountId;
 
+  const handleUpvote = () => {
+    if (isUpvoted) {
+      remove_upvote({ list_id: Number(id) })
+        .then((data) => {
+          if (data) {
+            setIsUpvoted(!isUpvoted);
+          }
+        })
+        .catch((error) => console.error("Error upvoting:", error));
+    } else {
+      upvote({ list_id: Number(id) })
+        .then((data) => {
+          if (data) {
+            setIsUpvoted(!isUpvoted);
+          }
+        })
+        .catch((error) => console.error("Error upvoting:", error));
+    }
+  };
+
   return (
     <>
-      <div className="md:px-10">
-        <p className="mb-2 text-2xl font-semibold">{listDetails.name}</p>
-        <div className="mb-2 flex items-center space-x-2">
-          By{" "}
-          <img
-            className="ml-2 h-4 w-4 rounded-full object-cover"
-            src="https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHVzZXJ8ZW58MHx8MHx8fDA%3D"
-            alt="Owner"
-          />
-          <Link href={`/profile/${listDetails.owner}`}>
-            {listDetails.owner}
-          </Link>
-          <span className="text-gray-500">
-            Created {new Date(listDetails.created_at).toLocaleDateString()}
-          </span>
-        </div>
-        <div className="md:grid grid-cols-8">
-          <div className="col-span-5 pr-3">
+      <div className="md:px-10 md:flex-row flex flex-col-reverse items-start justify-between">
+        <div className="md:w[45%] flex flex-col items-start">
+          <p className="mb-2 font-lora text-2xl font-semibold">
+            {listDetails.name}
+          </p>
+          <div className="mb-2 flex items-center space-x-2 text-[12px] text-[#656565]">
+            BY{" "}
             <img
-              src={
-                listDetails.cover_image_url || "https://via.placeholder.com/800"
-              }
-              alt="cover"
-              className="md:w-[896px] md:h-[264px] mt-3 h-[180px] w-full rounded-md object-cover"
+              className="ml-2 h-4 w-4 rounded-full object-cover"
+              src="https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHVzZXJ8ZW58MHx8MHx8fDA%3D"
+              alt="Owner"
             />
+            <Link href={`/profile/${listDetails.owner}`}>
+              {listDetails.owner}
+            </Link>
+            <span className="text-gray-500">
+              Created {new Date(listDetails.created_at).toLocaleDateString()}
+            </span>
           </div>
-          <div className="col-span-3 p-4 pt-0">
-            <p className="mb-4 text-lg">{listDetails.description}</p>
-            <div className="mb-4 flex items-center justify-between">
+          <div className="mt-4 w-full pt-0">
+            <p className="mb-4 text-lg text-[#525252]">
+              {listDetails.description}
+            </p>
+            <div className="mb-4 flex items-center gap-6">
               <div className="mb-6 flex flex-col items-start space-y-2">
                 <span className="mr-4 font-semibold text-gray-700">Admins</span>
                 <div className="flex items-center gap-2">
@@ -194,7 +217,7 @@ export const ListDetails = () => {
               {listDetails.owner === walletApi?.accountId && (
                 <div
                   onClick={openAccountsModal}
-                  className="cursor-pointer rounded p-2  hover:opacity-50"
+                  className="cursor-pointer rounded   hover:opacity-50"
                 >
                   <PenIcon />
                 </div>
@@ -202,7 +225,7 @@ export const ListDetails = () => {
             </div>
 
             {Boolean(walletApi?.accountId) && (
-              <div className="relative flex items-start justify-between">
+              <div className="relative flex items-start gap-4">
                 <div className="flex space-x-4">
                   <button
                     onClick={() => {
@@ -259,6 +282,38 @@ export const ListDetails = () => {
                 )}
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="md:max-w-[54%] w-full">
+          <img
+            alt="alt-text"
+            src="/assets/images/list_bg_image.png"
+            className=" mx-auto w-full px-3"
+          />
+          <div className="m-0 w-full rounded p-0">
+            <img
+              src={
+                listDetails.cover_image_url || "https://via.placeholder.com/800"
+              }
+              alt="cover"
+              className="md:h-[320px] h-[180px] w-full rounded-tl-md rounded-tr-md  object-cover"
+            />
+          </div>
+          <div className="flex h-16 items-center justify-between rounded-bl-md rounded-br-md border border-[#dadbda] p-4">
+            <p className="text-[14px] font-[500]">
+              {registrants.length} Accounts
+            </p>
+            <div className="flex items-center gap-3">
+              <button onClick={handleUpvote} className="focus:outline-none">
+                {isUpvoted ? (
+                  <FaHeart size="large" className="h-16 text-red-500" />
+                ) : (
+                  <FaRegHeart className="text-gray-500" size={22} />
+                )}
+              </button>
+              <SocialsShare />
+            </div>
           </div>
         </div>
       </div>
