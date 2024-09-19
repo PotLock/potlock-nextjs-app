@@ -68,7 +68,6 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
 
   const isLoading = isPotLoading || isPotApplicationListLoading;
   const error = potError ?? potApplicationsError;
-
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
   const generalSection = useMemo(
@@ -219,29 +218,31 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                   <FormField
                     name="potDonationPlan"
                     control={form.control}
-                    render={({ field: { onChange, value = [], ...field } }) => (
-                      <TextField
-                        {...field}
-                        type="number"
-                        placeholder="0.00"
-                        min={yoctoNearToFloat(
-                          pot.min_matching_pool_donation_amount,
-                        )}
-                        max={balanceFloat ?? undefined}
-                        step={0.01}
-                        value={
-                          value.find(
-                            ({ account_id }) => account_id === applicant.id,
-                          )?.amount
-                        }
-                        appendix={nearAmountUsdDisplayValue}
-                        customErrorMessage={
-                          isBalanceSufficient
-                            ? null
-                            : DONATION_INSUFFICIENT_BALANCE_ERROR
-                        }
-                      />
-                    )}
+                    render={({ field: { onChange, value = [], ...field } }) => {
+                      const normalizedValue = value.find(
+                        ({ account_id }) => account_id === applicant.id,
+                      )?.amount;
+
+                      return (
+                        <TextField
+                          {...field}
+                          type="number"
+                          placeholder="0.00"
+                          min={yoctoNearToFloat(
+                            pot.min_matching_pool_donation_amount,
+                          )}
+                          max={balanceFloat ?? undefined}
+                          step={0.01}
+                          value={normalizedValue}
+                          appendix={NEAR_TOKEN_DENOM}
+                          customErrorMessage={
+                            isBalanceSufficient
+                              ? null
+                              : DONATION_INSUFFICIENT_BALANCE_ERROR
+                          }
+                        />
+                      );
+                    }}
                   />
                 )
               }
@@ -253,7 +254,6 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
       balanceFloat,
       form.control,
       isBalanceSufficient,
-      nearAmountUsdDisplayValue,
       pot,
       potApplications,
       potDistributionStrategy,
