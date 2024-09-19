@@ -212,14 +212,14 @@ export const donate = (
 
 export const donateBatch = (
   potAccountId: PotId,
-  txInputs: PotBatchDonationItem[],
+  txDrafts: PotBatchDonationItem[],
 ) =>
   contractApi(potAccountId).callMultiple<PotDonationArgs>(
-    txInputs.map(({ amountYoctoNear, ...txInput }) => ({
+    txDrafts.map(({ amountYoctoNear, ...txDraft }) => ({
       method: "donate",
       deposit: amountYoctoNear,
       gas: FULL_TGAS,
-      ...txInput,
+      ...txDraft,
     })),
   );
 

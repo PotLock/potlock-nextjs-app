@@ -2,7 +2,6 @@ import { walletApi } from "@/common/api/near";
 import {
   DirectDonation,
   DirectDonationArgs,
-  PotBatchDonationItem,
   PotDonation,
   PotDonationArgs,
   donate,
@@ -15,22 +14,26 @@ import { AppDispatcher } from "@/store";
 import { DonationInputs } from "./schemas";
 import {
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategyEnum,
+  DonationPotBatchCallDraft,
   DonationSubmissionInputs,
 } from "../types";
+import { potDonationInputsToBatchDonationDraft } from "../utils/normalization";
 
 export const effects = (dispatch: AppDispatcher) => ({
-  submit: async ({
-    amount,
-    allocationStrategy,
-    potDistributionStrategy,
-    potDonationDistribution,
-    referrerAccountId,
-    bypassProtocolFee,
-    bypassChefFee,
-    message,
-    ...params
-  }: DonationSubmissionInputs & DonationInputs): Promise<void> => {
+  submit: async (
+    inputs: DonationSubmissionInputs & DonationInputs,
+  ): Promise<void> => {
+    const {
+      amount,
+      allocationStrategy,
+      potDonationRecipients,
+      referrerAccountId,
+      bypassProtocolFee,
+      bypassChefFee,
+      message,
+      ...params
+    } = inputs;
+
     if ("accountId" in params) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.direct: {
@@ -66,35 +69,14 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
-    } else if ("potId" in params && potDonationDistribution !== undefined) {
+    } else if ("potId" in params && potDonationRecipients !== undefined) {
+      const batchTxDraft = potDonationInputsToBatchDonationDraft({
+        potAccountId: params.potId,
+        ...inputs,
+      });
+
       return void pot
-        .donateBatch(
-          params.potId,
-
-          potDonationDistribution.reduce(
-            (txs, batchDonationItem) => [
-              ...txs,
-
-              {
-                args: {
-                  referrer_id: referrerAccountId,
-                  project_id: batchDonationItem.account_id,
-
-                  bypass_protocol_fee: bypassProtocolFee,
-                  ...(bypassChefFee ? { custom_chef_fee_basis_points: 0 } : {}),
-                },
-
-                amountYoctoNear:
-                  potDistributionStrategy ===
-                  DonationPotDistributionStrategyEnum.manually
-                    ? floatToYoctoNear(amount)
-                    : floatToYoctoNear(batchDonationItem.amount),
-              },
-            ],
-
-            [] as PotBatchDonationItem[],
-          ),
-        )
+        .donateBatch(batchTxDraft.potAccountId, batchTxDraft.entries)
         .then(/* dispatch.donation.success */ console.log)
         .catch(dispatch.donation.failure);
     } else {

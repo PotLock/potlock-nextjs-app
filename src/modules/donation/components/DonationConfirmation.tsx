@@ -47,8 +47,8 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   }, [form]);
 
   const totalAmount =
-    values.potDonationDistribution?.reduce(
-      (total, { amount }) => total + amount,
+    values.potDonationRecipients?.reduce(
+      (total, { amount }) => total + (amount ?? 0.0),
       0.0,
     ) ?? values.amount;
 

@@ -1,8 +1,8 @@
 import { DirectDonation, PotDonation } from "@/common/contracts/potlock";
 import { ByStringId } from "@/common/types";
-import { DonationTransactionBlueprint } from "@/modules/donation";
+import { DonationBatchCallDraft } from "@/modules/donation";
 
-export type CartItem = ByStringId & DonationTransactionBlueprint;
+export type CartItem = ByStringId & DonationBatchCallDraft;
 
 export type CartOrderStep = "details" | "result";
 

@@ -199,7 +199,12 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                 name="potDistribution"
                 render={({ field }) => <CheckboxField {...field} />}
               />
-            ) : null
+            ) : (
+              <FormField
+                name="potDistribution"
+                render={({ field }) => <CheckboxField {...field} />}
+              />
+            )
           }
         />
       )),
