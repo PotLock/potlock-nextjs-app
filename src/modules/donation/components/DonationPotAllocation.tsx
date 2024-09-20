@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
@@ -6,6 +6,7 @@ import { ByPotId, potlock } from "@/common/api/potlock";
 import { NearIcon } from "@/common/assets/svgs";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
+import { ByAccountId } from "@/common/types";
 import {
   DialogDescription,
   DialogHeader,
@@ -37,6 +38,7 @@ import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import {
   DonationAllocationInputs,
+  DonationInputs,
   donationPotDistributionStrategies,
 } from "../models";
 
@@ -49,11 +51,13 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
   balanceFloat,
   potId,
 }) => {
-  const [amount, tokenId, potDistributionStrategy] = form.watch([
-    "amount",
-    "tokenId",
-    "potDistributionStrategy",
-  ]);
+  const [amount, tokenId, potDistributionStrategy, potDonationPlan] =
+    form.watch([
+      "amount",
+      "tokenId",
+      "potDistributionStrategy",
+      "potDonationPlan",
+    ]);
 
   const {
     isLoading: isPotLoading,
@@ -70,6 +74,32 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
   const isLoading = isPotLoading || isPotApplicationListLoading;
   const error = potError ?? potApplicationsError;
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
+
+  const handleDonationPlanChange = useCallback(
+    ({ accountId }: ByAccountId): React.ChangeEventHandler<HTMLInputElement> =>
+      ({ target: { value } }) =>
+        form.setValue(
+          "potDonationPlan",
+
+          potDonationPlan?.reduce(
+            (entries, entry) => {
+              if (entry.account_id === accountId) {
+                return entries?.concat([
+                  {
+                    ...entry,
+                    account_id: accountId,
+                    amount: parseFloat(value),
+                  },
+                ]);
+              } else return entries ?? [];
+            },
+
+            [] as DonationInputs["potDonationPlan"],
+          ),
+        ),
+
+    [form, potDonationPlan],
+  );
 
   const generalSection = useMemo(
     () =>
@@ -220,10 +250,10 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                   <FormField
                     name="potDonationPlan"
                     control={form.control}
-                    render={({ field: { onChange, value = [], ...field } }) => {
-                      const perRecipientAmount = value.find(
+                    render={({ field: { value = [], ...field } }) => {
+                      const recipientEntry = value.find(
                         ({ account_id }) => account_id === applicant.id,
-                      )?.amount;
+                      );
 
                       return (
                         <TextField
@@ -235,8 +265,10 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                           )}
                           max={balanceFloat ?? undefined}
                           step={0.01}
-                          value={perRecipientAmount}
-                          onChange={(number) => onChange(number)}
+                          defaultValue={recipientEntry?.amount}
+                          onChange={handleDonationPlanChange({
+                            accountId: applicant.id,
+                          })}
                           appendix={<NearIcon width={24} height={24} />}
                           customErrorMessage={
                             isBalanceSufficient
@@ -256,6 +288,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
     [
       balanceFloat,
       form.control,
+      handleDonationPlanChange,
       isBalanceSufficient,
       pot,
       potApplications,

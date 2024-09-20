@@ -40,11 +40,13 @@ export const donationPotDistributionStrategies: Record<
 > = {
   evenly: {
     label: "Evenly",
+    hint: "(Allocate funds evenly across multiple projects)",
     value: DonationPotDistributionStrategyEnum.evenly,
   },
 
   manually: {
     label: "Manually",
+    hint: "(Specify amount for each project)",
     value: DonationPotDistributionStrategyEnum.manually,
   },
 };
