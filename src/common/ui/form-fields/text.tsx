@@ -136,16 +136,18 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           <FormControl>
             <input
               {...fieldProps}
-              className={cn("max-h-11 rounded-md px-3 py-2.5", {
-                "mr-2.5": typeof appendixElement === "string",
-              })}
-              un-focus-visible={
-                inputExtensionElement !== null && appendixElement !== null
-                  ? "rounded-l-none border-inset pl-2.5 border-l-2 border-input outline-none"
-                  : undefined
-              }
-              un-w="full"
-              un-placeholder="text-muted-foreground"
+              className={cn(
+                "placeholder-text-muted-foreground max-h-10 w-full rounded-md px-3 py-2.5",
+                {
+                  "mr-2.5": appendixElement !== null,
+
+                  "focus-visible:border-inset focus-visible:rounded-l-none focus-visible:pl-2.5":
+                    inputExtensionElement !== null && appendixElement !== null,
+
+                  "focus-visible:border-l-2 focus-visible:border-input focus-visible:outline-none":
+                    inputExtensionElement !== null && appendixElement !== null,
+                },
+              )}
             />
           </FormControl>
 
