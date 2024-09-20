@@ -44,7 +44,7 @@ export const RadioGroupItem = forwardRef<
     <div
       className={cn({
         "border-none bg-neutral-50": disabled,
-        "border-neutral-400": !disabled && !checked,
+        "border-neutral-200": !disabled && !checked,
 
         "color-[var(--primary-600)] border-[var(--primary-600)]":
           !disabled && checked,
@@ -73,9 +73,9 @@ export const RadioGroupItem = forwardRef<
 
       <Label
         htmlFor={props.id}
-        className={cn("flex gap-1", { "text-neutral-400": disabled })}
+        className={cn("flex gap-2 text-sm", { "text-neutral-400": disabled })}
       >
-        <span un-font="500">{label}</span>
+        <span className="font-500 text-current">{label}</span>
 
         {hint && (
           <span

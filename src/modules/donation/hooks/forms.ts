@@ -8,7 +8,6 @@ import { walletApi } from "@/common/api/near";
 import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
-import { ByAccountId } from "@/common/types";
 import { useAvailableBalance } from "@/modules/core";
 import useIsHuman from "@/modules/core/hooks/useIsHuman";
 import { dispatch } from "@/store";
