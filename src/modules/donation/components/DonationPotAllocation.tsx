@@ -250,34 +250,32 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                   <FormField
                     name="potDonationPlan"
                     control={form.control}
-                    render={({ field: { value = [], ...field } }) => {
-                      const recipientEntry = value.find(
-                        ({ account_id }) => account_id === applicant.id,
-                      );
-
-                      return (
-                        <TextField
-                          {...field}
-                          type="number"
-                          placeholder="0.00"
-                          min={yoctoNearToFloat(
-                            pot.min_matching_pool_donation_amount,
-                          )}
-                          max={balanceFloat ?? undefined}
-                          step={0.01}
-                          defaultValue={recipientEntry?.amount}
-                          onChange={handleDonationPlanChange({
-                            accountId: applicant.id,
-                          })}
-                          appendix={<NearIcon width={24} height={24} />}
-                          customErrorMessage={
-                            isBalanceSufficient
-                              ? null
-                              : DONATION_INSUFFICIENT_BALANCE_ERROR
-                          }
-                        />
-                      );
-                    }}
+                    render={({ field: { value = [], ...field } }) => (
+                      <TextField
+                        {...field}
+                        type="number"
+                        placeholder="0.00"
+                        min={yoctoNearToFloat(
+                          pot.min_matching_pool_donation_amount,
+                        )}
+                        max={balanceFloat ?? undefined}
+                        step={0.01}
+                        defaultValue={
+                          value.find(
+                            ({ account_id }) => account_id === applicant.id,
+                          )?.amount
+                        }
+                        onChange={handleDonationPlanChange({
+                          accountId: applicant.id,
+                        })}
+                        appendix={<NearIcon width={24} height={24} />}
+                        customErrorMessage={
+                          isBalanceSufficient
+                            ? null
+                            : DONATION_INSUFFICIENT_BALANCE_ERROR
+                        }
+                      />
+                    )}
                   />
                 )
               }

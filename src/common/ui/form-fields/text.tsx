@@ -123,8 +123,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
         <div
           className={cn(
-            "flex w-full items-center",
-            "border-op-100 border-1 rounded-md border border-neutral-300",
+            "h-10.5 flex w-full items-center",
+            "border-1 rounded-md border border-neutral-300",
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
             { "pr-3": appendixElement !== null },
@@ -137,14 +137,14 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             <input
               {...fieldProps}
               className={cn(
-                "placeholder-text-muted-foreground max-h-10 w-full rounded-md px-3 py-2.5",
+                "placeholder-text-muted-foreground h-10 w-full rounded-md border-none px-3 py-2.5",
                 {
                   "mr-2.5": appendixElement !== null,
 
-                  "focus-visible:border-inset focus-visible:rounded-l-none focus-visible:pl-2.5":
+                  "focus-visible:rounded-l-none focus-visible:pl-2.5 focus-visible:outline-none":
                     inputExtensionElement !== null && appendixElement !== null,
 
-                  "focus-visible:border-l-2 focus-visible:border-input focus-visible:outline-none":
+                  "focus-visible:border-inset focus-visible:border-l focus-visible:border-l-2 focus-visible:border-neutral-300":
                     inputExtensionElement !== null && appendixElement !== null,
                 },
               )}
