@@ -17,7 +17,7 @@ export type TextFieldProps = Omit<
   label?: string;
   labelExtension?: React.ReactNode;
   inputExtension?: React.ReactNode;
-  appendix?: string | null;
+  appendix?: React.ReactNode;
   hint?: string;
   customErrorMessage?: string | null;
 
@@ -137,7 +137,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             <input
               {...fieldProps}
               className={cn("max-h-11 rounded-md px-3 py-2.5", {
-                "mr-2.5": appendixElement !== null,
+                "mr-2.5": typeof appendixElement === "string",
               })}
               un-focus-visible={
                 inputExtensionElement !== null && appendixElement !== null

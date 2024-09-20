@@ -1,5 +1,6 @@
 export { default as ChefHatIcon } from "./chef-hat.svg";
 export { default as CartIcon } from "./cart.svg";
+export { default as NearIcon } from "./near.svg";
 export { WarningIcon } from "./warning";
 export { GroupIcon } from "./group";
 export { CopyPasteIcon } from "./CopyPasteIcon";

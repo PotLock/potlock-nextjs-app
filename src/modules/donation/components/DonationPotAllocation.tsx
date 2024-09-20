@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { values } from "remeda";
 
 import { ByPotId, potlock } from "@/common/api/potlock";
+import { NearIcon } from "@/common/assets/svgs";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
 import {
@@ -30,7 +31,7 @@ import {
   ModalErrorBody,
   useNearUsdDisplayValue,
 } from "@/modules/core";
-import { DonationPotDistributionStrategyEnum } from "@/modules/donation/types";
+import { DonationPotDistributionStrategyEnum } from "@/modules/donation";
 
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
@@ -199,7 +200,8 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                       <CheckboxField
                         {...field}
                         checked={value.some(
-                          ({ account_id }) => account_id === applicant.id,
+                          ({ account_id, amount }) =>
+                            account_id === applicant.id && amount !== 0,
                         )}
                         onCheckedChange={(checked) =>
                           onChange(
@@ -219,7 +221,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                     name="potDonationPlan"
                     control={form.control}
                     render={({ field: { onChange, value = [], ...field } }) => {
-                      const normalizedValue = value.find(
+                      const perRecipientAmount = value.find(
                         ({ account_id }) => account_id === applicant.id,
                       )?.amount;
 
@@ -233,8 +235,9 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                           )}
                           max={balanceFloat ?? undefined}
                           step={0.01}
-                          value={normalizedValue}
-                          appendix={NEAR_TOKEN_DENOM}
+                          value={perRecipientAmount}
+                          onChange={(number) => onChange(number)}
+                          appendix={<NearIcon width={24} height={24} />}
                           customErrorMessage={
                             isBalanceSufficient
                               ? null
@@ -289,7 +292,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
 
       {generalSection}
 
-      <ScrollArea className="h-[180px] w-full">
+      <ScrollArea className="h-[190px] w-full">
         <div un-flex="~ col" un-items="center" un-gap="0.5">
           {projectList}
         </div>

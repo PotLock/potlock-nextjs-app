@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { pagoda } from "@/common/api/pagoda";
-import NearIcon from "@/common/assets/svgs/near-icon";
+import { NearIcon } from "@/common/assets/svgs";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
