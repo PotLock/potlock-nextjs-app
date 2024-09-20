@@ -76,27 +76,34 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
   const handleDonationPlanChange = useCallback(
-    ({ accountId }: ByAccountId): React.ChangeEventHandler<HTMLInputElement> =>
-      ({ target: { value } }) =>
+    ({
+      accountId,
+    }: ByAccountId): React.ChangeEventHandler<HTMLInputElement> => {
+      const isExistingEntry =
+        potDonationPlan !== undefined &&
+        (potDonationPlan.some(({ account_id }) => account_id === accountId) ??
+          false);
+
+      return ({ target: { value } }) =>
         form.setValue(
           "potDonationPlan",
 
-          potDonationPlan?.reduce(
-            (entries, entry) => {
-              if (entry.account_id === accountId) {
-                return entries?.concat([
-                  {
-                    ...entry,
-                    account_id: accountId,
-                    amount: parseFloat(value),
-                  },
-                ]);
-              } else return entries ?? [];
-            },
+          isExistingEntry
+            ? potDonationPlan.reduce(
+                (entries = [], entry) =>
+                  entries.concat([
+                    entry.account_id === accountId
+                      ? { ...entry, amount: parseFloat(value) }
+                      : entry,
+                  ]),
 
-            [] as DonationInputs["potDonationPlan"],
-          ),
-        ),
+                [] as DonationInputs["potDonationPlan"],
+              )
+            : potDonationPlan?.concat([
+                { account_id: accountId, amount: parseFloat(value) },
+              ]),
+        );
+    },
 
     [form, potDonationPlan],
   );
@@ -255,9 +262,6 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                         {...field}
                         type="number"
                         placeholder="0.00"
-                        min={yoctoNearToFloat(
-                          pot.min_matching_pool_donation_amount,
-                        )}
                         max={balanceFloat ?? undefined}
                         step={0.01}
                         defaultValue={
