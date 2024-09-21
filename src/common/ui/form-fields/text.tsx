@@ -23,7 +23,7 @@ export type TextFieldProps = Omit<
 
   classNames?: {
     root?: string;
-    inputWrapper?: string;
+    fieldRoot?: string;
     input?: string;
   };
 };
@@ -128,7 +128,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
             { "pr-3": appendixElement !== null },
-            classNames?.inputWrapper,
+            classNames?.fieldRoot,
           )}
         >
           {inputExtensionElement}

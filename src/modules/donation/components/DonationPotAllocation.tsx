@@ -278,6 +278,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                             ? null
                             : DONATION_INSUFFICIENT_BALANCE_ERROR
                         }
+                        classNames={{ fieldRoot: "w-32" }}
                       />
                     )}
                   />
