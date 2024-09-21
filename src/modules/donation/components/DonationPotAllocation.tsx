@@ -262,6 +262,7 @@ export const DonationPotAllocation: React.FC<DonationPotAllocationProps> = ({
                         {...field}
                         type="number"
                         placeholder="0.00"
+                        min={0}
                         max={balanceFloat ?? undefined}
                         step={0.01}
                         defaultValue={
