@@ -57,7 +57,7 @@ export const donationSchema = object({
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
 
-  potDonationPlan: array(
+  potDonationShares: array(
     object({ account_id: string(), amount: donationAmount.optional() }),
   )
     .refine((recipients) => recipients.length > 0, {
@@ -74,7 +74,7 @@ export const donationSchema = object({
     message: "Incorrect allocation strategy.",
   }).default(DonationAllocationStrategyEnum.direct),
 
-  potDistributionStrategy: nativeEnum(DonationPotDistributionStrategyEnum, {
+  potShareAllocationStrategy: nativeEnum(DonationPotDistributionStrategyEnum, {
     message: "Incorrect donation distribution strategy.",
   }).default(DonationPotDistributionStrategyEnum.evenly),
 

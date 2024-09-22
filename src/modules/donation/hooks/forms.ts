@@ -63,7 +63,7 @@ export const useDonationForm = ({
       referrerAccountId,
       potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
 
-      potDistributionStrategy:
+      potShareAllocationStrategy:
         DonationPotDistributionStrategyEnum[
           "accountId" in params ? "manually" : "evenly"
         ],
@@ -131,7 +131,9 @@ export const useDonationForm = ({
     }
   }, [values, defaultPotAccountId, self, hasChanges, params]);
 
-  console.table(omit(values, ["potAccountId"]));
+  console.table(omit(values, ["potDonationShares"]));
+
+  values.potDonationShares?.forEach((entry) => console.table(entry));
 
   return {
     form: self,

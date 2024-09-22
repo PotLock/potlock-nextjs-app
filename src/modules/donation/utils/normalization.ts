@@ -13,20 +13,20 @@ import {
 export const potDonationInputsToBatchDonationDraft = ({
   amount,
   potAccountId,
-  potDistributionStrategy,
-  potDonationPlan = [],
+  potShareAllocationStrategy,
+  potDonationShares = [],
   referrerAccountId,
   bypassProtocolFee,
   bypassChefFee,
 }: DonationInputs & { potAccountId: PotId }): DonationPotBatchCallDraft => {
   const isDistributionManual =
-    potDistributionStrategy === DonationPotDistributionStrategyEnum.manually;
+    potShareAllocationStrategy === DonationPotDistributionStrategyEnum.manually;
 
   return {
     potAccountId,
 
     entries: reduce(
-      potDonationPlan,
+      potDonationShares,
 
       (txs, { account_id, amount: donationAmount = 0 }) =>
         isDistributionManual && donationAmount === 0
