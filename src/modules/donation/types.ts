@@ -27,17 +27,17 @@ export type DonationAllocationStrategyOption = {
   hintIfDisabled?: string;
 };
 
-export enum DonationPotDistributionStrategyEnum {
+export enum DonationShareAllocationStrategyEnum {
   evenly = "evenly",
   manually = "manually",
 }
 
-export type DonationPotDistributionStrategy =
-  keyof typeof DonationPotDistributionStrategyEnum;
+export type DonationShareAllocationStrategy =
+  keyof typeof DonationShareAllocationStrategyEnum;
 
-export type DonationPotDistributionStrategyOption = {
+export type DonationShareAllocationStrategyOption = {
   label: string;
-  value: DonationPotDistributionStrategy;
+  value: DonationShareAllocationStrategy;
   hint?: string;
   hintIfDisabled?: string;
 };

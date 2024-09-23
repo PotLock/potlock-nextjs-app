@@ -20,7 +20,7 @@ import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategyEnum,
+  DonationShareAllocationStrategyEnum,
 } from "../types";
 import { isDonationAmountSufficient } from "../utils/validation";
 
@@ -64,7 +64,7 @@ export const useDonationForm = ({
       potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
 
       potShareAllocationStrategy:
-        DonationPotDistributionStrategyEnum[
+        DonationShareAllocationStrategyEnum[
           "accountId" in params ? "manually" : "evenly"
         ],
     }),
@@ -90,14 +90,21 @@ export const useDonationForm = ({
   const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
   const { balanceFloat } = useAvailableBalance({ tokenId });
 
-  const hasChanges = Object.keys(values).some((key) => {
-    const defaultValue = defaultValues[key as keyof DonationInputs];
-    const currentValue = values[key as keyof DonationInputs];
+  const totalAmountFloat =
+    values.allocationStrategy === DonationAllocationStrategyEnum.pot
+      ? values.potDonationShares?.reduce(
+          (total, { amount }) => total + (amount ?? 0),
+          0,
+        ) ?? 0
+      : amount;
 
-    return currentValue !== defaultValue;
-  });
+  const hasChanges = Object.keys(values).some(
+    (key) =>
+      values[key as keyof DonationInputs] !==
+      defaultValues[key as keyof DonationInputs],
+  );
 
-  const isBalanceSufficient = amount < (balanceFloat ?? 0);
+  const isBalanceSufficient = totalAmountFloat < (balanceFloat ?? 0);
 
   const isDisabled =
     !hasChanges ||
@@ -146,5 +153,6 @@ export const useDonationForm = ({
     matchingPots,
     minAmountError,
     inputs: values,
+    totalAmountFloat,
   };
 };

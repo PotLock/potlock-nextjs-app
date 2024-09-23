@@ -8,7 +8,7 @@ import { intoShareValue } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 
 import { DonationInputs } from "../models";
-import { DonationPotDistributionStrategyEnum } from "../types";
+import { DonationShareAllocationStrategyEnum } from "../types";
 
 export type DonationPotShareAllocationDeps = {
   form: UseFormReturn<DonationInputs>;
@@ -28,7 +28,7 @@ export const useDonationEvenShareAllocation = ({
   useEffect(() => {
     if (
       potShareAllocationStrategy ===
-        DonationPotDistributionStrategyEnum.evenly &&
+        DonationShareAllocationStrategyEnum.evenly &&
       potDonationShares.some(
         piped(prop("amount"), isNot(isStrictEqual(recipientShareAmount))),
       )

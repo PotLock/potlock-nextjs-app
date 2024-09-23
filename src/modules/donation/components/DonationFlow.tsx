@@ -37,6 +37,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     minAmountError,
     isDisabled,
     onSubmit,
+    totalAmountFloat,
   } = useDonationForm({
     ...props,
 
@@ -69,6 +70,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
               ...props,
             })
           : h(DonationPotShareAllocation, {
+              totalAmountFloat,
               ...staticAllocationProps,
               ...props,
             });
@@ -98,6 +100,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     minAmountError,
     props,
     result,
+    totalAmountFloat,
     transactionHash,
   ]);
 

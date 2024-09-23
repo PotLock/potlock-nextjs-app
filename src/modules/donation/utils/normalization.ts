@@ -7,7 +7,7 @@ import { floatToYoctoNear } from "@/common/lib";
 import { DonationInputs } from "../models";
 import {
   DonationPotBatchCallDraft,
-  DonationPotDistributionStrategyEnum,
+  DonationShareAllocationStrategyEnum,
 } from "../types";
 
 export const potDonationInputsToBatchDonationDraft = ({
@@ -20,7 +20,7 @@ export const potDonationInputsToBatchDonationDraft = ({
   bypassChefFee,
 }: DonationInputs & { potAccountId: PotId }): DonationPotBatchCallDraft => {
   const isDistributionManual =
-    potShareAllocationStrategy === DonationPotDistributionStrategyEnum.manually;
+    potShareAllocationStrategy === DonationShareAllocationStrategyEnum.manually;
 
   return {
     potAccountId,

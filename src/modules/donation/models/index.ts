@@ -9,9 +9,9 @@ import {
   DonationAllocationStrategy,
   DonationAllocationStrategyEnum,
   DonationAllocationStrategyOption,
-  DonationPotDistributionStrategy,
-  DonationPotDistributionStrategyEnum,
-  DonationPotDistributionStrategyOption,
+  DonationShareAllocationStrategy,
+  DonationShareAllocationStrategyEnum,
+  DonationShareAllocationStrategyOption,
   DonationState,
   DonationStep,
 } from "../types";
@@ -35,19 +35,19 @@ export const donationAllocationStrategies: Record<
 };
 
 export const donationPotDistributionStrategies: Record<
-  DonationPotDistributionStrategy,
-  DonationPotDistributionStrategyOption
+  DonationShareAllocationStrategy,
+  DonationShareAllocationStrategyOption
 > = {
   evenly: {
     label: "Evenly",
     hint: "(Allocate funds evenly across multiple projects)",
-    value: DonationPotDistributionStrategyEnum.evenly,
+    value: DonationShareAllocationStrategyEnum.evenly,
   },
 
   manually: {
     label: "Manually",
     hint: "(Specify amount for each project)",
-    value: DonationPotDistributionStrategyEnum.manually,
+    value: DonationShareAllocationStrategyEnum.manually,
   },
 };
 

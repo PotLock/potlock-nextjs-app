@@ -43,14 +43,14 @@ import {
   DonationAllocationInputs,
   donationPotDistributionStrategies,
 } from "../models";
-import { DonationPotDistributionStrategyEnum } from "../types";
+import { DonationShareAllocationStrategyEnum } from "../types";
 
 export type DonationPotShareAllocationProps = ByPotId &
-  DonationAllocationInputs & {};
+  DonationAllocationInputs & { totalAmountFloat: number };
 
 export const DonationPotShareAllocation: React.FC<
   DonationPotShareAllocationProps
-> = ({ form, isBalanceSufficient, balanceFloat, potId }) => {
+> = ({ form, isBalanceSufficient, balanceFloat, potId, totalAmountFloat }) => {
   const [amount, tokenId, potShareAllocationStrategy] = form.watch([
     "amount",
     "tokenId",
@@ -73,9 +73,10 @@ export const DonationPotShareAllocation: React.FC<
   const error = potError ?? potApplicationsError;
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
-  const totalAmount = useMemo(
+  const totalAmountField = useMemo(
     () =>
-      potShareAllocationStrategy === "evenly" ? (
+      potShareAllocationStrategy ===
+      DonationShareAllocationStrategyEnum.evenly ? (
         <FormField
           control={form.control}
           name="amount"
@@ -122,8 +123,11 @@ export const DonationPotShareAllocation: React.FC<
           )}
         />
       ) : (
-        <div>
-          <span className="prose">{"Total allocated"}</span>
+        <div className="flex justify-between">
+          <div className="flex flex-col">
+            <span className="prose">{"Total allocated"}</span>
+            <span className="prose">{totalAmountFloat + " NEAR"}</span>
+          </div>
         </div>
       ),
 
@@ -135,6 +139,7 @@ export const DonationPotShareAllocation: React.FC<
       pot?.min_matching_pool_donation_amount,
       potShareAllocationStrategy,
       tokenId,
+      totalAmountFloat,
     ],
   );
 
@@ -166,7 +171,7 @@ export const DonationPotShareAllocation: React.FC<
                         isLoading={isPotLoading}
                         checked={
                           field.value ===
-                          DonationPotDistributionStrategyEnum[value]
+                          DonationShareAllocationStrategyEnum[value]
                         }
                         hint={field.disabled ? hintIfDisabled : hint}
                         disabled={field.disabled}
@@ -298,7 +303,7 @@ export const DonationPotShareAllocation: React.FC<
       <DialogDescription>
         {strategy}
         <DonationVerificationWarning />
-        {totalAmount}
+        {totalAmountField}
       </DialogDescription>
 
       <ScrollArea className="h-[190px] w-full">
