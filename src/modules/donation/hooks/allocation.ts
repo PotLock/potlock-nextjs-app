@@ -82,39 +82,40 @@ export const useDonationManualShareAllocation = ({
 
   return useCallback(
     (recipient: ByAccountId): React.ChangeEventHandler<HTMLInputElement> => {
-      const isAssigned =
-        potDonationShares !== undefined &&
-        potDonationShares.some(
-          ({ account_id }) => account_id === recipient.accountId,
-        );
+      const hasAssignedShare = potDonationShares.some(
+        ({ account_id }) => account_id === recipient.accountId,
+      );
 
       return ({ target: { value } }) => {
-        form.setValue(
-          "potDonationShares",
+        const recipientShareAmount = parseFloat(value);
 
-          isAssigned
-            ? potDonationShares.reduce(
-                (updatedShares = [], recipientShare) => {
-                  const recipientShareAmount = parseFloat(value);
+        if (hasAssignedShare) {
+          form.setValue(
+            "potDonationShares",
 
+            potDonationShares.reduce(
+              (updatedShares = [], recipientShare) => {
+                if (recipientShare.account_id === recipient.accountId) {
                   return recipientShareAmount > 0
                     ? updatedShares.concat([
-                        recipientShare.account_id === recipient.accountId
-                          ? { ...recipientShare, amount: recipientShareAmount }
-                          : recipientShare,
+                        { ...recipientShare, amount: recipientShareAmount },
                       ])
-                    : updatedShares.filter(
-                        (recipientShare) =>
-                          recipientShare.account_id !== recipient.accountId,
-                      );
-                },
+                    : updatedShares;
+                } else return updatedShares.concat([recipientShare]);
+              },
 
-                [] as DonationInputs["potDonationShares"],
-              )
-            : (potDonationShares ?? []).concat([
-                { account_id: recipient.accountId, amount: parseFloat(value) },
-              ]),
-        );
+              [] as DonationInputs["potDonationShares"],
+            ),
+          );
+        } else if (recipientShareAmount > 0) {
+          form.setValue(
+            "potDonationShares",
+
+            potDonationShares.concat([
+              { account_id: recipient.accountId, amount: recipientShareAmount },
+            ]),
+          );
+        }
       };
     },
 
