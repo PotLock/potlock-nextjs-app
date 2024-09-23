@@ -16,7 +16,7 @@ export type DonationPotShareAllocationDeps = {
 
 export const useDonationEvenShareAllocation = ({
   form,
-}: DonationPotShareAllocationDeps) => {
+}: DonationPotShareAllocationDeps & { totalAmountFloat: number }) => {
   const [amount, potShareAllocationStrategy, potDonationShares = []] =
     form.watch(["amount", "potShareAllocationStrategy", "potDonationShares"]);
 

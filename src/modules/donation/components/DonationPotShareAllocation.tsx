@@ -73,6 +73,53 @@ export const DonationPotShareAllocation: React.FC<
   const error = potError ?? potApplicationsError;
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
+  const strategy = useMemo(
+    () => (
+      <FormField
+        control={form.control}
+        name="potShareAllocationStrategy"
+        render={({ field }) => (
+          <FormItem className="gap-3">
+            {isPotLoading ? (
+              <Skeleton className="w-59 h-3.5" />
+            ) : (
+              <FormLabel className="font-600">
+                {"How do you want to allocate funds?"}
+              </FormLabel>
+            )}
+
+            <FormControl>
+              <RadioGroup
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+              >
+                {values(donationPotDistributionStrategies).map(
+                  ({ label, hint, hintIfDisabled, value }) => (
+                    <FormItem key={value}>
+                      <RadioGroupItem
+                        id={`donation-options-${value}`}
+                        isLoading={isPotLoading}
+                        checked={
+                          field.value ===
+                          DonationShareAllocationStrategyEnum[value]
+                        }
+                        hint={field.disabled ? hintIfDisabled : hint}
+                        disabled={field.disabled}
+                        {...{ label, value }}
+                      />
+                    </FormItem>
+                  ),
+                )}
+              </RadioGroup>
+            </FormControl>
+          </FormItem>
+        )}
+      />
+    ),
+
+    [form.control, isPotLoading],
+  );
+
   const totalAmountField = useMemo(
     () =>
       potShareAllocationStrategy ===
@@ -150,55 +197,9 @@ export const DonationPotShareAllocation: React.FC<
     ],
   );
 
-  const strategy = useMemo(
-    () => (
-      <FormField
-        control={form.control}
-        name="potShareAllocationStrategy"
-        render={({ field }) => (
-          <FormItem className="gap-3">
-            {isPotLoading ? (
-              <Skeleton className="w-59 h-3.5" />
-            ) : (
-              <FormLabel className="font-600">
-                {"How do you want to allocate funds?"}
-              </FormLabel>
-            )}
-
-            <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                {values(donationPotDistributionStrategies).map(
-                  ({ label, hint, hintIfDisabled, value }) => (
-                    <FormItem key={value}>
-                      <RadioGroupItem
-                        id={`donation-options-${value}`}
-                        isLoading={isPotLoading}
-                        checked={
-                          field.value ===
-                          DonationShareAllocationStrategyEnum[value]
-                        }
-                        hint={field.disabled ? hintIfDisabled : hint}
-                        disabled={field.disabled}
-                        {...{ label, value }}
-                      />
-                    </FormItem>
-                  ),
-                )}
-              </RadioGroup>
-            </FormControl>
-          </FormItem>
-        )}
-      />
-    ),
-
-    [form.control, isPotLoading],
-  );
-
   const handleEvenShareAllocation = useDonationEvenShareAllocation({
     form,
+    totalAmountFloat,
   });
 
   const handleManualShareAllocation = useDonationManualShareAllocation({

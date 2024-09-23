@@ -64,7 +64,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
       <DialogDescription>
         <div un-flex="~ col" un-gap="1" un-items="start" un-justify="between">
           <span className="prose" un-text="neutral-600" un-font="600">
-            Total amount
+            {"Total amount"}
           </span>
 
           <TotalTokenValue tokenId={inputs.tokenId} amountFloat={totalAmount} />
