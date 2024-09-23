@@ -18,8 +18,8 @@ import {
 } from "../constants";
 import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
-  DonationAllocationStrategyEnum,
   DonationAllocationKey,
+  DonationAllocationStrategyEnum,
   DonationPotDistributionStrategyEnum,
 } from "../types";
 import { isDonationAmountSufficient } from "../utils/validation";
