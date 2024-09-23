@@ -1,6 +1,11 @@
-import { ByPotId } from "@/common/api/potlock";
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
-import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { ByPotId, PotId } from "@/common/api/potlock";
+import {
+  DirectBatchDonationItem,
+  DirectDonation,
+  DirectFTBatchDonationItem,
+  PotBatchDonationItem,
+  PotDonation,
+} from "@/common/contracts/potlock";
 import { ByAccountId } from "@/common/types";
 
 export type DonationParameters = ByAccountId | ByPotId;
@@ -22,13 +27,20 @@ export type DonationAllocationStrategyOption = {
   hintIfDisabled?: string;
 };
 
-export enum DonationPotDistributionStrategy {
+export enum DonationPotDistributionStrategyEnum {
   evenly = "evenly",
   manually = "manually",
 }
 
-export type DonationPotDistributionStrategyKey =
-  keyof typeof DonationPotDistributionStrategy;
+export type DonationPotDistributionStrategy =
+  keyof typeof DonationPotDistributionStrategyEnum;
+
+export type DonationPotDistributionStrategyOption = {
+  label: string;
+  value: DonationPotDistributionStrategy;
+  hint?: string;
+  hintIfDisabled?: string;
+};
 
 export type DonationState = {
   currentStep: DonationStep;
@@ -36,3 +48,16 @@ export type DonationState = {
 };
 
 export type DonationSubmissionInputs = ByAccountId | ByPotId;
+
+export type DonationDirectBatchCallDraft = {
+  entries: DirectFTBatchDonationItem[] | DirectBatchDonationItem[];
+};
+
+export type DonationPotBatchCallDraft = {
+  potAccountId: PotId;
+  entries: PotBatchDonationItem[];
+};
+
+export type DonationBatchCallDraft =
+  | DonationPotBatchCallDraft
+  | DonationDirectBatchCallDraft;

@@ -21,7 +21,7 @@ import {
 } from "../constants";
 import {
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
+  DonationPotDistributionStrategyEnum,
 } from "../types";
 import {
   donationFeeBasisPointsToPercents,
@@ -52,15 +52,13 @@ export const donationFeeBasisPoints = preprocess(
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,
-
   amount: donationAmount.describe("Amount of the selected tokens to donate."),
-
   recipientAccountId: string().optional().describe("Recipient account id."),
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
 
-  potDonationDistribution: array(
-    object({ account_id: string(), amount: donationAmount }),
+  potDonationShares: array(
+    object({ account_id: string(), amount: donationAmount.optional() }),
   )
     .refine((recipients) => recipients.length > 0, {
       message: "You have to select at least one recipient.",
@@ -76,9 +74,9 @@ export const donationSchema = object({
     message: "Incorrect allocation strategy.",
   }).default(DonationAllocationStrategyEnum.direct),
 
-  potDistributionStrategy: nativeEnum(DonationPotDistributionStrategy, {
+  potShareAllocationStrategy: nativeEnum(DonationPotDistributionStrategyEnum, {
     message: "Incorrect donation distribution strategy.",
-  }).default(DonationPotDistributionStrategy.evenly),
+  }).default(DonationPotDistributionStrategyEnum.evenly),
 
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),

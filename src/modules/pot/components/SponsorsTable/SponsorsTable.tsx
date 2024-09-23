@@ -9,9 +9,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/common/ui/components/tooltip";
+import { AccountAvatar } from "@/modules/core";
 import Pagination from "@/modules/core/components/Pagination";
 import routesPath from "@/modules/core/routes";
-import { CustomAvatar } from "@/modules/profile";
 
 import { Container, NoResult, Percentage, TrRow } from "./styles";
 import { CustomDonationType } from "../../models/types";
@@ -50,7 +50,7 @@ const SponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] }) => {
                   className="address"
                   target="_blank"
                 >
-                  <CustomAvatar
+                  <AccountAvatar
                     accountId={donorId}
                     className="mr-4 h-[24px] w-[24px]"
                   />

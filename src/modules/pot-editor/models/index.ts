@@ -3,7 +3,7 @@ import { merge, mergeAll, prop } from "remeda";
 
 import { PotData } from "@/modules/pot";
 import { useTypedSelector } from "@/store";
-import { RootModel } from "@/store/models";
+import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
 import { PotEditorState, PotEditorStep } from "../types";
@@ -26,7 +26,7 @@ const handleStep = (
   stateUpdate?: Partial<PotEditorState>,
 ) => mergeAll([state, stateUpdate ?? {}, { currentStep: step }]);
 
-export const potEditorModel = createModel<RootModel>()({
+export const potEditorModel = createModel<AppModel>()({
   state: potEditorStateDefaults,
   effects,
 

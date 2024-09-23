@@ -6,7 +6,7 @@ import { Donation } from "@/common/api/potlock";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import routesPath from "@/modules/core/routes";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 
 import NearIcon from "./NearIcon";
 import { FundingSrc } from "./styled";

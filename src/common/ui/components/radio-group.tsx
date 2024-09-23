@@ -44,7 +44,7 @@ export const RadioGroupItem = forwardRef<
     <div
       className={cn({
         "border-none bg-neutral-50": disabled,
-        "border-neutral-400": !disabled && !checked,
+        "border-neutral-200": !disabled && !checked,
 
         "color-[var(--primary-600)] border-[var(--primary-600)]":
           !disabled && checked,
@@ -59,7 +59,7 @@ export const RadioGroupItem = forwardRef<
       <RadioGroupPrimitive.Item
         ref={ref}
         className={cn(
-          "aspect-square h-4 w-4 rounded-full border border-inherit text-current",
+          "aspect-square h-5 w-5 rounded-full border border-inherit text-current",
           "ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
           className,
@@ -67,20 +67,19 @@ export const RadioGroupItem = forwardRef<
         {...inputProps}
       >
         <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-          <Circle className="h-2.5 w-2.5 fill-current text-current" />
+          <Circle className="h-3.5 w-3.5 fill-current text-current" />
         </RadioGroupPrimitive.Indicator>
       </RadioGroupPrimitive.Item>
 
       <Label
         htmlFor={props.id}
-        className={cn("flex gap-1", { "text-neutral-400": disabled })}
+        className={cn("flex gap-2 text-sm", { "text-neutral-400": disabled })}
       >
-        <span un-font="500">{label}</span>
+        <span className="font-500 text-current">{label}</span>
 
         {hint && (
           <span
-            un-font="500"
-            className={cn({
+            className={cn("font-500", {
               "text-neutral-400": disabled,
               "text-neutral-500": !disabled,
             })}

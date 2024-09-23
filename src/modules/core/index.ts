@@ -1,3 +1,4 @@
+export * from "./components/AccountAvatar";
 export * from "./components/AccountOption";
 export { default as Alert } from "./components/Alert";
 export * from "./components/AvailableTokenBalance";

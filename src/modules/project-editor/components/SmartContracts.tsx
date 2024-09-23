@@ -126,14 +126,14 @@ const SmartContract = ({
         return;
       }
 
-      dispatch.createProject.addSmartContract([chain, address], index);
+      dispatch.projectEditor.addSmartContract([chain, address], index);
       setChain("");
       setAddress("");
     }
   }, [chain, address, index]);
 
   const onRemoveHandler = useCallback(() => {
-    dispatch.createProject.removeSmartContract(index);
+    dispatch.projectEditor.removeSmartContract(index);
   }, [index]);
 
   return (
@@ -216,7 +216,7 @@ type SmartContractsProps = {
 
 export const SmartContracts = ({ onEditClickHandler }: SmartContractsProps) => {
   const smartContracts = useTypedSelector(
-    (state) => state.createProject.smartContracts,
+    (state) => state.projectEditor.smartContracts,
   );
 
   if (smartContracts && smartContracts.length > 0) {

@@ -7,7 +7,7 @@ import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
 import { dispatch } from "@/store";
 
 import { DonationConfirmation } from "./DonationConfirmation";
-import { DonationPotAllocation } from "./DonationPotAllocation";
+import { DonationPotShareAllocation } from "./DonationPotShareAllocation";
 import { DonationProjectAllocation } from "./DonationProjectAllocation";
 import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
@@ -31,10 +31,10 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   } = useRouteQuery();
 
   const {
+    form,
     isBalanceSufficient,
     matchingPots,
     minAmountError,
-    form,
     isDisabled,
     onSubmit,
   } = useDonationForm({
@@ -46,16 +46,16 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
         : result?.referrer_id ?? undefined,
   });
 
-  const [tokenId] = form.watch(["tokenId"]);
-
-  const { balanceFloat } = useAvailableBalance({ tokenId });
+  const inputs = form.watch();
+  const { balanceFloat } = useAvailableBalance(inputs);
 
   const content = useMemo(() => {
     const staticAllocationProps = {
+      form,
       isBalanceSufficient,
       minAmountError,
       balanceFloat,
-      form,
+      ...inputs,
     };
 
     const staticSuccessProps = { form, result, transactionHash, closeModal };
@@ -68,7 +68,10 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
               ...staticAllocationProps,
               ...props,
             })
-          : h(DonationPotAllocation, { ...staticAllocationProps, ...props });
+          : h(DonationPotShareAllocation, {
+              ...staticAllocationProps,
+              ...props,
+            });
 
       case "confirmation":
         return <DonationConfirmation {...{ form }} />;
@@ -89,6 +92,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     closeModal,
     currentStep,
     form,
+    inputs,
     isBalanceSufficient,
     matchingPots,
     minAmountError,
@@ -124,9 +128,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
                   : dispatch.donation.nextStep
               }
               disabled={isDisabled}
-              className={cn({
-                "w-full": currentStep === "confirmation",
-              })}
+              className={cn({ "w-full": currentStep === "confirmation" })}
             >
               {currentStep === "confirmation"
                 ? "Confirm donation"

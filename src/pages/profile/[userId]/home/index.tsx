@@ -7,7 +7,7 @@ import AboutItem from "@/modules/profile/components/AboutItem";
 import Github from "@/modules/profile/components/Github";
 import SmartContract from "@/modules/profile/components/SmartContract";
 import Team from "@/modules/profile/components/Team";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 
 const HomeTab = () => {
   const router = useRouter();

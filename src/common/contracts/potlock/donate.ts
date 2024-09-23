@@ -1,12 +1,13 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { naxiosInstance } from "@/common/api/near";
-import { DONATION_CONTRACT_ID } from "@/common/constants";
+import { DONATION_CONTRACT_ID, FULL_TGAS } from "@/common/constants";
 
 import {
-  Config,
+  DirectBatchDonationItem,
   DirectDonation,
   DirectDonationArgs,
+  DirectDonationConfig,
 } from "./interfaces/donate.interfaces";
 
 /**
@@ -22,7 +23,8 @@ export const contractApi = naxiosInstance.contractApi({
 /**
  * Get donate contract config
  */
-export const getConfig = () => contractApi.view<{}, Config>("get_config");
+export const getConfig = () =>
+  contractApi.view<{}, DirectDonationConfig>("get_config");
 
 /**
  * Get direct donations
@@ -53,3 +55,13 @@ export const donate = (args: DirectDonationArgs, depositAmountYocto: string) =>
     deposit: depositAmountYocto,
     callbackUrl: window.location.href,
   });
+
+export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
+  contractApi.callMultiple<DirectDonationArgs>(
+    txInputs.map(({ amountYoctoNear, ...txInput }) => ({
+      method: "donate",
+      deposit: amountYoctoNear,
+      gas: FULL_TGAS,
+      ...txInput,
+    })),
+  );

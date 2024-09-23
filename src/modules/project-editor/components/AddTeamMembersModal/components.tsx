@@ -2,7 +2,7 @@
 import { useCallback, useState } from "react";
 
 import { Button } from "@/common/ui/components";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 import { dispatch } from "@/store";
 
 export const GroupIcon = () => (
@@ -83,7 +83,7 @@ type AccountItemProps = {
 
 export const AccountItems = ({ accountIds }: AccountItemProps) => {
   const removeAccountHandler = useCallback((accountId: string) => {
-    dispatch.createProject.removeTeamMember(accountId);
+    dispatch.projectEditor.removeTeamMember(accountId);
   }, []);
 
   return (

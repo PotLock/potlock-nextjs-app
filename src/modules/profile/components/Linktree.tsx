@@ -5,7 +5,7 @@ import NearSvg from "@/common/assets/svgs/near";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import WebsiteSvg from "@/common/assets/svgs/website";
 
-import useProfileData from "../hooks/useProfileData";
+import useProfileData from "../hooks/data";
 
 const LinktreeItemContainer = styled.a`
   display: flex;

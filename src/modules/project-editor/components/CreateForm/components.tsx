@@ -11,7 +11,7 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from "@/common/ui/components/molecules/multi-select";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 import { useTypedSelector } from "@/store";
 
 export const Row = ({
@@ -227,7 +227,7 @@ const AccountStackItem = ({
 const MAX_DISPLAY_MEMBERS = 5;
 
 export const AccountStack = () => {
-  const members = useTypedSelector((state) => state.createProject.teamMembers);
+  const members = useTypedSelector((state) => state.projectEditor.teamMembers);
   const shown = members.slice(0, MAX_DISPLAY_MEMBERS);
   const hidden = Math.max(members.length - MAX_DISPLAY_MEMBERS, 0);
 

@@ -11,6 +11,10 @@ export type ContractMetadata = {
   latestSourceCodeCommitHash: null | string;
 };
 
+export interface ByStringId {
+  id: string;
+}
+
 export type AccountId = Account["accountId"];
 
 export interface ByAccountId {

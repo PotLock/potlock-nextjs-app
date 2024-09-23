@@ -32,9 +32,9 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
 }) => {
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
-  const values = form.watch();
-  const { data: pot } = potlock.usePot({ potId: values.potAccountId });
-  const fees = useDonationFees({ ...values, pot });
+  const inputs = form.watch();
+  const { data: pot } = potlock.usePot({ potId: inputs.potAccountId });
+  const fees = useDonationFees({ ...inputs, pot });
 
   const onAddNoteClick = useCallback(() => {
     setIsMessageFieldVisible(true);
@@ -47,10 +47,10 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   }, [form]);
 
   const totalAmount =
-    values.potDonationDistribution?.reduce(
-      (total, { amount }) => total + amount,
+    inputs.potDonationShares?.reduce(
+      (total, { amount }) => total + (amount ?? 0.0),
       0.0,
-    ) ?? values.amount;
+    ) ?? inputs.amount;
 
   const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
     fees;
@@ -67,10 +67,10 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             Total amount
           </span>
 
-          <TotalTokenValue tokenId={values.tokenId} amountFloat={totalAmount} />
+          <TotalTokenValue tokenId={inputs.tokenId} amountFloat={totalAmount} />
         </div>
 
-        <DonationBreakdown tokenId={values.tokenId} {...{ fees }} />
+        <DonationBreakdown tokenId={inputs.tokenId} {...{ fees }} />
 
         <div className="flex flex-col gap-2">
           {protocolFeePercent > 0 && (
@@ -97,7 +97,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             />
           )}
 
-          {values.potAccountId && chefFeePercent > 0 && (
+          {inputs.potAccountId && chefFeePercent > 0 && (
             <FormField
               control={form.control}
               name="bypassChefFee"
@@ -108,7 +108,10 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   label={
                     <>
                       <span>{`Remove ${chefFeePercent}% Chef Fees`}</span>
-                      {pot?.chef.id && <ProfileLink accountId={pot?.chef.id} />}
+
+                      {pot?.chef?.id && (
+                        <ProfileLink accountId={pot?.chef?.id} />
+                      )}
                     </>
                   }
                 />
@@ -117,7 +120,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           )}
         </div>
 
-        {values.recipientAccountId && (
+        {inputs.recipientAccountId && (
           <FormField
             control={form.control}
             name="message"

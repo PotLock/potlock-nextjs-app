@@ -4,7 +4,7 @@ import { FormControl, FormItem, FormLabel } from "../components/form";
 export type CheckboxFieldProps = Pick<
   React.ComponentProps<typeof Checkbox>,
   "checked" | "disabled" | "onCheckedChange"
-> & { label: React.ReactNode };
+> & { label?: React.ReactNode };
 
 export const CheckboxField: React.FC<CheckboxFieldProps> = ({
   label,
@@ -16,9 +16,11 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
         <Checkbox {...props} />
       </FormControl>
 
-      <FormLabel className="mt-0.5 flex flex-row items-center gap-2 font-normal">
-        {label}
-      </FormLabel>
+      {label && (
+        <FormLabel className="mt-0.5 flex flex-row items-center gap-2 font-normal">
+          {label}
+        </FormLabel>
+      )}
     </FormItem>
   );
 };

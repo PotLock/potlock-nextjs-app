@@ -1,5 +1,6 @@
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { PageWithBanner } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import {
   PotEditor,
   useDeploymentSuccessWalletRedirect,
@@ -11,8 +12,9 @@ export default function PotDeployPage() {
   return (
     <PageWithBanner>
       <section
-        className="md:px-25 md:py-20 mb-6 w-full gap-6 border-[#f8d3b0] bg-hero px-5 py-16"
-        un-flex="~ col"
+        className={cn(
+          "md:px-10 md:py-16 mb-6 flex w-full flex-col gap-6 border-[#f8d3b0] bg-hero px-5 py-12",
+        )}
       >
         <span className="prose uppercase" un-font="500" un-text="2.75 md:sm">
           Deploy Pot

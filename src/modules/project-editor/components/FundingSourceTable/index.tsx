@@ -12,11 +12,11 @@ type Props = {
 
 const FundingSourceTable = ({ onEditClick }: Props) => {
   const fundingSources = useTypedSelector(
-    (state) => state.createProject.fundingSources,
+    (state) => state.projectEditor.fundingSources,
   );
 
   const onDeleteHandler = useCallback((fundingIndex: number) => {
-    dispatch.createProject.removeFundingSource(fundingIndex);
+    dispatch.projectEditor.removeFundingSource(fundingIndex);
   }, []);
 
   if (!fundingSources || fundingSources.length === 0) {

@@ -2,13 +2,16 @@ import { createModel } from "@rematch/core";
 
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
 import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { RootModel } from "@/store/models";
+import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
 import {
   DonationAllocationStrategy,
   DonationAllocationStrategyEnum,
   DonationAllocationStrategyOption,
+  DonationPotDistributionStrategy,
+  DonationPotDistributionStrategyEnum,
+  DonationPotDistributionStrategyOption,
   DonationState,
   DonationStep,
 } from "../types";
@@ -31,6 +34,23 @@ export const donationAllocationStrategies: Record<
   },
 };
 
+export const donationPotDistributionStrategies: Record<
+  DonationPotDistributionStrategy,
+  DonationPotDistributionStrategyOption
+> = {
+  evenly: {
+    label: "Evenly",
+    hint: "(Allocate funds evenly across multiple projects)",
+    value: DonationPotDistributionStrategyEnum.evenly,
+  },
+
+  manually: {
+    label: "Manually",
+    hint: "(Specify amount for each project)",
+    value: DonationPotDistributionStrategyEnum.manually,
+  },
+};
+
 const donationStateDefaults: DonationState = {
   currentStep: "allocation",
 };
@@ -40,7 +60,7 @@ const handleStep = (state: DonationState, step: DonationStep) => ({
   currentStep: step,
 });
 
-export const donationModel = createModel<RootModel>()({
+export const donationModel = createModel<AppModel>()({
   state: donationStateDefaults,
   effects,
 

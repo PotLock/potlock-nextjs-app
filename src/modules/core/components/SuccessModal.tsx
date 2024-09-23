@@ -15,8 +15,8 @@ type Props = {
 
 const SuccessModal = ({ open, onCloseClick, successMessage }: Props) => {
   const closeHandler = () => {
-    dispatch.createProject.submissionStatus("pending");
-    dispatch.createProject.setSubmissionError("");
+    dispatch.projectEditor.submissionStatus("pending");
+    dispatch.projectEditor.setSubmissionError("");
 
     if (onCloseClick) {
       onCloseClick();

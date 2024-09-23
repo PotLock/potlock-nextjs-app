@@ -1,35 +1,38 @@
 import { walletApi } from "@/common/api/near";
-import { donate, pot } from "@/common/contracts/potlock";
 import {
   DirectDonation,
   DirectDonationArgs,
-} from "@/common/contracts/potlock/interfaces/donate.interfaces";
-import {
   PotDonation,
   PotDonationArgs,
-} from "@/common/contracts/potlock/interfaces/pot.interfaces";
+  donate,
+  pot,
+} from "@/common/contracts/potlock";
 import { floatToYoctoNear } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
-import { RootDispatcher } from "@/store";
+import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
 import {
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
   DonationSubmissionInputs,
 } from "../types";
+import { potDonationInputsToBatchDonationDraft } from "../utils/normalization";
 
-export const effects = (dispatch: RootDispatcher) => ({
-  submit: async ({
-    amount,
-    allocationStrategy,
-    potDistributionStrategy,
-    referrerAccountId,
-    bypassProtocolFee,
-    bypassChefFee,
-    message,
-    ...params
-  }: DonationSubmissionInputs & DonationInputs): Promise<void> => {
+export const effects = (dispatch: AppDispatcher) => ({
+  submit: async (
+    inputs: DonationSubmissionInputs & DonationInputs,
+  ): Promise<void> => {
+    const {
+      amount,
+      allocationStrategy,
+      potDonationShares,
+      referrerAccountId,
+      bypassProtocolFee,
+      bypassChefFee,
+      message,
+      ...params
+    } = inputs;
+
     if ("accountId" in params) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.direct: {
@@ -65,16 +68,20 @@ export const effects = (dispatch: RootDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
-    } else if ("potId" in params) {
-      switch (potDistributionStrategy) {
-        case DonationPotDistributionStrategy.evenly: {
-          return void dispatch.donation.failure(new Error("Not implemented"));
-        }
+    } else if ("potId" in params && potDonationShares !== undefined) {
+      const batchTxDraft = potDonationInputsToBatchDonationDraft({
+        potAccountId: params.potId,
+        ...inputs,
+      });
 
-        case DonationPotDistributionStrategy.manually: {
-          return void dispatch.donation.failure(new Error("Not implemented"));
-        }
-      }
+      return void pot
+        .donateBatch(batchTxDraft.potAccountId, batchTxDraft.entries)
+        .then(/* dispatch.donation.success */ console.log)
+        .catch(dispatch.donation.failure);
+    } else {
+      return void dispatch.donation.failure(
+        new Error("Unable to determine donation type."),
+      );
     }
   },
 
