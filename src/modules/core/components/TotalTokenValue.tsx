@@ -11,10 +11,13 @@ import { TokenIcon } from "./TokenIcon";
 import { useNearUsdDisplayValue } from "../hooks/price";
 
 export type TotalTokenValueProps = ByTokenId &
-  ({ amountFloat: number } | { amountBigString: string });
+  ({ amountFloat: number } | { amountBigString: string }) & {
+    textOnly?: boolean;
+  };
 
 export const TotalTokenValue = ({
   tokenId,
+  textOnly = false,
   ...props
 }: TotalTokenValueProps) => {
   const { isLoading: isTokenMetadataLoading, data: tokenMetadata } =
@@ -35,7 +38,7 @@ export const TotalTokenValue = ({
 
   return (
     <div un-flex="~" un-items="center" un-gap="2">
-      <TokenIcon {...{ tokenId }} />
+      {!textOnly && <TokenIcon {...{ tokenId }} />}
 
       {isTokenMetadataLoading ? (
         <Skeleton className="" />

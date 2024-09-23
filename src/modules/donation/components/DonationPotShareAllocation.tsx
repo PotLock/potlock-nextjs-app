@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 import { values } from "remeda";
 
@@ -6,7 +6,6 @@ import { ByPotId, potlock } from "@/common/api/potlock";
 import { NearIcon } from "@/common/assets/svgs";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
-import { ByAccountId } from "@/common/types";
 import {
   DialogDescription,
   DialogHeader,
@@ -30,6 +29,7 @@ import {
   AccountOption,
   AvailableTokenBalance,
   ModalErrorBody,
+  TotalTokenValue,
   useNearUsdDisplayValue,
 } from "@/modules/core";
 
@@ -126,7 +126,12 @@ export const DonationPotShareAllocation: React.FC<
         <div className="flex justify-between">
           <div className="flex flex-col">
             <span className="prose">{"Total allocated"}</span>
-            <span className="prose">{totalAmountFloat + " NEAR"}</span>
+
+            <TotalTokenValue
+              textOnly
+              amountFloat={totalAmountFloat}
+              tokenId={NEAR_TOKEN_DENOM}
+            />
           </div>
         </div>
       ),
