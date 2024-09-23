@@ -13,14 +13,14 @@ import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
 import {
+  DonationAllocationKey,
   DonationAllocationStrategyEnum,
-  DonationSubmissionInputs,
 } from "../types";
 import { potDonationInputsToBatchDonationDraft } from "../utils/normalization";
 
 export const effects = (dispatch: AppDispatcher) => ({
   submit: async (
-    inputs: DonationSubmissionInputs & DonationInputs,
+    inputs: DonationAllocationKey & DonationInputs,
   ): Promise<void> => {
     const {
       amount,

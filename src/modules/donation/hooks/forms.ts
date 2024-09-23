@@ -19,12 +19,12 @@ import {
 import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
   DonationAllocationStrategyEnum,
+  DonationAllocationKey,
   DonationPotDistributionStrategyEnum,
-  DonationSubmissionInputs,
 } from "../types";
 import { isDonationAmountSufficient } from "../utils/validation";
 
-export type DonationFormParams = DonationSubmissionInputs & {
+export type DonationFormParams = DonationAllocationKey & {
   referrerAccountId?: string;
 };
 

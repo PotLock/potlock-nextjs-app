@@ -42,11 +42,11 @@ import {
 } from "../models";
 import { DonationAllocationStrategyEnum } from "../types";
 
-export type DonationProjectAllocationProps = ByAccountId &
+export type DonationDirectAllocationProps = ByAccountId &
   DonationAllocationInputs & { matchingPots?: Pot[] };
 
-export const DonationProjectAllocation: React.FC<
-  DonationProjectAllocationProps
+export const DonationDirectAllocation: React.FC<
+  DonationDirectAllocationProps
 > = ({
   form,
   isBalanceSufficient,

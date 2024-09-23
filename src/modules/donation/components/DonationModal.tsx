@@ -11,9 +11,9 @@ import { ModalErrorBody } from "@/modules/core";
 import { dispatch, useTypedSelector } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
-import { DonationParameters } from "../types";
+import { DonationAllocationKey } from "../types";
 
-export type DonationModalProps = DonationParameters &
+export type DonationModalProps = DonationAllocationKey &
   Pick<DonationFlowProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {

@@ -8,7 +8,7 @@ import {
 } from "@/common/contracts/potlock";
 import { ByAccountId } from "@/common/types";
 
-export type DonationParameters = ByAccountId | ByPotId;
+export type DonationAllocationKey = ByAccountId | ByPotId;
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
@@ -46,8 +46,6 @@ export type DonationState = {
   currentStep: DonationStep;
   finalOutcome?: DirectDonation | PotDonation;
 };
-
-export type DonationSubmissionInputs = ByAccountId | ByPotId;
 
 export type DonationDirectBatchCallDraft = {
   entries: DirectFTBatchDonationItem[] | DirectBatchDonationItem[];

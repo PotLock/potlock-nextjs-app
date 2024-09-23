@@ -7,12 +7,12 @@ import { dispatch } from "@/store";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
 import { DonationModal } from "../components/DonationModal";
-import { DonationParameters } from "../types";
+import { DonationAllocationKey } from "../types";
 
 export * from "./fees";
 export * from "./forms";
 
-export const useDonation = (props: DonationParameters) => {
+export const useDonation = (props: DonationAllocationKey) => {
   const modal = useModal(DonationModal);
   const { setSearchParams } = useRouteQuery();
 

@@ -7,13 +7,13 @@ import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
 import { dispatch } from "@/store";
 
 import { DonationConfirmation } from "./DonationConfirmation";
+import { DonationDirectAllocation } from "./DonationDirectAllocation";
 import { DonationPotShareAllocation } from "./DonationPotShareAllocation";
-import { DonationProjectAllocation } from "./DonationProjectAllocation";
 import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
-import { DonationState, DonationSubmissionInputs } from "../types";
+import { DonationAllocationKey, DonationState } from "../types";
 
-export type DonationFlowProps = DonationSubmissionInputs &
+export type DonationFlowProps = DonationAllocationKey &
   DonationState &
   Pick<DonationSuccessProps, "transactionHash"> & {
     closeModal: VoidFunction;
@@ -63,7 +63,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     switch (currentStep) {
       case "allocation":
         return "accountId" in props
-          ? h(DonationProjectAllocation, {
+          ? h(DonationDirectAllocation, {
               matchingPots,
               ...staticAllocationProps,
               ...props,
