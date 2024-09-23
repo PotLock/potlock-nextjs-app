@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
@@ -73,6 +73,11 @@ export const DonationPotShareAllocation: React.FC<
   const error = potError ?? potApplicationsError;
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
+  const onEvenShareAllocationClick = useCallback(
+    () => form.setValue("amount", totalAmountFloat),
+    [form, totalAmountFloat],
+  );
+
   const strategy = useMemo(
     () => (
       <FormField
@@ -103,6 +108,7 @@ export const DonationPotShareAllocation: React.FC<
                           field.value ===
                           DonationShareAllocationStrategyEnum[value]
                         }
+                        onClick={onEvenShareAllocationClick}
                         hint={field.disabled ? hintIfDisabled : hint}
                         disabled={field.disabled}
                         {...{ label, value }}
@@ -117,7 +123,7 @@ export const DonationPotShareAllocation: React.FC<
       />
     ),
 
-    [form.control, isPotLoading],
+    [form.control, isPotLoading, onEvenShareAllocationClick],
   );
 
   const totalAmountField = useMemo(
