@@ -9,3 +9,6 @@ export const safePositiveNumber = preprocess(
     .safe()
     .transform((floatOrInt) => number().safeParse(floatOrInt).data ?? 0),
 );
+
+export const intoShareValue = (amount: number, numOfShares: number) =>
+  (amount ?? 0) / (numOfShares > 0 ? numOfShares : 1);

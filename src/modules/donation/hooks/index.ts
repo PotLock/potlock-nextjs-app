@@ -9,6 +9,7 @@ import { useDonationSuccessWalletRedirect } from "./redirects";
 import { DonationModal } from "../components/DonationModal";
 import { DonationAllocationKey } from "../types";
 
+export * from "./allocation";
 export * from "./fees";
 export * from "./forms";
 

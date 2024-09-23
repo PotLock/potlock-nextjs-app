@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 
-import { CheckedState } from "@radix-ui/react-checkbox";
 import { values } from "remeda";
 
 import { ByPotId, potlock } from "@/common/api/potlock";
@@ -33,15 +32,18 @@ import {
   ModalErrorBody,
   useNearUsdDisplayValue,
 } from "@/modules/core";
-import { DonationPotDistributionStrategyEnum } from "@/modules/donation";
 
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import {
+  useDonationEvenShareAllocation,
+  useDonationManualShareAllocation,
+} from "../hooks";
+import {
   DonationAllocationInputs,
-  DonationInputs,
   donationPotDistributionStrategies,
 } from "../models";
+import { DonationPotDistributionStrategyEnum } from "../types";
 
 export type DonationPotShareAllocationProps = ByPotId &
   DonationAllocationInputs & {};
@@ -49,13 +51,11 @@ export type DonationPotShareAllocationProps = ByPotId &
 export const DonationPotShareAllocation: React.FC<
   DonationPotShareAllocationProps
 > = ({ form, isBalanceSufficient, balanceFloat, potId }) => {
-  const [amount, tokenId, potShareAllocationStrategy, potDonationShares] =
-    form.watch([
-      "amount",
-      "tokenId",
-      "potShareAllocationStrategy",
-      "potDonationShares",
-    ]);
+  const [amount, tokenId, potShareAllocationStrategy] = form.watch([
+    "amount",
+    "tokenId",
+    "potShareAllocationStrategy",
+  ]);
 
   const {
     isLoading: isPotLoading,
@@ -185,88 +185,13 @@ export const DonationPotShareAllocation: React.FC<
     [form.control, isPotLoading],
   );
 
-  const handleEvenStrategy = useCallback(
-    (recipient: ByAccountId) => {
-      const isAssigned =
-        potDonationShares !== undefined &&
-        potDonationShares.some(
-          ({ account_id }) => account_id === recipient.accountId,
-        );
+  const handleEvenShareAllocation = useDonationEvenShareAllocation({
+    form,
+  });
 
-      const recipientShareAmount = amount / (potDonationShares?.length ?? 1);
-
-      return (assign: CheckedState) => {
-        form.setValue(
-          "potDonationShares",
-
-          assign
-            ? (potDonationShares ?? [])
-                .concat(isAssigned ? [] : [{ account_id: recipient.accountId }])
-                .map((recipientShare) => ({
-                  ...recipientShare,
-                  amount: recipientShareAmount,
-                }))
-            : (potDonationShares ?? []).reduce(
-                (updatedShares = [], recipientShare) => {
-                  return recipientShare.account_id === recipient.accountId
-                    ? updatedShares
-                    : updatedShares.concat([
-                        {
-                          account_id: recipient.accountId,
-                          amount: recipientShareAmount,
-                        },
-                      ]);
-                },
-
-                [] as DonationInputs["potDonationShares"],
-              ),
-        );
-      };
-    },
-
-    [amount, form, potDonationShares],
-  );
-
-  const handleManualStrategy = useCallback(
-    (recipient: ByAccountId): React.ChangeEventHandler<HTMLInputElement> => {
-      const isAssigned =
-        potDonationShares !== undefined &&
-        potDonationShares.some(
-          ({ account_id }) => account_id === recipient.accountId,
-        );
-
-      return ({ target: { value } }) => {
-        form.setValue(
-          "potDonationShares",
-
-          isAssigned
-            ? potDonationShares.reduce(
-                (updatedShares = [], recipientShare) => {
-                  const recipientShareAmount = parseFloat(value);
-
-                  return recipientShareAmount > 0
-                    ? updatedShares.concat([
-                        recipientShare.account_id === recipient.accountId
-                          ? { ...recipientShare, amount: recipientShareAmount }
-                          : recipientShare,
-                      ])
-                    : updatedShares.filter(
-                        (recipientShare) =>
-                          recipientShare.account_id !== recipient.accountId,
-                      );
-                },
-
-                [] as DonationInputs["potDonationShares"],
-              )
-            : (potDonationShares ?? []).concat([
-                { account_id: recipient.accountId, amount: parseFloat(value) },
-              ]),
-        );
-      };
-    },
-
-    [form, potDonationShares],
-  );
+  const handleManualShareAllocation = useDonationManualShareAllocation({
+    form,
+  });
 
   const recipientShares = useMemo(
     () =>
@@ -288,7 +213,7 @@ export const DonationPotShareAllocation: React.FC<
                             recipient.account_id === recipientCandidate.id &&
                             recipient.amount !== undefined,
                         )}
-                        onCheckedChange={handleEvenStrategy({
+                        onCheckedChange={handleEvenShareAllocation({
                           accountId: recipientCandidate.id,
                         })}
                       />
@@ -312,7 +237,7 @@ export const DonationPotShareAllocation: React.FC<
                               recipient.account_id === recipientCandidate.id,
                           )?.amount
                         }
-                        onChange={handleManualStrategy({
+                        onChange={handleManualShareAllocation({
                           accountId: recipientCandidate.id,
                         })}
                         appendix={<NearIcon width={24} height={24} />}
@@ -332,14 +257,14 @@ export const DonationPotShareAllocation: React.FC<
         : null,
 
     [
-      balanceFloat,
-      form.control,
-      handleManualStrategy,
-      handleEvenStrategy,
-      isBalanceSufficient,
       pot,
       potApplications,
       potShareAllocationStrategy,
+      form.control,
+      handleEvenShareAllocation,
+      balanceFloat,
+      handleManualShareAllocation,
+      isBalanceSufficient,
     ],
   );
 
