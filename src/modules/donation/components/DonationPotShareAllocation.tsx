@@ -130,9 +130,11 @@ export const DonationPotShareAllocation: React.FC<
             <TotalTokenValue
               textOnly
               amountFloat={totalAmountFloat}
-              tokenId={NEAR_TOKEN_DENOM}
+              {...{ tokenId }}
             />
           </div>
+
+          <AvailableTokenBalance {...{ tokenId }} />
         </div>
       ),
 
