@@ -18,6 +18,7 @@ import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
+import { Toast } from "@/common/ui/components/toast/Toast";
 import { cn } from "@/common/ui/utils";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 import { Nav } from "@/modules/core";
@@ -62,6 +63,7 @@ export default function RootLayout({
             >
               <Nav />
               {getLayout(<Component {...pageProps} />)}
+              <Toast />
             </div>
           </AuthProvider>
         </NiceModalProvider>

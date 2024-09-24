@@ -6,6 +6,7 @@ import {
   POTLOCK_REGISTRY_LIST_ID,
 } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
+import { AccountId } from "@/common/types";
 
 import {
   ApplyToList,
@@ -41,22 +42,25 @@ export const create_list = ({
   description,
   admins,
   image_cover_url,
+  accounts,
 }: {
   name: string;
   description: string;
-  admins: Array<string>;
+  admins: AccountId[];
+  accounts: { registrant_id: AccountId; status: RegistrationStatus }[];
   image_cover_url?: string | null;
 }) =>
-  contractApi.call<{}, List[]>("create_list", {
+  contractApi.call<{}, List[]>("create_list_with_registrations", {
     args: {
       name,
       description,
       admins,
       cover_image_url: image_cover_url ?? null,
+      ...(accounts?.length && { registrations: accounts }),
       admin_only_registrations: false,
       default_registration_status: "Approved",
     },
-    deposit: floatToYoctoNear(0.015),
+    deposit: floatToYoctoNear(0.021),
     gas: "300000000000000",
   });
 
@@ -82,7 +86,7 @@ export const update_list = ({
       list_id,
       name,
       description,
-      cover_image_url: image_cover_url ?? "",
+      cover_image_url: image_cover_url ?? null,
       admins,
       admin_only_registrations: allowApplications || false,
       default_registration_status: approveApplications ? "Approved" : "Pending",

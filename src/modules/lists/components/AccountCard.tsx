@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
 import { Trigger } from "@radix-ui/react-select";
 import Image from "next/image";
@@ -7,11 +7,11 @@ import Image from "next/image";
 import { walletApi } from "@/common/api/near";
 import { ListRegistration, StatusF24Enum } from "@/common/api/potlock";
 import DownArrow from "@/common/assets/svgs/DownArrow";
-import { ListNoteIcon } from "@/common/assets/svgs/ListNote";
+import { ListNoteIcon } from "@/common/assets/svgs/list-note";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { update_registered_project } from "@/common/contracts/potlock/lists";
-import { truncate } from "@/common/lib";
+import { truncate, useRouteQuery } from "@/common/lib";
 import {
   Button,
   Dialog,
@@ -28,6 +28,9 @@ import {
 } from "@/common/ui/components";
 import { statusesIcons } from "@/modules/core/constants";
 import { statuses } from "@/modules/project/constants";
+import { dispatch } from "@/store";
+
+import { ListFormModalType } from "../types";
 
 interface StatusModal {
   open: boolean;
@@ -41,6 +44,8 @@ export const AccountCard = ({
   dataForList: ListRegistration;
   accountsWithAccess: string[];
 }) => {
+  const { setSearchParams } = useRouteQuery();
+
   const [currentStatus, setCurrentStatus] = useState<StatusF24Enum | string>(
     "",
   );
@@ -82,6 +87,11 @@ export const AccountCard = ({
     })
       .then((data) => setCurrentStatus(data.status as StatusF24Enum))
       .catch((err) => console.error(err));
+    setSearchParams({ type: ListFormModalType.UPDATE_ACCOUNT });
+    dispatch.toast.setListType(
+      statusChange.status as StatusF24Enum,
+      profile?.name ?? dataForList.registrant?.id,
+    );
   };
 
   return (
@@ -94,15 +104,19 @@ export const AccountCard = ({
         <div className="relative">
           <div className="h-[150px] bg-gray-400">
             {profile?.backgroundImage?.ipfs_cid && (
-              <img
+              <Image
+                width={100}
+                height={150}
                 src={`${IPFS_NEAR_SOCIAL_URL}${profile?.backgroundImage?.ipfs_cid}`}
                 alt="person"
-                className="h-full w-full rounded-full object-cover"
+                className="h-full w-full object-cover"
               />
             )}
           </div>
           <div className="mb-[-25px] h-[40px] w-[40px] translate-x-2 translate-y-[-25px] rounded-full bg-white shadow-md">
-            <img
+            <Image
+              width={40}
+              height={40}
               src={
                 profile?.image?.ipfs_cid
                   ? `${IPFS_NEAR_SOCIAL_URL}${profile?.image?.ipfs_cid}`

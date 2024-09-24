@@ -40,7 +40,7 @@ export interface GetListInput {
 
 export interface ApplyToList {
   list_id: string;
-  notes?: string;
+  notes?: null | string;
   registrations: Array<{
     registrant_id: string;
     status: string;

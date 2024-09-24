@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { DialogDescription } from "@radix-ui/react-dialog";
 
-import SuccessRedIcon from "@/common/assets/svgs/SuccessRedIcon";
+import SuccessRedIcon from "@/common/assets/svgs/success-red-icon";
 import {
   Button,
   Dialog,
@@ -92,5 +92,3 @@ export const ApplyToListModal: React.FC<ApplyToListModalProps> = ({
     </Dialog>
   );
 };
-
-export default ApplyToListModal;

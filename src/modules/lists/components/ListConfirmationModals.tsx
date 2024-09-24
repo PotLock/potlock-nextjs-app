@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
 
@@ -50,7 +50,10 @@ const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
             you can always make adjustments in the pot settings page.
           </p>
           <button
-            onClick={onViewList}
+            onClick={() => {
+              onViewList();
+              onClose();
+            }}
             className="w-full rounded-md bg-red-500 px-4 py-2 font-semibold text-white transition hover:bg-red-600"
           >
             View list

@@ -2,16 +2,15 @@
 import React, { useCallback, useEffect, useId, useState } from "react";
 
 import { show } from "@ebay/nice-modal-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 import { walletApi } from "@/common/api/near";
-import { potlock } from "@/common/api/potlock";
 import { AdminUserIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { List } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import {
-  getList,
   registerBatch,
   remove_upvote,
   upvote,
@@ -23,29 +22,39 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
+import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { AccessControlAccountsModal } from "@/modules/access-control/components/AccessControlListModal";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
+import { SavedUsersType } from "@/pages/list/[id]";
 
-import ApplyToListModal from "./ApplyToListModal";
+import { ApplyToListModal } from "./ApplyToListModal";
 import DonationFlow from "./DonationFlow";
 import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { SocialsShare } from "@/common/ui/components/SocialShare";
 
-interface SavedUsersType {
-  accounts?: { account: AccountId; id?: number }[];
-  admins?: { account: AccountId }[];
+interface ListDetailsType {
+  data: any;
+  isLoading?: boolean;
+  admins: string[];
+  setAdmins: (value: string[]) => void;
+  listDetails: any;
+  savedUsers: SavedUsersType;
+  setSavedUsers: (value: any) => void;
 }
 
-export const ListDetails = () => {
+export const ListDetails = ({
+  data,
+  admins,
+  setAdmins,
+  listDetails,
+  savedUsers,
+  setSavedUsers,
+}: ListDetailsType) => {
   const {
     push,
     query: { id },
   } = useRouter();
-  const [listDetails, setListDetails] = useState<List | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
   const [registrants, setRegistrants] = useState<AccountId[]>([]);
@@ -54,16 +63,12 @@ export const ListDetails = () => {
     useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
     useState({ open: false });
-  const [savedUsers, setSavedUsers] = useState<SavedUsersType>({
-    accounts: [],
-    admins: [],
-  });
+
   const { wallet } = useWallet();
 
   const adminsModalId = useId();
   const registrantsModalId = useId();
 
-  // Modals
   const openRegistrantsModal = useCallback(
     () => show(registrantsModalId),
     [registrantsModalId],
@@ -73,47 +78,22 @@ export const ListDetails = () => {
     [adminsModalId],
   );
 
-  const {
-    handleDeleteList,
-    handleSaveAdminsSettings,
-    handleRegisterBatch,
-    admins,
-    setAdmins,
-  } = useListForm();
-
-  const { data, isLoading } = potlock.useListRegistrations({
-    listId: parseInt(id as string),
-  });
+  const { handleDeleteList, handleSaveAdminsSettings, handleRegisterBatch } =
+    useListForm();
 
   useEffect(() => {
-    const fetchListDetails = () => {
-      setLoading(true); // Set loading to true at the beginning
-      getList({ list_id: parseInt(id as any) as any })
-        .then((response) => {
-          setAdmins(response.admins);
-          setRegistrants(
-            data?.results?.map((data: any) => `${data?.registrant?.id}`) || [],
-          );
-          setListDetails(response);
-          setSavedUsers({
-            admins: response.admins?.map((admin) => ({ account: admin })) ?? [],
-            accounts:
-              data?.results?.map((data: any) => ({
-                account: data?.registrant?.id,
-                id: data?.id,
-              })) || [],
-          });
-        })
-        .catch((error) => {
-          console.error("Error fetching list details:", error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
-
-    fetchListDetails();
-  }, [id]);
+    setRegistrants(
+      data?.results?.map((data: any) => `${data?.registrant?.id}`) || [],
+    );
+    setSavedUsers((prevValues: any) => ({
+      ...prevValues,
+      accounts:
+        data?.results?.map((data: any) => ({
+          account: data?.registrant?.id,
+          id: data?.id,
+        })) || [],
+    }));
+  }, [data]);
 
   const applyToListModal = (note: string) => {
     registerBatch({
@@ -122,7 +102,10 @@ export const ListDetails = () => {
       registrations: [
         {
           registrant_id: wallet?.accountId ?? "",
-          status: listDetails?.default_registration_status ?? "Pending",
+          status:
+            listDetails?.owner === walletApi.accountId
+              ? "Approved"
+              : (listDetails?.default_registration_status ?? "Pending"),
           submitted_ms: Date.now(),
           updated_ms: Date.now(),
           notes: "",
@@ -136,10 +119,6 @@ export const ListDetails = () => {
   };
 
   const onEditList = useCallback(() => push(`/list/edit/${id}`), [id]);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
 
   if (!listDetails) {
     return <p>No list details available.</p>;
@@ -285,24 +264,33 @@ export const ListDetails = () => {
           </div>
         </div>
 
-        <div className="md:max-w-[54%] w-full">
-          <img
+        <div className="md:max-w-[54%] md:mb-0 mb-4 w-full">
+          <Image
             alt="alt-text"
-            src="/assets/images/list_bg_image.png"
-            className=" mx-auto w-full px-3"
+            src={
+              listDetails.cover_image_url
+                ? "/assets/images/large_default_backdrop.png"
+                : "/assets/images/list_bg_image.png"
+            }
+            className=" mx-auto w-full px-2"
+            width={500}
+            height={300}
           />
           <div className="m-0 w-full rounded p-0">
-            <img
+            <Image
               src={
-                listDetails.cover_image_url || "https://via.placeholder.com/800"
+                listDetails.cover_image_url ||
+                "/assets/images/list-gradient-3.png"
               }
               alt="cover"
+              width={500}
+              height={300}
               className="md:h-[320px] h-[180px] w-full rounded-tl-md rounded-tr-md  object-cover"
             />
           </div>
           <div className="flex h-16 items-center justify-between rounded-bl-md rounded-br-md border border-[#dadbda] p-4">
             <p className="text-[14px] font-[500]">
-              {registrants.length} Accounts
+              {listDetails?.total_registrations_count} Accounts
             </p>
             <div className="flex items-center gap-3">
               <button onClick={handleUpvote} className="focus:outline-none">
@@ -347,7 +335,12 @@ export const ListDetails = () => {
         showOnSaveButton={admins.length > 0}
         onSaveSettings={() =>
           handleSaveAdminsSettings(
-            admins?.filter((account) => !savedUsers.admins?.includes(account)),
+            admins?.filter(
+              (account) =>
+                !savedUsers.admins
+                  ?.map((admin) => admin.account)
+                  .includes(account),
+            ),
           )
         }
       />
@@ -356,7 +349,7 @@ export const ListDetails = () => {
         title="Edit Accounts"
         onSubmit={(modal) => setRegistrants(modal)}
         type="ACCOUNT"
-        value={isLoading ? [] : registrants}
+        value={registrants ?? []}
         contractAdmins={savedUsers.accounts}
         showOnSaveButton={registrants?.length > 0}
         countText="Account(s)"

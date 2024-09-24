@@ -1,4 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
@@ -6,6 +12,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { walletApi } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import {
   create_list,
   getList,
@@ -17,6 +24,7 @@ import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { AccessControlList } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import { AccountOption } from "@/modules/core";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
 
@@ -24,6 +32,7 @@ import SuccessModalCreateList, {
   ListConfirmationModal,
   ListConfirmationModalProps,
 } from "./ListConfirmationModals";
+import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
 
 interface FormData {
   name: string;
@@ -50,7 +59,7 @@ export const ListFormDetails: React.FC = () => {
   } = useForm<FormData>({
     resolver: zodResolver(createListSchema),
   });
-
+  useListDeploymentSuccessRedirect();
   const descriptionLength = watch("description")?.length || 0;
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -75,12 +84,15 @@ export const ListFormDetails: React.FC = () => {
     transferAccountError,
     transferAccountField,
     handleChangeTransferOwnerField,
+    setAccounts,
+    accounts,
   } = useListForm();
 
   const {
+    back,
+    push,
     query: { id },
   } = useRouter();
-  const { push, back } = useRouter();
   const onEditPage = !!id;
   const { wallet } = useWallet();
 
@@ -126,6 +138,8 @@ export const ListFormDetails: React.FC = () => {
     )
       return;
 
+    console.log("here");
+
     if (onEditPage) {
       update_list({
         ...data,
@@ -148,6 +162,10 @@ export const ListFormDetails: React.FC = () => {
       create_list({
         ...data,
         admins,
+        accounts: accounts.map((account) => ({
+          registrant_id: account,
+          status: RegistrationStatus.Approved,
+        })),
         image_cover_url: coverImage,
       })
         .then((dataToReturn) => {
@@ -180,9 +198,45 @@ export const ListFormDetails: React.FC = () => {
     }
   };
 
-  const handleViewList = () => {
-    if (listCreateSuccess.data.id) push(`/list/${listCreateSuccess.data.id}`);
-  };
+  const accountList = useMemo(
+    () =>
+      accounts.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2">
+          {[...accounts].map((accountId) => (
+            <AccountOption
+              isThumbnail
+              key={accountId}
+              title={accountId}
+              classNames={{ avatar: "md:w-[40px] md:h-[40px] w-7 h-7" }}
+              {...{ accountId }}
+            />
+          ))}
+        </div>
+      ) : null,
+
+    [accounts],
+  );
+
+  const adminsList = useMemo(
+    () =>
+      admins.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2">
+          {[...admins].map((accountId) => (
+            <AccountOption
+              isThumbnail
+              key={accountId}
+              title={accountId}
+              classNames={{ avatar: "md:w-[40px] md:h-[40px] w-7 h-7" }}
+              {...{ accountId }}
+            />
+          ))}
+        </div>
+      ) : null,
+
+    [admins],
+  );
+
+  const handleViewList = useCallback(() => push(`/list/${id}`), [id]);
 
   return (
     <>
@@ -250,28 +304,36 @@ export const ListFormDetails: React.FC = () => {
               </label>
             </div>
           </div>
-          <h3 className="mb-4 mt-8 text-xl font-semibold">Permissions</h3>
-          <div className="md:flex-row md:items-start md:space-y-0  flex flex-col items-start">
+          <h3 className="mb-4 mt-8 text-xl font-semibold">Add Users</h3>
+          <div
+            style={{
+              boxShadow:
+                "rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px",
+            }}
+            className="md:flex-row md:items-start md:space-y-0 flex flex-col  items-start rounded p-4"
+          >
             <div className="flex items-center">
-              <div className="p-2 pl-0">
-                <span className="mr-4 mt-2 font-semibold text-gray-700">
-                  Owner
-                </span>
-                <div className="flex items-center space-x-2 p-2">
-                  <img
-                    src={profileImage || "https://via.placeholder.com/40"}
-                    alt="Owner"
-                    className="h-6 w-6 rounded-full border-2 border-white"
-                  />
-                  <span className="text-xs text-gray-700">
-                    {onEditPage ? watch("owner") : walletApi?.accountId}
+              {onEditPage && (
+                <div className="md:mr-5 flex w-full flex-col items-start  gap-3">
+                  <span className="mr-4 mt-2 font-semibold text-gray-700">
+                    Owner
                   </span>
+                  <div className="flex items-center gap-2 p-2">
+                    <img
+                      src={profileImage || "https://via.placeholder.com/40"}
+                      alt="Owner"
+                      className="md:w-[40px] md:h-[40px] h-7 w-7 rounded-full  "
+                    />
+                    {/* <span className="text-xs text-gray-700">
+                      {onEditPage ? watch("owner") : walletApi?.accountId}
+                    </span> */}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-            <div className=" translate-y-1">
-              <div className="flex items-end  space-x-2">
-                <div className="flex flex-col gap-2">
+            <div className="w-full translate-y-1">
+              <div className="flex w-full flex-col items-start  gap-3">
+                <div className="flex w-full flex-row justify-between gap-2">
                   <div className="translate-y-1 justify-between">
                     <p className="font-semibold text-gray-700">Admins</p>
                   </div>
@@ -281,6 +343,7 @@ export const ListFormDetails: React.FC = () => {
                       title="Admins"
                       value={admins}
                       contractAdmins={savedAdmins}
+                      showAccountList={false}
                       type="ADMIN"
                       showOnSaveButton={
                         admins.length > 0 &&
@@ -293,9 +356,51 @@ export const ListFormDetails: React.FC = () => {
                     />
                   </div>
                 </div>
+                {adminsList}
               </div>
             </div>
           </div>
+          {!onEditPage && (
+            <div
+              style={{
+                boxShadow:
+                  "rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px",
+              }}
+              className="md:flex-row md:items-start md:space-y-0 flex w-full flex-col items-start rounded p-4"
+            >
+              <div className=" w-full translate-y-1">
+                <div className="flex w-full flex-col items-start  gap-3">
+                  <div className="flex w-full flex-row items-start justify-between gap-2">
+                    <div className="translate-y-1 justify-between">
+                      <p className="pt-[2px] font-semibold text-gray-700">
+                        Accounts
+                      </p>
+                    </div>
+                    <div className="flex h-[35px]  flex-wrap">
+                      <AccessControlList
+                        isEditable
+                        title="Accounts"
+                        value={accounts}
+                        type="ADMIN"
+                        showAccountList={false}
+                        showOnSaveButton={
+                          accounts.length > 0 &&
+                          onEditPage &&
+                          watch("owner") === walletApi?.accountId
+                        }
+                        classNames={{ avatar: "w-[40px] h-[40px]" }}
+                        onSubmit={(accounts) => setAccounts(accounts)}
+                        onSaveSettings={() =>
+                          handleSaveAdminsSettings(accounts)
+                        }
+                      />
+                    </div>
+                  </div>
+                  {accountList}
+                </div>
+              </div>
+            </div>
+          )}
           {onEditPage && watch("owner") === walletApi?.accountId && (
             <div>
               <h3>Transfer Ownership</h3>
@@ -327,7 +432,7 @@ export const ListFormDetails: React.FC = () => {
               <span className="font-normal text-gray-500">(Optional)</span>
             </h3>
             <div
-              className="relative flex h-40 w-full items-center justify-center rounded-md bg-gray-100"
+              className="relative flex h-[320px] w-full items-center justify-center rounded-md bg-gray-100"
               style={{
                 backgroundImage: `url(${coverImage})`,
                 backgroundSize: "cover",

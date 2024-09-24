@@ -1,0 +1,73 @@
+import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
+
+import { nearRpc, walletApi } from "@/common/api/near";
+import { List } from "@/common/api/potlock";
+import { AppDispatcher } from "@/store";
+
+import { ListFormModalType } from "../types";
+
+export const effects = (dispatch: AppDispatcher) => ({
+  handleListContractActions: async (transactionHash: string): Promise<void> => {
+    const { accountId: owner_account_id } = walletApi;
+    if (owner_account_id) {
+      nearRpc.txStatus(transactionHash, owner_account_id).then((response) => {
+        const method =
+          response.transaction?.actions[0]?.FunctionCall?.method_name;
+        const { status } =
+          response.receipts_outcome.at(method === "donate" ? 6 : 0)?.outcome ??
+          {};
+
+        let type: ListFormModalType = ListFormModalType.NONE;
+        switch (method) {
+          case "create_list": {
+            type = ListFormModalType.CREATE_LIST;
+            break;
+          }
+          case "update_list": {
+            type = ListFormModalType.UPDATE_LIST;
+            break;
+          }
+          case "owner_add_admins": {
+            type = ListFormModalType.ADD_ADMINS;
+            break;
+          }
+          case "donate": {
+            type = ListFormModalType.LIST_DONATION;
+            break;
+          }
+          case "owner_change_owner": {
+            type = ListFormModalType.TRANSFER_OWNER;
+            break;
+          }
+          default: {
+            type = ListFormModalType.NONE;
+            break;
+          }
+        }
+
+        if (typeof status === "string") {
+          switch (status) {
+            case ExecutionStatusBasic.Failure: {
+              throw new Error("Unable to Update this List");
+            }
+
+            default: {
+              throw "Unable to Update List";
+            }
+          }
+        } else if (typeof status?.SuccessValue === "string") {
+          //   console.log(JSON.parse(atob(status.SuccessValue)));
+          dispatch.listEditor.deploymentSuccess({
+            data: JSON.parse(atob(status.SuccessValue)) as List,
+            type,
+            ...(type === ListFormModalType.TRANSFER_OWNER && {
+              accountId: JSON.parse(atob(status.SuccessValue)) as string,
+            }),
+          });
+        } else {
+          throw "Unable to Update List";
+        }
+      });
+    }
+  },
+});

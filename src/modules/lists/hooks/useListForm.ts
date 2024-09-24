@@ -12,16 +12,9 @@ import {
 } from "@/common/contracts/potlock/lists";
 import { AccountId } from "@/common/types";
 import { validateAccountId } from "@/modules/core";
+import { dispatch } from "@/store";
 
-// Step 1: Define the enum
-export enum ListFormModalType {
-  NONE = "NONE",
-  BATCH_REGISTER = "BATCH_REGISTER",
-  UNREGISTER = "UNREGISTER",
-  ADD_ADMINS = "ADD_ADMINS",
-  REMOVE_ADMINS = "REMOVE_ADMINS",
-  TRANSFER_OWNER = "TRANSFER_OWNER",
-}
+import { ListFormModalType } from "../types";
 
 export const useListForm = () => {
   const { push, query } = useRouter();
@@ -33,43 +26,11 @@ export const useListForm = () => {
     open: boolean;
     type: ListFormModalType;
   }>({ open: false, type: ListFormModalType.NONE });
-  const [finishText, setFinishText] = useState<{
-    header: string;
-    body: string;
-  }>({ header: "", body: "" });
-  const [admins, setAdmins] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<AccountId[]>([]);
+  const [accounts, setAccounts] = useState<AccountId[]>([]);
   const id = query.id;
 
-  useEffect(() => {
-    if (finishModal.type === ListFormModalType.TRANSFER_OWNER) {
-      setFinishText({
-        header: "Transfer of Ownership was Successful",
-        body: "You may now close this window",
-      });
-    } else if (finishModal.type === ListFormModalType.ADD_ADMINS) {
-      setFinishText({
-        header: "Admin(s) added Successfully",
-        body: "You may now close this window",
-      });
-    } else if (finishModal.type === ListFormModalType.REMOVE_ADMINS) {
-      setFinishText({
-        header: "Admin removed Successfully",
-        body: "You may now close this window",
-      });
-    } else if (finishModal.type === ListFormModalType.UNREGISTER) {
-      setFinishText({
-        header: "Account Unregistered Successfully",
-        body: "You may now close this window",
-      });
-    } else if (finishModal.type === ListFormModalType.BATCH_REGISTER) {
-      setFinishText({
-        header: "Batch Registration was Successful",
-        body: "You may now close this window",
-      });
-    } else if (finishModal.type === ListFormModalType.NONE) {
-      setFinishText({ header: "", body: "" });
-    }
-  }, [finishModal.type]);
+  const description = "You may now close this window";
 
   const handleDeleteList = () => {
     if (!id) return; // Ensure id is available
@@ -80,6 +41,11 @@ export const useListForm = () => {
       .catch((error) => {
         console.error("Error deleting list", error);
       });
+    dispatch.listEditor.updateListModalState({
+      header: "List Deleted Successfully",
+      description,
+      type: ListFormModalType.DELETE_LIST,
+    });
   };
 
   const handleRegisterBatch = (list_id: string, registrants: string[]) => {
@@ -97,6 +63,11 @@ export const useListForm = () => {
         setFinishModal({ open: true, type: ListFormModalType.BATCH_REGISTER });
       })
       .catch((error) => console.error(error));
+    dispatch.listEditor.updateListModalState({
+      header: "Account(s) Registered Successfully",
+      description,
+      type: ListFormModalType.BATCH_REGISTER,
+    });
   };
 
   const handleUnRegisterAccount = (registrant_id: number) => {
@@ -110,6 +81,11 @@ export const useListForm = () => {
         setFinishModal({ open: true, type: ListFormModalType.UNREGISTER });
       })
       .catch((error) => console.error(error));
+    dispatch.listEditor.updateListModalState({
+      header: "Account Deleted From List Successfully",
+      description,
+      type: ListFormModalType.UNREGISTER,
+    });
   };
 
   const handleRemoveAdmin = (admins: Array<string>) => {
@@ -123,10 +99,15 @@ export const useListForm = () => {
       .catch((error) => {
         console.error("Error adding admins to list", error);
       });
+    dispatch.listEditor.updateListModalState({
+      header: "Admin(s) Removed Successfully",
+      description,
+      type: ListFormModalType.REMOVE_ADMINS,
+    });
   };
 
   const handleSaveAdminsSettings = (admins: AccountId[]) => {
-    if (!id) return; // Ensure id is available
+    if (!id) return;
     add_admins_to_list({
       list_id: parseInt(id as string),
       admins,
@@ -137,6 +118,11 @@ export const useListForm = () => {
       .catch((error) => {
         console.error("Error adding admins to list", error);
       });
+    dispatch.listEditor.updateListModalState({
+      header: "Admin(s) Added Successfully",
+      description,
+      type: ListFormModalType.ADD_ADMINS,
+    });
   };
 
   const handleChangeTransferOwnerField = async (
@@ -166,6 +152,11 @@ export const useListForm = () => {
       .catch((error) => {
         console.error("Error Transferring Owner", error);
       });
+    dispatch.listEditor.updateListModalState({
+      header: "Transfer of Ownership Successfully",
+      description,
+      type: ListFormModalType.TRANSFER_OWNER,
+    });
   };
 
   return {
@@ -179,8 +170,9 @@ export const useListForm = () => {
     handleRegisterBatch,
     finishModal,
     setFinishModal,
-    finishText,
     handleRemoveAdmin,
+    accounts,
+    setAccounts,
     setTransferAccountError,
     handleUnRegisterAccount,
     admins,

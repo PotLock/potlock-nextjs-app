@@ -30,7 +30,7 @@ const FundAllocation = ({
 
   useEffect(() => {
     setProjects((data?.results as any) ?? []);
-  }, []);
+  }, [isLoading]);
 
   const handleProjectSelection = (project: any) => {
     if (selectedProjects.includes(project)) {

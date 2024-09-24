@@ -14,7 +14,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/common/ui/components";
+import { dispatch } from "@/store";
 
+import { ListFormModalType } from "../types";
 import ConfirmDonation from "./Donation/ConfirmDonation";
 import DonationSuccess from "./Donation/DonationSuccess";
 import FundAllocation from "./Donation/FundAllocation";
@@ -37,12 +39,10 @@ const DonationFlow = ({
     setStep(step + 1);
   };
 
-  // Handle going back to the previous step
   const prevStep = () => {
     setStep(step - 1);
   };
 
-  // Handle final confirmation
   const handleConfirm = async () => {
     const allTransactions: any = [];
     selectedProjects.map((item: any) => {
@@ -68,6 +68,12 @@ const DonationFlow = ({
         if (res) nextStep();
       })
       .catch((err) => console.error(err));
+    dispatch.listEditor.handleUpdateDonationSuccess({
+      type: ListFormModalType.LIST_DONATION,
+      amount,
+      breakdown,
+      selectedProjects,
+    });
   };
 
   return (

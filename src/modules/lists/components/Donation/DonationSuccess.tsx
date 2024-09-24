@@ -1,4 +1,4 @@
-import SuccessRedIcon from "@/common/assets/svgs/SuccessRedIcon";
+import SuccessRedIcon from "@/common/assets/svgs/success-red-icon";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 
 const DonationSuccess = ({
@@ -46,7 +46,7 @@ const DonationSuccess = ({
           .join(", ")}{" "}
         collective
       </span>{" "}
-      {selectedProjects.length - 2
+      {selectedProjects.length > 2 && selectedProjects.length - 2
         ? ` and  ${selectedProjects?.length - 2} others. `
         : ""}
     </p>

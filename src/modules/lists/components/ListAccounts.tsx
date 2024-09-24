@@ -1,26 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
-import { useRouter } from "next/router";
+import { filter } from "remeda";
 
-import { potlock } from "@/common/api/potlock";
+import { List } from "@/common/api/potlock";
 import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
 import { statuses } from "@/modules/project/constants";
 
 import { AccountCard } from "./AccountCard";
+import { ListCardSkeleton } from "./ListCardSkeleton";
 
-export const ListAccounts = () => {
-  const router = useRouter();
-  const { id } = router.query;
+interface ListAccountsType {
+  loadingListData: boolean;
+  listData: List | undefined;
+  filteredRegistrations: any[];
+  isLoading: boolean;
+  setFilteredRegistrations: (value: any) => void;
+  setStatus: (value: string) => void;
+}
 
-  const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
-  const [registrations, setRegistrations] = useState<any[]>([]);
+export const ListAccounts = ({
+  listData,
+  loadingListData,
+  setStatus,
+  isLoading,
+  filteredRegistrations,
+  setFilteredRegistrations,
+}: ListAccountsType) => {
   const [search, setSearch] = useState("");
   const [accountsWithAccess, setAccountsWithAccess] = useState<string[]>([]);
-  // const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string[]>(["all"]);
-  const [currentListType, setCurrentListType] = useState(
-    "Accounts in the list",
-  );
+  const [searchedAccounts, setSearchedAccounts] = useState<any[]>([]);
 
   const SORT_LIST_PROJEECTS = [
     { label: "Most recent", value: "recent" },
@@ -34,6 +43,7 @@ export const ListAccounts = () => {
       props: {
         value: statusFilter,
         onValueChange: (value) => {
+          setStatus(value[value.length - 1]);
           if (value[value.length - 1] === "all") {
             setsStatusFilter(["all"]);
           } else if (value.includes("all")) {
@@ -46,6 +56,24 @@ export const ListAccounts = () => {
       },
     },
   ];
+
+  // const registrationsProfile = useTypedSelector((state) => state.profiles);
+
+  const handleFilter = (registration: any) => {
+    const matchesSearch = search
+      ? registration.registrant?.near_social_profile_data?.name
+          ?.toLowerCase()
+          .includes(search.toLowerCase()) ||
+        registration.registrant?.id?.toString().includes(search)
+      : false;
+
+    return matchesSearch;
+  };
+
+  useEffect(() => {
+    const filtered = filteredRegistrations.filter(handleFilter);
+    setSearchedAccounts(filtered ?? []);
+  }, [search]);
 
   const handleSort = (sortType: string) => {
     const projects = [...filteredRegistrations];
@@ -70,37 +98,6 @@ export const ListAccounts = () => {
         break;
     }
   };
-  // const registrationsProfile = useTypedSelector((state) => state.profiles);
-
-  const handleFilter = (registration: any) => {
-    const matchesSearch = search
-      ? registration.registrant?.near_social_profile_data?.name
-          ?.toLowerCase()
-          .includes(search.toLowerCase()) ||
-        registration.registrant?.id?.toString().includes(search)
-      : true; // If no search term, consider it a match
-
-    const matchesStatus =
-      statusFilter.includes("all") || statusFilter.length === 0
-        ? true
-        : statusFilter.includes(registration.status); // Implement your status filter logic here
-    const matchesCategory = true; // Implement your category filter logic here
-
-    return matchesSearch && matchesStatus && matchesCategory;
-  };
-
-  useEffect(() => {
-    const filtered = registrations.filter(handleFilter);
-    setFilteredRegistrations(filtered);
-  }, [search, registrations, statusFilter]);
-
-  const { data, isLoading } = potlock.useListRegistrations({
-    listId: parseInt(id as string),
-  });
-
-  const { data: listData, isLoading: loadingListData } = potlock.useList({
-    listId: parseInt(id as string),
-  });
 
   useEffect(() => {
     if (!loadingListData && listData) {
@@ -111,28 +108,14 @@ export const ListAccounts = () => {
 
       setAccountsWithAccess(accountsWithAccess);
     }
-  }, [listData, loadingListData]);
-
-  useEffect(() => {
-    setRegistrations((data?.results as any) ?? []);
-    setFilteredRegistrations((data?.results as any) ?? []);
-    // setAccountsWithAccess(data?.results?.map((item) => item.registrant?.id));
-  }, [data]);
-
-  if (isLoading) {
-    return (
-      <div className="p-10">
-        <span className="loader"></span>
-      </div>
-    );
-  }
+  }, [listData]);
 
   return (
     <div className="md:px-10 md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
       <div className="flex w-full flex-col gap-5">
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
-            {currentListType}
+            Accounts in the list
             <span
               style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
             >
@@ -145,12 +128,7 @@ export const ListAccounts = () => {
             placeholder="Search Accounts"
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
-          <Filter
-            // toggleProps={{
-            //   onValueChange: handleTag,
-            // }}
-            groups={tagsList}
-          />
+          <Filter groups={tagsList} />
           <SortSelect
             options={SORT_LIST_PROJEECTS}
             onValueChange={handleSort}
@@ -158,14 +136,23 @@ export const ListAccounts = () => {
         </div>
       </div>
       <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
-        {(filteredRegistrations ?? [])?.map((item, index) => (
-          <AccountCard
-            accountsWithAccess={accountsWithAccess}
-            dataForList={item}
-            key={index}
-          />
-        ))}
-        {filteredRegistrations?.length === 0 && <p>No Registrations present</p>}
+        {isLoading
+          ? Array.from({ length: 12 }, (_, index) => (
+              <ListCardSkeleton key={index} />
+            ))
+          : (searchedAccounts.length
+              ? searchedAccounts
+              : (filteredRegistrations ?? [])
+            )?.map((item, index) => (
+              <AccountCard
+                accountsWithAccess={accountsWithAccess}
+                dataForList={item}
+                key={index}
+              />
+            ))}
+        {filteredRegistrations?.length === 0 && !isLoading && (
+          <p>No Registrations present</p>
+        )}
       </div>
     </div>
   );

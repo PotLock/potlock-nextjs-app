@@ -35,6 +35,25 @@ const AllLists = ({
     { label: "Least recent", value: "older" },
   ];
 
+  const defaultBgImages = [
+    {
+      background: "/assets/images/list-gradient-01.png",
+      backdrop: "/assets/images/list_backdrop_2.png",
+    },
+    {
+      background: "/assets/images/list-gradient-2.png",
+      backdrop: "/assets/images/list_bg_image.png",
+    },
+    {
+      background: "/assets/images/list-gradient-3.png",
+      backdrop: "/assets/images/list_bg_image.png",
+    },
+    {
+      background: "/assets/images/list-gradient-4.png",
+      backdrop: "/assets/images/list_backdrop_2.png",
+    },
+  ];
+
   const tagsList: Group[] = [
     {
       label: "Category",
@@ -79,8 +98,6 @@ const AllLists = ({
     }
   };
 
-  const registrationsProfile = useTypedSelector((state) => state.profiles);
-
   // handle search & filter
   useEffect(() => {
     const handleSearch = (registration: any) => {
@@ -109,6 +126,11 @@ const AllLists = ({
   useEffect(() => {
     fetchAllLists();
   }, []);
+
+  const getRandomBackgroundImage = () => {
+    const randomIndex = Math.floor(Math.random() * defaultBgImages.length);
+    return defaultBgImages[randomIndex];
+  };
 
   return (
     <div className="md:px-10 md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
@@ -142,29 +164,34 @@ const AllLists = ({
             placeholder="Search Lists"
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
-          {/* <Filter
-            // toggleProps={{
-            //   onValueChange: handleTag,
-            // }}
-            groups={tagsList}
-          /> */}
+
           <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
         </div>
       </div>
-      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8 pb-10">
         {loading
           ? Array.from({ length: 6 }, (_, index) => (
               <ListCardSkeleton key={index} />
             ))
-          : filteredRegistrations.map((item, index) => (
-              <ListCard dataForList={item} key={index} />
-            ))}
+          : filteredRegistrations.map((item, index) => {
+              // Check if cover_image is present, otherwise use a random background image
+              let background = "";
+              let backdrop = "";
+              if (!item.cover_image) {
+                ({ background, backdrop } = getRandomBackgroundImage());
+              }
+              return (
+                <ListCard
+                  dataForList={item}
+                  key={index}
+                  background={background}
+                  backdrop={backdrop}
+                />
+              );
+            })}
       </div>
     </div>
   );
 };
 
 export default AllLists;
-function setFilteredRegistrations(type: any): void {
-  throw new Error("Function not implemented.");
-}

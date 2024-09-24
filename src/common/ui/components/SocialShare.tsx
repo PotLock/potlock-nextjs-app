@@ -1,15 +1,18 @@
+import { useCallback, useState } from "react";
+
+import { Check } from "lucide-react";
+import CopyToClipboard from "react-copy-to-clipboard";
+
+import { CopyPasteIcon } from "@/common/assets/svgs";
 import {
   InstagramShareIcon,
   ShareIcon,
   TelegramShareIcon,
   TwitterShareIcon,
 } from "@/common/assets/svgs/Share";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+
 import { Button } from "./atoms/button";
-import CopyToClipboard from "react-copy-to-clipboard";
-import { useCallback, useState } from "react";
-import { CopyPasteIcon } from "@/common/assets/svgs";
-import { Check } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 export const SocialsShare = ({ shareContent }: { shareContent?: string }) => {
   const [copied, setCopied] = useState(false);
