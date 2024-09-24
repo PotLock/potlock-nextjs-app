@@ -12,8 +12,8 @@ import {
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { safePositiveNumber } from "@/common/lib";
-import { AvailableBalance } from "@/modules/core";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
+import { TokenAvailableBalance } from "@/modules/token";
 
 import {
   DONATION_MAX_MESSAGE_LENGTH,
@@ -95,7 +95,7 @@ export const donationSchema = object({
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
 export type DonationAllocationInputs = Pick<
-  AvailableBalance,
+  TokenAvailableBalance,
   "balanceFloat"
 > & {
   isBalanceSufficient: boolean;

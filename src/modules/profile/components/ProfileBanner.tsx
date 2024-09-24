@@ -1,9 +1,3 @@
-import React, { useEffect, useState } from "react";
-
-import Image from "next/image";
-
-import { NEARSocialUserProfile } from "@/common/contracts/social";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
 import {
   Avatar,
   AvatarFallback,
@@ -11,8 +5,7 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import useIsHuman from "@/modules/core/hooks/useIsHuman";
-import useRegistration from "@/modules/core/hooks/useRegistration";
+import { useIsHuman, useRegistration } from "@/modules/core";
 import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIcons";
 
 import { FollowStats } from "./FollowStats";

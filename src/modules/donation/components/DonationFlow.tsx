@@ -3,7 +3,8 @@ import { createElement as h, useMemo } from "react";
 import { useRouteQuery } from "@/common/lib";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { ModalErrorBody, useAvailableBalance } from "@/modules/core";
+import { ModalErrorBody } from "@/modules/core";
+import { useTokenBalance } from "@/modules/token";
 import { dispatch } from "@/store";
 
 import { DonationConfirmation } from "./DonationConfirmation";
@@ -48,7 +49,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   });
 
   const inputs = form.watch();
-  const { balanceFloat } = useAvailableBalance(inputs);
+  const { balanceFloat } = useTokenBalance(inputs);
 
   const content = useMemo(() => {
     const staticAllocationProps = {

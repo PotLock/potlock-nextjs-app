@@ -25,11 +25,8 @@ import {
   SelectFieldOption,
   TextField,
 } from "@/common/ui/form-fields";
-import {
-  AvailableTokenBalance,
-  ModalErrorBody,
-  useNearUsdDisplayValue,
-} from "@/modules/core";
+import { ModalErrorBody, useNearUsdDisplayValue } from "@/modules/core";
+import { TokenBalance } from "@/modules/token";
 
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import {
@@ -153,7 +150,7 @@ export const DonationDirectAllocation: React.FC<
             <TextField
               label="Amount"
               {...field}
-              labelExtension={<AvailableTokenBalance tokenId={tokenId} />}
+              labelExtension={<TokenBalance tokenId={tokenId} />}
               inputExtension={
                 <FormField
                   control={form.control}

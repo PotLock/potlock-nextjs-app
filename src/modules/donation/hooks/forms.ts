@@ -8,8 +8,8 @@ import { walletApi } from "@/common/api/near";
 import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
-import { useAvailableBalance } from "@/modules/core";
-import useIsHuman from "@/modules/core/hooks/useIsHuman";
+import { useIsHuman } from "@/modules/core";
+import { useTokenBalance } from "@/modules/token";
 import { dispatch } from "@/store";
 
 import {
@@ -88,7 +88,7 @@ export const useDonationForm = ({
   const values = useWatch(self);
   const amount = values.amount ?? 0;
   const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
-  const { balanceFloat } = useAvailableBalance({ tokenId });
+  const { balanceFloat } = useTokenBalance({ tokenId });
 
   const totalAmountFloat =
     values.allocationStrategy === DonationAllocationStrategyEnum.pot

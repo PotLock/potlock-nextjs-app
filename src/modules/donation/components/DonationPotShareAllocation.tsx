@@ -27,11 +27,11 @@ import {
 } from "@/common/ui/form-fields";
 import {
   AccountOption,
-  AvailableTokenBalance,
   ModalErrorBody,
   TotalTokenValue,
   useNearUsdDisplayValue,
 } from "@/modules/core";
+import { TokenBalance } from "@/modules/token";
 
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
@@ -137,7 +137,7 @@ export const DonationPotShareAllocation: React.FC<
             <TextField
               label="Amount"
               {...field}
-              labelExtension={<AvailableTokenBalance {...{ tokenId }} />}
+              labelExtension={<TokenBalance {...{ tokenId }} />}
               inputExtension={
                 <FormField
                   control={form.control}
@@ -176,7 +176,7 @@ export const DonationPotShareAllocation: React.FC<
           )}
         />
       ) : (
-        <div className="flex justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <span className="prose">{"Total allocated"}</span>
 
@@ -187,7 +187,7 @@ export const DonationPotShareAllocation: React.FC<
             />
           </div>
 
-          <AvailableTokenBalance {...{ tokenId }} />
+          <TokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />
         </div>
       ),
 
