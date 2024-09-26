@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { List, potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/potlock";
 import { getList } from "@/common/contracts/potlock/lists";
 import { AccountId } from "@/common/types";
-import ListAccounts from "@/modules/lists/components/ListAccounts";
+import { ListAccounts } from "@/modules/lists/components/ListAccounts";
+import { ListDetails } from "@/modules/lists/components/ListDetails";
 import { useListDeploymentSuccessRedirect } from "@/modules/lists/hooks/redirects";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
-
-import { ListDetails } from "../../../modules/lists/components/ListDetails";
 
 export interface SavedUsersType {
   accounts?: { account: AccountId; id?: number }[];
@@ -66,16 +65,8 @@ export default function Page() {
     fetchListDetails();
   }, [id]);
 
-  // if (loadingListData) {
-  //   return (
-  //     <div className="p-10">
-  //       <span className="loader"></span>
-  //     </div>
-  //   );
-  // }
-
   return (
-    <div className="container pb-10">
+    <div className="md:px-[2rem] container  px-0   pb-10">
       <ListDetails
         admins={admins}
         listDetails={listDetails}

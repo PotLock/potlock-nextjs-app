@@ -28,9 +28,10 @@ import { AccountOption } from "@/modules/core";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
 
-import SuccessModalCreateList, {
+import {
   ListConfirmationModal,
   ListConfirmationModalProps,
+  SuccessModalCreateList,
 } from "./ListConfirmationModals";
 import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
 
@@ -105,8 +106,8 @@ export const ListFormDetails: React.FC = () => {
         setValue("name", response.name);
         setValue("owner", response.owner);
         setValue("description", response.description);
-        setValue("allowApplications", response.default_registration_status);
-        setValue("approveApplications", response.admin_only_registrations);
+        setValue("allowApplications", response.admin_only_registrations);
+        setValue("approveApplications", response.default_registration_status);
         setAdmins(response.admins);
         setSavedAdmins(
           response.admins?.map((admin: AccountId) => ({ account: admin })),
@@ -137,8 +138,6 @@ export const ListFormDetails: React.FC = () => {
       "list-submit-button"
     )
       return;
-
-    console.log("here");
 
     if (onEditPage) {
       update_list({
@@ -240,8 +239,8 @@ export const ListFormDetails: React.FC = () => {
 
   return (
     <>
-      <div className="mx-auto max-w-[896px] p-6 font-sans">
-        <h2 className="mb-6 text-2xl font-bold">List details</h2>
+      <div className=" md:border md:border-[#DBDBDB] md:rounded-[16px] md:p-10 md:w-[720px] mx-auto my-8 max-w-[896px] p-6 font-sans">
+        <h2 className="mb-6 text-[18px] font-semibold">List Details</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label className="mb-2 block font-semibold text-gray-700">
@@ -265,6 +264,7 @@ export const ListFormDetails: React.FC = () => {
               placeholder="Type description"
               className="w-full rounded-md border px-4 py-2"
               maxLength={250}
+              rows={6}
               {...register("description", { required: true })}
             ></textarea>
             <div className="text-right text-gray-500">
@@ -304,33 +304,61 @@ export const ListFormDetails: React.FC = () => {
               </label>
             </div>
           </div>
-          <h3 className="mb-4 mt-8 text-xl font-semibold">Add Users</h3>
+          <h3 className="mb-4 mt-8 text-xl font-semibold">Permissions</h3>
+          {onEditPage && watch("owner") === walletApi?.accountId && (
+            <div
+              style={{
+                boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+              }}
+              className=" md:items-start md:space-y-0 m-0 !mb-10 flex min-h-[100px] w-full flex-col items-start rounded-[8px] p-0 "
+            >
+              <div className="md:mr-5 flex w-full flex-row items-start justify-between gap-3  p-2 px-4">
+                <span className="mr-4 mt-2 font-semibold text-gray-700">
+                  Owner
+                </span>
+                <div className="flex items-center gap-2 p-2">
+                  <img
+                    src={profileImage || "https://via.placeholder.com/40"}
+                    alt="Owner"
+                    className="md:w-[24px] md:h-[24px] h-7 w-7 rounded-full  "
+                  />
+                  <span className="text-[14px] text-[#292929]">
+                    {onEditPage ? watch("owner") : walletApi?.accountId}
+                  </span>
+                </div>
+              </div>
+              <div className="w-full bg-[#f6f6f7] p-4">
+                <h3 className="mb-2 font-semibold">Transfer Ownership</h3>
+                <div className="flex gap-2">
+                  <Input
+                    onChange={handleChangeTransferOwnerField}
+                    error={transferAccountError}
+                    value={transferAccountField}
+                  />
+                  <button
+                    disabled={!!transferAccountError || !transferAccountField}
+                    type="button"
+                    onClick={() =>
+                      setOpenListConfirmModal({
+                        open: true,
+                        type: "TRANSFER_OWNERSHIP",
+                      })
+                    }
+                    className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    Transfer
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <div
             style={{
-              boxShadow:
-                "rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px",
+              boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
             }}
-            className="md:flex-row md:items-start md:space-y-0 flex flex-col  items-start rounded p-4"
+            className="md:flex-row md:items-start md:space-y-0 flex min-h-[100px] flex-col  items-start rounded-[8px] p-4"
           >
-            <div className="flex items-center">
-              {onEditPage && (
-                <div className="md:mr-5 flex w-full flex-col items-start  gap-3">
-                  <span className="mr-4 mt-2 font-semibold text-gray-700">
-                    Owner
-                  </span>
-                  <div className="flex items-center gap-2 p-2">
-                    <img
-                      src={profileImage || "https://via.placeholder.com/40"}
-                      alt="Owner"
-                      className="md:w-[40px] md:h-[40px] h-7 w-7 rounded-full  "
-                    />
-                    {/* <span className="text-xs text-gray-700">
-                      {onEditPage ? watch("owner") : walletApi?.accountId}
-                    </span> */}
-                  </div>
-                </div>
-              )}
-            </div>
+            <div className="flex items-center"></div>
             <div className="w-full translate-y-1">
               <div className="flex w-full flex-col items-start  gap-3">
                 <div className="flex w-full flex-row justify-between gap-2">
@@ -360,13 +388,13 @@ export const ListFormDetails: React.FC = () => {
               </div>
             </div>
           </div>
+
           {!onEditPage && (
             <div
               style={{
-                boxShadow:
-                  "rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px",
+                boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
               }}
-              className="md:flex-row md:items-start md:space-y-0 flex w-full flex-col items-start rounded p-4"
+              className="md:flex-row md:items-start md:space-y-0 flex min-h-[100px] w-full flex-col items-start rounded-[8px] p-4"
             >
               <div className=" w-full translate-y-1">
                 <div className="flex w-full flex-col items-start  gap-3">
@@ -401,31 +429,7 @@ export const ListFormDetails: React.FC = () => {
               </div>
             </div>
           )}
-          {onEditPage && watch("owner") === walletApi?.accountId && (
-            <div>
-              <h3>Transfer Ownership</h3>
-              <div className="flex gap-2">
-                <Input
-                  onChange={handleChangeTransferOwnerField}
-                  error={transferAccountError}
-                  value={transferAccountField}
-                />
-                <button
-                  disabled={!!transferAccountError || !transferAccountField}
-                  type="button"
-                  onClick={() =>
-                    setOpenListConfirmModal({
-                      open: true,
-                      type: "TRANSFER_OWNERSHIP",
-                    })
-                  }
-                  className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  Transfer
-                </button>
-              </div>
-            </div>
-          )}
+
           <div>
             <h3 className="mb-2 mt-10 text-xl font-semibold">
               Upload list cover image{" "}
@@ -459,16 +463,18 @@ export const ListFormDetails: React.FC = () => {
             </div>
           </div>
           <div
-            className={`md:flex-row flex w-full flex-col justify-between ${"md:justify-end flex-col"} `}
+            className={`md:flex-row md:flex-row flex w-full flex-col-reverse justify-between  ${onEditPage ? "" : "md:justify-end"} `}
           >
-            {/* <button
-              onClick={() =>
-                setOpenListConfirmModal({ open: true, type: "DELETE" })
-              }
-              className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9] ${onEditPage ? "" : "hidden"}`}
-            >
-              Delete List
-            </button> */}
+            {onEditPage && watch("owner") === walletApi?.accountId && (
+              <button
+                onClick={() =>
+                  setOpenListConfirmModal({ open: true, type: "DELETE" })
+                }
+                className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9]`}
+              >
+                Delete List
+              </button>
+            )}
             <div className="md:justify-end md:flex-row md:space-y-0 md:space-x-4 flex flex-col-reverse justify-center">
               <button
                 type="button"

@@ -7,7 +7,7 @@ import { Button } from "@/common/ui/components";
 import { AccountOption, AccountOptionProps } from "@/modules/core";
 
 import {
-  AccessControlAccountsModal,
+  AccessControlListModal,
   AccessControlListModalProps,
 } from "./AccessControlListModal";
 
@@ -55,9 +55,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
 
   return (
     <>
-      {isEditingEnabled && (
-        <AccessControlAccountsModal id={modalId} {...props} />
-      )}
+      {isEditingEnabled && <AccessControlListModal id={modalId} {...props} />}
 
       <div un-flex="~" un-justify="between" un-items="center">
         {showAccountList && accountList}

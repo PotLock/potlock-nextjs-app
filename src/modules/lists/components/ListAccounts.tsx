@@ -111,7 +111,7 @@ export const ListAccounts = ({
   }, [listData]);
 
   return (
-    <div className="md:px-10 md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
+    <div className="md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
       <div className="flex w-full flex-col gap-5">
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
@@ -157,5 +157,3 @@ export const ListAccounts = ({
     </div>
   );
 };
-
-export default ListAccounts;

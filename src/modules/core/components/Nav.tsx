@@ -84,7 +84,7 @@ export const Nav = () => {
     <>
       <nav
         un-w="full"
-        className="max-sm:px-1 md:h-[96px] md:pr-2 container z-50 flex content-between items-center justify-between self-stretch bg-transparent px-[40px] pb-6 pt-6"
+        className="max-sm:px-1 md:h-[96px]  container z-50 flex content-between items-center justify-between self-stretch bg-transparent  pb-6 pt-6"
       >
         {/* Left */}
         <div className="flex">

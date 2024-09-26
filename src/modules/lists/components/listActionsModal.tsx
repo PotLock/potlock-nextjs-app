@@ -15,9 +15,9 @@ import {
 import { dispatch } from "@/store";
 
 import { useListActionsState } from "../models";
-import SuccessModalCreateList from "./ListConfirmationModals";
 import { ListFormModalType } from "../types";
 import DonationSuccess from "./Donation/DonationSuccess";
+import { SuccessModalCreateList } from "./ListConfirmationModals";
 
 type ListActionsModal = {};
 
@@ -39,6 +39,7 @@ export const ListActionsModal = create((_: ListActionsModal) => {
   } = useListActionsState();
 
   const transferType = type === ListFormModalType.TRANSFER_OWNER;
+  const deleteType = type === ListFormModalType.DELETE_LIST;
 
   const content = useMemo(() => {
     return type === ListFormModalType.LIST_DONATION ? (
@@ -67,6 +68,7 @@ export const ListActionsModal = create((_: ListActionsModal) => {
           onClick={() => {
             close();
             if (transferType) push(`/list/${query.id}`);
+            if (deleteType) push(`/list`);
           }}
           variant="brand-outline"
         >
@@ -85,7 +87,11 @@ export const ListActionsModal = create((_: ListActionsModal) => {
       onClose={close}
       listName={data?.name as string}
       isUpdate={type === ListFormModalType.UPDATE_LIST}
-      onViewList={() => push(`/list/${data?.id}`)}
+      onViewList={() =>
+        push(
+          `/list/${data?.id ?? (Array.isArray(data) ? data[0]?.id : undefined)}`,
+        )
+      }
     />
   ) : (
     <Dialog open={self.visible}>
@@ -94,7 +100,7 @@ export const ListActionsModal = create((_: ListActionsModal) => {
         className="max-w-115 "
         onCloseClick={close}
       >
-        {data === undefined ? (
+        {data === undefined && !deleteType ? (
           <DataLoadingPlaceholder
             text="Loading List Changes..."
             className="h-106"

@@ -43,10 +43,12 @@ export const create_list = ({
   admins,
   image_cover_url,
   accounts,
+  allowApplications,
 }: {
   name: string;
   description: string;
   admins: AccountId[];
+  allowApplications?: boolean;
   accounts: { registrant_id: AccountId; status: RegistrationStatus }[];
   image_cover_url?: string | null;
 }) =>
@@ -57,7 +59,7 @@ export const create_list = ({
       admins,
       cover_image_url: image_cover_url ?? null,
       ...(accounts?.length && { registrations: accounts }),
-      admin_only_registrations: false,
+      admin_only_registrations: allowApplications || false,
       default_registration_status: "Approved",
     },
     deposit: floatToYoctoNear(0.021),
@@ -103,7 +105,7 @@ export const getList = (args: GetListInput) =>
     args,
   });
 
-export const registerBatch = (args: ApplyToList) =>
+export const register_batch = (args: ApplyToList) =>
   contractApi.call<typeof args, ApplyToList>("register_batch", {
     deposit: floatToYoctoNear(0.015 * args.registrations.length),
     gas: "300000000000000",

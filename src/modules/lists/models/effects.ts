@@ -23,6 +23,10 @@ export const effects = (dispatch: AppDispatcher) => ({
             type = ListFormModalType.CREATE_LIST;
             break;
           }
+          case "create_list_with_registrations": {
+            type = ListFormModalType.CREATE_LIST;
+            break;
+          }
           case "update_list": {
             type = ListFormModalType.UPDATE_LIST;
             break;
@@ -37,6 +41,10 @@ export const effects = (dispatch: AppDispatcher) => ({
           }
           case "owner_change_owner": {
             type = ListFormModalType.TRANSFER_OWNER;
+            break;
+          }
+          case "delete_list": {
+            type = ListFormModalType.DELETE_LIST;
             break;
           }
           default: {
@@ -56,9 +64,11 @@ export const effects = (dispatch: AppDispatcher) => ({
             }
           }
         } else if (typeof status?.SuccessValue === "string") {
-          //   console.log(JSON.parse(atob(status.SuccessValue)));
           dispatch.listEditor.deploymentSuccess({
-            data: JSON.parse(atob(status.SuccessValue)) as List,
+            data:
+              type === ListFormModalType.DELETE_LIST
+                ? undefined
+                : (JSON.parse(atob(status.SuccessValue)) as List),
             type,
             ...(type === ListFormModalType.TRANSFER_OWNER && {
               accountId: JSON.parse(atob(status.SuccessValue)) as string,

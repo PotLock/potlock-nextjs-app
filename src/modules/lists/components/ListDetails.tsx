@@ -8,13 +8,18 @@ import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 import { walletApi } from "@/common/api/near";
-import { AdminUserIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
-import { List } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import {
-  registerBatch,
+  AdminUserIcon,
+  DeleteListIcon,
+  DotsIcons,
+  PenIcon,
+} from "@/common/assets/svgs";
+import {
+  register_batch,
   remove_upvote,
   upvote,
 } from "@/common/contracts/potlock/lists";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId } from "@/common/types";
 import {
   DropdownMenu,
@@ -23,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
-import { AccessControlAccountsModal } from "@/modules/access-control/components/AccessControlListModal";
+import { AccessControlListModal } from "@/modules/access-control/components/AccessControlListModal";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
 import { SavedUsersType } from "@/pages/list/[id]";
@@ -59,6 +64,7 @@ export const ListDetails = ({
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
   const [registrants, setRegistrants] = useState<AccountId[]>([]);
   const [isUpvoted, setIsUpvoted] = useState(false);
+  const [listOwnerImage, setListOwnerImage] = useState<string>("");
   const [isApplicationSuccessful, setIsApplicationSuccessful] =
     useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
@@ -69,6 +75,16 @@ export const ListDetails = ({
   const adminsModalId = useId();
   const registrantsModalId = useId();
 
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      const { image } = await fetchSocialImages({
+        accountId: listDetails?.owner || "",
+      });
+      setListOwnerImage(image);
+    };
+    if (id) fetchProfileImage();
+  }, [listDetails?.owner]);
+
   const openRegistrantsModal = useCallback(
     () => show(registrantsModalId),
     [registrantsModalId],
@@ -78,8 +94,13 @@ export const ListDetails = ({
     [adminsModalId],
   );
 
-  const { handleDeleteList, handleSaveAdminsSettings, handleRegisterBatch } =
-    useListForm();
+  const {
+    handleDeleteList,
+    handleSaveAdminsSettings,
+    handleRegisterBatch,
+    handleRemoveAdmin,
+    handleUnRegisterAccount,
+  } = useListForm();
 
   useEffect(() => {
     setRegistrants(
@@ -96,7 +117,7 @@ export const ListDetails = ({
   }, [data]);
 
   const applyToListModal = (note: string) => {
-    registerBatch({
+    register_batch({
       list_id: parseInt(id as any) as any,
       notes: note,
       registrations: [
@@ -148,27 +169,34 @@ export const ListDetails = ({
     }
   };
 
+  const NO_IMAGE =
+    "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
+
+  const nameContent = (
+    <>
+      <p className="mb-2 font-lora text-2xl font-semibold">
+        {listDetails.name}
+      </p>
+      <div className="mb-2 flex items-center space-x-2 text-[12px] text-[#656565]">
+        BY{" "}
+        <img
+          className="ml-2 h-4 w-4 rounded-full object-cover"
+          src={listOwnerImage || NO_IMAGE}
+          alt="Owner"
+        />
+        <Link href={`/profile/${listDetails.owner}`}>{listDetails.owner}</Link>
+        <span className="text-gray-500">
+          Created {new Date(listDetails.created_at).toLocaleDateString()}
+        </span>
+      </div>
+    </>
+  );
+
   return (
     <>
-      <div className="md:px-10 md:flex-row flex flex-col-reverse items-start justify-between">
-        <div className="md:w[45%] flex flex-col items-start">
-          <p className="mb-2 font-lora text-2xl font-semibold">
-            {listDetails.name}
-          </p>
-          <div className="mb-2 flex items-center space-x-2 text-[12px] text-[#656565]">
-            BY{" "}
-            <img
-              className="ml-2 h-4 w-4 rounded-full object-cover"
-              src="https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHVzZXJ8ZW58MHx8MHx8fDA%3D"
-              alt="Owner"
-            />
-            <Link href={`/profile/${listDetails.owner}`}>
-              {listDetails.owner}
-            </Link>
-            <span className="text-gray-500">
-              Created {new Date(listDetails.created_at).toLocaleDateString()}
-            </span>
-          </div>
+      <div className="md:flex-row flex flex-col-reverse items-start justify-between">
+        <div className="md:w[45%] md:px-0 flex-col items-start px-[1rem]">
+          <div className="md:flex hidden flex-col">{nameContent}</div>
           <div className="mt-4 w-full pt-0">
             <p className="mb-4 text-lg text-[#525252]">
               {listDetails.description}
@@ -247,7 +275,7 @@ export const ListDetails = ({
                         <AdminUserIcon className="mr-1 max-w-[22px]" />
                         Add/Remove accounts
                       </DropdownMenuItem>
-                      {/* <DropdownMenuItem
+                      <DropdownMenuItem
                         onClick={() =>
                           setIsListConfirmationModalOpen({ open: true })
                         }
@@ -255,7 +283,7 @@ export const ListDetails = ({
                       >
                         <DeleteListIcon className="mr-1 max-w-[22px]" />
                         <span className="text-red-500">Delete List</span>
-                      </DropdownMenuItem> */}
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
@@ -265,6 +293,7 @@ export const ListDetails = ({
         </div>
 
         <div className="md:max-w-[54%] md:mb-0 mb-4 w-full">
+          <div className="md:hidden flex flex-col p-[1rem]">{nameContent}</div>
           <Image
             alt="alt-text"
             src={
@@ -276,7 +305,11 @@ export const ListDetails = ({
             width={500}
             height={300}
           />
-          <div className="m-0 w-full rounded p-0">
+          <div
+            className="md:rounded m-0  w-full p-0"
+            un-w="full"
+            un-flex="~ col"
+          >
             <Image
               src={
                 listDetails.cover_image_url ||
@@ -285,10 +318,10 @@ export const ListDetails = ({
               alt="cover"
               width={500}
               height={300}
-              className="md:h-[320px] h-[180px] w-full rounded-tl-md rounded-tr-md  object-cover"
+              className="md:h-[320px] md:rounded-tl-md md:rounded-tr-md h-[188px] w-full  object-cover"
             />
           </div>
-          <div className="flex h-16 items-center justify-between rounded-bl-md rounded-br-md border border-[#dadbda] p-4">
+          <div className="md:rounded-bl-md md:rounded-br-md flex h-16 items-center justify-between border border-[#dadbda] p-4">
             <p className="text-[14px] font-[500]">
               {listDetails?.total_registrations_count} Accounts
             </p>
@@ -325,12 +358,13 @@ export const ListDetails = ({
         onClose={() => setIsListConfirmationModalOpen({ open: false })}
         onSubmitButton={handleDeleteList}
       />
-      <AccessControlAccountsModal
+      <AccessControlListModal
         id={adminsModalId}
         title="Edit Admin list"
         onSubmit={(admins) => setAdmins(admins)}
         contractAdmins={savedUsers.admins}
         type="ADMIN"
+        handleRemoveAdmin={handleRemoveAdmin}
         value={admins}
         showOnSaveButton={admins.length > 0}
         onSaveSettings={() =>
@@ -344,13 +378,14 @@ export const ListDetails = ({
           )
         }
       />
-      <AccessControlAccountsModal
+      <AccessControlListModal
         id={registrantsModalId}
         title="Edit Accounts"
         onSubmit={(modal) => setRegistrants(modal)}
         type="ACCOUNT"
         value={registrants ?? []}
         contractAdmins={savedUsers.accounts}
+        handleUnRegisterAccount={handleUnRegisterAccount}
         showOnSaveButton={registrants?.length > 0}
         countText="Account(s)"
         onSaveSettings={() =>
@@ -368,5 +403,3 @@ export const ListDetails = ({
     </>
   );
 };
-
-export default ListDetails;

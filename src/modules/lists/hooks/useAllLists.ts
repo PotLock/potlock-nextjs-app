@@ -59,7 +59,7 @@ export const useAllLists = (
 
   const buttons = [
     {
-      label: "All List",
+      label: "All Lists",
       fetchFunction: fetchAllLists,
       type: "All Lists",
     },

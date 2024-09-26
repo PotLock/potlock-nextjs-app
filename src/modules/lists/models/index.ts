@@ -53,7 +53,11 @@ export const listEditorModel = createModel<AppModel>()({
         data,
         accountId,
         type,
-      }: { data: List; accountId?: AccountId; type?: ListFormModalType },
+      }: {
+        data: List | undefined;
+        accountId?: AccountId;
+        type?: ListFormModalType;
+      },
     ) =>
       handleList(state, {
         finalOutcome: { data, accountId, error: null },

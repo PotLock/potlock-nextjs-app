@@ -144,20 +144,6 @@ const AllLists = ({
               {filteredRegistrations.length}
             </span>
           </div>
-          <div className="md:gap-1 flex items-center gap-3">
-            {buttons.map(
-              ({ label, fetchFunction, type, condition = true }) =>
-                condition && (
-                  <button
-                    key={type}
-                    className={`border px-3 py-1 transition-all duration-200 ease-in-out ${currentListType === type ? "rounded-sm border-[#F8D3B0] bg-[#fff6ee]  text-[#EA6A25]" : "border-[#F7F7F7] bg-[#f6f6f7] text-black"}`}
-                    onClick={fetchFunction}
-                  >
-                    {label}
-                  </button>
-                ),
-            )}
-          </div>
         </div>
         <div className="flex w-full items-center gap-4">
           <SearchBar
@@ -166,6 +152,20 @@ const AllLists = ({
           />
 
           <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
+        </div>
+        <div className="md:gap-1 flex items-center gap-3">
+          {buttons.map(
+            ({ label, fetchFunction, type, condition = true }) =>
+              condition && (
+                <button
+                  key={type}
+                  className={`border px-3 py-1 transition-all duration-200 ease-in-out ${currentListType === type ? "rounded-sm border-[#F8D3B0] bg-[#fff6ee]  text-[#EA6A25]" : "border-[#F7F7F7] bg-[#f6f6f7] text-black"}`}
+                  onClick={fetchFunction}
+                >
+                  {label}
+                </button>
+              ),
+          )}
         </div>
       </div>
       <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8 pb-10">

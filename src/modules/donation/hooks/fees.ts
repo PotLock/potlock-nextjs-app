@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { Pot, potlock } from "@/common/api/potlock";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 

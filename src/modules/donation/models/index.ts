@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { createModel } from "@rematch/core";
 
 import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";

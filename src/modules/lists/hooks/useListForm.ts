@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import {
   add_admins_to_list,
   delete_list,
-  registerBatch,
+  register_batch,
   remove_admins_from_list,
   transfer_list_ownership,
   unregister_from_list,
@@ -49,7 +49,7 @@ export const useListForm = () => {
   };
 
   const handleRegisterBatch = (list_id: string, registrants: string[]) => {
-    registerBatch({
+    register_batch({
       list_id: parseInt(list_id as any) as any,
       registrations: registrants.map((data: string) => ({
         registrant_id: data,

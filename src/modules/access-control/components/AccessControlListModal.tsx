@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
 import { object } from "zod";
 
-import SuccessRedIcon from "@/common/assets/svgs/success-red-icon";
 import { AccountId, ByAccountId } from "@/common/types";
 import {
   Button,
@@ -24,7 +23,6 @@ import {
 import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
 import { AccountOption, validAccountId } from "@/modules/core";
-import { useListForm } from "@/modules/lists/hooks/useListForm";
 
 export type AccessControlListModalProps = {
   title: string;
@@ -34,18 +32,22 @@ export type AccessControlListModalProps = {
   showOnSaveButton?: boolean;
   countText?: string;
   type?: "ADMIN" | "ACCOUNT";
+  handleRemoveAdmin?: (accountIds: AccountId[]) => void;
+  handleUnRegisterAccount?: (accountId: number) => void;
   contractAdmins?:
     | { account: AccountId }[]
     | { account: AccountId; id?: number }[];
 };
 
-export const AccessControlAccountsModal = create(
+export const AccessControlListModal = create(
   ({
     title,
     value: accountIds,
     onSubmit,
     showOnSaveButton,
     onSaveSettings,
+    handleRemoveAdmin,
+    handleUnRegisterAccount,
     countText = "Admins",
     contractAdmins,
     type,
@@ -56,8 +58,6 @@ export const AccessControlAccountsModal = create(
       self.hide();
       self.remove();
     }, [self]);
-
-    const { handleRemoveAdmin, handleUnRegisterAccount } = useListForm();
 
     const [selectedAccounts, setSelectedAccounts] = useState<AccountId[]>([]);
 
@@ -228,26 +228,34 @@ export const AccessControlAccountsModal = create(
                       }
                       secondaryAction={
                         <Button
-                          onClick={
-                            !contractAdmins?.some(
-                              (admin) => admin.account === accountId,
-                            ) // Use a callback function
-                              ? handleAccountRemove(accountId)
-                              : type === "ACCOUNT"
-                                ? () =>
-                                    handleUnRegisterAccount(
-                                      getAdminIdByAccountId(
-                                        contractAdmins,
-                                        accountId,
-                                      ),
-                                    )
-                                : () => handleRemoveAdmin([accountId])
-                          }
+                          onClick={() => {
+                            const isAdmin = contractAdmins?.some(
+                              (admin) => admin?.account === accountId,
+                            );
+
+                            if (!isAdmin) {
+                              return handleAccountRemove(accountId);
+                            }
+
+                            if (type === "ACCOUNT") {
+                              if (handleUnRegisterAccount) {
+                                const adminId = getAdminIdByAccountId(
+                                  contractAdmins,
+                                  accountId,
+                                );
+                                return handleUnRegisterAccount(adminId);
+                              }
+                              return;
+                            }
+
+                            if (handleRemoveAdmin) {
+                              return handleRemoveAdmin([accountId]);
+                            }
+                          }}
                           variant="standard-plain"
                           className="ml-auto pe-0"
                         >
                           <MdDeleteOutline width={18} height={18} />
-
                           <span className="prose font-500 line-height-none">
                             Remove
                           </span>
