@@ -11,7 +11,6 @@ import {
 } from "../types";
 
 export const potDonationInputsToBatchDonationDraft = ({
-  amount,
   potAccountId,
   potShareAllocationStrategy,
   potDonationShares = [],
@@ -41,9 +40,7 @@ export const potDonationInputsToBatchDonationDraft = ({
                   ...(bypassChefFee ? { custom_chef_fee_basis_points: 0 } : {}),
                 },
 
-                amountYoctoNear: isDistributionManual
-                  ? floatToYoctoNear(donationAmount)
-                  : floatToYoctoNear(amount),
+                amountYoctoNear: floatToYoctoNear(donationAmount),
               },
             ]),
 
