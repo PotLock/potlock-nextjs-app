@@ -4,7 +4,6 @@ export { default as Alert } from "./components/Alert";
 export * from "./components/ModalErrorBody";
 export * from "./components/Nav";
 export * from "./components/RuntimeErrorAlert";
-export * from "../token/components/TokenIcon";
 export * from "./components/UserDropdown";
 export * from "./hooks";
 export * from "./hooks/price";

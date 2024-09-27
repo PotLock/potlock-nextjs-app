@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
-import { TokenIcon } from "@/modules/core";
+import { TokenIcon } from "@/modules/token";
 
 import { DonationBreakdown } from "../types";
 
