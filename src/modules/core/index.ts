@@ -5,7 +5,6 @@ export * from "./components/ModalErrorBody";
 export * from "./components/Nav";
 export * from "./components/RuntimeErrorAlert";
 export * from "../token/components/TokenIcon";
-export * from "../token/components/TotalTokenValue";
 export * from "./components/UserDropdown";
 export * from "./hooks";
 export * from "./hooks/price";

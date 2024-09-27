@@ -28,10 +28,9 @@ import {
 import {
   AccountOption,
   ModalErrorBody,
-  TotalTokenValue,
   useNearUsdDisplayValue,
 } from "@/modules/core";
-import { TokenBalance } from "@/modules/token";
+import { TokenBalance, TokenTotalValue } from "@/modules/token";
 
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
@@ -181,7 +180,7 @@ export const DonationPotShareAllocation: React.FC<
           <div className="flex flex-col">
             <span className="prose">{"Total allocated"}</span>
 
-            <TotalTokenValue
+            <TokenTotalValue
               textOnly
               amountFloat={totalAmountFloat}
               {...{ tokenId }}

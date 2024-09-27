@@ -18,8 +18,9 @@ import {
   LabeledIcon,
   Skeleton,
 } from "@/common/ui/components";
-import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
+import { ModalErrorBody } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
+import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
@@ -142,7 +143,7 @@ export const DonationSuccess = ({
         {isLoading ? (
           <Skeleton className="h-7 w-44" />
         ) : (
-          <TotalTokenValue
+          <TokenTotalValue
             amountBigString={result.total_amount}
             {...{ tokenId }}
           />

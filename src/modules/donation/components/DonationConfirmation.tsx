@@ -18,8 +18,8 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { TotalTokenValue } from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
+import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { useDonationBreakdown } from "../hooks";
@@ -74,7 +74,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             {"Total amount"}
           </span>
 
-          <TotalTokenValue
+          <TokenTotalValue
             tokenId={inputs.tokenId}
             amountFloat={totalAmountFloat}
           />

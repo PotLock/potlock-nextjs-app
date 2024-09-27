@@ -9,20 +9,20 @@ import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
 import { TokenIcon } from "./TokenIcon";
-import { useNearUsdDisplayValue } from "../../core/hooks/price";
+import { useNearUsdDisplayValue } from "../../core";
 
-export type TotalTokenValueProps = ByTokenId &
+export type TokenTotalValueProps = ByTokenId &
   ({ amountFloat: number } | { amountBigString: string }) & {
     textOnly?: boolean;
     classNames?: { root?: string; amount?: string };
   };
 
-export const TotalTokenValue = ({
+export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   tokenId,
   textOnly = false,
   classNames,
   ...props
-}: TotalTokenValueProps) => {
+}) => {
   const { isLoading: isTokenMetadataLoading, data: tokenMetadata } =
     pagoda.useTokenMetadata({ tokenId });
 
