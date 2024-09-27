@@ -11,4 +11,4 @@ export const safePositiveNumber = preprocess(
 );
 
 export const intoShareValue = (amount: number, numOfShares: number) =>
-  (amount ?? 0) / (numOfShares > 0 ? numOfShares : 1);
+  parseFloat(((amount ?? 0) / (numOfShares > 0 ? numOfShares : 1)).toFixed(4));

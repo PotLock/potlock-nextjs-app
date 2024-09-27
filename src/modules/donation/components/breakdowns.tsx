@@ -66,7 +66,7 @@ export const DonationSummaryBreakdown: React.FC<
 
       {
         label: "On-Chain Storage",
-        amount: "< 0.01",
+        amount: "< 0.00001",
         tokenId: NEAR_TOKEN_DENOM,
       },
     ],
