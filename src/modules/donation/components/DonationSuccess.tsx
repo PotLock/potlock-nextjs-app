@@ -21,7 +21,7 @@ import {
 import { ModalErrorBody, TotalTokenValue } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 
-import { DonationBreakdown } from "./DonationBreakdown";
+import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { useDonationBreakdown } from "../hooks";
 import { DonationInputs } from "../models";
@@ -81,7 +81,7 @@ export const DonationSuccess = ({
 
   const breakdown = useDonationBreakdown({
     pot,
-    amount: totalAmountFloat,
+    totalAmountFloat,
     referrerAccountId: result?.referrer_id ?? undefined,
     protocolFeeFinalAmount: protocolFeeAmountFloat,
     referralFeeFinalAmount: referralFeeFinalAmountFloat,
@@ -182,7 +182,7 @@ export const DonationSuccess = ({
       {isLoading ? (
         <Skeleton className="h-28" />
       ) : (
-        <DonationBreakdown data={breakdown} {...{ tokenId }} />
+        <DonationSummaryBreakdown data={breakdown} {...{ tokenId }} />
       )}
 
       {pot && <DonationVerificationWarning />}

@@ -2,42 +2,30 @@ import { Pot, potlock } from "@/common/api/potlock";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 
 import { DonationInputs } from "../models";
+import { DonationBreakdown, WithTotalAmount } from "../types";
 import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
-export type DonationPlanProps = Pick<
-  DonationInputs,
-  "amount" | "referrerAccountId"
-> &
+export type DonationPlanProps = WithTotalAmount &
+  Pick<DonationInputs, "referrerAccountId"> &
   Partial<Pick<DonationInputs, "bypassProtocolFee" | "bypassChefFee">> & {
     pot?: Pot;
     protocolFeeFinalAmount?: number;
     referralFeeFinalAmount?: number;
   };
 
-export type DonationPlanBreakdown = {
-  projectAllocationAmount: number;
-  projectAllocationPercent: number;
-  protocolFeeAmount: number;
-  protocolFeePercent: number;
-  protocolFeeRecipientAccountId?: string;
-  referralFeeAmount: number;
-  referralFeePercent: number;
-  chefFeeAmount: number;
-  chefFeePercent: number;
-};
-
 export const useDonationBreakdown = ({
+  totalAmountFloat,
   pot,
-  amount,
   referrerAccountId,
   protocolFeeFinalAmount,
   referralFeeFinalAmount,
   bypassProtocolFee = false,
   bypassChefFee = false,
-}: DonationPlanProps): DonationPlanBreakdown => {
+}: DonationPlanProps): DonationBreakdown => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
 
-  // TODO: Recalculate basis points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
+  // TODO: (non-critical)
+  //? Recalculate basis points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
 
   /**
    *? Protocol fee:
@@ -52,7 +40,7 @@ export const useDonationBreakdown = ({
 
   const protocolFeeAmount =
     protocolFeeFinalAmount ??
-    (amount * protocolFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
+    (totalAmountFloat * protocolFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
   const protocolFeePercent = donationFeeBasisPointsToPercents(
     protocolFeeInitialBasisPoints,
@@ -78,7 +66,7 @@ export const useDonationBreakdown = ({
 
   const referralFeeAmount =
     referralFeeFinalAmount ??
-    (amount * referralFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
+    (totalAmountFloat * referralFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
   const referralFeePercent = donationFeeBasisPointsToPercents(
     referralFeeBasisPoints,
@@ -90,7 +78,9 @@ export const useDonationBreakdown = ({
 
   const chefFeeInitialBasisPoints = pot?.chef_fee_basis_points ?? 0;
   const chefFeeBasisPoints = bypassChefFee ? 0 : chefFeeInitialBasisPoints;
-  const chefFeeAmount = (amount * chefFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
+
+  const chefFeeAmount =
+    (totalAmountFloat * chefFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
   const chefFeePercent = donationFeeBasisPointsToPercents(
     chefFeeInitialBasisPoints,
@@ -107,7 +97,7 @@ export const useDonationBreakdown = ({
     referralFeeBasisPoints;
 
   const projectAllocationAmount =
-    (amount * projectAllocationBasisPoints) / TOTAL_FEE_BASIS_POINTS;
+    (totalAmountFloat * projectAllocationBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
   const projectAllocationPercent = donationFeeBasisPointsToPercents(
     projectAllocationBasisPoints,

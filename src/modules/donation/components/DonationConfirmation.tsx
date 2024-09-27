@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 
 import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
+import { pick } from "remeda";
 
 import { potlock } from "@/common/api/potlock";
 import {
@@ -20,7 +21,7 @@ import { cn } from "@/common/ui/utils";
 import { TotalTokenValue } from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
 
-import { DonationBreakdown } from "./DonationBreakdown";
+import { DonationSummaryBreakdown } from "./breakdowns";
 import { useDonationBreakdown } from "../hooks";
 import { DonationInputs } from "../models";
 import { WithTotalAmount } from "../types";
@@ -38,9 +39,14 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   const { data: pot } = potlock.usePot({ potId: inputs.potAccountId });
 
   const breakdown = useDonationBreakdown({
-    ...inputs,
+    ...pick(inputs, [
+      "referrerAccountId",
+      "bypassProtocolFee",
+      "bypassChefFee",
+    ]),
+
     pot,
-    amount: totalAmountFloat,
+    totalAmountFloat,
   });
 
   const onAddNoteClick = useCallback(() => {
@@ -74,7 +80,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           />
         </div>
 
-        <DonationBreakdown tokenId={inputs.tokenId} data={breakdown} />
+        <DonationSummaryBreakdown tokenId={inputs.tokenId} data={breakdown} />
 
         <div className="flex flex-col gap-2">
           {protocolFeePercent > 0 && (

@@ -51,6 +51,18 @@ export interface WithTotalAmount {
   totalAmountFloat: number;
 }
 
+export type DonationBreakdown = {
+  projectAllocationAmount: number;
+  projectAllocationPercent: number;
+  protocolFeeAmount: number;
+  protocolFeePercent: number;
+  protocolFeeRecipientAccountId?: string;
+  referralFeeAmount: number;
+  referralFeePercent: number;
+  chefFeeAmount: number;
+  chefFeePercent: number;
+};
+
 export type DonationDirectBatchCallDraft = {
   entries: DirectFTBatchDonationItem[] | DirectBatchDonationItem[];
 };
