@@ -9,8 +9,7 @@ import {
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
-import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { DirectDonation, PotDonation } from "@/common/contracts/potlock";
 import { bigStringToFloat, truncate } from "@/common/lib";
 import {
   Button,
@@ -24,7 +23,7 @@ import routesPath from "@/modules/core/routes";
 
 import { DonationBreakdown } from "./DonationBreakdown";
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
-import { useDonationFees } from "../hooks";
+import { useDonationBreakdown } from "../hooks";
 import { DonationInputs } from "../models";
 import { DonationState } from "../types";
 
@@ -80,7 +79,7 @@ export const DonationSuccess = ({
     tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
   );
 
-  const fees = useDonationFees({
+  const breakdown = useDonationBreakdown({
     pot,
     amount: totalAmountFloat,
     referrerAccountId: result?.referrer_id ?? undefined,
@@ -183,7 +182,7 @@ export const DonationSuccess = ({
       {isLoading ? (
         <Skeleton className="h-28" />
       ) : (
-        <DonationBreakdown {...{ fees, tokenId }} />
+        <DonationBreakdown data={breakdown} {...{ tokenId }} />
       )}
 
       {pot && <DonationVerificationWarning />}

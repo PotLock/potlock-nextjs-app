@@ -1,4 +1,4 @@
-import { cn } from "../utils";
+import { cn } from "../../utils";
 
 export type LabeledIconProps = {
   caption: string | number;
@@ -29,7 +29,7 @@ export const LabeledIcon = ({
     >
       {positioning === "icon-text" && children}
 
-      <span un-line-height="none" className={cn("mt-0.6", classNames?.caption)}>
+      <span un-line-height="none" className={cn("mt-0.8", classNames?.caption)}>
         {caption}
       </span>
 

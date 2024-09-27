@@ -47,6 +47,10 @@ export type DonationState = {
   finalOutcome?: DirectDonation | PotDonation;
 };
 
+export interface WithTotalAmount {
+  totalAmountFloat: number;
+}
+
 export type DonationDirectBatchCallDraft = {
   entries: DirectFTBatchDonationItem[] | DirectBatchDonationItem[];
 };

@@ -8,7 +8,7 @@ import { intoShareValue } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 
 import { DonationInputs } from "../models";
-import { DonationShareAllocationStrategyEnum } from "../types";
+import { DonationShareAllocationStrategyEnum, WithTotalAmount } from "../types";
 
 export type DonationPotShareAllocationDeps = {
   form: UseFormReturn<DonationInputs>;
@@ -16,7 +16,7 @@ export type DonationPotShareAllocationDeps = {
 
 export const useDonationEvenShareAllocation = ({
   form,
-}: DonationPotShareAllocationDeps & { totalAmountFloat: number }) => {
+}: WithTotalAmount & DonationPotShareAllocationDeps) => {
   const [amount, potShareAllocationStrategy, potDonationShares = []] =
     form.watch(["amount", "potShareAllocationStrategy", "potDonationShares"]);
 

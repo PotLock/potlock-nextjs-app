@@ -4,7 +4,7 @@ import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 import { DonationInputs } from "../models";
 import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
-export type DonationFeeInputs = Pick<
+export type DonationPlanProps = Pick<
   DonationInputs,
   "amount" | "referrerAccountId"
 > &
@@ -14,7 +14,7 @@ export type DonationFeeInputs = Pick<
     referralFeeFinalAmount?: number;
   };
 
-export type DonationFees = {
+export type DonationPlanBreakdown = {
   projectAllocationAmount: number;
   projectAllocationPercent: number;
   protocolFeeAmount: number;
@@ -26,7 +26,7 @@ export type DonationFees = {
   chefFeePercent: number;
 };
 
-export const useDonationFees = ({
+export const useDonationBreakdown = ({
   pot,
   amount,
   referrerAccountId,
@@ -34,7 +34,7 @@ export const useDonationFees = ({
   referralFeeFinalAmount,
   bypassProtocolFee = false,
   bypassChefFee = false,
-}: DonationFeeInputs): DonationFees => {
+}: DonationPlanProps): DonationPlanBreakdown => {
   const { data: potlockDonationConfig } = potlock.useDonationConfig();
 
   // TODO: Recalculate basis points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided

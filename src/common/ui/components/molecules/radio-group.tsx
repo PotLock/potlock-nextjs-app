@@ -3,9 +3,9 @@ import { forwardRef } from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Circle } from "lucide-react";
 
-import { Label } from "./label";
-import { Skeleton } from "./skeleton";
-import { cn } from "../utils";
+import { cn } from "../../utils";
+import { Label } from "../atoms/label";
+import { Skeleton } from "../atoms/skeleton";
 
 export const RadioGroup = forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
@@ -42,19 +42,13 @@ export const RadioGroupItem = forwardRef<
     <Skeleton className="h-12.5 w-full" />
   ) : (
     <div
-      className={cn({
+      className={cn("border-1 flex items-center gap-2 rounded-md p-4", {
         "border-none bg-neutral-50": disabled,
         "border-neutral-200": !disabled && !checked,
 
         "color-[var(--primary-600)] border-[var(--primary-600)]":
           !disabled && checked,
       })}
-      un-border="1"
-      un-rounded="md"
-      un-flex="~"
-      un-items="center"
-      un-gap="2"
-      un-p="4"
     >
       <RadioGroupPrimitive.Item
         ref={ref}

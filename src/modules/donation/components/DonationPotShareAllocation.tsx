@@ -43,10 +43,11 @@ import {
   DonationAllocationInputs,
   donationPotDistributionStrategies,
 } from "../models";
-import { DonationShareAllocationStrategyEnum } from "../types";
+import { DonationShareAllocationStrategyEnum, WithTotalAmount } from "../types";
 
-export type DonationPotShareAllocationProps = ByPotId &
-  DonationAllocationInputs & { totalAmountFloat: number };
+export type DonationPotShareAllocationProps = DonationAllocationInputs &
+  ByPotId &
+  WithTotalAmount;
 
 export const DonationPotShareAllocation: React.FC<
   DonationPotShareAllocationProps

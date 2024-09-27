@@ -3,14 +3,14 @@ import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
 import { TokenIcon } from "@/modules/core";
 
-import { DonationFees } from "../hooks";
+import { DonationPlanBreakdown } from "../hooks";
 
 export type DonationBreakdownProps = ByTokenId & {
-  fees: DonationFees;
+  data: DonationPlanBreakdown;
 };
 
 export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
-  fees: {
+  data: {
     projectAllocationAmount,
     projectAllocationPercent,
     protocolFeeAmount,
@@ -23,7 +23,7 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
 
   ...props
 }) => {
-  const totalFees = [
+  const entries = [
     {
       label: "Project allocation",
       amount: projectAllocationAmount,
@@ -61,16 +61,11 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
   return (
     <div un-flex="~ col" un-gap="2" un-w="full">
       <span className="prose" un-text="neutral-600" un-font="600">
-        Breakdown
+        {"Breakdown"}
       </span>
 
-      <div
-        un-flex="~ col"
-        un-gap="3"
-        un-p="4"
-        un-border="~ neutral-300 rounded-lg"
-      >
-        {totalFees.map(
+      <div className="border-1 flex flex-col gap-3 rounded-lg border-neutral-300 p-4">
+        {entries.map(
           ({
             display = true,
             label,
@@ -79,8 +74,11 @@ export const DonationBreakdown: React.FC<DonationBreakdownProps> = ({
             tokenId = props.tokenId,
           }) =>
             display && (
-              <div un-flex="~" un-justify="between" un-gap="4" key={label}>
-                <span className="prose line-height-none" un-mt="0.6">
+              <div
+                className="flex h-5 items-center justify-between gap-4"
+                key={label}
+              >
+                <span className="prose mt-0.6">
                   {label + (percentage ? ` (${percentage}%)` : "")}
                 </span>
 

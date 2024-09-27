@@ -1,4 +1,4 @@
-import { createElement as h, useMemo } from "react";
+import { useMemo } from "react";
 
 import { useRouteQuery } from "@/common/lib";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
@@ -63,21 +63,28 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     const staticSuccessProps = { form, result, transactionHash, closeModal };
 
     switch (currentStep) {
-      case "allocation":
-        return "accountId" in props
-          ? h(DonationDirectAllocation, {
-              matchingPots,
-              ...staticAllocationProps,
-              ...props,
-            })
-          : h(DonationPotShareAllocation, {
-              totalAmountFloat,
-              ...staticAllocationProps,
-              ...props,
-            });
+      case "allocation": {
+        if ("accountId" in props) {
+          const allocationProps = {
+            matchingPots,
+            ...staticAllocationProps,
+            ...props,
+          };
+
+          return <DonationDirectAllocation {...allocationProps} />;
+        } else {
+          const allocationProps = {
+            totalAmountFloat,
+            ...staticAllocationProps,
+            ...props,
+          };
+
+          return <DonationPotShareAllocation {...allocationProps} />;
+        }
+      }
 
       case "confirmation":
-        return <DonationConfirmation {...{ form }} />;
+        return <DonationConfirmation {...{ form, totalAmountFloat }} />;
 
       case "success":
         return <DonationSuccess {...staticSuccessProps} />;

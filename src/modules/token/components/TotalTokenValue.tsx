@@ -41,7 +41,7 @@ export const TotalTokenValue = ({
 
   return (
     <div className={cn("flex items-center gap-2", classNames?.root)}>
-      {!textOnly && <TokenIcon {...{ tokenId }} />}
+      {!textOnly && <TokenIcon size="medium" {...{ tokenId }} />}
 
       {isTokenMetadataLoading ? (
         <Skeleton className="" />
@@ -57,9 +57,8 @@ export const TotalTokenValue = ({
 
       {totalAmountUsdDisplayValue && (
         <span
-          className="prose line-height-none"
+          className="prose line-height-none mt-0.7 text-xl text-neutral-600"
           un-mt="0.7"
-          un-text="gray-500 xl"
         >
           {totalAmountUsdDisplayValue}
         </span>

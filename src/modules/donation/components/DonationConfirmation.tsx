@@ -21,20 +21,27 @@ import { TotalTokenValue } from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
 
 import { DonationBreakdown } from "./DonationBreakdown";
-import { useDonationFees } from "../hooks";
+import { useDonationBreakdown } from "../hooks";
 import { DonationInputs } from "../models";
+import { WithTotalAmount } from "../types";
 
-export type DonationConfirmationProps = {
+export type DonationConfirmationProps = WithTotalAmount & {
   form: UseFormReturn<DonationInputs>;
 };
 
 export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
+  totalAmountFloat,
 }) => {
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
   const inputs = form.watch();
   const { data: pot } = potlock.usePot({ potId: inputs.potAccountId });
-  const fees = useDonationFees({ ...inputs, pot });
+
+  const breakdown = useDonationBreakdown({
+    ...inputs,
+    pot,
+    amount: totalAmountFloat,
+  });
 
   const onAddNoteClick = useCallback(() => {
     setIsMessageFieldVisible(true);
@@ -46,14 +53,8 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     form.resetField("message");
   }, [form]);
 
-  const totalAmount =
-    inputs.potDonationShares?.reduce(
-      (total, { amount }) => total + (amount ?? 0.0),
-      0.0,
-    ) ?? inputs.amount;
-
   const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
-    fees;
+    breakdown;
 
   return (
     <>
@@ -67,10 +68,13 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             {"Total amount"}
           </span>
 
-          <TotalTokenValue tokenId={inputs.tokenId} amountFloat={totalAmount} />
+          <TotalTokenValue
+            tokenId={inputs.tokenId}
+            amountFloat={totalAmountFloat}
+          />
         </div>
 
-        <DonationBreakdown tokenId={inputs.tokenId} {...{ fees }} />
+        <DonationBreakdown tokenId={inputs.tokenId} data={breakdown} />
 
         <div className="flex flex-col gap-2">
           {protocolFeePercent > 0 && (

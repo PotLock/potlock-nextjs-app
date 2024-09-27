@@ -93,9 +93,9 @@ export const useDonationForm = ({
   const totalAmountFloat =
     values.allocationStrategy === DonationAllocationStrategyEnum.pot
       ? values.potDonationShares?.reduce(
-          (total, { amount }) => total + (amount ?? 0),
-          0,
-        ) ?? 0
+          (total, { amount }) => total + (amount ?? 0.0),
+          0.0,
+        ) ?? 0.0
       : amount;
 
   const hasChanges = Object.keys(values).some(
