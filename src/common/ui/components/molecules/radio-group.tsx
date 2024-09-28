@@ -1,7 +1,8 @@
 import { forwardRef } from "react";
 
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
-import { Circle } from "lucide-react";
+
+import { RadioActiveIcon, RadioInactiveIcon } from "@/common/assets/svgs";
 
 import { cn } from "../../utils";
 import { Label } from "../atoms/label";
@@ -41,48 +42,61 @@ export const RadioGroupItem = forwardRef<
   return isLoading ? (
     <Skeleton className="h-12.5 w-full" />
   ) : (
-    <div
-      className={cn("border-1 flex items-center gap-2 rounded-md p-4", {
-        "border-none bg-neutral-50": disabled,
-        "border-neutral-200": !disabled && !checked,
+    <RadioGroupPrimitive.Item
+      ref={ref}
+      className={cn(
+        "border-1 rounded-md text-current ring-offset-background",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
 
-        "color-[var(--primary-600)] border-[var(--primary-600)]":
-          !disabled && checked,
-      })}
+        {
+          "border-none bg-neutral-50": disabled,
+          "border-neutral-200": !disabled && !checked,
+
+          "color-[var(--primary-600)] border-[var(--primary-600)]":
+            !disabled && checked,
+        },
+
+        className,
+      )}
+      {...inputProps}
     >
-      <RadioGroupPrimitive.Item
-        ref={ref}
-        className={cn(
-          "aspect-square h-5 w-5 rounded-full border border-inherit text-current",
-          "ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className,
-        )}
-        {...inputProps}
-      >
+      <div className="flex items-center gap-2 p-4">
         <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-          <Circle className="h-3.5 w-3.5 fill-current text-current" />
+          <RadioActiveIcon
+            className="h-6 w-6"
+            width={24}
+            height={24}
+            style={{ display: checked ? undefined : "none" }}
+          />
+
+          <RadioInactiveIcon
+            className="h-6 w-6"
+            width={24}
+            height={24}
+            style={{ display: checked ? "none" : undefined }}
+          />
         </RadioGroupPrimitive.Indicator>
-      </RadioGroupPrimitive.Item>
 
-      <Label
-        htmlFor={props.id}
-        className={cn("flex gap-2 text-sm", { "text-neutral-400": disabled })}
-      >
-        <span className="font-500 text-current">{label}</span>
+        <Label
+          htmlFor={props.id}
+          className={cn("flex gap-2 text-sm", { "text-neutral-400": disabled })}
+        >
+          <span className="font-500 text-current">{label}</span>
 
-        {hint && (
-          <span
-            className={cn("font-500", {
-              "text-neutral-400": disabled,
-              "text-neutral-500": !disabled,
-            })}
-          >
-            {hint}
-          </span>
-        )}
-      </Label>
-    </div>
+          {hint && (
+            <span
+              className={cn("font-500", {
+                "text-neutral-400": disabled,
+                "text-neutral-500": !disabled,
+              })}
+            >
+              {hint}
+            </span>
+          )}
+        </Label>
+      </div>
+    </RadioGroupPrimitive.Item>
   );
 });
 
