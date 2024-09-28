@@ -30,7 +30,7 @@ export default function Document() {
         <style>{"html.dark {background: #000;}"}</style>
       </Head>
 
-      <body>
+      <body className="text-foreground">
         <Main />
         <NextScript />
       </body>

@@ -63,20 +63,15 @@ export const RadioGroupItem = forwardRef<
     >
       <div className="flex items-center gap-2 p-4">
         <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-          <RadioActiveIcon
-            className="h-6 w-6"
-            width={24}
-            height={24}
-            style={{ display: checked ? undefined : "none" }}
-          />
-
-          <RadioInactiveIcon
-            className="h-6 w-6"
-            width={24}
-            height={24}
-            style={{ display: checked ? "none" : undefined }}
-          />
+          <RadioActiveIcon className="h-6 w-6" width={24} height={24} />
         </RadioGroupPrimitive.Indicator>
+
+        <RadioInactiveIcon
+          className="h-6 w-6"
+          width={24}
+          height={24}
+          style={{ display: checked ? "none" : undefined }}
+        />
 
         <Label
           htmlFor={props.id}
