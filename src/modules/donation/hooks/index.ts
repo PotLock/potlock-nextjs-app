@@ -10,7 +10,6 @@ import { DonationModal } from "../components/DonationModal";
 import { DonationAllocationKey } from "../types";
 
 export * from "./allocation";
-export * from "./breakdown";
 export * from "./forms";
 
 export const useDonation = (props: DonationAllocationKey) => {

@@ -22,7 +22,7 @@ import { ProfileLink } from "@/modules/profile";
 import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
-import { useDonationBreakdown } from "../hooks";
+import { useDonationAllocationBreakdown } from "../hooks";
 import { DonationInputs } from "../models";
 import { WithTotalAmount } from "../types";
 
@@ -38,7 +38,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   const inputs = form.watch();
   const { data: pot } = potlock.usePot({ potId: inputs.potAccountId });
 
-  const breakdown = useDonationBreakdown({
+  const breakdown = useDonationAllocationBreakdown({
     ...pick(inputs, [
       "referrerAccountId",
       "bypassProtocolFee",

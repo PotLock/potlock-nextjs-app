@@ -24,7 +24,7 @@ import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
-import { useDonationBreakdown } from "../hooks";
+import { useDonationAllocationBreakdown } from "../hooks";
 import { DonationInputs } from "../models";
 import { DonationState } from "../types";
 
@@ -80,7 +80,7 @@ export const DonationSuccess = ({
     tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
   );
 
-  const breakdown = useDonationBreakdown({
+  const breakdown = useDonationAllocationBreakdown({
     pot,
     totalAmountFloat,
     referrerAccountId: result?.referrer_id ?? undefined,

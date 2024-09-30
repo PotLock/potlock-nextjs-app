@@ -95,7 +95,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       });
 
       const donationData = JSON.parse(
-        atob(data.result.receipts_outcome[3].outcome.status.SuccessValue),
+        atob(data?.result?.receipts_outcome[3].outcome.status.SuccessValue),
       ) as DirectDonation | PotDonation;
 
       dispatch.donation.success(donationData);
