@@ -17,6 +17,7 @@ export default function GlobalFeedsPage() {
 
   const { data: registrations = [] } = potlock.useListRegistrations({
     listId: POTLOCK_REGISTRY_LIST_ID,
+    page_size: 999,
   });
 
   const accountIds = useMemo(
@@ -38,7 +39,7 @@ export default function GlobalFeedsPage() {
       .catch((err) => {
         console.error("Unable to fetch feeds:", err);
       });
-  }, [accountIds, registrations]);
+  }, [accountIds]);
 
   const loadMorePosts = useCallback(async () => {
     console.log(loadingMore);
@@ -57,50 +58,55 @@ export default function GlobalFeedsPage() {
     setLoadingMore(false);
   }, [accountIds, loadingMore, offset]);
 
-  const NoResults = () => (
-    <div
-      className={cn(
-        "md:flex-col md:px-[105px] md:py-[68px] rounded-3",
-        "flex flex-col-reverse items-center justify-between bg-[#f6f5f3] px-6 py-4",
-      )}
-    >
-      <p
+  const noResults = useMemo(
+    () => (
+      <div
         className={cn(
-          "font-italic font-500 md:text-[22px] text-4 mb-4 max-w-[290px]",
-          "text-center font-lora text-[#292929]",
+          "md:flex-col md:px-[105px] md:py-[68px] rounded-3",
+          "flex flex-col-reverse items-center justify-between bg-[#f6f5f3] px-6 py-4",
         )}
       >
-        {"This project has no Feeds yet."}
-      </p>
+        <p
+          className={cn(
+            "font-italic font-500 md:text-[22px] text-4 mb-4 max-w-[290px]",
+            "text-center font-lora text-[#292929]",
+          )}
+        >
+          {"No social posts available."}
+        </p>
 
-      <img
-        className="w-[50%]"
-        src="https://ipfs.near.social/ipfs/bafkreibcjfkv5v2e2n3iuaaaxearps2xgjpc6jmuam5tpouvi76tvfr2de"
-        alt="pots"
-      />
-    </div>
+        <img
+          className="w-[50%]"
+          src="https://ipfs.near.social/ipfs/bafkreibcjfkv5v2e2n3iuaaaxearps2xgjpc6jmuam5tpouvi76tvfr2de"
+          alt="pots"
+        />
+      </div>
+    ),
+    [],
   );
 
   return (
     <div className="h-full max-h-full w-full max-w-[1300px] overflow-auto p-8">
-      <InfiniteScrollWrapper
-        className="space-y-4"
-        dataLength={1000}
-        scrollThreshold={1}
-        hasMore={true}
-        next={loadMorePosts}
-        loader={
-          <div ref={loadingRef} className="mt-4 min-h-12 text-center">
-            <div className="prose">{"Loading..."}</div>
-          </div>
-        }
-      >
-        {feedPosts.map((post) => (
-          <FeedCard key={post.blockHeight} post={post} />
-        ))}
-      </InfiniteScrollWrapper>
-
-      {feedPosts.length === 0 && !isLoading && <NoResults />}
+      {feedPosts.length === 0 && !isLoading ? (
+        noResults
+      ) : (
+        <InfiniteScrollWrapper
+          className="space-y-4"
+          dataLength={1000}
+          scrollThreshold={1}
+          hasMore={true}
+          next={loadMorePosts}
+          loader={
+            <div ref={loadingRef} className="mt-4 min-h-12 text-center">
+              <div className="prose">{"Loading..."}</div>
+            </div>
+          }
+        >
+          {feedPosts.map((post) => (
+            <FeedCard key={post.blockHeight} post={post} />
+          ))}
+        </InfiniteScrollWrapper>
+      )}
     </div>
   );
 }
