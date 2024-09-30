@@ -4,7 +4,7 @@ import { ProjectCard } from "@/modules/project";
 const featuredProjectIds =
   NETWORK === "mainnet"
     ? ["v1.foodbank.near", "potlock.near", "yearofchef.near"]
-    : ["root.akaia.testnet"];
+    : ["amichaeltest.testnet", "root.akaia.testnet", "yearofchef.testnet"];
 
 export const ProjectsOverviewFeatured = () => {
   return (

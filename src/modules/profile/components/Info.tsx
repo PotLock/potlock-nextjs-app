@@ -16,7 +16,7 @@ import DonationsInfo from "./DonationsInfo";
 import FollowButton from "./FollowButton";
 import Linktree from "./Linktree";
 import ProfileTags from "./ProfileTags";
-import useProfileData from "../hooks/useProfileData";
+import useProfileData from "../hooks/data";
 
 type Props = {
   accountId: string;

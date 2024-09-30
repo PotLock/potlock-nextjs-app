@@ -1,60 +1,50 @@
-/* eslint-disable @next/next/no-img-element */
-
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { fetchGlobalFeeds } from "@/common/api/near-social";
-import { ListRegistration, potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/potlock";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
-import { FeedCard } from "@/modules/profile/components/FeedCard";
+import { cn } from "@/common/ui/utils";
+import { FeedCard } from "@/modules/profile";
 
-const GlobalFeedsPage = () => {
+export default function GlobalFeedsPage() {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
-  const [registration, setRegistrations] = useState<ListRegistration[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
-
   const loadingRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(40);
 
-  const { data, isLoading } = potlock.useListRegistrations({
+  const { data: registrations = [] } = potlock.useListRegistrations({
     listId: POTLOCK_REGISTRY_LIST_ID,
+    page_size: 999,
   });
 
+  const accountIds = useMemo(
+    () => registrations.map(({ registrant }) => registrant.id),
+    [registrations],
+  );
+
   useEffect(() => {
-    setLoading(true);
+    setIsLoading(true);
 
-    // Fetch registrations and feeds
-    const results = data?.results || [];
-    setRegistrations(results);
-    const accountIds = results.map((account) => account.registrant.id);
-
-    fetchGlobalFeeds({
-      accountId: accountIds,
-    })
+    fetchGlobalFeeds({ accountIds })
       .then((posts) => {
-        setLoadingMore(isLoading);
+        setLoadingMore(false);
         setFeedPosts(posts); // Flatten the array if necessary
-        setLoading(isLoading);
+        setIsLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching registrations or feeds:", err);
-      })
-      .finally(() => {
-        setLoading(isLoading); // Ensure loading state is updated
+        console.error("Unable to fetch feeds:", err);
       });
-  }, []);
+  }, [accountIds]);
 
   const loadMorePosts = useCallback(async () => {
     console.log(loadingMore);
     if (loadingMore) return; // Prevent multiple calls while loading
     setLoadingMore(true);
 
-    const fetchedPosts = await fetchGlobalFeeds({
-      accountId: registration,
-      offset,
-    });
+    const fetchedPosts = await fetchGlobalFeeds({ accountIds, offset });
     setLoadingMore(false);
 
     // Filter out previously fetched posts
@@ -64,42 +54,57 @@ const GlobalFeedsPage = () => {
     setFeedPosts((prevPosts) => [...prevPosts, ...newPosts]);
     setOffset((prevOffset) => prevOffset + 20);
     setLoadingMore(false);
-  }, []);
+  }, [accountIds, loadingMore, offset]);
 
-  const NoResults = () => (
-    <div className="md:flex-col md:px-[105px] md:py-[68px] flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px]">
-      <p className="font-italic font-500 md:text-[22px] mb-4 max-w-[290px] text-center font-lora text-[16px] text-[#292929]">
-        This project has no Feeds yet.
-      </p>
+  const noResults = useMemo(
+    () => (
+      <div
+        className={cn(
+          "md:flex-col md:px-[105px] md:py-[68px] rounded-3",
+          "flex flex-col-reverse items-center justify-between bg-[#f6f5f3] px-6 py-4",
+        )}
+      >
+        <p
+          className={cn(
+            "font-italic font-500 md:text-[22px] text-4 mb-4 max-w-[290px]",
+            "text-center font-lora text-[#292929]",
+          )}
+        >
+          {"No social posts available."}
+        </p>
 
-      <img
-        className="w-[50%]"
-        src="https://ipfs.near.social/ipfs/bafkreibcjfkv5v2e2n3iuaaaxearps2xgjpc6jmuam5tpouvi76tvfr2de"
-        alt="pots"
-      />
-    </div>
+        <img
+          className="w-[50%]"
+          src="https://ipfs.near.social/ipfs/bafkreibcjfkv5v2e2n3iuaaaxearps2xgjpc6jmuam5tpouvi76tvfr2de"
+          alt="pots"
+        />
+      </div>
+    ),
+    [],
   );
 
   return (
     <div className="h-full max-h-full w-full max-w-[1300px] overflow-auto p-8">
-      <InfiniteScrollWrapper
-        className="space-y-4"
-        dataLength={1000}
-        scrollThreshold={1}
-        hasMore={true}
-        next={loadMorePosts}
-        loader={
-          <div ref={loadingRef} className="mt-4 min-h-12 text-center">
-            <div className="">Loading...</div>
-          </div>
-        }
-      >
-        {feedPosts.map((post) => (
-          <FeedCard key={post.blockHeight} post={post} />
-        ))}
-      </InfiniteScrollWrapper>
-      {feedPosts.length === 0 && loading && <NoResults />}
+      {feedPosts.length === 0 && !isLoading ? (
+        noResults
+      ) : (
+        <InfiniteScrollWrapper
+          className="space-y-4"
+          dataLength={1000}
+          scrollThreshold={1}
+          hasMore={true}
+          next={loadMorePosts}
+          loader={
+            <div ref={loadingRef} className="mt-4 min-h-12 text-center">
+              <div className="prose">{"Loading..."}</div>
+            </div>
+          }
+        >
+          {feedPosts.map((post) => (
+            <FeedCard key={post.blockHeight} post={post} />
+          ))}
+        </InfiniteScrollWrapper>
+      )}
     </div>
   );
-};
-export default GlobalFeedsPage;
+}

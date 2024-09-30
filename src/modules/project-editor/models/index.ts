@@ -1,13 +1,19 @@
 import { createModel } from "@rematch/core";
+import { prop } from "remeda";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import routesPath from "@/modules/core/routes";
-import { updateState } from "@/modules/core/utils/updateState";
+import { useTypedSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
-import { AddFundingSourceInputs, CreateProjectInputs } from "./models/types";
+import { AddFundingSourceInputs, CreateProjectInputs } from "./types";
+
+export const projectEditorModelKey = "projectEditor";
+
+export const useProjectEditorState = () =>
+  useTypedSelector(prop(projectEditorModelKey));
 
 type CheckStatus = "pending" | "done" | "sending";
 type FetchStatus = "pending" | "fetching" | "ready";
@@ -65,7 +71,16 @@ const initialState: CreateProjectState = {
   github: "",
 };
 
-export const projectEditor = createModel<AppModel>()({
+export const updateState = (previousState: {}, inputPayload: {}) => {
+  const keys = Object.keys(inputPayload);
+  const updatedState: any = previousState || {};
+  keys.forEach((key) => {
+    updatedState[key] = (inputPayload as any)[key];
+  });
+  return updatedState;
+};
+
+export const projectEditorModel = createModel<AppModel>()({
   state: initialState,
 
   reducers: {

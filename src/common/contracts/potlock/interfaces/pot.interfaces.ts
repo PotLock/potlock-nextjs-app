@@ -120,3 +120,8 @@ export type PotDonationArgs = {
   bypass_protocol_fee?: null | boolean;
   custom_chef_fee_basis_points?: null | number;
 };
+
+export type PotBatchDonationItem = {
+  args: PotDonationArgs;
+  amountYoctoNear: string;
+};

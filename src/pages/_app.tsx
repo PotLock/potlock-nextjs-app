@@ -6,9 +6,8 @@ import "@unocss/reset/tailwind.css";
 import "@/common/ui/styles/fonts.css";
 import "@/common/ui/styles/theme.css";
 import "@/common/ui/styles/uno.generated.css";
-import "./global.css";
 
-import { ReactElement, ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 
 import { Provider as NiceModalProvider } from "@ebay/nice-modal-react";
 import { NextPage } from "next";
@@ -31,7 +30,7 @@ const lora = Lora({
 });
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode;
+  getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {

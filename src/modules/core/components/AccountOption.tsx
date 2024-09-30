@@ -1,12 +1,7 @@
 import { useMemo } from "react";
 
 import { AccountId, ByAccountId } from "@/common/types";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Skeleton,
-} from "@/common/ui/components";
+import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/modules/profile";
 
@@ -24,9 +19,6 @@ export type AccountOptionProps = ByAccountId &
     };
   };
 
-const NO_IMAGE =
-  "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
-
 export const AccountOption = ({
   isRounded = false,
   isThumbnail = false,
@@ -36,27 +28,27 @@ export const AccountOption = ({
   title,
   classNames,
 }: AccountOptionProps) => {
-  const { profileImages, profileReady } = useProfileData(accountId);
+  const { profileImages, profile, profileReady } = useProfileData(accountId);
+
+  const avatarSrc = useMemo(
+    () =>
+      (typeof profile?.image === "string"
+        ? profile?.image
+        : profile?.image?.url) ?? profileImages.image,
+
+    [profile?.image, profileImages.image],
+  );
 
   const avatarElement = useMemo(
     () =>
       profileReady ? (
         <Avatar className={cn("h-10 w-10", classNames?.avatar)} {...{ title }}>
           <AvatarImage
-            src={profileImages.image}
+            src={avatarSrc}
             alt={`Avatar of ${accountId}`}
             width={40}
             height={40}
           />
-
-          <AvatarFallback>
-            <AvatarImage
-              src={NO_IMAGE}
-              alt={`${accountId} does not have an avatar`}
-              width={40}
-              height={40}
-            />
-          </AvatarFallback>
         </Avatar>
       ) : (
         <Skeleton
@@ -65,7 +57,7 @@ export const AccountOption = ({
         />
       ),
 
-    [accountId, classNames?.avatar, profileImages.image, profileReady, title],
+    [accountId, avatarSrc, classNames?.avatar, profileReady, title],
   );
 
   return isThumbnail ? (
@@ -73,7 +65,7 @@ export const AccountOption = ({
   ) : (
     <div
       className={cn(
-        "flex w-full items-center gap-4 px-5 py-3 hover:bg-neutral-50",
+        "flex w-full items-center gap-4 px-5 py-2 hover:bg-[#FEF6EE]",
         { "rounded-full": isRounded },
         classNames?.root,
       )}
@@ -83,10 +75,10 @@ export const AccountOption = ({
       <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
         {avatarElement}
 
-        <span className="prose">{accountId}</span>
+        <span className="prose">{profile?.name ?? accountId}</span>
       </div>
 
-      {secondaryAction}
+      {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}
     </div>
   );
 };

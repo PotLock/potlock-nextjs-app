@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 import { Group, SearchBar, SortSelect } from "@/common/ui/components";
-import useWallet from "@/modules/auth/hooks/useWallet";
-import { ListCard } from "@/modules/lists/components/ListCard";
-import { useAllLists } from "@/modules/lists/hooks/useAllLists";
 import { Profile } from "@/modules/profile/models";
 import { categories, statuses } from "@/modules/project/constants";
-import { useTypedSelector } from "@/store";
 
+import { ListCard } from "./ListCard";
 import { ListCardSkeleton } from "./ListCardSkeleton";
+import { useAllLists } from "../hooks/useAllLists";
 
-const AllLists = ({
+export const ListsOverview = ({
   currentListType,
   setCurrentListType,
   filteredRegistrations,
@@ -121,7 +119,13 @@ const AllLists = ({
         handleCategory(registration),
     );
     setFilteredRegistrations(filtered);
-  }, [search, categoryFilter, statusFilter, registrations]);
+  }, [
+    search,
+    categoryFilter,
+    statusFilter,
+    registrations,
+    setFilteredRegistrations,
+  ]);
 
   useEffect(() => {
     fetchAllLists();
@@ -193,5 +197,3 @@ const AllLists = ({
     </div>
   );
 };
-
-export default AllLists;

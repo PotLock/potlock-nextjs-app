@@ -6,9 +6,9 @@ import { NEAR_DEFAULT_TOKEN_DECIMALS } from "../constants";
 /**
  * @deprecated Use `yoctoNearToFloat`
  */
-export const yoctosToNear = (amountYoctos: string, abbreviate?: boolean) => {
+export const yoctosToNear = (amountYoctoNear: string, abbreviate?: boolean) => {
   return (
-    formatWithCommas(Big(amountYoctos).div(1e24).toFixed(2)) +
+    formatWithCommas(Big(amountYoctoNear).div(1e24).toFixed(2)) +
     (abbreviate ? "N" : " NEAR")
   );
 };

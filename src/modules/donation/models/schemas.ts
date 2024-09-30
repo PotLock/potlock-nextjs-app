@@ -12,8 +12,8 @@ import {
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { safePositiveNumber } from "@/common/lib";
-import { AvailableBalance } from "@/modules/core";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
+import { TokenAvailableBalance } from "@/modules/token";
 
 import {
   DONATION_MAX_MESSAGE_LENGTH,
@@ -21,7 +21,7 @@ import {
 } from "../constants";
 import {
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
+  DonationGroupAllocationStrategyEnum,
 } from "../types";
 import {
   donationFeeBasisPointsToPercents,
@@ -52,20 +52,10 @@ export const donationFeeBasisPoints = preprocess(
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,
-
   amount: donationAmount.describe("Amount of the selected tokens to donate."),
-
   recipientAccountId: string().optional().describe("Recipient account id."),
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
-
-  potDonationDistribution: array(
-    object({ account_id: string(), amount: donationAmount }),
-  )
-    .refine((recipients) => recipients.length > 0, {
-      message: "You have to select at least one recipient.",
-    })
-    .optional(),
 
   message: string()
     .max(DONATION_MAX_MESSAGE_LENGTH)
@@ -74,11 +64,19 @@ export const donationSchema = object({
 
   allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {
     message: "Incorrect allocation strategy.",
-  }).default(DonationAllocationStrategyEnum.direct),
+  }).default(DonationAllocationStrategyEnum.full),
 
-  potDistributionStrategy: nativeEnum(DonationPotDistributionStrategy, {
-    message: "Incorrect donation distribution strategy.",
-  }).default(DonationPotDistributionStrategy.evenly),
+  groupAllocationStrategy: nativeEnum(DonationGroupAllocationStrategyEnum, {
+    message: "Incorrect group allocation strategy.",
+  }).default(DonationGroupAllocationStrategyEnum.evenly),
+
+  groupAllocationPlan: array(
+    object({ account_id: string(), amount: donationAmount.optional() }),
+  )
+    .refine((recipients) => recipients.length > 0, {
+      message: "You have to select at least one recipient.",
+    })
+    .optional(),
 
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),
@@ -97,7 +95,7 @@ export const donationSchema = object({
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
 export type DonationAllocationInputs = Pick<
-  AvailableBalance,
+  TokenAvailableBalance,
   "balanceFloat"
 > & {
   isBalanceSufficient: boolean;

@@ -17,13 +17,13 @@ export type TextFieldProps = Omit<
   label?: string;
   labelExtension?: React.ReactNode;
   inputExtension?: React.ReactNode;
-  appendix?: string | null;
+  appendix?: React.ReactNode;
   hint?: string;
   customErrorMessage?: string | null;
 
   classNames?: {
     root?: string;
-    inputWrapper?: string;
+    fieldRoot?: string;
     input?: string;
   };
 };
@@ -109,12 +109,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const appendixElement = useMemo(
       () =>
         appendix ? (
-          <span
-            un-flex="~"
-            un-items="center"
-            un-text="gray-500 sm:sm nowrap"
-            className="prose"
-          >
+          <span className="prose sm:text-sm flex items-center text-nowrap text-gray-500">
             {appendix}
           </span>
         ) : null,
@@ -128,12 +123,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
         <div
           className={cn(
-            "flex w-full items-center",
-            "border-op-100 border-1 rounded-md border border-input",
+            "h-10.5 flex w-full items-center",
+            "border-1 rounded-md border border-neutral-300",
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
             "disabled:cursor-not-allowed disabled:opacity-50",
             { "pr-3": appendixElement !== null },
-            classNames?.inputWrapper,
+            classNames?.fieldRoot,
           )}
         >
           {inputExtensionElement}
@@ -141,16 +136,18 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           <FormControl>
             <input
               {...fieldProps}
-              className={cn("max-h-11 rounded-l-md px-3 py-2.5", {
-                "rounded-r-md": appendixElement === null,
-              })}
-              un-focus-visible={
-                inputExtensionElement !== null && appendixElement !== null
-                  ? "rounded-l-none border-inset pl-2.5 border-l-2 border-input outline-none"
-                  : undefined
-              }
-              un-w="full"
-              un-placeholder="text-muted-foreground"
+              className={cn(
+                "placeholder-text-muted-foreground h-10 w-full rounded-md border-none px-3 py-2.5",
+                {
+                  "mr-2.5": appendixElement !== null,
+
+                  "focus-visible:rounded-l-none focus-visible:pl-2.5 focus-visible:outline-none":
+                    inputExtensionElement !== null && appendixElement !== null,
+
+                  "focus-visible:border-inset focus-visible:border-l focus-visible:border-l-2 focus-visible:border-neutral-300":
+                    inputExtensionElement !== null && appendixElement !== null,
+                },
+              )}
             />
           </FormControl>
 

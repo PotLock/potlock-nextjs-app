@@ -1,12 +1,13 @@
 import { walletApi } from "@/common/api/near";
 import { WarningIcon } from "@/common/assets/svgs";
+import { DEBUG } from "@/common/constants";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
   Button,
 } from "@/common/ui/components";
-import useIsHuman from "@/modules/core/hooks/useIsHuman";
+import { useIsHuman } from "@/modules/core";
 
 export type DonationVerificationWarningProps = {};
 
@@ -17,7 +18,7 @@ export const DonationVerificationWarning: React.FC<
     walletApi.accountId ?? "unknown",
   );
 
-  return isDonorNadabotVerified ? null : (
+  return isDonorNadabotVerified && !DEBUG ? null : (
     <Alert variant="warning">
       <WarningIcon />
 
