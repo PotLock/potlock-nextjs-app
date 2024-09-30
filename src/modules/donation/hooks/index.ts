@@ -26,6 +26,8 @@ export const useDonation = (props: DonationAllocationKey) => {
         setSearchParams({ donateTo: props.accountId });
       } else if ("potId" in props) {
         setSearchParams({ donateToPot: props.potId });
+      } else if ("listId" in props) {
+        setSearchParams({ donateToList: props.listId.toString() });
       }
 
       modal.show(props);

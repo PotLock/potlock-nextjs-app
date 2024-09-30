@@ -25,7 +25,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     const {
       amount,
       allocationStrategy,
-      potDonationShares,
+      groupAllocationPlan,
       referrerAccountId,
       bypassProtocolFee,
       bypassChefFee,
@@ -35,7 +35,7 @@ export const effects = (dispatch: AppDispatcher) => ({
 
     if ("accountId" in params) {
       switch (allocationStrategy) {
-        case DonationAllocationStrategyEnum.direct: {
+        case DonationAllocationStrategyEnum.full: {
           const args: DirectDonationArgs = {
             recipient_id: params.accountId,
             message,
@@ -49,7 +49,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
 
-        case DonationAllocationStrategyEnum.pot: {
+        case DonationAllocationStrategyEnum.split: {
           if (!params.potAccountId) {
             return void dispatch.donation.failure(new Error("No pot selected"));
           }
@@ -68,7 +68,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
-    } else if ("potId" in params && potDonationShares !== undefined) {
+    } else if ("potId" in params && groupAllocationPlan !== undefined) {
       const batchTxDraft = potDonationInputsToBatchDonationDraft({
         potAccountId: params.potId,
         ...inputs,

@@ -69,7 +69,8 @@ export const DonationDirectAllocation: React.FC<
   } = potlock.useAccount({ accountId });
 
   const isFtDonation =
-    allocationStrategy !== "pot" && tokenId !== NEAR_TOKEN_DENOM;
+    allocationStrategy !== DonationAllocationStrategyEnum.split &&
+    tokenId !== NEAR_TOKEN_DENOM;
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
@@ -97,7 +98,9 @@ export const DonationDirectAllocation: React.FC<
                 >
                   {values(donationAllocationStrategies).map(
                     ({ label, hint, hintIfDisabled, value }) => {
-                      const disabled = value === "pot" && !hasMatchingPots;
+                      const disabled =
+                        value === DonationAllocationStrategyEnum.split &&
+                        !hasMatchingPots;
 
                       return (
                         <FormItem key={value}>
@@ -121,27 +124,30 @@ export const DonationDirectAllocation: React.FC<
           )}
         />
 
-        {allocationStrategy === "pot" && <DonationVerificationWarning />}
-
-        {allocationStrategy === "pot" && hasMatchingPots && (
-          <FormField
-            control={form.control}
-            name="potAccountId"
-            render={({ field }) => (
-              <SelectField
-                label="Select Pot"
-                defaultValue={field.value}
-                onValueChange={field.onChange}
-              >
-                {matchingPots?.map(({ account: potAccountId, name }) => (
-                  <SelectFieldOption key={potAccountId} value={potAccountId}>
-                    {name}
-                  </SelectFieldOption>
-                ))}
-              </SelectField>
-            )}
-          />
+        {allocationStrategy === DonationAllocationStrategyEnum.split && (
+          <DonationVerificationWarning />
         )}
+
+        {allocationStrategy === DonationAllocationStrategyEnum.split &&
+          hasMatchingPots && (
+            <FormField
+              control={form.control}
+              name="potAccountId"
+              render={({ field }) => (
+                <SelectField
+                  label="Select Pot"
+                  defaultValue={field.value}
+                  onValueChange={field.onChange}
+                >
+                  {matchingPots?.map(({ account: potAccountId, name }) => (
+                    <SelectFieldOption key={potAccountId} value={potAccountId}>
+                      {name}
+                    </SelectFieldOption>
+                  ))}
+                </SelectField>
+              )}
+            />
+          )}
 
         <FormField
           control={form.control}
@@ -171,7 +177,8 @@ export const DonationDirectAllocation: React.FC<
                         {NEAR_TOKEN_DENOM.toUpperCase()}
                       </SelectItem>
 
-                      {allocationStrategy === "direct" &&
+                      {allocationStrategy ===
+                        DonationAllocationStrategyEnum.full &&
                         availableFts?.map(
                           ({
                             contract_account_id: contractId,

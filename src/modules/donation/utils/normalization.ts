@@ -6,26 +6,26 @@ import { floatToYoctoNear } from "@/common/lib";
 
 import { DonationInputs } from "../models";
 import {
+  DonationGroupAllocationStrategyEnum,
   DonationPotBatchCallDraft,
-  DonationShareAllocationStrategyEnum,
 } from "../types";
 
 export const potDonationInputsToBatchDonationDraft = ({
   potAccountId,
-  potShareAllocationStrategy,
-  potDonationShares = [],
+  groupAllocationStrategy,
+  groupAllocationPlan = [],
   referrerAccountId,
   bypassProtocolFee,
   bypassChefFee,
 }: DonationInputs & { potAccountId: PotId }): DonationPotBatchCallDraft => {
   const isDistributionManual =
-    potShareAllocationStrategy === DonationShareAllocationStrategyEnum.manually;
+    groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manually;
 
   return {
     potAccountId,
 
     entries: reduce(
-      potDonationShares,
+      groupAllocationPlan,
 
       (txs, { account_id, amount: donationAmount = 0 }) =>
         isDistributionManual && donationAmount === 0

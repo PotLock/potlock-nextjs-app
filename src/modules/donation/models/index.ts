@@ -1,7 +1,6 @@
 import { createModel } from "@rematch/core";
 
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
-import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { DirectDonation, PotDonation } from "@/common/contracts/potlock";
 import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
@@ -9,9 +8,9 @@ import {
   DonationAllocationStrategy,
   DonationAllocationStrategyEnum,
   DonationAllocationStrategyOption,
-  DonationShareAllocationStrategy,
-  DonationShareAllocationStrategyEnum,
-  DonationShareAllocationStrategyOption,
+  DonationGroupAllocationStrategy,
+  DonationGroupAllocationStrategyEnum,
+  DonationGroupAllocationStrategyOption,
   DonationState,
   DonationStep,
 } from "../types";
@@ -22,32 +21,32 @@ export const donationAllocationStrategies: Record<
   DonationAllocationStrategy,
   DonationAllocationStrategyOption
 > = {
-  direct: {
+  full: {
     label: "Direct donation",
-    value: DonationAllocationStrategyEnum.direct,
+    value: DonationAllocationStrategyEnum.full,
   },
 
-  pot: {
+  split: {
     label: "Quadratically matched donation",
     hintIfDisabled: "(no pots available)",
-    value: DonationAllocationStrategyEnum.pot,
+    value: DonationAllocationStrategyEnum.split,
   },
 };
 
 export const donationPotDistributionStrategies: Record<
-  DonationShareAllocationStrategy,
-  DonationShareAllocationStrategyOption
+  DonationGroupAllocationStrategy,
+  DonationGroupAllocationStrategyOption
 > = {
   evenly: {
     label: "Evenly",
     hint: "(Allocate funds evenly across multiple projects)",
-    value: DonationShareAllocationStrategyEnum.evenly,
+    value: DonationGroupAllocationStrategyEnum.evenly,
   },
 
   manually: {
     label: "Manually",
     hint: "(Specify amount for each project)",
-    value: DonationShareAllocationStrategyEnum.manually,
+    value: DonationGroupAllocationStrategyEnum.manually,
   },
 };
 

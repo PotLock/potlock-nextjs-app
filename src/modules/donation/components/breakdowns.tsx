@@ -7,10 +7,10 @@ import { TokenIcon } from "@/modules/token";
 
 import { DonationBreakdown } from "../types";
 
-export type DonationShareAllocationBreakdownProps = {};
+export type DonationGroupAllocationBreakdownProps = {};
 
-export const DonationShareAllocationBreakdown: React.FC<
-  DonationShareAllocationBreakdownProps
+export const DonationGroupAllocationBreakdown: React.FC<
+  DonationGroupAllocationBreakdownProps
 > = () => {
   return <div>WIP</div>;
 };

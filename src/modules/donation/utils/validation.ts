@@ -2,7 +2,10 @@ import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 
 import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
-import { DonationAllocationStrategy } from "../types";
+import {
+  DonationAllocationStrategy,
+  DonationAllocationStrategyEnum,
+} from "../types";
 
 export type DonationAmountValidationInputs = ByTokenId & { amount: number };
 
@@ -23,6 +26,6 @@ export const isDonationMatchingPotSelected = ({
   allocationStrategy,
   potAccountId,
 }: DonationMatchingPotValidationInputs) =>
-  allocationStrategy === "pot"
+  allocationStrategy === DonationAllocationStrategyEnum.split
     ? typeof potAccountId === "string" && potAccountId.length > 0
     : true;

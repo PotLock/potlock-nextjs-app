@@ -9,7 +9,7 @@ import { dispatch } from "@/store";
 
 import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationDirectAllocation } from "./DonationDirectAllocation";
-import { DonationPotShareAllocation } from "./DonationPotShareAllocation";
+import { DonationGroupAllocation } from "./DonationGroupAllocation";
 import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
 import { DonationAllocationKey, DonationState } from "../types";
@@ -51,62 +51,66 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   const inputs = form.watch();
   const { balanceFloat } = useTokenBalance(inputs);
 
-  const content = useMemo(() => {
-    const staticAllocationProps = {
+  const allocationScreenProps = useMemo(
+    () => ({
       form,
       isBalanceSufficient,
       minAmountError,
       balanceFloat,
+      totalAmountFloat,
+      matchingPots,
       ...inputs,
-    };
+      ...props,
+    }),
 
-    const staticSuccessProps = { form, result, transactionHash, closeModal };
+    [
+      balanceFloat,
+      form,
+      inputs,
+      isBalanceSufficient,
+      matchingPots,
+      minAmountError,
+      props,
+      totalAmountFloat,
+    ],
+  );
+
+  const content = useMemo(() => {
+    const successScreenProps = { form, result, transactionHash, closeModal };
+
+    const defaultErrorScreen = (
+      <ModalErrorBody
+        heading="Donation"
+        title="Unable to proceed with the next step."
+      />
+    );
 
     switch (currentStep) {
       case "allocation": {
-        if ("accountId" in props) {
-          const allocationProps = {
-            matchingPots,
-            ...staticAllocationProps,
-            ...props,
-          };
-
-          return <DonationDirectAllocation {...allocationProps} />;
-        } else {
-          const allocationProps = {
-            totalAmountFloat,
-            ...staticAllocationProps,
-            ...props,
-          };
-
-          return <DonationPotShareAllocation {...allocationProps} />;
-        }
+        if ("accountId" in allocationScreenProps) {
+          return <DonationDirectAllocation {...allocationScreenProps} />;
+        } else if (
+          "potId" in allocationScreenProps ||
+          "listId" in allocationScreenProps
+        ) {
+          return <DonationGroupAllocation {...allocationScreenProps} />;
+        } else return defaultErrorScreen;
       }
 
       case "confirmation":
         return <DonationConfirmation {...{ form, totalAmountFloat }} />;
 
       case "success":
-        return <DonationSuccess {...staticSuccessProps} />;
+        return <DonationSuccess {...successScreenProps} />;
 
       default:
-        return (
-          <ModalErrorBody
-            heading="Donation"
-            title="Unable to proceed with the next step."
-          />
-        );
+        return defaultErrorScreen;
     }
   }, [
-    balanceFloat,
+    allocationScreenProps,
     closeModal,
     currentStep,
     form,
-    inputs,
-    isBalanceSufficient,
-    matchingPots,
-    minAmountError,
-    props,
     result,
     totalAmountFloat,
     transactionHash,
@@ -126,7 +130,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
                 color="black"
                 disabled
               >
-                Add to cart
+                {"Add to cart"}
               </Button>
             )}
 

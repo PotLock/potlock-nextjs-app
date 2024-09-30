@@ -20,7 +20,7 @@ import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
-  DonationShareAllocationStrategyEnum,
+  DonationGroupAllocationStrategyEnum,
 } from "../types";
 import { isDonationAmountSufficient } from "../utils/validation";
 
@@ -54,17 +54,17 @@ export const useDonationForm = ({
       allocationStrategy:
         "accountId" in params
           ? DonationAllocationStrategyEnum[
-              matchingPots.length > 0 ? "pot" : "direct"
+              matchingPots.length > 0 ? "split" : "full"
             ]
-          : DonationAllocationStrategyEnum.pot,
+          : DonationAllocationStrategyEnum.split,
 
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId,
       referrerAccountId,
       potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
 
-      potShareAllocationStrategy:
-        DonationShareAllocationStrategyEnum[
+      groupAllocationStrategy:
+        DonationGroupAllocationStrategyEnum[
           "accountId" in params ? "manually" : "evenly"
         ],
     }),
@@ -91,8 +91,8 @@ export const useDonationForm = ({
   const { balanceFloat } = useTokenBalance({ tokenId });
 
   const totalAmountFloat =
-    values.allocationStrategy === DonationAllocationStrategyEnum.pot
-      ? values.potDonationShares?.reduce(
+    values.allocationStrategy === DonationAllocationStrategyEnum.split
+      ? values.groupAllocationPlan?.reduce(
           (total, { amount }) => total + (amount ?? 0.0),
           0.0,
         ) ?? 0.0
@@ -138,9 +138,9 @@ export const useDonationForm = ({
     }
   }, [values, defaultPotAccountId, self, hasChanges, params]);
 
-  console.table(omit(values, ["potDonationShares"]));
+  console.table(omit(values, ["groupAllocationPlan"]));
 
-  values.potDonationShares?.forEach((entry) => console.table(entry));
+  values.groupAllocationPlan?.forEach((entry) => console.table(entry));
 
   return {
     form: self,

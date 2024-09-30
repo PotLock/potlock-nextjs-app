@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import useIsClient from "@/common/lib/useIsClient";
+import { cn } from "@/common/ui/utils";
 import { SignInButton } from "@/modules/auth";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { CartLink } from "@/modules/cart";
@@ -12,11 +13,11 @@ import { CartLink } from "@/modules/cart";
 import { UserDropdown } from "./UserDropdown";
 import routesPath from "../routes";
 
-const tabOptions = [
-  { text: "Projects", link: routesPath.PROJECTS_LIST, disabled: false },
-  { text: "Feed", link: "feed", disabled: false },
-  { text: "Pots", link: routesPath.POTS, disabled: false },
-  // { text: "Donors", link: routesPath.DONORS, disabled: false },
+const links = [
+  { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },
+  { label: "Feed", url: routesPath.FEED, disabled: false },
+  { label: "Pots", url: routesPath.POTS, disabled: false },
+  // { label: "Donors", url: routesPath.DONORS, disabled: false },
 ];
 
 const AuthButton = () => {
@@ -57,16 +58,23 @@ const MobileNav = () => {
 
   return (
     <nav className="flex flex-col gap-4 p-6">
-      {tabOptions.map((tab) => {
-        const selected = isClient ? tab.link === router.pathname : false;
+      {links.map(({ url, label }) => {
+        const isActive = isClient ? url === router.pathname : false;
 
         return (
           <Link
-            key={tab.text}
-            href={tab.link}
-            className={`${selected ? "font-medium text-[color:var(--neutral-900)]" : "font-normal text-[color:var(--neutral-500)]"} decoration-none not-last-child hover:decoration-none relative mr-8 text-sm`}
+            key={url + label}
+            href={url}
+            className={cn(
+              "decoration-none not-last-child hover:decoration-none relative mr-8 text-sm",
+
+              {
+                "font-medium": isActive,
+                "font-normal text-neutral-500": !isActive,
+              },
+            )}
           >
-            {tab.text}
+            {label}
           </Link>
         );
       })}
@@ -81,10 +89,7 @@ export const Nav = () => {
 
   return (
     <>
-      <nav
-        un-w="full"
-        className="max-sm:px-1 md:h-[96px] 2xl-container z-50 flex content-between items-center justify-between self-stretch bg-transparent px-[40px] pb-6 pt-6"
-      >
+      <nav className="max-sm:px-1 md:h-[96px] 2xl-container z-50 flex w-full content-between items-center justify-between self-stretch bg-transparent px-[40px] pb-6 pt-6">
         {/* Left */}
         <div className="flex">
           <div className="mr-12 flex flex-row items-center justify-center">
@@ -99,26 +104,32 @@ export const Nav = () => {
                 width={28.72}
                 height={23.94}
               />
-              <p className="max-sm:hidden text-center text-xl font-bold text-[color:var(--neutral-900)]">
-                POTLOCK
+
+              <p className="max-sm:hidden text-center text-xl font-bold">
+                {"POTLOCK"}
               </p>
             </Link>
           </div>
 
           <div className="flex flex-row items-center justify-center">
             <div className="max-md:hidden flex flex-row items-center justify-center">
-              {tabOptions.map((tab) => {
-                const selected = isClient
-                  ? tab.link === router.pathname
-                  : false;
+              {links.map(({ url, label }) => {
+                const isActive = isClient ? url === router.pathname : false;
 
                 return (
                   <Link
-                    key={tab.text}
-                    href={tab.link}
-                    className={`${selected ? "font-medium text-[color:var(--neutral-900)]" : "font-normal text-[color:var(--neutral-500)]"} decoration-none not-last-child hover:decoration-none relative mr-8 text-sm`}
+                    key={url + label}
+                    href={url}
+                    className={cn(
+                      "decoration-none not-last-child hover:decoration-none relative mr-8 text-sm",
+
+                      {
+                        "font-medium": isActive,
+                        "font-normal text-neutral-500": !isActive,
+                      },
+                    )}
                   >
-                    {tab.text}
+                    {label}
                   </Link>
                 );
               })}

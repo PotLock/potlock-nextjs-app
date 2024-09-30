@@ -12,38 +12,37 @@ import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 import { DonationInputs } from "../models";
 import {
   DonationBreakdown,
-  DonationShareAllocationStrategyEnum,
+  DonationGroupAllocationStrategyEnum,
   WithTotalAmount,
 } from "../types";
 import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
-export type DonationPotShareAllocationDeps = {
+export type DonationGroupAllocationDeps = {
   form: UseFormReturn<DonationInputs>;
 };
 
 export const useDonationEvenShareAllocation = ({
   form,
-}: WithTotalAmount & DonationPotShareAllocationDeps) => {
-  const [amount, potShareAllocationStrategy, potDonationShares = []] =
-    form.watch(["amount", "potShareAllocationStrategy", "potDonationShares"]);
+}: WithTotalAmount & DonationGroupAllocationDeps) => {
+  const [amount, groupAllocationStrategy, groupAllocationPlan = []] =
+    form.watch(["amount", "groupAllocationStrategy", "groupAllocationPlan"]);
 
   const recipientShareAmount = useMemo(
-    () => intoShareValue(amount, potDonationShares.length),
-    [amount, potDonationShares.length],
+    () => intoShareValue(amount, groupAllocationPlan.length),
+    [amount, groupAllocationPlan.length],
   );
 
   useEffect(() => {
     if (
-      potShareAllocationStrategy ===
-        DonationShareAllocationStrategyEnum.evenly &&
-      potDonationShares.some(
+      groupAllocationStrategy === DonationGroupAllocationStrategyEnum.evenly &&
+      groupAllocationPlan.some(
         piped(prop("amount"), isNot(isStrictEqual(recipientShareAmount))),
       )
     ) {
       form.setValue(
-        "potDonationShares",
+        "groupAllocationPlan",
 
-        potDonationShares.map((recipientShare) => ({
+        groupAllocationPlan.map((recipientShare) => ({
           ...recipientShare,
           amount: recipientShareAmount,
         })),
@@ -51,26 +50,26 @@ export const useDonationEvenShareAllocation = ({
     }
   }, [
     form,
-    potDonationShares,
-    potShareAllocationStrategy,
+    groupAllocationPlan,
+    groupAllocationStrategy,
     recipientShareAmount,
   ]);
 
   return useCallback(
     (recipient: ByAccountId) => {
-      const isAssigned = potDonationShares.some(
+      const isAssigned = groupAllocationPlan.some(
         ({ account_id }) => account_id === recipient.accountId,
       );
 
       return (assign: CheckedState) => {
         form.setValue(
-          "potDonationShares",
+          "groupAllocationPlan",
 
           assign
-            ? potDonationShares.concat(
+            ? groupAllocationPlan.concat(
                 isAssigned ? [] : [{ account_id: recipient.accountId }],
               )
-            : potDonationShares.filter(
+            : groupAllocationPlan.filter(
                 (recipientShare) =>
                   recipientShare.account_id !== recipient.accountId,
               ),
@@ -78,18 +77,18 @@ export const useDonationEvenShareAllocation = ({
       };
     },
 
-    [form, potDonationShares],
+    [form, groupAllocationPlan],
   );
 };
 
 export const useDonationManualShareAllocation = ({
   form,
-}: DonationPotShareAllocationDeps) => {
-  const [potDonationShares = []] = form.watch(["potDonationShares"]);
+}: DonationGroupAllocationDeps) => {
+  const [groupAllocationPlan = []] = form.watch(["groupAllocationPlan"]);
 
   return useCallback(
     (recipient: ByAccountId): React.ChangeEventHandler<HTMLInputElement> => {
-      const hasAssignedShare = potDonationShares.some(
+      const hasAssignedShare = groupAllocationPlan.some(
         ({ account_id }) => account_id === recipient.accountId,
       );
 
@@ -98,9 +97,9 @@ export const useDonationManualShareAllocation = ({
 
         if (hasAssignedShare) {
           form.setValue(
-            "potDonationShares",
+            "groupAllocationPlan",
 
-            potDonationShares.reduce(
+            groupAllocationPlan.reduce(
               (updatedShares = [], recipientShare) => {
                 if (recipientShare.account_id === recipient.accountId) {
                   return recipientShareAmount > 0
@@ -111,14 +110,14 @@ export const useDonationManualShareAllocation = ({
                 } else return updatedShares.concat([recipientShare]);
               },
 
-              [] as DonationInputs["potDonationShares"],
+              [] as DonationInputs["groupAllocationPlan"],
             ),
           );
         } else if (recipientShareAmount > 0) {
           form.setValue(
-            "potDonationShares",
+            "groupAllocationPlan",
 
-            potDonationShares.concat([
+            groupAllocationPlan.concat([
               { account_id: recipient.accountId, amount: recipientShareAmount },
             ]),
           );
@@ -126,7 +125,7 @@ export const useDonationManualShareAllocation = ({
       };
     },
 
-    [form, potDonationShares],
+    [form, groupAllocationPlan],
   );
 };
 

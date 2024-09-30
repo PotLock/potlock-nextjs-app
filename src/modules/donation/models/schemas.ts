@@ -21,7 +21,7 @@ import {
 } from "../constants";
 import {
   DonationAllocationStrategyEnum,
-  DonationShareAllocationStrategyEnum,
+  DonationGroupAllocationStrategyEnum,
 } from "../types";
 import {
   donationFeeBasisPointsToPercents,
@@ -57,7 +57,7 @@ export const donationSchema = object({
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
 
-  potDonationShares: array(
+  groupAllocationPlan: array(
     object({ account_id: string(), amount: donationAmount.optional() }),
   )
     .refine((recipients) => recipients.length > 0, {
@@ -72,11 +72,11 @@ export const donationSchema = object({
 
   allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {
     message: "Incorrect allocation strategy.",
-  }).default(DonationAllocationStrategyEnum.direct),
+  }).default(DonationAllocationStrategyEnum.full),
 
-  potShareAllocationStrategy: nativeEnum(DonationShareAllocationStrategyEnum, {
-    message: "Incorrect donation distribution strategy.",
-  }).default(DonationShareAllocationStrategyEnum.evenly),
+  groupAllocationStrategy: nativeEnum(DonationGroupAllocationStrategyEnum, {
+    message: "Incorrect group allocation strategy.",
+  }).default(DonationGroupAllocationStrategyEnum.evenly),
 
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),

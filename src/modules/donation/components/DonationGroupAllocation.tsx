@@ -6,6 +6,7 @@ import { ByPotId, potlock } from "@/common/api/potlock";
 import { NearIcon } from "@/common/assets/svgs";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
+import { ByListId } from "@/common/types";
 import {
   DialogDescription,
   DialogHeader,
@@ -42,19 +43,30 @@ import {
   DonationAllocationInputs,
   donationPotDistributionStrategies,
 } from "../models";
-import { DonationShareAllocationStrategyEnum, WithTotalAmount } from "../types";
+import { DonationGroupAllocationStrategyEnum, WithTotalAmount } from "../types";
 
-export type DonationPotShareAllocationProps = DonationAllocationInputs &
-  ByPotId &
-  WithTotalAmount;
+export type DonationGroupAllocationProps = WithTotalAmount &
+  DonationAllocationInputs &
+  (ByPotId | ByListId);
 
-export const DonationPotShareAllocation: React.FC<
-  DonationPotShareAllocationProps
-> = ({ form, isBalanceSufficient, balanceFloat, potId, totalAmountFloat }) => {
-  const [amount, tokenId, potShareAllocationStrategy] = form.watch([
+export const DonationGroupAllocation: React.FC<
+  DonationGroupAllocationProps
+> = ({
+  form,
+  isBalanceSufficient,
+  balanceFloat,
+  totalAmountFloat,
+  ...props
+}) => {
+  const isPotDonation = "potId" in props;
+  const isListDonation = "listId" in props;
+  const potId = isPotDonation ? props.potId : undefined;
+  const listId = isListDonation ? props.listId : undefined;
+
+  const [amount, tokenId, groupAllocationStrategy] = form.watch([
     "amount",
     "tokenId",
-    "potShareAllocationStrategy",
+    "groupAllocationStrategy",
   ]);
 
   const {
@@ -63,14 +75,19 @@ export const DonationPotShareAllocation: React.FC<
     error: potError,
   } = potlock.usePot({ potId });
 
-  const {
-    isLoading: isPotApplicationListLoading,
-    data: { results: potApplications } = { results: [] },
-    error: potApplicationsError,
-  } = potlock.usePotApplications({ potId, page_size: 100 });
+  const { data: potApplications = [], error: potApplicationsError } =
+    potlock.usePotApplications({ potId, page_size: 100 });
 
-  const isLoading = isPotLoading || isPotApplicationListLoading;
-  const error = potError ?? potApplicationsError;
+  const {
+    data: list,
+    isLoading: isListLoading,
+    error: listError,
+  } = potlock.useList({ listId });
+
+  const { data: listRegistrations = [] } = potlock.useListRegistrations({
+    listId,
+  });
+
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
   const onEvenShareAllocationClick = useCallback(
@@ -78,14 +95,14 @@ export const DonationPotShareAllocation: React.FC<
     [form, totalAmountFloat],
   );
 
-  const strategy = useMemo(
+  const strategySelect = useMemo(
     () => (
       <FormField
         control={form.control}
-        name="potShareAllocationStrategy"
+        name="groupAllocationStrategy"
         render={({ field }) => (
           <FormItem className="gap-3">
-            {isPotLoading ? (
+            {isPotLoading || isListLoading ? (
               <Skeleton className="w-59 h-3.5" />
             ) : (
               <FormLabel className="font-600">
@@ -103,10 +120,10 @@ export const DonationPotShareAllocation: React.FC<
                     <FormItem key={value}>
                       <RadioGroupItem
                         id={`donation-options-${value}`}
-                        isLoading={isPotLoading}
+                        isLoading={isPotLoading || isListLoading}
                         checked={
                           field.value ===
-                          DonationShareAllocationStrategyEnum[value]
+                          DonationGroupAllocationStrategyEnum[value]
                         }
                         onClick={onEvenShareAllocationClick}
                         hint={field.disabled ? hintIfDisabled : hint}
@@ -123,84 +140,7 @@ export const DonationPotShareAllocation: React.FC<
       />
     ),
 
-    [form.control, isPotLoading, onEvenShareAllocationClick],
-  );
-
-  const totalAmountField = useMemo(
-    () =>
-      potShareAllocationStrategy ===
-      DonationShareAllocationStrategyEnum.evenly ? (
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <TextField
-              label="Amount"
-              {...field}
-              labelExtension={<TokenBalance {...{ tokenId }} />}
-              inputExtension={
-                <FormField
-                  control={form.control}
-                  name="tokenId"
-                  render={({ field: inputExtension }) => (
-                    <SelectField
-                      embedded
-                      label="Available tokens"
-                      disabled //? FT donation is not supported in pots
-                      defaultValue={inputExtension.value}
-                      onValueChange={inputExtension.onChange}
-                      classes={{
-                        trigger:
-                          "mr-2px h-full w-min rounded-r-none shadow-none",
-                      }}
-                    >
-                      <SelectFieldOption value={NEAR_TOKEN_DENOM}>
-                        {NEAR_TOKEN_DENOM.toUpperCase()}
-                      </SelectFieldOption>
-                    </SelectField>
-                  )}
-                />
-              }
-              type="number"
-              placeholder="0.00"
-              min={yoctoNearToFloat(
-                pot?.min_matching_pool_donation_amount ?? "0",
-              )}
-              max={balanceFloat ?? undefined}
-              step={0.01}
-              appendix={nearAmountUsdDisplayValue}
-              customErrorMessage={
-                isBalanceSufficient ? null : DONATION_INSUFFICIENT_BALANCE_ERROR
-              }
-            />
-          )}
-        />
-      ) : (
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="prose">{"Total allocated"}</span>
-
-            <TokenTotalValue
-              textOnly
-              amountFloat={totalAmountFloat}
-              {...{ tokenId }}
-            />
-          </div>
-
-          <TokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />
-        </div>
-      ),
-
-    [
-      balanceFloat,
-      form.control,
-      isBalanceSufficient,
-      nearAmountUsdDisplayValue,
-      pot?.min_matching_pool_donation_amount,
-      potShareAllocationStrategy,
-      tokenId,
-      totalAmountFloat,
-    ],
+    [form.control, isListLoading, isPotLoading, onEvenShareAllocationClick],
   );
 
   const handleEvenShareAllocation = useDonationEvenShareAllocation({
@@ -220,9 +160,9 @@ export const DonationPotShareAllocation: React.FC<
               key={recipientCandidate.id}
               accountId={recipientCandidate.id}
               secondaryAction={
-                potShareAllocationStrategy === "evenly" ? (
+                groupAllocationStrategy === "evenly" ? (
                   <FormField
-                    name="potDonationShares"
+                    name="groupAllocationPlan"
                     control={form.control}
                     render={({ field: { value = [], ...field } }) => (
                       <CheckboxField
@@ -240,7 +180,7 @@ export const DonationPotShareAllocation: React.FC<
                   />
                 ) : (
                   <FormField
-                    name="potDonationShares"
+                    name="groupAllocationPlan"
                     control={form.control}
                     render={({ field: { value = [], ...field } }) => (
                       <TextField
@@ -278,7 +218,7 @@ export const DonationPotShareAllocation: React.FC<
     [
       pot,
       potApplications,
-      potShareAllocationStrategy,
+      groupAllocationStrategy,
       form.control,
       handleEvenShareAllocation,
       balanceFloat,
@@ -287,41 +227,117 @@ export const DonationPotShareAllocation: React.FC<
     ],
   );
 
-  return error ? (
-    <ModalErrorBody
-      heading="Pot donation"
-      title="Unable to load pot data!"
-      message={error.message}
-    />
+  const errorDetails = useMemo(() => {
+    if (potError) {
+      return {
+        heading: "Pot donation",
+        title: "Unable to load pot data!",
+        message: potError.message,
+      };
+    } else if (potApplicationsError) {
+      return {
+        heading: "Pot donation",
+        title: "Unable to load recipients' data!",
+        message: potApplicationsError.message,
+      };
+    } else if (listError) {
+      return {
+        heading: "List donation",
+        title: "Unable to load recipients' data!",
+        message: listError.message,
+      };
+    } else return null;
+  }, [listError, potApplicationsError, potError]);
+
+  return errorDetails ? (
+    <ModalErrorBody {...errorDetails} />
   ) : (
     <>
-      {isLoading && (
-        <span
-          un-flex="~"
-          un-justify="center"
-          un-items="center"
-          un-w="full"
-          un-h="40"
-          un-text="2xl"
-        >
-          Loading...
-        </span>
-      )}
-
-      {pot && (
-        <DialogHeader>
+      <DialogHeader>
+        {pot && (
           <DialogTitle>{`Donation to Projects in ${pot.name}`}</DialogTitle>
-        </DialogHeader>
-      )}
+        )}
+
+        {list && (
+          <DialogTitle>{`Donation to Projects in ${list.name}`}</DialogTitle>
+        )}
+      </DialogHeader>
 
       <DialogDescription>
-        {strategy}
+        {strategySelect}
         <DonationVerificationWarning />
-        {totalAmountField}
+
+        {groupAllocationStrategy ===
+        DonationGroupAllocationStrategyEnum.evenly ? (
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <TextField
+                label="Amount"
+                {...field}
+                labelExtension={<TokenBalance {...{ tokenId }} />}
+                inputExtension={
+                  <FormField
+                    control={form.control}
+                    name="tokenId"
+                    render={({ field: inputExtension }) => (
+                      <SelectField
+                        embedded
+                        label="Available tokens"
+                        disabled //? FT donation is not supported in pots
+                        defaultValue={inputExtension.value}
+                        onValueChange={inputExtension.onChange}
+                        classes={{
+                          trigger:
+                            "mr-2px h-full w-min rounded-r-none shadow-none",
+                        }}
+                      >
+                        <SelectFieldOption value={NEAR_TOKEN_DENOM}>
+                          {NEAR_TOKEN_DENOM.toUpperCase()}
+                        </SelectFieldOption>
+                      </SelectField>
+                    )}
+                  />
+                }
+                type="number"
+                placeholder="0.00"
+                min={yoctoNearToFloat(
+                  pot?.min_matching_pool_donation_amount ?? "0",
+                )}
+                max={balanceFloat ?? undefined}
+                step={0.01}
+                appendix={nearAmountUsdDisplayValue}
+                customErrorMessage={
+                  isBalanceSufficient
+                    ? null
+                    : DONATION_INSUFFICIENT_BALANCE_ERROR
+                }
+              />
+            )}
+          />
+        ) : (
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="prose">{"Total allocated"}</span>
+
+              <TokenTotalValue
+                textOnly
+                amountFloat={totalAmountFloat}
+                {...{ tokenId }}
+              />
+            </div>
+
+            <TokenBalance
+              {...{ tokenId }}
+              classNames={{ amount: "text-base" }}
+            />
+          </div>
+        )}
       </DialogDescription>
 
       <ScrollArea className="h-[190px] w-full">
-        <div un-flex="~ col" un-items="center" un-gap="0.5">
+        <div className="flex flex-col items-center gap-0.5">
           {recipientShares}
         </div>
       </ScrollArea>

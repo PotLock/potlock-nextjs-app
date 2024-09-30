@@ -6,15 +6,15 @@ import {
   PotBatchDonationItem,
   PotDonation,
 } from "@/common/contracts/potlock";
-import { ByAccountId } from "@/common/types";
+import { ByAccountId, ByListId } from "@/common/types";
 
-export type DonationAllocationKey = ByAccountId | ByPotId;
+export type DonationAllocationKey = ByAccountId | ByPotId | ByListId;
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
 export enum DonationAllocationStrategyEnum {
-  direct = "direct",
-  pot = "pot",
+  full = "full",
+  split = "split",
 }
 
 export type DonationAllocationStrategy =
@@ -27,17 +27,17 @@ export type DonationAllocationStrategyOption = {
   hintIfDisabled?: string;
 };
 
-export enum DonationShareAllocationStrategyEnum {
+export enum DonationGroupAllocationStrategyEnum {
   evenly = "evenly",
   manually = "manually",
 }
 
-export type DonationShareAllocationStrategy =
-  keyof typeof DonationShareAllocationStrategyEnum;
+export type DonationGroupAllocationStrategy =
+  keyof typeof DonationGroupAllocationStrategyEnum;
 
-export type DonationShareAllocationStrategyOption = {
+export type DonationGroupAllocationStrategyOption = {
   label: string;
-  value: DonationShareAllocationStrategy;
+  value: DonationGroupAllocationStrategy;
   hint?: string;
   hintIfDisabled?: string;
 };

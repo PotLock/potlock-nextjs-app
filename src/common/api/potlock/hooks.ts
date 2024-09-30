@@ -112,7 +112,7 @@ export const usePotApplications = ({
     { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(potId) } },
   );
 
-  return { ...queryResult, data: queryResult.data?.data };
+  return { ...queryResult, data: queryResult.data?.data.results };
 };
 
 /**
@@ -200,12 +200,16 @@ export const useRandomListRegistration = ({
 export const useListRegistrations = ({
   listId,
   ...params
-}: ByListId & V1ListsRegistrationsRetrieveParams) => {
+}: Partial<ByListId> & V1ListsRegistrationsRetrieveParams) => {
   const queryResult = swrHooks.useV1ListsRegistrationsRetrieve(
-    listId,
+    listId ?? 0,
     params,
-    POTLOCK_REQUEST_CONFIG,
+
+    {
+      ...POTLOCK_REQUEST_CONFIG,
+      swr: { enabled: Boolean(listId) },
+    },
   );
 
-  return { ...queryResult, data: queryResult.data?.data };
+  return { ...queryResult, data: queryResult.data?.data.results };
 };
