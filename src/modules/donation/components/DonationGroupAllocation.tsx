@@ -41,7 +41,7 @@ import {
 } from "../hooks";
 import {
   DonationAllocationInputs,
-  donationPotDistributionStrategies,
+  donationGroupAllocationStrategies,
 } from "../models";
 import { DonationGroupAllocationStrategyEnum, WithTotalAmount } from "../types";
 
@@ -115,11 +115,11 @@ export const DonationGroupAllocation: React.FC<
                 onValueChange={field.onChange}
                 defaultValue={field.value}
               >
-                {values(donationPotDistributionStrategies).map(
+                {values(donationGroupAllocationStrategies).map(
                   ({ label, hint, hintIfDisabled, value }) => (
                     <FormItem key={value}>
                       <RadioGroupItem
-                        id={`donation-options-${value}`}
+                        id={`group-allocation-strategy-${value}`}
                         isLoading={isPotLoading || isListLoading}
                         checked={
                           field.value ===

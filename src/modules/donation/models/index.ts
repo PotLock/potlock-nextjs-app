@@ -1,6 +1,8 @@
 import { createModel } from "@rematch/core";
+import { prop } from "remeda";
 
 import { DirectDonation, PotDonation } from "@/common/contracts/potlock";
+import { useTypedSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
@@ -16,6 +18,10 @@ import {
 } from "../types";
 
 export * from "./schemas";
+
+export const donationModelKey = "donation";
+
+export const useDonationState = () => useTypedSelector(prop(donationModelKey));
 
 export const donationAllocationStrategies: Record<
   DonationAllocationStrategy,
@@ -33,7 +39,7 @@ export const donationAllocationStrategies: Record<
   },
 };
 
-export const donationPotDistributionStrategies: Record<
+export const donationGroupAllocationStrategies: Record<
   DonationGroupAllocationStrategy,
   DonationGroupAllocationStrategyOption
 > = {

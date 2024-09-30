@@ -33,7 +33,11 @@ export const effects = (dispatch: AppDispatcher) => ({
       ...params
     } = inputs;
 
-    if ("accountId" in params) {
+    const isSingleProjectDonation = "accountId" in params;
+    const isPotDonation = "potId" in params;
+    const isListDonation = "listId" in params;
+
+    if (isSingleProjectDonation) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
           const args: DirectDonationArgs = {
@@ -68,7 +72,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
-    } else if ("potId" in params && groupAllocationPlan !== undefined) {
+    } else if (isPotDonation && groupAllocationPlan !== undefined) {
       const batchTxDraft = potDonationInputsToBatchDonationDraft({
         potAccountId: params.potId,
         ...inputs,
@@ -76,8 +80,12 @@ export const effects = (dispatch: AppDispatcher) => ({
 
       return void pot
         .donateBatch(batchTxDraft.potAccountId, batchTxDraft.entries)
+        // TODO: Handle batch tx outcome
         .then(/* dispatch.donation.success */ console.log)
         .catch(dispatch.donation.failure);
+    } else if (isListDonation && groupAllocationPlan !== undefined) {
+      // TODO: Move list donation batch call logic in here
+      return void null;
     } else {
       return void dispatch.donation.failure(
         new Error("Unable to determine donation type."),
@@ -86,6 +94,8 @@ export const effects = (dispatch: AppDispatcher) => ({
   },
 
   handleOutcome: async (transactionHash: string): Promise<void> => {
+    // TODO: Use nearRps.txStatus for each tx hash & handle batch tx outcome
+
     const { accountId: sender_account_id } = walletApi;
 
     if (sender_account_id) {

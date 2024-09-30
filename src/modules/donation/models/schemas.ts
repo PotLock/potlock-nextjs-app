@@ -57,14 +57,6 @@ export const donationSchema = object({
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
 
-  groupAllocationPlan: array(
-    object({ account_id: string(), amount: donationAmount.optional() }),
-  )
-    .refine((recipients) => recipients.length > 0, {
-      message: "You have to select at least one recipient.",
-    })
-    .optional(),
-
   message: string()
     .max(DONATION_MAX_MESSAGE_LENGTH)
     .optional()
@@ -77,6 +69,14 @@ export const donationSchema = object({
   groupAllocationStrategy: nativeEnum(DonationGroupAllocationStrategyEnum, {
     message: "Incorrect group allocation strategy.",
   }).default(DonationGroupAllocationStrategyEnum.evenly),
+
+  groupAllocationPlan: array(
+    object({ account_id: string(), amount: donationAmount.optional() }),
+  )
+    .refine((recipients) => recipients.length > 0, {
+      message: "You have to select at least one recipient.",
+    })
+    .optional(),
 
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),

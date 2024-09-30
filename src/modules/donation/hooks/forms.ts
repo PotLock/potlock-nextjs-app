@@ -32,8 +32,12 @@ export const useDonationForm = ({
   referrerAccountId,
   ...params
 }: DonationFormParams) => {
-  const recipientAccountId =
-    "accountId" in params ? params.accountId : undefined;
+  const isSingleProjectDonation = "accountId" in params;
+  const isPotDonation = "potId" in params;
+
+  const recipientAccountId = isSingleProjectDonation
+    ? params.accountId
+    : undefined;
 
   const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
     accountId: recipientAccountId,
@@ -50,27 +54,27 @@ export const useDonationForm = ({
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       amount: DONATION_MIN_NEAR_AMOUNT,
-
-      allocationStrategy:
-        "accountId" in params
-          ? DonationAllocationStrategyEnum[
-              matchingPots.length > 0 ? "split" : "full"
-            ]
-          : DonationAllocationStrategyEnum.split,
-
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId,
       referrerAccountId,
-      potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
+      potAccountId: isPotDonation ? params.potId : defaultPotAccountId,
+
+      allocationStrategy: isSingleProjectDonation
+        ? DonationAllocationStrategyEnum[
+            matchingPots.length > 0 ? "split" : "full"
+          ]
+        : DonationAllocationStrategyEnum.split,
 
       groupAllocationStrategy:
         DonationGroupAllocationStrategyEnum[
-          "accountId" in params ? "manually" : "evenly"
+          isSingleProjectDonation ? "manually" : "evenly"
         ],
     }),
 
     [
       defaultPotAccountId,
+      isPotDonation,
+      isSingleProjectDonation,
       matchingPots.length,
       params,
       recipientAccountId,
@@ -130,13 +134,20 @@ export const useDonationForm = ({
      *?  it does not trigger rerender, so we have to do it manually.
      */
     if (
-      "accountId" in params &&
+      isSingleProjectDonation &&
       values.potAccountId === undefined &&
       defaultPotAccountId
     ) {
       self.setValue("potAccountId", defaultPotAccountId);
     }
-  }, [values, defaultPotAccountId, self, hasChanges, params]);
+  }, [
+    values,
+    defaultPotAccountId,
+    self,
+    hasChanges,
+    params,
+    isSingleProjectDonation,
+  ]);
 
   console.table(omit(values, ["groupAllocationPlan"]));
 

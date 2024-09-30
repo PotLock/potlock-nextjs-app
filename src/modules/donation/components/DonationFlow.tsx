@@ -12,21 +12,21 @@ import { DonationDirectAllocation } from "./DonationDirectAllocation";
 import { DonationGroupAllocation } from "./DonationGroupAllocation";
 import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
-import { DonationAllocationKey, DonationState } from "../types";
+import { useDonationState } from "../models";
+import { DonationAllocationKey } from "../types";
 
 export type DonationFlowProps = DonationAllocationKey &
-  DonationState &
   Pick<DonationSuccessProps, "transactionHash"> & {
     closeModal: VoidFunction;
   };
 
 export const DonationFlow: React.FC<DonationFlowProps> = ({
-  currentStep,
-  finalOutcome: result,
   transactionHash,
   closeModal,
   ...props
 }) => {
+  const { currentStep, finalOutcome } = useDonationState();
+
   const {
     query: { referrerId: referrerIdSearchParam },
   } = useRouteQuery();
@@ -45,7 +45,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     referrerAccountId:
       typeof referrerIdSearchParam === "string"
         ? referrerIdSearchParam
-        : result?.referrer_id ?? undefined,
+        : finalOutcome?.referrer_id ?? undefined,
   });
 
   const inputs = form.watch();
@@ -75,9 +75,17 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     ],
   );
 
-  const content = useMemo(() => {
-    const successScreenProps = { form, result, transactionHash, closeModal };
+  const confirmationScreenProps = useMemo(
+    () => ({ form, totalAmountFloat }),
+    [form, totalAmountFloat],
+  );
 
+  const successScreenProps = useMemo(
+    () => ({ form, transactionHash, closeModal }),
+    [closeModal, form, transactionHash],
+  );
+
+  const currentScreen = useMemo(() => {
     const defaultErrorScreen = (
       <ModalErrorBody
         heading="Donation"
@@ -98,7 +106,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       }
 
       case "confirmation":
-        return <DonationConfirmation {...{ form, totalAmountFloat }} />;
+        return <DonationConfirmation {...confirmationScreenProps} />;
 
       case "success":
         return <DonationSuccess {...successScreenProps} />;
@@ -108,18 +116,15 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     }
   }, [
     allocationScreenProps,
-    closeModal,
+    confirmationScreenProps,
     currentStep,
-    form,
-    result,
-    totalAmountFloat,
-    transactionHash,
+    successScreenProps,
   ]);
 
   return (
     <Form {...form}>
       <form un-flex="~ col" un-h="full" {...{ onSubmit }}>
-        {content}
+        {currentScreen}
 
         {currentStep !== "success" && (
           <DialogFooter>

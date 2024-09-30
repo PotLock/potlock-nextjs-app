@@ -25,12 +25,10 @@ import { TokenTotalValue } from "@/modules/token";
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { useDonationAllocationBreakdown } from "../hooks";
-import { DonationInputs } from "../models";
-import { DonationState } from "../types";
+import { DonationInputs, useDonationState } from "../models";
 
 export type DonationSuccessProps = {
   form: UseFormReturn<DonationInputs>;
-  result?: DonationState["finalOutcome"];
   transactionHash?: string;
   closeModal: VoidFunction;
 };
@@ -40,24 +38,24 @@ const staticResultIndicatorClassName =
 
 export const DonationSuccess = ({
   form,
-  result,
   transactionHash,
   closeModal,
 }: DonationSuccessProps) => {
-  const isResultLoading = result === undefined;
+  const { finalOutcome } = useDonationState();
+  const isResultLoading = finalOutcome === undefined;
   const [potAccountId] = form.watch(["potAccountId"]);
   const { data: pot } = potlock.usePot({ potId: potAccountId });
 
   const { data: recipient, error: recipientDataError } = potlock.useAccount({
     accountId:
-      "recipient_id" in (result ?? {})
-        ? (result as DirectDonation).recipient_id
-        : (result as PotDonation).project_id ?? undefined,
+      "recipient_id" in (finalOutcome ?? {})
+        ? (finalOutcome as DirectDonation).recipient_id
+        : (finalOutcome as PotDonation).project_id ?? undefined,
   });
 
   const tokenId =
-    "ft_id" in (result ?? {})
-      ? (result as DirectDonation).ft_id
+    "ft_id" in (finalOutcome ?? {})
+      ? (finalOutcome as DirectDonation).ft_id
       : NEAR_TOKEN_DENOM;
 
   const { data: tokenMetadata } = pagoda.useTokenMetadata({ tokenId });
@@ -66,24 +64,24 @@ export const DonationSuccess = ({
     isResultLoading || recipient === undefined || tokenMetadata === undefined;
 
   const totalAmountFloat = bigStringToFloat(
-    result?.total_amount ?? "0",
+    finalOutcome?.total_amount ?? "0",
     tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
   );
 
   const protocolFeeAmountFloat = bigStringToFloat(
-    result?.protocol_fee ?? "0",
+    finalOutcome?.protocol_fee ?? "0",
     tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
   );
 
   const referralFeeFinalAmountFloat = bigStringToFloat(
-    result?.referrer_fee ?? "0",
+    finalOutcome?.referrer_fee ?? "0",
     tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
   );
 
   const breakdown = useDonationAllocationBreakdown({
     pot,
     totalAmountFloat,
-    referrerAccountId: result?.referrer_id ?? undefined,
+    referrerAccountId: finalOutcome?.referrer_id ?? undefined,
     protocolFeeFinalAmount: protocolFeeAmountFloat,
     referralFeeFinalAmount: referralFeeFinalAmountFloat,
   });
@@ -116,7 +114,7 @@ export const DonationSuccess = ({
           <Skeleton className="w-46 h-7" />
         ) : (
           <h2 className="prose" un-text="xl" un-font="600">
-            Donation Successful
+            {"Donation Successful"}
           </h2>
         )}
 
@@ -130,7 +128,7 @@ export const DonationSuccess = ({
           >
             <Link href="#">
               <span className="prose" un-font="500">
-                Share on
+                {"Share on"}
               </span>
 
               <TwitterSvg width={18} height={18} />
@@ -144,7 +142,7 @@ export const DonationSuccess = ({
           <Skeleton className="h-7 w-44" />
         ) : (
           <TokenTotalValue
-            amountBigString={result.total_amount}
+            amountBigString={finalOutcome.total_amount}
             {...{ tokenId }}
           />
         )}
@@ -154,7 +152,7 @@ export const DonationSuccess = ({
         ) : (
           <p className="prose" un-m="0" un-flex="~ col">
             <span className="prose flex gap-1">
-              <span>has been donated to</span>
+              <span>{"has been donated to"}</span>
 
               <span un-font="600">
                 {recipient.near_social_profile_data?.name ?? recipient.id}
@@ -175,7 +173,7 @@ export const DonationSuccess = ({
             onClick={closeModal}
             className="text-red-600"
           >
-            View donation
+            {"View donation"}
           </Link>
         )}
       </div>

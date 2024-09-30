@@ -1,4 +1,4 @@
-import { CreateProjectState } from "../state";
+import { CreateProjectState } from "../models";
 
 const getSocialDataFormat = (data: CreateProjectState) => {
   const body = {

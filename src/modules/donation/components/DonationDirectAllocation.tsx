@@ -228,7 +228,7 @@ export const DonationDirectAllocation: React.FC<
     ],
   );
 
-  return recipientDataError !== undefined ? (
+  return recipientDataError ? (
     <ModalErrorBody
       heading="Project donation"
       title="Unable to load recipient data!"
