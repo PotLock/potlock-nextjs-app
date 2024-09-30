@@ -14,10 +14,10 @@ import {
 } from "@/common/ui/components";
 import { dispatch } from "@/store";
 
-import { useListActionsState } from "../models";
-import { ListFormModalType } from "../types";
 import DonationSuccess from "./Donation/DonationSuccess";
 import { SuccessModalCreateList } from "./ListConfirmationModals";
+import { useListActionsState } from "../models";
+import { ListFormModalType } from "../types";
 
 type ListActionsModal = {};
 

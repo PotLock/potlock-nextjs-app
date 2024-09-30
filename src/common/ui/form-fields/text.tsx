@@ -49,7 +49,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
     const labelElement = useMemo(
       () =>
-        (label ?? labelExtension) ? (
+        label ?? labelExtension ? (
           <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
             <div un-flex="~" un-items="center" un-gap="1">
               {label && <FormLabel className="text-sm">{label}</FormLabel>}

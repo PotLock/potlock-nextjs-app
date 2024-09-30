@@ -16,10 +16,10 @@ import {
 } from "@/common/ui/components";
 import { dispatch } from "@/store";
 
-import { ListFormModalType } from "../types";
 import ConfirmDonation from "./Donation/ConfirmDonation";
 import DonationSuccess from "./Donation/DonationSuccess";
 import FundAllocation from "./Donation/FundAllocation";
+import { ListFormModalType } from "../types";
 
 const DonationFlow = ({
   onClose,
