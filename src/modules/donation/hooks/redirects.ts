@@ -11,7 +11,7 @@ export const useDonationSuccessWalletRedirect = () => {
   const donationModal = useModal(DonationModal);
 
   const {
-    query: { donateTo, donateToPot, transactionHashes },
+    query: { donateTo, donateToPot, donateToList, transactionHashes },
     setSearchParams,
   } = useRouteQuery();
 
@@ -20,6 +20,9 @@ export const useDonationSuccessWalletRedirect = () => {
 
   const potAccountId =
     typeof donateToPot === "string" ? donateToPot : undefined;
+
+  const listId =
+    typeof donateToList === "string" ? parseInt(donateToList) : undefined;
 
   const transactionHash =
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
@@ -34,12 +37,14 @@ export const useDonationSuccessWalletRedirect = () => {
         donationModal.show({
           accountId: recipientAccountId,
           potId: potAccountId,
+          listId,
           transactionHash,
         });
 
         setSearchParams({
           donateTo: null,
           donateToPot: null,
+          donateToList: null,
           transactionHashes: null,
         });
       });
@@ -48,6 +53,7 @@ export const useDonationSuccessWalletRedirect = () => {
     isTransactionOutcomeDetected,
     donationModal,
     donationModal.visible,
+    listId,
     potAccountId,
     recipientAccountId,
     setSearchParams,

@@ -1,38 +1,45 @@
 import { walletApi } from "@/common/api/near";
-import { donate, pot } from "@/common/contracts/potlock";
 import {
   DirectDonation,
   DirectDonationArgs,
-} from "@/common/contracts/potlock/interfaces/donate.interfaces";
-import {
   PotDonation,
   PotDonationArgs,
-} from "@/common/contracts/potlock/interfaces/pot.interfaces";
+  donate,
+  pot,
+} from "@/common/contracts/potlock";
 import { floatToYoctoNear } from "@/common/lib";
 import { getTransactionStatus } from "@/common/services";
 import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
 import {
+  DonationAllocationKey,
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
-  DonationSubmissionInputs,
 } from "../types";
+import { potDonationInputsToBatchDonationDraft } from "../utils/normalization";
 
 export const effects = (dispatch: AppDispatcher) => ({
-  submit: async ({
-    amount,
-    allocationStrategy,
-    potDistributionStrategy,
-    referrerAccountId,
-    bypassProtocolFee,
-    bypassChefFee,
-    message,
-    ...params
-  }: DonationSubmissionInputs & DonationInputs): Promise<void> => {
-    if ("accountId" in params) {
+  submit: async (
+    inputs: DonationAllocationKey & DonationInputs,
+  ): Promise<void> => {
+    const {
+      amount,
+      allocationStrategy,
+      groupAllocationPlan,
+      referrerAccountId,
+      bypassProtocolFee,
+      bypassChefFee,
+      message,
+      ...params
+    } = inputs;
+
+    const isSingleProjectDonation = "accountId" in params;
+    const isPotDonation = "potId" in params;
+    const isListDonation = "listId" in params;
+
+    if (isSingleProjectDonation) {
       switch (allocationStrategy) {
-        case DonationAllocationStrategyEnum.direct: {
+        case DonationAllocationStrategyEnum.full: {
           const args: DirectDonationArgs = {
             recipient_id: params.accountId,
             message,
@@ -46,7 +53,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
 
-        case DonationAllocationStrategyEnum.pot: {
+        case DonationAllocationStrategyEnum.split: {
           if (!params.potAccountId) {
             return void dispatch.donation.failure(new Error("No pot selected"));
           }
@@ -65,20 +72,30 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
-    } else if ("potId" in params) {
-      switch (potDistributionStrategy) {
-        case DonationPotDistributionStrategy.evenly: {
-          return void dispatch.donation.failure(new Error("Not implemented"));
-        }
+    } else if (isPotDonation && groupAllocationPlan !== undefined) {
+      const batchTxDraft = potDonationInputsToBatchDonationDraft({
+        potAccountId: params.potId,
+        ...inputs,
+      });
 
-        case DonationPotDistributionStrategy.manually: {
-          return void dispatch.donation.failure(new Error("Not implemented"));
-        }
-      }
+      return void pot
+        .donateBatch(batchTxDraft.potAccountId, batchTxDraft.entries)
+        // TODO: Handle batch tx outcome
+        .then(/* dispatch.donation.success */ console.log)
+        .catch(dispatch.donation.failure);
+    } else if (isListDonation && groupAllocationPlan !== undefined) {
+      // TODO: Move list donation batch call logic in here
+      return void null;
+    } else {
+      return void dispatch.donation.failure(
+        new Error("Unable to determine donation type."),
+      );
     }
   },
 
   handleOutcome: async (transactionHash: string): Promise<void> => {
+    // TODO: Use nearRps.txStatus for each tx hash & handle batch tx outcome
+
     const { accountId: sender_account_id } = walletApi;
 
     if (sender_account_id) {
@@ -88,7 +105,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       });
 
       const donationData = JSON.parse(
-        atob(data.result.receipts_outcome[3].outcome.status.SuccessValue),
+        atob(data?.result?.receipts_outcome[3].outcome.status.SuccessValue),
       ) as DirectDonation | PotDonation;
 
       dispatch.donation.success(donationData);

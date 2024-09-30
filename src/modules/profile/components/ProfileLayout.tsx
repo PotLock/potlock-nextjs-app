@@ -3,14 +3,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import useRegistration from "@/modules/core/hooks/useRegistration";
-import Info from "@/modules/profile/components/Info";
-import ProfileBanner from "@/modules/profile/components/ProfileBanner";
-import Tabs from "@/modules/profile/components/Tabs";
 import {
   tabRoutesProfile,
   tabRoutesProject,
 } from "@/modules/profile/tabRoutes";
 import ProjectBanner from "@/modules/project/components/ProjectBanner";
+
+import Info from "./Info";
+import { ProfileBanner } from "./ProfileBanner";
+import Tabs from "./Tabs";
 
 type Props = {
   children: React.ReactNode;

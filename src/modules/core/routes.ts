@@ -4,7 +4,7 @@ const routesPath = {
   PROJECTS_LIST: "/",
   PROJECT: "/profile",
   CART: "/cart",
-  FEED: "feed",
+  FEED: "/feed",
   POTS: "/pots",
   POT_DETAIL: "/pot",
   DEPLOY_POT: "/deploy",

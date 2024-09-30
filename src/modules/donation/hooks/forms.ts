@@ -2,25 +2,29 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { omit } from "remeda";
 
 import { walletApi } from "@/common/api/near";
 import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
-import { useAvailableBalance } from "@/modules/core";
-import useIsHuman from "@/modules/core/hooks/useIsHuman";
+import { useIsHuman } from "@/modules/core";
+import { useTokenBalance } from "@/modules/token";
 import { dispatch } from "@/store";
 
-import { DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
+import {
+  DONATION_MIN_NEAR_AMOUNT,
+  DONATION_MIN_NEAR_AMOUNT_ERROR,
+} from "../constants";
 import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
+  DonationAllocationKey,
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategy,
-  DonationSubmissionInputs,
+  DonationGroupAllocationStrategyEnum,
 } from "../types";
 import { isDonationAmountSufficient } from "../utils/validation";
 
-export type DonationFormParams = DonationSubmissionInputs & {
+export type DonationFormParams = DonationAllocationKey & {
   referrerAccountId?: string;
 };
 
@@ -28,8 +32,12 @@ export const useDonationForm = ({
   referrerAccountId,
   ...params
 }: DonationFormParams) => {
-  const recipientAccountId =
-    "accountId" in params ? params.accountId : undefined;
+  const isSingleProjectDonation = "accountId" in params;
+  const isPotDonation = "potId" in params;
+
+  const recipientAccountId = isSingleProjectDonation
+    ? params.accountId
+    : undefined;
 
   const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
     accountId: recipientAccountId,
@@ -45,27 +53,28 @@ export const useDonationForm = ({
 
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
-      allocationStrategy:
-        "accountId" in params
-          ? DonationAllocationStrategyEnum[
-              matchingPots.length > 0 ? "pot" : "direct"
-            ]
-          : DonationAllocationStrategyEnum.pot,
-
+      amount: DONATION_MIN_NEAR_AMOUNT,
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId,
       referrerAccountId,
+      potAccountId: isPotDonation ? params.potId : defaultPotAccountId,
 
-      potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
+      allocationStrategy: isSingleProjectDonation
+        ? DonationAllocationStrategyEnum[
+            matchingPots.length > 0 ? "split" : "full"
+          ]
+        : DonationAllocationStrategyEnum.split,
 
-      potDistributionStrategy:
-        DonationPotDistributionStrategy[
-          "accountId" in params ? "manually" : "evenly"
+      groupAllocationStrategy:
+        DonationGroupAllocationStrategyEnum[
+          isSingleProjectDonation ? "manually" : "evenly"
         ],
     }),
 
     [
       defaultPotAccountId,
+      isPotDonation,
+      isSingleProjectDonation,
       matchingPots.length,
       params,
       recipientAccountId,
@@ -73,31 +82,38 @@ export const useDonationForm = ({
     ],
   );
 
-  const form = useForm<DonationInputs>({
+  const self = useForm<DonationInputs>({
     resolver: zodResolver(donationSchema),
     mode: "onChange",
     defaultValues,
     resetOptions: { keepDirtyValues: true },
   });
 
-  const currentValues = useWatch({ control: form.control });
-  const amount = currentValues.amount ?? 0;
-  const tokenId = currentValues.tokenId ?? NEAR_TOKEN_DENOM;
-  const { balanceFloat } = useAvailableBalance({ tokenId });
+  const values = useWatch(self);
+  const amount = values.amount ?? 0;
+  const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
+  const { balanceFloat } = useTokenBalance({ tokenId });
 
-  const hasChanges = Object.keys(currentValues).some((key) => {
-    const defaultValue = defaultValues[key as keyof DonationInputs];
-    const currentValue = currentValues[key as keyof DonationInputs];
+  const totalAmountFloat =
+    values.allocationStrategy === DonationAllocationStrategyEnum.split
+      ? values.groupAllocationPlan?.reduce(
+          (total, { amount }) => total + (amount ?? 0.0),
+          0.0,
+        ) ?? 0.0
+      : amount;
 
-    return currentValue !== defaultValue;
-  });
+  const hasChanges = Object.keys(values).some(
+    (key) =>
+      values[key as keyof DonationInputs] !==
+      defaultValues[key as keyof DonationInputs],
+  );
 
-  const isBalanceSufficient = amount < (balanceFloat ?? 0);
+  const isBalanceSufficient = totalAmountFloat < (balanceFloat ?? 0);
 
   const isDisabled =
     !hasChanges ||
-    !form.formState.isValid ||
-    form.formState.isSubmitting ||
+    !self.formState.isValid ||
+    self.formState.isSubmitting ||
     !isBalanceSufficient;
 
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
@@ -108,7 +124,7 @@ export const useDonationForm = ({
       : null;
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
-    (values) => dispatch.donation.submit({ ...values, ...params }),
+    (inputs) => dispatch.donation.submit({ ...inputs, ...params }),
     [params],
   );
 
@@ -118,22 +134,36 @@ export const useDonationForm = ({
      *?  it does not trigger rerender, so we have to do it manually.
      */
     if (
-      "accountId" in params &&
-      currentValues.potAccountId === undefined &&
+      isSingleProjectDonation &&
+      values.potAccountId === undefined &&
       defaultPotAccountId
     ) {
-      form.setValue("potAccountId", defaultPotAccountId);
+      self.setValue("potAccountId", defaultPotAccountId);
     }
-  }, [currentValues, defaultPotAccountId, form, hasChanges, params]);
+  }, [
+    values,
+    defaultPotAccountId,
+    self,
+    hasChanges,
+    params,
+    isSingleProjectDonation,
+  ]);
+
+  console.table(omit(values, ["groupAllocationPlan"]));
+
+  values.groupAllocationPlan?.forEach((entry) => console.table(entry));
 
   return {
+    form: self,
+    defaultValues,
     hasChanges,
     isBalanceSufficient,
     isDisabled,
     isSenderHumanVerified,
+    onSubmit: self.handleSubmit(onSubmit),
     matchingPots,
-    form,
     minAmountError,
-    onSubmit: form.handleSubmit(onSubmit),
+    inputs: values,
+    totalAmountFloat,
   };
 };

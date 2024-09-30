@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { getImage } from "@/common/api/images";
 import { useAccountDonationsSent } from "@/common/api/potlock/hooks";
@@ -8,7 +8,7 @@ import {
 } from "@/common/contracts/social";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 
-const useProfileData = (
+export const useProfileData = (
   accountId?: string,
   useCache: boolean = true,
   getDonationsSent = true,
@@ -37,21 +37,20 @@ const useProfileData = (
       if (accountId) {
         setProfileReady(false);
         setProfile(undefined);
+
         const projectProfileData = await getSocialProfile({
           accountId,
           useCache,
         });
 
-        const image = getImage({
-          image: projectProfileData?.image,
-          type: "image",
-        });
-        const backgroundImage = getImage({
-          image: projectProfileData?.backgroundImage,
-          type: "backgroundImage",
-        });
+        const images = await Promise.all([
+          getImage({ image: projectProfileData?.image, type: "image" }),
 
-        const images = await Promise.all([image, backgroundImage]);
+          getImage({
+            image: projectProfileData?.backgroundImage,
+            type: "backgroundImage",
+          }),
+        ]);
 
         setProfileImages({
           image: images[0],
@@ -64,13 +63,40 @@ const useProfileData = (
     })();
   }, [accountId, useCache]);
 
+  const avatarSrc = useMemo(
+    () =>
+      (typeof profile?.image === "string"
+        ? profile?.image
+        : profile?.image?.url ??
+          (profile?.image?.ipfs_cid
+            ? `https://ipfs.near.social/ipfs/${profile?.image?.ipfs_cid}`
+            : null)) ?? profileImages.image,
+
+    [profile?.image, profileImages.image],
+  );
+
+  const backgroundSrc = useMemo(
+    () =>
+      (typeof profile?.backgroundImage === "string"
+        ? profile?.backgroundImage
+        : profile?.backgroundImage?.url ??
+          (profile?.backgroundImage?.ipfs_cid
+            ? `https://ipfs.near.social/ipfs/${profile?.backgroundImage?.ipfs_cid}`
+            : null)) ?? profileImages.backgroundImage,
+
+    [profile?.backgroundImage, profileImages.backgroundImage],
+  );
+
   return {
-    profile,
+    /** @deprecated use `avatarSrc` and `backgroundSrc` */
     profileImages,
-    profileReady,
+    avatarSrc,
+    backgroundSrc,
     donationsSent: donationsData?.results,
-    registration,
+    profile,
+    profileReady,
     profileType,
+    registration,
   };
 };
 

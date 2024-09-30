@@ -4,21 +4,21 @@ import { mergeAll } from "remeda";
 import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
-import { CartCheckoutStep, CartOrderOutcome, CartState } from "../types";
+import { CartOrderExecutionOutcome, CartOrderStep, CartState } from "../types";
 
 export * from "./schemas";
 
 const cartStateDefaults: CartState = {
-  orders: {},
-  checkoutStep: "details",
+  items: {},
+  orderStep: "details",
   finalOutcome: { error: null },
 };
 
 const handleStep = (
   state: CartState,
-  checkoutStep: CartCheckoutStep,
+  orderStep: CartOrderStep,
   stateUpdate?: Partial<CartState>,
-) => mergeAll([state, stateUpdate ?? {}, { checkoutStep }]);
+) => mergeAll([state, stateUpdate ?? {}, { orderStep }]);
 
 export const cartModel = createModel<AppModel>()({
   state: cartStateDefaults,
@@ -27,7 +27,7 @@ export const cartModel = createModel<AppModel>()({
   reducers: {
     reset: () => cartStateDefaults,
 
-    ordersExecuted: (state, data: CartOrderOutcome[]) =>
+    ordersExecuted: (state, data: CartOrderExecutionOutcome[]) =>
       handleStep(state, "result", {
         finalOutcome: { data, error: null },
       }),

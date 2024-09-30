@@ -1,5 +1,5 @@
-export * from "./components/custom-avatar";
-export { ProfileLink } from "./components/ProfileLink";
-export { ProfileLayout } from "./components/ProfileLayout";
+export * from "./components/FeedCard";
+export * from "./components/ProfileLink";
+export * from "./components/ProfileLayout";
 export { profilesModel, navModel } from "./models";
-export { default as useProfileData } from "./hooks/useProfileData";
+export { default as useProfileData } from "./hooks/data";

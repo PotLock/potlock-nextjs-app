@@ -1,3 +1,5 @@
+import { ByTokenId } from "@/common/types";
+
 export interface DirectDonationConfig {
   owner: string;
   protocol_fee_basis_points: number;
@@ -29,3 +31,10 @@ export type DirectDonationArgs = {
   referrer_id?: null | string;
   bypass_protocol_fee?: null | boolean;
 };
+
+export type DirectBatchDonationItem = {
+  args: DirectDonationArgs;
+  amountYoctoNear: string;
+};
+
+export type DirectFTBatchDonationItem = ByTokenId & DirectBatchDonationItem;

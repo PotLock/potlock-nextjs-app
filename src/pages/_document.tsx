@@ -1,10 +1,13 @@
 import { Head, Html, Main, NextScript } from "next/document";
 
-import { APP_METADATA } from "@/common/constants";
+import { APP_METADATA, DEBUG } from "@/common/constants";
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html
+      lang="en"
+      style={DEBUG ? { background: "#000!important" } : undefined}
+    >
       <Head>
         <meta name="description" content={APP_METADATA.description} />
         <meta name="image" content={APP_METADATA.openGraph.images.url} />
@@ -27,7 +30,7 @@ export default function Document() {
         <style>{"html.dark {background: #000;}"}</style>
       </Head>
 
-      <body>
+      <body className="text-foreground">
         <Main />
         <NextScript />
       </body>
