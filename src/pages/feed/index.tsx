@@ -25,8 +25,6 @@ export default function GlobalFeedsPage() {
     [registrations],
   );
 
-  console.log(feedPosts);
-
   useEffect(() => {
     setIsLoading(true);
 
