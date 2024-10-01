@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Import the three components
 import { buildTransaction } from "@wpdas/naxios";
@@ -28,12 +28,13 @@ const DonationFlow = ({
   onClose: () => void;
   isOpen: boolean;
 }) => {
-  const [step, setStep] = useState(1); // Track the current step in the process
-  const [amount, setAmount] = useState(0); // Track the donation amount
-  const [breakdown, setBreakdown] = useState<any>([]); // Track the breakdown of fees
+  const [step, setStep] = useState(1);
+  const [amount, setAmount] = useState(0);
+  const [breakdown, setBreakdown] = useState<any>([]);
   const [selectedProjects, setSelectedProjects] = useState<any>([]);
   const [projects, setProjects] = useState<any>([]);
   const [amountPerProject, setAmountPerProject] = useState<number>(0);
+  const [bypassFeeCheck, setBypassFeeCheck] = useState<boolean>(false);
 
   const nextStep = () => {
     setStep(step + 1);
@@ -53,7 +54,7 @@ const DonationFlow = ({
             message: "",
             recipient_id: item?.registrant?.id,
             referrer_id: null,
-            bypass_protocol_fee: true,
+            bypass_protocol_fee: bypassFeeCheck,
           },
           deposit: parseNearAmount(`${amountPerProject}`)!,
         }),
@@ -76,6 +77,10 @@ const DonationFlow = ({
     });
   };
 
+  useEffect(() => {
+    console.log(selectedProjects);
+  }, [selectedProjects]);
+
   return (
     <Dialog open={isOpen}>
       <DialogContent onCloseClick={onClose}>
@@ -95,13 +100,11 @@ const DonationFlow = ({
                 donationAmount: number,
                 selectedProjects: any,
               ) => {
-                // Create a Project Breakdown based on allocation Logic (For Contract)
                 const individualAmount =
                   donationAmount / selectedProjects.length;
                 setAmountPerProject(individualAmount);
 
                 setAmount(donationAmount);
-                // Create a breakdown based on allocation logic (For Display)
                 setBreakdown([
                   {
                     label: "Project allocation (92.5%)",
@@ -130,7 +133,9 @@ const DonationFlow = ({
               totalAmount={amount}
               breakdown={breakdown}
               onConfirm={handleConfirm}
+              feeChecked={bypassFeeCheck}
               onBack={prevStep}
+              onFeeCheckChange={setBypassFeeCheck}
               onClose={onClose}
             />
           )}

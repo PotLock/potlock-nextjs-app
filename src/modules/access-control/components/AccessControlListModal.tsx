@@ -106,9 +106,10 @@ export const AccessControlListModal = create(
     const isAccountFormDisabled =
       form.formState.isSubmitting || !form.formState.isValid;
 
-    const onAccountSubmit = form.handleSubmit(({ accountId }) =>
-      onSubmit([...accountIds, accountId]),
-    );
+    const onAccountSubmit = form.handleSubmit(({ accountId }) => {
+      onSubmit([...accountIds, accountId]);
+      form.setValue("accountId", "");
+    });
 
     const handleAccountRemove = useCallback(
       (accountId: AccountId) => () =>

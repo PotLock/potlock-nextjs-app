@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-import { Group, SearchBar, SortSelect } from "@/common/ui/components";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import { SearchBar, SortSelect } from "@/common/ui/components";
 import { ListCard } from "@/modules/lists/components/ListCard";
 import { useAllLists } from "@/modules/lists/hooks/useAllLists";
-import { Profile } from "@/modules/profile/models";
-import { categories, statuses } from "@/modules/project/constants";
-import { useTypedSelector } from "@/store";
 
 import { ListCardSkeleton } from "./ListCardSkeleton";
+import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
 
 const AllLists = ({
   currentListType,
@@ -22,10 +19,8 @@ const AllLists = ({
   setFilteredRegistrations: (type: any) => void;
 }) => {
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
 
-  const { fetchAllLists, registrations, loading, buttons } = useAllLists(
+  const { registrations, loading, buttons } = useAllLists(
     setCurrentListType,
     setFilteredRegistrations,
   );
@@ -54,43 +49,21 @@ const AllLists = ({
     },
   ];
 
-  const tagsList: Group[] = [
-    {
-      label: "Category",
-      options: categories,
-      props: {
-        value: categoryFilter,
-        onValueChange: (value) => setCategoryFilter(value),
-      },
-    },
-    {
-      label: "Status",
-      options: statuses,
-      props: {
-        value: statusFilter,
-        onValueChange: (value) => {
-          if (value[value.length - 1] === "all") {
-            setsStatusFilter(["all"]);
-          } else if (value.includes("all")) {
-            const filter = value.filter((item) => item !== "all");
-            setsStatusFilter(filter);
-          } else {
-            setsStatusFilter(value);
-          }
-        },
-      },
-    },
-  ];
-
   const handleSort = (sortType: string) => {
     const projects = [...filteredRegistrations];
     switch (sortType) {
       case "recent":
-        projects.sort((a, b) => b.created_at - a.created_at);
+        projects.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        );
         setFilteredRegistrations(projects);
         break;
       case "older":
-        projects.sort((a, b) => a.created_at - b.created_at);
+        projects.sort(
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+        );
         setFilteredRegistrations(projects);
         break;
       default:
@@ -98,34 +71,16 @@ const AllLists = ({
     }
   };
 
-  // handle search & filter
   useEffect(() => {
     const handleSearch = (registration: any) => {
       return registration.name.toLowerCase().includes(search);
     };
 
-    const handleStatus = (registration: any) => {
-      // Implement filter status logic (if required)
-      return true; // Placeholder to ensure other logic can run smoothly
-    };
-
-    const handleCategory = (profile: Profile) => {
-      // Implement filter category logic (if required)
-      return true; // Placeholder to ensure other logic can run smoothly
-    };
-
-    const filtered = registrations.filter(
-      (registration) =>
-        handleSearch(registration) &&
-        handleStatus(registration) &&
-        handleCategory(registration),
+    const filtered = registrations.filter((registration) =>
+      handleSearch(registration),
     );
     setFilteredRegistrations(filtered);
-  }, [search, categoryFilter, statusFilter, registrations]);
-
-  useEffect(() => {
-    fetchAllLists();
-  }, []);
+  }, [search, registrations]);
 
   const getRandomBackgroundImage = () => {
     const randomIndex = Math.floor(Math.random() * defaultBgImages.length);

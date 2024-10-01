@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 
 import { statusesIcons } from "@/modules/core/constants";
+import { ListFormModalType } from "@/modules/lists/types";
 import { dispatch, useTypedSelector } from "@/store";
 
 export const Toast: React.FC = () => {
@@ -18,8 +19,6 @@ export const Toast: React.FC = () => {
 
   if (!toast.show) return null;
 
-  console.log(toast);
-
   return (
     toast.message && (
       <div
@@ -29,7 +28,7 @@ export const Toast: React.FC = () => {
         className="md:w-[498px] top-15 fixed right-4 z-20 flex w-[50%] items-center justify-between rounded bg-white p-4 text-black shadow-lg"
       >
         <div className="flex items-center gap-3">
-          {toast.listType && toast.listType !== "NONE" && (
+          {toast.listType === ListFormModalType.UPDATE_ACCOUNT && (
             <Image
               width={18}
               height={18}

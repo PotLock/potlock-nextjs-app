@@ -18,6 +18,9 @@ export const useListDeploymentSuccessRedirect = () => {
     setSearchParams,
   } = useRouteQuery();
 
+  const voteType =
+    toast.listType === ListFormModalType.UPVOTE ||
+    toast.listType === ListFormModalType.DOWNVOTE;
   const transactionHash =
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
     (typeof transactionHashes === "string" ? transactionHashes : undefined);
@@ -35,7 +38,11 @@ export const useListDeploymentSuccessRedirect = () => {
         listType: toast.listType as StatusF24Enum,
       });
       setSearchParams({ transactionHashes: null, type: null });
-    } else if (isTransactionOutcomeDetected) {
+    } else if (voteType && isTransactionOutcomeDetected) {
+      dispatch.toast.showToast({
+        message: `${toast.name} has been added to your favorites`,
+      });
+    } else if (isTransactionOutcomeDetected && !voteType) {
       dispatch.listEditor
         .handleListContractActions(transactionHash)
         .finally(() => {

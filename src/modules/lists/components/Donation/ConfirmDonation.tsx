@@ -5,6 +5,8 @@ const ConfirmDonation = ({
   breakdown,
   onConfirm,
   onBack,
+  feeChecked = false,
+  onFeeCheckChange,
 }: any) => (
   <div>
     <div className="p-4">
@@ -46,6 +48,8 @@ const ConfirmDonation = ({
         <label className="flex items-center text-sm">
           <input
             type="checkbox"
+            checked={feeChecked}
+            onChange={(e) => onFeeCheckChange(e.target.checked)}
             className="form-checkbox h-4 w-4 text-red-600"
           />
           <span className="ml-2">Remove 2% Protocol Fees</span>
@@ -58,7 +62,7 @@ const ConfirmDonation = ({
             <span>impact.sputnik.dao.near</span>
           </span>
         </label>
-        <label className="flex items-center text-sm">
+        {/* <label className="flex items-center text-sm">
           <input
             type="checkbox"
             className="form-checkbox h-4 w-4 text-red-600"
@@ -72,7 +76,7 @@ const ConfirmDonation = ({
             />
             <span>#build</span>
           </span>
-        </label>
+        </label> */}
       </div>
 
       <div className="mt-6">

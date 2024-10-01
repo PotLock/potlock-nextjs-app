@@ -4,10 +4,16 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
+import { walletApi } from "@/common/api/near";
+import { StatusF24Enum } from "@/common/api/potlock";
 import { LayersIcon } from "@/common/assets/svgs";
+import { LikeIcon } from "@/common/assets/svgs/like";
 import { remove_upvote, upvote } from "@/common/contracts/potlock/lists";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { dispatch } from "@/store";
+
+import { ListFormModalType } from "../types";
 
 export const ListCard = ({
   dataForList,
@@ -30,22 +36,42 @@ export const ListCard = ({
       setProfileImage(image);
     };
     if (dataForList.owner) fetchProfileImage();
+    setIsUpvoted(
+      dataForList.upvotes?.some(
+        (data: any) => data?.account === walletApi.accountId,
+      ),
+    );
   }, [dataForList.owner]);
 
   const handleRoute = useCallback(
-    () => push(`/list/${dataForList?.id}`),
-    [dataForList?.id],
+    () => push(`/list/${dataForList?.on_chain_id}`),
+    [dataForList?.on_chain_id],
   );
 
   const handleUpvote = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (isUpvoted) {
-      remove_upvote({ list_id: dataForList?.id });
+      remove_upvote({ list_id: dataForList?.on_chain_id });
     } else {
-      upvote({ list_id: dataForList?.id });
+      upvote({ list_id: dataForList?.on_chain_id });
     }
-    setIsUpvoted(!isUpvoted);
+    dispatch.toast.upvoteSuccess({
+      name: truncate(dataForList?.name, 15),
+      listType: ListFormModalType.UPVOTE,
+      message: "",
+    });
   };
+
+  const handleRouteUser = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      push(`/profile/${dataForList?.owner?.id}`);
+    },
+    [dataForList?.owner],
+  );
+
+  const NO_IMAGE =
+    "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
 
   return (
     <div
@@ -61,7 +87,7 @@ export const ListCard = ({
         alt="backdrop"
         width={500}
         height={5}
-        className={`h-max w-full ${dataForList?.cover_image_url ? "" : "px-4"} object-cover`}
+        className={`h-max w-full ${backdrop.endsWith("list_bg_image.png") ? "px-4" : ""} object-cover`}
       />
       <div
         className=" overflow-hidden rounded-[12px] border  border-gray-300 bg-white "
@@ -87,33 +113,35 @@ export const ListCard = ({
         </div>
         <div className="flex h-[112px] flex-col justify-between p-3">
           <p className=" text-lg font-[600] leading-tight">
-            {truncate(dataForList.name, 150)}
+            {truncate(dataForList?.name || "", 150)}
           </p>
           <div className="mt-2 flex items-center justify-between space-x-2">
             <div className="flex items-center gap-2 text-[14px]">
               <p className="">BY</p>
-              <div className="flex items-center gap-1">
+              <div
+                role="button"
+                className="flex items-center gap-1 hover:opacity-50"
+                onClick={handleRouteUser}
+              >
                 <img
-                  src={
-                    profileImage ||
-                    "https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cGVyc29ufGVufDB8fDB8fHww"
-                  }
+                  src={profileImage || NO_IMAGE}
                   alt="person"
                   className="h-4 w-4 rounded-full object-cover"
                 />
-                <p className="">{truncate(dataForList.owner, 25)}</p>
+
+                <p className="">{truncate(dataForList.owner?.id, 25)}</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center justify-center gap-2">
               <button onClick={handleUpvote} className="focus:outline-none">
                 {isUpvoted ? (
-                  <FaHeart className="text-red-500" />
+                  <FaHeart className="text-[18px] text-red-500" />
                 ) : (
-                  <FaRegHeart className="text-gray-500" />
+                  <LikeIcon className="m-0 p-0" />
                 )}
               </button>
-              <p className="">
-                {dataForList.total_upvotes_count + (isUpvoted ? 1 : 0)}
+              <p className="m-0 p-0 pt-1 text-[16px] font-semibold text-black">
+                {dataForList.upvotes?.length + (isUpvoted ? 1 : 0)}
               </p>
             </div>
           </div>

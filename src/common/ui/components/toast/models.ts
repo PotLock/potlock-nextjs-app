@@ -3,6 +3,7 @@ import { mergeAll } from "remeda";
 
 import { StatusF24Enum } from "@/common/api/potlock";
 import { AccountId } from "@/common/types";
+import { ListFormModalType } from "@/modules/lists/types";
 import { AppModel } from "@/store/models";
 
 export const potEditorModelKey = "toast";
@@ -12,12 +13,14 @@ interface ToastState {
   message: string;
   listType?: StatusF24Enum | string;
   account?: AccountId;
+  name?: string;
 }
 
 const toastDefaultState: ToastState = {
   show: false,
   message: "",
   listType: "NONE",
+  name: "",
 };
 
 const handleToastState = (
@@ -34,6 +37,14 @@ export const toastModel = createModel<AppModel>()({
       listType,
       account,
     }),
+    upvoteSuccess: (
+      state,
+      {
+        message,
+        listType,
+        name,
+      }: { message: string; listType: ListFormModalType; name: string },
+    ) => handleToastState(state, { show: true, message, listType, name }),
     showToast: (
       state,
       { message, listType }: { message: string; listType?: StatusF24Enum },
