@@ -15,6 +15,7 @@ import routesPath from "../routes";
 const links = [
   { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },
   { label: "Feed", url: routesPath.FEED, disabled: false },
+  { label: "List", url: routesPath.LIST, disabled: false },
   { label: "Pots", url: routesPath.POTS, disabled: false },
   // { label: "Donors", url: routesPath.DONORS, disabled: false },
 ];
@@ -114,7 +115,6 @@ export const Nav = () => {
             <div className="max-md:hidden flex flex-row items-center justify-center">
               {links.map(({ url, label }) => {
                 const isActive = isClient ? url === router.pathname : false;
-
                 return (
                   <Link
                     key={url + label}
