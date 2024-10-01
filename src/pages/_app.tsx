@@ -56,9 +56,7 @@ export default function RootLayout({
         <NiceModalProvider>
           <AuthProvider>
             <div
-              un-flex="~ col"
-              un-items="center"
-              className={`${cn("font-lora antialiased", lora.variable)}`}
+              className={`${cn("flex h-full flex-col items-center font-lora antialiased", lora.variable)}`}
             >
               <Nav />
               {getLayout(<Component {...pageProps} />)}

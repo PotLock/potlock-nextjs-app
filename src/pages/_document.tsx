@@ -28,8 +28,6 @@ export default function Document() {
           href="https://fonts.cdnfonts.com"
           crossOrigin="anonymous"
         />
-
-        <style>{"html.dark {background: #000;}"}</style>
       </Head>
 
       <body className="text-foreground">
