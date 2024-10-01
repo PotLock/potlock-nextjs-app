@@ -14,12 +14,23 @@ export type DonationGroupAllocationBreakdownProps = WithDonationFormAPI & {};
 export const DonationGroupAllocationBreakdown: React.FC<
   DonationGroupAllocationBreakdownProps
 > = ({ form }) => {
-  const [groupAllocationPlan] = form.watch(["groupAllocationPlan"]);
+  const [tokenId, groupAllocationPlan] = form.watch([
+    "tokenId",
+    "groupAllocationPlan",
+  ]);
 
   return (
     <div>
       {groupAllocationPlan?.map(({ account_id, amount }) => (
-        <AccountOption accountId={account_id} key={account_id + amount} />
+        <AccountOption
+          key={account_id + amount}
+          accountId={account_id}
+          secondaryAction={
+            <LabeledIcon caption={amount ?? 0}>
+              <TokenIcon {...{ tokenId }} />
+            </LabeledIcon>
+          }
+        />
       ))}
     </div>
   );

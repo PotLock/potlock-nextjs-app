@@ -142,7 +142,7 @@ export const ListAccounts = ({
             ))
           : (searchedAccounts.length
               ? searchedAccounts
-              : filteredRegistrations ?? []
+              : (filteredRegistrations ?? [])
             )?.map((item, index) => (
               <AccountCard
                 accountsWithAccess={accountsWithAccess}

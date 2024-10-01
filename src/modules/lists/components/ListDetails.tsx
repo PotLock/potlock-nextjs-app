@@ -127,7 +127,7 @@ export const ListDetails = ({
           status:
             listDetails?.owner === walletApi.accountId
               ? "Approved"
-              : listDetails?.default_registration_status ?? "Pending",
+              : (listDetails?.default_registration_status ?? "Pending"),
 
           submitted_ms: Date.now(),
           updated_ms: Date.now(),
