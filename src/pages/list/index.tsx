@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
 import { PageWithBanner } from "@/common/ui/components";
-import AllLists from "@/modules/lists/components/AllLists";
-import ListHero from "@/modules/lists/components/ListHero";
+import { ListHero, ListsOverview } from "@/modules/lists";
 import { useListDeploymentSuccessRedirect } from "@/modules/lists/hooks/redirects";
 
 export default function Page() {
@@ -17,7 +16,8 @@ export default function Page() {
           setCurrentListType={setCurrentListType}
           setFilteredRegistrations={setFilteredRegistrations}
         />
-        <AllLists
+
+        <ListsOverview
           currentListType={currentListType}
           setCurrentListType={setCurrentListType}
           filteredRegistrations={filteredRegistrations}

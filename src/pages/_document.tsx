@@ -1,11 +1,13 @@
 import { Head, Html, Main, NextScript } from "next/document";
 
-// Assuming APP_METADATA is defined and imported from a constants file
-import { APP_METADATA } from "@/common/constants";
+import { APP_METADATA, DEBUG } from "@/common/constants";
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html
+      lang="en"
+      style={DEBUG ? { background: "#000!important" } : undefined}
+    >
       <Head>
         {/* Meta tags for description and image */}
         <meta name="description" content={APP_METADATA.description} />
@@ -17,7 +19,7 @@ export default function Document() {
         <meta property="og:description" content={APP_METADATA.description} />
         <meta property="og:image" content={APP_METADATA.openGraph.images.url} />
 
-        {/* Meta tag for Twitter Card (X) */}
+        {/* Meta tags for X ( formerly Twitter ) */}
         <meta property="twitter:card" content="summary_large_image" />
 
         {/* Preconnect to fonts CDN */}
@@ -26,14 +28,10 @@ export default function Document() {
           href="https://fonts.cdnfonts.com"
           crossOrigin="anonymous"
         />
-
-        <style>{"html.dark {background: #000;}"}</style>
       </Head>
 
-      <body>
-        {/* Main content */}
+      <body className="text-foreground">
         <Main />
-        {/* Next.js scripts */}
         <NextScript />
       </body>
     </Html>

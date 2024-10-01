@@ -7,7 +7,12 @@
   "env": {
     "node": true
   },
-  "plugins": ["@typescript-eslint", "prettier", "import", "testing-library"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "import",
+    "testing-library"
+  ],
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
@@ -19,6 +24,7 @@
     "prettier"
   ],
   "rules": {
+    "@next/next/no-img-element": "off",
     "camelcase": [
       "off",
       {
@@ -26,12 +32,12 @@
         "ignoreDestructuring": true
       }
     ],
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-explicit-any": 1,
     "@typescript-eslint/ban-types": "off",
     "prettier/prettier": [
       "error",
       {
-        "endOfLine": "auto"
+        "endOfLine": "lf"
       }
     ],
     "sort-imports": [
@@ -40,7 +46,12 @@
         "ignoreCase": false,
         "ignoreDeclarationSort": true, // don"t want to sort import lines, use eslint-plugin-import instead
         "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
+        "memberSyntaxSortOrder": [
+          "none",
+          "all",
+          "multiple",
+          "single"
+        ],
         "allowSeparatedGroups": true
       }
     ],
@@ -54,7 +65,10 @@
           "builtin", // Built-in imports (come from NodeJS native) go first
           "external", // <- External imports
           "internal", // <- Absolute imports
-          ["sibling", "parent"], // <- Relative imports, the sibling and parent types they can be mingled together
+          [
+            "sibling",
+            "parent"
+          ], // <- Relative imports, the sibling and parent types they can be mingled together
           "index", // <- index imports
           "unknown" // <- unknown
         ],
@@ -65,7 +79,9 @@
             "position": "before"
           }
         ],
-        "pathGroupsExcludedImportTypes": ["react"],
+        "pathGroupsExcludedImportTypes": [
+          "react"
+        ],
         "newlines-between": "always",
         "alphabetize": {
           /* sort in ascending order. Options: ["ignore", "asc", "desc"] */

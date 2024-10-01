@@ -6,7 +6,7 @@ import Link from "next/link";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import routesPath from "@/modules/core/routes";
 
-import useProfileData from "../hooks/useProfileData";
+import { useProfileData } from "../hooks/data";
 import getProfileTeamMembersData from "../utils/getProfileTeamMembersData";
 
 const NoTeam = () => (

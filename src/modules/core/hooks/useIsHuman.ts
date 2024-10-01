@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { getIsHuman } from "@/common/contracts/sybil.nadabot";
 
-const useIsHuman = (accountId?: string) => {
+export const useIsHuman = (accountId?: string) => {
   const [nadaBotVerified, setNadaBotVerified] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
@@ -30,5 +30,3 @@ const useIsHuman = (accountId?: string) => {
     error,
   };
 };
-
-export default useIsHuman;

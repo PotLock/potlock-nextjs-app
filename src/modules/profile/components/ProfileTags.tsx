@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 
 import { getTagsFromSocialProfileData } from "@/modules/project/utils";
 
-import useProfileData from "../hooks/useProfileData";
+import useProfileData from "../hooks/data";
 
 const TagsContainer = styled.div`
   display: flex;

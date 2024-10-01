@@ -5,7 +5,7 @@ import { getRegistration } from "@/common/contracts/potlock/lists";
 
 import { UNREGISTERED_PROJECT } from "../constants";
 
-const useRegistration = (projectId: string) => {
+export const useRegistration = (projectId: string) => {
   const [registration, setRegistration] =
     useState<Registration>(UNREGISTERED_PROJECT);
   const [loading, setLoading] = useState(true);

@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
-import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { IPFS_NEAR_SOCIAL_URL, NEAR_TOKEN_DENOM } from "@/common/constants";
 import { truncate } from "@/common/lib";
-import { useAvailableBalance } from "@/modules/core";
+import { useTokenBalance } from "@/modules/token";
 
 const FundAllocation = ({
   projects,
@@ -20,17 +20,15 @@ const FundAllocation = ({
     query: { id },
   } = useRouter();
 
-  const { balanceFloat } = useAvailableBalance({
-    tokenId: "near",
-  });
+  const { balanceFloat } = useTokenBalance({ tokenId: NEAR_TOKEN_DENOM });
 
   const { data, isLoading } = potlock.useListRegistrations({
     listId: parseInt(id as string),
   });
 
   useEffect(() => {
-    setProjects((data?.results as any) ?? []);
-  }, [isLoading]);
+    setProjects(data ?? []);
+  }, [data, isLoading, setProjects]);
 
   const handleProjectSelection = (project: any) => {
     if (selectedProjects.includes(project)) {

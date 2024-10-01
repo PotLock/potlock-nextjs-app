@@ -5,9 +5,8 @@ import { ListCard } from "@/modules/lists/components/ListCard";
 import { useAllLists } from "@/modules/lists/hooks/useAllLists";
 
 import { ListCardSkeleton } from "./ListCardSkeleton";
-import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
 
-const AllLists = ({
+export const ListsOverview = ({
   currentListType,
   setCurrentListType,
   filteredRegistrations,
@@ -80,7 +79,7 @@ const AllLists = ({
       handleSearch(registration),
     );
     setFilteredRegistrations(filtered);
-  }, [search, registrations]);
+  }, [search, registrations, setFilteredRegistrations]);
 
   const getRandomBackgroundImage = () => {
     const randomIndex = Math.floor(Math.random() * defaultBgImages.length);
@@ -148,5 +147,3 @@ const AllLists = ({
     </div>
   );
 };
-
-export default AllLists;

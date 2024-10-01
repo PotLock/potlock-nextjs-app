@@ -1,27 +1,19 @@
 import { DirectDonation, PotDonation } from "@/common/contracts/potlock";
+import { ByStringId } from "@/common/types";
+import { DonationBatchCallDraft } from "@/modules/donation";
 
-export type CartOrder = {
-  id: string;
-  amount: string;
-  token: string;
-  referrerId?: string;
-  accountId?: string;
-  potId?: string;
-};
+export type CartItem = ByStringId & DonationBatchCallDraft;
 
-export type CartCheckoutStep = "details" | "result";
+export type CartOrderStep = "details" | "result";
 
-export type CartOrderOutcome = DirectDonation | PotDonation;
+export type CartOrderExecutionOutcome = DirectDonation | PotDonation;
 
 export type CartState = {
-  orders: {
-    [id: CartOrder["id"]]: CartOrder;
-  };
-
-  checkoutStep: CartCheckoutStep;
+  items: Record<CartItem["id"], CartItem>;
+  orderStep: CartOrderStep;
 
   finalOutcome: {
-    data?: null | CartOrderOutcome[];
+    data?: null | CartOrderExecutionOutcome[];
     error: null | Error;
   };
 };

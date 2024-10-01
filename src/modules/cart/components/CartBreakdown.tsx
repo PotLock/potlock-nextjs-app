@@ -13,7 +13,7 @@ import { useCart } from "../hooks";
 export type CartBreakdownProps = {};
 
 export const CartBreakdown: React.FC<CartBreakdownProps> = () => {
-  const { orders } = useCart();
+  const { items } = useCart();
 
   const [matchingAmount, setMatchingAmount] = useState(0);
   const [directAmount, setDirectAmount] = useState(0);

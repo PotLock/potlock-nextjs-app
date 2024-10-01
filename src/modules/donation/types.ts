@@ -1,15 +1,20 @@
-import { ByPotId } from "@/common/api/potlock";
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
-import { PotDonation } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { ByAccountId } from "@/common/types";
+import { ByPotId, PotId } from "@/common/api/potlock";
+import {
+  DirectBatchDonationItem,
+  DirectDonation,
+  DirectFTBatchDonationItem,
+  PotBatchDonationItem,
+  PotDonation,
+} from "@/common/contracts/potlock";
+import { ByAccountId, ByListId } from "@/common/types";
 
-export type DonationParameters = ByAccountId | ByPotId;
+export type DonationAllocationKey = ByAccountId | ByPotId | ByListId;
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
 export enum DonationAllocationStrategyEnum {
-  direct = "direct",
-  pot = "pot",
+  full = "full",
+  split = "split",
 }
 
 export type DonationAllocationStrategy =
@@ -22,17 +27,51 @@ export type DonationAllocationStrategyOption = {
   hintIfDisabled?: string;
 };
 
-export enum DonationPotDistributionStrategy {
+export enum DonationGroupAllocationStrategyEnum {
   evenly = "evenly",
   manually = "manually",
 }
 
-export type DonationPotDistributionStrategyKey =
-  keyof typeof DonationPotDistributionStrategy;
+export type DonationGroupAllocationStrategy =
+  keyof typeof DonationGroupAllocationStrategyEnum;
+
+export type DonationGroupAllocationStrategyOption = {
+  label: string;
+  value: DonationGroupAllocationStrategy;
+  hint?: string;
+  hintIfDisabled?: string;
+};
 
 export type DonationState = {
   currentStep: DonationStep;
   finalOutcome?: DirectDonation | PotDonation;
 };
 
-export type DonationSubmissionInputs = ByAccountId | ByPotId;
+export interface WithTotalAmount {
+  totalAmountFloat: number;
+}
+
+export type DonationBreakdown = {
+  projectAllocationAmount: number;
+  projectAllocationPercent: number;
+  protocolFeeAmount: number;
+  protocolFeePercent: number;
+  protocolFeeRecipientAccountId?: string;
+  referralFeeAmount: number;
+  referralFeePercent: number;
+  chefFeeAmount: number;
+  chefFeePercent: number;
+};
+
+export type DonationDirectBatchCallDraft = {
+  entries: DirectFTBatchDonationItem[] | DirectBatchDonationItem[];
+};
+
+export type DonationPotBatchCallDraft = {
+  potAccountId: PotId;
+  entries: PotBatchDonationItem[];
+};
+
+export type DonationBatchCallDraft =
+  | DonationPotBatchCallDraft
+  | DonationDirectBatchCallDraft;

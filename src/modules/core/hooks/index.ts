@@ -1,1 +1,2 @@
-export { default as useIsHuman } from "./useIsHuman";
+export * from "./useIsHuman";
+export * from "./useRegistration";

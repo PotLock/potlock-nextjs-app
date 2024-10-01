@@ -5,9 +5,11 @@ import { useRouter } from "next/router";
 import { potlock } from "@/common/api/potlock";
 import { getList } from "@/common/contracts/potlock/lists";
 import { AccountId } from "@/common/types";
-import { ListAccounts } from "@/modules/lists/components/ListAccounts";
-import { ListDetails } from "@/modules/lists/components/ListDetails";
-import { useListDeploymentSuccessRedirect } from "@/modules/lists/hooks/redirects";
+import {
+  ListAccounts,
+  ListDetails,
+  useListDeploymentSuccessRedirect,
+} from "@/modules/lists";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 
 export interface SavedUsersType {
@@ -40,7 +42,7 @@ export default function Page() {
   });
 
   useEffect(() => {
-    setFilteredRegistrations((data?.results as any) ?? []);
+    setFilteredRegistrations(data ?? []);
   }, [data]);
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export default function Page() {
     };
 
     fetchListDetails();
-  }, [id]);
+  }, [id, setAdmins]);
 
   return (
     <div className="md:px-[2rem] container  px-0   pb-10">

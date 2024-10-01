@@ -11,7 +11,7 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from "@/common/ui/components/molecules/multi-select";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 import { useTypedSelector } from "@/store";
 
 export const Row = ({

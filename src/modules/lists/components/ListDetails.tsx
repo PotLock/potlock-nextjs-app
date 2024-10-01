@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import React, { useCallback, useEffect, useId, useState } from "react";
 
 import { show } from "@ebay/nice-modal-react";
@@ -8,6 +7,7 @@ import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 import { walletApi } from "@/common/api/near";
+import { ListRegistration } from "@/common/api/potlock";
 import {
   AdminUserIcon,
   DeleteListIcon,
@@ -39,7 +39,7 @@ import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
 
 interface ListDetailsType {
-  data: any;
+  data?: ListRegistration[];
   isLoading?: boolean;
   admins: string[];
   setAdmins: (value: string[]) => void;
@@ -49,7 +49,7 @@ interface ListDetailsType {
 }
 
 export const ListDetails = ({
-  data,
+  data = [],
   admins,
   setAdmins,
   listDetails,
@@ -83,7 +83,7 @@ export const ListDetails = ({
       setListOwnerImage(image);
     };
     if (id) fetchProfileImage();
-  }, [listDetails?.owner]);
+  }, [id, listDetails?.owner]);
 
   const openRegistrantsModal = useCallback(
     () => show(registrantsModalId),
@@ -103,18 +103,18 @@ export const ListDetails = ({
   } = useListForm();
 
   useEffect(() => {
-    setRegistrants(
-      data?.results?.map((data: any) => `${data?.registrant?.id}`) || [],
-    );
+    setRegistrants(data.map((data: any) => `${data?.registrant?.id}`) || []);
+
     setSavedUsers((prevValues: any) => ({
       ...prevValues,
+
       accounts:
-        data?.results?.map((data: any) => ({
+        data?.map((data: any) => ({
           account: data?.registrant?.id,
           id: data?.id,
         })) || [],
     }));
-  }, [data]);
+  }, [data, setSavedUsers]);
 
   const applyToListModal = (note: string) => {
     register_batch({
@@ -123,10 +123,12 @@ export const ListDetails = ({
       registrations: [
         {
           registrant_id: wallet?.accountId ?? "",
+
           status:
             listDetails?.owner === walletApi.accountId
               ? "Approved"
               : (listDetails?.default_registration_status ?? "Pending"),
+
           submitted_ms: Date.now(),
           updated_ms: Date.now(),
           notes: "",
@@ -139,7 +141,7 @@ export const ListDetails = ({
       .catch((error) => console.error("Error applying to list:", error));
   };
 
-  const onEditList = useCallback(() => push(`/list/edit/${id}`), [id]);
+  const onEditList = useCallback(() => push(`/list/edit/${id}`), [id, push]);
 
   if (!listDetails) {
     return <p>No list details available.</p>;

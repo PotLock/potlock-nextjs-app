@@ -102,25 +102,18 @@ export const usePots = (params?: V1PotsRetrieveParams) => {
 
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_applications_retrieve
- * NOTE: Not working. Getting 404 (Not Found)
  */
-export const usePotApplications = (
-  potId: string,
-  params?: V1PotsApplicationsRetrieveParams,
-) => {
-  const [data, setData] = useState<swrHooks.PaginatedPotApplicationsResponse>();
-  useEffect(() => {
-    (async () => {
-      const queryResult = await swrHooks.v1PotsApplicationsRetrieve(
-        potId,
-        params,
-      );
+export const usePotApplications = ({
+  potId,
+  ...params
+}: Partial<ByPotId> & V1PotsApplicationsRetrieveParams) => {
+  const queryResult = swrHooks.useV1PotsApplicationsRetrieve(
+    potId ?? "unknown",
+    params,
+    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(potId) } },
+  );
 
-      setData(queryResult.data);
-    })();
-  }, [params, potId]);
-
-  return { data };
+  return { ...queryResult, data: queryResult.data?.data.results };
 };
 
 /**
@@ -208,14 +201,18 @@ export const useRandomListRegistration = ({
 export const useListRegistrations = ({
   listId,
   ...params
-}: ByListId & V1ListsRegistrationsRetrieveParams) => {
+}: Partial<ByListId> & V1ListsRegistrationsRetrieveParams) => {
   const queryResult = swrHooks.useV1ListsRegistrationsRetrieve(
-    listId,
+    listId ?? 0,
     params,
-    POTLOCK_REQUEST_CONFIG,
+
+    {
+      ...POTLOCK_REQUEST_CONFIG,
+      swr: { enabled: Boolean(listId) },
+    },
   );
 
-  return { ...queryResult, data: queryResult.data?.data };
+  return { ...queryResult, data: queryResult.data?.data.results };
 };
 
 /**

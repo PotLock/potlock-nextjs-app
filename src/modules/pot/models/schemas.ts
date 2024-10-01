@@ -1,7 +1,7 @@
 import { infer as FromSchema, array, boolean, object, string, z } from "zod";
 
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
-import { validAccountId } from "@/modules/core";
+import { validAccountIdOrNothing } from "@/modules/core";
 import {
   donationAmount,
   donationFeeBasisPoints,
@@ -16,12 +16,10 @@ import {
   POT_MAX_NAME_LENGTH,
   POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS,
   POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS,
-  POT_MIN_COOLDOWN_PERIOD_MS,
   POT_MIN_NAME_LENGTH,
 } from "../constants";
 import {
   isPotChefFeeValid,
-  isPotCooldownPeriodValid,
   isPotMatchingPoolReferralFeeValid,
   isPotMaxProjectsValid,
   isPotPublicRoundReferralFeeValid,
@@ -81,7 +79,7 @@ export const potSchema = object({
     .optional()
     .describe("List of pot admins' account ids."),
 
-  chef: validAccountId.optional().describe("Chef's account id."),
+  chef: validAccountIdOrNothing.describe("Chef's account id."),
 
   pot_name: string()
     .min(

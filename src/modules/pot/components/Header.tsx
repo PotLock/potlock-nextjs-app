@@ -2,12 +2,13 @@ import { useState } from "react";
 
 import ReactMarkdown from "react-markdown";
 
+import { walletApi } from "@/common/api/near";
 import { Pot } from "@/common/api/potlock";
 import { VolunteerIcon } from "@/common/assets/svgs";
 import { yoctoNearToFloat } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
-import { useDonation } from "@/modules/donation";
+import { DonateToPotProjects } from "@/modules/donation";
 import { useTypedSelector } from "@/store";
 
 import ChallengeModal from "./ChallengeModal";
@@ -29,9 +30,12 @@ const Header = ({ potDetail }: Props) => {
 
   const potStatuses = usePotStatusesForAccountId({
     potDetail,
-    accountId: asDao ? actAsDao.defaultAddress : accountId,
+
+    accountId: asDao
+      ? actAsDao.defaultAddress
+      : (walletApi.accountId ?? accountId),
   });
-  const { openDonationModal } = useDonation({ potId: potDetail.account });
+
   const [fundModalOpen, setFundModalOpen] = useState(false);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
@@ -82,7 +86,7 @@ const Header = ({ potDetail }: Props) => {
           {/* ButtonsWrapper */}
           <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
             {potStatuses.canDonate && (
-              <Button onClick={openDonationModal}>Donate to Projects</Button>
+              <DonateToPotProjects potId={potDetail.account} />
             )}
             {potStatuses.canFund && (
               <Button
