@@ -311,11 +311,12 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               <FormField
                 name="chef"
                 control={form.control}
-                render={({ field }) => (
+                render={({ field: { value, ...field } }) => (
                   <TextField
                     label="Assign Chef"
                     type="text"
                     classNames={{ root: "lg:w-63% w-full" }}
+                    value={value ?? undefined}
                     {...field}
                   />
                 )}

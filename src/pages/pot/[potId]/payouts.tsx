@@ -7,6 +7,7 @@ import ArrowDown from "@/common/assets/svgs/ArrowDown";
 import { Payout } from "@/common/contracts/potlock";
 import { getPayouts } from "@/common/contracts/potlock/pot";
 import { yoctoNearToFloat } from "@/common/lib";
+import { AccountAvatar } from "@/modules/core";
 import {
   PayoutsChallenges,
   PotLayout,
@@ -29,7 +30,6 @@ import {
   TableContainer,
   WarningText,
 } from "@/modules/pot/styles/payouts-styles";
-import { CustomAvatar } from "@/modules/profile";
 
 const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 
@@ -159,7 +159,7 @@ const PayoutsTab = () => {
             return (
               <Row key={index}>
                 <RowItem className="project">
-                  <CustomAvatar
+                  <AccountAvatar
                     accountId={project_id}
                     className="h-[24px] w-[24px]"
                   />

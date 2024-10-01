@@ -207,7 +207,7 @@ export const useNewApplicationForm = ({
         } else {
           await naxiosInstance
             .contractApi({ contractId: potDetail.account }) // INFO: In this case, the accountId is a regular pot account
-            .call("donate", {
+            .call("apply", {
               args,
               deposit,
               gas: ONE_TGAS.mul(100).toString(),

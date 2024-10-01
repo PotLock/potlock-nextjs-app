@@ -9,7 +9,7 @@ import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject"
 import { ProfileLayout } from "@/modules/profile";
 import ExternalFunding from "@/modules/profile/components/ExternalFunding";
 import PotlockFunding from "@/modules/profile/components/PotlockFunding";
-import useProfileData from "@/modules/profile/hooks/useProfileData";
+import useProfileData from "@/modules/profile/hooks/data";
 
 const Line = () => <div className="my-[3rem] h-[1px] w-full bg-[#c7c7c7]" />;
 

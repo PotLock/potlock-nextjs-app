@@ -1,3 +1,7 @@
+import { useMemo } from "react";
+
+import { values } from "remeda";
+
 import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
 import { Pot, potlock } from "@/common/api/potlock";
@@ -21,11 +25,8 @@ import {
   SelectFieldOption,
   TextField,
 } from "@/common/ui/form-fields";
-import {
-  AvailableTokenBalance,
-  ModalErrorBody,
-  useNearUsdDisplayValue,
-} from "@/modules/core";
+import { ModalErrorBody, useNearUsdDisplayValue } from "@/modules/core";
+import { TokenBalance } from "@/modules/token";
 
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import {
@@ -38,19 +39,25 @@ import {
 } from "../models";
 import { DonationAllocationStrategyEnum } from "../types";
 
-export type DonationProjectAllocationProps = ByAccountId &
+export type DonationDirectAllocationProps = ByAccountId &
   DonationAllocationInputs & { matchingPots?: Pot[] };
 
-export const DonationProjectAllocation: React.FC<
-  DonationProjectAllocationProps
+export const DonationDirectAllocation: React.FC<
+  DonationDirectAllocationProps
 > = ({
+  form,
   isBalanceSufficient,
   minAmountError,
   accountId,
   balanceFloat,
   matchingPots,
-  form,
 }) => {
+  const [amount, tokenId, allocationStrategy] = form.watch([
+    "amount",
+    "tokenId",
+    "allocationStrategy",
+  ]);
+
   const { data: availableFts } = pagoda.useFtAccountBalances({
     accountId: walletApi.accountId,
   });
@@ -61,33 +68,15 @@ export const DonationProjectAllocation: React.FC<
     error: recipientDataError,
   } = potlock.useAccount({ accountId });
 
-  const [amount, tokenId, allocationStrategy] = form.watch([
-    "amount",
-    "tokenId",
-    "allocationStrategy",
-  ]);
-
   const isFtDonation =
-    allocationStrategy !== "pot" && tokenId !== NEAR_TOKEN_DENOM;
+    allocationStrategy !== DonationAllocationStrategyEnum.split &&
+    tokenId !== NEAR_TOKEN_DENOM;
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
-
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
 
-  return recipientDataError !== undefined ? (
-    <ModalErrorBody
-      heading="Donation"
-      title="Unable to load recipient data!"
-      message={recipientDataError?.message}
-    />
-  ) : (
-    <>
-      <DialogHeader>
-        <DialogTitle>
-          {`Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
-        </DialogTitle>
-      </DialogHeader>
-
+  const formLayout = useMemo(
+    () => (
       <DialogDescription>
         <FormField
           control={form.control}
@@ -98,7 +87,7 @@ export const DonationProjectAllocation: React.FC<
                 <Skeleton className="w-59 h-3.5" />
               ) : (
                 <FormLabel className="font-600">
-                  How do you want to allocate funds?
+                  {"How do you want to allocate funds?"}
                 </FormLabel>
               )}
 
@@ -107,9 +96,11 @@ export const DonationProjectAllocation: React.FC<
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  {Object.values(donationAllocationStrategies).map(
+                  {values(donationAllocationStrategies).map(
                     ({ label, hint, hintIfDisabled, value }) => {
-                      const disabled = value === "pot" && !hasMatchingPots;
+                      const disabled =
+                        value === DonationAllocationStrategyEnum.split &&
+                        !hasMatchingPots;
 
                       return (
                         <FormItem key={value}>
@@ -133,27 +124,30 @@ export const DonationProjectAllocation: React.FC<
           )}
         />
 
-        {allocationStrategy === "pot" && <DonationVerificationWarning />}
-
-        {allocationStrategy === "pot" && hasMatchingPots && (
-          <FormField
-            control={form.control}
-            name="potAccountId"
-            render={({ field }) => (
-              <SelectField
-                label="Select Pot"
-                defaultValue={field.value}
-                onValueChange={field.onChange}
-              >
-                {matchingPots?.map(({ account: potAccountId, name }) => (
-                  <SelectFieldOption key={potAccountId} value={potAccountId}>
-                    {name}
-                  </SelectFieldOption>
-                ))}
-              </SelectField>
-            )}
-          />
+        {allocationStrategy === DonationAllocationStrategyEnum.split && (
+          <DonationVerificationWarning />
         )}
+
+        {allocationStrategy === DonationAllocationStrategyEnum.split &&
+          hasMatchingPots && (
+            <FormField
+              control={form.control}
+              name="potAccountId"
+              render={({ field }) => (
+                <SelectField
+                  label="Select Pot"
+                  defaultValue={field.value}
+                  onValueChange={field.onChange}
+                >
+                  {matchingPots?.map(({ account: potAccountId, name }) => (
+                    <SelectFieldOption key={potAccountId} value={potAccountId}>
+                      {name}
+                    </SelectFieldOption>
+                  ))}
+                </SelectField>
+              )}
+            />
+          )}
 
         <FormField
           control={form.control}
@@ -162,7 +156,7 @@ export const DonationProjectAllocation: React.FC<
             <TextField
               label="Amount"
               {...field}
-              labelExtension={<AvailableTokenBalance tokenId={tokenId} />}
+              labelExtension={<TokenBalance tokenId={tokenId} />}
               inputExtension={
                 <FormField
                   control={form.control}
@@ -183,7 +177,8 @@ export const DonationProjectAllocation: React.FC<
                         {NEAR_TOKEN_DENOM.toUpperCase()}
                       </SelectItem>
 
-                      {allocationStrategy === "direct" &&
+                      {allocationStrategy ===
+                        DonationAllocationStrategyEnum.full &&
                         availableFts?.map(
                           ({
                             contract_account_id: contractId,
@@ -215,6 +210,39 @@ export const DonationProjectAllocation: React.FC<
           )}
         />
       </DialogDescription>
+    ),
+
+    [
+      allocationStrategy,
+      availableFts,
+      balanceFloat,
+      form.control,
+      hasMatchingPots,
+      isBalanceSufficient,
+      isFtDonation,
+      isRecipientDataLoading,
+      matchingPots,
+      minAmountError,
+      nearAmountUsdDisplayValue,
+      tokenId,
+    ],
+  );
+
+  return recipientDataError ? (
+    <ModalErrorBody
+      heading="Project donation"
+      title="Unable to load recipient data!"
+      message={recipientDataError?.message}
+    />
+  ) : (
+    <>
+      <DialogHeader>
+        <DialogTitle>
+          {`Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
+        </DialogTitle>
+      </DialogHeader>
+
+      {formLayout}
     </>
   );
 };

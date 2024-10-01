@@ -3,6 +3,7 @@ import {
   presetAttributify,
   presetTypography,
   presetUno,
+  transformerVariantGroup,
 } from "unocss";
 import presetAnimations from "unocss-preset-animations";
 import presetAutoprefixer from "unocss-preset-autoprefixer";
@@ -19,6 +20,9 @@ export default defineConfig({
       color: "slate",
     }),
   ],
+
+  transformers: [transformerVariantGroup()],
+
   theme: {
     colors: {
       primary: {

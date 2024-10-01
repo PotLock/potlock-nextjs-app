@@ -111,6 +111,7 @@
     "@typescript-eslint/parser": "^7.9.0",
     "@unocss/preset-attributify": "^0.60.4",
     "@unocss/preset-wind": "^0.60.4",
+    "@unocss/transformer-variant-group": "^0.62.4",
     "@vitejs/plugin-react": "^4.3.0",
     "concurrently": "^8.2.2",
     "eslint": "^8",

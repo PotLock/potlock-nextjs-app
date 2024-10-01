@@ -10,7 +10,7 @@ import routesPath from "@/modules/core/routes";
 import NearIcon from "./NearIcon";
 // import PotIcon from "./PotIcon";
 import { FundingSrc } from "./styled";
-import useProfileData from "../../hooks/useProfileData";
+import useProfileData from "../../hooks/data";
 
 const addTrailingZeros = (number: number) => {
   if (number < 100 && number >= 0.1) return number.toFixed(1);

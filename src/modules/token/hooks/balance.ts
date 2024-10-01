@@ -12,15 +12,11 @@ import {
 import { bigStringToFloat } from "@/common/lib";
 import { ByTokenId } from "@/common/types";
 
-export type AvailableBalance = {
-  isBalanceLoading: boolean;
-  balanceFloat: number | null;
-  balanceString: string | null;
-};
+import { TokenAvailableBalance } from "../types";
 
-export const useAvailableBalance = ({
+export const useTokenBalance = ({
   tokenId = NEAR_TOKEN_DENOM,
-}: Partial<ByTokenId>): AvailableBalance => {
+}: Partial<ByTokenId>): TokenAvailableBalance => {
   const [nearBalanceYoctoNear, setNearBalanceYoctoNear] = useState<
     string | null
   >(null);

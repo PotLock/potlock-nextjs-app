@@ -24,7 +24,7 @@ export const nearToUsdWithFallback = (
 };
 
 export const yoctosToUsdWithFallback = (
-  amountYoctos: string,
+  amountYoctoNear: string,
   abbreviate?: boolean,
 ) => {
   const nearToUsdInfo = oneNearUsdPrice();
@@ -32,8 +32,8 @@ export const yoctosToUsdWithFallback = (
   return nearToUsdInfo
     ? "~$" +
         formatWithCommas(
-          Big(amountYoctos).mul(nearToUsdInfo).div(1e24).toFixed(2),
+          Big(amountYoctoNear).mul(nearToUsdInfo).div(1e24).toFixed(2),
         )
-    : formatWithCommas(Big(amountYoctos).div(1e24).toFixed(2)) +
+    : formatWithCommas(Big(amountYoctoNear).div(1e24).toFixed(2)) +
         (abbreviate ? "N" : " NEAR");
 };

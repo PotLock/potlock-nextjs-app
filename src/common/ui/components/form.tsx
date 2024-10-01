@@ -11,7 +11,7 @@ import {
   useFormContext,
 } from "react-hook-form";
 
-import { Label } from "./label";
+import { Label } from "./atoms/label";
 import { cn } from "../utils";
 
 const Form = FormProvider;

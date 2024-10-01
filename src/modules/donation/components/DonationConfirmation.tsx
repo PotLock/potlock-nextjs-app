@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 
 import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
+import { pick } from "remeda";
 
 import { potlock } from "@/common/api/potlock";
 import {
@@ -17,24 +18,36 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { TotalTokenValue } from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
+import { TokenTotalValue } from "@/modules/token";
 
-import { DonationBreakdown } from "./DonationBreakdown";
-import { useDonationFees } from "../hooks";
+import { DonationSummaryBreakdown } from "./breakdowns";
+import { useDonationAllocationBreakdown } from "../hooks";
 import { DonationInputs } from "../models";
+import { WithTotalAmount } from "../types";
 
-export type DonationConfirmationProps = {
+export type DonationConfirmationProps = WithTotalAmount & {
   form: UseFormReturn<DonationInputs>;
 };
 
 export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
+  totalAmountFloat,
 }) => {
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
-  const values = form.watch();
-  const { data: pot } = potlock.usePot({ potId: values.potAccountId });
-  const fees = useDonationFees({ ...values, pot });
+  const inputs = form.watch();
+  const { data: pot } = potlock.usePot({ potId: inputs.potAccountId });
+
+  const breakdown = useDonationAllocationBreakdown({
+    ...pick(inputs, [
+      "referrerAccountId",
+      "bypassProtocolFee",
+      "bypassChefFee",
+    ]),
+
+    pot,
+    totalAmountFloat,
+  });
 
   const onAddNoteClick = useCallback(() => {
     setIsMessageFieldVisible(true);
@@ -46,14 +59,8 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     form.resetField("message");
   }, [form]);
 
-  const totalAmount =
-    values.potDonationDistribution?.reduce(
-      (total, { amount }) => total + amount,
-      0.0,
-    ) ?? values.amount;
-
   const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
-    fees;
+    breakdown;
 
   return (
     <>
@@ -64,13 +71,16 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
       <DialogDescription>
         <div un-flex="~ col" un-gap="1" un-items="start" un-justify="between">
           <span className="prose" un-text="neutral-600" un-font="600">
-            Total amount
+            {"Total amount"}
           </span>
 
-          <TotalTokenValue tokenId={values.tokenId} amountFloat={totalAmount} />
+          <TokenTotalValue
+            tokenId={inputs.tokenId}
+            amountFloat={totalAmountFloat}
+          />
         </div>
 
-        <DonationBreakdown tokenId={values.tokenId} {...{ fees }} />
+        <DonationSummaryBreakdown tokenId={inputs.tokenId} data={breakdown} />
 
         <div className="flex flex-col gap-2">
           {protocolFeePercent > 0 && (
@@ -97,7 +107,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             />
           )}
 
-          {values.potAccountId && chefFeePercent > 0 && (
+          {inputs.potAccountId && chefFeePercent > 0 && (
             <FormField
               control={form.control}
               name="bypassChefFee"
@@ -108,7 +118,10 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   label={
                     <>
                       <span>{`Remove ${chefFeePercent}% Chef Fees`}</span>
-                      {pot?.chef.id && <ProfileLink accountId={pot?.chef.id} />}
+
+                      {pot?.chef?.id && (
+                        <ProfileLink accountId={pot?.chef?.id} />
+                      )}
                     </>
                   }
                 />
@@ -117,7 +130,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           )}
         </div>
 
-        {values.recipientAccountId && (
+        {inputs.recipientAccountId && (
           <FormField
             control={form.control}
             name="message"
