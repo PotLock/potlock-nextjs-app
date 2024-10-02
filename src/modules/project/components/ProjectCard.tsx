@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { potlock } from "@/common/api/potlock";
-import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";

@@ -15,14 +15,17 @@ export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &
   (
     | (AccessControlListModalProps & {
         isEditable?: true;
+        showAccountList?: boolean;
       })
     | (Pick<AccessControlListModalProps, "value"> & {
         isEditable?: false;
+        showAccountList?: boolean;
       })
   );
 
 export const AccessControlList: React.FC<AccessControlListProps> = ({
   isEditable = false,
+  showAccountList = true,
   classNames,
   ...props
 }) => {
@@ -55,7 +58,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
       {isEditingEnabled && <AccessControlListModal id={modalId} {...props} />}
 
       <div un-flex="~" un-justify="between" un-items="center">
-        {accountList}
+        {showAccountList && accountList}
 
         {isEditingEnabled && (
           <Button
@@ -63,7 +66,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
             onClick={openAccountsModal}
             variant="brand-plain"
           >
-            <GroupIcon />
+            {showAccountList && <GroupIcon />}
 
             <span className="prose line-height-none font-500">
               {`${accountIds.length > 0 ? "Change" : "Add"} ${props.title}`}

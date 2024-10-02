@@ -28,12 +28,12 @@ export const SortSelect = ({
             width={18}
             height={18}
           />
-          Sort
+          <p className="md:block hidden">Sort</p>
         </Button>
       </Trigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
+          <SelectItem key={option.value} className="pr-6" value={option.value}>
             {option.label}
           </SelectItem>
         ))}

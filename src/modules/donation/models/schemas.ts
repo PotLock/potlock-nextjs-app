@@ -94,11 +94,14 @@ export const donationSchema = object({
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
-export type DonationAllocationInputs = Pick<
-  TokenAvailableBalance,
-  "balanceFloat"
-> & {
-  isBalanceSufficient: boolean;
-  minAmountError: string | null;
-  form: UseFormReturn<DonationInputs>;
-};
+export type DonationFormAPI = UseFormReturn<DonationInputs>;
+
+export interface WithDonationFormAPI {
+  form: DonationFormAPI;
+}
+
+export type DonationAllocationInputs = WithDonationFormAPI &
+  Pick<TokenAvailableBalance, "balanceFloat"> & {
+    isBalanceSufficient: boolean;
+    minAmountError: string | null;
+  };

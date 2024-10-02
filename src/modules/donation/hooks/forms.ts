@@ -96,10 +96,10 @@ export const useDonationForm = ({
 
   const totalAmountFloat =
     values.allocationStrategy === DonationAllocationStrategyEnum.split
-      ? values.groupAllocationPlan?.reduce(
+      ? (values.groupAllocationPlan?.reduce(
           (total, { amount }) => total + (amount ?? 0.0),
           0.0,
-        ) ?? 0.0
+        ) ?? 0.0)
       : amount;
 
   const hasChanges = Object.keys(values).some(

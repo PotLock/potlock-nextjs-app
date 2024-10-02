@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 
 import { Pencil } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
 import { pick } from "remeda";
 
 import { potlock } from "@/common/api/potlock";
@@ -21,14 +20,16 @@ import { cn } from "@/common/ui/utils";
 import { ProfileLink } from "@/modules/profile";
 import { TokenTotalValue } from "@/modules/token";
 
-import { DonationSummaryBreakdown } from "./breakdowns";
+import {
+  DonationGroupAllocationBreakdown,
+  DonationSummaryBreakdown,
+} from "./breakdowns";
 import { useDonationAllocationBreakdown } from "../hooks";
-import { DonationInputs } from "../models";
+import { WithDonationFormAPI } from "../models";
 import { WithTotalAmount } from "../types";
 
-export type DonationConfirmationProps = WithTotalAmount & {
-  form: UseFormReturn<DonationInputs>;
-};
+export type DonationConfirmationProps = WithTotalAmount &
+  WithDonationFormAPI & {};
 
 export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
@@ -79,6 +80,8 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             amountFloat={totalAmountFloat}
           />
         </div>
+
+        <DonationGroupAllocationBreakdown {...{ form }} />
 
         <DonationSummaryBreakdown tokenId={inputs.tokenId} data={breakdown} />
 

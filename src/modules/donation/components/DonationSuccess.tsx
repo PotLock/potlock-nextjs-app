@@ -1,6 +1,5 @@
 import { Check } from "lucide-react";
 import Link from "next/link";
-import { UseFormReturn } from "react-hook-form";
 
 import { pagoda } from "@/common/api/pagoda";
 import { potlock } from "@/common/api/potlock";
@@ -25,10 +24,9 @@ import { TokenTotalValue } from "@/modules/token";
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationVerificationWarning } from "./DonationVerificationWarning";
 import { useDonationAllocationBreakdown } from "../hooks";
-import { DonationInputs, useDonationState } from "../models";
+import { WithDonationFormAPI, useDonationState } from "../models";
 
-export type DonationSuccessProps = {
-  form: UseFormReturn<DonationInputs>;
+export type DonationSuccessProps = WithDonationFormAPI & {
   transactionHash?: string;
   closeModal: VoidFunction;
 };
@@ -50,7 +48,7 @@ export const DonationSuccess = ({
     accountId:
       "recipient_id" in (finalOutcome ?? {})
         ? (finalOutcome as DirectDonation).recipient_id
-        : (finalOutcome as PotDonation).project_id ?? undefined,
+        : ((finalOutcome as PotDonation).project_id ?? undefined),
   });
 
   const tokenId =

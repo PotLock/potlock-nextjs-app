@@ -3,16 +3,37 @@ import { useMemo } from "react";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
+import { AccountOption } from "@/modules/core";
 import { TokenIcon } from "@/modules/token";
 
+import { WithDonationFormAPI } from "../models";
 import { DonationBreakdown } from "../types";
 
-export type DonationGroupAllocationBreakdownProps = {};
+export type DonationGroupAllocationBreakdownProps = WithDonationFormAPI & {};
 
 export const DonationGroupAllocationBreakdown: React.FC<
   DonationGroupAllocationBreakdownProps
-> = () => {
-  return <div>WIP</div>;
+> = ({ form }) => {
+  const [tokenId, groupAllocationPlan] = form.watch([
+    "tokenId",
+    "groupAllocationPlan",
+  ]);
+
+  return (
+    <div>
+      {groupAllocationPlan?.map(({ account_id, amount }) => (
+        <AccountOption
+          key={account_id + amount}
+          accountId={account_id}
+          secondaryAction={
+            <LabeledIcon caption={amount ?? 0}>
+              <TokenIcon {...{ tokenId }} />
+            </LabeledIcon>
+          }
+        />
+      ))}
+    </div>
+  );
 };
 
 export type DonationSummaryBreakdownProps = ByTokenId & {

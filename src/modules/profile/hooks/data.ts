@@ -67,10 +67,10 @@ export const useProfileData = (
     () =>
       (typeof profile?.image === "string"
         ? profile?.image
-        : profile?.image?.url ??
+        : (profile?.image?.url ??
           (profile?.image?.ipfs_cid
             ? `https://ipfs.near.social/ipfs/${profile?.image?.ipfs_cid}`
-            : null)) ?? profileImages.image,
+            : null))) ?? profileImages.image,
 
     [profile?.image, profileImages.image],
   );
@@ -79,10 +79,10 @@ export const useProfileData = (
     () =>
       (typeof profile?.backgroundImage === "string"
         ? profile?.backgroundImage
-        : profile?.backgroundImage?.url ??
+        : (profile?.backgroundImage?.url ??
           (profile?.backgroundImage?.ipfs_cid
             ? `https://ipfs.near.social/ipfs/${profile?.backgroundImage?.ipfs_cid}`
-            : null)) ?? profileImages.backgroundImage,
+            : null))) ?? profileImages.backgroundImage,
 
     [profile?.backgroundImage, profileImages.backgroundImage],
   );

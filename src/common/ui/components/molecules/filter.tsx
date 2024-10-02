@@ -36,7 +36,7 @@ export const Filter = ({ groups, popoverProps }: Props) => {
             width={18}
             height={18}
           />
-          Filter
+          <p className="md:block hidden">Filter</p>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="sm:w-[466px] flex w-80 flex-col gap-6">
