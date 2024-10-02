@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "../atoms/button";
 import { Label } from "../atoms/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
-import { ToggleGroup, ToggleGroupItem } from "../toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 
 // Define the item type
 type Item = {

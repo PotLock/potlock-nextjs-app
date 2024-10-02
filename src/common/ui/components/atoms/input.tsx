@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { CircleAlert } from "lucide-react";
 
-import { cn } from "../utils";
+import { cn } from "../../utils";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {

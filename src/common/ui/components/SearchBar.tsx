@@ -2,7 +2,7 @@ import React from "react";
 
 import Image from "next/image";
 
-import { Input, InputProps } from "./input";
+import { Input, InputProps } from "./atoms/input";
 import { cn } from "../utils";
 
 type Props = InputProps & {
