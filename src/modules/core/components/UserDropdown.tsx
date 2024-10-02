@@ -93,11 +93,14 @@ export const UserDropdown = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full">
+      <DropdownMenuTrigger className="h-8 w-8 rounded-full">
         {actAsDaoEnabled ? (
           daoProfileImage
         ) : (
-          <AccountProfilePicture accountId={accountId} className="h-8 w-8" />
+          <AccountProfilePicture
+            accountId={accountId}
+            className="h-full w-full"
+          />
         )}
       </DropdownMenuTrigger>
 

@@ -13,7 +13,7 @@ import {
 import routesPath from "@/modules/core/routes";
 import { useDonation } from "@/modules/donation";
 
-import CardSkeleton from "./CardSkeleton";
+import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
 import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";
 
 const rootBoxShadow = `
@@ -52,7 +52,7 @@ export const ProjectCard = ({
   return (
     <Link href={`${routesPath.PROFILE}/${projectId}`}>
       {isAccountLoading ? (
-        <CardSkeleton />
+        <ProjectCardSkeleton />
       ) : (
         <div
           className={cn(

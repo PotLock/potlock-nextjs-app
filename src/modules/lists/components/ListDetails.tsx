@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useId, useState } from "react";
 
 import { show } from "@ebay/nice-modal-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
 import { ListRegistration } from "@/common/api/potlock";
@@ -289,14 +289,14 @@ export const ListDetails = ({
 
         <div className="md:max-w-[54%] md:mb-0 mb-4 w-full">
           <div className="md:hidden flex flex-col p-[1rem]">{nameContent}</div>
-          <Image
+          <LazyLoadImage
             alt="alt-text"
             src={
               listDetails.cover_image_url
                 ? "/assets/images/large_default_backdrop.png"
                 : "/assets/images/list_bg_image.png"
             }
-            className=" mx-auto w-full px-2"
+            className="mx-auto w-full px-2"
             width={500}
             height={300}
           />
@@ -305,7 +305,7 @@ export const ListDetails = ({
             un-w="full"
             un-flex="~ col"
           >
-            <Image
+            <LazyLoadImage
               src={
                 listDetails.cover_image_url ||
                 "/assets/images/list-gradient-3.png"
@@ -313,7 +313,7 @@ export const ListDetails = ({
               alt="cover"
               width={500}
               height={300}
-              className="md:h-[320px] md:rounded-tl-md md:rounded-tr-md h-[188px] w-full  object-cover"
+              className="md:h-[320px] md:rounded-tl-md md:rounded-tr-md h-[188px] w-full object-cover"
             />
           </div>
           <div className="md:rounded-bl-md md:rounded-br-md flex h-16 items-center justify-between border border-[#dadbda] p-4">
