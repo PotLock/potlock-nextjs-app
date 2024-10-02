@@ -95,8 +95,6 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     [tokenId, totalAmountFloat],
   );
 
-  console.log(totalAmountFloat);
-
   return (
     <>
       <DialogHeader>
