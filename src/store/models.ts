@@ -1,11 +1,11 @@
 import { Models } from "@rematch/core";
 
-import { toastModel } from "@/common/ui/components/toast/models";
 import { auth } from "@/modules/auth/state";
 import { cartModel } from "@/modules/cart";
 import { core } from "@/modules/core";
 import { donationModel, donationModelKey } from "@/modules/donation";
 import { listEditorModel } from "@/modules/lists";
+import { toastModel } from "@/modules/lists/_deprecated_toast/models";
 import { potEditorModel, potEditorModelKey } from "@/modules/pot-editor";
 import { navModel, profilesModel } from "@/modules/profile";
 import {

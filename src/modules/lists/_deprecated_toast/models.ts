@@ -3,10 +3,9 @@ import { mergeAll } from "remeda";
 
 import { StatusF24Enum } from "@/common/api/potlock";
 import { AccountId } from "@/common/types";
-import { ListFormModalType } from "@/modules/lists/types";
 import { AppModel } from "@/store/models";
 
-export const potEditorModelKey = "toast";
+import { ListFormModalType } from "../types";
 
 interface ToastState {
   show: boolean;

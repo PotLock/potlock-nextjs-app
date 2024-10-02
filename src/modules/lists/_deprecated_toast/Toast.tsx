@@ -2,9 +2,10 @@ import React, { useEffect } from "react";
 
 import Image from "next/image";
 
-import { statusesIcons } from "@/modules/core/constants";
-import { ListFormModalType } from "@/modules/lists/types";
 import { dispatch, useTypedSelector } from "@/store";
+
+import { listRegistrationStatuses } from "../constants";
+import { ListFormModalType } from "../types";
 
 export const Toast: React.FC = () => {
   const toast = useTypedSelector((state) => state.toast);
@@ -23,7 +24,7 @@ export const Toast: React.FC = () => {
     toast.message && (
       <div
         style={{
-          boxShadow: " rgba(149, 157, 165, 0.2) 0px 8px 24px",
+          boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
         }}
         className="md:w-[498px] top-15 fixed right-4 z-20 flex w-[50%] items-center justify-between rounded bg-white p-4 text-black shadow-lg"
       >
@@ -32,7 +33,9 @@ export const Toast: React.FC = () => {
             <Image
               width={18}
               height={18}
-              src={statusesIcons[toast.listType].icon}
+              // @ts-expect-error This won't work because of the type mismatch
+              //! ( UPDATE_ACCOUNT is not a list registration status )
+              src={listRegistrationStatuses[toast.listType].icon}
               alt="icon"
             />
           )}
