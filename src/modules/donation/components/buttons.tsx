@@ -1,10 +1,11 @@
 import { ByPotId, potlock } from "@/common/api/potlock";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
+import { ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
 
 import { useDonation } from "../hooks";
 
-export const DonationRandomButton = () => {
+export const DonateRandomly = () => {
   const {
     isLoading: isRandomPGRegistryEntryLoading,
     data: randomPGRegistryEntry,
@@ -36,12 +37,22 @@ export const DonationRandomButton = () => {
   );
 };
 
-export type DonationToPotButtonProps = ByPotId & {};
+export type DonateToPotProjectsProps = ByPotId & {};
 
-export const DonationToPotButton: React.FC<DonationToPotButtonProps> = ({
+export const DonateToPotProjects: React.FC<DonateToPotProjectsProps> = ({
   potId,
 }) => {
   const { openDonationModal } = useDonation({ potId });
 
   return <Button onClick={openDonationModal}>{"Donate to Projects"}</Button>;
+};
+
+export type DonateToListProjectsProps = ByListId & {};
+
+export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({
+  listId,
+}) => {
+  const { openDonationModal } = useDonation({ listId });
+
+  return <Button onClick={openDonationModal}>{"Donate to list"}</Button>;
 };

@@ -8,8 +8,8 @@ import { walletApi } from "@/common/api/near";
 import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
-import { useAvailableBalance } from "@/modules/core";
-import useIsHuman from "@/modules/core/hooks/useIsHuman";
+import { useIsHuman } from "@/modules/core";
+import { useTokenBalance } from "@/modules/token";
 import { dispatch } from "@/store";
 
 import {
@@ -18,13 +18,13 @@ import {
 } from "../constants";
 import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
 import {
+  DonationAllocationKey,
   DonationAllocationStrategyEnum,
-  DonationPotDistributionStrategyEnum,
-  DonationSubmissionInputs,
+  DonationGroupAllocationStrategyEnum,
 } from "../types";
 import { isDonationAmountSufficient } from "../utils/validation";
 
-export type DonationFormParams = DonationSubmissionInputs & {
+export type DonationFormParams = DonationAllocationKey & {
   referrerAccountId?: string;
 };
 
@@ -32,8 +32,12 @@ export const useDonationForm = ({
   referrerAccountId,
   ...params
 }: DonationFormParams) => {
-  const recipientAccountId =
-    "accountId" in params ? params.accountId : undefined;
+  const isSingleProjectDonation = "accountId" in params;
+  const isPotDonation = "potId" in params;
+
+  const recipientAccountId = isSingleProjectDonation
+    ? params.accountId
+    : undefined;
 
   const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
     accountId: recipientAccountId,
@@ -50,27 +54,27 @@ export const useDonationForm = ({
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       amount: DONATION_MIN_NEAR_AMOUNT,
-
-      allocationStrategy:
-        "accountId" in params
-          ? DonationAllocationStrategyEnum[
-              matchingPots.length > 0 ? "pot" : "direct"
-            ]
-          : DonationAllocationStrategyEnum.pot,
-
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId,
       referrerAccountId,
-      potAccountId: "potId" in params ? params.potId : defaultPotAccountId,
+      potAccountId: isPotDonation ? params.potId : defaultPotAccountId,
 
-      potShareAllocationStrategy:
-        DonationPotDistributionStrategyEnum[
-          "accountId" in params ? "manually" : "evenly"
+      allocationStrategy: isSingleProjectDonation
+        ? DonationAllocationStrategyEnum[
+            matchingPots.length > 0 ? "split" : "full"
+          ]
+        : DonationAllocationStrategyEnum.split,
+
+      groupAllocationStrategy:
+        DonationGroupAllocationStrategyEnum[
+          isSingleProjectDonation ? "manually" : "evenly"
         ],
     }),
 
     [
       defaultPotAccountId,
+      isPotDonation,
+      isSingleProjectDonation,
       matchingPots.length,
       params,
       recipientAccountId,
@@ -88,16 +92,23 @@ export const useDonationForm = ({
   const values = useWatch(self);
   const amount = values.amount ?? 0;
   const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
-  const { balanceFloat } = useAvailableBalance({ tokenId });
+  const { balanceFloat } = useTokenBalance({ tokenId });
 
-  const hasChanges = Object.keys(values).some((key) => {
-    const defaultValue = defaultValues[key as keyof DonationInputs];
-    const currentValue = values[key as keyof DonationInputs];
+  const totalAmountFloat =
+    values.allocationStrategy === DonationAllocationStrategyEnum.split
+      ? values.groupAllocationPlan?.reduce(
+          (total, { amount }) => total + (amount ?? 0.0),
+          0.0,
+        ) ?? 0.0
+      : amount;
 
-    return currentValue !== defaultValue;
-  });
+  const hasChanges = Object.keys(values).some(
+    (key) =>
+      values[key as keyof DonationInputs] !==
+      defaultValues[key as keyof DonationInputs],
+  );
 
-  const isBalanceSufficient = amount < (balanceFloat ?? 0);
+  const isBalanceSufficient = totalAmountFloat < (balanceFloat ?? 0);
 
   const isDisabled =
     !hasChanges ||
@@ -123,17 +134,24 @@ export const useDonationForm = ({
      *?  it does not trigger rerender, so we have to do it manually.
      */
     if (
-      "accountId" in params &&
+      isSingleProjectDonation &&
       values.potAccountId === undefined &&
       defaultPotAccountId
     ) {
       self.setValue("potAccountId", defaultPotAccountId);
     }
-  }, [values, defaultPotAccountId, self, hasChanges, params]);
+  }, [
+    values,
+    defaultPotAccountId,
+    self,
+    hasChanges,
+    params,
+    isSingleProjectDonation,
+  ]);
 
-  console.table(omit(values, ["potDonationShares"]));
+  console.table(omit(values, ["groupAllocationPlan"]));
 
-  values.potDonationShares?.forEach((entry) => console.table(entry));
+  values.groupAllocationPlan?.forEach((entry) => console.table(entry));
 
   return {
     form: self,
@@ -146,5 +164,6 @@ export const useDonationForm = ({
     matchingPots,
     minAmountError,
     inputs: values,
+    totalAmountFloat,
   };
 };

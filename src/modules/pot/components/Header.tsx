@@ -8,7 +8,7 @@ import { VolunteerIcon } from "@/common/assets/svgs";
 import { yoctoNearToFloat } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
-import { DonationToPotButton } from "@/modules/donation";
+import { DonateToPotProjects } from "@/modules/donation";
 import { useTypedSelector } from "@/store";
 
 import ChallengeModal from "./ChallengeModal";
@@ -86,7 +86,7 @@ const Header = ({ potDetail }: Props) => {
           {/* ButtonsWrapper */}
           <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
             {potStatuses.canDonate && (
-              <DonationToPotButton potId={potDetail.account} />
+              <DonateToPotProjects potId={potDetail.account} />
             )}
             {potStatuses.canFund && (
               <Button

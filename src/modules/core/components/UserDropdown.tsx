@@ -16,11 +16,10 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-  Skeleton,
 } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
+import { AccountAvatar, useRegistration } from "@/modules/core";
 import { statusesIcons } from "@/modules/core/constants";
-import useRegistration from "@/modules/core/hooks/useRegistration";
 import routesPath from "@/modules/core/routes";
 import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
 import {
@@ -82,10 +81,9 @@ export const UserDropdown = () => {
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-      const { image, profile } = await fetchSocialImages({
+      const { profile } = await fetchSocialImages({
         accountId,
       });
-      setProfileImg(image);
       setProfile(profile || {});
     };
     if (accountId) fetchProfileImage();
@@ -118,22 +116,13 @@ export const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-full">
-        {profileImg ? (
-          <>
-            {actAsDaoEnabled ? (
-              <DAOProfileImg />
-            ) : (
-              <ProfileImg
-                size={32}
-                profileImg={profileImg}
-                setProfileImg={setProfileImg}
-              />
-            )}
-          </>
+        {actAsDaoEnabled ? (
+          <DAOProfileImg />
         ) : (
-          <Skeleton className="h-8 w-8 rounded-full" />
+          <AccountAvatar accountId={accountId} className="h-8 w-8" />
         )}
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end" className="12px w-72 p-0">
         {status && (
           <DropdownMenuLabel
@@ -144,6 +133,7 @@ export const UserDropdown = () => {
             }}
           >
             {registration.status}
+
             <Image
               src={statusesIcons[status]?.icon}
               width={18}
@@ -152,39 +142,41 @@ export const UserDropdown = () => {
             />
           </DropdownMenuLabel>
         )}
+
         <div className="flex flex-col gap-6 p-4">
           <DropdownMenuLabel className="flex gap-2 p-0">
             {actAsDaoEnabled ? (
               <DAOProfileImg />
             ) : (
-              <ProfileImg
-                size={40}
-                profileImg={profileImg}
-                setProfileImg={setProfileImg}
-              />
+              <AccountAvatar accountId={accountId} className="h-10 w-10" />
             )}
+
             <div className="flex flex-col">
               {profile?.name && (
-                <p className="font-semibold">{truncate(profile?.name, 20)}</p>
+                <p className="font-semibold">{truncate(profile?.name, 30)}</p>
               )}
+
               {actAsDaoEnabled ? (
                 <p className="color-[#656565] text-xs">
                   {truncate(`Acting as ${actAsDao.defaultAddress}`, 36)}
                 </p>
               ) : (
-                <p className="color-[#656565] text-xs">
-                  {truncate(accountId, 20)}
+                <p className="prose color-[#656565] text-xs">
+                  {truncate(accountId, 40)}
                 </p>
               )}
             </div>
           </DropdownMenuLabel>
+
           <ActAsDao />
+
           <div className="rounded-md border border-[#DBDBDB]">
             <Link href={`${routesPath.PROFILE}/${accountId}`}>
               <DropdownMenuItem className="px-3 py-[10px] font-medium">
                 {registration ? "My Project" : "My user"}
               </DropdownMenuItem>
             </Link>
+
             <Link
               href={`https://near.social/mob.near/widget/NotificationFeed`}
               target="_blank"
@@ -195,6 +187,7 @@ export const UserDropdown = () => {
             </Link>
           </div>
         </div>
+
         <Button
           onClick={logoutHandler}
           variant="brand-plain"

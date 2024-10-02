@@ -5,7 +5,7 @@ import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 import routesPath from "@/modules/core/routes";
-import { DonationRandomButton } from "@/modules/donation";
+import { DonateRandomly } from "@/modules/donation";
 import {
   ProjectFundingStats,
   ProjectsOverview,
@@ -35,7 +35,7 @@ const Hero = () => {
           <br className="md:block hidden" /> participate in funding rounds.
         </h1>
         <div className="max-md:flex-col md:mt-10 md:gap-8 mt-6 flex items-center gap-4 text-sm">
-          <DonationRandomButton />
+          <DonateRandomly />
 
           {isAuthenticated && !loading && (
             <Button

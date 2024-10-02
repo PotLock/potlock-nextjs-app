@@ -221,6 +221,8 @@ export const donateBatch = (
       gas: FULL_TGAS,
       ...txDraft,
     })),
+
+    window.location.href,
   );
 
 export const admin_dangerously_set_pot_config = (

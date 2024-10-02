@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 
 import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
+import { pick } from "remeda";
 
 import { potlock } from "@/common/api/potlock";
 import {
@@ -17,24 +18,36 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { TotalTokenValue } from "@/modules/core";
 import { ProfileLink } from "@/modules/profile";
+import { TokenTotalValue } from "@/modules/token";
 
-import { DonationBreakdown } from "./DonationBreakdown";
-import { useDonationFees } from "../hooks";
+import { DonationSummaryBreakdown } from "./breakdowns";
+import { useDonationAllocationBreakdown } from "../hooks";
 import { DonationInputs } from "../models";
+import { WithTotalAmount } from "../types";
 
-export type DonationConfirmationProps = {
+export type DonationConfirmationProps = WithTotalAmount & {
   form: UseFormReturn<DonationInputs>;
 };
 
 export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
+  totalAmountFloat,
 }) => {
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
   const inputs = form.watch();
   const { data: pot } = potlock.usePot({ potId: inputs.potAccountId });
-  const fees = useDonationFees({ ...inputs, pot });
+
+  const breakdown = useDonationAllocationBreakdown({
+    ...pick(inputs, [
+      "referrerAccountId",
+      "bypassProtocolFee",
+      "bypassChefFee",
+    ]),
+
+    pot,
+    totalAmountFloat,
+  });
 
   const onAddNoteClick = useCallback(() => {
     setIsMessageFieldVisible(true);
@@ -46,14 +59,8 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     form.resetField("message");
   }, [form]);
 
-  const totalAmount =
-    inputs.potDonationShares?.reduce(
-      (total, { amount }) => total + (amount ?? 0.0),
-      0.0,
-    ) ?? inputs.amount;
-
   const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
-    fees;
+    breakdown;
 
   return (
     <>
@@ -64,13 +71,16 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
       <DialogDescription>
         <div un-flex="~ col" un-gap="1" un-items="start" un-justify="between">
           <span className="prose" un-text="neutral-600" un-font="600">
-            Total amount
+            {"Total amount"}
           </span>
 
-          <TotalTokenValue tokenId={inputs.tokenId} amountFloat={totalAmount} />
+          <TokenTotalValue
+            tokenId={inputs.tokenId}
+            amountFloat={totalAmountFloat}
+          />
         </div>
 
-        <DonationBreakdown tokenId={inputs.tokenId} {...{ fees }} />
+        <DonationSummaryBreakdown tokenId={inputs.tokenId} data={breakdown} />
 
         <div className="flex flex-col gap-2">
           {protocolFeePercent > 0 && (

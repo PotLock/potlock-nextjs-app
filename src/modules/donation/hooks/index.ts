@@ -7,12 +7,12 @@ import { dispatch } from "@/store";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
 import { DonationModal } from "../components/DonationModal";
-import { DonationParameters } from "../types";
+import { DonationAllocationKey } from "../types";
 
-export * from "./fees";
+export * from "./allocation";
 export * from "./forms";
 
-export const useDonation = (props: DonationParameters) => {
+export const useDonation = (props: DonationAllocationKey) => {
   const modal = useModal(DonationModal);
   const { setSearchParams } = useRouteQuery();
 
@@ -26,6 +26,8 @@ export const useDonation = (props: DonationParameters) => {
         setSearchParams({ donateTo: props.accountId });
       } else if ("potId" in props) {
         setSearchParams({ donateToPot: props.potId });
+      } else if ("listId" in props) {
+        setSearchParams({ donateToList: props.listId.toString() });
       }
 
       modal.show(props);

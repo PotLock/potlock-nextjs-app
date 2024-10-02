@@ -182,15 +182,15 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
 
                 {/* Avatar - Account */}
                 <Link
-                  href={`/${routesPath.PROFILE}/${potDetail.chef.id}`}
+                  href={`/${routesPath.PROFILE}/${potDetail.chef?.id}`}
                   target="_blank"
                 >
                   <Badge variant="secondary" className="gap-1">
                     <AccountAvatar
-                      accountId={potDetail.chef.id}
+                      accountId={potDetail.chef?.id}
                       className="h-[12px] w-[12px]"
                     />{" "}
-                    {potDetail.chef.id}
+                    {potDetail.chef?.id}
                   </Badge>
                 </Link>
               </div>

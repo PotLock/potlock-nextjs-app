@@ -7,7 +7,7 @@ import {
   AlertTitle,
   Button,
 } from "@/common/ui/components";
-import useIsHuman from "@/modules/core/hooks/useIsHuman";
+import { useIsHuman } from "@/modules/core";
 
 export type DonationVerificationWarningProps = {};
 
