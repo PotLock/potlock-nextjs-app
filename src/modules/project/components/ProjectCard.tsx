@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { potlock } from "@/common/api/potlock";
 import { PayoutDetailed } from "@/common/contracts/potlock";
@@ -55,46 +55,37 @@ export const ProjectCard = ({
         <CardSkeleton />
       ) : (
         <div
-          className="group"
-          un-mx="auto"
-          un-transition="all duration-300"
-          un-w="full"
-          un-max-w="420px"
-          un-h="full"
-          un-flex="~ col"
-          un-bg="card"
-          un-overflow="overflow-hidden"
-          un-border="rounded-md"
+          className={cn(
+            "transition-duration-300 max-w-105 mx-auto flex h-full w-full flex-col",
+            "overflow-hidden rounded-md bg-card transition-all",
+          )}
           style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"
         >
           {/* Cover */}
-          <div className="relative h-[145px] w-full overflow-hidden rounded-t-md">
-            {backgroundSrc && (
-              <Image
-                alt={`Background image for ${name}`}
-                className={cn(
-                  "object-cover transition-transform duration-500 ease-in-out",
-                  "group-hover:scale-110",
-                )}
-                src={backgroundSrc}
-                loading="lazy"
-                fill
-              />
-            )}
+          <div className="h-36.5 w-full overflow-hidden">
+            <LazyLoadImage
+              alt="Profile cover"
+              height={145}
+              src={backgroundSrc}
+              className={cn(
+                "h-full w-full object-cover",
+                "transition-transform duration-500 ease-in-out hover:scale-110",
+              )}
+            />
           </div>
 
           {/* Content */}
           <div className="flex flex-1 flex-col gap-5 px-6 pb-6">
             <div className="relative -mt-5 h-10 w-10">
               {avatarSrc && (
-                <img
-                  alt={`Profile image for ${name}`}
+                <LazyLoadImage
+                  alt="Profile image"
+                  src={avatarSrc}
                   className={cn(
                     "h-full w-full rounded-full bg-white object-cover",
                     "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
                   )}
-                  src={avatarSrc}
                 />
               )}
             </div>
