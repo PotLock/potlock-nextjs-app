@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/modules/profile";
@@ -13,10 +13,10 @@ export const AccountAvatar = ({
   const { avatarSrc } = useProfileData(accountId);
 
   return (
-    <img
+    <LazyLoadImage
       alt="avatar"
-      className={cn(`h-[12px] w-[12px] rounded-[50%] bg-white`, className)}
       src={avatarSrc}
+      className={cn(`h-[12px] w-[12px] rounded-[50%] bg-white`, className)}
     />
   );
 };
