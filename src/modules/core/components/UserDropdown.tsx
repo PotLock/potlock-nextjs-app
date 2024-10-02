@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { LogOut } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
+import { RegistrationStatus } from "@/common/contracts/potlock";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import { getIsHuman } from "@/common/contracts/sybil.nadabot";
 import { truncate } from "@/common/lib";
@@ -17,11 +18,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountAvatar, useRegistration } from "@/modules/core";
-import { statusesIcons } from "@/modules/core/constants";
 import routesPath from "@/modules/core/routes";
-import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
+import {
+  ListRegistrationStatus,
+  listRegistrationStatuses,
+} from "@/modules/lists";
 import {
   updateAccountId,
   updateNadabotVerification,
@@ -30,85 +34,59 @@ import { useTypedSelector } from "@/store";
 
 import ActAsDao from "./ActAsDao";
 
-const ProfileImg = ({
-  size,
-  profileImg,
-  setProfileImg,
-}: {
-  size: number;
-  profileImg: string;
-  setProfileImg: (value: string) => void;
-}) => (
-  <Image
-    src={profileImg}
-    width={size}
-    height={size}
-    onError={() => {
-      setProfileImg(PROFILE_DEFAULTS.socialImages.image);
-    }}
-    className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-    alt="profile-image"
-  />
-);
-
-const DAOProfileImg = () => (
-  <div className="flex h-[40px] w-[40px] justify-center rounded-full bg-[#292929] shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]">
-    <Image
+const daoProfileImage = (
+  <div
+    className={cn(
+      "flex h-10 w-10 justify-center rounded-full bg-[#292929]",
+      "shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
+    )}
+  >
+    <LazyLoadImage
+      alt="DAO profile image"
       src="/assets/icons/dao-address-icon.svg"
       width={17}
       height={17}
-      alt="profile-image"
     />
   </div>
 );
 
 export const UserDropdown = () => {
-  const [profileImg, setProfileImg] = useState("");
   const [profile, setProfile] = useState<NEARSocialUserProfile>({});
-
   const wallet = useWallet();
   const accountId = wallet?.wallet?.accountId || "";
-
   const { registration } = useRegistration(accountId);
-
-  const [status, setStatus] = useState<string>(registration.status);
-
   const actAsDao = useTypedSelector((state) => state.nav.actAsDao);
+
+  const [status, setStatus] = useState<ListRegistrationStatus>(
+    registration.status,
+  );
 
   const logoutHandler = useCallback(() => {
     walletApi.wallet?.signOut();
   }, []);
 
   useEffect(() => {
-    const fetchProfileImage = async () => {
-      const { profile } = await fetchSocialImages({
-        accountId,
-      });
-      setProfile(profile || {});
-    };
-    if (accountId) fetchProfileImage();
+    if (accountId) {
+      fetchSocialImages({ accountId }).then(({ profile }) =>
+        setProfile(profile ?? {}),
+      );
+    }
 
     // Add accountId to the nav model
     updateAccountId(accountId);
   }, [accountId]);
 
   useEffect(() => {
-    // check if account verified on nadabot
-    const fetchHumanStatus = async () => {
-      if (accountId) {
-        const isHuman = await getIsHuman({ account_id: accountId });
+    if (accountId) {
+      getIsHuman({ account_id: accountId }).then((isHuman) => {
         updateNadabotVerification(isHuman);
 
-        const status = registration.id
-          ? registration.status
-          : isHuman
-            ? "Human"
-            : "";
-
-        setStatus(status);
-      }
-    };
-    fetchHumanStatus();
+        setStatus(
+          (registration.id ? registration.status : undefined) ??
+            (isHuman ? "Human" : RegistrationStatus.Unregistered),
+        );
+      });
+    }
   }, [accountId, registration]);
 
   const actAsDaoEnabled = actAsDao.toggle && actAsDao.defaultAddress;
@@ -117,28 +95,28 @@ export const UserDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-full">
         {actAsDaoEnabled ? (
-          <DAOProfileImg />
+          daoProfileImage
         ) : (
           <AccountAvatar accountId={accountId} className="h-8 w-8" />
         )}
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="12px w-72 p-0">
+      <DropdownMenuContent align="end" className="w-72 p-0">
         {status && (
           <DropdownMenuLabel
             className="flex items-center justify-between px-4 py-2"
             style={{
-              color: statusesIcons[status]?.color,
-              background: statusesIcons[status]?.background,
+              color: listRegistrationStatuses[status].color,
+              background: listRegistrationStatuses[status].background,
             }}
           >
             {registration.status}
 
-            <Image
-              src={statusesIcons[status]?.icon}
+            <LazyLoadImage
+              alt="Registration status icon"
+              src={listRegistrationStatuses[status].icon}
               width={18}
               height={18}
-              alt="status-icon"
             />
           </DropdownMenuLabel>
         )}
@@ -146,7 +124,7 @@ export const UserDropdown = () => {
         <div className="flex flex-col gap-6 p-4">
           <DropdownMenuLabel className="flex gap-2 p-0">
             {actAsDaoEnabled ? (
-              <DAOProfileImg />
+              daoProfileImage
             ) : (
               <AccountAvatar accountId={accountId} className="h-10 w-10" />
             )}
@@ -172,8 +150,8 @@ export const UserDropdown = () => {
 
           <div className="rounded-md border border-[#DBDBDB]">
             <Link href={`${routesPath.PROFILE}/${accountId}`}>
-              <DropdownMenuItem className="px-3 py-[10px] font-medium">
-                {registration ? "My Project" : "My user"}
+              <DropdownMenuItem className="px-3 py-2.5 font-medium">
+                {registration ? "My Project" : "My Profile"}
               </DropdownMenuItem>
             </Link>
 
@@ -181,8 +159,8 @@ export const UserDropdown = () => {
               href={`https://near.social/mob.near/widget/NotificationFeed`}
               target="_blank"
             >
-              <DropdownMenuItem className="px-3 py-[10px] font-medium">
-                Notifications
+              <DropdownMenuItem className="px-3 py-2.5 font-medium">
+                {"Notifications"}
               </DropdownMenuItem>
             </Link>
           </div>
@@ -193,7 +171,8 @@ export const UserDropdown = () => {
           variant="brand-plain"
           className="w-full justify-start bg-[#F7F7F7] px-4 py-3"
         >
-          <LogOut color="#F6767A" /> Signout
+          <LogOut color="#F6767A" />
+          <span className="prose">{"Sign Out"}</span>
         </Button>
       </DropdownMenuContent>
     </DropdownMenu>

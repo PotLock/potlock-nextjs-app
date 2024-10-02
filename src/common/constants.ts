@@ -5,6 +5,8 @@ import { Metadata } from "next";
 
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 
+export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
+
 export const APP_METADATA: Metadata & {
   title: string;
   description: NonNullable<Metadata["description"]>;

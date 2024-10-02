@@ -1,5 +1,19 @@
 import { List } from "@/common/api/potlock";
+import { RegistrationStatus } from "@/common/contracts/potlock";
 import { AccountId } from "@/common/types";
+
+export type ListRegistrationStatus = RegistrationStatus | "Human";
+
+export type ListRegistrationStatusConfig = {
+  icon: string;
+  color: string;
+  background: string;
+};
+
+export type ListRegistrationStatusMap = Record<
+  ListRegistrationStatus,
+  ListRegistrationStatusConfig
+>;
 
 export enum ListFormModalType {
   NONE = "NONE",
