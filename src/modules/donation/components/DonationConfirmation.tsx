@@ -1,10 +1,14 @@
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 
 import { Pencil } from "lucide-react";
 import { pick } from "remeda";
 
 import { potlock } from "@/common/api/potlock";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Button,
   DialogDescription,
   DialogHeader,
@@ -35,6 +39,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
   totalAmountFloat,
 }) => {
+  const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
   const inputs = form.watch();
   const { data: pot } = potlock.usePot({ potId: inputs.potAccountId });
@@ -70,18 +75,24 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
       </DialogHeader>
 
       <DialogDescription>
-        <div un-flex="~ col" un-gap="1" un-items="start" un-justify="between">
-          <span className="prose" un-text="neutral-600" un-font="600">
-            {"Total amount"}
-          </span>
+        <Accordion type="single" collapsible>
+          <AccordionItem value={detailedBreakdownAccordionId}>
+            <AccordionTrigger className="flex flex-col items-start justify-between gap-1">
+              <span className="prose font-600 text-neutral-600">
+                {"Total amount"}
+              </span>
 
-          <TokenTotalValue
-            tokenId={inputs.tokenId}
-            amountFloat={totalAmountFloat}
-          />
-        </div>
+              <TokenTotalValue
+                tokenId={inputs.tokenId}
+                amountFloat={totalAmountFloat}
+              />
+            </AccordionTrigger>
 
-        <DonationGroupAllocationBreakdown {...{ form }} />
+            <AccordionContent>
+              <DonationGroupAllocationBreakdown {...{ form }} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         <DonationSummaryBreakdown tokenId={inputs.tokenId} data={breakdown} />
 
