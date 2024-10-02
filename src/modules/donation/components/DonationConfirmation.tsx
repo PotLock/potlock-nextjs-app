@@ -75,20 +75,25 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
       </DialogHeader>
 
       <DialogDescription>
-        <Accordion type="single" collapsible>
-          <AccordionItem value={detailedBreakdownAccordionId}>
-            <AccordionTrigger className="flex flex-col items-start justify-between gap-1">
-              <span className="prose font-600 text-neutral-600">
-                {"Total amount"}
-              </span>
+        <Accordion collapsible type="single">
+          <AccordionItem
+            value={detailedBreakdownAccordionId}
+            className="border-none"
+          >
+            <AccordionTrigger className="hover:decoration-none">
+              <div className="flex flex-col items-start justify-between gap-1">
+                <span className="prose font-600 text-neutral-600">
+                  {"Total amount"}
+                </span>
 
-              <TokenTotalValue
-                tokenId={inputs.tokenId}
-                amountFloat={totalAmountFloat}
-              />
+                <TokenTotalValue
+                  tokenId={inputs.tokenId}
+                  amountFloat={totalAmountFloat}
+                />
+              </div>
             </AccordionTrigger>
 
-            <AccordionContent>
+            <AccordionContent asChild className="p-0">
               <DonationGroupAllocationBreakdown {...{ form }} />
             </AccordionContent>
           </AccordionItem>
