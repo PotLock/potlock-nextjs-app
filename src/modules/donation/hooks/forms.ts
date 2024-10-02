@@ -94,13 +94,12 @@ export const useDonationForm = ({
   const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
   const { balanceFloat } = useTokenBalance({ tokenId });
 
-  const totalAmountFloat =
-    values.allocationStrategy === DonationAllocationStrategyEnum.split
-      ? (values.groupAllocationPlan?.reduce(
-          (total, { amount }) => total + (amount ?? 0.0),
-          0.0,
-        ) ?? 0.0)
-      : amount;
+  const totalAmountFloat = isSingleProjectDonation
+    ? amount
+    : (values.groupAllocationPlan?.reduce(
+        (total, { amount }) => total + (amount ?? 0.0),
+        0.0,
+      ) ?? 0.0);
 
   const hasChanges = Object.keys(values).some(
     (key) =>

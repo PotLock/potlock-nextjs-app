@@ -5,6 +5,7 @@ import { pagoda } from "@/common/api/pagoda";
 import { potlock } from "@/common/api/potlock";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import {
+  BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL,
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";
@@ -19,6 +20,7 @@ import {
 } from "@/common/ui/components";
 import { ModalErrorBody } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
+import { ProfileLink } from "@/modules/profile";
 import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
@@ -148,17 +150,14 @@ export const DonationSuccess = ({
         {isLoading ? (
           <Skeleton className="w-49 h-5" />
         ) : (
-          <p className="prose" un-m="0" un-flex="~ col">
-            <span className="prose flex gap-1">
-              <span>{"has been donated to"}</span>
-
-              <span un-font="600">
-                {recipient.near_social_profile_data?.name ?? recipient.id}
-              </span>
-            </span>
+          <p className="m-0 flex flex-col">
+            <div className="flex gap-1">
+              <span className="prose">{"has been donated to"}</span>
+              <ProfileLink accountId={recipient.id} className="font-600" />
+            </div>
 
             {pot?.name && (
-              <span un-text="neutral-600">{`Via ${pot.name} Pot`}</span>
+              <span className="text-center text-neutral-600">{`Via ${pot.name} Pot`}</span>
             )}
           </p>
         )}
@@ -169,7 +168,7 @@ export const DonationSuccess = ({
           <Link
             href={`${routesPath.PROFILE}/${recipient.id}/funding-raised`}
             onClick={closeModal}
-            className="text-red-600"
+            className="font-500 text-red-600"
           >
             {"View donation"}
           </Link>
@@ -185,7 +184,11 @@ export const DonationSuccess = ({
       {pot && <DonationVerificationWarning />}
 
       {transactionHash && (
-        <LabeledIcon caption={`Txn Hash : ${truncate(transactionHash, 7)}`}>
+        <LabeledIcon
+          caption={`Transaction Hash : ${truncate(transactionHash, 10)}`}
+          hint="View on blockchain explorer"
+          href={`${BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL}/${transactionHash}`}
+        >
           <ClipboardCopyButton text={transactionHash} />
         </LabeledIcon>
       )}

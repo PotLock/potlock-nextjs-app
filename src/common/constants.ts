@@ -39,6 +39,11 @@ export const APP_METADATA: Metadata & {
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK?.toLowerCase() ||
   "testnet") as Network;
 
+export const BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL =
+  NETWORK === "mainnet"
+    ? "https://nearblocks.io/txns"
+    : "https://testnet.nearblocks.io/txns";
+
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 
 export const POTLOCK_CONTRACT_VERSION = "0.1.0";
