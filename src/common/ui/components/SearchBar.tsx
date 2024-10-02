@@ -2,8 +2,8 @@ import React from "react";
 
 import Image from "next/image";
 
-import { Input, InputProps } from "./atoms/input";
 import { cn } from "../utils";
+import { Input, InputProps } from "./atoms/input";
 
 type Props = InputProps & {
   className?: string;
