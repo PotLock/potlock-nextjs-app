@@ -31,10 +31,10 @@ import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { AccessControlListModal } from "@/modules/access-control/components/AccessControlListModal";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
+import { DonateToListProjects } from "@/modules/donation";
 import { SavedUsersType } from "@/pages/list/[id]";
 
 import { ApplyToListModal } from "./ApplyToListModal";
-import DonationFlow from "./DonationFlow";
 import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
 
@@ -61,7 +61,6 @@ export const ListDetails = ({
     query: { id },
   } = useRouter();
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
-  const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
   const [registrants, setRegistrants] = useState<AccountId[]>([]);
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [listOwnerImage, setListOwnerImage] = useState<string>("");
@@ -236,14 +235,8 @@ export const ListDetails = ({
             {Boolean(walletApi?.accountId) && (
               <div className="relative flex items-start gap-4">
                 <div className="flex space-x-4">
-                  <button
-                    onClick={() => {
-                      setIsDonateModalOpen(true);
-                    }}
-                    className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
-                  >
-                    Donate to list
-                  </button>
+                  <DonateToListProjects listId={parseInt(id as string)} />
+
                   {!listDetails?.admin_only_registrations && (
                     <button
                       onClick={() => {
@@ -348,12 +341,7 @@ export const ListDetails = ({
         onApply={applyToListModal}
         isSuccessful={isApplicationSuccessful}
       />
-      {isDonateModalOpen && (
-        <DonationFlow
-          isOpen={isDonateModalOpen}
-          onClose={() => setIsDonateModalOpen(false)}
-        />
-      )}
+
       <ListConfirmationModal
         open={isListConfirmationModalOpen.open}
         type={"DELETE"}

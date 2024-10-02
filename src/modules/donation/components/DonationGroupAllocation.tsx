@@ -157,6 +157,7 @@ export const DonationGroupAllocation: React.FC<
       pot
         ? potApplications.map(({ applicant: recipientCandidate }) => (
             <AccountOption
+              highlightOnHover
               key={recipientCandidate.id}
               accountId={recipientCandidate.id}
               secondaryAction={

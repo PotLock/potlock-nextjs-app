@@ -216,9 +216,10 @@ export const AccessControlListModal = create(
               </div>
 
               <ScrollArea className="max-h-80 w-full overflow-y-auto whitespace-nowrap rounded-b-lg">
-                <div un-flex="~ col" un-w="full">
+                <div className="flex w-full flex-col">
                   {accountIds.map((accountId) => (
                     <AccountOption
+                      highlightOnHover
                       key={accountId}
                       primaryAction={
                         <Checkbox
