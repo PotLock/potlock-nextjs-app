@@ -1,15 +1,17 @@
 import Link from "next/link";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { potlock } from "@/common/api/potlock";
 import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useNearUsdDisplayValue } from "@/modules/core";
+import {
+  AccountProfileCover,
+  AccountProfilePicture,
+  useNearUsdDisplayValue,
+} from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useDonation } from "@/modules/donation";
-import { useProfileData } from "@/modules/profile";
 
 import CardSkeleton from "./CardSkeleton";
 import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";
@@ -38,8 +40,6 @@ export const ProjectCard = ({
     accountId: projectId,
   });
 
-  const { avatarSrc, backgroundSrc } = useProfileData(projectId);
-
   const estimatedMatchedAmount = useNearUsdDisplayValue(
     yoctoNearToFloat(payoutDetails?.amount ?? "0"),
   );
@@ -62,33 +62,17 @@ export const ProjectCard = ({
           style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"
         >
-          {/* Cover */}
-          <div className="h-36.5 w-full overflow-hidden">
-            <LazyLoadImage
-              alt="Profile cover"
-              height={145}
-              src={backgroundSrc}
-              className={cn(
-                "h-full w-full object-cover",
-                "transition-transform duration-500 ease-in-out hover:scale-110",
-              )}
-            />
-          </div>
+          <AccountProfileCover accountId={projectId} />
 
           {/* Content */}
           <div className="flex flex-1 flex-col gap-5 px-6 pb-6">
-            <div className="relative -mt-5 h-10 w-10">
-              {avatarSrc && (
-                <LazyLoadImage
-                  alt="Profile image"
-                  src={avatarSrc}
-                  className={cn(
-                    "h-full w-full rounded-full bg-white object-cover",
-                    "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
-                  )}
-                />
+            <AccountProfilePicture
+              accountId={projectId}
+              className={cn(
+                "relative -mt-5 h-10 w-10 object-cover",
+                "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
               )}
-            </div>
+            />
 
             {/* Name */}
             <div

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { Toggle } from "@/common/assets/svgs";
 import { truncate } from "@/common/lib";
-import { AccountAvatar, oneNearUsdPrice } from "@/modules/core";
+import { AccountProfilePicture, oneNearUsdPrice } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { JoinDonation } from "@/modules/pot/hooks";
 import useProfileData from "@/modules/profile/hooks/data";
@@ -87,7 +87,10 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
     <Row>
       <div>#{index + 1}</div>
       <Link className="address" href={url}>
-        <AccountAvatar accountId={donorId} className="h-[18px] w-[18px]" />
+        <AccountProfilePicture
+          accountId={donorId}
+          className="h-[18px] w-[18px]"
+        />
         {truncate(profile.profile?.name || donorId, 15)}
       </Link>
       <div>

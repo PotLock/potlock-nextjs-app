@@ -20,7 +20,7 @@ import {
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import useWallet from "@/modules/auth/hooks/useWallet";
-import { AccountAvatar, useRegistration } from "@/modules/core";
+import { AccountProfilePicture, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import {
   ListRegistrationStatus,
@@ -97,7 +97,7 @@ export const UserDropdown = () => {
         {actAsDaoEnabled ? (
           daoProfileImage
         ) : (
-          <AccountAvatar accountId={accountId} className="h-8 w-8" />
+          <AccountProfilePicture accountId={accountId} className="h-8 w-8" />
         )}
       </DropdownMenuTrigger>
 
@@ -126,7 +126,10 @@ export const UserDropdown = () => {
             {actAsDaoEnabled ? (
               daoProfileImage
             ) : (
-              <AccountAvatar accountId={accountId} className="h-10 w-10" />
+              <AccountProfilePicture
+                accountId={accountId}
+                className="h-10 w-10"
+              />
             )}
 
             <div className="flex flex-col">

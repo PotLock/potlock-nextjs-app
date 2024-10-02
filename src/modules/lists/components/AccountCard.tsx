@@ -1,15 +1,13 @@
-/* eslint-disable @next/next/no-img-element */
-import React, { use, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Trigger } from "@radix-ui/react-select";
-import Image from "next/image";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
 import { ListRegistration, StatusF24Enum } from "@/common/api/potlock";
 import DownArrow from "@/common/assets/svgs/DownArrow";
 import { ListNoteIcon } from "@/common/assets/svgs/list-note";
-import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@/common/contracts/potlock";
 import { update_registered_project } from "@/common/contracts/potlock/lists";
 import { truncate, useRouteQuery } from "@/common/lib";
 import {
@@ -26,10 +24,12 @@ import {
   SelectContent,
   SelectItem,
 } from "@/common/ui/components";
-import { statusesIcons } from "@/modules/core/constants";
+import { cn } from "@/common/ui/utils";
+import { AccountProfileCover, AccountProfilePicture } from "@/modules/core";
 import { statuses } from "@/modules/project/constants";
 import { dispatch } from "@/store";
 
+import { listRegistrationStatuses } from "../constants";
 import { ListFormModalType } from "../types";
 
 interface StatusModal {
@@ -46,38 +46,43 @@ export const AccountCard = ({
 }) => {
   const { setSearchParams } = useRouteQuery();
 
-  const [currentStatus, setCurrentStatus] = useState<StatusF24Enum | string>(
-    "",
-  );
+  const [registrationStatus, setRegistrationStatus] =
+    useState<RegistrationStatus>(RegistrationStatus.Pending);
+
+  const status = listRegistrationStatuses[registrationStatus];
+
   const [statusChange, setStatusChange] = useState<StatusModal>({
     open: false,
     status: "",
   });
+
   useEffect(() => {
-    setCurrentStatus(dataForList.status);
-  }, [dataForList, currentStatus]);
+    setRegistrationStatus(RegistrationStatus[dataForList.status]);
+  }, [dataForList, registrationStatus]);
 
   const profile = dataForList.registrant?.near_social_profile_data;
 
-  const NO_IMAGE =
-    "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
+  const statusDisplay = useMemo(
+    () => (
+      <div
+        className="flex w-max items-center justify-between  gap-2 rounded-sm px-2 py-2 "
+        style={{
+          color: status.color,
+          background: status.background,
+        }}
+      >
+        <LazyLoadImage
+          alt="List registration status icon"
+          src={status.icon}
+          width={18}
+          height={18}
+        />
 
-  const statusDisplay = (
-    <div
-      className="flex w-max items-center justify-between  gap-2 rounded-sm px-2 py-2 "
-      style={{
-        color: statusesIcons[currentStatus]?.color,
-        background: statusesIcons[currentStatus]?.background,
-      }}
-    >
-      <Image
-        src={statusesIcons[currentStatus]?.icon}
-        width={18}
-        height={18}
-        alt="status-icon"
-      />
-      <span className="text-[14px]">{currentStatus}</span>
-    </div>
+        <span className="text-[14px]">{registrationStatus}</span>
+      </div>
+    ),
+
+    [registrationStatus, status.background, status.color, status.icon],
   );
 
   const handleUpdateStatus = () => {
@@ -85,9 +90,11 @@ export const AccountCard = ({
       registration_id: dataForList.id,
       status: statusChange.status as RegistrationStatus,
     })
-      .then((data) => setCurrentStatus(data.status as StatusF24Enum))
+      .then((data) => setRegistrationStatus(data.status))
       .catch((err) => console.error(err));
+
     setSearchParams({ type: ListFormModalType.UPDATE_ACCOUNT });
+
     dispatch.toast.setListType(
       statusChange.status as StatusF24Enum,
       profile?.name ?? dataForList.registrant?.id,
@@ -100,39 +107,25 @@ export const AccountCard = ({
         className="overflow-hidden rounded-md bg-white font-lora shadow-md"
         data-testid="list-card"
       >
-        {/* Image Section */}
-        <div className="relative">
-          <div className="h-[150px] bg-gray-400">
-            {profile?.backgroundImage?.ipfs_cid && (
-              <Image
-                width={100}
-                height={150}
-                src={`${IPFS_NEAR_SOCIAL_URL}${profile?.backgroundImage?.ipfs_cid}`}
-                alt="person"
-                className="h-full w-full object-cover"
-              />
-            )}
-          </div>
-          <div className="mb-[-25px] h-[40px] w-[40px] translate-x-2 translate-y-[-25px] rounded-full bg-white shadow-md">
-            <Image
-              width={40}
-              height={40}
-              src={
-                profile?.image?.ipfs_cid
-                  ? `${IPFS_NEAR_SOCIAL_URL}${profile?.image?.ipfs_cid}`
-                  : NO_IMAGE
-              }
-              alt="person"
-              className="h-full w-full rounded-full object-cover"
-            />
-          </div>
-        </div>
+        <AccountProfileCover
+          accountId={dataForList.registrant.id}
+          height={150}
+        />
 
         {/* Content Section */}
-        <div className="p-3">
+        <div className="flex flex-col gap-4 p-4">
+          <AccountProfilePicture
+            accountId={dataForList.registrant.id}
+            className={cn(
+              "relative -mt-9 h-10 w-10 rounded-full bg-white object-cover",
+              "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
+            )}
+          />
+
           <p className="font-lora text-lg font-semibold leading-tight">
             {profile?.name ?? dataForList.registrant?.id}
           </p>
+
           <p className="mt-2 h-14 overflow-hidden text-sm text-gray-600">
             {truncate(profile?.description as string, 150) ?? "N/A"}
           </p>
