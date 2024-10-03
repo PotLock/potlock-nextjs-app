@@ -31,6 +31,7 @@ import {
 import {
   donationAmount,
   donationFeeBasisPointsToPercents,
+  donationFeePercentsToBasisPoints,
 } from "@/modules/donation";
 import { PotInputs } from "@/modules/pot";
 
@@ -133,6 +134,9 @@ export const potInputsToPotArgs = ({
     },
 
     {
+      referral_fee_matching_pool_basis_points: donationFeePercentsToBasisPoints,
+      referral_fee_public_round_basis_points: donationFeePercentsToBasisPoints,
+      chef_fee_basis_points: donationFeePercentsToBasisPoints,
       application_start_ms: timestamp.parse,
       application_end_ms: timestamp.parse,
       public_round_start_ms: timestamp.parse,

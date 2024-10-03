@@ -110,12 +110,7 @@ export const AccessControlListModal = create(
 
           <DialogDescription>
             <Form {...form}>
-              <form
-                onSubmit={onAccountSubmit}
-                un-flex="~"
-                un-gap="3"
-                un-items="start"
-              >
+              <form className="flex items-start gap-3">
                 <FormField
                   name="accountId"
                   control={form.control}
@@ -130,27 +125,21 @@ export const AccessControlListModal = create(
                 />
 
                 <Button
-                  type="submit"
+                  onClick={onAccountSubmit}
                   variant="standard-filled"
                   disabled={isAccountFormDisabled}
                 >
-                  Add
+                  {"Add"}
                 </Button>
               </form>
             </Form>
           </DialogDescription>
 
           <div
-            un-flex="~ col"
+            className="flex flex-col"
             style={{ display: accountIds.length > 0 ? undefined : "none" }}
           >
-            <div
-              un-flex="~"
-              un-justify="between"
-              un-gap="4"
-              un-p="x-5 y-2"
-              un-bg="neutral-50"
-            >
+            <div className="p-x-5 p-y-2 flex justify-between gap-4 bg-neutral-50">
               <div className="flex items-center gap-4">
                 <Checkbox
                   checked={selectedAccounts.length === accountIds.length}
@@ -159,7 +148,7 @@ export const AccessControlListModal = create(
                 />
 
                 <span className="prose font-500 text-neutral-600">
-                  {`${accountIds.length} Admins` +
+                  {`${accountIds.length} Account(s)` +
                     (selectedAccounts.length > 0
                       ? `, ${selectedAccounts.length} selected`
                       : "")}
@@ -176,7 +165,7 @@ export const AccessControlListModal = create(
                 <MdDeleteOutline width={18} height={18} />
 
                 <span className="prose line-height-none">
-                  Remove all selected
+                  {"Remove all selected"}
                 </span>
               </Button>
             </div>
@@ -202,7 +191,7 @@ export const AccessControlListModal = create(
                         <MdDeleteOutline width={18} height={18} />
 
                         <span className="prose font-500 line-height-none">
-                          Remove
+                          {"Remove"}
                         </span>
                       </Button>
                     }

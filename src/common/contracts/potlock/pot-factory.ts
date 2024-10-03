@@ -8,26 +8,18 @@ import { ByAccountId } from "@/common/types";
 import {
   PotArgs,
   PotDeploymentResult,
+  PotFactoryConfig,
 } from "./interfaces/pot-factory.interfaces";
 
 export type { PotDeploymentResult };
 
-/**
- * Contract API
- */
 export const contractApi = naxiosInstance.contractApi({
   contractId: POT_FACTORY_CONTRACT_ID,
   cache: new MemoryCache({ expirationTime: 5 }), // 10 seg
 });
 
-// READ METHODS
-
-type Config = {
-  require_whitelist: boolean;
-  whitelisted_deployers: string[];
-};
-
-export const get_config = () => contractApi.view<{}, Config>("get_config");
+export const get_config = () =>
+  contractApi.view<{}, PotFactoryConfig>("get_config");
 
 export const calculate_min_deployment_deposit = (args: {
   args: PotArgs;
@@ -36,7 +28,11 @@ export const calculate_min_deployment_deposit = (args: {
     .view<typeof args, string>("calculate_min_deployment_deposit", { args })
     .then((amount) =>
       Big(amount).plus(Big("20000000000000000000000")).toFixed(),
-    );
+    )
+    .catch((error) => {
+      console.error(error);
+      return undefined;
+    });
 
 export const deploy_pot = async (args: {
   pot_args: PotArgs;
