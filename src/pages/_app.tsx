@@ -17,10 +17,10 @@ import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
-import { Toast } from "@/modules/lists/_deprecated_toast/Toast";
 import { cn } from "@/common/ui/utils";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 import { Nav } from "@/modules/core";
+import { Toast } from "@/modules/lists/_deprecated_toast/Toast";
 import { dispatch, store } from "@/store";
 
 const lora = Lora({
