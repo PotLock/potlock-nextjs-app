@@ -5,7 +5,7 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { omit } from "remeda";
 
 import { walletApi } from "@/common/api/near";
-import {  potlock, StatusF24Enum } from "@/common/api/potlock";
+import { StatusF24Enum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
 import { useIsHuman } from "@/modules/core";
