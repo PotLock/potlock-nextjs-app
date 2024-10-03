@@ -21,6 +21,7 @@ import { cn } from "@/common/ui/utils";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 import { Nav } from "@/modules/core";
 import { dispatch, store } from "@/store";
+import { Toaster } from "@/common/ui/components/molecules/toaster";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -62,6 +63,7 @@ export default function RootLayout({
             </div>
           </AuthProvider>
         </NiceModalProvider>
+        <Toaster />
       </ReduxProvider>
     </>
   );
