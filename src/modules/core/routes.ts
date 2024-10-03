@@ -10,6 +10,7 @@ const routesPath = {
   DEPLOY_POT: "/deploy",
   DONORS: "/donors",
   PROFILE: "/profile",
+  CAMPAIGNS: "/campaigns",
   EDIT_PROFILE: "/editprofile",
 };
 
