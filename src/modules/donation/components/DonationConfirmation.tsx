@@ -18,7 +18,7 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { ProfileLink } from "@/modules/profile";
+import { AccountProfileLink } from "@/modules/account";
 import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
@@ -96,7 +96,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                       <span>{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
 
                       {protocolFeeRecipientAccountId && (
-                        <ProfileLink
+                        <AccountProfileLink
                           accountId={protocolFeeRecipientAccountId}
                         />
                       )}
@@ -120,7 +120,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                       <span>{`Remove ${chefFeePercent}% Chef Fees`}</span>
 
                       {pot?.chef?.id && (
-                        <ProfileLink accountId={pot?.chef?.id} />
+                        <AccountProfileLink accountId={pot?.chef?.id} />
                       )}
                     </>
                   }

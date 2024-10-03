@@ -8,7 +8,7 @@ import {
   prop,
 } from "remeda";
 
-import { Pot } from "@/common/api/potlock";
+import { Account, Pot } from "@/common/api/potlock";
 import {
   LISTS_CONTRACT_ID,
   NEAR_TOKEN_DENOM,
@@ -186,7 +186,15 @@ export const potIndexedFieldToString = (
         return value;
       } else if (Array.isArray(value)) {
         return value.filter(isNonNullish).join(", ");
-      } else return null;
+      } else {
+        switch (key) {
+          case "chef":
+            return (value as Account).id;
+
+          default:
+            return value.toString();
+        }
+      }
     }
 
     default:
