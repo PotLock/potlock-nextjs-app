@@ -5,7 +5,7 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { omit } from "remeda";
 
 import { walletApi } from "@/common/api/near";
-import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
+import {  potlock, StatusF24Enum } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
 import { useIsHuman } from "@/modules/core";
@@ -41,7 +41,7 @@ export const useDonationForm = ({
 
   const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
     accountId: recipientAccountId,
-    status: PotApplicationStatusEnum.Approved,
+    status: StatusF24Enum.Approved,
   });
 
   const matchingPots = matchingPotsPaginated?.results ?? [];

@@ -1,68 +1,76 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { walletApi } from "@/common/api/near";
-import { potlock } from "@/common/api/potlock";
-import {
-  get_list_for_owner,
-  get_upvoted_lists_for_account,
-} from "@/common/contracts/potlock/lists"; // Adjust the import based on your project structure
+import { List, potlock } from "@/common/api/potlock";
 
 export const useAllLists = (
   setCurrentListType: (type: string) => void,
   setFilteredRegistrations: (type: any) => void,
 ) => {
-  const [registrations, setRegistrations] = useState<any[]>([]);
+  const [registrations, setRegistrations] = useState<List[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const wallet = walletApi;
 
   const { data, isLoading } = potlock.useLists();
+  const { data: myLists } = potlock.useLists({
+    account: wallet?.accountId,
+  });
+  const { data: myFavourites } = potlock.useAccountUpvotedLists({
+    accountId: wallet?.accountId as string,
+  });
 
-  const fetchAllLists = async () => {
-    setLoading(isLoading);
-    if (data) {
-      try {
-        setRegistrations(data?.results);
-        setFilteredRegistrations(data?.results);
+  const fetchAllLists = useCallback(async () => {
+    setLoading(true);
+    try {
+      if (data) {
+        setRegistrations(data.results);
+        setFilteredRegistrations(data.results);
         setCurrentListType("All Lists");
-      } catch (error) {
-        console.error("Error fetching all lists:", error);
-      } finally {
-        setLoading(isLoading);
       }
+    } catch (error) {
+      console.error("Error fetching all lists:", error);
+    } finally {
+      setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchAllLists();
-  }, [isLoading]);
+  }, [data, setCurrentListType, setFilteredRegistrations]);
 
   const fetchMyLists = useCallback(async () => {
-    setCurrentListType("My Lists");
     if (!wallet?.accountId) return;
+    setLoading(true);
+    setCurrentListType("My Lists");
     try {
-      const myLists: any = await get_list_for_owner({
-        owner_id: wallet.accountId,
-      });
-      setRegistrations(myLists);
-      setFilteredRegistrations(myLists);
+      if (myLists) {
+        setRegistrations(myLists.results);
+        setFilteredRegistrations(myLists.results);
+      }
     } catch (error) {
       console.error("Error fetching my lists:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [wallet, setCurrentListType]);
+  }, [wallet, myLists, setCurrentListType, setFilteredRegistrations]);
 
   const fetchFavourites = useCallback(async () => {
     if (!wallet?.accountId) return;
+    setLoading(true);
     try {
-      const upvotedLists: any = await get_upvoted_lists_for_account({
-        account_id: wallet.accountId,
-      });
-      setRegistrations(upvotedLists);
-      setFilteredRegistrations(upvotedLists);
-      setCurrentListType("My Favorites");
+      if (myFavourites) {
+        setRegistrations(myFavourites);
+        setFilteredRegistrations(myFavourites);
+        setCurrentListType("My Favorites");
+      }
     } catch (error) {
       console.error("Error fetching favorites:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [wallet, setCurrentListType]);
+  }, [wallet, myFavourites, setCurrentListType, setFilteredRegistrations]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      fetchAllLists();
+    }
+  }, [isLoading, fetchAllLists]);
 
   const buttons = [
     {

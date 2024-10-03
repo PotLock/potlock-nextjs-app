@@ -47,6 +47,10 @@ export const listEditorModel = createModel<AppModel>()({
         type,
       }: { header: string; description: string; type: ListFormModalType },
     ) => handleList(state, { modalTextState: { header, description }, type }),
+    handleListToast: (
+      state,
+      { name, type }: { name: string; type: ListFormModalType },
+    ) => handleList(state, { name, type }),
     deploymentSuccess: (
       state,
       {

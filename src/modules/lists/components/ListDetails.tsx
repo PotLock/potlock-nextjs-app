@@ -32,11 +32,11 @@ import { AccessControlListModal } from "@/modules/access-control/components/Acce
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
 import { DonateToListProjects } from "@/modules/donation";
-import { SavedUsersType } from "@/pages/list/[id]";
 
 import { ApplyToListModal } from "./ApplyToListModal";
 import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
+import { SavedUsersType } from "../types";
 
 interface ListDetailsType {
   data?: ListRegistration[];

@@ -52,14 +52,17 @@ export const ListCard = ({
     e.stopPropagation();
     if (isUpvoted) {
       remove_upvote({ list_id: dataForList?.on_chain_id });
+      dispatch.listEditor.handleListToast({
+        name: truncate(dataForList?.name, 15),
+        type: ListFormModalType.DOWNVOTE,
+      });
     } else {
       upvote({ list_id: dataForList?.on_chain_id });
+      dispatch.listEditor.handleListToast({
+        name: truncate(dataForList?.name, 15),
+        type: ListFormModalType.UPVOTE,
+      });
     }
-    dispatch.toast.upvoteSuccess({
-      name: truncate(dataForList?.name, 15),
-      listType: ListFormModalType.UPVOTE,
-      message: "",
-    });
   };
 
   const handleRouteUser = useCallback(

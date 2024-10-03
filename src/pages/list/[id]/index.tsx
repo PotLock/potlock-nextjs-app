@@ -8,14 +8,10 @@ import { AccountId } from "@/common/types";
 import {
   ListAccounts,
   ListDetails,
+  SavedUsersType,
   useListDeploymentSuccessRedirect,
 } from "@/modules/lists";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
-
-export interface SavedUsersType {
-  accounts?: { account: AccountId; id?: number }[];
-  admins?: { account: AccountId }[];
-}
 
 export default function Page() {
   useListDeploymentSuccessRedirect();

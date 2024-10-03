@@ -20,7 +20,6 @@ import { APP_METADATA } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 import { Nav } from "@/modules/core";
-import { Toast } from "@/modules/lists/_deprecated_toast/Toast";
 import { dispatch, store } from "@/store";
 
 const lora = Lora({
@@ -60,7 +59,6 @@ export default function RootLayout({
             >
               <Nav />
               {getLayout(<Component {...pageProps} />)}
-              <Toast />
             </div>
           </AuthProvider>
         </NiceModalProvider>

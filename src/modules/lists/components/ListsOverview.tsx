@@ -75,7 +75,7 @@ export const ListsOverview = ({
       return registration.name.toLowerCase().includes(search);
     };
 
-    const filtered = registrations.filter((registration) =>
+    const filtered = registrations?.filter((registration) =>
       handleSearch(registration),
     );
     setFilteredRegistrations(filtered);
@@ -95,7 +95,7 @@ export const ListsOverview = ({
             <span
               style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
             >
-              {filteredRegistrations.length}
+              {filteredRegistrations?.length}
             </span>
           </div>
         </div>

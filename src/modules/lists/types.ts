@@ -32,6 +32,7 @@ export enum ListFormModalType {
 }
 
 export type ListEditorState = {
+  name?: string;
   type: ListFormModalType;
   finalOutcome: {
     data?: List | null;
@@ -48,3 +49,8 @@ export type ListEditorState = {
     selectedProjects: any;
   };
 };
+
+export interface SavedUsersType {
+  accounts?: { account: AccountId; id?: number }[];
+  admins?: { account: AccountId }[];
+}

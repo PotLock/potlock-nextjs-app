@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
-import { StatusF24Enum } from "@/common/api/potlock";
+import { useToast } from "@/common/hooks/use-toast";
 import { useRouteQuery } from "@/common/lib";
 import { dispatch, useTypedSelector } from "@/store";
 
@@ -10,8 +10,10 @@ import { ListActionsModal } from "../components/listActionsModal";
 import { ListFormModalType } from "../types";
 
 export const useListDeploymentSuccessRedirect = () => {
+  const { toast } = useToast();
   const resultModal = useModal(ListActionsModal);
-  const toast = useTypedSelector((state) => state.toast);
+
+  const listValues = useTypedSelector((state) => state.listEditor);
 
   const {
     query: { transactionHashes, type },
@@ -19,8 +21,8 @@ export const useListDeploymentSuccessRedirect = () => {
   } = useRouteQuery();
 
   const voteType =
-    toast.listType === ListFormModalType.UPVOTE ||
-    toast.listType === ListFormModalType.DOWNVOTE;
+    listValues.type === ListFormModalType.UPVOTE ||
+    listValues.type === ListFormModalType.DOWNVOTE;
   const transactionHash =
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
     (typeof transactionHashes === "string" ? transactionHashes : undefined);
@@ -29,25 +31,24 @@ export const useListDeploymentSuccessRedirect = () => {
 
   useEffect(() => {
     if (
-      type === ListFormModalType.UPDATE_ACCOUNT &&
-      toast.listType !== "NONE" &&
+      listValues.type === ListFormModalType.UPDATE_ACCOUNT &&
       isTransactionOutcomeDetected
     ) {
-      dispatch.toast.showToast({
-        message: `${toast.account} has been ${toast.listType?.toLowerCase()}`,
-        listType: toast.listType as StatusF24Enum,
+      toast({
+        title: `Account Status Updated to ${listValues.name} Successfully`,
       });
-      setSearchParams({ transactionHashes: null, type: null });
-    } else if (voteType && isTransactionOutcomeDetected) {
-      dispatch.toast.showToast({
-        message: `${toast.name} has been added to your favorites`,
+    } else if (voteType && isTransactionOutcomeDetected && listValues.name) {
+      console.log(transactionHashes, listValues);
+
+      toast({
+        title: `${listValues.name} has been ${listValues.type === ListFormModalType.UPVOTE ? "added" : "removed"} to your favorites`,
       });
     } else if (isTransactionOutcomeDetected && !voteType) {
       dispatch.listEditor
         .handleListContractActions(transactionHash)
         .finally(() => {
           resultModal.show();
-          setSearchParams({ transactionHashes: null, type: null });
+          setSearchParams({ transactionHashes: null });
         });
     }
   }, [

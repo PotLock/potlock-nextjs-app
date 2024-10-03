@@ -4,12 +4,12 @@ import { Trigger } from "@radix-ui/react-select";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
-import { ListRegistration, StatusF24Enum } from "@/common/api/potlock";
+import { ListRegistration } from "@/common/api/potlock";
 import DownArrow from "@/common/assets/svgs/DownArrow";
 import { ListNoteIcon } from "@/common/assets/svgs/list-note";
 import { RegistrationStatus } from "@/common/contracts/potlock";
 import { update_registered_project } from "@/common/contracts/potlock/lists";
-import { truncate, useRouteQuery } from "@/common/lib";
+import { truncate } from "@/common/lib";
 import {
   Button,
   Dialog,
@@ -44,8 +44,6 @@ export const AccountCard = ({
   dataForList: ListRegistration;
   accountsWithAccess: string[];
 }) => {
-  const { setSearchParams } = useRouteQuery();
-
   const [registrationStatus, setRegistrationStatus] =
     useState<RegistrationStatus>(RegistrationStatus.Pending);
 
@@ -93,12 +91,10 @@ export const AccountCard = ({
       .then((data) => setRegistrationStatus(data.status))
       .catch((err) => console.error(err));
 
-    setSearchParams({ type: ListFormModalType.UPDATE_ACCOUNT });
-
-    dispatch.toast.setListType(
-      statusChange.status as StatusF24Enum,
-      profile?.name ?? dataForList.registrant?.id,
-    );
+    dispatch.listEditor.handleListToast({
+      name: statusChange.status as string,
+      type: ListFormModalType.UPDATE_ACCOUNT,
+    });
   };
 
   return (
