@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 
 import { Pencil } from "lucide-react";
-import { entries, isStrictEqual, omit, pick, piped, prop } from "remeda";
+import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 
 import { walletApi } from "@/common/api/near";
 import { ByPotId, potlock } from "@/common/api/potlock";
+import { isAccountId } from "@/common/lib";
 import {
   Button,
   DataLoadingPlaceholder,
@@ -12,6 +13,7 @@ import {
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/modules/access-control";
+import { AccountProfileLink } from "@/modules/account";
 import { AccountOption } from "@/modules/core";
 
 import { POT_EDITOR_FIELDS } from "../constants";
@@ -40,7 +42,14 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
             {subheading ? `${heading} (${subheading})` : heading}
           </span>
 
-          {<span className="prose md:w-102 w-full text-sm">{children}</span>}
+          {typeof children === "string" && isAccountId(children) ? (
+            <AccountProfileLink
+              accountId={children}
+              classNames={{ root: "mr-a", name: "text-sm" }}
+            />
+          ) : (
+            <span className="prose md:w-102 w-full text-sm">{children}</span>
+          )}
         </div>
       ) : null}
     </>
@@ -89,7 +98,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
   );
 
   return (
-    <div className="max-w-183 flex w-full flex-col gap-8">
+    <div className="max-w-195 flex w-full flex-col gap-8">
       <div className="flex flex-wrap gap-8">
         <div un-pr="4" un-flex="~ col" un-gap="2">
           <span className="prose font-500 text-sm text-neutral-500">

@@ -8,7 +8,7 @@ import {
   prop,
 } from "remeda";
 
-import { Pot } from "@/common/api/potlock";
+import { Account, Pot } from "@/common/api/potlock";
 import {
   LISTS_CONTRACT_ID,
   NEAR_TOKEN_DENOM,
@@ -31,6 +31,7 @@ import {
 import {
   donationAmount,
   donationFeeBasisPointsToPercents,
+  donationFeePercentsToBasisPoints,
 } from "@/modules/donation";
 import { PotInputs } from "@/modules/pot";
 
@@ -133,6 +134,9 @@ export const potInputsToPotArgs = ({
     },
 
     {
+      referral_fee_matching_pool_basis_points: donationFeePercentsToBasisPoints,
+      referral_fee_public_round_basis_points: donationFeePercentsToBasisPoints,
+      chef_fee_basis_points: donationFeePercentsToBasisPoints,
       application_start_ms: timestamp.parse,
       application_end_ms: timestamp.parse,
       public_round_start_ms: timestamp.parse,
@@ -186,7 +190,15 @@ export const potIndexedFieldToString = (
         return value;
       } else if (Array.isArray(value)) {
         return value.filter(isNonNullish).join(", ");
-      } else return null;
+      } else {
+        switch (key) {
+          case "chef":
+            return (value as Account).id;
+
+          default:
+            return value.toString();
+        }
+      }
     }
 
     default:
