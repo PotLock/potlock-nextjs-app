@@ -1,5 +1,4 @@
 export { default as Header } from "./Header";
-export { default as HeaderStatus } from "./HeaderStatus/HeaderStatus";
 export { default as Indicator } from "./Indicator";
 export { default as PotCard } from "./PotCard";
 export * from "./PotLayout";

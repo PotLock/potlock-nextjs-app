@@ -1,17 +1,18 @@
 import { useState } from "react";
 
 import { Pot } from "@/common/api/potlock";
+import { cn } from "@/common/ui/utils";
 
 import ProgressBar from "./ProgressBar";
-import { Container, Loader, State, Wrapper } from "./styles";
-import { statsList } from "../../utils";
-import TimeLeft from "../TimeLeft";
+import { Container, Loader, Wrapper } from "./styles";
+import TimeLeft from "./TimeLeft";
+import { statsList } from "../utils";
 
-type Props = {
+export type PotStatusBarProps = {
   potDetail: Pot;
 };
 
-const HeaderStatus = ({ potDetail }: Props) => {
+export const PotStatusBar: React.FC<PotStatusBarProps> = ({ potDetail }) => {
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
 
   if (potDetail === null) return "";
@@ -33,7 +34,10 @@ const HeaderStatus = ({ potDetail }: Props) => {
   const showActiveState = getIndexOfActive() * (containerHeight / 4);
 
   return (
-    <Wrapper onClick={() => setMobileMenuActive(!mobileMenuActive)}>
+    <Wrapper
+      onClick={() => setMobileMenuActive(!mobileMenuActive)}
+      className="px-4"
+    >
       <Container
         containerHeight={containerHeight}
         showActiveState={showActiveState}
@@ -59,28 +63,36 @@ const HeaderStatus = ({ potDetail }: Props) => {
             // TODO: Improve this code (built by mohamed)
             ({ label, daysLeft, progress, started, completed }, idx) => {
               return (
-                <State
-                  style={{
-                    color: completed || started ? "#000" : "#7b7b7b",
-                  }}
+                <div
                   key={label}
+                  className={cn(
+                    "relative flex items-center gap-4 whitespace-nowrap",
+
+                    {
+                      "color-neutral-500": !(completed || started),
+                    },
+                  )}
                 >
                   <ProgressBar
                     progress={progress}
                     started={started}
                     completed={completed}
                   />
+
                   <div className="flex">
                     {label}
-                    {!daysLeft && started && <span>pending </span>}
+                    {!daysLeft && started && <span>{"pending "}</span>}
+
                     {started && !completed && daysLeft && (
                       <>
-                        <p className="mx-1">{` `}ends in</p>
-                        <span>
+                        <p className="mx-1">ends in</p>
+
+                        <span className="prose text-primary-600 font-600">
                           <TimeLeft daysLeft={daysLeft} />
                         </span>
                       </>
                     )}
+
                     {idx === 0 && !started && " hasn’t started"}
                   </div>
 
@@ -90,12 +102,13 @@ const HeaderStatus = ({ potDetail }: Props) => {
                       display: idx === 3 ? "none" : "flex",
                     }}
                   />
-                </State>
+                </div>
               );
             },
           )}
         </div>
       </Container>
+
       <svg
         className="spread-indicator"
         style={{
@@ -113,5 +126,3 @@ const HeaderStatus = ({ potDetail }: Props) => {
     </Wrapper>
   );
 };
-
-export default HeaderStatus;
