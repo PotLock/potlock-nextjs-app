@@ -6,11 +6,13 @@ import { cn } from "@/common/ui/utils";
 import { AccountAvatar } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 
-export type ProfileLinkProps = ByAccountId & { className?: string };
+export type AccountProfileLinkProps = ByAccountId & {
+  classNames?: { root?: string; avatar?: string; name?: string };
+};
 
-export const ProfileLink: React.FC<ProfileLinkProps> = ({
+export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
   accountId,
-  className,
+  classNames,
 }) => {
   const { data: account } = potlock.useAccount({ accountId });
   const { name } = account?.near_social_profile_data ?? {};
@@ -19,11 +21,17 @@ export const ProfileLink: React.FC<ProfileLinkProps> = ({
     <Link
       href={`${routesPath.PROFILE}/${accountId}`}
       target="_blank"
-      className={cn("decoration-none flex items-center gap-1", className)}
+      className={cn(
+        "decoration-none flex items-center gap-1",
+        classNames?.root,
+      )}
     >
-      <AccountAvatar {...{ accountId }} className="h-5 w-5" />
+      <AccountAvatar
+        {...{ accountId }}
+        className={cn("h-5 w-5", classNames?.avatar)}
+      />
 
-      <span className="prose font-500" un-decoration="hover:underline">
+      <span className={cn("prose font-500 hover:underline", classNames?.name)}>
         {name ?? accountId}
       </span>
     </Link>

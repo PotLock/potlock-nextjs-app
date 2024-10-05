@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 
 import { fetchTimeByBlockHeight } from "@/common/api/near-social";
-import truncate from "@/common/lib/truncate";
+import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 
 import FeedCardOptionsSelect from "./FeedCardOptionsSelect";
