@@ -50,7 +50,7 @@ export const DonationSuccess = ({
     accountId:
       "recipient_id" in (finalOutcome ?? {})
         ? (finalOutcome as DirectDonation).recipient_id
-        : (finalOutcome as PotDonation).project_id ?? undefined,
+        : ((finalOutcome as PotDonation).project_id ?? undefined),
   });
 
   const tokenId =
