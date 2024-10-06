@@ -18,9 +18,9 @@ import {
   LabeledIcon,
   Skeleton,
 } from "@/common/ui/components";
+import { AccountProfileLink } from "@/modules/account";
 import { ModalErrorBody } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { ProfileLink } from "@/modules/profile";
 import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
@@ -50,7 +50,7 @@ export const DonationSuccess = ({
     accountId:
       "recipient_id" in (finalOutcome ?? {})
         ? (finalOutcome as DirectDonation).recipient_id
-        : ((finalOutcome as PotDonation).project_id ?? undefined),
+        : (finalOutcome as PotDonation).project_id ?? undefined,
   });
 
   const tokenId =
@@ -153,7 +153,11 @@ export const DonationSuccess = ({
           <p className="m-0 flex flex-col">
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
-              <ProfileLink accountId={recipient.id} className="font-600" />
+
+              <AccountProfileLink
+                accountId={recipient.id}
+                classNames={{ name: "font-600" }}
+              />
             </div>
 
             {pot?.name && (

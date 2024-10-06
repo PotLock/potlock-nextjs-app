@@ -1,4 +1,4 @@
-export { default as truncate } from "./truncate";
+export * from "./string";
 export { default as formatWithCommas } from "./formatWithCommas";
 export * from "./converters";
 export * from "./navigation";

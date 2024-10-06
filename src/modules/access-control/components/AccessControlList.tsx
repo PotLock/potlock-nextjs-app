@@ -57,7 +57,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
     <>
       {isEditingEnabled && <AccessControlListModal id={modalId} {...props} />}
 
-      <div un-flex="~" un-justify="between" un-items="center">
+      <div className="flex items-center justify-between">
         {showAccountList && accountList}
 
         {isEditingEnabled && (

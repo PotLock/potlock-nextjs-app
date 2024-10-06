@@ -1,3 +1,5 @@
+import { donationFeeBasisPointsToPercents } from "@/modules/donation";
+
 import {
   POT_MAX_APPROVED_PROJECTS,
   POT_MAX_CHEF_FEE_BASIS_POINTS,
@@ -36,11 +38,17 @@ export const isPotCooldownPeriodValid = (cooldown_period_ms: number) =>
 export const isPotMaxProjectsValid = (max_projects: number) =>
   max_projects <= POT_MAX_APPROVED_PROJECTS;
 
-export const isPotMatchingPoolReferralFeeValid = (basisPoints: number) =>
-  basisPoints <= POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS;
+export const isPotMatchingPoolReferralFeeValid = (percents: number) =>
+  percents <=
+  donationFeeBasisPointsToPercents(
+    POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS,
+  );
 
-export const isPotPublicRoundReferralFeeValid = (basisPoints: number) =>
-  basisPoints <= POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS;
+export const isPotPublicRoundReferralFeeValid = (percents: number) =>
+  percents <=
+  donationFeeBasisPointsToPercents(
+    POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS,
+  );
 
-export const isPotChefFeeValid = (basisPoints: number) =>
-  basisPoints <= POT_MAX_CHEF_FEE_BASIS_POINTS;
+export const isPotChefFeeValid = (percents: number) =>
+  percents <= donationFeeBasisPointsToPercents(POT_MAX_CHEF_FEE_BASIS_POINTS);
