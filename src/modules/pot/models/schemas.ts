@@ -4,7 +4,7 @@ import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 import { validAccountIdOrNothing } from "@/modules/core";
 import {
   donationAmount,
-  donationFeeBasisPoints,
+  donationFee,
   donationFeeBasisPointsToPercents,
 } from "@/modules/donation";
 
@@ -149,7 +149,7 @@ export const potSchema = object({
     .optional()
     .describe("Whether the projects must have Nadabot verification."),
 
-  referral_fee_matching_pool_basis_points: donationFeeBasisPoints
+  referral_fee_matching_pool_basis_points: donationFee
     .refine(isPotMatchingPoolReferralFeeValid, {
       message: `Cannot exceed ${donationFeeBasisPointsToPercents(
         POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS,
@@ -157,7 +157,7 @@ export const potSchema = object({
     })
     .describe("Matching pool referral fee in basis points."),
 
-  referral_fee_public_round_basis_points: donationFeeBasisPoints
+  referral_fee_public_round_basis_points: donationFee
     .refine(isPotPublicRoundReferralFeeValid, {
       message: `Cannot exceed ${donationFeeBasisPointsToPercents(
         POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS,
@@ -165,7 +165,7 @@ export const potSchema = object({
     })
     .describe("Public round referral fee in basis points."),
 
-  chef_fee_basis_points: donationFeeBasisPoints
+  chef_fee_basis_points: donationFee
     .refine(isPotChefFeeValid, {
       message: `Cannot exceed ${donationFeeBasisPointsToPercents(
         POT_MAX_CHEF_FEE_BASIS_POINTS,
