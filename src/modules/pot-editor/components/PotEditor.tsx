@@ -47,9 +47,9 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
           },
     );
 
-  const [isInEditMode, setEditMode] = useState(isNewPot);
-  const enterEditMode = useCallback(() => setEditMode(true), []);
-  const exitEditMode = useCallback(() => setEditMode(false), []);
+  const [isInPreviewMode, setPreviewMode] = useState(!isNewPot);
+  const enterEditMode = useCallback(() => setPreviewMode(false), []);
+  const exitEditMode = useCallback(() => setPreviewMode(true), []);
 
   const onCancelClick = useCallback(() => {
     form.reset();
@@ -59,7 +59,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
     } else exitEditMode();
   }, [exitEditMode, form, isNewPot, router]);
 
-  return !isInEditMode ? (
+  return isInPreviewMode ? (
     <PotEditorPreview onEditClick={enterEditMode} {...{ potId }} />
   ) : (
     <Form {...form}>
@@ -189,37 +189,35 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               </AlertDescription>
             </Alert>
 
-            {isNewPot && (
-              <div un-flex="~ col lg:row" un-gap="8">
-                <FormField
-                  name="application_start_ms"
-                  control={form.control}
-                  render={({ field }) => (
-                    <TextField
-                      label={POT_EDITOR_FIELDS.application_start_ms.title}
-                      required
-                      type="datetime-local"
-                      classNames={{ root: "lg:w-50% w-full" }}
-                      {...field}
-                    />
-                  )}
-                />
+            <div un-flex="~ col lg:row" un-gap="8">
+              <FormField
+                name="application_start_ms"
+                control={form.control}
+                render={({ field }) => (
+                  <TextField
+                    label={POT_EDITOR_FIELDS.application_start_ms.title}
+                    required
+                    type="datetime-local"
+                    classNames={{ root: "lg:w-50% w-full" }}
+                    {...field}
+                  />
+                )}
+              />
 
-                <FormField
-                  name="application_end_ms"
-                  control={form.control}
-                  render={({ field }) => (
-                    <TextField
-                      label={POT_EDITOR_FIELDS.application_end_ms.title}
-                      required
-                      type="datetime-local"
-                      classNames={{ root: "lg:w-50% w-full" }}
-                      {...field}
-                    />
-                  )}
-                />
-              </div>
-            )}
+              <FormField
+                name="application_end_ms"
+                control={form.control}
+                render={({ field }) => (
+                  <TextField
+                    label={POT_EDITOR_FIELDS.application_end_ms.title}
+                    required
+                    type="datetime-local"
+                    classNames={{ root: "lg:w-50% w-full" }}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
 
             <div un-flex="~ col lg:row" un-gap="8">
               <FormField
