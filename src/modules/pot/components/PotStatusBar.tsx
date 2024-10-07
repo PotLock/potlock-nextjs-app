@@ -10,9 +10,14 @@ import { potIndexedDataByIdToStatuses } from "../utils/statuses";
 
 export type PotStatusBarProps = ByPotId & {
   potIndexedData: Pot;
+
+  classNames?: {
+    root?: string;
+  };
 };
 
 export const PotStatusBar: React.FC<PotStatusBarProps> = ({
+  classNames,
   potId,
   potIndexedData,
 }) => {
@@ -39,7 +44,7 @@ export const PotStatusBar: React.FC<PotStatusBarProps> = ({
   return (
     <Wrapper
       onClick={() => setMobileMenuActive(!mobileMenuActive)}
-      className="px-4"
+      className={cn("px-4", classNames?.root)}
     >
       <Container
         containerHeight={containerHeight}

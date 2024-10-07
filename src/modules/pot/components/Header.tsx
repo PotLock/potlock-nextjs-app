@@ -60,7 +60,7 @@ const Header = ({ potDetail }: Props) => {
         onCloseClick={() => setChallengeModalOpen(false)}
       />
 
-      <div className="lg:flex-row md:p-[32px_2rem_80px] mt-8 flex flex-col flex-wrap gap-8 p-[3rem_0]">
+      <div className="lg:flex-row md:p-8 flex flex-col flex-wrap gap-8 p-4 p-[3rem_0]">
         {/* Left Content*/}
         <div className="flex grow flex-col gap-6">
           {/* Title */}

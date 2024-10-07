@@ -3,12 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
-import { SYBIL_FRONTEND_URL } from "@/common/constants";
 import { PageWithBanner } from "@/common/ui/components";
-import useWallet from "@/modules/auth/hooks/useWallet";
-import { Alert, useIsHuman } from "@/modules/core";
 import ErrorModal from "@/modules/core/components/ErrorModal";
 import SuccessModal from "@/modules/core/components/SuccessModal";
+import { DonationSybilWarning } from "@/modules/donation";
 import { Header, isPotStakeWeighted } from "@/modules/pot";
 
 import { PotStatusBar } from "./PotStatusBar";
@@ -31,8 +29,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { potId } = query;
   const isStakeWeightedPot = isPotStakeWeighted({ potId });
   const { data: pot } = potlock.usePot({ potId });
-  const { wallet } = useWallet();
-  const { loading, nadaBotVerified } = useIsHuman(wallet?.accountId);
 
   // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(
@@ -76,18 +72,15 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      <PotStatusBar potIndexedData={pot} {...{ potId }} />
+      <PotStatusBar
+        potIndexedData={pot}
+        {...{ potId }}
+        classNames={{ root: "mb-4" }}
+      />
 
-      {/* Not a human alert */}
-      {!loading && !nadaBotVerified && (
-        <div className="px-8">
-          <Alert
-            text="Your contribution won't be matched unless verified as human before the matching round ends."
-            buttonLabel="Verify you're human"
-            buttonHref={SYBIL_FRONTEND_URL}
-          />
-        </div>
-      )}
+      <div className="md:px-8 flex w-full flex-col items-center px-4">
+        <DonationSybilWarning {...{ potId }} />
+      </div>
 
       <Header potDetail={pot} />
 
