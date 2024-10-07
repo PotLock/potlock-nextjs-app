@@ -6,9 +6,9 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { DEFAULT_URL } from "@/common/constants";
-import truncate from "@/common/lib/truncate";
+import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/modules/auth";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";
 
@@ -16,7 +16,7 @@ import DonationsInfo from "./DonationsInfo";
 import FollowButton from "./FollowButton";
 import Linktree from "./Linktree";
 import ProfileTags from "./ProfileTags";
-import useProfileData from "../hooks/data";
+import { useProfileData } from "../hooks/data";
 
 type Props = {
   accountId: string;

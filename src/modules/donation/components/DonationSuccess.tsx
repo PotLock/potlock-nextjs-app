@@ -18,13 +18,13 @@ import {
   LabeledIcon,
   Skeleton,
 } from "@/common/ui/components";
+import { AccountProfileLink } from "@/modules/account";
 import { ModalErrorBody } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { ProfileLink } from "@/modules/profile";
 import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
-import { DonationVerificationWarning } from "./DonationVerificationWarning";
+import { DonationSybilWarning } from "./DonationSybilWarning";
 import { useDonationAllocationBreakdown } from "../hooks";
 import { WithDonationFormAPI, useDonationState } from "../models";
 
@@ -43,8 +43,8 @@ export const DonationSuccess = ({
 }: DonationSuccessProps) => {
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
-  const [potAccountId] = form.watch(["potAccountId"]);
-  const { data: pot } = potlock.usePot({ potId: potAccountId });
+  const [potId] = form.watch(["potAccountId"]);
+  const { data: pot } = potlock.usePot({ potId });
 
   const { data: recipient, error: recipientDataError } = potlock.useAccount({
     accountId:
@@ -153,7 +153,11 @@ export const DonationSuccess = ({
           <p className="m-0 flex flex-col">
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
-              <ProfileLink accountId={recipient.id} className="font-600" />
+
+              <AccountProfileLink
+                accountId={recipient.id}
+                classNames={{ name: "font-600" }}
+              />
             </div>
 
             {pot?.name && (
@@ -181,7 +185,7 @@ export const DonationSuccess = ({
         <DonationSummaryBreakdown data={breakdown} {...{ tokenId }} />
       )}
 
-      {pot && <DonationVerificationWarning />}
+      {potId && <DonationSybilWarning {...{ potId }} />}
 
       {transactionHash && (
         <LabeledIcon

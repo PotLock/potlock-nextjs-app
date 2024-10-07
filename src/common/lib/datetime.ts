@@ -92,11 +92,16 @@ export const daysSinceTimestamp = (unixTimestampMs: number) =>
 
 export const toChronologicalOrder = <T>(
   property: keyof T,
-  list: Array<T extends Record<string, any> ? T : never>,
+  list: Array<
+    T extends Record<string, Temporal.Instant | string | unknown> ? T : T
+  >,
 ) =>
   list.length > 1
     ? list.sort((one, another) =>
-        Temporal.Instant.compare(one[property], another[property]),
+        Temporal.Instant.compare(
+          one[property] as string,
+          another[property] as string,
+        ),
       )
     : list;
 

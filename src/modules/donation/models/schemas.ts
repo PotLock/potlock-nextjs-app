@@ -12,7 +12,6 @@ import {
 
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { safePositiveNumber } from "@/common/lib";
-import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 import { TokenAvailableBalance } from "@/modules/token";
 
 import {
@@ -23,10 +22,6 @@ import {
   DonationAllocationStrategyEnum,
   DonationGroupAllocationStrategyEnum,
 } from "../types";
-import {
-  donationFeeBasisPointsToPercents,
-  donationFeePercentsToBasisPoints,
-} from "../utils/converters";
 import {
   isDonationAmountSufficient,
   isDonationMatchingPotSelected,
@@ -39,15 +34,21 @@ export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
 
 export const donationAmount = safePositiveNumber;
 
-export const donationFeeBasisPoints = preprocess(
+/**
+ * # Heads up!
+ *
+ * The donation fee is stored in basis points, but the schema expects it to be a percentage.
+ *
+ * Thus make sure to convert it to percents before passing to the form
+ *  and convert it back to basis points before passing to the contract.
+ */
+export const donationFee = preprocess(
   (value) =>
-    typeof value === "string"
-      ? donationFeePercentsToBasisPoints(safePositiveNumber.parse(value))
-      : value,
+    typeof value === "string" ? safePositiveNumber.parse(value) : value,
 
   safePositiveNumber,
-).refine((basisPoints) => basisPoints <= TOTAL_FEE_BASIS_POINTS, {
-  message: `Fee cannot exceed ${donationFeeBasisPointsToPercents(TOTAL_FEE_BASIS_POINTS)}%.`,
+).refine((percents) => percents < 100, {
+  message: `Fee must be less than 100%.`,
 });
 
 export const donationSchema = object({

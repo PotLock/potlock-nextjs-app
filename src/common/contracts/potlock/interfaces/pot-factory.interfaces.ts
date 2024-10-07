@@ -21,7 +21,7 @@ export type CustomSybilCheck = {
   weight: SybilProviderWeight;
 };
 
-export interface Config {
+export interface PotFactoryConfig {
   owner: string;
   admins: string[];
   protocol_fee_basis_points: number;
