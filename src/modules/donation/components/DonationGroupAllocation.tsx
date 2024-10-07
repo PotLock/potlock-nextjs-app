@@ -33,7 +33,7 @@ import {
 } from "@/modules/core";
 import { TokenBalance, TokenTotalValue } from "@/modules/token";
 
-import { DonationVerificationWarning } from "./DonationVerificationWarning";
+import { DonationSybilWarning } from "./DonationSybilWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import {
   useDonationEvenShareAllocation,
@@ -265,7 +265,7 @@ export const DonationGroupAllocation: React.FC<
 
       <DialogDescription>
         {strategySelect}
-        <DonationVerificationWarning />
+        {potId && <DonationSybilWarning {...{ potId }} />}
 
         {groupAllocationStrategy ===
         DonationGroupAllocationStrategyEnum.evenly ? (

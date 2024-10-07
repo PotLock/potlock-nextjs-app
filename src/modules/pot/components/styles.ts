@@ -1,4 +1,4 @@
-// TODO: move to tailwind
+// TODO: convert to tailwind classes
 
 import { styled } from "styled-components";
 
@@ -49,19 +49,6 @@ export const Wrapper = styled.div`
     .spread-indicator {
       display: block;
     }
-  }
-`;
-
-export const State = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-  gap: 1rem;
-  font-size: 14px;
-  white-space: nowrap;
-  span {
-    font-weight: 600;
-    color: #dd3345;
   }
 `;
 
