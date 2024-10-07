@@ -1,23 +1,26 @@
 import { useState } from "react";
 
-import { Pot } from "@/common/api/potlock";
+import { ByPotId, Pot } from "@/common/api/potlock";
 import { cn } from "@/common/ui/utils";
 
 import ProgressBar from "./ProgressBar";
 import { Container, Loader, Wrapper } from "./styles";
 import TimeLeft from "./TimeLeft";
-import { statsList } from "../utils";
+import { potIndexedDataByIdToStatuses } from "../utils/statuses";
 
-export type PotStatusBarProps = {
-  potDetail: Pot;
+export type PotStatusBarProps = ByPotId & {
+  potIndexedData: Pot;
 };
 
-export const PotStatusBar: React.FC<PotStatusBarProps> = ({ potDetail }) => {
+export const PotStatusBar: React.FC<PotStatusBarProps> = ({
+  potId,
+  potIndexedData,
+}) => {
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
 
-  if (potDetail === null) return "";
+  if (potIndexedData === null) return "";
 
-  const stats = statsList(potDetail);
+  const stats = potIndexedDataByIdToStatuses({ potId, ...potIndexedData });
 
   const getIndexOfActive = () => {
     let index = 0;
@@ -41,23 +44,11 @@ export const PotStatusBar: React.FC<PotStatusBarProps> = ({ potDetail }) => {
       <Container
         containerHeight={containerHeight}
         showActiveState={showActiveState}
-        style={
-          mobileMenuActive
-            ? {
-                height: containerHeight + "px",
-              }
-            : {}
-        }
+        style={mobileMenuActive ? { height: containerHeight + "px" } : {}}
       >
         <div
           className="mobile-selected"
-          style={
-            mobileMenuActive
-              ? {
-                  transform: "translateY(0px)",
-                }
-              : {}
-          }
+          style={mobileMenuActive ? { transform: "translateY(0px)" } : {}}
         >
           {stats.map(
             // TODO: Improve this code (built by mohamed)

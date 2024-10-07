@@ -51,7 +51,7 @@ export const millisecondsToLocaleString = (value: number): string => {
 export const millisecondsToDays = (value: number | string | null): number => {
   try {
     return Temporal.Duration.from({
-      milliseconds: typeof value === "string" ? parseInt(value) : value ?? 0,
+      milliseconds: typeof value === "string" ? parseInt(value) : (value ?? 0),
     }).total("days");
   } catch {
     const error = new TypeError(`Unable to convert \`${value}\` to days`);
@@ -73,7 +73,7 @@ export const millisecondsToDays = (value: number | string | null): number => {
 export const daysToMilliseconds = (value: number | string | null): number => {
   try {
     return Temporal.Duration.from({
-      days: typeof value === "string" ? parseInt(value) : value ?? 0,
+      days: typeof value === "string" ? parseInt(value) : (value ?? 0),
     }).total("milliseconds");
   } catch {
     const error = new TypeError(
@@ -92,11 +92,16 @@ export const daysSinceTimestamp = (unixTimestampMs: number) =>
 
 export const toChronologicalOrder = <T>(
   property: keyof T,
-  list: Array<T extends Record<string, any> ? T : never>,
+  list: Array<
+    T extends Record<string, Temporal.Instant | string | unknown> ? T : T
+  >,
 ) =>
   list.length > 1
     ? list.sort((one, another) =>
-        Temporal.Instant.compare(one[property], another[property]),
+        Temporal.Instant.compare(
+          one[property] as string,
+          another[property] as string,
+        ),
       )
     : list;
 

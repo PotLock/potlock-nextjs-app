@@ -30,7 +30,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
   const { potId } = query;
   const isStakeWeightedPot = isPotStakeWeighted({ potId });
-  const { data: potDetail } = potlock.usePot({ potId });
+  const { data: pot } = potlock.usePot({ potId });
   const { wallet } = useWallet();
   const { loading, nadaBotVerified } = useIsHuman(wallet?.accountId);
 
@@ -44,27 +44,25 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const tabs = useMemo(
     () =>
       isStakeWeightedPot
-        ? POT_TABS_CONFIG.filter(({ id }) => id !== "projects")
+        ? POT_TABS_CONFIG.filter(({ id }) => id !== "projects").map((tab) =>
+            tab.id === "donations" ? { ...tab, label: "History" } : tab,
+          )
         : POT_TABS_CONFIG,
 
     [isStakeWeightedPot],
   );
 
   const [selectedTab, setSelectedTab] = useState(
-    tabs.find((tab) => pathname.includes(tab.href)) ?? POT_TABS_CONFIG[0],
+    tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0],
   );
 
   useEffect(() => {
     setSelectedTab(
-      tabs.find((tab) => pathname.includes(tab.href)) ?? POT_TABS_CONFIG[0],
+      tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0],
     );
   }, [isStakeWeightedPot, pathname, tabs]);
 
-  if (!potDetail) {
-    return "";
-  }
-
-  return (
+  return !pot ? null : (
     <PageWithBanner>
       <SuccessModal
         successMessage="Transaction sent successfully"
@@ -78,7 +76,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      <PotStatusBar potDetail={potDetail} />
+      <PotStatusBar potIndexedData={pot} {...{ potId }} />
 
       {/* Not a human alert */}
       {!loading && !nadaBotVerified && (
@@ -91,7 +89,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         </div>
       )}
 
-      <Header potDetail={potDetail} />
+      <Header potDetail={pot} />
 
       {/* Pot Tabs */}
       <Tabs
