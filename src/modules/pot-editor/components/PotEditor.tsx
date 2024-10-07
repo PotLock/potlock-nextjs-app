@@ -1,8 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { ByPotId } from "@/common/api/potlock";
+import { ByPotId, potlock } from "@/common/api/potlock";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
@@ -29,7 +29,10 @@ import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 import { PotEditorPreview } from "./PotEditorPreview";
 import { POT_EDITOR_FIELDS } from "../constants";
 import { usePotEditorForm } from "../hooks/forms";
-import { potEditorDeploymentSchema, potEditorSettingsSchema } from "../models";
+import {
+  getPotEditorDeploymentSchema,
+  getPotEditorSettingsSchema,
+} from "../models";
 
 export type PotEditorProps = Partial<ByPotId> & {};
 
@@ -37,15 +40,19 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   const isNewPot = typeof potId !== "string";
   const router = useRouter();
 
-  const { form, values, handleAdminsUpdate, isDisabled, onSubmit } =
-    usePotEditorForm(
+  const { data: pot } = potlock.usePot({ potId });
+
+  const schema = useMemo(
+    () =>
       isNewPot
-        ? { schema: potEditorDeploymentSchema }
-        : {
-            potId,
-            schema: potEditorSettingsSchema,
-          },
-    );
+        ? getPotEditorDeploymentSchema()
+        : getPotEditorSettingsSchema(pot),
+
+    [isNewPot, pot],
+  );
+
+  const { form, values, handleAdminsUpdate, isDisabled, onSubmit } =
+    usePotEditorForm(isNewPot ? { schema } : { potId, schema });
 
   const [isInPreviewMode, setPreviewMode] = useState(!isNewPot);
   const enterEditMode = useCallback(() => setPreviewMode(false), []);
