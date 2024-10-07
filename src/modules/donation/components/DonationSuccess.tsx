@@ -24,7 +24,7 @@ import routesPath from "@/modules/core/routes";
 import { TokenTotalValue } from "@/modules/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
-import { DonationVerificationWarning } from "./DonationVerificationWarning";
+import { DonationSybilWarning } from "./DonationSybilWarning";
 import { useDonationAllocationBreakdown } from "../hooks";
 import { WithDonationFormAPI, useDonationState } from "../models";
 
@@ -43,8 +43,8 @@ export const DonationSuccess = ({
 }: DonationSuccessProps) => {
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
-  const [potAccountId] = form.watch(["potAccountId"]);
-  const { data: pot } = potlock.usePot({ potId: potAccountId });
+  const [potId] = form.watch(["potAccountId"]);
+  const { data: pot } = potlock.usePot({ potId });
 
   const { data: recipient, error: recipientDataError } = potlock.useAccount({
     accountId:
@@ -185,7 +185,7 @@ export const DonationSuccess = ({
         <DonationSummaryBreakdown data={breakdown} {...{ tokenId }} />
       )}
 
-      {pot && <DonationVerificationWarning />}
+      {potId && <DonationSybilWarning {...{ potId }} />}
 
       {transactionHash && (
         <LabeledIcon
