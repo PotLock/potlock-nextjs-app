@@ -13,7 +13,7 @@ import {
 } from "@/modules/lists";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 
-export default function Page() {
+export default function SingleList() {
   useListDeploymentSuccessRedirect();
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
   const [listDetails, setListDetails] = useState<any>(null);
@@ -29,7 +29,7 @@ export default function Page() {
   const { id } = router.query;
   const { data, isLoading } = potlock.useListRegistrations({
     listId: parseInt(id as string),
-    page_size: 500,
+    // page_size: 500,
     ...(status !== "all" && { status }),
   });
 
@@ -42,26 +42,17 @@ export default function Page() {
   }, [data]);
 
   useEffect(() => {
-    const fetchListDetails = () => {
-      getList({ list_id: parseInt(id as any) as any })
-        .then((response: any) => {
-          setAdmins(response.admins);
-
-          setListDetails(response);
-          setSavedUsers({
-            admins:
-              response.admins?.map((admin: AccountId) => ({
-                account: admin,
-              })) ?? [],
-          });
-        })
-        .catch((error) => {
-          console.error("Error fetching list details:", error);
-        });
-    };
-
-    fetchListDetails();
-  }, [id, setAdmins]);
+    if (loadingListData) return;
+    console.log(listData);
+    setAdmins(listData?.admins?.map((admin) => admin?.id) as AccountId[]);
+    setListDetails(listData);
+    setSavedUsers({
+      admins:
+        listData?.admins?.map((admin) => ({
+          account: admin?.id,
+        })) ?? [],
+    });
+  }, [loadingListData]);
 
   return (
     <div className="md:px-[2rem] container  px-0   pb-10">

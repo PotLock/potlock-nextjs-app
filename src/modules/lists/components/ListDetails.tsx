@@ -7,7 +7,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
-import { ListRegistration } from "@/common/api/potlock";
+import { List, ListRegistration } from "@/common/api/potlock";
 import {
   AdminUserIcon,
   DeleteListIcon,
@@ -43,7 +43,7 @@ interface ListDetailsType {
   isLoading?: boolean;
   admins: string[];
   setAdmins: (value: string[]) => void;
-  listDetails: any;
+  listDetails: List | any;
   savedUsers: SavedUsersType;
   setSavedUsers: (value: any) => void;
 }
@@ -77,12 +77,12 @@ export const ListDetails = ({
   useEffect(() => {
     const fetchProfileImage = async () => {
       const { image } = await fetchSocialImages({
-        accountId: listDetails?.owner || "",
+        accountId: listDetails?.owner?.id || "",
       });
       setListOwnerImage(image);
     };
     if (id) fetchProfileImage();
-  }, [id, listDetails?.owner]);
+  }, []);
 
   const openRegistrantsModal = useCallback(
     () => show(registrantsModalId),
@@ -113,7 +113,7 @@ export const ListDetails = ({
           id: data?.id,
         })) || [],
     }));
-  }, [data, setSavedUsers]);
+  }, [id]);
 
   const applyToListModal = (note: string) => {
     register_batch({
@@ -124,9 +124,9 @@ export const ListDetails = ({
           registrant_id: wallet?.accountId ?? "",
 
           status:
-            listDetails?.owner === walletApi.accountId
+            listDetails?.owner?.id === walletApi.accountId
               ? "Approved"
-              : (listDetails?.default_registration_status ?? "Pending"),
+              : listDetails?.default_registration_status,
 
           submitted_ms: Date.now(),
           updated_ms: Date.now(),
@@ -147,8 +147,8 @@ export const ListDetails = ({
   }
 
   const isAdmin =
-    listDetails.admins.includes(walletApi?.accountId ?? "") ||
-    listDetails.owner === walletApi?.accountId;
+    admins.includes(walletApi?.accountId ?? "") ||
+    listDetails.owner?.id === walletApi?.accountId;
 
   const handleUpvote = () => {
     if (isUpvoted) {
@@ -185,7 +185,9 @@ export const ListDetails = ({
           src={listOwnerImage || NO_IMAGE}
           alt="Owner"
         />
-        <Link href={`/profile/${listDetails.owner}`}>{listDetails.owner}</Link>
+        <Link href={`/profile/${listDetails.owner?.id}`}>
+          {listDetails.owner?.id}
+        </Link>
         <span className="text-gray-500">
           Created {new Date(listDetails.created_at).toLocaleDateString()}
         </span>
@@ -215,14 +217,14 @@ export const ListDetails = ({
                       {...{ accountId: admin }}
                     />
                   ))}
-                  {listDetails.admins.length > 4 && (
+                  {admins.length > 4 && (
                     <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white">
-                      {listDetails.admins.length - 4}+
+                      {admins.length - 4}+
                     </div>
                   )}
                 </div>
               </div>
-              {listDetails.owner === walletApi?.accountId && (
+              {listDetails.owner?.id === walletApi?.accountId && (
                 <div
                   onClick={openAccountsModal}
                   className="cursor-pointer rounded   hover:opacity-50"
@@ -296,12 +298,12 @@ export const ListDetails = ({
                 ? "/assets/images/large_default_backdrop.png"
                 : "/assets/images/list_bg_image.png"
             }
-            className="mx-auto w-full px-2"
+            className="w-full"
             width={500}
             height={300}
           />
           <div
-            className="md:rounded m-0  w-full p-0"
+            className="md:rounded-[12px] m-0  w-full p-0"
             un-w="full"
             un-flex="~ col"
           >
@@ -313,12 +315,12 @@ export const ListDetails = ({
               alt="cover"
               width={500}
               height={300}
-              className="md:h-[320px] md:rounded-tl-md md:rounded-tr-md h-[188px] w-full object-cover"
+              className="md:h-[320px] md:rounded-tl-[12px] md:rounded-tr-[12px] h-[188px] w-full object-cover"
             />
           </div>
           <div className="md:rounded-bl-md md:rounded-br-md flex h-16 items-center justify-between border border-[#dadbda] p-4">
             <p className="text-[14px] font-[500]">
-              {listDetails?.total_registrations_count} Accounts
+              {listDetails?.registrations_count} Accounts
             </p>
             <div className="flex items-center gap-3">
               <button onClick={handleUpvote} className="focus:outline-none">

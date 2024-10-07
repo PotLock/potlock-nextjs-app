@@ -54,3 +54,11 @@ export interface SavedUsersType {
   accounts?: { account: AccountId; id?: number }[];
   admins?: { account: AccountId }[];
 }
+
+export enum NoListItemType {
+  ACCOUNT = "ACCOUNT",
+  ALL_LISTS = "ALL_LISTS",
+  MY_LISTS = "MY_LISTS",
+  FAVORITE_LISTS = "FAVORITE_LISTS",
+  NO_RESULTS = "NO_RESULTS",
+}

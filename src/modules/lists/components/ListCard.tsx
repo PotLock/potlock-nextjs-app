@@ -27,7 +27,6 @@ export const ListCard = ({
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [profileImage, setProfileImage] = useState("");
   const { push } = useRouter();
-
   useEffect(() => {
     const fetchProfileImage = async () => {
       const { image } = await fetchSocialImages({
@@ -44,11 +43,11 @@ export const ListCard = ({
   }, [dataForList.owner]);
 
   const handleRoute = useCallback(
-    () => push(`/list/${dataForList?.on_chain_id}`),
+    () => push(`/list/${dataForList?.id}`),
     [dataForList?.on_chain_id],
   );
 
-  const handleUpvote = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isUpvoted) {
       remove_upvote({ list_id: dataForList?.on_chain_id });
@@ -66,7 +65,7 @@ export const ListCard = ({
   };
 
   const handleRouteUser = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+    (e: React.MouseEvent) => {
       e.stopPropagation();
       push(`/profile/${dataForList?.owner?.id}`);
     },
@@ -110,7 +109,7 @@ export const ListCard = ({
           >
             <LayersIcon />
             <p className="text-[12px] font-[600]">
-              {dataForList?.total_registrations_count} Accounts
+              {dataForList?.registrations_count} Accounts
             </p>
           </div>
         </div>
