@@ -6,7 +6,7 @@ export const CampaignBanner = () => {
       <h1 className="font-500  font-lora text-[48px] tracking-[1.12px]">
         Fund Your Ideas
       </h1>
-      <p className="md:w-[50%] text-[18px]">
+      <p className="md:w-[50%] text-[18px] font-extralight leading-[30px]">
         Bring your vision to life with a powerful fundraising campaign to
         support groundbreaking projects. Reach your goals and make a positive
         impact on your community{" "}

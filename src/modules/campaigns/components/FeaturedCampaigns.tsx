@@ -65,9 +65,9 @@ export const FeaturedCampaigns = () => {
           {dummy.map((data) => (
             <CarouselItem
               key={data.id}
-              className="md:flex-row flex w-full flex-col items-start gap-4"
+              className="md:flex-row flex w-full flex-col items-start justify-between gap-4"
             >
-              <div className="md:h-[285px] h-293px md:w-[70%] relative">
+              <div className="md:h-[285px] h-293px md:w-[68%] relative">
                 <Image
                   src="/assets/images/profile-banner.png"
                   alt=""
