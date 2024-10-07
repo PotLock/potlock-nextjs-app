@@ -1,6 +1,6 @@
 {
-  "name": "nextjs-app",
-  "version": "0.1.0",
+  "name": "@potlock/app",
+  "version": "2.0.0",
   "packageManager": "yarn@1.22.22",
   "private": true,
   "type": "module",
