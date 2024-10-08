@@ -30,11 +30,11 @@ export const useListForm = () => {
   const [accounts, setAccounts] = useState<AccountId[]>([]);
   const id = query.id;
 
-  const description = "You may now close this window";
+  const description = "You may now close this modal";
 
-  const handleDeleteList = () => {
-    if (!id) return; // Ensure id is available
-    delete_list({ list_id: parseInt(id as string) })
+  const handleDeleteList = (id: number) => {
+    if (!id) return;
+    delete_list({ list_id: id })
       .then(() => {
         push("/list");
       })
@@ -48,7 +48,7 @@ export const useListForm = () => {
     });
   };
 
-  const handleRegisterBatch = (list_id: string, registrants: string[]) => {
+  const handleRegisterBatch = (list_id: number, registrants: string[]) => {
     register_batch({
       list_id: parseInt(list_id as any) as any,
       registrations: registrants.map((data: string) => ({
@@ -70,7 +70,7 @@ export const useListForm = () => {
     });
   };
 
-  const handleUnRegisterAccount = (registrant_id: number) => {
+  const handleUnRegisterAccount = (registrant_id: number, id: number) => {
     if (!id) return;
 
     unregister_from_list({
@@ -88,9 +88,9 @@ export const useListForm = () => {
     });
   };
 
-  const handleRemoveAdmin = (admins: Array<string>) => {
+  const handleRemoveAdmin = (admins: Array<string>, id: number) => {
     remove_admins_from_list({
-      list_id: parseInt(id as string),
+      list_id: id,
       admins,
     })
       .then(() => {
@@ -106,10 +106,10 @@ export const useListForm = () => {
     });
   };
 
-  const handleSaveAdminsSettings = (admins: AccountId[]) => {
+  const handleSaveAdminsSettings = (admins: AccountId[], id: number) => {
     if (!id) return;
     add_admins_to_list({
-      list_id: parseInt(id as string),
+      list_id: id,
       admins,
     })
       .then(() => {

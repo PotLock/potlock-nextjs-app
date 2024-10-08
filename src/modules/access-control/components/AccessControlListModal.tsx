@@ -32,8 +32,6 @@ export type AccessControlListModalProps = {
   showOnSaveButton?: boolean;
   countText?: string;
   type?: "ADMIN" | "ACCOUNT";
-  handleRemoveAdmin?: (accountIds: AccountId[]) => void;
-  handleUnRegisterAccount?: (accountId: number) => void;
   contractAdmins?:
     | { account: AccountId }[]
     | { account: AccountId; id?: number }[];
@@ -46,9 +44,6 @@ export const AccessControlListModal = create(
     onSubmit,
     showOnSaveButton,
     onSaveSettings,
-    handleRemoveAdmin,
-    handleUnRegisterAccount,
-    countText = "Admins",
     contractAdmins,
     type,
   }: AccessControlListModalProps) => {

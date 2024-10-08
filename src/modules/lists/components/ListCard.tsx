@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 
 import { walletApi } from "@/common/api/near";
-import { StatusF24Enum } from "@/common/api/potlock";
 import { LayersIcon } from "@/common/assets/svgs";
 import { LikeIcon } from "@/common/assets/svgs/like";
 import { remove_upvote, upvote } from "@/common/contracts/potlock/lists";
@@ -44,7 +43,7 @@ export const ListCard = ({
 
   const handleRoute = useCallback(
     () => push(`/list/${dataForList?.id}`),
-    [dataForList?.on_chain_id],
+    [dataForList?.id],
   );
 
   const handleUpvote = (e: React.MouseEvent) => {
@@ -143,7 +142,7 @@ export const ListCard = ({
                 )}
               </button>
               <p className="m-0 p-0 pt-1 text-[16px] font-semibold text-black">
-                {dataForList.upvotes?.length + (isUpvoted ? 1 : 0)}
+                {dataForList.upvotes?.length}
               </p>
             </div>
           </div>

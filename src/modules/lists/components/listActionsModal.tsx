@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
 
 import SuccessRedIcon from "@/common/assets/svgs/success-red-icon";
@@ -10,7 +10,6 @@ import {
   DataLoadingPlaceholder,
   Dialog,
   DialogContent,
-  DialogHeader,
 } from "@/common/ui/components";
 import { dispatch } from "@/store";
 
@@ -41,6 +40,7 @@ export const ListActionsModal = create((_: ListActionsModal) => {
   const transferType = type === ListFormModalType.TRANSFER_OWNER;
   const deleteType = type === ListFormModalType.DELETE_LIST;
 
+  console.log(data);
   const content = useMemo(() => {
     return type === ListFormModalType.LIST_DONATION ? (
       <DialogDescription className="p-8">
@@ -67,8 +67,7 @@ export const ListActionsModal = create((_: ListActionsModal) => {
         <Button
           onClick={() => {
             close();
-            if (transferType) push(`/list/${query.id}`);
-            if (deleteType) push(`/list`);
+            if (deleteType || transferType) push(`/lists`);
           }}
           variant="brand-outline"
         >

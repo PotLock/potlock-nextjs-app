@@ -19,6 +19,7 @@ import {
   remove_upvote,
   upvote,
 } from "@/common/contracts/potlock/lists";
+import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId } from "@/common/types";
 import {
@@ -32,11 +33,12 @@ import { AccessControlListModal } from "@/modules/access-control/components/Acce
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
 import { DonateToListProjects } from "@/modules/donation";
+import { dispatch } from "@/store";
 
 import { ApplyToListModal } from "./ApplyToListModal";
 import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
-import { SavedUsersType } from "../types";
+import { ListFormModalType, SavedUsersType } from "../types";
 
 interface ListDetailsType {
   data?: ListRegistration[];
@@ -62,7 +64,6 @@ export const ListDetails = ({
   } = useRouter();
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [registrants, setRegistrants] = useState<AccountId[]>([]);
-  const [isUpvoted, setIsUpvoted] = useState(false);
   const [listOwnerImage, setListOwnerImage] = useState<string>("");
   const [isApplicationSuccessful, setIsApplicationSuccessful] =
     useState<boolean>(false);
@@ -70,9 +71,12 @@ export const ListDetails = ({
     useState({ open: false });
 
   const { wallet } = useWallet();
-
   const adminsModalId = useId();
   const registrantsModalId = useId();
+
+  const isUpvoted = listDetails?.upvotes?.some(
+    (data: any) => data?.account === walletApi.accountId,
+  );
 
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -97,13 +101,12 @@ export const ListDetails = ({
     handleDeleteList,
     handleSaveAdminsSettings,
     handleRegisterBatch,
-    handleRemoveAdmin,
-    handleUnRegisterAccount,
+    // handleRemoveAdmin,
+    // handleUnRegisterAccount,
   } = useListForm();
 
   useEffect(() => {
     setRegistrants(data.map((data: any) => `${data?.registrant?.id}`) || []);
-
     setSavedUsers((prevValues: any) => ({
       ...prevValues,
 
@@ -117,12 +120,11 @@ export const ListDetails = ({
 
   const applyToListModal = (note: string) => {
     register_batch({
-      list_id: parseInt(id as any) as any,
+      list_id: parseInt(listDetails?.on_chain_id as any) as any,
       notes: note,
       registrations: [
         {
           registrant_id: wallet?.accountId ?? "",
-
           status:
             listDetails?.owner?.id === walletApi.accountId
               ? "Approved"
@@ -130,7 +132,7 @@ export const ListDetails = ({
 
           submitted_ms: Date.now(),
           updated_ms: Date.now(),
-          notes: "",
+          notes: note,
         },
       ],
     })
@@ -138,9 +140,14 @@ export const ListDetails = ({
         setIsApplicationSuccessful(true);
       })
       .catch((error) => console.error("Error applying to list:", error));
+    dispatch.listEditor.updateListModalState({
+      header: `Applied to ${listDetails.name} list Successfully `,
+      description: "You can now close this modal.",
+      type: ListFormModalType.APPLICATION,
+    });
   };
 
-  const onEditList = useCallback(() => push(`/list/edit/${id}`), [id, push]);
+  const onEditList = () => push(`/list/edit/${listDetails?.on_chain_id}`);
 
   if (!listDetails) {
     return <p>No list details available.</p>;
@@ -152,21 +159,21 @@ export const ListDetails = ({
 
   const handleUpvote = () => {
     if (isUpvoted) {
-      remove_upvote({ list_id: Number(id) })
-        .then((data) => {
-          if (data) {
-            setIsUpvoted(!isUpvoted);
-          }
-        })
-        .catch((error) => console.error("Error upvoting:", error));
+      remove_upvote({ list_id: Number(listDetails.on_chain_id) }).catch(
+        (error) => console.error("Error upvoting:", error),
+      );
+      dispatch.listEditor.handleListToast({
+        name: truncate(listDetails?.name, 15),
+        type: ListFormModalType.DOWNVOTE,
+      });
     } else {
-      upvote({ list_id: Number(id) })
-        .then((data) => {
-          if (data) {
-            setIsUpvoted(!isUpvoted);
-          }
-        })
-        .catch((error) => console.error("Error upvoting:", error));
+      upvote({ list_id: Number(listDetails.on_chain_id) }).catch((error) =>
+        console.error("Error upvoting:", error),
+      );
+      dispatch.listEditor.handleListToast({
+        name: truncate(listDetails?.name, 15),
+        type: ListFormModalType.UPVOTE,
+      });
     }
   };
 
@@ -322,14 +329,17 @@ export const ListDetails = ({
             <p className="text-[14px] font-[500]">
               {listDetails?.registrations_count} Accounts
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-row items-center gap-3">
               <button onClick={handleUpvote} className="focus:outline-none">
                 {isUpvoted ? (
-                  <FaHeart size="large" className="h-16 text-red-500" />
+                  <FaHeart size={22} className=" text-red-500" />
                 ) : (
                   <FaRegHeart className="text-gray-500" size={22} />
                 )}
               </button>
+              <div className="font-semibold">
+                {listDetails && listDetails?.upvotes?.length}
+              </div>
               <SocialsShare />
             </div>
           </div>
@@ -348,7 +358,7 @@ export const ListDetails = ({
         open={isListConfirmationModalOpen.open}
         type={"DELETE"}
         onClose={() => setIsListConfirmationModalOpen({ open: false })}
-        onSubmitButton={handleDeleteList}
+        onSubmitButton={() => handleDeleteList(listDetails.on_chain_id)}
       />
       <AccessControlListModal
         id={adminsModalId}
@@ -356,7 +366,9 @@ export const ListDetails = ({
         onSubmit={(admins) => setAdmins(admins)}
         contractAdmins={savedUsers.admins}
         type="ADMIN"
-        handleRemoveAdmin={handleRemoveAdmin}
+        // handleRemoveAdmin={() =>
+        //   handleRemoveAdmin(Number(listDetails?.on_chain_id))
+        // }
         value={admins}
         showOnSaveButton={admins.length > 0}
         onSaveSettings={() =>
@@ -367,6 +379,7 @@ export const ListDetails = ({
                   ?.map((admin) => admin.account)
                   .includes(account),
             ),
+            Number(listDetails?.on_chain_id),
           )
         }
       />
@@ -377,12 +390,11 @@ export const ListDetails = ({
         type="ACCOUNT"
         value={registrants ?? []}
         contractAdmins={savedUsers.accounts}
-        handleUnRegisterAccount={handleUnRegisterAccount}
         showOnSaveButton={registrants?.length > 0}
         countText="Account(s)"
         onSaveSettings={() =>
           handleRegisterBatch(
-            id as string,
+            Number(listDetails?.on_chain_id),
             registrants?.filter(
               (registrant) =>
                 !savedUsers?.accounts?.some(

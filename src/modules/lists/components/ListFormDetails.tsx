@@ -131,7 +131,8 @@ export const ListFormDetails: React.FC = () => {
     if (walletApi?.accountId) fetchProfileImage();
   }, [wallet]);
 
-  const onSubmit: SubmitHandler<FormData> = async (data, event) => {
+  // prettier-ignore
+  const onSubmit: SubmitHandler<any> = async (data, event) => {
     // Due to conflicting submit buttons (admin and list), this is to make sure only list submit form is submitted.
     if (
       (event?.nativeEvent as SubmitEvent)?.submitter?.id !==
@@ -182,18 +183,19 @@ export const ListFormDetails: React.FC = () => {
     }
   };
 
-  const handleCoverImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+  const handleCoverImageChange = async (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement; // Cast to HTMLInputElement
+    if (target.files && target.files[0]) {
       const reader = new FileReader();
       setLoadingImageUpload(true);
-      const res = await uploadFileToIPFS(e.target.files[0]);
+      const res = await uploadFileToIPFS(target.files[0]); // Use the casted target
       if (res.ok) {
         const data = await res.json();
         setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
         setValue("image_cover_url", `${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
         setLoadingImageUpload(false);
       }
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(target.files[0]); // Use the casted target
     }
   };
 
@@ -380,7 +382,9 @@ export const ListFormDetails: React.FC = () => {
                       }
                       classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={(admins) => setAdmins(admins)}
-                      onSaveSettings={() => handleSaveAdminsSettings(admins)}
+                      onSaveSettings={() =>
+                        handleSaveAdminsSettings(admins, Number(id))
+                      }
                     />
                   </div>
                 </div>
@@ -419,7 +423,7 @@ export const ListFormDetails: React.FC = () => {
                         classNames={{ avatar: "w-[40px] h-[40px]" }}
                         onSubmit={(accounts) => setAccounts(accounts)}
                         onSaveSettings={() =>
-                          handleSaveAdminsSettings(accounts)
+                          handleSaveAdminsSettings(accounts, Number(id))
                         }
                       />
                     </div>
@@ -501,7 +505,7 @@ export const ListFormDetails: React.FC = () => {
         onClose={() => setOpenListConfirmModal({ open: false })}
         onSubmitButton={
           listConfirmModal.type === "DELETE"
-            ? handleDeleteList
+            ? () => handleDeleteList(Number(id))
             : handleTransferOwner
         }
       />

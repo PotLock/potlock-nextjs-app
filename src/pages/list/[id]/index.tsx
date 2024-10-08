@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
-import { getList } from "@/common/contracts/potlock/lists";
 import { AccountId } from "@/common/types";
 import {
   ListAccounts,
@@ -29,7 +28,7 @@ export default function SingleList() {
   const { id } = router.query;
   const { data, isLoading } = potlock.useListRegistrations({
     listId: parseInt(id as string),
-    // page_size: 500,
+    page_size: 500,
     ...(status !== "all" && { status }),
   });
 
@@ -43,7 +42,6 @@ export default function SingleList() {
 
   useEffect(() => {
     if (loadingListData) return;
-    console.log(listData);
     setAdmins(listData?.admins?.map((admin) => admin?.id) as AccountId[]);
     setListDetails(listData);
     setSavedUsers({
