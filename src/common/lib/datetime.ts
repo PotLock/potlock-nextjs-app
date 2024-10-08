@@ -5,7 +5,7 @@ export const DATETIME_INCORRECT_FORMAT_ERROR = "Incorrect datetime";
 
 export const localeStringToTimestampMs = (value: string): number => {
   try {
-    return new Date(value).getTime();
+    return new Date(value.slice(0, 16)).getTime();
   } catch {
     const error = new TypeError(`Unable to parse \`${value}\``);
 

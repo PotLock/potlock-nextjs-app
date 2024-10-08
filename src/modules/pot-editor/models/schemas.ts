@@ -48,13 +48,7 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
             .describe("Application period start timestamp.")
             .refine(
               (value) => {
-                console.log(
-                  "Indexed value",
-                  localeStringToTimestampMs(
-                    potIndexedData?.matching_round_start as string,
-                  ),
-                );
-
+                console.log("Indexed value", potIndexedData?.application_start);
                 console.log("Form value", value);
 
                 console.log(
