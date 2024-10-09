@@ -167,7 +167,7 @@ export const usePot = ({ potId }: Partial<ByPotId>) => {
 export const useList = ({ listId }: Partial<ByListId>) => {
   const queryResult = swrHooks.useV1ListsRetrieve2(listId ?? 0, {
     ...POTLOCK_REQUEST_CONFIG,
-    swr: { enabled: Boolean(listId) },
+    swr: { enabled: Boolean(listId), refreshInterval: 3000 },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

@@ -40,3 +40,7 @@ export interface ByListId {
  * `"{CONTRACT_ADDRESS}:{METHOD_NAME}"`
  */
 export type ProviderId = string;
+
+export interface ByRegistrationId {
+  registrationId: number;
+}

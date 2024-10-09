@@ -16,9 +16,11 @@ import {
 } from "../types";
 import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
+export type DonationShareAllocationDeps = WithDonationFormAPI;
+
 export const useDonationEvenShareAllocation = ({
   form,
-}: WithTotalAmount & WithDonationFormAPI) => {
+}: DonationShareAllocationDeps) => {
   const [amount, groupAllocationStrategy, groupAllocationPlan = []] =
     form.watch(["amount", "groupAllocationStrategy", "groupAllocationPlan"]);
 
@@ -78,7 +80,7 @@ export const useDonationEvenShareAllocation = ({
 
 export const useDonationManualShareAllocation = ({
   form,
-}: WithDonationFormAPI) => {
+}: DonationShareAllocationDeps) => {
   const [groupAllocationPlan = []] = form.watch(["groupAllocationPlan"]);
 
   return useCallback(
@@ -196,7 +198,7 @@ export const useDonationAllocationBreakdown = ({
    */
 
   const chefFeeInitialBasisPoints =
-    typeof pot?.chef?.id === "string" ? (pot?.chef_fee_basis_points ?? 0) : 0;
+    typeof pot?.chef?.id === "string" ? pot?.chef_fee_basis_points ?? 0 : 0;
 
   const chefFeeBasisPoints = bypassChefFee ? 0 : chefFeeInitialBasisPoints;
 
