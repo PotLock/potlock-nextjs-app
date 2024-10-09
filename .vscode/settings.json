@@ -8,6 +8,7 @@
     "source.fixAll": "explicit"
   },
   "cSpell.words": [
+    "appkit",
     "Attributify",
     "bitget",
     "builddao",
@@ -34,12 +35,14 @@
     "POTLOCK",
     "precommit",
     "ramper",
+    "reown",
     "sessionid",
     "shadcn",
     "socialdb",
     "svgr",
     "typecheck",
     "unocss",
+    "wagmi",
     "welldone",
     "wpdas",
     "xdefi",

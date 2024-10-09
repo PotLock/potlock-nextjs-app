@@ -29,6 +29,7 @@
     "@near-wallet-selector/bitget-wallet": "^8.9.5",
     "@near-wallet-selector/bitte-wallet": "^8.9.11",
     "@near-wallet-selector/coin98-wallet": "^8.9.5",
+    "@near-wallet-selector/ethereum-wallets": "^8.9.13",
     "@near-wallet-selector/here-wallet": "^8.9.5",
     "@near-wallet-selector/ledger": "^8.9.5",
     "@near-wallet-selector/math-wallet": "^8.9.5",
@@ -65,7 +66,11 @@
     "@rematch/immer": "^2.1.3",
     "@rematch/loading": "^2.1.2",
     "@rematch/persist": "^2.1.2",
+    "@reown/appkit": "^1.1.0",
+    "@reown/appkit-adapter-wagmi": "^1.1.0",
+    "@tanstack/react-query": "^5.59.6",
     "@unocss/reset": "^0.60.4",
+    "@web3modal/wagmi": "^5.1.11",
     "@wpdas/naxios": "^2.2.0",
     "axios": "^1.7.2",
     "big.js": "^6.2.1",
@@ -97,6 +102,8 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "temporal-polyfill": "^0.2.5",
+    "viem": "^2.21.19",
+    "wagmi": "^2.12.17",
     "zod": "^3.23.8"
   },
   "devDependencies": {
