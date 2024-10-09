@@ -198,7 +198,7 @@ export const useDonationAllocationBreakdown = ({
    */
 
   const chefFeeInitialBasisPoints =
-    typeof pot?.chef?.id === "string" ? pot?.chef_fee_basis_points ?? 0 : 0;
+    typeof pot?.chef?.id === "string" ? (pot?.chef_fee_basis_points ?? 0) : 0;
 
   const chefFeeBasisPoints = bypassChefFee ? 0 : chefFeeInitialBasisPoints;
 
