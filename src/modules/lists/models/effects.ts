@@ -16,7 +16,6 @@ export const effects = (dispatch: AppDispatcher) => ({
         const { status } =
           response.receipts_outcome.at(method === "donate" ? 6 : 0)?.outcome ??
           {};
-
         let type: ListFormModalType = ListFormModalType.NONE;
         switch (method) {
           case "create_list": {
@@ -64,16 +63,22 @@ export const effects = (dispatch: AppDispatcher) => ({
             }
           }
         } else if (typeof status?.SuccessValue === "string") {
-          dispatch.listEditor.deploymentSuccess({
-            data:
-              type === ListFormModalType.DELETE_LIST
-                ? undefined
-                : (JSON.parse(atob(status.SuccessValue)) as List),
-            type,
-            ...(type === ListFormModalType.TRANSFER_OWNER && {
-              accountId: JSON.parse(atob(status.SuccessValue)) as string,
-            }),
-          });
+          try {
+            dispatch.listEditor.deploymentSuccess({
+              data:
+                type === ListFormModalType.DELETE_LIST
+                  ? undefined
+                  : (JSON.parse(atob(status.SuccessValue)) as List),
+              type,
+              ...(type === ListFormModalType.TRANSFER_OWNER && {
+                accountId: JSON.parse(atob(status.SuccessValue)) as string,
+              }),
+            });
+          } catch (error) {
+            console.error("Error parsing JSON:", error);
+            // Handle the error appropriately, e.g., dispatch an error action or show a notification
+            throw ("Unable to Update List: Invalid JSON input");
+          }
         } else {
           throw "Unable to Update List";
         }

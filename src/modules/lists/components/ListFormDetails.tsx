@@ -34,6 +34,7 @@ import {
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
 import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
+import { dispatch } from "@/store";
 
 interface FormData {
   name: string;
@@ -134,11 +135,12 @@ export const ListFormDetails: React.FC = () => {
   // prettier-ignore
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     // Due to conflicting submit buttons (admin and list), this is to make sure only list submit form is submitted.
+    dispatch.listEditor.reset()
     if (
       (event?.nativeEvent as SubmitEvent)?.submitter?.id !==
       "list-submit-button"
     )
-      return;
+     { return;}
 
     if (onEditPage) {
       update_list({
@@ -158,6 +160,7 @@ export const ListFormDetails: React.FC = () => {
           // Handle error for update_list
           console.error("Error updating list:", error);
         });
+        dispatch.listEditor.reset()
     } else {
       create_list({
         ...data,

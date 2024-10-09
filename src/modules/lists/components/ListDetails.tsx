@@ -39,24 +39,21 @@ import { ApplyToListModal } from "./ApplyToListModal";
 import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
 import { ListFormModalType, SavedUsersType } from "../types";
+import DonationFlow from "./DonationFlow";
 
 interface ListDetailsType {
-  data?: ListRegistration[];
   isLoading?: boolean;
   admins: string[];
   setAdmins: (value: string[]) => void;
   listDetails: List | any;
   savedUsers: SavedUsersType;
-  setSavedUsers: (value: any) => void;
 }
 
 export const ListDetails = ({
-  data = [],
   admins,
   setAdmins,
   listDetails,
   savedUsers,
-  setSavedUsers,
 }: ListDetailsType) => {
   const {
     push,
@@ -65,6 +62,7 @@ export const ListDetails = ({
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [registrants, setRegistrants] = useState<AccountId[]>([]);
   const [listOwnerImage, setListOwnerImage] = useState<string>("");
+  const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
   const [isApplicationSuccessful, setIsApplicationSuccessful] =
     useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
@@ -101,22 +99,15 @@ export const ListDetails = ({
     handleDeleteList,
     handleSaveAdminsSettings,
     handleRegisterBatch,
-    // handleRemoveAdmin,
-    // handleUnRegisterAccount,
+    handleRemoveAdmin,
+    handleUnRegisterAccount,
   } = useListForm();
 
   useEffect(() => {
-    setRegistrants(data.map((data: any) => `${data?.registrant?.id}`) || []);
-    setSavedUsers((prevValues: any) => ({
-      ...prevValues,
-
-      accounts:
-        data?.map((data: any) => ({
-          account: data?.registrant?.id,
-          id: data?.id,
-        })) || [],
-    }));
-  }, [id]);
+    setRegistrants(
+      savedUsers?.accounts?.map((data: any) => `${data?.account}`) || [],
+    );
+  }, [savedUsers]);
 
   const applyToListModal = (note: string) => {
     register_batch({
@@ -244,8 +235,15 @@ export const ListDetails = ({
             {Boolean(walletApi?.accountId) && (
               <div className="relative flex items-start gap-4">
                 <div className="flex space-x-4">
-                  <DonateToListProjects listId={parseInt(id as string)} />
-
+                  {/* <DonateToListProjects listId={parseInt(id as string)} /> */}
+                  <button
+                    onClick={() => {
+                      setIsDonateModalOpen(true);
+                    }}
+                    className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
+                  >
+                    Donate to list
+                  </button>
                   {!listDetails?.admin_only_registrations && (
                     <button
                       onClick={() => {
@@ -353,7 +351,12 @@ export const ListDetails = ({
         onApply={applyToListModal}
         isSuccessful={isApplicationSuccessful}
       />
-
+      {isDonateModalOpen && (
+        <DonationFlow
+          isOpen={isDonateModalOpen}
+          onClose={() => setIsDonateModalOpen(false)}
+        />
+      )}
       <ListConfirmationModal
         open={isListConfirmationModalOpen.open}
         type={"DELETE"}
@@ -366,9 +369,7 @@ export const ListDetails = ({
         onSubmit={(admins) => setAdmins(admins)}
         contractAdmins={savedUsers.admins}
         type="ADMIN"
-        // handleRemoveAdmin={() =>
-        //   handleRemoveAdmin(Number(listDetails?.on_chain_id))
-        // }
+        handleRemoveAdmin={handleRemoveAdmin}
         value={admins}
         showOnSaveButton={admins.length > 0}
         onSaveSettings={() =>
@@ -390,8 +391,8 @@ export const ListDetails = ({
         type="ACCOUNT"
         value={registrants ?? []}
         contractAdmins={savedUsers.accounts}
+        handleUnRegisterAccount={handleUnRegisterAccount}
         showOnSaveButton={registrants?.length > 0}
-        countText="Account(s)"
         onSaveSettings={() =>
           handleRegisterBatch(
             Number(listDetails?.on_chain_id),

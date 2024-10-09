@@ -30,8 +30,9 @@ export type AccessControlListModalProps = {
   onSubmit: (accountIds: AccountId[]) => void;
   onSaveSettings?: () => void;
   showOnSaveButton?: boolean;
-  countText?: string;
   type?: "ADMIN" | "ACCOUNT";
+  handleRemoveAdmin?: (accountIds: AccountId[]) => void;
+  handleUnRegisterAccount?: (accountId: number) => void;
   contractAdmins?:
     | { account: AccountId }[]
     | { account: AccountId; id?: number }[];
@@ -44,6 +45,8 @@ export const AccessControlListModal = create(
     onSubmit,
     showOnSaveButton,
     onSaveSettings,
+    handleRemoveAdmin,
+    handleUnRegisterAccount,
     contractAdmins,
     type,
   }: AccessControlListModalProps) => {
@@ -212,7 +215,30 @@ export const AccessControlListModal = create(
                     }
                     secondaryAction={
                       <Button
-                        onClick={handleAccountRemove(accountId)}
+                        onClick={() => {
+                          const isAdmin = contractAdmins?.some(
+                            (admin) => admin?.account === accountId,
+                          );
+
+                          if (!isAdmin) {
+                            return handleAccountRemove(accountId);
+                          }
+
+                          if (type === "ACCOUNT") {
+                            if (handleUnRegisterAccount) {
+                              const adminId = getAdminIdByAccountId(
+                                contractAdmins,
+                                accountId,
+                              );
+                              return handleUnRegisterAccount(adminId);
+                            }
+                            return;
+                          }
+
+                          if (handleRemoveAdmin) {
+                            return handleRemoveAdmin([accountId]);
+                          }
+                        }}
                         variant="standard-plain"
                         className="ml-auto pe-0"
                       >

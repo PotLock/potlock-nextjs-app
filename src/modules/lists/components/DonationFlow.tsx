@@ -77,10 +77,6 @@ const DonationFlow = ({
     });
   };
 
-  useEffect(() => {
-    console.log(selectedProjects);
-  }, [selectedProjects]);
-
   return (
     <Dialog open={isOpen}>
       <DialogContent onCloseClick={onClose}>

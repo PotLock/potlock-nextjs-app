@@ -42,7 +42,7 @@ export const ListCard = ({
   }, [dataForList.owner]);
 
   const handleRoute = useCallback(
-    () => push(`/list/${dataForList?.id}`),
+    () => push(`/list/${dataForList?.on_chain_id}`),
     [dataForList?.id],
   );
 

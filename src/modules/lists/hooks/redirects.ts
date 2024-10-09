@@ -29,6 +29,7 @@ export const useListDeploymentSuccessRedirect = () => {
 
   const isTransactionOutcomeDetected = transactionHash !== undefined;
 
+
   useEffect(() => {
     if (
       listValues.type === ListFormModalType.UPDATE_ACCOUNT &&

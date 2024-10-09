@@ -70,7 +70,7 @@ export const useListForm = () => {
     });
   };
 
-  const handleUnRegisterAccount = (registrant_id: number, id: number) => {
+  const handleUnRegisterAccount = (registrant_id: number) => {
     if (!id) return;
 
     unregister_from_list({
@@ -88,9 +88,9 @@ export const useListForm = () => {
     });
   };
 
-  const handleRemoveAdmin = (admins: Array<string>, id: number) => {
+  const handleRemoveAdmin = (admins: Array<string>) => {
     remove_admins_from_list({
-      list_id: id,
+      list_id: Number(id),
       admins,
     })
       .then(() => {

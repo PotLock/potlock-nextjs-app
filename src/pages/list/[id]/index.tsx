@@ -45,12 +45,17 @@ export default function SingleList() {
     setAdmins(listData?.admins?.map((admin) => admin?.id) as AccountId[]);
     setListDetails(listData);
     setSavedUsers({
+      accounts:
+        data?.map((registration) => ({
+          account: registration?.registrant?.id,
+          id: registration?.id,
+        })) ?? [],
       admins:
         listData?.admins?.map((admin) => ({
           account: admin?.id,
         })) ?? [],
     });
-  }, [loadingListData]);
+  }, [loadingListData, isLoading]);
 
   return (
     <div className="md:px-[2rem] container  px-0   pb-10">
@@ -59,8 +64,6 @@ export default function SingleList() {
         listDetails={listDetails}
         savedUsers={savedUsers}
         setAdmins={setAdmins}
-        setSavedUsers={setSavedUsers}
-        data={data}
       />
       <ListAccounts
         listData={listData}

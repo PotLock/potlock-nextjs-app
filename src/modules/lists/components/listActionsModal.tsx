@@ -40,7 +40,6 @@ export const ListActionsModal = create((_: ListActionsModal) => {
   const transferType = type === ListFormModalType.TRANSFER_OWNER;
   const deleteType = type === ListFormModalType.DELETE_LIST;
 
-  console.log(data);
   const content = useMemo(() => {
     return type === ListFormModalType.LIST_DONATION ? (
       <DialogDescription className="p-8">
@@ -99,7 +98,9 @@ export const ListActionsModal = create((_: ListActionsModal) => {
         className="max-w-115 "
         onCloseClick={close}
       >
-        {data === undefined && !deleteType ? (
+        {data === undefined &&
+        !deleteType &&
+        type !== ListFormModalType.UNREGISTER ? (
           <DataLoadingPlaceholder
             text="Loading List Changes..."
             className="h-106"
