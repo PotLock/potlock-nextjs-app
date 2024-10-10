@@ -1,6 +1,8 @@
 import { Account } from "near-api-js";
 import { SWRConfiguration } from "swr";
 
+export type { infer as FromSchema } from "zod";
+
 export type ClientConfig = { swr?: SWRConfiguration };
 
 export interface ConditionalExecution {

@@ -48,8 +48,6 @@ export const effects = (dispatch: AppDispatcher) => ({
         ),
       );
     } else {
-      // TODO: provide compatible types
-      // @ts-expect-error runtime should be fine
       const pot_args = potInputsToPotArgs({
         ...potInputs,
         source_metadata: { commit_hash, ...sourceMetadata },

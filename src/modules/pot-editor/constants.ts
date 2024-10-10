@@ -1,4 +1,8 @@
+import { Temporal } from "temporal-polyfill";
+
 import { PotEditorFieldRegistry } from "./types";
+
+export const POT_DEFAULT_MIN_DATE = Temporal.Now.instant().toString();
 
 export const POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES = [
   "all_paid_out" as const,

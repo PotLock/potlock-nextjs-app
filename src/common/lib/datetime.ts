@@ -14,12 +14,12 @@ export const localeStringToTimestampMs = (value: string): number => {
   }
 };
 
-export const formatDatetimeLocal = (value: string): string =>
+export const dropTimezoneIndicator = (value: string): string =>
   value.slice(0, 16);
 
-export const millisecondsToDatetimeLocal = (value: number): string => {
+export const millisecondsToLocaleString = (value: number): string => {
   try {
-    return formatDatetimeLocal(new Date(value).toISOString());
+    return Temporal.Instant.fromEpochMilliseconds(value).toLocaleString();
   } catch {
     const error = new TypeError(`Unable to parse \`${value}\``);
 
@@ -28,9 +28,11 @@ export const millisecondsToDatetimeLocal = (value: number): string => {
   }
 };
 
-export const millisecondsToLocaleString = (value: number): string => {
+export const millisecondsToDatetimeLocal = (value: number): string => {
   try {
-    return Temporal.Instant.fromEpochMilliseconds(value).toLocaleString();
+    return dropTimezoneIndicator(
+      Temporal.Instant.fromEpochMilliseconds(value).toString(),
+    );
   } catch {
     const error = new TypeError(`Unable to parse \`${value}\``);
 
