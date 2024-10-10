@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/common/ui/components/tooltip";
-import { AccountAvatar } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/core";
 import Pagination from "@/modules/core/components/Pagination";
 import routesPath from "@/modules/core/routes";
 
@@ -50,7 +50,7 @@ const SponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] }) => {
                   className="address"
                   target="_blank"
                 >
-                  <AccountAvatar
+                  <AccountProfilePicture
                     accountId={donorId}
                     className="mr-4 h-[24px] w-[24px]"
                   />

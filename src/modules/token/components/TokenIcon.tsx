@@ -37,7 +37,7 @@ export const TokenIcon = ({
   });
 
   const { sizePx, rootClass, placeholderClass } = variants[size];
-
+  const tokenSymbolFallback = isLoading ? "⋯" : "🪙";
   return (
     <span
       className={cn("flex items-center justify-center", rootClass, className)}
@@ -59,7 +59,7 @@ export const TokenIcon = ({
             />
           ) : (
             <span className={cn("prose", placeholderClass)}>
-              {token?.symbol ?? isLoading ? "⋯" : "🪙"}
+              {token?.symbol ?? tokenSymbolFallback}
             </span>
           )}
         </>

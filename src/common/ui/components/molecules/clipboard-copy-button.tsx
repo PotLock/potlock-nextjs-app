@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useState } from "react";
+import React, { ReactElement, useCallback, useState } from "react";
 
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
@@ -35,7 +35,7 @@ export const ClipboardCopyButton: React.FC<ClipboardCopyButtonProps> = ({
     </svg>
   ) : (
     <CopyToClipboard {...{ text, onCopy }}>
-      <div className="h-[18px] w-[18px]">
+      <div className="h-4.5 w-4.5" title="Copy to clipboard">
         {customIcon ? customIcon : <CopyPasteIcon />}
       </div>
     </CopyToClipboard>

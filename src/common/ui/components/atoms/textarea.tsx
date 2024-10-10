@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 
 import { CircleAlert } from "lucide-react";
 
-import { cn } from "../utils";
+import { cn } from "../../utils";
 
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}

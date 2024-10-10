@@ -17,7 +17,7 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { AccountAvatar } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useTypedSelector } from "@/store";
 
@@ -147,19 +147,21 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                 </label>
               </div>
 
-              {/* Avatar - Account */}
-              <Link
-                href={`/${routesPath.PROFILE}/${protocolConfig?.account_id}`}
-                target="_blank"
-              >
-                <Badge variant="secondary" className="gap-1">
-                  <AccountAvatar
-                    accountId={protocolConfig?.account_id}
-                    className="h-[12px] w-[12px]"
-                  />{" "}
-                  {protocolConfig?.account_id}
-                </Badge>
-              </Link>
+              {protocolConfig && (
+                <Link
+                  href={`/${routesPath.PROFILE}/${protocolConfig.account_id}`}
+                  target="_blank"
+                >
+                  <Badge variant="secondary" className="gap-1">
+                    <AccountProfilePicture
+                      accountId={protocolConfig.account_id}
+                      className="h-3 w-3"
+                    />
+
+                    {protocolConfig?.account_id}
+                  </Badge>
+                </Link>
+              )}
             </div>
 
             {/* Bypass Chef Fee */}
@@ -186,7 +188,7 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                   target="_blank"
                 >
                   <Badge variant="secondary" className="gap-1">
-                    <AccountAvatar
+                    <AccountProfilePicture
                       accountId={potDetail.chef?.id}
                       className="h-[12px] w-[12px]"
                     />{" "}

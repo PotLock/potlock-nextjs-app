@@ -5,7 +5,7 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { omit } from "remeda";
 
 import { walletApi } from "@/common/api/near";
-import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
+import { StatusF24Enum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
 import { useIsHuman } from "@/modules/core";
@@ -41,7 +41,7 @@ export const useDonationForm = ({
 
   const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
     accountId: recipientAccountId,
-    status: PotApplicationStatusEnum.Approved,
+    status: StatusF24Enum.Approved,
   });
 
   const matchingPots = matchingPotsPaginated?.results ?? [];
@@ -94,13 +94,12 @@ export const useDonationForm = ({
   const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
   const { balanceFloat } = useTokenBalance({ tokenId });
 
-  const totalAmountFloat =
-    values.allocationStrategy === DonationAllocationStrategyEnum.split
-      ? values.groupAllocationPlan?.reduce(
-          (total, { amount }) => total + (amount ?? 0.0),
-          0.0,
-        ) ?? 0.0
-      : amount;
+  const totalAmountFloat = isSingleProjectDonation
+    ? amount
+    : (values.groupAllocationPlan?.reduce(
+        (total, { amount }) => total + (amount ?? 0.0),
+        0.0,
+      ) ?? 0.0);
 
   const hasChanges = Object.keys(values).some(
     (key) =>

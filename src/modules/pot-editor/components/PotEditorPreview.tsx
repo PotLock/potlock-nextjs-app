@@ -26,6 +26,7 @@ type PotEditorPreviewSectionProps = {
   children?: React.ReactNode;
 };
 
+/* prettier-ignore */
 const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
   isLoading,
   heading,
@@ -55,10 +56,12 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
     </>
   );
 
+/* prettier-ignore */
 export type PotEditorPreviewProps = Partial<ByPotId> & {
   onEditClick: () => void;
 };
 
+/* prettier-ignore */
 export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
   potId,
   onEditClick,
@@ -125,7 +128,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
             <>
               {adminAccountIds.length > 0 ? (
                 <AccessControlList
-                  value={adminAccountIds}
+                  value={adminAccountIds?.map(admin => ({accountId: admin}))}
                   classNames={{ avatar: "w-6 h-6" }}
                 />
               ) : (

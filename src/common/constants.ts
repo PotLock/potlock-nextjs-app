@@ -5,6 +5,10 @@ import { Metadata } from "next";
 
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 
+export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
+
+export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
+
 export const APP_METADATA: Metadata & {
   title: string;
   description: NonNullable<Metadata["description"]>;
@@ -38,6 +42,11 @@ export const APP_METADATA: Metadata & {
 
 export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK?.toLowerCase() ||
   "testnet") as Network;
+
+export const BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL =
+  NETWORK === "mainnet"
+    ? "https://nearblocks.io/txns"
+    : "https://testnet.nearblocks.io/txns";
 
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 

@@ -3,16 +3,41 @@ import { useMemo } from "react";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
+import { AccountOption } from "@/modules/core";
 import { TokenIcon } from "@/modules/token";
 
+import { WithDonationFormAPI } from "../models";
 import { DonationBreakdown } from "../types";
 
-export type DonationGroupAllocationBreakdownProps = {};
+export type DonationGroupAllocationBreakdownProps = WithDonationFormAPI & {};
 
 export const DonationGroupAllocationBreakdown: React.FC<
   DonationGroupAllocationBreakdownProps
-> = () => {
-  return <div>WIP</div>;
+> = ({ form }) => {
+  const [tokenId, groupAllocationPlan] = form.watch([
+    "tokenId",
+    "groupAllocationPlan",
+  ]);
+
+  return (
+    <div className="flex flex-col gap-4 rounded-lg bg-neutral-50 p-4">
+      {groupAllocationPlan?.map(({ account_id, amount }) => (
+        <AccountOption
+          key={account_id + amount}
+          accountId={account_id}
+          secondaryAction={
+            <LabeledIcon
+              caption={amount ?? 0}
+              classNames={{ caption: "font-600 text-4" }}
+            >
+              <TokenIcon {...{ tokenId }} />
+            </LabeledIcon>
+          }
+          classNames={{ root: "p-0", avatar: "border-1 border-neutral-200" }}
+        />
+      ))}
+    </div>
+  );
 };
 
 export type DonationSummaryBreakdownProps = ByTokenId & {
