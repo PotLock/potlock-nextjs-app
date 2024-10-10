@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { ByPotId, potlock } from "@/common/api/potlock";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { dropTimezoneIndicator } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
@@ -27,7 +28,7 @@ import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
 import { PotEditorPreview } from "./PotEditorPreview";
-import { POT_EDITOR_FIELDS } from "../constants";
+import { POT_DEFAULT_MIN_DATE, POT_EDITOR_FIELDS } from "../constants";
 import { usePotEditorForm } from "../hooks/forms";
 import {
   getPotEditorDeploymentSchema,
@@ -135,7 +136,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               )}
             />
 
-            <div un-flex="~ col lg:row" un-gap="8">
+            <div className="lg:flex-row flex flex-col gap-8">
               <FormField
                 name="referral_fee_matching_pool_basis_points"
                 control={form.control}
@@ -196,7 +197,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               </AlertDescription>
             </Alert>
 
-            <div un-flex="~ col lg:row" un-gap="8">
+            <div className="lg:flex-row flex flex-col gap-8">
               <FormField
                 name="application_start_ms"
                 control={form.control}
@@ -205,8 +206,11 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     label={POT_EDITOR_FIELDS.application_start_ms.title}
                     required
                     type="datetime-local"
-                    classNames={{ root: "lg:w-50% w-full" }}
+                    min={dropTimezoneIndicator(
+                      pot?.application_start ?? POT_DEFAULT_MIN_DATE,
+                    )}
                     {...field}
+                    classNames={{ root: "lg:w-50% w-full" }}
                   />
                 )}
               />
@@ -219,14 +223,17 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     label={POT_EDITOR_FIELDS.application_end_ms.title}
                     required
                     type="datetime-local"
-                    classNames={{ root: "lg:w-50% w-full" }}
+                    min={dropTimezoneIndicator(
+                      pot?.application_end ?? POT_DEFAULT_MIN_DATE,
+                    )}
                     {...field}
+                    classNames={{ root: "lg:w-50% w-full" }}
                   />
                 )}
               />
             </div>
 
-            <div un-flex="~ col lg:row" un-gap="8">
+            <div className="lg:flex-row flex flex-col gap-8">
               <FormField
                 name="public_round_start_ms"
                 control={form.control}
@@ -235,8 +242,11 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     label={POT_EDITOR_FIELDS.public_round_start_ms.title}
                     required
                     type="datetime-local"
-                    classNames={{ root: "lg:w-50% w-full" }}
+                    min={dropTimezoneIndicator(
+                      pot?.matching_round_start ?? POT_DEFAULT_MIN_DATE,
+                    )}
                     {...field}
+                    classNames={{ root: "lg:w-50% w-full" }}
                   />
                 )}
               />
@@ -249,14 +259,17 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     label={POT_EDITOR_FIELDS.public_round_end_ms.title}
                     required
                     type="datetime-local"
-                    classNames={{ root: "lg:w-50% w-full" }}
+                    min={dropTimezoneIndicator(
+                      pot?.matching_round_end ?? POT_DEFAULT_MIN_DATE,
+                    )}
                     {...field}
+                    classNames={{ root: "lg:w-50% w-full" }}
                   />
                 )}
               />
             </div>
 
-            <div un-flex="~ col lg:row" un-gap="8">
+            <div className="lg:flex-row flex flex-col gap-8">
               <FormField
                 control={form.control}
                 name="min_matching_pool_donation_amount"
@@ -294,7 +307,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
           </EditorSection>
 
           <EditorSection heading="Chef details">
-            <div un-flex="~ col lg:row" un-gap="8">
+            <div className="lg:flex-row flex flex-col gap-8">
               <FormField
                 name="chef_fee_basis_points"
                 control={form.control}

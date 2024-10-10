@@ -5,7 +5,7 @@ export const DATETIME_INCORRECT_FORMAT_ERROR = "Incorrect datetime";
 
 export const localeStringToTimestampMs = (value: string): number => {
   try {
-    return new Date(value.slice(0, 16)).getTime();
+    return new Date(value).getTime();
   } catch {
     const error = new TypeError(`Unable to parse \`${value}\``);
 
@@ -14,23 +14,25 @@ export const localeStringToTimestampMs = (value: string): number => {
   }
 };
 
-export const formatDatetimeLocal = (value: string): string =>
+export const dropTimezoneIndicator = (value: string): string =>
   value.slice(0, 16);
-
-export const millisecondsToDatetimeLocal = (value: number): string => {
-  try {
-    return formatDatetimeLocal(new Date(value).toISOString());
-  } catch {
-    const error = new TypeError(`Unable to parse \`${value}\``);
-
-    console.error(error);
-    throw error;
-  }
-};
 
 export const millisecondsToLocaleString = (value: number): string => {
   try {
     return Temporal.Instant.fromEpochMilliseconds(value).toLocaleString();
+  } catch {
+    const error = new TypeError(`Unable to parse \`${value}\``);
+
+    console.error(error);
+    throw error;
+  }
+};
+
+export const millisecondsToDatetimeLocal = (value: number): string => {
+  try {
+    return dropTimezoneIndicator(
+      Temporal.Instant.fromEpochMilliseconds(value).toString(),
+    );
   } catch {
     const error = new TypeError(`Unable to parse \`${value}\``);
 

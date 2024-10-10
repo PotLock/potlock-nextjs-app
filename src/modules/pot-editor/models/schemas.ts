@@ -1,5 +1,11 @@
+import { Temporal } from "temporal-polyfill";
+
 import { Pot } from "@/common/api/potlock";
-import { localeStringToTimestampMs, timestamp } from "@/common/lib";
+import {
+  localeStringToTimestampMs,
+  millisecondsToDatetimeLocal,
+  timestamp,
+} from "@/common/lib";
 import { FromSchema } from "@/common/types";
 import {
   isPotApplicationStartBeforeEnd,
@@ -8,27 +14,26 @@ import {
   potSchema,
 } from "@/modules/pot";
 
-export const potEditorDeploymentSchema = potSchema
-  /**
-   *! Heads up!
-   *!  Make sure that any fields targeted here are listed in
-   *!  `potEditorDeploymentCrossFieldValidationTargets`
-   *!  and have their corresponding error paths specified correctly.
-   */
-  .refine(isPotApplicationStartBeforeEnd, {
-    message: "Application cannot end before it starts.",
-    path: ["application_end_ms"],
-  })
-  .refine(isPotPublicRoundStartAfterApplicationEnd, {
-    message: "Public round can only start after application period ends.",
-    path: ["public_round_start_ms"],
-  })
-  .refine(isPotPublicRoundStartBeforeEnd, {
-    message: "Public round cannot end before it starts.",
-    path: ["public_round_end_ms"],
-  });
-
-export const getPotEditorDeploymentSchema = () => potEditorDeploymentSchema;
+export const getPotEditorDeploymentSchema = () =>
+  potSchema
+    /**
+     *! Heads up!
+     *!  Make sure that any fields targeted here are listed in
+     *!  `potEditorDeploymentCrossFieldValidationTargets`
+     *!  and have their corresponding error paths specified correctly.
+     */
+    .refine(isPotApplicationStartBeforeEnd, {
+      message: "Application cannot end before it starts.",
+      path: ["application_end_ms"],
+    })
+    .refine(isPotPublicRoundStartAfterApplicationEnd, {
+      message: "Public round can only start after application period ends.",
+      path: ["public_round_start_ms"],
+    })
+    .refine(isPotPublicRoundStartBeforeEnd, {
+      message: "Public round cannot end before it starts.",
+      path: ["public_round_end_ms"],
+    });
 
 export type PotEditorDeploymentSchema = ReturnType<
   typeof getPotEditorDeploymentSchema
@@ -49,15 +54,14 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
             .refine(
               (value) => {
                 console.log("Indexed value", potIndexedData?.application_start);
-                console.log("Form value", value);
+                console.log("Form value", millisecondsToDatetimeLocal(value));
 
                 console.log(
                   "Difference in hours",
                   (localeStringToTimestampMs(potIndexedData.application_start) -
                     value) /
                     1000 /
-                    60 /
-                    60,
+                    3600,
                 );
 
                 return (
@@ -134,4 +138,4 @@ export type PotEditorSettingsSchema = ReturnType<
 export type PotEditorSettings = FromSchema<PotEditorSettingsSchema>;
 
 export const potEditorSettingsCrossFieldValidationTargets: (keyof PotEditorSettings)[] =
-  [...potEditorDeploymentCrossFieldValidationTargets];
+  ["application_end_ms", "public_round_end_ms", "public_round_start_ms"];

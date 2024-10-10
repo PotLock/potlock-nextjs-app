@@ -22,8 +22,8 @@ import {
 } from "@/common/contracts/potlock";
 import {
   floatToYoctoNear,
-  formatDatetimeLocal,
   localeStringToTimestampMs,
+  millisecondsToDatetimeLocal,
   millisecondsToLocaleString,
   timestamp,
   yoctoNearToFloat,
@@ -95,10 +95,23 @@ export const potIndexedDataToPotInputs = ({
       pot_name: name,
       pot_description: description,
       max_projects: max_approved_applicants,
-      application_start_ms: formatDatetimeLocal(application_start),
-      application_end_ms: formatDatetimeLocal(application_end),
-      public_round_start_ms: formatDatetimeLocal(matching_round_start),
-      public_round_end_ms: formatDatetimeLocal(matching_round_end),
+
+      application_start_ms: millisecondsToDatetimeLocal(
+        localeStringToTimestampMs(application_start),
+      ),
+
+      application_end_ms: millisecondsToDatetimeLocal(
+        localeStringToTimestampMs(application_end),
+      ),
+
+      public_round_start_ms: millisecondsToDatetimeLocal(
+        localeStringToTimestampMs(matching_round_start),
+      ),
+
+      public_round_end_ms: millisecondsToDatetimeLocal(
+        localeStringToTimestampMs(matching_round_end),
+      ),
+
       registry_provider: registry_provider ?? undefined,
       isPgRegistrationRequired: typeof registry_provider === "string",
       sybil_wrapper_provider: sybil_wrapper_provider ?? undefined,
