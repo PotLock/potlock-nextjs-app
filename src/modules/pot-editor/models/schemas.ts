@@ -81,6 +81,7 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
               (value) =>
                 value >=
                 localeStringToTimestampMs(potIndexedData.application_end),
+
               {
                 message: "Cannot be earlier than the date set upon deployment.",
               },
@@ -104,6 +105,7 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
               (value) =>
                 value >=
                 localeStringToTimestampMs(potIndexedData.matching_round_end),
+
               {
                 message: "Cannot be earlier than the date set upon deployment.",
               },
