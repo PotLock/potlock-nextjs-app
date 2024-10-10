@@ -105,16 +105,17 @@ export const AccessControlListModal = create(
     );
 
     const selectedAccountsRemove = useCallback(() => {
-      const selectedAccountsToRemove = accountIds.filter(
-        (accountId) => !selectedAccounts.includes(accountId),
+      const selectedAccountsToRemove = accountIds.filter((accountId) =>
+        selectedAccounts.includes(accountId),
       );
-      onSubmit(selectedAccountsToRemove);
       if (handleRemoveAccounts) {
         handleRemoveAccounts(
-          entries.filter(
-            (entry) => !selectedAccountsToRemove.includes(entry.accountId),
+          entries.filter((entry) =>
+            selectedAccountsToRemove.includes(entry.accountId),
           ),
         );
+      } else {
+        onSubmit(selectedAccountsToRemove);
       }
       setSelectedAccounts([]);
     }, [accountIds, onSubmit, selectedAccounts]);

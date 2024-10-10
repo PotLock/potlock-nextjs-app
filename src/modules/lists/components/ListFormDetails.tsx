@@ -157,7 +157,6 @@ export const ListFormDetails: React.FC = () => {
           });
         })
         .catch((error) => {
-          // Handle error for update_list
           console.error("Error updating list:", error);
         });
         dispatch.listEditor.reset()
@@ -172,7 +171,6 @@ export const ListFormDetails: React.FC = () => {
         image_cover_url: coverImage,
       })
         .then((dataToReturn) => {
-          // Handle success for create_list
           setListCreateSuccess({
             open: true,
             type: "CREATE_LIST",
@@ -180,7 +178,6 @@ export const ListFormDetails: React.FC = () => {
           });
         })
         .catch((error) => {
-          // Handle error for create_list
           console.error("Error creating list:", error);
         });
     }
@@ -374,6 +371,7 @@ export const ListFormDetails: React.FC = () => {
                     <AccessControlList
                       isEditable={true}
                       title="Admins"
+                      showAccountList={false}
                       value={admins.map((admin) => ({ accountId: admin }))}
                       classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={(admins: string[]) => setAdmins(admins)}

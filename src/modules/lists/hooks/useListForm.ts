@@ -101,14 +101,6 @@ export const useListForm = () => {
         console.log(res);
       })
       .catch((err) => console.error(err));
-    // unregister_from_list({
-    //   list_id: Number(id),
-    //   registration_id: registrant_id,
-    // })
-    //   .then(() => {
-    //     setFinishModal({ open: true, type: ListFormModalType.UNREGISTER });
-    //   })
-    //   .catch((error) => console.error(error));
     dispatch.listEditor.updateListModalState({
       header: "Account Deleted From List Successfully",
       description,

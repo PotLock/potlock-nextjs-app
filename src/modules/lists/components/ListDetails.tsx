@@ -40,6 +40,7 @@ import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
 import { ListFormModalType, SavedUsersType } from "../types";
 import DonationFlow from "./DonationFlow";
+import { prop } from "remeda";
 
 interface ListDetailsType {
   isLoading?: boolean;
@@ -358,16 +359,30 @@ export const ListDetails = ({
       <AccessControlListModal
         id={adminsModalId}
         title="Edit Admin list"
-        onSubmit={(admins) => handleSaveAdminsSettings(admins)}
         handleRemoveAccounts={handleRemoveAdmin}
         value={savedUsers?.admins ?? []}
+        onSubmit={(admins) => {
+          const newAdmins =
+            admins?.filter(
+              (admin) =>
+                !savedUsers.admins?.map(prop("accountId"))?.includes(admin),
+            ) ?? [];
+          handleSaveAdminsSettings(newAdmins);
+        }}
       />
       <AccessControlListModal
         id={registrantsModalId}
         title="Edit Accounts"
-        onSubmit={(account) => handleRegisterBatch(account)}
         value={savedUsers?.accounts ?? []}
         handleRemoveAccounts={handleUnRegisterAccount}
+        onSubmit={(accounts) => {
+          const newAccounts =
+            accounts?.filter(
+              (admin) =>
+                !savedUsers.accounts?.map(prop("accountId"))?.includes(admin),
+            ) ?? [];
+          handleRegisterBatch(newAccounts);
+        }}
       />
     </>
   );
