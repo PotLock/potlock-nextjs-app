@@ -27,6 +27,7 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
+import { dispatch } from "@/store";
 
 import {
   ListConfirmationModal,
@@ -34,7 +35,6 @@ import {
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
 import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
-import { dispatch } from "@/store";
 
 interface FormData {
   name: string;
@@ -372,22 +372,11 @@ export const ListFormDetails: React.FC = () => {
                   </div>
                   <div className="flex h-[35px]  flex-wrap">
                     <AccessControlList
-                      isEditable
+                      isEditable={true}
                       title="Admins"
-                      value={admins}
-                      contractAdmins={savedAdmins}
-                      showAccountList={false}
-                      type="ADMIN"
-                      showOnSaveButton={
-                        admins.length > 0 &&
-                        onEditPage &&
-                        watch("owner") === walletApi?.accountId
-                      }
+                      value={admins.map((admin) => ({ accountId: admin }))}
                       classNames={{ avatar: "w-5 h-5" }}
-                      onSubmit={(admins) => setAdmins(admins)}
-                      onSaveSettings={() =>
-                        handleSaveAdminsSettings(admins, Number(id))
-                      }
+                      onSubmit={(admins: string[]) => setAdmins(admins)}
                     />
                   </div>
                 </div>
@@ -415,19 +404,12 @@ export const ListFormDetails: React.FC = () => {
                       <AccessControlList
                         isEditable
                         title="Accounts"
-                        value={accounts}
-                        type="ADMIN"
+                        value={accounts?.map((account) => ({
+                          accountId: account,
+                        }))}
                         showAccountList={false}
-                        showOnSaveButton={
-                          accounts.length > 0 &&
-                          onEditPage &&
-                          watch("owner") === walletApi?.accountId
-                        }
                         classNames={{ avatar: "w-[40px] h-[40px]" }}
-                        onSubmit={(accounts) => setAccounts(accounts)}
-                        onSaveSettings={() =>
-                          handleSaveAdminsSettings(accounts, Number(id))
-                        }
+                        onSubmit={(accounts: string[]) => setAccounts(accounts)}
                       />
                     </div>
                   </div>

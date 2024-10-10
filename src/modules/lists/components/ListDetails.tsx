@@ -51,7 +51,6 @@ interface ListDetailsType {
 
 export const ListDetails = ({
   admins,
-  setAdmins,
   listDetails,
   savedUsers,
 }: ListDetailsType) => {
@@ -60,7 +59,6 @@ export const ListDetails = ({
     query: { id },
   } = useRouter();
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
-  const [registrants, setRegistrants] = useState<AccountId[]>([]);
   const [listOwnerImage, setListOwnerImage] = useState<string>("");
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
   const [isApplicationSuccessful, setIsApplicationSuccessful] =
@@ -102,12 +100,6 @@ export const ListDetails = ({
     handleRemoveAdmin,
     handleUnRegisterAccount,
   } = useListForm();
-
-  useEffect(() => {
-    setRegistrants(
-      savedUsers?.accounts?.map((data: any) => `${data?.account}`) || [],
-    );
-  }, [savedUsers]);
 
   const applyToListModal = (note: string) => {
     register_batch({
@@ -366,44 +358,16 @@ export const ListDetails = ({
       <AccessControlListModal
         id={adminsModalId}
         title="Edit Admin list"
-        onSubmit={(admins) => setAdmins(admins)}
-        contractAdmins={savedUsers.admins}
-        type="ADMIN"
-        handleRemoveAdmin={handleRemoveAdmin}
-        value={admins}
-        showOnSaveButton={admins.length > 0}
-        onSaveSettings={() =>
-          handleSaveAdminsSettings(
-            admins?.filter(
-              (account) =>
-                !savedUsers.admins
-                  ?.map((admin) => admin.account)
-                  .includes(account),
-            ),
-            Number(listDetails?.on_chain_id),
-          )
-        }
+        onSubmit={(admins) => handleSaveAdminsSettings(admins)}
+        handleRemoveAccounts={handleRemoveAdmin}
+        value={savedUsers?.admins ?? []}
       />
       <AccessControlListModal
         id={registrantsModalId}
         title="Edit Accounts"
-        onSubmit={(modal) => setRegistrants(modal)}
-        type="ACCOUNT"
-        value={registrants ?? []}
-        contractAdmins={savedUsers.accounts}
-        handleUnRegisterAccount={handleUnRegisterAccount}
-        showOnSaveButton={registrants?.length > 0}
-        onSaveSettings={() =>
-          handleRegisterBatch(
-            Number(listDetails?.on_chain_id),
-            registrants?.filter(
-              (registrant) =>
-                !savedUsers?.accounts?.some(
-                  (savedAccount) => savedAccount?.account === registrant,
-                ),
-            ),
-          )
-        }
+        onSubmit={(account) => handleRegisterBatch(account)}
+        value={savedUsers?.accounts ?? []}
+        handleRemoveAccounts={handleUnRegisterAccount}
       />
     </>
   );

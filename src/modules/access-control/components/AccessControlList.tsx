@@ -1,3 +1,5 @@
+/* prettier-ignore */
+
 import { useCallback, useId, useMemo } from "react";
 
 import { show } from "@ebay/nice-modal-react";
@@ -11,6 +13,7 @@ import {
   AccessControlListModalProps,
 } from "./AccessControlListModal";
 
+/* prettier-ignore */
 export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &
   (
     | (AccessControlListModalProps & {
@@ -23,6 +26,7 @@ export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &
       })
   );
 
+/* prettier-ignore */
 export const AccessControlList: React.FC<AccessControlListProps> = ({
   isEditable = false,
   showAccountList = true,
@@ -38,13 +42,13 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
     () =>
       accountIds.length > 0 ? (
         <div un-flex="~" un-items="center" un-gap="2">
-          {accountIds.map((accountId) => (
+          {accountIds.map((account) => (
             <AccountOption
               isThumbnail
-              key={accountId}
-              title={accountId}
+              key={account.accountId}
+              title={account.accountId}
               classNames={{ avatar: classNames?.avatar }}
-              {...{ accountId }}
+              {...{ accountId: account.accountId }}
             />
           ))}
         </div>

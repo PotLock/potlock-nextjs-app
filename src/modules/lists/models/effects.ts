@@ -77,7 +77,7 @@ export const effects = (dispatch: AppDispatcher) => ({
           } catch (error) {
             console.error("Error parsing JSON:", error);
             // Handle the error appropriately, e.g., dispatch an error action or show a notification
-            throw ("Unable to Update List: Invalid JSON input");
+            throw "Unable to Update List: Invalid JSON input";
           }
         } else {
           throw "Unable to Update List";

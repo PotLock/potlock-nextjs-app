@@ -47,12 +47,12 @@ export default function SingleList() {
     setSavedUsers({
       accounts:
         data?.map((registration) => ({
-          account: registration?.registrant?.id,
-          id: registration?.id,
+          accountId: registration?.registrant?.id,
+          reg: registration?.id,
         })) ?? [],
       admins:
         listData?.admins?.map((admin) => ({
-          account: admin?.id,
+          accountId: admin?.id,
         })) ?? [],
     });
   }, [loadingListData, isLoading]);

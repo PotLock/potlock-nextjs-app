@@ -52,8 +52,8 @@ export type ListEditorState = {
 };
 
 export interface SavedUsersType {
-  accounts?: { account: AccountId; id?: number }[];
-  admins?: { account: AccountId }[];
+  accounts?: { accountId: AccountId; registrationId?: number }[];
+  admins?: { accountId: AccountId }[];
 }
 
 export enum NoListItemType {
