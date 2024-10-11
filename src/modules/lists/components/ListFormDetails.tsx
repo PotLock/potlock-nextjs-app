@@ -398,13 +398,17 @@ export const ListFormDetails: React.FC = () => {
                       handleRemoveAccounts={id ? handleRemoveAdmin : undefined}
                       value={admins.map((admin) => ({ accountId: admin }))}
                       classNames={{ avatar: "w-5 h-5" }}
-                      onSubmit={(accounts: string[]) => {
-                        const newAdmins =
-                          accounts?.filter(
-                            (admin) => !admins?.includes(admin),
-                          ) ?? [];
-                        handleSaveAdminsSettings(newAdmins);
-                      }}
+                      onSubmit={
+                        id
+                          ? (accounts: string[]) => {
+                              const newAdmins =
+                                accounts?.filter(
+                                  (admin) => !admins?.includes(admin),
+                                ) ?? [];
+                              handleSaveAdminsSettings(newAdmins);
+                            }
+                          : (accounts: string[]) => setAdmins(accounts)
+                      }
                     />
                   </div>
                 </div>
