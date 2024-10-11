@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { pick } from "remeda";
 import { infer as FromSchema, ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
@@ -94,7 +95,8 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   const values = useWatch(self);
 
   const handleAdminsUpdate = useCallback(
-    (accountIds: AccountId[]) => self.setValue("admins", accountIds),
+    (accountIds: AccountId[]) =>
+      self.setValue("admins", accountIds, { shouldDirty: true }),
     [self],
   );
 
@@ -126,6 +128,8 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
 
     [isNewPot, schema, values],
   );
+
+  console.table(pick(self.formState, ["isDirty", "isValid"]));
 
   const isDisabled = useMemo(
     () =>
