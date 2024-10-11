@@ -59,7 +59,7 @@ export const create_list = ({
       admins,
       cover_image_url: image_cover_url ?? null,
       ...(accounts?.length && { registrations: accounts }),
-      admin_only_registrations: !allowApplications || true,
+      admin_only_registrations: allowApplications,
       default_registration_status: "Approved",
     },
     deposit: floatToYoctoNear(0.021 * (accounts?.length ?? 1)),
