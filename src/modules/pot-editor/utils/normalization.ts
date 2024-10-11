@@ -7,6 +7,7 @@ import {
   piped,
   prop,
 } from "remeda";
+import { Temporal } from "temporal-polyfill";
 
 import { Account, Pot } from "@/common/api/potlock";
 import {
@@ -20,14 +21,7 @@ import {
   PotArgs,
   PotConfig,
 } from "@/common/contracts/potlock";
-import {
-  floatToYoctoNear,
-  localeStringToTimestampMs,
-  millisecondsToDatetimeLocal,
-  millisecondsToLocaleString,
-  timestamp,
-  yoctoNearToFloat,
-} from "@/common/lib";
+import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
 import {
   donationAmount,
   donationFeeBasisPointsToPercents,
@@ -86,6 +80,18 @@ export const potIndexedDataToPotInputs = ({
     ),
   });
 
+  console.table({
+    asUTC: Temporal.Instant.from(application_start)
+      .toZonedDateTimeISO(Temporal.TimeZone.from("UTC"))
+      .toPlainDateTime()
+      .toString(),
+
+    asLocal: Temporal.Instant.from(application_start)
+      .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+      .toPlainDateTime()
+      .toString(),
+  });
+
   return omit(
     {
       ...potData,
@@ -96,21 +102,25 @@ export const potIndexedDataToPotInputs = ({
       pot_description: description,
       max_projects: max_approved_applicants,
 
-      application_start_ms: millisecondsToDatetimeLocal(
-        localeStringToTimestampMs(application_start),
-      ),
+      application_start_ms: Temporal.Instant.from(application_start)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString(),
 
-      application_end_ms: millisecondsToDatetimeLocal(
-        localeStringToTimestampMs(application_end),
-      ),
+      application_end_ms: Temporal.Instant.from(application_end)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString(),
 
-      public_round_start_ms: millisecondsToDatetimeLocal(
-        localeStringToTimestampMs(matching_round_start),
-      ),
+      public_round_start_ms: Temporal.Instant.from(matching_round_start)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString(),
 
-      public_round_end_ms: millisecondsToDatetimeLocal(
-        localeStringToTimestampMs(matching_round_end),
-      ),
+      public_round_end_ms: Temporal.Instant.from(matching_round_end)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString(),
 
       registry_provider: registry_provider ?? undefined,
       isPgRegistrationRequired: typeof registry_provider === "string",
@@ -180,11 +190,7 @@ export const potIndexedFieldToString = (
 
     case "string": {
       if (key.includes("ms")) {
-        return pipe(
-          value,
-          localeStringToTimestampMs,
-          millisecondsToLocaleString,
-        );
+        return Temporal.Instant.from(value).toLocaleString();
       } else if (key.includes("provider")) {
         return typeof value === "string" ? subtitle ?? null : "No";
       } else {

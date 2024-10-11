@@ -87,7 +87,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
           </EditorSection>
 
           <EditorSection heading="Pot details">
-            <div un-flex="~ col lg:row" un-gap="8">
+            <div className="lg:flex-row flex flex-col gap-8">
               <FormField
                 name="pot_name"
                 control={form.control}

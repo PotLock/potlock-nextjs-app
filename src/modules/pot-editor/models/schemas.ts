@@ -1,11 +1,7 @@
 import { Temporal } from "temporal-polyfill";
 
 import { Pot } from "@/common/api/potlock";
-import {
-  localeStringToTimestampMs,
-  millisecondsToDatetimeLocal,
-  timestamp,
-} from "@/common/lib";
+import { timestamp } from "@/common/lib";
 import { FromSchema } from "@/common/types";
 import {
   isPotApplicationStartBeforeEnd,
@@ -52,23 +48,10 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
           application_start_ms: timestamp
             .describe("Application period start timestamp.")
             .refine(
-              (value) => {
-                console.log("Indexed value", potIndexedData?.application_start);
-                console.log("Form value", millisecondsToDatetimeLocal(value));
-
-                console.log(
-                  "Difference in hours",
-                  (localeStringToTimestampMs(potIndexedData.application_start) -
-                    value) /
-                    1000 /
-                    3600,
-                );
-
-                return (
-                  value >=
-                  localeStringToTimestampMs(potIndexedData.application_start)
-                );
-              },
+              (value) =>
+                value >=
+                Temporal.Instant.from(potIndexedData.application_start)
+                  .epochMilliseconds,
 
               {
                 message: "Cannot be earlier than the date set upon deployment.",
@@ -80,7 +63,8 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
             .refine(
               (value) =>
                 value >=
-                localeStringToTimestampMs(potIndexedData.application_end),
+                Temporal.Instant.from(potIndexedData.application_end)
+                  .epochMilliseconds,
 
               {
                 message: "Cannot be earlier than the date set upon deployment.",
@@ -92,7 +76,8 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
             .refine(
               (value) =>
                 value >=
-                localeStringToTimestampMs(potIndexedData.matching_round_start),
+                Temporal.Instant.from(potIndexedData.matching_round_start)
+                  .epochMilliseconds,
 
               {
                 message: "Cannot be earlier than the date set upon deployment.",
@@ -104,7 +89,8 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
             .refine(
               (value) =>
                 value >=
-                localeStringToTimestampMs(potIndexedData.matching_round_end),
+                Temporal.Instant.from(potIndexedData.matching_round_end)
+                  .epochMilliseconds,
 
               {
                 message: "Cannot be earlier than the date set upon deployment.",

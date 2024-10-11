@@ -3,43 +3,8 @@ import { number, preprocess } from "zod";
 
 export const DATETIME_INCORRECT_FORMAT_ERROR = "Incorrect datetime";
 
-export const localeStringToTimestampMs = (value: string): number => {
-  try {
-    return new Date(value).getTime();
-  } catch {
-    const error = new TypeError(`Unable to parse \`${value}\``);
-
-    console.error(error);
-    throw error;
-  }
-};
-
 export const dropTimezoneIndicator = (value: string): string =>
   value.slice(0, 16);
-
-export const millisecondsToLocaleString = (value: number): string => {
-  try {
-    return Temporal.Instant.fromEpochMilliseconds(value).toLocaleString();
-  } catch {
-    const error = new TypeError(`Unable to parse \`${value}\``);
-
-    console.error(error);
-    throw error;
-  }
-};
-
-export const millisecondsToDatetimeLocal = (value: number): string => {
-  try {
-    return dropTimezoneIndicator(
-      Temporal.Instant.fromEpochMilliseconds(value).toString(),
-    );
-  } catch {
-    const error = new TypeError(`Unable to parse \`${value}\``);
-
-    console.error(error);
-    throw error;
-  }
-};
 
 /**
  * Converts a value in milliseconds to the equivalent number of days.
@@ -109,7 +74,11 @@ export const toChronologicalOrder = <T>(
 
 export const timestamp = preprocess(
   (value) =>
-    typeof value === "string" ? localeStringToTimestampMs(value) : value,
+    typeof value === "string"
+      ? Temporal.PlainDateTime.from(value).toZonedDateTime(
+          Temporal.Now.timeZoneId(),
+        ).epochMilliseconds
+      : value,
 
   number({ message: DATETIME_INCORRECT_FORMAT_ERROR })
     .int()
