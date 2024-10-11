@@ -129,8 +129,6 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
     [isNewPot, schema, values],
   );
 
-  console.table(pick(self.formState, ["isDirty", "isValid"]));
-
   const isDisabled = useMemo(
     () =>
       values.source_metadata === null ||
