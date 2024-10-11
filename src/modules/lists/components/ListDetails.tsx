@@ -3,11 +3,12 @@ import React, { useCallback, useEffect, useId, useState } from "react";
 import { show } from "@ebay/nice-modal-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { prop } from "remeda";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
-import { List, ListRegistration } from "@/common/api/potlock";
+import { List } from "@/common/api/potlock";
 import {
   AdminUserIcon,
   DeleteListIcon,
@@ -21,7 +22,6 @@ import {
 } from "@/common/contracts/potlock/lists";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { AccountId } from "@/common/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +32,6 @@ import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { AccessControlListModal } from "@/modules/access-control/components/AccessControlListModal";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
-import { DonateToListProjects } from "@/modules/donation";
 import { dispatch } from "@/store";
 
 import { ApplyToListModal } from "./ApplyToListModal";
@@ -40,7 +39,6 @@ import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
 import { ListFormModalType, SavedUsersType } from "../types";
 import DonationFlow from "./DonationFlow";
-import { prop } from "remeda";
 
 interface ListDetailsType {
   isLoading?: boolean;
