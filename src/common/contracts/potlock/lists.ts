@@ -90,7 +90,7 @@ export const update_list = ({
       description,
       cover_image_url: image_cover_url ?? null,
       admins,
-      admin_only_registrations: !allowApplications,
+      admin_only_registrations: allowApplications,
       default_registration_status: approveApplications ? "Approved" : "Pending",
     },
     deposit: floatToYoctoNear(0.015),
