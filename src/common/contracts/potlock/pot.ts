@@ -1,10 +1,9 @@
-import { ONE_YOCTO } from "@builddao/near-social-js";
 import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { naxiosInstance } from "@/common/api/near";
 import { PotId } from "@/common/api/potlock";
-import { FULL_TGAS, TWO_HUNDREDTHS_NEAR } from "@/common/constants";
+import { FULL_TGAS, ONE_HUNDREDTH_NEAR } from "@/common/constants";
 
 import {
   Application,
@@ -234,7 +233,7 @@ export const admin_dangerously_set_pot_config = (
 
     {
       args,
-      deposit: TWO_HUNDREDTHS_NEAR,
+      deposit: ONE_HUNDREDTH_NEAR,
       gas: FULL_TGAS,
       callbackUrl: window.location.href,
     },

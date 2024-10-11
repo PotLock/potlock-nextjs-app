@@ -88,7 +88,7 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
     resolver: zodResolver(schema),
     mode: "all",
     defaultValues,
-    resetOptions: { keepDirtyValues: true },
+    resetOptions: { keepDirtyValues: false },
   });
 
   const values = useWatch(self);
