@@ -114,18 +114,12 @@ export const potSchema = object({
     .describe("Maximum number of approved projects."),
 
   application_start_ms: futureTimestamp.describe(
-    "Application start timestamp.",
+    "Application period start date.",
   ),
 
-  application_end_ms: futureTimestamp.describe("Application end timestamp."),
-
-  public_round_start_ms: futureTimestamp.describe(
-    "Matching round start timestamp.",
-  ),
-
-  public_round_end_ms: futureTimestamp.describe(
-    "Matching round end timestamp.",
-  ),
+  application_end_ms: futureTimestamp.describe("Application period end date."),
+  public_round_start_ms: futureTimestamp.describe("Matching round start date."),
+  public_round_end_ms: futureTimestamp.describe("Matching round end date."),
 
   min_matching_pool_donation_amount: donationAmount.describe(
     "Minimum donation amount.",
