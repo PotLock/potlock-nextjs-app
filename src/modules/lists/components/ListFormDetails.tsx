@@ -7,6 +7,7 @@ import React, {
 } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Check } from "lucide-react";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -22,6 +23,7 @@ import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
@@ -35,8 +37,6 @@ import {
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
 import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
-import { cn } from "@/common/ui/utils";
-import { Check } from "lucide-react";
 
 interface FormData {
   name: string;
