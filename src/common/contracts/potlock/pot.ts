@@ -4,7 +4,7 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { naxiosInstance } from "@/common/api/near";
 import { PotId } from "@/common/api/potlock";
-import { FULL_TGAS } from "@/common/constants";
+import { FULL_TGAS, TWO_HUNDREDTHS_NEAR } from "@/common/constants";
 
 import {
   Application,
@@ -234,7 +234,8 @@ export const admin_dangerously_set_pot_config = (
 
     {
       args,
-      deposit: ONE_YOCTO,
+      deposit: TWO_HUNDREDTHS_NEAR,
+      gas: FULL_TGAS,
       callbackUrl: window.location.href,
     },
   );
