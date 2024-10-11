@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { pick } from "remeda";
 import { infer as FromSchema, ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";

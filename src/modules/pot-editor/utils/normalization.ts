@@ -1,12 +1,4 @@
-import {
-  conditional,
-  evolve,
-  isNonNullish,
-  omit,
-  pipe,
-  piped,
-  prop,
-} from "remeda";
+import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { Account, Pot } from "@/common/api/potlock";
@@ -78,18 +70,6 @@ export const potIndexedDataToPotInputs = ({
       [isNonNullish, yoctoNearToFloat],
       conditional.defaultCase(() => undefined),
     ),
-  });
-
-  console.table({
-    asUTC: Temporal.Instant.from(application_start)
-      .toZonedDateTimeISO(Temporal.TimeZone.from("UTC"))
-      .toPlainDateTime()
-      .toString(),
-
-    asLocal: Temporal.Instant.from(application_start)
-      .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-      .toPlainDateTime()
-      .toString(),
   });
 
   return omit(
