@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useId, useState } from "react";
 import { show } from "@ebay/nice-modal-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { prop } from "remeda";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { prop } from "remeda";
 
 import { walletApi } from "@/common/api/near";
 import { List } from "@/common/api/potlock";
