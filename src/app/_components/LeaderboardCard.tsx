@@ -1,5 +1,3 @@
-import { Users } from "lucide-react";
-
 import Trophy from "@/common/assets/svgs/Trophy";
 
 interface LeaderboardCardProps {
@@ -25,7 +23,12 @@ export function LeaderboardCard({
         : "bg-gradient-to-r from-orange-200 to-red-200";
 
   const rankText = ["1st", "2nd", "3rd"][rank - 1];
-  const iconClass = rank === 1 ? "fill-yellow-400" : "fill-gray-600";
+  const iconClass =
+    rank === 1
+      ? "fill-yellow-400"
+      : rank === 2
+        ? "fill-gray-400"
+        : "fill-red-800";
 
   return (
     <div
@@ -33,11 +36,7 @@ export function LeaderboardCard({
     >
       <div className={`mb-4 flex items-center justify-between p-4 ${bgClass}`}>
         <div className={`p-2`}>
-          {type === "donor" ? (
-            <Trophy className={`h-6 w-6 ${iconClass}`} />
-          ) : (
-            <Users className={`h-6 w-6 ${iconClass}`} />
-          )}
+          <Trophy className={`h-6 w-6 ${iconClass}`} />
         </div>
         <span className="text-lg font-bold">{rankText}</span>
       </div>
