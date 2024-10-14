@@ -5,6 +5,7 @@ import {
   boolean,
   literal,
   nativeEnum,
+  number,
   object,
   preprocess,
   string,
@@ -57,6 +58,7 @@ export const donationSchema = object({
   recipientAccountId: string().optional().describe("Recipient account id."),
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
+  listId: number().optional().describe("List id."),
 
   message: string()
     .max(DONATION_MAX_MESSAGE_LENGTH)
@@ -82,7 +84,10 @@ export const donationSchema = object({
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),
 })
-  .refine(isDonationMatchingPotSelected, { message: "Pot is not selected." })
+  .refine(isDonationMatchingPotSelected, {
+    message: "Pot is not selected.",
+    path: ["potAccountId"],
+  })
   .refine(isDonationAmountSufficient, {
     /**
      *? NOTE: Due to an unknown issue,
@@ -94,6 +99,11 @@ export const donationSchema = object({
   });
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
+
+export const donationCrossFieldValidationTargets: (keyof DonationInputs)[] = [
+  "amount",
+  "potAccountId",
+];
 
 export type DonationFormAPI = UseFormReturn<DonationInputs>;
 

@@ -20,11 +20,13 @@ export const isDonationAmountSufficient = ({
 export type DonationMatchingPotValidationInputs = {
   allocationStrategy: DonationAllocationStrategy;
   potAccountId?: string;
+  listId?: number;
 };
 
 export const isDonationMatchingPotSelected = ({
   allocationStrategy,
   potAccountId,
+  listId,
 }: DonationMatchingPotValidationInputs) =>
   allocationStrategy === DonationAllocationStrategyEnum.split
     ? typeof potAccountId === "string" && potAccountId.length > 0

@@ -53,15 +53,16 @@ export const DonationGroupAllocation: React.FC<
   ...props
 }) => {
   const isPotDonation = "potId" in props;
-  const isListDonation = "listId" in props;
   const potId = isPotDonation ? props.potId : undefined;
-  const listId = isListDonation ? props.listId : undefined;
 
-  const [amount, tokenId, groupAllocationStrategy] = form.watch([
+  const [amount, tokenId, listId, groupAllocationStrategy] = form.watch([
     "amount",
     "tokenId",
+    "listId",
     "groupAllocationStrategy",
   ]);
+
+  const isListDonation = listId !== undefined;
 
   const {
     isLoading: isPotLoading,
@@ -245,7 +246,7 @@ export const DonationGroupAllocation: React.FC<
           {isListDonation && (
             <DonationRecipientShares
               {...{ balanceFloat, isBalanceSufficient, form }}
-              listId={props.listId}
+              listId={listId}
             />
           )}
         </div>
