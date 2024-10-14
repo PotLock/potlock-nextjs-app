@@ -40,6 +40,13 @@ const buttonVariants = cva(
           "disabled:text-[#c7c7c7] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset]",
         ),
 
+        // sec-brand
+        "sec-brand-filled": cn(
+          "bg-#fce9d5 shadow-amber outline-none translate-y-[-1.5px] text-#91321B font-bold border border-#f4b37d border-solid hover:translate-y-0 focus:shadow-#f4b37d",
+          "hover:shadow-[0px_0px_0px_1px_rgba(244, 179, 125, 1)_inset,0px_1px_1px_1px_rgba(252, 233, 213, 1)_inset,0px_0px_0px_2px_rgba(252, 233, 213, 1)_inset]",
+          "disabled:text-[#a6a6a6] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset] disabled:bg-[var(--neutral-100)]",
+        ),
+
         // Standard
         "standard-filled": cn(
           "text-[white] bg-[var(--neutral-800)]",
@@ -48,7 +55,7 @@ const buttonVariants = cva(
         ),
 
         "standard-outline": cn(
-          "bg-white hover:bg-[var(--neutral-50)",
+          "bg-white hover:bg-[var(--neutral-50) outline-none focus:shadow-[0px_0px_0px_1px_rgba(0,0,0,0.22)_inset,0px_-1px_0px_0px_rgba(15,15,15,0.15)_inset,0px_1px_2px_-0.5px_rgba(5,5,5,0.08)]",
           "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.22)_inset,0px_-1px_0px_0px_rgba(15,15,15,0.15)_inset,0px_1px_2px_-0.5px_rgba(5,5,5,0.08)]",
           "disabled:text-[#c7c7c7] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset]",
         ),
