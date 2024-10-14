@@ -16,7 +16,7 @@ import { DonationAllocationInputs } from "../models";
 import { DonationGroupAllocationKey } from "../types";
 
 export type DonationRecipientSharesProps = DonationGroupAllocationKey &
-  DonationAllocationInputs &
+  Omit<DonationAllocationInputs, "minAmountError"> &
   DonationShareAllocationDeps & {};
 
 export const DonationRecipientShares: React.FC<
@@ -59,35 +59,36 @@ export const DonationRecipientShares: React.FC<
     } else return null;
   }, [listRegistrationsError, potApplicationsError]);
 
-  return potApplications.map(({ applicant: recipientCandidate }) => (
+  const recipientCandidateIds = [...potApplications, ...listRegistrations].map(
+    (entry) =>
+      "registrant" in entry ? entry.registrant.id : entry.applicant.id,
+  );
+
+  console.log("recipientCandidateIds", recipientCandidateIds);
+
+  return recipientCandidateIds.map((accountId) => (
     <AccountOption
       highlightOnHover
-      key={recipientCandidate.id}
-      accountId={recipientCandidate.id}
+      key={accountId}
+      {...{ accountId }}
       secondaryAction={
-        groupAllocationStrategy === "evenly" ? (
-          <FormField
-            name="groupAllocationPlan"
-            control={form.control}
-            render={({ field: { value = [], ...field } }) => (
+        <FormField
+          name="groupAllocationPlan"
+          control={form.control}
+          render={({ field: { value = [], ...field } }) =>
+            groupAllocationStrategy === "evenly" ? (
               <CheckboxField
                 {...field}
                 checked={value.some(
                   (recipient) =>
-                    recipient.account_id === recipientCandidate.id &&
+                    recipient.account_id === accountId &&
                     recipient.amount !== undefined,
                 )}
                 onCheckedChange={handleEvenShareAllocation({
-                  accountId: recipientCandidate.id,
+                  accountId,
                 })}
               />
-            )}
-          />
-        ) : (
-          <FormField
-            name="groupAllocationPlan"
-            control={form.control}
-            render={({ field: { value = [], ...field } }) => (
+            ) : (
               <TextField
                 {...field}
                 type="number"
@@ -96,14 +97,10 @@ export const DonationRecipientShares: React.FC<
                 max={balanceFloat ?? undefined}
                 step={0.01}
                 defaultValue={
-                  value.find(
-                    (recipient) =>
-                      recipient.account_id === recipientCandidate.id,
-                  )?.amount
+                  value.find((recipient) => recipient.account_id === accountId)
+                    ?.amount
                 }
-                onChange={handleManualShareAllocation({
-                  accountId: recipientCandidate.id,
-                })}
+                onChange={handleManualShareAllocation({ accountId })}
                 appendix={<NearIcon width={24} height={24} />}
                 customErrorMessage={
                   isBalanceSufficient
@@ -112,9 +109,9 @@ export const DonationRecipientShares: React.FC<
                 }
                 classNames={{ fieldRoot: "w-32" }}
               />
-            )}
-          />
-        )
+            )
+          }
+        />
       }
     />
   ));

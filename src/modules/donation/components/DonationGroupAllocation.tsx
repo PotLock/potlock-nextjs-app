@@ -236,7 +236,6 @@ export const DonationGroupAllocation: React.FC<
       <ScrollArea className="h-[190px] w-full">
         <div className="flex flex-col items-center gap-0.5">
           {isPotDonation && (
-            // @ts-expect-error // TODO!: Fix this
             <DonationRecipientShares
               {...{ balanceFloat, isBalanceSufficient, form }}
               potId={props.potId}
@@ -244,7 +243,6 @@ export const DonationGroupAllocation: React.FC<
           )}
 
           {isListDonation && (
-            // @ts-expect-error // TODO!: Fix this
             <DonationRecipientShares
               {...{ balanceFloat, isBalanceSufficient, form }}
               listId={props.listId}
