@@ -89,9 +89,9 @@ const topSponsors: Participant[] = [
 export default function LeaderboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [timeFilter, setTimeFilter] = useState("All time");
-  const [selectedTab, setSelectedTab] = useState<"donors" | "sponsors">(
-    "donors",
-  ); // Updated formatting for selectedTab
+  const [selectedTab, setSelectedTab] = useState<
+    "donors" | "sponsors" | "activities"
+  >("activities"); // Updated formatting for selectedTab
 
   const toggleTab = (tab: "donors" | "sponsors") => {
     setSelectedTab(tab);
@@ -109,10 +109,12 @@ export default function LeaderboardPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <div className="flex flex-wrap gap-2">
-          {["All time", "1Y", "1W", "30D", "1D"].map((filter) => (
+          {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
             <Button
               key={filter}
-              variant={timeFilter === filter ? "default" : "outline"}
+              variant={
+                timeFilter === filter ? "sec-brand-filled" : "standard-outline"
+              }
               onClick={() => setTimeFilter(filter)}
               className="text-sm"
             >
@@ -134,20 +136,20 @@ export default function LeaderboardPage() {
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-lg bg-white shadow">
+      <div className="overflow-x-auto rounded-2xl border border-gray-200  bg-white">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                 Rank
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                 Projects
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                 Amount
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                 AMT (USD)
               </th>
             </tr>
@@ -175,7 +177,7 @@ export default function LeaderboardPage() {
                       alt=""
                     />
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-bold text-gray-900">
                         {participant.name}
                       </div>
                     </div>
@@ -199,6 +201,11 @@ export default function LeaderboardPage() {
 
   const TABs = [
     {
+      name: "activities",
+      label: "All Activities",
+      count: 20000,
+    },
+    {
       name: "donors",
       label: "Donor Leaderboard",
       count: 250,
@@ -211,22 +218,21 @@ export default function LeaderboardPage() {
   ];
 
   return (
-    <div className="container mx-auto flex flex-col px-4 py-8">
+    <div className="container mx-auto flex flex-col py-8">
       <ToggleGroup defaultValue="donors" type="single" className="w-full">
-        <div className="w-full border-b border-gray-200">
-          <div className="grid w-full grid-cols-2">
+        <div className="w-full overflow-x-scroll border-b border-gray-200">
+          <div className="w-5xl grid grid-flow-col content-center items-center px-4">
             {TABs.map((tab) => (
               <div
                 key={tab.name}
-                className={`pb-10 text-center text-lg font-semibold ${
+                className={`w-fit p-2 text-center text-lg font-semibold ${
                   selectedTab === tab.name
                     ? "text-brand-500 border-b-2 border-black"
                     : ""
                 }`}
-                onClick={() => toggleTab(tab.name)}
+                onClick={() => toggleTab(tab.name as "donors" | "sponsors")}
               >
-                <span className="hidden sm:inline">{tab.label}</span>
-                <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
+                <span className="inline">{tab.label}</span>
                 <span className="ml-2 rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-700">
                   {tab.count}
                 </span>
@@ -235,22 +241,38 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </ToggleGroup>
-      <div className="w-full py-10">
-        {selectedTab === "donors" ? (
-          <div className="w-full">
-            <h1 className="mb-8 text-center font-lora text-3xl font-bold md:text-5xl">
-              Donor Leaderboard
-            </h1>
-            {renderLeaderboard([...topDonors, ...otherDonors], "donor")}
-          </div>
-        ) : (
-          <div>
-            <h1 className="text-center font-lora text-3xl font-bold md:text-5xl">
-              Sponsor Leaderboard
-            </h1>
-            {renderLeaderboard(topSponsors, "sponsor")}
-          </div>
-        )}
+      <div className="w-full flex-nowrap py-10">
+        <div>
+          {selectedTab === "activities" ? (
+            <div>
+              <h1 className="text-center font-lora text-3xl font-bold md:text-5xl">
+                All Activities
+              </h1>
+            </div>
+          ) : (
+            ""
+          )}
+          {selectedTab === "donors" ? (
+            <div>
+              <h1 className="mb-8 text-center font-lora text-3xl font-bold md:text-5xl">
+                Donor Leaderboard
+              </h1>
+              {renderLeaderboard([...topDonors, ...otherDonors], "donor")}
+            </div>
+          ) : (
+            ""
+          )}
+          {selectedTab === "sponsors" ? (
+            <div>
+              <h1 className="text-center font-lora text-3xl font-bold md:text-5xl">
+                Sponsor Leaderboard
+              </h1>
+              {renderLeaderboard(topSponsors, "sponsor")}
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
       </div>
     </div>
   );
