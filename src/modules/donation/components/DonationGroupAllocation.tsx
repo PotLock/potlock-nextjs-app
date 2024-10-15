@@ -2,11 +2,9 @@ import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
-import { ByPotId, potlock } from "@/common/api/potlock";
-import { NearIcon } from "@/common/assets/svgs";
+import { potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
-import { ByListId } from "@/common/types";
 import {
   DialogDescription,
   DialogHeader,
@@ -21,33 +19,29 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import {
-  CheckboxField,
   SelectField,
   SelectFieldOption,
   TextField,
 } from "@/common/ui/form-fields";
-import {
-  AccountOption,
-  ModalErrorBody,
-  useNearUsdDisplayValue,
-} from "@/modules/core";
+import { ModalErrorBody, useNearUsdDisplayValue } from "@/modules/core";
 import { TokenBalance, TokenTotalValue } from "@/modules/token";
 
-import { DonationVerificationWarning } from "./DonationVerificationWarning";
+import { DonationRecipientShares } from "./DonationRecipientShares";
+import { DonationSybilWarning } from "./DonationSybilWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
-import {
-  useDonationEvenShareAllocation,
-  useDonationManualShareAllocation,
-} from "../hooks";
 import {
   DonationAllocationInputs,
   donationGroupAllocationStrategies,
 } from "../models";
-import { DonationGroupAllocationStrategyEnum, WithTotalAmount } from "../types";
+import {
+  DonationGroupAllocationKey,
+  DonationGroupAllocationStrategyEnum,
+  WithTotalAmount,
+} from "../types";
 
 export type DonationGroupAllocationProps = WithTotalAmount &
-  DonationAllocationInputs &
-  (ByPotId | ByListId);
+  DonationGroupAllocationKey &
+  DonationAllocationInputs & {};
 
 export const DonationGroupAllocation: React.FC<
   DonationGroupAllocationProps
@@ -59,15 +53,16 @@ export const DonationGroupAllocation: React.FC<
   ...props
 }) => {
   const isPotDonation = "potId" in props;
-  const isListDonation = "listId" in props;
   const potId = isPotDonation ? props.potId : undefined;
-  const listId = isListDonation ? props.listId : undefined;
 
-  const [amount, tokenId, groupAllocationStrategy] = form.watch([
+  const [amount, tokenId, listId, groupAllocationStrategy] = form.watch([
     "amount",
     "tokenId",
+    "listId",
     "groupAllocationStrategy",
   ]);
+
+  const isListDonation = listId !== undefined;
 
   const {
     isLoading: isPotLoading,
@@ -75,18 +70,11 @@ export const DonationGroupAllocation: React.FC<
     error: potError,
   } = potlock.usePot({ potId });
 
-  const { data: potApplications = [], error: potApplicationsError } =
-    potlock.usePotApplications({ potId, page_size: 100 });
-
   const {
     data: list,
     isLoading: isListLoading,
     error: listError,
   } = potlock.useList({ listId });
-
-  const { data: listRegistrations = [] } = potlock.useListRegistrations({
-    listId,
-  });
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
@@ -143,90 +131,6 @@ export const DonationGroupAllocation: React.FC<
     [form.control, isListLoading, isPotLoading, onEvenShareAllocationClick],
   );
 
-  const handleEvenShareAllocation = useDonationEvenShareAllocation({
-    form,
-    totalAmountFloat,
-  });
-
-  const handleManualShareAllocation = useDonationManualShareAllocation({
-    form,
-  });
-
-  const recipientShares = useMemo(
-    () =>
-      pot
-        ? potApplications.map(({ applicant: recipientCandidate }) => (
-            <AccountOption
-              key={recipientCandidate.id}
-              accountId={recipientCandidate.id}
-              secondaryAction={
-                groupAllocationStrategy === "evenly" ? (
-                  <FormField
-                    name="groupAllocationPlan"
-                    control={form.control}
-                    render={({ field: { value = [], ...field } }) => (
-                      <CheckboxField
-                        {...field}
-                        checked={value.some(
-                          (recipient) =>
-                            recipient.account_id === recipientCandidate.id &&
-                            recipient.amount !== undefined,
-                        )}
-                        onCheckedChange={handleEvenShareAllocation({
-                          accountId: recipientCandidate.id,
-                        })}
-                      />
-                    )}
-                  />
-                ) : (
-                  <FormField
-                    name="groupAllocationPlan"
-                    control={form.control}
-                    render={({ field: { value = [], ...field } }) => (
-                      <TextField
-                        {...field}
-                        type="number"
-                        placeholder="0.00"
-                        min={0}
-                        max={balanceFloat ?? undefined}
-                        step={0.01}
-                        defaultValue={
-                          value.find(
-                            (recipient) =>
-                              recipient.account_id === recipientCandidate.id,
-                          )?.amount
-                        }
-                        onChange={handleManualShareAllocation({
-                          accountId: recipientCandidate.id,
-                        })}
-                        appendix={<NearIcon width={24} height={24} />}
-                        customErrorMessage={
-                          isBalanceSufficient
-                            ? null
-                            : DONATION_INSUFFICIENT_BALANCE_ERROR
-                        }
-                        classNames={{ fieldRoot: "w-32" }}
-                      />
-                    )}
-                  />
-                )
-              }
-            />
-          ))
-        : null,
-
-    [
-      pot,
-      potApplications,
-      groupAllocationStrategy,
-      form.control,
-      handleEvenShareAllocation,
-      balanceFloat,
-      handleManualShareAllocation,
-      isBalanceSufficient,
-    ],
-  );
-
   const errorDetails = useMemo(() => {
     if (potError) {
       return {
@@ -234,20 +138,14 @@ export const DonationGroupAllocation: React.FC<
         title: "Unable to load pot data!",
         message: potError.message,
       };
-    } else if (potApplicationsError) {
-      return {
-        heading: "Pot donation",
-        title: "Unable to load recipients' data!",
-        message: potApplicationsError.message,
-      };
     } else if (listError) {
       return {
         heading: "List donation",
-        title: "Unable to load recipients' data!",
+        title: "Unable to load list data!",
         message: listError.message,
       };
     } else return null;
-  }, [listError, potApplicationsError, potError]);
+  }, [listError, potError]);
 
   return errorDetails ? (
     <ModalErrorBody {...errorDetails} />
@@ -265,7 +163,7 @@ export const DonationGroupAllocation: React.FC<
 
       <DialogDescription>
         {strategySelect}
-        <DonationVerificationWarning />
+        {potId && <DonationSybilWarning {...{ potId }} />}
 
         {groupAllocationStrategy ===
         DonationGroupAllocationStrategyEnum.evenly ? (
@@ -338,7 +236,19 @@ export const DonationGroupAllocation: React.FC<
 
       <ScrollArea className="h-[190px] w-full">
         <div className="flex flex-col items-center gap-0.5">
-          {recipientShares}
+          {isPotDonation && (
+            <DonationRecipientShares
+              {...{ balanceFloat, isBalanceSufficient, form }}
+              potId={props.potId}
+            />
+          )}
+
+          {isListDonation && (
+            <DonationRecipientShares
+              {...{ balanceFloat, isBalanceSufficient, form }}
+              listId={listId}
+            />
+          )}
         </div>
       </ScrollArea>
     </>

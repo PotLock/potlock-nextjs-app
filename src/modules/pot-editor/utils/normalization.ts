@@ -1,12 +1,5 @@
-import {
-  conditional,
-  evolve,
-  isNonNullish,
-  omit,
-  pipe,
-  piped,
-  prop,
-} from "remeda";
+import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
+import { Temporal } from "temporal-polyfill";
 
 import { Account, Pot } from "@/common/api/potlock";
 import {
@@ -20,14 +13,7 @@ import {
   PotArgs,
   PotConfig,
 } from "@/common/contracts/potlock";
-import {
-  floatToYoctoNear,
-  formatDatetimeLocal,
-  localeStringToTimestampMs,
-  millisecondsToLocaleString,
-  timestamp,
-  yoctoNearToFloat,
-} from "@/common/lib";
+import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
 import {
   donationAmount,
   donationFeeBasisPointsToPercents,
@@ -95,10 +81,27 @@ export const potIndexedDataToPotInputs = ({
       pot_name: name,
       pot_description: description,
       max_projects: max_approved_applicants,
-      application_start_ms: formatDatetimeLocal(application_start),
-      application_end_ms: formatDatetimeLocal(application_end),
-      public_round_start_ms: formatDatetimeLocal(matching_round_start),
-      public_round_end_ms: formatDatetimeLocal(matching_round_end),
+
+      application_start_ms: Temporal.Instant.from(application_start)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString(),
+
+      application_end_ms: Temporal.Instant.from(application_end)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString(),
+
+      public_round_start_ms: Temporal.Instant.from(matching_round_start)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString(),
+
+      public_round_end_ms: Temporal.Instant.from(matching_round_end)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString(),
+
       registry_provider: registry_provider ?? undefined,
       isPgRegistrationRequired: typeof registry_provider === "string",
       sybil_wrapper_provider: sybil_wrapper_provider ?? undefined,
@@ -156,7 +159,7 @@ export const potIndexedFieldToString = (
 ): null | string => {
   switch (typeof value) {
     case "boolean": {
-      return value ? subtitle ?? null : "No";
+      return value ? (subtitle ?? null) : "No";
     }
 
     case "number": {
@@ -167,13 +170,9 @@ export const potIndexedFieldToString = (
 
     case "string": {
       if (key.includes("ms")) {
-        return pipe(
-          value,
-          localeStringToTimestampMs,
-          millisecondsToLocaleString,
-        );
+        return Temporal.Instant.from(value).toLocaleString();
       } else if (key.includes("provider")) {
-        return typeof value === "string" ? subtitle ?? null : "No";
+        return typeof value === "string" ? (subtitle ?? null) : "No";
       } else {
         switch (key) {
           case "min_matching_pool_donation_amount":

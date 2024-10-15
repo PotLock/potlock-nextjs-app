@@ -123,7 +123,7 @@ export const CampaignForm = () => {
             name="target_amount"
             render={({ field }) => (
               <NearInputField
-                className="w-[45%] appearance-none"
+                className="md:w-[42%] appearance-none"
                 label="Target Amount"
                 required
                 {...field}

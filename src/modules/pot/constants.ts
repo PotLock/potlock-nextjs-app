@@ -1,4 +1,4 @@
-import { POT_FACTORY_CONTRACT_ID } from "@/common/constants";
+import { NETWORK, POT_FACTORY_CONTRACT_ID } from "@/common/constants";
 import { TabNav } from "@/modules/profile/types";
 
 export const POT_MIN_NAME_LENGTH = 3;
@@ -89,3 +89,6 @@ export const POT_TABS_CONFIG = [
     href: "/settings",
   },
 ] as TabNav[];
+
+export const STAKE_WEIGHTED_POT_IDS =
+  NETWORK === "mainnet" ? ["mpdao.v1.potfactory.potlock.near"] : [];

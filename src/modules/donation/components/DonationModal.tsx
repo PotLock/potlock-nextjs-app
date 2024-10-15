@@ -34,6 +34,7 @@ export const DonationModal = create((props: DonationModalProps) => {
     setSearchParams({
       donateTo: null,
       donateToPot: null,
+      donateToList: null,
       transactionHashes: null,
     });
   }, [self, setSearchParams]);

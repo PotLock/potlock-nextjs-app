@@ -7,7 +7,7 @@ import "@/common/ui/styles/fonts.css";
 import "@/common/ui/styles/theme.css";
 import "@/common/ui/styles/uno.generated.css";
 
-import { ReactElement, ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 
 import { Provider as NiceModalProvider } from "@ebay/nice-modal-react";
 import { NextPage } from "next";
@@ -17,6 +17,7 @@ import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
+import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 import { Nav } from "@/modules/core";
@@ -29,7 +30,7 @@ const lora = Lora({
 });
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode;
+  getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -55,15 +56,14 @@ export default function RootLayout({
         <NiceModalProvider>
           <AuthProvider>
             <div
-              un-flex="~ col"
-              un-items="center"
-              className={`${cn("font-lora antialiased", lora.variable)}`}
+              className={`${cn("flex h-full flex-col items-center font-lora antialiased", lora.variable)}`}
             >
               <Nav />
               {getLayout(<Component {...pageProps} />)}
             </div>
           </AuthProvider>
         </NiceModalProvider>
+        <Toaster />
       </ReduxProvider>
     </>
   );

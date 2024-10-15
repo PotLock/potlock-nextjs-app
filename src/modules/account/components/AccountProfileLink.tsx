@@ -3,7 +3,7 @@ import Link from "next/link";
 import { potlock } from "@/common/api/potlock";
 import { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
-import { AccountAvatar } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 
 export type AccountProfileLinkProps = ByAccountId & {
@@ -26,7 +26,7 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
         classNames?.root,
       )}
     >
-      <AccountAvatar
+      <AccountProfilePicture
         {...{ accountId }}
         className={cn("h-5 w-5", classNames?.avatar)}
       />

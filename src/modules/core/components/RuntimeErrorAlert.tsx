@@ -1,3 +1,5 @@
+import { AlertCircle } from "lucide-react";
+
 import { Alert, AlertDescription, AlertTitle } from "@/common/ui/components";
 
 export type RuntimeErrorAlertProps = {
@@ -12,6 +14,7 @@ export const RuntimeErrorAlert: React.FC<RuntimeErrorAlertProps> = ({
   callToAction,
 }) => (
   <Alert variant="destructive" className="flex flex-col gap-4 bg-white">
+    <AlertCircle className="h-4 w-4" />
     <AlertTitle>{title}</AlertTitle>
 
     <AlertDescription className="flex flex-col gap-4">

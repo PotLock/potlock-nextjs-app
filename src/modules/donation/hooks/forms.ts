@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { omit } from "remeda";
+import { ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
-import { PotApplicationStatusEnum, potlock } from "@/common/api/potlock";
+import { StatusF24Enum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
 import { useIsHuman } from "@/modules/core";
@@ -16,7 +17,12 @@ import {
   DONATION_MIN_NEAR_AMOUNT,
   DONATION_MIN_NEAR_AMOUNT_ERROR,
 } from "../constants";
-import { DonationInputs, donationSchema, donationTokenSchema } from "../models";
+import {
+  DonationInputs,
+  donationCrossFieldValidationTargets,
+  donationSchema,
+  donationTokenSchema,
+} from "../models";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
@@ -34,6 +40,9 @@ export const useDonationForm = ({
 }: DonationFormParams) => {
   const isSingleProjectDonation = "accountId" in params;
   const isPotDonation = "potId" in params;
+  const isListDonation = "listId" in params;
+  const potAccountId = isPotDonation ? params.potId : undefined;
+  const listId = isListDonation ? params.listId : undefined;
 
   const recipientAccountId = isSingleProjectDonation
     ? params.accountId
@@ -41,7 +50,7 @@ export const useDonationForm = ({
 
   const { data: matchingPotsPaginated } = potlock.useAccountActivePots({
     accountId: recipientAccountId,
-    status: PotApplicationStatusEnum.Approved,
+    status: StatusF24Enum.Approved,
   });
 
   const matchingPots = matchingPotsPaginated?.results ?? [];
@@ -57,7 +66,8 @@ export const useDonationForm = ({
       tokenId: donationTokenSchema.parse(undefined),
       recipientAccountId,
       referrerAccountId,
-      potAccountId: isPotDonation ? params.potId : defaultPotAccountId,
+      potAccountId: isPotDonation ? potAccountId : defaultPotAccountId,
+      listId,
 
       allocationStrategy: isSingleProjectDonation
         ? DonationAllocationStrategyEnum[
@@ -75,8 +85,9 @@ export const useDonationForm = ({
       defaultPotAccountId,
       isPotDonation,
       isSingleProjectDonation,
+      listId,
       matchingPots.length,
-      params,
+      potAccountId,
       recipientAccountId,
       referrerAccountId,
     ],
@@ -94,13 +105,40 @@ export const useDonationForm = ({
   const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
   const { balanceFloat } = useTokenBalance({ tokenId });
 
-  const totalAmountFloat =
-    values.allocationStrategy === DonationAllocationStrategyEnum.split
-      ? values.groupAllocationPlan?.reduce(
-          (total, { amount }) => total + (amount ?? 0.0),
-          0.0,
-        ) ?? 0.0
-      : amount;
+  const totalAmountFloat = isSingleProjectDonation
+    ? amount
+    : (values.groupAllocationPlan?.reduce(
+        (total, { amount }) => total + (amount ?? 0.0),
+        0.0,
+      ) ?? 0.0);
+
+  const [crossFieldErrors, setCrossFieldErrors] = useState<
+    FieldErrors<DonationInputs>
+  >({});
+
+  useEffect(
+    () =>
+      void donationSchema
+        .parseAsync(values as DonationInputs)
+        .then(() => setCrossFieldErrors({}))
+        .catch((error: ZodError) =>
+          setCrossFieldErrors(
+            error?.issues.reduce((schemaErrors, { code, message, path }) => {
+              const fieldPath = path.at(0);
+
+              return donationCrossFieldValidationTargets.includes(
+                fieldPath as keyof DonationInputs,
+              ) &&
+                typeof fieldPath === "string" &&
+                code === "custom"
+                ? { ...schemaErrors, [fieldPath]: { message, type: code } }
+                : schemaErrors;
+            }, {}),
+          ),
+        ),
+
+    [values],
+  );
 
   const hasChanges = Object.keys(values).some(
     (key) =>
@@ -136,7 +174,7 @@ export const useDonationForm = ({
     if (
       isSingleProjectDonation &&
       values.potAccountId === undefined &&
-      defaultPotAccountId
+      defaultPotAccountId !== undefined
     ) {
       self.setValue("potAccountId", defaultPotAccountId);
     }
@@ -149,12 +187,16 @@ export const useDonationForm = ({
     isSingleProjectDonation,
   ]);
 
-  console.table(omit(values, ["groupAllocationPlan"]));
-
-  values.groupAllocationPlan?.forEach((entry) => console.table(entry));
-
   return {
-    form: self,
+    form: {
+      ...self,
+
+      formState: {
+        ...self.formState,
+        errors: { ...self.formState.errors, ...crossFieldErrors },
+      },
+    },
+
     defaultValues,
     hasChanges,
     isBalanceSufficient,

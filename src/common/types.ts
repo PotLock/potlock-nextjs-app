@@ -1,6 +1,8 @@
 import { Account } from "near-api-js";
 import { SWRConfiguration } from "swr";
 
+export type { infer as FromSchema } from "zod";
+
 export type ClientConfig = { swr?: SWRConfiguration };
 
 export interface ConditionalExecution {
@@ -40,3 +42,7 @@ export interface ByListId {
  * `"{CONTRACT_ADDRESS}:{METHOD_NAME}"`
  */
 export type ProviderId = string;
+
+export interface ByRegistrationId {
+  registrationId: number;
+}

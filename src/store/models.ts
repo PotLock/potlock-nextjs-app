@@ -4,6 +4,7 @@ import { auth } from "@/modules/auth/state";
 import { cartModel } from "@/modules/cart";
 import { core } from "@/modules/core";
 import { donationModel, donationModelKey } from "@/modules/donation";
+import { listEditorModel } from "@/modules/lists";
 import { potEditorModel, potEditorModelKey } from "@/modules/pot-editor";
 import { navModel, profilesModel } from "@/modules/profile";
 import {
@@ -19,6 +20,7 @@ export interface AppModel extends Models<AppModel> {
   nav: typeof navModel;
   [potEditorModelKey]: typeof potEditorModel;
   profiles: typeof profilesModel;
+  listEditor: typeof listEditorModel;
   [projectEditorModelKey]: typeof projectEditorModel;
 }
 
@@ -28,6 +30,7 @@ export const models: AppModel = {
   cart: cartModel,
   [donationModelKey]: donationModel,
   nav: navModel,
+  listEditor: listEditorModel,
   [potEditorModelKey]: potEditorModel,
   profiles: profilesModel,
   [projectEditorModelKey]: projectEditorModel,

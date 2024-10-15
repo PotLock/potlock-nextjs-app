@@ -28,7 +28,7 @@ import {
 import { ModalErrorBody, useNearUsdDisplayValue } from "@/modules/core";
 import { TokenBalance } from "@/modules/token";
 
-import { DonationVerificationWarning } from "./DonationVerificationWarning";
+import { DonationSybilWarning } from "./DonationSybilWarning";
 import {
   DONATION_INSUFFICIENT_BALANCE_ERROR,
   DONATION_MIN_NEAR_AMOUNT,
@@ -52,10 +52,11 @@ export const DonationDirectAllocation: React.FC<
   balanceFloat,
   matchingPots,
 }) => {
-  const [amount, tokenId, allocationStrategy] = form.watch([
+  const [amount, tokenId, allocationStrategy, potId] = form.watch([
     "amount",
     "tokenId",
     "allocationStrategy",
+    "potAccountId",
   ]);
 
   const { data: availableFts } = pagoda.useFtAccountBalances({
@@ -124,9 +125,8 @@ export const DonationDirectAllocation: React.FC<
           )}
         />
 
-        {allocationStrategy === DonationAllocationStrategyEnum.split && (
-          <DonationVerificationWarning />
-        )}
+        {allocationStrategy === DonationAllocationStrategyEnum.split &&
+          potId && <DonationSybilWarning {...{ potId }} />}
 
         {allocationStrategy === DonationAllocationStrategyEnum.split &&
           hasMatchingPots && (

@@ -1,11 +1,13 @@
-import { useCallback, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 
 import { Pencil } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
-import { pick } from "remeda";
 
 import { potlock } from "@/common/api/potlock";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Button,
   DialogDescription,
   DialogHeader,
@@ -21,31 +23,48 @@ import { cn } from "@/common/ui/utils";
 import { AccountProfileLink } from "@/modules/account";
 import { TokenTotalValue } from "@/modules/token";
 
-import { DonationSummaryBreakdown } from "./breakdowns";
+import {
+  DonationGroupAllocationBreakdown,
+  DonationSummaryBreakdown,
+} from "./breakdowns";
 import { useDonationAllocationBreakdown } from "../hooks";
-import { DonationInputs } from "../models";
-import { WithTotalAmount } from "../types";
+import { WithDonationFormAPI } from "../models";
+import { DonationAllocationStrategyEnum, WithTotalAmount } from "../types";
 
-export type DonationConfirmationProps = WithTotalAmount & {
-  form: UseFormReturn<DonationInputs>;
-};
+export type DonationConfirmationProps = WithTotalAmount &
+  WithDonationFormAPI & {};
 
 export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
   totalAmountFloat,
 }) => {
+  const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
-  const inputs = form.watch();
-  const { data: pot } = potlock.usePot({ potId: inputs.potAccountId });
+
+  const [
+    tokenId,
+    recipientAccountId,
+    potAccountId,
+    referrerAccountId,
+    bypassProtocolFee,
+    bypassChefFee,
+  ] = form.watch([
+    "tokenId",
+    "recipientAccountId",
+    "potAccountId",
+    "referrerAccountId",
+    "bypassProtocolFee",
+    "bypassChefFee",
+  ]);
+
+  const isSingleProjectDonation = typeof recipientAccountId === "string";
+  const { data: pot } = potlock.usePot({ potId: potAccountId });
 
   const breakdown = useDonationAllocationBreakdown({
-    ...pick(inputs, [
-      "referrerAccountId",
-      "bypassProtocolFee",
-      "bypassChefFee",
-    ]),
-
     pot,
+    referrerAccountId,
+    bypassProtocolFee,
+    bypassChefFee,
     totalAmountFloat,
   });
 
@@ -62,6 +81,20 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
     breakdown;
 
+  const totalAmount = useMemo(
+    () => (
+      <div className="flex flex-col items-start justify-between gap-1">
+        <span className="prose font-600 text-neutral-600">
+          {"Total amount"}
+        </span>
+
+        <TokenTotalValue tokenId={tokenId} amountFloat={totalAmountFloat} />
+      </div>
+    ),
+
+    [tokenId, totalAmountFloat],
+  );
+
   return (
     <>
       <DialogHeader>
@@ -69,18 +102,26 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
       </DialogHeader>
 
       <DialogDescription>
-        <div un-flex="~ col" un-gap="1" un-items="start" un-justify="between">
-          <span className="prose" un-text="neutral-600" un-font="600">
-            {"Total amount"}
-          </span>
+        {isSingleProjectDonation ? (
+          totalAmount
+        ) : (
+          <Accordion collapsible type="single">
+            <AccordionItem
+              value={detailedBreakdownAccordionId}
+              className="border-none"
+            >
+              <AccordionTrigger className="hover:decoration-none p-0">
+                {totalAmount}
+              </AccordionTrigger>
 
-          <TokenTotalValue
-            tokenId={inputs.tokenId}
-            amountFloat={totalAmountFloat}
-          />
-        </div>
+              <AccordionContent asChild className="p-0 pt-2">
+                <DonationGroupAllocationBreakdown {...{ form }} />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
 
-        <DonationSummaryBreakdown tokenId={inputs.tokenId} data={breakdown} />
+        <DonationSummaryBreakdown data={breakdown} {...{ tokenId }} />
 
         <div className="flex flex-col gap-2">
           {protocolFeePercent > 0 && (
@@ -93,7 +134,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   onCheckedChange={field.onChange}
                   label={
                     <>
-                      <span>{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
+                      <span className="prose">{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
 
                       {protocolFeeRecipientAccountId && (
                         <AccountProfileLink
@@ -107,7 +148,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             />
           )}
 
-          {inputs.potAccountId && chefFeePercent > 0 && (
+          {potAccountId && chefFeePercent > 0 && (
             <FormField
               control={form.control}
               name="bypassChefFee"
@@ -130,12 +171,12 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           )}
         </div>
 
-        {inputs.recipientAccountId && (
+        {isSingleProjectDonation && (
           <FormField
             control={form.control}
             name="message"
             render={({ field }) => {
-              const isSpecified = typeof field.value === "string";
+              const isNoteAttached = typeof field.value === "string";
 
               return (
                 <FormItem
@@ -144,18 +185,19 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   }
                 >
                   <Button
-                    onClick={isSpecified ? onDeleteNoteClick : onAddNoteClick}
+                    asChild
+                    onClick={
+                      isNoteAttached ? onDeleteNoteClick : onAddNoteClick
+                    }
                     variant="brand-plain"
                     className={cn("p-0", {
-                      "color-neutral-500": !isSpecified,
-                      "color-destructive": isSpecified,
+                      "color-neutral-500": !isNoteAttached,
+                      "color-destructive": isNoteAttached,
                     })}
-                    asChild
                   >
                     <FormLabel className="flex justify-center gap-3.5">
                       <Pencil width={14} height={14} />
-
-                      <span un-font="500">{`${isSpecified ? "Delete" : "Add"} Note`}</span>
+                      <span un-font="500">{`${isNoteAttached ? "Delete" : "Add"} Note`}</span>
                     </FormLabel>
                   </Button>
 

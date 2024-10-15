@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { pick } from "remeda";
 import { infer as FromSchema, ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
@@ -19,11 +20,11 @@ import { dispatch } from "@/store";
 
 import {
   PotEditorDeploymentInputs,
+  PotEditorDeploymentSchema,
   PotEditorSettings,
+  PotEditorSettingsSchema,
   potEditorDeploymentCrossFieldValidationTargets,
-  potEditorDeploymentSchema,
   potEditorSettingsCrossFieldValidationTargets,
-  potEditorSettingsSchema,
 } from "../models";
 import {
   potConfigToSettings,
@@ -32,13 +33,15 @@ import {
 
 export type PotEditorFormArgs =
   | (ByPotId & {
-      schema: typeof potEditorSettingsSchema;
+      schema: PotEditorDeploymentSchema;
     })
-  | { schema: typeof potEditorDeploymentSchema };
+  | { schema: PotEditorSettingsSchema };
 
 export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = "potId" in props && typeof potId !== "string";
+
+  const { data: potIndexedData } = potlock.usePot({ potId });
 
   type Values = FromSchema<typeof schema>;
 
@@ -46,15 +49,13 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
     contractMetadata: { latestSourceCodeCommitHash },
   } = useCoreState();
 
-  const { data: existingPotData } = potlock.usePot({ potId });
-
   const existingValues = useMemo<Partial<Values>>(
     () =>
-      existingPotData === undefined
+      potIndexedData === undefined
         ? {}
-        : potIndexedDataToPotInputs(existingPotData),
+        : potIndexedDataToPotInputs(potIndexedData),
 
-    [existingPotData],
+    [potIndexedData],
   );
 
   const defaultValues = useMemo<Partial<Values>>(
@@ -86,15 +87,16 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
 
   const self = useForm<Values>({
     resolver: zodResolver(schema),
-    mode: "onChange",
+    mode: "all",
     defaultValues,
-    resetOptions: { keepDirtyValues: true },
+    resetOptions: { keepDirtyValues: false },
   });
 
   const values = useWatch(self);
 
   const handleAdminsUpdate = useCallback(
-    (accountIds: AccountId[]) => self.setValue("admins", accountIds),
+    (accountIds: AccountId[]) =>
+      self.setValue("admins", accountIds, { shouldDirty: true }),
     [self],
   );
 

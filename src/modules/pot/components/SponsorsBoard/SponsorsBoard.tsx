@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { truncate } from "@/common/lib";
-import { AccountAvatar } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import useProfileData from "@/modules/profile/hooks/data";
 
@@ -23,7 +23,7 @@ const Sponsor = ({
 
   return (
     <div className={`item ${colIdx === 2 && "first"}`}>
-      <AccountAvatar accountId={donorId} className={avatarSize} />
+      <AccountProfilePicture accountId={donorId} className={avatarSize} />
       <Link
         href={`${routesPath.PROFILE}/${donorId}`}
         target="_blank"

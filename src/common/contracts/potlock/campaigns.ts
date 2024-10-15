@@ -7,8 +7,8 @@ import { floatToYoctoNear } from "@/common/lib";
 import { CampaignFormFields } from "./interfaces/campaign.interfaces";
 
 export const contractApi = naxiosInstance.contractApi({
-  contractId: CAMPAIGN_CONTRACT_ID,
-  cache: new MemoryCache({ expirationTime: 10 }),
+    contractId: CAMPAIGN_CONTRACT_ID,
+    cache: new MemoryCache({ expirationTime: 10 }),
 });
 
 /**
@@ -16,9 +16,16 @@ export const contractApi = naxiosInstance.contractApi({
  */
 
 export const create_campaign = ({ args }: { args: CampaignFormFields }) => {
-  return contractApi.call("create_campaign", {
-    args,
-    deposit: floatToYoctoNear(0.021),
-    gas: "300000000000000",
-  });
+    return contractApi.call("create_campaign", {
+        args,
+        deposit: floatToYoctoNear(0.021),
+        gas: "300000000000000",
+    });
 };
+
+/**
+ * GET CAMPAIGNS
+ */
+
+export const get_campaigns = () =>
+    contractApi.view<{}, CampaignFormFields[]>("get_campaigns");
