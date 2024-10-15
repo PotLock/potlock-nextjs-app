@@ -3,9 +3,8 @@ import { forwardRef } from "react";
 import { useNearUsdDisplayValue } from "@/modules/core";
 
 import { TextField } from "./text";
-import { FormControl, FormItem, FormLabel, Input } from "../components";
+import { FormControl, FormItem, FormLabel } from "../components";
 
-// prettier-ignore
 export interface InputFieldProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
