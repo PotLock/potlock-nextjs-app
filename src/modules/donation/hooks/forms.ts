@@ -187,17 +187,6 @@ export const useDonationForm = ({
     isSingleProjectDonation,
   ]);
 
-  console.table(omit(values, ["groupAllocationPlan"]));
-
-  values.groupAllocationPlan?.forEach((entry) => console.table(entry));
-
-  console.log({
-    isValid: self.formState.isValid,
-  });
-
-  console.log(self.formState.validatingFields);
-  console.log({ ...self.formState.errors, ...crossFieldErrors });
-
   return {
     form: {
       ...self,

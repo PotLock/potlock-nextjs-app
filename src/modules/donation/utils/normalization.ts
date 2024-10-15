@@ -30,13 +30,16 @@ export const donationInputsToBatchDonationDraft = ({
           : txs.concat([
               {
                 args: {
-                  project_id: account_id,
-                  referrer_id: referrerAccountId,
-                  bypass_protocol_fee: bypassProtocolFee,
+                  ...(potAccountId
+                    ? { project_id: account_id }
+                    : { recipient_id: account_id }),
 
                   ...(potAccountId && bypassChefFee
                     ? { custom_chef_fee_basis_points: 0 }
                     : {}),
+
+                  referrer_id: referrerAccountId,
+                  bypass_protocol_fee: bypassProtocolFee,
                 },
 
                 amountYoctoNear: floatToYoctoNear(donationAmount),

@@ -57,9 +57,13 @@ export const useListDeploymentSuccessRedirect = () => {
     }
   }, [
     isTransactionOutcomeDetected,
+    listValues.name,
+    listValues.type,
     resultModal,
     setSearchParams,
+    toast,
     transactionHash,
     type,
+    voteType,
   ]);
 };

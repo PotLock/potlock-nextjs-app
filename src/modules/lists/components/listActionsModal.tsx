@@ -13,7 +13,7 @@ import {
 } from "@/common/ui/components";
 import { dispatch } from "@/store";
 
-import DonationSuccess from "./Donation/DonationSuccess";
+import DonationSuccess from "./DonationSuccess";
 import { SuccessModalCreateList } from "./ListConfirmationModals";
 import { useListActionsState } from "../models";
 import { ListFormModalType } from "../types";
@@ -74,7 +74,19 @@ export const ListActionsModal = create((_: ListActionsModal) => {
         </Button>
       </DialogDescription>
     );
-  }, [close, data, error]);
+  }, [
+    accountId,
+    amount,
+    breakdown,
+    close,
+    deleteType,
+    description,
+    header,
+    push,
+    selectedProjects,
+    transferType,
+    type,
+  ]);
 
   return [
     ListFormModalType.CREATE_LIST,
