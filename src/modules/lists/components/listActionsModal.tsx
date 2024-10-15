@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
 
 import SuccessRedIcon from "@/common/assets/svgs/success-red-icon";
@@ -10,7 +10,6 @@ import {
   DataLoadingPlaceholder,
   Dialog,
   DialogContent,
-  DialogHeader,
 } from "@/common/ui/components";
 import { dispatch } from "@/store";
 
@@ -67,8 +66,7 @@ export const ListActionsModal = create((_: ListActionsModal) => {
         <Button
           onClick={() => {
             close();
-            if (transferType) push(`/list/${query.id}`);
-            if (deleteType) push(`/list`);
+            if (deleteType || transferType) push(`/lists`);
           }}
           variant="brand-outline"
         >
@@ -100,7 +98,9 @@ export const ListActionsModal = create((_: ListActionsModal) => {
         className="max-w-115 "
         onCloseClick={close}
       >
-        {data === undefined && !deleteType ? (
+        {data === undefined &&
+        !deleteType &&
+        type !== ListFormModalType.UNREGISTER ? (
           <DataLoadingPlaceholder
             text="Loading List Changes..."
             className="h-106"

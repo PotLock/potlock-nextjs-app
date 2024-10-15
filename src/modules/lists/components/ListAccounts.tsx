@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-
-import { filter } from "remeda";
+/* eslint-disable prettier/prettier */
+import React, { useEffect, useState } from "react";
 
 import { List } from "@/common/api/potlock";
 import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
@@ -8,6 +7,8 @@ import { statuses } from "@/modules/project/constants";
 
 import { AccountCard } from "./AccountCard";
 import { ListCardSkeleton } from "./ListCardSkeleton";
+import { NoListItem } from "./NoListItem";
+import { NoListItemType } from "../types";
 
 interface ListAccountsType {
   loadingListData: boolean;
@@ -56,8 +57,6 @@ export const ListAccounts = ({
       },
     },
   ];
-
-  // const registrationsProfile = useTypedSelector((state) => state.profiles);
 
   const handleFilter = (registration: any) => {
     const matchesSearch = search
@@ -110,6 +109,8 @@ export const ListAccounts = ({
     }
   }, [listData]);
 
+  const data = search ? searchedAccounts : filteredRegistrations ?? [];
+
   return (
     <div className="md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
       <div className="flex w-full flex-col gap-5">
@@ -135,25 +136,33 @@ export const ListAccounts = ({
           />
         </div>
       </div>
-      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
-        {isLoading
-          ? Array.from({ length: 12 }, (_, index) => (
-              <ListCardSkeleton key={index} />
-            ))
-          : (searchedAccounts.length
-              ? searchedAccounts
-              : (filteredRegistrations ?? [])
-            )?.map((item, index) => (
-              <AccountCard
-                accountsWithAccess={accountsWithAccess}
-                dataForList={item}
-                key={index}
-              />
-            ))}
-        {filteredRegistrations?.length === 0 && !isLoading && (
-          <p>No Registrations present</p>
-        )}
-      </div>
+      {isLoading ? (
+        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+          {Array.from({ length: 12 }, (_, index) => (
+            <ListCardSkeleton key={index} />
+          ))}
+        </div>
+      ) : data?.length ? (
+        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+          {data?.map((item, index) => (
+            <AccountCard
+              accountsWithAccess={accountsWithAccess}
+              dataForList={item}
+              key={index}
+            />
+          ))}
+        </div>
+      ) : (
+        <NoListItem
+          type={
+            search !== "" ||
+            JSON.stringify(statusFilter) != JSON.stringify(["all"])
+              ? NoListItemType.NO_RESULTS
+              : NoListItemType.ACCOUNT
+          }
+          showButton={false}
+        />
+      )}
     </div>
   );
 };

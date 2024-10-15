@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 
 import { walletApi } from "@/common/api/near";
-import { StatusF24Enum } from "@/common/api/potlock";
 import { LayersIcon } from "@/common/assets/svgs";
 import { LikeIcon } from "@/common/assets/svgs/like";
 import { remove_upvote, upvote } from "@/common/contracts/potlock/lists";
@@ -27,7 +26,6 @@ export const ListCard = ({
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [profileImage, setProfileImage] = useState("");
   const { push } = useRouter();
-
   useEffect(() => {
     const fetchProfileImage = async () => {
       const { image } = await fetchSocialImages({
@@ -45,10 +43,10 @@ export const ListCard = ({
 
   const handleRoute = useCallback(
     () => push(`/list/${dataForList?.on_chain_id}`),
-    [dataForList?.on_chain_id],
+    [dataForList?.id],
   );
 
-  const handleUpvote = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isUpvoted) {
       remove_upvote({ list_id: dataForList?.on_chain_id });
@@ -66,7 +64,7 @@ export const ListCard = ({
   };
 
   const handleRouteUser = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+    (e: React.MouseEvent) => {
       e.stopPropagation();
       push(`/profile/${dataForList?.owner?.id}`);
     },
@@ -110,7 +108,7 @@ export const ListCard = ({
           >
             <LayersIcon />
             <p className="text-[12px] font-[600]">
-              {dataForList?.total_registrations_count} Accounts
+              {dataForList?.registrations_count} Accounts
             </p>
           </div>
         </div>
@@ -144,7 +142,7 @@ export const ListCard = ({
                 )}
               </button>
               <p className="m-0 p-0 pt-1 text-[16px] font-semibold text-black">
-                {dataForList.upvotes?.length + (isUpvoted ? 1 : 0)}
+                {dataForList.upvotes?.length}
               </p>
             </div>
           </div>

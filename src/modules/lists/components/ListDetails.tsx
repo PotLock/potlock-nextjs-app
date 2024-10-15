@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { prop } from "remeda";
 
 import { walletApi } from "@/common/api/near";
-import { ListRegistration } from "@/common/api/potlock";
+import { List } from "@/common/api/potlock";
 import {
   AdminUserIcon,
   DeleteListIcon,
@@ -19,8 +20,8 @@ import {
   remove_upvote,
   upvote,
 } from "@/common/contracts/potlock/lists";
+import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { AccountId } from "@/common/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,58 +32,56 @@ import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { AccessControlListModal } from "@/modules/access-control/components/AccessControlListModal";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
-import { DonateToListProjects } from "@/modules/donation";
+import { dispatch } from "@/store";
 
 import { ApplyToListModal } from "./ApplyToListModal";
 import { ListConfirmationModal } from "./ListConfirmationModals";
 import { useListForm } from "../hooks/useListForm";
-import { SavedUsersType } from "../types";
+import { ListFormModalType, SavedUsersType } from "../types";
+import DonationFlow from "./DonationFlow";
 
 interface ListDetailsType {
-  data?: ListRegistration[];
   isLoading?: boolean;
   admins: string[];
   setAdmins: (value: string[]) => void;
-  listDetails: any;
+  listDetails: List | any;
   savedUsers: SavedUsersType;
-  setSavedUsers: (value: any) => void;
 }
 
 export const ListDetails = ({
-  data = [],
   admins,
-  setAdmins,
   listDetails,
   savedUsers,
-  setSavedUsers,
 }: ListDetailsType) => {
   const {
     push,
     query: { id },
   } = useRouter();
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
-  const [registrants, setRegistrants] = useState<AccountId[]>([]);
-  const [isUpvoted, setIsUpvoted] = useState(false);
   const [listOwnerImage, setListOwnerImage] = useState<string>("");
+  const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
   const [isApplicationSuccessful, setIsApplicationSuccessful] =
     useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
     useState({ open: false });
 
   const { wallet } = useWallet();
-
   const adminsModalId = useId();
   const registrantsModalId = useId();
+
+  const isUpvoted = listDetails?.upvotes?.some(
+    (data: any) => data?.account === walletApi.accountId,
+  );
 
   useEffect(() => {
     const fetchProfileImage = async () => {
       const { image } = await fetchSocialImages({
-        accountId: listDetails?.owner || "",
+        accountId: listDetails?.owner?.id || "",
       });
       setListOwnerImage(image);
     };
     if (id) fetchProfileImage();
-  }, [id, listDetails?.owner]);
+  }, []);
 
   const openRegistrantsModal = useCallback(
     () => show(registrantsModalId),
@@ -101,36 +100,21 @@ export const ListDetails = ({
     handleUnRegisterAccount,
   } = useListForm();
 
-  useEffect(() => {
-    setRegistrants(data.map((data: any) => `${data?.registrant?.id}`) || []);
-
-    setSavedUsers((prevValues: any) => ({
-      ...prevValues,
-
-      accounts:
-        data?.map((data: any) => ({
-          account: data?.registrant?.id,
-          id: data?.id,
-        })) || [],
-    }));
-  }, [data, setSavedUsers]);
-
   const applyToListModal = (note: string) => {
     register_batch({
-      list_id: parseInt(id as any) as any,
+      list_id: parseInt(listDetails?.on_chain_id as any) as any,
       notes: note,
       registrations: [
         {
           registrant_id: wallet?.accountId ?? "",
-
           status:
-            listDetails?.owner === walletApi.accountId
+            listDetails?.owner?.id === walletApi.accountId
               ? "Approved"
-              : (listDetails?.default_registration_status ?? "Pending"),
+              : listDetails?.default_registration_status,
 
           submitted_ms: Date.now(),
           updated_ms: Date.now(),
-          notes: "",
+          notes: note,
         },
       ],
     })
@@ -138,35 +122,40 @@ export const ListDetails = ({
         setIsApplicationSuccessful(true);
       })
       .catch((error) => console.error("Error applying to list:", error));
+    dispatch.listEditor.updateListModalState({
+      header: `Applied to ${listDetails.name} list Successfully `,
+      description: "You can now close this modal.",
+      type: ListFormModalType.APPLICATION,
+    });
   };
 
-  const onEditList = useCallback(() => push(`/list/edit/${id}`), [id, push]);
+  const onEditList = () => push(`/list/edit/${listDetails?.on_chain_id}`);
 
   if (!listDetails) {
     return <p>No list details available.</p>;
   }
 
   const isAdmin =
-    listDetails.admins.includes(walletApi?.accountId ?? "") ||
-    listDetails.owner === walletApi?.accountId;
+    admins.includes(walletApi?.accountId ?? "") ||
+    listDetails.owner?.id === walletApi?.accountId;
 
   const handleUpvote = () => {
     if (isUpvoted) {
-      remove_upvote({ list_id: Number(id) })
-        .then((data) => {
-          if (data) {
-            setIsUpvoted(!isUpvoted);
-          }
-        })
-        .catch((error) => console.error("Error upvoting:", error));
+      remove_upvote({ list_id: Number(listDetails.on_chain_id) }).catch(
+        (error) => console.error("Error upvoting:", error),
+      );
+      dispatch.listEditor.handleListToast({
+        name: truncate(listDetails?.name, 15),
+        type: ListFormModalType.DOWNVOTE,
+      });
     } else {
-      upvote({ list_id: Number(id) })
-        .then((data) => {
-          if (data) {
-            setIsUpvoted(!isUpvoted);
-          }
-        })
-        .catch((error) => console.error("Error upvoting:", error));
+      upvote({ list_id: Number(listDetails.on_chain_id) }).catch((error) =>
+        console.error("Error upvoting:", error),
+      );
+      dispatch.listEditor.handleListToast({
+        name: truncate(listDetails?.name, 15),
+        type: ListFormModalType.UPVOTE,
+      });
     }
   };
 
@@ -185,7 +174,9 @@ export const ListDetails = ({
           src={listOwnerImage || NO_IMAGE}
           alt="Owner"
         />
-        <Link href={`/profile/${listDetails.owner}`}>{listDetails.owner}</Link>
+        <Link href={`/profile/${listDetails.owner?.id}`}>
+          {listDetails.owner?.id}
+        </Link>
         <span className="text-gray-500">
           Created {new Date(listDetails.created_at).toLocaleDateString()}
         </span>
@@ -215,14 +206,14 @@ export const ListDetails = ({
                       {...{ accountId: admin }}
                     />
                   ))}
-                  {listDetails.admins.length > 4 && (
+                  {admins.length > 4 && (
                     <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white">
-                      {listDetails.admins.length - 4}+
+                      {admins.length - 4}+
                     </div>
                   )}
                 </div>
               </div>
-              {listDetails.owner === walletApi?.accountId && (
+              {listDetails.owner?.id === walletApi?.accountId && (
                 <div
                   onClick={openAccountsModal}
                   className="cursor-pointer rounded   hover:opacity-50"
@@ -235,8 +226,15 @@ export const ListDetails = ({
             {Boolean(walletApi?.accountId) && (
               <div className="relative flex items-start gap-4">
                 <div className="flex space-x-4">
-                  <DonateToListProjects listId={parseInt(id as string)} />
-
+                  {/* <DonateToListProjects listId={parseInt(id as string)} /> */}
+                  <button
+                    onClick={() => {
+                      setIsDonateModalOpen(true);
+                    }}
+                    className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
+                  >
+                    Donate to list
+                  </button>
                   {!listDetails?.admin_only_registrations && (
                     <button
                       onClick={() => {
@@ -296,12 +294,12 @@ export const ListDetails = ({
                 ? "/assets/images/large_default_backdrop.png"
                 : "/assets/images/list_bg_image.png"
             }
-            className="mx-auto w-full px-2"
+            className="w-full"
             width={500}
             height={300}
           />
           <div
-            className="md:rounded m-0  w-full p-0"
+            className="md:rounded-[12px] m-0  w-full p-0"
             un-w="full"
             un-flex="~ col"
           >
@@ -313,21 +311,24 @@ export const ListDetails = ({
               alt="cover"
               width={500}
               height={300}
-              className="md:h-[320px] md:rounded-tl-md md:rounded-tr-md h-[188px] w-full object-cover"
+              className="md:h-[320px] md:rounded-tl-[12px] md:rounded-tr-[12px] h-[188px] w-full object-cover"
             />
           </div>
           <div className="md:rounded-bl-md md:rounded-br-md flex h-16 items-center justify-between border border-[#dadbda] p-4">
             <p className="text-[14px] font-[500]">
-              {listDetails?.total_registrations_count} Accounts
+              {listDetails?.registrations_count} Accounts
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-row items-center gap-3">
               <button onClick={handleUpvote} className="focus:outline-none">
                 {isUpvoted ? (
-                  <FaHeart size="large" className="h-16 text-red-500" />
+                  <FaHeart size={22} className=" text-red-500" />
                 ) : (
                   <FaRegHeart className="text-gray-500" size={22} />
                 )}
               </button>
+              <div className="font-semibold">
+                {listDetails && listDetails?.upvotes?.length}
+              </div>
               <SocialsShare />
             </div>
           </div>
@@ -341,54 +342,45 @@ export const ListDetails = ({
         onApply={applyToListModal}
         isSuccessful={isApplicationSuccessful}
       />
-
+      {isDonateModalOpen && (
+        <DonationFlow
+          isOpen={isDonateModalOpen}
+          onClose={() => setIsDonateModalOpen(false)}
+        />
+      )}
       <ListConfirmationModal
         open={isListConfirmationModalOpen.open}
         type={"DELETE"}
         onClose={() => setIsListConfirmationModalOpen({ open: false })}
-        onSubmitButton={handleDeleteList}
+        onSubmitButton={() => handleDeleteList(listDetails.on_chain_id)}
       />
       <AccessControlListModal
         id={adminsModalId}
         title="Edit Admin list"
-        onSubmit={(admins) => setAdmins(admins)}
-        contractAdmins={savedUsers.admins}
-        type="ADMIN"
-        handleRemoveAdmin={handleRemoveAdmin}
-        value={admins}
-        showOnSaveButton={admins.length > 0}
-        onSaveSettings={() =>
-          handleSaveAdminsSettings(
+        handleRemoveAccounts={handleRemoveAdmin}
+        value={savedUsers?.admins ?? []}
+        onSubmit={(admins) => {
+          const newAdmins =
             admins?.filter(
-              (account) =>
-                !savedUsers.admins
-                  ?.map((admin) => admin.account)
-                  .includes(account),
-            ),
-          )
-        }
+              (admin) =>
+                !savedUsers.admins?.map(prop("accountId"))?.includes(admin),
+            ) ?? [];
+          handleSaveAdminsSettings(newAdmins);
+        }}
       />
       <AccessControlListModal
         id={registrantsModalId}
         title="Edit Accounts"
-        onSubmit={(modal) => setRegistrants(modal)}
-        type="ACCOUNT"
-        value={registrants ?? []}
-        contractAdmins={savedUsers.accounts}
-        handleUnRegisterAccount={handleUnRegisterAccount}
-        showOnSaveButton={registrants?.length > 0}
-        countText="Account(s)"
-        onSaveSettings={() =>
-          handleRegisterBatch(
-            id as string,
-            registrants?.filter(
-              (registrant) =>
-                !savedUsers?.accounts?.some(
-                  (savedAccount) => savedAccount?.account === registrant,
-                ),
-            ),
-          )
-        }
+        value={savedUsers?.accounts ?? []}
+        handleRemoveAccounts={handleUnRegisterAccount}
+        onSubmit={(accounts) => {
+          const newAccounts =
+            accounts?.filter(
+              (admin) =>
+                !savedUsers.accounts?.map(prop("accountId"))?.includes(admin),
+            ) ?? [];
+          handleRegisterBatch(newAccounts);
+        }}
       />
     </>
   );

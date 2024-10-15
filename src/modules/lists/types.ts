@@ -27,6 +27,7 @@ export enum ListFormModalType {
   UPDATE_LIST = "UPDATE_LIST",
   UPVOTE = "UPVOTE",
   DOWNVOTE = "DOWNVOTE",
+  APPLICATION = "APPLICATION",
   DELETE_LIST = "DELETE_LIST",
   LIST_DONATION = "LIST_DONATION",
 }
@@ -51,6 +52,14 @@ export type ListEditorState = {
 };
 
 export interface SavedUsersType {
-  accounts?: { account: AccountId; id?: number }[];
-  admins?: { account: AccountId }[];
+  accounts?: { accountId: AccountId; registrationId?: number }[];
+  admins?: { accountId: AccountId }[];
+}
+
+export enum NoListItemType {
+  ACCOUNT = "ACCOUNT",
+  ALL_LISTS = "ALL_LISTS",
+  MY_LISTS = "MY_LISTS",
+  FAVORITE_LISTS = "FAVORITE_LISTS",
+  NO_RESULTS = "NO_RESULTS",
 }

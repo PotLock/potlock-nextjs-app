@@ -7,6 +7,7 @@ import React, {
 } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Check } from "lucide-react";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -22,11 +23,13 @@ import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/modules/access-control";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import { AccountOption } from "@/modules/core";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
+import { dispatch } from "@/store";
 
 import {
   ListConfirmationModal,
@@ -86,6 +89,7 @@ export const ListFormDetails: React.FC = () => {
     transferAccountField,
     handleChangeTransferOwnerField,
     setAccounts,
+    handleRemoveAdmin,
     accounts,
   } = useListForm();
 
@@ -131,13 +135,15 @@ export const ListFormDetails: React.FC = () => {
     if (walletApi?.accountId) fetchProfileImage();
   }, [wallet]);
 
-  const onSubmit: SubmitHandler<FormData> = async (data, event) => {
+  // prettier-ignore
+  const onSubmit: SubmitHandler<any> = async (data, event) => {
     // Due to conflicting submit buttons (admin and list), this is to make sure only list submit form is submitted.
+    dispatch.listEditor.reset()
     if (
       (event?.nativeEvent as SubmitEvent)?.submitter?.id !==
       "list-submit-button"
     )
-      return;
+     { return;}
 
     if (onEditPage) {
       update_list({
@@ -154,9 +160,9 @@ export const ListFormDetails: React.FC = () => {
           });
         })
         .catch((error) => {
-          // Handle error for update_list
           console.error("Error updating list:", error);
         });
+        dispatch.listEditor.reset()
     } else {
       create_list({
         ...data,
@@ -168,7 +174,6 @@ export const ListFormDetails: React.FC = () => {
         image_cover_url: coverImage,
       })
         .then((dataToReturn) => {
-          // Handle success for create_list
           setListCreateSuccess({
             open: true,
             type: "CREATE_LIST",
@@ -176,24 +181,24 @@ export const ListFormDetails: React.FC = () => {
           });
         })
         .catch((error) => {
-          // Handle error for create_list
           console.error("Error creating list:", error);
         });
     }
   };
 
-  const handleCoverImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+  const handleCoverImageChange = async (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement; // Cast to HTMLInputElement
+    if (target.files && target.files[0]) {
       const reader = new FileReader();
       setLoadingImageUpload(true);
-      const res = await uploadFileToIPFS(e.target.files[0]);
+      const res = await uploadFileToIPFS(target.files[0]); // Use the casted target
       if (res.ok) {
         const data = await res.json();
         setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
         setValue("image_cover_url", `${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
         setLoadingImageUpload(false);
       }
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(target.files[0]); // Use the casted target
     }
   };
 
@@ -274,8 +279,16 @@ export const ListFormDetails: React.FC = () => {
               <span className="text-red-500">This field is required</span>
             )}
           </div>
-          <div className="md:items-center md:flex-row  md:space-y-0 md:space-x-4 flex flex-col justify-between space-y-6 pb-[50px]">
-            <div className="flex items-center space-x-2">
+          <div
+            style={{
+              boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+            }}
+            className="flex min-h-[70px] flex-col justify-between rounded p-[12px]"
+          >
+            <div className="flex w-full items-start justify-between space-x-2">
+              <label className="font-semibold text-gray-700">
+                Admin only applications
+              </label>
               <label className="inline-flex cursor-pointer items-center">
                 <input
                   type="checkbox"
@@ -284,25 +297,37 @@ export const ListFormDetails: React.FC = () => {
                 />
                 <div className="peer relative h-6 w-11 rounded-md bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-md after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#474647] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#a4a2a4] dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-[#474647] rtl:peer-checked:after:-translate-x-full"></div>
               </label>
-              <label className="font-semibold text-gray-700">
-                Allow applications
-              </label>
             </div>
-            <div className="m-0 flex items-center">
-              <input
-                type="checkbox"
-                id="approve-applications"
-                className="ml-0 mr-2"
-                defaultChecked
-                {...register("approveApplications")}
-              />
-              <label
-                htmlFor="approve-applications"
-                className="font-semibold text-gray-700"
-              >
-                Automatically approve applications
-              </label>
-            </div>
+            {watch("allowApplications") && (
+              <div className="mt-2 flex p-0">
+                <label className="mr-1 inline-flex cursor-pointer items-center">
+                  <input
+                    type="checkbox"
+                    id="approve-applications"
+                    className="peer sr-only"
+                    defaultChecked
+                    {...register("approveApplications")}
+                  />
+                  <div
+                    className={cn(
+                      "h-4.5 w-4.5 peer shrink-0 rounded-sm border border-[var(--primary-600)] ring-offset-background",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                      "data-[state=checked]:bg-[var(--primary-600)] data-[state=checked]:text-primary-foreground",
+                      "peer-checked:bg-[var(--primary-600)] peer-checked:text-primary-foreground",
+                    )}
+                  >
+                    <Check className="flex hidden h-4 w-4 items-center justify-center text-white peer-checked:block" />
+                  </div>
+                </label>
+                <label
+                  htmlFor="approve-applications"
+                  className="font-semibold text-gray-700"
+                >
+                  Automatically approve applications
+                </label>
+              </div>
+            )}
           </div>
           <h3 className="mb-4 mt-8 text-xl font-semibold">Permissions</h3>
           {onEditPage && watch("owner") === walletApi?.accountId && (
@@ -367,20 +392,23 @@ export const ListFormDetails: React.FC = () => {
                   </div>
                   <div className="flex h-[35px]  flex-wrap">
                     <AccessControlList
-                      isEditable
+                      isEditable={true}
                       title="Admins"
-                      value={admins}
-                      contractAdmins={savedAdmins}
                       showAccountList={false}
-                      type="ADMIN"
-                      showOnSaveButton={
-                        admins.length > 0 &&
-                        onEditPage &&
-                        watch("owner") === walletApi?.accountId
-                      }
+                      handleRemoveAccounts={id ? handleRemoveAdmin : undefined}
+                      value={admins.map((admin) => ({ accountId: admin }))}
                       classNames={{ avatar: "w-5 h-5" }}
-                      onSubmit={(admins) => setAdmins(admins)}
-                      onSaveSettings={() => handleSaveAdminsSettings(admins)}
+                      onSubmit={
+                        id
+                          ? (accounts: string[]) => {
+                              const newAdmins =
+                                accounts?.filter(
+                                  (admin) => !admins?.includes(admin),
+                                ) ?? [];
+                              handleSaveAdminsSettings(newAdmins);
+                            }
+                          : (accounts: string[]) => setAdmins(accounts)
+                      }
                     />
                   </div>
                 </div>
@@ -408,19 +436,12 @@ export const ListFormDetails: React.FC = () => {
                       <AccessControlList
                         isEditable
                         title="Accounts"
-                        value={accounts}
-                        type="ADMIN"
+                        value={accounts?.map((account) => ({
+                          accountId: account,
+                        }))}
                         showAccountList={false}
-                        showOnSaveButton={
-                          accounts.length > 0 &&
-                          onEditPage &&
-                          watch("owner") === walletApi?.accountId
-                        }
                         classNames={{ avatar: "w-[40px] h-[40px]" }}
-                        onSubmit={(accounts) => setAccounts(accounts)}
-                        onSaveSettings={() =>
-                          handleSaveAdminsSettings(accounts)
-                        }
+                        onSubmit={(accounts: string[]) => setAccounts(accounts)}
                       />
                     </div>
                   </div>
@@ -501,7 +522,7 @@ export const ListFormDetails: React.FC = () => {
         onClose={() => setOpenListConfirmModal({ open: false })}
         onSubmitButton={
           listConfirmModal.type === "DELETE"
-            ? handleDeleteList
+            ? () => handleDeleteList(Number(id))
             : handleTransferOwner
         }
       />

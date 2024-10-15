@@ -4,6 +4,7 @@ import { create, useModal } from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
+import { prop } from "remeda";
 import { object } from "zod";
 
 import { AccountId, ByAccountId } from "@/common/types";
@@ -22,37 +23,26 @@ import {
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
+import { AccountKey } from "@/modules/account";
 import { AccountOption, validAccountId } from "@/modules/core";
 
 export type AccessControlListModalProps = {
   title: string;
-  value: AccountId[];
+  value: AccountKey[];
   onSubmit: (accountIds: AccountId[]) => void;
-  onSaveSettings?: () => void;
-  showOnSaveButton?: boolean;
-  countText?: string;
-  type?: "ADMIN" | "ACCOUNT";
-  handleRemoveAdmin?: (accountIds: AccountId[]) => void;
-  handleUnRegisterAccount?: (accountId: number) => void;
-  contractAdmins?:
-    | { account: AccountId }[]
-    | { account: AccountId; id?: number }[];
+  handleRemoveAccounts?: (accounts: AccountKey[]) => void;
 };
 
 export const AccessControlListModal = create(
   ({
     title,
-    value: accountIds,
+    value: entries,
     onSubmit,
-    showOnSaveButton,
-    onSaveSettings,
-    handleRemoveAdmin,
-    handleUnRegisterAccount,
-    countText = "Admins",
-    contractAdmins,
-    type,
+    handleRemoveAccounts,
   }: AccessControlListModalProps) => {
     const self = useModal();
+
+    const accountIds = entries.map(prop("accountId"));
 
     const close = useCallback(() => {
       self.hide();
@@ -84,12 +74,6 @@ export const AccessControlListModal = create(
       [selectedAccounts],
     );
 
-    useEffect(() => {
-      if (type === "ACCOUNT" && accountIds.length > 0) {
-        accountIds.forEach((account) => account.split("~~")[1]);
-      }
-    }, [accountIds, type]);
-
     const form = useForm<ByAccountId>({
       resolver: zodResolver(
         object({
@@ -108,7 +92,7 @@ export const AccessControlListModal = create(
 
     const onAccountSubmit = form.handleSubmit(({ accountId }) => {
       onSubmit([...accountIds, accountId]);
-      form.setValue("accountId", "");
+      form.reset((currentValues) => ({ ...currentValues, accountId: "" }));
     });
 
     const handleAccountRemove = useCallback(
@@ -121,22 +105,20 @@ export const AccessControlListModal = create(
     );
 
     const selectedAccountsRemove = useCallback(() => {
-      onSubmit(
-        accountIds.filter((accountId) => !selectedAccounts.includes(accountId)),
+      const selectedAccountsToRemove = accountIds.filter((accountId) =>
+        selectedAccounts.includes(accountId),
       );
-
+      if (handleRemoveAccounts) {
+        handleRemoveAccounts(
+          entries.filter((entry) =>
+            selectedAccountsToRemove.includes(entry.accountId),
+          ),
+        );
+      } else {
+        onSubmit(selectedAccountsToRemove);
+      }
       setSelectedAccounts([]);
     }, [accountIds, onSubmit, selectedAccounts]);
-
-    // Helper function to get admin ID by account ID
-    const getAdminIdByAccountId = (
-      contractAdmins: { account: string; id?: number }[] | undefined,
-      accountId: string,
-    ) => {
-      return (
-        contractAdmins?.find((admin) => admin?.account === accountId)?.id || 0
-      );
-    };
 
     return (
       <Dialog open={self.visible}>
@@ -219,7 +201,9 @@ export const AccessControlListModal = create(
                       <Button
                         onClick={handleAccountRemove(accountId)}
                         variant="standard-plain"
-                        className="ml-auto pe-0"
+                        className={cn("ml-auto pe-0", {
+                          invisible: typeof handleRemoveAccounts === "function",
+                        })}
                       >
                         <MdDeleteOutline width={18} height={18} />
 
@@ -236,22 +220,6 @@ export const AccessControlListModal = create(
               <ScrollBar orientation="vertical" />
             </ScrollArea>
           </div>
-
-          {showOnSaveButton &&
-            accountIds.some(
-              (data) =>
-                !contractAdmins?.some?.((admin) => data == admin.account),
-            ) && (
-              <div className="flex justify-center p-4">
-                <Button
-                  type="button"
-                  variant="brand-filled"
-                  onClick={onSaveSettings}
-                >
-                  {"Save Changes"}
-                </Button>
-              </div>
-            )}
         </DialogContent>
       </Dialog>
     );

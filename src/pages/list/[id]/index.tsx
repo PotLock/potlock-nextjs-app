@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
-import { getList } from "@/common/contracts/potlock/lists";
 import { AccountId } from "@/common/types";
 import {
   ListAccounts,
@@ -13,7 +12,7 @@ import {
 } from "@/modules/lists";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 
-export default function Page() {
+export default function SingleList() {
   useListDeploymentSuccessRedirect();
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
   const [listDetails, setListDetails] = useState<any>(null);
@@ -42,26 +41,21 @@ export default function Page() {
   }, [data]);
 
   useEffect(() => {
-    const fetchListDetails = () => {
-      getList({ list_id: parseInt(id as any) as any })
-        .then((response: any) => {
-          setAdmins(response.admins);
-
-          setListDetails(response);
-          setSavedUsers({
-            admins:
-              response.admins?.map((admin: AccountId) => ({
-                account: admin,
-              })) ?? [],
-          });
-        })
-        .catch((error) => {
-          console.error("Error fetching list details:", error);
-        });
-    };
-
-    fetchListDetails();
-  }, [id, setAdmins]);
+    if (loadingListData) return;
+    setAdmins(listData?.admins?.map((admin) => admin?.id) as AccountId[]);
+    setListDetails(listData);
+    setSavedUsers({
+      accounts:
+        data?.map((registration) => ({
+          accountId: registration?.registrant?.id,
+          reg: registration?.id,
+        })) ?? [],
+      admins:
+        listData?.admins?.map((admin) => ({
+          accountId: admin?.id,
+        })) ?? [],
+    });
+  }, [loadingListData, isLoading]);
 
   return (
     <div className="md:px-[2rem] container  px-0   pb-10">
@@ -70,8 +64,6 @@ export default function Page() {
         listDetails={listDetails}
         savedUsers={savedUsers}
         setAdmins={setAdmins}
-        setSavedUsers={setSavedUsers}
-        data={data}
       />
       <ListAccounts
         listData={listData}

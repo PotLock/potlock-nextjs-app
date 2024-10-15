@@ -35,14 +35,18 @@ export const useListDeploymentSuccessRedirect = () => {
       isTransactionOutcomeDetected
     ) {
       toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
         title: `Account Status Updated to ${listValues.name} Successfully`,
       });
+      setSearchParams({ transactionHashes: null });
     } else if (voteType && isTransactionOutcomeDetected && listValues.name) {
-      console.log(transactionHashes, listValues);
-
       toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
         title: `${listValues.name} has been ${listValues.type === ListFormModalType.UPVOTE ? "added" : "removed"} to your favorites`,
       });
+      setSearchParams({ transactionHashes: null });
     } else if (isTransactionOutcomeDetected && !voteType) {
       dispatch.listEditor
         .handleListContractActions(transactionHash)

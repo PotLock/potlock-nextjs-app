@@ -1,7 +1,11 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
+import { buildTransaction } from "@wpdas/naxios";
 import { useRouter } from "next/router";
+import { prop } from "remeda";
 
+import { naxiosInstance } from "@/common/api/near";
+import { LISTS_CONTRACT_ID } from "@/common/constants";
 import {
   add_admins_to_list,
   delete_list,
@@ -10,7 +14,9 @@ import {
   transfer_list_ownership,
   unregister_from_list,
 } from "@/common/contracts/potlock/lists";
+import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
+import { AccountKey } from "@/modules/account";
 import { validateAccountId } from "@/modules/core";
 import { dispatch } from "@/store";
 
@@ -30,11 +36,11 @@ export const useListForm = () => {
   const [accounts, setAccounts] = useState<AccountId[]>([]);
   const id = query.id;
 
-  const description = "You may now close this window";
+  const description = "You may now close this modal";
 
-  const handleDeleteList = () => {
-    if (!id) return; // Ensure id is available
-    delete_list({ list_id: parseInt(id as string) })
+  const handleDeleteList = (id: number) => {
+    if (!id) return;
+    delete_list({ list_id: id })
       .then(() => {
         push("/list");
       })
@@ -48,9 +54,9 @@ export const useListForm = () => {
     });
   };
 
-  const handleRegisterBatch = (list_id: string, registrants: string[]) => {
+  const handleRegisterBatch = (registrants: string[]) => {
     register_batch({
-      list_id: parseInt(list_id as any) as any,
+      list_id: parseInt(id as any) as any,
       registrations: registrants.map((data: string) => ({
         registrant_id: data,
         status: "Approved",
@@ -70,17 +76,31 @@ export const useListForm = () => {
     });
   };
 
-  const handleUnRegisterAccount = (registrant_id: number) => {
+  const handleUnRegisterAccount = (registrants: AccountKey[]) => {
     if (!id) return;
-
-    unregister_from_list({
-      list_id: Number(id),
-      registration_id: registrant_id,
-    })
-      .then(() => {
-        setFinishModal({ open: true, type: ListFormModalType.UNREGISTER });
+    const allTransactions: any = [];
+    registrants.map((registrant: AccountKey) => {
+      allTransactions.push(
+        buildTransaction("unregister", {
+          receiverId: LISTS_CONTRACT_ID,
+          args: {
+            list_id: Number(id),
+            registration_id: Number(registrant.registrationId),
+          },
+          deposit: floatToYoctoNear(0.015),
+          gas: "300000000000000",
+        }),
+      );
+    });
+    naxiosInstance
+      .contractApi({
+        contractId: LISTS_CONTRACT_ID,
       })
-      .catch((error) => console.error(error));
+      .callMultiple(allTransactions)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.error(err));
     dispatch.listEditor.updateListModalState({
       header: "Account Deleted From List Successfully",
       description,
@@ -88,10 +108,11 @@ export const useListForm = () => {
     });
   };
 
-  const handleRemoveAdmin = (admins: Array<string>) => {
+  const handleRemoveAdmin = (accounts: AccountKey[]) => {
+    const accountIds = accounts.map(prop("accountId"));
     remove_admins_from_list({
-      list_id: parseInt(id as string),
-      admins,
+      list_id: Number(id),
+      admins: accountIds,
     })
       .then(() => {
         setFinishModal({ open: true, type: ListFormModalType.REMOVE_ADMINS });
@@ -109,7 +130,7 @@ export const useListForm = () => {
   const handleSaveAdminsSettings = (admins: AccountId[]) => {
     if (!id) return;
     add_admins_to_list({
-      list_id: parseInt(id as string),
+      list_id: Number(id),
       admins,
     })
       .then(() => {
