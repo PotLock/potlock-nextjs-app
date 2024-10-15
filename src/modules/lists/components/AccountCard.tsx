@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Trigger } from "@radix-ui/react-select";
+import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
@@ -46,6 +47,13 @@ export const AccountCard = ({
 }) => {
   const [registrationStatus, setRegistrationStatus] =
     useState<RegistrationStatus>(RegistrationStatus.Pending);
+
+  const { push } = useRouter();
+
+  const handleAccountClick = useCallback(
+    () => push(`/profile/${dataForList.registrant.id}`),
+    [dataForList, push],
+  );
 
   const status = listRegistrationStatuses[registrationStatus];
 
@@ -98,7 +106,7 @@ export const AccountCard = ({
   };
 
   return (
-    <div>
+    <div onClick={handleAccountClick}>
       <div
         className="overflow-hidden rounded-md bg-white font-lora shadow-md"
         data-testid="list-card"
