@@ -83,16 +83,12 @@ export const NEAR_TOKEN_DENOM = "near";
 
 export const NEAR_DEFAULT_TOKEN_DECIMALS = 24;
 
-// 1 NEAR
 export const ONE_NEAR = utils.format.parseNearAmount("1")!;
-// 0.5 NEAR
 export const HALF_NEAR = utils.format.parseNearAmount("0.5")!;
-// 0.1 NEAR
 export const ONE_TENTH_NEAR = utils.format.parseNearAmount("0.1")!;
-// 0.01 NEAR
 export const ONE_HUNDREDTH_NEAR = utils.format.parseNearAmount("0.01")!;
-// 0.02 NEAR
 export const TWO_HUNDREDTHS_NEAR = utils.format.parseNearAmount("0.02")!;
+
 // 300 TGas (full)
 export const FULL_TGAS = "300000000000000";
 export const FIFTY_TGAS = "50000000000000";

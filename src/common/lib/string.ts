@@ -10,4 +10,4 @@ export const truncate = (input: string, maxLength: number) => {
 };
 
 export const isAccountId = (input: string): boolean =>
-  input.endsWith(`.${NETWORK}`);
+  input.endsWith(`.${NETWORK === "mainnet" ? "near" : "testnet"}`);
