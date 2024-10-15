@@ -50,6 +50,9 @@ export const SYBIL_CONTRACT_ID =
 export const SYBIL_FRONTEND_URL =
   NETWORK === "mainnet" ? "https://app.nada.bot" : "https://testnet.nada.bot";
 
+export const CAMPAIGN_CONTRACT_ID =
+  NETWORK === "mainnet" ? "" : "campaignstest2.potlock.testnet";
+
 export const SOCIAL_DB_CONTRACT_ID =
   NETWORK === "mainnet" ? "social.near" : "v1.social08.testnet";
 

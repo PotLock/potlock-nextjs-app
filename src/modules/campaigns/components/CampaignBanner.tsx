@@ -1,6 +1,10 @@
+import { useRouter } from "next/router";
+
 import { Button } from "@/common/ui/components";
 
 export const CampaignBanner = () => {
+  const { push } = useRouter();
+
   return (
     <div className="md:p-[70px] relative flex min-h-[400px] w-full flex-col items-start justify-center overflow-hidden bg-hero">
       <h1 className="font-500  font-lora text-[48px] tracking-[1.12px]">
@@ -18,7 +22,11 @@ export const CampaignBanner = () => {
           Learn more
         </a>
       </p>
-      <Button className="mt-4" variant="brand-filled">
+      <Button
+        onClick={() => push("/campaign/create")}
+        className="mt-4"
+        variant="brand-filled"
+      >
         Start Campaign
       </Button>
     </div>
