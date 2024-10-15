@@ -1,3 +1,5 @@
+/* prettier-ignore */
+
 import { useCallback, useId, useMemo } from "react";
 
 import { show } from "@ebay/nice-modal-react";
@@ -11,18 +13,23 @@ import {
   AccessControlListModalProps,
 } from "./AccessControlListModal";
 
+/* prettier-ignore */
 export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &
   (
     | (AccessControlListModalProps & {
         isEditable?: true;
+        showAccountList?: boolean;
       })
     | (Pick<AccessControlListModalProps, "value"> & {
         isEditable?: false;
+        showAccountList?: boolean;
       })
   );
 
+/* prettier-ignore */
 export const AccessControlList: React.FC<AccessControlListProps> = ({
   isEditable = false,
+  showAccountList = true,
   classNames,
   ...props
 }) => {
@@ -35,13 +42,13 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
     () =>
       accountIds.length > 0 ? (
         <div un-flex="~" un-items="center" un-gap="2">
-          {accountIds.map((accountId) => (
+          {accountIds.map((account) => (
             <AccountOption
               isThumbnail
-              key={accountId}
-              title={accountId}
+              key={account.accountId}
+              title={account.accountId}
               classNames={{ avatar: classNames?.avatar }}
-              {...{ accountId }}
+              {...{ accountId: account.accountId }}
             />
           ))}
         </div>
@@ -55,7 +62,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
       {isEditingEnabled && <AccessControlListModal id={modalId} {...props} />}
 
       <div className="flex items-center justify-between">
-        {accountList}
+        {showAccountList && accountList}
 
         {isEditingEnabled && (
           <Button
@@ -63,7 +70,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
             onClick={openAccountsModal}
             variant="brand-plain"
           >
-            <GroupIcon />
+            {showAccountList && <GroupIcon />}
 
             <span className="prose line-height-none font-500">
               {`${accountIds.length > 0 ? "Change" : "Add"} ${props.title}`}

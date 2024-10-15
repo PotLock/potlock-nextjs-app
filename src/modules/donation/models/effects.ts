@@ -15,8 +15,10 @@ import { DonationInputs } from "./schemas";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
+  DonationDirectBatchCallDraft,
+  DonationPotBatchCallDraft,
 } from "../types";
-import { potDonationInputsToBatchDonationDraft } from "../utils/normalization";
+import { donationInputsToBatchDonationDraft } from "../utils/normalization";
 
 export const effects = (dispatch: AppDispatcher) => ({
   submit: async (
@@ -24,6 +26,7 @@ export const effects = (dispatch: AppDispatcher) => ({
   ): Promise<void> => {
     const {
       amount,
+      listId,
       allocationStrategy,
       groupAllocationPlan,
       referrerAccountId,
@@ -35,7 +38,7 @@ export const effects = (dispatch: AppDispatcher) => ({
 
     const isSingleProjectDonation = "accountId" in params;
     const isPotDonation = "potId" in params;
-    const isListDonation = "listId" in params;
+    const isListDonation = listId !== undefined;
 
     if (isSingleProjectDonation) {
       switch (allocationStrategy) {
@@ -73,10 +76,9 @@ export const effects = (dispatch: AppDispatcher) => ({
         }
       }
     } else if (isPotDonation && groupAllocationPlan !== undefined) {
-      const batchTxDraft = potDonationInputsToBatchDonationDraft({
-        potAccountId: params.potId,
-        ...inputs,
-      });
+      const batchTxDraft = donationInputsToBatchDonationDraft(
+        inputs,
+      ) as DonationPotBatchCallDraft;
 
       return void pot
         .donateBatch(batchTxDraft.potAccountId, batchTxDraft.entries)
@@ -84,8 +86,11 @@ export const effects = (dispatch: AppDispatcher) => ({
         .then(/* dispatch.donation.success */ console.log)
         .catch(dispatch.donation.failure);
     } else if (isListDonation && groupAllocationPlan !== undefined) {
-      // TODO: Move list donation batch call logic in here
-      return void null;
+      const batchTxDraft = donationInputsToBatchDonationDraft(
+        inputs,
+      ) as DonationDirectBatchCallDraft;
+
+      return void donate.donateBatch(batchTxDraft.entries);
     } else {
       return void dispatch.donation.failure(
         new Error("Unable to determine donation type."),

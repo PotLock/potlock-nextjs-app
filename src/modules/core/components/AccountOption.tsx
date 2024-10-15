@@ -9,6 +9,7 @@ export type AccountOptionProps = ByAccountId &
   Pick<React.HTMLAttributes<HTMLDivElement>, "title"> & {
     isRounded?: boolean;
     isThumbnail?: boolean;
+    highlightOnHover?: boolean;
     onCheck?: (accountId: AccountId) => void;
     primaryAction?: React.ReactNode;
     secondaryAction?: React.ReactNode;
@@ -22,6 +23,7 @@ export type AccountOptionProps = ByAccountId &
 export const AccountOption = ({
   isRounded = false,
   isThumbnail = false,
+  highlightOnHover = false,
   accountId,
   primaryAction,
   secondaryAction,
@@ -65,8 +67,8 @@ export const AccountOption = ({
   ) : (
     <div
       className={cn(
-        "flex w-full items-center gap-4 px-5 py-2 hover:bg-[#FEF6EE]",
-        { "rounded-full": isRounded },
+        "flex w-full items-center gap-4 px-5 py-2",
+        { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
         classNames?.root,
       )}
     >
@@ -75,7 +77,12 @@ export const AccountOption = ({
       <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
         {avatarElement}
 
-        <span className="prose">{profile?.name ?? accountId}</span>
+        <div className="flex flex-col">
+          <span className="prose font-600">
+            {profile?.name ?? accountId.split(".").slice(0, -1).join(".")}
+          </span>
+          <span className="prose text-neutral-500">{accountId}</span>
+        </div>
       </div>
 
       {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}

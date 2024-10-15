@@ -9,6 +9,7 @@ const routesPath = {
   POT_DETAIL: "/pot",
   DEPLOY_POT: "/deploy",
   DONORS: "/donors",
+  LIST: "/lists",
   PROFILE: "/profile",
   EDIT_PROFILE: "/editprofile",
 };

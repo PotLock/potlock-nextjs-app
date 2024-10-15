@@ -1,17 +1,19 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { potlock } from "@/common/api/potlock";
-import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useNearUsdDisplayValue } from "@/modules/core";
+import {
+  AccountProfileCover,
+  AccountProfilePicture,
+  useNearUsdDisplayValue,
+} from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useDonation } from "@/modules/donation";
-import { useProfileData } from "@/modules/profile";
 
-import CardSkeleton from "./CardSkeleton";
+import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
 import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";
 
 const rootBoxShadow = `
@@ -38,8 +40,6 @@ export const ProjectCard = ({
     accountId: projectId,
   });
 
-  const { avatarSrc, backgroundSrc } = useProfileData(projectId);
-
   const estimatedMatchedAmount = useNearUsdDisplayValue(
     yoctoNearToFloat(payoutDetails?.amount ?? "0"),
   );
@@ -52,52 +52,27 @@ export const ProjectCard = ({
   return (
     <Link href={`${routesPath.PROFILE}/${projectId}`}>
       {isAccountLoading ? (
-        <CardSkeleton />
+        <ProjectCardSkeleton />
       ) : (
         <div
-          className="group"
-          un-mx="auto"
-          un-transition="all duration-300"
-          un-w="full"
-          un-max-w="420px"
-          un-h="full"
-          un-flex="~ col"
-          un-bg="card"
-          un-overflow="overflow-hidden"
-          un-border="rounded-md"
+          className={cn(
+            "transition-duration-300 max-w-105 mx-auto flex h-full w-full flex-col",
+            "overflow-hidden rounded-md bg-card transition-all",
+          )}
           style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"
         >
-          {/* Cover */}
-          <div className="relative h-[145px] w-full overflow-hidden rounded-t-md">
-            {backgroundSrc && (
-              <Image
-                alt={`Background image for ${name}`}
-                className={cn(
-                  "object-cover transition-transform duration-500 ease-in-out",
-                  "group-hover:scale-110",
-                )}
-                src={backgroundSrc}
-                loading="lazy"
-                fill
-              />
-            )}
-          </div>
+          <AccountProfileCover accountId={projectId} />
 
           {/* Content */}
           <div className="flex flex-1 flex-col gap-5 px-6 pb-6">
-            <div className="relative -mt-5 h-10 w-10">
-              {avatarSrc && (
-                <img
-                  alt={`Profile image for ${name}`}
-                  className={cn(
-                    "h-full w-full rounded-full bg-white object-cover",
-                    "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
-                  )}
-                  src={avatarSrc}
-                />
+            <AccountProfilePicture
+              accountId={projectId}
+              className={cn(
+                "relative -mt-5 h-10 w-10 object-cover",
+                "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
               )}
-            </div>
+            />
 
             {/* Name */}
             <div

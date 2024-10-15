@@ -6,8 +6,7 @@ import { useRouter } from "next/router";
 
 import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
-import { SignInButton } from "@/modules/auth";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { SignInButton, useAuth } from "@/modules/auth";
 import { CartLink } from "@/modules/cart";
 
 import { UserDropdown } from "./UserDropdown";
@@ -15,9 +14,10 @@ import routesPath from "../routes";
 
 const links = [
   { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },
-  { label: "Feed", url: routesPath.FEED, disabled: false },
   { label: "Pots", url: routesPath.POTS, disabled: false },
+  { label: "Feed", url: routesPath.FEED, disabled: false },
   // { label: "Donors", url: routesPath.DONORS, disabled: false },
+  { label: "Lists", url: routesPath.LIST, disabled: false },
 ];
 
 const AuthButton = () => {
@@ -115,7 +115,6 @@ export const Nav = () => {
             <div className="max-md:hidden flex flex-row items-center justify-center">
               {links.map(({ url, label }) => {
                 const isActive = isClient ? url === router.pathname : false;
-
                 return (
                   <Link
                     key={url + label}

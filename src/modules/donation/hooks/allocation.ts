@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { UseFormReturn } from "react-hook-form";
 import { isNot, isStrictEqual, piped, prop } from "remeda";
 
 import { Pot, potlock } from "@/common/api/potlock";
@@ -9,7 +8,7 @@ import { intoShareValue } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 
-import { DonationInputs } from "../models";
+import { DonationInputs, WithDonationFormAPI } from "../models";
 import {
   DonationBreakdown,
   DonationGroupAllocationStrategyEnum,
@@ -17,13 +16,11 @@ import {
 } from "../types";
 import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
-export type DonationGroupAllocationDeps = {
-  form: UseFormReturn<DonationInputs>;
-};
+export type DonationShareAllocationDeps = WithDonationFormAPI;
 
 export const useDonationEvenShareAllocation = ({
   form,
-}: WithTotalAmount & DonationGroupAllocationDeps) => {
+}: DonationShareAllocationDeps) => {
   const [amount, groupAllocationStrategy, groupAllocationPlan = []] =
     form.watch(["amount", "groupAllocationStrategy", "groupAllocationPlan"]);
 
@@ -83,7 +80,7 @@ export const useDonationEvenShareAllocation = ({
 
 export const useDonationManualShareAllocation = ({
   form,
-}: DonationGroupAllocationDeps) => {
+}: DonationShareAllocationDeps) => {
   const [groupAllocationPlan = []] = form.watch(["groupAllocationPlan"]);
 
   return useCallback(
@@ -201,7 +198,7 @@ export const useDonationAllocationBreakdown = ({
    */
 
   const chefFeeInitialBasisPoints =
-    typeof pot?.chef?.id === "string" ? pot?.chef_fee_basis_points ?? 0 : 0;
+    typeof pot?.chef?.id === "string" ? (pot?.chef_fee_basis_points ?? 0) : 0;
 
   const chefFeeBasisPoints = bypassChefFee ? 0 : chefFeeInitialBasisPoints;
 

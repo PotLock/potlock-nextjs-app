@@ -35,8 +35,10 @@ import {
   getPotEditorSettingsSchema,
 } from "../models";
 
+/* prettier-ignore */
 export type PotEditorProps = Partial<ByPotId> & {};
 
+/* prettier-ignore */
 export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   const isNewPot = typeof potId !== "string";
   const router = useRouter();
@@ -81,7 +83,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
             <AccessControlList
               isEditable
               title={POT_EDITOR_FIELDS.admins.title}
-              value={values.admins ?? []}
+              value={values.admins?.map(admin => ({accountId: admin})) ?? []}
               onSubmit={handleAdminsUpdate}
             />
           </EditorSection>

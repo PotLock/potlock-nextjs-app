@@ -18,7 +18,7 @@ export const dropTimezoneIndicator = (value: string): string =>
 export const millisecondsToDays = (value: number | string | null): number => {
   try {
     return Temporal.Duration.from({
-      milliseconds: typeof value === "string" ? parseInt(value) : value ?? 0,
+      milliseconds: typeof value === "string" ? parseInt(value) : (value ?? 0),
     }).total("days");
   } catch {
     const error = new TypeError(`Unable to convert \`${value}\` to days`);
@@ -40,7 +40,7 @@ export const millisecondsToDays = (value: number | string | null): number => {
 export const daysToMilliseconds = (value: number | string | null): number => {
   try {
     return Temporal.Duration.from({
-      days: typeof value === "string" ? parseInt(value) : value ?? 0,
+      days: typeof value === "string" ? parseInt(value) : (value ?? 0),
     }).total("milliseconds");
   } catch {
     const error = new TypeError(

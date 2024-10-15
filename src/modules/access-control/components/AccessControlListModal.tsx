@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
+import { prop } from "remeda";
 import { object } from "zod";
 
 import { AccountId, ByAccountId } from "@/common/types";
@@ -22,17 +23,26 @@ import {
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
+import { AccountKey } from "@/modules/account";
 import { AccountOption, validAccountId } from "@/modules/core";
 
 export type AccessControlListModalProps = {
   title: string;
-  value: AccountId[];
+  value: AccountKey[];
   onSubmit: (accountIds: AccountId[]) => void;
+  handleRemoveAccounts?: (accounts: AccountKey[]) => void;
 };
 
 export const AccessControlListModal = create(
-  ({ title, value: accountIds, onSubmit }: AccessControlListModalProps) => {
+  ({
+    title,
+    value: entries,
+    onSubmit,
+    handleRemoveAccounts,
+  }: AccessControlListModalProps) => {
     const self = useModal();
+
+    const accountIds = entries.map(prop("accountId"));
 
     const close = useCallback(() => {
       self.hide();
@@ -80,9 +90,10 @@ export const AccessControlListModal = create(
     const isAccountFormDisabled =
       form.formState.isSubmitting || !form.formState.isValid;
 
-    const onAccountSubmit = form.handleSubmit(({ accountId }) =>
-      onSubmit([...accountIds, accountId]),
-    );
+    const onAccountSubmit = form.handleSubmit(({ accountId }) => {
+      onSubmit([...accountIds, accountId]);
+      form.reset((currentValues) => ({ ...currentValues, accountId: "" }));
+    });
 
     const handleAccountRemove = useCallback(
       (accountId: AccountId) => () =>
@@ -94,21 +105,28 @@ export const AccessControlListModal = create(
     );
 
     const selectedAccountsRemove = useCallback(() => {
-      onSubmit(
-        accountIds.filter((accountId) => !selectedAccounts.includes(accountId)),
+      const selectedAccountsToRemove = accountIds.filter((accountId) =>
+        selectedAccounts.includes(accountId),
       );
-
+      if (handleRemoveAccounts) {
+        handleRemoveAccounts(
+          entries.filter((entry) =>
+            selectedAccountsToRemove.includes(entry.accountId),
+          ),
+        );
+      } else {
+        onSubmit(selectedAccountsToRemove);
+      }
       setSelectedAccounts([]);
     }, [accountIds, onSubmit, selectedAccounts]);
 
     return (
       <Dialog open={self.visible}>
-        <DialogContent className="max-w-115 max-h-150" onCloseClick={close}>
+        <DialogContent className="max-w-115 " onCloseClick={close}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
-
-          <DialogDescription>
+          <DialogDescription className="">
             <Form {...form}>
               <form className="flex items-start gap-3">
                 <FormField
@@ -135,10 +153,7 @@ export const AccessControlListModal = create(
             </Form>
           </DialogDescription>
 
-          <div
-            className="flex flex-col"
-            style={{ display: accountIds.length > 0 ? undefined : "none" }}
-          >
+          <div className="flex flex-col">
             <div className="p-x-5 p-y-2 flex justify-between gap-4 bg-neutral-50">
               <div className="flex items-center gap-4">
                 <Checkbox
@@ -186,7 +201,9 @@ export const AccessControlListModal = create(
                       <Button
                         onClick={handleAccountRemove(accountId)}
                         variant="standard-plain"
-                        className="ml-auto pe-0"
+                        className={cn("ml-auto pe-0", {
+                          invisible: typeof handleRemoveAccounts === "function",
+                        })}
                       >
                         <MdDeleteOutline width={18} height={18} />
 

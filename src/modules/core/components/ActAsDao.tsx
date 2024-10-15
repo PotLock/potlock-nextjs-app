@@ -16,6 +16,7 @@ import {
   Label,
   Switch,
 } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { validateUserInDao } from "@/modules/core";
 import {
   addOrRemoveDaoAddress,
@@ -101,10 +102,15 @@ const ActAsDao = () => {
                   className="rounded-md border border-[#DBDBDB]"
                 >
                   <AccordionTrigger
-                    style={{
-                      color: isActive ? "#0B7A74" : "",
-                    }}
-                    className="color-[#656565] flex items-center justify-start gap-2 px-3 py-[10px] text-[#656565]"
+                    hiddenChevron
+                    className={cn(
+                      "flex items-center justify-start gap-2 px-3 py-2.5",
+
+                      {
+                        "color-[#0B7A74]": isActive,
+                        "color-[#656565]": !isActive,
+                      },
+                    )}
                   >
                     <Box
                       size={16}

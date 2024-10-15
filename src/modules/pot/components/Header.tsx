@@ -33,7 +33,7 @@ const Header = ({ potDetail }: Props) => {
 
     accountId: asDao
       ? actAsDao.defaultAddress
-      : walletApi.accountId ?? accountId,
+      : (walletApi.accountId ?? accountId),
   });
 
   const [fundModalOpen, setFundModalOpen] = useState(false);

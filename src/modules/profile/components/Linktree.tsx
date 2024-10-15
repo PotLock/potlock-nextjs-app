@@ -1,11 +1,11 @@
 import { styled } from "styled-components";
 
+import { NearIcon } from "@/common/assets/svgs";
 import GithubSvg from "@/common/assets/svgs/github";
-import NearSvg from "@/common/assets/svgs/near";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import WebsiteSvg from "@/common/assets/svgs/website";
 
-import useProfileData from "../hooks/data";
+import { useProfileData } from "../hooks/data";
 
 const LinktreeItemContainer = styled.a`
   display: flex;
@@ -41,7 +41,7 @@ const Linktree = ({ accountId }: Props) => {
     github: <GithubSvg />,
     twitter: <TwitterSvg />,
     website: <WebsiteSvg />,
-    NEAR: <NearSvg />,
+    NEAR: <NearIcon />,
   };
 
   const fullUrls: Record<string, any> = {

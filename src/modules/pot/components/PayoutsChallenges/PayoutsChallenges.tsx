@@ -7,7 +7,7 @@ import AdminIcon from "@/common/assets/svgs/AdminIcon";
 import { Challenge as ChallengeType } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import * as potContract from "@/common/contracts/potlock/pot";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { AccountAvatar } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useTypedSelector } from "@/store";
 
@@ -83,7 +83,7 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
               <Challenge key={challenger_id}>
                 <div className="content">
                   <div className="header">
-                    <AccountAvatar
+                    <AccountProfilePicture
                       accountId={challenger_id}
                       className="h-[42px] w-[42px]"
                     />
