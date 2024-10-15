@@ -2,8 +2,8 @@ import { forwardRef } from "react";
 
 import { useNearUsdDisplayValue } from "@/modules/core";
 
-import { FormControl, FormItem, FormLabel, Input } from "../components";
 import { TextField } from "./text";
+import { FormControl, FormItem, FormLabel, Input } from "../components";
 
 // prettier-ignore
 export interface InputFieldProps
@@ -45,12 +45,12 @@ export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
 
         <FormControl>
           <TextField
-            type={props.type || "number"}
             appendix={nearAmountInUSD || "$0.00"}
             disabled={disabled}
             classNames={{ root: className }}
             inputExtension="NEAR"
             {...props}
+            type="number"
           />
         </FormControl>
       </FormItem>
