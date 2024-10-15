@@ -51,8 +51,9 @@ export const create_list = ({
   allowApplications?: boolean;
   accounts: { registrant_id: AccountId; status: RegistrationStatus }[];
   image_cover_url?: string | null;
-}) =>
-  contractApi.call<{}, List[]>("create_list_with_registrations", {
+}) => {
+  const length = accounts?.length || 1;
+  return contractApi.call<{}, List[]>("create_list_with_registrations", {
     args: {
       name,
       description,
@@ -62,9 +63,10 @@ export const create_list = ({
       admin_only_registrations: allowApplications,
       default_registration_status: "Approved",
     },
-    deposit: floatToYoctoNear(0.021 * accounts?.length || 1),
+    deposit: floatToYoctoNear(0.021 * length),
     gas: "300000000000000",
   });
+};
 
 export const update_list = ({
   name,
