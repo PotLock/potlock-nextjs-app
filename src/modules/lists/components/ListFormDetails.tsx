@@ -242,6 +242,8 @@ export const ListFormDetails: React.FC = () => {
 
   const handleViewList = useCallback(() => push(`/list/${id}`), [id]);
 
+  const handleViewLists = useCallback(() => push(`/lists`), []);
+
   return (
     <>
       <div className=" md:border md:border-[#DBDBDB] md:rounded-[16px] md:p-10 md:w-[720px] mx-auto my-8 max-w-[896px] p-6 font-sans">
@@ -533,7 +535,8 @@ export const ListFormDetails: React.FC = () => {
         }}
         isUpdate={listCreateSuccess.type === "UPDATE_LIST"}
         listName={listCreateSuccess.data?.name}
-        onViewList={handleViewList}
+        showBackToLists={!id}
+        onViewList={id ? handleViewList : handleViewLists}
       />
     </>
   );
