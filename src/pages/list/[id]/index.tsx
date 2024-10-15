@@ -48,7 +48,7 @@ export default function SingleList() {
       accounts:
         data?.map((registration) => ({
           accountId: registration?.registrant?.id,
-          reg: registration?.id,
+          registrationId: registration?.id,
         })) ?? [],
       admins:
         listData?.admins?.map((admin) => ({

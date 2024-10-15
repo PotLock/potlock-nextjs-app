@@ -62,7 +62,7 @@ export const create_list = ({
       admin_only_registrations: allowApplications,
       default_registration_status: "Approved",
     },
-    deposit: floatToYoctoNear(0.021 * (accounts?.length ?? 1)),
+    deposit: floatToYoctoNear(0.021 * accounts?.length || 1),
     gas: "300000000000000",
   });
 

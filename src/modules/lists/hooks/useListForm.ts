@@ -42,7 +42,7 @@ export const useListForm = () => {
     if (!id) return;
     delete_list({ list_id: id })
       .then(() => {
-        push("/list");
+        push("/lists");
       })
       .catch((error) => {
         console.error("Error deleting list", error);
@@ -102,7 +102,7 @@ export const useListForm = () => {
       })
       .catch((err) => console.error(err));
     dispatch.listEditor.updateListModalState({
-      header: "Account Deleted From List Successfully",
+      header: "Account(s) Deleted From List Successfully",
       description,
       type: ListFormModalType.UNREGISTER,
     });
