@@ -41,6 +41,7 @@ export const ListAccounts = ({
     {
       label: "Status",
       options: statuses,
+      
       props: {
         value: statusFilter,
         onValueChange: (value) => {

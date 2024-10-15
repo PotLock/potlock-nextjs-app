@@ -106,7 +106,10 @@ export const AccountCard = ({
   };
 
   return (
-    <div onClick={handleAccountClick}>
+    <div
+      className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]"
+      onClick={handleAccountClick}
+    >
       <div
         className="overflow-hidden rounded-md bg-white font-lora shadow-md"
         data-testid="list-card"
