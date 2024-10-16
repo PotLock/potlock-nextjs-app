@@ -77,9 +77,13 @@ export const DonationRecipientShares: React.FC<
     } else return null;
   }, [listRegistrationsError, potApplicationsError]);
 
-  const recipientCandidateIds = [...potApplications, ...listRegistrations].map(
-    (entry) =>
-      "registrant" in entry ? entry.registrant.id : entry.applicant.id,
+  const recipientCandidateIds = useMemo(
+    () =>
+      [...potApplications, ...listRegistrations].map((entry) =>
+        "registrant" in entry ? entry.registrant.id : entry.applicant.id,
+      ),
+
+    [listRegistrations, potApplications],
   );
 
   return errorDetails ? (
