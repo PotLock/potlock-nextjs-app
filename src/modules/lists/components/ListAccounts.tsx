@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 
 import { List } from "@/common/api/potlock";
-import { Filter, Group, SearchBar, SortSelect } from "@/common/ui/components";
+import { Filter, Group, GroupType, SearchBar, SortSelect } from "@/common/ui/components";
 import { statuses } from "@/modules/project/constants";
 
 import { AccountCard } from "./AccountCard";
@@ -29,7 +29,7 @@ export const ListAccounts = ({
 }: ListAccountsType) => {
   const [search, setSearch] = useState("");
   const [accountsWithAccess, setAccountsWithAccess] = useState<string[]>([]);
-  const [statusFilter, setsStatusFilter] = useState<string[]>(["all"]);
+  const [statusFilter, setsStatusFilter] = useState<string>("all");
   const [searchedAccounts, setSearchedAccounts] = useState<any[]>([]);
 
   const SORT_LIST_PROJEECTS = [
@@ -37,22 +37,16 @@ export const ListAccounts = ({
     { label: "Least recent", value: "older" },
   ];
 
-  const tagsList: Group[] = [
+  const tagsList: Group<GroupType.single>[] = [
     {
       label: "Status",
       options: statuses,
+      type: GroupType.single,
       props: {
         value: statusFilter,
         onValueChange: (value) => {
-          setStatus(value[value.length - 1]);
-          if (value[value.length - 1] === "all") {
-            setsStatusFilter(["all"]);
-          } else if (value.includes("all")) {
-            const filter = value.filter((item) => item !== "all");
-            setsStatusFilter(filter);
-          } else {
-            setsStatusFilter(value);
-          }
+          setStatus(value);
+          setsStatusFilter(value);
         },
       },
     },

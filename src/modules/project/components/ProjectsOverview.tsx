@@ -8,6 +8,7 @@ import { getRegistrations } from "@/common/contracts/potlock/lists";
 import {
   Filter,
   Group,
+  GroupType,
   InfiniteScroll,
   SearchBar,
   SortSelect,
@@ -39,6 +40,7 @@ export const ProjectsOverview = () => {
     {
       label: "Category",
       options: categories,
+      type: GroupType.multiple,
       props: {
         value: categoryFilter,
         onValueChange: (value) => setCategoryFilter(value),
@@ -47,6 +49,7 @@ export const ProjectsOverview = () => {
     {
       label: "Status",
       options: statuses,
+      type: GroupType.multiple,
       props: {
         value: statusFilter,
         onValueChange: (value) => {

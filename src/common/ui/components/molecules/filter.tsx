@@ -1,5 +1,8 @@
 import { PopoverProps } from "@radix-ui/react-popover";
-import { ToggleGroupMultipleProps } from "@radix-ui/react-toggle-group";
+import {
+  ToggleGroupMultipleProps,
+  ToggleGroupSingleProps,
+} from "@radix-ui/react-toggle-group";
 import Image from "next/image";
 
 import { Button } from "../atoms/button";
@@ -13,16 +16,23 @@ type Item = {
   val: string;
 };
 
-export type Group = {
+export enum GroupType {
+  multiple = "multiple",
+  single = "single",
+}
+
+export type Group<T extends GroupType = GroupType.multiple> = {
   label: string;
-  props?: Omit<ToggleGroupMultipleProps, "type">;
+  props?: T extends GroupType.multiple
+    ? Omit<ToggleGroupMultipleProps, "type">
+    : Omit<ToggleGroupSingleProps, "type">; // Conditional props based on type
   options: Item[];
+  type: T;
 };
 
-// Define the Props type extending PopoverProps
 type Props = {
   popoverProps?: PopoverProps;
-  groups: Group[];
+  groups: (Group<GroupType.multiple> | Group<GroupType.single>)[];
 };
 
 export const Filter = ({ groups, popoverProps }: Props) => {
@@ -40,23 +50,38 @@ export const Filter = ({ groups, popoverProps }: Props) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="sm:w-[466px] flex w-80 flex-col gap-6">
-        {groups.map(({ label, options, props }) => (
+        {groups.map(({ label, options, props, type }) => (
           <div className="flex flex-col gap-3" key={label}>
             <Label className=" w-full text-[#656565] first-of-type:mt-0">
               Filter by {label}
             </Label>
-            <ToggleGroup
-              className="flex flex-wrap justify-start gap-2"
-              variant="outline"
-              {...(props || {})}
-              type="multiple"
-            >
-              {options.map(({ label, val }: any) => (
-                <ToggleGroupItem value={val} aria-label="Toggle" key={val}>
-                  {label}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
+            {type === GroupType.multiple ? (
+              <ToggleGroup
+                className="flex flex-wrap justify-start gap-2"
+                variant="outline"
+                type="multiple"
+                {...(props || {})} // Spread multiple props
+              >
+                {options.map(({ label, val }: any) => (
+                  <ToggleGroupItem value={val} aria-label="Toggle" key={val}>
+                    {label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            ) : (
+              <ToggleGroup
+                className="flex flex-wrap justify-start gap-2"
+                variant="outline"
+                type="single"
+                {...(props || {})} // Spread single props
+              >
+                {options.map(({ label, val }: any) => (
+                  <ToggleGroupItem value={val} aria-label="Toggle" key={val}>
+                    {label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            )}
           </div>
         ))}
       </PopoverContent>

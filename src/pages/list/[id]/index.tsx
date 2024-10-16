@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import { potlock } from "@/common/api/potlock";
 import { AccountId } from "@/common/types";
+import { PageWithBanner } from "@/common/ui/components";
 import {
   ListAccounts,
   ListDetails,
@@ -58,7 +59,7 @@ export default function SingleList() {
   }, [loadingListData, isLoading]);
 
   return (
-    <div className="md:px-[2rem] container  px-0   pb-10">
+    <PageWithBanner>
       <ListDetails
         admins={admins}
         listDetails={listDetails}
@@ -73,6 +74,6 @@ export default function SingleList() {
         setStatus={setStatus}
         setFilteredRegistrations={setFilteredRegistrations}
       />
-    </div>
+    </PageWithBanner>
   );
 }
