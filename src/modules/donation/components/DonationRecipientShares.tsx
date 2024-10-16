@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 
-import { PotApplicationStatus, potlock } from "@/common/api/potlock";
+import {
+  ListRegistrationStatus,
+  PotApplicationStatus,
+  potlock,
+} from "@/common/api/potlock";
 import { NearIcon } from "@/common/assets/svgs";
 import { FormField } from "@/common/ui/components";
 import { CheckboxField, TextField } from "@/common/ui/form-fields";
@@ -30,12 +34,18 @@ export const DonationRecipientShares: React.FC<
   const { data: potApplications = [], error: potApplicationsError } =
     potlock.usePotApplications({
       potId,
-      page_size: 100,
+      // TODO: Consider integrating infinite scroll in the future instead
+      page_size: 999,
       status: PotApplicationStatus.Approved,
     });
 
   const { data: listRegistrations = [], error: listRegistrationsError } =
-    potlock.useListRegistrations({ listId });
+    potlock.useListRegistrations({
+      listId,
+      // TODO: Consider integrating infinite scroll in the future instead
+      page_size: 999,
+      status: ListRegistrationStatus.Approved,
+    });
 
   const handleEvenShareAllocation = useDonationEvenShareAllocation({
     form,
