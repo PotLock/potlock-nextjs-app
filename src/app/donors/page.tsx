@@ -428,44 +428,49 @@ export default function LeaderboardPage() {
                 {ACTIVITY.map((activity, index) => (
                   <div
                     key={index}
-                    className="border-gray-#ebebeb my-4 flex flex-wrap items-center justify-between rounded-xl border py-4"
+                    className="border-gray-#ebebeb gap-8px my-4 flex flex-wrap items-center justify-between rounded-xl border p-4"
                   >
-                    <div className="w-224px flex items-center gap-2 overflow-x-scroll px-4 text-sm font-medium text-gray-900">
-                      <Image
-                        src={activity.senderImage}
-                        className="h-24px w-24px rounded-full"
-                        alt="sender image"
-                        width={10}
-                        height={10}
-                      />
-                      <h1>{activity.sender}</h1>
-                    </div>
-                    <div className="flex gap-2 px-4 align-middle text-sm text-gray-600">
-                      Donated
-                    </div>
-                    <div className="w-140px flex items-center">
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {activity.amount} {activity.currency}
+                    <div className="flex w-full items-center justify-between gap-2 text-sm font-medium text-gray-900">
+                      <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                        <Image
+                          src={activity.senderImage}
+                          className="h-24px w-24px rounded-full"
+                          alt="sender image"
+                          width={10}
+                          height={10}
+                        />
+                        <h1>{activity.sender}</h1>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex gap-2 px-4 align-middle text-sm text-gray-600">
+                          Donated
                         </div>
+                        <div className="">
+                          <div className="gap-8px flex items-center text-sm text-gray-900">
+                            <NearIcon className="w-18px h-18px" />{" "}
+                            <span className="font-600 m-0 pt-[2px]">
+                              {activity.amount}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="ml-4 text-sm text-gray-600">to</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 px-4 text-sm text-gray-600">
-                      to
-                    </div>
-                    <div className="w-224px flex items-center gap-2 overflow-x-scroll px-4 text-sm font-medium text-gray-900">
-                      <Image
-                        src={activity.receiverImage}
-                        className="h-24px w-24px rounded-full"
-                        alt="receiver image"
-                        width={10}
-                        height={10}
-                      />
-                      <h1>{activity.receiver}</h1>
-                    </div>
-                    <div className="w-120px flex items-center gap-2 whitespace-nowrap px-4 text-sm text-gray-600">
-                      <span className="dot"></span>{" "}
-                      {timeAgo(activity.timestamp)}
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                        <Image
+                          src={activity.receiverImage}
+                          className="h-24px w-24px rounded-full"
+                          alt="receiver image"
+                          width={10}
+                          height={10}
+                        />
+                        <h1>{activity.receiver}</h1>
+                      </div>
+                      <div className="flex items-center gap-2 whitespace-nowrap pl-3 text-sm text-gray-600">
+                        <span className="h-4px w-4px rounded-full bg-gray-600"></span>{" "}
+                        {timeAgo(activity.timestamp)}
+                      </div>
                     </div>
                   </div>
                 ))}
