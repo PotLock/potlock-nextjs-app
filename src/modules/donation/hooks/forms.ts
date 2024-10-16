@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { omit } from "remeda";
 import { ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
@@ -95,7 +94,7 @@ export const useDonationForm = ({
 
   const self = useForm<DonationInputs>({
     resolver: zodResolver(donationSchema),
-    mode: "onChange",
+    mode: "all",
     defaultValues,
     resetOptions: { keepDirtyValues: true },
   });
