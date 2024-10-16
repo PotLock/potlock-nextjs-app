@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import Image from "next/image";
 
+import NearIcon from "@/common/assets/svgs/near-icon";
 import { Button, SearchBar, ToggleGroup } from "@/common/ui/components";
 
 import { LeaderboardCard } from "../_components/LeaderboardCard";
@@ -30,21 +31,21 @@ interface Activity {
 const topDonors: Participant[] = [
   {
     rank: 1,
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://picsum.photos/200/300/?blur",
     name: "nearcollective.near",
     amount: 731.25,
     amountUsd: 0,
   },
   {
     rank: 2,
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://picsum.photos/200/300/?blur",
     name: "nf-payments.near",
     amount: 731.25,
     amountUsd: 0,
   },
   {
     rank: 3,
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://picsum.photos/200/300/?blur",
     name: "creatives.potlock.near",
     amount: 731.25,
     amountUsd: 0,
@@ -54,21 +55,21 @@ const topDonors: Participant[] = [
 const otherDonors: Participant[] = [
   {
     rank: 4,
-    image: "/placeholder.svg?height=40&width=40",
+    image: "https://picsum.photos/200/300/?blur",
     name: "creativesportfolio.near",
     amount: 2000,
     amountUsd: 2000,
   },
   {
     rank: 5,
-    image: "/placeholder.svg?height=40&width=40",
+    image: "https://picsum.photos/200/300/?blur",
     name: "mike.near",
     amount: 2000,
     amountUsd: 2000,
   },
   {
     rank: 6,
-    image: "/placeholder.svg?height=40&width=40",
+    image: "https://picsum.photos/200/300/?blur",
     name: "mike.near",
     amount: 2000,
     amountUsd: 2000,
@@ -78,21 +79,21 @@ const otherDonors: Participant[] = [
 const topSponsors: Participant[] = [
   {
     rank: 1,
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://picsum.photos/200/300/?blur",
     name: "sponsor1.near",
     amount: 1000,
     amountUsd: 1000,
   },
   {
     rank: 2,
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://picsum.photos/200/300/?blur",
     name: "sponsor2.near",
     amount: 900,
     amountUsd: 900,
   },
   {
     rank: 3,
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://picsum.photos/200/300/?blur",
     name: "sponsor3.near",
     amount: 800,
     amountUsd: 800,
@@ -102,52 +103,52 @@ const topSponsors: Participant[] = [
 const ACTIVITY: Activity[] = [
   {
     sender: "nearcollective.near",
-    senderImage: "/placeholder.svg?height=40&width=40",
+    senderImage: "https://picsum.photos/200/300/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "creativesportfolio.near",
-    receiverImage: "/placeholder.svg?height=40&width=40",
+    receiverImage: "https://picsum.photos/200/300/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
   {
     sender: "nf-payments.near",
-    senderImage: "/placeholder.svg?height=40&width=40",
+    senderImage: "https://picsum.photos/200/300/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "mike.near",
-    receiverImage: "/placeholder.svg?height=40&width=40",
+    receiverImage: "https://picsum.photos/200/300/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
   {
     sender: "creatives.potlock.near",
-    senderImage: "/placeholder.svg?height=40&width=40",
+    senderImage: "https://picsum.photos/200/300/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "mike.near",
-    receiverImage: "/placeholder.svg?height=40&width=40",
+    receiverImage: "https://picsum.photos/200/300/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
   {
     sender: "nearcollective.near",
-    senderImage: "/placeholder.svg?height=40&width=40",
+    senderImage: "https://picsum.photos/200/300/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "creativesportfolio.near",
-    receiverImage: "/placeholder.svg?height=40&width=40",
+    receiverImage: "https://picsum.photos/200/300/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
   {
     sender: "nf-payments.near",
-    senderImage: "/placeholder.svg?height=40&width=40",
+    senderImage: "https://picsum.photos/200/300/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "mike.near",
-    receiverImage: "/placeholder.svg?height=40&width=40",
+    receiverImage: "https://picsum.photos/200/300/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
 ];
@@ -181,14 +182,14 @@ export default function LeaderboardPage() {
     type: "donor" | "sponsor",
   ) => (
     <>
-      <div className="flex w-full flex-col gap-x-14 gap-y-4 py-10 sm:w-auto md:flex-row md:justify-between">
+      <div className="pb-24px flex w-full flex-col gap-x-14 gap-y-4 pt-10 sm:w-auto md:flex-row md:justify-between">
         <SearchBar
           className="w-85% max-w-xs flex-1 text-gray-400"
           placeholder={`Search projects`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <div className="flex w-fit gap-1">
+        <div className="flex w-fit gap-3">
           {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
             <Button
               key={filter}
@@ -203,33 +204,35 @@ export default function LeaderboardPage() {
           ))}
         </div>
       </div>
-      <div className="max-w-1000px min-w-lg mb-8 grid w-full grid-cols-3 gap-4 overflow-x-scroll">
-        {participants.slice(0, 3).map((participant) => (
-          <LeaderboardCard
-            key={participant.rank}
-            rank={participant.rank}
-            image={participant.image}
-            name={participant.name}
-            amount={participant.amount}
-            type={type}
-          />
-        ))}
+      <div className="pl-36px ml-[-36px] mr-[-46px] w-screen overflow-x-scroll md:w-[104.5%]">
+        <div className="gap-20px mb-8 grid w-full grid-flow-col">
+          {participants.slice(0, 3).map((participant) => (
+            <LeaderboardCard
+              key={participant.rank}
+              rank={participant.rank}
+              image={participant.image}
+              name={participant.name}
+              amount={participant.amount}
+              type={type}
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-gray-200  bg-white">
+      <div className="hidden overflow-x-auto rounded-2xl border border-gray-200 bg-white  md:block">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+              <th className="p-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                 Rank
               </th>
-              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+              <th className="p-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                 Projects
               </th>
-              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+              <th className="p-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                 Amount
               </th>
-              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+              <th className="w-150px p-4 text-right text-xs font-bold uppercase tracking-wider text-gray-500">
                 AMT (USD)
               </th>
             </tr>
@@ -237,7 +240,7 @@ export default function LeaderboardPage() {
           <tbody className="divide-y divide-gray-200 bg-white">
             {participants.slice(3).map((participant) => (
               <tr key={participant.rank}>
-                <td className="whitespace-nowrap px-6 py-4">
+                <td className="w-10px whitespace-nowrap p-4">
                   <div className="flex items-center">
                     <span className="text-sm text-gray-900">
                       #{participant.rank}
@@ -249,32 +252,89 @@ export default function LeaderboardPage() {
                     )}
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-6 py-4">
+                <td className="whitespace-nowrap p-4">
                   <div className="flex items-center">
-                    <img
+                    <Image
                       className="h-10 w-10 rounded-full"
                       src={participant.image}
+                      width={10}
+                      height={10}
                       alt=""
                     />
                     <div className="ml-4">
-                      <div className="text-sm font-bold text-gray-900">
+                      <div className="font-500 text-sm text-gray-900">
                         {participant.name}
                       </div>
                     </div>
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div className="text-sm text-gray-900">
-                    {participant.amount}
+                <td className="w-100px whitespace-nowrap p-4">
+                  <div className="gap-8px flex items-center text-sm text-gray-900">
+                    <NearIcon className="w-18px h-18px pb-[-4]" />
+                    <span className="font-600 m-0 pt-[2px]">
+                      {participant.amount}
+                    </span>
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  ${participant.amountUsd}
+                <td className="fw-600 w-100px whitespace-nowrap p-4 text-right text-sm text-gray-950">
+                  $ {participant.amountUsd}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="p-16px flex flex-col items-start gap-4 md:hidden">
+        {participants.map((participant) => (
+          <div
+            key={participant.rank}
+            className="flex items-center gap-2 self-stretch rounded-2xl border border-solid border-[color:var(--Neutral-100,#EBEBEB)] p-4"
+          >
+            <div className="whitespace-nowrap">
+              <div className="flex items-center">
+                <Image
+                  className="h-40px w-40px rounded-full"
+                  src={participant.image}
+                  width={10}
+                  height={10}
+                  alt=""
+                />
+              </div>
+            </div>
+            <div className="w-full">
+              <div className="flex justify-between whitespace-nowrap">
+                <div className="ml-1">
+                  <div className="font-500 text-sm text-gray-900">
+                    {participant.name}
+                  </div>
+                </div>
+                <div className="whitespace-nowrap">
+                  <div className="flex items-center">
+                    <span className="fw-50 text-sm text-gray-900">
+                      #{participant.rank}
+                    </span>
+                    {participant.rank === 4 ? (
+                      <div className="ml-1 text-green-500" />
+                    ) : (
+                      <div className="ml-1 text-red-500" />
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="gap-8px flex items-center">
+                <div className="gap-8px flex items-center text-sm text-gray-900">
+                  <NearIcon className="w-18px h-18px" />
+                  <span className="font-600 m-0 pt-[2px]">
+                    {participant.amount}
+                  </span>
+                </div>
+                <div className="fw-600 w-fit whitespace-nowrap text-right text-sm text-gray-500">
+                  ~$ {participant.amountUsd}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </>
   );
@@ -298,22 +358,34 @@ export default function LeaderboardPage() {
   ];
 
   return (
-    <div className="container mx-auto flex flex-col py-8">
-      <ToggleGroup defaultValue="donors" type="single" className="w-full">
-        <div className="w-full overflow-x-scroll border-b border-gray-200">
-          <div className="w-5xl grid grid-flow-col content-center items-center px-4">
+    <div className="mx-auto flex flex-col py-8">
+      <ToggleGroup
+        defaultValue="donors"
+        type="single"
+        className="mt-40px relative w-full"
+      >
+        <div className="mb-40px md:mb-64px absolute w-screen overflow-x-scroll border-b border-t border-gray-200">
+          <div className="ml-20px md:ml-30px pt-16px grid grid-flow-col content-center items-center gap-x-4 px-4 md:w-fit">
             {TABs.map((tab) => (
               <div
                 key={tab.name}
-                className={`w-fit p-2 text-center text-lg font-semibold ${
-                  selectedTab === tab.name
-                    ? "text-brand-500 border-b-2 border-black"
-                    : ""
+                className={`py-10px px-16px text-#7B7B7B w-fit cursor-pointer text-center text-lg font-semibold ${
+                  selectedTab === tab.name ? "border-b-2 border-black" : ""
                 }`}
                 onClick={() => toggleTab(tab.name as "donors" | "sponsors")}
               >
-                <span className="inline">{tab.label}</span>
-                <span className="ml-2 rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-700">
+                <span
+                  className={`inline whitespace-nowrap ${
+                    selectedTab === tab.name ? "font-500 text-black" : ""
+                  }`}
+                >
+                  {tab.label}
+                </span>
+                <span
+                  className={`border-#DBDBDB px-6px py-2px rounded-16px ml-2 border bg-gray-200 text-sm text-gray-700 ${
+                    selectedTab === tab.name ? "font-600 text-black" : ""
+                  }`}
+                >
                   {tab.count}
                 </span>
               </div>
@@ -321,21 +393,21 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </ToggleGroup>
-      <div className="w-full flex-nowrap py-10">
-        <div className="md:w-80% mx-auto w-full">
+      <div className="py-64px max-w-912px mx-auto w-full flex-nowrap">
+        <div className="mx-auto w-full">
           {selectedTab === "activities" ? (
             <div className="w-full">
-              <h1 className="font-lora text-3xl font-bold md:text-5xl">
+              <h1 className="font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px]">
                 All Activities
               </h1>
-              <div className="flex w-full flex-col justify-between gap-x-14 gap-y-4 py-10 sm:w-auto md:flex-row">
+              <div className="pb-24px flex w-full flex-col justify-between gap-x-14 gap-y-4 pt-10 sm:w-auto md:flex-row">
                 <SearchBar
                   className="w-85% max-w-xs text-gray-400 md:w-auto"
                   placeholder={`Search projects`}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <div className="flex w-fit gap-1">
+                <div className="flex w-fit gap-3">
                   {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
                     <Button
                       key={filter}
@@ -361,7 +433,7 @@ export default function LeaderboardPage() {
                     <div className="w-224px flex items-center gap-2 overflow-x-scroll px-4 text-sm font-medium text-gray-900">
                       <Image
                         src={activity.senderImage}
-                        className="h-10 w-10 rounded-full"
+                        className="h-24px w-24px rounded-full"
                         alt="sender image"
                         width={10}
                         height={10}
@@ -384,7 +456,7 @@ export default function LeaderboardPage() {
                     <div className="w-224px flex items-center gap-2 overflow-x-scroll px-4 text-sm font-medium text-gray-900">
                       <Image
                         src={activity.receiverImage}
-                        className="h-10 w-10 rounded-full"
+                        className="h-24px w-24px rounded-full"
                         alt="receiver image"
                         width={10}
                         height={10}
@@ -392,6 +464,7 @@ export default function LeaderboardPage() {
                       <h1>{activity.receiver}</h1>
                     </div>
                     <div className="w-120px flex items-center gap-2 whitespace-nowrap px-4 text-sm text-gray-600">
+                      <span className="dot"></span>{" "}
                       {timeAgo(activity.timestamp)}
                     </div>
                   </div>
@@ -402,8 +475,8 @@ export default function LeaderboardPage() {
             ""
           )}
           {selectedTab === "donors" ? (
-            <div>
-              <h1 className="mb-8 text-center font-lora text-3xl font-bold md:text-5xl">
+            <div className="w-full">
+              <h1 className="font-lora text-3xl font-semibold leading-[56px] tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px]">
                 Donor Leaderboard
               </h1>
               {renderLeaderboard([...topDonors, ...otherDonors], "donor")}
@@ -412,8 +485,8 @@ export default function LeaderboardPage() {
             ""
           )}
           {selectedTab === "sponsors" ? (
-            <div>
-              <h1 className="text-center font-lora text-3xl font-bold md:text-5xl">
+            <div className="w-full">
+              <h1 className="font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px]">
                 Sponsor Leaderboard
               </h1>
               {renderLeaderboard(topSponsors, "sponsor")}
