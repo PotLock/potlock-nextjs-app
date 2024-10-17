@@ -5,7 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 
 import NearIcon from "@/common/assets/svgs/near-icon";
-import { Button, SearchBar, ToggleGroup } from "@/common/ui/components";
+import { FilterChip, SearchBar, ToggleGroup } from "@/common/ui/components";
 
 import { LeaderboardCard } from "../_components/LeaderboardCard";
 
@@ -191,16 +191,14 @@ export default function LeaderboardPage() {
         />
         <div className="flex w-fit gap-3">
           {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
-            <Button
+            <FilterChip
               key={filter}
-              variant={
-                timeFilter === filter ? "sec-brand-filled" : "standard-outline"
-              }
+              variant={timeFilter === filter ? "brand-filled" : "brand-outline"}
               onClick={() => setTimeFilter(filter)}
               className="py-0.375 px-3 text-sm"
             >
               {filter}
-            </Button>
+            </FilterChip>
           ))}
         </div>
       </div>
@@ -409,18 +407,16 @@ export default function LeaderboardPage() {
                 />
                 <div className="flex w-fit gap-3">
                   {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
-                    <Button
+                    <FilterChip
                       key={filter}
                       variant={
-                        timeFilter === filter
-                          ? "sec-brand-filled"
-                          : "standard-outline"
+                        timeFilter === filter ? "brand-filled" : "brand-outline"
                       }
                       onClick={() => setTimeFilter(filter)}
                       className="py-0.375 px-3 text-sm"
                     >
                       {filter}
-                    </Button>
+                    </FilterChip>
                   ))}
                 </div>
               </div>
