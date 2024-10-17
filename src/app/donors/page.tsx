@@ -439,7 +439,12 @@ export default function LeaderboardPage() {
                           width={10}
                           height={10}
                         />
-                        <h1>{activity.sender}</h1>
+                        <h1
+                          className="w-100px m:w-fit truncate md:overflow-visible"
+                          title={activity.sender}
+                        >
+                          {activity.sender}
+                        </h1>
                       </div>
                       <div className="flex items-center">
                         <div className="flex gap-2 px-4 align-middle text-sm text-gray-600">
@@ -465,7 +470,12 @@ export default function LeaderboardPage() {
                           width={10}
                           height={10}
                         />
-                        <h1>{activity.receiver}</h1>
+                        <h1
+                          className="w-100px m:w-fit truncate md:overflow-visible"
+                          title={activity.receiver}
+                        >
+                          {activity.receiver}
+                        </h1>
                       </div>
                       <div className="flex items-center gap-2 whitespace-nowrap pl-3 text-sm text-gray-600">
                         <span className="h-4px w-4px rounded-full bg-gray-600"></span>{" "}
