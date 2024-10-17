@@ -21,3 +21,4 @@ export * from "./textarea";
 export * from "./text-field";
 export * from "./toggle";
 export * from "./toggle-group";
+export * from "./filter-chip";
