@@ -8,7 +8,7 @@ import { cn } from "../utils";
 // TODO: add correct hover effects
 const filterChipVariants = cva(
   cn(
-    "flex text-sm leading-[157%] items-center justify-center text-[#292929] gap-2 font-medium",
+    "flex text-sm leading-[157%] items-center justify-center text-[#292929] gap-2 font-medium whitespace-nowrap",
     "no-underline cursor-pointer transition-all duration-200 ease-in-out w-fit rounded-md",
     "border-none focus:shadow-button-focus disabled:cursor-not-allowed",
   ),

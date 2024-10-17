@@ -182,7 +182,7 @@ export default function LeaderboardPage() {
     type: "donor" | "sponsor",
   ) => (
     <>
-      <div className="pb-24px flex w-full flex-col gap-x-14 gap-y-4 pt-10 sm:w-auto md:flex-row md:justify-between">
+      <div className="pb-24px flex w-full flex-row flex-wrap justify-between gap-x-14 gap-y-4 pt-10 sm:flex-col">
         <SearchBar
           className="w-85% max-w-xs flex-1 text-gray-400"
           placeholder={`Search projects`}
@@ -202,7 +202,7 @@ export default function LeaderboardPage() {
           ))}
         </div>
       </div>
-      <div className="pl-36px ml-[-36px] mr-[-46px] w-screen overflow-x-scroll md:w-[104.5%]">
+      <div className="pl-36px ml-[-36px] mr-[-46px] w-[104.5%] sm:w-fit sm:overflow-x-scroll">
         <div className="gap-20px mb-8 grid w-full grid-flow-col">
           {participants.slice(0, 3).map((participant) => (
             <LeaderboardCard
@@ -217,7 +217,7 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      <div className="hidden overflow-x-auto rounded-2xl border border-gray-200 bg-white  md:block">
+      <div className="block overflow-x-auto rounded-2xl border border-gray-200 bg-white  sm:hidden">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -236,53 +236,61 @@ export default function LeaderboardPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {participants.slice(3).map((participant) => (
-              <tr key={participant.rank}>
-                <td className="w-10px whitespace-nowrap p-4">
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-900">
-                      #{participant.rank}
-                    </span>
-                    {participant.rank === 4 ? (
-                      <div className="ml-1 text-green-500" />
-                    ) : (
-                      <div className="ml-1 text-red-500" />
-                    )}
-                  </div>
-                </td>
-                <td className="whitespace-nowrap p-4">
-                  <div className="flex items-center">
-                    <Image
-                      className="h-10 w-10 rounded-full"
-                      src={participant.image}
-                      width={10}
-                      height={10}
-                      alt=""
-                    />
-                    <div className="ml-4">
-                      <div className="font-500 text-sm text-gray-900">
-                        {participant.name}
+            {participants
+              .filter((participant) =>
+                participant.name
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()),
+              )
+              .sort((a, b) => b.amount - a.amount)
+              .slice(3)
+              .map((participant) => (
+                <tr key={participant.rank}>
+                  <td className="w-10px whitespace-nowrap p-4">
+                    <div className="flex items-center">
+                      <span className="text-sm text-gray-900">
+                        #{participant.rank}
+                      </span>
+                      {participant.rank === 4 ? (
+                        <div className="ml-1 text-green-500" />
+                      ) : (
+                        <div className="ml-1 text-red-500" />
+                      )}
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap p-4">
+                    <div className="flex items-center">
+                      <Image
+                        className="h-10 w-10 rounded-full"
+                        src={participant.image}
+                        width={10}
+                        height={10}
+                        alt=""
+                      />
+                      <div className="ml-4">
+                        <div className="font-500 text-sm text-gray-900">
+                          {participant.name}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td className="w-100px whitespace-nowrap p-4">
-                  <div className="gap-8px flex items-center text-sm text-gray-900">
-                    <NearIcon className="w-18px h-18px pb-[-4]" />
-                    <span className="font-600 m-0 pt-[2px]">
-                      {participant.amount}
-                    </span>
-                  </div>
-                </td>
-                <td className="fw-600 w-100px whitespace-nowrap p-4 text-right text-sm text-gray-950">
-                  $ {participant.amountUsd}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="w-100px whitespace-nowrap p-4">
+                    <div className="gap-8px flex items-center text-sm text-gray-900">
+                      <NearIcon className="w-18px h-18px pb-[-4]" />
+                      <span className="font-600 m-0 pt-[2px]">
+                        {participant.amount}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="fw-600 w-100px whitespace-nowrap p-4 text-right text-sm text-gray-950">
+                    $ {participant.amountUsd}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
-      <div className="p-16px flex flex-col items-start gap-4 md:hidden">
+      <div className="p-16px hidden flex-col items-start gap-4 sm:flex">
         {participants.map((participant) => (
           <div
             key={participant.rank}
@@ -398,7 +406,7 @@ export default function LeaderboardPage() {
               <h1 className="font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px]">
                 All Activities
               </h1>
-              <div className="pb-24px flex w-full flex-col justify-between gap-x-14 gap-y-4 pt-10 sm:w-auto md:flex-row">
+              <div className="pb-24px flex w-full flex-row flex-wrap justify-between gap-x-14 gap-y-4 pt-10 sm:flex-col">
                 <SearchBar
                   className="w-85% max-w-xs text-gray-400 md:w-auto"
                   placeholder={`Search projects`}
