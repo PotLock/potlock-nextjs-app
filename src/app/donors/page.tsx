@@ -221,7 +221,7 @@ export default function LeaderboardPage() {
         </div>
       </div>
       <div className="pl-36px md:overflow-x-unset relative ml-[-36px] mr-[-46px] w-screen overflow-x-scroll  md:w-fit">
-        <div className="gap-20px absolute mb-8 grid w-full grid-flow-col">
+        <div className="gap-20px mb-8 grid w-full grid-flow-col">
           {participants.slice(0, 3).map((participant) => (
             <LeaderboardCard
               key={participant.rank}
