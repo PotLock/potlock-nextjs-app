@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Big from "big.js";
 
 import { Pot } from "@/common/api/potlock";
-import { Filter, Group, SortSelect } from "@/common/ui/components";
+import { Filter, Group, GroupType, SortSelect } from "@/common/ui/components";
 
 import { PotCard } from "./PotCard";
 import { POT_SORT_OPTIONS, POT_STATUSES } from "../constants";
@@ -63,6 +63,7 @@ const ActivePots = () => {
     {
       label: "Status",
       options: POT_STATUSES,
+      type: GroupType.multiple,
       props: {
         value: categoryFilter,
         onValueChange: (value) => setCategoryFilter(value),
