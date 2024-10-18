@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { getConfig } from "@/common/contracts/potlock/donate";
 import { yoctosToUsdWithFallback } from "@/common/lib/yoctosToUsdWithFallback";
+import { getProjectStats } from "@/modules/project/utils";
 
 const DonationStats = () => {
   const [donateConfig, setDonateConfig] = useState({
@@ -10,24 +11,31 @@ const DonationStats = () => {
   });
 
   useEffect(() => {
-    const fetchDonateConfig = async () => {
-      const config = await getConfig();
-      const nearAnount = await yoctosToUsdWithFallback(
-        config.net_donations_amount,
-      );
+    // const fetchDonateConfig = async () => {
+    //   const config = await getConfig();
+    //   const nearAnount = await yoctosToUsdWithFallback(
+    //     config.net_donations_amount,
+    //   );
+    //   setDonateConfig({
+    //     amount: nearAnount,
+    //     count: config.total_donations_count,
+    //   });
+    // };
+    // fetchDonateConfig();
+    const data = getProjectStats();
+    data.then(({ stats }) => {
       setDonateConfig({
-        amount: nearAnount,
-        count: config.total_donations_count,
+        amount: stats.total_payouts_usd.toString(),
+        count: stats.total_donors_count.toString(),
       });
-    };
-    fetchDonateConfig();
+    });
   }, []);
 
   return (
     <div className="flex w-full flex-col ">
       <div className="mt-4 flex flex-row flex-wrap items-center gap-4 px-2 py-0 md:gap-6 md:px-10">
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
-          {donateConfig.amount}
+          ${donateConfig.amount}
           <div className="text-sm font-normal text-[#656565]">Donated</div>
         </div>
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
