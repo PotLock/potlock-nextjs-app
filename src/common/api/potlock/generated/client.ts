@@ -9,253 +9,19 @@ import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import useSwr from "swr";
 import type { Key, SWRConfiguration } from "swr";
-export type V1PotsSponsorsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1PotsPayoutsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1PotsDonationsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1PotsApplicationsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1PotsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1PotfactoriesRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1ListsRegistrationsRetrieveParams = {
-  /**
-   * Filter registrations by category
-   */
-  category?: string;
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-  /**
-   * Filter registrations by status
-   */
-  status?: string;
-};
-
-export type V1ListsRandomRegistrationRetrieveParams = {
-  /**
-   * Filter registrations by status
-   */
-  status?: string;
-};
-
-export type V1ListsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
 export type V1DonorsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
   /**
    * Sort by field, e.g., most_donated_usd
    */
   sort?: string;
 };
 
-export type V1DonateContractConfigRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1AccountsPotApplicationsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-  /**
-   * Filter pot applications by status
-   */
-  status?: string;
-};
-
-export type V1AccountsPayoutsReceivedRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1AccountsListRegistrationsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1AccountsDonationsSentRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export type V1AccountsDonationsReceivedRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
 export type V1AccountsActivePotsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
   /**
    * Filter by pot status
    */
   status?: string;
 };
-
-export type V1AccountsRetrieveParams = {
-  /**
-   * Page number for pagination
-   */
-  page?: number;
-  /**
-   * Number of results per page
-   */
-  page_size?: number;
-};
-
-export interface Token {
-  /** Token ID (address). */
-  account: string;
-  /**
-   * Token id on coingecko.
-   * @maxLength 255
-   * @nullable
-   */
-  coingecko_id?: string | null;
-  /**
-   * Token decimals.
-   * @minimum 0
-   * @maximum 2147483647
-   */
-  decimals: number;
-  /**
-   * Token icon (base64 data URL).
-   * @nullable
-   */
-  icon?: string | null;
-  /**
-   * Token name.
-   * @maxLength 255
-   * @nullable
-   */
-  name?: string | null;
-  /**
-   * Token symbol.
-   * @maxLength 255
-   * @nullable
-   */
-  symbol?: string | null;
-}
 
 /**
  * * `Pending` - Pending
@@ -294,49 +60,16 @@ export interface PotPayout {
   amount_paid_usd?: string | null;
   /** Payout id. */
   readonly id: number;
-  /**
-   * Payout date.
-   * @nullable
-   */
-  paid_at?: string | null;
-  pot: Pot;
-  recipient: Account;
-  token: Token;
+  /** Payout date. */
+  paid_at: string;
+  readonly pot: string;
+  readonly recipient: string;
+  readonly token: string;
   /**
    * Transaction hash.
    * @nullable
    */
   tx_hash?: string | null;
-}
-
-/**
- * Pot factory source metadata.
- * @nullable
- */
-export type PotFactorySourceMetadata = unknown | null;
-
-export interface PotFactory {
-  /** Pot factory account ID. */
-  account: string;
-  admins: Account[];
-  /** Pot factory deployment date. */
-  deployed_at: string;
-  owner: Account;
-  /**
-   * Pot factory protocol fee basis points.
-   * @minimum 0
-   * @maximum 2147483647
-   */
-  protocol_fee_basis_points: number;
-  protocol_fee_recipient: Account;
-  /** Require whitelist. */
-  require_whitelist: boolean;
-  /**
-   * Pot factory source metadata.
-   * @nullable
-   */
-  source_metadata?: PotFactorySourceMetadata;
-  whitelisted_deployers: Account[];
 }
 
 /**
@@ -356,10 +89,40 @@ export const PotApplicationStatusEnum = {
   InReview: "InReview",
 } as const;
 
+export interface PotApplication {
+  readonly applicant: string;
+  /** Application id. */
+  readonly id: number;
+  /**
+   * Application message.
+   * @maxLength 1024
+   * @nullable
+   */
+  message?: string | null;
+  readonly pot: string;
+  /** Application status.
+
+* `Pending` - Pending
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `InReview` - InReview */
+  status: PotApplicationStatusEnum;
+  /** Application submission date. */
+  submitted_at: string;
+  /**
+   * Transaction hash.
+   * @nullable
+   */
+  tx_hash?: string | null;
+  /**
+   * Application last update date.
+   * @nullable
+   */
+  updated_at?: string | null;
+}
+
 export interface Pot {
-  /** Pot account ID. */
-  account: string;
-  admins: Account[];
+  readonly admins: string;
   /** All paid out. */
   all_paid_out: boolean;
   /** Pot application end date. */
@@ -372,7 +135,7 @@ export interface Pot {
    * @nullable
    */
   base_currency?: string | null;
-  chef: Account;
+  readonly chef: string;
   /**
    * Chef fee basis points.
    * @minimum 0
@@ -405,9 +168,11 @@ export interface Pot {
   custom_sybil_checks?: string | null;
   /** Pot deployment date. */
   deployed_at: string;
-  deployer: Account;
+  readonly deployer: string;
   /** Pot description. */
   description: string;
+  /** Pot account ID. */
+  id: string;
   /** Matching pool balance. */
   matching_pool_balance: string;
   /**
@@ -430,7 +195,7 @@ export interface Pot {
   min_matching_pool_donation_amount: string;
   /** Pot name. */
   name: string;
-  owner: Account;
+  readonly owner: string;
   /** Pot factory. */
   pot_factory: string;
   /**
@@ -478,108 +243,23 @@ export interface Pot {
   total_public_donations_usd: string;
 }
 
-export interface PotApplication {
-  applicant: Account;
-  /** Application id. */
-  readonly id: number;
-  /**
-   * Application message.
-   * @maxLength 1024
-   * @nullable
-   */
-  message?: string | null;
-  pot: Pot;
-  /** Application status.
-
-* `Pending` - Pending
-* `Approved` - Approved
-* `Rejected` - Rejected
-* `InReview` - InReview */
-  status: PotApplicationStatusEnum;
-  /** Application submission date. */
-  submitted_at: string;
-  /**
-   * Transaction hash.
-   * @nullable
-   */
-  tx_hash?: string | null;
-  /**
-   * Application last update date.
-   * @nullable
-   */
-  updated_at?: string | null;
-}
-
-export interface PaginatedPotsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: Pot[];
-}
-
-export interface PaginatedPotPayoutsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: PotPayout[];
-}
-
-export interface PaginatedPotFactoriesResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: PotFactory[];
-}
-
-export interface PaginatedPotApplicationsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: PotApplication[];
-}
-
-export interface PaginatedListsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: List[];
-}
-
-export interface PaginatedListRegistrationsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: ListRegistration[];
-}
-
-export interface PaginatedDonationsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: Donation[];
-}
-
-export interface PaginatedAccountsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: Account[];
+export interface NearSocialProfileData {
+  backgroundImage?: Image;
+  description?: string;
+  image?: Image;
+  linktree?: Linktree;
+  name?: string;
+  /** JSON-stringified array of category strings */
+  plCategories?: string;
+  /** JSON-stringified array of funding source objects */
+  plFundingSources?: string;
+  /** JSON-stringified array of URLs */
+  plGithubRepos?: string;
+  plPublicGoodReason?: string;
+  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
+  plSmartContracts?: string;
+  /** JSON-stringified array of team member account ID strings */
+  plTeam?: string;
 }
 
 export interface Nft {
@@ -589,10 +269,48 @@ export interface Nft {
   tokenId?: string;
 }
 
+export interface ListRegistration {
+  /**
+   * Admin notes.
+   * @maxLength 1024
+   * @nullable
+   */
+  admin_notes?: string | null;
+  /** Registration id. */
+  readonly id: number;
+  readonly list: string;
+  readonly registered_by: string;
+  readonly registrant: string;
+  /**
+   * Registrant notes.
+   * @maxLength 1024
+   * @nullable
+   */
+  registrant_notes?: string | null;
+  /** Registration status.
+
+* `Pending` - Pending
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `Graylisted` - Graylisted
+* `Blacklisted` - Blacklisted */
+  status: StatusF24Enum;
+  /** Registration submission date. */
+  submitted_at: string;
+  /**
+   * Transaction hash.
+   * @maxLength 64
+   * @nullable
+   */
+  tx_hash?: string | null;
+  /** Registration last update date. */
+  updated_at: string;
+}
+
 export interface List {
   /** Admin only registrations. */
   admin_only_registrations: boolean;
-  admins: Account[];
+  readonly admins: string;
   /**
    * Cover image url.
    * @maxLength 200
@@ -628,46 +346,8 @@ export interface List {
    * @maximum 2147483647
    */
   on_chain_id: number;
-  owner: Account;
+  readonly owner: string;
   /** List last update date. */
-  updated_at: string;
-}
-
-export interface ListRegistration {
-  /**
-   * Admin notes.
-   * @maxLength 1024
-   * @nullable
-   */
-  admin_notes?: string | null;
-  /** Registration id. */
-  readonly id: number;
-  list: List;
-  registered_by: Account;
-  registrant: Account;
-  /**
-   * Registrant notes.
-   * @maxLength 1024
-   * @nullable
-   */
-  registrant_notes?: string | null;
-  /** Registration status.
-
-* `Pending` - Pending
-* `Approved` - Approved
-* `Rejected` - Rejected
-* `Graylisted` - Graylisted
-* `Blacklisted` - Blacklisted */
-  status: StatusF24Enum;
-  /** Registration submission date. */
-  submitted_at: string;
-  /**
-   * Transaction hash.
-   * @maxLength 64
-   * @nullable
-   */
-  tx_hash?: string | null;
-  /** Registration last update date. */
   updated_at: string;
 }
 
@@ -684,25 +364,6 @@ export interface Image {
   url?: string;
 }
 
-export interface NearSocialProfileData {
-  backgroundImage?: Image;
-  description?: string;
-  image?: Image;
-  linktree?: Linktree;
-  name?: string;
-  /** JSON-stringified array of category strings */
-  plCategories?: string;
-  /** JSON-stringified array of funding source objects */
-  plFundingSources?: string;
-  /** JSON-stringified array of URLs */
-  plGithubRepos?: string;
-  plPublicGoodReason?: string;
-  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
-  plSmartContracts?: string;
-  /** JSON-stringified array of team member account ID strings */
-  plTeam?: string;
-}
-
 export interface DonationContractConfig {
   owner: string;
   protocol_fee_basis_points: number;
@@ -711,7 +372,7 @@ export interface DonationContractConfig {
 }
 
 export interface Donation {
-  chef: Account;
+  readonly chef: string;
   /**
    * Chef fee.
    * @maxLength 64
@@ -726,7 +387,7 @@ export interface Donation {
   chef_fee_usd?: string | null;
   /** Donation date. */
   donated_at: string;
-  donor: Account;
+  readonly donor: string;
   /** Donation id. */
   readonly id: number;
   /** Matching pool. */
@@ -754,7 +415,7 @@ export interface Donation {
    * @maximum 2147483647
    */
   on_chain_id: number;
-  pot: Pot;
+  readonly pot: string;
   /**
    * Protocol fee.
    * @maxLength 64
@@ -766,8 +427,8 @@ export interface Donation {
    * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
    */
   protocol_fee_usd?: string | null;
-  recipient: Account;
-  referrer: Account;
+  readonly recipient: string;
+  readonly referrer: string;
   /**
    * Referrer fee.
    * @maxLength 64
@@ -780,7 +441,7 @@ export interface Donation {
    * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
    */
   referrer_fee_usd?: string | null;
-  token: Token;
+  readonly token: string;
   /**
    * Total amount.
    * @maxLength 64
@@ -851,40 +512,32 @@ export interface Account {
 }
 
 export const v1AccountsRetrieve = (
-  params?: V1AccountsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedAccountsResponse>> => {
-  return axios.get(`/api/v1/accounts`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<Account[]>> => {
+  return axios.get(`/api/v1/accounts`, options);
 };
 
-export const getV1AccountsRetrieveKey = (params?: V1AccountsRetrieveParams) =>
-  [`/api/v1/accounts`, ...(params ? [params] : [])] as const;
+export const getV1AccountsRetrieveKey = () => [`/api/v1/accounts`] as const;
 
 export type V1AccountsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1AccountsRetrieve>>
 >;
 export type V1AccountsRetrieveQueryError = AxiosError<void>;
 
-export const useV1AccountsRetrieve = <TError = AxiosError<void>>(
-  params?: V1AccountsRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1AccountsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
-) => {
+export const useV1AccountsRetrieve = <TError = AxiosError<void>>(options?: {
+  swr?: SWRConfiguration<
+    Awaited<ReturnType<typeof v1AccountsRetrieve>>,
+    TError
+  > & { swrKey?: Key; enabled?: boolean };
+  axios?: AxiosRequestConfig;
+}) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
     swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1AccountsRetrieveKey(params) : null));
-  const swrFn = () => v1AccountsRetrieve(params, axiosOptions);
+    (() => (isEnabled ? getV1AccountsRetrieveKey() : null));
+  const swrFn = () => v1AccountsRetrieve(axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -947,7 +600,7 @@ export const v1AccountsActivePotsRetrieve = (
   accountId: string,
   params?: V1AccountsActivePotsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedPotsResponse>> => {
+): Promise<AxiosResponse<Pot[]>> => {
   return axios.get(`/api/v1/accounts/${accountId}/active_pots`, {
     ...options,
     params: { ...params, ...options?.params },
@@ -1003,23 +656,13 @@ export const useV1AccountsActivePotsRetrieve = <TError = AxiosError<void>>(
 
 export const v1AccountsDonationsReceivedRetrieve = (
   accountId: string,
-  params?: V1AccountsDonationsReceivedRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedDonationsResponse>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/donations_received`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<Donation[]>> => {
+  return axios.get(`/api/v1/accounts/${accountId}/donations_received`, options);
 };
 
-export const getV1AccountsDonationsReceivedRetrieveKey = (
-  accountId: string,
-  params?: V1AccountsDonationsReceivedRetrieveParams,
-) =>
-  [
-    `/api/v1/accounts/${accountId}/donations_received`,
-    ...(params ? [params] : []),
-  ] as const;
+export const getV1AccountsDonationsReceivedRetrieveKey = (accountId: string) =>
+  [`/api/v1/accounts/${accountId}/donations_received`] as const;
 
 export type V1AccountsDonationsReceivedRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1AccountsDonationsReceivedRetrieve>>
@@ -1030,7 +673,6 @@ export const useV1AccountsDonationsReceivedRetrieve = <
   TError = AxiosError<void>,
 >(
   accountId: string,
-  params?: V1AccountsDonationsReceivedRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1AccountsDonationsReceivedRetrieve>>,
@@ -1045,11 +687,9 @@ export const useV1AccountsDonationsReceivedRetrieve = <
   const swrKey =
     swrOptions?.swrKey ??
     (() =>
-      isEnabled
-        ? getV1AccountsDonationsReceivedRetrieveKey(accountId, params)
-        : null);
+      isEnabled ? getV1AccountsDonationsReceivedRetrieveKey(accountId) : null);
   const swrFn = () =>
-    v1AccountsDonationsReceivedRetrieve(accountId, params, axiosOptions);
+    v1AccountsDonationsReceivedRetrieve(accountId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1065,23 +705,13 @@ export const useV1AccountsDonationsReceivedRetrieve = <
 
 export const v1AccountsDonationsSentRetrieve = (
   accountId: string,
-  params?: V1AccountsDonationsSentRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedDonationsResponse>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/donations_sent`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<Donation[]>> => {
+  return axios.get(`/api/v1/accounts/${accountId}/donations_sent`, options);
 };
 
-export const getV1AccountsDonationsSentRetrieveKey = (
-  accountId: string,
-  params?: V1AccountsDonationsSentRetrieveParams,
-) =>
-  [
-    `/api/v1/accounts/${accountId}/donations_sent`,
-    ...(params ? [params] : []),
-  ] as const;
+export const getV1AccountsDonationsSentRetrieveKey = (accountId: string) =>
+  [`/api/v1/accounts/${accountId}/donations_sent`] as const;
 
 export type V1AccountsDonationsSentRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1AccountsDonationsSentRetrieve>>
@@ -1090,7 +720,6 @@ export type V1AccountsDonationsSentRetrieveQueryError = AxiosError<void>;
 
 export const useV1AccountsDonationsSentRetrieve = <TError = AxiosError<void>>(
   accountId: string,
-  params?: V1AccountsDonationsSentRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1AccountsDonationsSentRetrieve>>,
@@ -1105,73 +734,8 @@ export const useV1AccountsDonationsSentRetrieve = <TError = AxiosError<void>>(
   const swrKey =
     swrOptions?.swrKey ??
     (() =>
-      isEnabled
-        ? getV1AccountsDonationsSentRetrieveKey(accountId, params)
-        : null);
-  const swrFn = () =>
-    v1AccountsDonationsSentRetrieve(accountId, params, axiosOptions);
-
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
-
-  return {
-    swrKey,
-    ...query,
-  };
-};
-
-export const v1AccountsListRegistrationsRetrieve = (
-  accountId: string,
-  params?: V1AccountsListRegistrationsRetrieveParams,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedListRegistrationsResponse>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/list-registrations`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
-};
-
-export const getV1AccountsListRegistrationsRetrieveKey = (
-  accountId: string,
-  params?: V1AccountsListRegistrationsRetrieveParams,
-) =>
-  [
-    `/api/v1/accounts/${accountId}/list-registrations`,
-    ...(params ? [params] : []),
-  ] as const;
-
-export type V1AccountsListRegistrationsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1AccountsListRegistrationsRetrieve>>
->;
-export type V1AccountsListRegistrationsRetrieveQueryError = AxiosError<void>;
-
-export const useV1AccountsListRegistrationsRetrieve = <
-  TError = AxiosError<void>,
->(
-  accountId: string,
-  params?: V1AccountsListRegistrationsRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1AccountsListRegistrationsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
-) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
-
-  const isEnabled = swrOptions?.enabled !== false && !!accountId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() =>
-      isEnabled
-        ? getV1AccountsListRegistrationsRetrieveKey(accountId, params)
-        : null);
-  const swrFn = () =>
-    v1AccountsListRegistrationsRetrieve(accountId, params, axiosOptions);
+      isEnabled ? getV1AccountsDonationsSentRetrieveKey(accountId) : null);
+  const swrFn = () => v1AccountsDonationsSentRetrieve(accountId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1187,23 +751,13 @@ export const useV1AccountsListRegistrationsRetrieve = <
 
 export const v1AccountsPayoutsReceivedRetrieve = (
   accountId: string,
-  params?: V1AccountsPayoutsReceivedRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedPotPayoutsResponse>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/payouts_received`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<Donation[]>> => {
+  return axios.get(`/api/v1/accounts/${accountId}/payouts_received`, options);
 };
 
-export const getV1AccountsPayoutsReceivedRetrieveKey = (
-  accountId: string,
-  params?: V1AccountsPayoutsReceivedRetrieveParams,
-) =>
-  [
-    `/api/v1/accounts/${accountId}/payouts_received`,
-    ...(params ? [params] : []),
-  ] as const;
+export const getV1AccountsPayoutsReceivedRetrieveKey = (accountId: string) =>
+  [`/api/v1/accounts/${accountId}/payouts_received`] as const;
 
 export type V1AccountsPayoutsReceivedRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1AccountsPayoutsReceivedRetrieve>>
@@ -1212,7 +766,6 @@ export type V1AccountsPayoutsReceivedRetrieveQueryError = AxiosError<void>;
 
 export const useV1AccountsPayoutsReceivedRetrieve = <TError = AxiosError<void>>(
   accountId: string,
-  params?: V1AccountsPayoutsReceivedRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1AccountsPayoutsReceivedRetrieve>>,
@@ -1227,11 +780,9 @@ export const useV1AccountsPayoutsReceivedRetrieve = <TError = AxiosError<void>>(
   const swrKey =
     swrOptions?.swrKey ??
     (() =>
-      isEnabled
-        ? getV1AccountsPayoutsReceivedRetrieveKey(accountId, params)
-        : null);
+      isEnabled ? getV1AccountsPayoutsReceivedRetrieveKey(accountId) : null);
   const swrFn = () =>
-    v1AccountsPayoutsReceivedRetrieve(accountId, params, axiosOptions);
+    v1AccountsPayoutsReceivedRetrieve(accountId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1247,23 +798,13 @@ export const useV1AccountsPayoutsReceivedRetrieve = <TError = AxiosError<void>>(
 
 export const v1AccountsPotApplicationsRetrieve = (
   accountId: string,
-  params?: V1AccountsPotApplicationsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedPotApplicationsResponse>> => {
-  return axios.get(`/api/v1/accounts/${accountId}/pot_applications`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<PotApplication[]>> => {
+  return axios.get(`/api/v1/accounts/${accountId}/pot_applications`, options);
 };
 
-export const getV1AccountsPotApplicationsRetrieveKey = (
-  accountId: string,
-  params?: V1AccountsPotApplicationsRetrieveParams,
-) =>
-  [
-    `/api/v1/accounts/${accountId}/pot_applications`,
-    ...(params ? [params] : []),
-  ] as const;
+export const getV1AccountsPotApplicationsRetrieveKey = (accountId: string) =>
+  [`/api/v1/accounts/${accountId}/pot_applications`] as const;
 
 export type V1AccountsPotApplicationsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>
@@ -1272,7 +813,6 @@ export type V1AccountsPotApplicationsRetrieveQueryError = AxiosError<void>;
 
 export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
   accountId: string,
-  params?: V1AccountsPotApplicationsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1AccountsPotApplicationsRetrieve>>,
@@ -1287,11 +827,9 @@ export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
   const swrKey =
     swrOptions?.swrKey ??
     (() =>
-      isEnabled
-        ? getV1AccountsPotApplicationsRetrieveKey(accountId, params)
-        : null);
+      isEnabled ? getV1AccountsPotApplicationsRetrieveKey(accountId) : null);
   const swrFn = () =>
-    v1AccountsPotApplicationsRetrieve(accountId, params, axiosOptions);
+    v1AccountsPotApplicationsRetrieve(accountId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1306,41 +844,35 @@ export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
 };
 
 export const v1DonateContractConfigRetrieve = (
-  params?: V1DonateContractConfigRetrieveParams,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<DonationContractConfig>> => {
-  return axios.get(`/api/v1/donate_contract_config`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+  return axios.get(`/api/v1/donate_contract_config`, options);
 };
 
-export const getV1DonateContractConfigRetrieveKey = (
-  params?: V1DonateContractConfigRetrieveParams,
-) => [`/api/v1/donate_contract_config`, ...(params ? [params] : [])] as const;
+export const getV1DonateContractConfigRetrieveKey = () =>
+  [`/api/v1/donate_contract_config`] as const;
 
 export type V1DonateContractConfigRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1DonateContractConfigRetrieve>>
 >;
 export type V1DonateContractConfigRetrieveQueryError = AxiosError<void>;
 
-export const useV1DonateContractConfigRetrieve = <TError = AxiosError<void>>(
-  params?: V1DonateContractConfigRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1DonateContractConfigRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
-) => {
+export const useV1DonateContractConfigRetrieve = <
+  TError = AxiosError<void>,
+>(options?: {
+  swr?: SWRConfiguration<
+    Awaited<ReturnType<typeof v1DonateContractConfigRetrieve>>,
+    TError
+  > & { swrKey?: Key; enabled?: boolean };
+  axios?: AxiosRequestConfig;
+}) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
     swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1DonateContractConfigRetrieveKey(params) : null));
-  const swrFn = () => v1DonateContractConfigRetrieve(params, axiosOptions);
+    (() => (isEnabled ? getV1DonateContractConfigRetrieveKey() : null));
+  const swrFn = () => v1DonateContractConfigRetrieve(axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1357,7 +889,7 @@ export const useV1DonateContractConfigRetrieve = <TError = AxiosError<void>>(
 export const v1DonorsRetrieve = (
   params?: V1DonorsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedAccountsResponse>> => {
+): Promise<AxiosResponse<Account[]>> => {
   return axios.get(`/api/v1/donors`, {
     ...options,
     params: { ...params, ...options?.params },
@@ -1403,40 +935,31 @@ export const useV1DonorsRetrieve = <TError = AxiosError<void>>(
 };
 
 export const v1ListsRetrieve = (
-  params?: V1ListsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedListsResponse>> => {
-  return axios.get(`/api/v1/lists`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<List[]>> => {
+  return axios.get(`/api/v1/lists`, options);
 };
 
-export const getV1ListsRetrieveKey = (params?: V1ListsRetrieveParams) =>
-  [`/api/v1/lists`, ...(params ? [params] : [])] as const;
+export const getV1ListsRetrieveKey = () => [`/api/v1/lists`] as const;
 
 export type V1ListsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1ListsRetrieve>>
 >;
 export type V1ListsRetrieveQueryError = AxiosError<void>;
 
-export const useV1ListsRetrieve = <TError = AxiosError<void>>(
-  params?: V1ListsRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1ListsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
-) => {
+export const useV1ListsRetrieve = <TError = AxiosError<void>>(options?: {
+  swr?: SWRConfiguration<
+    Awaited<ReturnType<typeof v1ListsRetrieve>>,
+    TError
+  > & { swrKey?: Key; enabled?: boolean };
+  axios?: AxiosRequestConfig;
+}) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1ListsRetrieveKey(params) : null));
-  const swrFn = () => v1ListsRetrieve(params, axiosOptions);
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1ListsRetrieveKey() : null));
+  const swrFn = () => v1ListsRetrieve(axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1495,85 +1018,15 @@ export const useV1ListsRetrieve2 = <TError = AxiosError<void>>(
   };
 };
 
-export const v1ListsRandomRegistrationRetrieve = (
-  listId: number,
-  params?: V1ListsRandomRegistrationRetrieveParams,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ListRegistration>> => {
-  return axios.get(`/api/v1/lists/${listId}/random_registration`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
-};
-
-export const getV1ListsRandomRegistrationRetrieveKey = (
-  listId: number,
-  params?: V1ListsRandomRegistrationRetrieveParams,
-) =>
-  [
-    `/api/v1/lists/${listId}/random_registration`,
-    ...(params ? [params] : []),
-  ] as const;
-
-export type V1ListsRandomRegistrationRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1ListsRandomRegistrationRetrieve>>
->;
-export type V1ListsRandomRegistrationRetrieveQueryError = AxiosError<void>;
-
-export const useV1ListsRandomRegistrationRetrieve = <TError = AxiosError<void>>(
-  listId: number,
-  params?: V1ListsRandomRegistrationRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1ListsRandomRegistrationRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
-) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
-
-  const isEnabled = swrOptions?.enabled !== false && !!listId;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() =>
-      isEnabled
-        ? getV1ListsRandomRegistrationRetrieveKey(listId, params)
-        : null);
-  const swrFn = () =>
-    v1ListsRandomRegistrationRetrieve(listId, params, axiosOptions);
-
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
-
-  return {
-    swrKey,
-    ...query,
-  };
-};
-
 export const v1ListsRegistrationsRetrieve = (
   listId: number,
-  params?: V1ListsRegistrationsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedListRegistrationsResponse>> => {
-  return axios.get(`/api/v1/lists/${listId}/registrations`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<ListRegistration[]>> => {
+  return axios.get(`/api/v1/lists/${listId}/registrations`, options);
 };
 
-export const getV1ListsRegistrationsRetrieveKey = (
-  listId: number,
-  params?: V1ListsRegistrationsRetrieveParams,
-) =>
-  [
-    `/api/v1/lists/${listId}/registrations`,
-    ...(params ? [params] : []),
-  ] as const;
+export const getV1ListsRegistrationsRetrieveKey = (listId: number) =>
+  [`/api/v1/lists/${listId}/registrations`] as const;
 
 export type V1ListsRegistrationsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1ListsRegistrationsRetrieve>>
@@ -1582,7 +1035,6 @@ export type V1ListsRegistrationsRetrieveQueryError = AxiosError<void>;
 
 export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
   listId: number,
-  params?: V1ListsRegistrationsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1ListsRegistrationsRetrieve>>,
@@ -1596,59 +1048,8 @@ export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
   const isEnabled = swrOptions?.enabled !== false && !!listId;
   const swrKey =
     swrOptions?.swrKey ??
-    (() =>
-      isEnabled ? getV1ListsRegistrationsRetrieveKey(listId, params) : null);
-  const swrFn = () =>
-    v1ListsRegistrationsRetrieve(listId, params, axiosOptions);
-
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
-
-  return {
-    swrKey,
-    ...query,
-  };
-};
-
-export const v1PotfactoriesRetrieve = (
-  params?: V1PotfactoriesRetrieveParams,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedPotFactoriesResponse>> => {
-  return axios.get(`/api/v1/potfactories`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
-};
-
-export const getV1PotfactoriesRetrieveKey = (
-  params?: V1PotfactoriesRetrieveParams,
-) => [`/api/v1/potfactories`, ...(params ? [params] : [])] as const;
-
-export type V1PotfactoriesRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1PotfactoriesRetrieve>>
->;
-export type V1PotfactoriesRetrieveQueryError = AxiosError<unknown>;
-
-export const useV1PotfactoriesRetrieve = <TError = AxiosError<unknown>>(
-  params?: V1PotfactoriesRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1PotfactoriesRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
-) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
-
-  const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotfactoriesRetrieveKey(params) : null));
-  const swrFn = () => v1PotfactoriesRetrieve(params, axiosOptions);
+    (() => (isEnabled ? getV1ListsRegistrationsRetrieveKey(listId) : null));
+  const swrFn = () => v1ListsRegistrationsRetrieve(listId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1663,40 +1064,31 @@ export const useV1PotfactoriesRetrieve = <TError = AxiosError<unknown>>(
 };
 
 export const v1PotsRetrieve = (
-  params?: V1PotsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedPotsResponse>> => {
-  return axios.get(`/api/v1/pots`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<Pot[]>> => {
+  return axios.get(`/api/v1/pots`, options);
 };
 
-export const getV1PotsRetrieveKey = (params?: V1PotsRetrieveParams) =>
-  [`/api/v1/pots`, ...(params ? [params] : [])] as const;
+export const getV1PotsRetrieveKey = () => [`/api/v1/pots`] as const;
 
 export type V1PotsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1PotsRetrieve>>
 >;
 export type V1PotsRetrieveQueryError = AxiosError<unknown>;
 
-export const useV1PotsRetrieve = <TError = AxiosError<unknown>>(
-  params?: V1PotsRetrieveParams,
-  options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof v1PotsRetrieve>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
-    axios?: AxiosRequestConfig;
-  },
-) => {
+export const useV1PotsRetrieve = <TError = AxiosError<unknown>>(options?: {
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof v1PotsRetrieve>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
+  axios?: AxiosRequestConfig;
+}) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsRetrieveKey(params) : null));
-  const swrFn = () => v1PotsRetrieve(params, axiosOptions);
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1PotsRetrieveKey() : null));
+  const swrFn = () => v1PotsRetrieve(axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1757,20 +1149,13 @@ export const useV1PotsRetrieve2 = <TError = AxiosError<void>>(
 
 export const v1PotsApplicationsRetrieve = (
   potId: string,
-  params?: V1PotsApplicationsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedPotApplicationsResponse>> => {
-  return axios.get(`/api/v1/pots/${potId}/applications`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<PotApplication[]>> => {
+  return axios.get(`/api/v1/pots/${potId}/applications`, options);
 };
 
-export const getV1PotsApplicationsRetrieveKey = (
-  potId: string,
-  params?: V1PotsApplicationsRetrieveParams,
-) =>
-  [`/api/v1/pots/${potId}/applications`, ...(params ? [params] : [])] as const;
+export const getV1PotsApplicationsRetrieveKey = (potId: string) =>
+  [`/api/v1/pots/${potId}/applications`] as const;
 
 export type V1PotsApplicationsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1PotsApplicationsRetrieve>>
@@ -1779,7 +1164,6 @@ export type V1PotsApplicationsRetrieveQueryError = AxiosError<void>;
 
 export const useV1PotsApplicationsRetrieve = <TError = AxiosError<void>>(
   potId: string,
-  params?: V1PotsApplicationsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1PotsApplicationsRetrieve>>,
@@ -1793,9 +1177,8 @@ export const useV1PotsApplicationsRetrieve = <TError = AxiosError<void>>(
   const isEnabled = swrOptions?.enabled !== false && !!potId;
   const swrKey =
     swrOptions?.swrKey ??
-    (() =>
-      isEnabled ? getV1PotsApplicationsRetrieveKey(potId, params) : null);
-  const swrFn = () => v1PotsApplicationsRetrieve(potId, params, axiosOptions);
+    (() => (isEnabled ? getV1PotsApplicationsRetrieveKey(potId) : null));
+  const swrFn = () => v1PotsApplicationsRetrieve(potId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1811,19 +1194,13 @@ export const useV1PotsApplicationsRetrieve = <TError = AxiosError<void>>(
 
 export const v1PotsDonationsRetrieve = (
   potId: string,
-  params?: V1PotsDonationsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedDonationsResponse>> => {
-  return axios.get(`/api/v1/pots/${potId}/donations`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<Donation[]>> => {
+  return axios.get(`/api/v1/pots/${potId}/donations`, options);
 };
 
-export const getV1PotsDonationsRetrieveKey = (
-  potId: string,
-  params?: V1PotsDonationsRetrieveParams,
-) => [`/api/v1/pots/${potId}/donations`, ...(params ? [params] : [])] as const;
+export const getV1PotsDonationsRetrieveKey = (potId: string) =>
+  [`/api/v1/pots/${potId}/donations`] as const;
 
 export type V1PotsDonationsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1PotsDonationsRetrieve>>
@@ -1832,7 +1209,6 @@ export type V1PotsDonationsRetrieveQueryError = AxiosError<void>;
 
 export const useV1PotsDonationsRetrieve = <TError = AxiosError<void>>(
   potId: string,
-  params?: V1PotsDonationsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1PotsDonationsRetrieve>>,
@@ -1846,8 +1222,8 @@ export const useV1PotsDonationsRetrieve = <TError = AxiosError<void>>(
   const isEnabled = swrOptions?.enabled !== false && !!potId;
   const swrKey =
     swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsDonationsRetrieveKey(potId, params) : null));
-  const swrFn = () => v1PotsDonationsRetrieve(potId, params, axiosOptions);
+    (() => (isEnabled ? getV1PotsDonationsRetrieveKey(potId) : null));
+  const swrFn = () => v1PotsDonationsRetrieve(potId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1863,19 +1239,13 @@ export const useV1PotsDonationsRetrieve = <TError = AxiosError<void>>(
 
 export const v1PotsPayoutsRetrieve = (
   potId: string,
-  params?: V1PotsPayoutsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedPotPayoutsResponse>> => {
-  return axios.get(`/api/v1/pots/${potId}/payouts`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<PotPayout[]>> => {
+  return axios.get(`/api/v1/pots/${potId}/payouts`, options);
 };
 
-export const getV1PotsPayoutsRetrieveKey = (
-  potId: string,
-  params?: V1PotsPayoutsRetrieveParams,
-) => [`/api/v1/pots/${potId}/payouts`, ...(params ? [params] : [])] as const;
+export const getV1PotsPayoutsRetrieveKey = (potId: string) =>
+  [`/api/v1/pots/${potId}/payouts`] as const;
 
 export type V1PotsPayoutsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1PotsPayoutsRetrieve>>
@@ -1884,7 +1254,6 @@ export type V1PotsPayoutsRetrieveQueryError = AxiosError<void>;
 
 export const useV1PotsPayoutsRetrieve = <TError = AxiosError<void>>(
   potId: string,
-  params?: V1PotsPayoutsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1PotsPayoutsRetrieve>>,
@@ -1898,8 +1267,8 @@ export const useV1PotsPayoutsRetrieve = <TError = AxiosError<void>>(
   const isEnabled = swrOptions?.enabled !== false && !!potId;
   const swrKey =
     swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsPayoutsRetrieveKey(potId, params) : null));
-  const swrFn = () => v1PotsPayoutsRetrieve(potId, params, axiosOptions);
+    (() => (isEnabled ? getV1PotsPayoutsRetrieveKey(potId) : null));
+  const swrFn = () => v1PotsPayoutsRetrieve(potId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1915,19 +1284,13 @@ export const useV1PotsPayoutsRetrieve = <TError = AxiosError<void>>(
 
 export const v1PotsSponsorsRetrieve = (
   potId: string,
-  params?: V1PotsSponsorsRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PaginatedAccountsResponse>> => {
-  return axios.get(`/api/v1/pots/${potId}/sponsors`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+): Promise<AxiosResponse<Account[]>> => {
+  return axios.get(`/api/v1/pots/${potId}/sponsors`, options);
 };
 
-export const getV1PotsSponsorsRetrieveKey = (
-  potId: string,
-  params?: V1PotsSponsorsRetrieveParams,
-) => [`/api/v1/pots/${potId}/sponsors`, ...(params ? [params] : [])] as const;
+export const getV1PotsSponsorsRetrieveKey = (potId: string) =>
+  [`/api/v1/pots/${potId}/sponsors`] as const;
 
 export type V1PotsSponsorsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1PotsSponsorsRetrieve>>
@@ -1936,7 +1299,6 @@ export type V1PotsSponsorsRetrieveQueryError = AxiosError<void>;
 
 export const useV1PotsSponsorsRetrieve = <TError = AxiosError<void>>(
   potId: string,
-  params?: V1PotsSponsorsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<
       Awaited<ReturnType<typeof v1PotsSponsorsRetrieve>>,
@@ -1950,8 +1312,8 @@ export const useV1PotsSponsorsRetrieve = <TError = AxiosError<void>>(
   const isEnabled = swrOptions?.enabled !== false && !!potId;
   const swrKey =
     swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1PotsSponsorsRetrieveKey(potId, params) : null));
-  const swrFn = () => v1PotsSponsorsRetrieve(potId, params, axiosOptions);
+    (() => (isEnabled ? getV1PotsSponsorsRetrieveKey(potId) : null));
+  const swrFn = () => v1PotsSponsorsRetrieve(potId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
