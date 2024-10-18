@@ -11,6 +11,10 @@ import { useImgVisibilityToggle } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/modules/profile";
 
+const ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-image.png`;
+
+const ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-banner.png`;
+
 export type AccountProfilePictureProps = ByAccountId & {
   className?: string;
 };
@@ -25,7 +29,8 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
   return (
     <LazyLoadImage
       alt="Avatar"
-      placeholderSrc={`${IMAGES_ASSET_ENDPOINT_URL}/profile-image.png`}
+      placeholderSrc={ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC}
+      visibleByDefault={src === ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC}
       {...{ src }}
       onLoad={displayImg}
       wrapperClassName={cn(`h-3 w-3 rounded-full bg-white`, className)}
@@ -64,7 +69,8 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
     >
       <LazyLoadImage
         alt="Profile cover"
-        placeholderSrc={`${IMAGES_ASSET_ENDPOINT_URL}/profile-banner.png`}
+        placeholderSrc={ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
+        visibleByDefault={src === ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
         width="100%"
         {...{ height, src }}
         onLoad={displayImg}

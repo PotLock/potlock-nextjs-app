@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { DEBUG } from "@/common/constants";
 import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
 import { SignInButton, useAuth } from "@/modules/auth";
@@ -17,7 +18,12 @@ const links = [
   { label: "Pots", url: routesPath.POTS, disabled: false },
   { label: "Feed", url: routesPath.FEED, disabled: false },
   // { label: "Donors", url: routesPath.DONORS, disabled: false },
-  // { label: "Lists", url: routesPath.LIST, disabled: false },
+
+  {
+    label: "Lists",
+    url: routesPath.LIST,
+    ...(DEBUG ? {} : { disabled: true }),
+  },
 ];
 
 const AuthButton = () => {
