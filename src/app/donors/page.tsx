@@ -220,7 +220,7 @@ export default function LeaderboardPage() {
           ))}
         </div>
       </div>
-      <div className="pl-36px md:overflow-x-unset relative ml-[-36px] mr-[-46px] w-screen overflow-x-scroll  md:w-fit">
+      <div className="pl-36px xl:overflow-x-unset relative ml-[-36px] mr-[-46px] w-screen overflow-x-scroll  md:w-full">
         <div className="gap-20px mb-8 grid w-full grid-flow-col">
           {participants.slice(0, 3).map((participant) => (
             <LeaderboardCard
@@ -424,9 +424,9 @@ export default function LeaderboardPage() {
               <h1 className="font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px]">
                 All Activities
               </h1>
-              <div className="pb-24px flex w-full justify-between gap-x-14 gap-y-4 pt-10 sm:flex-col md:flex-row">
+              <div className="pb-24px flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10 md:flex-row">
                 <SearchBar
-                  className="w-85% max-w-xs text-gray-400 md:w-auto"
+                  className="w-320px text-gray-400"
                   placeholder={`Search projects`}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
