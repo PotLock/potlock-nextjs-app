@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
-import { useToast } from "@/common/hooks/use-toast";
+import { useToast } from "@/common/ui/hooks/toasts";
 import { useRouteQuery } from "@/common/lib";
 import { dispatch, useTypedSelector } from "@/store";
 
