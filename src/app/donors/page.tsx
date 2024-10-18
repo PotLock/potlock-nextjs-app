@@ -31,21 +31,21 @@ interface Activity {
 const topDonors: Participant[] = [
   {
     rank: 1,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "nearcollective.near",
     amount: 731.25,
     amountUsd: 0,
   },
   {
     rank: 2,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "nf-payments.near",
     amount: 731.25,
     amountUsd: 0,
   },
   {
     rank: 3,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "creatives.potlock.near",
     amount: 731.25,
     amountUsd: 0,
@@ -55,21 +55,21 @@ const topDonors: Participant[] = [
 const otherDonors: Participant[] = [
   {
     rank: 4,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "creativesportfolio.near",
     amount: 2000,
     amountUsd: 2000,
   },
   {
     rank: 5,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "mike.near",
     amount: 2000,
     amountUsd: 2000,
   },
   {
     rank: 6,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "mike.near",
     amount: 2000,
     amountUsd: 2000,
@@ -79,21 +79,21 @@ const otherDonors: Participant[] = [
 const topSponsors: Participant[] = [
   {
     rank: 1,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "sponsor1.near",
     amount: 1000,
     amountUsd: 1000,
   },
   {
     rank: 2,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "sponsor2.near",
     amount: 900,
     amountUsd: 900,
   },
   {
     rank: 3,
-    image: "https://picsum.photos/200/300/?blur",
+    image: "https://picsum.photos/200/200/?blur",
     name: "sponsor3.near",
     amount: 800,
     amountUsd: 800,
@@ -103,52 +103,52 @@ const topSponsors: Participant[] = [
 const ACTIVITY: Activity[] = [
   {
     sender: "nearcollective.near",
-    senderImage: "https://picsum.photos/200/300/?blur",
+    senderImage: "https://picsum.photos/200/200/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "creativesportfolio.near",
-    receiverImage: "https://picsum.photos/200/300/?blur",
+    receiverImage: "https://picsum.photos/200/200/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
   {
     sender: "nf-payments.near",
-    senderImage: "https://picsum.photos/200/300/?blur",
+    senderImage: "https://picsum.photos/200/200/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "mike.near",
-    receiverImage: "https://picsum.photos/200/300/?blur",
+    receiverImage: "https://picsum.photos/200/200/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
   {
     sender: "creatives.potlock.near",
-    senderImage: "https://picsum.photos/200/300/?blur",
+    senderImage: "https://picsum.photos/200/200/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "mike.near",
-    receiverImage: "https://picsum.photos/200/300/?blur",
+    receiverImage: "https://picsum.photos/200/200/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
   {
     sender: "nearcollective.near",
-    senderImage: "https://picsum.photos/200/300/?blur",
+    senderImage: "https://picsum.photos/200/200/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "creativesportfolio.near",
-    receiverImage: "https://picsum.photos/200/300/?blur",
+    receiverImage: "https://picsum.photos/200/200/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
   {
     sender: "nf-payments.near",
-    senderImage: "https://picsum.photos/200/300/?blur",
+    senderImage: "https://picsum.photos/200/200/?blur",
     amount: 1000,
     amountUsd: 1000,
     currency: "NEAR",
     receiver: "mike.near",
-    receiverImage: "https://picsum.photos/200/300/?blur",
+    receiverImage: "https://picsum.photos/200/200/?blur",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2,
   },
 ];
@@ -315,7 +315,7 @@ export default function LeaderboardPage() {
             className="flex items-center gap-2 self-stretch rounded-2xl border border-solid border-[color:var(--Neutral-100,#EBEBEB)] p-4"
           >
             <div className="whitespace-nowrap">
-              <div className="flex items-center">
+              <div className="h-40px w-40px flex items-center">
                 <Image
                   className="h-40px w-40px rounded-full"
                   src={participant.image}
@@ -406,7 +406,7 @@ export default function LeaderboardPage() {
                   {tab.label}
                 </span>
                 <span
-                  className={`border-#DBDBDB px-6px py-2px rounded-16px ml-2 border bg-gray-200 text-sm text-gray-700 ${
+                  className={`border-#DBDBDB px-6px py-4px rounded-16px ml-2 border bg-gray-200 text-sm text-gray-700 ${
                     selectedTab === tab.name ? "font-600 text-black" : ""
                   }`}
                 >
