@@ -388,7 +388,7 @@ export default function LeaderboardPage() {
         type="single"
         className="mt-40px relative w-full"
       >
-        <div className="mb-40px md:mb-64px absolute w-screen overflow-x-scroll border-b border-t border-gray-200">
+        <div className="mb-40px md:mb-64px absolute w-screen overflow-x-scroll border-b border-t border-gray-200 xl:w-full">
           <div className="ml-20px md:ml-30px pt-16px grid grid-flow-col content-center items-center gap-x-4 px-4 md:w-fit">
             {TABs.map((tab) => (
               <div
