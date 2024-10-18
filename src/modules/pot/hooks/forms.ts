@@ -42,6 +42,7 @@ export const useFundMatchingPoolForm = ({
 }) => {
   const form = useForm<FundMatchingPoolInputs>({
     resolver: zodResolver(fundMatchingPoolSchema),
+    mode: "all",
   });
 
   const [inProgress, setInProgress] = useState(false);
