@@ -220,8 +220,8 @@ export default function LeaderboardPage() {
           ))}
         </div>
       </div>
-      <div className="pl-36px ml-[-36px] mr-[-46px] w-[104.5%] sm:w-fit sm:overflow-x-scroll">
-        <div className="gap-20px mb-8 grid w-full grid-flow-col">
+      <div className="pl-36px md:overflow-x-unset relative ml-[-36px] mr-[-46px] w-screen overflow-x-scroll  md:w-fit">
+        <div className="gap-20px absolute mb-8 grid w-full grid-flow-col">
           {participants.slice(0, 3).map((participant) => (
             <LeaderboardCard
               key={participant.rank}
@@ -235,7 +235,7 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      <div className="block overflow-x-auto rounded-2xl border border-gray-200 bg-white  sm:hidden">
+      <div className="hidden overflow-x-auto rounded-2xl border border-gray-200 bg-white  md:block">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -308,7 +308,7 @@ export default function LeaderboardPage() {
           </tbody>
         </table>
       </div>
-      <div className="p-16px hidden flex-col items-start gap-4 sm:flex">
+      <div className="p-16px flex flex-col items-start gap-4 md:hidden">
         {participants.map((participant) => (
           <div
             key={participant.rank}
