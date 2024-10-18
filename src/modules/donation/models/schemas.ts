@@ -76,9 +76,7 @@ export const donationSchema = object({
   groupAllocationPlan: array(
     object({ account_id: string(), amount: donationAmount.optional() }),
   )
-    .refine((recipients) => recipients.length > 0, {
-      message: "You have to select at least one recipient.",
-    })
+    .min(1, { message: "You have to select at least one recipient." })
     .optional(),
 
   bypassProtocolFee: boolean().default(false),

@@ -79,7 +79,9 @@ const ChallengeResolveModal = ({
               <Checkbox
                 id="resolve"
                 onCheckedChange={(value) => {
-                  form.setValue("resolve", value as boolean);
+                  form.setValue("resolve", value as boolean, {
+                    shouldDirty: true,
+                  });
                 }}
               />
               <label

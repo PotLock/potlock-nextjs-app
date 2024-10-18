@@ -79,7 +79,7 @@ export const DonationGroupAllocation: React.FC<
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 
   const onEvenShareAllocationClick = useCallback(
-    () => form.setValue("amount", totalAmountFloat),
+    () => form.setValue("amount", totalAmountFloat, { shouldDirty: true }),
     [form, totalAmountFloat],
   );
 

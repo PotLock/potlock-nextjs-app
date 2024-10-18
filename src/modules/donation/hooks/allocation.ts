@@ -43,6 +43,8 @@ export const useDonationEvenShareAllocation = ({
           ...recipientShare,
           amount: recipientShareAmount,
         })),
+
+        { shouldDirty: true },
       );
     }
   }, [
@@ -70,6 +72,8 @@ export const useDonationEvenShareAllocation = ({
                 (recipientShare) =>
                   recipientShare.account_id !== recipient.accountId,
               ),
+
+          { shouldDirty: true },
         );
       };
     },
