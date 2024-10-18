@@ -158,12 +158,30 @@ const timeAgo = (timestamp: number) => {
   const diff = now - timestamp;
   if (diff < 1000 * 60) {
     return `${Math.floor(diff / 1000)}s ago`;
+  } else if (diff < 1000 * 60 * 2) {
+    return `1 min ago`;
   } else if (diff < 1000 * 60 * 60) {
-    return `${Math.floor(diff / (1000 * 60))}mns ago`;
+    return `${Math.floor(diff / (1000 * 60))} mins ago`;
+  } else if (diff < 1000 * 60 * 60 * 2) {
+    return `1 hr ago`;
   } else if (diff < 1000 * 60 * 60 * 24) {
-    return `${Math.floor(diff / (1000 * 60 * 60))}hrs ago`;
+    return `${Math.floor(diff / (1000 * 60 * 60))} hrs ago`;
+  } else if (diff < 1000 * 60 * 60 * 24 * 2) {
+    return `1 day ago`;
+  } else if (diff < 1000 * 60 * 60 * 24 * 7) {
+    return `${Math.floor(diff / (1000 * 60 * 60 * 24))} days ago`;
+  } else if (diff < 1000 * 60 * 60 * 24 * 7 * 2) {
+    return `1 wk ago`;
+  } else if (diff < 1000 * 60 * 60 * 24 * 30) {
+    return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 7))} wks ago`;
+  } else if (diff < 1000 * 60 * 60 * 24 * 30 * 2) {
+    return `1 mn ago`;
+  } else if (diff < 1000 * 60 * 60 * 24 * 365) {
+    return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 30))} mns ago`;
+  } else if (diff < 1000 * 60 * 60 * 24 * 365 * 2) {
+    return `1 yr ago`;
   } else {
-    return `${Math.floor(diff / (1000 * 60 * 60 * 24))}days ago`;
+    return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 365))} yrs ago`;
   }
 };
 
@@ -182,9 +200,9 @@ export default function LeaderboardPage() {
     type: "donor" | "sponsor",
   ) => (
     <>
-      <div className="pb-24px flex w-full flex-row flex-wrap justify-between gap-x-14 gap-y-4 pt-10 sm:flex-col">
+      <div className="pb-24px flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10 md:flex-row">
         <SearchBar
-          className="w-85% max-w-xs flex-1 text-gray-400"
+          className="w-320px text-gray-400"
           placeholder={`Search projects`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -406,7 +424,7 @@ export default function LeaderboardPage() {
               <h1 className="font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px]">
                 All Activities
               </h1>
-              <div className="pb-24px flex w-full flex-row flex-wrap justify-between gap-x-14 gap-y-4 pt-10 sm:flex-col">
+              <div className="pb-24px flex w-full justify-between gap-x-14 gap-y-4 pt-10 sm:flex-col md:flex-row">
                 <SearchBar
                   className="w-85% max-w-xs text-gray-400 md:w-auto"
                   placeholder={`Search projects`}
@@ -444,7 +462,7 @@ export default function LeaderboardPage() {
                           height={10}
                         />
                         <h1
-                          className="w-100px m:w-fit truncate md:overflow-visible"
+                          className="w-100px truncate md:w-fit md:overflow-visible"
                           title={activity.sender}
                         >
                           {activity.sender}
@@ -475,7 +493,7 @@ export default function LeaderboardPage() {
                           height={10}
                         />
                         <h1
-                          className="w-100px m:w-fit truncate md:overflow-visible"
+                          className="w-100px truncate md:w-fit md:overflow-visible"
                           title={activity.receiver}
                         >
                           {activity.receiver}
