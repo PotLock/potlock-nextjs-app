@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isValid } from "date-fns";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { entries } from "remeda";
 import { ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
@@ -96,7 +98,7 @@ export const useDonationForm = ({
     resolver: zodResolver(donationSchema),
     mode: "all",
     defaultValues,
-    resetOptions: { keepDirtyValues: true },
+    resetOptions: { keepDirtyValues: false },
   });
 
   const values = useWatch(self);
@@ -139,10 +141,13 @@ export const useDonationForm = ({
     [values],
   );
 
-  const hasChanges = Object.keys(values).some(
-    (key) =>
-      values[key as keyof DonationInputs] !==
-      defaultValues[key as keyof DonationInputs],
+  const hasChanges = useMemo(
+    () =>
+      entries(values).some(
+        ([key, value]) => value !== defaultValues[key as keyof DonationInputs],
+      ),
+
+    [defaultValues, values],
   );
 
   const isBalanceSufficient = totalAmountFloat < (balanceFloat ?? 0);
@@ -185,6 +190,12 @@ export const useDonationForm = ({
     params,
     isSingleProjectDonation,
   ]);
+
+  console.log(values.groupAllocationPlan);
+
+  console.table({ hasChanges, isValid: self.formState.isValid });
+
+  console.log(JSON.stringify(self.formState, null, 2));
 
   return {
     form: {
