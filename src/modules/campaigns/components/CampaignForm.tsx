@@ -174,7 +174,7 @@ export const CampaignForm = () => {
               name="end_ms"
               render={({ field }) => (
                 <TextField
-                  label="Start Date"
+                  label="End Date"
                   {...field}
                   classNames={{ root: "lg:w-90" }}
                   type="datetime-local"

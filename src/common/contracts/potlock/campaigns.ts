@@ -4,7 +4,7 @@ import { naxiosInstance } from "@/common/api/near";
 import { CAMPAIGN_CONTRACT_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 
-import { CampaignFormFields } from "./interfaces/campaign.interfaces";
+import { Campaign, CampaignFormFields } from "./interfaces/campaign.interfaces";
 
 export const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGN_CONTRACT_ID,
@@ -28,4 +28,18 @@ export const create_campaign = ({ args }: { args: CampaignFormFields }) => {
  */
 
 export const get_campaigns = () =>
-  contractApi.view<{}, CampaignFormFields[]>("get_campaigns");
+  contractApi.view<{}, Campaign[]>("get_campaigns");
+
+/**
+ * GET CAMPAIGN
+ */
+
+export interface GetCampaignInput {
+  campaign_id: string;
+}
+
+export const get_campaign = (args: GetCampaignInput) =>
+  contractApi.view<typeof args, Campaign>(`get_campaign`, { args });
+
+export const get_donations_for_campaign = (args: GetCampaignInput) =>
+  contractApi.view<typeof args, number>("get_donations_for_campaign", { args });

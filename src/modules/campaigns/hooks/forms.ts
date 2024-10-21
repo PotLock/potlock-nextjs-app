@@ -22,16 +22,26 @@ export const useCampaignForm = () => {
 
   const values = useWatch(self);
 
+  const timeToMiliSeconds = (time: string) => {
+    return Temporal.Instant.from(time + "Z");
+  };
+
   const onSubmit: SubmitHandler<Values> = useCallback((values) => {
     campaign.create_campaign({
       args: {
         ...values,
+        ...(values.min_amount && {
+          min_amount: floatToYoctoNear(values.min_amount) as any,
+        }),
+        ...(values.max_amount && {
+          max_amount: floatToYoctoNear(values.max_amount) as any,
+        }),
         target_amount: floatToYoctoNear(values.target_amount) as any,
-        start_ms: Temporal.Instant.from(values.start_ms.toString() + "Z")
+        start_ms: timeToMiliSeconds(values.start_ms.toString())
           .epochMilliseconds,
-        // ...(values.end_ms
-        //     ? { end_ms: localeStringToTimestampMs(values.end_ms.toString()) }
-        //     : {}),
+        ...(values.end_ms && {
+          end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
+        }),
         owner: walletApi.accountId as string,
       },
     });

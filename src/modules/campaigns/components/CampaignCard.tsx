@@ -1,10 +1,12 @@
 import Image from "next/image";
 
+import { Campaign } from "@/common/contracts/potlock";
+import { yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
-export const CampaignCard = () => {
+export const CampaignCard = ({ data }: { data: Campaign }) => {
   const NO_IMAGE =
     "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
 
@@ -18,7 +20,7 @@ export const CampaignCard = () => {
     >
       <div className="relative h-[212px] w-full">
         <Image
-          src="/assets/images/profile-banner.png"
+          src={data?.cover_image_url || ""}
           alt=""
           className="h-[212px] w-full rounded-t-lg object-cover"
           width={500}
@@ -26,7 +28,7 @@ export const CampaignCard = () => {
         />
         <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
         <h1 className="absolute bottom-0 px-6 py-3 text-[20px] font-semibold text-white">
-          Campaign Name Should span 2 lines of text only then truncate
+          {data.name}
         </h1>
       </div>
       <div className="flex flex-col gap-4 px-6 py-6">
@@ -39,17 +41,16 @@ export const CampaignCard = () => {
             height={20}
             className="rounded-[50%]"
           />
-          <p className="">MAGICBUILD</p>
+          <p className="">{data.recipient}</p>
         </div>
         <div className="h-[120px]">
-          <p className="text-[16px]">
-            Lorem ipsum dolor sit amet consectetur. Duis fermentum turpis vitae
-            mi augue erat et lectus. Auctor a diam amet sagittis dui at accumsan
-            adipiscing. Suspendisse sapien ante dolor id leo. Placerat convallis
-            enim est diam ipsum tempor.
-          </p>
+          <p className="text-[16px]">{data.description}</p>
         </div>
-        <CampaignProgressBar target={10000} minAmount={1000} amount={10000} />
+        <CampaignProgressBar
+          target={yoctoNearToFloat(data.target_amount)}
+          minAmount={0}
+          amount={Number(data.total_raised_amount)}
+        />
         <Button variant="standard-outline" className="w-full">
           Donate
         </Button>

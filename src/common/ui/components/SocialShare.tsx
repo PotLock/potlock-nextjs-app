@@ -14,7 +14,13 @@ import {
 import { Button } from "./atoms/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-export const SocialsShare = ({ shareContent }: { shareContent?: string }) => {
+export const SocialsShare = ({
+  shareContent,
+  showButton,
+}: {
+  shareContent?: string;
+  showButton?: boolean;
+}) => {
   const [copied, setCopied] = useState(false);
 
   const onCopy = useCallback(() => {
@@ -28,7 +34,13 @@ export const SocialsShare = ({ shareContent }: { shareContent?: string }) => {
     <Popover>
       <PopoverTrigger asChild>
         <div>
-          <ShareIcon />
+          {showButton ? (
+            <Button className="w-full" variant="standard-outline">
+              Share
+            </Button>
+          ) : (
+            <ShareIcon />
+          )}
         </div>
       </PopoverTrigger>
       <PopoverContent>

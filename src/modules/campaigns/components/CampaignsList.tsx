@@ -1,10 +1,11 @@
 import { useState } from "react";
 
+import { Campaign } from "@/common/contracts/potlock";
 import { SearchBar, SortSelect } from "@/common/ui/components";
 
 import { CampaignCard } from "./CampaignCard";
 
-export const CampaignsList = () => {
+export const CampaignsList = ({ campaigns }: { campaigns: Campaign[] }) => {
   const [search, setSearch] = useState("");
 
   const SORT_LIST_PROJECTS = [
@@ -25,8 +26,10 @@ export const CampaignsList = () => {
         />
         <SortSelect options={SORT_LIST_PROJECTS} />
       </div>
-      <div className="my-4">
-        <CampaignCard />
+      <div className="my-4 flex flex-wrap gap-8">
+        {campaigns.map((campaign) => (
+          <CampaignCard key={campaign.id} data={campaign} />
+        ))}
       </div>
     </div>
   );
