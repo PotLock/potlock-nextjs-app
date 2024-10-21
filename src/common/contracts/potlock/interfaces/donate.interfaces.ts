@@ -1,4 +1,6 @@
-export interface Config {
+import { ByTokenId } from "@/common/types";
+
+export interface DirectDonationConfig {
   owner: string;
   protocol_fee_basis_points: number;
   referral_fee_basis_points: number;
@@ -11,23 +13,28 @@ export interface Config {
 }
 
 export interface DirectDonation {
-  id: string;
+  id: number;
   donor_id: string;
   total_amount: string;
   ft_id: string;
-  message: string;
+  message?: null | string;
   donated_at_ms: number;
   recipient_id: string;
   protocol_fee: string;
-  referrer_id: null | string;
-  referrer_fee: null | string;
-  base_currency: string;
-  amount?: string;
+  referrer_id?: null | string;
+  referrer_fee?: null | string;
 }
 
 export type DirectDonationArgs = {
   recipient_id: string;
-  message?: string | null;
-  referrer_id?: string | null;
-  bypass_protocol_fee?: boolean | null;
+  message?: null | string;
+  referrer_id?: null | string;
+  bypass_protocol_fee?: null | boolean;
 };
+
+export type DirectBatchDonationItem = {
+  args: DirectDonationArgs;
+  amountYoctoNear: string;
+};
+
+export type DirectFTBatchDonationItem = ByTokenId & DirectBatchDonationItem;

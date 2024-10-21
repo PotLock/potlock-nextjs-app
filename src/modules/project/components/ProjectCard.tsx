@@ -1,89 +1,85 @@
-import React, { useEffect, useState } from "react";
-
-import Image from "next/image";
 import Link from "next/link";
 
-import { dispatch } from "@/app/_store";
-import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { _address, yoctosToNear } from "@/common/lib";
+import { potlock } from "@/common/api/potlock";
+import { PayoutDetailed } from "@/common/contracts/potlock";
+import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
-import { useProfile } from "@/modules/profile/utils";
+import { cn } from "@/common/ui/utils";
+import {
+  AccountProfileCover,
+  AccountProfilePicture,
+  useNearUsdDisplayValue,
+} from "@/modules/core";
+import routesPath from "@/modules/core/routes";
+import { useDonation } from "@/modules/donation";
 
-import CardSkeleton from "./CardSkeleton";
+import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
+import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";
 
-const MAX_DESCRIPTION_LENGTH = 80;
+const rootBoxShadow = `
+  0px 0px 0px 1px rgba(5, 5, 5, 0.08),
+  0px 2px 2px -1px rgba(15, 15, 15, 0.15),
+  0px 4px 4px -2px rgba(5, 5, 5, 0.08)
+`;
 
-export const ProjectCard = ({
-  projectId,
-  potId,
-  allowDonate: _allowDonate,
-  payoutDetails,
-}: {
+export type ProjectCardProps = {
   projectId: string;
   potId?: string;
   allowDonate?: boolean;
   payoutDetails?: PayoutDetailed;
-}) => {
-  const allowDonate = _allowDonate === undefined ? true : _allowDonate;
+};
 
-  const { socialData, socialImages, tags, totalAmountNear } =
-    useProfile(projectId);
+export const ProjectCard = ({
+  projectId,
+  allowDonate = true,
+  payoutDetails,
+}: ProjectCardProps) => {
+  const { openDonationModal } = useDonation({ accountId: projectId });
 
-  const [isLoading, setIsLoading] = useState(true);
+  const { isLoading: isAccountLoading, data: account } = potlock.useAccount({
+    accountId: projectId,
+  });
 
-  useEffect(() => {
-    dispatch.profiles
-      .loadProfile({
-        projectId,
-        payoutDetails,
-        potId,
-      })
-      .then(() => setIsLoading(false))
-      .catch((err: Error) => {
-        console.error("error fetching data for project card ", err);
-        setIsLoading(false);
-      });
-  }, [projectId, payoutDetails, potId]);
+  const estimatedMatchedAmount = useNearUsdDisplayValue(
+    yoctoNearToFloat(payoutDetails?.amount ?? "0"),
+  );
+
+  const { name, description, plCategories } =
+    account?.near_social_profile_data ?? {};
+
+  const categories = plCategories ? JSON.parse(plCategories) : [];
 
   return (
-    <Link href={`/user/${projectId}`}>
-      {isLoading ? (
-        <CardSkeleton />
+    <Link href={`${routesPath.PROFILE}/${projectId}`}>
+      {isAccountLoading ? (
+        <ProjectCardSkeleton />
       ) : (
         <div
-          className="group mx-auto flex h-full w-full max-w-[420px]  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300"
+          className={cn(
+            "transition-duration-300 max-w-105 mx-auto flex h-full w-full flex-col",
+            "overflow-hidden rounded-md bg-card transition-all",
+          )}
+          style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"
         >
-          {/* Background */}
-          <div className="relative h-[145px] w-full overflow-hidden">
-            <Image
-              fill
-              // loading="lazy"
-              className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-              alt="background-image"
-              src={socialImages.backgroundImage}
-            />
-          </div>
+          <AccountProfileCover accountId={projectId} />
 
           {/* Content */}
-          <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
-            {/* Profile image */}
-            <div className="relative -mt-5 h-10 w-10">
-              <Image
-                fill
-                loading="lazy"
-                className="rounded-full bg-white object-cover shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-                alt="profile-image"
-                src={socialImages.image}
-              />
-            </div>
+          <div className="flex flex-1 flex-col gap-5 px-6 pb-6">
+            <AccountProfilePicture
+              accountId={projectId}
+              className={cn(
+                "relative -mt-5 h-10 w-10 object-cover",
+                "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
+              )}
+            />
 
             {/* Name */}
             <div
               className="w-full text-base font-semibold text-[#2e2e2e]"
               data-testid="project-card-title"
             >
-              {_address(socialData?.name || "", 30) || _address(projectId, 30)}
+              {truncate(name ?? "", 30) || truncate(projectId, 30)}
             </div>
 
             {/* Description */}
@@ -91,38 +87,45 @@ export const ProjectCard = ({
               className="text-base font-normal text-[#2e2e2e]"
               data-testid="project-card-description"
             >
-              {_address(socialData.description || "", MAX_DESCRIPTION_LENGTH)}
+              {truncate(description ?? "", MAX_PROJECT_DESCRIPTION_LENGTH)}
             </div>
 
-            {/* Tags */}
+            {/* Categories */}
             <div className="flex flex-wrap gap-2 text-base">
-              {tags?.map((tag: string, index: number) => (
+              {categories.map((category: string) => (
                 <div
-                  className="rounded border border-solid border-[#7b7b7b5c] px-2 py-1 text-base text-[#2e2e2e] shadow-[0px_-0.699999988079071px_0px_#7b7b7b5c_inset]"
-                  key={index}
+                  className="prose"
+                  un-shadow="[0px_-0.699999988079071px_0px_#7b7b7b5c_inset]"
+                  un-border="rounded 1 solid #7b7b7b5c"
+                  un-px="2"
+                  un-py="1"
+                  un-bg="neutral-50"
+                  un-text="sm"
+                  un-font="500"
+                  key={category}
                 >
-                  {tag}
+                  {category}
                 </div>
               ))}
             </div>
 
-            {/* Donations Info */}
+            {/* Donations */}
             <div className="mt-auto flex items-center gap-4">
-              {/* amount */}
-              <div className="flex flex-row items-center gap-2">
-                <div
-                  className="text-lg font-semibold leading-6 text-[#292929]"
-                  data-testid="project-card-fundraising-amount"
-                >
-                  {totalAmountNear}
-                </div>
+              {account?.total_donations_in_usd && (
+                <div className="flex flex-row items-center gap-2">
+                  <div
+                    className="text-lg font-semibold leading-6 text-[#292929]"
+                    data-testid="project-card-fundraising-amount"
+                  >
+                    {`$${account?.total_donations_in_usd}`}
+                  </div>
 
-                <div className="text-sm font-medium leading-4  text-neutral-600">
-                  Raised
+                  <div className="text-sm font-medium leading-4  text-neutral-600">
+                    Raised
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* donors count */}
               {payoutDetails && (
                 <div className="flex flex-row items-center gap-2">
                   <div className="text-lg font-semibold leading-6 text-[#292929]">
@@ -139,11 +142,8 @@ export const ProjectCard = ({
             {allowDonate && (
               <Button
                 className="w-full"
-                variant={"standard-outline"}
-                onClick={(e) => {
-                  e.preventDefault();
-                  // TODO: Donation modal
-                }}
+                variant="standard-outline"
+                onClick={openDonationModal}
               >
                 Donate
               </Button>
@@ -151,14 +151,24 @@ export const ProjectCard = ({
           </div>
 
           {payoutDetails && (
-            <div className="flex items-center justify-between rounded-[0px_0px_12px_12px] bg-[#ebebeb] px-6 py-2">
-              <div className="text-xs uppercase leading-[18px] tracking-[1.1px] text-[#292929]">
-                Estimated matched amount
-              </div>
+            <div
+              className="prose"
+              un-flex="~"
+              un-justify="between"
+              un-items="center"
+              un-py="2"
+              un-px="6"
+              un-rounded="[0px_0px_12px_12px]"
+              un-bg="neutral-50"
+              un-text="sm"
+            >
+              <span un-text="neutral-500" un-font="500">
+                Estimated Matched Amount
+              </span>
 
-              <div className="text-sm font-semibold leading-6 text-[#292929]">
-                {yoctosToNear(payoutDetails.amount) || "- N"}
-              </div>
+              <span className="font-600 text-nowrap">
+                {estimatedMatchedAmount}
+              </span>
             </div>
           )}
         </div>

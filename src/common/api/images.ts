@@ -1,9 +1,9 @@
-import { naxiosInstance } from "@/common/contracts/index";
+import { naxiosInstance } from "@/common/api/near";
 import { Image, getSocialProfile } from "@/common/contracts/social";
 
 type Props = {
   accountId?: string;
-  image?: Image;
+  image?: Image | string;
   type?: "backgroundImage" | "image";
   fallbackurl?: string;
 };
@@ -37,7 +37,7 @@ export const getImage = async ({
   type,
   fallbackurl,
 }: Props) => {
-  let socialImage = image;
+  let socialImage: any = image;
 
   try {
     if (!socialImage && accountId) {
@@ -121,13 +121,13 @@ export const getImage = async ({
     } else if (socialImage?.ipfs_cid) {
       return `https://ipfs.near.social/ipfs/${socialImage.ipfs_cid}`;
     } else {
-      return fallbackurl ?? type === "image"
+      return (fallbackurl ?? type === "image")
         ? "/assets/images/profile-image.png"
         : "/assets/images/profile-banner.png";
     }
   } catch (err) {
     console.log("error fetching image ", err);
-    return fallbackurl ?? type === "image"
+    return (fallbackurl ?? type === "image")
       ? "/assets/images/profile-image.png"
       : "/assets/images/profile-banner.png";
   }

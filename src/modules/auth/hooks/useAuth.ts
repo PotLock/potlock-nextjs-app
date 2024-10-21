@@ -1,4 +1,4 @@
-import { useTypedSelector } from "@/app/_store";
+import { useTypedSelector } from "@/store";
 
 export const useAuth = () => {
   const auth = useTypedSelector((state) => state.auth);
