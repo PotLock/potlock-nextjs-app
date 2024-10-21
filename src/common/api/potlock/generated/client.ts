@@ -107,6 +107,10 @@ export type V1PotsApplicationsRetrieveParams = {
    * Number of results per page
    */
   page_size?: number;
+  /**
+   * Filter by application status
+   */
+  status?: string;
 };
 
 export type V1PotsRetrieveParams = {
@@ -1100,6 +1104,7 @@ export interface List {
    */
   on_chain_id: number;
   owner: Account;
+  readonly registrations_count: string;
   /** List last update date. */
   updated_at: string;
   upvotes: ListUpvote[];

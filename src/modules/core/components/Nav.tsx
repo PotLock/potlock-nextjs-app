@@ -19,7 +19,7 @@ const links = [
 
   { label: "Feed", url: routesPath.FEED, disabled: false },
   // { label: "Donors", url: routesPath.DONORS, disabled: false },
-  { label: "Lists", url: routesPath.LIST, disabled: false },
+  // { label: "Lists", url: routesPath.LIST, disabled: false },
 ];
 
 const AuthButton = () => {
@@ -91,7 +91,7 @@ export const Nav = () => {
 
   return (
     <>
-      <nav className="max-sm:px-1 md:h-[96px] 2xl-container z-50 flex w-full content-between items-center justify-between self-stretch bg-transparent px-[40px] pb-6 pt-6">
+      <nav className="max-sm:px-1 md:h-[96px] 2xl-container z-50 mx-auto flex w-full content-between items-center justify-between self-stretch bg-transparent px-10 pb-6 pt-6">
         {/* Left */}
         <div className="flex">
           <div className="mr-12 flex flex-row items-center justify-center">

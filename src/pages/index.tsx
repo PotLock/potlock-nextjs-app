@@ -3,20 +3,17 @@ import Link from "next/link";
 import { Button } from "@/common/ui/components";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
-import useRegistration from "@/modules/core/hooks/useRegistration";
+import { GeneralStats, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { DonateRandomly } from "@/modules/donation";
-import {
-  ProjectFundingStats,
-  ProjectsOverview,
-  ProjectsOverviewFeatured,
-} from "@/modules/project";
+import { ProjectsOverview, ProjectsOverviewFeatured } from "@/modules/project";
 import { useTypedSelector } from "@/store";
 
-const Hero = () => {
+const WelcomeBanner = () => {
   const { defaultAddress, toggle } = useTypedSelector(
     (state) => state.nav.actAsDao,
   );
+
   const daoAddress = toggle && defaultAddress ? defaultAddress : "";
   const wallet = useWallet();
   const accountId = daoAddress || wallet?.wallet?.accountId || "";
@@ -30,10 +27,12 @@ const Hero = () => {
         <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
           Transforming Funding for Public Goods
         </h3>
+
         <h1 className="lett md:text-[40px] m-0 font-lora text-4xl font-medium leading-none tracking-tight">
           Discover impact projects, donate directly, &
           <br className="md:block hidden" /> participate in funding rounds.
         </h1>
+
         <div className="max-md:flex-col md:mt-10 md:gap-8 mt-6 flex items-center gap-4 text-sm">
           <DonateRandomly />
 
@@ -66,8 +65,8 @@ const Hero = () => {
 export default function Home() {
   return (
     <main className="container flex flex-col items-center">
-      <Hero />
-      <ProjectFundingStats />
+      <WelcomeBanner />
+      <GeneralStats />
       <ProjectsOverviewFeatured />
       <ProjectsOverview />
     </main>
