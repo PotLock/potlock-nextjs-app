@@ -1,14 +1,21 @@
-import { MemoryCache } from "@wpdas/naxios";
+import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
+import { parseNearAmount } from "near-api-js/lib/utils/format";
+
+import { naxiosInstance } from "@/common/api/near";
+import { PotId } from "@/common/api/potlock";
+import { FULL_TGAS, ONE_HUNDREDTH_NEAR } from "@/common/constants";
 
 import {
   Application,
   ApprovedApplication,
-  Challange,
+  Challenge,
   Payout,
+  PotBatchDonationItem,
   PotConfig,
   PotDonation,
+  PotDonationArgs,
+  UpdatePotArgs,
 } from "./interfaces/pot.interfaces";
-import { naxiosInstance } from "..";
 
 /**
  * NEAR Contract API
@@ -114,24 +121,21 @@ export const getApplications = async (args: { potId: string }) =>
  * Get round payout challanges
  */
 export const getPayoutsChallenges = async (args: { potId: string }) =>
-  contractApi(args.potId).view<typeof args, Challange[]>(
+  contractApi(args.potId).view<typeof args, Challenge[]>(
     "get_payouts_challenges",
-    {
-      args,
-    },
   );
 
 /**
  * Get round payouts
  */
 export const getPayouts = async (args: { potId: string }) =>
-  contractApi(args.potId).view<typeof args, Payout[]>("get_payouts ", {
+  contractApi(args.potId).view<typeof args, Payout[]>("get_payouts", {
     args,
   });
 
 // WRITE METHODS
 /**
- * Challange round payout
+ * Challenge round payout
  */
 export const challengePayouts = ({
   potId,
@@ -140,22 +144,21 @@ export const challengePayouts = ({
   potId: string;
   reason: string;
 }) => {
-  const depositFloat = reason.length * 0.00003 + 0.003;
+  const args = { reason };
+  const deposit = parseNearAmount(calculateDepositByDataSize(args))!;
 
-  contractApi(potId).call<{ reason: string }, Challange[]>(
+  return contractApi(potId).call<{ reason: string }, Challenge[]>(
     "challenge_payouts",
     {
-      args: {
-        reason: reason,
-      },
-      deposit: `${depositFloat}`,
-      gas: "300000000000000",
+      args,
+      deposit,
+      gas: FULL_TGAS,
     },
   );
 };
 
 /**
- * Admin update round payout Challange
+ * Admin update round payout Challenge
  */
 export const adminUpdatePayoutsChallenge = (args: {
   potId: string;
@@ -165,24 +168,24 @@ export const adminUpdatePayoutsChallenge = (args: {
 }) => {
   const depositFloat = args.notes.length * 0.00003;
 
-  contractApi(args.potId).call<typeof args, Challange[]>(
+  contractApi(args.potId).call<typeof args, Challenge[]>(
     "admin_update_payouts_challenge",
     {
       args,
       deposit: `${depositFloat}`,
-      gas: "300000000000000",
+      gas: FULL_TGAS,
     },
   );
 };
 
 /**
- * Admin update round payout Challange
+ * Admin update round payout Challenge
  */
 export const chefSetPayouts = (args: { potId: string; payouts: Payout[] }) =>
   contractApi(args.potId).call<typeof args, Payout[]>("chef_set_payouts", {
     args,
     deposit: "1",
-    gas: "300000000000000",
+    gas: FULL_TGAS,
   });
 
 /**
@@ -192,57 +195,46 @@ export const adminProcessPayouts = (args: { potId: string }) =>
   contractApi(args.potId).call<typeof args, Payout[]>("admin_process_payouts", {
     args,
     deposit: "1",
-    gas: "300000000000000",
+    gas: FULL_TGAS,
   });
 
-/**
- * Get flagged acoounts for round
- */
-// export const get_flagged_accounts = ({
-//   potDetail,
-//   potId,
-// }: {
-//   potDetail: PotConfig;
-//   potId: string;
-// }) => {
-//   const roles = ["owner", "admins", "chef"];
+export const donate = (
+  potAccountId: PotId,
+  args: PotDonationArgs,
+  depositAmountYocto: string,
+) =>
+  contractApi(potAccountId).call<typeof args, PotDonation>("donate", {
+    args,
+    deposit: depositAmountYocto,
+    callbackUrl: window.location.href,
+  });
 
-//   const allUsers = {};
-//   roles.forEach((role) => {
-//     const users = potDetail[role];
-//     if (typeof users === "object") {
-//       users.forEach((user) => {
-//         allUsers[user] = role === "admins" ? "admin" : role;
-//       });
-//     } else {
-//       allUsers[users] = role;
-//     }
-//   });
+export const donateBatch = (
+  potAccountId: PotId,
+  txDrafts: PotBatchDonationItem[],
+) =>
+  contractApi(potAccountId).callMultiple<PotDonationArgs>(
+    txDrafts.map(({ amountYoctoNear, ...txDraft }) => ({
+      method: "donate",
+      deposit: amountYoctoNear,
+      gas: FULL_TGAS,
+      ...txDraft,
+    })),
 
-//   const flaggedAccounts = [];
-//   const socialKeys = Object.keys(allUsers).map((user) => `${user}/profile/**`);
+    window.location.href,
+  );
 
-//   return new Promise((resolve, reject) => {
-//     getSocialProfile(socialKeys)
-//       .then((profiles) => {
-//         Object.entries(profiles).forEach(([user, { profile }]) => {
-//           const pLBlacklistedAccounts = JSON.parse(
-//             profile.pLBlacklistedAccounts || "{}",
-//           );
-//           const potFlaggedAcc = pLBlacklistedAccounts[potId] || {};
-//           if (!isEmpty(potFlaggedAcc)) {
-//             flaggedAccounts.push({
-//               flaggedBy: user,
-//               role: allUsers[user],
-//               potFlaggedAcc,
-//             });
-//           }
-//         });
-//         resolve(flaggedAccounts);
-//       })
-//       .catch((error) => {
-//         console.error("Error fetching social profiles:", error);
-//         reject(error);
-//       });
-//   });
-// };
+export const admin_dangerously_set_pot_config = (
+  potAccountId: PotId,
+  args: { update_args: UpdatePotArgs },
+) =>
+  contractApi(potAccountId).call<typeof args, PotConfig>(
+    "admin_dangerously_set_pot_config",
+
+    {
+      args,
+      deposit: ONE_HUNDREDTH_NEAR,
+      gas: FULL_TGAS,
+      callbackUrl: window.location.href,
+    },
+  );

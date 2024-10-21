@@ -4,6 +4,8 @@ import InfiniteScrollWrapper, {
   Props as ScrollProps,
 } from "react-infinite-scroll-component";
 
+import { cn } from "../utils";
+
 type Props = Partial<ScrollProps> & {
   items: any[];
   index: number;
@@ -13,6 +15,7 @@ type Props = Partial<ScrollProps> & {
 };
 
 export const InfiniteScroll = ({
+  className,
   items,
   size,
   index,
@@ -25,7 +28,10 @@ export const InfiniteScroll = ({
 
   return (
     <InfiniteScrollWrapper
-      className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+      className={cn(
+        "md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8",
+        className,
+      )}
       dataLength={items.slice(0, size * index).length}
       next={fetchMoreData}
       scrollThreshold={1}

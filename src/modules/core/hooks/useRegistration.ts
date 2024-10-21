@@ -5,7 +5,7 @@ import { getRegistration } from "@/common/contracts/potlock/lists";
 
 import { UNREGISTERED_PROJECT } from "../constants";
 
-const useRegistration = (projectId: string) => {
+export const useRegistration = (projectId: string) => {
   const [registration, setRegistration] =
     useState<Registration>(UNREGISTERED_PROJECT);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,6 @@ const useRegistration = (projectId: string) => {
           setLoading(false);
         }
       } catch (error) {
-        console.log("error fetching project ", error);
         setError(error);
         setLoading(false);
       }
@@ -35,6 +34,7 @@ const useRegistration = (projectId: string) => {
     registration,
     loading,
     error,
+    isRegisteredProject: !!registration.id,
   };
 };
 

@@ -1,19 +1,20 @@
 import { MemoryCache } from "@wpdas/naxios";
 
-import { POTLOCK_DONATE_CONTRACT_ID } from "@/common/constants";
+import { naxiosInstance } from "@/common/api/near";
+import { DONATION_CONTRACT_ID, FULL_TGAS } from "@/common/constants";
 
 import {
-  Config,
+  DirectBatchDonationItem,
   DirectDonation,
   DirectDonationArgs,
+  DirectDonationConfig,
 } from "./interfaces/donate.interfaces";
-import { naxiosInstance } from "..";
 
 /**
  * NEAR Contract API
  */
 export const contractApi = naxiosInstance.contractApi({
-  contractId: POTLOCK_DONATE_CONTRACT_ID,
+  contractId: DONATION_CONTRACT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });
 
@@ -22,15 +23,14 @@ export const contractApi = naxiosInstance.contractApi({
 /**
  * Get donate contract config
  */
-export const getConfig = () => contractApi.view<{}, Config>("get_config");
+export const getConfig = () =>
+  contractApi.view<{}, DirectDonationConfig>("get_config");
 
 /**
  * Get direct donations
  */
 export const getDonations = (args: { fromIndex?: number; limit?: number }) =>
-  contractApi.view<typeof args, DirectDonation[]>("get_donations", {
-    args,
-  });
+  contractApi.view<typeof args, DirectDonation[]>("get_donations", { args });
 
 /**
  * Get donations for a recipient id
@@ -38,9 +38,7 @@ export const getDonations = (args: { fromIndex?: number; limit?: number }) =>
 export const getDonationsForRecipient = (args: { recipient_id: string }) =>
   contractApi.view<typeof args, DirectDonation[]>(
     "get_donations_for_recipient",
-    {
-      args,
-    },
+    { args },
   );
 
 /**
@@ -51,11 +49,19 @@ export const getDonationsForDonor = (args: { donor_id: string }) =>
     args,
   });
 
-export const donateNearDirectly = (
-  args: DirectDonationArgs,
-  depositAmountFloat: number,
-) =>
+export const donate = (args: DirectDonationArgs, depositAmountYocto: string) =>
   contractApi.call<typeof args, DirectDonation>("donate", {
     args,
-    deposit: depositAmountFloat.toString(),
+    deposit: depositAmountYocto,
+    callbackUrl: window.location.href,
   });
+
+export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
+  contractApi.callMultiple<DirectDonationArgs>(
+    txInputs.map(({ amountYoctoNear, ...txInput }) => ({
+      method: "donate",
+      deposit: amountYoctoNear,
+      gas: FULL_TGAS,
+      ...txInput,
+    })),
+  );

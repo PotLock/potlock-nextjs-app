@@ -3,11 +3,12 @@
 PotLock application built on NextJS featuring project exploration, pages, donations, and Pots (quadratic funding for now) on the NEAR Blockchain
 
 To-Do
+
 - Feeds
 - Campaigns
 - Lists
 
-The backlog to the NextJS App can be found at https://potlock.org/next-backlog 
+The backlog to the NextJS App can be found at <https://potlock.org/next-backlog>
 
 You can access BOS PotLock version using one of the environments below:
 
@@ -15,9 +16,14 @@ You can access BOS PotLock version using one of the environments below:
 - [Staging](https://bos.potlock.org/staging.potlock.near/widget/IndexLoader)
 = [Repo](https://github.com/potlock/bos-alem-app)
 
-You can see original features https://potlock.notion.site/All-Features-Potlock-NextJS-App-5f543fa8b31840aa88bf5b8cf57ead3d?pvs=4 
+You can see original features <https://potlock.notion.site/All-Features-Potlock-NextJS-App-5f543fa8b31840aa88bf5b8cf57ead3d?pvs=4>
 
-Core contracts can be found at https://github.com/PotLock/core and documentation https://docs.potlock.io/contracts/contracts-overview 
+Core contracts can be found at <https://github.com/PotLock/core> and documentation <https://docs.potlock.io/contracts/contracts-overview>
+
+You can see original features <https://potlock.notion.site/All-Features-Potlock-NextJS-App-5f543fa8b31840aa88bf5b8cf57ead3d?pvs=4>
+
+Core contracts can be found at <https://github.com/PotLock/core> and documentation <https://docs.potlock.io/contracts/contracts-overview>
+
 ## Development
 
 ### Getting Started
@@ -55,16 +61,7 @@ aspects of the application within each module:
 
 [ src/ ]
 │
-├── [ app ] <--- # Entry point of the application.
-│   │            # Follows Nextjs App routing specification ( see link 1. )
-│   │
-│  ...
-│   │
-│   └── [ _store ] <--- # Application state root.
-│                       # Uses Rematch state management library, based on Redux.
-│
-│
-│
+├── global.d.ts <--- # Globally available type definitions
 │
 ├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings,
 │   │               # utility libraries, reusable primitives, and assets, used in layouts and
@@ -96,43 +93,55 @@ aspects of the application within each module:
 │
 │
 │
-└── [ modules ] <--- # Business logic units broken down into categories. Simply put, this is
-    │                # a collection of directories that contain code implementing specific
-    │                # groups of app use cases and are named after functionalities they provide.
-    │
-   ...
-    │
-    │
-    ├── [ core ] <--- # Follows the same structure as any other module, but contains business logic,
-    │                 # that is shared between all or some of the other modules
-    │
-    ├── [ profile ] <--- # A feature-specific module
-    │   │
-    │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
-    │   │                       export const POTLOCK_REGISTRY_LIST_ID = 1
-    │   │
-    │   ├── models.ts <--- # Feature state definitions ( See link 3. )
-    │   │                  # If this file grows over 300 LoC, consider turning it into a directory
-    │   │                  # with the same name by applying code-splitting techniques.
-    │   │
-    │   ├── types.d.ts <--- # Module-specific shared types and interfaces
-    │   │
-    │   ├── [ components ] <--- # Feature-specific React components
-    │   │
-    │   ├── [ hooks ] <--- # Feature-specific React hooks
-    │   │
-    │   └── [ utils ] <--- # Feature-specific utilities, like value converters or validators
-    │
-    │
-    ├── ...
-    │
-   ...
+├── [ modules ] <--- # Business logic units broken down into categories. Simply put, this is
+│   │                # a collection of directories that contain code implementing specific
+│   │                # groups of app use cases and are named after functionalities they provide.
+│   │
+│  ...
+│   │
+│   │
+│   ├── [ core ] <--- # Follows the same structure as any other module, but contains business logic,
+│   │                 # that is shared between all or some of the other modules
+│   │
+│   ├── [ profile ] <--- # A feature-specific module
+│   │   │
+│   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
+│   │   │                       export const POTLOCK_REGISTRY_LIST_ID = 1
+│   │   │
+│   │   ├── models.ts <--- # Feature state definitions ( See link 3. )
+│   │   │                  # If this file grows over 300 LoC, consider turning it into a directory
+│   │   │                  # with the same name by applying code-splitting techniques.
+│   │   │
+│   │   ├── types.d.ts <--- # Module-specific shared types and interfaces
+│   │   │
+│   │   ├── [ components ] <--- # Feature-specific React components
+│   │   │
+│   │   ├── [ hooks ] <--- # Feature-specific React hooks
+│   │   │
+│   │   └── [ utils ] <--- # Feature-specific utilities, like value converters or validators
+│   │
+│   │
+│   ├── ...
+│   │
+│  ...
+│
+│
+│
+│
+├── [ pages ] <--- # Entry point of the application.
+│                  # Follows Nextjs Pages routing specification ( see link 1. )
+│
+│
+│
+│
+└── [ store ] <--- # Shared application state root.
+                   # Uses Rematch state management library, based on Redux.
 
 ```
 
 #### Links
 
-1. [Nextjs Routing](https://nextjs.org/docs/app/building-your-application/routing)
+1. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
 2. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
 3. [Rematch models](https://rematchjs.org/docs/api-reference/models)
 
@@ -144,6 +153,22 @@ For details, please refer to the corresponding documentation resources:
 
 - [Vitest API reference](https://vitest.dev/api/)
 - [React Testing Library guideline](https://testing-library.com/docs/react-testing-library/example-intro)
+
+All tests should be located in the `_tests/` directory. ... for each specific page or group of use cases.
+
+```bash
+
+[ _tests/ ]
+│
+├── donation.tests.tsx <--- # Tests for donation scenarios
+│
+├── homepage.tests.tsx <--- # Tests for the homepage
+│
+...
+│
+└── test-env.tsx <--- # Testing environment setup
+
+```
 
 #### Commands
 
@@ -158,65 +183,3 @@ Run dev server for unit tests:
 ```bash
 yarn dev:test
 ```
-
-#### File colocation
-
-The project convention implies keeping the test scenarios alongside the code they're meant for
-( See examples below ).
-
-##### Pages
-
-Tests for each page must be placed in `tests.tsx`
-within the same directory where `page.tsx` is located:
-
-```bash
-
-─── [ app ]
-    │
-    ├── page.tsx <--- # Homepage ( URL "/" )
-    │
-    ├── tests.tsx <--- # Tests for Homepage
-    │
-    ├── [ pots ]
-    │   │
-    │   ├── page.tsx <--- # Pots page ( URL "/pots" )
-    │   │
-    │   └── tests.tsx <--- # Tests for Pots page
-    │
-    └── [ users ]
-        │
-        └── [ [userId] ]
-            │
-            ├── page.tsx <--- # User page ( e.g. "/users/builder.near" )
-            │
-            └── tests.tsx <--- # Tests for User page
-
-```
-
-##### Modules
-
-For modules, we target specific implementation details:
-
-```bash
-
-─── [ modules ]
-    │
-    └── [ profile ] <--- # Profile module
-        │
-        ├── [ components ]
-        │   │
-        │   ├── ProfileCard.tsx <--- # Profile card component
-        │   │
-        │   └── ProfileCard.test.tsx <--- # Tests for profile card component
-        │
-        └── [ utils ]
-            │
-            ├── validation.ts <--- # Profile validation functions
-            │
-            └── validation.test.ts <--- # Profile validation tests
-
-```
-
-
-# Important Links
-- All Potlock Links can be found at https://bento.me/potlock 

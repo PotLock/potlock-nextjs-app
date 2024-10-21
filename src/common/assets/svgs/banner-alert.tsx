@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 const BannerAlertSvgWrapper = styled.svg`
   width: 18px;
@@ -12,7 +12,7 @@ const BannerAlertSvg = () => (
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
-    stroke-width="1.5"
+    strokeWidth="1.5"
     stroke="white"
     aria-hidden="true"
   >

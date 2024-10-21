@@ -1,15 +1,16 @@
 const routesPath = {
-  CREATE_PROJECT: "/createproject",
-  EDIT_PROJECT: "/editproject",
+  CREATE_PROJECT: "/register",
+  EDIT_PROJECT: "/edit-project",
   PROJECTS_LIST: "/",
-  PROJECT: "/user",
+  PROJECT: "/profile",
   CART: "/cart",
-  FEED: "feed",
+  FEED: "/feed",
   POTS: "/pots",
-  DEPLOY_POT: "deploypot",
-  POT_DETAIL: "pot",
+  POT_DETAIL: "/pot",
+  DEPLOY_POT: "/deploy",
   DONORS: "/donors",
-  PROFILE: "/user",
+  LIST: "/lists",
+  PROFILE: "/profile",
   EDIT_PROFILE: "/editprofile",
 };
 
