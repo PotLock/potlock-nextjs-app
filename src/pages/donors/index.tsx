@@ -226,8 +226,8 @@ export default function LeaderboardPage() {
           ))}
         </div>
       </div>
-      <div className="pl-36px xl:overflow-x-unset relative ml-[-36px] w-screen overflow-x-scroll  md:w-full">
-        <div className="gap-20px mb-8 grid w-full grid-flow-col">
+      <div className="pl-36px xl:overflow-x-unset h-300px relative ml-[-36px]  w-full">
+        <div className="gap-20px absolute mb-8 grid w-full grid-flow-col overflow-scroll">
           {participants.slice(0, 3).map((participant) => (
             <DonationLeaderboardEntry
               key={participant.rank}
@@ -434,89 +434,93 @@ export default function LeaderboardPage() {
               >
                 All Activities
               </h1>
-              <div className="pb-24px flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10 md:flex-row">
-                <SearchBar
-                  className="w-320px text-gray-400"
-                  placeholder={`Search projects`}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <div className="flex w-fit gap-3">
-                  {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
-                    <FilterChip
-                      key={filter}
-                      variant={
-                        timeFilter === filter ? "brand-filled" : "brand-outline"
-                      }
-                      onClick={() => setTimeFilter(filter)}
-                      className="py-0.375 px-3 text-sm"
-                    >
-                      {filter}
-                    </FilterChip>
-                  ))}
+              <>
+                <div className="pb-24px flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10 md:flex-row">
+                  <SearchBar
+                    className="w-320px text-gray-400"
+                    placeholder={`Search projects`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <div className="flex w-fit gap-3">
+                    {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
+                      <FilterChip
+                        key={filter}
+                        variant={
+                          timeFilter === filter
+                            ? "brand-filled"
+                            : "brand-outline"
+                        }
+                        onClick={() => setTimeFilter(filter)}
+                        className="py-0.375 px-3 text-sm"
+                      >
+                        {filter}
+                      </FilterChip>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="overflow-x-auto bg-white">
-                {ACTIVITY.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="border-gray-#ebebeb gap-8px my-4 flex flex-wrap items-center justify-between rounded-xl border p-4"
-                  >
-                    <div className="flex w-full items-center justify-between gap-2 text-sm font-medium text-gray-900">
-                      <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
-                        <Image
-                          src={activity.senderImage}
-                          className="h-24px w-24px rounded-full"
-                          alt="sender image"
-                          width={10}
-                          height={10}
-                        />
-                        <h1
-                          className="w-100px truncate md:w-fit md:overflow-visible"
-                          title={activity.sender}
-                        >
-                          {activity.sender}
-                        </h1>
+                <div className="overflow-x-auto bg-white">
+                  {ACTIVITY.map((activity, index) => (
+                    <div
+                      key={index}
+                      className="border-gray-#ebebeb gap-8px my-4 flex flex-wrap items-center justify-between rounded-xl border p-4"
+                    >
+                      <div className="flex w-full items-center justify-between gap-2 text-sm font-medium text-gray-900">
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                          <Image
+                            src={activity.senderImage}
+                            className="h-24px w-24px rounded-full"
+                            alt="sender image"
+                            width={10}
+                            height={10}
+                          />
+                          <h1
+                            className="w-100px truncate md:w-fit md:overflow-visible"
+                            title={activity.sender}
+                          >
+                            {activity.sender}
+                          </h1>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="flex gap-2 px-4 align-middle text-sm text-gray-600">
+                            Donated
+                          </div>
+                          <div className="">
+                            <div className="gap-8px flex items-center text-sm text-gray-900">
+                              <NearIcon className="w-18px h-18px" />{" "}
+                              <span className="font-600 m-0 pt-[2px]">
+                                {activity.amount}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="ml-4 text-sm text-gray-600">to</div>
+                        </div>
                       </div>
                       <div className="flex items-center">
-                        <div className="flex gap-2 px-4 align-middle text-sm text-gray-600">
-                          Donated
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                          <Image
+                            src={activity.receiverImage}
+                            className="h-24px w-24px rounded-full"
+                            alt="receiver image"
+                            width={10}
+                            height={10}
+                          />
+                          <h1
+                            className="w-100px truncate md:w-fit md:overflow-visible"
+                            title={activity.receiver}
+                          >
+                            {activity.receiver}
+                          </h1>
                         </div>
-                        <div className="">
-                          <div className="gap-8px flex items-center text-sm text-gray-900">
-                            <NearIcon className="w-18px h-18px" />{" "}
-                            <span className="font-600 m-0 pt-[2px]">
-                              {activity.amount}
-                            </span>
-                          </div>
+                        <div className="flex items-center gap-2 whitespace-nowrap pl-3 text-sm text-gray-600">
+                          <span className="h-4px w-4px rounded-full bg-gray-600"></span>{" "}
+                          {timeAgo(activity.timestamp)}
                         </div>
-                        <div className="ml-4 text-sm text-gray-600">to</div>
                       </div>
                     </div>
-                    <div className="flex items-center">
-                      <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
-                        <Image
-                          src={activity.receiverImage}
-                          className="h-24px w-24px rounded-full"
-                          alt="receiver image"
-                          width={10}
-                          height={10}
-                        />
-                        <h1
-                          className="w-100px truncate md:w-fit md:overflow-visible"
-                          title={activity.receiver}
-                        >
-                          {activity.receiver}
-                        </h1>
-                      </div>
-                      <div className="flex items-center gap-2 whitespace-nowrap pl-3 text-sm text-gray-600">
-                        <span className="h-4px w-4px rounded-full bg-gray-600"></span>{" "}
-                        {timeAgo(activity.timestamp)}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </>
             </div>
           ) : (
             ""
