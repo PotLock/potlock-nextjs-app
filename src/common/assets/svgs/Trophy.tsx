@@ -1,5 +1,3 @@
-import React from "react";
-
 const Trophy = (props: any) => {
   return (
     <svg

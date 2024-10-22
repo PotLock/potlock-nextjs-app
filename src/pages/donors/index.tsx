@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import { Lora } from "next/font/google";
@@ -289,7 +287,7 @@ export default function LeaderboardPage() {
                         src={participant.image}
                         width={10}
                         height={10}
-                        alt=""
+                        alt="profile picture"
                       />
                       <div className="ml-4">
                         <div className="font-500 text-sm text-gray-900">
@@ -327,7 +325,7 @@ export default function LeaderboardPage() {
                   src={participant.image}
                   width={10}
                   height={10}
-                  alt=""
+                  alt="profile picture"
                 />
               </div>
             </div>
@@ -400,7 +398,7 @@ export default function LeaderboardPage() {
               <div
                 key={tab.name}
                 className={`py-10px px-16px text-#7B7B7B w-fit cursor-pointer text-center text-lg font-semibold ${
-                  selectedTab === tab.name ? "border-b-2 border-black" : ""
+                  selectedTab === tab.name ? "border-b-2 border-black" : null
                 }`}
                 onClick={() =>
                   toggleTab(tab.name as "donors" | "sponsors" | "activities")
@@ -408,14 +406,14 @@ export default function LeaderboardPage() {
               >
                 <span
                   className={`inline whitespace-nowrap text-sm ${
-                    selectedTab === tab.name ? "font-500 text-black" : ""
+                    selectedTab === tab.name ? "font-500 text-black" : null
                   }`}
                 >
                   {tab.label}
                 </span>
                 <span
                   className={`border-#DBDBDB px-6px py-4px rounded-16px ml-2 border bg-gray-200 text-sm text-gray-700 ${
-                    selectedTab === tab.name ? "font-600 text-black" : ""
+                    selectedTab === tab.name ? "font-600 text-black" : null
                   }`}
                 >
                   {tab.count}
@@ -485,7 +483,7 @@ export default function LeaderboardPage() {
                           <div className="flex gap-2 px-4 align-middle text-sm text-gray-600">
                             Donated
                           </div>
-                          <div className="">
+                          <div>
                             <div className="gap-8px flex items-center text-sm text-gray-900">
                               <NearIcon className="w-18px h-18px" />{" "}
                               <span className="font-600 m-0 pt-[2px]">
@@ -522,9 +520,7 @@ export default function LeaderboardPage() {
                 </div>
               </>
             </div>
-          ) : (
-            ""
-          )}
+          ) : null}
           {selectedTab === "donors" ? (
             <div className="w-full">
               <h1
@@ -534,9 +530,7 @@ export default function LeaderboardPage() {
               </h1>
               {renderLeaderboard([...topDonors, ...otherDonors], "donor")}
             </div>
-          ) : (
-            ""
-          )}
+          ) : null}
           {selectedTab === "sponsors" ? (
             <div className="w-full">
               <h1
@@ -546,9 +540,7 @@ export default function LeaderboardPage() {
               </h1>
               {renderLeaderboard(topSponsors, "sponsor")}
             </div>
-          ) : (
-            ""
-          )}
+          ) : null}
         </div>
       </div>
     </div>
