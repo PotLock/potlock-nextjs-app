@@ -2,11 +2,18 @@
 
 import { useState } from "react";
 
+import { Lora } from "next/font/google";
 import Image from "next/image";
 
 import { NearIcon } from "@/common/assets/svgs";
 import { FilterChip, SearchBar, ToggleGroup } from "@/common/ui/components";
 import { DonationLeaderboardEntry } from "@/modules/donation";
+
+const lora = Lora({
+  subsets: ["latin"],
+  variable: "--font-lora",
+  weight: ["400", "500", "600", "700"],
+});
 
 interface Participant {
   rank: number;
@@ -191,7 +198,7 @@ export default function LeaderboardPage() {
     "donors" | "sponsors" | "activities"
   >("activities"); // Updated formatting for selectedTab
 
-  const toggleTab = (tab: "donors" | "sponsors") => {
+  const toggleTab = (tab: "donors" | "sponsors" | "activities") => {
     setSelectedTab(tab);
   };
   const renderLeaderboard = (
@@ -199,7 +206,7 @@ export default function LeaderboardPage() {
     type: "donor" | "sponsor",
   ) => (
     <>
-      <div className="pb-24px md:flex-row flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10">
+      <div className="pb-24px flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10 md:flex-row">
         <SearchBar
           className="w-320px text-gray-400"
           placeholder={`Search projects`}
@@ -219,7 +226,7 @@ export default function LeaderboardPage() {
           ))}
         </div>
       </div>
-      <div className="pl-36px xl:overflow-x-unset md:w-full relative ml-[-36px] mr-[-46px] w-screen  overflow-x-scroll">
+      <div className="pl-36px xl:overflow-x-unset relative ml-[-36px] w-screen overflow-x-scroll  md:w-full">
         <div className="gap-20px mb-8 grid w-full grid-flow-col">
           {participants.slice(0, 3).map((participant) => (
             <DonationLeaderboardEntry
@@ -234,7 +241,7 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      <div className="md:block hidden overflow-x-auto rounded-2xl border border-gray-200  bg-white">
+      <div className="hidden overflow-x-auto rounded-2xl border border-gray-200 bg-white  md:block">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -307,7 +314,7 @@ export default function LeaderboardPage() {
           </tbody>
         </table>
       </div>
-      <div className="p-16px md:hidden flex flex-col items-start gap-4">
+      <div className="p-16px flex flex-col items-start gap-4 md:hidden">
         {participants.map((participant) => (
           <div
             key={participant.rank}
@@ -387,18 +394,20 @@ export default function LeaderboardPage() {
         type="single"
         className="mt-40px relative w-full"
       >
-        <div className="mb-40px md:mb-64px xl:w-full absolute w-screen overflow-x-scroll border-b border-t border-gray-200">
-          <div className="ml-20px md:ml-30px pt-16px md:w-fit grid grid-flow-col content-center items-center gap-x-4 px-4">
+        <div className="mb-40px md:mb-64px xl:w-1024px absolute w-screen overflow-x-scroll border-b border-t border-gray-200 md:overflow-x-auto">
+          <div className="ml-20px md:ml-30px pt-16px grid grid-flow-col content-center items-center gap-x-4 px-4 md:w-fit">
             {TABs.map((tab) => (
               <div
                 key={tab.name}
                 className={`py-10px px-16px text-#7B7B7B w-fit cursor-pointer text-center text-lg font-semibold ${
                   selectedTab === tab.name ? "border-b-2 border-black" : ""
                 }`}
-                onClick={() => toggleTab(tab.name as "donors" | "sponsors")}
+                onClick={() =>
+                  toggleTab(tab.name as "donors" | "sponsors" | "activities")
+                }
               >
                 <span
-                  className={`inline whitespace-nowrap ${
+                  className={`inline whitespace-nowrap text-sm ${
                     selectedTab === tab.name ? "font-500 text-black" : ""
                   }`}
                 >
@@ -416,14 +425,16 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </ToggleGroup>
-      <div className="py-64px max-w-912px mx-auto w-full flex-nowrap">
+      <div className="py-64px mx-auto w-full flex-nowrap">
         <div className="mx-auto w-full">
           {selectedTab === "activities" ? (
             <div className="w-full">
-              <h1 className="md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px]">
+              <h1
+                className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
+              >
                 All Activities
               </h1>
-              <div className="pb-24px md:flex-row flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10">
+              <div className="pb-24px flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10 md:flex-row">
                 <SearchBar
                   className="w-320px text-gray-400"
                   placeholder={`Search projects`}
@@ -461,7 +472,7 @@ export default function LeaderboardPage() {
                           height={10}
                         />
                         <h1
-                          className="w-100px md:w-fit md:overflow-visible truncate"
+                          className="w-100px truncate md:w-fit md:overflow-visible"
                           title={activity.sender}
                         >
                           {activity.sender}
@@ -492,7 +503,7 @@ export default function LeaderboardPage() {
                           height={10}
                         />
                         <h1
-                          className="w-100px md:w-fit md:overflow-visible truncate"
+                          className="w-100px truncate md:w-fit md:overflow-visible"
                           title={activity.receiver}
                         >
                           {activity.receiver}
@@ -512,7 +523,9 @@ export default function LeaderboardPage() {
           )}
           {selectedTab === "donors" ? (
             <div className="w-full">
-              <h1 className="md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold leading-[56px] tracking-[-1.12px]">
+              <h1
+                className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
+              >
                 Donor Leaderboard
               </h1>
               {renderLeaderboard([...topDonors, ...otherDonors], "donor")}
@@ -522,7 +535,9 @@ export default function LeaderboardPage() {
           )}
           {selectedTab === "sponsors" ? (
             <div className="w-full">
-              <h1 className="md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px]">
+              <h1
+                className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
+              >
                 Sponsor Leaderboard
               </h1>
               {renderLeaderboard(topSponsors, "sponsor")}
