@@ -110,7 +110,10 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
               error={errors.amountNEAR?.message}
               defaultValue={form.getValues().amountNEAR}
               onChange={(e) => {
-                form.setValue("amountNEAR", Number(e.target.value));
+                form.setValue("amountNEAR", Number(e.target.value), {
+                  shouldDirty: true,
+                });
+
                 form.trigger();
               }}
             />
@@ -136,7 +139,9 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                 <Checkbox
                   id="bypass"
                   onCheckedChange={(value) => {
-                    form.setValue("bypassProtocolFee", value as boolean);
+                    form.setValue("bypassProtocolFee", value as boolean, {
+                      shouldDirty: true,
+                    });
                   }}
                 />
                 <label
@@ -171,7 +176,9 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                   <Checkbox
                     id="bypassChef"
                     onCheckedChange={(value) => {
-                      form.setValue("bypassChefFee", value as boolean);
+                      form.setValue("bypassChefFee", value as boolean, {
+                        shouldDirty: true,
+                      });
                     }}
                   />
                   <label

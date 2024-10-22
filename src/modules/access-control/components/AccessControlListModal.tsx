@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -118,7 +118,7 @@ export const AccessControlListModal = create(
         onSubmit(selectedAccountsToRemove);
       }
       setSelectedAccounts([]);
-    }, [accountIds, onSubmit, selectedAccounts]);
+    }, [accountIds, entries, handleRemoveAccounts, onSubmit, selectedAccounts]);
 
     return (
       <Dialog open={self.visible}>
