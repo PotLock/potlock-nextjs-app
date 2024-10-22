@@ -386,7 +386,7 @@ export default function LeaderboardPage() {
   ];
 
   return (
-    <div className="max-w-912px mx-auto flex w-full flex-col py-8">
+    <div className="mx-auto flex w-full flex-col py-8">
       <ToggleGroup
         defaultValue="donors"
         type="single"
@@ -423,7 +423,7 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </ToggleGroup>
-      <div className="md:py-16 md:px-0 mx-auto w-full flex-nowrap px-5 py-9">
+      <div className="md:py-16 max-w-912px md:px-0 mx-auto w-full flex-nowrap px-5 py-9">
         <div className="mx-auto w-full">
           {selectedTab === "activities" ? (
             <div className="w-full">
