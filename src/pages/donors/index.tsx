@@ -224,7 +224,7 @@ export default function LeaderboardPage() {
           ))}
         </div>
       </div>
-      <div className="pl-36px xl:overflow-x-unset h-300px md:w-full relative ml-[-36px]  w-screen">
+      <div className="pl-36px xl:overflow-x-unset h-300px md:w-full relative ml-[-36px]  w-full">
         <div className="gap-20px absolute mb-8 grid w-full grid-flow-col overflow-x-scroll">
           {participants.slice(0, 3).map((participant) => (
             <DonationLeaderboardEntry
