@@ -225,7 +225,7 @@ export default function LeaderboardPage() {
         </div>
       </div>
       <div className="pl-36px xl:overflow-x-unset h-300px md:w-full relative ml-[-36px]  w-screen">
-        <div className="gap-20px absolute mb-8 grid w-full grid-flow-col overflow-scroll">
+        <div className="gap-20px absolute mb-8 grid w-full grid-flow-col overflow-x-clip">
           {participants.slice(0, 3).map((participant) => (
             <DonationLeaderboardEntry
               key={participant.rank}
@@ -239,7 +239,7 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      <div className="md:block hidden overflow-x-auto rounded-2xl border border-gray-200  bg-white">
+      <div className="md:block hidden rounded-2xl border border-gray-200  bg-white">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
