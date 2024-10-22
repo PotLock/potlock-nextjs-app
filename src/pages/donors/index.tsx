@@ -206,7 +206,7 @@ export default function LeaderboardPage() {
     type: "donor" | "sponsor",
   ) => (
     <>
-      <div className="pb-24px flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10 md:flex-row">
+      <div className="pb-24px md:flex-row flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10">
         <SearchBar
           className="w-320px text-gray-400"
           placeholder={`Search projects`}
@@ -226,7 +226,7 @@ export default function LeaderboardPage() {
           ))}
         </div>
       </div>
-      <div className="pl-36px xl:overflow-x-unset h-300px relative ml-[-36px] w-screen  md:w-full">
+      <div className="pl-36px xl:overflow-x-unset h-300px md:w-full relative ml-[-36px]  w-screen">
         <div className="gap-20px absolute mb-8 grid w-full grid-flow-col overflow-scroll">
           {participants.slice(0, 3).map((participant) => (
             <DonationLeaderboardEntry
@@ -241,7 +241,7 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      <div className="hidden overflow-x-auto rounded-2xl border border-gray-200 bg-white  md:block">
+      <div className="md:block hidden overflow-x-auto rounded-2xl border border-gray-200  bg-white">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -314,7 +314,7 @@ export default function LeaderboardPage() {
           </tbody>
         </table>
       </div>
-      <div className="p-16px flex flex-col items-start gap-4 md:hidden">
+      <div className="p-16px md:hidden flex flex-col items-start gap-4">
         {participants.map((participant) => (
           <div
             key={participant.rank}
@@ -394,8 +394,8 @@ export default function LeaderboardPage() {
         type="single"
         className="mt-40px relative w-full"
       >
-        <div className="mb-40px md:mb-64px xl:w-1024px absolute w-screen overflow-x-scroll border-b border-t border-gray-200 md:overflow-x-auto">
-          <div className="ml-20px md:ml-30px pt-16px grid grid-flow-col content-center items-center gap-x-4 px-4 md:w-fit">
+        <div className="mb-40px md:mb-64px xl:w-1024px md:overflow-x-auto absolute w-screen overflow-x-scroll border-b border-t border-gray-200">
+          <div className="ml-20px md:ml-30px pt-16px md:w-fit grid grid-flow-col content-center items-center gap-x-4 px-4">
             {TABs.map((tab) => (
               <div
                 key={tab.name}
@@ -430,12 +430,12 @@ export default function LeaderboardPage() {
           {selectedTab === "activities" ? (
             <div className="w-full">
               <h1
-                className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
+                className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
               >
                 All Activities
               </h1>
               <>
-                <div className="pb-24px flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10 md:flex-row">
+                <div className="pb-24px md:flex-row flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10">
                   <SearchBar
                     className="w-320px text-gray-400"
                     placeholder={`Search projects`}
@@ -475,7 +475,7 @@ export default function LeaderboardPage() {
                             height={10}
                           />
                           <h1
-                            className="w-100px truncate md:w-fit md:overflow-visible"
+                            className="w-100px md:w-fit md:overflow-visible truncate"
                             title={activity.sender}
                           >
                             {activity.sender}
@@ -506,7 +506,7 @@ export default function LeaderboardPage() {
                             height={10}
                           />
                           <h1
-                            className="w-100px truncate md:w-fit md:overflow-visible"
+                            className="w-100px md:w-fit md:overflow-visible truncate"
                             title={activity.receiver}
                           >
                             {activity.receiver}
@@ -528,7 +528,7 @@ export default function LeaderboardPage() {
           {selectedTab === "donors" ? (
             <div className="w-full">
               <h1
-                className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
+                className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
               >
                 Donor Leaderboard
               </h1>
@@ -540,7 +540,7 @@ export default function LeaderboardPage() {
           {selectedTab === "sponsors" ? (
             <div className="w-full">
               <h1
-                className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
+                className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
               >
                 Sponsor Leaderboard
               </h1>
