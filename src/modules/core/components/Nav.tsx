@@ -11,7 +11,7 @@ import { SignInButton, useAuth } from "@/modules/auth";
 import { CartLink } from "@/modules/cart";
 
 import { UserDropdown } from "./UserDropdown";
-import routesPath from "../routes";
+import routesPath, { hrefByRouteName } from "../routes";
 
 const links = [
   { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },
@@ -22,7 +22,7 @@ const links = [
   {
     label: "Lists",
     url: routesPath.LIST,
-    ...(DEBUG ? {} : { disabled: true }),
+    ...(DEBUG ? { disabled: true } : { disabled: true }),
   },
 ];
 
@@ -64,17 +64,18 @@ const MobileNav = () => {
 
   return (
     <nav className="flex flex-col gap-4 p-6">
-      {links.map(({ url, label }) => {
+      {links.map(({ url, label, disabled }) => {
         const isActive = isClient ? url === router.pathname : false;
 
         return (
           <Link
             key={url + label}
-            href={url}
+            href={disabled ? hrefByRouteName.CURRENT : url}
             className={cn(
               "decoration-none not-last-child hover:decoration-none relative mr-8 text-sm",
 
               {
+                "cursor-not-allowed opacity-20": disabled,
                 "font-medium": isActive,
                 "font-normal text-neutral-500": !isActive,
               },
@@ -119,16 +120,17 @@ export const Nav = () => {
 
           <div className="flex flex-row items-center justify-center">
             <div className="max-md:hidden flex flex-row items-center justify-center">
-              {links.map(({ url, label }) => {
+              {links.map(({ url, label, disabled }) => {
                 const isActive = isClient ? url === router.pathname : false;
                 return (
                   <Link
                     key={url + label}
-                    href={url}
+                    href={disabled ? hrefByRouteName.CURRENT : url}
                     className={cn(
                       "decoration-none not-last-child hover:decoration-none relative mr-8 text-sm",
 
                       {
+                        "cursor-not-allowed opacity-20": disabled,
                         "font-medium": isActive,
                         "font-normal text-neutral-500": !isActive,
                       },
