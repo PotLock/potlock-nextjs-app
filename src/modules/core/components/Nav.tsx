@@ -16,7 +16,7 @@ const links = [
   { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },
   { label: "Pots", url: routesPath.POTS, disabled: false },
   { label: "Feed", url: routesPath.FEED, disabled: false },
-  // { label: "Donors", url: routesPath.DONORS, disabled: false },
+  { label: "Donors", url: routesPath.DONORS, disabled: false },
   // { label: "Lists", url: routesPath.LIST, disabled: false },
 ];
 
