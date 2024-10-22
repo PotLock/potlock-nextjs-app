@@ -204,9 +204,9 @@ export default function LeaderboardPage() {
     type: "donor" | "sponsor",
   ) => (
     <>
-      <div className="pb-24px md:flex-row flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10">
+      <div className="md:flex-row mx-auto flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pb-4 pt-10">
         <SearchBar
-          className="w-320px text-gray-400"
+          className="md:w-40 text-gray-400"
           placeholder={`Search projects`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -386,13 +386,13 @@ export default function LeaderboardPage() {
   ];
 
   return (
-    <div className="mx-auto flex flex-col py-8">
+    <div className="max-w-912px mx-auto flex w-full flex-col py-8">
       <ToggleGroup
         defaultValue="donors"
         type="single"
         className="mt-40px relative w-full"
       >
-        <div className="mb-40px md:mb-64px xl:w-1024px md:overflow-x-auto absolute w-screen overflow-x-scroll border-b border-t border-gray-200">
+        <div className="mb-40px md:mb-64px md:overflow-x-auto absolute w-screen overflow-x-scroll border-b border-t border-gray-200">
           <div className="ml-20px md:ml-30px pt-16px md:w-fit grid grid-flow-col content-center items-center gap-x-4 px-4">
             {TABs.map((tab) => (
               <div
@@ -423,7 +423,7 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </ToggleGroup>
-      <div className="py-64px mx-auto w-full flex-nowrap">
+      <div className="md:py-16 md:px-auto mx-auto w-full flex-nowrap px-5 py-9">
         <div className="mx-auto w-full">
           {selectedTab === "activities" ? (
             <div className="w-full">
@@ -433,9 +433,9 @@ export default function LeaderboardPage() {
                 All Activities
               </h1>
               <>
-                <div className="pb-24px md:flex-row flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pt-10">
+                <div className="md:flex-row mx-auto flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pb-4 pt-10">
                   <SearchBar
-                    className="w-320px text-gray-400"
+                    className="md:w-40 text-gray-400"
                     placeholder={`Search projects`}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
