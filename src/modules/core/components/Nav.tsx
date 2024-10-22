@@ -112,7 +112,7 @@ export const Nav = () => {
           </div>
 
           <div className="flex flex-row items-center justify-center">
-            <div className="flex flex-row items-center justify-center max-md:hidden">
+            <div className="max-md:hidden flex flex-row items-center justify-center">
               {links.map(({ url, label }) => {
                 const isActive = isClient ? url === router.pathname : false;
                 return (

@@ -219,7 +219,7 @@ export default function LeaderboardPage() {
               key={filter}
               variant={timeFilter === filter ? "brand-filled" : "brand-outline"}
               onClick={() => setTimeFilter(filter)}
-              className="py-0.375 px-3 text-sm"
+              className="text-sm"
             >
               {filter}
             </FilterChip>
@@ -452,7 +452,7 @@ export default function LeaderboardPage() {
                             : "brand-outline"
                         }
                         onClick={() => setTimeFilter(filter)}
-                        className="py-0.375 px-3 text-sm"
+                        className="text-sm"
                       >
                         {filter}
                       </FilterChip>
