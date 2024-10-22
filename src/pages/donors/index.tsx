@@ -386,13 +386,13 @@ export default function LeaderboardPage() {
   ];
 
   return (
-    <div className="max-w-912px mx-auto flex w-full flex-col py-8">
+    <div className="flex w-full flex-col">
       <ToggleGroup
         defaultValue="donors"
         type="single"
         className="mt-40px relative w-full"
       >
-        <div className="mb-40px md:mb-64px md:overflow-x-auto absolute w-screen overflow-x-scroll border-b border-t border-gray-200">
+        <div className="mb-40px md:mb-64px md:overflow-x-auto absolute w-full overflow-x-scroll border-b border-t border-gray-200">
           <div className="ml-20px md:ml-30px pt-16px md:w-fit grid grid-flow-col content-center items-center gap-x-4 px-4">
             {TABs.map((tab) => (
               <div
@@ -423,124 +423,126 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </ToggleGroup>
-      <div className="md:py-16 md:px-0 mx-auto w-full flex-nowrap px-5 py-9">
-        <div className="mx-auto w-full">
-          {selectedTab === "activities" ? (
-            <div className="w-full">
-              <h1
-                className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
-              >
-                All Activities
-              </h1>
-              <>
-                <div className="md:flex-row mx-auto flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pb-4 pt-10">
-                  <SearchBar
-                    className="md:w-40 text-gray-400"
-                    placeholder={`Search projects`}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <div className="flex w-fit gap-3">
-                    {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
-                      <FilterChip
-                        key={filter}
-                        variant={
-                          timeFilter === filter
-                            ? "brand-filled"
-                            : "brand-outline"
-                        }
-                        onClick={() => setTimeFilter(filter)}
-                        className="text-sm"
-                      >
-                        {filter}
-                      </FilterChip>
-                    ))}
+      <div className="max-w-912px mx-auto flex w-full flex-col py-8">
+        <div className="md:py-16 md:px-0 mx-auto w-full flex-nowrap px-5 py-9">
+          <div className="mx-auto w-full">
+            {selectedTab === "activities" ? (
+              <div className="w-full">
+                <h1
+                  className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
+                >
+                  All Activities
+                </h1>
+                <>
+                  <div className="md:flex-row mx-auto flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pb-4 pt-10">
+                    <SearchBar
+                      className="md:w-40 text-gray-400"
+                      placeholder={`Search projects`}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <div className="flex w-fit gap-3">
+                      {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
+                        <FilterChip
+                          key={filter}
+                          variant={
+                            timeFilter === filter
+                              ? "brand-filled"
+                              : "brand-outline"
+                          }
+                          onClick={() => setTimeFilter(filter)}
+                          className="text-sm"
+                        >
+                          {filter}
+                        </FilterChip>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div className="overflow-x-auto bg-white">
-                  {ACTIVITY.map((activity, index) => (
-                    <div
-                      key={index}
-                      className="border-gray-#ebebeb gap-8px my-4 flex flex-wrap items-center justify-between rounded-xl border p-4"
-                    >
-                      <div className="flex w-full items-center justify-between gap-2 text-sm font-medium text-gray-900">
-                        <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
-                          <Image
-                            src={activity.senderImage}
-                            className="h-24px w-24px rounded-full"
-                            alt="sender image"
-                            width={10}
-                            height={10}
-                          />
-                          <h1
-                            className="w-100px md:w-fit md:overflow-visible truncate"
-                            title={activity.sender}
-                          >
-                            {activity.sender}
-                          </h1>
+                  <div className="overflow-x-auto bg-white">
+                    {ACTIVITY.map((activity, index) => (
+                      <div
+                        key={index}
+                        className="border-gray-#ebebeb gap-8px my-4 flex flex-wrap items-center justify-between rounded-xl border p-4"
+                      >
+                        <div className="flex w-full items-center justify-between gap-2 text-sm font-medium text-gray-900">
+                          <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                            <Image
+                              src={activity.senderImage}
+                              className="h-24px w-24px rounded-full"
+                              alt="sender image"
+                              width={10}
+                              height={10}
+                            />
+                            <h1
+                              className="w-100px md:w-fit md:overflow-visible truncate"
+                              title={activity.sender}
+                            >
+                              {activity.sender}
+                            </h1>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="flex gap-2 px-4 align-middle text-sm text-gray-600">
+                              Donated
+                            </div>
+                            <div>
+                              <div className="gap-8px flex items-center text-sm text-gray-900">
+                                <NearIcon className="w-18px h-18px" />{" "}
+                                <span className="font-600 m-0 pt-[2px]">
+                                  {activity.amount}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="ml-4 text-sm text-gray-600">to</div>
+                          </div>
                         </div>
                         <div className="flex items-center">
-                          <div className="flex gap-2 px-4 align-middle text-sm text-gray-600">
-                            Donated
+                          <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                            <Image
+                              src={activity.receiverImage}
+                              className="h-24px w-24px rounded-full"
+                              alt="receiver image"
+                              width={10}
+                              height={10}
+                            />
+                            <h1
+                              className="w-100px md:w-fit md:overflow-visible truncate"
+                              title={activity.receiver}
+                            >
+                              {activity.receiver}
+                            </h1>
                           </div>
-                          <div>
-                            <div className="gap-8px flex items-center text-sm text-gray-900">
-                              <NearIcon className="w-18px h-18px" />{" "}
-                              <span className="font-600 m-0 pt-[2px]">
-                                {activity.amount}
-                              </span>
-                            </div>
+                          <div className="flex items-center gap-2 whitespace-nowrap pl-3 text-sm text-gray-600">
+                            <span className="h-4px w-4px rounded-full bg-gray-600"></span>{" "}
+                            {timeAgo(activity.timestamp)}
                           </div>
-                          <div className="ml-4 text-sm text-gray-600">to</div>
                         </div>
                       </div>
-                      <div className="flex items-center">
-                        <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
-                          <Image
-                            src={activity.receiverImage}
-                            className="h-24px w-24px rounded-full"
-                            alt="receiver image"
-                            width={10}
-                            height={10}
-                          />
-                          <h1
-                            className="w-100px md:w-fit md:overflow-visible truncate"
-                            title={activity.receiver}
-                          >
-                            {activity.receiver}
-                          </h1>
-                        </div>
-                        <div className="flex items-center gap-2 whitespace-nowrap pl-3 text-sm text-gray-600">
-                          <span className="h-4px w-4px rounded-full bg-gray-600"></span>{" "}
-                          {timeAgo(activity.timestamp)}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            </div>
-          ) : null}
-          {selectedTab === "donors" ? (
-            <div className="w-full">
-              <h1
-                className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
-              >
-                Donor Leaderboard
-              </h1>
-              {renderLeaderboard([...topDonors, ...otherDonors], "donor")}
-            </div>
-          ) : null}
-          {selectedTab === "sponsors" ? (
-            <div className="w-full">
-              <h1
-                className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
-              >
-                Sponsor Leaderboard
-              </h1>
-              {renderLeaderboard(topSponsors, "sponsor")}
-            </div>
-          ) : null}
+                    ))}
+                  </div>
+                </>
+              </div>
+            ) : null}
+            {selectedTab === "donors" ? (
+              <div className="w-full">
+                <h1
+                  className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
+                >
+                  Donor Leaderboard
+                </h1>
+                {renderLeaderboard([...topDonors, ...otherDonors], "donor")}
+              </div>
+            ) : null}
+            {selectedTab === "sponsors" ? (
+              <div className="w-full">
+                <h1
+                  className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
+                >
+                  Sponsor Leaderboard
+                </h1>
+                {renderLeaderboard(topSponsors, "sponsor")}
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
