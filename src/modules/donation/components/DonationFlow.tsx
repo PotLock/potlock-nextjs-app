@@ -95,7 +95,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
     switch (currentStep) {
       case "allocation": {
-        if ("accountId" in allocationScreenProps) {
+        if ("accountId" in allocationScreenProps || "campaignId" in allocationScreenProps) {
           return <DonationDirectAllocation {...allocationScreenProps} />;
         } else if (
           "potId" in allocationScreenProps ||

@@ -24,7 +24,7 @@ const Tabs = ({ navOptions, selectedTab, onSelect, asLink }: Props) => {
 
   return (
     <div className="mb-8 flex w-full flex-row flex-wrap gap-2">
-      <div className="md:px-8 w-full px-8">
+      <div className="md:px-8 w-full px-2">
         <div
           className={cn(
             "flex w-full justify-start gap-8 overflow-y-auto",

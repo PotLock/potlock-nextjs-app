@@ -7,17 +7,15 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Campaign } from "@/common/contracts/potlock";
 import { get_campaign } from "@/common/contracts/potlock/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { Button } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { useNearToUsdWithFallback } from "@/modules/core/hooks/useNearToUsdWithFallback";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
+import { DonateToCampaignProjects } from "@/modules/donation";
+import { AccountProfilePicture } from "@/modules/core";
 
 export const SingleCampaignBanner = () => {
   const [campaign, setCampaign] = useState<Campaign>();
-  const [ownerImage, setOwnerImage] = useState<string>();
-  const [recipientImage, setRecipientImage] = useState<string>();
   const [loading, setLoading] = useState(false);
 
   const usdInfo = useNearToUsdWithFallback(
@@ -33,23 +31,12 @@ export const SingleCampaignBanner = () => {
     setLoading(true);
     get_campaign({ campaign_id: parseInt(campaignId as string) as any })
       .then((response) => {
-        console.log(response);
         setCampaign(response);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
 
-    const fetchImages = async () => {
-      const { image } = await fetchSocialImages({
-        accountId: campaign?.recipient as string,
-      });
-      const { image: ownerImage } = await fetchSocialImages({
-        accountId: campaign?.owner as string,
-      });
-      setOwnerImage(ownerImage);
-      setRecipientImage(image);
-      setLoading(false);
-    };
-    fetchImages();
+   
   }, [campaignId]);
 
   if (loading) {
@@ -74,13 +61,7 @@ export const SingleCampaignBanner = () => {
                 <p className="font-semibold">FOR</p>
                 <Link href={`/profile/${campaign?.recipient}`} target="_blank">
                   <div onClick={(e) => e.stopPropagation()} className="flex">
-                    <LazyLoadImage
-                      alt=""
-                      src={recipientImage}
-                      width={20}
-                      height={20}
-                      className=" mx-1 h-5 w-5 rounded-[50%]"
-                    />
+                    <AccountProfilePicture accountId={campaign?.recipient as string} className="w-5 h-5" />
                     <p className="font-semibold">{campaign?.recipient}</p>
                   </div>
                 </Link>
@@ -92,13 +73,7 @@ export const SingleCampaignBanner = () => {
                 <p className="font-semibold">ORGANIZED BY</p>
                 <Link href={`/profile/${campaign?.owner}`} target="_blank">
                   <div onClick={(e) => e.stopPropagation()} className="flex">
-                    <LazyLoadImage
-                      alt=""
-                      src={ownerImage}
-                      width={20}
-                      height={10}
-                      className="mx-1 h-5 w-5 rounded-[100%]"
-                    />
+                  <AccountProfilePicture accountId={campaign?.owner as string} className="w-5 h-5" />
                     <p className="font-semibold">{campaign?.owner}</p>
                   </div>
                 </Link>
@@ -126,9 +101,7 @@ export const SingleCampaignBanner = () => {
           amount={Number(campaign?.total_raised_amount)}
         />
         <div className="mt-6">
-          <Button className="mb-4 w-full" variant="brand-filled">
-            Donate
-          </Button>
+         <DonateToCampaignProjects className="mb-4" campaignId={parseInt(campaignId as string)} />
           <SocialsShare showButton />
         </div>
       </div>

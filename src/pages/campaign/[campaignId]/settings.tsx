@@ -1,13 +1,14 @@
+import { CampaignLayout, CampaignSettings } from "@/modules/campaigns/components";
 import { ReactElement } from "react";
 
-import { CampaignLayout } from "@/modules/campaigns/components/CampaignLayout";
 
-const CampaignSettings = () => {
-  return <div className="">Hello</div>;
+const Settings = () => {
+  return   <CampaignSettings />
+ 
 };
 
-CampaignSettings.getLayout = function getLayout(page: ReactElement) {
+Settings.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-export default CampaignSettings;
+export default Settings;

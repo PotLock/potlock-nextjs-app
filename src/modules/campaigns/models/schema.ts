@@ -13,8 +13,8 @@ export const campaignFormSchema = z.object({
   min_amount: z.number().min(1, "Min amount must be at least 1").optional(),
   max_amount: z.number().min(1, "Max amount must be at least 1").optional(),
   cover_image_url: z.string().optional(),
-  start_ms: z.number(),
-  end_ms: z.number()?.optional(),
+  start_ms: z.string(),
+  end_ms: z.string()?.optional(),
   owner: z.string(),
   recipient: z.string(),
 });

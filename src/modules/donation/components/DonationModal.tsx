@@ -22,6 +22,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   const isSingleProjectDonation = "accountId" in props;
   const isPotDonation = "potId" in props;
   const isListDonation = "listId" in props;
+  const isCampaignDonation = "campaignId" in props
   const { currentStep } = useDonationState();
   const { isAuthenticated } = useAuth();
   const { setSearchParams } = useRouteQuery();
@@ -43,6 +44,8 @@ export const DonationModal = create((props: DonationModalProps) => {
     walletApi.signInModal();
     close();
   }, [close]);
+
+  const donationType = !isSingleProjectDonation && !isPotDonation && !isListDonation && !isCampaignDonation
 
   return (
     <Dialog open={self.visible}>
@@ -92,7 +95,7 @@ export const DonationModal = create((props: DonationModalProps) => {
           />
         ) : (
           <>
-            {!isSingleProjectDonation && !isPotDonation && !isListDonation ? (
+            {donationType ? (
               <ModalErrorBody
                 heading="Donation"
                 title="Unable to determine donation type."

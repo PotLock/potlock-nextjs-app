@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import uploadFileToIPFS from "@/common/services/ipfs";
@@ -10,12 +10,44 @@ import {
 } from "@/common/ui/form-fields";
 
 import { useCampaignForm } from "../hooks/forms";
+import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
+import { Campaign } from "@/common/contracts/potlock";
 
-export const CampaignForm = () => {
-  const [coverImage, setCoverImage] = useState<string | null>(null);
+const formatTimestampForInput = (timestamp: string) => {
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  return date.toISOString().slice(0, 16);
+};
+
+export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
+  const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
+  const { query: { campaignId } } = useRouteQuery()
+
+  const isUpdate = campaignId !== undefined;
 
   const { form, onChange, onSubmit } = useCampaignForm();
+
+
+
+  useEffect(() => {
+    if (isUpdate && existingData) {
+      setCoverImage(existingData?.cover_image_url);
+      form.setValue("cover_image_url", existingData?.cover_image_url);
+      form.setValue("recipient", existingData?.recipient);
+      form.setValue("name", existingData?.name);
+      form.setValue("description", existingData?.description);
+      form.setValue("target_amount", yoctoNearToFloat(existingData?.target_amount));
+      if (existingData.min_amount != undefined) {
+        form.setValue("min_amount", yoctoNearToFloat(existingData.min_amount));
+      }
+      if (existingData.max_amount != undefined) {
+        form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
+      }
+      form.setValue("start_ms", formatTimestampForInput(existingData?.start_ms));
+      form.setValue("end_ms", existingData?.end_ms)
+    }
+  }, [isUpdate])
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
@@ -70,7 +102,7 @@ export const CampaignForm = () => {
                 className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span>{" "}
-                {loadingImageUpload ? "Uploading..." : "Add cover photo"}
+                {loadingImageUpload ? "Uploading..." : `${coverImage ? "Update" : "Add"} cover photo`}
               </button>
             </div>
           </div>
@@ -184,7 +216,7 @@ export const CampaignForm = () => {
           </div>
           <div className="my-10 flex flex-row-reverse">
             <Button variant="standard-filled" type="submit">
-              Create Campaign
+              {isUpdate ? "Update" : "Create"} Campaign
             </Button>
           </div>
         </form>

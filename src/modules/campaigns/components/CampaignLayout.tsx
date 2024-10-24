@@ -25,7 +25,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
 
   return (
     <PageWithBanner>
-      <div className="p-8">
+      <div className="md:p-8">
         <SingleCampaignBanner />
       </div>
       <Tabs
@@ -36,7 +36,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
           setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);
         }}
       />
-      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">
+      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2">
         {children}
       </div>
     </PageWithBanner>

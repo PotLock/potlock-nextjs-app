@@ -6,11 +6,11 @@ import {
   PotBatchDonationItem,
   PotDonation,
 } from "@/common/contracts/potlock";
-import { ByAccountId, ByListId } from "@/common/types";
+import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
 export type DonationGroupAllocationKey = ByPotId | ByListId;
 
-export type DonationAllocationKey = ByAccountId | DonationGroupAllocationKey;
+export type DonationAllocationKey = ByAccountId | ByCampaignId | DonationGroupAllocationKey;
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 

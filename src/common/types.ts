@@ -38,6 +38,12 @@ export interface ByListId {
   listId: ListId;
 }
 
+
+export type CampaignId = number;
+export interface ByCampaignId {
+  campaignId: CampaignId;
+}
+
 /**
  * `"{CONTRACT_ADDRESS}:{METHOD_NAME}"`
  */

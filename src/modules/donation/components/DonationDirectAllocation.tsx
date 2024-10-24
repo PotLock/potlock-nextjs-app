@@ -6,7 +6,7 @@ import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
 import { Pot, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { ByAccountId } from "@/common/types";
+import { ByAccountId, ByCampaignId } from "@/common/types";
 import {
   DialogDescription,
   DialogHeader,
@@ -39,7 +39,7 @@ import {
 } from "../models";
 import { DonationAllocationStrategyEnum } from "../types";
 
-export type DonationDirectAllocationProps = ByAccountId &
+export type DonationDirectAllocationProps = ByAccountId & Partial<ByCampaignId> &
   DonationAllocationInputs & { matchingPots?: Pot[] };
 
 export const DonationDirectAllocation: React.FC<
@@ -51,6 +51,7 @@ export const DonationDirectAllocation: React.FC<
   accountId,
   balanceFloat,
   matchingPots,
+  campaignId,
 }) => {
   const [amount, tokenId, allocationStrategy, potId] = form.watch([
     "amount",
@@ -58,6 +59,8 @@ export const DonationDirectAllocation: React.FC<
     "allocationStrategy",
     "potAccountId",
   ]);
+
+  const isCampaignDonation = campaignId !== undefined
 
   const { data: availableFts } = pagoda.useFtAccountBalances({
     accountId: walletApi.accountId,
@@ -79,6 +82,7 @@ export const DonationDirectAllocation: React.FC<
   const formLayout = useMemo(
     () => (
       <DialogDescription>
+        {!isCampaignDonation && (
         <FormField
           control={form.control}
           name="allocationStrategy"
@@ -124,6 +128,7 @@ export const DonationDirectAllocation: React.FC<
             </FormItem>
           )}
         />
+        )}
 
         {allocationStrategy === DonationAllocationStrategyEnum.split &&
           potId && <DonationSybilWarning {...{ potId }} />}
@@ -238,7 +243,8 @@ export const DonationDirectAllocation: React.FC<
     <>
       <DialogHeader>
         <DialogTitle>
-          {`Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
+          {isCampaignDonation ? "Donate to Campaign" : `Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
+          
         </DialogTitle>
       </DialogHeader>
 

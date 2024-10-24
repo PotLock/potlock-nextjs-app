@@ -41,8 +41,11 @@ export const useDonationForm = ({
   const isSingleProjectDonation = "accountId" in params;
   const isPotDonation = "potId" in params;
   const isListDonation = "listId" in params;
+  const isCampaignDonation = "campaignId" in params;
   const potAccountId = isPotDonation ? params.potId : undefined;
   const listId = isListDonation ? params.listId : undefined;
+  const campaignId = isCampaignDonation ? params.campaignId : undefined;
+
 
   const recipientAccountId = isSingleProjectDonation
     ? params.accountId
@@ -68,16 +71,17 @@ export const useDonationForm = ({
       referrerAccountId,
       potAccountId: isPotDonation ? potAccountId : defaultPotAccountId,
       listId,
+      campaignId,
 
-      allocationStrategy: isSingleProjectDonation
+      allocationStrategy: isSingleProjectDonation || campaignId
         ? DonationAllocationStrategyEnum[
-            matchingPots.length > 0 ? "split" : "full"
-          ]
+        matchingPots.length > 0 ? "split" : "full"
+        ]
         : DonationAllocationStrategyEnum.split,
 
       groupAllocationStrategy:
         DonationGroupAllocationStrategyEnum[
-          isSingleProjectDonation ? "manually" : "evenly"
+        isSingleProjectDonation ? "manually" : "evenly"
         ],
     }),
 
@@ -86,6 +90,7 @@ export const useDonationForm = ({
       isPotDonation,
       isSingleProjectDonation,
       listId,
+      campaignId,
       matchingPots.length,
       potAccountId,
       recipientAccountId,
@@ -108,9 +113,9 @@ export const useDonationForm = ({
   const totalAmountFloat = isSingleProjectDonation
     ? amount
     : (values.groupAllocationPlan?.reduce(
-        (total, { amount }) => total + (amount ?? 0.0),
-        0.0,
-      ) ?? 0.0);
+      (total, { amount }) => total + (amount ?? 0.0),
+      0.0,
+    ) ?? 0.0);
 
   const [crossFieldErrors, setCrossFieldErrors] = useState<
     FieldErrors<DonationInputs>
@@ -153,6 +158,7 @@ export const useDonationForm = ({
     !self.formState.isValid ||
     self.formState.isSubmitting ||
     !isBalanceSufficient;
+
 
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
 

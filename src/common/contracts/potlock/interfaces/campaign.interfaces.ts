@@ -4,13 +4,13 @@ export type CampaignFormFields = {
   name: string;
   description?: string;
   cover_image_url?: string;
-  start_ms: number;
-  end_ms?: number;
+  start_ms: number | string;
+  end_ms?: number | string;
   target_amount: number;
   min_amount?: number;
   max_amount?: number;
-  recipient: AccountId;
-  owner: AccountId;
+  recipient?: AccountId;
+  owner?: AccountId;
 };
 
 export type Campaign = {

@@ -1,9 +1,10 @@
 import { ByPotId, potlock } from "@/common/api/potlock";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
-import { ByListId } from "@/common/types";
+import { ByCampaignId, ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
 
 import { useDonation } from "../hooks";
+import { cn } from "@/common/ui/utils";
 
 export const DonateRandomly = () => {
   const {
@@ -55,4 +56,12 @@ export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({
   const { openDonationModal } = useDonation({ listId });
 
   return <Button onClick={openDonationModal}>{"Donate to list"}</Button>;
+};
+
+
+export type DonationToCampaignProjectsProps = ByCampaignId & {className?: string};
+
+export const DonateToCampaignProjects: React.FC<DonationToCampaignProjectsProps> = ({campaignId, className}) => {
+  const { openDonationModal } = useDonation({ campaignId });
+  return <Button className={cn('w-full', className)} onClick={openDonationModal}>{"Donate"}</Button>;
 };
