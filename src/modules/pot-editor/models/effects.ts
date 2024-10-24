@@ -57,7 +57,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         potFactory
           .deploy_pot({
             pot_args,
-            pot_handle,
+            pot_handle: (pot_handle?.length ?? 0) > 0 ? pot_handle : undefined,
           })
           .then(dispatch.potEditor.handleDeploymentSuccess)
           .catch(dispatch.potEditor.deploymentFailure);

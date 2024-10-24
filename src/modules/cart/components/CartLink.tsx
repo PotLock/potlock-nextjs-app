@@ -4,8 +4,9 @@ import { values } from "remeda";
 import { CartIcon } from "@/common/assets/svgs";
 import { Button, ButtonProps } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useCart } from "@/modules/cart/hooks";
-import routesPath from "@/modules/core/routes";
+import { hrefByRouteName } from "@/modules/core";
+
+import { useCart } from "../hooks";
 
 export type CartLinkProps = Pick<ButtonProps, "disabled"> & {};
 
@@ -18,11 +19,13 @@ export const CartLink: React.FC<CartLinkProps> = ({ disabled }) => {
       asChild
       variant="standard-plain"
       size="icon"
-      title={disabled ? "On maintenance" : undefined}
-      className={cn("rounded-full p-1", { "cursor-not-allowed": disabled })}
+      title={disabled ? "🚧 Work In Progress 🚧" : undefined}
+      className={cn("rounded-full p-1", {
+        "cursor-not-allowed opacity-20": disabled,
+      })}
       {...{ disabled }}
     >
-      <Link href={disabled ? "" : routesPath.CART}>
+      <Link href={disabled ? hrefByRouteName.CURRENT : hrefByRouteName.CART}>
         <CartIcon width={24} height={24} />
 
         {numberOfItems > 0 && (

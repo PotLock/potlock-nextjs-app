@@ -143,6 +143,7 @@ export default defineConfig({
     },
   },
   shortcuts: {
+    "not-displayed": "display-[none]",
     "btn-primary": "bg-primary text-primary-foreground hover:bg-primary/90",
     "btn-secondary":
       "bg-secondary text-secondary-foreground hover:bg-secondary/80",
