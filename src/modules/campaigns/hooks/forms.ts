@@ -12,7 +12,9 @@ import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
 import { campaignFormSchema } from "../models/schema";
 
 export const useCampaignForm = () => {
-  const { query: { campaignId } } = useRouteQuery()
+  const {
+    query: { campaignId },
+  } = useRouteQuery();
   type Values = FromSchema<typeof campaignFormSchema>;
 
   const self = useForm<Values>({
@@ -33,20 +35,24 @@ export const useCampaignForm = () => {
       name: values.name || "",
       target_amount: Number(floatToYoctoNear(values.target_amount)) as any,
       cover_image_url: values.cover_image_url || "",
-      ...(values.min_amount && { min_amount: Number(floatToYoctoNear(values.min_amount)) }),
-      ...(values.max_amount && { max_amount: Number(floatToYoctoNear(values.max_amount)) }),
-      start_ms: timeToMiliSeconds(values.start_ms.toString())
-        .epochMilliseconds,
+      ...(values.min_amount && {
+        min_amount: Number(floatToYoctoNear(values.min_amount)),
+      }),
+      ...(values.max_amount && {
+        max_amount: Number(floatToYoctoNear(values.max_amount)),
+      }),
+      start_ms: timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds,
       ...(values.end_ms && {
         end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
       }),
       ...(campaignId ? {} : { owner: walletApi.accountId as string }), // You can't update the owner
       ...(campaignId ? {} : { recipient: values.recipient }), // You can't update Recipient
-
-    }
+    };
 
     if (campaignId) {
-      campaign.update_campaign({ args: { campaign_id: Number(campaignId), ...args } });
+      campaign.update_campaign({
+        args: { campaign_id: Number(campaignId), ...args },
+      });
     } else {
       campaign.create_campaign({ args });
     }

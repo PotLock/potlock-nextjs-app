@@ -8,11 +8,11 @@ import { Campaign } from "@/common/contracts/potlock";
 import { get_campaign } from "@/common/contracts/potlock/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
+import { AccountProfilePicture } from "@/modules/core";
 import { useNearToUsdWithFallback } from "@/modules/core/hooks/useNearToUsdWithFallback";
+import { DonateToCampaignProjects } from "@/modules/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
-import { DonateToCampaignProjects } from "@/modules/donation";
-import { AccountProfilePicture } from "@/modules/core";
 
 export const SingleCampaignBanner = () => {
   const [campaign, setCampaign] = useState<Campaign>();
@@ -35,8 +35,6 @@ export const SingleCampaignBanner = () => {
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
-
-   
   }, [campaignId]);
 
   if (loading) {
@@ -61,7 +59,10 @@ export const SingleCampaignBanner = () => {
                 <p className="font-semibold">FOR</p>
                 <Link href={`/profile/${campaign?.recipient}`} target="_blank">
                   <div onClick={(e) => e.stopPropagation()} className="flex">
-                    <AccountProfilePicture accountId={campaign?.recipient as string} className="w-5 h-5" />
+                    <AccountProfilePicture
+                      accountId={campaign?.recipient as string}
+                      className="h-5 w-5"
+                    />
                     <p className="font-semibold">{campaign?.recipient}</p>
                   </div>
                 </Link>
@@ -73,7 +74,10 @@ export const SingleCampaignBanner = () => {
                 <p className="font-semibold">ORGANIZED BY</p>
                 <Link href={`/profile/${campaign?.owner}`} target="_blank">
                   <div onClick={(e) => e.stopPropagation()} className="flex">
-                  <AccountProfilePicture accountId={campaign?.owner as string} className="w-5 h-5" />
+                    <AccountProfilePicture
+                      accountId={campaign?.owner as string}
+                      className="h-5 w-5"
+                    />
                     <p className="font-semibold">{campaign?.owner}</p>
                   </div>
                 </Link>
@@ -101,7 +105,10 @@ export const SingleCampaignBanner = () => {
           amount={Number(campaign?.total_raised_amount)}
         />
         <div className="mt-6">
-         <DonateToCampaignProjects className="mb-4" campaignId={parseInt(campaignId as string)} />
+          <DonateToCampaignProjects
+            className="mb-4"
+            campaignId={parseInt(campaignId as string)}
+          />
           <SocialsShare showButton />
         </div>
       </div>

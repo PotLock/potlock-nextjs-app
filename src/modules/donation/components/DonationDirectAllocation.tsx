@@ -39,7 +39,8 @@ import {
 } from "../models";
 import { DonationAllocationStrategyEnum } from "../types";
 
-export type DonationDirectAllocationProps = ByAccountId & Partial<ByCampaignId> &
+export type DonationDirectAllocationProps = Partial<ByAccountId> &
+  Partial<ByCampaignId> &
   DonationAllocationInputs & { matchingPots?: Pot[] };
 
 export const DonationDirectAllocation: React.FC<
@@ -60,7 +61,7 @@ export const DonationDirectAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const isCampaignDonation = campaignId !== undefined
+  const isCampaignDonation = campaignId !== undefined;
 
   const { data: availableFts } = pagoda.useFtAccountBalances({
     accountId: walletApi.accountId,
@@ -83,51 +84,51 @@ export const DonationDirectAllocation: React.FC<
     () => (
       <DialogDescription>
         {!isCampaignDonation && (
-        <FormField
-          control={form.control}
-          name="allocationStrategy"
-          render={({ field }) => (
-            <FormItem className="gap-3">
-              {isRecipientDataLoading ? (
-                <Skeleton className="w-59 h-3.5" />
-              ) : (
-                <FormLabel className="font-600">
-                  {"How do you want to allocate funds?"}
-                </FormLabel>
-              )}
+          <FormField
+            control={form.control}
+            name="allocationStrategy"
+            render={({ field }) => (
+              <FormItem className="gap-3">
+                {isRecipientDataLoading ? (
+                  <Skeleton className="w-59 h-3.5" />
+                ) : (
+                  <FormLabel className="font-600">
+                    {"How do you want to allocate funds?"}
+                  </FormLabel>
+                )}
 
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  {values(donationAllocationStrategies).map(
-                    ({ label, hint, hintIfDisabled, value }) => {
-                      const disabled =
-                        value === DonationAllocationStrategyEnum.split &&
-                        !hasMatchingPots;
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    {values(donationAllocationStrategies).map(
+                      ({ label, hint, hintIfDisabled, value }) => {
+                        const disabled =
+                          value === DonationAllocationStrategyEnum.split &&
+                          !hasMatchingPots;
 
-                      return (
-                        <FormItem key={value}>
-                          <RadioGroupItem
-                            id={`donation-options-${value}`}
-                            isLoading={isRecipientDataLoading}
-                            checked={
-                              field.value ===
-                              DonationAllocationStrategyEnum[value]
-                            }
-                            hint={disabled ? hintIfDisabled : hint}
-                            {...{ disabled, label, value }}
-                          />
-                        </FormItem>
-                      );
-                    },
-                  )}
-                </RadioGroup>
-              </FormControl>
-            </FormItem>
-          )}
-        />
+                        return (
+                          <FormItem key={value}>
+                            <RadioGroupItem
+                              id={`donation-options-${value}`}
+                              isLoading={isRecipientDataLoading}
+                              checked={
+                                field.value ===
+                                DonationAllocationStrategyEnum[value]
+                              }
+                              hint={disabled ? hintIfDisabled : hint}
+                              {...{ disabled, label, value }}
+                            />
+                          </FormItem>
+                        );
+                      },
+                    )}
+                  </RadioGroup>
+                </FormControl>
+              </FormItem>
+            )}
+          />
         )}
 
         {allocationStrategy === DonationAllocationStrategyEnum.split &&
@@ -243,8 +244,9 @@ export const DonationDirectAllocation: React.FC<
     <>
       <DialogHeader>
         <DialogTitle>
-          {isCampaignDonation ? "Donate to Campaign" : `Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
-          
+          {isCampaignDonation
+            ? "Donate to Campaign"
+            : `Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
         </DialogTitle>
       </DialogHeader>
 

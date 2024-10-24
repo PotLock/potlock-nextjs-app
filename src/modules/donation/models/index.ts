@@ -1,7 +1,11 @@
 import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
-import { CampaignDonation, DirectDonation, PotDonation } from "@/common/contracts/potlock";
+import {
+  CampaignDonation,
+  DirectDonation,
+  PotDonation,
+} from "@/common/contracts/potlock";
 import { useTypedSelector } from "@/store";
 import { AppModel } from "@/store/models";
 

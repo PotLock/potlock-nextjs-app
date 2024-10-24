@@ -5,7 +5,10 @@ import { CAMPAIGN_CONTRACT_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 
 import { Campaign, CampaignFormFields } from "./interfaces/campaign.interfaces";
-import { CampaignDonation, DirectCampaignDonationArgs } from "./interfaces/donate.interfaces";
+import {
+  CampaignDonation,
+  DirectCampaignDonationArgs,
+} from "./interfaces/donate.interfaces";
 
 export const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGN_CONTRACT_ID,
@@ -28,7 +31,11 @@ export const create_campaign = ({ args }: { args: CampaignFormFields }) => {
  * UPDATE CAMPAIGN
  */
 
-export const update_campaign = ({ args }: { args: CampaignFormFields & { campaign_id: number } }) => {
+export const update_campaign = ({
+  args,
+}: {
+  args: CampaignFormFields & { campaign_id: number };
+}) => {
   return contractApi.call("update_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
@@ -36,11 +43,15 @@ export const update_campaign = ({ args }: { args: CampaignFormFields & { campaig
   });
 };
 
-export const donate = (args: DirectCampaignDonationArgs, depositAmountYocto: string) => contractApi.call('donate', {
-  args,
-  deposit: depositAmountYocto,
-  callbackUrl: window.location.href
-})
+export const donate = (
+  args: DirectCampaignDonationArgs,
+  depositAmountYocto: string,
+) =>
+  contractApi.call("donate", {
+    args,
+    deposit: depositAmountYocto,
+    callbackUrl: window.location.href,
+  });
 
 /**
  * GET CAMPAIGNS
@@ -62,4 +73,7 @@ export const get_campaign = (args: GetCampaignInput) =>
   contractApi.view<typeof args, Campaign>(`get_campaign`, { args });
 
 export const get_donations_for_campaign = (args: GetCampaignInput) =>
-  contractApi.view<typeof args, CampaignDonation[]>("get_donations_for_campaign", { args });
+  contractApi.view<typeof args, CampaignDonation[]>(
+    "get_donations_for_campaign",
+    { args },
+  );

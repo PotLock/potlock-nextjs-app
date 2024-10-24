@@ -133,7 +133,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       dispatch.donation.failure(
         new Error(
           "Unable to get donation transaction status without user authentication." +
-          "Please login and try again.",
+            "Please login and try again.",
         ),
       );
     }

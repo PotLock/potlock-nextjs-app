@@ -22,7 +22,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   const isSingleProjectDonation = "accountId" in props;
   const isPotDonation = "potId" in props;
   const isListDonation = "listId" in props;
-  const isCampaignDonation = "campaignId" in props
+  const isCampaignDonation = "campaignId" in props;
   const { currentStep } = useDonationState();
   const { isAuthenticated } = useAuth();
   const { setSearchParams } = useRouteQuery();
@@ -45,7 +45,11 @@ export const DonationModal = create((props: DonationModalProps) => {
     close();
   }, [close]);
 
-  const donationType = !isSingleProjectDonation && !isPotDonation && !isListDonation && !isCampaignDonation
+  const donationType =
+    !isSingleProjectDonation &&
+    !isPotDonation &&
+    !isListDonation &&
+    !isCampaignDonation;
 
   return (
     <Dialog open={self.visible}>

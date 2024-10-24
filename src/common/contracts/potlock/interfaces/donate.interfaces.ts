@@ -54,7 +54,7 @@ export type DirectCampaignDonationArgs = {
   referrer_id?: string;
   bypass_protocol_fee?: boolean;
   bypass_creator_fee?: boolean;
-}
+};
 
 export type DirectBatchDonationItem = {
   args: DirectDonationArgs;

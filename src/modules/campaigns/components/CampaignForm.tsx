@@ -1,6 +1,8 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { Campaign } from "@/common/contracts/potlock";
+import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { Button, Form, FormField } from "@/common/ui/components";
 import {
@@ -10,8 +12,6 @@ import {
 } from "@/common/ui/form-fields";
 
 import { useCampaignForm } from "../hooks/forms";
-import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
-import { Campaign } from "@/common/contracts/potlock";
 
 const formatTimestampForInput = (timestamp: string) => {
   if (!timestamp) return "";
@@ -22,13 +22,13 @@ const formatTimestampForInput = (timestamp: string) => {
 export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
   const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
-  const { query: { campaignId } } = useRouteQuery()
+  const {
+    query: { campaignId },
+  } = useRouteQuery();
 
   const isUpdate = campaignId !== undefined;
 
   const { form, onChange, onSubmit } = useCampaignForm();
-
-
 
   useEffect(() => {
     if (isUpdate && existingData) {
@@ -37,17 +37,23 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
       form.setValue("recipient", existingData?.recipient);
       form.setValue("name", existingData?.name);
       form.setValue("description", existingData?.description);
-      form.setValue("target_amount", yoctoNearToFloat(existingData?.target_amount));
+      form.setValue(
+        "target_amount",
+        yoctoNearToFloat(existingData?.target_amount),
+      );
       if (existingData.min_amount != undefined) {
         form.setValue("min_amount", yoctoNearToFloat(existingData.min_amount));
       }
       if (existingData.max_amount != undefined) {
         form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
       }
-      form.setValue("start_ms", formatTimestampForInput(existingData?.start_ms));
-      form.setValue("end_ms", existingData?.end_ms)
+      form.setValue(
+        "start_ms",
+        formatTimestampForInput(existingData?.start_ms),
+      );
+      form.setValue("end_ms", existingData?.end_ms);
     }
-  }, [isUpdate])
+  }, [isUpdate]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
@@ -102,7 +108,9 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
                 className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span>{" "}
-                {loadingImageUpload ? "Uploading..." : `${coverImage ? "Update" : "Add"} cover photo`}
+                {loadingImageUpload
+                  ? "Uploading..."
+                  : `${coverImage ? "Update" : "Add"} cover photo`}
               </button>
             </div>
           </div>
