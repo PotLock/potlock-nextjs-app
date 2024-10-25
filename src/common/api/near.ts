@@ -24,7 +24,8 @@ import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import naxios from "@wpdas/naxios";
 import { AccountView } from "near-api-js/lib/providers/provider";
 
-import { FULL_TGAS, NETWORK, SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
+import { NETWORK, SOCIAL_DB_CONTRACT_ID } from "@/common/config";
+import { FULL_TGAS } from "@/common/constants";
 import { AccountId } from "@/common/types";
 
 import { wagmiConfig, web3Modal } from "./web3modal";

@@ -1,6 +1,7 @@
 import { AxiosRequestConfig } from "axios";
 
-import { NETWORK, PAGODA_API_KEY } from "@/common/constants";
+import { NETWORK } from "@/common/config";
+import { PAGODA_API_KEY } from "@/common/constants";
 
 /**
  * Docs: https://console.pagoda.co/apis?tab=enhancedApi#/

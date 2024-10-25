@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 
-import { NETWORK } from "@/common/constants";
+import { NETWORK } from "@/common/config";
 
 /**
  * Docs: https://dev.potlock.io/api/schema/swagger-ui/

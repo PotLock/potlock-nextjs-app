@@ -2,10 +2,10 @@ import { MemoryCache } from "@wpdas/naxios";
 import { Provider } from "near-api-js/lib/providers";
 
 import { naxiosInstance } from "@/common/api/near";
+import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/config";
 import {
   FULL_TGAS,
   ONE_HUNDREDTH_NEAR,
-  SYBIL_CONTRACT_ID,
   TWO_HUNDREDTHS_NEAR,
 } from "@/common/constants";
 
@@ -31,7 +31,7 @@ import {
  * NEAR Contract API
  */
 export const contractApi = naxiosInstance.contractApi({
-  contractId: SYBIL_CONTRACT_ID,
+  contractId: SYBIL_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });
 

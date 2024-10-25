@@ -1,8 +1,9 @@
 import { MemoryCache } from "@wpdas/naxios";
-import Big from "big.js";
+import { Big } from "big.js";
 
 import { naxiosInstance } from "@/common/api/near";
-import { FULL_TGAS, POT_FACTORY_CONTRACT_ID } from "@/common/constants";
+import { POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/config";
+import { FULL_TGAS } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 
 import {
@@ -14,7 +15,7 @@ import {
 export type { PotDeploymentResult };
 
 export const contractApi = naxiosInstance.contractApi({
-  contractId: POT_FACTORY_CONTRACT_ID,
+  contractId: POT_FACTORY_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 5 }), // 10 seg
 });
 

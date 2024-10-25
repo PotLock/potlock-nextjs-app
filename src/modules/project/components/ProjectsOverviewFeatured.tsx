@@ -1,4 +1,4 @@
-import { NETWORK } from "@/common/constants";
+import { NETWORK } from "@/common/config";
 import { ProjectCard } from "@/modules/project";
 
 const featuredProjectIds =

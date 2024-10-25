@@ -1,4 +1,4 @@
-import { NETWORK, POT_FACTORY_CONTRACT_ID } from "@/common/constants";
+import { NETWORK, POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/config";
 import { TabNav } from "@/modules/profile/types";
 
 export const POT_MIN_NAME_LENGTH = 3;
@@ -7,7 +7,8 @@ export const POT_MAX_NAME_LENGTH = 64;
 
 export const POT_MAX_DESCRIPTION_LENGTH = 256;
 
-export const POT_MAX_HANDLE_LENGTH = 64 - `.${POT_FACTORY_CONTRACT_ID}`.length;
+export const POT_MAX_HANDLE_LENGTH =
+  64 - `.${POT_FACTORY_CONTRACT_ACCOUNT_ID}`.length;
 
 export const POT_MAX_APPROVED_PROJECTS = 100;
 

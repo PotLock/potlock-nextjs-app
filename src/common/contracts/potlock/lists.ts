@@ -1,10 +1,8 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { naxiosInstance } from "@/common/api/near";
-import {
-  LISTS_CONTRACT_ID,
-  POTLOCK_REGISTRY_LIST_ID,
-} from "@/common/constants";
+import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/config";
+import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 
@@ -21,7 +19,7 @@ import {
  * NEAR Contract API
  */
 export const contractApi = naxiosInstance.contractApi({
-  contractId: LISTS_CONTRACT_ID,
+  contractId: LISTS_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });
 

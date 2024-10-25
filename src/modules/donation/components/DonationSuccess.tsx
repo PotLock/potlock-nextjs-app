@@ -4,8 +4,8 @@ import Link from "next/link";
 import { pagoda } from "@/common/api/pagoda";
 import { potlock } from "@/common/api/potlock";
 import TwitterSvg from "@/common/assets/svgs/twitter";
+import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/config";
 import {
-  BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL,
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";

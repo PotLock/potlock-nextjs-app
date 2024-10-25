@@ -1,7 +1,24 @@
+/**
+ *! Heads up! Types defined here can ONLY use external dependencies!
+ */
+
+import { Network } from "@wpdas/naxios";
 import { Account } from "near-api-js";
 import { SWRConfiguration } from "swr";
 
+export type EnvConfig = {
+  network: Network;
+  contractMetadata: { version: string; repoUrl: string };
+  donation: { contract: { accountId: string } };
+  lists: { contract: { accountId: string } };
+  potFactory: { contract: { accountId: string } };
+  sybil: { app: { url: string }; contract: { accountId: string } };
+};
+
 export type { infer as FromSchema } from "zod";
+
+export type UnionFromStringList<ListOfMembers extends string[]> =
+  ListOfMembers[number];
 
 export type ClientConfig = { swr?: SWRConfiguration };
 
