@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { List, potlock } from "@/common/api/indexer";
+import { List, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 
 export const useAllLists = (
@@ -11,11 +11,11 @@ export const useAllLists = (
   const [loading, setLoading] = useState<boolean>(false);
   const wallet = walletApi;
 
-  const { data, isLoading } = potlock.useLists();
-  const { data: myLists } = potlock.useLists({
+  const { data, isLoading } = indexer.useLists();
+  const { data: myLists } = indexer.useLists({
     account: wallet?.accountId,
   });
-  const { data: myFavourites } = potlock.useAccountUpvotedLists({
+  const { data: myFavourites } = indexer.useAccountUpvotedLists({
     accountId: wallet?.accountId as string,
   });
 

@@ -1,7 +1,7 @@
-import { potlock } from "@/common/api/indexer";
+import { indexer } from "@/common/api/indexer";
 
 export const GeneralStats = () => {
-  const { data: stats } = potlock.useStats();
+  const { data: stats } = indexer.useStats();
 
   return (
     <div className="flex w-full flex-col ">

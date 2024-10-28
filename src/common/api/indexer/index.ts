@@ -1,2 +1,2 @@
-export * as potlock from "./hooks";
+export * as indexer from "./hooks";
 export * from "./types";

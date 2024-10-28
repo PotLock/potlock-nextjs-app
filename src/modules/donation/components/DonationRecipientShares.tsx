@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import {
   ListRegistrationStatus,
   PotApplicationStatus,
-  potlock,
+  indexer,
 } from "@/common/api/indexer";
 import { NearIcon } from "@/common/assets/svgs";
 import { FormField } from "@/common/ui/components";
@@ -32,7 +32,7 @@ export const DonationRecipientShares: React.FC<
   const [groupAllocationStrategy] = form.watch(["groupAllocationStrategy"]);
 
   const { data: potApplications = [], error: potApplicationsError } =
-    potlock.usePotApplications({
+    indexer.usePotApplications({
       potId,
       // TODO: Consider integrating infinite scroll in the future instead
       page_size: 999,
@@ -40,7 +40,7 @@ export const DonationRecipientShares: React.FC<
     });
 
   const { data: listRegistrations = [], error: listRegistrationsError } =
-    potlock.useListRegistrations({
+    indexer.useListRegistrations({
       listId,
       // TODO: Consider integrating infinite scroll in the future instead
       page_size: 999,

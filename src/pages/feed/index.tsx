@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
-import { potlock } from "@/common/api/indexer";
+import { indexer } from "@/common/api/indexer";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
@@ -15,7 +15,7 @@ export default function GlobalFeedsPage() {
   const loadingRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(40);
 
-  const { data: registrations = [] } = potlock.useListRegistrations({
+  const { data: registrations = [] } = indexer.useListRegistrations({
     listId: POTLOCK_REGISTRY_LIST_ID,
     page_size: 999,
   });

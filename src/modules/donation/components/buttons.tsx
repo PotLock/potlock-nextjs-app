@@ -1,4 +1,4 @@
-import { ByPotId, potlock } from "@/common/api/indexer";
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
 import { ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
@@ -10,7 +10,7 @@ export const DonateRandomly = () => {
     isLoading: isRandomPGRegistryEntryLoading,
     data: randomPGRegistryEntry,
     mutate: refetchRandomPGRegistryEntry,
-  } = potlock.useRandomListRegistration({
+  } = indexer.useRandomListRegistration({
     listId: POTLOCK_REGISTRY_LIST_ID,
     status: "Approved",
   });

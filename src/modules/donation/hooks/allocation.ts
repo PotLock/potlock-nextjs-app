@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { isNot, isStrictEqual, piped, prop } from "remeda";
 
-import { Pot, potlock } from "@/common/api/indexer";
+import { Pot, indexer } from "@/common/api/indexer";
 import { intoShareValue } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
@@ -147,7 +147,7 @@ export const useDonationAllocationBreakdown = ({
   bypassProtocolFee = false,
   bypassChefFee = false,
 }: DonationAllocationParams): DonationBreakdown => {
-  const { data: potlockDonationConfig } = potlock.useDonationConfig();
+  const { data: potlockDonationConfig } = indexer.useDonationConfig();
 
   // TODO: (non-critical)
   //? Recalculate basis points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided

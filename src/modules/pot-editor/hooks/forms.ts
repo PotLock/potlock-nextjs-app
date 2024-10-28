@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema, ZodError } from "zod";
 
-import { ByPotId, potlock } from "@/common/api/indexer";
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import {
   CONTRACT_SOURCECODE_REPO_URL,
@@ -40,7 +40,7 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = "potId" in props && typeof potId !== "string";
 
-  const { data: potIndexedData } = potlock.usePot({ potId });
+  const { data: potIndexedData } = indexer.usePot({ potId });
 
   type Values = FromSchema<typeof schema>;
 

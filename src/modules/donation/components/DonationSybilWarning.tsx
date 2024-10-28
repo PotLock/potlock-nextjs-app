@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { ByPotId, potlock } from "@/common/api/indexer";
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { WarningIcon } from "@/common/assets/svgs";
 import { SYBIL_APP_LINK_URL } from "@/common/config";
@@ -28,7 +28,7 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
     walletApi.accountId ?? "unknown",
   );
 
-  const { data: pot } = potlock.usePot({ potId });
+  const { data: pot } = indexer.usePot({ potId });
 
   const isDisplayed = useMemo(
     () =>

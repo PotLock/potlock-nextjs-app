@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import Link from "next/link";
 
-import { potlock } from "@/common/api/indexer";
+import { indexer } from "@/common/api/indexer";
 import { pagoda } from "@/common/api/pagoda";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/config";
@@ -44,9 +44,9 @@ export const DonationSuccess = ({
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
   const [potId] = form.watch(["potAccountId"]);
-  const { data: pot } = potlock.usePot({ potId });
+  const { data: pot } = indexer.usePot({ potId });
 
-  const { data: recipient, error: recipientDataError } = potlock.useAccount({
+  const { data: recipient, error: recipientDataError } = indexer.useAccount({
     accountId:
       "recipient_id" in (finalOutcome ?? {})
         ? (finalOutcome as DirectDonation).recipient_id
