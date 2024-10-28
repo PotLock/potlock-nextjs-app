@@ -1,4 +1,4 @@
-import { ByPotId, PotId } from "@/common/api/potlock";
+import { ByPotId, PotId } from "@/common/api/indexer";
 import {
   DirectBatchDonationItem,
   DirectDonation,

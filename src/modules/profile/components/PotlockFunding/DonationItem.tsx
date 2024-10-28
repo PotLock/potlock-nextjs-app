@@ -2,7 +2,7 @@
 import Big from "big.js";
 import Link from "next/link";
 
-import { DonationInfo } from "@/common/api/potlock/account";
+import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import routesPath from "@/modules/core/routes";

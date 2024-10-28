@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
-import { potlock } from "@/common/api/potlock";
+import { indexer } from "@/common/api/indexer";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
 import {
@@ -68,13 +68,13 @@ export const DonationGroupAllocation: React.FC<
     isLoading: isPotLoading,
     data: pot,
     error: potError,
-  } = potlock.usePot({ potId });
+  } = indexer.usePot({ potId });
 
   const {
     data: list,
     isLoading: isListLoading,
     error: listError,
-  } = potlock.useList({ listId });
+  } = indexer.useList({ listId });
 
   const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
 

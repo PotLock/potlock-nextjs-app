@@ -1,11 +1,11 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 import { buildTransaction } from "@wpdas/naxios";
 import { useRouter } from "next/router";
 import { prop } from "remeda";
 
 import { naxiosInstance } from "@/common/api/near";
-import { LISTS_CONTRACT_ID } from "@/common/constants";
+import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/config";
 import {
   add_admins_to_list,
   delete_list,
@@ -82,7 +82,7 @@ export const useListForm = () => {
     registrants.map((registrant: AccountKey) => {
       allTransactions.push(
         buildTransaction("unregister", {
-          receiverId: LISTS_CONTRACT_ID,
+          receiverId: LISTS_CONTRACT_ACCOUNT_ID,
           args: {
             list_id: Number(id),
             registration_id: Number(registrant.registrationId),
@@ -94,7 +94,7 @@ export const useListForm = () => {
     });
     naxiosInstance
       .contractApi({
-        contractId: LISTS_CONTRACT_ID,
+        contractId: LISTS_CONTRACT_ACCOUNT_ID,
       })
       .callMultiple(allTransactions)
       .then((res) => {

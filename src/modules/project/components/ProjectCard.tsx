@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { potlock } from "@/common/api/potlock";
+import { indexer } from "@/common/api/indexer";
 import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
@@ -36,7 +36,7 @@ export const ProjectCard = ({
 }: ProjectCardProps) => {
   const { openDonationModal } = useDonation({ accountId: projectId });
 
-  const { isLoading: isAccountLoading, data: account } = potlock.useAccount({
+  const { isLoading: isAccountLoading, data: account } = indexer.useAccount({
     accountId: projectId,
   });
 

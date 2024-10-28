@@ -1,4 +1,4 @@
-import { Pot } from "@/common/api/potlock";
+import { Pot } from "@/common/api/indexer";
 
 import Table from "./Table";
 import { useOrderedDonations } from "../../hooks";

@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import ReactMarkdown from "react-markdown";
 
+import { Pot } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import { Pot } from "@/common/api/potlock";
 import { VolunteerIcon } from "@/common/assets/svgs";
 import { yoctoNearToFloat } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";

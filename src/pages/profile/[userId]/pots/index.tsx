@@ -4,8 +4,8 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { potlock } from "@/common/api/potlock";
-import PotCard from "@/modules/pot/components/PotCard";
+import { indexer } from "@/common/api/indexer";
+import { PotCard } from "@/modules/pot";
 import { ProfileLayout } from "@/modules/profile";
 
 const PotsSubPage = () => {
@@ -18,7 +18,7 @@ const PotsSubPage = () => {
       : userIdPathParam?.at(0);
 
   const { data: paginatedPotApplications, isLoading } =
-    potlock.useAccountPotApplications({ accountId: userId });
+    indexer.useAccountPotApplications({ accountId: userId });
 
   const potApplications = paginatedPotApplications?.results ?? [];
 

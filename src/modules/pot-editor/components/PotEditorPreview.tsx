@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { Pencil } from "lucide-react";
 import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import { ByPotId, potlock } from "@/common/api/potlock";
 import { isAccountId } from "@/common/lib";
 import {
   Button,
@@ -66,7 +66,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
   potId,
   onEditClick,
 }) => {
-  const { isLoading, data } = potlock.usePot({ potId });
+  const { isLoading, data } = indexer.usePot({ potId });
   const adminAccountIds = data?.admins.map(prop("id"));
   const isDataAvailable = data !== undefined && adminAccountIds !== undefined;
 

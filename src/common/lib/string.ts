@@ -1,4 +1,4 @@
-import { NETWORK } from "../constants";
+import { NETWORK } from "@/common/config";
 
 export const truncate = (input: string, maxLength: number) => {
   if (!input) return "";

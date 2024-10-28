@@ -1,4 +1,4 @@
-import { ByPotId } from "@/common/api/potlock";
+import { ByPotId } from "@/common/api/indexer";
 
 import { STAKE_WEIGHTED_POT_IDS } from "../constants";
 

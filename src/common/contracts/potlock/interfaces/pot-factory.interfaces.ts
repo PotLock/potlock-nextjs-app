@@ -1,4 +1,4 @@
-import { PotId } from "@/common/api/potlock";
+import { PotId } from "@/common/api/indexer";
 import { AccountId, ProviderId } from "@/common/types";
 
 export type PotDeploymentResult = {
