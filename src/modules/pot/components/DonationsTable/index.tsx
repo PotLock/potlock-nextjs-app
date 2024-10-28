@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Donation } from "@/common/api/potlock";
+import { Donation } from "@/common/api/indexer";
 import Spinner from "@/common/ui/components/Spinner";
 import Pagination from "@/modules/core/components/Pagination";
 

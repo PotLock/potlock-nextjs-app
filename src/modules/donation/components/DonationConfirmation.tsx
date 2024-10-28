@@ -2,7 +2,7 @@ import { useCallback, useId, useMemo, useState } from "react";
 
 import { Pencil } from "lucide-react";
 
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import {
   Accordion,
   AccordionContent,

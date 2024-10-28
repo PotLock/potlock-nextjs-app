@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { walletApi } from "@/common/api/near";
-import { ByPotId, potlock } from "@/common/api/potlock";
+import { ByPotId, potlock } from "@/common/api/indexer";
 import { WarningIcon } from "@/common/assets/svgs";
 import { SYBIL_APP_LINK_URL } from "@/common/config";
 import { DEBUG } from "@/common/constants";

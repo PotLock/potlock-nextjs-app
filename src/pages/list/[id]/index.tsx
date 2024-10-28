@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
 import { PageWithBanner } from "@/common/ui/components";
 import {

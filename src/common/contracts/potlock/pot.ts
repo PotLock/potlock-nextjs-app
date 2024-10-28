@@ -2,7 +2,7 @@ import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { naxiosInstance } from "@/common/api/near";
-import { PotId } from "@/common/api/potlock";
+import { PotId } from "@/common/api/indexer";
 import { FULL_TGAS, ONE_HUNDREDTH_NEAR } from "@/common/constants";
 
 import {

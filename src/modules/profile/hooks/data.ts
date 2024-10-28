@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { getImage } from "@/common/api/images";
-import { useAccountDonationsSent } from "@/common/api/potlock/hooks";
+import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
 import {
   NEARSocialUserProfile,
   getSocialProfile,

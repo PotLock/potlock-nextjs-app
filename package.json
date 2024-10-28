@@ -1,5 +1,5 @@
 {
-  "name": "@potlock/app",
+  "name": "@potlock/nextjs-frontend",
   "version": "2.0.0",
   "packageManager": "yarn@1.22.22",
   "private": true,
@@ -9,7 +9,7 @@
     "format": "yarn lint --fix ./",
     "typecheck": "tsc --noEmit",
     "generate:api-pagoda": "orval --config pagoda-eapi.cjs",
-    "generate:api-potlock": "orval --config potlock-indexer.cjs",
+    "generate:api-potlock": "orval --config indexer-api.cjs",
     "generate:api": "concurrently 'yarn generate:api-potlock' 'yarn generate:api-pagoda'",
     "generate:css": "unocss 'src/**/*.tsx' --out-file=src/common/ui/styles/uno.generated.css --write-transformed",
     "dev:css": "yarn generate:css --watch",

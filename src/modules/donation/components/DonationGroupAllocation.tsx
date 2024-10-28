@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
 import {

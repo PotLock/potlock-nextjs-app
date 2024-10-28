@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 
-import { Pot } from "@/common/api/potlock";
+import { Pot } from "@/common/api/indexer";
 import { yoctoNearToFloat } from "@/common/lib";
 import {
   Badge,

@@ -1,4 +1,4 @@
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 
 export const GeneralStats = () => {
   const { data: stats } = potlock.useStats();

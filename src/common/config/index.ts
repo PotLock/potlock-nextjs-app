@@ -29,6 +29,14 @@ export const {
 export const SOCIAL_DB_CONTRACT_ID =
   NETWORK === "mainnet" ? "social.near" : "v1.social08.testnet";
 
+/**
+ * Docs: https://dev.potlock.io/api/schema/swagger-ui/
+ */
+export const INDEXER_API_ENDPOINT =
+  NETWORK === "mainnet"
+    ? "https://dev.potlock.io"
+    : "https://test-dev.potlock.io";
+
 export const BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL =
   NETWORK === "mainnet"
     ? "https://nearblocks.io/txns"

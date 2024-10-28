@@ -1,7 +1,7 @@
-const targetPath = "./src/common/api/potlock/generated/client.ts";
+const targetPath = "./src/common/api/indexer/generated/client.ts";
 
 module.exports = {
-  "potlock-indexer": {
+  indexer: {
     input: "https://test-dev.potlock.io/api/schema",
 
     output: {

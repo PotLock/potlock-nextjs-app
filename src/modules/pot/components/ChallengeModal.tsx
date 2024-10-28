@@ -1,6 +1,6 @@
 import { Form } from "react-hook-form";
 
-import { Pot } from "@/common/api/potlock";
+import { Pot } from "@/common/api/indexer";
 import { Challenge } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import {
   Button,

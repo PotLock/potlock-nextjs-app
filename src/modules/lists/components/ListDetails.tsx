@@ -8,7 +8,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
 import { walletApi } from "@/common/api/near";
-import { List } from "@/common/api/potlock";
+import { List } from "@/common/api/indexer";
 import {
   AdminUserIcon,
   DeleteListIcon,

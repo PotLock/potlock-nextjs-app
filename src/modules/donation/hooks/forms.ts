@@ -5,8 +5,8 @@ import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { entries } from "remeda";
 import { ZodError } from "zod";
 
+import { StatusF24Enum, potlock } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import { StatusF24Enum, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
 import { useIsHuman } from "@/modules/core";

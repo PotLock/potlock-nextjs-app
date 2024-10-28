@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";

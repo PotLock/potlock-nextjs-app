@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
 import ErrorModal from "@/modules/core/components/ErrorModal";
 import SuccessModal from "@/modules/core/components/SuccessModal";

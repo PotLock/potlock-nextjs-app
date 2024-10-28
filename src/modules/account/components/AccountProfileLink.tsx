@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/modules/core";

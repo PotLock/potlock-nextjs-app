@@ -5,7 +5,7 @@ import Big from "big.js";
 import {
   DonationInfo,
   getAccountDonationsReceived,
-} from "@/common/api/potlock/account";
+} from "@/common/api/indexer/deprecated/accounts.deprecated";
 import { SUPPORTED_FTS } from "@/common/constants";
 
 import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";

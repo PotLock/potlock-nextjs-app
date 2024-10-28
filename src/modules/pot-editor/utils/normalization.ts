@@ -1,7 +1,7 @@
 import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
-import { Account, Pot } from "@/common/api/potlock";
+import { Account, Pot } from "@/common/api/indexer";
 import {
   LISTS_CONTRACT_ACCOUNT_ID,
   SYBIL_CONTRACT_ACCOUNT_ID,

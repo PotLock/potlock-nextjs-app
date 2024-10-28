@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { isNot, isStrictEqual, piped, prop } from "remeda";
 
-import { Pot, potlock } from "@/common/api/potlock";
+import { Pot, potlock } from "@/common/api/indexer";
 import { intoShareValue } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";

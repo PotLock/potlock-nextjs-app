@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 import Link from "next/link";
 
 import { pagoda } from "@/common/api/pagoda";
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/config";
 import {

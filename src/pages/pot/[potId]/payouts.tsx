@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
 import { Payout } from "@/common/contracts/potlock";
 import { getPayouts } from "@/common/contracts/potlock/pot";

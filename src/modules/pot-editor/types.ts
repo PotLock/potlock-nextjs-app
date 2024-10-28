@@ -1,4 +1,4 @@
-import { Pot } from "@/common/api/potlock";
+import { Pot } from "@/common/api/indexer";
 import { PotData, PotInputs } from "@/modules/pot";
 
 export type PotEditorStep = "configuration" | "result";

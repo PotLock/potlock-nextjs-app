@@ -4,7 +4,7 @@ import { values } from "remeda";
 
 import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
-import { Pot, potlock } from "@/common/api/potlock";
+import { Pot, potlock } from "@/common/api/indexer";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 import {

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { walletApi } from "@/common/api/near";
-import { List, potlock } from "@/common/api/potlock";
+import { List, potlock } from "@/common/api/indexer";
 
 export const useAllLists = (
   setCurrentListType: (type: string) => void,

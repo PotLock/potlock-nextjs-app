@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { ByPotId, potlock } from "@/common/api/potlock";
+import { ByPotId, potlock } from "@/common/api/indexer";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { dropTimezoneIndicator } from "@/common/lib";

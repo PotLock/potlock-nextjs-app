@@ -4,7 +4,7 @@ import {
   ListRegistrationStatus,
   PotApplicationStatus,
   potlock,
-} from "@/common/api/potlock";
+} from "@/common/api/indexer";
 import { NearIcon } from "@/common/assets/svgs";
 import { FormField } from "@/common/ui/components";
 import { CheckboxField, TextField } from "@/common/ui/form-fields";

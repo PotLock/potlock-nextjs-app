@@ -1,4 +1,4 @@
-import { ByPotId, potlock } from "@/common/api/potlock";
+import { ByPotId, potlock } from "@/common/api/indexer";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
 import { ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";

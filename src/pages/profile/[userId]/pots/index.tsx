@@ -4,7 +4,7 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { potlock } from "@/common/api/potlock";
+import { potlock } from "@/common/api/indexer";
 import PotCard from "@/modules/pot/components/PotCard";
 import { ProfileLayout } from "@/modules/profile";
 
