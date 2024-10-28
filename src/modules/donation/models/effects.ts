@@ -4,7 +4,7 @@ import {
   DirectDonationArgs,
   PotDonation,
   PotDonationArgs,
-  donate,
+  donationApi,
   pot,
 } from "@/common/contracts/potlock";
 import { floatToYoctoNear } from "@/common/lib";
@@ -50,7 +50,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             bypass_protocol_fee: bypassProtocolFee,
           };
 
-          return void donate
+          return void donationApi
             .donate(args, floatToYoctoNear(amount))
             .then((result) => dispatch.donation.success(result))
             .catch((error) => dispatch.donation.failure(error));
@@ -90,7 +90,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         inputs,
       ) as DonationDirectBatchCallDraft;
 
-      return void donate.donateBatch(batchTxDraft.entries);
+      return void donationApi.donateBatch(batchTxDraft.entries);
     } else {
       return void dispatch.donation.failure(
         new Error("Unable to determine donation type."),

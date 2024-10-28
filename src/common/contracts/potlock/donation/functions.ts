@@ -9,11 +9,8 @@ import {
   DirectDonation,
   DirectDonationArgs,
   DirectDonationConfig,
-} from "./interfaces/donate.interfaces";
+} from "./types";
 
-/**
- * NEAR Contract API
- */
 export const contractApi = naxiosInstance.contractApi({
   contractId: DONATION_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
@@ -66,3 +63,5 @@ export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
       ...txInput,
     })),
   );
+
+export const ft_on_transfer = () => {};
