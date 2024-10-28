@@ -165,7 +165,7 @@ export const DonationDirectAllocation: React.FC<
                     <SelectField
                       embedded
                       label="Available tokens"
-                      disabled // TODO: FT donation is not yet finished
+                      disabled={false}
                       defaultValue={inputExtension.value}
                       onValueChange={inputExtension.onChange}
                       classes={{
