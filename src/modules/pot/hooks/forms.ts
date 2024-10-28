@@ -5,8 +5,8 @@ import { calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
+import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/api/near";
-import { Pot } from "@/common/api/potlock";
 import {
   FIFTY_TGAS,
   FULL_TGAS,

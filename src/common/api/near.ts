@@ -24,7 +24,8 @@ import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import naxios from "@wpdas/naxios";
 import { AccountView } from "near-api-js/lib/providers/provider";
 
-import { FULL_TGAS, NETWORK, SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
+import { NETWORK, SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/config";
+import { FULL_TGAS } from "@/common/constants";
 import { AccountId } from "@/common/types";
 
 import { wagmiConfig, web3Modal } from "./web3modal";
@@ -34,7 +35,7 @@ export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnea
 // Naxios (Contract/Wallet) Instance
 export const naxiosInstance = new naxios({
   rpcNodeUrl: RPC_NODE_URL,
-  contractId: SOCIAL_DB_CONTRACT_ID,
+  contractId: SOCIAL_CONTRACT_ACCOUNT_ID,
   network: NETWORK,
   walletSelectorModules: [
     setupMyNearWallet(),

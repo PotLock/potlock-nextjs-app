@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 // info: not working
 // import { usePotApplications } from "@/common/api/potlock/hooks";
-import { usePot } from "@/common/api/potlock/hooks";
+import { usePot } from "@/common/api/indexer/hooks";
 import { SearchIcon } from "@/common/assets/svgs";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";

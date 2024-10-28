@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { potlock } from "@/common/api/potlock";
+import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
 import ErrorModal from "@/modules/core/components/ErrorModal";
 import SuccessModal from "@/modules/core/components/SuccessModal";
@@ -28,7 +28,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
   const { potId } = query;
   const isStakeWeightedPot = isPotStakeWeighted({ potId });
-  const { data: pot } = potlock.usePot({ potId });
+  const { data: pot } = indexer.usePot({ potId });
 
   // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(

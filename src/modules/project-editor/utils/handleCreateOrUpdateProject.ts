@@ -8,11 +8,13 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { naxiosInstance } from "@/common/api/near";
 import {
+  LISTS_CONTRACT_ACCOUNT_ID,
+  SOCIAL_CONTRACT_ACCOUNT_ID,
+} from "@/common/config";
+import {
   FIFTY_TGAS,
   FULL_TGAS,
-  LISTS_CONTRACT_ID,
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
-  SOCIAL_DB_CONTRACT_ID,
 } from "@/common/constants";
 import * as socialDb from "@/common/contracts/social";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
@@ -82,7 +84,7 @@ const handleCreateOrUpdateProject = async () => {
 
     // social.near
     const socialTransaction = buildTransaction("set", {
-      receiverId: SOCIAL_DB_CONTRACT_ID,
+      receiverId: SOCIAL_CONTRACT_ACCOUNT_ID,
       args: socialArgs,
       deposit: parseNearAmount(depositFloat)!,
     });
@@ -95,7 +97,7 @@ const handleCreateOrUpdateProject = async () => {
       transactions.push(
         // lists.potlock.near
         buildTransaction("register_batch", {
-          receiverId: LISTS_CONTRACT_ID,
+          receiverId: LISTS_CONTRACT_ACCOUNT_ID,
           args: potlockRegistryArgs,
           deposit: parseNearAmount("0.05")!,
         }),

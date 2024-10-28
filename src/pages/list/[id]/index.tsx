@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { potlock } from "@/common/api/potlock";
+import { indexer } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
 import { PageWithBanner } from "@/common/ui/components";
 import {
@@ -27,13 +27,13 @@ export default function SingleList() {
 
   const router = useRouter();
   const { id } = router.query;
-  const { data, isLoading } = potlock.useListRegistrations({
+  const { data, isLoading } = indexer.useListRegistrations({
     listId: parseInt(id as string),
     page_size: 500,
     ...(status !== "all" && { status }),
   });
 
-  const { data: listData, isLoading: loadingListData } = potlock.useList({
+  const { data: listData, isLoading: loadingListData } = indexer.useList({
     listId: parseInt(id as string),
   });
 
@@ -56,7 +56,7 @@ export default function SingleList() {
           accountId: admin?.id,
         })) ?? [],
     });
-  }, [loadingListData, isLoading]);
+  }, [loadingListData, isLoading, setAdmins, listData, data]);
 
   return (
     <PageWithBanner>

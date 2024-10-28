@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { Pot } from "@/common/api/potlock";
+import { Pot } from "@/common/api/indexer";
 import AdminIcon from "@/common/assets/svgs/AdminIcon";
 import { Challenge as ChallengeType } from "@/common/contracts/potlock/interfaces/pot.interfaces";
 import * as potContract from "@/common/contracts/potlock/pot";

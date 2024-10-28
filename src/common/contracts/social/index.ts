@@ -1,13 +1,13 @@
 import { StorageCache } from "@wpdas/naxios";
 
 import { naxiosInstance } from "@/common/api/near";
-import { SOCIAL_DB_CONTRACT_ID } from "@/common/constants";
+import { SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/config";
 
 /**
  * NEAR Social DB Contract API
  */
 const nearSocialDbContractApi = naxiosInstance.contractApi({
-  contractId: SOCIAL_DB_CONTRACT_ID,
+  contractId: SOCIAL_CONTRACT_ACCOUNT_ID,
   cache: new StorageCache({ expirationTime: 5 * 60 }), // 5 minutes
 });
 

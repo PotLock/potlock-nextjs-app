@@ -1,6 +1,6 @@
-# PotLock - NextJS App
+# PotLock - NextJS frontend
 
-PotLock application built on NextJS featuring project exploration, pages, donations, and Pots (quadratic funding for now) on the NEAR Blockchain
+PotLock frontend application built on NextJS featuring project exploration, pages, donations, and Pots (quadratic funding for now) on the NEAR Blockchain
 
 To-Do
 

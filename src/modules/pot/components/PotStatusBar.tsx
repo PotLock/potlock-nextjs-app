@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ByPotId, Pot } from "@/common/api/potlock";
+import { ByPotId, Pot } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
 import ProgressBar from "./ProgressBar";

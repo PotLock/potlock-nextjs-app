@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { ByPotId, potlock } from "@/common/api/potlock";
+import { ByPotId, indexer } from "@/common/api/indexer";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { dropTimezoneIndicator } from "@/common/lib";
@@ -43,7 +43,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   const isNewPot = typeof potId !== "string";
   const router = useRouter();
 
-  const { data: pot } = potlock.usePot({ potId });
+  const { data: pot } = indexer.usePot({ potId });
 
   const schema = useMemo(
     () =>

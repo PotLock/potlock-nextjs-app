@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { DonationInfo } from "@/common/api/potlock/account";
+import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
 import { Option } from "@/modules/core/components/Dropdown";
 import Pagination from "@/modules/core/components/Pagination";
 import Stats, { Stat } from "@/modules/core/components/Stats";

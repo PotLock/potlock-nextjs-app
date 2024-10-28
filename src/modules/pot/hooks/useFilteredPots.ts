@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { Pot, potlock } from "@/common/api/potlock";
+import { Pot, indexer } from "@/common/api/indexer";
 
 const useFilteredPots = () => {
-  const { data: pots, isLoading } = potlock.usePots({ page_size: 200 });
+  const { data: pots, isLoading } = indexer.usePots({ page_size: 200 });
   const [activePots, setActivePots] = useState<Pot[]>([]);
   const [completedPots, setCompletedPots] = useState<Pot[]>([]);
 

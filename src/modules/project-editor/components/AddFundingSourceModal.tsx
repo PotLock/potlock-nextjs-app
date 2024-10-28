@@ -75,7 +75,10 @@ const AddFundingSourceModal = ({
 
   return (
     <Dialog open={open}>
-      <DialogContent className="max-w-130" onCloseClick={onCloseHandler}>
+      <DialogContent
+        className="max-w-130 max-h-screen"
+        onCloseClick={onCloseHandler}
+      >
         <DialogHeader>
           <DialogTitle>
             {isEdit ? "Edit Funding Source" : "Add Funding Source"}
@@ -89,7 +92,7 @@ const AddFundingSourceModal = ({
                 ? onSubmitEditedFundingSourceHandler
                 : onSubmitFundingSourceHandler,
             )}
-            className="flex flex-col p-6"
+            className="flex h-full flex-col overflow-y-scroll p-6"
           >
             <FormField
               control={form.control}

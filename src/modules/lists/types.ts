@@ -1,4 +1,4 @@
-import { List } from "@/common/api/potlock";
+import { List } from "@/common/api/indexer";
 import { RegistrationStatus } from "@/common/contracts/potlock";
 import { AccountId } from "@/common/types";
 

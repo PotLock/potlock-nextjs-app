@@ -1,20 +1,4 @@
-import { POTLOCK_API_ENDPOINT } from "./config";
-import { PotApplication } from "./types";
-
-type Accounts = {
-  id: string;
-  donors_count: number;
-  total_donations_in_usd: string;
-  total_donations_out_usd: string;
-  total_matching_pool_allocations_usd: string;
-};
-
-type GetAccountsResponse = {
-  count: number;
-  next?: string;
-  previous?: string;
-  results: Accounts[];
-};
+import { INDEXER_API_ENDPOINT_URL } from "@/common/config";
 
 type NearSocialProfileData = {
   backgroundImage:
@@ -145,20 +129,6 @@ type GetAccountDonationsReceivedResponse = {
   results: DonationInfo[];
 };
 
-export const getAccounts = async () => {
-  const res = await fetch(`${POTLOCK_API_ENDPOINT}/api/v1/accounts`);
-  const json = await res.json();
-  return json as GetAccountsResponse;
-};
-
-export const getAccount = async ({ accountId }: { accountId: string }) => {
-  const res = await fetch(
-    `${POTLOCK_API_ENDPOINT}/api/v1/accounts/${accountId}`,
-  );
-  const json = await res.json();
-  return json as GetAccountsResponse;
-};
-
 export const getAccountDonationsReceived = async ({
   accountId,
   limit,
@@ -167,20 +137,8 @@ export const getAccountDonationsReceived = async ({
   limit?: number;
 }) => {
   const res = await fetch(
-    `${POTLOCK_API_ENDPOINT}/api/v1/accounts/${accountId}/donations_received?limit=${limit || 9999}`,
+    `${INDEXER_API_ENDPOINT_URL}/api/v1/accounts/${accountId}/donations_received?limit=${limit || 9999}`,
   );
   const json = await res.json();
   return json as GetAccountDonationsReceivedResponse;
-};
-
-export const getAccountPotApplications = async ({
-  accountId,
-}: {
-  accountId: string;
-}) => {
-  const res = await fetch(
-    `${POTLOCK_API_ENDPOINT}/api/v1/accounts/${accountId}/pot_applications`,
-  );
-  const json = await res.json();
-  return json.results as PotApplication[];
 };
