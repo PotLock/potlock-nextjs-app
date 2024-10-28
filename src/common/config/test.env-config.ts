@@ -29,4 +29,8 @@ export const envConfig: EnvConfig = {
     app: { url: "https://test.near.social" },
     contract: { accountId: "v1.social08.testnet" },
   },
+
+  indexer: {
+    api: { endpointUrl: "https://test-dev.potlock.io" },
+  },
 };

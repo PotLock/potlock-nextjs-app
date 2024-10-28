@@ -14,6 +14,7 @@ export type EnvConfig = {
   potFactory: { contract: { accountId: string } };
   sybil: { app: { url: string }; contract: { accountId: string } };
   social: { app: { url: string }; contract: { accountId: string } };
+  indexer: { api: { endpointUrl: string } };
 };
 
 export type { infer as FromSchema } from "zod";

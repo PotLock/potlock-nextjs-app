@@ -29,15 +29,11 @@ export const {
     app: { url: SYBIL_APP_LINK_URL },
     contract: { accountId: SYBIL_CONTRACT_ACCOUNT_ID },
   },
-} = getEnvConfig();
 
-/**
- * Docs: https://dev.potlock.io/api/schema/swagger-ui/
- */
-export const INDEXER_API_ENDPOINT =
-  NETWORK === "mainnet"
-    ? "https://dev.potlock.io"
-    : "https://test-dev.potlock.io";
+  indexer: {
+    api: { endpointUrl: INDEXER_API_ENDPOINT_URL },
+  },
+} = getEnvConfig();
 
 export const BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL =
   NETWORK === "mainnet"

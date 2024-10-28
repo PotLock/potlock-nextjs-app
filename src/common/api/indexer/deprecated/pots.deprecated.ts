@@ -1,4 +1,4 @@
-import { INDEXER_API_ENDPOINT } from "@/common/config";
+import { INDEXER_API_ENDPOINT_URL } from "@/common/config";
 
 import { Donation, PotPayout } from "../types";
 
@@ -17,7 +17,7 @@ export const getPotPayouts = async ({
   pageSize?: number;
 }) => {
   const res = await fetch(
-    `${INDEXER_API_ENDPOINT}/api/v1/pots/${potId}/payouts${pageSize ? `?page_size=${pageSize}` : ""}`,
+    `${INDEXER_API_ENDPOINT_URL}/api/v1/pots/${potId}/payouts${pageSize ? `?page_size=${pageSize}` : ""}`,
   );
   const json = await res.json();
   return json as GetPotPayoutsResponse;
@@ -38,7 +38,7 @@ export const getPotDonations = async ({
   pageSize?: number;
 }) => {
   const res = await fetch(
-    `${INDEXER_API_ENDPOINT}/api/v1/pots/${potId}/donations${pageSize ? `?page_size=${9999}` : ""}`,
+    `${INDEXER_API_ENDPOINT_URL}/api/v1/pots/${potId}/donations${pageSize ? `?page_size=${9999}` : ""}`,
   );
   const json = await res.json();
   return json as GetPotDonationsResponse;
