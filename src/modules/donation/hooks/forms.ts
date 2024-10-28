@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { entries } from "remeda";
+import { Temporal } from "temporal-polyfill";
 import { ZodError } from "zod";
 
 import { StatusF24Enum, indexer } from "@/common/api/indexer";
@@ -48,12 +49,18 @@ export const useDonationForm = ({
     ? params.accountId
     : undefined;
 
-  const { data: matchingPotsPaginated } = indexer.useAccountActivePots({
+  const { data: recipientActivePots = [] } = indexer.useAccountActivePots({
     accountId: recipientAccountId,
     status: StatusF24Enum.Approved,
+    page_size: 999,
   });
 
-  const matchingPots = matchingPotsPaginated?.results ?? [];
+  const matchingPots = recipientActivePots.filter(
+    ({ matching_round_start }) =>
+      Temporal.Now.instant()
+        .since(Temporal.Instant.from(matching_round_start))
+        .total("milliseconds") > 0,
+  );
 
   const defaultPotAccountId = toChronologicalOrder(
     "matching_round_end",
