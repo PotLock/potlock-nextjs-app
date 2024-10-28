@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { Pencil } from "lucide-react";
 import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 
-import { walletApi } from "@/common/api/near";
 import { ByPotId, potlock } from "@/common/api/indexer";
+import { walletApi } from "@/common/api/near";
 import { isAccountId } from "@/common/lib";
 import {
   Button,

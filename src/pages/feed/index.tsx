@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
-import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { potlock } from "@/common/api/indexer";
+import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
 import { FeedCard } from "@/modules/profile";

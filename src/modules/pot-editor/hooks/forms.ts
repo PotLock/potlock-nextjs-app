@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema, ZodError } from "zod";
 
-import { walletApi } from "@/common/api/near";
 import { ByPotId, potlock } from "@/common/api/indexer";
+import { walletApi } from "@/common/api/near";
 import {
   CONTRACT_SOURCECODE_REPO_URL,
   CONTRACT_SOURCECODE_VERSION,
