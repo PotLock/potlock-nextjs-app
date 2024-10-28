@@ -77,7 +77,7 @@ export const useAccountActivePots = ({
     { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
-  return { ...queryResult, data: queryResult.data?.data };
+  return { ...queryResult, data: queryResult.data?.data.results };
 };
 
 /**

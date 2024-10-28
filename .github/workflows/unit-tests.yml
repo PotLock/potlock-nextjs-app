@@ -31,7 +31,5 @@ jobs:
 
       - name: Execute Unit tests
         env:
-          NEXT_PUBLIC_NETWORK: mainnet
-          NEXT_PUBLIC_NADABOT_CONTRACT_ID: v2new.staging.nadabot.near
-          NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID: social.near
+          NEXT_PUBLIC_ENV: test
         run: yarn test:unit
