@@ -24,4 +24,9 @@ export const envConfig: EnvConfig = {
     app: { url: "https://app.nada.bot" },
     contract: { accountId: "v1.nadabot.near" },
   },
+
+  social: {
+    app: { url: "https://near.social" },
+    contract: { accountId: "social.near" },
+  },
 };

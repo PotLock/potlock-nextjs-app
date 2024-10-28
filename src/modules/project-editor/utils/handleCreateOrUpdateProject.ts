@@ -9,7 +9,7 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { naxiosInstance } from "@/common/api/near";
 import {
   LISTS_CONTRACT_ACCOUNT_ID,
-  SOCIAL_DB_CONTRACT_ID,
+  SYBIL_CONTRACT_ACCOUNT_ID,
 } from "@/common/config";
 import {
   FIFTY_TGAS,
@@ -84,7 +84,7 @@ const handleCreateOrUpdateProject = async () => {
 
     // social.near
     const socialTransaction = buildTransaction("set", {
-      receiverId: SOCIAL_DB_CONTRACT_ID,
+      receiverId: SYBIL_CONTRACT_ACCOUNT_ID,
       args: socialArgs,
       deposit: parseNearAmount(depositFloat)!,
     });

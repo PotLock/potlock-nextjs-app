@@ -13,6 +13,7 @@ export type EnvConfig = {
   lists: { contract: { accountId: string } };
   potFactory: { contract: { accountId: string } };
   sybil: { app: { url: string }; contract: { accountId: string } };
+  social: { app: { url: string }; contract: { accountId: string } };
 };
 
 export type { infer as FromSchema } from "zod";
