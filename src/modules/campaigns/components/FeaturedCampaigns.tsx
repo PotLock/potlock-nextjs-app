@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { Campaign } from "@/common/contracts/potlock";
-import { yoctoNearToFloat } from "@/common/lib";
+import { truncate, yoctoNearToFloat } from "@/common/lib";
+import getTimePassed from "@/common/lib/getTimePassed";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { Button } from "@/common/ui/components";
 import {
@@ -14,14 +16,13 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/common/ui/components/carousel";
+import { DonateToCampaignProjects } from "@/modules/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
 export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-
-  console.log(data);
 
   useEffect(() => {
     if (!api) return;
@@ -41,22 +42,32 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
           <p className="text-[18px]">{current + 1}/3</p>
         </div>
         <div className="flex gap-4">
-          <ArrowLeft
+          <Image
+            src="/assets/icons/left-arrow.svg"
+            width={6}
+            alt=""
+            height={6}
             onClick={() => api?.scrollTo(current - 1)}
-            className="cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
+            className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
           />
-          <ArrowRight
+          <Image
+            src="/assets/icons/right-arrow.svg"
+            width={6}
+            alt=""
+            height={6}
             onClick={() => api?.scrollTo(current + 1)}
-            className="cursor-pointer rounded-full border border-gray-400 text-gray-500"
+            className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
           />
         </div>
       </div>
       <Carousel opts={{ loop: true }} setApi={setApi}>
         <CarouselContent>
-          {data.length &&
-            data?.map((data) => (
-              <FeaturedCampaignCard key={data.id} data={data} />
-            ))}
+          {data?.length &&
+            data
+              ?.slice(0, 3)
+              ?.map((data) => (
+                <FeaturedCampaignCard key={data.id} data={data} />
+              ))}
         </CarouselContent>
       </Carousel>
     </div>
@@ -66,6 +77,8 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
   const [recepientImage, setRecepientImage] = useState<string>();
   const [ownerImage, setOwnerImage] = useState<string>();
+
+  const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -134,16 +147,22 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
             </div>
           </div>
         </div>
-        <div className="md:w-[28%] md:p-0 flex flex-col items-start p-4">
+        <div className="md:w-[28%] md:p-0 flex w-full flex-col items-start p-4">
           <CampaignProgressBar
             target={yoctoNearToFloat(data.target_amount)}
-            minAmount={0}
+            minAmount={data.min_amount ? yoctoNearToFloat(data.min_amount) : 0}
+            isStarted={isStarted}
+            endDate={Number(data?.end_ms)}
             amount={Number(data.total_raised_amount)}
           />
-          <p className="mt-4 text-start">{data.description}</p>
-          <Button className="mt-4 w-full" disabled>
-            Donate
-          </Button>
+          <p className="mt-4 text-start">
+            {data?.description ? truncate(data.description, 100) : ""}
+          </p>
+          <DonateToCampaignProjects
+            campaignId={data.id}
+            className="mt-4"
+            disabled={isStarted}
+          />
         </div>
       </Link>
     </CarouselItem>

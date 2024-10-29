@@ -4,7 +4,7 @@ export type CampaignFormFields = {
   name: string;
   description?: string;
   cover_image_url?: string;
-  start_ms: number | string;
+  start_ms?: number | string;
   end_ms?: number | string;
   target_amount: number;
   min_amount?: number;
@@ -20,7 +20,7 @@ export type Campaign = {
   cover_image_url?: string;
   recipient: AccountId;
   owner: AccountId;
-  start_ms: string;
+  start_ms?: string;
   end_ms?: string;
   ftId?: AccountId;
   target_amount: string;

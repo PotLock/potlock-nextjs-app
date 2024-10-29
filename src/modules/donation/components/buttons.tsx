@@ -60,14 +60,24 @@ export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({
 
 export type DonationToCampaignProjectsProps = ByCampaignId & {
   className?: string;
+  disabled: boolean;
+  variant?: "standard-outline";
 };
 
 export const DonateToCampaignProjects: React.FC<
   DonationToCampaignProjectsProps
-> = ({ campaignId, className }) => {
+> = ({ campaignId, className, disabled, variant }) => {
   const { openDonationModal } = useDonation({ campaignId });
   return (
-    <Button className={cn("w-full", className)} onClick={openDonationModal}>
+    <Button
+      variant={variant ?? "brand-filled"}
+      disabled={disabled}
+      className={cn("w-full", className)}
+      onClick={(e) => {
+        e.stopPropagation();
+        openDonationModal(e);
+      }}
+    >
       {"Donate"}
     </Button>
   );

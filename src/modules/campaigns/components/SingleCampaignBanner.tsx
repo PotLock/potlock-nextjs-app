@@ -7,6 +7,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Campaign } from "@/common/contracts/potlock";
 import { get_campaign } from "@/common/contracts/potlock/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
+import getTimePassed from "@/common/lib/getTimePassed";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { AccountProfilePicture } from "@/modules/core";
 import { useNearToUsdWithFallback } from "@/modules/core/hooks/useNearToUsdWithFallback";
@@ -32,6 +33,7 @@ export const SingleCampaignBanner = () => {
     get_campaign({ campaign_id: parseInt(campaignId as string) as any })
       .then((response) => {
         setCampaign(response);
+        console.log(response);
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
@@ -40,6 +42,9 @@ export const SingleCampaignBanner = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+  const isStarted = getTimePassed(Number(campaign?.start_ms), true)?.includes(
+    "-",
+  );
 
   return (
     <div className="md:flex-row md:gap-0 flex w-full flex-col justify-between gap-4">
@@ -101,12 +106,16 @@ export const SingleCampaignBanner = () => {
         </div>
         <CampaignProgressBar
           target={yoctoNearToFloat((campaign?.target_amount as string) || "0")}
-          minAmount={0}
+          minAmount={
+            campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0
+          }
+          isStarted={isStarted}
           amount={Number(campaign?.total_raised_amount)}
         />
         <div className="mt-6">
           <DonateToCampaignProjects
             className="mb-4"
+            disabled={isStarted}
             campaignId={parseInt(campaignId as string)}
           />
           <SocialsShare showButton />

@@ -49,11 +49,18 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
       }
       form.setValue(
         "start_ms",
-        formatTimestampForInput(existingData?.start_ms),
+        existingData?.start_ms
+          ? formatTimestampForInput(existingData?.start_ms)
+          : "",
       );
-      form.setValue("end_ms", existingData?.end_ms);
+      form.setValue(
+        "end_ms",
+        existingData?.end_ms
+          ? formatTimestampForInput(existingData?.end_ms)
+          : "",
+      );
     }
-  }, [isUpdate]);
+  }, [isUpdate, existingData]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
@@ -120,11 +127,11 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               name="recipient"
               render={({ field }) => (
                 <TextField
-                  {...field}
                   classNames={{ root: "md:w-[45%]" }}
                   label="Who are you raising this campaign for?"
                   required
                   type="text"
+                  {...field}
                 />
               )}
             />
@@ -180,6 +187,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
                   className="lg:w-90"
                   label="Minimum Target Amount"
                   {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               )}
             />
@@ -191,6 +199,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
                   className="lg:w-90"
                   label="Maximum Target Amount"
                   {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               )}
             />

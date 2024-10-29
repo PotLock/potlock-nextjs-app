@@ -22,7 +22,6 @@ export const CampaignDonorsTable = () => {
   const { donations } = useCampaign({ campaignId: campaignId as string });
   const [currentPage, setCurrentPage] = useState(1);
 
-  console.log(donations);
   const [filteredDonations, setFilteredDonations] = useState(donations || []);
   const [shownDonationItemsList, setShownDonationItemsList] = useState<
     CampaignDonation[]
@@ -45,7 +44,6 @@ export const CampaignDonorsTable = () => {
   }, [donations]);
 
   useEffect(() => {
-    console.log(shownDonationItemsList);
     setShownDonationItemsList(
       donations.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE),
     );
@@ -59,9 +57,9 @@ export const CampaignDonorsTable = () => {
         <div key={row.id} className="flex gap-2">
           <AccountProfilePicture
             className="h-5 w-5"
-            accountId={row.original.recipient_id}
+            accountId={row.original.donor_id}
           />
-          <span>{row.original.recipient_id}</span>
+          <span>{row.original.donor_id}</span>
         </div>
       ),
     },

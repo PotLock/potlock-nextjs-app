@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import Link from "next/link";
+
 import { walletApi } from "@/common/api/near";
 import { NearIcon } from "@/common/assets/svgs";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
@@ -30,23 +32,31 @@ export const CampaignSettings = () => {
         <div className="md:w-[40%] md:flex-row md:items-center flex flex-wrap items-start justify-between gap-5">
           <div className="flex flex-col gap-2">
             <p className="text-[#7B7B7B]">Organizer</p>
-            <div className="flex items-center gap-2">
+            <Link
+              target="_blank"
+              href={`/profile/${campaign?.owner}`}
+              className="flex items-center gap-2"
+            >
               <AccountProfilePicture
                 accountId={campaign?.owner as string}
                 className="h-6 w-6"
               />
               <p className="font-medium">{campaign?.owner}</p>
-            </div>
+            </Link>
           </div>
           <div className="flex flex-col gap-2">
             <p className="text-[#7B7B7B]">Project</p>
-            <div className="flex items-center gap-2">
+            <Link
+              target="_blank"
+              href={`/profile/${campaign?.owner}`}
+              className="flex items-center gap-2"
+            >
               <AccountProfilePicture
                 accountId={campaign?.recipient as string}
                 className="h-6 w-6"
               />
               <p className="font-medium">{campaign?.recipient}</p>
-            </div>
+            </Link>
           </div>
         </div>
         {walletApi.accountId === campaign?.owner && (

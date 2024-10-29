@@ -13,7 +13,6 @@ export const useCampaign = ({ campaignId }: { campaignId: string }) => {
   useEffect(() => {
     get_campaign({ campaign_id: parseInt(campaignId as string) as any })
       .then((response) => {
-        console.log(response);
         setCampaign(response);
       })
       .catch((err) => console.error(err));

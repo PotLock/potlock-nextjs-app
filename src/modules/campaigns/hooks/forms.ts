@@ -19,8 +19,8 @@ export const useCampaignForm = () => {
 
   const self = useForm<Values>({
     resolver: zodResolver(campaignFormSchema),
-    mode: "onChange",
-    resetOptions: { keepDirtyValues: true },
+    mode: "all",
+    resetOptions: { keepDirtyValues: false },
   });
 
   const values = useWatch(self);
@@ -33,15 +33,23 @@ export const useCampaignForm = () => {
     const args = {
       description: values.description || "",
       name: values.name || "",
-      target_amount: Number(floatToYoctoNear(values.target_amount)) as any,
+      target_amount: floatToYoctoNear(values.target_amount) as any,
       cover_image_url: values.cover_image_url || "",
-      ...(values.min_amount && {
-        min_amount: Number(floatToYoctoNear(values.min_amount)),
-      }),
+      ...(values.min_amount &&
+        !campaignId && {
+          min_amount: floatToYoctoNear(values.min_amount) as any,
+        }),
       ...(values.max_amount && {
-        max_amount: Number(floatToYoctoNear(values.max_amount)),
+        max_amount: floatToYoctoNear(values.max_amount) as any,
       }),
-      start_ms: timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds,
+      ...(values.start_ms &&
+      timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds >
+        Date.now()
+        ? {
+            start_ms: timeToMiliSeconds(values.start_ms.toString())
+              .epochMilliseconds,
+          }
+        : {}),
       ...(values.end_ms && {
         end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
       }),
@@ -67,7 +75,7 @@ export const useCampaignForm = () => {
       ...self,
       formState: {
         ...self.formState,
-        error: { ...self.formState.errors },
+        errors: { ...self.formState.errors },
       },
     },
     onSubmit,
