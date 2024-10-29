@@ -9,20 +9,20 @@ export const envConfig: EnvConfig = {
   },
 
   donation: {
-    contract: { accountId: "donate.potlock.near" },
+    contract: { accountId: "donate.staging.potlock.near" },
   },
 
   lists: {
-    contract: { accountId: "lists.potlock.near" },
+    contract: { accountId: "lists.staging.potlock.near" },
   },
 
   potFactory: {
-    contract: { accountId: "v1.potfactory.potlock.near" },
+    contract: { accountId: "potfactory.staging.potlock.near" },
   },
 
   sybil: {
-    app: { url: "https://app.nada.bot" },
-    contract: { accountId: "v1.nadabot.near" },
+    app: { url: "https://staging.nada.bot" },
+    contract: { accountId: "v2new.staging.nadabot.near" },
   },
 
   social: {
