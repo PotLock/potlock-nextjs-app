@@ -2,9 +2,9 @@ import { useMemo } from "react";
 
 import { values } from "remeda";
 
+import { Pot, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
-import { Pot, potlock } from "@/common/api/potlock";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ByAccountId, ByCampaignId } from "@/common/types";
 import {
@@ -71,7 +71,7 @@ export const DonationDirectAllocation: React.FC<
     isLoading: isRecipientDataLoading,
     data: recipient,
     error: recipientDataError,
-  } = potlock.useAccount({ accountId });
+  } = indexer.useAccount({ accountId });
 
   const isFtDonation =
     allocationStrategy !== DonationAllocationStrategyEnum.split &&

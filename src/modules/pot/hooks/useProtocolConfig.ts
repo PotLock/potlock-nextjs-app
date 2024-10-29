@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/api/near";
-import { Pot } from "@/common/api/potlock";
 
 import { ConfigProtocol } from "../models/types";
 

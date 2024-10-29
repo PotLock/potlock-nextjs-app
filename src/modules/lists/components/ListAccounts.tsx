@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from "react";
 
-import { List } from "@/common/api/potlock";
+import { List } from "@/common/api/indexer";
 import { Filter, Group, GroupType, SearchBar, SortSelect } from "@/common/ui/components";
 import { statuses } from "@/modules/project/constants";
 

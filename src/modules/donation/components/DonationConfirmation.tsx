@@ -2,7 +2,7 @@ import { useCallback, useId, useMemo, useState } from "react";
 
 import { Pencil } from "lucide-react";
 
-import { potlock } from "@/common/api/potlock";
+import { indexer } from "@/common/api/indexer";
 import {
   Accordion,
   AccordionContent,
@@ -29,7 +29,7 @@ import {
 } from "./breakdowns";
 import { useDonationAllocationBreakdown } from "../hooks";
 import { WithDonationFormAPI } from "../models";
-import { DonationAllocationStrategyEnum, WithTotalAmount } from "../types";
+import { WithTotalAmount } from "../types";
 
 export type DonationConfirmationProps = WithTotalAmount &
   WithDonationFormAPI & {};
@@ -58,7 +58,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   ]);
 
   const isSingleProjectDonation = typeof recipientAccountId === "string";
-  const { data: pot } = potlock.usePot({ potId: potAccountId });
+  const { data: pot } = indexer.usePot({ potId: potAccountId });
 
   const breakdown = useDonationAllocationBreakdown({
     pot,

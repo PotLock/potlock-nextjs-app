@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { potlock } from "@/common/api/potlock";
+import { indexer } from "@/common/api/indexer";
 import { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/modules/core";
@@ -14,7 +14,7 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
   accountId,
   classNames,
 }) => {
-  const { data: account } = potlock.useAccount({ accountId });
+  const { data: account } = indexer.useAccount({ accountId });
   const { name } = account?.near_social_profile_data ?? {};
 
   return (

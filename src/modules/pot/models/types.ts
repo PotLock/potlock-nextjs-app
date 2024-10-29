@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { Donation } from "@/common/api/potlock";
+import { Donation } from "@/common/api/indexer";
 
 import {
   applicationReviewSchema,

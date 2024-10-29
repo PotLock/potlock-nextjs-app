@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { potlock } from "@/common/api/potlock";
+import { indexer } from "@/common/api/indexer";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
 import { Payout } from "@/common/contracts/potlock";
 import { getPayouts } from "@/common/contracts/potlock/pot";
@@ -39,7 +39,7 @@ const PayoutsTab = () => {
     potId: string;
   };
 
-  const { data: potDetail } = potlock.usePot({ potId });
+  const { data: potDetail } = indexer.usePot({ potId });
   const { donations: allDonations } = useOrderedDonations(potId);
 
   const [allPayouts, setAllPayouts] = useState<Payout[]>([]);

@@ -7,8 +7,8 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
+import { List } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import { List } from "@/common/api/potlock";
 import {
   AdminUserIcon,
   DeleteListIcon,

@@ -1,4 +1,4 @@
-import { ByPotId, Pot } from "@/common/api/potlock";
+import { ByPotId, Pot } from "@/common/api/indexer";
 import { getDateTime } from "@/modules/core";
 
 import { isPotStakeWeighted } from "./voting";

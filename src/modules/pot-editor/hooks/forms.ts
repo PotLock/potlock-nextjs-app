@@ -2,15 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { pick } from "remeda";
 import { infer as FromSchema, ZodError } from "zod";
 
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import { ByPotId, potlock } from "@/common/api/potlock";
 import {
-  POTLOCK_CONTRACT_REPO_URL,
-  POTLOCK_CONTRACT_VERSION,
-} from "@/common/constants";
+  CONTRACT_SOURCECODE_REPO_URL,
+  CONTRACT_SOURCECODE_VERSION,
+} from "@/common/config";
 import { PotConfig } from "@/common/contracts/potlock";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";
@@ -41,7 +40,7 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = "potId" in props && typeof potId !== "string";
 
-  const { data: potIndexedData } = potlock.usePot({ potId });
+  const { data: potIndexedData } = indexer.usePot({ potId });
 
   type Values = FromSchema<typeof schema>;
 
@@ -61,9 +60,9 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   const defaultValues = useMemo<Partial<Values>>(
     () => ({
       source_metadata: {
-        version: POTLOCK_CONTRACT_VERSION,
+        version: CONTRACT_SOURCECODE_VERSION,
         commit_hash: latestSourceCodeCommitHash,
-        link: POTLOCK_CONTRACT_REPO_URL,
+        link: CONTRACT_SOURCECODE_REPO_URL,
       },
 
       owner: walletApi.accountId,

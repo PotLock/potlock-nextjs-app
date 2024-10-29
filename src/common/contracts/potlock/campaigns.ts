@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { naxiosInstance } from "@/common/api/near";
-import { CAMPAIGN_CONTRACT_ID } from "@/common/constants";
+import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/config";
 import { floatToYoctoNear } from "@/common/lib";
 
 import { Campaign, CampaignFormFields } from "./interfaces/campaign.interfaces";
@@ -11,7 +11,7 @@ import {
 } from "./interfaces/donate.interfaces";
 
 export const contractApi = naxiosInstance.contractApi({
-  contractId: CAMPAIGN_CONTRACT_ID,
+  contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }),
 });
 

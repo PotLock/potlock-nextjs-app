@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import { ByPotId, potlock } from "@/common/api/potlock";
 import { WarningIcon } from "@/common/assets/svgs";
-import { DEBUG, SYBIL_FRONTEND_URL } from "@/common/constants";
+import { SYBIL_APP_LINK_URL } from "@/common/config";
+import { DEBUG } from "@/common/constants";
 import {
   Alert,
   AlertDescription,
@@ -27,7 +28,7 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
     walletApi.accountId ?? "unknown",
   );
 
-  const { data: pot } = potlock.usePot({ potId });
+  const { data: pot } = indexer.usePot({ potId });
 
   const isDisplayed = useMemo(
     () =>
@@ -54,7 +55,7 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
           variant="standard-plain"
           className="text-[var(--primary-600] p-0"
         >
-          <a target="_blank" href={SYBIL_FRONTEND_URL}>
+          <a target="_blank" href={SYBIL_APP_LINK_URL}>
             {"Verify you’re human"}
           </a>
         </Button>

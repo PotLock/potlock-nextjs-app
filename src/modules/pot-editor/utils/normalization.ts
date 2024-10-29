@@ -1,13 +1,12 @@
 import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
-import { Account, Pot } from "@/common/api/potlock";
+import { Account, Pot } from "@/common/api/indexer";
 import {
-  LISTS_CONTRACT_ID,
-  NEAR_TOKEN_DENOM,
-  PROVIDER_ID_DELIMITER,
-  SYBIL_CONTRACT_ID,
-} from "@/common/constants";
+  LISTS_CONTRACT_ACCOUNT_ID,
+  SYBIL_CONTRACT_ACCOUNT_ID,
+} from "@/common/config";
+import { NEAR_TOKEN_DENOM, PROVIDER_ID_DELIMITER } from "@/common/constants";
 import {
   ContractSourceMetadata,
   PotArgs,
@@ -128,11 +127,11 @@ export const potInputsToPotArgs = ({
       ...potInputs,
 
       registry_provider: isPgRegistrationRequired
-        ? LISTS_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_registered"
+        ? LISTS_CONTRACT_ACCOUNT_ID + PROVIDER_ID_DELIMITER + "is_registered"
         : undefined,
 
       sybil_wrapper_provider: isSybilResistanceEnabled
-        ? SYBIL_CONTRACT_ID + PROVIDER_ID_DELIMITER + "is_human"
+        ? SYBIL_CONTRACT_ACCOUNT_ID + PROVIDER_ID_DELIMITER + "is_human"
         : undefined,
     },
 

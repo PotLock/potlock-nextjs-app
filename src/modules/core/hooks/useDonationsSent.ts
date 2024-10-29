@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 
 import Big from "big.js";
 
-import { Donation } from "@/common/api/potlock";
-import { DonationInfo } from "@/common/api/potlock/account";
-import { useAccountDonationsSent } from "@/common/api/potlock/hooks";
+import { Donation } from "@/common/api/indexer";
+import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
+import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
 import { SUPPORTED_FTS } from "@/common/constants";
 
 import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";

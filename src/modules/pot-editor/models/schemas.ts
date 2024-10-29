@@ -1,6 +1,6 @@
 import { Temporal } from "temporal-polyfill";
 
-import { Pot } from "@/common/api/potlock";
+import { Pot } from "@/common/api/indexer";
 import { timestamp } from "@/common/lib";
 import { FromSchema } from "@/common/types";
 import {

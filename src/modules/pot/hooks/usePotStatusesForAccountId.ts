@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Pot } from "@/common/api/potlock";
+import { Pot } from "@/common/api/indexer";
 import {
   Application,
   Challenge,

@@ -1,7 +1,7 @@
 import { createModel } from "@rematch/core";
 import { merge, mergeAll, prop } from "remeda";
 
-import { List } from "@/common/api/potlock";
+import { List } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
 import { useTypedSelector } from "@/store";
 import { AppModel } from "@/store/models";

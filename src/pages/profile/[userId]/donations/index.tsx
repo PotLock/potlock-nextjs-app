@@ -4,7 +4,7 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { useAccountDonationsSent } from "@/common/api/potlock/hooks";
+import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
 import { ProfileLayout } from "@/modules/profile";
 import PotlockFunding from "@/modules/profile/components/PotlockFunding";
 
