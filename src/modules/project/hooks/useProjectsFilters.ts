@@ -63,7 +63,7 @@ export const useProjectsFilters = ({
 
   // fetchfiltered
 
-  const fetchfilteredRegistrations = useCallback(async () => {
+  const fetchFilteredRegistrations = useCallback(async () => {
     try {
       if (filteredRegistrations) {
         setLoading(true);
