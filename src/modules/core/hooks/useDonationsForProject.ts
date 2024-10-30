@@ -54,7 +54,7 @@ const useDonationsForProject = (projectId?: string, limit?: number) => {
         let totalMatched = Big(0);
 
         const uniqueDonors = [
-          ...new Set(donations.map((donation) => donation.donor?.toString())),
+          ...new Set(donations.map((donation) => donation.donor.id)),
         ];
         donations.forEach((donation) => {
           totalNear = totalNear.plus(Big(donation.total_amount || "0"));
