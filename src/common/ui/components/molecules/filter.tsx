@@ -21,14 +21,15 @@ export enum GroupType {
   single = "single",
 }
 
-export type Group<T extends GroupType = GroupType.multiple> = {
-  label: string;
-  props?: T extends GroupType.multiple
-    ? Omit<ToggleGroupMultipleProps, "type">
-    : Omit<ToggleGroupSingleProps, "type">; // Conditional props based on type
-  options: Item[];
-  type: T;
-};
+export type Group<T extends GroupType = GroupType.multiple | GroupType.single> =
+  {
+    label: string;
+    props?: T extends GroupType.multiple
+      ? Omit<ToggleGroupMultipleProps, "type">
+      : Omit<ToggleGroupSingleProps, "type">; // Conditional props based on type
+    options: Item[];
+    type: T;
+  };
 
 type Props = {
   popoverProps?: PopoverProps;
