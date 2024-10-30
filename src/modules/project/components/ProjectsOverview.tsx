@@ -49,17 +49,14 @@ export const ProjectsOverview = () => {
     {
       label: "Status",
       options: statuses,
-      type: GroupType.multiple,
+      type: GroupType.single,
       props: {
-        value: statusFilter,
-        onValueChange: (value: string[]) => {
-          if (value[value.length - 1] === "all") {
+        value: statusFilter[0] || "",
+        onValueChange: (value: string) => {
+          if (value === "all") {
             setsStatusFilter(["all"]);
-          } else if (value.includes("all")) {
-            const filter = value.filter((item: string) => item !== "all");
-            setsStatusFilter(filter);
           } else {
-            setsStatusFilter(value);
+            setsStatusFilter([value]);
           }
         },
       },
