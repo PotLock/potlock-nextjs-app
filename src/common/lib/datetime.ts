@@ -57,19 +57,33 @@ export const daysSinceTimestamp = (unixTimestampMs: number) =>
     Temporal.Instant.fromEpochMilliseconds(unixTimestampMs),
   ).days;
 
+/**
+ * Sorts a list of objects containing information about events in chronological order
+ *  based on a given datetime property.
+ */
 export const toChronologicalOrder = <T>(
-  property: keyof T,
-  list: Array<
-    T extends Record<string, Temporal.Instant | string | unknown> ? T : T
-  >,
+  propertyKey: keyof T,
+  list: Array<T extends Record<string, string | number | unknown> ? T : T>,
 ) =>
   list.length > 1
-    ? list.sort((one, another) =>
-        Temporal.Instant.compare(
-          one[property] as string,
-          another[property] as string,
-        ),
-      )
+    ? list.toSorted((firstObject, secondObject) => {
+        const [firstValue, secondValue] = [
+          firstObject[propertyKey],
+          secondObject[propertyKey],
+        ];
+
+        // TODO: Error handling if one of the values is neither a string nor a number
+
+        return Temporal.Instant.compare(
+          typeof firstValue === "number"
+            ? Temporal.Instant.fromEpochMilliseconds(firstValue)
+            : Temporal.Instant.from(firstValue as string),
+
+          typeof secondValue === "number"
+            ? Temporal.Instant.fromEpochMilliseconds(secondValue)
+            : Temporal.Instant.from(secondValue as string),
+        );
+      })
     : list;
 
 export const timestamp = preprocess(
