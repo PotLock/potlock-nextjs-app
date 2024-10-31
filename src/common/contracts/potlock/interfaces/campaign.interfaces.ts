@@ -29,5 +29,5 @@ export type Campaign = {
   referralFeeBasisPoints?: number;
   creatorFeeBasisPoints?: number;
   allowFeeAvoidance?: boolean;
-  total_raised_amount: number;
+  total_raised_amount: string;
 };

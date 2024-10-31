@@ -65,11 +65,19 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             </p>
           </div>
           <CampaignProgressBar
-            target={yoctoNearToFloat(data.target_amount)}
-            minAmount={data.min_amount ? yoctoNearToFloat(data.min_amount) : 0}
-            amount={Number(data.total_raised_amount)}
-            endDate={Number(data?.end_ms)}
+            target={
+              data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0
+            }
+            minAmount={
+              data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0
+            }
             isStarted={isStarted}
+            amount={
+              data?.total_raised_amount
+                ? yoctoNearToFloat(data?.total_raised_amount)
+                : 0
+            }
+            endDate={Number(data?.end_ms)}
           />
           <DonateToCampaignProjects
             campaignId={data.id}

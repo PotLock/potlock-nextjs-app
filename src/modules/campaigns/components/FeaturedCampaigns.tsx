@@ -149,11 +149,19 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
         </div>
         <div className="md:w-[28%] md:p-0 flex w-full flex-col items-start p-4">
           <CampaignProgressBar
-            target={yoctoNearToFloat(data.target_amount)}
-            minAmount={data.min_amount ? yoctoNearToFloat(data.min_amount) : 0}
+            target={
+              data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0
+            }
+            minAmount={
+              data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0
+            }
             isStarted={isStarted}
+            amount={
+              data?.total_raised_amount
+                ? yoctoNearToFloat(data?.total_raised_amount)
+                : 0
+            }
             endDate={Number(data?.end_ms)}
-            amount={Number(data.total_raised_amount)}
           />
           <p className="mt-4 text-start">
             {data?.description ? truncate(data.description, 100) : ""}

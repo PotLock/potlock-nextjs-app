@@ -20,7 +20,7 @@ export const SingleCampaignBanner = () => {
   const [loading, setLoading] = useState(false);
 
   const usdInfo = useNearToUsdWithFallback(
-    Number(campaign?.total_raised_amount || 0),
+    Number(yoctoNearToFloat((campaign?.total_raised_amount as string) || "0")),
   );
 
   const {
@@ -99,18 +99,27 @@ export const SingleCampaignBanner = () => {
           </p>
           <div className="flex items-baseline">
             <h1 className="text-xl font-semibold">
-              {campaign?.total_raised_amount} NEAR
+              {yoctoNearToFloat(campaign?.total_raised_amount || "0")} NEAR
             </h1>
             <h2 className="text-base">{usdInfo}</h2>
           </div>
         </div>
         <CampaignProgressBar
-          target={yoctoNearToFloat((campaign?.target_amount as string) || "0")}
+          target={
+            campaign?.target_amount
+              ? yoctoNearToFloat(campaign?.target_amount)
+              : 0
+          }
           minAmount={
             campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0
           }
           isStarted={isStarted}
-          amount={Number(campaign?.total_raised_amount)}
+          amount={
+            campaign?.total_raised_amount
+              ? yoctoNearToFloat(campaign?.total_raised_amount)
+              : 0
+          }
+          endDate={Number(campaign?.end_ms)}
         />
         <div className="mt-6">
           <DonateToCampaignProjects

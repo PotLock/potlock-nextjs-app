@@ -50,6 +50,7 @@ export const donate = (
   contractApi.call("donate", {
     args,
     deposit: depositAmountYocto,
+    gas: "300000000000000",
     callbackUrl: window.location.href,
   });
 
