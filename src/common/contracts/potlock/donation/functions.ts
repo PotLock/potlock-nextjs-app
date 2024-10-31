@@ -63,5 +63,3 @@ export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
       ...txInput,
     })),
   );
-
-export const ft_on_transfer = () => {};
