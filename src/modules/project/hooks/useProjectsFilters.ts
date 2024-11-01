@@ -91,7 +91,7 @@ export const useProjectsFilters = ({
       type: GroupType.multiple,
       props: {
         value: categoryFilter,
-        onValueChange: (value) => setCategoryFilter(value),
+        onValueChange: (value: string[]) => setCategoryFilter(value),
       },
     },
     {
@@ -100,11 +100,11 @@ export const useProjectsFilters = ({
       type: GroupType.multiple,
       props: {
         value: statusFilter,
-        onValueChange: (value) => {
+        onValueChange: (value: string[]) => {
           if (value[value.length - 1] === "all") {
             setStatusFilter([""]);
           } else if (value.includes("all")) {
-            const filter = value.filter((item) => item !== "all");
+            const filter = value.filter((item: string) => item !== "all");
             setStatusFilter(filter);
           } else {
             setStatusFilter(value);
