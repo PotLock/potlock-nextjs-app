@@ -50,18 +50,18 @@ export const useCampaignForm = () => {
         cover_image_url: values.cover_image_url || "",
         ...(values.min_amount &&
           !campaignId && {
-          min_amount: floatToYoctoNear(values.min_amount) as any,
-        }),
+            min_amount: floatToYoctoNear(values.min_amount) as any,
+          }),
         ...(values.max_amount && {
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-          timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds >
+        timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds >
           Date.now()
           ? {
-            start_ms: timeToMiliSeconds(values.start_ms.toString())
-              .epochMilliseconds,
-          }
+              start_ms: timeToMiliSeconds(values.start_ms.toString())
+                .epochMilliseconds,
+            }
           : {}),
         ...(values.end_ms && {
           end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
