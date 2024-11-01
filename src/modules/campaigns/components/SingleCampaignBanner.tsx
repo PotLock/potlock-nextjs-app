@@ -33,7 +33,6 @@ export const SingleCampaignBanner = () => {
     get_campaign({ campaign_id: parseInt(campaignId as string) as any })
       .then((response) => {
         setCampaign(response);
-        console.log(response);
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
@@ -110,6 +109,7 @@ export const SingleCampaignBanner = () => {
               ? yoctoNearToFloat(campaign?.target_amount)
               : 0
           }
+          targetMet={campaign?.total_raised_amount === campaign?.max_amount}
           minAmount={
             campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0
           }
@@ -124,7 +124,10 @@ export const SingleCampaignBanner = () => {
         <div className="mt-6">
           <DonateToCampaignProjects
             className="mb-4"
-            disabled={isStarted}
+            disabled={
+              isStarted ||
+              campaign?.total_raised_amount === campaign?.max_amount
+            }
             campaignId={parseInt(campaignId as string)}
           />
           <SocialsShare showButton />

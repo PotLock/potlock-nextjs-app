@@ -71,6 +71,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             minAmount={
               data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0
             }
+            targetMet={data?.total_raised_amount === data?.max_amount}
             isStarted={isStarted}
             amount={
               data?.total_raised_amount
@@ -82,7 +83,9 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
           <DonateToCampaignProjects
             campaignId={data.id}
             variant="standard-outline"
-            disabled={isStarted}
+            disabled={
+              isStarted || data?.total_raised_amount === data?.max_amount
+            }
           />
         </div>
       </Link>

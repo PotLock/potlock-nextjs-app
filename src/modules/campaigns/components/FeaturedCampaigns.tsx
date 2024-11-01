@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
@@ -9,7 +8,6 @@ import { Campaign } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { Button } from "@/common/ui/components";
 import {
   Carousel,
   CarouselApi,
@@ -156,6 +154,7 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
               data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0
             }
             isStarted={isStarted}
+            targetMet={data?.total_raised_amount === data?.max_amount}
             amount={
               data?.total_raised_amount
                 ? yoctoNearToFloat(data?.total_raised_amount)
@@ -169,7 +168,9 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
           <DonateToCampaignProjects
             campaignId={data.id}
             className="mt-4"
-            disabled={isStarted}
+            disabled={
+              isStarted || data?.total_raised_amount === data?.max_amount
+            }
           />
         </div>
       </Link>

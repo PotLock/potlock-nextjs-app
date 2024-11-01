@@ -28,7 +28,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit } = useCampaignForm();
+  const { form, onChange, onSubmit, handleDeleteCampaign } = useCampaignForm();
 
   useEffect(() => {
     if (isUpdate && existingData) {
@@ -231,10 +231,19 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               )}
             />
           </div>
-          <div className="my-10 flex flex-row-reverse">
+          <div className="my-10 flex flex-row-reverse justify-between">
             <Button variant="standard-filled" type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
+            {isUpdate && (
+              <Button
+                onClick={handleDeleteCampaign}
+                type="button"
+                variant="brand-tonal"
+              >
+                Delete Campaign
+              </Button>
+            )}
           </div>
         </form>
       </Form>

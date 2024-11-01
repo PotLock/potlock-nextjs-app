@@ -43,6 +43,18 @@ export const update_campaign = ({
   });
 };
 
+export const delete_campaign = ({
+  args,
+}: {
+  args: { campaign_id: number };
+}) => {
+  return contractApi.call("delete_campaign", {
+    args,
+    deposit: floatToYoctoNear(0.021),
+    gas: "300000000000000",
+  });
+};
+
 export const donate = (
   args: DirectCampaignDonationArgs,
   depositAmountYocto: string,

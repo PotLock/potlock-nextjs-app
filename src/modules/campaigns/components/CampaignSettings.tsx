@@ -8,9 +8,11 @@ import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import { AccountProfilePicture } from "@/modules/core";
 
 import { CampaignForm } from "./CampaignForm";
+import { useCampaignDeploymentRedirect } from "../hooks/redirects";
 import { useCampaign } from "../hooks/useCampaign";
 
 export const CampaignSettings = () => {
+  useCampaignDeploymentRedirect();
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
   const {
     query: { campaignId },

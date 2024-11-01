@@ -1,7 +1,9 @@
 import { PageWithBanner } from "@/common/ui/components";
 import { CampaignForm } from "@/modules/campaigns/components/CampaignForm";
+import { useCampaignDeploymentRedirect } from "@/modules/campaigns/hooks/redirects";
 
 export default function CreateCampaign() {
+  useCampaignDeploymentRedirect();
   return (
     <PageWithBanner>
       <div className="relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden bg-hero">

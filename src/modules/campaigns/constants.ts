@@ -6,6 +6,6 @@ export const CAMPAIGN_TAB_ROUTES = [
     id: "leaderboard",
     href: "/leaderboard",
   },
-  { label: "History", id: "history", href: "/history" },
+  // { label: "History", id: "history", href: "/history" },
   { label: "Settings", id: "settings", href: "/settings" },
 ] as TabNav[];
