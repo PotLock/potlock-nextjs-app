@@ -5,15 +5,19 @@ import { AccountId } from "@/common/types";
 import * as contract from "./client";
 
 export const useWhitelistedTokens = () => {
-  const [data, setData] = useState<AccountId[] | undefined>();
   const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<AccountId[] | undefined>();
+  const [error, setError] = useState<unknown>(null);
 
-  useEffect(() => {
-    void contract.get_whitelisted_tokens().then((ftContractAccountIds) => {
-      setData(ftContractAccountIds);
-      setIsLoading(false);
-    });
-  }, []);
+  useEffect(
+    () =>
+      void contract
+        .get_whitelisted_tokens()
+        .then(setData)
+        .catch(setError)
+        .finally(() => setIsLoading(false)),
+    [],
+  );
 
-  return { isLoading, data };
+  return { isLoading, data, error };
 };

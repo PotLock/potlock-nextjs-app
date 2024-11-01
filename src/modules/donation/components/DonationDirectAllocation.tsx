@@ -60,10 +60,10 @@ export const DonationDirectAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const { data: availableFtAccountIds = [] } =
+  const { data: supportedFtAccountIds = [] } =
     refExchangeApi.useWhitelistedTokens();
 
-  console.log(availableFtAccountIds);
+  console.log(supportedFtAccountIds);
 
   const { data: availableFts } = pagoda.useFtAccountBalances({
     accountId: walletApi.accountId,
