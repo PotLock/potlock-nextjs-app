@@ -9,9 +9,9 @@ import {
   DirectDonation,
   DirectDonationArgs,
   DirectDonationConfig,
-} from "./types";
+} from "./interface";
 
-export const contractApi = naxiosInstance.contractApi({
+const contractApi = naxiosInstance.contractApi({
   contractId: DONATION_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });

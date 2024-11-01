@@ -3,9 +3,19 @@ import { getEnvConfig } from "./env";
 export const {
   network: NETWORK,
 
+  indexer: {
+    api: { endpointUrl: INDEXER_API_ENDPOINT_URL },
+  },
+
   contractMetadata: {
     version: CONTRACT_SOURCECODE_VERSION,
     repoUrl: CONTRACT_SOURCECODE_REPO_URL,
+  },
+
+  deFi: {
+    refFinance: {
+      exchangeContract: { accountId: REF_EXCHANGE_CONTRACT_ACCOUNT_ID },
+    },
   },
 
   donation: {
@@ -28,10 +38,6 @@ export const {
   sybil: {
     app: { url: SYBIL_APP_LINK_URL },
     contract: { accountId: SYBIL_CONTRACT_ACCOUNT_ID },
-  },
-
-  indexer: {
-    api: { endpointUrl: INDEXER_API_ENDPOINT_URL },
   },
 } = getEnvConfig();
 

@@ -24,28 +24,34 @@ export interface ByEnvironmentTag {
 type EnvConfigRegistry = Record<EnvTag, ByEnvironmentTag & EnvConfig>;
 
 const envConfigRegistry: EnvConfigRegistry = {
-  production: {
-    envTag: "production",
-    ...productionEnvConfig,
-  },
-
-  staging: {
-    envTag: "staging",
-    ...stagingEnvConfig,
-  },
-
-  test: {
-    envTag: "test",
-    ...testEnvConfig,
-  },
+  production: { ...productionEnvConfig, envTag: "production" },
+  staging: { ...stagingEnvConfig, envTag: "staging" },
+  test: { ...testEnvConfig, envTag: "test" },
 };
 
-export const getEnvConfig = (): EnvConfigRegistry[EnvTag] => {
+const getDeFiConfig = (envConfig: EnvConfig) => ({
+  refFinance: {
+    exchangeContract: {
+      accountId:
+        envConfig.network === "mainnet"
+          ? "v2.ref-finance.near"
+          : "ref-finance-101.testnet",
+    },
+  },
+});
+
+export const getEnvConfig = () => {
   const deploymentEnvTag = process.env.NEXT_PUBLIC_ENV?.toLowerCase();
 
-  return envConfigRegistry[
-    isEnvTag((deploymentEnvTag ?? "test") as EnvTag)
-      ? (deploymentEnvTag as EnvTag)
-      : "test"
-  ];
+  const activeEnvironmentConfig =
+    envConfigRegistry[
+      isEnvTag((deploymentEnvTag ?? "test") as EnvTag)
+        ? (deploymentEnvTag as EnvTag)
+        : "test"
+    ];
+
+  return {
+    ...activeEnvironmentConfig,
+    deFi: getDeFiConfig(activeEnvironmentConfig),
+  };
 };

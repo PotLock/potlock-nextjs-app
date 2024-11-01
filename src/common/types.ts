@@ -6,15 +6,30 @@ import { Network } from "@wpdas/naxios";
 import { Account } from "near-api-js";
 import { SWRConfiguration } from "swr";
 
+export type AccountId = Account["accountId"];
+
+export interface ByAccountId {
+  accountId: AccountId;
+}
+
+export type ContractConfig = ByAccountId & {};
+
 export type EnvConfig = {
   network: Network;
-  contractMetadata: { version: string; repoUrl: string };
-  donation: { contract: { accountId: string } };
-  lists: { contract: { accountId: string } };
-  potFactory: { contract: { accountId: string } };
-  sybil: { app: { url: string }; contract: { accountId: string } };
-  social: { app: { url: string }; contract: { accountId: string } };
   indexer: { api: { endpointUrl: string } };
+  contractMetadata: { version: string; repoUrl: string };
+
+  deFi?: {
+    refFinance?: {
+      exchangeContract: ContractConfig;
+    };
+  };
+
+  donation: { contract: ContractConfig };
+  lists: { contract: ContractConfig };
+  potFactory: { contract: ContractConfig };
+  sybil: { app: { url: string }; contract: ContractConfig };
+  social: { app: { url: string }; contract: ContractConfig };
 };
 
 export type { infer as FromSchema } from "zod";
@@ -34,12 +49,6 @@ export type ContractMetadata = {
 
 export interface ByStringId {
   id: string;
-}
-
-export type AccountId = Account["accountId"];
-
-export interface ByAccountId {
-  accountId: AccountId;
 }
 
 /**
