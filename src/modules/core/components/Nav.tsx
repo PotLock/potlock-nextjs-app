@@ -24,7 +24,7 @@ const links = [
   {
     label: "Lists",
     url: routesPath.LIST,
-    ...(DEBUG ? { disabled: true } : { disabled: true }),
+    disabled: false,
   },
 ];
 

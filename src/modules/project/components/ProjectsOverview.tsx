@@ -36,30 +36,27 @@ export const ProjectsOverview = () => {
     { label: "Least recent", value: "older" },
   ];
 
-  const tagsList: Group[] = [
+  const tagsList: (Group<GroupType.multiple> | Group<GroupType.single>)[] = [
     {
       label: "Category",
       options: categories,
       type: GroupType.multiple,
       props: {
         value: categoryFilter,
-        onValueChange: (value) => setCategoryFilter(value),
+        onValueChange: (value: string[]) => setCategoryFilter(value),
       },
     },
     {
       label: "Status",
       options: statuses,
-      type: GroupType.multiple,
+      type: GroupType.single,
       props: {
-        value: statusFilter,
-        onValueChange: (value) => {
-          if (value[value.length - 1] === "all") {
+        value: statusFilter[0] || "",
+        onValueChange: (value: string) => {
+          if (value === "all") {
             setsStatusFilter(["all"]);
-          } else if (value.includes("all")) {
-            const filter = value.filter((item) => item !== "all");
-            setsStatusFilter(filter);
           } else {
-            setsStatusFilter(value);
+            setsStatusFilter([value]);
           }
         },
       },
