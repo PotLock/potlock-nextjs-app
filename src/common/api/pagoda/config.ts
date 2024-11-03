@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 
-import { NETWORK } from "@/common/config";
+import { NETWORK } from "@/common/_config";
 import { PAGODA_API_KEY } from "@/common/constants";
 
 /**

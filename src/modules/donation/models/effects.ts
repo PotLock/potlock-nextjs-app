@@ -1,18 +1,19 @@
+import axios from "axios";
 import { Big } from "big.js";
 
-import { walletApi } from "@/common/api/near";
-import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/config";
+import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { RPC_NODE_URL, walletApi } from "@/common/api/near";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
   DirectDonation,
   DirectDonationArgs,
   PotDonation,
   PotDonationArgs,
-  donationApi,
+  donationClient,
   pot,
 } from "@/common/contracts/potlock";
 import { floatToYoctoNear } from "@/common/lib";
-import { getTransactionStatus } from "@/common/services";
+import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
@@ -24,6 +25,24 @@ import {
   DonationPotBatchCallDraft,
 } from "../types";
 import { donationInputsToBatchDonationDraft } from "../utils/normalization";
+
+/**
+ * @deprecated use `nearRpc.txStatus()`
+ */
+const getTransactionStatus = ({
+  wait_until = "EXECUTED_OPTIMISTIC",
+  ...params
+}: {
+  tx_hash: string;
+  sender_account_id: AccountId;
+  wait_until?: TxExecutionStatus;
+}) =>
+  axios.post(RPC_NODE_URL, {
+    jsonrpc: "2.0",
+    id: "dontcare",
+    method: "tx",
+    params: { wait_until, ...params },
+  });
 
 export const effects = (dispatch: AppDispatcher) => ({
   submit: async (
@@ -195,7 +214,7 @@ export const effects = (dispatch: AppDispatcher) => ({
               bypass_protocol_fee: bypassProtocolFee,
             };
 
-            return void donationApi
+            return void donationClient
               .donate(args, floatToYoctoNear(amount))
               .then((result) => dispatch.donation.success(result))
               .catch((error) => dispatch.donation.failure(error));
@@ -236,7 +255,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         inputs,
       ) as DonationDirectBatchCallDraft;
 
-      return void donationApi.donateBatch(batchTxDraft.entries);
+      return void donationClient.donateBatch(batchTxDraft.entries);
     } else {
       return void dispatch.donation.failure(
         new Error("Unable to determine donation type."),

@@ -10,7 +10,7 @@ import { naxiosInstance } from "@/common/api/near";
 import {
   LISTS_CONTRACT_ACCOUNT_ID,
   SOCIAL_CONTRACT_ACCOUNT_ID,
-} from "@/common/config";
+} from "@/common/_config";
 import {
   FIFTY_TGAS,
   FULL_TGAS,

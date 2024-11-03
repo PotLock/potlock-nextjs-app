@@ -1,3 +1,1 @@
-import * as refExchangeApi from "./ref-exchange";
-
-export { refExchangeApi };
+export * from "./ref-exchange";

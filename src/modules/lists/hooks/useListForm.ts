@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { prop } from "remeda";
 
 import { naxiosInstance } from "@/common/api/near";
-import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/config";
+import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import {
   add_admins_to_list,
   delete_list,

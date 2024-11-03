@@ -1,2 +1,5 @@
-export * from "./client";
-export * from "./hooks";
+import * as refExchangeClient from "./client";
+
+export * from "./interface.d";
+
+export { refExchangeClient };

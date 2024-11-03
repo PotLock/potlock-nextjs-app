@@ -5,7 +5,7 @@ import { Account, Pot } from "@/common/api/indexer";
 import {
   LISTS_CONTRACT_ACCOUNT_ID,
   SYBIL_CONTRACT_ACCOUNT_ID,
-} from "@/common/config";
+} from "@/common/_config";
 import { NEAR_TOKEN_DENOM, PROVIDER_ID_DELIMITER } from "@/common/constants";
 import {
   ContractSourceMetadata,

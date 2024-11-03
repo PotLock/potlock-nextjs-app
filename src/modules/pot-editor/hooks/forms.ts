@@ -9,7 +9,7 @@ import { walletApi } from "@/common/api/near";
 import {
   CONTRACT_SOURCECODE_REPO_URL,
   CONTRACT_SOURCECODE_VERSION,
-} from "@/common/config";
+} from "@/common/_config";
 import { PotConfig } from "@/common/contracts/potlock";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";

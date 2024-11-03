@@ -1,6 +1,6 @@
 import { createModel } from "@rematch/core";
 
-import { PayoutDetailed, donationApi, pot } from "@/common/contracts/potlock";
+import { PayoutDetailed, donationClient, pot } from "@/common/contracts/potlock";
 import {
   NEARSocialUserProfile,
   getSocialProfile,
@@ -69,7 +69,7 @@ export const profilesModel = createModel<AppModel>()({
               project_id: projectId,
             })
           : !potId
-            ? donationApi.getDonationsForRecipient({
+            ? donationClient.getDonationsForRecipient({
                 recipient_id: projectId,
               })
             : Promise.resolve([]);

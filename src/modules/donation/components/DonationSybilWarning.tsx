@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { WarningIcon } from "@/common/assets/svgs";
-import { SYBIL_APP_LINK_URL } from "@/common/config";
+import { SYBIL_APP_LINK_URL } from "@/common/_config";
 import { DEBUG } from "@/common/constants";
 import {
   Alert,

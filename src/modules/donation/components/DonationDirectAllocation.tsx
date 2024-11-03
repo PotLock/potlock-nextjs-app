@@ -6,7 +6,7 @@ import { Pot, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { refExchangeApi } from "@/common/contracts/ref-finance";
+import { tokenService } from "@/common/services";
 import { ByAccountId } from "@/common/types";
 import {
   DialogDescription,
@@ -60,10 +60,9 @@ export const DonationDirectAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const { data: supportedFtAccountIds = [] } =
-    refExchangeApi.useWhitelistedTokens();
+  const { data: supportedFts = [] } = tokenService.useSupportedFts();
 
-  console.log(supportedFtAccountIds);
+  console.log(supportedFts);
 
   const { data: availableFts } = pagoda.useFtAccountBalances({
     accountId: walletApi.accountId,

@@ -2,7 +2,7 @@ import { MemoryCache } from "@wpdas/naxios";
 import { Provider } from "near-api-js/lib/providers";
 
 import { naxiosInstance } from "@/common/api/near";
-import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/config";
+import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import {
   FULL_TGAS,
   ONE_HUNDREDTH_NEAR,

@@ -6,6 +6,14 @@ import { Network } from "@wpdas/naxios";
 import { Account } from "near-api-js";
 import { SWRConfiguration } from "swr";
 
+export type TxExecutionStatus =
+  | "NONE"
+  | "INCLUDED"
+  | "EXECUTED_OPTIMISTIC"
+  | "INCLUDED_FINAL"
+  | "EXECUTED"
+  | "FINAL";
+
 export type AccountId = Account["accountId"];
 
 export interface ByAccountId {
