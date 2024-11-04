@@ -6,7 +6,7 @@ import { Pot, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { pagoda } from "@/common/api/pagoda";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { tokenService } from "@/common/services";
+import { ftService } from "@/common/services";
 import { ByAccountId } from "@/common/types";
 import {
   DialogDescription,
@@ -60,7 +60,7 @@ export const DonationDirectAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const { data: supportedFts = [] } = tokenService.useSupportedFts();
+  const { data: supportedFts } = ftService.useSupportedTokens();
 
   console.log(supportedFts);
 

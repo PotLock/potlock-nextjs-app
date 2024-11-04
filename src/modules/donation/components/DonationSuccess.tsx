@@ -1,10 +1,10 @@
 import { Check } from "lucide-react";
 import Link from "next/link";
 
+import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import { pagoda } from "@/common/api/pagoda";
 import TwitterSvg from "@/common/assets/svgs/twitter";
-import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import {
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,

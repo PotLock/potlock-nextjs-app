@@ -1,11 +1,11 @@
 import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
-import { Account, Pot } from "@/common/api/indexer";
 import {
   LISTS_CONTRACT_ACCOUNT_ID,
   SYBIL_CONTRACT_ACCOUNT_ID,
 } from "@/common/_config";
+import { Account, Pot } from "@/common/api/indexer";
 import { NEAR_TOKEN_DENOM, PROVIDER_ID_DELIMITER } from "@/common/constants";
 import {
   ContractSourceMetadata,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { naxiosInstance } from "@/common/api/near";
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { naxiosInstance } from "@/common/api/near";
 import * as potlockLists from "@/common/contracts/potlock/lists";
 import { useRouteQuery } from "@/common/lib";
 import useWallet from "@/modules/auth/hooks/useWallet";

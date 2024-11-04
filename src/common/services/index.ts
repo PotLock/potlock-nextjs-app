@@ -1,1 +1,1 @@
-export * as tokenService from "./token";
+export * as ftService from "./ft";
