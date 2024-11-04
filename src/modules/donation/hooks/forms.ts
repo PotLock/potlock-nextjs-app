@@ -82,13 +82,13 @@ export const useDonationForm = ({
       allocationStrategy:
         isSingleProjectDonation || isCampaignDonation
           ? DonationAllocationStrategyEnum[
-              matchingPots.length > 0 ? "split" : "full"
-            ]
+          matchingPots.length > 0 ? "split" : "full"
+          ]
           : DonationAllocationStrategyEnum.split,
 
       groupAllocationStrategy:
         DonationGroupAllocationStrategyEnum[
-          isSingleProjectDonation ? "manually" : "evenly"
+        isSingleProjectDonation ? "manually" : "evenly"
         ],
     }),
 
@@ -122,9 +122,9 @@ export const useDonationForm = ({
     isSingleProjectDonation || isCampaignDonation
       ? amount
       : (values.groupAllocationPlan?.reduce(
-          (total, { amount }) => total + (amount ?? 0.0),
-          0.0,
-        ) ?? 0.0);
+        (total, { amount }) => total + (amount ?? 0.0),
+        0.0,
+      ) ?? 0.0);
 
   const [crossFieldErrors, setCrossFieldErrors] = useState<
     FieldErrors<DonationInputs>
