@@ -19,7 +19,7 @@ export const CampaignDonorsTable = () => {
   const { donations } = useCampaign({ campaignId: campaignId as string });
 
   const sortedDonations = useMemo(() => {
-    return toChronologicalOrder("donated_at_ms", donations).sort(
+    return toChronologicalOrder("donated_at_ms", donations).toSorted(
       (a, b) => b.donated_at_ms - a.donated_at_ms,
     );
   }, [donations]);
