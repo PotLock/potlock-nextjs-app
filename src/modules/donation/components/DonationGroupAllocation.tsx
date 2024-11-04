@@ -5,6 +5,7 @@ import { values } from "remeda";
 import { indexer } from "@/common/api/indexer";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
+import { ftService } from "@/common/services";
 import {
   DialogDescription,
   DialogHeader,
@@ -24,11 +25,7 @@ import {
   TextField,
 } from "@/common/ui/form-fields";
 import { ModalErrorBody } from "@/modules/core";
-import {
-  TokenBalance,
-  TokenTotalValue,
-  useNearUsdDisplayValue,
-} from "@/modules/token";
+import { TokenBalance, TokenTotalValue } from "@/modules/token";
 
 import { DonationRecipientShares } from "./DonationRecipientShares";
 import { DonationSybilWarning } from "./DonationSybilWarning";
@@ -80,7 +77,7 @@ export const DonationGroupAllocation: React.FC<
     error: listError,
   } = indexer.useList({ listId });
 
-  const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
+  const nearAmountUsdDisplayValue = ftService.useNearUsdDisplayValue(amount);
 
   const onEvenShareAllocationClick = useCallback(
     () => form.setValue("amount", totalAmountFloat, { shouldDirty: true }),

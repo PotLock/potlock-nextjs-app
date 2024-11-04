@@ -3,12 +3,12 @@ import Link from "next/link";
 import { indexer } from "@/common/api/indexer";
 import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
+import { ftService } from "@/common/services";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfileCover, AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useDonation } from "@/modules/donation";
-import { useNearUsdDisplayValue } from "@/modules/token";
 
 import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
 import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";
@@ -37,7 +37,7 @@ export const ProjectCard = ({
     accountId: projectId,
   });
 
-  const estimatedMatchedAmount = useNearUsdDisplayValue(
+  const estimatedMatchedAmount = ftService.useNearUsdDisplayValue(
     yoctoNearToFloat(payoutDetails?.amount ?? "0"),
   );
 

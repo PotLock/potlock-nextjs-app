@@ -25,7 +25,7 @@ import {
   TextField,
 } from "@/common/ui/form-fields";
 import { ModalErrorBody } from "@/modules/core";
-import { TokenBalance, useNearUsdDisplayValue } from "@/modules/token";
+import { TokenBalance } from "@/modules/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import {
@@ -60,18 +60,23 @@ export const DonationDirectAllocation: React.FC<
 
   const { data: supportedFts = {} } = ftService.useSupportedTokens();
 
+  const selectedFt = useMemo(
+    () => supportedFts[tokenId] ?? {},
+    [tokenId, supportedFts],
+  );
+
   const {
     isLoading: isRecipientDataLoading,
     data: recipient,
     error: recipientDataError,
   } = indexer.useAccount({ accountId });
 
-  const isFtDonation =
-    allocationStrategy !== DonationAllocationStrategyEnum.split &&
-    tokenId !== NEAR_TOKEN_DENOM;
-
-  const nearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
+
+  const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
+    amountFloat: amount,
+    symbol: selectedFt?.metadata.symbol ?? NEAR_TOKEN_DENOM,
+  });
 
   const formLayout = useMemo(
     () => (
@@ -198,7 +203,7 @@ export const DonationDirectAllocation: React.FC<
               }
               max={balanceFloat ?? undefined}
               step={0.01}
-              appendix={isFtDonation ? null : nearAmountUsdDisplayValue}
+              appendix={totalAmountUsdValue}
               customErrorMessage={
                 isBalanceSufficient
                   ? minAmountError
@@ -216,14 +221,13 @@ export const DonationDirectAllocation: React.FC<
       form.control,
       hasMatchingPots,
       isBalanceSufficient,
-      isFtDonation,
       isRecipientDataLoading,
       matchingPots,
       minAmountError,
-      nearAmountUsdDisplayValue,
       potId,
       supportedFts,
       tokenId,
+      totalAmountUsdValue,
     ],
   );
 

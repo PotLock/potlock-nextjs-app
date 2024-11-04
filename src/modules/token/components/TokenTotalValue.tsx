@@ -4,12 +4,12 @@ import {
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";
 import { bigStringToFloat } from "@/common/lib";
+import { ftService } from "@/common/services";
 import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
 import { TokenIcon } from "./TokenIcon";
-import { useNearUsdDisplayValue } from "../hooks/price";
 
 export type TokenTotalValueProps = ByTokenId &
   ({ amountFloat: number } | { amountBigString: string }) & {
@@ -34,10 +34,10 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
           tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
         );
 
-  const totalNearAmountUsdDisplayValue = useNearUsdDisplayValue(amount);
-
-  const totalAmountUsdDisplayValue =
-    tokenId === NEAR_TOKEN_DENOM ? totalNearAmountUsdDisplayValue : null;
+  const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
+    amountFloat: amount,
+    symbol: tokenMetadata?.symbol ?? NEAR_TOKEN_DENOM,
+  });
 
   return (
     <div className={cn("flex items-center gap-2", classNames?.root)}>
@@ -55,12 +55,12 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
         >{`${amount} ${tokenMetadata?.symbol ?? "⋯"}`}</span>
       )}
 
-      {totalAmountUsdDisplayValue && (
+      {totalAmountUsdValue && (
         <span
           className="prose line-height-none mt-0.7 text-xl text-neutral-600"
           un-mt="0.7"
         >
-          {totalAmountUsdDisplayValue}
+          {totalAmountUsdValue}
         </span>
       )}
     </div>
