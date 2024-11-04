@@ -4,14 +4,14 @@ import { MemoryCache } from "@wpdas/naxios";
 import { filter, fromEntries, isNonNull, pick, piped } from "remeda";
 import { useShallow } from "zustand/shallow";
 
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance, walletApi } from "@/common/api/near";
 import { refExchangeClient } from "@/common/contracts/ref-finance";
-import { FungibleTokenMetadata, TokenId } from "@/common/types";
+import { AccountId, FungibleTokenMetadata, TokenId } from "@/common/types";
 
-import { useFtMetadataStore } from "./models";
+import { FtRegistryEntry, useFtRegistryStore } from "./models";
 
 export const useSupportedTokens = () => {
-  const { data, error } = useFtMetadataStore(
+  const { data, error } = useFtRegistryStore(
     useShallow(pick(["data", "error"])),
   );
 
@@ -20,7 +20,7 @@ export const useSupportedTokens = () => {
     [data, error],
   );
 
-  const { setData, setError } = useFtMetadataStore();
+  const { setData, setError } = useFtRegistryStore();
 
   useEffect(
     () =>
@@ -28,21 +28,28 @@ export const useSupportedTokens = () => {
         .get_whitelisted_tokens()
         .then((tokenContractAccountIds) =>
           Promise.all(
-            tokenContractAccountIds.map(async (contractAccountId) => {
-              const metadata = await naxiosInstance
-                .contractApi({
-                  contractId: contractAccountId,
-                  cache: new MemoryCache({ expirationTime: 600 }),
-                })
-                .view<{}, FungibleTokenMetadata>("ft_metadata")
-                .catch(() => null);
+            tokenContractAccountIds.map(async (contract_account_id) => {
+              const ftClient = naxiosInstance.contractApi({
+                contractId: contract_account_id,
+                cache: new MemoryCache({ expirationTime: 600 }),
+              });
 
-              return metadata === null
+              const metadata = await ftClient
+                .view<{}, FungibleTokenMetadata>("ft_metadata")
+                .catch(() => undefined);
+
+              const balance = await ftClient
+                .view<{ account_id: AccountId }, string>("ft_balance_of", {
+                  args: { account_id: walletApi.accountId ?? "unknown" },
+                })
+                .catch(() => undefined);
+
+              return metadata === undefined
                 ? null
-                : ([contractAccountId, metadata] as [
-                    TokenId,
-                    FungibleTokenMetadata,
-                  ]);
+                : ([
+                    contract_account_id,
+                    { contract_account_id, metadata, balance },
+                  ] as [TokenId, FtRegistryEntry]);
             }),
           ).then(
             piped(
@@ -53,6 +60,7 @@ export const useSupportedTokens = () => {
           ),
         )
         .catch(setError),
+
     [setData, setError],
   );
 

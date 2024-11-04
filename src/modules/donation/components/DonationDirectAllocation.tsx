@@ -3,8 +3,6 @@ import { useMemo } from "react";
 import { values } from "remeda";
 
 import { Pot, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
-import { pagoda } from "@/common/api/pagoda";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import { ftService } from "@/common/services";
 import { ByAccountId } from "@/common/types";
@@ -60,13 +58,14 @@ export const DonationDirectAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const { data: supportedFts } = ftService.useSupportedTokens();
+  const { data: supportedFts = {} } = ftService.useSupportedTokens();
 
-  console.log(supportedFts);
+  const selectedFt = useMemo(
+    () => supportedFts[tokenId],
+    [supportedFts, tokenId],
+  );
 
-  const { data: availableFts } = pagoda.useFtAccountBalances({
-    accountId: walletApi.accountId,
-  });
+  console.log("selectedFt", selectedFt);
 
   const {
     isLoading: isRecipientDataLoading,
@@ -184,15 +183,16 @@ export const DonationDirectAllocation: React.FC<
 
                       {allocationStrategy ===
                         DonationAllocationStrategyEnum.full &&
-                        availableFts?.map(
-                          ({
-                            contract_account_id: contractId,
-                            metadata: { symbol },
-                          }) => (
-                            <SelectItem key={contractId} value={contractId}>
-                              {symbol}
-                            </SelectItem>
-                          ),
+                        Object.values(supportedFts).map(
+                          ({ contract_account_id, metadata, balance }) =>
+                            Number(balance) > 0 ? (
+                              <SelectItem
+                                key={contract_account_id}
+                                value={contract_account_id}
+                              >
+                                {metadata.symbol}
+                              </SelectItem>
+                            ) : null,
                         )}
                     </SelectField>
                   )}
@@ -219,7 +219,6 @@ export const DonationDirectAllocation: React.FC<
 
     [
       allocationStrategy,
-      availableFts,
       balanceFloat,
       form.control,
       hasMatchingPots,
@@ -229,6 +228,8 @@ export const DonationDirectAllocation: React.FC<
       matchingPots,
       minAmountError,
       nearAmountUsdDisplayValue,
+      potId,
+      supportedFts,
       tokenId,
     ],
   );
