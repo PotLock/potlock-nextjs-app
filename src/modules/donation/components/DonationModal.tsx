@@ -36,6 +36,7 @@ export const DonationModal = create((props: DonationModalProps) => {
       donateTo: null,
       donateToPot: null,
       donateToList: null,
+      donateToCampaign: null,
       transactionHashes: null,
     });
   }, [self, setSearchParams]);

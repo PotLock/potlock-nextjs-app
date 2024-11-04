@@ -82,13 +82,13 @@ export const useDonationForm = ({
       allocationStrategy:
         isSingleProjectDonation || isCampaignDonation
           ? DonationAllocationStrategyEnum[
-              matchingPots.length > 0 ? "split" : "full"
-            ]
+          matchingPots.length > 0 ? "split" : "full"
+          ]
           : DonationAllocationStrategyEnum.split,
 
       groupAllocationStrategy:
         DonationGroupAllocationStrategyEnum[
-          isSingleProjectDonation ? "manually" : "evenly"
+        isSingleProjectDonation ? "manually" : "evenly"
         ],
     }),
 
@@ -96,6 +96,7 @@ export const useDonationForm = ({
       defaultPotAccountId,
       isPotDonation,
       isSingleProjectDonation,
+      isCampaignDonation,
       listId,
       campaignId,
       matchingPots.length,
@@ -117,9 +118,10 @@ export const useDonationForm = ({
   const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
   const { balanceFloat } = useTokenBalance({ tokenId });
 
-  const totalAmountFloat = isSingleProjectDonation
-    ? amount
-    : (values.groupAllocationPlan?.reduce(
+  const totalAmountFloat =
+    isSingleProjectDonation || isCampaignDonation
+      ? amount
+      : (values.groupAllocationPlan?.reduce(
         (total, { amount }) => total + (amount ?? 0.0),
         0.0,
       ) ?? 0.0);
@@ -202,11 +204,11 @@ export const useDonationForm = ({
     isSingleProjectDonation,
   ]);
 
-  console.log(values.groupAllocationPlan);
+  // console.log(values.groupAllocationPlan);
 
-  console.table({ hasChanges, isValid: self.formState.isValid });
+  // console.table({ hasChanges, isValid: self.formState.isValid });
 
-  console.log(JSON.stringify(self.formState, null, 2));
+  // console.log(JSON.stringify(self.formState, null, 2));
 
   return {
     form: {
