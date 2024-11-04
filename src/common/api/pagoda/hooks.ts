@@ -1,19 +1,9 @@
 import { walletApi } from "@/common/api/near";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
-import { ByAccountId, ByTokenId } from "@/common/types";
+import { ByTokenId } from "@/common/types";
 
 import { PAGODA_REQUEST_CONFIG } from "./config";
 import { swrHooks } from "./generated";
-
-export const useFtAccountBalances = ({ accountId }: Partial<ByAccountId>) => {
-  const queryResult = swrHooks.useGetAccountsAccountIdBalancesFT(
-    accountId ?? "unknown",
-    undefined,
-    { ...PAGODA_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
-  );
-
-  return { ...queryResult, data: queryResult.data?.data.balances };
-};
 
 export type TokenMetadataInputs = ByTokenId & {
   disabled?: boolean;

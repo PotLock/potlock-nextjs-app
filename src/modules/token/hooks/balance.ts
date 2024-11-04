@@ -4,12 +4,12 @@ import { AccountView } from "near-api-js/lib/providers/provider";
 import { piped, prop } from "remeda";
 
 import { nearRpc, walletApi } from "@/common/api/near";
-import { pagoda } from "@/common/api/pagoda";
 import {
   NEAR_DEFAULT_TOKEN_DECIMALS,
   NEAR_TOKEN_DENOM,
 } from "@/common/constants";
 import { bigStringToFloat } from "@/common/lib";
+import { ftService } from "@/common/services";
 import { ByTokenId } from "@/common/types";
 
 import { TokenAvailableBalance } from "../types";
@@ -34,23 +34,19 @@ export const useTokenBalance = ({
     [],
   );
 
-  const { isLoading: isFtBalanceLoading, data: availableFtBalances } =
-    pagoda.useFtAccountBalances({
-      accountId: walletApi.accountId ?? "unknown",
-    });
+  const { isLoading: isFtRegistryLoading, data: supportedFts = {} } =
+    ftService.useSupportedTokens();
 
   const isNearBalanceLoading = nearBalanceYoctoNear === null;
-  const isBalanceLoading = isNearBalanceLoading || isFtBalanceLoading;
+  const isBalanceLoading = isNearBalanceLoading || isFtRegistryLoading;
 
   const data = useMemo(
     () =>
       (tokenId === NEAR_TOKEN_DENOM
         ? nearBalanceYoctoNear
-        : availableFtBalances?.find(
-            (ftBalance) => ftBalance.contract_account_id === tokenId,
-          )) ?? null,
+        : supportedFts[tokenId]) ?? null,
 
-    [availableFtBalances, nearBalanceYoctoNear, tokenId],
+    [nearBalanceYoctoNear, supportedFts, tokenId],
   );
 
   const balanceFloat = useMemo(
@@ -58,7 +54,7 @@ export const useTokenBalance = ({
       data === null
         ? null
         : bigStringToFloat(
-            typeof data === "string" ? data : data?.amount,
+            typeof data === "string" ? data : (data?.balance ?? (0).toString()),
 
             typeof data === "string"
               ? NEAR_DEFAULT_TOKEN_DECIMALS
