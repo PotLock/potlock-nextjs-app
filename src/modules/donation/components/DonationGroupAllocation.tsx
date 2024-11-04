@@ -23,8 +23,12 @@ import {
   SelectFieldOption,
   TextField,
 } from "@/common/ui/form-fields";
-import { ModalErrorBody, useNearUsdDisplayValue } from "@/modules/core";
-import { TokenBalance, TokenTotalValue } from "@/modules/token";
+import { ModalErrorBody } from "@/modules/core";
+import {
+  TokenBalance,
+  TokenTotalValue,
+  useNearUsdDisplayValue,
+} from "@/modules/token";
 
 import { DonationRecipientShares } from "./DonationRecipientShares";
 import { DonationSybilWarning } from "./DonationSybilWarning";

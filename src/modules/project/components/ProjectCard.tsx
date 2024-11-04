@@ -5,13 +5,10 @@ import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import {
-  AccountProfileCover,
-  AccountProfilePicture,
-  useNearUsdDisplayValue,
-} from "@/modules/core";
+import { AccountProfileCover, AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useDonation } from "@/modules/donation";
+import { useNearUsdDisplayValue } from "@/modules/token";
 
 import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
 import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";

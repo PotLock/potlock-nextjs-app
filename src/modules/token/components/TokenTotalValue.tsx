@@ -9,7 +9,7 @@ import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
 import { TokenIcon } from "./TokenIcon";
-import { useNearUsdDisplayValue } from "../../core";
+import { useNearUsdDisplayValue } from "../hooks/price";
 
 export type TokenTotalValueProps = ByTokenId &
   ({ amountFloat: number } | { amountBigString: string }) & {

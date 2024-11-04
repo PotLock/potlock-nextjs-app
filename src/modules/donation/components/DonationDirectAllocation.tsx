@@ -24,8 +24,8 @@ import {
   SelectFieldOption,
   TextField,
 } from "@/common/ui/form-fields";
-import { ModalErrorBody, useNearUsdDisplayValue } from "@/modules/core";
-import { TokenBalance } from "@/modules/token";
+import { ModalErrorBody } from "@/modules/core";
+import { TokenBalance, useNearUsdDisplayValue } from "@/modules/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import {
@@ -59,13 +59,6 @@ export const DonationDirectAllocation: React.FC<
   ]);
 
   const { data: supportedFts = {} } = ftService.useSupportedTokens();
-
-  const selectedFt = useMemo(
-    () => supportedFts[tokenId] ?? {},
-    [supportedFts, tokenId],
-  );
-
-  console.log("selectedFt", selectedFt);
 
   const {
     isLoading: isRecipientDataLoading,

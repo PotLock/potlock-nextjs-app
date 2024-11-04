@@ -7,7 +7,6 @@ export * from "./components/Nav";
 export * from "./components/RuntimeErrorAlert";
 export * from "./components/UserDropdown";
 export * from "./hooks";
-export * from "./hooks/price";
 export * from "./models";
 export { hrefByRouteName } from "./routes";
 export * from "./utils";
