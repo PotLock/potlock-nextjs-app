@@ -12,6 +12,10 @@ export const envConfig: EnvConfig = {
     contract: { accountId: "donate.potlock.testnet" },
   },
 
+  campaigns: {
+    contract: { accountId: "campaignstest2.potlock.testnet" },
+  },
+
   lists: {
     contract: { accountId: "lists.potlock.testnet" },
   },

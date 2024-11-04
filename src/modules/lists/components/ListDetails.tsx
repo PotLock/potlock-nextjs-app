@@ -322,7 +322,7 @@ export const ListDetails = ({
               <div className="font-semibold">
                 {listDetails && listDetails?.upvotes?.length}
               </div>
-              <SocialsShare />
+              <SocialsShare variant="icon" />
             </div>
           </div>
         </div>

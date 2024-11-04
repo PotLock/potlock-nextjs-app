@@ -1,9 +1,12 @@
 import { walletApi } from "@/common/api/near";
 import {
+  CampaignDonation,
+  DirectCampaignDonationArgs,
   DirectDonation,
   DirectDonationArgs,
   PotDonation,
   PotDonationArgs,
+  campaign,
   donate,
   pot,
 } from "@/common/contracts/potlock";
@@ -27,6 +30,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     const {
       amount,
       listId,
+      campaignId,
       allocationStrategy,
       groupAllocationPlan,
       referrerAccountId,
@@ -39,7 +43,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     const isSingleProjectDonation = "accountId" in params;
     const isPotDonation = "potId" in params;
     const isListDonation = listId !== undefined;
-
+    const isCampaignDonation = campaignId !== undefined;
     if (isSingleProjectDonation) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
@@ -75,6 +79,17 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
+    } else if (isCampaignDonation) {
+      const args: DirectCampaignDonationArgs = {
+        campaign_id: campaignId,
+        message,
+        referrer_id: referrerAccountId,
+        bypass_protocol_fee: bypassProtocolFee,
+      };
+      return void campaign
+        .donate(args, floatToYoctoNear(amount))
+        .then((result) => dispatch.donation.success(result as CampaignDonation))
+        .catch((error) => dispatch.donation.failure(error));
     } else if (isPotDonation && groupAllocationPlan !== undefined) {
       const batchTxDraft = donationInputsToBatchDonationDraft(
         inputs,
