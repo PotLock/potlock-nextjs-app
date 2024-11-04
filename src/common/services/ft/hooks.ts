@@ -5,7 +5,7 @@ import { useShallow } from "zustand/shallow";
 
 import { coingecko } from "@/common/api/coingecko";
 import formatWithCommas from "@/common/lib/formatWithCommas";
-import { FungibleTokenMetadata } from "@/common/types";
+import { ByTokenId } from "@/common/types";
 
 import { useFtRegistryStore } from "./models";
 
@@ -24,24 +24,12 @@ export const useSupportedTokens = () => {
 
 export const useTokenUsdDisplayValue = ({
   amountFloat,
-  symbol,
-}: Pick<FungibleTokenMetadata, "symbol"> & {
+  tokenId,
+}: ByTokenId & {
   amountFloat: number;
 }): string | null => {
-  const { data: oneNearUsdPrice } = coingecko.useTokenUsdPrice({ symbol });
-  const value = oneNearUsdPrice ? amountFloat * oneNearUsdPrice : 0.0;
-
-  return useMemo(
-    () => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`),
-    [value],
-  );
-};
-
-export const useNearUsdDisplayValue = (
-  amountNearFloat: number,
-): string | null => {
-  const { data: oneNearUsdPrice } = coingecko.useOneNearUsdPrice();
-  const value = oneNearUsdPrice ? amountNearFloat * oneNearUsdPrice : 0.0;
+  const { data: oneTokenUsdPrice } = coingecko.useTokenUsdPrice({ tokenId });
+  const value = oneTokenUsdPrice ? amountFloat * oneTokenUsdPrice : 0.0;
 
   return useMemo(
     () => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`),

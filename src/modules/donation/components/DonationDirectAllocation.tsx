@@ -65,6 +65,9 @@ export const DonationDirectAllocation: React.FC<
     [tokenId, supportedFts],
   );
 
+  // TODO: WIP
+  console.log(selectedFt);
+
   const {
     isLoading: isRecipientDataLoading,
     data: recipient,
@@ -75,7 +78,7 @@ export const DonationDirectAllocation: React.FC<
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,
-    symbol: selectedFt?.metadata?.symbol ?? NEAR_TOKEN_DENOM,
+    tokenId,
   });
 
   const formLayout = useMemo(

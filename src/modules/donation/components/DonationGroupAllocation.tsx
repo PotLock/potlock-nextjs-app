@@ -77,7 +77,10 @@ export const DonationGroupAllocation: React.FC<
     error: listError,
   } = indexer.useList({ listId });
 
-  const nearAmountUsdDisplayValue = ftService.useNearUsdDisplayValue(amount);
+  const amountUsdValue = ftService.useTokenUsdDisplayValue({
+    amountFloat: amount,
+    tokenId,
+  });
 
   const onEvenShareAllocationClick = useCallback(
     () => form.setValue("amount", totalAmountFloat, { shouldDirty: true }),
@@ -206,7 +209,7 @@ export const DonationGroupAllocation: React.FC<
                 )}
                 max={balanceFloat ?? undefined}
                 step={0.01}
-                appendix={nearAmountUsdDisplayValue}
+                appendix={amountUsdValue}
                 customErrorMessage={
                   isBalanceSufficient
                     ? null

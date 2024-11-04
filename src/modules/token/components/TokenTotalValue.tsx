@@ -36,7 +36,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,
-    symbol: tokenMetadata?.symbol ?? NEAR_TOKEN_DENOM,
+    tokenId,
   });
 
   return (
