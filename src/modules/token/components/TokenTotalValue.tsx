@@ -1,8 +1,5 @@
 import { pagoda } from "@/common/api/pagoda";
-import {
-  NEAR_DEFAULT_TOKEN_DECIMALS,
-  NEAR_TOKEN_DENOM,
-} from "@/common/constants";
+import { NEAR_DEFAULT_TOKEN_DECIMALS } from "@/common/constants";
 import { bigStringToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { ByTokenId } from "@/common/types";
