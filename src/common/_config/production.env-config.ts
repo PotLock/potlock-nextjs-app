@@ -8,6 +8,10 @@ export const envConfig: EnvConfig = {
     repoUrl: "https://github.com/PotLock/core",
   },
 
+  campaigns: {
+    contract: { accountId: "campaigns.staging.potlock.near" },
+  },
+
   donation: {
     contract: { accountId: "donate.potlock.near" },
   },

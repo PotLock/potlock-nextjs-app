@@ -12,6 +12,10 @@ export const {
     repoUrl: CONTRACT_SOURCECODE_REPO_URL,
   },
 
+  campaigns: {
+    contract: { accountId: CAMPAIGNS_CONTRACT_ACCOUNT_ID },
+  },
+
   deFi: {
     refFinance: {
       exchangeContract: { accountId: REF_EXCHANGE_CONTRACT_ACCOUNT_ID },

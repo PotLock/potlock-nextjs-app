@@ -59,6 +59,7 @@ export const donationSchema = object({
   referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
   listId: number().optional().describe("List id."),
+  campaignId: number().optional().describe("Campaign id."),
 
   message: string()
     .max(DONATION_MAX_MESSAGE_LENGTH)

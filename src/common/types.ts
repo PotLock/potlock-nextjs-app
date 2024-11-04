@@ -16,8 +16,8 @@ export type ContractConfig = ByAccountId & {};
 
 export type EnvConfig = {
   network: Network;
-  indexer: { api: { endpointUrl: string } };
   contractMetadata: { version: string; repoUrl: string };
+  indexer: { api: { endpointUrl: string } };
 
   deFi?: {
     refFinance?: {
@@ -25,6 +25,7 @@ export type EnvConfig = {
     };
   };
 
+  campaigns: { contract: { accountId: string } };
   donation: { contract: ContractConfig };
   lists: { contract: ContractConfig };
   potFactory: { contract: ContractConfig };
@@ -64,6 +65,11 @@ export type ListId = number;
 
 export interface ByListId {
   listId: ListId;
+}
+
+export type CampaignId = number;
+export interface ByCampaignId {
+  campaignId: CampaignId;
 }
 
 /**

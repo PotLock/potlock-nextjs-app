@@ -1,6 +1,7 @@
 import { Models } from "@rematch/core";
 
 import { auth } from "@/modules/auth/state";
+import { campaignEditorModel } from "@/modules/campaigns/models";
 import { cartModel } from "@/modules/cart";
 import { core } from "@/modules/core";
 import { donationModel, donationModelKey } from "@/modules/donation";
@@ -21,6 +22,7 @@ export interface AppModel extends Models<AppModel> {
   [potEditorModelKey]: typeof potEditorModel;
   profiles: typeof profilesModel;
   listEditor: typeof listEditorModel;
+  campaignEditor: typeof campaignEditorModel;
   [projectEditorModelKey]: typeof projectEditorModel;
 }
 
@@ -31,6 +33,7 @@ export const models: AppModel = {
   [donationModelKey]: donationModel,
   nav: navModel,
   listEditor: listEditorModel,
+  campaignEditor: campaignEditorModel,
   [potEditorModelKey]: potEditorModel,
   profiles: profilesModel,
   [projectEditorModelKey]: projectEditorModel,

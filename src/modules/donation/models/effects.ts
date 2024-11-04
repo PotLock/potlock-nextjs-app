@@ -1,14 +1,15 @@
 import axios from "axios";
-import { Big } from "big.js";
 
-import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { RPC_NODE_URL, walletApi } from "@/common/api/near";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
 import {
+  CampaignDonation,
+  DirectCampaignDonationArgs,
   DirectDonation,
   DirectDonationArgs,
   PotDonation,
   PotDonationArgs,
+  campaign,
   donationClient,
   pot,
 } from "@/common/contracts/potlock";
@@ -51,6 +52,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     const {
       amount,
       listId,
+      campaignId,
       allocationStrategy,
       groupAllocationPlan,
       referrerAccountId,
@@ -64,6 +66,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     const isSingleProjectDonation = "accountId" in params;
     const isPotDonation = "potId" in params;
     const isListDonation = listId !== undefined;
+    const isCampaignDonation = campaignId !== undefined;
 
     const requiredDepositFloat =
       // additional 0.0001 NEAR per message character
@@ -240,6 +243,17 @@ export const effects = (dispatch: AppDispatcher) => ({
             .catch((error) => dispatch.donation.failure(error));
         }
       }
+    } else if (isCampaignDonation) {
+      const args: DirectCampaignDonationArgs = {
+        campaign_id: campaignId,
+        message,
+        referrer_id: referrerAccountId,
+        bypass_protocol_fee: bypassProtocolFee,
+      };
+      return void campaign
+        .donate(args, floatToYoctoNear(amount))
+        .then((result) => dispatch.donation.success(result as CampaignDonation))
+        .catch((error) => dispatch.donation.failure(error));
     } else if (isPotDonation && groupAllocationPlan !== undefined) {
       const batchTxDraft = donationInputsToBatchDonationDraft(
         inputs,
