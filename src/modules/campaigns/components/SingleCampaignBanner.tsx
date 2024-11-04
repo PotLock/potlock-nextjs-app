@@ -130,7 +130,7 @@ export const SingleCampaignBanner = () => {
             }
             campaignId={parseInt(campaignId as string)}
           />
-          <SocialsShare showButton />
+          <SocialsShare variant="button" />
         </div>
       </div>
     </div>

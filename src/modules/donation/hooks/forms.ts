@@ -80,7 +80,7 @@ export const useDonationForm = ({
       campaignId,
 
       allocationStrategy:
-        isSingleProjectDonation || campaignId
+        isSingleProjectDonation || isCampaignDonation
           ? DonationAllocationStrategyEnum[
               matchingPots.length > 0 ? "split" : "full"
             ]

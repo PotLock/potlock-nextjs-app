@@ -45,7 +45,7 @@ export const DonationModal = create((props: DonationModalProps) => {
     close();
   }, [close]);
 
-  const donationType =
+  const isKnownDonationType =
     !isSingleProjectDonation &&
     !isPotDonation &&
     !isListDonation &&
@@ -99,7 +99,7 @@ export const DonationModal = create((props: DonationModalProps) => {
           />
         ) : (
           <>
-            {donationType ? (
+            {isKnownDonationType ? (
               <ModalErrorBody
                 heading="Donation"
                 title="Unable to determine donation type."

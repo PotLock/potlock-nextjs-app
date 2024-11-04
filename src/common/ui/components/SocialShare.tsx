@@ -16,10 +16,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 export const SocialsShare = ({
   shareContent,
-  showButton,
+  variant = "icon",
 }: {
   shareContent?: string;
-  showButton?: boolean;
+  variant: "button" | "icon";
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -34,7 +34,7 @@ export const SocialsShare = ({
     <Popover>
       <PopoverTrigger asChild>
         <div>
-          {showButton ? (
+          {variant === "button" ? (
             <Button className="w-full" variant="standard-outline">
               Share
             </Button>

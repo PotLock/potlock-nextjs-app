@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -14,13 +14,18 @@ type ReactLayoutProps = {
 
 export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   const router = useRouter();
-  const params = router.query as { campaignId: string };
   const pathname = router.pathname;
 
   const tabs = CAMPAIGN_TAB_ROUTES;
 
   const [selectedTab, setSelectedTab] = useState(
     tabs.find((tab) => pathname.includes(tab.href)) || tabs[0],
+  );
+
+  const handleSelectedTab = useCallback(
+    (tabId: string) =>
+      setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!),
+    [tabs],
   );
 
   return (
@@ -32,9 +37,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
         asLink
         navOptions={tabs}
         selectedTab={selectedTab.id}
-        onSelect={(tabId: string) => {
-          setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);
-        }}
+        onSelect={(tabId: string) => handleSelectedTab(tabId)}
       />
       <div className="md:px-8 flex w-full flex-row flex-wrap gap-2">
         {children}

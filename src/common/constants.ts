@@ -96,6 +96,3 @@ export const SUPPORTED_FTS: Record<
         .toFixed(decimals || 2),
   },
 };
-
-// export const CAMPAIGN_CONTRACT_ID =
-//   NETWORK === "mainnet" ? "" : "campaignstest2.potlock.testnet";

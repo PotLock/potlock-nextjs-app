@@ -4,11 +4,12 @@ import { naxiosInstance } from "@/common/api/near";
 import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/config";
 import { floatToYoctoNear } from "@/common/lib";
 
-import { Campaign, CampaignFormFields } from "./interfaces/campaign.interfaces";
 import {
+  Campaign,
   CampaignDonation,
+  CampaignFormFields,
   DirectCampaignDonationArgs,
-} from "./interfaces/donate.interfaces";
+} from "./interfaces/campaign.interfaces";
 
 export const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,

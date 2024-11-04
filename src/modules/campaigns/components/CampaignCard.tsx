@@ -14,25 +14,13 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
 
   return (
-    <div
-      style={{
-        boxShadow:
-          "0px 0px 0px 1px rgba(0, 0, 0, 0.06), 0px 2px 2px -1px rgba(5, 5, 5, 0.08), 0px 3px 5px 0px rgba(5, 5, 5, 0.08)",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 6px 10px rgba(0, 0, 0, 0.2)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
-      }}
-      className="md:w-[412px] h-[572px] w-full cursor-pointer rounded-lg transition-all duration-500 ease-in-out"
-    >
+    <div className="md:w-104 h-144  w-full cursor-pointer rounded-lg shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_2px_2px_-1px_rgba(5,5,5,0.08),0px_3px_5px_0px_rgba(5,5,5,0.08)] transition-all duration-500 ease-in-out hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]">
       <Link href={`/campaign/${data.id}/leaderboard`} passHref>
         <div className="relative h-[212px] w-full">
           <Image
             src={data?.cover_image_url || ""}
             alt=""
-            className="h-[212px] w-full rounded-t-lg object-cover hover:scale-150"
+            className="h-52 w-full rounded-t-lg object-cover hover:scale-150"
             width={500}
             height={500}
           />

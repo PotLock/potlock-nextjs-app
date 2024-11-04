@@ -27,7 +27,7 @@ export const useCampaign = ({ campaignId }: { campaignId: string }) => {
         setDonations(response);
       })
       .catch((err) => console.error(err));
-  }, []);
+  }, [campaignId]);
 
   return {
     donations,

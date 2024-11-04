@@ -15,6 +15,7 @@ import {
   CarouselItem,
 } from "@/common/ui/components/carousel";
 import { DonateToCampaignProjects } from "@/modules/donation";
+import { useProfileData } from "@/modules/profile";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
@@ -40,19 +41,15 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
           <p className="text-[18px]">{current + 1}/3</p>
         </div>
         <div className="flex gap-4">
-          <Image
+          <img
             src="/assets/icons/left-arrow.svg"
-            width={6}
             alt=""
-            height={6}
             onClick={() => api?.scrollTo(current - 1)}
             className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
           />
-          <Image
+          <img
             src="/assets/icons/right-arrow.svg"
-            width={6}
             alt=""
-            height={6}
             onClick={() => api?.scrollTo(current + 1)}
             className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
           />
@@ -73,22 +70,10 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 };
 
 const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
-  const [recepientImage, setRecepientImage] = useState<string>();
-  const [ownerImage, setOwnerImage] = useState<string>();
+  const { avatarSrc: recipientImage } = useProfileData(data?.recipient);
+  const { avatarSrc: ownerImage } = useProfileData(data?.owner);
 
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
-
-  useEffect(() => {
-    const fetchImages = async () => {
-      const { image } = await fetchSocialImages({ accountId: data.recipient });
-      const { image: ownerImage } = await fetchSocialImages({
-        accountId: data.owner,
-      });
-      setOwnerImage(ownerImage);
-      setRecepientImage(image);
-    };
-    fetchImages();
-  }, [data]);
 
   return (
     <CarouselItem key={data.id}>
@@ -115,7 +100,7 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
                   <div onClick={(e) => e.stopPropagation()} className="flex">
                     <LazyLoadImage
                       alt=""
-                      src={recepientImage}
+                      src={recipientImage}
                       width={20}
                       height={20}
                       className=" mx-1 h-5 w-5 rounded-[50%]"

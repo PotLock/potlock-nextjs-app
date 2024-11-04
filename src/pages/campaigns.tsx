@@ -11,15 +11,13 @@ export default function Campaigns() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
   useEffect(() => {
-    const getCampaigns = async () => {
-      try {
-        const fetchedCampaigns = await get_campaigns();
+    get_campaigns()
+      .then((fetchedCampaigns) => {
         setCampaigns(fetchedCampaigns);
-      } catch (error) {
+      })
+      .catch((error) => {
         console.log(error);
-      }
-    };
-    getCampaigns();
+      });
   }, []);
 
   return (

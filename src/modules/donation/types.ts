@@ -8,12 +8,9 @@ import {
 } from "@/common/contracts/potlock";
 import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
-export type DonationGroupAllocationKey = ByPotId | ByListId;
+export type DonationGroupAllocationKey = ByPotId | ByListId | ByCampaignId;
 
-export type DonationAllocationKey =
-  | ByAccountId
-  | ByCampaignId
-  | DonationGroupAllocationKey;
+export type DonationAllocationKey = ByAccountId | DonationGroupAllocationKey;
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
