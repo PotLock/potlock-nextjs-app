@@ -6,17 +6,12 @@ import { Group, GroupType } from "@/common/ui/components";
 
 import { categories, statuses } from "../constants";
 
-export const useProjectsFilters = ({
-  setCurrentFilterCategory,
-  setCurrentFilterStatus,
-  setFilteredProjects,
-  ...props
-}: {
-  setCurrentFilterCategory: (type: string) => void;
-  setCurrentFilterStatus: (type: string) => void;
-  setFilteredProjects: (type: any) => void;
-  [key: string]: any;
-}) => {
+export const useProjectsFilters = (
+  setCurrentFilterCategory: (type: string) => void,
+  setCurrentFilterStatus: (type: string) => void,
+  setFilteredProjects: any,
+  ...props: any[]
+) => {
   const [registrations, setRegistrations] = useState<ListRegistration[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
@@ -84,7 +79,7 @@ export const useProjectsFilters = ({
 
   // fetchByStatus
 
-  const tagList: Group[] = [
+  const tagList: (Group<GroupType.multiple> | Group<GroupType.single>)[] = [
     {
       label: "Category",
       options: categories,

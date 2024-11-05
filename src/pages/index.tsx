@@ -1,5 +1,8 @@
+import { useState } from "react";
+
 import Link from "next/link";
 
+import { Registration } from "@/common/contracts/potlock";
 import { Button } from "@/common/ui/components";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import useWallet from "@/modules/auth/hooks/useWallet";
@@ -63,12 +66,26 @@ const WelcomeBanner = () => {
 };
 
 export default function Home() {
+  const [currentFilterCategory, setCurrentFilterCategory] =
+    useState<string>("All Lists");
+  const [currentFilterStatus, setCurrentFilterStatus] =
+    useState<string>("All Lists");
+  const [filteredRegistrations, setFilteredRegistrations] = useState<
+    Registration[]
+  >([]);
   return (
     <main className="container flex flex-col items-center">
       <WelcomeBanner />
       <GeneralStats />
       <ProjectsOverviewFeatured />
-      <ProjectsOverview />
+      <ProjectsOverview
+        currentFilterCategory={currentFilterCategory}
+        setCurrentFilterCategory={setCurrentFilterCategory}
+        currentFilterStatus={currentFilterStatus}
+        setCurrentFilterStatus={setCurrentFilterStatus}
+        filteredRegistrations={filteredRegistrations}
+        setFilteredRegistrations={setFilteredRegistrations}
+      />
     </main>
   );
 }

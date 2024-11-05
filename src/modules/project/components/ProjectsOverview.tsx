@@ -17,51 +17,71 @@ import { Profile } from "@/modules/profile/models";
 import { useTypedSelector } from "@/store";
 
 import { ProjectCard } from "./ProjectCard";
-import { categories, statuses } from "../constants";
+// import { categories, statuses } from "../constants";
+import { useProjectsFilters } from "../hooks/useProjectsFilters";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
-export const ProjectsOverview = () => {
-  const [filteredRegistrations, setFilteredRegistrations] = useState<
-    Registration[]
-  >([]);
+export const ProjectsOverview = ({
+  currentFilterCategory,
+  setCurrentFilterCategory,
+  currentFilterStatus,
+  setCurrentFilterStatus,
+  filteredRegistrations,
+  setFilteredRegistrations,
+}: {
+  currentFilterCategory: string;
+  setCurrentFilterCategory: (type: string) => void;
+  currentFilterStatus: string;
+  setCurrentFilterStatus: (type: string) => void;
+  filteredRegistrations: any;
+  setFilteredRegistrations: (type: any) => void;
+}) => {
+  // const [filteredRegistrations, setFilteredRegistrations] = useState<
+  //   Registration[]
+  // >([]);
   const [index, setIndex] = useState(1);
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  // const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
+  // const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  // const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
 
+  const { registrations, tagList } = useProjectsFilters(
+    setCurrentFilterCategory,
+    setCurrentFilterStatus,
+    setFilteredRegistrations,
+  );
   const SORT_LIST_PROJEECTS = [
     { label: "Most recent", value: "recent" },
     { label: "Least recent", value: "older" },
   ];
 
-  const tagsList: (Group<GroupType.multiple> | Group<GroupType.single>)[] = [
-    {
-      label: "Category",
-      options: categories,
-      type: GroupType.multiple,
-      props: {
-        value: categoryFilter,
-        onValueChange: (value: string[]) => setCategoryFilter(value),
-      },
-    },
-    {
-      label: "Status",
-      options: statuses,
-      type: GroupType.single,
-      props: {
-        value: statusFilter[0] || "",
-        onValueChange: (value: string) => {
-          if (value === "all") {
-            setsStatusFilter(["all"]);
-          } else {
-            setsStatusFilter([value]);
-          }
-        },
-      },
-    },
-  ];
+  // const tagsList: (Group<GroupType.multiple> | Group<GroupType.single>)[] = [
+  //   {
+  //     label: "Category",
+  //     options: categories,
+  //     type: GroupType.multiple,
+  //     props: {
+  //       value: categoryFilter,
+  //       onValueChange: (value: string[]) => setCategoryFilter(value),
+  //     },
+  //   },
+  //   {
+  //     label: "Status",
+  //     options: statuses,
+  //     type: GroupType.single,
+  //     props: {
+  //       value: statusFilter[0] || "",
+  //       onValueChange: (value: string) => {
+  //         if (value === "all") {
+  //           setsStatusFilter(["all"]);
+  //         } else {
+  //           setsStatusFilter([value]);
+  //         }
+  //       },
+  //     },
+  //   },
+  // ];
 
   const handleSort = (sortType: string) => {
     const projects = [...filteredRegistrations];
@@ -100,37 +120,37 @@ export const ProjectsOverview = () => {
       return fields.some((item) => (item || "").toLowerCase().includes(search));
     };
     // Filter by registration status
-    const handleStatus = (registration: Registration) => {
-      if (statusFilter.includes("all") || statusFilter.length === 0) {
-        return true;
-      }
-      return statusFilter.includes(registration.status);
-    };
-    // Filter by registration category
-    const handleCategory = (profile: Profile) => {
-      const tags = profile.tags || [];
+    // const handleStatus = (registration: Registration) => {
+    //   if (statusFilter.includes("all") || statusFilter.length === 0) {
+    //     return true;
+    //   }
+    //   return statusFilter.includes(registration.status);
+    // };
+    // // Filter by registration category
+    // const handleCategory = (profile: Profile) => {
+    //   const tags = profile.tags || [];
 
-      if (categoryFilter.length === 0) return true;
-      return categoryFilter.some((tag: string) => tags.includes(tag));
-    };
+    //   if (categoryFilter.length === 0) return true;
+    //   return categoryFilter.some((tag: string) => tags.includes(tag));
+    // };
 
-    if (search || categoryFilter.length || statusFilter.length) {
-      const filteredRegistrations = registrations.filter((registration) => {
-        const profile = registrationsProfile[registration.registrant_id] || {};
+    // if (search || categoryFilter.length || statusFilter.length) {
+    //   const filteredRegistrations = registrations.filter((registration) => {
+    //     const profile = registrationsProfile[registration.registrant_id] || {};
 
-        return (
-          handleSearch(registration, profile) &&
-          handleCategory(profile) &&
-          handleStatus(registration)
-        );
-      });
+    //     return (
+    //       handleSearch(registration, profile) &&
+    //       handleCategory(profile) &&
+    //       handleStatus(registration)
+    //     );
+    //   });
 
-      setFilteredRegistrations(filteredRegistrations);
-    }
+    //   setFilteredRegistrations(filteredRegistrations);
+    // }
   }, [
     search,
-    categoryFilter,
-    statusFilter,
+    // categoryFilter,
+    // statusFilter,
     registrations,
     registrationsProfile,
   ]);
@@ -145,7 +165,7 @@ export const ProjectsOverview = () => {
         (registration) => registration.status == RegistrationStatus.Approved,
       );
 
-      setRegistrations(registrations);
+      // setRegistrations(registrations);
       setFilteredRegistrations(approvedRegistrations);
     };
     fetchRegistrations();
@@ -171,7 +191,7 @@ export const ProjectsOverview = () => {
             // toggleProps={{
             //   onValueChange: handleTag,
             // }}
-            groups={tagsList}
+            groups={tagList}
           />
           <SortSelect
             options={SORT_LIST_PROJEECTS}
