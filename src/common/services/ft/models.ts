@@ -110,13 +110,7 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
             piped(
               filter(isNonNull),
               (registryEntries) => fromEntries(registryEntries),
-              (data) =>
-                set({
-                  data: {
-                    ...data,
-                    [NATIVE_TOKEN_ID]: NATIVE_TOKEN_FT_REGISTRY_ENTRY,
-                  },
-                }),
+              (data) => set({ data }),
             ),
           ),
         )

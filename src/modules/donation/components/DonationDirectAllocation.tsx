@@ -68,10 +68,10 @@ export const DonationDirectAllocation: React.FC<
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
-  const tokenIdReset = useCallback(() => {
-    console.log("hey?", tokenId);
-    form.setValue("tokenId", NATIVE_TOKEN_ID);
-  }, [form, tokenId]);
+  const tokenIdReset = useCallback(
+    () => form.resetField("tokenId", { keepDirty: true }),
+    [form],
+  );
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,

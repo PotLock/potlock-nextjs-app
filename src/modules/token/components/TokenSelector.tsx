@@ -33,10 +33,6 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
       }}
       {...props}
     >
-      <SelectFieldOption value={NATIVE_TOKEN_ID}>
-        {NATIVE_TOKEN_ID.toUpperCase()}
-      </SelectFieldOption>
-
       {!props.disabled &&
         tokenOptions.map((token) =>
           token && (token.balanceFloat ?? 0) > 0 ? (
