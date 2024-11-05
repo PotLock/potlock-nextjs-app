@@ -4,10 +4,7 @@ import Link from "next/link";
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import TwitterSvg from "@/common/assets/svgs/twitter";
-import {
-  NEAR_DEFAULT_TOKEN_DECIMALS,
-  NEAR_TOKEN_DENOM,
-} from "@/common/constants";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/potlock";
 import { bigStringToFloat, truncate } from "@/common/lib";
 import { ftService } from "@/common/services";
@@ -56,7 +53,7 @@ export const DonationSuccess = ({
   const tokenId =
     "ft_id" in (finalOutcome ?? {})
       ? (finalOutcome as DirectDonation).ft_id
-      : NEAR_TOKEN_DENOM;
+      : NATIVE_TOKEN_ID;
 
   const { data: token } = ftService.useRegisteredToken({ tokenId });
 
@@ -65,17 +62,17 @@ export const DonationSuccess = ({
 
   const totalAmountFloat = bigStringToFloat(
     finalOutcome?.total_amount ?? "0",
-    token?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
+    token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
   const protocolFeeAmountFloat = bigStringToFloat(
     finalOutcome?.protocol_fee ?? "0",
-    token?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
+    token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
   const referralFeeFinalAmountFloat = bigStringToFloat(
     finalOutcome?.referrer_fee ?? "0",
-    token?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
+    token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
   const breakdown = useDonationAllocationBreakdown({

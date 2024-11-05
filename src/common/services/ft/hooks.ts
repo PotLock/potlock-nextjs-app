@@ -23,25 +23,32 @@ export const useTokenRegistry = () => {
 };
 
 export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
-  const metadata = useFtRegistryStore(
-    useShallow((ftRegistry) => ftRegistry.data?.[tokenId]?.metadata ?? null),
+  const { metadata, balance, balanceFloat } = useFtRegistryStore(
+    useShallow(
+      (ftRegistry) =>
+        ftRegistry.data?.[tokenId] ?? {
+          metadata: null,
+          balance: null,
+          balanceFloat: null,
+        },
+    ),
   );
 
   const error = useMemo(
     () =>
       metadata === null
-        ? new Error(`Fungible token ${tokenId} is not supported.`)
+        ? new Error(
+            `Fungible token ${tokenId} is not supported on this platform.`,
+          )
         : undefined,
 
     [metadata, tokenId],
   );
 
-  const isLoading = useMemo(
-    () => metadata === undefined && error === undefined,
-    [metadata, error],
-  );
-
-  return { isLoading, data: metadata ?? undefined, error };
+  return {
+    data: metadata ? { metadata, balance, balanceFloat } : undefined,
+    error,
+  };
 };
 
 export const useTokenUsdDisplayValue = ({

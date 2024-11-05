@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { indexer } from "@/common/api/indexer";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
@@ -40,7 +40,7 @@ export const ProjectCard = ({
 
   const estimatedMatchedAmount = ftService.useTokenUsdDisplayValue({
     amountFloat: yoctoNearToFloat(payoutDetails?.amount ?? "0"),
-    tokenId: NEAR_TOKEN_DENOM,
+    tokenId: NATIVE_TOKEN_ID,
   });
 
   const { name, description, plCategories } =

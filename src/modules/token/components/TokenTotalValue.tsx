@@ -1,8 +1,7 @@
-import { NEAR_DEFAULT_TOKEN_DECIMALS } from "@/common/constants";
+import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { bigStringToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { ByTokenId } from "@/common/types";
-import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
 import { TokenIcon } from "./TokenIcon";
@@ -19,15 +18,14 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   classNames,
   ...props
 }) => {
-  const { isLoading: isTokenLoading, data: token } =
-    ftService.useRegisteredToken({ tokenId });
+  const { data: token } = ftService.useRegisteredToken({ tokenId });
 
   const amount =
     "amountFloat" in props
       ? props.amountFloat
       : bigStringToFloat(
           props.amountBigString,
-          token?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
+          token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         );
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
@@ -39,17 +37,15 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
     <div className={cn("flex items-center gap-2", classNames?.root)}>
       {!textOnly && <TokenIcon size="medium" {...{ tokenId }} />}
 
-      {isTokenLoading ? (
-        <Skeleton className="" />
-      ) : (
+      {
         <span
           className={cn(
             "prose line-height-none font-600 text-xl",
             { "mt-0.7": !textOnly },
             classNames?.amount,
           )}
-        >{`${amount} ${token?.symbol ?? "⋯"}`}</span>
-      )}
+        >{`${amount} ${token?.metadata.symbol ?? "⋯"}`}</span>
+      }
 
       {totalAmountUsdValue && (
         <span

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { values } from "remeda";
 
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ftService } from "@/common/services";
 import {
   SelectField,
@@ -19,6 +19,8 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
   const { data: registeredFts = {} } = ftService.useTokenRegistry();
   const tokenOptions = useMemo(() => values(registeredFts), [registeredFts]);
 
+  console.log(props.defaultValue);
+
   return (
     // TODO: Move FormField wrapper from target parent layouts to here
     //? But do not forget to account for ability to use this component without forms
@@ -31,13 +33,13 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
       }}
       {...props}
     >
-      <SelectFieldOption value={NEAR_TOKEN_DENOM}>
-        {NEAR_TOKEN_DENOM.toUpperCase()}
+      <SelectFieldOption value={NATIVE_TOKEN_ID}>
+        {NATIVE_TOKEN_ID.toUpperCase()}
       </SelectFieldOption>
 
       {!props.disabled &&
         tokenOptions.map((token) =>
-          token && Number(token.balance) > 0 ? (
+          token && (token.balanceFloat ?? 0) > 0 ? (
             <SelectFieldOption
               key={token.contract_account_id}
               value={token.contract_account_id}

@@ -2,12 +2,13 @@ import { useState } from "react";
 
 import Link from "next/link";
 
+import { coingecko } from "@/common/api/coingecko";
 import { Toggle } from "@/common/assets/svgs";
 import { truncate } from "@/common/lib";
-import { AccountProfilePicture, oneNearUsdPrice } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { JoinDonation } from "@/modules/pot/hooks";
-import useProfileData from "@/modules/profile/hooks/data";
+import { useProfileData } from "@/modules/profile";
 
 import { Container, Row } from "./styles";
 
@@ -23,7 +24,7 @@ const Table = ({
   title: string;
 }) => {
   const [usdToggle, setUsdToggle] = useState(false);
-  const nearToUsdValue = oneNearUsdPrice();
+  const { data: nearToUsdValue } = coingecko.useOneNearUsdPrice();
 
   return (
     <Container>
@@ -75,10 +76,13 @@ type DonationProps = {
   index: number;
   usdToggle: boolean;
 };
+
 const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
+  const { data: oneNearUsdPrice } = coingecko.useOneNearUsdPrice();
   const profile = useProfileData(donorId);
+
   const matchedAmount = usdToggle
-    ? (nearAmount * oneNearUsdPrice()).toFixed(2)
+    ? (nearAmount * oneNearUsdPrice).toFixed(2)
     : nearAmount.toFixed(2);
 
   const url = `${routesPath.PROJECT}/${donorId}`;

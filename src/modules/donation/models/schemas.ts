@@ -11,7 +11,7 @@ import {
   string,
 } from "zod";
 
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { safePositiveNumber } from "@/common/lib";
 import { TokenAvailableBalance } from "@/modules/token";
 
@@ -28,9 +28,9 @@ import {
   isDonationMatchingPotSelected,
 } from "../utils/validation";
 
-export const donationTokenSchema = literal(NEAR_TOKEN_DENOM)
+export const donationTokenSchema = literal(NATIVE_TOKEN_ID)
   .or(string().min(6))
-  .default(NEAR_TOKEN_DENOM)
+  .default(NATIVE_TOKEN_ID)
   .describe('Either "NEAR" or FT contract account id.');
 
 export const donationAmount = safePositiveNumber;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { RPC_NODE_URL, walletApi } from "@/common/api/near";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   CampaignDonation,
   DirectCampaignDonationArgs,
@@ -103,7 +103,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     if (isSingleProjectDonation) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
-          if (tokenId !== NEAR_TOKEN_DENOM) {
+          if (tokenId !== NATIVE_TOKEN_ID) {
             console.log("FT direct donation mode ON");
 
             // const transactions = [];

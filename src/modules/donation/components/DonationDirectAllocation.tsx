@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { values } from "remeda";
 
 import { Pot, indexer } from "@/common/api/indexer";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ftService } from "@/common/services";
 import { ByAccountId, ByCampaignId } from "@/common/types";
 import {
@@ -68,7 +68,10 @@ export const DonationDirectAllocation: React.FC<
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
-  const tokeIdReset = useCallback(() => form.resetField("tokenId"), [form]);
+  const tokenIdReset = useCallback(() => {
+    console.log("hey?", tokenId);
+    form.setValue("tokenId", NATIVE_TOKEN_ID);
+  }, [form, tokenId]);
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,
@@ -114,7 +117,7 @@ export const DonationDirectAllocation: React.FC<
                             hint={disabled ? hintIfDisabled : hint}
                             onClick={
                               value === DonationAllocationStrategyEnum.split
-                                ? tokeIdReset
+                                ? tokenIdReset
                                 : undefined
                             }
                             {...{ disabled, label, value }}
@@ -135,7 +138,7 @@ export const DonationDirectAllocation: React.FC<
       hasMatchingPots,
       isCampaignDonation,
       isRecipientDataLoading,
-      tokeIdReset,
+      tokenIdReset,
     ],
   );
 
@@ -204,9 +207,10 @@ export const DonationDirectAllocation: React.FC<
                   render={({ field: inputExtension }) => (
                     <TokenSelector
                       disabled={
-                        isCampaignDonation ||
-                        allocationStrategy !==
-                          DonationAllocationStrategyEnum.full
+                        false
+                        // isCampaignDonation ||
+                        // allocationStrategy !==
+                        //   DonationAllocationStrategyEnum.full
                       }
                       defaultValue={inputExtension.value}
                       onValueChange={inputExtension.onChange}
@@ -216,9 +220,7 @@ export const DonationDirectAllocation: React.FC<
               }
               type="number"
               placeholder="0.00"
-              min={
-                tokenId === NEAR_TOKEN_DENOM ? DONATION_MIN_NEAR_AMOUNT : 0.0
-              }
+              min={tokenId === NATIVE_TOKEN_ID ? DONATION_MIN_NEAR_AMOUNT : 0.0}
               max={balanceFloat ?? undefined}
               step={0.01}
               appendix={totalAmountUsdValue}

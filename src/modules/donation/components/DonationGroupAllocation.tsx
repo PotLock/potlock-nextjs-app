@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import {

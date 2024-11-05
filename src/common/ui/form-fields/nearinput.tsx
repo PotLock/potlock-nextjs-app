@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ftService } from "@/common/services";
 
 import { TextField } from "./text";
@@ -19,7 +19,7 @@ export type NearInputFieldProps = InputFieldProps & {
 export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
   ({ disabled, className, label, labelExtension, ...props }) => {
     const usdAmountFloat = ftService.useTokenUsdDisplayValue({
-      tokenId: NEAR_TOKEN_DENOM,
+      tokenId: NATIVE_TOKEN_ID,
       amountFloat: typeof props.value === "number" ? props.value : 0.0,
     });
 
