@@ -31,7 +31,7 @@ export const TokenIcon = ({
   className,
   size = "medium",
 }: TokenIconProps) => {
-  const { data: token, isLoading } = ftService.useTokenMetadata({ tokenId });
+  const { data: token, isLoading } = ftService.useRegisteredToken({ tokenId });
   const { sizePx, rootClass, placeholderClass } = variants[size];
   const tokenSymbolFallback = isLoading ? "⋯" : "🪙";
 

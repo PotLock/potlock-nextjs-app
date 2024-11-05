@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
@@ -16,7 +16,6 @@ import {
   FormLabel,
   RadioGroup,
   RadioGroupItem,
-  SelectItem,
   Skeleton,
 } from "@/common/ui/components";
 import {
@@ -25,7 +24,7 @@ import {
   TextField,
 } from "@/common/ui/form-fields";
 import { ModalErrorBody } from "@/modules/core";
-import { TokenBalance } from "@/modules/token";
+import { TokenBalance, TokenSelector } from "@/modules/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import {
@@ -60,8 +59,6 @@ export const DonationDirectAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const { data: supportedFts = {} } = ftService.useSupportedTokens();
-
   const {
     isLoading: isRecipientDataLoading,
     data: recipient,
@@ -69,88 +66,128 @@ export const DonationDirectAllocation: React.FC<
   } = indexer.useAccount({ accountId });
 
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
-
   const isCampaignDonation = campaignId !== undefined;
+
+  const tokeIdReset = useCallback(() => form.resetField("tokenId"), [form]);
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,
     tokenId,
   });
 
-  const formLayout = useMemo(
-    () => (
+  const strategySelector = useMemo(
+    () =>
+      isCampaignDonation ? null : (
+        <FormField
+          control={form.control}
+          name="allocationStrategy"
+          render={({ field }) => (
+            <FormItem className="gap-3">
+              {isRecipientDataLoading ? (
+                <Skeleton className="w-59 h-3.5" />
+              ) : (
+                <FormLabel className="font-600">
+                  {"How do you want to allocate funds?"}
+                </FormLabel>
+              )}
+
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  {values(donationAllocationStrategies).map(
+                    ({ label, hint, hintIfDisabled, value }) => {
+                      const disabled =
+                        value === DonationAllocationStrategyEnum.split &&
+                        !hasMatchingPots;
+
+                      return (
+                        <FormItem key={value}>
+                          <RadioGroupItem
+                            id={`donation-options-${value}`}
+                            isLoading={isRecipientDataLoading}
+                            checked={
+                              field.value ===
+                              DonationAllocationStrategyEnum[value]
+                            }
+                            hint={disabled ? hintIfDisabled : hint}
+                            onClick={
+                              value === DonationAllocationStrategyEnum.split
+                                ? tokeIdReset
+                                : undefined
+                            }
+                            {...{ disabled, label, value }}
+                          />
+                        </FormItem>
+                      );
+                    },
+                  )}
+                </RadioGroup>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      ),
+
+    [
+      form.control,
+      hasMatchingPots,
+      isCampaignDonation,
+      isRecipientDataLoading,
+      tokeIdReset,
+    ],
+  );
+
+  const potSelector = useMemo(
+    () =>
+      allocationStrategy === DonationAllocationStrategyEnum.split &&
+      hasMatchingPots && (
+        <FormField
+          control={form.control}
+          name="potAccountId"
+          render={({ field }) => (
+            <SelectField
+              label="Select Pot"
+              defaultValue={field.value}
+              onValueChange={field.onChange}
+            >
+              {matchingPots?.map(({ account: potAccountId, name }) => (
+                <SelectFieldOption key={potAccountId} value={potAccountId}>
+                  {name}
+                </SelectFieldOption>
+              ))}
+            </SelectField>
+          )}
+        />
+      ),
+
+    [allocationStrategy, form.control, hasMatchingPots, matchingPots],
+  );
+
+  return recipientDataError ? (
+    <ModalErrorBody
+      heading="Project donation"
+      title="Unable to load recipient data!"
+      message={recipientDataError?.message}
+    />
+  ) : (
+    <>
+      <DialogHeader>
+        <DialogTitle>
+          {isCampaignDonation
+            ? "Donate to Campaign"
+            : `Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
+        </DialogTitle>
+      </DialogHeader>
+
       <DialogDescription>
-        {!isCampaignDonation && (
-          <FormField
-            control={form.control}
-            name="allocationStrategy"
-            render={({ field }) => (
-              <FormItem className="gap-3">
-                {isRecipientDataLoading ? (
-                  <Skeleton className="w-59 h-3.5" />
-                ) : (
-                  <FormLabel className="font-600">
-                    {"How do you want to allocate funds?"}
-                  </FormLabel>
-                )}
-
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    {values(donationAllocationStrategies).map(
-                      ({ label, hint, hintIfDisabled, value }) => {
-                        const disabled =
-                          value === DonationAllocationStrategyEnum.split &&
-                          !hasMatchingPots;
-
-                        return (
-                          <FormItem key={value}>
-                            <RadioGroupItem
-                              id={`donation-options-${value}`}
-                              isLoading={isRecipientDataLoading}
-                              checked={
-                                field.value ===
-                                DonationAllocationStrategyEnum[value]
-                              }
-                              hint={disabled ? hintIfDisabled : hint}
-                              {...{ disabled, label, value }}
-                            />
-                          </FormItem>
-                        );
-                      },
-                    )}
-                  </RadioGroup>
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        )}
+        {strategySelector}
 
         {allocationStrategy === DonationAllocationStrategyEnum.split &&
           potId && <DonationSybilWarning {...{ potId }} />}
 
-        {allocationStrategy === DonationAllocationStrategyEnum.split &&
-          hasMatchingPots && (
-            <FormField
-              control={form.control}
-              name="potAccountId"
-              render={({ field }) => (
-                <SelectField
-                  label="Select Pot"
-                  defaultValue={field.value}
-                  onValueChange={field.onChange}
-                >
-                  {matchingPots?.map(({ account: potAccountId, name }) => (
-                    <SelectFieldOption key={potAccountId} value={potAccountId}>
-                      {name}
-                    </SelectFieldOption>
-                  ))}
-                </SelectField>
-              )}
-            />
-          )}
+        {potSelector}
 
         <FormField
           control={form.control}
@@ -165,35 +202,15 @@ export const DonationDirectAllocation: React.FC<
                   control={form.control}
                   name="tokenId"
                   render={({ field: inputExtension }) => (
-                    <SelectField
-                      embedded
-                      label="Available tokens"
-                      disabled={false}
+                    <TokenSelector
+                      disabled={
+                        isCampaignDonation ||
+                        allocationStrategy !==
+                          DonationAllocationStrategyEnum.full
+                      }
                       defaultValue={inputExtension.value}
                       onValueChange={inputExtension.onChange}
-                      classes={{
-                        trigger:
-                          "mr-2px h-full w-min rounded-r-none shadow-none",
-                      }}
-                    >
-                      <SelectItem value={NEAR_TOKEN_DENOM}>
-                        {NEAR_TOKEN_DENOM.toUpperCase()}
-                      </SelectItem>
-
-                      {allocationStrategy ===
-                        DonationAllocationStrategyEnum.full &&
-                        Object.values(supportedFts).map(
-                          ({ contract_account_id, metadata, balance }) =>
-                            Number(balance) > 0 ? (
-                              <SelectItem
-                                key={contract_account_id}
-                                value={contract_account_id}
-                              >
-                                {metadata.symbol}
-                              </SelectItem>
-                            ) : null,
-                        )}
-                    </SelectField>
+                    />
                   )}
                 />
               }
@@ -214,42 +231,6 @@ export const DonationDirectAllocation: React.FC<
           )}
         />
       </DialogDescription>
-    ),
-
-    [
-      allocationStrategy,
-      balanceFloat,
-      form.control,
-      hasMatchingPots,
-      potId,
-      isBalanceSufficient,
-      isCampaignDonation,
-      isRecipientDataLoading,
-      matchingPots,
-      minAmountError,
-      supportedFts,
-      tokenId,
-      totalAmountUsdValue,
-    ],
-  );
-
-  return recipientDataError ? (
-    <ModalErrorBody
-      heading="Project donation"
-      title="Unable to load recipient data!"
-      message={recipientDataError?.message}
-    />
-  ) : (
-    <>
-      <DialogHeader>
-        <DialogTitle>
-          {isCampaignDonation
-            ? "Donate to Campaign"
-            : `Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
-        </DialogTitle>
-      </DialogHeader>
-
-      {formLayout}
     </>
   );
 };

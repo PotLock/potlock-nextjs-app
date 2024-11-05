@@ -9,7 +9,7 @@ import { ByTokenId } from "@/common/types";
 
 import { useFtRegistryStore } from "./models";
 
-export const useSupportedTokens = () => {
+export const useTokenRegistry = () => {
   const { data, error } = useFtRegistryStore(
     useShallow(pick(["data", "error"])),
   );
@@ -22,22 +22,26 @@ export const useSupportedTokens = () => {
   return { isLoading, data, error };
 };
 
-export const useTokenMetadata = ({ tokenId }: ByTokenId) => {
-  const { data, error } = useFtRegistryStore(
-    useShallow(pick(["data", "error"])),
+export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
+  const metadata = useFtRegistryStore(
+    useShallow((ftRegistry) => ftRegistry.data?.[tokenId]?.metadata ?? null),
+  );
+
+  const error = useMemo(
+    () =>
+      metadata === null
+        ? new Error(`Fungible token ${tokenId} is not supported.`)
+        : undefined,
+
+    [metadata, tokenId],
   );
 
   const isLoading = useMemo(
-    () => data === undefined && error === undefined,
-    [data, error],
+    () => metadata === undefined && error === undefined,
+    [metadata, error],
   );
 
-  const metadata = useMemo(
-    () => (data ? data[tokenId].metadata : undefined),
-    [data, tokenId],
-  );
-
-  return { isLoading, data: metadata, error };
+  return { isLoading, data: metadata ?? undefined, error };
 };
 
 export const useTokenUsdDisplayValue = ({

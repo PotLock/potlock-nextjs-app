@@ -58,7 +58,7 @@ export const DonationSuccess = ({
       ? (finalOutcome as DirectDonation).ft_id
       : NEAR_TOKEN_DENOM;
 
-  const { data: token } = ftService.useTokenMetadata({ tokenId });
+  const { data: token } = ftService.useRegisteredToken({ tokenId });
 
   const isLoading =
     isResultLoading || recipient === undefined || token === undefined;

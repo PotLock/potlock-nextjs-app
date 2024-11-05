@@ -13,7 +13,7 @@ export type FtRegistryEntry = {
   balance?: string;
 };
 
-export type FtRegistry = Record<TokenId, FtRegistryEntry>;
+export type FtRegistry = Record<TokenId, FtRegistryEntry | undefined>;
 
 type FtRegistryStoreState = {
   data?: FtRegistry;

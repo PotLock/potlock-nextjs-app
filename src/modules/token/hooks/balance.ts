@@ -35,7 +35,7 @@ export const useTokenBalance = ({
   );
 
   const { isLoading: isFtRegistryLoading, data: supportedFts = {} } =
-    ftService.useSupportedTokens();
+    ftService.useTokenRegistry();
 
   const isNearBalanceLoading = nearBalanceYoctoNear === null;
   const isBalanceLoading = isNearBalanceLoading || isFtRegistryLoading;

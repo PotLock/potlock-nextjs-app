@@ -25,7 +25,7 @@ import {
   TextField,
 } from "@/common/ui/form-fields";
 import { ModalErrorBody } from "@/modules/core";
-import { TokenBalance, TokenTotalValue } from "@/modules/token";
+import { TokenBalance, TokenSelector, TokenTotalValue } from "@/modules/token";
 
 import { DonationRecipientShares } from "./DonationRecipientShares";
 import { DonationSybilWarning } from "./DonationSybilWarning";
@@ -87,7 +87,7 @@ export const DonationGroupAllocation: React.FC<
     [form, totalAmountFloat],
   );
 
-  const strategySelect = useMemo(
+  const strategySelector = useMemo(
     () => (
       <FormField
         control={form.control}
@@ -166,7 +166,7 @@ export const DonationGroupAllocation: React.FC<
       </DialogHeader>
 
       <DialogDescription>
-        {strategySelect}
+        {strategySelector}
         {potId && <DonationSybilWarning {...{ potId }} />}
 
         {groupAllocationStrategy ===
@@ -184,21 +184,15 @@ export const DonationGroupAllocation: React.FC<
                     control={form.control}
                     name="tokenId"
                     render={({ field: inputExtension }) => (
-                      <SelectField
-                        embedded
-                        label="Available tokens"
-                        disabled //? FT donation is not supported in pots
+                      <TokenSelector
+                        /**
+                         *? INFO: pots only support NEAR donations, which is the default token
+                         *?  in this form already. Please make sure the last part stays that way.
+                         */
+                        disabled
                         defaultValue={inputExtension.value}
                         onValueChange={inputExtension.onChange}
-                        classes={{
-                          trigger:
-                            "mr-2px h-full w-min rounded-r-none shadow-none",
-                        }}
-                      >
-                        <SelectFieldOption value={NEAR_TOKEN_DENOM}>
-                          {NEAR_TOKEN_DENOM.toUpperCase()}
-                        </SelectFieldOption>
-                      </SelectField>
+                      />
                     )}
                   />
                 }

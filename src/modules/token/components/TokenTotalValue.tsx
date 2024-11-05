@@ -19,7 +19,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   classNames,
   ...props
 }) => {
-  const { isLoading: isTokenLoading, data: token } = ftService.useTokenMetadata(
+  const { isLoading: isTokenLoading, data: token } = ftService.useRegisteredToken(
     { tokenId },
   );
 
