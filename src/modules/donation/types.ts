@@ -6,9 +6,9 @@ import {
   PotBatchDonationItem,
   PotDonation,
 } from "@/common/contracts/potlock";
-import { ByAccountId, ByListId } from "@/common/types";
+import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
-export type DonationGroupAllocationKey = ByPotId | ByListId;
+export type DonationGroupAllocationKey = ByPotId | ByListId | ByCampaignId;
 
 export type DonationAllocationKey = ByAccountId | DonationGroupAllocationKey;
 

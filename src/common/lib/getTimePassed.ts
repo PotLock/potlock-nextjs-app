@@ -1,9 +1,15 @@
 // TODO: Move to datetime.ts and refactor using Temporal
 
-const getTimePassed = (timestamp: number, abbreviate?: boolean) => {
+const getTimePassed = (
+  timestamp: number,
+  abbreviate?: boolean,
+  isFuture?: boolean,
+) => {
   // Calculate the difference in milliseconds
   const currentTimestamp = new Date().getTime();
-  const timePassed = currentTimestamp - timestamp;
+  const timePassed = isFuture
+    ? timestamp - currentTimestamp
+    : currentTimestamp - timestamp;
 
   // Convert milliseconds to seconds, minutes, hours, etc.
   const secondsPassed = Math.floor(timePassed / 1000);

@@ -7,8 +7,6 @@ import {
 import { getRegistrations } from "@/common/contracts/potlock/lists";
 import {
   Filter,
-  Group,
-  GroupType,
   InfiniteScroll,
   SearchBar,
   SortSelect,
@@ -23,9 +21,9 @@ import { useProjectsFilters } from "../hooks/useProjectsFilters";
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
 export const ProjectsOverview = ({
-  currentFilterCategory,
+  // currentFilterCategory,
   setCurrentFilterCategory,
-  currentFilterStatus,
+  // currentFilterStatus,
   setCurrentFilterStatus,
   filteredRegistrations,
   setFilteredRegistrations,
