@@ -22,6 +22,24 @@ export const useSupportedTokens = () => {
   return { isLoading, data, error };
 };
 
+export const useTokenMetadata = ({ tokenId }: ByTokenId) => {
+  const { data, error } = useFtRegistryStore(
+    useShallow(pick(["data", "error"])),
+  );
+
+  const isLoading = useMemo(
+    () => data === undefined && error === undefined,
+    [data, error],
+  );
+
+  const metadata = useMemo(
+    () => (data ? data[tokenId].metadata : undefined),
+    [data, tokenId],
+  );
+
+  return { isLoading, data: metadata, error };
+};
+
 export const useTokenUsdDisplayValue = ({
   amountFloat,
   tokenId,

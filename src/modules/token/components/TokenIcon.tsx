@@ -1,8 +1,8 @@
 import Image from "next/image";
 
-import { pagoda } from "@/common/api/pagoda";
 import { NearIcon } from "@/common/assets/svgs";
 import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { ftService } from "@/common/services";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 
@@ -31,13 +31,10 @@ export const TokenIcon = ({
   className,
   size = "medium",
 }: TokenIconProps) => {
-  const { data: token, isLoading } = pagoda.useTokenMetadata({
-    tokenId,
-    disabled: tokenId === NEAR_TOKEN_DENOM,
-  });
-
+  const { data: token, isLoading } = ftService.useTokenMetadata({ tokenId });
   const { sizePx, rootClass, placeholderClass } = variants[size];
   const tokenSymbolFallback = isLoading ? "⋯" : "🪙";
+
   return (
     <span
       className={cn("flex items-center justify-center", rootClass, className)}

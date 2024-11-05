@@ -1,14 +1,16 @@
-import Big from "big.js";
+import { Big } from "big.js";
 
-import { NearBalanceResponse } from "@/common/api/pagoda";
 import { bigStringToFloat, formatWithCommas } from "@/common/lib";
+import { FungibleTokenMetadata } from "@/common/types";
 import { store } from "@/store";
 
 export const balanceToString = ({
   amount,
   metadata,
-}: NearBalanceResponse["balance"]) =>
-  `${bigStringToFloat(amount, metadata.decimals)} ${metadata.symbol}`;
+}: {
+  amount: string;
+  metadata: FungibleTokenMetadata;
+}) => `${bigStringToFloat(amount, metadata.decimals)} ${metadata.symbol}`;
 
 export const oneNearUsdPrice = () => store.getState().core.oneNearUsdPrice;
 

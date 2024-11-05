@@ -1,4 +1,3 @@
-import { pagoda } from "@/common/api/pagoda";
 import { NEAR_DEFAULT_TOKEN_DECIMALS } from "@/common/constants";
 import { bigStringToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
@@ -20,15 +19,16 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   classNames,
   ...props
 }) => {
-  const { isLoading: isTokenMetadataLoading, data: tokenMetadata } =
-    pagoda.useTokenMetadata({ tokenId });
+  const { isLoading: isTokenLoading, data: token } = ftService.useTokenMetadata(
+    { tokenId },
+  );
 
   const amount =
     "amountFloat" in props
       ? props.amountFloat
       : bigStringToFloat(
           props.amountBigString,
-          tokenMetadata?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
+          token?.decimals ?? NEAR_DEFAULT_TOKEN_DECIMALS,
         );
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
@@ -40,7 +40,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
     <div className={cn("flex items-center gap-2", classNames?.root)}>
       {!textOnly && <TokenIcon size="medium" {...{ tokenId }} />}
 
-      {isTokenMetadataLoading ? (
+      {isTokenLoading ? (
         <Skeleton className="" />
       ) : (
         <span
@@ -49,7 +49,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
             { "mt-0.7": !textOnly },
             classNames?.amount,
           )}
-        >{`${amount} ${tokenMetadata?.symbol ?? "⋯"}`}</span>
+        >{`${amount} ${token?.symbol ?? "⋯"}`}</span>
       )}
 
       {totalAmountUsdValue && (

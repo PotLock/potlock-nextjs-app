@@ -69,7 +69,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     const isCampaignDonation = campaignId !== undefined;
 
     const requiredDepositFloat =
-      // additional 0.0001 NEAR per message character
+      /* Additional 0.0001 NEAR per message character */
       DONATION_BASE_STORAGE_DEPOSIT_FLOAT + 0.0001 * (message?.length ?? 0);
 
     // const storageBalanceBounds = Near.view<any>(
@@ -250,6 +250,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         referrer_id: referrerAccountId,
         bypass_protocol_fee: bypassProtocolFee,
       };
+
       return void campaign
         .donate(args, floatToYoctoNear(amount))
         .then((result) => dispatch.donation.success(result as CampaignDonation))

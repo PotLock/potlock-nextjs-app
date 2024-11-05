@@ -62,14 +62,6 @@ export const DonationDirectAllocation: React.FC<
 
   const { data: supportedFts = {} } = ftService.useSupportedTokens();
 
-  const selectedFt = useMemo(
-    () => supportedFts[tokenId] ?? {},
-    [tokenId, supportedFts],
-  );
-
-  // TODO: WIP
-  console.log(selectedFt);
-
   const {
     isLoading: isRecipientDataLoading,
     data: recipient,
