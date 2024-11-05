@@ -4,7 +4,7 @@ import { pick } from "remeda";
 import { useShallow } from "zustand/shallow";
 
 import { coingecko } from "@/common/api/coingecko";
-import formatWithCommas from "@/common/lib/formatWithCommas";
+import { formatWithCommas } from "@/common/lib/formatWithCommas";
 import { ByTokenId } from "@/common/types";
 
 import { useFtRegistryStore } from "./models";
