@@ -11,6 +11,7 @@ export type EnvConfig = {
   contractMetadata: { version: string; repoUrl: string };
   donation: { contract: { accountId: string } };
   lists: { contract: { accountId: string } };
+  campaigns: { contract: { accountId: string } };
   potFactory: { contract: { accountId: string } };
   sybil: { app: { url: string }; contract: { accountId: string } };
   social: { app: { url: string }; contract: { accountId: string } };
@@ -55,6 +56,11 @@ export type ListId = number;
 
 export interface ByListId {
   listId: ListId;
+}
+
+export type CampaignId = number;
+export interface ByCampaignId {
+  campaignId: CampaignId;
 }
 
 /**
