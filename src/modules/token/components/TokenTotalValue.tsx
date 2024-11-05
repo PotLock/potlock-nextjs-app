@@ -19,9 +19,8 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   classNames,
   ...props
 }) => {
-  const { isLoading: isTokenLoading, data: token } = ftService.useRegisteredToken(
-    { tokenId },
-  );
+  const { isLoading: isTokenLoading, data: token } =
+    ftService.useRegisteredToken({ tokenId });
 
   const amount =
     "amountFloat" in props
