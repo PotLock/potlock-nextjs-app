@@ -2,7 +2,6 @@ import { useMemo } from "react";
 
 import { values } from "remeda";
 
-import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ftService } from "@/common/services";
 import {
   SelectField,
@@ -19,7 +18,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
   const { data: registeredFts = {} } = ftService.useTokenRegistry();
   const tokenOptions = useMemo(() => values(registeredFts), [registeredFts]);
 
-  console.log(props.defaultValue);
+  // console.log(props.defaultValue);
 
   return (
     // TODO: Move FormField wrapper from target parent layouts to here

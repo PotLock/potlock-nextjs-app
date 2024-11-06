@@ -73,6 +73,10 @@ export const DonationDirectAllocation: React.FC<
     [form],
   );
 
+  const isFtSupportAvailable =
+    !isCampaignDonation &&
+    allocationStrategy === DonationAllocationStrategyEnum.full;
+
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,
     tokenId,
@@ -206,12 +210,7 @@ export const DonationDirectAllocation: React.FC<
                   name="tokenId"
                   render={({ field: inputExtension }) => (
                     <TokenSelector
-                      disabled={
-                        false
-                        // isCampaignDonation ||
-                        // allocationStrategy !==
-                        //   DonationAllocationStrategyEnum.full
-                      }
+                      disabled={true} // TODO: {!isFtSupportAvailable}
                       defaultValue={inputExtension.value}
                       onValueChange={inputExtension.onChange}
                     />
