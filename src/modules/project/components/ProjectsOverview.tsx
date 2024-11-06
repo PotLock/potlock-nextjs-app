@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import Image from "next/image";
 
 import { ListRegistration } from "@/common/api/indexer";
+import { toChronologicalOrder } from "@/common/lib";
 import {
   Filter,
   InfiniteScroll,
@@ -42,25 +43,17 @@ export const ProjectsOverview = ({
     { label: "Least recent", value: "older" },
   ];
 
+  const chronologicallySortedProjects = useMemo(() => {
+    return toChronologicalOrder("submitted_at", filteredRegistrations);
+  }, [filteredRegistrations]);
+
   const handleSort = (sortType: string) => {
-    const projects = [...filteredRegistrations];
     switch (sortType) {
       case "recent":
-        projects.sort((a, b) => {
-          const dateA = new Date(a.submitted_at).getTime();
-          const dateB = new Date(b.submitted_at).getTime();
-
-          return dateB - dateA;
-        });
-        setFilteredRegistrations(projects);
+        setFilteredRegistrations(chronologicallySortedProjects.reverse());
         break;
       case "older":
-        projects.sort((a, b) => {
-          const dateA = new Date(a.submitted_at).getTime();
-          const dateB = new Date(b.submitted_at).getTime();
-          return dateA - dateB;
-        });
-        setFilteredRegistrations(projects);
+        setFilteredRegistrations(chronologicallySortedProjects);
         break;
       default:
         break;

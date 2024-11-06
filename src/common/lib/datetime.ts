@@ -65,7 +65,7 @@ export const toChronologicalOrder = <T>(
   propertyKey: keyof T,
   list: Array<T extends Record<string, string | number | unknown> ? T : T>,
 ) =>
-  list.length > 1
+  list?.length > 1
     ? list.toSorted((firstObject, secondObject) => {
         const [firstValue, secondValue] = [
           firstObject[propertyKey],
