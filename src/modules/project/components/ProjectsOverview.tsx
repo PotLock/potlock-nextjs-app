@@ -50,7 +50,7 @@ export const ProjectsOverview = ({
   const handleSort = (sortType: string) => {
     switch (sortType) {
       case "recent":
-        setFilteredRegistrations(chronologicallySortedProjects.reverse());
+        setFilteredRegistrations(chronologicallySortedProjects.toReversed());
         break;
       case "older":
         setFilteredRegistrations(chronologicallySortedProjects);
