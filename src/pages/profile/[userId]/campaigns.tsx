@@ -8,29 +8,29 @@ import { CampaignCard } from "@/modules/campaigns/components";
 import { ProfileLayout } from "@/modules/profile";
 
 const ProfileCampaigns = () => {
-    const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-    const {
-        query: { userId },
-    } = useRouteQuery();
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const {
+    query: { userId },
+  } = useRouteQuery();
 
-    useEffect(() => {
-        get_campaigns_by_owner({ owner_id: userId as AccountId })
-            .then((fetchedCampaigns) => {
-                setCampaigns(fetchedCampaigns);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, []);
-    return (
-        <div className="my-4 flex flex-wrap gap-8">
-            {campaigns?.map((data) => <CampaignCard data={data} key={data.id} />)}
-        </div>
-    );
+  useEffect(() => {
+    get_campaigns_by_owner({ owner_id: userId as AccountId })
+      .then((fetchedCampaigns) => {
+        setCampaigns(fetchedCampaigns);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+  return (
+    <div className="my-4 flex flex-wrap gap-8">
+      {campaigns?.map((data) => <CampaignCard data={data} key={data.id} />)}
+    </div>
+  );
 };
 
 ProfileCampaigns.getLayout = function getLayout(page: ReactElement) {
-    return <ProfileLayout>{page}</ProfileLayout>;
+  return <ProfileLayout>{page}</ProfileLayout>;
 };
 
 export default ProfileCampaigns;
