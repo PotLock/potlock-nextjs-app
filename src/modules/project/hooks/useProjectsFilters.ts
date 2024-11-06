@@ -49,7 +49,6 @@ export const useProjectsFilters = (
     try {
       if (filteredRegistrations) {
         setLoading(true);
-        // setFilteredProjects(filteredRegistrations);
         setCurrentFilterCategory(filteredRegistrations.join(","));
         setCurrentFilterStatus(filteredRegistrations.join(","));
       }
