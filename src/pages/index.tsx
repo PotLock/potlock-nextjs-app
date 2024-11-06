@@ -79,9 +79,7 @@ export default function Home() {
       <GeneralStats />
       <ProjectsOverviewFeatured />
       <ProjectsOverview
-        currentFilterCategory={currentFilterCategory}
         setCurrentFilterCategory={setCurrentFilterCategory}
-        currentFilterStatus={currentFilterStatus}
         setCurrentFilterStatus={setCurrentFilterStatus}
         filteredRegistrations={filteredRegistrations}
         setFilteredRegistrations={setFilteredRegistrations}

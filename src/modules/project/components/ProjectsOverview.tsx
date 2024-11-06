@@ -19,25 +19,18 @@ import { useProjectsFilters } from "../hooks/useProjectsFilters";
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
 export const ProjectsOverview = ({
-  currentFilterCategory,
   setCurrentFilterCategory,
-  currentFilterStatus,
   setCurrentFilterStatus,
   filteredRegistrations,
   setFilteredRegistrations,
 }: {
-  currentFilterCategory: string[];
   setCurrentFilterCategory: (type: string[]) => void;
-  currentFilterStatus: string;
   setCurrentFilterStatus: (type: string) => void;
   filteredRegistrations: ListRegistration[];
   setFilteredRegistrations: (type: any) => void;
 }) => {
   const [index, setIndex] = useState(1);
   const [search, setSearch] = useState("");
-  useEffect(() => {
-    console.log({ currentFilterCategory, currentFilterStatus });
-  }, [currentFilterCategory, currentFilterStatus]);
 
   const { registrations, tagList, loading } = useProjectsFilters(
     (type: string) => setCurrentFilterCategory([type]),
@@ -100,14 +93,7 @@ export const ProjectsOverview = ({
       return handleSearch(registration, profile);
     });
     setFilteredRegistrations(filtered);
-  }, [
-    search,
-    // currentFilterCategory,
-    // currentFilterStatus,
-    registrations,
-    registrationsProfile,
-    setFilteredRegistrations,
-  ]);
+  }, [search, registrations, registrationsProfile, setFilteredRegistrations]);
 
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
@@ -125,12 +111,7 @@ export const ProjectsOverview = ({
             placeholder="Search projects"
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
-          <Filter
-            // toggleProps={{
-            //   onValueChange: handleTag,
-            // }}
-            groups={tagList}
-          />
+          <Filter groups={tagList} />
           <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
         </div>
       </div>
