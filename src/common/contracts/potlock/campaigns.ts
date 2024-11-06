@@ -3,6 +3,7 @@ import { MemoryCache } from "@wpdas/naxios";
 import { naxiosInstance } from "@/common/api/near";
 import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/config";
 import { floatToYoctoNear } from "@/common/lib";
+import { AccountId } from "@/common/types";
 
 import {
   Campaign,
@@ -77,6 +78,11 @@ export const get_campaigns = () =>
 /**
  * GET CAMPAIGN
  */
+
+export const get_campaigns_by_owner = ({ owner_id }: { owner_id: AccountId }) =>
+  contractApi.view<{}, Campaign[]>("get_campaigns_by_owner", {
+    args: { owner_id },
+  });
 
 export interface GetCampaignInput {
   campaign_id: string;
