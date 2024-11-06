@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { ListRegistration, indexer } from "@/common/api/indexer";
-import { Registration } from "@/common/contracts/potlock/interfaces/lists.interfaces";
 import { Group, GroupType } from "@/common/ui/components";
 
 import { categories, statuses } from "../constants";
@@ -9,20 +8,20 @@ import { categories, statuses } from "../constants";
 export const useProjectsFilters = (
   setCurrentFilterCategory: (type: string) => void,
   setCurrentFilterStatus: (type: string) => void,
-  setFilteredProjects: any,
+  setFilteredProjects: (type: any) => void,
   ...props: any[]
 ) => {
   const [registrations, setRegistrations] = useState<ListRegistration[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<any>(undefined);
   const listId = "listId" in props ? props.listId : undefined;
 
-  const { data, isLoading } = indexer.useListRegistrations({});
+  const { data, isLoading } = indexer.useListRegistrations({ listId: 1 });
   const { data: filteredRegistrations } = indexer.useListRegistrations({
     listId: 1,
     category: categoryFilter.join(","),
-    status: statusFilter.join("."),
+    status: statusFilter,
   });
 
   const fetchAllRegistrations = useCallback(async () => {
@@ -30,38 +29,27 @@ export const useProjectsFilters = (
     try {
       if (data) {
         setRegistrations(data);
-        setFilteredProjects(data);
-        setCurrentFilterCategory(categoryFilter.join(","));
-        setCurrentFilterStatus(statusFilter.join(","));
+        setFilteredProjects(filteredRegistrations);
       }
     } catch (error) {
       console.log("Error fetching all registrations", error);
     } finally {
       setLoading(false);
     }
-  }, [
-    data,
-    setCurrentFilterCategory,
-    setFilteredProjects,
-    setCurrentFilterStatus,
-    setLoading,
-    categoryFilter,
-    statusFilter,
-  ]);
+  }, [data, filteredRegistrations, setFilteredProjects]);
 
   useEffect(() => {
     if (!isLoading) {
       fetchAllRegistrations();
-      console.log({ registrations });
     }
   }, [isLoading, fetchAllRegistrations, registrations]);
 
   // fetchfiltered
-
   const fetchFilteredRegistrations = useCallback(async () => {
     try {
       if (filteredRegistrations) {
         setLoading(true);
+        // setFilteredProjects(filteredRegistrations);
         setCurrentFilterCategory(filteredRegistrations.join(","));
         setCurrentFilterStatus(filteredRegistrations.join(","));
       }
@@ -86,21 +74,21 @@ export const useProjectsFilters = (
       type: GroupType.multiple,
       props: {
         value: categoryFilter,
-        onValueChange: (value: string[]) => setCategoryFilter(value),
+        onValueChange: (value: string[]) => {
+          setCategoryFilter(value);
+          console.log({ categoryFilter });
+        },
       },
     },
     {
       label: "Status",
       options: statuses,
-      type: GroupType.multiple,
+      type: GroupType.single,
       props: {
         value: statusFilter,
-        onValueChange: (value: string[]) => {
-          if (value[value.length - 1] === "all") {
-            setStatusFilter([""]);
-          } else if (value.includes("all")) {
-            const filter = value.filter((item: string) => item !== "all");
-            setStatusFilter(filter);
+        onValueChange: (value: string) => {
+          if (value === "all") {
+            setStatusFilter(undefined);
           } else {
             setStatusFilter(value);
           }
@@ -112,5 +100,8 @@ export const useProjectsFilters = (
   return {
     registrations,
     tagList,
+    loading,
+    fetchAllRegistrations,
+    fetchFilteredRegistrations,
   };
 };

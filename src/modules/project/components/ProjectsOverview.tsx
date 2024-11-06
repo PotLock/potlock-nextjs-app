@@ -1,95 +1,72 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  Registration,
-  RegistrationStatus,
-} from "@/common/contracts/potlock/interfaces/lists.interfaces";
-import { getRegistrations } from "@/common/contracts/potlock/lists";
+import Image from "next/image";
+
+import { ListRegistration } from "@/common/api/indexer";
 import {
   Filter,
   InfiniteScroll,
   SearchBar,
   SortSelect,
 } from "@/common/ui/components";
+import { ListCardSkeleton } from "@/modules/lists/components/ListCardSkeleton";
 import { Profile } from "@/modules/profile/models";
 import { useTypedSelector } from "@/store";
 
 import { ProjectCard } from "./ProjectCard";
-// import { categories, statuses } from "../constants";
 import { useProjectsFilters } from "../hooks/useProjectsFilters";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
 export const ProjectsOverview = ({
-  // currentFilterCategory,
+  currentFilterCategory,
   setCurrentFilterCategory,
-  // currentFilterStatus,
+  currentFilterStatus,
   setCurrentFilterStatus,
   filteredRegistrations,
   setFilteredRegistrations,
 }: {
-  currentFilterCategory: string;
-  setCurrentFilterCategory: (type: string) => void;
+  currentFilterCategory: string[];
+  setCurrentFilterCategory: (type: string[]) => void;
   currentFilterStatus: string;
   setCurrentFilterStatus: (type: string) => void;
-  filteredRegistrations: any;
+  filteredRegistrations: ListRegistration[];
   setFilteredRegistrations: (type: any) => void;
 }) => {
-  // const [filteredRegistrations, setFilteredRegistrations] = useState<
-  //   Registration[]
-  // >([]);
   const [index, setIndex] = useState(1);
-  // const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [search, setSearch] = useState("");
-  // const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  // const [statusFilter, setsStatusFilter] = useState<string[]>(["Approved"]);
+  useEffect(() => {
+    console.log({ currentFilterCategory, currentFilterStatus });
+  }, [currentFilterCategory, currentFilterStatus]);
 
-  const { registrations, tagList } = useProjectsFilters(
-    setCurrentFilterCategory,
+  const { registrations, tagList, loading } = useProjectsFilters(
+    (type: string) => setCurrentFilterCategory([type]),
     setCurrentFilterStatus,
     setFilteredRegistrations,
   );
-  const SORT_LIST_PROJEECTS = [
+  const SORT_LIST_PROJECTS = [
     { label: "Most recent", value: "recent" },
     { label: "Least recent", value: "older" },
   ];
-
-  // const tagsList: (Group<GroupType.multiple> | Group<GroupType.single>)[] = [
-  //   {
-  //     label: "Category",
-  //     options: categories,
-  //     type: GroupType.multiple,
-  //     props: {
-  //       value: categoryFilter,
-  //       onValueChange: (value: string[]) => setCategoryFilter(value),
-  //     },
-  //   },
-  //   {
-  //     label: "Status",
-  //     options: statuses,
-  //     type: GroupType.single,
-  //     props: {
-  //       value: statusFilter[0] || "",
-  //       onValueChange: (value: string) => {
-  //         if (value === "all") {
-  //           setsStatusFilter(["all"]);
-  //         } else {
-  //           setsStatusFilter([value]);
-  //         }
-  //       },
-  //     },
-  //   },
-  // ];
 
   const handleSort = (sortType: string) => {
     const projects = [...filteredRegistrations];
     switch (sortType) {
       case "recent":
-        projects.sort((a, b) => b.submitted_ms - a.submitted_ms);
+        projects.sort((a, b) => {
+          const dateA = new Date(a.submitted_at).getTime();
+          const dateB = new Date(b.submitted_at).getTime();
+
+          return dateB - dateA;
+        });
         setFilteredRegistrations(projects);
         break;
       case "older":
-        projects.sort((a, b) => a.submitted_ms - b.submitted_ms);
+        projects.sort((a, b) => {
+          const dateA = new Date(a.submitted_at).getTime();
+          const dateB = new Date(b.submitted_at).getTime();
+          return dateA - dateB;
+        });
         setFilteredRegistrations(projects);
         break;
       default:
@@ -102,9 +79,9 @@ export const ProjectsOverview = ({
   // handle search & filter
   useEffect(() => {
     // Search
-    const handleSearch = (registration: Registration, profile: Profile) => {
+    const handleSearch = (registration: ListRegistration, profile: Profile) => {
       if (search === "") return true;
-      const { registrant_id: registrantId } = registration;
+      const { id: registrantId } = registration.registrant;
       const { socialData, tags, team } = profile || {};
       // registration fields to search in
       const fields = [
@@ -117,57 +94,20 @@ export const ProjectsOverview = ({
 
       return fields.some((item) => (item || "").toLowerCase().includes(search));
     };
-    // Filter by registration status
-    // const handleStatus = (registration: Registration) => {
-    //   if (statusFilter.includes("all") || statusFilter.length === 0) {
-    //     return true;
-    //   }
-    //   return statusFilter.includes(registration.status);
-    // };
-    // // Filter by registration category
-    // const handleCategory = (profile: Profile) => {
-    //   const tags = profile.tags || [];
+    const filtered = registrations.filter((registration) => {
+      const profile = registrationsProfile[registration.registrant.id] || {};
 
-    //   if (categoryFilter.length === 0) return true;
-    //   return categoryFilter.some((tag: string) => tags.includes(tag));
-    // };
-
-    // if (search || categoryFilter.length || statusFilter.length) {
-    //   const filteredRegistrations = registrations.filter((registration) => {
-    //     const profile = registrationsProfile[registration.registrant_id] || {};
-
-    //     return (
-    //       handleSearch(registration, profile) &&
-    //       handleCategory(profile) &&
-    //       handleStatus(registration)
-    //     );
-    //   });
-
-    //   setFilteredRegistrations(filteredRegistrations);
-    // }
+      return handleSearch(registration, profile);
+    });
+    setFilteredRegistrations(filtered);
   }, [
     search,
-    // categoryFilter,
-    // statusFilter,
+    // currentFilterCategory,
+    // currentFilterStatus,
     registrations,
     registrationsProfile,
+    setFilteredRegistrations,
   ]);
-
-  // Fetch Registrations
-  useEffect(() => {
-    const fetchRegistrations = async () => {
-      const registrations = await getRegistrations();
-      registrations.sort(() => Math.random() - 0.5);
-
-      const approvedRegistrations = registrations.filter(
-        (registration) => registration.status == RegistrationStatus.Approved,
-      );
-
-      // setRegistrations(registrations);
-      setFilteredRegistrations(approvedRegistrations);
-    };
-    fetchRegistrations();
-  }, []);
 
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
@@ -177,7 +117,7 @@ export const ProjectsOverview = ({
           <span
             style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
           >
-            {filteredRegistrations.length}
+            {filteredRegistrations?.length}
           </span>
         </div>
         <div className="flex w-full items-center gap-4">
@@ -191,29 +131,41 @@ export const ProjectsOverview = ({
             // }}
             groups={tagList}
           />
-          <SortSelect
-            options={SORT_LIST_PROJEECTS}
-            onValueChange={handleSort}
-          />
+          <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
         </div>
       </div>
-      {filteredRegistrations.length ? (
+      {loading ? (
+        Array.from({ length: 6 }, (_, index) => (
+          <ListCardSkeleton key={index} />
+        ))
+      ) : filteredRegistrations?.length ? (
         <InfiniteScroll
           className="p-0.5"
           items={filteredRegistrations}
           index={index}
           setIndex={setIndex}
           size={MAXIMUM_CARDS_PER_INDEX}
-          renderItem={(registration: Registration) => (
+          renderItem={(registration: ListRegistration) => (
             <ProjectCard
-              projectId={registration.registrant_id}
+              projectId={registration.registrant.id}
               key={registration.id}
             />
           )}
         />
       ) : (
-        <div style={{ alignSelf: "flex-start", margin: "24px 0px" }}>
-          No results
+        <div className="min-h-100 flex w-full flex-col items-center justify-center">
+          <Image
+            src="/assets/icons/no-list.svg"
+            alt=""
+            width={200}
+            height={200}
+            className="mb-4 h-[200px] w-[200px]"
+          />
+          <div className="md:flex-row flex flex-col items-center justify-center gap-2">
+            <p className="w-100 text-center font-lora italic">
+              No results found
+            </p>
+          </div>
         </div>
       )}
     </div>
