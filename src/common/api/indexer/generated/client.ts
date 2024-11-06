@@ -22,6 +22,10 @@ export type V1RoundsApplicationsRetrieveParams = {
 
 export type V1RoundsRetrieveParams = {
   /**
+   * Filter projects by chain
+   */
+  chain?: string;
+  /**
    * Page number for pagination
    */
   page?: number;
@@ -943,7 +947,7 @@ export interface Round {
    */
   application_start?: string | null;
   /** Projects Approved for round. */
-  approved_projects: number[];
+  approved_projects: string[];
   /**
    * Base currency.
    * @maxLength 64
@@ -1273,7 +1277,7 @@ export interface RoundApplication {
    * @nullable
    */
   message?: string | null;
-  project: Project;
+  project: Account;
   reviews: ApplicationReview[];
   round: Round;
   /** Application status.
