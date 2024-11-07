@@ -12,6 +12,7 @@ export const hrefByRouteName = {
   DONORS: "/donors",
   LIST: "/lists",
   PROFILE: "/profile",
+  CAMPAIGNS: "/campaigns",
   EDIT_PROFILE: "/editprofile",
 };
 

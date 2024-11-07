@@ -10,6 +10,30 @@ import { ListCardSkeleton } from "./ListCardSkeleton";
 import { NoListItem } from "./NoListItem";
 import { NoListItemType } from "../types";
 
+const defaultBgImages = [
+  {
+    background: "/assets/images/list-gradient-01.png",
+    backdrop: "/assets/images/list_backdrop_2.png",
+  },
+  {
+    background: "/assets/images/list-gradient-2.png",
+    backdrop: "/assets/images/list_bg_image.png",
+  },
+  {
+    background: "/assets/images/list-gradient-3.png",
+    backdrop: "/assets/images/list_bg_image.png",
+  },
+  {
+    background: "/assets/images/list-gradient-4.png",
+    backdrop: "/assets/images/list_backdrop_2.png",
+  },
+];
+
+export const getRandomBackgroundImage = () => {
+  const randomIndex = Math.floor(Math.random() * defaultBgImages.length);
+  return defaultBgImages[randomIndex];
+};
+
 export const ListsOverview = ({
   currentListType,
   setCurrentListType,
@@ -32,25 +56,6 @@ export const ListsOverview = ({
   const SORT_LIST_PROJECTS = [
     { label: "Most recent", value: "recent" },
     { label: "Least recent", value: "older" },
-  ];
-
-  const defaultBgImages = [
-    {
-      background: "/assets/images/list-gradient-01.png",
-      backdrop: "/assets/images/list_backdrop_2.png",
-    },
-    {
-      background: "/assets/images/list-gradient-2.png",
-      backdrop: "/assets/images/list_bg_image.png",
-    },
-    {
-      background: "/assets/images/list-gradient-3.png",
-      backdrop: "/assets/images/list_bg_image.png",
-    },
-    {
-      background: "/assets/images/list-gradient-4.png",
-      backdrop: "/assets/images/list_backdrop_2.png",
-    },
   ];
 
   const handleSort = (sortType: string) => {
@@ -85,11 +90,6 @@ export const ListsOverview = ({
     );
     setFilteredRegistrations(filtered);
   }, [search, registrations, setFilteredRegistrations]);
-
-  const getRandomBackgroundImage = () => {
-    const randomIndex = Math.floor(Math.random() * defaultBgImages.length);
-    return defaultBgImages[randomIndex];
-  };
 
   const noData =
     search !== "" && filteredRegistrations.length === 0

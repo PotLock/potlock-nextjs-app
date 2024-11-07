@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { NETWORK } from "@/common/config";
 import { DEBUG } from "@/common/constants";
 import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
@@ -16,6 +17,12 @@ import routesPath, { hrefByRouteName } from "../routes";
 const links = [
   { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },
   { label: "Pots", url: routesPath.POTS, disabled: false },
+  {
+    label: "Campaigns",
+    url: routesPath.CAMPAIGNS,
+    disabled: NETWORK !== "testnet",
+  },
+
   { label: "Feed", url: routesPath.FEED, disabled: false },
   // { label: "Donors", url: routesPath.DONORS, disabled: false },
 

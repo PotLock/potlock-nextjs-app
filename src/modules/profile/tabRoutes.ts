@@ -26,6 +26,16 @@ export const tabRoutesProject = [
     id: "donations",
     href: "/donations",
   },
+  {
+    label: "Lists",
+    id: "lists",
+    href: "/lists",
+  },
+  {
+    label: "Campaigns",
+    id: "campaigns",
+    href: "/campaigns",
+  },
 ] as TabNav[];
 
 export const tabRoutesProfile = [

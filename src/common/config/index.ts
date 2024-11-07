@@ -15,6 +15,9 @@ export const {
   lists: {
     contract: { accountId: LISTS_CONTRACT_ACCOUNT_ID },
   },
+  campaigns: {
+    contract: { accountId: CAMPAIGNS_CONTRACT_ACCOUNT_ID },
+  },
 
   potFactory: {
     contract: { accountId: POT_FACTORY_CONTRACT_ACCOUNT_ID },

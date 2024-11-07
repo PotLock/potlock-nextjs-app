@@ -31,7 +31,7 @@ export default function GlobalFeedsPage() {
     fetchGlobalFeeds({ accountIds })
       .then((posts) => {
         setLoadingMore(false);
-        setFeedPosts(posts); // Flatten the array if necessary
+        setFeedPosts(posts);
         setIsLoading(false);
       })
       .catch((err) => {
