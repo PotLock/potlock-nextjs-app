@@ -2,9 +2,8 @@ import { injected, walletConnect } from "@wagmi/connectors";
 import { createConfig, http, reconnect } from "@wagmi/core";
 import { createWeb3Modal } from "@web3modal/wagmi";
 
-import { NETWORK } from "@/common/config";
-
-import { EVMWalletChain, projectId } from "./evmWalletConfig";
+import { NETWORK } from "@/common/_config";
+import { EVMWalletChain, projectId } from "@/common/_config/evmWalletConfig";
 
 // Config
 const near = {

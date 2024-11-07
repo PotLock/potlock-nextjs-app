@@ -1,6 +1,6 @@
 import { Network } from "@wpdas/naxios";
 
-import { NETWORK } from "@/common/config";
+import { NETWORK } from "@/common/_config";
 
 // Chains for EVM Wallets
 export const evmWalletChains = {

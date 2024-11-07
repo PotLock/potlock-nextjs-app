@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 
-import { useNearUsdDisplayValue } from "@/modules/core";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { ftService } from "@/common/services";
 
 import { TextField } from "./text";
 import { FormControl, FormItem, FormLabel } from "../components";
@@ -17,7 +18,10 @@ export type NearInputFieldProps = InputFieldProps & {
 
 export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
   ({ disabled, className, label, labelExtension, ...props }) => {
-    const nearAmountInUSD = useNearUsdDisplayValue(Number(props.value));
+    const usdAmountFloat = ftService.useTokenUsdDisplayValue({
+      tokenId: NATIVE_TOKEN_ID,
+      amountFloat: typeof props.value === "number" ? props.value : 0.0,
+    });
 
     return (
       <FormItem>
@@ -44,7 +48,7 @@ export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
 
         <FormControl>
           <TextField
-            appendix={nearAmountInUSD || "$0.00"}
+            appendix={usdAmountFloat || "$0.00"}
             disabled={disabled}
             classNames={{ root: className }}
             inputExtension="NEAR"

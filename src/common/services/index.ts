@@ -1,2 +1,1 @@
-export * from "./fetchNearPrice";
-export * from "./transactions";
+export * as ftService from "./ft";

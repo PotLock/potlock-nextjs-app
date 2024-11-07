@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
+import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/config";
 import { FULL_TGAS } from "@/common/constants";
 
 import {
@@ -9,12 +9,9 @@ import {
   DirectDonation,
   DirectDonationArgs,
   DirectDonationConfig,
-} from "./interfaces/donate.interfaces";
+} from "./interface";
 
-/**
- * NEAR Contract API
- */
-export const contractApi = naxiosInstance.contractApi({
+const contractApi = naxiosInstance.contractApi({
   contractId: DONATION_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });

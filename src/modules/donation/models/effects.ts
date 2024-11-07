@@ -1,4 +1,7 @@
-import { walletApi } from "@/common/api/near";
+import axios from "axios";
+
+import { RPC_NODE_URL, walletApi } from "@/common/api/near";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   CampaignDonation,
   DirectCampaignDonationArgs,
@@ -7,14 +10,15 @@ import {
   PotDonation,
   PotDonationArgs,
   campaign,
-  donate,
+  donationClient,
   pot,
 } from "@/common/contracts/potlock";
 import { floatToYoctoNear } from "@/common/lib";
-import { getTransactionStatus } from "@/common/services";
+import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
+import { DONATION_BASE_STORAGE_DEPOSIT_FLOAT } from "../constants";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
@@ -22,6 +26,24 @@ import {
   DonationPotBatchCallDraft,
 } from "../types";
 import { donationInputsToBatchDonationDraft } from "../utils/normalization";
+
+/**
+ * @deprecated use `nearRpc.txStatus()`
+ */
+const getTransactionStatus = ({
+  wait_until = "EXECUTED_OPTIMISTIC",
+  ...params
+}: {
+  tx_hash: string;
+  sender_account_id: AccountId;
+  wait_until?: TxExecutionStatus;
+}) =>
+  axios.post(RPC_NODE_URL, {
+    jsonrpc: "2.0",
+    id: "dontcare",
+    method: "tx",
+    params: { wait_until, ...params },
+  });
 
 export const effects = (dispatch: AppDispatcher) => ({
   submit: async (
@@ -37,6 +59,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       bypassProtocolFee,
       bypassChefFee,
       message,
+      tokenId,
       ...params
     } = inputs;
 
@@ -44,20 +67,161 @@ export const effects = (dispatch: AppDispatcher) => ({
     const isPotDonation = "potId" in params;
     const isListDonation = listId !== undefined;
     const isCampaignDonation = campaignId !== undefined;
+
+    const requiredDepositFloat =
+      /* Additional 0.0001 NEAR per message character */
+      DONATION_BASE_STORAGE_DEPOSIT_FLOAT + 0.0001 * (message?.length ?? 0);
+
+    // const storageBalanceBounds = Near.view<any>(
+    //   selectedDenomination.id,
+    //   "storage_balance_bounds",
+    //   {},
+    // );
+
+    // const storageBalanceProtocolFeeRecipient = Near.view<any>(
+    //   selectedDenomination.id,
+    //   "storage_balance_of",
+    //   {
+    //     account_id: protocolFeeRecipientAccount,
+    //   },
+    // );
+
+    // const storageBalanceReferrer = referrerId
+    //   ? Near.view<any>(selectedDenomination.id, "storage_balance_of", {
+    //       account_id: referrerId,
+    //     })
+    //   : null;
+
+    // const storageBalanceDonationContract = Near.view<any>(
+    //   selectedDenomination.id,
+    //   "storage_balance_of",
+    //   {
+    //     account_id: DONATION_CONTRACT_ACCOUNT_ID,
+    //   },
+    // );
+
     if (isSingleProjectDonation) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
-          const args: DirectDonationArgs = {
-            recipient_id: params.accountId,
-            message,
-            referrer_id: referrerAccountId,
-            bypass_protocol_fee: bypassProtocolFee,
-          };
+          if (tokenId !== NATIVE_TOKEN_ID) {
+            console.log("FT direct donation mode ON");
 
-          return void donate
-            .donate(args, floatToYoctoNear(amount))
-            .then((result) => dispatch.donation.success(result))
-            .catch((error) => dispatch.donation.failure(error));
+            // const transactions = [];
+
+            // // adding storage deposit
+            // transactions.push({
+            //   contractName: DONATION_CONTRACT_ACCOUNT_ID,
+            //   methodName: "storage_deposit",
+            //   args: {},
+            //   deposit: Big(requiredDepositFloat).mul(Big(10).pow(24)),
+            //   gas: "100000000000000",
+            // });
+
+            // const { min, max } = storageBalanceBounds;
+            // const storageMaxBig = Big(max);
+
+            // // check storage balance for each account
+            // if (
+            //   !bypassProtocolFee &&
+            //   (!storageBalanceProtocolFeeRecipient ||
+            //     Big(storageBalanceProtocolFeeRecipient.total).lt(storageMaxBig))
+            // ) {
+            //   transactions.push({
+            //     contractName: tokenId,
+            //     methodName: "storage_deposit",
+            //     args: { account_id: protocolFeeRecipientAccount },
+            //     deposit: storageMaxBig.minus(
+            //       Big(storageBalanceProtocolFeeRecipient || 0),
+            //     ),
+            //     gas: "100000000000000",
+            //   });
+            // }
+
+            // // referrer
+            // if (
+            //   referrerAccountId &&
+            //   (!storageBalanceReferrer ||
+            //     Big(storageBalanceReferrer.total).lt(storageMaxBig))
+            // ) {
+            //   transactions.push({
+            //     contractName: tokenId,
+            //     methodName: "storage_deposit",
+            //     args: { account_id: referrerAccountId },
+            //     deposit: storageMaxBig.minus(Big(storageBalanceReferrer || 0)),
+            //     gas: "100000000000000",
+            //   });
+            // }
+
+            // // donation contract
+            // if (
+            //   !storageBalanceDonationContract ||
+            //   Big(storageBalanceDonationContract.total).lt(storageMaxBig)
+            // ) {
+            //   transactions.push({
+            //     contractName: tokenId,
+            //     methodName: "storage_deposit",
+            //     args: { account_id: constants.DONATION_CONTRACT_ID },
+            //     deposit: storageMaxBig.minus(
+            //       Big(storageBalanceDonationContract || 0),
+            //     ),
+            //     gas: "100000000000000",
+            //   });
+            // }
+
+            // // project (can't do this till this point)
+            // Near.asyncView(tokenId, "storage_balance_of", {
+            //   account_id: params.accountId,
+            // }).then((balance) => {
+            //   if (!balance || Big(balance.total).lt(storageMaxBig)) {
+            //     transactions.push({
+            //       contractName: tokenId,
+            //       methodName: "storage_deposit",
+            //       args: { account_id: params.accountId },
+            //       deposit: storageMaxBig.minus(Big(balance || 0)),
+            //       gas: "100000000000000",
+            //     });
+            //   }
+
+            //   // add donation transaction
+            //   transactions.push({
+            //     contractName: tokenId,
+            //     methodName: "ft_transfer_call",
+            //     args: {
+            //       receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
+
+            //       amount: Big(amount)
+            //         .mul(new Big(10).pow(selectedDenomination.decimals))
+            //         .toFixed(0),
+
+            //       msg: JSON.stringify({
+            //         recipient_id: params.accountId,
+            //         referrer_id: referrerAccountId || null,
+            //         bypass_protocol_fee: bypassProtocolFee,
+            //         message,
+            //       }),
+            //     },
+
+            //     deposit: "1",
+            //     gas: "300000000000000",
+            //   });
+
+            //   Near.call(transactions);
+            // });
+
+            return void "WIP";
+          } else {
+            const args: DirectDonationArgs = {
+              recipient_id: params.accountId,
+              message,
+              referrer_id: referrerAccountId,
+              bypass_protocol_fee: bypassProtocolFee,
+            };
+
+            return void donationClient
+              .donate(args, floatToYoctoNear(amount))
+              .then((result) => dispatch.donation.success(result))
+              .catch((error) => dispatch.donation.failure(error));
+          }
         }
 
         case DonationAllocationStrategyEnum.split: {
@@ -86,6 +250,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         referrer_id: referrerAccountId,
         bypass_protocol_fee: bypassProtocolFee,
       };
+
       return void campaign
         .donate(args, floatToYoctoNear(amount))
         .then((result) => dispatch.donation.success(result as CampaignDonation))
@@ -105,7 +270,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         inputs,
       ) as DonationDirectBatchCallDraft;
 
-      return void donate.donateBatch(batchTxDraft.entries);
+      return void donationClient.donateBatch(batchTxDraft.entries);
     } else {
       return void dispatch.donation.failure(
         new Error("Unable to determine donation type."),

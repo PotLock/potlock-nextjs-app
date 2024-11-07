@@ -4,12 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema, ZodError } from "zod";
 
-import { ByPotId, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
 import {
   CONTRACT_SOURCECODE_REPO_URL,
   CONTRACT_SOURCECODE_VERSION,
-} from "@/common/config";
+} from "@/common/_config";
+import { ByPotId, indexer } from "@/common/api/indexer";
+import { walletApi } from "@/common/api/near";
 import { PotConfig } from "@/common/contracts/potlock";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/modules/core";

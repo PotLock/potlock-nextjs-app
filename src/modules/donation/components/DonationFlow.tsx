@@ -4,7 +4,6 @@ import { useRouteQuery } from "@/common/lib";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ModalErrorBody } from "@/modules/core";
-import { useTokenBalance } from "@/modules/token";
 import { dispatch } from "@/store";
 
 import { DonationConfirmation } from "./DonationConfirmation";
@@ -39,6 +38,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     isDisabled,
     onSubmit,
     totalAmountFloat,
+    token,
   } = useDonationForm({
     ...props,
 
@@ -49,14 +49,13 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   });
 
   const inputs = form.watch();
-  const { balanceFloat } = useTokenBalance(inputs);
 
   const allocationScreenProps = useMemo(
     () => ({
       form,
       isBalanceSufficient,
       minAmountError,
-      balanceFloat,
+      balanceFloat: token?.balanceFloat ?? 0.0,
       totalAmountFloat,
       matchingPots,
       ...inputs,
@@ -64,7 +63,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     }),
 
     [
-      balanceFloat,
+      token?.balanceFloat,
       form,
       inputs,
       isBalanceSufficient,

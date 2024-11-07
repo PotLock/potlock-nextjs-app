@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { dropTimezoneIndicator } from "@/common/lib";
 import {
   Alert,
@@ -284,15 +284,15 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     inputExtension={
                       <SelectField
                         label="Available tokens"
-                        defaultValue={NEAR_TOKEN_DENOM}
+                        defaultValue={NATIVE_TOKEN_ID}
                         embedded
                         disabled
                         classes={{
                           trigger: "h-full w-min rounded-r-none shadow-none",
                         }}
                       >
-                        <SelectFieldOption value={NEAR_TOKEN_DENOM}>
-                          {NEAR_TOKEN_DENOM.toUpperCase()}
+                        <SelectFieldOption value={NATIVE_TOKEN_ID}>
+                          {NATIVE_TOKEN_ID.toUpperCase()}
                         </SelectFieldOption>
                       </SelectField>
                     }

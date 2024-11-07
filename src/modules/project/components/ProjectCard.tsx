@@ -1,15 +1,13 @@
 import Link from "next/link";
 
 import { indexer } from "@/common/api/indexer";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { PayoutDetailed } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
+import { ftService } from "@/common/services";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import {
-  AccountProfileCover,
-  AccountProfilePicture,
-  useNearUsdDisplayValue,
-} from "@/modules/core";
+import { AccountProfileCover, AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useDonation } from "@/modules/donation";
 
@@ -40,9 +38,10 @@ export const ProjectCard = ({
     accountId: projectId,
   });
 
-  const estimatedMatchedAmount = useNearUsdDisplayValue(
-    yoctoNearToFloat(payoutDetails?.amount ?? "0"),
-  );
+  const estimatedMatchedAmount = ftService.useTokenUsdDisplayValue({
+    amountFloat: yoctoNearToFloat(payoutDetails?.amount ?? "0"),
+    tokenId: NATIVE_TOKEN_ID,
+  });
 
   const { name, description, plCategories } =
     account?.near_social_profile_data ?? {};

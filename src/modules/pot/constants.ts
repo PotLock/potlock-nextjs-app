@@ -1,4 +1,4 @@
-import { NETWORK, POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/config";
+import { NETWORK, POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { TabNav } from "@/modules/profile/types";
 
 export const POT_MIN_NAME_LENGTH = 3;

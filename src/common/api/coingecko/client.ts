@@ -9,7 +9,8 @@ export const client = axios.create({
 export const CLIENT_CONFIG: ClientConfig = {
   swr: {
     revalidateOnFocus: false,
-    refreshInterval: 60000,
-    focusThrottleInterval: 30000,
+    revalidateIfStale: false,
+    revalidateOnMount: false,
+    refreshInterval: 1800000,
   },
 };

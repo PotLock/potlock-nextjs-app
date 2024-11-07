@@ -1,4 +1,4 @@
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 
 import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
@@ -13,7 +13,7 @@ export const isDonationAmountSufficient = ({
   tokenId,
   amount,
 }: DonationAmountValidationInputs) =>
-  tokenId === NEAR_TOKEN_DENOM
+  tokenId === NATIVE_TOKEN_ID
     ? amount >= DONATION_MIN_NEAR_AMOUNT
     : amount > 0.0;
 

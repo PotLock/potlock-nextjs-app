@@ -8,9 +8,8 @@
     "lint": "next lint",
     "format": "yarn lint --fix ./",
     "typecheck": "tsc --noEmit",
-    "generate:api-pagoda": "orval --config pagoda-eapi.config.cjs",
-    "generate:api-potlock": "orval --config indexer-api.config.cjs",
-    "generate:api": "concurrently 'yarn generate:api-potlock' 'yarn generate:api-pagoda'",
+    "generate:indexer-api": "orval --config indexer-api.config.cjs",
+    "generate:api": "concurrently 'yarn generate:indexer-api'",
     "generate:css": "unocss 'src/**/*.tsx' --out-file=src/common/ui/styles/uno.generated.css --write-transformed",
     "dev:css": "yarn generate:css --watch",
     "dev:test": "yarn && vitest watch",
@@ -107,7 +106,8 @@
     "temporal-polyfill": "^0.2.5",
     "viem": "^2.21.27",
     "wagmi": "^2.12.16",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",

@@ -6,11 +6,11 @@ import {
 } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
-import { naxiosInstance } from "@/common/api/near";
 import {
   LISTS_CONTRACT_ACCOUNT_ID,
   SOCIAL_CONTRACT_ACCOUNT_ID,
-} from "@/common/config";
+} from "@/common/_config";
+import { naxiosInstance } from "@/common/api/near";
 import {
   FIFTY_TGAS,
   FULL_TGAS,

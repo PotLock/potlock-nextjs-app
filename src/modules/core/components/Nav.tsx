@@ -4,8 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { NETWORK } from "@/common/config";
-import { DEBUG } from "@/common/constants";
+import { NETWORK } from "@/common/_config";
 import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
 import { SignInButton, useAuth } from "@/modules/auth";

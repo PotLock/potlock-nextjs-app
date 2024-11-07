@@ -6,6 +6,9 @@ import { Pot } from "@/common/api/indexer";
 import { yoctosToNear } from "@/common/lib";
 import { yoctosToUsdWithFallback } from "@/modules/core";
 
+/**
+ * @deprecated use `ftService`
+ */
 const useNearAndUsdByPot = ({ pot }: { pot?: Pot }) => {
   const [amountNear, setAmountNear] = useState(
     pot ? yoctosToNear(pot.matching_pool_balance, true) : undefined,

@@ -1,4 +1,4 @@
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import { DirectDonation } from "@/common/contracts/potlock/donation/interface";
 
 export const directDonationMock: DirectDonation = {
   id: 2665,
