@@ -24,6 +24,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  Textarea,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfileCover, AccountProfilePicture } from "@/modules/core";
@@ -47,6 +48,7 @@ export const AccountCard = ({
 }) => {
   const [registrationStatus, setRegistrationStatus] =
     useState<RegistrationStatus>(RegistrationStatus.Pending);
+  const [note, setNote] = useState<string>("");
 
   const status = listRegistrationStatuses[registrationStatus];
 
@@ -87,6 +89,7 @@ export const AccountCard = ({
   const handleUpdateStatus = () => {
     update_registered_project({
       registration_id: dataForList.id,
+      ...(note && { notes: note }),
       status: statusChange.status as RegistrationStatus,
     })
       .then((data) => setRegistrationStatus(data.status))
@@ -99,41 +102,42 @@ export const AccountCard = ({
   };
 
   return (
-    <Link href={`/profile/${dataForList.registrant.id}`}>
-      <div className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]">
-        <div
-          className="overflow-hidden rounded-md bg-white font-lora shadow-md"
-          data-testid="list-card"
-        >
-          <AccountProfileCover
-            accountId={dataForList.registrant.id}
-            className={cn(
-              "relative -mt-9 h-10 w-10 rounded-full bg-white object-cover",
-              "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgb(199,199,199)_inset]",
-            )}
-            height={150}
-          />
-
-          {/* Content Section */}
-          <div className="flex flex-col gap-4 p-4">
-            <AccountProfilePicture
+    <>
+      <Link href={`/profile/${dataForList.registrant.id}`}>
+        <div className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]">
+          <div
+            className="overflow-hidden rounded-md bg-white font-lora shadow-md"
+            data-testid="list-card"
+          >
+            <AccountProfileCover
               accountId={dataForList.registrant.id}
               className={cn(
                 "relative -mt-9 h-10 w-10 rounded-full bg-white object-cover",
-                "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
+                "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgb(199,199,199)_inset]",
               )}
+              height={150}
             />
 
-            <p className="font-lora text-lg font-semibold leading-tight">
-              {profile?.name ?? dataForList.registrant?.id}
-            </p>
+            {/* Content Section */}
+            <div className="flex flex-col gap-4 p-4">
+              <AccountProfilePicture
+                accountId={dataForList.registrant.id}
+                className={cn(
+                  "relative -mt-9 h-10 w-10 rounded-full bg-white object-cover",
+                  "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
+                )}
+              />
 
-            <p className="mt-2 h-14 overflow-hidden text-sm text-gray-600">
-              {truncate(profile?.description as string, 150) ?? "N/A"}
-            </p>
+              <p className="font-lora text-lg font-semibold leading-tight">
+                {profile?.name ?? dataForList.registrant?.id}
+              </p>
 
-            {/* Labels NOT sure if we need this */}
-            {/* <div className="mt-3 flex space-x-2">
+              <p className="mt-2 h-14 overflow-hidden text-sm text-gray-600">
+                {truncate(profile?.description as string, 150) ?? "N/A"}
+              </p>
+
+              {/* Labels NOT sure if we need this */}
+              {/* <div className="mt-3 flex space-x-2">
               <span className="rounded-md bg-gray-200 px-2 py-1 text-sm">
                 Label
               </span>
@@ -145,96 +149,110 @@ export const AccountCard = ({
               </span>
             </div> */}
 
-            {/* Donation Info */}
-            <div className="mt-4 flex items-center justify-between">
-              <p className="text-lg font-bold">
-                ${dataForList.registrant.total_donations_in_usd}{" "}
-                <span className="text-sm font-normal text-gray-500">
-                  RAISED FROM
-                </span>
-              </p>
-              <p className="text-lg font-bold">
-                {dataForList.registrant.donors_count}{" "}
-                <span className="text-sm font-normal text-gray-500">
-                  DONORS
-                </span>
-              </p>
-            </div>
-            <div className="mt-4 flex items-center justify-between">
-              {accountsWithAccess?.includes(walletApi?.accountId || "") ? (
-                <Select
-                  onValueChange={(value) =>
-                    setStatusChange({ open: true, status: value })
-                  }
-                  defaultValue={dataForList.status}
-                >
-                  <Trigger asChild>
-                    <div className="flex transition-all duration-300 ease-in-out hover:opacity-60">
-                      {statusDisplay}
-                      <DownArrow />
+              {/* Donation Info */}
+              <div className="mt-4 flex items-center justify-between">
+                <p className="text-lg font-bold">
+                  ${dataForList.registrant.total_donations_in_usd}{" "}
+                  <span className="text-sm font-normal text-gray-500">
+                    RAISED FROM
+                  </span>
+                </p>
+                <p className="text-lg font-bold">
+                  {dataForList.registrant.donors_count}{" "}
+                  <span className="text-sm font-normal text-gray-500">
+                    DONORS
+                  </span>
+                </p>
+              </div>
+              <div className="mt-4 flex items-center justify-between">
+                {accountsWithAccess?.includes(walletApi?.accountId || "") ? (
+                  <Select
+                    onValueChange={(value) =>
+                      setStatusChange({ open: true, status: value })
+                    }
+                    defaultValue={dataForList.status}
+                  >
+                    <Trigger asChild>
+                      <div className="flex transition-all duration-300 ease-in-out hover:opacity-60">
+                        {statusDisplay}
+                        <DownArrow />
+                      </div>
+                    </Trigger>
+                    <SelectContent>
+                      {statuses
+                        .filter((item) => item.val !== "all")
+                        .map((item) => (
+                          <SelectItem value={item.val} key={item.val}>
+                            {item.val}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  statusDisplay
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div>
+                      <ListNoteIcon className="cursor-pointer hover:opacity-50" />
                     </div>
-                  </Trigger>
-                  <SelectContent>
-                    {statuses
-                      .filter((item) => item.val !== "all")
-                      .map((item) => (
-                        <SelectItem value={item.val} key={item.val}>
-                          {item.val}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                statusDisplay
-              )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div>
-                    <ListNoteIcon className="cursor-pointer hover:opacity-50" />
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem className="max-h-[150px] max-w-[250px] items-start bg-white p-2 text-start">
-                    <div className=" text-black">
-                      {dataForList?.registrant_notes ?? "No Note"}
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="max-h-[150px] max-w-[250px] items-start bg-white p-2 text-start">
+                      <div className=" text-black">
+                        {dataForList?.registrant_notes ?? "No Note"}
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
         </div>
-        <Dialog open={statusChange.open}>
-          <DialogContent onCloseClick={() => setStatusChange({ open: false })}>
-            <DialogHeader>
-              <DialogTitle>Update Account Status</DialogTitle>
-            </DialogHeader>
+      </Link>
+      <Dialog open={statusChange.open}>
+        <DialogContent
+          onCloseClick={() => {
+            setStatusChange({ open: false });
+            setNote("");
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle>Update Account Status</DialogTitle>
+          </DialogHeader>
 
-            <div className="flex flex-col p-6">
-              <p className="text-center">
-                Are you sure you want to change the status of this Account to{" "}
-                <strong>{statusChange.status}?</strong>
-              </p>
-              <div className="m-8 flex justify-center gap-4">
-                <Button onClick={handleUpdateStatus} variant="standard-outline">
-                  Yes, I do
-                </Button>
-                <Button
-                  onClick={() =>
-                    setStatusChange({
-                      open: false,
-                      status: statusChange.status,
-                    })
-                  }
-                  variant="standard-outline"
-                >
-                  No, I don&apos;t
-                </Button>
-              </div>
+          <div className="flex flex-col p-6">
+            <p className="text-center">
+              Are you sure you want to change the status of this Account to{" "}
+              <strong>{statusChange.status}?</strong>
+            </p>
+            <Textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              className="my-4"
+              placeholder="Add Notes..."
+              rows={4}
+            />
+            <div className="m-8 flex justify-center gap-4">
+              <Button onClick={handleUpdateStatus} variant="standard-outline">
+                Yes, I do
+              </Button>
+              <Button
+                onClick={() => {
+                  setStatusChange({
+                    open: false,
+                    status: statusChange.status,
+                  });
+                  setNote("");
+                }}
+                variant="standard-outline"
+              >
+                No, I don&apos;t
+              </Button>
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </Link>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
