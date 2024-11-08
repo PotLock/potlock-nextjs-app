@@ -11,6 +11,7 @@ import {
   V1AccountsRetrieveParams,
   V1AccountsUpvotedListsRetrieveParams,
   V1DonateContractConfigRetrieveParams,
+  V1DonorsRetrieveParams,
   V1ListsRandomRegistrationRetrieveParams,
   V1ListsRegistrationsRetrieveParams,
   V1ListsRetrieveParams,
@@ -25,6 +26,19 @@ export const useStats = () => {
   const queryResult = swrHooks.useV1StatsRetrieve(POTLOCK_REQUEST_CONFIG);
 
   return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ *
+https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donors_retrieve
+ */
+
+export const useDonors = ({ ...params }: V1DonorsRetrieveParams) => {
+  const queryResult = swrHooks.useV1DonorsRetrieve(
+    params,
+    POTLOCK_REQUEST_CONFIG,
+  );
+  return { ...queryResult, data: queryResult.data?.data.results };
 };
 
 /**
