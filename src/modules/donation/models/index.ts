@@ -36,10 +36,10 @@ export const donationAllocationStrategies: Record<
     value: DonationAllocationStrategyEnum.full,
   },
 
-  split: {
+  share: {
     label: "Quadratically matched donation",
     hintIfDisabled: "(no pots available)",
-    value: DonationAllocationStrategyEnum.split,
+    value: DonationAllocationStrategyEnum.share,
   },
 };
 

@@ -28,7 +28,7 @@ export const isDonationMatchingPotSelected = ({
   potAccountId,
   listId,
 }: DonationMatchingPotValidationInputs) =>
-  allocationStrategy === DonationAllocationStrategyEnum.split &&
+  allocationStrategy === DonationAllocationStrategyEnum.share &&
   listId === undefined
     ? Boolean(potAccountId)
     : true;

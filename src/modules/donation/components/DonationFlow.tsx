@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { useRouteQuery } from "@/common/lib";
+import { ftService } from "@/common/services";
 import { Button, DialogFooter, Form } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ModalErrorBody } from "@/modules/core";
@@ -32,13 +33,11 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
   const {
     form,
-    isBalanceSufficient,
     matchingPots,
     minAmountError,
     isDisabled,
     onSubmit,
     totalAmountFloat,
-    token,
   } = useDonationForm({
     ...props,
 
@@ -49,6 +48,8 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   });
 
   const inputs = form.watch();
+  const { data: token } = ftService.useRegisteredToken(inputs);
+  const isBalanceSufficient = totalAmountFloat < (token?.balanceFloat ?? 0);
 
   const allocationScreenProps = useMemo(
     () => ({
@@ -58,14 +59,12 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       balanceFloat: token?.balanceFloat ?? 0.0,
       totalAmountFloat,
       matchingPots,
-      ...inputs,
       ...props,
     }),
 
     [
       token?.balanceFloat,
       form,
-      inputs,
       isBalanceSufficient,
       matchingPots,
       minAmountError,
@@ -149,7 +148,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
                   ? onSubmit
                   : dispatch.donation.nextStep
               }
-              disabled={isDisabled}
+              disabled={isDisabled || !isBalanceSufficient}
               className={cn({ "w-full": currentStep === "confirmation" })}
             >
               {currentStep === "confirmation"

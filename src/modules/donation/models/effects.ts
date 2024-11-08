@@ -224,7 +224,7 @@ export const effects = (dispatch: AppDispatcher) => ({
           }
         }
 
-        case DonationAllocationStrategyEnum.split: {
+        case DonationAllocationStrategyEnum.share: {
           if (!params.potAccountId) {
             return void dispatch.donation.failure(new Error("No pot selected"));
           }

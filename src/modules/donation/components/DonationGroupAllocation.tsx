@@ -3,7 +3,6 @@ import { useCallback, useMemo } from "react";
 import { values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
-import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { yoctoNearToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import {
@@ -19,11 +18,7 @@ import {
   ScrollArea,
   Skeleton,
 } from "@/common/ui/components";
-import {
-  SelectField,
-  SelectFieldOption,
-  TextField,
-} from "@/common/ui/form-fields";
+import { TextField } from "@/common/ui/form-fields";
 import { ModalErrorBody } from "@/modules/core";
 import { TokenBalance, TokenSelector, TokenTotalValue } from "@/modules/token";
 
