@@ -1,6 +1,6 @@
 import Big from "big.js";
 
-import { DirectDonation } from "@/common/contracts/potlock/interfaces/donate.interfaces";
+import { DirectDonation } from "@/common/contracts/potlock/donation/interface";
 import {
   PayoutDetailed,
   PotDonation,

@@ -8,10 +8,10 @@ import { ZodError } from "zod";
 
 import { StatusF24Enum, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
+import { ftService } from "@/common/services";
 import { useIsHuman } from "@/modules/core";
-import { useTokenBalance } from "@/modules/token";
 import { dispatch } from "@/store";
 
 import {
@@ -42,8 +42,10 @@ export const useDonationForm = ({
   const isSingleProjectDonation = "accountId" in params;
   const isPotDonation = "potId" in params;
   const isListDonation = "listId" in params;
+  const isCampaignDonation = "campaignId" in params;
   const potAccountId = isPotDonation ? params.potId : undefined;
   const listId = isListDonation ? params.listId : undefined;
+  const campaignId = isCampaignDonation ? params.campaignId : undefined;
 
   const recipientAccountId = isSingleProjectDonation
     ? params.accountId
@@ -75,12 +77,14 @@ export const useDonationForm = ({
       referrerAccountId,
       potAccountId: isPotDonation ? potAccountId : defaultPotAccountId,
       listId,
+      campaignId,
 
-      allocationStrategy: isSingleProjectDonation
-        ? DonationAllocationStrategyEnum[
-            matchingPots.length > 0 ? "split" : "full"
-          ]
-        : DonationAllocationStrategyEnum.split,
+      allocationStrategy:
+        isSingleProjectDonation || isCampaignDonation
+          ? DonationAllocationStrategyEnum[
+              matchingPots.length > 0 ? "split" : "full"
+            ]
+          : DonationAllocationStrategyEnum.split,
 
       groupAllocationStrategy:
         DonationGroupAllocationStrategyEnum[
@@ -92,7 +96,9 @@ export const useDonationForm = ({
       defaultPotAccountId,
       isPotDonation,
       isSingleProjectDonation,
+      isCampaignDonation,
       listId,
+      campaignId,
       matchingPots.length,
       potAccountId,
       recipientAccountId,
@@ -109,15 +115,16 @@ export const useDonationForm = ({
 
   const values = useWatch(self);
   const amount = values.amount ?? 0;
-  const tokenId = values.tokenId ?? NEAR_TOKEN_DENOM;
-  const { balanceFloat } = useTokenBalance({ tokenId });
+  const tokenId = values.tokenId ?? NATIVE_TOKEN_ID;
+  const { data: token } = ftService.useRegisteredToken({ tokenId });
 
-  const totalAmountFloat = isSingleProjectDonation
-    ? amount
-    : (values.groupAllocationPlan?.reduce(
-        (total, { amount }) => total + (amount ?? 0.0),
-        0.0,
-      ) ?? 0.0);
+  const totalAmountFloat =
+    isSingleProjectDonation || isCampaignDonation
+      ? amount
+      : (values.groupAllocationPlan?.reduce(
+          (total, { amount }) => total + (amount ?? 0.0),
+          0.0,
+        ) ?? 0.0);
 
   const [crossFieldErrors, setCrossFieldErrors] = useState<
     FieldErrors<DonationInputs>
@@ -156,7 +163,7 @@ export const useDonationForm = ({
     [defaultValues, values],
   );
 
-  const isBalanceSufficient = totalAmountFloat < (balanceFloat ?? 0);
+  const isBalanceSufficient = totalAmountFloat < (token?.balanceFloat ?? 0);
 
   const isDisabled =
     !hasChanges ||
@@ -197,12 +204,6 @@ export const useDonationForm = ({
     isSingleProjectDonation,
   ]);
 
-  console.log(values.groupAllocationPlan);
-
-  console.table({ hasChanges, isValid: self.formState.isValid });
-
-  console.log(JSON.stringify(self.formState, null, 2));
-
   return {
     form: {
       ...self,
@@ -223,5 +224,6 @@ export const useDonationForm = ({
     minAmountError,
     inputs: values,
     totalAmountFloat,
+    token,
   };
 };

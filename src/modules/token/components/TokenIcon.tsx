@@ -1,8 +1,8 @@
 import Image from "next/image";
 
-import { pagoda } from "@/common/api/pagoda";
 import { NearIcon } from "@/common/assets/svgs";
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { ftService } from "@/common/services";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 
@@ -31,18 +31,14 @@ export const TokenIcon = ({
   className,
   size = "medium",
 }: TokenIconProps) => {
-  const { data: token, isLoading } = pagoda.useTokenMetadata({
-    tokenId,
-    disabled: tokenId === NEAR_TOKEN_DENOM,
-  });
-
+  const { data: token } = ftService.useRegisteredToken({ tokenId });
   const { sizePx, rootClass, placeholderClass } = variants[size];
-  const tokenSymbolFallback = isLoading ? "⋯" : "🪙";
+
   return (
     <span
       className={cn("flex items-center justify-center", rootClass, className)}
     >
-      {tokenId === NEAR_TOKEN_DENOM ? (
+      {tokenId === NATIVE_TOKEN_ID ? (
         <NearIcon
           width={sizePx + 4}
           height={sizePx + 4}
@@ -50,16 +46,16 @@ export const TokenIcon = ({
         />
       ) : (
         <>
-          {token?.icon ? (
+          {token?.metadata.icon ? (
             <Image
-              alt={`Token icon for ${token.name}`}
-              src={token?.icon}
+              alt={`Token icon for ${token.metadata.name}`}
+              src={token?.metadata.icon}
               width={sizePx}
               height={sizePx}
             />
           ) : (
             <span className={cn("prose", placeholderClass)}>
-              {token?.symbol ?? tokenSymbolFallback}
+              {token?.metadata.symbol ?? "..."}
             </span>
           )}
         </>

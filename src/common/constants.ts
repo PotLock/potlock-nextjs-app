@@ -38,14 +38,15 @@ export const APP_METADATA: Metadata & {
   },
 };
 
+export const NATIVE_TOKEN_ID = "near";
+export const NATIVE_TOKEN_DECIMALS = 24;
+
 // List ID of PotLock Public Goods Registry
 export const POTLOCK_REGISTRY_LIST_ID = 1;
 
 // Separates contract_id and method_name in ProviderId
 export const PROVIDER_ID_DELIMITER = ":";
 
-export const NEAR_TOKEN_DENOM = "near";
-export const NEAR_DEFAULT_TOKEN_DECIMALS = 24;
 export const ONE_NEAR = utils.format.parseNearAmount("1")!;
 export const HALF_NEAR = utils.format.parseNearAmount("0.5")!;
 export const ONE_TENTH_NEAR = utils.format.parseNearAmount("0.1")!;
@@ -68,8 +69,9 @@ export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
 
 export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
 
-export const DEFAULT_URL = "https://app.potlock.org/";
-
+/**
+ * @deprecated use `ftService` hooks instead
+ */
 export const SUPPORTED_FTS: Record<
   string,
   {

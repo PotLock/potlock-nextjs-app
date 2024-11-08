@@ -11,7 +11,7 @@ import { useFilteredPots } from "../hooks";
 import { filters } from "../utils/filters";
 
 const ActivePots = () => {
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
   // Fetch Pots
   const { isLoading, activePots, completedPots } = useFilteredPots();
@@ -59,23 +59,26 @@ const ActivePots = () => {
     setSortedPots(sortedPots);
   };
 
-  const tagsList: Group[] = [
+  const tagsList: Group<GroupType.single>[] = [
     {
       label: "Status",
       options: POT_STATUSES,
-      type: GroupType.multiple,
+      type: GroupType.single,
       props: {
-        value: categoryFilter,
-        onValueChange: (value) => setCategoryFilter(value),
+        value: categoryFilter || "",
+        onValueChange: (value: string) => setCategoryFilter(value || null),
       },
     },
   ];
 
   let filtered = sortedActivePots;
 
-  categoryFilter.forEach((filterKey) => {
-    filtered = filtered.filter(filters[filterKey]);
-  });
+  if (categoryFilter) {
+    const filterFunction = filters[categoryFilter];
+    if (typeof filterFunction === "function") {
+      filtered = filtered.filter(filterFunction);
+    }
+  }
 
   const activePotCards = useMemo(() => {
     return filtered.map((pot) => <PotCard key={pot.account} pot={pot} />);

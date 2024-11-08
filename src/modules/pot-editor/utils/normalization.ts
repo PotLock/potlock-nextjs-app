@@ -1,12 +1,12 @@
 import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
-import { Account, Pot } from "@/common/api/indexer";
 import {
   LISTS_CONTRACT_ACCOUNT_ID,
   SYBIL_CONTRACT_ACCOUNT_ID,
-} from "@/common/config";
-import { NEAR_TOKEN_DENOM, PROVIDER_ID_DELIMITER } from "@/common/constants";
+} from "@/common/_config";
+import { Account, Pot } from "@/common/api/indexer";
+import { NATIVE_TOKEN_ID, PROVIDER_ID_DELIMITER } from "@/common/constants";
 import {
   ContractSourceMetadata,
   PotArgs,
@@ -175,7 +175,7 @@ export const potIndexedFieldToString = (
       } else {
         switch (key) {
           case "min_matching_pool_donation_amount":
-            return `${yoctoNearToFloat(value)} ${NEAR_TOKEN_DENOM.toUpperCase()}`;
+            return `${yoctoNearToFloat(value)} ${NATIVE_TOKEN_ID.toUpperCase()}`;
 
           default:
             return value;

@@ -1,7 +1,8 @@
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
-import { ByListId } from "@/common/types";
+import { ByCampaignId, ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 
 import { useDonation } from "../hooks";
 
@@ -55,4 +56,29 @@ export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({
   const { openDonationModal } = useDonation({ listId });
 
   return <Button onClick={openDonationModal}>{"Donate to list"}</Button>;
+};
+
+export type DonationToCampaignProjectsProps = ByCampaignId & {
+  className?: string;
+  disabled: boolean;
+  variant?: "standard-outline";
+};
+
+export const DonateToCampaignProjects: React.FC<
+  DonationToCampaignProjectsProps
+> = ({ campaignId, className, disabled, variant }) => {
+  const { openDonationModal } = useDonation({ campaignId });
+  return (
+    <Button
+      variant={variant ?? "brand-filled"}
+      disabled={disabled}
+      className={cn("w-full", className)}
+      onClick={(e) => {
+        e.stopPropagation();
+        openDonationModal(e);
+      }}
+    >
+      {"Donate"}
+    </Button>
+  );
 };

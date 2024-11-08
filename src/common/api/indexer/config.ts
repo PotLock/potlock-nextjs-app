@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 
-import { INDEXER_API_ENDPOINT_URL } from "@/common/config";
+import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
 
 /**
  * Request config for SWR

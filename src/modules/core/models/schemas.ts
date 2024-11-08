@@ -1,8 +1,8 @@
 import { AccountView } from "near-api-js/lib/providers/provider";
 import { string } from "zod";
 
+import { NETWORK } from "@/common/_config";
 import { near, nearRpc } from "@/common/api/near";
-import { NETWORK } from "@/common/config";
 
 const primitive = string().min(5, "Account ID is too short");
 

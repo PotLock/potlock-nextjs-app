@@ -10,6 +10,8 @@ export * from "./popover";
 export * from "./scroll-area";
 export * from "./SearchBar";
 export * from "./Spinner";
+export * from "./DataTable";
+export * from "./table";
 
 /**
  * Atoms

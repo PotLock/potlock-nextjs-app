@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { NEAR_TOKEN_DENOM } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
 import { AccountOption } from "@/modules/core";
@@ -92,7 +92,7 @@ export const DonationSummaryBreakdown: React.FC<
       {
         label: "On-Chain Storage",
         amount: "< 0.00001",
-        tokenId: NEAR_TOKEN_DENOM,
+        tokenId: NATIVE_TOKEN_ID,
       },
     ],
 

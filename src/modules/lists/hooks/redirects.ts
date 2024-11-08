@@ -11,6 +11,7 @@ import { ListFormModalType } from "../types";
 
 export const useListDeploymentSuccessRedirect = () => {
   const { toast } = useToast();
+
   const resultModal = useModal(ListActionsModal);
 
   const listValues = useTypedSelector((state) => state.listEditor);

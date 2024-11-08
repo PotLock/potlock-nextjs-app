@@ -1,7 +1,7 @@
 import Big from "big.js";
 
 import formatWithCommas from "./formatWithCommas";
-import { NEAR_DEFAULT_TOKEN_DECIMALS } from "../constants";
+import { NATIVE_TOKEN_DECIMALS } from "../constants";
 
 /**
  * @deprecated Use `yoctoNearToFloat`
@@ -23,7 +23,7 @@ export const floatToBigNum = (amount: number, decimals: number) =>
   Big(amount).mul(Big(10).pow(decimals));
 
 export const yoctoNearToFloat = (amountYoctoNear: string) =>
-  bigStringToFloat(amountYoctoNear, NEAR_DEFAULT_TOKEN_DECIMALS);
+  bigStringToFloat(amountYoctoNear, NATIVE_TOKEN_DECIMALS);
 
 export const floatToYoctoNear = (amountFloat: number) =>
-  floatToBigNum(amountFloat, NEAR_DEFAULT_TOKEN_DECIMALS).toFixed().toString();
+  floatToBigNum(amountFloat, NATIVE_TOKEN_DECIMALS).toFixed().toString();

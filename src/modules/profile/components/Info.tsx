@@ -5,12 +5,11 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
-import { DEFAULT_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import { useAuth } from "@/modules/auth";
 import useWallet from "@/modules/auth/hooks/useWallet";
-import routesPath from "@/modules/core/routes";
+import routesPath, { hrefByRouteName } from "@/modules/core/routes";
 
 import DonationsInfo from "./DonationsInfo";
 import FollowButton from "./FollowButton";
@@ -33,7 +32,10 @@ const LinksWrapper = ({ accountId }: { accountId: string }) => {
       <Linktree accountId={accountId} />
       {isAuthenticated && (
         <CopyToClipboard
-          text={`${DEFAULT_URL}?tab=project&projectId=${accountId}&referrerId=${wallet?.accountId}`}
+          text={
+            window.location.origin +
+            `${hrefByRouteName.PROFILE}/${accountId}?referrerId=${wallet?.accountId}`
+          }
           onCopy={() => {
             setCopied(true);
             setTimeout(() => {
