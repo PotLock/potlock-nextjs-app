@@ -81,7 +81,9 @@ const Header = ({ potDetail }: Props) => {
                       onClick={(event) => {
                         event.stopPropagation();
                       }}
-                    />
+                    >
+                      More Info
+                    </a>
                   );
                 },
               }}
