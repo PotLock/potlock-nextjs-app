@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Lora } from "next/font/google";
 import Image from "next/image";
 
+import { useDonors } from "@/common/api/indexer/hooks";
 import { NearIcon } from "@/common/assets/svgs";
 import { FilterChip, SearchBar, ToggleGroup } from "@/common/ui/components";
 import { DonationLeaderboardEntry } from "@/modules/donation";
@@ -199,6 +200,11 @@ export default function LeaderboardPage() {
   const toggleTab = (tab: "donors" | "sponsors" | "activities") => {
     setSelectedTab(tab);
   };
+
+  const { data: mainData } = useDonors({});
+
+  console.log("data", mainData);
+
   const renderLeaderboard = (
     participants: Participant[],
     type: "donor" | "sponsor",
