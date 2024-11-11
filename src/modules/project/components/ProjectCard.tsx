@@ -111,20 +111,18 @@ export const ProjectCard = ({
 
             {/* Donations */}
             <div className="mt-auto flex items-center gap-4">
-              {account?.total_donations_in_usd && (
-                <div className="flex flex-row items-center gap-2">
-                  <div
-                    className="text-lg font-semibold leading-6 text-[#292929]"
-                    data-testid="project-card-fundraising-amount"
-                  >
-                    {`$${account?.total_donations_in_usd}`}
-                  </div>
-
-                  <div className="text-sm font-medium leading-4  text-neutral-600">
-                    Raised
-                  </div>
+              <div className="flex flex-row items-center gap-2">
+                <div
+                  className="text-lg font-semibold leading-6 text-[#292929]"
+                  data-testid="project-card-fundraising-amount"
+                >
+                  {`$${account?.total_donations_in_usd ?? "0"}`}
                 </div>
-              )}
+
+                <div className="text-sm font-medium leading-4  text-neutral-600">
+                  Raised
+                </div>
+              </div>
 
               {payoutDetails && (
                 <div className="flex flex-row items-center gap-2">
