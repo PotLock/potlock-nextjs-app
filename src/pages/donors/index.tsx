@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import { useDonors } from "@/common/api/indexer/hooks";
 import { NearIcon } from "@/common/assets/svgs";
+import { daysAgo } from "@/common/lib";
 import { FilterChip, SearchBar, ToggleGroup } from "@/common/ui/components";
 import { DonationLeaderboardEntry } from "@/modules/donation";
 
@@ -158,37 +159,37 @@ const ACTIVITY: Activity[] = [
   },
 ];
 
-const timeAgo = (timestamp: number) => {
-  const now = Date.now();
-  const diff = now - timestamp;
-  if (diff < 1000 * 60) {
-    return `${Math.floor(diff / 1000)}s ago`;
-  } else if (diff < 1000 * 60 * 2) {
-    return `1 min ago`;
-  } else if (diff < 1000 * 60 * 60) {
-    return `${Math.floor(diff / (1000 * 60))} mins ago`;
-  } else if (diff < 1000 * 60 * 60 * 2) {
-    return `1 hr ago`;
-  } else if (diff < 1000 * 60 * 60 * 24) {
-    return `${Math.floor(diff / (1000 * 60 * 60))} hrs ago`;
-  } else if (diff < 1000 * 60 * 60 * 24 * 2) {
-    return `1 day ago`;
-  } else if (diff < 1000 * 60 * 60 * 24 * 7) {
-    return `${Math.floor(diff / (1000 * 60 * 60 * 24))} days ago`;
-  } else if (diff < 1000 * 60 * 60 * 24 * 7 * 2) {
-    return `1 wk ago`;
-  } else if (diff < 1000 * 60 * 60 * 24 * 30) {
-    return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 7))} wks ago`;
-  } else if (diff < 1000 * 60 * 60 * 24 * 30 * 2) {
-    return `1 mn ago`;
-  } else if (diff < 1000 * 60 * 60 * 24 * 365) {
-    return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 30))} mns ago`;
-  } else if (diff < 1000 * 60 * 60 * 24 * 365 * 2) {
-    return `1 yr ago`;
-  } else {
-    return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 365))} yrs ago`;
-  }
-};
+// const timeAgo = (timestamp: number) => {
+//   const now = Date.now();
+//   const diff = now - timestamp;
+//   if (diff < 1000 * 60) {
+//     return `${Math.floor(diff / 1000)}s ago`;
+//   } else if (diff < 1000 * 60 * 2) {
+//     return `1 min ago`;
+//   } else if (diff < 1000 * 60 * 60) {
+//     return `${Math.floor(diff / (1000 * 60))} mins ago`;
+//   } else if (diff < 1000 * 60 * 60 * 2) {
+//     return `1 hr ago`;
+//   } else if (diff < 1000 * 60 * 60 * 24) {
+//     return `${Math.floor(diff / (1000 * 60 * 60))} hrs ago`;
+//   } else if (diff < 1000 * 60 * 60 * 24 * 2) {
+//     return `1 day ago`;
+//   } else if (diff < 1000 * 60 * 60 * 24 * 7) {
+//     return `${Math.floor(diff / (1000 * 60 * 60 * 24))} days ago`;
+//   } else if (diff < 1000 * 60 * 60 * 24 * 7 * 2) {
+//     return `1 wk ago`;
+//   } else if (diff < 1000 * 60 * 60 * 24 * 30) {
+//     return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 7))} wks ago`;
+//   } else if (diff < 1000 * 60 * 60 * 24 * 30 * 2) {
+//     return `1 mn ago`;
+//   } else if (diff < 1000 * 60 * 60 * 24 * 365) {
+//     return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 30))} mns ago`;
+//   } else if (diff < 1000 * 60 * 60 * 24 * 365 * 2) {
+//     return `1 yr ago`;
+//   } else {
+//     return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 365))} yrs ago`;
+//   }
+// };
 
 export default function LeaderboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -201,9 +202,9 @@ export default function LeaderboardPage() {
     setSelectedTab(tab);
   };
 
-  const { data: mainData } = useDonors({});
+  const { data: donors } = useDonors({});
 
-  console.log("data", mainData);
+  console.log("data", donors);
 
   const renderLeaderboard = (
     participants: Participant[],
@@ -264,22 +265,20 @@ export default function LeaderboardPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {participants
-              .filter((participant) =>
-                participant.name
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase()),
+            {donors
+              ?.filter((participant) =>
+                participant.id.toLowerCase().includes(searchTerm.toLowerCase()),
               )
-              .sort((a, b) => b.amount - a.amount)
+              .sort(
+                (a, b) => b.total_donations_out_usd - a.total_donations_out_usd,
+              )
               .slice(3)
-              .map((participant) => (
-                <tr key={participant.rank}>
+              .map((participant, index) => (
+                <tr key={index}>
                   <td className="w-10px whitespace-nowrap p-4">
                     <div className="flex items-center">
-                      <span className="text-sm text-gray-900">
-                        #{participant.rank}
-                      </span>
-                      {participant.rank === 4 ? (
+                      <span className="text-sm text-gray-900">#{index}</span>
+                      {index === 4 ? (
                         <div className="ml-1 text-green-500" />
                       ) : (
                         <div className="ml-1 text-red-500" />
@@ -290,14 +289,23 @@ export default function LeaderboardPage() {
                     <div className="flex items-center">
                       <Image
                         className="h-10 w-10 rounded-full"
-                        src={participant.image}
+                        src={
+                          (participant.near_social_profile_data?.image?.ipfs_cid
+                            ? `https://ipfs.near.social/ipfs/${participant.near_social_profile_data?.image.ipfs_cid}`
+                            : participant.near_social_profile_data?.image?.nft
+                              ? participant.near_social_profile_data?.image?.nft
+                                  ?.media
+                              : "https://picsum.photos/200/200/?blur") ||
+                          "https://picsum.photos/200/200/?blur"
+                        }
                         width={10}
                         height={10}
                         alt="profile picture"
                       />
                       <div className="ml-4">
                         <div className="font-500 text-sm text-gray-900">
-                          {participant.name}
+                          {participant.near_social_profile_data?.name ??
+                            participant.id}
                         </div>
                       </div>
                     </div>
@@ -305,13 +313,11 @@ export default function LeaderboardPage() {
                   <td className="w-100px whitespace-nowrap p-4">
                     <div className="gap-8px flex items-center text-sm text-gray-900">
                       <NearIcon className="w-18px h-18px pb-[-4]" />
-                      <span className="font-600 m-0 pt-[2px]">
-                        {participant.amount}
-                      </span>
+                      <span className="font-600 m-0 pt-[2px]">-</span>
                     </div>
                   </td>
                   <td className="fw-600 w-100px whitespace-nowrap p-4 text-right text-sm text-gray-950">
-                    $ {participant.amountUsd}
+                    $ {participant.total_donations_out_usd}
                   </td>
                 </tr>
               ))}
@@ -382,7 +388,7 @@ export default function LeaderboardPage() {
     {
       name: "donors",
       label: "Donor Leaderboard",
-      count: 250,
+      count: donors?.length || 0,
     },
     {
       name: "sponsors",
@@ -519,7 +525,7 @@ export default function LeaderboardPage() {
                           </div>
                           <div className="flex items-center gap-2 whitespace-nowrap pl-3 text-sm text-gray-600">
                             <span className="h-4px w-4px rounded-full bg-gray-600"></span>{" "}
-                            {timeAgo(activity.timestamp)}
+                            {daysAgo(activity.timestamp)}
                           </div>
                         </div>
                       </div>
