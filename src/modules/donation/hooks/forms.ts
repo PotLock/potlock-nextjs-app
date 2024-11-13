@@ -196,8 +196,6 @@ export const useDonationForm = ({
   ]);
 
   useEffect(() => {
-    console.log(values);
-
     if (
       (values.allocationStrategy === "full" && values.tokenId === undefined) ||
       (values.allocationStrategy === "share" &&
