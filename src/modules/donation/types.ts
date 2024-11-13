@@ -16,7 +16,7 @@ export type DonationStep = "allocation" | "confirmation" | "success";
 
 export enum DonationAllocationStrategyEnum {
   full = "full",
-  split = "split",
+  share = "share",
 }
 
 export type DonationAllocationStrategy =

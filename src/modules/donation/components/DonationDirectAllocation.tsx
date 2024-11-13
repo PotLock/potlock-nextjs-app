@@ -52,7 +52,7 @@ export const DonationDirectAllocation: React.FC<
   matchingPots,
   campaignId,
 }) => {
-  const [amount, tokenId, allocationStrategy, potId] = form.watch([
+  const [amount, tokenId, allocationStrategy, potAccountId] = form.watch([
     "amount",
     "tokenId",
     "allocationStrategy",
@@ -68,14 +68,8 @@ export const DonationDirectAllocation: React.FC<
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
-  const tokenIdReset = useCallback(
-    () => form.resetField("tokenId", { keepDirty: true }),
-    [form],
-  );
-
-  const isFtSupportAvailable =
-    !isCampaignDonation &&
-    allocationStrategy === DonationAllocationStrategyEnum.full;
+  const isFtSupportAvailable = false; // temporarily disabled as this feature is WIP
+  // !isCampaignDonation && allocationStrategy === DonationAllocationStrategyEnum.full;
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,
@@ -106,7 +100,7 @@ export const DonationDirectAllocation: React.FC<
                   {values(donationAllocationStrategies).map(
                     ({ label, hint, hintIfDisabled, value }) => {
                       const disabled =
-                        value === DonationAllocationStrategyEnum.split &&
+                        value === DonationAllocationStrategyEnum.share &&
                         !hasMatchingPots;
 
                       return (
@@ -119,11 +113,6 @@ export const DonationDirectAllocation: React.FC<
                               DonationAllocationStrategyEnum[value]
                             }
                             hint={disabled ? hintIfDisabled : hint}
-                            onClick={
-                              value === DonationAllocationStrategyEnum.split
-                                ? tokenIdReset
-                                : undefined
-                            }
                             {...{ disabled, label, value }}
                           />
                         </FormItem>
@@ -137,18 +126,12 @@ export const DonationDirectAllocation: React.FC<
         />
       ),
 
-    [
-      form.control,
-      hasMatchingPots,
-      isCampaignDonation,
-      isRecipientDataLoading,
-      tokenIdReset,
-    ],
+    [form.control, hasMatchingPots, isCampaignDonation, isRecipientDataLoading],
   );
 
   const potSelector = useMemo(
     () =>
-      allocationStrategy === DonationAllocationStrategyEnum.split &&
+      allocationStrategy === DonationAllocationStrategyEnum.share &&
       hasMatchingPots && (
         <FormField
           control={form.control}
@@ -159,8 +142,11 @@ export const DonationDirectAllocation: React.FC<
               defaultValue={field.value}
               onValueChange={field.onChange}
             >
-              {matchingPots?.map(({ account: potAccountId, name }) => (
-                <SelectFieldOption key={potAccountId} value={potAccountId}>
+              {matchingPots?.map(({ account: optionAccountId, name }) => (
+                <SelectFieldOption
+                  key={optionAccountId}
+                  value={optionAccountId}
+                >
                   {name}
                 </SelectFieldOption>
               ))}
@@ -191,8 +177,8 @@ export const DonationDirectAllocation: React.FC<
       <DialogDescription>
         {strategySelector}
 
-        {allocationStrategy === DonationAllocationStrategyEnum.split &&
-          potId && <DonationSybilWarning {...{ potId }} />}
+        {allocationStrategy === DonationAllocationStrategyEnum.share &&
+          potAccountId && <DonationSybilWarning potId={potAccountId} />}
 
         {potSelector}
 
@@ -203,14 +189,14 @@ export const DonationDirectAllocation: React.FC<
             <TextField
               label="Amount"
               {...field}
-              labelExtension={<TokenBalance tokenId={tokenId} />}
+              labelExtension={<TokenBalance {...{ tokenId }} />}
               inputExtension={
                 <FormField
                   control={form.control}
                   name="tokenId"
                   render={({ field: inputExtension }) => (
                     <TokenSelector
-                      disabled={true} // TODO: {!isFtSupportAvailable}
+                      disabled={!isFtSupportAvailable}
                       defaultValue={inputExtension.value}
                       onValueChange={inputExtension.onChange}
                     />
