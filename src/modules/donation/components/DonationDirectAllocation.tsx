@@ -68,9 +68,8 @@ export const DonationDirectAllocation: React.FC<
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
-  const isFtSupportAvailable =
-    !isCampaignDonation &&
-    allocationStrategy === DonationAllocationStrategyEnum.full;
+  const isFtSupportAvailable = false; // temporarily disabled as this feature is WIP
+  // !isCampaignDonation && allocationStrategy === DonationAllocationStrategyEnum.full;
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,
