@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { Pot } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
@@ -67,7 +68,27 @@ const Header = ({ potDetail }: Props) => {
           <h3 className="font-500 font-lora text-[40px]">{potDetail.name}</h3>
           {/* Description */}
           <div className="line-height-[1.5rem] max-w-[498px]">
-            <ReactMarkdown className="markdown-link">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ node, ...props }) => {
+                  return (
+                    <a
+                      {...props}
+                      className="text-blue-500 underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                      }}
+                    >
+                      More Info
+                    </a>
+                  );
+                },
+              }}
+              className="markdown-link"
+            >
               {potDetail.description}
             </ReactMarkdown>
           </div>

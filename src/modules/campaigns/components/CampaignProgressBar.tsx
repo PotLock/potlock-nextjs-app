@@ -33,6 +33,8 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   const value = amount >= target ? 100 : Math.floor((amount / target) * 100);
 
   const getDaysLeft = endDate ? getTimePassed(endDate, false, true) : null;
+  const timeUp = getTimePassed(Number(endDate), false, true)?.includes("-");
+
   return (
     <div className="flex w-full flex-col">
       {targetMet ? (
@@ -55,7 +57,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
         <div className="flex items-center gap-1">
           <TimerIcon size={20} className="text-[#7B7B7B]" />
           <p className="m-0 p-0 pt-[4px] text-[14px] font-semibold text-[#292929]">
-            {targetMet
+            {targetMet || timeUp
               ? "ENDED"
               : !isStarted
                 ? getDaysLeft
