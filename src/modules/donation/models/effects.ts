@@ -1,6 +1,11 @@
-import axios from "axios";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+//! TODO: remove unused vars before the feature release
 
-import { RPC_NODE_URL, walletApi } from "@/common/api/near";
+import axios from "axios";
+import { Big } from "big.js";
+
+import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   CampaignDonation,
@@ -68,52 +73,70 @@ export const effects = (dispatch: AppDispatcher) => ({
     const isListDonation = listId !== undefined;
     const isCampaignDonation = campaignId !== undefined;
 
-    const requiredDepositFloat =
-      /* Additional 0.0001 NEAR per message character */
-      DONATION_BASE_STORAGE_DEPOSIT_FLOAT + 0.0001 * (message?.length ?? 0);
-
-    // const storageBalanceBounds = Near.view<any>(
-    //   selectedDenomination.id,
-    //   "storage_balance_bounds",
-    //   {},
-    // );
-
-    // const storageBalanceProtocolFeeRecipient = Near.view<any>(
-    //   selectedDenomination.id,
-    //   "storage_balance_of",
-    //   {
-    //     account_id: protocolFeeRecipientAccount,
-    //   },
-    // );
-
-    // const storageBalanceReferrer = referrerId
-    //   ? Near.view<any>(selectedDenomination.id, "storage_balance_of", {
-    //       account_id: referrerId,
-    //     })
-    //   : null;
-
-    // const storageBalanceDonationContract = Near.view<any>(
-    //   selectedDenomination.id,
-    //   "storage_balance_of",
-    //   {
-    //     account_id: DONATION_CONTRACT_ACCOUNT_ID,
-    //   },
-    // );
-
     if (isSingleProjectDonation) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
+          const { protocol_fee_recipient_account } =
+            await donationClient.getConfig();
+
           if (tokenId !== NATIVE_TOKEN_ID) {
             console.log("FT direct donation mode ON");
 
-            // const transactions = [];
+            const tokenClient = naxiosInstance.contractApi({
+              contractId: tokenId,
+            });
+
+            const requiredDepositBig = Big(
+              DONATION_BASE_STORAGE_DEPOSIT_FLOAT,
+            ).plus(
+              /* Additional 0.0001 NEAR per message character */
+              Big(0.0001).mul(Big(message?.length ?? 0)),
+            );
+
+            const referrerStorageBalance = referrerAccountId
+              ? await tokenClient.view<{ account_id: AccountId }, string>(
+                  "storage_balance_of",
+
+                  {
+                    args: { account_id: referrerAccountId },
+                  },
+                )
+              : null;
+
+            const [
+              ftStorageBalanceBounds,
+              protocolFeeRecipientFtStorageBalance,
+              donationContractFtStorageBalance,
+            ] = await Promise.all([
+              tokenClient.view<{}, { min: string; max: string }>(
+                "storage_balance_bounds",
+              ),
+
+              tokenClient.view<{ account_id: AccountId }, string>(
+                "storage_balance_of",
+
+                {
+                  args: { account_id: protocol_fee_recipient_account },
+                },
+              ),
+
+              tokenClient.view<{ account_id: AccountId }, string>(
+                "storage_balance_of",
+
+                {
+                  args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
+                },
+              ),
+            ]);
+
+            const transactions = [];
 
             // // adding storage deposit
             // transactions.push({
             //   contractName: DONATION_CONTRACT_ACCOUNT_ID,
             //   methodName: "storage_deposit",
             //   args: {},
-            //   deposit: Big(requiredDepositFloat).mul(Big(10).pow(24)),
+            //   deposit: requiredDepositBig.mul(Big(10).pow(24)),
             //   gas: "100000000000000",
             // });
 
