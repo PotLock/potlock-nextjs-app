@@ -1,6 +1,6 @@
 import { MemoryCache } from "@wpdas/naxios";
 import { AccountView } from "near-api-js/lib/providers/provider";
-import { filter, fromEntries, isNonNull, piped } from "remeda";
+import { filter, fromEntries, isError, isNonNull, merge, piped } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -114,11 +114,26 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
             ),
           ),
         )
-        .catch((error) => set({ error }));
+        .catch((error) =>
+          set({
+            error: isError(error)
+              ? error
+              : new Error(
+                  "type" in error
+                    ? (error as Record<string, unknown> & { type: string }).type
+                    : error,
+                ),
+          }),
+        );
 
       return { data: undefined, error: undefined };
     },
 
-    { name: "FT Registry" },
+    {
+      name: "FT Registry",
+
+      merge: (persistedState, currentState) =>
+        merge(persistedState, currentState),
+    },
   ),
 );

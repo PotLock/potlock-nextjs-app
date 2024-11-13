@@ -129,6 +129,12 @@ export const effects = (dispatch: AppDispatcher) => ({
               ),
             ]);
 
+            console.log({
+              ftStorageBalanceBounds,
+              protocolFeeRecipientFtStorageBalance,
+              donationContractFtStorageBalance,
+            });
+
             const transactions = [];
 
             // // adding storage deposit
@@ -249,7 +255,9 @@ export const effects = (dispatch: AppDispatcher) => ({
 
         case DonationAllocationStrategyEnum.share: {
           if (!params.potAccountId) {
-            return void dispatch.donation.failure(new Error("No pot selected"));
+            return void dispatch.donation.failure(
+              new Error("No pot selected."),
+            );
           }
 
           const args: PotDonationArgs = {

@@ -19,6 +19,8 @@ export const useTokenRegistry = () => {
     [data, error],
   );
 
+  useEffect(() => void (error ? console.error(error) : null), [error]);
+
   return { isLoading, data, error };
 };
 
@@ -38,12 +40,14 @@ export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
     () =>
       metadata === null
         ? new Error(
-            `Fungible token ${tokenId} is not supported on this platform.`,
+            `Unable to get token metadata for "${tokenId}" or it's not supported on this platform.`,
           )
         : undefined,
 
     [metadata, tokenId],
   );
+
+  useEffect(() => void (error ? console.error(error) : null), [error]);
 
   return {
     data: metadata ? { metadata, balance, balanceFloat } : undefined,
