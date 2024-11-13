@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Lora } from "next/font/google";
 import Image from "next/image";
 
+import { coingecko } from "@/common/api/coingecko";
 import { useDonors } from "@/common/api/indexer/hooks";
 import { NearIcon } from "@/common/assets/svgs";
 import { daysAgo } from "@/common/lib";
 import { FilterChip, SearchBar, ToggleGroup } from "@/common/ui/components";
+import { AccountOption } from "@/modules/core";
 import { DonationLeaderboardEntry } from "@/modules/donation";
 
 const lora = Lora({
@@ -159,38 +161,6 @@ const ACTIVITY: Activity[] = [
   },
 ];
 
-// const timeAgo = (timestamp: number) => {
-//   const now = Date.now();
-//   const diff = now - timestamp;
-//   if (diff < 1000 * 60) {
-//     return `${Math.floor(diff / 1000)}s ago`;
-//   } else if (diff < 1000 * 60 * 2) {
-//     return `1 min ago`;
-//   } else if (diff < 1000 * 60 * 60) {
-//     return `${Math.floor(diff / (1000 * 60))} mins ago`;
-//   } else if (diff < 1000 * 60 * 60 * 2) {
-//     return `1 hr ago`;
-//   } else if (diff < 1000 * 60 * 60 * 24) {
-//     return `${Math.floor(diff / (1000 * 60 * 60))} hrs ago`;
-//   } else if (diff < 1000 * 60 * 60 * 24 * 2) {
-//     return `1 day ago`;
-//   } else if (diff < 1000 * 60 * 60 * 24 * 7) {
-//     return `${Math.floor(diff / (1000 * 60 * 60 * 24))} days ago`;
-//   } else if (diff < 1000 * 60 * 60 * 24 * 7 * 2) {
-//     return `1 wk ago`;
-//   } else if (diff < 1000 * 60 * 60 * 24 * 30) {
-//     return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 7))} wks ago`;
-//   } else if (diff < 1000 * 60 * 60 * 24 * 30 * 2) {
-//     return `1 mn ago`;
-//   } else if (diff < 1000 * 60 * 60 * 24 * 365) {
-//     return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 30))} mns ago`;
-//   } else if (diff < 1000 * 60 * 60 * 24 * 365 * 2) {
-//     return `1 yr ago`;
-//   } else {
-//     return `${Math.floor(diff / (1000 * 60 * 60 * 24 * 365))} yrs ago`;
-//   }
-// };
-
 export default function LeaderboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [timeFilter, setTimeFilter] = useState("All time");
@@ -203,6 +173,7 @@ export default function LeaderboardPage() {
   };
 
   const { data: donors } = useDonors({});
+  const { data: oneNearPrice } = coingecko.useOneNearUsdPrice();
 
   console.log("data", donors);
 
@@ -233,16 +204,34 @@ export default function LeaderboardPage() {
       </div>
       <div className="pl-36px xl:overflow-x-unset h-300px md:w-full relative ml-[-36px]  w-full">
         <div className="gap-20px absolute mb-8 grid w-full grid-flow-col overflow-x-scroll">
-          {participants.slice(0, 3).map((participant) => (
-            <DonationLeaderboardEntry
-              key={participant.rank}
-              rank={participant.rank}
-              image={participant.image}
-              name={participant.name}
-              amount={participant.amount}
-              type={type}
-            />
-          ))}
+          {donors
+            ?.sort(
+              (a, b) => b.total_donations_out_usd - a.total_donations_out_usd,
+            )
+            .slice(0, 3)
+            .map((participant, index) => (
+              <DonationLeaderboardEntry
+                key={index}
+                rank={index + 1}
+                image={
+                  (participant.near_social_profile_data?.image?.ipfs_cid
+                    ? `https://ipfs.io/ipfs/${participant.near_social_profile_data?.image.ipfs_cid}`
+                    : participant.near_social_profile_data?.image?.nft
+                      ? participant.near_social_profile_data?.image?.nft?.media
+                      : "https://picsum.photos/200/200/?blur") ||
+                  "https://picsum.photos/200/200/?blur"
+                }
+                name={
+                  participant.near_social_profile_data?.name ?? participant.id
+                }
+                amount={Number(
+                  (participant.total_donations_out_usd / oneNearPrice).toFixed(
+                    2,
+                  ),
+                )}
+                type={type}
+              />
+            ))}
         </div>
       </div>
 
@@ -277,7 +266,9 @@ export default function LeaderboardPage() {
                 <tr key={index}>
                   <td className="w-10px whitespace-nowrap p-4">
                     <div className="flex items-center">
-                      <span className="text-sm text-gray-900">#{index}</span>
+                      <span className="text-sm text-gray-900">
+                        #{index + 1}
+                      </span>
                       {index === 4 ? (
                         <div className="ml-1 text-green-500" />
                       ) : (
@@ -285,35 +276,28 @@ export default function LeaderboardPage() {
                       )}
                     </div>
                   </td>
-                  <td className="whitespace-nowrap p-4">
-                    <div className="flex items-center">
-                      <Image
-                        className="h-10 w-10 rounded-full"
-                        src={
-                          (participant.near_social_profile_data?.image?.ipfs_cid
-                            ? `https://ipfs.near.social/ipfs/${participant.near_social_profile_data?.image.ipfs_cid}`
-                            : participant.near_social_profile_data?.image?.nft
-                              ? participant.near_social_profile_data?.image?.nft
-                                  ?.media
-                              : "https://picsum.photos/200/200/?blur") ||
-                          "https://picsum.photos/200/200/?blur"
-                        }
-                        width={10}
-                        height={10}
-                        alt="profile picture"
-                      />
-                      <div className="ml-4">
+                  <td className="ml-[-20px] whitespace-nowrap p-4">
+                    <AccountOption
+                      title="user Account"
+                      accountId={participant.id}
+                      highlightOnHover={true}
+                      isRounded={true}
+                    />
+                    {/* <div className="ml-4">
                         <div className="font-500 text-sm text-gray-900">
                           {participant.near_social_profile_data?.name ??
                             participant.id}
                         </div>
-                      </div>
-                    </div>
+                      </div> */}
                   </td>
                   <td className="w-100px whitespace-nowrap p-4">
                     <div className="gap-8px flex items-center text-sm text-gray-900">
                       <NearIcon className="w-18px h-18px pb-[-4]" />
-                      <span className="font-600 m-0 pt-[2px]">-</span>
+                      <span className="font-600 m-0 pt-[2px]">
+                        {(
+                          participant.total_donations_out_usd / oneNearPrice
+                        ).toFixed(2)}
+                      </span>
                     </div>
                   </td>
                   <td className="fw-600 w-100px whitespace-nowrap p-4 text-right text-sm text-gray-950">
@@ -325,16 +309,20 @@ export default function LeaderboardPage() {
         </table>
       </div>
       <div className="p-16px md:hidden flex flex-col items-start gap-4">
-        {participants.map((participant) => (
+        {donors?.map((participant, index) => (
           <div
-            key={participant.rank}
+            key={index}
             className="flex items-center gap-2 self-stretch rounded-2xl border border-solid border-[color:var(--Neutral-100,#EBEBEB)] p-4"
           >
             <div className="whitespace-nowrap">
               <div className="h-40px w-40px flex items-center">
                 <Image
                   className="h-40px w-40px rounded-full"
-                  src={participant.image}
+                  src={
+                    participant?.near_social_profile_data?.image?.ipfs_cid
+                      ? `https://ipfs.near.social/ipfs/${participant.near_social_profile_data?.image?.ipfs_cid}`
+                      : participant.near_social_profile_data?.image?.url || ""
+                  }
                   width={10}
                   height={10}
                   alt="profile picture"
@@ -345,15 +333,16 @@ export default function LeaderboardPage() {
               <div className="flex justify-between whitespace-nowrap">
                 <div className="ml-1">
                   <div className="font-500 text-sm text-gray-900">
-                    {participant.name}
+                    {participant?.near_social_profile_data?.name ??
+                      participant.id}
                   </div>
                 </div>
                 <div className="whitespace-nowrap">
                   <div className="flex items-center">
                     <span className="fw-50 text-sm text-gray-900">
-                      #{participant.rank}
+                      #{index + 1}
                     </span>
-                    {participant.rank === 4 ? (
+                    {index === 4 ? (
                       <div className="ml-1 text-green-500" />
                     ) : (
                       <div className="ml-1 text-red-500" />
@@ -365,11 +354,13 @@ export default function LeaderboardPage() {
                 <div className="gap-8px flex items-center text-sm text-gray-900">
                   <NearIcon className="w-18px h-18px" />
                   <span className="font-600 m-0 pt-[2px]">
-                    {participant.amount}
+                    {(
+                      participant.total_donations_out_usd / oneNearPrice
+                    ).toFixed(2)}
                   </span>
                 </div>
                 <div className="fw-600 w-fit whitespace-nowrap text-right text-sm text-gray-500">
-                  ~$ {participant.amountUsd}
+                  ~$ {participant.total_donations_out_usd}
                 </div>
               </div>
             </div>
