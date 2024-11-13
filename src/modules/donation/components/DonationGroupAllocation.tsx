@@ -227,7 +227,7 @@ export const DonationGroupAllocation: React.FC<
         )}
       </DialogDescription>
 
-      <ScrollArea className="h-[190px] w-full">
+      <ScrollArea className="h-48 w-full">
         <div className="flex flex-col items-center gap-0.5">
           {isPotDonation && (
             <DonationRecipientShares
