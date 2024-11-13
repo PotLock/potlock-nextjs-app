@@ -138,7 +138,7 @@ export const ListCard = ({
                 {isUpvoted ? (
                   <FaHeart className="text-[18px] text-red-500" />
                 ) : (
-                  <LikeIcon className="m-0 p-0" />
+                  <LikeIcon className="m-0 fill-red-500  p-0" />
                 )}
               </button>
               <p className="m-0 p-0 pt-1 text-[16px] font-semibold text-black">

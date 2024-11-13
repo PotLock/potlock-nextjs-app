@@ -66,8 +66,8 @@ export const useCampaignForm = () => {
         ...(values.end_ms && {
           end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
         }),
-        ...(campaignId ? {} : { owner: walletApi.accountId as string }), // You can't update the owner
-        ...(campaignId ? {} : { recipient: values.recipient }), // You can't update Recipient
+        ...(campaignId ? {} : { owner: walletApi.accountId as string }),
+        ...(campaignId ? {} : { recipient: values.recipient }),
       };
 
       if (campaignId) {

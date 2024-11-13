@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Campaign } from "@/common/contracts/potlock";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { Button } from "@/common/ui/components";
 import { AccountProfilePicture } from "@/modules/core";
 import { DonateToCampaignProjects } from "@/modules/donation";
 
@@ -18,7 +17,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
       <Link href={`/campaign/${data.id}/leaderboard`} passHref>
         <div className="relative h-[212px] w-full">
           <Image
-            src={data?.cover_image_url || ""}
+            src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
             alt=""
             className="h-52 w-full rounded-t-lg object-cover hover:scale-150"
             width={500}

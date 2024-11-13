@@ -61,9 +61,24 @@ export const CampaignsList = ({ campaigns }: { campaigns: Campaign[] }) => {
         <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
       </div>
       <div className="my-4 flex flex-wrap gap-8">
-        {filteredCampaigns.map((campaign) => (
-          <CampaignCard key={campaign.id} data={campaign} />
-        ))}
+        {filteredCampaigns.length ? (
+          filteredCampaigns.map((campaign) => (
+            <CampaignCard key={campaign.id} data={campaign} />
+          ))
+        ) : (
+          <div className="min-h-100 flex w-full flex-col items-center justify-center">
+            <img
+              src="/assets/icons/no-list.svg"
+              alt=""
+              className="mb-4 h-[200px] w-[200px]"
+            />
+            <div className="md:flex-row flex flex-col items-center justify-center gap-2">
+              <p className="w-100 text-center font-lora italic">
+                No Campaign found
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
