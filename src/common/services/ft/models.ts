@@ -1,10 +1,12 @@
 import { MemoryCache } from "@wpdas/naxios";
-import { AccountView } from "near-api-js/lib/providers/provider";
+import { Big } from "big.js";
+import { type AccountView } from "near-api-js/lib/providers/provider";
 import { filter, fromEntries, isError, isNonNull, merge, piped } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { naxiosInstance, nearRpc, walletApi } from "@/common/api/near";
+import { PRICES_REQUEST_CONFIG, pricesClient } from "@/common/api/prices";
 import {
   ICONS_ASSET_ENDPOINT_URL,
   NATIVE_TOKEN_DECIMALS,
@@ -19,9 +21,11 @@ export type FtRegistryEntry = {
   metadata: FungibleTokenMetadata;
   balance?: string;
   balanceFloat?: number;
+  balanceUsdApproximation?: string | null;
+  usdPrice?: Big.Big;
 };
 
-const NATIVE_TOKEN_FT_REGISTRY_ENTRY: FtRegistryEntry = {
+const NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY: FtRegistryEntry = {
   contract_account_id: NATIVE_TOKEN_ID,
 
   metadata: {
@@ -63,12 +67,12 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                     NATIVE_TOKEN_ID,
 
                     {
-                      ...NATIVE_TOKEN_FT_REGISTRY_ENTRY,
+                      ...NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY,
                       balance: amount,
 
                       balanceFloat: bigStringToFloat(
                         amount,
-                        NATIVE_TOKEN_FT_REGISTRY_ENTRY.metadata.decimals,
+                        NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY.metadata.decimals,
                       ),
                     },
                   ] as [TokenId, FtRegistryEntry],
@@ -84,11 +88,30 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                 .view<{}, FungibleTokenMetadata>("ft_metadata")
                 .catch(() => undefined);
 
-              const balance = await ftClient
-                .view<{ account_id: AccountId }, string>("ft_balance_of", {
-                  args: { account_id: walletApi.accountId ?? "unknown" },
-                })
-                .catch(() => undefined);
+              const [balance, usdPrice] =
+                metadata === undefined
+                  ? [undefined, undefined]
+                  : await Promise.all([
+                      ftClient
+                        .view<{ account_id: AccountId }, string>(
+                          "ft_balance_of",
+
+                          {
+                            args: {
+                              account_id: walletApi.accountId ?? "unknown",
+                            },
+                          },
+                        )
+                        .catch(() => undefined),
+
+                      pricesClient
+                        .getSuperPrecisePrice(
+                          { token_id: contract_account_id },
+                          PRICES_REQUEST_CONFIG.axios,
+                        )
+                        .then(({ data }) => Big(data))
+                        .catch(() => undefined),
+                    ]);
 
               return metadata === undefined
                 ? null
@@ -103,6 +126,13 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                         balance === undefined
                           ? balance
                           : bigStringToFloat(balance, metadata.decimals),
+
+                      balanceUsdApproximation:
+                        balance && usdPrice
+                          ? `~$ ${usdPrice.mul(balance ?? 0).toFixed(2)}`
+                          : null,
+
+                      usdPrice,
                     },
                   ] as [TokenId, FtRegistryEntry]);
             }),

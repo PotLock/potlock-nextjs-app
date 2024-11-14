@@ -6,7 +6,7 @@ import * as swrBindings from "./generated/client";
 /**
  * https://prices.intear.tech/swagger-ui/#/Token%20Prices/get_get_token_price
  */
-export const useTokenPrice = ({ tokenId }: Partial<ByTokenId>) => {
+export const useTokenUsdPrice = ({ tokenId }: Partial<ByTokenId>) => {
   const queryResult = swrBindings.useGetGetTokenPrice(
     { token_id: tokenId ?? "unknown" },
 

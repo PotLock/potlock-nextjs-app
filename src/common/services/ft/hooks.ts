@@ -9,6 +9,9 @@ import { ByTokenId } from "@/common/types";
 
 import { useFtRegistryStore } from "./models";
 
+/**
+ * Registry of supported fungible tokens.
+ */
 export const useTokenRegistry = () => {
   const { data, error } = useFtRegistryStore(
     useShallow(pick(["data", "error"])),
@@ -24,16 +27,12 @@ export const useTokenRegistry = () => {
   return { isLoading, data, error };
 };
 
+/**
+ * Fungible token data for a supported token.
+ */
 export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
-  const { metadata, balance, balanceFloat } = useFtRegistryStore(
-    useShallow(
-      (registry) =>
-        registry.data?.[tokenId] ?? {
-          metadata: null,
-          balance: null,
-          balanceFloat: null,
-        },
-    ),
+  const { metadata, ...data } = useFtRegistryStore(
+    useShallow((registry) => registry.data?.[tokenId] ?? { metadata: null }),
   );
 
   const error = useMemo(
@@ -50,11 +49,14 @@ export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
   useEffect(() => void (error ? console.error(error) : null), [error]);
 
   return {
-    data: metadata ? { metadata, balance, balanceFloat } : undefined,
+    data: metadata ? { metadata, ...data } : undefined,
     error,
   };
 };
 
+/**
+ * @deprecated Use `usdPrice` Big number from `ftService.useRegisteredToken({ tokenId: ... })`
+ */
 export const useTokenUsdDisplayValue = ({
   amountFloat,
   tokenId,

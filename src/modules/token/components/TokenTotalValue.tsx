@@ -28,10 +28,9 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         );
 
-  const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
-    amountFloat: amount,
-    tokenId,
-  });
+  const amountUsd = token?.usdPrice?.gt(0)
+    ? token?.usdPrice?.mul(amount).toFixed(2)
+    : null;
 
   return (
     <div className={cn("flex items-center gap-2", classNames?.root)}>
@@ -47,14 +46,14 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
         >{`${amount} ${token?.metadata.symbol ?? "⋯"}`}</span>
       }
 
-      {totalAmountUsdValue && (
+      {amountUsd ? (
         <span
           className="prose line-height-none mt-0.7 text-xl text-neutral-600"
           un-mt="0.7"
         >
-          {totalAmountUsdValue}
+          {`~$ ${amountUsd}`}
         </span>
-      )}
+      ) : null}
     </div>
   );
 };

@@ -40,9 +40,9 @@ export const TokenIcon = ({
     >
       {tokenId === NATIVE_TOKEN_ID ? (
         <NearIcon
-          width={sizePx + 4}
-          height={sizePx + 4}
-          className="color-neutral-950 m--1"
+          width={sizePx + 3}
+          height={sizePx + 3}
+          className="color-neutral-950 m--0.5"
         />
       ) : (
         <>
