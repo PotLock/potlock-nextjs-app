@@ -1,4 +1,4 @@
-import { DirectDonation, PotDonation } from "@/common/contracts/potlock";
+import { DirectDonation, PotDonation } from "@/common/contracts/core";
 import { ByStringId } from "@/common/types";
 import { DonationBatchCallDraft } from "@/modules/donation";
 

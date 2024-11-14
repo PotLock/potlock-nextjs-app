@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { potFactory } from "@/common/contracts/potlock";
+import { potFactory } from "@/common/contracts/core";
 import { Button } from "@/common/ui/components";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";

@@ -17,7 +17,7 @@ import {
   campaign,
   donationClient,
   pot,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";

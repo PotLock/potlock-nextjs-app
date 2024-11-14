@@ -4,8 +4,8 @@ import { Pot } from "@/common/api/indexer";
 import {
   Application,
   Challenge,
-} from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/potlock/pot";
+} from "@/common/contracts/core/interfaces/pot.interfaces";
+import * as potContract from "@/common/contracts/core/pot";
 import { getDateTime, yoctosToUsdWithFallback } from "@/modules/core";
 
 export const usePotStatusesForAccountId = (props: {

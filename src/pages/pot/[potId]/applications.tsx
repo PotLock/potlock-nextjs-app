@@ -10,8 +10,8 @@ import { useRouter } from "next/router";
 import { usePot } from "@/common/api/indexer/hooks";
 import { SearchIcon } from "@/common/assets/svgs";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
-import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/potlock/pot";
+import { Application } from "@/common/contracts/core/interfaces/pot.interfaces";
+import * as potContract from "@/common/contracts/core/pot";
 import { daysAgo, truncate } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import {

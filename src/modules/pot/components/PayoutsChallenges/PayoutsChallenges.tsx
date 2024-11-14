@@ -4,8 +4,8 @@ import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
 import AdminIcon from "@/common/assets/svgs/AdminIcon";
-import { Challenge as ChallengeType } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/potlock/pot";
+import { Challenge as ChallengeType } from "@/common/contracts/core/interfaces/pot.interfaces";
+import * as potContract from "@/common/contracts/core/pot";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";

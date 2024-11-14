@@ -5,7 +5,7 @@ import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
-import { DirectDonation, PotDonation } from "@/common/contracts/potlock";
+import { DirectDonation, PotDonation } from "@/common/contracts/core";
 import { bigStringToFloat, truncate } from "@/common/lib";
 import { ftService } from "@/common/services";
 import {

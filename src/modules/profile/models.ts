@@ -4,7 +4,7 @@ import {
   PayoutDetailed,
   donationClient,
   pot,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import {
   NEARSocialUserProfile,
   getSocialProfile,

@@ -5,7 +5,7 @@ import {
   DirectFTBatchDonationItem,
   PotBatchDonationItem,
   PotDonation,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
 export type DonationGroupAllocationKey = ByPotId | ByListId | ByCampaignId;

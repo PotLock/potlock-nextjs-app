@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { Campaign } from "@/common/contracts/potlock";
+import { Campaign } from "@/common/contracts/core";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { fetchSocialImages } from "@/common/services/near-socialdb";

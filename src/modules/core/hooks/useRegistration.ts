@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { Registration } from "@/common/contracts/potlock/interfaces/lists.interfaces";
-import { getRegistration } from "@/common/contracts/potlock/lists";
+import { Registration } from "@/common/contracts/core/interfaces/lists.interfaces";
+import { getRegistration } from "@/common/contracts/core/lists";
 
 import { UNREGISTERED_PROJECT } from "../constants";
 

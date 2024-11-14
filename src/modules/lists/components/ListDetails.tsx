@@ -19,7 +19,7 @@ import {
   register_batch,
   remove_upvote,
   upvote,
-} from "@/common/contracts/potlock/lists";
+} from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import {

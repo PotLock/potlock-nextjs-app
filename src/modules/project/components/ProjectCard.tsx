@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { PayoutDetailed } from "@/common/contracts/potlock";
+import { PayoutDetailed } from "@/common/contracts/core";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { Button } from "@/common/ui/components";
