@@ -59,6 +59,8 @@ export const DonationDirectAllocation: React.FC<
     "potAccountId",
   ]);
 
+  const { data: token } = ftService.useRegisteredToken({ tokenId });
+
   const {
     isLoading: isRecipientDataLoading,
     data: recipient,
@@ -72,10 +74,9 @@ export const DonationDirectAllocation: React.FC<
     !isCampaignDonation &&
     allocationStrategy === DonationAllocationStrategyEnum.full;
 
-  const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
-    amountFloat: amount,
-    tokenId,
-  });
+  const totalAmountUsdValue = token?.usdPrice
+    ? `~$ ${token.usdPrice.mul(amount).toFixed(2)}`
+    : null;
 
   const strategySelector = useMemo(
     () =>

@@ -19,7 +19,7 @@ import { AccountId, FungibleTokenMetadata, TokenId } from "@/common/types";
 export type FtRegistryEntry = {
   contract_account_id: TokenId;
   metadata: FungibleTokenMetadata;
-  balance?: string;
+  balance?: Big.Big;
   balanceFloat?: number;
   balanceUsdApproximation?: string | null;
   usdPrice?: Big.Big;
@@ -61,22 +61,22 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                 account_id: walletApi.accountId ?? "unknown",
                 finality: "final",
               })
-              .then(
-                ({ amount }) =>
-                  [
-                    NATIVE_TOKEN_ID,
+              .then(({ amount }) => {
+                const balanceFloat = bigStringToFloat(
+                  amount,
+                  NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY.metadata.decimals,
+                );
 
-                    {
-                      ...NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY,
-                      balance: amount,
+                return [
+                  NATIVE_TOKEN_ID,
 
-                      balanceFloat: bigStringToFloat(
-                        amount,
-                        NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY.metadata.decimals,
-                      ),
-                    },
-                  ] as [TokenId, FtRegistryEntry],
-              ),
+                  {
+                    ...NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY,
+                    balance: Big(balanceFloat),
+                    balanceFloat,
+                  },
+                ] as [TokenId, FtRegistryEntry];
+              }),
 
             ...tokenContractAccountIds.map(async (contract_account_id) => {
               const ftClient = naxiosInstance.contractApi({
@@ -88,7 +88,7 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                 .view<{}, FungibleTokenMetadata>("ft_metadata")
                 .catch(() => undefined);
 
-              const [balance, usdPrice] =
+              const [balanceRaw, usdPrice] =
                 metadata === undefined
                   ? [undefined, undefined]
                   : await Promise.all([
@@ -113,6 +113,13 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                         .catch(() => undefined),
                     ]);
 
+              const balanceFloat =
+                metadata === undefined || balanceRaw === undefined
+                  ? undefined
+                  : bigStringToFloat(balanceRaw, metadata.decimals);
+
+              const balance = balanceFloat ? Big(balanceFloat) : undefined;
+
               return metadata === undefined
                 ? null
                 : ([
@@ -121,15 +128,11 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                       contract_account_id,
                       metadata,
                       balance,
-
-                      balanceFloat:
-                        balance === undefined
-                          ? balance
-                          : bigStringToFloat(balance, metadata.decimals),
+                      balanceFloat,
 
                       balanceUsdApproximation:
-                        balance && usdPrice
-                          ? `~$ ${usdPrice.mul(balance ?? 0).toFixed(2)}`
+                        balance?.gt(0) && usdPrice?.gt(0)
+                          ? `~$ ${usdPrice.mul(balance).toFixed(2)}`
                           : null,
 
                       usdPrice,
