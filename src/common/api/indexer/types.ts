@@ -1,6 +1,6 @@
 import { ListRegistration, Pot, PotApplication } from "./generated/client";
 
-export * from "./generated/client";
+export type * from "./generated/client";
 
 export type PotId = Pot["account"];
 

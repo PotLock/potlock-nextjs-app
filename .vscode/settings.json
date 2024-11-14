@@ -13,6 +13,7 @@
     "builddao",
     "camelcase",
     "cmdk",
+    "codegen",
     "colocation",
     "cooldown",
     "data-testid",

@@ -6,7 +6,7 @@ import { entries } from "remeda";
 import { Temporal } from "temporal-polyfill";
 import { ZodError } from "zod";
 
-import { StatusF24Enum, indexer } from "@/common/api/indexer";
+import { ListRegistrationStatus, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
@@ -51,7 +51,7 @@ export const useDonationForm = ({
 
   const { data: recipientActivePots = [] } = indexer.useAccountActivePots({
     accountId: recipientAccountId,
-    status: StatusF24Enum.Approved,
+    status: ListRegistrationStatus.Approved,
     page_size: 999,
   });
 
