@@ -15,6 +15,7 @@ export const useTokenUsdPrice = ({ tokenId }: Partial<ByTokenId>) => {
 
     (url: string) =>
       client.get(url).then((response) => response.data[key ?? "unknown"].usd),
+
     { ...CLIENT_CONFIG.swr, enabled: key !== null },
   );
 };

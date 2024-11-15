@@ -5,6 +5,7 @@ import { filter, fromEntries, isError, isNonNull, merge, piped } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { coingeckoClient } from "@/common/api/coingecko";
 import { naxiosInstance, nearRpc, walletApi } from "@/common/api/near";
 import { PRICES_REQUEST_CONFIG, pricesClient } from "@/common/api/prices";
 import {
@@ -61,19 +62,28 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                 account_id: walletApi.accountId ?? "unknown",
                 finality: "final",
               })
-              .then(({ amount }) => {
+              .then(async ({ amount }) => {
                 const balanceFloat = bigStringToFloat(
                   amount,
                   NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY.metadata.decimals,
                 );
+
+                const balance = Big(balanceFloat);
+
+                const usdPrice = await coingeckoClient
+                  .get(`/simple/price?ids=${NATIVE_TOKEN_ID}&vs_currencies=usd`)
+                  .then((response) => Big(response.data[NATIVE_TOKEN_ID].usd))
+                  .catch(() => undefined);
 
                 return [
                   NATIVE_TOKEN_ID,
 
                   {
                     ...NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY,
-                    balance: Big(balanceFloat),
+                    balance,
                     balanceFloat,
+                    balanceUsdApproximation: usdPrice?.mul(balance).toFixed(2),
+                    usdPrice,
                   },
                 ] as [TokenId, FtRegistryEntry];
               }),

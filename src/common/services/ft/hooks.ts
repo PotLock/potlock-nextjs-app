@@ -38,9 +38,7 @@ export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
   const error = useMemo(
     () =>
       metadata === null
-        ? new Error(
-            `Unable to get token metadata for "${tokenId}" or it's not supported on this platform.`,
-          )
+        ? new Error(`Unable to get token metadata for the ${tokenId} token.`)
         : undefined,
 
     [metadata, tokenId],
