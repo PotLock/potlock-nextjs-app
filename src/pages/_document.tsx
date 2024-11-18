@@ -30,7 +30,10 @@ export default function Document() {
         />
       </Head>
 
-      <body className="text-foreground">
+      <body
+        className="text-foreground"
+        style={DEBUG ? { background: "#000!important" } : undefined}
+      >
         <Main />
         <NextScript />
       </body>

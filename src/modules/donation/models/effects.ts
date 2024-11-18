@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-//! TODO: remove unused vars before the feature release
-
 import axios from "axios";
 import { Big } from "big.js";
 
@@ -86,7 +83,7 @@ export const effects = (dispatch: AppDispatcher) => ({
               contractId: tokenId,
             });
 
-            const requiredDepositBig = Big(
+            const requiredDeposit = Big(
               DONATION_BASE_STORAGE_DEPOSIT_FLOAT,
             ).plus(
               /* Additional 0.0001 NEAR per message character */
@@ -94,119 +91,126 @@ export const effects = (dispatch: AppDispatcher) => ({
             );
 
             const referrerStorageBalance = referrerAccountId
-              ? await tokenClient.view<{ account_id: AccountId }, string>(
-                  "storage_balance_of",
-
-                  {
-                    args: { account_id: referrerAccountId },
-                  },
-                )
+              ? await tokenClient.view<
+                  { account_id: AccountId },
+                  { total: string; available: string }
+                >("storage_balance_of", {
+                  args: { account_id: referrerAccountId },
+                })
               : null;
 
             const [
-              ftStorageBalanceBounds,
-              protocolFeeRecipientFtStorageBalance,
-              donationContractFtStorageBalance,
+              ftStorageBalanceBounds = null,
+              protocolFeeRecipientFtStorageBalance = null,
+              donationContractFtStorageBalance = null,
             ] = await Promise.all([
               tokenClient.view<{}, { min: string; max: string }>(
                 "storage_balance_bounds",
               ),
 
-              tokenClient.view<{ account_id: AccountId }, string>(
-                "storage_balance_of",
+              tokenClient.view<
+                { account_id: AccountId },
+                { total: string; available: string }
+              >("storage_balance_of", {
+                args: { account_id: protocol_fee_recipient_account },
+              }),
 
-                {
-                  args: { account_id: protocol_fee_recipient_account },
-                },
-              ),
-
-              tokenClient.view<{ account_id: AccountId }, string>(
-                "storage_balance_of",
-
-                {
-                  args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
-                },
-              ),
+              tokenClient.view<
+                { account_id: AccountId },
+                { total: string; available: string }
+              >("storage_balance_of", {
+                args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
+              }),
             ]);
 
-            console.log({
-              ftStorageBalanceBounds,
-              protocolFeeRecipientFtStorageBalance,
-              donationContractFtStorageBalance,
-            });
+            const maxFtStorageBalance =
+              ftStorageBalanceBounds === null
+                ? null
+                : Big(ftStorageBalanceBounds.max);
 
-            const transactions = [];
+            const transactions = [
+              {
+                contractName: DONATION_CONTRACT_ACCOUNT_ID,
+                methodName: "storage_deposit",
+                args: {},
+                deposit: requiredDeposit.mul(Big(10).pow(24)),
+                gas: "100000000000000",
+              },
 
-            // // adding storage deposit
-            // transactions.push({
-            //   contractName: DONATION_CONTRACT_ACCOUNT_ID,
-            //   methodName: "storage_deposit",
-            //   args: {},
-            //   deposit: requiredDepositBig.mul(Big(10).pow(24)),
-            //   gas: "100000000000000",
-            // });
+              // Protocol fee recipient's storage balance
+              ...(!bypassProtocolFee &&
+              (protocolFeeRecipientFtStorageBalance === null ||
+                (maxFtStorageBalance !== null &&
+                  Big(protocolFeeRecipientFtStorageBalance.total).lt(
+                    maxFtStorageBalance,
+                  )))
+                ? [
+                    {
+                      contractName: tokenId,
+                      methodName: "storage_deposit",
+                      args: { account_id: protocol_fee_recipient_account },
 
-            // const { min, max } = storageBalanceBounds;
-            // const storageMaxBig = Big(max);
+                      deposit: maxFtStorageBalance?.minus(
+                        Big(protocolFeeRecipientFtStorageBalance?.total ?? 0),
+                      ),
 
-            // // check storage balance for each account
-            // if (
-            //   !bypassProtocolFee &&
-            //   (!storageBalanceProtocolFeeRecipient ||
-            //     Big(storageBalanceProtocolFeeRecipient.total).lt(storageMaxBig))
-            // ) {
-            //   transactions.push({
-            //     contractName: tokenId,
-            //     methodName: "storage_deposit",
-            //     args: { account_id: protocolFeeRecipientAccount },
-            //     deposit: storageMaxBig.minus(
-            //       Big(storageBalanceProtocolFeeRecipient || 0),
-            //     ),
-            //     gas: "100000000000000",
-            //   });
-            // }
+                      gas: "100000000000000",
+                    },
+                  ]
+                : []),
 
-            // // referrer
-            // if (
-            //   referrerAccountId &&
-            //   (!storageBalanceReferrer ||
-            //     Big(storageBalanceReferrer.total).lt(storageMaxBig))
-            // ) {
-            //   transactions.push({
-            //     contractName: tokenId,
-            //     methodName: "storage_deposit",
-            //     args: { account_id: referrerAccountId },
-            //     deposit: storageMaxBig.minus(Big(storageBalanceReferrer || 0)),
-            //     gas: "100000000000000",
-            //   });
-            // }
+              // Referrer's storage balance
+              ...(referrerAccountId &&
+              (referrerStorageBalance === null ||
+                (maxFtStorageBalance !== null &&
+                  Big(referrerStorageBalance.total).lt(maxFtStorageBalance)))
+                ? [
+                    {
+                      contractName: tokenId,
+                      methodName: "storage_deposit",
+                      args: { account_id: referrerAccountId },
 
-            // // donation contract
-            // if (
-            //   !storageBalanceDonationContract ||
-            //   Big(storageBalanceDonationContract.total).lt(storageMaxBig)
-            // ) {
-            //   transactions.push({
-            //     contractName: tokenId,
-            //     methodName: "storage_deposit",
-            //     args: { account_id: constants.DONATION_CONTRACT_ID },
-            //     deposit: storageMaxBig.minus(
-            //       Big(storageBalanceDonationContract || 0),
-            //     ),
-            //     gas: "100000000000000",
-            //   });
-            // }
+                      deposit: maxFtStorageBalance?.minus(
+                        Big(referrerStorageBalance?.total || 0),
+                      ),
 
-            // // project (can't do this till this point)
+                      gas: "100000000000000",
+                    },
+                  ]
+                : []),
+
+              // Donation contract storage balance
+              donationContractFtStorageBalance === null ||
+              (maxFtStorageBalance !== null &&
+                Big(donationContractFtStorageBalance.total).lt(
+                  maxFtStorageBalance,
+                ))
+                ? [
+                    {
+                      contractName: tokenId,
+                      methodName: "storage_deposit",
+                      args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
+
+                      deposit: maxFtStorageBalance?.minus(
+                        Big(donationContractFtStorageBalance?.total || 0),
+                      ),
+
+                      gas: "100000000000000",
+                    },
+                  ]
+                : [],
+            ];
+
+            // // Project's account storage balance
             // Near.asyncView(tokenId, "storage_balance_of", {
             //   account_id: params.accountId,
             // }).then((balance) => {
-            //   if (!balance || Big(balance.total).lt(storageMaxBig)) {
+            //   if (!balance || Big(balance.total).lt(maxFtStorageBalance)) {
             //     transactions.push({
             //       contractName: tokenId,
             //       methodName: "storage_deposit",
             //       args: { account_id: params.accountId },
-            //       deposit: storageMaxBig.minus(Big(balance || 0)),
+            //       deposit: maxFtStorageBalance.minus(Big(balance || 0)),
             //       gas: "100000000000000",
             //     });
             //   }
@@ -234,8 +238,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             //     gas: "300000000000000",
             //   });
 
-            //   Near.call(transactions);
-            // });
+            console.log(transactions);
 
             return void "WIP";
           } else {
