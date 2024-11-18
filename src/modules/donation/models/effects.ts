@@ -149,14 +149,6 @@ export const effects = (dispatch: AppDispatcher) => ({
                 : Big(ftStorageBalanceBounds.max);
 
             const transactions = [
-              {
-                contractName: DONATION_CONTRACT_ACCOUNT_ID,
-                methodName: "storage_deposit",
-                args: {},
-                deposit: requiredDepositNear.mul(Big(10).pow(24)),
-                gas: "100000000000000",
-              },
-
               /**
                *? FT storage balance replenishment for protocol fee recipient account
                */
@@ -168,8 +160,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                   )))
                 ? [
                     {
-                      contractName: tokenId,
-                      methodName: "storage_deposit",
+                      method: "storage_deposit",
                       args: { account_id: protocol_fee_recipient_account },
 
                       deposit: maxFtStorageBalance?.minus(
@@ -190,8 +181,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                   Big(referrerStorageBalance.total).lt(maxFtStorageBalance)))
                 ? [
                     {
-                      contractName: tokenId,
-                      methodName: "storage_deposit",
+                      method: "storage_deposit",
                       args: { account_id: referrerAccountId },
 
                       deposit: maxFtStorageBalance?.minus(
@@ -213,8 +203,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                 ))
                 ? [
                     {
-                      contractName: tokenId,
-                      methodName: "storage_deposit",
+                      method: "storage_deposit",
                       args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
 
                       deposit: maxFtStorageBalance?.minus(
@@ -234,8 +223,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                 Big(recipientFtStorageBalance.total).lt(maxFtStorageBalance))
                 ? [
                     {
-                      contractName: tokenId,
-                      methodName: "storage_deposit",
+                      method: "storage_deposit",
                       args: { account_id: params.accountId },
 
                       deposit: maxFtStorageBalance?.minus(
@@ -248,8 +236,8 @@ export const effects = (dispatch: AppDispatcher) => ({
                 : []),
 
               {
-                contractName: tokenId,
-                methodName: "ft_transfer_call",
+                method: "ft_transfer_call",
+
                 args: {
                   receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
 
@@ -276,7 +264,15 @@ export const effects = (dispatch: AppDispatcher) => ({
 
             console.log(transactions);
 
-            return void "WIP";
+            return void donationClient
+              .storage_deposit(
+                requiredDepositNear.mul(Big(10).pow(24)).toString(),
+              )
+              .then((updatedStorageBalance) =>
+                // @ts-expect-error WIP
+                tokenClient.callMultiple(transactions),
+              )
+              .catch((error) => dispatch.donation.failure(error));
           } else {
             const args: DirectDonationArgs = {
               recipient_id: params.accountId,
