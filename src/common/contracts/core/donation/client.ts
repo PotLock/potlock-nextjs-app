@@ -63,3 +63,10 @@ export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
       ...txInput,
     })),
   );
+
+export const storage_deposit = (depositAmountYocto: string) =>
+  contractApi.call<{}, string>("storage_deposit", {
+    deposit: depositAmountYocto,
+    args: {},
+    gas: "100000000000000",
+  });
