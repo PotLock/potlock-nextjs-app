@@ -3,7 +3,7 @@ import { Big } from "big.js";
 
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near";
-import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { FULL_TGAS, NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   CampaignDonation,
   DirectCampaignDonationArgs,
@@ -103,6 +103,7 @@ export const effects = (dispatch: AppDispatcher) => ({
               ftStorageBalanceBounds = null,
               protocolFeeRecipientFtStorageBalance = null,
               donationContractFtStorageBalance = null,
+              recipientFtStorageBalance = null,
             ] = await Promise.all([
               tokenClient.view<{}, { min: string; max: string }>(
                 "storage_balance_bounds",
@@ -121,6 +122,13 @@ export const effects = (dispatch: AppDispatcher) => ({
               >("storage_balance_of", {
                 args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
               }),
+
+              tokenClient.view<
+                { account_id: AccountId },
+                { total: string; available: string }
+              >("storage_balance_of", {
+                args: { account_id: params.accountId },
+              }),
             ]);
 
             const maxFtStorageBalance =
@@ -137,7 +145,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                 gas: "100000000000000",
               },
 
-              // Protocol fee recipient's storage balance
+              // FT storage balance replenishment for protocol fee recipient account
               ...(!bypassProtocolFee &&
               (protocolFeeRecipientFtStorageBalance === null ||
                 (maxFtStorageBalance !== null &&
@@ -159,7 +167,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                   ]
                 : []),
 
-              // Referrer's storage balance
+              // Ft contract storage balance replenishment for referrer account
               ...(referrerAccountId &&
               (referrerStorageBalance === null ||
                 (maxFtStorageBalance !== null &&
@@ -179,7 +187,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                   ]
                 : []),
 
-              // Donation contract's storage balance
+              // FT contract storage balance replenishment for donation contract account
               ...(donationContractFtStorageBalance === null ||
               (maxFtStorageBalance !== null &&
                 Big(donationContractFtStorageBalance.total).lt(
@@ -199,21 +207,26 @@ export const effects = (dispatch: AppDispatcher) => ({
                     },
                   ]
                 : []),
-            ];
 
-            // // Project's account storage balance
-            // Near.asyncView(tokenId, "storage_balance_of", {
-            //   account_id: params.accountId,
-            // }).then((balance) => {
-            //   if (!balance || Big(balance.total).lt(maxFtStorageBalance)) {
-            //     transactions.push({
-            //       contractName: tokenId,
-            //       methodName: "storage_deposit",
-            //       args: { account_id: params.accountId },
-            //       deposit: maxFtStorageBalance.minus(Big(balance || 0)),
-            //       gas: "100000000000000",
-            //     });
-            //   }
+              // FT contract storage balance replenishment for donation recipient account
+              ...(recipientFtStorageBalance === null ||
+              (maxFtStorageBalance !== null &&
+                Big(recipientFtStorageBalance.total).lt(maxFtStorageBalance))
+                ? [
+                    {
+                      contractName: tokenId,
+                      methodName: "storage_deposit",
+                      args: { account_id: params.accountId },
+
+                      deposit: maxFtStorageBalance?.minus(
+                        Big(recipientFtStorageBalance?.total || 0),
+                      ),
+
+                      gas: "100000000000000",
+                    },
+                  ]
+                : []),
+            ];
 
             //   // add donation transaction
             //   transactions.push({
@@ -235,7 +248,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             //     },
 
             //     deposit: "1",
-            //     gas: "300000000000000",
+            //     gas: FULL_TGAS,
             //   });
 
             console.log(transactions);
