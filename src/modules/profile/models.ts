@@ -1,10 +1,6 @@
 import { createModel } from "@rematch/core";
 
-import {
-  PayoutDetailed,
-  donationClient,
-  pot,
-} from "@/common/contracts/potlock";
+import { PayoutDetailed, donationClient, pot } from "@/common/contracts/core";
 import {
   NEARSocialUserProfile,
   getSocialProfile,

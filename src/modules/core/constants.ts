@@ -1,4 +1,4 @@
-import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@/common/contracts/core/interfaces/lists.interfaces";
 
 export const TOTAL_FEE_BASIS_POINTS = 10_000;
 

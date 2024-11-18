@@ -7,7 +7,7 @@ import { FaHeart } from "react-icons/fa";
 import { walletApi } from "@/common/api/near";
 import { LayersIcon } from "@/common/assets/svgs";
 import { LikeIcon } from "@/common/assets/svgs/like";
-import { remove_upvote, upvote } from "@/common/contracts/potlock/lists";
+import { remove_upvote, upvote } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { dispatch } from "@/store";

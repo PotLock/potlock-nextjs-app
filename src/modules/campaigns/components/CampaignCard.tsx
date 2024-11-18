@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Campaign } from "@/common/contracts/potlock";
+import { Campaign } from "@/common/contracts/core";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { AccountProfilePicture } from "@/modules/core";
