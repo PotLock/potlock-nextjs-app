@@ -5,7 +5,7 @@ import {
   CampaignDonation,
   DirectDonation,
   PotDonation,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import { useTypedSelector } from "@/store";
 import { AppModel } from "@/store/models";
 

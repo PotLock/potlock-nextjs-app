@@ -1,10 +1,10 @@
 import Big from "big.js";
 
-import { DirectDonation } from "@/common/contracts/potlock/donation/interface";
+import { DirectDonation } from "@/common/contracts/core/donation/interface";
 import {
   PayoutDetailed,
   PotDonation,
-} from "@/common/contracts/potlock/interfaces/pot.interfaces";
+} from "@/common/contracts/core/interfaces/pot.interfaces";
 
 export const getTotalAmountNear = (
   donations: (PotDonation | DirectDonation)[],

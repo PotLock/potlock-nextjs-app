@@ -1,6 +1,6 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { CampaignDonation } from "@/common/contracts/potlock";
+import { CampaignDonation } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { useProfileData } from "@/modules/profile";
