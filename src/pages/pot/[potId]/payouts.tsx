@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
-import { Payout } from "@/common/contracts/potlock";
-import { getPayouts } from "@/common/contracts/potlock/pot";
+import { Payout } from "@/common/contracts/core";
+import { getPayouts } from "@/common/contracts/core/pot";
 import { yoctoNearToFloat } from "@/common/lib";
 import { AccountProfilePicture } from "@/modules/core";
 import {

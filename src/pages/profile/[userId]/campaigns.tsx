@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useState } from "react";
 
-import { Campaign } from "@/common/contracts/potlock";
-import { get_campaigns_by_owner } from "@/common/contracts/potlock/campaigns";
+import { Campaign } from "@/common/contracts/core";
+import { get_campaigns_by_owner } from "@/common/contracts/core/campaigns";
 import { useRouteQuery } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { CampaignCard } from "@/modules/campaigns/components";

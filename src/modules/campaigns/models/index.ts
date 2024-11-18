@@ -1,7 +1,7 @@
 import { createModel } from "@rematch/core";
 import { mergeAll, prop } from "remeda";
 
-import { Campaign } from "@/common/contracts/potlock";
+import { Campaign } from "@/common/contracts/core";
 import { useTypedSelector } from "@/store";
 import { AppModel } from "@/store/models";
 

@@ -5,9 +5,9 @@ import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
-import { RegistrationStatus } from "@/common/contracts/potlock";
+import { RegistrationStatus } from "@/common/contracts/core";
+import { getIsHuman } from "@/common/contracts/core/sybil";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
-import { getIsHuman } from "@/common/contracts/sybil.nadabot";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import {

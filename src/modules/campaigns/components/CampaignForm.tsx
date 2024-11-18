@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { Campaign } from "@/common/contracts/potlock";
+import { Campaign } from "@/common/contracts/core";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { Button, Form, FormField } from "@/common/ui/components";
