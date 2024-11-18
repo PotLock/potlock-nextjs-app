@@ -217,7 +217,7 @@ export default function LeaderboardPage() {
 
   const sponsors: Participant[] = [];
   const { data: priceOfOneNear } = coingecko.useOneNearUsdPrice();
-  // const filteredDonors = [...donors];
+  const price = priceOfOneNear ?? 5.0;
 
   console.log({ donors, priceOfOneNear });
 
@@ -273,8 +273,12 @@ export default function LeaderboardPage() {
           <div className="gap-20px absolute mb-8 grid w-full grid-flow-col overflow-x-scroll">
             {data
               ?.sort((a, b) => {
-                const aAmount = isAccount(a) ? a.total_donations_out_usd : 0;
-                const bAmount = isAccount(b) ? b.total_donations_out_usd : 0;
+                const aAmount = isAccount(a)
+                  ? a.total_donations_out_usd
+                  : a.amountUsd;
+                const bAmount = isAccount(b)
+                  ? b.total_donations_out_usd
+                  : b.amountUsd;
                 return bAmount - aAmount;
               })
               .slice(0, 3)
@@ -303,7 +307,7 @@ export default function LeaderboardPage() {
                     name={name}
                     amount={Number(
                       (isAccount(participant)
-                        ? participant.total_donations_out_usd / priceOfOneNear
+                        ? participant.total_donations_out_usd / price
                         : participant.amount
                       ).toFixed(2),
                     )}
@@ -374,9 +378,7 @@ export default function LeaderboardPage() {
                         <NearIcon className="w-18px h-18px pb-[-4]" />
                         <span className="font-600 m-0 pt-[2px]">
                           {isAccount(donor)
-                            ? (
-                                donor.total_donations_out_usd / priceOfOneNear
-                              ).toFixed(2)
+                            ? (donor.total_donations_out_usd / price).toFixed(2)
                             : donor.amount}
                         </span>
                       </div>
@@ -444,7 +446,7 @@ export default function LeaderboardPage() {
                     <NearIcon className="w-18px h-18px" />
                     <span className="font-600 m-0 pt-[2px]">
                       {isAccount(participant)
-                        ? participant.total_donations_out_usd / priceOfOneNear
+                        ? participant.total_donations_out_usd / price
                         : participant.amount}
                     </span>
                   </div>
