@@ -1,9 +1,14 @@
+import { ONE_YOCTO } from "@builddao/near-social-js";
 import axios from "axios";
 import { Big } from "big.js";
 
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near";
-import { FULL_TGAS, NATIVE_TOKEN_ID } from "@/common/constants";
+import {
+  FULL_TGAS,
+  NATIVE_TOKEN_DECIMALS,
+  NATIVE_TOKEN_ID,
+} from "@/common/constants";
 import {
   CampaignDonation,
   DirectCampaignDonationArgs,
@@ -16,7 +21,11 @@ import {
   pot,
 } from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
-import { AccountId, TxExecutionStatus } from "@/common/types";
+import {
+  AccountId,
+  FungibleTokenMetadata,
+  TxExecutionStatus,
+} from "@/common/types";
 import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
@@ -83,7 +92,7 @@ export const effects = (dispatch: AppDispatcher) => ({
               contractId: tokenId,
             });
 
-            const requiredDeposit = Big(
+            const requiredDepositNear = Big(
               DONATION_BASE_STORAGE_DEPOSIT_FLOAT,
             ).plus(
               /* Additional 0.0001 NEAR per message character */
@@ -100,11 +109,14 @@ export const effects = (dispatch: AppDispatcher) => ({
               : null;
 
             const [
+              ftMetadata = null,
               ftStorageBalanceBounds = null,
               protocolFeeRecipientFtStorageBalance = null,
               donationContractFtStorageBalance = null,
               recipientFtStorageBalance = null,
             ] = await Promise.all([
+              tokenClient.view<{}, FungibleTokenMetadata>("ft_metadata"),
+
               tokenClient.view<{}, { min: string; max: string }>(
                 "storage_balance_bounds",
               ),
@@ -141,11 +153,13 @@ export const effects = (dispatch: AppDispatcher) => ({
                 contractName: DONATION_CONTRACT_ACCOUNT_ID,
                 methodName: "storage_deposit",
                 args: {},
-                deposit: requiredDeposit.mul(Big(10).pow(24)),
+                deposit: requiredDepositNear.mul(Big(10).pow(24)),
                 gas: "100000000000000",
               },
 
-              // FT storage balance replenishment for protocol fee recipient account
+              /**
+               *? FT storage balance replenishment for protocol fee recipient account
+               */
               ...(!bypassProtocolFee &&
               (protocolFeeRecipientFtStorageBalance === null ||
                 (maxFtStorageBalance !== null &&
@@ -167,7 +181,9 @@ export const effects = (dispatch: AppDispatcher) => ({
                   ]
                 : []),
 
-              // Ft contract storage balance replenishment for referrer account
+              /**
+               *? FT contract storage balance replenishment for referrer account
+               */
               ...(referrerAccountId &&
               (referrerStorageBalance === null ||
                 (maxFtStorageBalance !== null &&
@@ -187,7 +203,9 @@ export const effects = (dispatch: AppDispatcher) => ({
                   ]
                 : []),
 
-              // FT contract storage balance replenishment for donation contract account
+              /**
+               *? FT contract storage balance replenishment for donation contract account
+               */
               ...(donationContractFtStorageBalance === null ||
               (maxFtStorageBalance !== null &&
                 Big(donationContractFtStorageBalance.total).lt(
@@ -208,7 +226,9 @@ export const effects = (dispatch: AppDispatcher) => ({
                   ]
                 : []),
 
-              // FT contract storage balance replenishment for donation recipient account
+              /**
+               *? FT contract storage balance replenishment for donation recipient account
+               */
               ...(recipientFtStorageBalance === null ||
               (maxFtStorageBalance !== null &&
                 Big(recipientFtStorageBalance.total).lt(maxFtStorageBalance))
@@ -226,30 +246,33 @@ export const effects = (dispatch: AppDispatcher) => ({
                     },
                   ]
                 : []),
+
+              {
+                contractName: tokenId,
+                methodName: "ft_transfer_call",
+                args: {
+                  receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
+
+                  amount: Big(amount)
+                    .mul(
+                      new Big(10).pow(
+                        ftMetadata?.decimals ?? NATIVE_TOKEN_DECIMALS,
+                      ),
+                    )
+                    .toFixed(0),
+
+                  msg: JSON.stringify({
+                    recipient_id: params.accountId,
+                    referrer_id: referrerAccountId || null,
+                    bypass_protocol_fee: bypassProtocolFee,
+                    message,
+                  }),
+                },
+
+                deposit: ONE_YOCTO,
+                gas: FULL_TGAS,
+              },
             ];
-
-            //   // add donation transaction
-            //   transactions.push({
-            //     contractName: tokenId,
-            //     methodName: "ft_transfer_call",
-            //     args: {
-            //       receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
-
-            //       amount: Big(amount)
-            //         .mul(new Big(10).pow(selectedDenomination.decimals))
-            //         .toFixed(0),
-
-            //       msg: JSON.stringify({
-            //         recipient_id: params.accountId,
-            //         referrer_id: referrerAccountId || null,
-            //         bypass_protocol_fee: bypassProtocolFee,
-            //         message,
-            //       }),
-            //     },
-
-            //     deposit: "1",
-            //     gas: FULL_TGAS,
-            //   });
 
             console.log(transactions);
 
