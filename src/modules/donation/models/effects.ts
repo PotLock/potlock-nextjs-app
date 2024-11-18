@@ -179,7 +179,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                   ]
                 : []),
 
-              // Donation contract storage balance
+              // Donation contract's storage balance
               donationContractFtStorageBalance === null ||
               (maxFtStorageBalance !== null &&
                 Big(donationContractFtStorageBalance.total).lt(
