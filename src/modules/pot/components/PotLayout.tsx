@@ -7,11 +7,12 @@ import { PageWithBanner } from "@/common/ui/components";
 import ErrorModal from "@/modules/core/components/ErrorModal";
 import SuccessModal from "@/modules/core/components/SuccessModal";
 import { DonationSybilWarning } from "@/modules/donation";
-import { Header, isPotStakeWeighted } from "@/modules/pot";
 
+import Header from "./Header";
 import { PotStatusBar } from "./PotStatusBar";
 import Tabs from "./Tabs";
 import { POT_TABS_CONFIG } from "../constants";
+import { isPotStakeWeighted } from "../utils/voting";
 
 export type PotLayoutProps = {
   children: React.ReactNode;

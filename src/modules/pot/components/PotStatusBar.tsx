@@ -25,12 +25,12 @@ export const PotStatusBar: React.FC<PotStatusBarProps> = ({
 
   if (potIndexedData === null) return "";
 
-  const stats = potIndexedDataByIdToStatuses({ potId, ...potIndexedData });
+  const statuses = potIndexedDataByIdToStatuses({ potId, ...potIndexedData });
 
   const getIndexOfActive = () => {
     let index = 0;
-    stats.forEach((state, idx) => {
-      if (state.started && !state.completed) {
+    statuses.forEach((status, idx) => {
+      if (status.started && !status.completed) {
         index = idx;
       }
     });
@@ -55,7 +55,7 @@ export const PotStatusBar: React.FC<PotStatusBarProps> = ({
           className="mobile-selected"
           style={mobileMenuActive ? { transform: "translateY(0px)" } : {}}
         >
-          {stats.map(
+          {statuses.map(
             // TODO: Improve this code (built by mohamed)
             ({ label, daysLeft, progress, started, completed }, idx) => {
               return (
