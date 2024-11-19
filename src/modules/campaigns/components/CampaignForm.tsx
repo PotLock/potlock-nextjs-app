@@ -130,6 +130,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
                   classNames={{ root: "md:w-[45%]" }}
                   label="Who are you raising this campaign for?"
                   required
+                  placeholder="Enter Near Address"
                   type="text"
                   {...field}
                 />

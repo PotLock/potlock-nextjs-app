@@ -11,6 +11,9 @@ import { CampaignProgressBar } from "./CampaignProgressBar";
 
 export const CampaignCard = ({ data }: { data: Campaign }) => {
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
+  const isEnded = data?.end_ms
+    ? getTimePassed(Number(data?.end_ms), false, true)?.includes("-")
+    : false;
 
   return (
     <div className="md:w-104 h-144  w-full cursor-pointer rounded-lg shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_2px_2px_-1px_rgba(5,5,5,0.08),0px_3px_5px_0px_rgba(5,5,5,0.08)] transition-all duration-500 ease-in-out hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]">
@@ -71,7 +74,9 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             campaignId={data.id}
             variant="standard-outline"
             disabled={
-              isStarted || data?.total_raised_amount === data?.max_amount
+              isStarted ||
+              isEnded ||
+              data?.total_raised_amount === data?.max_amount
             }
           />
         </div>

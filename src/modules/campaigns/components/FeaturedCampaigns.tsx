@@ -76,6 +76,9 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
   const { avatarSrc: ownerImage } = useProfileData(data?.owner);
 
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
+  const isEnded = data?.end_ms
+    ? getTimePassed(Number(data?.end_ms), false, true)?.includes("-")
+    : false;
 
   return (
     <CarouselItem key={data.id}>
@@ -86,7 +89,7 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
       >
         <div className="md:h-[285px] h-293px md:w-[68%] relative">
           <LazyLoadImage
-            src={data?.cover_image_url || ""}
+            src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
             alt=""
             className="md:rounded inset-1 h-full w-full object-cover"
             width={500}
@@ -156,7 +159,9 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
             campaignId={data.id}
             className="mt-4"
             disabled={
-              isStarted || data?.total_raised_amount === data?.max_amount
+              isStarted ||
+              isEnded ||
+              data?.total_raised_amount === data?.max_amount
             }
           />
         </div>
