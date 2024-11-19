@@ -73,11 +73,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      <PotStatusBar
-        potIndexedData={pot}
-        {...{ potId }}
-        classNames={{ root: "mb-4" }}
-      />
+      <PotStatusBar potIndexedData={pot} classNames={{ root: "mb-4" }} />
 
       <div className="md:px-8 flex w-full flex-col items-center px-4">
         <DonationSybilWarning {...{ potId }} />

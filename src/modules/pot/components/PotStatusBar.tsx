@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ByPotId, Pot } from "@/common/api/indexer";
+import { Pot } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
 import ProgressBar from "./ProgressBar";
@@ -8,7 +8,7 @@ import { Container, Loader, Wrapper } from "./styles";
 import TimeLeft from "./TimeLeft";
 import { potIndexedDataByIdToStatuses } from "../utils/statuses";
 
-export type PotStatusBarProps = ByPotId & {
+export type PotStatusBarProps = {
   potIndexedData: Pot;
 
   classNames?: {
@@ -18,14 +18,13 @@ export type PotStatusBarProps = ByPotId & {
 
 export const PotStatusBar: React.FC<PotStatusBarProps> = ({
   classNames,
-  potId,
   potIndexedData,
 }) => {
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
 
   if (potIndexedData === null) return "";
 
-  const statuses = potIndexedDataByIdToStatuses({ potId, ...potIndexedData });
+  const statuses = potIndexedDataByIdToStatuses(potIndexedData);
 
   const getIndexOfActive = () => {
     let index = 0;
