@@ -6,7 +6,7 @@ import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
 import { walletApi } from "@/common/api/near";
-import { campaign } from "@/common/contracts/potlock";
+import { campaign } from "@/common/contracts/core";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 

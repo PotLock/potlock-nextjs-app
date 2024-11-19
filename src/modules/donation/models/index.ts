@@ -5,7 +5,7 @@ import {
   CampaignDonation,
   DirectDonation,
   PotDonation,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import { useTypedSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
@@ -36,10 +36,10 @@ export const donationAllocationStrategies: Record<
     value: DonationAllocationStrategyEnum.full,
   },
 
-  split: {
+  share: {
     label: "Quadratically matched donation",
     hintIfDisabled: "(no pots available)",
-    value: DonationAllocationStrategyEnum.split,
+    value: DonationAllocationStrategyEnum.share,
   },
 };
 

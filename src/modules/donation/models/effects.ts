@@ -12,7 +12,7 @@ import {
   campaign,
   donationClient,
   pot,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
@@ -224,7 +224,7 @@ export const effects = (dispatch: AppDispatcher) => ({
           }
         }
 
-        case DonationAllocationStrategyEnum.split: {
+        case DonationAllocationStrategyEnum.share: {
           if (!params.potAccountId) {
             return void dispatch.donation.failure(new Error("No pot selected"));
           }

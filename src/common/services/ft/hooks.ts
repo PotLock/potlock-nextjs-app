@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { pick } from "remeda";
 import { useShallow } from "zustand/shallow";
@@ -25,8 +25,8 @@ export const useTokenRegistry = () => {
 export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
   const { metadata, balance, balanceFloat } = useFtRegistryStore(
     useShallow(
-      (ftRegistry) =>
-        ftRegistry.data?.[tokenId] ?? {
+      (registry) =>
+        registry.data?.[tokenId] ?? {
           metadata: null,
           balance: null,
           balanceFloat: null,

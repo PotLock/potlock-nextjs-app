@@ -1,6 +1,6 @@
 import { Form } from "react-hook-form";
 
-import { Challenge } from "@/common/contracts/potlock/interfaces/pot.interfaces";
+import { Challenge } from "@/common/contracts/core/interfaces/pot.interfaces";
 import {
   Button,
   Checkbox,

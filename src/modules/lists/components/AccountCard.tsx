@@ -8,8 +8,8 @@ import { ListRegistration } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import DownArrow from "@/common/assets/svgs/DownArrow";
 import { ListNoteIcon } from "@/common/assets/svgs/list-note";
-import { RegistrationStatus } from "@/common/contracts/potlock";
-import { update_registered_project } from "@/common/contracts/potlock/lists";
+import { RegistrationStatus } from "@/common/contracts/core";
+import { update_registered_project } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import {
   Button,

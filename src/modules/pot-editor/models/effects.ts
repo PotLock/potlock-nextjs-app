@@ -8,7 +8,7 @@ import {
   PotDeploymentResult,
   pot,
   potFactory,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import { AppDispatcher } from "@/store";
 
 import { PotEditorDeploymentInputs, PotEditorSettings } from "./schemas";

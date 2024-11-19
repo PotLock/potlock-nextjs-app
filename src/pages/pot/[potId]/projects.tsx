@@ -2,8 +2,8 @@ import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { Application } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/potlock/pot";
+import { Application } from "@/common/contracts/core/interfaces/pot.interfaces";
+import * as potContract from "@/common/contracts/core/pot";
 import { InfiniteScroll, SearchBar } from "@/common/ui/components";
 import { PotLayout } from "@/modules/pot";
 import { Profile } from "@/modules/profile/models";

@@ -13,12 +13,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { walletApi } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@/common/contracts/core/interfaces/lists.interfaces";
 import {
   create_list,
   getList,
   update_list,
-} from "@/common/contracts/potlock/lists";
+} from "@/common/contracts/core/lists";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId } from "@/common/types";

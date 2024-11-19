@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/router";
 
 import { NearIcon } from "@/common/assets/svgs";
-import { CampaignDonation } from "@/common/contracts/potlock";
+import { CampaignDonation } from "@/common/contracts/core";
 import { toChronologicalOrder, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { DataTable } from "@/common/ui/components";

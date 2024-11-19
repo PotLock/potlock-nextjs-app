@@ -11,7 +11,7 @@ import {
   ContractSourceMetadata,
   PotArgs,
   PotConfig,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
 import {
   donationAmount,

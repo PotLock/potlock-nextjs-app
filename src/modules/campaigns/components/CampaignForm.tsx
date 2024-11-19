@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { Campaign } from "@/common/contracts/potlock";
+import { Campaign } from "@/common/contracts/core";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { Button, Form, FormField } from "@/common/ui/components";
@@ -130,6 +130,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
                   classNames={{ root: "md:w-[45%]" }}
                   label="Who are you raising this campaign for?"
                   required
+                  placeholder="Enter Near Address"
                   type="text"
                   {...field}
                 />

@@ -10,7 +10,6 @@ import { StatusF24Enum, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
-import { ftService } from "@/common/services";
 import { useIsHuman } from "@/modules/core";
 import { dispatch } from "@/store";
 
@@ -22,7 +21,6 @@ import {
   DonationInputs,
   donationCrossFieldValidationTargets,
   donationSchema,
-  donationTokenSchema,
 } from "../models";
 import {
   DonationAllocationKey,
@@ -64,15 +62,17 @@ export const useDonationForm = ({
         .total("milliseconds") > 0,
   );
 
-  const defaultPotAccountId = toChronologicalOrder(
-    "matching_round_end",
-    matchingPots,
-  ).at(0)?.account;
+  const defaultPotAccountId = useMemo(
+    () =>
+      toChronologicalOrder("matching_round_end", matchingPots).at(0)?.account,
+
+    [matchingPots],
+  );
 
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       amount: DONATION_MIN_NEAR_AMOUNT,
-      tokenId: donationTokenSchema.parse(undefined),
+      tokenId: NATIVE_TOKEN_ID,
       recipientAccountId,
       referrerAccountId,
       potAccountId: isPotDonation ? potAccountId : defaultPotAccountId,
@@ -82,14 +82,11 @@ export const useDonationForm = ({
       allocationStrategy:
         isSingleProjectDonation || isCampaignDonation
           ? DonationAllocationStrategyEnum[
-              matchingPots.length > 0 ? "split" : "full"
+              !isCampaignDonation && matchingPots.length > 0 ? "share" : "full"
             ]
-          : DonationAllocationStrategyEnum.split,
+          : DonationAllocationStrategyEnum.share,
 
-      groupAllocationStrategy:
-        DonationGroupAllocationStrategyEnum[
-          isSingleProjectDonation ? "manually" : "evenly"
-        ],
+      groupAllocationStrategy: DonationGroupAllocationStrategyEnum.evenly,
     }),
 
     [
@@ -113,10 +110,9 @@ export const useDonationForm = ({
     resetOptions: { keepDirtyValues: false },
   });
 
-  const values = useWatch(self);
+  const values = useWatch({ control: self.control });
   const amount = values.amount ?? 0;
   const tokenId = values.tokenId ?? NATIVE_TOKEN_ID;
-  const { data: token } = ftService.useRegisteredToken({ tokenId });
 
   const totalAmountFloat =
     isSingleProjectDonation || isCampaignDonation
@@ -163,13 +159,8 @@ export const useDonationForm = ({
     [defaultValues, values],
   );
 
-  const isBalanceSufficient = totalAmountFloat < (token?.balanceFloat ?? 0);
-
   const isDisabled =
-    !hasChanges ||
-    !self.formState.isValid ||
-    self.formState.isSubmitting ||
-    !isBalanceSufficient;
+    !hasChanges || !self.formState.isValid || self.formState.isSubmitting;
 
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
 
@@ -185,8 +176,8 @@ export const useDonationForm = ({
 
   useEffect(() => {
     /**
-     *? Currently, when `defaultPotAccountId` gets determined,
-     *?  it does not trigger rerender, so we have to do it manually.
+     *? Due to an unknown issue, when `defaultPotAccountId` gets determined,
+     *?  it does not trigger the form state update, so we have to do it manually.
      */
     if (
       isSingleProjectDonation &&
@@ -204,26 +195,44 @@ export const useDonationForm = ({
     isSingleProjectDonation,
   ]);
 
-  return {
-    form: {
+  useEffect(() => {
+    if (
+      (values.allocationStrategy === "full" && values.tokenId === undefined) ||
+      (values.allocationStrategy === "share" &&
+        values.tokenId !== NATIVE_TOKEN_ID)
+    ) {
+      self.setValue("tokenId", NATIVE_TOKEN_ID, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    }
+  }, [self, values]);
+
+  /**
+   * Patched form object with cross-field validation errors included.
+   */
+  const form = useMemo(
+    () => ({
       ...self,
 
       formState: {
         ...self.formState,
         errors: { ...self.formState.errors, ...crossFieldErrors },
       },
-    },
+    }),
 
+    [crossFieldErrors, self],
+  );
+
+  return {
+    form,
     defaultValues,
     hasChanges,
-    isBalanceSufficient,
     isDisabled,
     isSenderHumanVerified,
     onSubmit: self.handleSubmit(onSubmit),
     matchingPots,
     minAmountError,
-    inputs: values,
     totalAmountFloat,
-    token,
   };
 };

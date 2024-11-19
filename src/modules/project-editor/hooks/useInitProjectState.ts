@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import * as potlockLists from "@/common/contracts/potlock/lists";
+import * as potlockLists from "@/common/contracts/core/lists";
 import { useRouteQuery } from "@/common/lib";
 import useWallet from "@/modules/auth/hooks/useWallet";
 import routesPath from "@/modules/core/routes";

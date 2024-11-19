@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { Campaign } from "@/common/contracts/potlock";
-import { get_campaigns } from "@/common/contracts/potlock/campaigns";
+import { Campaign } from "@/common/contracts/core";
+import { get_campaigns } from "@/common/contracts/core/campaigns";
 import { PageWithBanner } from "@/common/ui/components";
 import { CampaignBanner } from "@/modules/campaigns/components/CampaignBanner";
 import { CampaignsList } from "@/modules/campaigns/components/CampaignsList";

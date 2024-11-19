@@ -5,7 +5,7 @@ import {
   DirectFTBatchDonationItem,
   PotBatchDonationItem,
   PotDonation,
-} from "@/common/contracts/potlock";
+} from "@/common/contracts/core";
 import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
 export type DonationGroupAllocationKey = ByPotId | ByListId | ByCampaignId;
@@ -16,7 +16,7 @@ export type DonationStep = "allocation" | "confirmation" | "success";
 
 export enum DonationAllocationStrategyEnum {
   full = "full",
-  split = "split",
+  share = "share",
 }
 
 export type DonationAllocationStrategy =

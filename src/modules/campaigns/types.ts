@@ -1,4 +1,4 @@
-import { Campaign } from "@/common/contracts/potlock";
+import { Campaign } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 
 export enum CampaignEnumType {

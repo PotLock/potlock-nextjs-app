@@ -13,7 +13,7 @@ import {
   remove_admins_from_list,
   transfer_list_ownership,
   unregister_from_list,
-} from "@/common/contracts/potlock/lists";
+} from "@/common/contracts/core/lists";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { AccountKey } from "@/modules/account";

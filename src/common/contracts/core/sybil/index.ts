@@ -9,8 +9,8 @@ import {
   TWO_HUNDREDTHS_NEAR,
 } from "@/common/constants";
 
-import { GetHumanScoreInput, HumanScoreResponse } from "./interfaces/is-human";
-import { Config } from "./interfaces/lib";
+import { GetHumanScoreInput, HumanScoreResponse } from "./interface/is-human";
+import { Config } from "./interface/lib";
 import {
   ActivateProviderInput,
   DeactivateProviderInput,
@@ -19,13 +19,13 @@ import {
   RegisterProviderInput,
   UnflagProviderInput,
   UpdateProviderInput,
-} from "./interfaces/providers";
+} from "./interface/providers";
 import {
   AccountId,
   GetStampsForAccountIdInput,
   GetUsersForStampInput,
   StampExternal,
-} from "./interfaces/stamps";
+} from "./interface/stamps";
 
 /**
  * NEAR Contract API
