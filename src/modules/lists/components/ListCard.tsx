@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FaHeart } from "react-icons/fa";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near";
 import { LayersIcon } from "@/common/assets/svgs";
@@ -95,7 +96,7 @@ export const ListCard = ({
         data-testid="list-card"
       >
         <div className="relative">
-          <Image
+          <LazyLoadImage
             alt="listImage"
             className="h-[221px] w-full object-cover"
             src={dataForList?.cover_image_url ?? background}
