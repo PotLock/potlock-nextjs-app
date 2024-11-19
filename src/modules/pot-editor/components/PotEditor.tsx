@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { dropTimezoneIndicator } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
@@ -28,7 +27,7 @@ import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
 import { PotEditorPreview } from "./PotEditorPreview";
-import { POT_DEFAULT_MIN_DATE, POT_EDITOR_FIELDS } from "../constants";
+import { POT_EDITOR_FIELDS } from "../constants";
 import { usePotEditorForm } from "../hooks/forms";
 import {
   getPotEditorDeploymentSchema,
