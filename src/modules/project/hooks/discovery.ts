@@ -35,8 +35,6 @@ export const useProjectDiscovery = ({ listId }: ByListId) => {
     page_size: pageSize,
   });
 
-  const projects = filteredProjects;
-
   return {
     categoryFilter,
     pageSize,
@@ -47,7 +45,7 @@ export const useProjectDiscovery = ({ listId }: ByListId) => {
     setSortingOrder,
     setStatusFilter,
     isLoading,
-    projects,
+    projects: filteredProjects,
     error,
   };
 };
