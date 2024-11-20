@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { indexer } from "@/common/api/indexer";
+import { toChronologicalOrder } from "@/common/lib";
 import {
   ByListId,
   ChronologicalSortOrder,
@@ -17,7 +18,7 @@ export const useProjectDiscovery = ({ listId }: ByListId) => {
     useState<ProjectListingStatusVariant>("all");
 
   /**
-   *! INFO: Heads up! Do not apply chronological sorting within this hook.
+   *! INFO: Heads up! Do not apply reversed chronological sorting within this hook.
    *!  Instead, wrap the rendered list of items in `useMemo` within the target component
    *!  with `toReversed` applied to conditionally if `sortingOrder === ChronologicalSortOrder.older`
    */
@@ -35,6 +36,11 @@ export const useProjectDiscovery = ({ listId }: ByListId) => {
     page_size: pageSize,
   });
 
+  const searchResults = useMemo(
+    () => toChronologicalOrder("submitted_at", filteredProjects),
+    [filteredProjects],
+  );
+
   return {
     categoryFilter,
     pageSize,
@@ -45,7 +51,7 @@ export const useProjectDiscovery = ({ listId }: ByListId) => {
     setSortingOrder,
     setStatusFilter,
     isLoading,
-    projects: filteredProjects,
+    projects: searchResults,
     error,
   };
 };
