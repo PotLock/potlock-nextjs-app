@@ -98,3 +98,10 @@ export type FungibleTokenMetadata = {
   reference_hash: string | null;
   decimals: number;
 };
+
+export enum ChronologicalSortOrder {
+  recent = "recent",
+  older = "older",
+}
+
+export type ChronologicalSortOrderVariant = keyof typeof ChronologicalSortOrder;

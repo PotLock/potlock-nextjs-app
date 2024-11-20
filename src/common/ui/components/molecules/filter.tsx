@@ -10,8 +10,7 @@ import { Label } from "../atoms/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 
-// Define the item type
-type Item = {
+export type FilterOption = {
   label: string;
   val: string;
 };
@@ -27,7 +26,7 @@ export type Group<T extends GroupType = GroupType.multiple | GroupType.single> =
     props?: T extends GroupType.multiple
       ? Omit<ToggleGroupMultipleProps, "type">
       : Omit<ToggleGroupSingleProps, "type">; // Conditional props based on type
-    options: Item[];
+    options: FilterOption[];
     type: T;
   };
 
@@ -61,9 +60,9 @@ export const Filter = ({ groups, popoverProps }: Props) => {
                 className="flex flex-wrap justify-start gap-2"
                 variant="outline"
                 type="multiple"
-                {...(props || {})} // Spread multiple props
+                {...props}
               >
-                {options.map(({ label, val }: any) => (
+                {options.map(({ label, val }) => (
                   <ToggleGroupItem value={val} aria-label="Toggle" key={val}>
                     {label}
                   </ToggleGroupItem>
@@ -74,9 +73,9 @@ export const Filter = ({ groups, popoverProps }: Props) => {
                 className="flex flex-wrap justify-start gap-2"
                 variant="outline"
                 type="single"
-                {...(props || {})} // Spread single props
+                {...props}
               >
-                {options.map(({ label, val }: any) => (
+                {options.map(({ label, val }) => (
                   <ToggleGroupItem value={val} aria-label="Toggle" key={val}>
                     {label}
                   </ToggleGroupItem>

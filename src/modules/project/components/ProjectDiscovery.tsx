@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 
 import { ListRegistration } from "@/common/api/indexer";
+import { CHRONOLOGICAL_SORT_OPTIONS } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
 import {
   Filter,
@@ -19,7 +20,7 @@ import { useProjectsFilters } from "../hooks/useProjectsFilters";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
 
-export const ProjectsOverview = ({
+export const ProjectDiscovery = ({
   setCurrentFilterCategory,
   setCurrentFilterStatus,
   filteredRegistrations,
@@ -38,10 +39,6 @@ export const ProjectsOverview = ({
     setCurrentFilterStatus,
     setFilteredRegistrations,
   );
-  const SORT_LIST_PROJECTS = [
-    { label: "Most recent", value: "recent" },
-    { label: "Least recent", value: "older" },
-  ];
 
   const chronologicallySortedProjects = useMemo(() => {
     return toChronologicalOrder("submitted_at", filteredRegistrations);
@@ -105,7 +102,10 @@ export const ProjectsOverview = ({
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
           <Filter groups={tagList} />
-          <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
+          <SortSelect
+            options={CHRONOLOGICAL_SORT_OPTIONS}
+            onValueChange={handleSort}
+          />
         </div>
       </div>
       {loading ? (

@@ -9,7 +9,7 @@ import useWallet from "@/modules/auth/hooks/useWallet";
 import { GeneralStats, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { DonateRandomly } from "@/modules/donation";
-import { ProjectsOverview, ProjectsOverviewFeatured } from "@/modules/project";
+import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/modules/project";
 import { useTypedSelector } from "@/store";
 
 const WelcomeBanner = () => {
@@ -77,8 +77,8 @@ export default function Home() {
     <main className="container flex flex-col items-center">
       <WelcomeBanner />
       <GeneralStats />
-      <ProjectsOverviewFeatured />
-      <ProjectsOverview
+      <ProjectDiscoveryFeatured />
+      <ProjectDiscovery
         setCurrentFilterCategory={setCurrentFilterCategory}
         setCurrentFilterStatus={setCurrentFilterStatus}
         filteredRegistrations={filteredRegistrations}
