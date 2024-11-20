@@ -11,7 +11,7 @@ import {
 import { ProjectCategory, ProjectListingStatusVariant } from "../types";
 
 export const useProjectDiscovery = ({ listId }: ByListId) => {
-  const [pageSize, setPageSize] = useState(30);
+  const [pageSize, setPageSize] = useState(9);
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
   const [statusFilter, setStatusFilter] =
@@ -36,10 +36,9 @@ export const useProjectDiscovery = ({ listId }: ByListId) => {
     page_size: pageSize,
   });
 
-  const searchResults = useMemo(
-    () => toChronologicalOrder("submitted_at", filteredProjects),
-    [filteredProjects],
-  );
+  const searchResults = useMemo(() => {
+    return toChronologicalOrder("submitted_at", filteredProjects);
+  }, [filteredProjects]);
 
   return {
     categoryFilter,

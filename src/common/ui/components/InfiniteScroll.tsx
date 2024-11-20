@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode, useMemo } from "react";
 
 import InfiniteScrollWrapper, {
   Props as ScrollProps,
@@ -6,25 +6,33 @@ import InfiniteScrollWrapper, {
 
 import { cn } from "../utils";
 
-type Props = Partial<ScrollProps> & {
+export type InfiniteScrollProps = Partial<ScrollProps> & {
   items: any[];
   index: number;
   setIndex: (index: number) => void;
   size: number;
   renderItem: (props: any) => ReactNode;
+  reversed?: boolean;
 };
 
-export const InfiniteScroll = ({
+export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   className,
   items,
   size,
   index,
   setIndex,
   renderItem,
-}: Props) => {
+  reversed,
+}) => {
   const fetchMoreData = () => {
     setIndex(index + 1);
   };
+
+  const orderedItems = useMemo(() => {
+    const renderedItems = items.map(renderItem);
+
+    return reversed ? renderedItems.toReversed() : renderedItems;
+  }, [items, renderItem, reversed]);
 
   return (
     <InfiniteScrollWrapper
@@ -38,9 +46,7 @@ export const InfiniteScroll = ({
       hasMore={index < Math.ceil(items.length / size)}
       loader={<h4>Loading...</h4>}
     >
-      {items
-        .slice(0, size * index)
-        .map((registration) => renderItem(registration))}
+      {orderedItems}
     </InfiniteScrollWrapper>
   );
 };
