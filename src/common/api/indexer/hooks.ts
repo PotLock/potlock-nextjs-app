@@ -1,14 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-
-import { AxiosError } from "axios";
-import { add, pick, prop, values } from "remeda";
-import useSWRInfinite from "swr/infinite";
-import { useShallow } from "zustand/shallow";
-
-import { DEFAULT_LOOKUP_PAGE_SIZE } from "@/common/constants";
 import { ByAccountId, ByListId } from "@/common/types";
 
-import { useIndexerApiClientCacheStore } from "./internal/cache";
 import * as generatedClient from "./internal/client.generated";
 import type {
   V1AccountsActivePotsRetrieveParams,
@@ -233,73 +224,6 @@ export const useListRegistrations = ({
   );
 
   return { ...queryResult, data: queryResult.data?.data.results };
-};
-
-/**
- * Same as `useListRegistrations` but with infinite pagination and custom caching.
- */
-export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
-  listId,
-  ...params
-}: Partial<ByListId> & V1ListsRegistrationsRetrieveParams) => {
-  const isEnabled = typeof listId === "number";
-
-  const getQueryKey = () =>
-    isEnabled
-      ? generatedClient.getV1ListsRegistrationsRetrieveKey(listId, params)
-      : null;
-
-  const fetcher = () =>
-    generatedClient.v1ListsRegistrationsRetrieve(
-      listId ?? -1,
-      params,
-      INDEXER_CLIENT_CONFIG.axios,
-    );
-
-  const query = useSWRInfinite<Awaited<ReturnType<typeof fetcher>>, TError>(
-    getQueryKey,
-    fetcher,
-  );
-
-  const loadMore = useCallback(
-    () => query.setSize(add(DEFAULT_LOOKUP_PAGE_SIZE)),
-    [query],
-  );
-
-  console.log(query.data);
-
-  // useEffect(() => {
-  //   if (isEnabled && query.data !== undefined) {
-  //     setListCache(
-  //       listId,
-
-  //       {
-  //         registrations: query.data.at(0)?.data.results ?? [],
-  //         totalRegistrationCount: query.data.at(0)?.data.count ?? 0,
-  //       },
-  //     );
-  //   }
-  // }, [isEnabled, listId, query.data, setListCache]);
-
-  // const cache = useIndexerApiClientCacheStore(
-  //   useShallow(({ lists }) => {
-  //     const { registrations = {}, totalRegistrationCount = 0 } =
-  //       typeof listId === "number" ? (lists[listId] ?? {}) : {};
-
-  //     return {
-  //       entries: Object.values(registrations),
-  //       totalRegistrationCount,
-  //     };
-  //   }),
-  // );
-
-  // console.log(cache);
-
-  return {
-    ...query,
-    data: query.data?.at(0)?.data,
-    loadMore,
-  };
 };
 
 /**

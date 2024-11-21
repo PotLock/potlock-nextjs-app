@@ -13,18 +13,9 @@ import {
 
 import { ProjectCategory, ProjectListingStatusVariant } from "../types";
 
-export type ProjectLookupParams = ByListId & { basicPageSize?: number };
+export type ProjectLookupParams = ByListId & {};
 
-export const useProjectLookup = ({
-  listId,
-  basicPageSize = DEFAULT_LOOKUP_PAGE_SIZE,
-}: ProjectLookupParams) => {
-  const [page, setPage] = useState(1);
-
-  const loadMore = useCallback(() => {
-    setPage(add(1));
-  }, []);
-
+export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
   const [statusFilter, setStatusFilter] =
@@ -43,18 +34,15 @@ export const useProjectLookup = ({
     data: listRegistrations,
     isLoading,
     error,
-  } = indexer.useListRegistrationsInfinite({
+  } = indexer.useListRegistrations({
     listId,
     category: categoryFilter.join(","),
     status: statusFilter === "all" ? undefined : statusFilter,
-    page,
+    page_size: 9999,
   });
 
   const searchResults = useMemo(() => {
-    return toChronologicalOrder(
-      "submitted_at",
-      listRegistrations?.results ?? [],
-    );
+    return toChronologicalOrder("submitted_at", listRegistrations ?? []);
   }, [listRegistrations]);
 
   return {
@@ -67,7 +55,6 @@ export const useProjectLookup = ({
     setProjectStatusFilter: setStatusFilter,
     isProjectLookupPending: isLoading,
     projects: searchResults,
-    loadMoreProjects: loadMore,
-    totalProjectCount: listRegistrations?.count ?? 999,
+    totalProjectCount: listRegistrations?.length ?? 0,
   };
 };
