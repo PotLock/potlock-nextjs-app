@@ -1,4 +1,7 @@
+import { useCallback, useMemo, useState } from "react";
+
 import { AxiosError, AxiosRequestConfig } from "axios";
+import { add } from "remeda";
 import { Key, SWRConfiguration } from "swr";
 import useSWRInfinite from "swr/infinite";
 
@@ -233,15 +236,23 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
   listId,
   ...params
 }: Partial<ByListId> & V1ListsRegistrationsRetrieveParams) => {
+  const [lastPageIndex, setLastPageIndex] = useState(0);
   const isEnabled = typeof listId === "number";
 
+  const indexedParams = useMemo(
+    () => ({ ...params, page: lastPageIndex + 1 }),
+    [lastPageIndex, params],
+  );
+
   const swrKey = () =>
-    isEnabled ? getV1ListsRegistrationsRetrieveKey(listId, params) : null;
+    isEnabled
+      ? getV1ListsRegistrationsRetrieveKey(listId, indexedParams)
+      : null;
 
   const swrFn = () =>
     v1ListsRegistrationsRetrieve(
       listId ?? -1,
-      params,
+      indexedParams,
       POTLOCK_REQUEST_CONFIG.axios,
     );
 
@@ -252,10 +263,13 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
 
   console.log(query.data);
 
+  const loadMore = useCallback(() => setLastPageIndex(add(1)), []);
+
   return {
     swrKey,
     ...query,
     data: query.data?.at(0)?.data,
+    loadMore,
   };
 };
 

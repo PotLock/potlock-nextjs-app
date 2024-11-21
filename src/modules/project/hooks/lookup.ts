@@ -37,20 +37,14 @@ export const useProjectLookup = ({
   const {
     data: listRegistrationsData,
     isLoading,
+    loadMore,
     error,
-    setSize: setPageSize,
-    size: pageSize,
   } = indexer.useListRegistrationsInfinite({
     listId,
     category: categoryFilter.join(","),
     status: statusFilter === "all" ? undefined : statusFilter,
     page_size: basicPageSize,
   });
-
-  const loadMore = useCallback(
-    () => setPageSize(add(basicPageSize)),
-    [basicPageSize, setPageSize],
-  );
 
   const searchResults = useMemo(() => {
     return toChronologicalOrder(
@@ -62,7 +56,6 @@ export const useProjectLookup = ({
   return {
     projectCategoryFilter: categoryFilter,
     projectLookupError: error,
-    projectLookupPageSize: pageSize,
     projectSortingOrder: sortingOrder,
     projectStatusFilter: statusFilter,
     setProjectCategoryFilter: setCategoryFilter,
