@@ -71,6 +71,8 @@ export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
 
 export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
 
+export const DEFAULT_LOOKUP_PAGE_SIZE = 9;
+
 export const CHRONOLOGICAL_SORT_OPTIONS: {
   label: string;
   value: ChronologicalSortOrderVariant;

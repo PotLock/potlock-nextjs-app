@@ -4,7 +4,7 @@ import InfiniteScrollWrapper, {
   Props as ScrollProps,
 } from "react-infinite-scroll-component";
 
-import { cn } from "../utils";
+import { cn } from "../../utils";
 
 export type InfiniteScrollProps = Partial<ScrollProps> & {
   items: any[];

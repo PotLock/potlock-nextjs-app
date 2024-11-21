@@ -4,9 +4,8 @@
  * See https://atomicdesign.bradfrost.com/chapter-2/
  */
 export * from "./dropdown-menu";
-export * from "./InfiniteScroll";
+export * from "./_deprecated/InfiniteScroll";
 export * from "./popover";
-export * from "./scroll-area";
 export * from "./SearchBar";
 export * from "./Spinner";
 export * from "./DataTable";
@@ -25,8 +24,10 @@ export * from "./atoms/button";
 export * from "./atoms/calendar";
 export * from "./atoms/card";
 export * from "./atoms/checkbox";
+export * from "./atoms/infinite-scroll-trigger";
 export * from "./atoms/input";
 export * from "./atoms/label";
+export * from "./atoms/scroll-area";
 export * from "./atoms/select";
 export * from "./atoms/skeleton";
 export * from "./atoms/switch";
