@@ -4,6 +4,7 @@ import { POTLOCK_REQUEST_CONFIG } from "./config";
 import { swrHooks } from "./generated";
 import {
   ByPotId,
+  Donation,
   V1AccountsActivePotsRetrieveParams,
   V1AccountsDonationsReceivedRetrieveParams,
   V1AccountsDonationsSentRetrieveParams,
@@ -15,6 +16,7 @@ import {
   V1ListsRegistrationsRetrieveParams,
   V1ListsRetrieveParams,
   V1PotsApplicationsRetrieveParams,
+  V1PotsDonationsRetrieveParams,
   V1PotsRetrieveParams,
 } from "./types";
 
@@ -138,6 +140,24 @@ export const useAccountDonationsReceived = ({
   );
 
   return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_donations_retrieve
+ */
+
+export const usePotDonations = ({
+  potId,
+  ...params
+}: ByPotId & V1PotsDonationsRetrieveParams) => {
+  const queryResult = swrHooks.useV1PotsDonationsRetrieve(potId, params, {
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { enabled: Boolean(potId) },
+  });
+  return {
+    ...queryResult,
+    data: queryResult.data?.data?.results as Donation[],
+  };
 };
 
 /**
