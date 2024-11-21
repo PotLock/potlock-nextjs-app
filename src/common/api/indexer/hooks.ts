@@ -1,3 +1,7 @@
+import { AxiosError, AxiosRequestConfig } from "axios";
+import { Key, SWRConfiguration } from "swr";
+import useSWRInfinite from "swr/infinite";
+
 import { ByAccountId, ByListId } from "@/common/types";
 
 import { POTLOCK_REQUEST_CONFIG } from "./config";
@@ -16,6 +20,8 @@ import {
   V1ListsRetrieveParams,
   V1PotsApplicationsRetrieveParams,
   V1PotsRetrieveParams,
+  getV1ListsRegistrationsRetrieveKey,
+  v1ListsRegistrationsRetrieve,
 } from "./types";
 
 /**
@@ -221,6 +227,36 @@ export const useListRegistrations = ({
   );
 
   return { ...queryResult, data: queryResult.data?.data.results };
+};
+
+export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
+  listId,
+  ...params
+}: Partial<ByListId> & V1ListsRegistrationsRetrieveParams) => {
+  const isEnabled = typeof listId === "number";
+
+  const swrKey = () =>
+    isEnabled ? getV1ListsRegistrationsRetrieveKey(listId, params) : null;
+
+  const swrFn = () =>
+    v1ListsRegistrationsRetrieve(
+      listId ?? -1,
+      params,
+      POTLOCK_REQUEST_CONFIG.axios,
+    );
+
+  const query = useSWRInfinite<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+  );
+
+  console.log(query.data);
+
+  return {
+    swrKey,
+    ...query,
+    data: query.data?.at(0)?.data,
+  };
 };
 
 /**

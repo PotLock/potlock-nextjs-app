@@ -19,7 +19,7 @@ export const useProjectLookup = ({
   listId,
   basicPageSize = DEFAULT_LOOKUP_PAGE_SIZE,
 }: ProjectLookupParams) => {
-  const [pageSize, setPageSize] = useState(basicPageSize);
+  //const [pageSize, setPageSize] = useState(basicPageSize);
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
   const [statusFilter, setStatusFilter] =
@@ -35,24 +35,29 @@ export const useProjectLookup = ({
     useState<ChronologicalSortOrderVariant>(ChronologicalSortOrder.recent);
 
   const {
-    data: filteredEntries = [],
+    data: listRegistrationsData,
     isLoading,
     error,
-  } = indexer.useListRegistrations({
+    setSize: setPageSize,
+    size: pageSize,
+  } = indexer.useListRegistrationsInfinite({
     listId,
     category: categoryFilter.join(","),
     status: statusFilter === "all" ? undefined : statusFilter,
-    page_size: pageSize,
+    page_size: basicPageSize,
   });
 
   const loadMore = useCallback(
     () => setPageSize(add(basicPageSize)),
-    [basicPageSize],
+    [basicPageSize, setPageSize],
   );
 
   const searchResults = useMemo(() => {
-    return toChronologicalOrder("submitted_at", filteredEntries);
-  }, [filteredEntries]);
+    return toChronologicalOrder(
+      "submitted_at",
+      listRegistrationsData?.results ?? [],
+    );
+  }, [listRegistrationsData]);
 
   return {
     projectCategoryFilter: categoryFilter,
