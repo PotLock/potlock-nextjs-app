@@ -19,7 +19,6 @@ export const useProjectLookup = ({
   listId,
   basicPageSize = DEFAULT_LOOKUP_PAGE_SIZE,
 }: ProjectLookupParams) => {
-  //const [pageSize, setPageSize] = useState(basicPageSize);
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
   const [statusFilter, setStatusFilter] =

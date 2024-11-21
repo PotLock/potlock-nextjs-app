@@ -1,11 +1,13 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { AxiosError } from "axios";
-import { add } from "remeda";
+import { add, prop } from "remeda";
 import useSWRInfinite from "swr/infinite";
+import { useShallow } from "zustand/shallow";
 
 import { ByAccountId, ByListId } from "@/common/types";
 
+import { useIndexerApiClientCacheStore } from "./internal/cache";
 import * as generatedClient from "./internal/client.generated";
 import type {
   V1AccountsActivePotsRetrieveParams,
@@ -239,6 +241,12 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
   const [lastPageIndex, setLastPageIndex] = useState(0);
   const isEnabled = typeof listId === "number";
 
+  const setListRegistrations = useIndexerApiClientCacheStore(
+    prop("setListRegistrations"),
+  );
+
+  const loadMore = useCallback(() => setLastPageIndex(add(1)), []);
+
   const indexedParams = useMemo(
     () => ({ ...params, page: lastPageIndex + 1 }),
     [lastPageIndex, params],
@@ -266,7 +274,28 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
 
   console.log(query.data);
 
-  const loadMore = useCallback(() => setLastPageIndex(add(1)), []);
+  useEffect(() => {
+    if (isEnabled && query.data) {
+      setListRegistrations(
+        listId,
+
+        {
+          entries: query.data.map(({ data }) => data.results).flat(),
+          totalCount: query.data.at(0)?.data.count ?? 0,
+        },
+      );
+    }
+  }, [isEnabled, listId, query.data, setListRegistrations]);
+
+  const cachedRegistrations = useIndexerApiClientCacheStore(
+    useShallow(({ listRegistrations }) =>
+      typeof listId === "number"
+        ? listRegistrations[listId]
+        : { entries: [], totalCount: 0 },
+    ),
+  );
+
+  console.log(cachedRegistrations);
 
   return {
     swrKey,
