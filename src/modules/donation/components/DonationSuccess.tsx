@@ -102,7 +102,7 @@ export const DonationSuccess = ({
 
     const tag = `${singlePorject}`;
 
-    let url = `https://alpha.potlock.io/${routesPath.PROFILE}/${recipient.id}/funding-raised`;
+    let url = `https://alpha.potlock.io${routesPath.PROFILE}/${recipient.id}/funding-raised`;
     let text = `I just donated to ${tag} on @${POTLOCK_TWITTER_ACCOUNT_ID}! Support public goods at `;
     text = encodeURIComponent(text);
     url = encodeURIComponent(url);
@@ -154,7 +154,6 @@ export const DonationSuccess = ({
             variant="standard-filled"
             className="bg-neutral-950 py-1.5 shadow-none"
             onClick={() => {
-              // const shareUrl = `https://twitter.com/intent/tweet?text=I%20just%20donated%20${totalAmountFloat}%20NEAR%20to%20${recipient?.near_social_profile_data?.name}%20via%20${pot?.name}%20Pot!%20%23DonationSuccess%20%23NEARProtocol`;
               window.open(twitterIntent, "_blank");
             }}
           >
