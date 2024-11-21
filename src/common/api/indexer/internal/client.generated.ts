@@ -324,27 +324,16 @@ export type V1ProjectStatsRetrieveParams = {
   page_size?: number;
 };
 
-export interface VotePair {
+export interface Vote {
+  readonly pair: string;
   /**
    * @minimum 0
    * @maximum 2147483647
    */
   pair_id: number;
-  project: Project;
-}
-
-export interface Vote {
-  readonly id: number;
-  pairs: VotePair[];
-  /** Round ID in DB (does not necessarily correspond to on-chain ID). */
-  round: number;
-  /**
-   * Transaction hash.
-   * @nullable
-   */
-  tx_hash?: string | null;
-  voted_at: string;
+  voted_date: string;
   voter: Account;
+  winner: ProjectInPair;
 }
 
 export interface Token {
@@ -425,6 +414,179 @@ export interface StatsResponse {
   total_recipients_count: number;
 }
 
+export interface Round {
+  admins: Account[];
+  /** Allow applications. */
+  allow_applications: boolean;
+  /** Allow remaining dist. */
+  allow_remaining_dist: boolean;
+  /**
+   * Round application end date.
+   * @nullable
+   */
+  application_end?: string | null;
+  /**
+   * Round application start date.
+   * @nullable
+   */
+  application_start?: string | null;
+  /** Projects Approved for round. */
+  approved_projects: string[];
+  /**
+   * Base currency.
+   * @maxLength 64
+   * @nullable
+   */
+  base_currency?: string | null;
+  /**
+   * Compliance end date.
+   * @nullable
+   */
+  compliance_end?: string | null;
+  /**
+   * Compliance period in ms.
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  compliance_period_ms?: number | null;
+  /** Compliance req desc. */
+  compliance_req_desc: string;
+  contacts?: ProjectContact[];
+  /**
+   * Round cooldown end date.
+   * @nullable
+   */
+  cooldown_end?: string | null;
+  /**
+   * Round cooldown period in ms.
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  cooldown_period_ms?: number | null;
+  /**
+   * Current vault balance.
+   * @maxLength 255
+   * @nullable
+   */
+  current_vault_balance?: string | null;
+  /** @pattern ^-?\d{0,18}(?:\.\d{0,2})?$ */
+  current_vault_balance_usd: string;
+  /** Round deployment date. */
+  deployed_at: string;
+  /** Round description. */
+  description: string;
+  /** Expected amount. */
+  expected_amount: string;
+  /** Round factory account ID. */
+  factory_contract: string;
+  /** Round ID in DB (does not necessarily correspond to on-chain ID). */
+  readonly id: number;
+  /** Is video required. */
+  is_video_required: boolean;
+  /**
+   * Max participants.
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  max_participants?: number | null;
+  /** Round name. */
+  name: string;
+  /**
+   * Number of picks per voter.
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  num_picks_per_voter?: number | null;
+  /**
+   * Round ID in contract
+   * @minimum -2147483648
+   * @maximum 2147483647
+   */
+  on_chain_id: number;
+  owner: Account;
+  /**
+   * Referrer fee basis points.
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  referrer_fee_basis_points?: number | null;
+  remaining_dist_address: Account;
+  /**
+   * Remaining dist at ms.
+   * @minimum -9223372036854776000
+   * @maximum 9223372036854776000
+   * @nullable
+   */
+  remaining_dist_at_ms?: number | null;
+  remaining_dist_by: Account;
+  /**
+   * Remaining dist memo.
+   * @maxLength 255
+   * @nullable
+   */
+  remaining_dist_memo?: string | null;
+  /**
+   * Round complete date.
+   * @nullable
+   */
+  round_complete?: string | null;
+  /** Use vault. */
+  use_vault: boolean;
+  /** Use whitelist. */
+  use_whitelist: boolean;
+  /**
+   * Vault total deposits.
+   * @nullable
+   */
+  vault_total_deposits?: string | null;
+  /** @pattern ^-?\d{0,18}(?:\.\d{0,2})?$ */
+  vault_total_deposits_usd: string;
+  /** Round voting end date. */
+  voting_end: string;
+  /** Round voting start date. */
+  voting_start: string;
+}
+
+export interface RoundApplication {
+  applicant: Account;
+  /** Application id. */
+  readonly id: number;
+  /**
+   * Application message.
+   * @maxLength 1024
+   * @nullable
+   */
+  message?: string | null;
+  project: Account;
+  reviews: ApplicationReview[];
+  round: Round;
+  /** Application status.
+
+* `Pending` - Pending
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `InReview` - InReview
+* `Blacklisted` - Blacklisted */
+  status: Status68eEnum;
+  /** Application submission date. */
+  submitted_at: string;
+  /**
+   * Transaction hash.
+   * @nullable
+   */
+  tx_hash?: string | null;
+  /**
+   * Application last update date.
+   * @nullable
+   */
+  updated_at?: string | null;
+}
+
 /**
  * * `NEW` - New
  * `APPROVED` - Approved
@@ -448,6 +610,10 @@ export interface ProjectRepository {
   label: string;
   /** @maxLength 200 */
   url: string;
+}
+
+export interface ProjectInPair {
+  project_id: string;
 }
 
 export interface ProjectContract {
@@ -930,144 +1096,6 @@ export interface Account {
   total_matching_pool_allocations_usd: number;
 }
 
-export interface Round {
-  admins: Account[];
-  /** Allow applications. */
-  allow_applications: boolean;
-  /** Allow remaining dist. */
-  allow_remaining_dist: boolean;
-  /**
-   * Round application end date.
-   * @nullable
-   */
-  application_end?: string | null;
-  /**
-   * Round application start date.
-   * @nullable
-   */
-  application_start?: string | null;
-  /** Projects Approved for round. */
-  approved_projects: string[];
-  /**
-   * Base currency.
-   * @maxLength 64
-   * @nullable
-   */
-  base_currency?: string | null;
-  /**
-   * Compliance end date.
-   * @nullable
-   */
-  compliance_end?: string | null;
-  /**
-   * Compliance period in ms.
-   * @minimum 0
-   * @maximum 2147483647
-   * @nullable
-   */
-  compliance_period_ms?: number | null;
-  /** Compliance req desc. */
-  compliance_req_desc: string;
-  contacts?: ProjectContact[];
-  /**
-   * Round cooldown end date.
-   * @nullable
-   */
-  cooldown_end?: string | null;
-  /**
-   * Round cooldown period in ms.
-   * @minimum 0
-   * @maximum 2147483647
-   * @nullable
-   */
-  cooldown_period_ms?: number | null;
-  /**
-   * Current vault balance.
-   * @maxLength 255
-   * @nullable
-   */
-  current_vault_balance?: string | null;
-  /** @pattern ^-?\d{0,18}(?:\.\d{0,2})?$ */
-  current_vault_balance_usd: string;
-  /** Round deployment date. */
-  deployed_at: string;
-  /** Round description. */
-  description: string;
-  /** Expected amount. */
-  expected_amount: string;
-  /** Round factory account ID. */
-  factory_contract: string;
-  /** Round ID in DB (does not necessarily correspond to on-chain ID). */
-  readonly id: number;
-  /** Is video required. */
-  is_video_required: boolean;
-  /**
-   * Max participants.
-   * @minimum 0
-   * @maximum 2147483647
-   * @nullable
-   */
-  max_participants?: number | null;
-  /** Round name. */
-  name: string;
-  /**
-   * Number of picks per voter.
-   * @minimum 0
-   * @maximum 2147483647
-   * @nullable
-   */
-  num_picks_per_voter?: number | null;
-  /**
-   * Round ID in contract
-   * @minimum -2147483648
-   * @maximum 2147483647
-   */
-  on_chain_id: number;
-  owner: Account;
-  /**
-   * Referrer fee basis points.
-   * @minimum 0
-   * @maximum 2147483647
-   * @nullable
-   */
-  referrer_fee_basis_points?: number | null;
-  remaining_dist_address: Account;
-  /**
-   * Remaining dist at ms.
-   * @minimum -9223372036854776000
-   * @maximum 9223372036854776000
-   * @nullable
-   */
-  remaining_dist_at_ms?: number | null;
-  remaining_dist_by: Account;
-  /**
-   * Remaining dist memo.
-   * @maxLength 255
-   * @nullable
-   */
-  remaining_dist_memo?: string | null;
-  /**
-   * Round complete date.
-   * @nullable
-   */
-  round_complete?: string | null;
-  /** Use vault. */
-  use_vault: boolean;
-  /** Use whitelist. */
-  use_whitelist: boolean;
-  /**
-   * Vault total deposits.
-   * @nullable
-   */
-  vault_total_deposits?: string | null;
-  /** @pattern ^-?\d{0,18}(?:\.\d{0,2})?$ */
-  vault_total_deposits_usd: string;
-  /** Round voting end date. */
-  voting_end: string;
-  /** Round voting start date. */
-  voting_start: string;
-}
-
 export interface List {
   /** Admin only registrations. */
   admin_only_registrations: boolean;
@@ -1265,41 +1293,6 @@ export interface ApplicationReview {
    * @nullable
    */
   tx_hash?: string | null;
-}
-
-export interface RoundApplication {
-  applicant: Account;
-  /** Application id. */
-  readonly id: number;
-  /**
-   * Application message.
-   * @maxLength 1024
-   * @nullable
-   */
-  message?: string | null;
-  project: Account;
-  reviews: ApplicationReview[];
-  round: Round;
-  /** Application status.
-
-* `Pending` - Pending
-* `Approved` - Approved
-* `Rejected` - Rejected
-* `InReview` - InReview
-* `Blacklisted` - Blacklisted */
-  status: Status68eEnum;
-  /** Application submission date. */
-  submitted_at: string;
-  /**
-   * Transaction hash.
-   * @nullable
-   */
-  tx_hash?: string | null;
-  /**
-   * Application last update date.
-   * @nullable
-   */
-  updated_at?: string | null;
 }
 
 export const v1ProjectStatsRetrieve = (
