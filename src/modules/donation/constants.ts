@@ -8,3 +8,7 @@ export const DONATION_MIN_NEAR_AMOUNT_ERROR = `The minimum donation amount is ${
 export const DONATION_MAX_MESSAGE_LENGTH = 100;
 
 export const DONATION_BASE_STORAGE_DEPOSIT_FLOAT = 0.012;
+
+export const POTLOCK_TWITTER_ACCOUNT_ID = "PotLock_";
+
+export const DEFAULT_SHARE_HASHTAGS = ["PublicGoods", "Donations"];

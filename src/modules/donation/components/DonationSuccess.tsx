@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { Check } from "lucide-react";
 import Link from "next/link";
 
@@ -20,6 +22,10 @@ import { ModalErrorBody } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { TokenTotalValue } from "@/modules/token";
 
+import {
+  DEFAULT_SHARE_HASHTAGS,
+  POTLOCK_TWITTER_ACCOUNT_ID,
+} from "../constants";
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import { useDonationAllocationBreakdown } from "../hooks";
@@ -83,6 +89,31 @@ export const DonationSuccess = ({
     referralFeeFinalAmount: referralFeeFinalAmountFloat,
   });
 
+  const twitterIntent = useMemo(() => {
+    if (!recipient?.near_social_profile_data) return;
+    const twitterIntentBase = "https://twitter.com/intent/tweet?text=";
+
+    const profile: any = recipient?.near_social_profile_data;
+    const singlePorject = profile
+      ? profile.linktree?.twitter
+        ? `@${profile.linktree.twitter}`
+        : profile.name
+      : recipient.id;
+
+    const tag = `${singlePorject}`;
+
+    let url = `https://alpha.potlock.io/${routesPath.PROFILE}/${recipient.id}/funding-raised`;
+    let text = `I just donated to ${tag} on @${POTLOCK_TWITTER_ACCOUNT_ID}! Support public goods at `;
+    text = encodeURIComponent(text);
+    url = encodeURIComponent(url);
+    return (
+      twitterIntentBase +
+      text +
+      `&url=${url}` +
+      `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
+    );
+  }, [recipient?.id, recipient?.near_social_profile_data]);
+
   return recipientDataError !== undefined ? (
     <ModalErrorBody
       heading="Donation"
@@ -122,6 +153,10 @@ export const DonationSuccess = ({
             asChild
             variant="standard-filled"
             className="bg-neutral-950 py-1.5 shadow-none"
+            onClick={() => {
+              // const shareUrl = `https://twitter.com/intent/tweet?text=I%20just%20donated%20${totalAmountFloat}%20NEAR%20to%20${recipient?.near_social_profile_data?.name}%20via%20${pot?.name}%20Pot!%20%23DonationSuccess%20%23NEARProtocol`;
+              window.open(twitterIntent, "_blank");
+            }}
           >
             <Link href="#">
               <span className="prose" un-font="500">
