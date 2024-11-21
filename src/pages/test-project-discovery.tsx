@@ -3,10 +3,14 @@ import { InfiniteScrollTrigger, PageWithBanner } from "@/common/ui/components";
 import { ProjectCard, useProjectLookup } from "@/modules/project";
 
 export default function TestProjectDiscovery() {
-  const { projects, loadMoreProjects, isProjectLookupPending } =
-    useProjectLookup({
-      listId: 1,
-    });
+  const {
+    projects,
+    totalProjectCount,
+    loadMoreProjects,
+    isProjectLookupPending,
+  } = useProjectLookup({
+    listId: 1,
+  });
 
   return (
     <PageWithBanner>
@@ -17,11 +21,11 @@ export default function TestProjectDiscovery() {
           ))}
 
           <InfiniteScrollTrigger
-            hasMore={true} // TODO: request number of total items without pagination and pass here
+            hasMore={totalProjectCount > projects.length}
             isLoading={isProjectLookupPending}
             next={loadMoreProjects}
           >
-            {<div>{isProjectLookupPending && "Loading..."}</div>}
+            {<div>{"Loading..."}</div>}
           </InfiniteScrollTrigger>
         </div>
       </div>

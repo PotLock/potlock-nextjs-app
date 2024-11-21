@@ -5,21 +5,23 @@ import { ListId } from "@/common/types";
 
 import { ListRegistration } from "./client.generated";
 
-type ListRegistrationRegistryEntry = {
-  totalCount: number;
-  entries: ListRegistration[];
+type ListProjectRegistry = Record<ListRegistration["id"], ListRegistration>;
+
+export type ListRegistryEntry = {
+  registrations: ListProjectRegistry;
+  totalRegistrationCount: number;
 };
 
-type ListRegistrationRegistry = Record<ListId, ListRegistrationRegistryEntry>;
+type ListRegistry = Record<ListId, ListRegistryEntry>;
 
 type IndexerApiClientCacheStoreState = {
-  listRegistrations: ListRegistrationRegistry;
+  lists: ListRegistry;
 };
 
 type IndexerApiClientCacheStoreActions = {
-  setListRegistrations: (
+  setListData: (
     listId: ListId,
-    entries: ListRegistrationRegistryEntry,
+    data: { registrations: ListRegistration[]; totalRegistrationCount: number },
   ) => void;
 };
 
@@ -30,18 +32,34 @@ export const useIndexerApiClientCacheStore = create<IndexerApiClientStore>()(
   persist(
     (set, get) => {
       return {
-        listRegistrations: [],
+        lists: {},
 
-        setListRegistrations: (listId, entries) =>
+        setListData: (listId, { totalRegistrationCount, registrations }) => {
+          const { lists } = get();
+
           set({
-            listRegistrations: {
-              ...get().listRegistrations,
-              [listId]: entries,
+            lists: {
+              ...lists,
+
+              [listId]: {
+                ...lists[listId],
+                totalRegistrationCount,
+
+                registrations: registrations.reduce(
+                  (registrationsById, registration) => ({
+                    ...registrationsById,
+                    [registration.id]: registration,
+                  }),
+
+                  {},
+                ),
+              },
             },
-          }),
+          });
+        },
       };
     },
 
-    { name: "Indexer API client store" },
+    { name: "Indexer API client cache" },
   ),
 );

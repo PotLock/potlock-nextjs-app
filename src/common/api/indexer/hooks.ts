@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { AxiosError } from "axios";
-import { add, prop } from "remeda";
+import { add, pick, prop, values } from "remeda";
 import useSWRInfinite from "swr/infinite";
 import { useShallow } from "zustand/shallow";
 
+import { DEFAULT_LOOKUP_PAGE_SIZE } from "@/common/constants";
 import { ByAccountId, ByListId } from "@/common/types";
 
 import { useIndexerApiClientCacheStore } from "./internal/cache";
@@ -234,36 +235,24 @@ export const useListRegistrations = ({
   return { ...queryResult, data: queryResult.data?.data.results };
 };
 
+/**
+ * Same as `useListRegistrations` but with infinite pagination and custom caching.
+ */
 export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
   listId,
   ...params
 }: Partial<ByListId> & V1ListsRegistrationsRetrieveParams) => {
-  const [lastPageIndex, setLastPageIndex] = useState(0);
   const isEnabled = typeof listId === "number";
-
-  const setListRegistrations = useIndexerApiClientCacheStore(
-    prop("setListRegistrations"),
-  );
-
-  const loadMore = useCallback(() => setLastPageIndex(add(1)), []);
-
-  const indexedParams = useMemo(
-    () => ({ ...params, page: lastPageIndex + 1 }),
-    [lastPageIndex, params],
-  );
 
   const getQueryKey = () =>
     isEnabled
-      ? generatedClient.getV1ListsRegistrationsRetrieveKey(
-          listId,
-          indexedParams,
-        )
+      ? generatedClient.getV1ListsRegistrationsRetrieveKey(listId, params)
       : null;
 
   const fetcher = () =>
     generatedClient.v1ListsRegistrationsRetrieve(
       listId ?? -1,
-      indexedParams,
+      params,
       INDEXER_CLIENT_CONFIG.axios,
     );
 
@@ -272,34 +261,43 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
     fetcher,
   );
 
-  console.log(query.data);
-
-  useEffect(() => {
-    if (isEnabled && query.data) {
-      setListRegistrations(
-        listId,
-
-        {
-          entries: query.data.map(({ data }) => data.results).flat(),
-          totalCount: query.data.at(0)?.data.count ?? 0,
-        },
-      );
-    }
-  }, [isEnabled, listId, query.data, setListRegistrations]);
-
-  const cache = useIndexerApiClientCacheStore(
-    useShallow(({ listRegistrations }) =>
-      typeof listId === "number"
-        ? listRegistrations[listId]
-        : { entries: [], totalCount: 0 },
-    ),
+  const loadMore = useCallback(
+    () => query.setSize(add(DEFAULT_LOOKUP_PAGE_SIZE)),
+    [query],
   );
 
-  console.log(cache);
+  console.log(query.data);
+
+  // useEffect(() => {
+  //   if (isEnabled && query.data !== undefined) {
+  //     setListCache(
+  //       listId,
+
+  //       {
+  //         registrations: query.data.at(0)?.data.results ?? [],
+  //         totalRegistrationCount: query.data.at(0)?.data.count ?? 0,
+  //       },
+  //     );
+  //   }
+  // }, [isEnabled, listId, query.data, setListCache]);
+
+  // const cache = useIndexerApiClientCacheStore(
+  //   useShallow(({ lists }) => {
+  //     const { registrations = {}, totalRegistrationCount = 0 } =
+  //       typeof listId === "number" ? (lists[listId] ?? {}) : {};
+
+  //     return {
+  //       entries: Object.values(registrations),
+  //       totalRegistrationCount,
+  //     };
+  //   }),
+  // );
+
+  // console.log(cache);
 
   return {
     ...query,
-    data: cache,
+    data: query.data?.at(0)?.data,
     loadMore,
   };
 };

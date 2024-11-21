@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { add } from "remeda";
+import { add, values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
 import { DEFAULT_LOOKUP_PAGE_SIZE } from "@/common/constants";
@@ -19,6 +19,12 @@ export const useProjectLookup = ({
   listId,
   basicPageSize = DEFAULT_LOOKUP_PAGE_SIZE,
 }: ProjectLookupParams) => {
+  const [page, setPage] = useState(1);
+
+  const loadMore = useCallback(() => {
+    setPage(add(1));
+  }, []);
+
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
   const [statusFilter, setStatusFilter] =
@@ -34,23 +40,22 @@ export const useProjectLookup = ({
     useState<ChronologicalSortOrderVariant>(ChronologicalSortOrder.recent);
 
   const {
-    data: listRegistrationsData,
+    data: listRegistrations,
     isLoading,
-    loadMore,
     error,
   } = indexer.useListRegistrationsInfinite({
     listId,
     category: categoryFilter.join(","),
     status: statusFilter === "all" ? undefined : statusFilter,
-    page_size: basicPageSize,
+    page,
   });
 
   const searchResults = useMemo(() => {
     return toChronologicalOrder(
       "submitted_at",
-      listRegistrationsData?.entries ?? [],
+      listRegistrations?.results ?? [],
     );
-  }, [listRegistrationsData]);
+  }, [listRegistrations]);
 
   return {
     projectCategoryFilter: categoryFilter,
@@ -63,5 +68,6 @@ export const useProjectLookup = ({
     isProjectLookupPending: isLoading,
     projects: searchResults,
     loadMoreProjects: loadMore,
+    totalProjectCount: listRegistrations?.count ?? 999,
   };
 };
