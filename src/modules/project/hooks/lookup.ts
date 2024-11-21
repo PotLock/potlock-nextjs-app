@@ -48,7 +48,7 @@ export const useProjectLookup = ({
   const searchResults = useMemo(() => {
     return toChronologicalOrder(
       "submitted_at",
-      listRegistrationsData?.results ?? [],
+      listRegistrationsData?.entries ?? [],
     );
   }, [listRegistrationsData]);
 

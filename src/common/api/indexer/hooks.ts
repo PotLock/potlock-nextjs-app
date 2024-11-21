@@ -252,7 +252,7 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
     [lastPageIndex, params],
   );
 
-  const swrKey = () =>
+  const getQueryKey = () =>
     isEnabled
       ? generatedClient.getV1ListsRegistrationsRetrieveKey(
           listId,
@@ -260,16 +260,16 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
         )
       : null;
 
-  const swrFn = () =>
+  const fetcher = () =>
     generatedClient.v1ListsRegistrationsRetrieve(
       listId ?? -1,
       indexedParams,
       INDEXER_CLIENT_CONFIG.axios,
     );
 
-  const query = useSWRInfinite<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
+  const query = useSWRInfinite<Awaited<ReturnType<typeof fetcher>>, TError>(
+    getQueryKey,
+    fetcher,
   );
 
   console.log(query.data);
@@ -287,7 +287,7 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
     }
   }, [isEnabled, listId, query.data, setListRegistrations]);
 
-  const cachedRegistrations = useIndexerApiClientCacheStore(
+  const cache = useIndexerApiClientCacheStore(
     useShallow(({ listRegistrations }) =>
       typeof listId === "number"
         ? listRegistrations[listId]
@@ -295,12 +295,11 @@ export const useListRegistrationsInfinite = <TError = AxiosError<void>>({
     ),
   );
 
-  console.log(cachedRegistrations);
+  console.log(cache);
 
   return {
-    swrKey,
     ...query,
-    data: query.data?.at(0)?.data,
+    data: cache,
     loadMore,
   };
 };
