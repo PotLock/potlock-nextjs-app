@@ -14,6 +14,7 @@ export type ProjectLookupParams = ByListId & {};
 
 export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
   const [pageNumber, setPageNumber] = useState(1);
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
   const [statusFilter, setStatusFilter] =
@@ -37,23 +38,27 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
     category: categoryFilter.join(","),
     status: statusFilter === "all" ? undefined : statusFilter,
     page: pageNumber,
+    //? INFO: Won't work for now as we're waiting for backend support
+    // search: searchTerm,
   });
 
-  const searchResults = useMemo(() => {
-    return toChronologicalOrder(
-      "submitted_at",
-      listRegistrations?.results ?? [],
-    );
-  }, [listRegistrations]);
+  const searchResults = useMemo(
+    () =>
+      toChronologicalOrder("submitted_at", listRegistrations?.results ?? []),
+
+    [listRegistrations],
+  );
 
   return {
     projectCategoryFilter: categoryFilter,
     projectLookupError: error,
     projectLookupPageNumber: pageNumber,
+    projectSearchTerm: searchTerm,
     projectSortingOrder: sortingOrder,
     projectStatusFilter: statusFilter,
     setProjectCategoryFilter: setCategoryFilter,
     setProjectLookupPageNumber: setPageNumber,
+    setProjectSearchTerm: setSearchTerm,
     setProjectSortingOrder: setSortingOrder,
     setProjectStatusFilter: setStatusFilter,
     isProjectLookupPending: isLoading,
