@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ByPotId, Pot } from "@/common/api/indexer";
+import { Pot } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
 import ProgressBar from "./ProgressBar";
@@ -8,7 +8,7 @@ import { Container, Loader, Wrapper } from "./styles";
 import TimeLeft from "./TimeLeft";
 import { potIndexedDataByIdToStatuses } from "../utils/statuses";
 
-export type PotStatusBarProps = ByPotId & {
+export type PotStatusBarProps = {
   potIndexedData: Pot;
 
   classNames?: {
@@ -18,19 +18,18 @@ export type PotStatusBarProps = ByPotId & {
 
 export const PotStatusBar: React.FC<PotStatusBarProps> = ({
   classNames,
-  potId,
   potIndexedData,
 }) => {
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
 
   if (potIndexedData === null) return "";
 
-  const stats = potIndexedDataByIdToStatuses({ potId, ...potIndexedData });
+  const statuses = potIndexedDataByIdToStatuses(potIndexedData);
 
   const getIndexOfActive = () => {
     let index = 0;
-    stats.forEach((state, idx) => {
-      if (state.started && !state.completed) {
+    statuses.forEach((status, idx) => {
+      if (status.started && !status.completed) {
         index = idx;
       }
     });
@@ -55,7 +54,7 @@ export const PotStatusBar: React.FC<PotStatusBarProps> = ({
           className="mobile-selected"
           style={mobileMenuActive ? { transform: "translateY(0px)" } : {}}
         >
-          {stats.map(
+          {statuses.map(
             // TODO: Improve this code (built by mohamed)
             ({ label, daysLeft, progress, started, completed }, idx) => {
               return (

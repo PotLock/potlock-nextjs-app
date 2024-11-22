@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Donation } from "@/common/api/indexer";
+import { Donation, indexer } from "@/common/api/indexer";
 import Spinner from "@/common/ui/components/Spinner";
 import Pagination from "@/modules/core/components/Pagination";
 
 import Arrow from "./Arrow";
 import DonationItem from "./DonationItem";
 import { FundingListContainer, Hidden, SearchBar } from "./styled";
-import { useOrderedDonations } from "../../hooks";
 
 type Props = {
   potId: string;
@@ -18,7 +17,10 @@ const getDate = (donated_at: string) => new Date(donated_at).getTime();
 const PER_PAGE = 30; // need to be less than 50
 
 const DonationsTable = ({ potId }: Props) => {
-  const { donations, ready } = useOrderedDonations(potId);
+  const { data, isLoading } = indexer.usePotDonations({
+    potId,
+    page_size: 999,
+  });
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter (amount | date)
@@ -27,7 +29,7 @@ const DonationsTable = ({ potId }: Props) => {
     date: false, // false === ascending
     price: false, // false === ascending
   });
-  const [filteredDonations, setFilteredDonations] = useState(donations || []);
+  const [filteredDonations, setFilteredDonations] = useState(data || []);
   const [shownDonationItemsList, setShownDonationItemsList] = useState<
     Donation[]
   >([]);
@@ -35,14 +37,13 @@ const DonationsTable = ({ potId }: Props) => {
   useEffect(() => {
     // Set donations initially sorted by date (newer first)
     setFilteredDonations(
-      donations
-        .sort((a, b) => getDate(b.donated_at) - getDate(a.donated_at))
-        .filter((donation) => {
-          // INFO: Ignore if recipient is null
+      data
+        ?.sort((a, b) => getDate(b.donated_at) - getDate(a.donated_at))
+        ?.filter((donation) => {
           return !!donation.recipient;
         }),
     );
-  }, [donations]);
+  }, [data]);
 
   const sortDonation = (type: "price" | "date") => {
     setCurrentFilter(type);
@@ -71,7 +72,7 @@ const DonationsTable = ({ potId }: Props) => {
 
   // Page control - Search
   const searchDonations = (searchTerm: string) => {
-    const filteredApplications = donations.filter((item) => {
+    const filteredApplications = data?.filter((item) => {
       const searchIn = [
         item.pot?.name || "",
         item.recipient?.id || "",
@@ -89,7 +90,7 @@ const DonationsTable = ({ potId }: Props) => {
   // Shown items
   useEffect(() => {
     setShownDonationItemsList(
-      filteredDonations.slice(
+      filteredDonations?.slice(
         (currentPage - 1) * PER_PAGE,
         currentPage * PER_PAGE,
       ),
@@ -98,18 +99,22 @@ const DonationsTable = ({ potId }: Props) => {
 
   // Shown Donation Items
   const shownDonationItems = useMemo(() => {
-    return shownDonationItemsList.map((donation) => (
-      <DonationItem key={donation.id} donation={donation} projectId={potId} />
+    return shownDonationItemsList?.map((donation) => (
+      <DonationItem
+        key={donation.on_chain_id}
+        donation={donation}
+        projectId={potId}
+      />
     ));
   }, [shownDonationItemsList, potId]);
 
-  if (!ready) {
+  if (isLoading) {
     return (
       // Container
       <div className="flex flex-col gap-[1.5rem]">
         <div className="font-600 text-[18px] text-[#292929]">
           All Donations
-          <span className="ml-4">{ready ? donations.length : "-"}</span>
+          <span className="ml-4">{isLoading ? data?.length : "-"}</span>
         </div>
 
         <div className="flex w-full justify-center">
@@ -124,7 +129,7 @@ const DonationsTable = ({ potId }: Props) => {
     <div className="flex flex-col gap-[1.5rem]">
       <div className="font-600 text-[18px] text-[#292929]">
         All Donations
-        <span className="ml-4">{donations.length}</span>
+        <span className="ml-4">{data?.length}</span>
       </div>
 
       {/* Funding List */}

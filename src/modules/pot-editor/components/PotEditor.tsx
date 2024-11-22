@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { dropTimezoneIndicator } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
@@ -28,7 +27,7 @@ import { DONATION_MIN_NEAR_AMOUNT } from "@/modules/donation";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 
 import { PotEditorPreview } from "./PotEditorPreview";
-import { POT_DEFAULT_MIN_DATE, POT_EDITOR_FIELDS } from "../constants";
+import { POT_EDITOR_FIELDS } from "../constants";
 import { usePotEditorForm } from "../hooks/forms";
 import {
   getPotEditorDeploymentSchema,
@@ -208,9 +207,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     label={POT_EDITOR_FIELDS.application_start_ms.title}
                     required
                     type="datetime-local"
-                    min={dropTimezoneIndicator(
-                      pot?.application_start ?? POT_DEFAULT_MIN_DATE,
-                    )}
                     {...field}
                     classNames={{ root: "lg:w-50% w-full" }}
                   />
@@ -225,9 +221,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     label={POT_EDITOR_FIELDS.application_end_ms.title}
                     required
                     type="datetime-local"
-                    min={dropTimezoneIndicator(
-                      pot?.application_end ?? POT_DEFAULT_MIN_DATE,
-                    )}
                     {...field}
                     classNames={{ root: "lg:w-50% w-full" }}
                   />
@@ -244,9 +237,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     label={POT_EDITOR_FIELDS.public_round_start_ms.title}
                     required
                     type="datetime-local"
-                    min={dropTimezoneIndicator(
-                      pot?.matching_round_start ?? POT_DEFAULT_MIN_DATE,
-                    )}
                     {...field}
                     classNames={{ root: "lg:w-50% w-full" }}
                   />
@@ -261,9 +251,6 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                     label={POT_EDITOR_FIELDS.public_round_end_ms.title}
                     required
                     type="datetime-local"
-                    min={dropTimezoneIndicator(
-                      pot?.matching_round_end ?? POT_DEFAULT_MIN_DATE,
-                    )}
                     {...field}
                     classNames={{ root: "lg:w-50% w-full" }}
                   />

@@ -1,19 +1,14 @@
-import { ByPotId, Pot } from "@/common/api/indexer";
+import { Pot } from "@/common/api/indexer";
 import { getDateTime } from "@/modules/core";
 
-import { isPotStakeWeighted } from "./voting";
-
 export const potIndexedDataByIdToStatuses = ({
-  potId,
   application_start, // application_start_ms
   application_end, //application_end_ms
   matching_round_start, // public_round_start_ms,
   matching_round_end, // public_round_end_ms,
   cooldown_end, // cooldown_end_ms,
   all_paid_out,
-}: ByPotId & Pot) => {
-  const isStakeWeightedPot = isPotStakeWeighted({ potId });
-
+}: Pot) => {
   const date = new Date();
   const now = date.getTime();
   const application_start_ms = getDateTime(application_start);
@@ -36,7 +31,7 @@ export const potIndexedDataByIdToStatuses = ({
     },
 
     {
-      label: isStakeWeightedPot ? "Voting period" : "Matching round",
+      label: "Voting period",
       daysLeft: public_round_end_ms,
       started: now >= public_round_start_ms,
       completed: now > public_round_end_ms,
