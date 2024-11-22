@@ -405,12 +405,12 @@ export const ListFormDetails: React.FC = () => {
                       onSubmit={
                         id
                           ? (accounts: string[]) => {
-                            const newAdmins =
-                              accounts?.filter(
-                                (admin) => !admins?.includes(admin),
-                              ) ?? [];
-                            handleSaveAdminsSettings(newAdmins);
-                          }
+                              const newAdmins =
+                                accounts?.filter(
+                                  (admin) => !admins?.includes(admin),
+                                ) ?? [];
+                              handleSaveAdminsSettings(newAdmins);
+                            }
                           : (accounts: string[]) => setAdmins(accounts)
                       }
                     />
