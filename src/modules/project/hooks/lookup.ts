@@ -20,12 +20,6 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
   const [statusFilter, setStatusFilter] =
     useState<ProjectListingStatusVariant>("Approved");
 
-  /**
-   *! INFO: Heads up! Do not apply reversed chronological sorting within this hook.
-   *!  Instead, wrap the rendered list of items in `useMemo` within the target component
-   *!  with `toReversed` applied to conditionally
-   *!  if `projectSortingOrder === ChronologicalSortOrder.older`
-   */
   const [sortingOrder, setSortingOrder] =
     useState<ChronologicalSortOrderVariant>(ChronologicalSortOrder.recent);
 
@@ -41,12 +35,16 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
     search: searchTerm,
   });
 
-  const searchResults = useMemo(
-    () =>
-      toChronologicalOrder("submitted_at", listRegistrations?.results ?? []),
+  const results = useMemo(() => {
+    const oldToRecent = toChronologicalOrder(
+      "submitted_at",
+      listRegistrations?.results ?? [],
+    );
 
-    [listRegistrations],
-  );
+    return sortingOrder === ChronologicalSortOrder.older
+      ? oldToRecent
+      : oldToRecent.toReversed();
+  }, [listRegistrations?.results, sortingOrder]);
 
   return {
     projectCategoryFilter: categoryFilter,
@@ -61,7 +59,7 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
     setProjectSortingOrder: setSortingOrder,
     setProjectStatusFilter: setStatusFilter,
     isProjectLookupPending: isLoading,
-    projects: searchResults,
+    projects: results,
     totalProjectCount: listRegistrations?.count ?? 0,
   };
 };
