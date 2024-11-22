@@ -45,13 +45,19 @@ export const SingleCampaignBanner = () => {
     "-",
   );
 
+  const isEnded = campaign?.end_ms
+    ? getTimePassed(Number(campaign?.end_ms), false, true)?.includes("-")
+    : false;
+
   return (
     <div className="md:flex-row md:gap-0 flex w-full flex-col justify-between gap-4">
       <div className="md:w-[70%] w-full  rounded-xl border border-gray-300">
         <div className="relative">
           <LazyLoadImage
             className="md:rounded inset-1 h-[348px] w-full rounded-xl object-cover"
-            src={campaign?.cover_image_url}
+            src={
+              campaign?.cover_image_url || "/assets/images/list-gradient-3.png"
+            }
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
           <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
@@ -126,6 +132,7 @@ export const SingleCampaignBanner = () => {
             className="mb-4"
             disabled={
               isStarted ||
+              isEnded ||
               campaign?.total_raised_amount === campaign?.max_amount
             }
             campaignId={parseInt(campaignId as string)}
