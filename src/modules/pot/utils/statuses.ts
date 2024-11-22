@@ -1,14 +1,19 @@
 import { Pot } from "@/common/api/indexer";
 import { getDateTime } from "@/modules/core";
 
+export type PotTimelineParams = Pot & {
+  isVotingEnabled: boolean;
+};
+
 export const potIndexedDataByIdToStatuses = ({
+  isVotingEnabled,
   application_start,
   application_end,
   matching_round_start,
   matching_round_end,
   cooldown_end,
   all_paid_out,
-}: Pot) => {
+}: PotTimelineParams) => {
   const date = new Date();
   const now = date.getTime();
   const application_start_ms = getDateTime(application_start);
@@ -32,7 +37,7 @@ export const potIndexedDataByIdToStatuses = ({
     },
 
     {
-      label: "Voting period",
+      label: isVotingEnabled ? "Voting period" : "Matching round",
       daysLeft: public_round_end_ms,
       started: now >= public_round_start_ms,
       completed: now > public_round_end_ms,

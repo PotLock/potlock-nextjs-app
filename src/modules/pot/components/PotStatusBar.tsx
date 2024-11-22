@@ -1,14 +1,15 @@
 import { useState } from "react";
 
-import { Pot } from "@/common/api/indexer";
+import { ByPotId, Pot } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
 import ProgressBar from "./ProgressBar";
 import { Container, Loader, Wrapper } from "./styles";
 import TimeLeft from "./TimeLeft";
 import { potIndexedDataByIdToStatuses } from "../utils/statuses";
+import { isPotStakeWeighted } from "../utils/voting";
 
-export type PotStatusBarProps = {
+export type PotStatusBarProps = ByPotId & {
   potIndexedData: Pot;
 
   classNames?: {
@@ -17,14 +18,20 @@ export type PotStatusBarProps = {
 };
 
 export const PotStatusBar: React.FC<PotStatusBarProps> = ({
-  classNames,
+  potId,
   potIndexedData,
+  classNames,
 }) => {
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
 
   if (potIndexedData === null) return "";
 
-  const statuses = potIndexedDataByIdToStatuses(potIndexedData);
+  const isStakeWeightedPot = isPotStakeWeighted({ potId });
+
+  const statuses = potIndexedDataByIdToStatuses({
+    ...potIndexedData,
+    isVotingEnabled: isStakeWeightedPot,
+  });
 
   const getIndexOfActive = () => {
     let index = 0;
