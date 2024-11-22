@@ -13,6 +13,7 @@ import type {
   V1ListsRegistrationsRetrieveParams,
   V1ListsRetrieveParams,
   V1PotsApplicationsRetrieveParams,
+  V1PotsDonationsRetrieveParams,
   V1PotsRetrieveParams,
 } from "./internal/client.generated";
 import { INDEXER_CLIENT_CONFIG } from "./internal/config";
@@ -141,6 +142,30 @@ export const useAccountDonationsReceived = ({
   );
 
   return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_donations_retrieve
+ */
+
+export const usePotDonations = ({
+  potId,
+  ...params
+}: ByPotId & V1PotsDonationsRetrieveParams) => {
+  const queryResult = generatedClient.useV1PotsDonationsRetrieve(
+    potId,
+    params,
+
+    {
+      ...INDEXER_CLIENT_CONFIG,
+      swr: { enabled: Boolean(potId) },
+    },
+  );
+
+  return {
+    ...queryResult,
+    data: queryResult.data?.data?.results as generatedClient.Donation[],
+  };
 };
 
 /**
