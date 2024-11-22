@@ -66,22 +66,27 @@ const WelcomeBanner = () => {
 };
 
 export default function Home() {
+  // TODO: Delete
   const [currentFilterCategory, setCurrentFilterCategory] = useState<string[]>(
     [],
   );
-  const [currentFilterStatus, setCurrentFilterStatus] = useState<string>("all");
+
+  // TODO: Delete
   const [filteredRegistrations, setFilteredRegistrations] = useState<
     ListRegistration[]
   >([]);
+
   return (
     <main className="container flex flex-col items-center">
       <WelcomeBanner />
       <GeneralStats />
       <ProjectDiscoveryFeatured />
       <ProjectDiscovery
+        // TODO: Delete
         setCurrentFilterCategory={setCurrentFilterCategory}
-        setCurrentFilterStatus={setCurrentFilterStatus}
+        // TODO: Delete
         filteredRegistrations={filteredRegistrations}
+        // TODO: Delete
         setFilteredRegistrations={setFilteredRegistrations}
       />
     </main>

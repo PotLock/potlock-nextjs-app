@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import Image from "next/image";
 
@@ -12,32 +12,30 @@ import {
   SortSelect,
 } from "@/common/ui/components";
 import { ListCardSkeleton } from "@/modules/lists/components/ListCardSkeleton";
-import { Profile } from "@/modules/profile/models";
-import { useTypedSelector } from "@/store";
 
 import { ProjectCard } from "./ProjectCard";
 import { useProjectsFilters } from "../hooks/useProjectsFilters";
 
-const MAXIMUM_CARDS_PER_INDEX = 9;
-
 export const ProjectDiscovery = ({
+  // TODO: Delete
   setCurrentFilterCategory,
-  setCurrentFilterStatus,
+  // TODO: Delete
   filteredRegistrations,
+  // TODO: Delete
   setFilteredRegistrations,
 }: {
+  // TODO: Delete
   setCurrentFilterCategory: (type: string[]) => void;
-  setCurrentFilterStatus: (type: string) => void;
+  // TODO: Delete
   filteredRegistrations: ListRegistration[];
+  // TODO: Delete
   setFilteredRegistrations: (type: any) => void;
 }) => {
   const [index, setIndex] = useState(1);
   const [search, setSearch] = useState("");
 
-  const { registrations, tagList, loading } = useProjectsFilters(
-    (type: string) => setCurrentFilterCategory([type]),
-    setCurrentFilterStatus,
-    setFilteredRegistrations,
+  const { tagList, loading } = useProjectsFilters((type: string) =>
+    setCurrentFilterCategory([type]),
   );
 
   const chronologicallySortedProjects = useMemo(() => {
@@ -56,34 +54,6 @@ export const ProjectDiscovery = ({
         break;
     }
   };
-
-  const registrationsProfile = useTypedSelector((state) => state.profiles);
-
-  // handle search & filter
-  useEffect(() => {
-    // Search
-    const handleSearch = (registration: ListRegistration, profile: Profile) => {
-      if (search === "") return true;
-      const { id: registrantId } = registration.registrant;
-      const { socialData, tags, team } = profile || {};
-      // registration fields to search in
-      const fields = [
-        registrantId,
-        socialData?.description,
-        socialData?.name,
-        tags?.join(" "),
-        team?.join(" "),
-      ];
-
-      return fields.some((item) => (item || "").toLowerCase().includes(search));
-    };
-    const filtered = registrations.filter((registration) => {
-      const profile = registrationsProfile[registration.registrant.id] || {};
-
-      return handleSearch(registration, profile);
-    });
-    setFilteredRegistrations(filtered);
-  }, [search, registrations, registrationsProfile, setFilteredRegistrations]);
 
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
@@ -118,7 +88,7 @@ export const ProjectDiscovery = ({
           items={filteredRegistrations}
           index={index}
           setIndex={setIndex}
-          size={MAXIMUM_CARDS_PER_INDEX}
+          size={30}
           renderItem={(registration: ListRegistration) => (
             <ProjectCard
               projectId={registration.registrant.id}

@@ -6,16 +6,12 @@ import { Group, GroupType } from "@/common/ui/components";
 import { categories, statuses } from "../constants";
 
 export const useProjectsFilters = (
-  setCurrentFilterCategory: (type: string) => void,
-  setCurrentFilterStatus: (type: string) => void,
   setFilteredProjects: (type: any) => void,
-  ...props: any[]
 ) => {
   const [registrations, setRegistrations] = useState<ListRegistration[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<any>(undefined);
-  const listId = "listId" in props ? props.listId : undefined;
 
   const { data, isLoading } = indexer.useListRegistrations({ listId: 1 });
   const { data: filteredRegistrations } = indexer.useListRegistrations({
@@ -28,7 +24,7 @@ export const useProjectsFilters = (
     setLoading(true);
     try {
       if (data) {
-        setRegistrations(data);
+        setRegistrations(data.results);
         setFilteredProjects(filteredRegistrations);
       }
     } catch (error) {
@@ -49,20 +45,13 @@ export const useProjectsFilters = (
     try {
       if (filteredRegistrations) {
         setLoading(true);
-        setCurrentFilterCategory(filteredRegistrations.join(","));
-        setCurrentFilterStatus(filteredRegistrations.join(","));
       }
     } catch (error) {
       console.log("Error fetching filtered registrations", error);
     } finally {
       setLoading(false);
     }
-  }, [
-    setCurrentFilterCategory,
-    setCurrentFilterStatus,
-    setLoading,
-    filteredRegistrations,
-  ]);
+  }, [setLoading, filteredRegistrations]);
 
   // fetchByStatus
 

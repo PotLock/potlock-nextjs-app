@@ -38,7 +38,7 @@ export default function SingleList() {
   });
 
   useEffect(() => {
-    setFilteredRegistrations(data ?? []);
+    setFilteredRegistrations(data?.results ?? []);
   }, [data]);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function SingleList() {
     setListDetails(listData);
     setSavedUsers({
       accounts:
-        data?.map((registration) => ({
+        data?.results.map((registration) => ({
           accountId: registration?.registrant?.id,
           registrationId: registration?.id,
         })) ?? [],

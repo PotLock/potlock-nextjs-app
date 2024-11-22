@@ -39,7 +39,7 @@ export const DonationRecipientShares: React.FC<
       status: PotApplicationStatus.Approved,
     });
 
-  const { data: listRegistrations = [], error: listRegistrationsError } =
+  const { data: listRegistrations, error: listRegistrationsError } =
     indexer.useListRegistrations({
       listId,
       // TODO: Consider integrating infinite scroll in the future instead
@@ -79,8 +79,9 @@ export const DonationRecipientShares: React.FC<
 
   const recipientCandidateIds = useMemo(
     () =>
-      [...potApplications, ...listRegistrations].map((entry) =>
-        "registrant" in entry ? entry.registrant.id : entry.applicant.id,
+      [...potApplications, ...(listRegistrations?.results ?? [])].map(
+        (entry) =>
+          "registrant" in entry ? entry.registrant.id : entry.applicant.id,
       ),
 
     [listRegistrations, potApplications],

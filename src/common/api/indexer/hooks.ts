@@ -248,7 +248,7 @@ export const useListRegistrations = ({
     },
   );
 
-  return { ...queryResult, data: queryResult.data?.data.results };
+  return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**

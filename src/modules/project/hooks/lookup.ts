@@ -1,9 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
-
-import { add, values } from "remeda";
+import { useMemo, useState } from "react";
 
 import { indexer } from "@/common/api/indexer";
-import { DEFAULT_LOOKUP_PAGE_SIZE } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
 import {
   ByListId,
@@ -16,6 +13,7 @@ import { ProjectCategory, ProjectListingStatusVariant } from "../types";
 export type ProjectLookupParams = ByListId & {};
 
 export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
+  const [pageNumber, setPageNumber] = useState(1);
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
   const [statusFilter, setStatusFilter] =
@@ -38,23 +36,28 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
     listId,
     category: categoryFilter.join(","),
     status: statusFilter === "all" ? undefined : statusFilter,
-    page_size: 9999,
+    page: pageNumber,
   });
 
   const searchResults = useMemo(() => {
-    return toChronologicalOrder("submitted_at", listRegistrations ?? []);
+    return toChronologicalOrder(
+      "submitted_at",
+      listRegistrations?.results ?? [],
+    );
   }, [listRegistrations]);
 
   return {
     projectCategoryFilter: categoryFilter,
     projectLookupError: error,
+    projectLookupPageNumber: pageNumber,
     projectSortingOrder: sortingOrder,
     projectStatusFilter: statusFilter,
     setProjectCategoryFilter: setCategoryFilter,
+    setProjectLookupPageNumber: setPageNumber,
     setProjectSortingOrder: setSortingOrder,
     setProjectStatusFilter: setStatusFilter,
     isProjectLookupPending: isLoading,
     projects: searchResults,
-    totalProjectCount: listRegistrations?.length ?? 0,
+    totalProjectCount: listRegistrations?.count ?? 0,
   };
 };

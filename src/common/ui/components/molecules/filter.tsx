@@ -7,7 +7,7 @@ import Image from "next/image";
 
 import { Button } from "../atoms/button";
 import { Label } from "../atoms/label";
-import { Popover, PopoverContent, PopoverTrigger } from "../popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../atoms/popover";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 
 export type FilterOption = {

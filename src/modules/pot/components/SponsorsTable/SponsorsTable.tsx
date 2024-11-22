@@ -8,7 +8,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/common/ui/components/tooltip";
+} from "@/common/ui/components/atoms/tooltip";
 import { AccountProfilePicture } from "@/modules/core";
 import Pagination from "@/modules/core/components/Pagination";
 import routesPath from "@/modules/core/routes";
