@@ -38,8 +38,7 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
     category: categoryFilter.join(","),
     status: statusFilter === "all" ? undefined : statusFilter,
     page: pageNumber,
-    //? INFO: Won't work for now as we're waiting for backend support
-    // search: searchTerm,
+    search: searchTerm,
   });
 
   const searchResults = useMemo(

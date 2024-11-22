@@ -153,6 +153,10 @@ export type V1ListsRegistrationsRetrieveParams = {
    */
   page_size?: number;
   /**
+   * Search registrants by name or account ID
+   */
+  search?: string;
+  /**
    * Filter registrations by status
    */
   status?: string;
