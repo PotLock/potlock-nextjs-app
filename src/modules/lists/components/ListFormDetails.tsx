@@ -111,7 +111,10 @@ export const ListFormDetails: React.FC = () => {
         setValue("owner", response.owner);
         setValue("description", response.description);
         setValue("allowApplications", response.admin_only_registrations);
-        setValue("approveApplications", response.default_registration_status);
+        setValue(
+          "approveApplications",
+          response?.default_registration_status === "Approved",
+        );
         setAdmins(response.admins);
         setSavedAdmins(
           response.admins?.map((admin: AccountId) => ({ account: admin })),
@@ -142,8 +145,7 @@ export const ListFormDetails: React.FC = () => {
     if (
       (event?.nativeEvent as SubmitEvent)?.submitter?.id !==
       "list-submit-button"
-    )
-     { return;}
+    ) { return; }
 
     if (onEditPage) {
       update_list({
@@ -162,7 +164,7 @@ export const ListFormDetails: React.FC = () => {
         .catch((error) => {
           console.error("Error updating list:", error);
         });
-        dispatch.listEditor.reset()
+      dispatch.listEditor.reset()
     } else {
       create_list({
         ...data,
@@ -403,12 +405,12 @@ export const ListFormDetails: React.FC = () => {
                       onSubmit={
                         id
                           ? (accounts: string[]) => {
-                              const newAdmins =
-                                accounts?.filter(
-                                  (admin) => !admins?.includes(admin),
-                                ) ?? [];
-                              handleSaveAdminsSettings(newAdmins);
-                            }
+                            const newAdmins =
+                              accounts?.filter(
+                                (admin) => !admins?.includes(admin),
+                              ) ?? [];
+                            handleSaveAdminsSettings(newAdmins);
+                          }
                           : (accounts: string[]) => setAdmins(accounts)
                       }
                     />
