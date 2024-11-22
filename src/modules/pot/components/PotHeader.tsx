@@ -60,95 +60,97 @@ export const PotHeader: React.FC<PotHeaderProps> = ({ potDetail }) => {
         onCloseClick={() => setChallengeModalOpen(false)}
       />
 
-      <div className="lg:flex-row md:p-8 flex flex-col flex-wrap gap-8 p-4 p-[3rem_0]">
-        <div className="flex grow flex-col gap-6">
-          <h3 className="font-500 font-lora text-[40px]">{potDetail.name}</h3>
+      <div className="md:p-2 rounded-2xl bg-neutral-50">
+        <div className="lg:flex-row flex flex-col flex-wrap bg-background">
+          <div className="flex grow flex-col gap-6">
+            <h3 className="font-500 font-lora text-[40px]">{potDetail.name}</h3>
 
-          <div className="line-height-[1.5rem] max-w-[498px]">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={{
-                a: ({ node: _, ...props }) => (
-                  <a
-                    {...props}
-                    className="text-blue-500 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                    }}
-                  >
-                    {"More Info"}
-                  </a>
-                ),
-              }}
-              className="markdown-link"
-            >
-              {potDetail.description}
-            </ReactMarkdown>
-          </div>
-
-          <Separator />
-
-          {/* Fund */}
-          <div className="flex flex-col gap-2">
-            <p className="text-[#656565]">{"Matching Funds Available:"}</p>
-
-            <div className="flex items-baseline gap-2">
-              <p className="font-600 text-[24px]">
-                {yoctoNearToFloat(potDetail.matching_pool_balance)}N
-              </p>
-
-              <p className="font-600">{potStatuses.matchingPoolUsdBalance}</p>
-            </div>
-          </div>
-
-          {/* ButtonsWrapper */}
-          <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
-            {potStatuses.canDonate && (
-              <DonateToPotProjects potId={potDetail.account} />
-            )}
-
-            {potStatuses.canFund && (
-              <Button
-                variant="tonal-filled"
-                onClick={() => setFundModalOpen(true)}
+            <div className="line-height-[1.5rem] max-w-[498px]">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  a: ({ node: _, ...props }) => (
+                    <a
+                      {...props}
+                      className="text-blue-500 underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                      }}
+                    >
+                      {"More Info"}
+                    </a>
+                  ),
+                }}
+                className="markdown-link"
               >
-                {"Fund matching pool"}
-              </Button>
-            )}
+                {potDetail.description}
+              </ReactMarkdown>
+            </div>
 
-            {potStatuses.canApply && (
-              <Button onClick={() => setApplyModalOpen(true)}>
-                {"Apply to pot"}
-              </Button>
-            )}
+            <Separator />
 
-            {potStatuses.canChallengePayouts && (
-              <Button onClick={() => setChallengeModalOpen(true)}>
-                {potStatuses.existingChallengeForUser
-                  ? "Update challenge"
-                  : "Challenge payouts"}
-              </Button>
+            {/* Fund */}
+            <div className="flex flex-col gap-2">
+              <p className="text-[#656565]">{"Matching Funds Available:"}</p>
+
+              <div className="flex items-baseline gap-2">
+                <p className="font-600 text-[24px]">
+                  {yoctoNearToFloat(potDetail.matching_pool_balance)}N
+                </p>
+
+                <p className="font-600">{potStatuses.matchingPoolUsdBalance}</p>
+              </div>
+            </div>
+
+            {/* ButtonsWrapper */}
+            <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
+              {potStatuses.canDonate && (
+                <DonateToPotProjects potId={potDetail.account} />
+              )}
+
+              {potStatuses.canFund && (
+                <Button
+                  variant="tonal-filled"
+                  onClick={() => setFundModalOpen(true)}
+                >
+                  {"Fund matching pool"}
+                </Button>
+              )}
+
+              {potStatuses.canApply && (
+                <Button onClick={() => setApplyModalOpen(true)}>
+                  {"Apply to pot"}
+                </Button>
+              )}
+
+              {potStatuses.canChallengePayouts && (
+                <Button onClick={() => setChallengeModalOpen(true)}>
+                  {potStatuses.existingChallengeForUser
+                    ? "Update challenge"
+                    : "Challenge payouts"}
+                </Button>
+              )}
+            </div>
+
+            {/* Referral */}
+            {isSignedIn && (
+              <div className="flex items-center gap-[12px] text-[14px]">
+                <ClipboardCopyButton
+                  text={potStatuses.referrerPotLink}
+                  customIcon={<VolunteerIcon />}
+                />
+
+                <p>{"Earn referral fees"}</p>
+              </div>
             )}
           </div>
 
-          {/* Referral */}
-          {isSignedIn && (
-            <div className="flex items-center gap-[12px] text-[14px]">
-              <ClipboardCopyButton
-                text={potStatuses.referrerPotLink}
-                customIcon={<VolunteerIcon />}
-              />
-
-              <p>{"Earn referral fees"}</p>
-            </div>
-          )}
-        </div>
-
-        {/* Right content */}
-        <div className="flex grow flex-col gap-6">
-          <PoolAllocationTable potDetail={potDetail} />
+          {/* Right content */}
+          <div className="flex grow flex-col gap-6">
+            <PoolAllocationTable potDetail={potDetail} />
+          </div>
         </div>
       </div>
     </>

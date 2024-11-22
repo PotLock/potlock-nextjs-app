@@ -1,6 +1,16 @@
 import { ProgressBarWrapper } from "./styles";
 
-const ProgressBar = ({ progress, completed, started }: any) => (
+export type PotTimelineFragmentProps = {
+  progress: number;
+  completed: boolean;
+  started: boolean;
+};
+
+export const PotTimelineFragment: React.FC<PotTimelineFragmentProps> = ({
+  progress,
+  completed,
+  started,
+}) => (
   <ProgressBarWrapper>
     <svg viewBox="0 0 160 160" className="circle">
       <circle
@@ -11,6 +21,7 @@ const ProgressBar = ({ progress, completed, started }: any) => (
         stroke={completed ? "#629D13" : started ? "#000000" : "#C7C7C7"}
         strokeWidth="12px"
       ></circle>
+
       <circle
         r="70"
         cx="80"
@@ -22,6 +33,7 @@ const ProgressBar = ({ progress, completed, started }: any) => (
         strokeDashoffset={439.6 * progress + "px"}
       ></circle>
     </svg>
+
     <svg
       className="check"
       viewBox="0 0 12 9"
@@ -37,5 +49,3 @@ const ProgressBar = ({ progress, completed, started }: any) => (
     </svg>
   </ProgressBarWrapper>
 );
-
-export default ProgressBar;

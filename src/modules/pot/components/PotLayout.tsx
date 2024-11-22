@@ -9,7 +9,7 @@ import SuccessModal from "@/modules/core/components/SuccessModal";
 import { DonationSybilWarning } from "@/modules/donation";
 
 import { PotHeader } from "./PotHeader";
-import { PotStatusBar } from "./PotStatusBar";
+import { PotStatus } from "./PotTimeline";
 import Tabs from "./Tabs";
 import { POT_TABS_CONFIG } from "../constants";
 import { isPotStakeWeighted } from "../utils/voting";
@@ -73,7 +73,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      <PotStatusBar
+      <PotStatus
         potIndexedData={pot}
         classNames={{ root: "mb-4" }}
         {...{ potId }}

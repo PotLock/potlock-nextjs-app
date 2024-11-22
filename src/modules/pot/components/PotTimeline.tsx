@@ -3,13 +3,13 @@ import { useState } from "react";
 import { ByPotId, Pot } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
-import ProgressBar from "./ProgressBar";
+import { PotTimelineFragment } from "./PotTimelineFragment";
 import { Container, Loader, Wrapper } from "./styles";
 import TimeLeft from "./TimeLeft";
 import { potIndexedDataByIdToStatuses } from "../utils/statuses";
 import { isPotStakeWeighted } from "../utils/voting";
 
-export type PotStatusBarProps = ByPotId & {
+export type PotTimelineProps = ByPotId & {
   potIndexedData: Pot;
 
   classNames?: {
@@ -17,7 +17,7 @@ export type PotStatusBarProps = ByPotId & {
   };
 };
 
-export const PotStatusBar: React.FC<PotStatusBarProps> = ({
+export const PotStatus: React.FC<PotTimelineProps> = ({
   potId,
   potIndexedData,
   classNames,
@@ -72,11 +72,8 @@ export const PotStatusBar: React.FC<PotStatusBarProps> = ({
                     { "color-neutral-500": !(completed || started) },
                   )}
                 >
-                  <ProgressBar
-                    progress={progress}
-                    started={started}
-                    completed={completed}
-                  />
+                  {/* @ts-expect-error timeline fragments don't have proper typings */}
+                  <PotTimelineFragment {...{ progress, completed, started }} />
 
                   <div className="flex">
                     {label}
