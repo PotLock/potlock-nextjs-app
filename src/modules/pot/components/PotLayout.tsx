@@ -8,7 +8,7 @@ import ErrorModal from "@/modules/core/components/ErrorModal";
 import SuccessModal from "@/modules/core/components/SuccessModal";
 import { DonationSybilWarning } from "@/modules/donation";
 
-import Header from "./Header";
+import { PotHeader } from "./PotHeader";
 import { PotStatusBar } from "./PotStatusBar";
 import Tabs from "./Tabs";
 import { POT_TABS_CONFIG } from "../constants";
@@ -79,7 +79,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         <DonationSybilWarning {...{ potId }} />
       </div>
 
-      <Header potDetail={pot} />
+      <PotHeader potDetail={pot} />
 
       {/* Pot Tabs */}
       <Tabs
@@ -87,7 +87,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         navOptions={tabs}
         selectedTab={selectedTab.id}
         onSelect={(tabId: string) => {
-          setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);
+          setSelectedTab(tabs.find(({ id }) => id === tabId)!);
         }}
       />
 

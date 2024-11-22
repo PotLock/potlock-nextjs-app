@@ -28,6 +28,7 @@ export * from "./atoms/checkbox";
 export * from "./atoms/input";
 export * from "./atoms/label";
 export * from "./atoms/select";
+export * from "./atoms/separator";
 export * from "./atoms/skeleton";
 export * from "./atoms/switch";
 export * from "./atoms/textarea";

@@ -2,11 +2,11 @@ import { Pot } from "@/common/api/indexer";
 import { getDateTime } from "@/modules/core";
 
 export const potIndexedDataByIdToStatuses = ({
-  application_start, // application_start_ms
-  application_end, //application_end_ms
-  matching_round_start, // public_round_start_ms,
-  matching_round_end, // public_round_end_ms,
-  cooldown_end, // cooldown_end_ms,
+  application_start,
+  application_end,
+  matching_round_start,
+  matching_round_end,
+  cooldown_end,
   all_paid_out,
 }: Pot) => {
   const date = new Date();
@@ -23,6 +23,7 @@ export const potIndexedDataByIdToStatuses = ({
       daysLeft: application_end_ms,
       started: now >= application_start_ms,
       completed: now > application_end_ms,
+
       progress:
         now > application_end_ms
           ? 1

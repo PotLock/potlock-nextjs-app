@@ -62,10 +62,7 @@ export const PotStatusBar: React.FC<PotStatusBarProps> = ({
                   key={label}
                   className={cn(
                     "relative flex items-center gap-4 whitespace-nowrap",
-
-                    {
-                      "color-neutral-500": !(completed || started),
-                    },
+                    { "color-neutral-500": !(completed || started) },
                   )}
                 >
                   <ProgressBar
