@@ -66,18 +66,24 @@ export const ProjectDiscovery = ({
             {filteredRegistrations?.length}
           </span>
         </div>
+
         <div className="flex w-full items-center gap-4">
           <SearchBar
             placeholder="Search projects"
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
+
           <Filter groups={tagList} />
+
           <SortSelect
             options={CHRONOLOGICAL_SORT_OPTIONS}
             onValueChange={handleSort}
           />
         </div>
       </div>
+
+      {/* TODO: Use regular pagination from `@/common/ui/components` */}
+      {/* Guide: https://ui.shadcn.com/docs/components/pagination */}
       {loading ? (
         Array.from({ length: 6 }, (_, index) => (
           <ListCardSkeleton key={index} />
@@ -105,6 +111,7 @@ export const ProjectDiscovery = ({
             height={200}
             className="mb-4 h-[200px] w-[200px]"
           />
+
           <div className="md:flex-row flex flex-col items-center justify-center gap-2">
             <p className="w-100 text-center font-lora italic">
               No results found
