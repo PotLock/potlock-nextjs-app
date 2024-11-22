@@ -17,7 +17,7 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
   const [statusFilter, setStatusFilter] =
-    useState<ProjectListingStatusVariant>("all");
+    useState<ProjectListingStatusVariant>("Approved");
 
   /**
    *! INFO: Heads up! Do not apply reversed chronological sorting within this hook.
