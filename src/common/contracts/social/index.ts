@@ -1,4 +1,3 @@
-import { TransformedAction } from "@builddao/near-social-js/dist/utils/transformActions/types";
 import { StorageCache, buildTransaction } from "@wpdas/naxios";
 
 import { SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
@@ -76,10 +75,10 @@ export interface NEARSocialUserProfile {
   plFundingSources?: string; //ExternalFundingSource[];
   plSmartContracts?: string; //[string, string][];
   category?:
-    | keyof typeof Category
-    | {
-        text: string;
-      };
+  | keyof typeof Category
+  | {
+    text: string;
+  };
 }
 
 //  Registration (Project) social profile
@@ -198,11 +197,6 @@ export const setSocialData = async ({
   } catch (e) {
     console.error("setSocialData", e);
   }
-};
-
-export type TransformedContractActions = {
-  contractId: string;
-  actions: TransformedAction[];
 };
 
 export const createPost = async ({
