@@ -14,9 +14,7 @@ const Repo = ({
   index: number;
   onChangeHandler: (repoIndex: number, value: string) => void;
 }) => {
-  const [fieldValue, setValue] = useState<string>(
-    repo?.replace("https://github.com/", "") || "",
-  );
+  const [fieldValue, setValue] = useState<string>(repo?.replace("https://github.com/", "") || "");
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(extractFromUrl(e.target.value, urlPatters.github) || "");
@@ -32,10 +30,7 @@ const Repo = ({
         placeholder: "Enter repository address",
         onChange,
         onBlur: (_) => {
-          onChangeHandler(
-            index,
-            fieldValue ? `https://github.com/${fieldValue}` : "",
-          );
+          onChangeHandler(index, fieldValue ? `https://github.com/${fieldValue}` : "");
         },
       }}
     />
@@ -47,13 +42,9 @@ type Props = {
 };
 
 const Repositories = ({ onChange }: Props) => {
-  const repositories = useTypedSelector(
-    (state) => state.projectEditor.githubRepositories || [],
-  );
+  const repositories = useTypedSelector((state) => state.projectEditor.githubRepositories || []);
 
-  const [repos, setRepos] = useState(
-    repositories.length > 0 ? repositories : [""],
-  );
+  const [repos, setRepos] = useState(repositories.length > 0 ? repositories : [""]);
 
   useEffect(() => {
     setRepos(repositories);
@@ -80,12 +71,7 @@ const Repositories = ({ onChange }: Props) => {
   return (
     <>
       {toShow.map((repo, index) => (
-        <Repo
-          key={repo}
-          repo={repo}
-          index={index}
-          onChangeHandler={onChangeHandler}
-        />
+        <Repo key={repo} repo={repo} index={index} onChangeHandler={onChangeHandler} />
       ))}
     </>
   );

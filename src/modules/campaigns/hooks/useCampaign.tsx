@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Campaign, CampaignDonation } from "@/common/contracts/core";
-import {
-  get_campaign,
-  get_donations_for_campaign,
-} from "@/common/contracts/core/campaigns";
+import { get_campaign, get_donations_for_campaign } from "@/common/contracts/core/campaigns";
 
 export const useCampaign = ({ campaignId }: { campaignId: string }) => {
   const [campaign, setCampaign] = useState<Campaign>();

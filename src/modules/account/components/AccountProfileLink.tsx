@@ -21,15 +21,9 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
     <Link
       href={`${routesPath.PROFILE}/${accountId}`}
       target="_blank"
-      className={cn(
-        "decoration-none flex items-center gap-1",
-        classNames?.root,
-      )}
+      className={cn("decoration-none flex items-center gap-1", classNames?.root)}
     >
-      <AccountProfilePicture
-        {...{ accountId }}
-        className={cn("h-5 w-5", classNames?.avatar)}
-      />
+      <AccountProfilePicture {...{ accountId }} className={cn("h-5 w-5", classNames?.avatar)} />
 
       <span className={cn("prose font-500 hover:underline", classNames?.name)}>
         {name ?? accountId}

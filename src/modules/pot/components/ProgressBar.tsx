@@ -22,12 +22,7 @@ const ProgressBar = ({ progress, completed, started }: any) => (
         strokeDashoffset={439.6 * progress + "px"}
       ></circle>
     </svg>
-    <svg
-      className="check"
-      viewBox="0 0 12 9"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg className="check" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3.72667 7.05333L0.946667 4.27333L0 5.21333L3.72667 8.94L11.7267 0.94L10.7867 0L3.72667 7.05333Z"
         style={{

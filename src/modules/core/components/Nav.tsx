@@ -55,10 +55,7 @@ const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {
         viewBox="0 0 24 24"
         fill="none"
       >
-        <path
-          d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z"
-          fill="#7B7B7B"
-        />
+        <path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="#7B7B7B" />
       </svg>
     </button>
   );
@@ -118,9 +115,7 @@ export const Nav = () => {
                 height={23.94}
               />
 
-              <p className="max-sm:hidden text-center text-xl font-bold">
-                {"POTLOCK"}
-              </p>
+              <p className="max-sm:hidden text-center text-xl font-bold">{"POTLOCK"}</p>
             </Link>
           </div>
 
@@ -155,9 +150,7 @@ export const Nav = () => {
           <CartLink disabled />
           <AuthButton />
 
-          <MobileMenuButton
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-          />
+          <MobileMenuButton onClick={() => setShowMobileMenu(!showMobileMenu)} />
         </div>
       </nav>
 

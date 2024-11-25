@@ -14,11 +14,8 @@ const cartStateDefaults: CartState = {
   finalOutcome: { error: null },
 };
 
-const handleStep = (
-  state: CartState,
-  orderStep: CartOrderStep,
-  stateUpdate?: Partial<CartState>,
-) => mergeAll([state, stateUpdate ?? {}, { orderStep }]);
+const handleStep = (state: CartState, orderStep: CartOrderStep, stateUpdate?: Partial<CartState>) =>
+  mergeAll([state, stateUpdate ?? {}, { orderStep }]);
 
 export const cartModel = createModel<AppModel>()({
   state: cartStateDefaults,

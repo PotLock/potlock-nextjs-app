@@ -2,13 +2,7 @@ import InfoIcon from "@/common/assets/svgs/InfoIcon";
 
 import { Container, Description, Heading, Text } from "./styles";
 
-const InfoSegment = ({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) => {
+const InfoSegment = ({ title, description }: { title: string; description: string }) => {
   return (
     <Container>
       <InfoIcon />

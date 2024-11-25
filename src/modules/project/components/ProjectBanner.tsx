@@ -9,9 +9,7 @@ const ProjectBanner = ({ projectId }: { projectId: string }) => {
 
   const { registration, loading } = useRegistration(projectId);
 
-  const registrationStatus = registration
-    ? statuses[registration.status]
-    : statuses.Unregistered;
+  const registrationStatus = registration ? statuses[registration.status] : statuses.Unregistered;
 
   return loading || registration.status === RegistrationStatus.Approved ? (
     ""

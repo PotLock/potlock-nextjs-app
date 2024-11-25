@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import useRegistration from "@/modules/core/hooks/useRegistration";
-import {
-  tabRoutesProfile,
-  tabRoutesProject,
-} from "@/modules/profile/tabRoutes";
+import { tabRoutesProfile, tabRoutesProject } from "@/modules/profile/tabRoutes";
 import ProjectBanner from "@/modules/project/components/ProjectBanner";
 
 import Info from "./Info";

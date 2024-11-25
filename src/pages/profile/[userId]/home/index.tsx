@@ -13,10 +13,7 @@ const HomeTab = () => {
   const router = useRouter();
   const { userId: userIdPathParam } = router.query;
 
-  const userId =
-    typeof userIdPathParam === "string"
-      ? userIdPathParam
-      : userIdPathParam?.at(0);
+  const userId = typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0);
 
   const { profile, profileType } = useProfileData(userId);
 
@@ -37,14 +34,8 @@ const HomeTab = () => {
             text={profile?.plPublicGoodReason || "None provided"}
           />
           <Team profile={profile} />
-          <AboutItem
-            title="Github repo(s)"
-            element={<Github profile={profile} />}
-          />
-          <AboutItem
-            title="Smart contracts"
-            element={<SmartContract profile={profile} />}
-          />
+          <AboutItem title="Github repo(s)" element={<Github profile={profile} />} />
+          <AboutItem title="Smart contracts" element={<SmartContract profile={profile} />} />
         </>
       )}
     </div>

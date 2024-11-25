@@ -3,11 +3,7 @@ import { useMemo } from "react";
 import { values } from "remeda";
 
 import { ftService } from "@/common/services";
-import {
-  SelectField,
-  SelectFieldOption,
-  SelectFieldProps,
-} from "@/common/ui/form-fields";
+import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form-fields";
 
 export type TokenSelectorProps = Pick<
   SelectFieldProps,
@@ -32,10 +28,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
     >
       {tokenOptions.map((token) =>
         token && (token.balanceFloat ?? 0) > 0 ? (
-          <SelectFieldOption
-            key={token.contract_account_id}
-            value={token.contract_account_id}
-          >
+          <SelectFieldOption key={token.contract_account_id} value={token.contract_account_id}>
             {token.metadata.symbol}
           </SelectFieldOption>
         ) : null,

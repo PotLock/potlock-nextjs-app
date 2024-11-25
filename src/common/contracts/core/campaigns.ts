@@ -45,11 +45,7 @@ export const update_campaign = ({
   });
 };
 
-export const delete_campaign = ({
-  args,
-}: {
-  args: { campaign_id: number };
-}) => {
+export const delete_campaign = ({ args }: { args: { campaign_id: number } }) => {
   return contractApi.call("delete_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
@@ -57,10 +53,7 @@ export const delete_campaign = ({
   });
 };
 
-export const donate = (
-  args: DirectCampaignDonationArgs,
-  depositAmountYocto: string,
-) =>
+export const donate = (args: DirectCampaignDonationArgs, depositAmountYocto: string) =>
   contractApi.call("donate", {
     args,
     deposit: depositAmountYocto,
@@ -72,8 +65,7 @@ export const donate = (
  * GET CAMPAIGNS
  */
 
-export const get_campaigns = () =>
-  contractApi.view<{}, Campaign[]>("get_campaigns");
+export const get_campaigns = () => contractApi.view<{}, Campaign[]>("get_campaigns");
 
 /**
  * GET CAMPAIGN
@@ -93,7 +85,4 @@ export const get_campaign = (args: GetCampaignInput) =>
   contractApi.view<typeof args, Campaign>(`get_campaign`, { args });
 
 export const get_donations_for_campaign = (args: GetCampaignInput) =>
-  contractApi.view<typeof args, CampaignDonation[]>(
-    "get_donations_for_campaign",
-    { args },
-  );
+  contractApi.view<typeof args, CampaignDonation[]>("get_donations_for_campaign", { args });

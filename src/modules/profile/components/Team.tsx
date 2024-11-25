@@ -9,9 +9,7 @@ import routesPath from "@/modules/core/routes";
 import { useProfileData } from "../hooks/data";
 import getProfileTeamMembersData from "../utils/getProfileTeamMembersData";
 
-const NoTeam = () => (
-  <p className="m-0 flex w-full flex-col">No team members to display</p>
-);
+const NoTeam = () => <p className="m-0 flex w-full flex-col">No team members to display</p>;
 
 const TeamAvatar = ({ teamMemberId }: { teamMemberId: string }) => {
   const { profileImages } = useProfileData(teamMemberId);

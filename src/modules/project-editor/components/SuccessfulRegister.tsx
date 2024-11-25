@@ -21,13 +21,9 @@ const SuccessfulRegister = ({
   return (
     <div className="md:p-[72px_64px_72px_64px] flex w-full flex-col p-0">
       {isEdit ? (
-        <h1 style={{ textAlign: "center" }}>
-          You&apos;ve edited your project successfully!
-        </h1>
+        <h1 style={{ textAlign: "center" }}>You&apos;ve edited your project successfully!</h1>
       ) : (
-        <h1 style={{ textAlign: "center" }}>
-          You&apos;ve successfully registered!
-        </h1>
+        <h1 style={{ textAlign: "center" }}>You&apos;ve successfully registered!</h1>
       )}
       <div className="mt-8 flex items-center justify-center gap-8">
         <Link href={`${routesPath.PROFILE}/${registeredProject}/home`}>

@@ -12,10 +12,7 @@ export type PotEditorState = {
   };
 };
 
-export type PotEditorFieldKey = keyof Omit<
-  PotInputs,
-  "cooldown_period_ms" | "source_metadata"
->;
+export type PotEditorFieldKey = keyof Omit<PotInputs, "cooldown_period_ms" | "source_metadata">;
 
 export type PotEditorField = {
   index?: keyof Pot;

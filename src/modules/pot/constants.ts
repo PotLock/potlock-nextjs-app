@@ -7,8 +7,7 @@ export const POT_MAX_NAME_LENGTH = 64;
 
 export const POT_MAX_DESCRIPTION_LENGTH = 256;
 
-export const POT_MAX_HANDLE_LENGTH =
-  64 - `.${POT_FACTORY_CONTRACT_ACCOUNT_ID}`.length;
+export const POT_MAX_HANDLE_LENGTH = 64 - `.${POT_FACTORY_CONTRACT_ACCOUNT_ID}`.length;
 
 export const POT_MAX_APPROVED_PROJECTS = 100;
 

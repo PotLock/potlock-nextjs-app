@@ -32,13 +32,8 @@ export const useStats = () => {
 /**
  * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve
  */
-export const useDonationConfig = (
-  params?: V1DonateContractConfigRetrieveParams,
-) => {
-  const queryResult = swrHooks.useV1DonateContractConfigRetrieve(
-    params,
-    POTLOCK_REQUEST_CONFIG,
-  );
+export const useDonationConfig = (params?: V1DonateContractConfigRetrieveParams) => {
+  const queryResult = swrHooks.useV1DonateContractConfigRetrieve(params, POTLOCK_REQUEST_CONFIG);
 
   return { ...queryResult, data: queryResult.data?.data };
 };
@@ -73,11 +68,10 @@ export const useAccountActivePots = ({
   accountId,
   ...params
 }: Partial<ByAccountId> & V1AccountsActivePotsRetrieveParams) => {
-  const queryResult = swrHooks.useV1AccountsActivePotsRetrieve(
-    accountId ?? "unknown",
-    params,
-    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
-  );
+  const queryResult = swrHooks.useV1AccountsActivePotsRetrieve(accountId ?? "unknown", params, {
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { enabled: Boolean(accountId) },
+  });
 
   return { ...queryResult, data: queryResult.data?.data.results };
 };
@@ -117,11 +111,10 @@ export const usePotApplications = ({
   potId,
   ...params
 }: Partial<ByPotId> & V1PotsApplicationsRetrieveParams) => {
-  const queryResult = swrHooks.useV1PotsApplicationsRetrieve(
-    potId ?? "unknown",
-    params,
-    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(potId) } },
-  );
+  const queryResult = swrHooks.useV1PotsApplicationsRetrieve(potId ?? "unknown", params, {
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { enabled: Boolean(potId) },
+  });
 
   return { ...queryResult, data: queryResult.data?.data.results };
 };
@@ -146,10 +139,7 @@ export const useAccountDonationsReceived = ({
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_donations_retrieve
  */
 
-export const usePotDonations = ({
-  potId,
-  ...params
-}: ByPotId & V1PotsDonationsRetrieveParams) => {
+export const usePotDonations = ({ potId, ...params }: ByPotId & V1PotsDonationsRetrieveParams) => {
   const queryResult = swrHooks.useV1PotsDonationsRetrieve(potId, params, {
     ...POTLOCK_REQUEST_CONFIG,
     swr: { enabled: Boolean(potId) },
@@ -248,10 +238,7 @@ export const useListRegistrations = ({
  */
 
 export const useLists = ({ ...params }: V1ListsRetrieveParams = {}) => {
-  const queryResult = swrHooks.useV1ListsRetrieve(
-    params,
-    POTLOCK_REQUEST_CONFIG,
-  );
+  const queryResult = swrHooks.useV1ListsRetrieve(params, POTLOCK_REQUEST_CONFIG);
   return { ...queryResult, data: queryResult.data?.data };
 };
 
@@ -262,14 +249,10 @@ export const useAccountUpvotedLists = ({
   accountId,
   ...params
 }: { accountId: string } & V1AccountsUpvotedListsRetrieveParams) => {
-  const queryResult = swrHooks.useV1AccountsUpvotedListsRetrieve(
-    accountId,
-    params,
-    {
-      ...POTLOCK_REQUEST_CONFIG,
-      swr: { enabled: Boolean(accountId) },
-    },
-  );
+  const queryResult = swrHooks.useV1AccountsUpvotedListsRetrieve(accountId, params, {
+    ...POTLOCK_REQUEST_CONFIG,
+    swr: { enabled: Boolean(accountId) },
+  });
   return {
     ...queryResult,
     data: queryResult.data?.data.results,

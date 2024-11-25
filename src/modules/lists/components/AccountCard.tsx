@@ -46,8 +46,9 @@ export const AccountCard = ({
   dataForList: ListRegistration;
   accountsWithAccess: string[];
 }) => {
-  const [registrationStatus, setRegistrationStatus] =
-    useState<RegistrationStatus>(RegistrationStatus.Pending);
+  const [registrationStatus, setRegistrationStatus] = useState<RegistrationStatus>(
+    RegistrationStatus.Pending,
+  );
   const [note, setNote] = useState<string>("");
 
   const status = listRegistrationStatuses[registrationStatus];
@@ -153,23 +154,17 @@ export const AccountCard = ({
               <div className="mt-4 flex items-center justify-between">
                 <p className="text-lg font-bold">
                   ${dataForList.registrant.total_donations_in_usd}{" "}
-                  <span className="text-sm font-normal text-gray-500">
-                    RAISED FROM
-                  </span>
+                  <span className="text-sm font-normal text-gray-500">RAISED FROM</span>
                 </p>
                 <p className="text-lg font-bold">
                   {dataForList.registrant.donors_count}{" "}
-                  <span className="text-sm font-normal text-gray-500">
-                    DONORS
-                  </span>
+                  <span className="text-sm font-normal text-gray-500">DONORS</span>
                 </p>
               </div>
               <div className="mt-4 flex items-center justify-between">
                 {accountsWithAccess?.includes(walletApi?.accountId || "") ? (
                   <Select
-                    onValueChange={(value) =>
-                      setStatusChange({ open: true, status: value })
-                    }
+                    onValueChange={(value) => setStatusChange({ open: true, status: value })}
                     defaultValue={dataForList.status}
                   >
                     <Trigger asChild>

@@ -19,9 +19,7 @@ interface FeedCardOptionsSelectProps {
   post: Post;
 }
 
-const FeedCardOptionsSelect: React.FC<FeedCardOptionsSelectProps> = ({
-  post,
-}) => {
+const FeedCardOptionsSelect: React.FC<FeedCardOptionsSelectProps> = ({ post }) => {
   const feedRoute = `${window.location.href}/${post.accountId}/${post.blockHeight}`;
   const [copyLinkText] = useState("Copy Link ");
 

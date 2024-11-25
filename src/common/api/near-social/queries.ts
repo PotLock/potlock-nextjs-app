@@ -1,8 +1,4 @@
-import {
-  FeedsResult,
-  IndexPostResultItem,
-  PostContent,
-} from "@/common/contracts/social/types";
+import { FeedsResult, IndexPostResultItem, PostContent } from "@/common/contracts/social/types";
 
 import { nearSocialClient } from "./client";
 
@@ -42,10 +38,7 @@ export const fetchGlobalFeeds = async ({ accountIds, offset = 20 }: any) => {
   );
 };
 
-export const fetchAccountFeedPosts = async ({
-  accountId,
-  offset = 20,
-}: any) => {
+export const fetchAccountFeedPosts = async ({ accountId, offset = 20 }: any) => {
   // First, use index to get the list of posts
   const indexResult = (await nearSocialClient.index({
     action: "post",
@@ -116,17 +109,13 @@ export const fetchSinglePost = async ({
   }
 };
 
-export const fetchTimeByBlockHeight = async (
-  blockHeight: number,
-): Promise<string> => {
+export const fetchTimeByBlockHeight = async (blockHeight: number): Promise<string> => {
   if (!blockHeight) {
     return "unknown";
   }
 
   try {
-    const res = await fetch(
-      `https://api.near.social/time?blockHeight=${blockHeight}`,
-    );
+    const res = await fetch(`https://api.near.social/time?blockHeight=${blockHeight}`);
     if (!res.ok || res.status !== 200) {
       return "unknown";
     }

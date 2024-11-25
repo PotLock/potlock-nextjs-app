@@ -7,15 +7,13 @@ export async function middleware(request: NextRequest) {
   const isProfilePage = request.nextUrl.pathname.startsWith("/profile/");
   if (
     isProfilePage &&
-    (request.nextUrl.pathname.endsWith(".near") ||
-      request.nextUrl.pathname.endsWith(".testnet"))
+    (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
   ) {
     return NextResponse.rewrite(`${request.url}/home`);
   }
   if (
     isProfilePage &&
-    (request.nextUrl.pathname.endsWith(".near/") ||
-      request.nextUrl.pathname.endsWith(".testnet/"))
+    (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))
   ) {
     return NextResponse.rewrite(`${request.url}home`);
   }
@@ -25,15 +23,13 @@ export async function middleware(request: NextRequest) {
   const isPotPage = request.nextUrl.pathname.startsWith("/pot/");
   if (
     isPotPage &&
-    (request.nextUrl.pathname.endsWith(".near") ||
-      request.nextUrl.pathname.endsWith(".testnet"))
+    (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
   ) {
     return NextResponse.rewrite(`${request.url}/projects`);
   }
   if (
     isPotPage &&
-    (request.nextUrl.pathname.endsWith(".near/") ||
-      request.nextUrl.pathname.endsWith(".testnet/"))
+    (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))
   ) {
     return NextResponse.rewrite(`${request.url}projects`);
   }

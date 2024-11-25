@@ -32,54 +32,41 @@ const SponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] }) => {
           <div className="address">Donor</div>
           <div>Amount</div>
         </div>
-        {sponsors
-          .slice((currentPage - 1) * perPage, currentPage * perPage)
-          .map((donation, idx) => {
-            const donorId = donation.donor.id;
-            const amount = donation.amount;
-            const percentage_share = donation.percentage_share;
+        {sponsors.slice((currentPage - 1) * perPage, currentPage * perPage).map((donation, idx) => {
+          const donorId = donation.donor.id;
+          const amount = donation.amount;
+          const percentage_share = donation.percentage_share;
 
-            return (
-              <TrRow key={donation.id}>
-                <div className="rank">
-                  #{idx + 1 + (currentPage - 1) * perPage}
-                </div>
+          return (
+            <TrRow key={donation.id}>
+              <div className="rank">#{idx + 1 + (currentPage - 1) * perPage}</div>
 
-                <Link
-                  href={`${routesPath.PROFILE}/${donorId}`}
-                  className="address"
-                  target="_blank"
-                >
-                  <AccountProfilePicture
-                    accountId={donorId}
-                    className="mr-4 h-[24px] w-[24px]"
-                  />
+              <Link href={`${routesPath.PROFILE}/${donorId}`} className="address" target="_blank">
+                <AccountProfilePicture accountId={donorId} className="mr-4 h-[24px] w-[24px]" />
 
-                  {/* Tooltip */}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Link
-                          className="address"
-                          href={`${routesPath.PROFILE}/${donorId}`}
-                          target="_blank"
-                        >
-                          {truncate(donorId, 25)}
-                        </Link>
-                      </TooltipTrigger>
-                      <TooltipContent>{donorId}</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </Link>
-                <div className="sponsors-amount">
-                  {amount.toFixed(2)}N{" "}
-                  <Percentage>
-                    {percentage_share === "0" ? "<0.01" : percentage_share}%
-                  </Percentage>
-                </div>
-              </TrRow>
-            );
-          })}
+                {/* Tooltip */}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Link
+                        className="address"
+                        href={`${routesPath.PROFILE}/${donorId}`}
+                        target="_blank"
+                      >
+                        {truncate(donorId, 25)}
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>{donorId}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </Link>
+              <div className="sponsors-amount">
+                {amount.toFixed(2)}N{" "}
+                <Percentage>{percentage_share === "0" ? "<0.01" : percentage_share}%</Percentage>
+              </div>
+            </TrRow>
+          );
+        })}
       </div>
       <Pagination
         {...{

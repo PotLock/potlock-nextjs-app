@@ -107,10 +107,7 @@ type NEARSocialGetResponse = {
  * Get User Profile Info from NEAR Social DB
  * @returns
  */
-export const getSocialProfile = async (input: {
-  accountId: string;
-  useCache?: boolean;
-}) => {
+export const getSocialProfile = async (input: { accountId: string; useCache?: boolean }) => {
   try {
     const response = await nearSocialDbContractApi.view<
       NEARSocialUserProfileInput,
@@ -169,10 +166,9 @@ export const getSocialData = async <R>({ path }: { path: string }) => {
 
 export const getPolicy = async () => {
   try {
-    const response = await nearSocialDbContractApi.view<
-      any,
-      { proposal_bond: string }
-    >("get_policy");
+    const response = await nearSocialDbContractApi.view<any, { proposal_bond: string }>(
+      "get_policy",
+    );
 
     return response;
   } catch (e) {
@@ -180,11 +176,7 @@ export const getPolicy = async () => {
   }
 };
 
-export const setSocialData = async ({
-  data,
-}: {
-  data: Record<string, any>;
-}) => {
+export const setSocialData = async ({ data }: { data: Record<string, any> }) => {
   try {
     const response = await nearSocialDbContractApi.call("set", {
       args: {

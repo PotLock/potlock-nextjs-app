@@ -2,11 +2,7 @@ import { RematchDispatch, RematchRootState, init } from "@rematch/core";
 import immerPlugin from "@rematch/immer";
 import loadingPlugin, { ExtraModelsFromLoading } from "@rematch/loading";
 import persistPlugin from "@rematch/persist";
-import {
-  TypedUseSelectorHook,
-  useDispatch as useReduxDispatch,
-  useSelector,
-} from "react-redux";
+import { TypedUseSelectorHook, useDispatch as useReduxDispatch, useSelector } from "react-redux";
 import storage from "redux-persist/lib/storage";
 
 import { AppModel, models } from "./models";
