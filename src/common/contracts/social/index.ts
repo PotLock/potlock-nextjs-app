@@ -75,10 +75,10 @@ export interface NEARSocialUserProfile {
   plFundingSources?: string; //ExternalFundingSource[];
   plSmartContracts?: string; //[string, string][];
   category?:
-  | keyof typeof Category
-  | {
-    text: string;
-  };
+    | keyof typeof Category
+    | {
+        text: string;
+      };
 }
 
 //  Registration (Project) social profile
