@@ -85,7 +85,7 @@ const ActivePots = () => {
   }, [completedPots]);
 
   return (
-    <div className="md:px-10 md:py-12 flex w-full flex-col px-[64px] py-10">
+    <div className="md:px-10 md:py-12 flex w-full flex-col px-[0px] py-10">
       <div className="flex w-full justify-between gap-5">
         <p className="font-600 mb-4 flex items-center gap-4 text-[18px]">
           Active Pots <span className="font-600">{activePots.length}</span>
