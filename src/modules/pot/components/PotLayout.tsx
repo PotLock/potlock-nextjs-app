@@ -8,6 +8,7 @@ import { ErrorModal, SuccessModal } from "@/modules/core";
 import { DonationSybilWarning } from "@/modules/donation";
 
 import { PotHeader } from "./PotHeader";
+import { PotHero } from "./PotHero";
 import { PotTimeline } from "./PotTimeline";
 import Tabs from "./Tabs";
 import { POT_TABS_CONFIG } from "../constants";
@@ -67,13 +68,12 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      <PotTimeline classNames={{ root: "mb-4" }} {...{ potId }} />
-
-      <div className="md:px-8 flex w-full flex-col items-center px-4">
+      <div className="md:px-4 flex w-full flex-col items-center px-4">
         <DonationSybilWarning {...{ potId }} />
       </div>
 
       <PotHeader potDetail={pot} />
+      <PotHero potId={potId} />
 
       {/* Pot Tabs */}
       <Tabs

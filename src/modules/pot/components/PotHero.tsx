@@ -21,7 +21,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
   return (
     <div
       className={cn(
-        "inline-flex h-[560px] w-[1248px]",
+        "md:p-2 h-140 inline-flex",
         "flex-col items-center justify-start",
         "rounded-2xl bg-[#f7f7f7] p-2",
       )}
@@ -62,7 +62,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
               )}
 
               <div
-                className={cn("flex h-32 flex-col", "items-start justify-start gap-4 self-stretch")}
+                className={cn("flex h-32 flex-col items-start justify-start gap-4 self-stretch")}
               >
                 {pot ? (
                   <div
@@ -104,6 +104,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                   )}
                 >
                   <div className="relative h-6 w-6" />
+
                   <div
                     className={cn(
                       "shrink grow basis-0",
@@ -127,6 +128,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                       key={text}
                     >
                       <div className="relative h-6 w-6" />
+
                       <div
                         className={cn(
                           "shrink grow basis-0",
