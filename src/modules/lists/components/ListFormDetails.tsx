@@ -98,10 +98,7 @@ export const ListFormDetails: React.FC = () => {
         setValue("owner", response.owner);
         setValue("description", response.description);
         setValue("allowApplications", response.admin_only_registrations);
-        setValue(
-          "approveApplications",
-          response?.default_registration_status === "Approved",
-        );
+        setValue("approveApplications", response?.default_registration_status === "Approved");
         setAdmins(response.admins);
         setSavedAdmins(response.admins?.map((admin: AccountId) => ({ account: admin })));
         setCoverImage(response.cover_image_url);
