@@ -58,9 +58,9 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
 
   return (
     <div className="my-8 h-full max-h-80 w-full">
-      {/* {accountId === walletApi?.accountId && ( */}
-      <CreatePost accountId={accountId} />
-      {/* )} */}
+      {accountId === walletApi?.accountId && (
+        <CreatePost accountId={accountId} />
+      )}
       <InfiniteScrollWrapper
         className="space-y-4"
         dataLength={40}
