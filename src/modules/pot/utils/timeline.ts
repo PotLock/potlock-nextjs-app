@@ -5,7 +5,7 @@ export type PotTimelineParams = Pot & {
   isVotingEnabled: boolean;
 };
 
-export const potIndexedDataByIdToStatuses = ({
+export const potIndexedDataToTimeline = ({
   isVotingEnabled,
   application_start,
   application_end,

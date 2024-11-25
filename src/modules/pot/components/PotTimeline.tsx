@@ -6,7 +6,7 @@ import { cn } from "@/common/ui/utils";
 import { PotTimelineFragment } from "./PotTimelineFragment";
 import { Container, Loader, Wrapper } from "./styles";
 import TimeLeft from "./TimeLeft";
-import { potIndexedDataByIdToStatuses } from "../utils/statuses";
+import { potIndexedDataToTimeline } from "../utils/timeline";
 import { isPotStakeWeighted } from "../utils/voting";
 
 export type PotTimelineProps = ByPotId & {
@@ -21,7 +21,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
   const isStakeWeightedPot = isPotStakeWeighted({ potId });
 
   const statuses = pot
-    ? potIndexedDataByIdToStatuses({
+    ? potIndexedDataToTimeline({
         ...pot,
         isVotingEnabled: isStakeWeightedPot,
       })
