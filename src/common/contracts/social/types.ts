@@ -19,5 +19,5 @@ export interface FeedsResult {
 }
 
 export interface ProfileFeedsProps {
-  accountId: string; // Define the type for accountId
+  accountId: string | string[];
 }

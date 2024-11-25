@@ -113,29 +113,28 @@ const SinglePost = () => {
               />
             );
           },
-          img: ({ node, ...props }) => {
-            console.log(props);
-            return (
-              <div className="mt-4 flex w-full items-center justify-center">
-                <img
-                  {...props}
-                  src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
-                  alt="image"
-                />
-              </div>
-            );
-          },
+          img: (node) => (
+            <div className="mt-4 flex w-full items-center justify-center">
+              <img
+                src={node.src}
+                alt=""
+                className="w-100 h-max object-contain"
+              />
+            </div>
+          ),
         }}
       >
         {post.content}
       </ReactMarkdown>
-      <LazyLoadImage
-        src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
-        alt=""
-        className="mt-2"
-        width={700}
-        height={700}
-      />
+      {post.imageIPFSHash && (
+        <LazyLoadImage
+          src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
+          alt=""
+          className="mt-2"
+          width={700}
+          height={700}
+        />
+      )}
     </div>
   );
 };

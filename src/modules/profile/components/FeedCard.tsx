@@ -75,7 +75,7 @@ export const FeedCard = ({ post }: PostType) => {
               alt="profile-image"
             />
             <p className="font-bold text-black ">
-              {truncate(post.accountId, 20)}
+              {truncate(post.accountId, 10)}
             </p>
           </div>
           <div className="flex items-center">
@@ -107,7 +107,11 @@ export const FeedCard = ({ post }: PostType) => {
             ),
             img: (node) => (
               <div className="mt-4 flex w-full items-center justify-center">
-                <img src={node.src} alt="" />
+                <img
+                  src={node.src}
+                  alt=""
+                  className="w-100 h-max object-contain"
+                />
               </div>
             ),
           }}
@@ -118,7 +122,7 @@ export const FeedCard = ({ post }: PostType) => {
           <LazyLoadImage
             src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
             alt=""
-            className="mt-2"
+            className="w-100 h-max object-contain"
             width={500}
             height={500}
           />

@@ -153,14 +153,14 @@ export const fetchTimeByBlockHeight = async (
             ? `${(diffSec / 3600000) | 0}h`
             : date.getFullYear() === dateNow.getFullYear()
               ? date.toLocaleString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })
+                month: "short",
+                day: "numeric",
+              })
               : date.toLocaleString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                });
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              });
 
     return timeAgo(dateNow.getTime() - timeMs);
   } catch (error) {
@@ -168,26 +168,3 @@ export const fetchTimeByBlockHeight = async (
     return "unknown";
   }
 };
-
-// export function useGetPosts(limit: number = 10, order: string = "desc") {
-//   const computeFetchFrom = (items: any, limit: number) => {
-//     if (!items || items.length < limit) {
-//       return false; // Return false if less than limit or no items
-//     }
-//     const blockHeight = items[items.length - 1].item.blockHeight;
-//     return order === "desc" ? blockHeight - 1 : blockHeight + 1; // Adjust based on order
-//   };
-
-//   return useInfiniteQuery({
-//     queryKey: ["posts"],
-//     queryFn: async ({ pageParam = undefined }) => {
-//       // post main
-//       return await getPosts("post", "main", limit, order, pageParam);
-//     },
-//     getNextPageParam: (lastPage, allPages) => {
-//       const from = computeFetchFrom(lastPage, limit);
-//       return from; // Pass computed "from" value for the next query
-//     },
-//     initialPageParam: undefined,
-//   });
-// }
