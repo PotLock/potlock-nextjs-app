@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ByPotId, Pot } from "@/common/api/indexer";
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
 import { PotTimelineFragment } from "./PotTimelineFragment";
@@ -10,29 +10,24 @@ import { potIndexedDataByIdToStatuses } from "../utils/statuses";
 import { isPotStakeWeighted } from "../utils/voting";
 
 export type PotTimelineProps = ByPotId & {
-  potIndexedData: Pot;
-
   classNames?: {
     root?: string;
   };
 };
 
-export const PotStatus: React.FC<PotTimelineProps> = ({
-  potId,
-  potIndexedData,
-  classNames,
-}) => {
+export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) => {
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
-
-  if (potIndexedData === null) return "";
-
+  const { data: pot } = indexer.usePot({ potId });
   const isStakeWeightedPot = isPotStakeWeighted({ potId });
 
-  const statuses = potIndexedDataByIdToStatuses({
-    ...potIndexedData,
-    isVotingEnabled: isStakeWeightedPot,
-  });
+  const statuses = pot
+    ? potIndexedDataByIdToStatuses({
+        ...pot,
+        isVotingEnabled: isStakeWeightedPot,
+      })
+    : [];
 
+  // TODO: Refactor this code ( original owner: @M-Rb3 )
   const getIndexOfActive = () => {
     let index = 0;
     statuses.forEach((status, idx) => {
@@ -67,10 +62,9 @@ export const PotStatus: React.FC<PotTimelineProps> = ({
               return (
                 <div
                   key={label}
-                  className={cn(
-                    "relative flex items-center gap-4 whitespace-nowrap",
-                    { "color-neutral-500": !(completed || started) },
-                  )}
+                  className={cn("relative flex items-center gap-4 whitespace-nowrap", {
+                    "color-neutral-500": !(completed || started),
+                  })}
                 >
                   {/* @ts-expect-error timeline fragments don't have proper typings */}
                   <PotTimelineFragment {...{ progress, completed, started }} />

@@ -4,12 +4,11 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
-import ErrorModal from "@/modules/core/components/ErrorModal";
-import SuccessModal from "@/modules/core/components/SuccessModal";
+import { ErrorModal, SuccessModal } from "@/modules/core";
 import { DonationSybilWarning } from "@/modules/donation";
 
 import { PotHeader } from "./PotHeader";
-import { PotStatus } from "./PotTimeline";
+import { PotTimeline } from "./PotTimeline";
 import Tabs from "./Tabs";
 import { POT_TABS_CONFIG } from "../constants";
 import { isPotStakeWeighted } from "../utils/voting";
@@ -32,10 +31,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { data: pot } = indexer.usePot({ potId });
 
   // Modals
-  const [resultModalOpen, setSuccessModalOpen] = useState(
-    !!query.done && !query.errorMessage,
-  );
-
+  const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
   const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
 
   const tabs = useMemo(
@@ -54,9 +50,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    setSelectedTab(
-      tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0],
-    );
+    setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0]);
   }, [isStakeWeightedPot, pathname, tabs]);
 
   return !pot ? null : (
@@ -73,11 +67,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      <PotStatus
-        potIndexedData={pot}
-        classNames={{ root: "mb-4" }}
-        {...{ potId }}
-      />
+      <PotTimeline classNames={{ root: "mb-4" }} {...{ potId }} />
 
       <div className="md:px-8 flex w-full flex-col items-center px-4">
         <DonationSybilWarning {...{ potId }} />
@@ -96,9 +86,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       />
 
       {/* Tab Content */}
-      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">
-        {children}
-      </div>
+      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">{children}</div>
     </PageWithBanner>
   );
 };

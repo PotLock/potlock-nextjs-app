@@ -25,19 +25,15 @@ export type PotHeaderProps = {
 export const PotHeader: React.FC<PotHeaderProps> = ({ potDetail }) => {
   const { isSignedIn } = useWallet();
   const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
-  const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
-
-  const potStatuses = usePotStatusesForAccountId({
-    potDetail,
-
-    accountId: asDao
-      ? actAsDao.defaultAddress
-      : (walletApi.accountId ?? accountId),
-  });
-
+  const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
   const [fundModalOpen, setFundModalOpen] = useState(false);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
+
+  const potStatuses = usePotStatusesForAccountId({
+    potDetail,
+    accountId: asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId),
+  });
 
   return (
     <>
@@ -106,30 +102,21 @@ export const PotHeader: React.FC<PotHeaderProps> = ({ potDetail }) => {
 
             {/* ButtonsWrapper */}
             <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
-              {potStatuses.canDonate && (
-                <DonateToPotProjects potId={potDetail.account} />
-              )}
+              {potStatuses.canDonate && <DonateToPotProjects potId={potDetail.account} />}
 
               {potStatuses.canFund && (
-                <Button
-                  variant="tonal-filled"
-                  onClick={() => setFundModalOpen(true)}
-                >
+                <Button variant="tonal-filled" onClick={() => setFundModalOpen(true)}>
                   {"Fund matching pool"}
                 </Button>
               )}
 
               {potStatuses.canApply && (
-                <Button onClick={() => setApplyModalOpen(true)}>
-                  {"Apply to pot"}
-                </Button>
+                <Button onClick={() => setApplyModalOpen(true)}>{"Apply to pot"}</Button>
               )}
 
               {potStatuses.canChallengePayouts && (
                 <Button onClick={() => setChallengeModalOpen(true)}>
-                  {potStatuses.existingChallengeForUser
-                    ? "Update challenge"
-                    : "Challenge payouts"}
+                  {potStatuses.existingChallengeForUser ? "Update challenge" : "Challenge payouts"}
                 </Button>
               )}
             </div>

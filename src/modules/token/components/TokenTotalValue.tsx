@@ -23,10 +23,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   const amount =
     "amountFloat" in props
       ? props.amountFloat
-      : bigStringToFloat(
-          props.amountBigString,
-          token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
-        );
+      : bigStringToFloat(props.amountBigString, token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS);
 
   const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
     amountFloat: amount,
@@ -44,14 +41,11 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
             { "mt-0.7": !textOnly },
             classNames?.amount,
           )}
-        >{`${amount} ${token?.metadata.symbol ?? "⋯"}`}</span>
+        >{`${amount} ${token?.metadata.symbol ?? "🪙"}`}</span>
       }
 
       {totalAmountUsdValue && (
-        <span
-          className="prose line-height-none mt-0.7 text-xl text-neutral-600"
-          un-mt="0.7"
-        >
+        <span className="prose line-height-none mt-0.7 text-xl text-neutral-600" un-mt="0.7">
           {totalAmountUsdValue}
         </span>
       )}

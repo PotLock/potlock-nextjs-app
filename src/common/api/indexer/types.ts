@@ -8,6 +8,10 @@ export interface ByPotId {
   potId: PotId;
 }
 
+export interface AcceptsPotData {
+  pot: Pot;
+}
+
 export {
   StatusF24Enum as ListRegistrationStatus,
   Status68eEnum as PotApplicationStatus,
