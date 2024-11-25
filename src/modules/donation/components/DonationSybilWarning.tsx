@@ -5,12 +5,7 @@ import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { WarningIcon } from "@/common/assets/svgs";
 import { DEBUG } from "@/common/constants";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  Button,
-} from "@/common/ui/components";
+import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useIsHuman } from "@/modules/core";
 
@@ -24,17 +19,12 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
   potId,
   classNames,
 }) => {
-  const { nadaBotVerified: isDonorNadabotVerified } = useIsHuman(
-    walletApi.accountId ?? "unknown",
-  );
+  const { nadaBotVerified: isDonorNadabotVerified } = useIsHuman(walletApi.accountId ?? "unknown");
 
   const { data: pot } = indexer.usePot({ potId });
 
   const isDisplayed = useMemo(
-    () =>
-      (typeof pot?.sybil_wrapper_provider === "string" &&
-        !isDonorNadabotVerified) ||
-      DEBUG,
+    () => (typeof pot?.sybil_wrapper_provider === "string" && !isDonorNadabotVerified) || DEBUG,
 
     [isDonorNadabotVerified, pot?.sybil_wrapper_provider],
   );
@@ -50,11 +40,7 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
       </AlertTitle>
 
       <AlertDescription>
-        <Button
-          asChild
-          variant="standard-plain"
-          className="text-[var(--primary-600] p-0"
-        >
+        <Button asChild variant="standard-plain" className="text-[var(--primary-600] p-0">
           <a target="_blank" href={SYBIL_APP_LINK_URL}>
             {"Verify you’re human"}
           </a>

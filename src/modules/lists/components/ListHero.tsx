@@ -14,10 +14,7 @@ export const ListHero = ({
   setFilteredRegistrations: (type: any) => void;
 }) => {
   const { push } = useRouter();
-  const { fetchMyLists } = useAllLists(
-    setCurrentListType,
-    setFilteredRegistrations,
-  );
+  const { fetchMyLists } = useAllLists(setCurrentListType, setFilteredRegistrations);
 
   const handleCreateList = useCallback(() => {
     push("/list/create");
@@ -31,8 +28,7 @@ export const ListHero = ({
             LISTS
           </h1>
           <p className="m-0 p-0 text-[16px]">
-            Lists allows anyone to create fundraising initiatives for
-            groundbreaking public goods.{" "}
+            Lists allows anyone to create fundraising initiatives for groundbreaking public goods.{" "}
           </p>
         </div>
         {walletApi?.accountId && (
@@ -40,11 +36,7 @@ export const ListHero = ({
             <Button className="md:w-[180px] w-full" onClick={handleCreateList}>
               Create List
             </Button>
-            <Button
-              className="md:w-[180px] w-full"
-              variant={"brand-tonal"}
-              onClick={fetchMyLists}
-            >
+            <Button className="md:w-[180px] w-full" variant={"brand-tonal"} onClick={fetchMyLists}>
               View My Lists
             </Button>
           </div>

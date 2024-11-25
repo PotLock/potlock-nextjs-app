@@ -28,10 +28,7 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
       <div className="w-96 max-w-full rounded-md bg-white shadow-lg">
         <div className="flex justify-end p-4">
-          <button
-            onClick={onClose}
-            className="font-bold text-gray-500 hover:text-gray-700"
-          >
+          <button onClick={onClose} className="font-bold text-gray-500 hover:text-gray-700">
             X
           </button>
         </div>
@@ -48,8 +45,8 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
             List Successfully {isUpdate ? "Updated" : "Deployed"}!
           </h2>
           <p className="mb-6 text-center text-gray-700">
-            You’ve successfully {isUpdate ? "Updated" : "Deployed"} {listName},
-            you can always make adjustments in the pot settings page.
+            You’ve successfully {isUpdate ? "Updated" : "Deployed"} {listName}, you can always make
+            adjustments in the pot settings page.
           </p>
           <button
             onClick={() => {
@@ -90,16 +87,15 @@ export const ListConfirmationModal: React.FC<ListConfirmationModalProps> = ({
     if (type === "DELETE") {
       setModalText({
         header: "Delete List",
-        paragraph:
-          "Are you sure you want to delete this list? This action cannot be undone.",
+        paragraph: "Are you sure you want to delete this list? This action cannot be undone.",
       });
     } else if (type === "TRANSFER_OWNERSHIP") {
       setModalText({
         header: "Transfer ownership",
         paragraph: (
           <>
-            Are you sure you want to transfer ownership to{" "}
-            <strong>{transferAccount}?</strong> This action cannot be undone.
+            Are you sure you want to transfer ownership to <strong>{transferAccount}?</strong> This
+            action cannot be undone.
           </>
         ),
       });
@@ -112,10 +108,7 @@ export const ListConfirmationModal: React.FC<ListConfirmationModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
       <div className="w-96 max-w-full rounded-md bg-white shadow-lg">
         <div className="flex justify-end p-4 pb-0">
-          <button
-            onClick={onClose}
-            className="font-bold text-gray-500 hover:text-gray-700"
-          >
+          <button onClick={onClose} className="font-bold text-gray-500 hover:text-gray-700">
             X
           </button>
         </div>
@@ -130,15 +123,9 @@ export const ListConfirmationModal: React.FC<ListConfirmationModalProps> = ({
             />
           </div>
           <h2 className="mb-2 text-2xl font-semibold ">{modalText.header}</h2>
-          <p className="mb-6 text-center text-gray-700">
-            {modalText.paragraph}
-          </p>
+          <p className="mb-6 text-center text-gray-700">{modalText.paragraph}</p>
           <div className="flex w-full max-w-[60%] items-center justify-between">
-            <Button
-              onClick={onSubmitButton}
-              type="button"
-              variant="standard-outline"
-            >
+            <Button onClick={onSubmitButton} type="button" variant="standard-outline">
               {"Yes, I do"}
             </Button>
             <Button onClick={onClose} type="button" variant="standard-outline">

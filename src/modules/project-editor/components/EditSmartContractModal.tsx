@@ -3,13 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
 
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/common/ui/components";
+import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
 import { dispatch, useTypedSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";
@@ -22,37 +16,23 @@ type Props = {
   contractIndex: number;
 };
 
-const EditSmartContractModal = ({
-  open,
-  onCloseClick,
-  contractIndex,
-}: Props) => {
-  const contracts = useTypedSelector(
-    (state) => state.projectEditor.smartContracts || [["", ""]],
-  );
+const EditSmartContractModal = ({ open, onCloseClick, contractIndex }: Props) => {
+  const contracts = useTypedSelector((state) => state.projectEditor.smartContracts || [["", ""]]);
 
   const [chain, setChain] = useState(
-    contracts[contractIndex] && contracts[contractIndex][0]
-      ? contracts[contractIndex][0]
-      : "",
+    contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][0] : "",
   );
   const [address, setAddress] = useState(
-    contracts[contractIndex] && contracts[contractIndex][1]
-      ? contracts[contractIndex][1]
-      : "",
+    contracts[contractIndex] && contracts[contractIndex][1] ? contracts[contractIndex][1] : "",
   );
   const [error, setError] = useState("");
 
   useEffect(() => {
     setChain(
-      contracts[contractIndex] && contracts[contractIndex][0]
-        ? contracts[contractIndex][0]
-        : "",
+      contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][0] : "",
     );
     setAddress(
-      contracts[contractIndex] && contracts[contractIndex][0]
-        ? contracts[contractIndex][1]
-        : "",
+      contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][1] : "",
     );
   }, [contractIndex, contracts]);
 

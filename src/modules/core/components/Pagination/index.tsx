@@ -26,12 +26,7 @@ const range = (start: number, end: number) => {
   return Array.from({ length }, (_, idx) => idx + start);
 };
 
-const usePagination = ({
-  totalCount,
-  perPage,
-  siblingCount,
-  currentPage,
-}: Pagination) => {
+const usePagination = ({ totalCount, perPage, siblingCount, currentPage }: Pagination) => {
   const paginationRange = useMemo(() => {
     const totalPageCount = Math.ceil(totalCount / perPage);
 
@@ -42,10 +37,7 @@ const usePagination = ({
     }
 
     const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(
-      currentPage + siblingCount,
-      totalPageCount,
-    );
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPageCount);
 
     const shouldShowLeftDots = leftSiblingIndex > 2;
     const shouldShowRightDots = rightSiblingIndex <= totalPageCount - 3;
@@ -62,10 +54,7 @@ const usePagination = ({
 
     if (shouldShowLeftDots && !shouldShowRightDots) {
       const rightItemCount = 3 + siblingCount;
-      const rightRange = range(
-        totalPageCount - rightItemCount + 1,
-        totalPageCount,
-      );
+      const rightRange = range(totalPageCount - rightItemCount + 1, totalPageCount);
       return [firstPageIndex, DOTS, ...rightRange];
     }
 
@@ -112,10 +101,7 @@ const Pagination = (props: Props) => {
   return (
     <Container>
       {showArrows && (
-        <li
-          className={`${currentPage === 1 ? "disabled" : ""}`}
-          onClick={onPrevious}
-        >
+        <li className={`${currentPage === 1 ? "disabled" : ""}`} onClick={onPrevious}>
           <div className="arrow left" />
         </li>
       )}
@@ -140,10 +126,7 @@ const Pagination = (props: Props) => {
           );
         })}
       {showArrows && (
-        <li
-          className={`${currentPage === lastPage ? "disabled" : ""}`}
-          onClick={onNext}
-        >
+        <li className={`${currentPage === lastPage ? "disabled" : ""}`} onClick={onNext}>
           <div className="arrow right" />
         </li>
       )}

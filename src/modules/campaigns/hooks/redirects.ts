@@ -22,17 +22,10 @@ export const useCampaignDeploymentRedirect = () => {
 
   useEffect(() => {
     if (isTransactionOutcomeDetected) {
-      dispatch.campaignEditor
-        .handleCampaignContractActions(transactionHash)
-        .finally(() => {
-          resultModal.show();
-          setSearchParams({ transactionHashes: null });
-        });
+      dispatch.campaignEditor.handleCampaignContractActions(transactionHash).finally(() => {
+        resultModal.show();
+        setSearchParams({ transactionHashes: null });
+      });
     }
-  }, [
-    isTransactionOutcomeDetected,
-    transactionHash,
-    setSearchParams,
-    resultModal,
-  ]);
+  }, [isTransactionOutcomeDetected, transactionHash, setSearchParams, resultModal]);
 };

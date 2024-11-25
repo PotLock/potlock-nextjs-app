@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check } from "lucide-react";
@@ -14,11 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { walletApi } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus } from "@/common/contracts/core/interfaces/lists.interfaces";
-import {
-  create_list,
-  getList,
-  update_list,
-} from "@/common/contracts/core/lists";
+import { create_list, getList, update_list } from "@/common/contracts/core/lists";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId } from "@/common/types";
@@ -67,17 +57,14 @@ export const ListFormDetails: React.FC = () => {
   const descriptionLength = watch("description")?.length || 0;
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [listConfirmModal, setOpenListConfirmModal] =
-    useState<ListConfirmationModalProps>({
-      open: false,
-    });
+  const [listConfirmModal, setOpenListConfirmModal] = useState<ListConfirmationModalProps>({
+    open: false,
+  });
   const [listCreateSuccess, setListCreateSuccess] = useState<CreateSuccess>({
     open: false,
   });
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
-  const [savedAdmins, setSavedAdmins] = useState<{ account: AccountId }[]>([
-    { account: "" },
-  ]);
+  const [savedAdmins, setSavedAdmins] = useState<{ account: AccountId }[]>([{ account: "" }]);
 
   const {
     admins,
@@ -111,14 +98,9 @@ export const ListFormDetails: React.FC = () => {
         setValue("owner", response.owner);
         setValue("description", response.description);
         setValue("allowApplications", response.admin_only_registrations);
-        setValue(
-          "approveApplications",
-          response?.default_registration_status === "Approved",
-        );
+        setValue("approveApplications", response?.default_registration_status === "Approved");
         setAdmins(response.admins);
-        setSavedAdmins(
-          response.admins?.map((admin: AccountId) => ({ account: admin })),
-        );
+        setSavedAdmins(response.admins?.map((admin: AccountId) => ({ account: admin })));
         setCoverImage(response.cover_image_url);
       } catch (error) {
         console.error("Error fetching list details:", error);
@@ -252,23 +234,17 @@ export const ListFormDetails: React.FC = () => {
         <h2 className="mb-6 text-[18px] font-semibold">List Details</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label className="mb-2 block font-semibold text-gray-700">
-              Name
-            </label>
+            <label className="mb-2 block font-semibold text-gray-700">Name</label>
             <input
               type="text"
               placeholder="Enter name"
               className="w-full rounded-md border px-4 py-2"
               {...register("name", { required: true })}
             />
-            {errors.name && (
-              <span className="text-red-500">This field is required</span>
-            )}
+            {errors.name && <span className="text-red-500">This field is required</span>}
           </div>
           <div>
-            <label className="mb-2 block font-semibold text-gray-700">
-              Describe your List
-            </label>
+            <label className="mb-2 block font-semibold text-gray-700">Describe your List</label>
             <textarea
               placeholder="Type description"
               className="w-full rounded-md border px-4 py-2"
@@ -276,12 +252,8 @@ export const ListFormDetails: React.FC = () => {
               rows={6}
               {...register("description", { required: true })}
             ></textarea>
-            <div className="text-right text-gray-500">
-              {descriptionLength}/250
-            </div>
-            {errors.description && (
-              <span className="text-red-500">This field is required</span>
-            )}
+            <div className="text-right text-gray-500">{descriptionLength}/250</div>
+            {errors.description && <span className="text-red-500">This field is required</span>}
           </div>
           <div
             style={{
@@ -290,9 +262,7 @@ export const ListFormDetails: React.FC = () => {
             className="flex min-h-[70px] flex-col justify-between rounded p-[12px]"
           >
             <div className="flex w-full items-start justify-between space-x-2">
-              <label className="font-semibold text-gray-700">
-                Admin only applications
-              </label>
+              <label className="font-semibold text-gray-700">Admin only applications</label>
               <label className="inline-flex cursor-pointer items-center">
                 <input
                   type="checkbox"
@@ -324,10 +294,7 @@ export const ListFormDetails: React.FC = () => {
                     <Check className="flex hidden h-4 w-4 items-center justify-center text-white peer-checked:block" />
                   </div>
                 </label>
-                <label
-                  htmlFor="approve-applications"
-                  className="font-semibold text-gray-700"
-                >
+                <label htmlFor="approve-applications" className="font-semibold text-gray-700">
                   Automatically approve applications
                 </label>
               </div>
@@ -342,9 +309,7 @@ export const ListFormDetails: React.FC = () => {
               className=" md:items-start md:space-y-0 m-0 !mb-10 flex min-h-[100px] w-full flex-col items-start rounded-[8px] p-0 "
             >
               <div className="md:mr-5 flex w-full flex-row items-start justify-between gap-3  p-2 px-4">
-                <span className="mr-4 mt-2 font-semibold text-gray-700">
-                  Owner
-                </span>
+                <span className="mr-4 mt-2 font-semibold text-gray-700">Owner</span>
                 <div className="flex items-center gap-2 p-2">
                   <img
                     src={profileImage || "https://via.placeholder.com/40"}
@@ -406,9 +371,7 @@ export const ListFormDetails: React.FC = () => {
                         id
                           ? (accounts: string[]) => {
                               const newAdmins =
-                                accounts?.filter(
-                                  (admin) => !admins?.includes(admin),
-                                ) ?? [];
+                                accounts?.filter((admin) => !admins?.includes(admin)) ?? [];
                               handleSaveAdminsSettings(newAdmins);
                             }
                           : (accounts: string[]) => setAdmins(accounts)
@@ -432,9 +395,7 @@ export const ListFormDetails: React.FC = () => {
                 <div className="flex w-full flex-col items-start  gap-3">
                   <div className="flex w-full flex-row items-start justify-between gap-2">
                     <div className="translate-y-1 justify-between">
-                      <p className="pt-[2px] font-semibold text-gray-700">
-                        Accounts
-                      </p>
+                      <p className="pt-[2px] font-semibold text-gray-700">Accounts</p>
                     </div>
                     <div className="flex h-[35px]  flex-wrap">
                       <AccessControlList
@@ -457,8 +418,7 @@ export const ListFormDetails: React.FC = () => {
 
           <div>
             <h3 className="mb-2 mt-10 text-xl font-semibold">
-              Upload list cover image{" "}
-              <span className="font-normal text-gray-500">(Optional)</span>
+              Upload list cover image <span className="font-normal text-gray-500">(Optional)</span>
             </h3>
             <div
               className="relative flex h-[320px] w-full items-center justify-center rounded-md bg-gray-100"
@@ -477,9 +437,7 @@ export const ListFormDetails: React.FC = () => {
               />
               <button
                 type="button"
-                onClick={() =>
-                  document.getElementById("uploadCoverImage")?.click()
-                }
+                onClick={() => document.getElementById("uploadCoverImage")?.click()}
                 className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span>{" "}
@@ -492,9 +450,7 @@ export const ListFormDetails: React.FC = () => {
           >
             {onEditPage && watch("owner") === walletApi?.accountId && (
               <button
-                onClick={() =>
-                  setOpenListConfirmModal({ open: true, type: "DELETE" })
-                }
+                onClick={() => setOpenListConfirmModal({ open: true, type: "DELETE" })}
                 className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9]`}
               >
                 Delete List

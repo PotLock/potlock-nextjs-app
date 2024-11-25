@@ -18,14 +18,8 @@ export type TextAreaFieldProps = TextareaProps & {
   customErrorMessage?: string | null;
 };
 
-export const TextAreaField = forwardRef<
-  HTMLTextAreaElement,
-  TextAreaFieldProps
->(
-  (
-    { disabled, label, labelExtension, hint, customErrorMessage, ...props },
-    ref,
-  ) => {
+export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
+  ({ disabled, label, labelExtension, hint, customErrorMessage, ...props }, ref) => {
     const fieldProps = { disabled, ref, ...props };
     const { maxLength, value } = props;
     const currentLength = typeof value === "string" ? value?.length : 0;
@@ -34,22 +28,14 @@ export const TextAreaField = forwardRef<
       <FormItem>
         <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
           <div un-flex="~" un-items="center" un-gap="1">
-            {label && (
-              <FormLabel className="font-500 text-sm">{label}</FormLabel>
-            )}
+            {label && <FormLabel className="font-500 text-sm">{label}</FormLabel>}
 
-            {props.required && (
-              <span className="line-height-none text-xl text-destructive">
-                *
-              </span>
-            )}
+            {props.required && <span className="line-height-none text-xl text-destructive">*</span>}
           </div>
 
           {labelExtension ??
             (!props.required && (
-              <span className="line-height-none text-sm text-neutral-600">
-                (optional)
-              </span>
+              <span className="line-height-none text-sm text-neutral-600">(optional)</span>
             ))}
         </div>
 
@@ -66,9 +52,7 @@ export const TextAreaField = forwardRef<
           {hint && <span>{hint}</span>}
 
           <span className="prose ml-auto">
-            {typeof maxLength === "number"
-              ? `${currentLength}/${maxLength}`
-              : currentLength}
+            {typeof maxLength === "number" ? `${currentLength}/${maxLength}` : currentLength}
           </span>
         </FormDescription>
 

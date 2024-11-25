@@ -12,13 +12,7 @@ export const RadioGroup = forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
 >(({ className, ...props }, ref) => {
-  return (
-    <RadioGroupPrimitive.Root
-      className={cn("grid gap-3", className)}
-      {...props}
-      ref={ref}
-    />
-  );
+  return <RadioGroupPrimitive.Root className={cn("grid gap-3", className)} {...props} ref={ref} />;
 });
 
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
@@ -53,8 +47,7 @@ export const RadioGroupItem = forwardRef<
           "border-none bg-neutral-50": disabled,
           "border-neutral-200": !disabled && !checked,
 
-          "color-[var(--primary-600)] border-[var(--primary-600)]":
-            !disabled && checked,
+          "color-[var(--primary-600)] border-[var(--primary-600)]": !disabled && checked,
         },
 
         className,

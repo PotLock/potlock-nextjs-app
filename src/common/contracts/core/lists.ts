@@ -112,10 +112,7 @@ export const register_batch = (args: ApplyToList) =>
     args,
   });
 
-export const unregister_from_list = (args: {
-  list_id: number;
-  registration_id: number;
-}) =>
+export const unregister_from_list = (args: { list_id: number; registration_id: number }) =>
   contractApi.call<
     typeof args,
     {
@@ -149,30 +146,21 @@ export const upvote = (args: { list_id: number }) =>
     gas: "300000000000000",
   });
 
-export const add_admins_to_list = (args: {
-  list_id: number;
-  admins: Array<string>;
-}) =>
+export const add_admins_to_list = (args: { list_id: number; admins: Array<string> }) =>
   contractApi.call<typeof args, List>("owner_add_admins", {
     args,
     deposit: floatToYoctoNear(0.01),
     gas: "300000000000000",
   });
 
-export const remove_admins_from_list = (args: {
-  list_id: number;
-  admins: Array<string>;
-}) =>
+export const remove_admins_from_list = (args: { list_id: number; admins: Array<string> }) =>
   contractApi.call<typeof args, List>("owner_remove_admins", {
     args,
     deposit: floatToYoctoNear(0.01),
     gas: "300000000000000",
   });
 
-export const transfer_list_ownership = (args: {
-  list_id: number;
-  new_owner_id: string;
-}) =>
+export const transfer_list_ownership = (args: { list_id: number; new_owner_id: string }) =>
   contractApi.call<typeof args, List>("owner_change_owner", {
     args,
     deposit: floatToYoctoNear(0.01),
@@ -214,10 +202,7 @@ export const getRegistrations = (
 /**
  * Get Registrations for registrant
  */
-export const getRegistration = async (args: {
-  list_id?: number;
-  registrant_id: string;
-}) => {
+export const getRegistration = async (args: { list_id?: number; registrant_id: string }) => {
   const registrations = await contractApi.view<typeof args, Registration[]>(
     "get_registrations_for_registrant",
     {
@@ -225,8 +210,7 @@ export const getRegistration = async (args: {
     },
   );
   const registration = registrations.find(
-    (registration) =>
-      registration.list_id === args.list_id || POTLOCK_REGISTRY_LIST_ID,
+    (registration) => registration.list_id === args.list_id || POTLOCK_REGISTRY_LIST_ID,
   );
   return registration;
 };

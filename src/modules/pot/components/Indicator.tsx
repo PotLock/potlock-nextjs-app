@@ -13,10 +13,7 @@ const Indicator = ({ animate, colorInner, colorOuter }: Props) => {
         animationPlayState: animate ? "running" : "paused",
       }}
     >
-      <div
-        className="h-[10px] w-[10px] rounded-[50%]"
-        style={{ backgroundColor: colorInner }}
-      />
+      <div className="h-[10px] w-[10px] rounded-[50%]" style={{ backgroundColor: colorInner }} />
     </div>
   );
 };

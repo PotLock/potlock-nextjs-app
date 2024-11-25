@@ -7,13 +7,7 @@ type Props = {
   preElements?: any;
 };
 
-const Tag = ({
-  backgroundColor,
-  borderColor,
-  textColor,
-  text,
-  preElements,
-}: Props) => {
+const Tag = ({ backgroundColor, borderColor, textColor, text, preElements }: Props) => {
   return (
     <div
       className="flex items-center justify-center rounded-[4px] px-[8px] py-[6px] text-center"

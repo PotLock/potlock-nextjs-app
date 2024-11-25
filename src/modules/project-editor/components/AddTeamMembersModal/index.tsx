@@ -13,11 +13,7 @@ type Props = {
   onMembersChange?: (members: string[]) => void;
 };
 
-const AddTeamMembersModal = ({
-  open,
-  onCloseClick,
-  onMembersChange,
-}: Props) => {
+const AddTeamMembersModal = ({ open, onCloseClick, onMembersChange }: Props) => {
   const members = useTypedSelector((state) => state.projectEditor.teamMembers);
   const [account, setAccount] = useState("");
   const [invalidNearAcc, setInvalidNearAcc] = useState(false);
@@ -40,18 +36,12 @@ const AddTeamMembersModal = ({
 
   return (
     <Dialog open={open}>
-      <DialogContent
-        className="max-w-130 p-4"
-        contrastActions
-        onCloseClick={onCloseClick}
-      >
+      <DialogContent className="max-w-130 p-4" contrastActions onCloseClick={onCloseClick}>
         <div className="flex flex-row items-center justify-start">
           <div className="mr-4 flex h-[40px] w-[40px] items-center justify-center rounded-[50%] bg-[#f0f0f0]">
             <GroupIcon />
           </div>
-          <h4 className="color-[#2e2e2e] font-600 text-[16px]">
-            Add team members
-          </h4>
+          <h4 className="color-[#2e2e2e] font-600 text-[16px]">Add team members</h4>
         </div>
 
         {/* Description */}
@@ -87,9 +77,7 @@ const AddTeamMembersModal = ({
           </div>
           <p className="color-[#2e2e2e] font-600 mb-4 flex gap-2 text-[12px]">
             {members.length}
-            <span className="text-[#7b7b7b]">
-              {members.length > 1 ? "members" : "member"}
-            </span>
+            <span className="text-[#7b7b7b]">{members.length > 1 ? "members" : "member"}</span>
           </p>
           <AccountItems accountIds={members} />
         </div>

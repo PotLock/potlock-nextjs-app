@@ -7,11 +7,7 @@ import { Arrow, Container, Title } from "./styles";
 // INFO: styles are too complex
 // TODO: refactor using tailwind
 
-const ExternalFunding = ({
-  externalFunding,
-}: {
-  externalFunding: ExternalFundingSource[];
-}) => {
+const ExternalFunding = ({ externalFunding }: { externalFunding: ExternalFundingSource[] }) => {
   const [showFundingTable, setShowFundingTable] = useState(true);
 
   const ArrowDown = (arrowProps: any) => (
@@ -42,9 +38,7 @@ const ExternalFunding = ({
       >
         External Funding <ArrowDown showFundingTable={showFundingTable} />
       </Title>
-      <div className="description">
-        This not related to the funding generated on this platform
-      </div>
+      <div className="description">This not related to the funding generated on this platform</div>
       <div
         className={`
             external-funding ${showFundingTable ? "" : "hidden"}
@@ -58,13 +52,7 @@ const ExternalFunding = ({
           ))}
         </div>
         {externalFunding.map(
-          ({
-            investorName,
-            description,
-            date,
-            amountReceived,
-            denomination,
-          }: any) => (
+          ({ investorName, description, date, amountReceived, denomination }: any) => (
             <div className="funding-row" key={investorName}>
               <div className="investor">
                 <div>{investorName}</div>
@@ -74,9 +62,7 @@ const ExternalFunding = ({
               <div className="description">{description}</div>
               <div className="date">{date ?? "No specified date"}</div>
               <div className="amount">
-                {parseFloat(amountReceived).toLocaleString() +
-                  " " +
-                  denomination}{" "}
+                {parseFloat(amountReceived).toLocaleString() + " " + denomination}{" "}
                 <ArrowDown showFundingTable={showFundingTable} />
               </div>
             </div>

@@ -47,40 +47,29 @@ const useDonationsForProject = (projectId?: string, limit?: number) => {
   }, [projectId, limit]);
 
   // Get total donations & Unique donors count
-  const [totalDonationAmountNear, uniqueDonors, totalMatchedNear] =
-    useMemo(() => {
-      if (donations) {
-        let totalNear = Big(0);
-        let totalMatched = Big(0);
+  const [totalDonationAmountNear, uniqueDonors, totalMatchedNear] = useMemo(() => {
+    if (donations) {
+      let totalNear = Big(0);
+      let totalMatched = Big(0);
 
-        const uniqueDonors = [
-          ...new Set(donations.map((donation) => donation.donor.id)),
-        ];
-        donations.forEach((donation) => {
-          totalNear = totalNear.plus(Big(donation.total_amount || "0"));
+      const uniqueDonors = [...new Set(donations.map((donation) => donation.donor.id))];
+      donations.forEach((donation) => {
+        totalNear = totalNear.plus(Big(donation.total_amount || "0"));
 
-          // Total Matched info
-          if (donation.pot) {
-            totalMatched = totalNear.plus(Big(donation.total_amount || "0"));
-          }
-        });
+        // Total Matched info
+        if (donation.pot) {
+          totalMatched = totalNear.plus(Big(donation.total_amount || "0"));
+        }
+      });
 
-        const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
-          totalNear.toString(),
-        );
+      const totalDonationAmountNear = SUPPORTED_FTS["NEAR"].fromIndivisible(totalNear.toString());
 
-        const totalMatchedNear = SUPPORTED_FTS["NEAR"].fromIndivisible(
-          totalMatched.toString(),
-        );
+      const totalMatchedNear = SUPPORTED_FTS["NEAR"].fromIndivisible(totalMatched.toString());
 
-        return [
-          totalDonationAmountNear,
-          uniqueDonors?.length,
-          totalMatchedNear,
-        ];
-      }
-      return ["0", 0, "0"];
-    }, [donations]);
+      return [totalDonationAmountNear, uniqueDonors?.length, totalMatchedNear];
+    }
+    return ["0", 0, "0"];
+  }, [donations]);
 
   const usdInfo = useNearToUsdWithFallback(Number(totalDonationAmountNear));
   const totalMatchedUsd = useNearToUsdWithFallback(Number(totalMatchedNear));

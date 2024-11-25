@@ -11,13 +11,10 @@ import { DonationBreakdown } from "../types";
 
 export type DonationGroupAllocationBreakdownProps = WithDonationFormAPI & {};
 
-export const DonationGroupAllocationBreakdown: React.FC<
-  DonationGroupAllocationBreakdownProps
-> = ({ form }) => {
-  const [tokenId, groupAllocationPlan] = form.watch([
-    "tokenId",
-    "groupAllocationPlan",
-  ]);
+export const DonationGroupAllocationBreakdown: React.FC<DonationGroupAllocationBreakdownProps> = ({
+  form,
+}) => {
+  const [tokenId, groupAllocationPlan] = form.watch(["tokenId", "groupAllocationPlan"]);
 
   return (
     <div className="flex flex-col gap-4 rounded-lg bg-neutral-50 p-4">
@@ -26,10 +23,7 @@ export const DonationGroupAllocationBreakdown: React.FC<
           key={account_id + amount}
           accountId={account_id}
           secondaryAction={
-            <LabeledIcon
-              caption={amount ?? 0}
-              classNames={{ caption: "font-600 text-4" }}
-            >
+            <LabeledIcon caption={amount ?? 0} classNames={{ caption: "font-600 text-4" }}>
               <TokenIcon {...{ tokenId }} />
             </LabeledIcon>
           }
@@ -44,9 +38,7 @@ export type DonationSummaryBreakdownProps = ByTokenId & {
   data: DonationBreakdown;
 };
 
-export const DonationSummaryBreakdown: React.FC<
-  DonationSummaryBreakdownProps
-> = ({
+export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> = ({
   data: {
     projectAllocationAmount,
     projectAllocationPercent,
@@ -116,26 +108,14 @@ export const DonationSummaryBreakdown: React.FC<
 
       <div className="border-1 flex flex-col gap-3 rounded-lg border-neutral-300 p-4">
         {entries.map(
-          ({
-            isDisplayed = true,
-            label,
-            amount,
-            percentage,
-            tokenId = props.tokenId,
-          }) =>
+          ({ isDisplayed = true, label, amount, percentage, tokenId = props.tokenId }) =>
             isDisplayed && (
-              <div
-                className="flex h-5 items-center justify-between gap-4"
-                key={label}
-              >
+              <div className="flex h-5 items-center justify-between gap-4" key={label}>
                 <span className="prose mt-0.6">
                   {label + (percentage ? ` (${percentage}%)` : "")}
                 </span>
 
-                <LabeledIcon
-                  caption={amount}
-                  classNames={{ caption: "font-600" }}
-                >
+                <LabeledIcon caption={amount} classNames={{ caption: "font-600" }}>
                   <TokenIcon {...{ tokenId }} size="small" />
                 </LabeledIcon>
               </div>

@@ -8,9 +8,7 @@ import {
 } from "../components/AccessControlListModal";
 
 // TODO: Remove if not needed
-export const useAccessControlAccountManager = (
-  params: AccessControlListModalProps,
-) => {
+export const useAccessControlAccountManager = (params: AccessControlListModalProps) => {
   const modal = useModal(AccessControlListModal);
 
   const openAccountsModal = useCallback(

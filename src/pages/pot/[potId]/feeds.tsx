@@ -1,11 +1,4 @@
-import {
-  ReactElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
@@ -76,12 +69,9 @@ const FeedsTab = () => {
     // Fetch applications
     (async () => {
       try {
-        const applicationsData: Application[] =
-          await potContract.getApplications({ potId });
+        const applicationsData: Application[] = await potContract.getApplications({ potId });
         fetchGlobalFeeds({
-          accountIds: applicationsData?.map(
-            (application) => application?.project_id,
-          ),
+          accountIds: applicationsData?.map((application) => application?.project_id),
         })
           .then((posts) => {
             setFeedPosts(posts);
@@ -90,9 +80,7 @@ const FeedsTab = () => {
           .catch((err) => {
             console.error("Unable to fetch feeds:", err);
           });
-        setPotApplications(
-          applicationsData?.map((application) => application?.project_id),
-        );
+        setPotApplications(applicationsData?.map((application) => application?.project_id));
       } catch (error) {
         console.error(error);
       }
@@ -101,10 +89,9 @@ const FeedsTab = () => {
 
   return (
     <div className="w-full">
-      {walletApi?.accountId &&
-        potApplications?.includes(walletApi?.accountId) && (
-          <CreatePost accountId={walletApi?.accountId} />
-        )}
+      {walletApi?.accountId && potApplications?.includes(walletApi?.accountId) && (
+        <CreatePost accountId={walletApi?.accountId} />
+      )}
       <div>
         {feedPosts.length === 0 && !isLoading ? (
           noResults
@@ -116,10 +103,7 @@ const FeedsTab = () => {
             hasMore={true}
             next={loadMorePosts}
             loader={
-              <div
-                ref={loadingRef}
-                className="mt-4 min-h-12 w-full text-center"
-              >
+              <div ref={loadingRef} className="mt-4 min-h-12 w-full text-center">
                 {noResults}
               </div>
             }

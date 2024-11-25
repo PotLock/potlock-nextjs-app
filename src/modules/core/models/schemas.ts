@@ -15,16 +15,12 @@ export const validAccountIdOrNothing = primitive
   .nullable()
   .refine(
     async (accountId) =>
-      typeof accountId === "string"
-        ? await near.isAccountValid(accountId)
-        : true,
+      typeof accountId === "string" ? await near.isAccountValid(accountId) : true,
 
     { message: `Account does not exist on ${NETWORK}` },
   );
 
-export const validateAccountId = (
-  accountId: string,
-): Promise<string | undefined> => {
+export const validateAccountId = (accountId: string): Promise<string | undefined> => {
   // Check if the account ID is at least 5 characters long
   if (accountId.length < 5) {
     return Promise.resolve("Account ID is too short");
