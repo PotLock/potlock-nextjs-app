@@ -133,8 +133,8 @@ const SinglePost = () => {
         src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
         alt=""
         className="mt-2"
-        width={500}
-        height={500}
+        width={700}
+        height={700}
       />
     </div>
   );
