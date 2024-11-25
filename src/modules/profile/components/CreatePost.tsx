@@ -20,16 +20,14 @@ export const CreatePost = ({ accountId }: { accountId: AccountId }) => {
   };
 
   return (
-    <div>
+    <div className="py-4">
       <form onSubmit={handleCreatePost}>
-        <div
-          style={{ boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px" }}
-          className=""
-        >
+        <div className="rounded-2xl border-none shadow-lg">
           <Textarea
             onChange={(e) => setPostText(e.target.value)}
             placeholder="What is happening?"
-            rows={3}
+            className="rounded-2xl border-none p-6 focus:border-none"
+            rows={5}
           />
         </div>
         <div className="mt-4 flex flex-row-reverse">

@@ -73,9 +73,7 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
           </div>
         }
       >
-        {posts.map((post) => (
-          <FeedCard key={post.blockHeight} post={post} />
-        ))}
+        {posts?.map((post) => <FeedCard key={post?.blockHeight} post={post} />)}
       </InfiniteScrollWrapper>
       {posts.length === 0 && <NoResults />}
     </div>
