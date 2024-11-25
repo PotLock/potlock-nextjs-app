@@ -6,7 +6,7 @@ import { Form } from "react-hook-form";
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import useWallet from "@/modules/auth/hooks/wallet";
 import ErrorModal from "@/modules/core/components/ErrorModal";
 import routesPath from "@/modules/core/routes";
 import { dispatch, useTypedSelector } from "@/store";

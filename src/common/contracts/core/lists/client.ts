@@ -13,7 +13,7 @@ import {
   Registration,
   RegistrationStatus,
   UpdateRegistration,
-} from "./interfaces/lists.interfaces";
+} from "./interface";
 
 /**
  * NEAR Contract API

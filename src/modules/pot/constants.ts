@@ -97,3 +97,10 @@ export const POT_TABS_CONFIG = [
 
 export const STAKE_WEIGHTED_POT_IDS =
   NETWORK === "mainnet" ? ["mpdao.v1.potfactory.potlock.near"] : [];
+
+export const POT_METAPOOL_APPLICATION_REQUIREMENTS = [
+  "Verified Project on Potlock",
+  "A minimum stake of 500 USD in Meta Pool",
+  "A minimum of 50,000 votes",
+  "A total of 25 points accumulated for the RPGF score",
+];

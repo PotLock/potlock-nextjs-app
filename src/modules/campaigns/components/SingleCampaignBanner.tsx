@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { Campaign } from "@/common/contracts/core";
-import { get_campaign } from "@/common/contracts/core/campaigns";
+import { Campaign, campaignsClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
@@ -30,7 +29,9 @@ export const SingleCampaignBanner = () => {
   useEffect(() => {
     if (!campaignId) return;
     setLoading(true);
-    get_campaign({ campaign_id: parseInt(campaignId as string) as any })
+
+    campaignsClient
+      .get_campaign({ campaign_id: parseInt(campaignId as string) as any })
       .then((response) => {
         setCampaign(response);
       })

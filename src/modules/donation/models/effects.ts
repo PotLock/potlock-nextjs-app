@@ -9,9 +9,9 @@ import {
   DirectDonationArgs,
   PotDonation,
   PotDonationArgs,
-  campaign,
+  campaignsClient,
   donationClient,
-  pot,
+  potClient,
 } from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
@@ -235,7 +235,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
           };
 
-          return void pot
+          return void potClient
             .donate(params.potAccountId, args, floatToYoctoNear(amount))
             .then(dispatch.donation.success)
             .catch((error) => dispatch.donation.failure(error));
@@ -249,14 +249,14 @@ export const effects = (dispatch: AppDispatcher) => ({
         bypass_protocol_fee: bypassProtocolFee,
       };
 
-      return void campaign
+      return void campaignsClient
         .donate(args, floatToYoctoNear(amount))
         .then((result) => dispatch.donation.success(result as CampaignDonation))
         .catch((error) => dispatch.donation.failure(error));
     } else if (isPotDonation && groupAllocationPlan !== undefined) {
       const batchTxDraft = donationInputsToBatchDonationDraft(inputs) as DonationPotBatchCallDraft;
 
-      return void pot
+      return void potClient
         .donateBatch(batchTxDraft.potAccountId, batchTxDraft.entries)
         // TODO: Handle batch tx outcome
         .then(/* dispatch.donation.success */ console.log)

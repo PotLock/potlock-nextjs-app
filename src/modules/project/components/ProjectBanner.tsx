@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { RegistrationStatus } from "@/common/contracts/core/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@/common/contracts/core";
 import { useRegistration } from "@/modules/core";
 import { statuses } from "@/modules/core/constants";
 

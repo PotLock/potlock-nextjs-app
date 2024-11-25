@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { potFactory } from "@/common/contracts/core";
+import { potFactoryClient } from "@/common/contracts/core";
 import { Button } from "@/common/ui/components";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import { useWallet } from "@/modules/auth";
 import routesPath from "@/modules/core/routes";
 
 const Banner = () => {
@@ -14,7 +14,7 @@ const Banner = () => {
 
   useEffect(() => {
     if (wallet?.accountId) {
-      potFactory
+      potFactoryClient
         .isDeploymentAvailable({
           accountId: wallet.accountId,
         })

@@ -7,9 +7,7 @@ import { PageWithBanner } from "@/common/ui/components";
 import { ErrorModal, SuccessModal } from "@/modules/core";
 import { DonationSybilWarning } from "@/modules/donation";
 
-import { PotHeader } from "./PotHeader";
 import { PotHero } from "./PotHero";
-import { PotTimeline } from "./PotTimeline";
 import Tabs from "./Tabs";
 import { POT_TABS_CONFIG } from "../constants";
 import { isPotStakeWeighted } from "../utils/voting";
@@ -68,14 +66,9 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      <div className="md:px-4 flex w-full flex-col items-center px-4">
-        <DonationSybilWarning {...{ potId }} />
-      </div>
-
-      <PotHeader potDetail={pot} />
+      <DonationSybilWarning classNames={{ root: "w-full mb-4 md:mb-8" }} {...{ potId }} />
       <PotHero potId={potId} />
 
-      {/* Pot Tabs */}
       <Tabs
         asLink
         navOptions={tabs}

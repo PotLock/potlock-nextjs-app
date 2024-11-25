@@ -1,17 +1,12 @@
-// INFO: code partially refactored (original extracted from Além)
-
 import { ReactElement, useCallback, useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-// info: not working
-// import { usePotApplications } from "@/common/api/potlock/hooks";
 import { usePot } from "@/common/api/indexer/hooks";
 import { SearchIcon } from "@/common/assets/svgs";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
-import { Application } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
+import { Application, potClient } from "@/common/contracts/core";
 import { daysAgo, truncate } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import {
@@ -35,7 +30,7 @@ import {
   SearchBar,
   Status,
 } from "@/modules/pot/styles/application-styles";
-import useProfileData from "@/modules/profile/hooks/data";
+import { useProfileData } from "@/modules/profile";
 import { useTypedSelector } from "@/store";
 
 const ApplicationsTab = () => {
@@ -55,10 +50,11 @@ const ApplicationsTab = () => {
   const admins = potDetail?.admins.map((adm) => adm.id) || [];
   const chef = potDetail?.chef?.id || "";
 
+  //! TODO: please use `indexer.usePotApplications` instead!
   useEffect(() => {
     // Fetch applications
     (async () => {
-      const applicationsData = await potContract.getApplications({ potId });
+      const applicationsData = await potClient.getApplications({ potId });
       setApplications(applicationsData);
       setFilteredApplications(applicationsData);
     })();

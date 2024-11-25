@@ -1,7 +1,6 @@
-import Big from "big.js";
+import { Big } from "big.js";
 
-import { DirectDonation } from "@/common/contracts/core/donation/interface";
-import { PayoutDetailed, PotDonation } from "@/common/contracts/core/interfaces/pot.interfaces";
+import { DirectDonation, PayoutDetailed, PotDonation } from "@/common/contracts/core";
 
 export const getTotalAmountNear = (
   donations: (PotDonation | DirectDonation)[],

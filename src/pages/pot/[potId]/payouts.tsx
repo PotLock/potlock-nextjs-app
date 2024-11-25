@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
-import { Payout } from "@/common/contracts/core";
-import { getPayouts } from "@/common/contracts/core/pot";
+import { Payout, potClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import { AccountProfilePicture } from "@/modules/core";
 import { PayoutsChallenges, PotLayout, useOrderedDonations } from "@/modules/pot";
@@ -43,7 +42,7 @@ const PayoutsTab = () => {
 
   useEffect(() => {
     (async () => {
-      const payouts = await getPayouts({ potId });
+      const payouts = await potClient.getPayouts({ potId });
       setAllPayouts(payouts);
       setFilteredPayouts(payouts);
     })();

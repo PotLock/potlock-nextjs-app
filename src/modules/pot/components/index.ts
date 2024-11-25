@@ -1,4 +1,3 @@
-export { PotHeader } from "./PotHeader";
 export { default as Indicator } from "./Indicator";
 export { default as PotCard } from "./PotCard";
 export * from "./PotLayout";

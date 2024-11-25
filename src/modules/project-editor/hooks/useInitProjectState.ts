@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import * as potlockLists from "@/common/contracts/core/lists";
+import { listsClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import { useWallet } from "@/modules/auth";
 import routesPath from "@/modules/core/routes";
 import { dispatch, useTypedSelector } from "@/store";
 
@@ -84,7 +84,7 @@ const useInitProjectState = () => {
 
       (async () => {
         try {
-          const register = await potlockLists.getRegistration({
+          const register = await listsClient.getRegistration({
             registrant_id: accountId,
           });
 

@@ -8,7 +8,7 @@ import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import { useAuth } from "@/modules/auth";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import useWallet from "@/modules/auth/hooks/wallet";
 import routesPath, { hrefByRouteName } from "@/modules/core/routes";
 
 import DonationsInfo from "./DonationsInfo";

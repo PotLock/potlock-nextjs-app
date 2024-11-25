@@ -10,7 +10,7 @@ import {
   CampaignDonation,
   CampaignFormFields,
   DirectCampaignDonationArgs,
-} from "./interfaces/campaign.interfaces";
+} from "./interface";
 
 export const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,

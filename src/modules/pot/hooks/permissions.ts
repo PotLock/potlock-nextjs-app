@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { Pot } from "@/common/api/indexer";
-import { Application, Challenge } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
-import { getDateTime, yoctosToUsdWithFallback } from "@/modules/core";
+import { Application, Challenge, potClient } from "@/common/contracts/core";
+import { getDateTime } from "@/modules/core";
 
-export const usePotStatusesForAccountId = (props: { potDetail: Pot; accountId: string }) => {
+export const usePotUserPermissions = (props: { potDetail: Pot; accountId: string }) => {
   const now = Date.now();
   const { potDetail } = props;
-  const matchingPoolUsdBalance = yoctosToUsdWithFallback(potDetail.matching_pool_balance);
 
   // Check if current accountId is a existing application
   const [existingApplication, setExistingApplication] = useState<Application>();
@@ -21,7 +19,7 @@ export const usePotStatusesForAccountId = (props: { potDetail: Pot; accountId: s
       (async () => {
         // Get Application By Project ID
         try {
-          const _existingApp = await potContract.getApplicationByProjectId({
+          const _existingApp = await potClient.getApplicationByProjectId({
             potId: props.potDetail.account,
             project_id: props.accountId,
           });
@@ -34,7 +32,7 @@ export const usePotStatusesForAccountId = (props: { potDetail: Pot; accountId: s
 
         // Get Payouts Challenges for pot
         try {
-          const _payoutsChallenges = await potContract.getPayoutsChallenges({
+          const _payoutsChallenges = await potClient.getPayoutsChallenges({
             potId: props.potDetail.account,
           });
           setPayoutsChallenges(_payoutsChallenges);
@@ -44,8 +42,6 @@ export const usePotStatusesForAccountId = (props: { potDetail: Pot; accountId: s
       })();
     }
   }, [props.accountId, props.potDetail]);
-
-  const referrerPotLink = `${window.location.origin}${window.location.pathname}&referrerId=${props.accountId}`;
 
   const publicRoundOpen =
     now >= getDateTime(potDetail.matching_round_start) &&
@@ -73,8 +69,6 @@ export const usePotStatusesForAccountId = (props: { potDetail: Pot; accountId: s
   );
 
   return {
-    matchingPoolUsdBalance,
-    referrerPotLink,
     publicRoundOpen,
     canDonate,
     canFund,

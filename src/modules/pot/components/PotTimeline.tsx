@@ -1,13 +1,37 @@
 import { useState } from "react";
 
+import { styled } from "styled-components";
+
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
 import { PotTimelineFragment } from "./PotTimelineFragment";
-import { Container, Loader, Wrapper } from "./styles";
+import { Container, Loader } from "./styles";
 import TimeLeft from "./TimeLeft";
 import { potIndexedDataToTimeline } from "../utils/timeline";
 import { isPotStakeWeighted } from "../utils/voting";
+
+const Wrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+
+  .spread-indicator {
+    height: auto;
+    width: 12px;
+    transition: all 300ms ease-in-out;
+    display: none;
+  }
+
+  @media only screen and (max-width: 1280px) {
+    pointer-events: all;
+    cursor: pointer;
+    .spread-indicator {
+      display: block;
+    }
+  }
+`;
 
 export type PotTimelineProps = ByPotId & {
   classNames?: {

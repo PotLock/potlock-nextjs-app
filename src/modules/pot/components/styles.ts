@@ -29,29 +29,6 @@ export const Container = styled.div<{
   }
 `;
 
-export const Wrapper = styled.div`
-  border-top: 1px solid rgb(199 199 199 / 50%);
-  border-bottom: 1px solid rgb(199 199 199 / 50%);
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-top: -1px;
-  pointer-events: none;
-  .spread-indicator {
-    height: auto;
-    width: 12px;
-    transition: all 300ms ease-in-out;
-    display: none;
-  }
-  @media only screen and (max-width: 1280px) {
-    pointer-events: all;
-    cursor: pointer;
-    .spread-indicator {
-      display: block;
-    }
-  }
-`;
-
 export const Loader = styled.div`
   position: relative;
   background: #dbdbdb;

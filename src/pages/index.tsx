@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ListRegistration } from "@/common/api/indexer";
 import { Button } from "@/common/ui/components";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import useWallet from "@/modules/auth/hooks/wallet";
 import { GeneralStats, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { DonateRandomly } from "@/modules/donation";

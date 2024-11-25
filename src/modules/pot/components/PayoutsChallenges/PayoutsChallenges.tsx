@@ -4,8 +4,7 @@ import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
 import AdminIcon from "@/common/assets/svgs/AdminIcon";
-import { Challenge as ChallengeType } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
+import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
@@ -32,7 +31,7 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
       // Get Payouts Challenges for pot
       if (potDetail?.account) {
         try {
-          const _payoutsChallenges = await potContract.getPayoutsChallenges({
+          const _payoutsChallenges = await potClient.getPayoutsChallenges({
             potId: potDetail?.account,
           });
           setPayoutsChallenges(_payoutsChallenges);

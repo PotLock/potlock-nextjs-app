@@ -1,7 +1,7 @@
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { Challenge } from "@/common/contracts/core/interfaces/pot.interfaces";
+import { Challenge } from "@/common/contracts/core";
 import {
   Button,
   Dialog,
@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   FormField,
+  Spinner,
   Textarea,
 } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/Spinner";
 import { useTypedSelector } from "@/store";
 
 import { useChallengeForm } from "../hooks";

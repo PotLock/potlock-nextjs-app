@@ -2,8 +2,7 @@ import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { Application } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
+import { Application, potClient } from "@/common/contracts/core";
 import { InfiniteScroll, SearchBar } from "@/common/ui/components";
 import { PotLayout } from "@/modules/pot";
 import { Profile } from "@/modules/profile/models";
@@ -28,7 +27,7 @@ const ProjectsTab = () => {
   useEffect(() => {
     if (query.potId) {
       (async () => {
-        const _projects = await potContract.getApplications({
+        const _projects = await potClient.getApplications({
           potId: query.potId,
         });
 

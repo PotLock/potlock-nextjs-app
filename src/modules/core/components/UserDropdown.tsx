@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import useWallet from "@/modules/auth/hooks/wallet";
 import { AccountProfilePicture, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { ListRegistrationStatus, listRegistrationStatuses } from "@/modules/lists";
