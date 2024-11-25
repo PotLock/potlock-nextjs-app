@@ -39,45 +39,26 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center gap-1 transition-all  duration-300 hover:opacity-50"
               >
-                <AccountProfilePicture
-                  className="h-4 w-4"
-                  accountId={data.recipient}
-                />
-                <p className="m-0 font-semibold text-[#656565]">
-                  {data.recipient}
-                </p>
+                <AccountProfilePicture className="h-4 w-4" accountId={data.recipient} />
+                <p className="m-0 font-semibold text-[#656565]">{data.recipient}</p>
               </div>
             </Link>
           </div>
           <div className="h-[120px]">
-            <p className="text-[16px]">
-              {data.description ? truncate(data.description, 200) : ""}
-            </p>
+            <p className="text-[16px]">{data.description ? truncate(data.description, 200) : ""}</p>
           </div>
           <CampaignProgressBar
-            target={
-              data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0
-            }
-            minAmount={
-              data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0
-            }
+            target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}
+            minAmount={data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0}
             targetMet={data?.total_raised_amount === data?.max_amount}
             isStarted={isStarted}
-            amount={
-              data?.total_raised_amount
-                ? yoctoNearToFloat(data?.total_raised_amount)
-                : 0
-            }
+            amount={data?.total_raised_amount ? yoctoNearToFloat(data?.total_raised_amount) : 0}
             endDate={Number(data?.end_ms)}
           />
           <DonateToCampaignProjects
             campaignId={data.id}
             variant="standard-outline"
-            disabled={
-              isStarted ||
-              isEnded ||
-              data?.total_raised_amount === data?.max_amount
-            }
+            disabled={isStarted || isEnded || data?.total_raised_amount === data?.max_amount}
           />
         </div>
       </Link>

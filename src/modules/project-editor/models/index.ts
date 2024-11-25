@@ -12,8 +12,7 @@ import { AddFundingSourceInputs, CreateProjectInputs } from "./types";
 
 export const projectEditorModelKey = "projectEditor";
 
-export const useProjectEditorState = () =>
-  useTypedSelector(prop(projectEditorModelKey));
+export const useProjectEditorState = () => useTypedSelector(prop(projectEditorModelKey));
 
 type CheckStatus = "pending" | "done" | "sending";
 type FetchStatus = "pending" | "fetching" | "ready";
@@ -84,20 +83,14 @@ export const projectEditorModel = createModel<AppModel>()({
   state: initialState,
 
   reducers: {
-    updateSocialLinks(
-      state: CreateProjectState,
-      links: Record<string, string>,
-    ) {
+    updateSocialLinks(state: CreateProjectState, links: Record<string, string>) {
       state.website = links.website || state.website;
       state.twitter = links.twitter || state.twitter;
       state.telegram = links.telegram || state.telegram;
       state.github = links.github || state.github;
     },
 
-    setDaoProjectProposal(
-      state: CreateProjectState,
-      daoProjectProposal: Proposal | null,
-    ) {
+    setDaoProjectProposal(state: CreateProjectState, daoProjectProposal: Proposal | null) {
       state.daoProjectProposal = daoProjectProposal;
     },
 
@@ -109,10 +102,7 @@ export const projectEditorModel = createModel<AppModel>()({
       state.checkRegistrationStatus = status;
     },
 
-    checkPreviousProjectDataStatus(
-      state: CreateProjectState,
-      status: FetchStatus,
-    ) {
+    checkPreviousProjectDataStatus(state: CreateProjectState, status: FetchStatus) {
       state.checkPreviousProjectDataStatus = status;
     },
 
@@ -132,10 +122,7 @@ export const projectEditorModel = createModel<AppModel>()({
       state.description = description;
     },
 
-    updatePublicGoodReason(
-      state: CreateProjectState,
-      publicGoodReason: string,
-    ) {
+    updatePublicGoodReason(state: CreateProjectState, publicGoodReason: string) {
       state.publicGoodReason = publicGoodReason;
     },
 
@@ -171,22 +158,14 @@ export const projectEditorModel = createModel<AppModel>()({
     },
 
     removeTeamMember(state: CreateProjectState, accountId: string) {
-      state.teamMembers = state.teamMembers.filter(
-        (_accountId) => _accountId !== accountId,
-      );
+      state.teamMembers = state.teamMembers.filter((_accountId) => _accountId !== accountId);
     },
 
-    setFundingSources(
-      state: CreateProjectState,
-      fundingSources: AddFundingSourceInputs[],
-    ) {
+    setFundingSources(state: CreateProjectState, fundingSources: AddFundingSourceInputs[]) {
       state.fundingSources = fundingSources;
     },
 
-    addFundingSource(
-      state: CreateProjectState,
-      fundingSourceData: AddFundingSourceInputs,
-    ) {
+    addFundingSource(state: CreateProjectState, fundingSourceData: AddFundingSourceInputs) {
       if (state.fundingSources) {
         state.fundingSources = [...state.fundingSources, fundingSourceData];
       } else {
@@ -196,9 +175,7 @@ export const projectEditorModel = createModel<AppModel>()({
 
     removeFundingSource(state: CreateProjectState, index: number) {
       const currentFundingSources = state.fundingSources || [];
-      state.fundingSources = currentFundingSources.filter(
-        (_, _index) => _index !== index,
-      );
+      state.fundingSources = currentFundingSources.filter((_, _index) => _index !== index);
     },
 
     updateFundingSource(
@@ -215,11 +192,7 @@ export const projectEditorModel = createModel<AppModel>()({
       state.smartContracts = smartContracts;
     },
 
-    addSmartContract(
-      state: CreateProjectState,
-      smartContract: string[],
-      index: number,
-    ) {
+    addSmartContract(state: CreateProjectState, smartContract: string[], index: number) {
       const previousState = state.smartContracts || [];
       previousState[index] = smartContract;
       state.smartContracts = previousState;
@@ -227,9 +200,7 @@ export const projectEditorModel = createModel<AppModel>()({
 
     removeSmartContract(state: CreateProjectState, index: number) {
       const currentSmartContracts = state.smartContracts || [];
-      state.smartContracts = currentSmartContracts.filter(
-        (_, _index) => _index !== index,
-      );
+      state.smartContracts = currentSmartContracts.filter((_, _index) => _index !== index);
     },
 
     editSmartContract(
@@ -262,10 +233,7 @@ export const projectEditorModel = createModel<AppModel>()({
       state.profileImage = profileImageUrl;
     },
 
-    SET_INITIAL_DATA(
-      state: CreateProjectState,
-      initialData: Partial<CreateProjectState>,
-    ) {
+    SET_INITIAL_DATA(state: CreateProjectState, initialData: Partial<CreateProjectState>) {
       state = updateState(state, initialData);
     },
 
@@ -280,9 +248,7 @@ export const projectEditorModel = createModel<AppModel>()({
       const res = await uploadFileToIPFS(files[0]);
       if (res.ok) {
         const data = await res.json();
-        dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(
-          `${IPFS_NEAR_SOCIAL_URL}${data.cid}`,
-        );
+        dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
         return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
       }
     },
@@ -295,9 +261,7 @@ export const projectEditorModel = createModel<AppModel>()({
       const res = await uploadFileToIPFS(files[0]);
       if (res.ok) {
         const data = await res.json();
-        dispatch.projectEditor.UPDATE_PROFILE_IMAGE(
-          `${IPFS_NEAR_SOCIAL_URL}${data.cid}`,
-        );
+        dispatch.projectEditor.UPDATE_PROFILE_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
         return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
       }
     },
@@ -338,21 +302,17 @@ export const projectEditorModel = createModel<AppModel>()({
       // Team Members
       if (profile?.plTeam) data.teamMembers = JSON.parse(profile.plTeam);
       // Category
-      if (profile?.plCategories)
-        data.categories = JSON.parse(profile.plCategories);
+      if (profile?.plCategories) data.categories = JSON.parse(profile.plCategories);
       // Description
       data.description = profile?.description;
       // Reason
       data.publicGoodReason = profile?.plPublicGoodReason;
       // Smart Contracts
-      if (profile?.plSmartContracts)
-        data.smartContracts = JSON.parse(profile.plSmartContracts);
+      if (profile?.plSmartContracts) data.smartContracts = JSON.parse(profile.plSmartContracts);
       // Funding sources
-      if (profile?.plFundingSources)
-        data.fundingSources = JSON.parse(profile.plFundingSources);
+      if (profile?.plFundingSources) data.fundingSources = JSON.parse(profile.plFundingSources);
       // Repositories
-      if (profile?.plGithubRepos)
-        data.githubRepositories = JSON.parse(profile.plGithubRepos);
+      if (profile?.plGithubRepos) data.githubRepositories = JSON.parse(profile.plGithubRepos);
       // Social Links
       if (profile?.linktree) {
         data.website = profile.linktree.website;

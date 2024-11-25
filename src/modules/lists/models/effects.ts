@@ -11,11 +11,8 @@ export const effects = (dispatch: AppDispatcher) => ({
     const { accountId: owner_account_id } = walletApi;
     if (owner_account_id) {
       nearRpc.txStatus(transactionHash, owner_account_id).then((response) => {
-        const method =
-          response.transaction?.actions[0]?.FunctionCall?.method_name;
-        const { status } =
-          response.receipts_outcome.at(method === "donate" ? 6 : 0)?.outcome ??
-          {};
+        const method = response.transaction?.actions[0]?.FunctionCall?.method_name;
+        const { status } = response.receipts_outcome.at(method === "donate" ? 6 : 0)?.outcome ?? {};
         let type: ListFormModalType = ListFormModalType.NONE;
         switch (method) {
           case "create_list": {

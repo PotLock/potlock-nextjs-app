@@ -13,9 +13,7 @@ import { ProjectsOverview, ProjectsOverviewFeatured } from "@/modules/project";
 import { useTypedSelector } from "@/store";
 
 const WelcomeBanner = () => {
-  const { defaultAddress, toggle } = useTypedSelector(
-    (state) => state.nav.actAsDao,
-  );
+  const { defaultAddress, toggle } = useTypedSelector((state) => state.nav.actAsDao);
 
   const daoAddress = toggle && defaultAddress ? defaultAddress : "";
   const wallet = useWallet();
@@ -40,11 +38,7 @@ const WelcomeBanner = () => {
           <DonateRandomly />
 
           {isAuthenticated && !loading && (
-            <Button
-              className="md:w-[180px] w-full"
-              variant={"brand-tonal"}
-              asChild
-            >
+            <Button className="md:w-[180px] w-full" variant={"brand-tonal"} asChild>
               <Link
                 href={
                   isRegisteredProject
@@ -53,9 +47,7 @@ const WelcomeBanner = () => {
                 }
                 prefetch={true}
               >
-                {isRegisteredProject
-                  ? "View Your Project"
-                  : "Register Your Project"}
+                {isRegisteredProject ? "View Your Project" : "Register Your Project"}
               </Link>
             </Button>
           )}
@@ -66,13 +58,9 @@ const WelcomeBanner = () => {
 };
 
 export default function Home() {
-  const [currentFilterCategory, setCurrentFilterCategory] = useState<string[]>(
-    [],
-  );
+  const [currentFilterCategory, setCurrentFilterCategory] = useState<string[]>([]);
   const [currentFilterStatus, setCurrentFilterStatus] = useState<string>("all");
-  const [filteredRegistrations, setFilteredRegistrations] = useState<
-    ListRegistration[]
-  >([]);
+  const [filteredRegistrations, setFilteredRegistrations] = useState<ListRegistration[]>([]);
   return (
     <main className="container flex flex-col items-center">
       <WelcomeBanner />

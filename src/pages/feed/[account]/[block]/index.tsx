@@ -7,10 +7,7 @@ import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import {
-  fetchSinglePost,
-  fetchTimeByBlockHeight,
-} from "@/common/api/near-social";
+import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
 

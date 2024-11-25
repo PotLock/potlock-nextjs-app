@@ -6,8 +6,7 @@ import { getRegistration } from "@/common/contracts/core/lists";
 import { UNREGISTERED_PROJECT } from "../constants";
 
 export const useRegistration = (projectId: string) => {
-  const [registration, setRegistration] =
-    useState<Registration>(UNREGISTERED_PROJECT);
+  const [registration, setRegistration] = useState<Registration>(UNREGISTERED_PROJECT);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
 

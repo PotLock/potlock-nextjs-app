@@ -23,8 +23,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   );
 
   const handleSelectedTab = useCallback(
-    (tabId: string) =>
-      setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!),
+    (tabId: string) => setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!),
     [tabs],
   );
 
@@ -39,9 +38,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
         selectedTab={selectedTab.id}
         onSelect={(tabId: string) => handleSelectedTab(tabId)}
       />
-      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2">
-        {children}
-      </div>
+      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2">{children}</div>
     </PageWithBanner>
   );
 };

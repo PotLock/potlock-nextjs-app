@@ -5,11 +5,7 @@ import { Dialog } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
 
 import SuccessRedIcon from "@/common/assets/svgs/success-red-icon";
-import {
-  Button,
-  DialogContent,
-  DialogDescription,
-} from "@/common/ui/components";
+import { Button, DialogContent, DialogDescription } from "@/common/ui/components";
 import { dispatch } from "@/store";
 
 import { useCampaignActionState } from "../models";
@@ -36,11 +32,7 @@ export const CampaignFinishModal = create(() => {
   if (type === CampaignEnumType.DELETE_CAMPAIGN) {
     return (
       <Dialog open={self.visible}>
-        <DialogContent
-          contrastActions
-          className="max-w-115 "
-          onCloseClick={close}
-        >
+        <DialogContent contrastActions className="max-w-115 " onCloseClick={close}>
           <DialogDescription className="flex h-[300px] flex-col items-center justify-evenly">
             <SuccessRedIcon />
             <div className="items-center text-center">

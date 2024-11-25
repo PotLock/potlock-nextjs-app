@@ -41,9 +41,7 @@ export const SingleCampaignBanner = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-  const isStarted = getTimePassed(Number(campaign?.start_ms), true)?.includes(
-    "-",
-  );
+  const isStarted = getTimePassed(Number(campaign?.start_ms), true)?.includes("-");
 
   const isEnded = campaign?.end_ms
     ? getTimePassed(Number(campaign?.end_ms), false, true)?.includes("-")
@@ -55,15 +53,11 @@ export const SingleCampaignBanner = () => {
         <div className="relative">
           <LazyLoadImage
             className="md:rounded inset-1 h-[348px] w-full rounded-xl object-cover"
-            src={
-              campaign?.cover_image_url || "/assets/images/list-gradient-3.png"
-            }
+            src={campaign?.cover_image_url || "/assets/images/list-gradient-3.png"}
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
           <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
-            <h1 className="text-[24px] font-bold text-white">
-              {campaign?.name}
-            </h1>
+            <h1 className="text-[24px] font-bold text-white">{campaign?.name}</h1>
             <div className="md:flex-row md:items-center md:text-[15px] m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white">
               <div className="flex gap-1">
                 <p className="font-semibold">FOR</p>
@@ -110,20 +104,12 @@ export const SingleCampaignBanner = () => {
           </div>
         </div>
         <CampaignProgressBar
-          target={
-            campaign?.target_amount
-              ? yoctoNearToFloat(campaign?.target_amount)
-              : 0
-          }
+          target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
           targetMet={campaign?.total_raised_amount === campaign?.max_amount}
-          minAmount={
-            campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0
-          }
+          minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
           isStarted={isStarted}
           amount={
-            campaign?.total_raised_amount
-              ? yoctoNearToFloat(campaign?.total_raised_amount)
-              : 0
+            campaign?.total_raised_amount ? yoctoNearToFloat(campaign?.total_raised_amount) : 0
           }
           endDate={Number(campaign?.end_ms)}
         />
@@ -131,9 +117,7 @@ export const SingleCampaignBanner = () => {
           <DonateToCampaignProjects
             className="mb-4"
             disabled={
-              isStarted ||
-              isEnded ||
-              campaign?.total_raised_amount === campaign?.max_amount
+              isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
             }
             campaignId={parseInt(campaignId as string)}
           />

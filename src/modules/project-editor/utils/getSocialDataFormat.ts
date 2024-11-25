@@ -15,9 +15,7 @@ const getSocialDataFormat = (data: CreateProjectState) => {
       plCategories: JSON.stringify(data.categories),
       description: data.description,
       plPublicGoodReason: data.publicGoodReason,
-      plSmartContracts: data.smartContracts
-        ? JSON.stringify(data.smartContracts)
-        : null,
+      plSmartContracts: data.smartContracts ? JSON.stringify(data.smartContracts) : null,
       plGithubRepos: JSON.stringify(data.githubRepositories),
       plFundingSources: JSON.stringify(data.fundingSources),
       linktree: {

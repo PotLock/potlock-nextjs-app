@@ -71,15 +71,12 @@ export const FeedCard = ({ post }: PostType) => {
               className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
               alt="profile-image"
             />
-            <p className="font-bold text-black ">
-              {truncate(post.accountId, 20)}
-            </p>
+            <p className="font-bold text-black ">{truncate(post.accountId, 20)}</p>
           </div>
           <div className="flex items-center">
             {time && (
               <>
-                <span className="mx-2 text-gray-500">•</span>{" "}
-                {/* Centered dot */}
+                <span className="mx-2 text-gray-500">•</span> {/* Centered dot */}
                 <p className="text-sm text-gray-500"> {time}</p>
               </>
             )}

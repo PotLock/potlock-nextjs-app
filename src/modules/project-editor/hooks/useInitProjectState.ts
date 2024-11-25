@@ -9,22 +9,16 @@ import routesPath from "@/modules/core/routes";
 import { dispatch, useTypedSelector } from "@/store";
 
 const useInitProjectState = () => {
-  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
-    useTypedSelector((state) => state.projectEditor);
+  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } = useTypedSelector(
+    (state) => state.projectEditor,
+  );
 
   const {
-    query: {
-      projectId: projectIdPathParam,
-      done,
-      transactionHashes,
-      errorMessage,
-    },
+    query: { projectId: projectIdPathParam, done, transactionHashes, errorMessage },
   } = useRouteQuery();
 
   const projectId =
-    typeof projectIdPathParam === "string"
-      ? projectIdPathParam
-      : projectIdPathParam?.at(0);
+    typeof projectIdPathParam === "string" ? projectIdPathParam : projectIdPathParam?.at(0);
 
   const {
     actAsDao: { defaultAddress: daoAddress, toggle: isDao },
@@ -56,14 +50,7 @@ const useInitProjectState = () => {
       // Dao Address
       dispatch.projectEditor.setDaoAddress(isDao ? daoAddress : "");
     }
-  }, [
-    accountId,
-    isDao,
-    daoAddress,
-    wallet?.accountId,
-    isWalletReady,
-    projectId,
-  ]);
+  }, [accountId, isDao, daoAddress, wallet?.accountId, isWalletReady, projectId]);
 
   // Set initial loaded project data
   // const [initialDataLoaded, setInitialDataLoaded] = useState(false);
@@ -104,10 +91,7 @@ const useInitProjectState = () => {
           // If register found, set that it's registered already
           dispatch.projectEditor.isRegistered(!!register);
           // Auto set the project to DONE status if it's already registered & this is create project page
-          if (
-            register &&
-            location.pathname.includes(routesPath.CREATE_PROJECT)
-          ) {
+          if (register && location.pathname.includes(routesPath.CREATE_PROJECT)) {
             dispatch.projectEditor.submissionStatus("done");
             dispatch.projectEditor.setSubmissionError("");
           }
@@ -141,19 +125,14 @@ const useInitProjectState = () => {
       const proposals = checkDao
         ? await naxiosInstance
             .contractApi({ contractId: daoAddress })
-            .view<
-              any,
-              any[]
-            >("get_proposals", { args: { from_index: 0, limit: 1000 } })
+            .view<any, any[]>("get_proposals", { args: { from_index: 0, limit: 1000 } })
         : null;
 
       const proposal = proposals
         ? proposals.find(
             (proposal) =>
-              proposal.kind.FunctionCall?.receiver_id ===
-                LISTS_CONTRACT_ACCOUNT_ID &&
-              proposal.kind.FunctionCall?.actions[0]?.method_name ===
-                "register_batch",
+              proposal.kind.FunctionCall?.receiver_id === LISTS_CONTRACT_ACCOUNT_ID &&
+              proposal.kind.FunctionCall?.actions[0]?.method_name === "register_batch",
           )
         : null;
 

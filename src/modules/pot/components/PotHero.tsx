@@ -6,7 +6,12 @@ import { TokenTotalValue } from "@/modules/token";
 
 import { PotTimeline } from "./PotTimeline";
 
-const applicationRequirements = ["Verified Project on Potlock"];
+const POT_METAPOOL_APPLICATION_REQUIREMENTS = [
+  "Verified Project on Potlock",
+  "A minimum stake of 500 USD in Meta Pool",
+  "A minimum of 50,000 votes",
+  "A total of 25 points accumulated for the RPGF score",
+];
 
 export type PotHeroProps = ByPotId & {};
 
@@ -116,7 +121,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                     "rounded-lg bg-white p-4 shadow",
                   )}
                 >
-                  {applicationRequirements.map((text) => (
+                  {POT_METAPOOL_APPLICATION_REQUIREMENTS.map((text) => (
                     <div
                       className={cn("inline-flex items-center justify-start gap-2 self-stretch")}
                       key={text}

@@ -48,14 +48,10 @@ export const ApplyToListModal: React.FC<ApplyToListModalProps> = ({
                 Application to List Successful
               </h2>
               <p className="mt-2 px-5 text-center text-sm text-gray-500">
-                You have successfully applied to join the list. It might take a
-                while for your application to be processed.
+                You have successfully applied to join the list. It might take a while for your
+                application to be processed.
               </p>
-              <Button
-                onClick={onClose}
-                className="mt-8"
-                variant="standard-outline"
-              >
+              <Button onClick={onClose} className="mt-8" variant="standard-outline">
                 Close
               </Button>
             </div>
@@ -63,9 +59,7 @@ export const ApplyToListModal: React.FC<ApplyToListModalProps> = ({
             <div>
               <div className=" max-w-full rounded-md bg-white">
                 <div className="p-4">
-                  <label className="block text-sm text-gray-700">
-                    Leave a note (optional)
-                  </label>
+                  <label className="block text-sm text-gray-700">Leave a note (optional)</label>
                   <Textarea
                     value={note}
                     onChange={(e) => setNote(e.target.value)}

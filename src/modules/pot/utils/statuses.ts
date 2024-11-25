@@ -32,8 +32,7 @@ export const potIndexedDataByIdToStatuses = ({
       progress:
         now > application_end_ms
           ? 1
-          : (now - application_start_ms) /
-            (application_end_ms - application_start_ms),
+          : (now - application_start_ms) / (application_end_ms - application_start_ms),
     },
 
     {
@@ -45,8 +44,7 @@ export const potIndexedDataByIdToStatuses = ({
       progress:
         now > public_round_end_ms
           ? 1
-          : (now - public_round_start_ms) /
-            (public_round_end_ms - public_round_start_ms),
+          : (now - public_round_start_ms) / (public_round_end_ms - public_round_start_ms),
     },
 
     {
@@ -54,9 +52,7 @@ export const potIndexedDataByIdToStatuses = ({
       daysLeft: cooldown_end_ms,
       started: now >= public_round_end_ms,
 
-      completed: cooldown_end_ms
-        ? now > cooldown_end_ms && !!cooldown_end_ms
-        : false,
+      completed: cooldown_end_ms ? now > cooldown_end_ms && !!cooldown_end_ms : false,
 
       progress: cooldown_end_ms
         ? now > cooldown_end_ms && !!cooldown_end_ms

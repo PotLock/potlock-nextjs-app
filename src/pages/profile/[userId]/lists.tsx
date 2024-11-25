@@ -21,12 +21,7 @@ const ProfileLists = () => {
           ({ background, backdrop } = getRandomBackgroundImage());
         }
         return (
-          <ListCard
-            background={background}
-            backdrop={backdrop}
-            dataForList={item}
-            key={item.id}
-          />
+          <ListCard background={background} backdrop={backdrop} dataForList={item} key={item.id} />
         );
       })}
     </div>

@@ -5,10 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { fetchAccountFeedPosts } from "@/common/api/near-social";
-import {
-  IndexPostResultItem,
-  ProfileFeedsProps,
-} from "@/common/contracts/social/types";
+import { IndexPostResultItem, ProfileFeedsProps } from "@/common/contracts/social/types";
 
 import { FeedCard } from "./FeedCard";
 

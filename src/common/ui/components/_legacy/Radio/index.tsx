@@ -16,14 +16,7 @@ type Props = {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-const Radio = ({
-  options,
-  customClassName,
-  customStyle,
-  name,
-  value,
-  onChange,
-}: Props) => {
+const Radio = ({ options, customClassName, customStyle, name, value, onChange }: Props) => {
   return (
     <Container>
       {options.map((option: Option) => (
@@ -32,9 +25,7 @@ const Radio = ({
           className={`option ${customClassName || customClassName}`}
           style={customStyle || {}}
         >
-          <div
-            className={`radio-btn ${value === option.value ? "active" : ""}`}
-          >
+          <div className={`radio-btn ${value === option.value ? "active" : ""}`}>
             <div />
             <input
               className="input"

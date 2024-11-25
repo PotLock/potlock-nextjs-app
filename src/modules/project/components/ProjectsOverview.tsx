@@ -4,12 +4,7 @@ import Image from "next/image";
 
 import { ListRegistration } from "@/common/api/indexer";
 import { toChronologicalOrder } from "@/common/lib";
-import {
-  Filter,
-  InfiniteScroll,
-  SearchBar,
-  SortSelect,
-} from "@/common/ui/components";
+import { Filter, InfiniteScroll, SearchBar, SortSelect } from "@/common/ui/components";
 import { ListCardSkeleton } from "@/modules/lists/components/ListCardSkeleton";
 import { Profile } from "@/modules/profile/models";
 import { useTypedSelector } from "@/store";
@@ -93,9 +88,7 @@ export const ProjectsOverview = ({
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           All projects
-          <span
-            style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
-          >
+          <span style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}>
             {filteredRegistrations?.length}
           </span>
         </div>
@@ -109,9 +102,7 @@ export const ProjectsOverview = ({
         </div>
       </div>
       {loading ? (
-        Array.from({ length: 6 }, (_, index) => (
-          <ListCardSkeleton key={index} />
-        ))
+        Array.from({ length: 6 }, (_, index) => <ListCardSkeleton key={index} />)
       ) : filteredRegistrations?.length ? (
         <InfiniteScroll
           className="p-0.5"
@@ -120,10 +111,7 @@ export const ProjectsOverview = ({
           setIndex={setIndex}
           size={MAXIMUM_CARDS_PER_INDEX}
           renderItem={(registration: ListRegistration) => (
-            <ProjectCard
-              projectId={registration.registrant.id}
-              key={registration.id}
-            />
+            <ProjectCard projectId={registration.registrant.id} key={registration.id} />
           )}
         />
       ) : (
@@ -136,9 +124,7 @@ export const ProjectsOverview = ({
             className="mb-4 h-[200px] w-[200px]"
           />
           <div className="md:flex-row flex flex-col items-center justify-center gap-2">
-            <p className="w-100 text-center font-lora italic">
-              No results found
-            </p>
+            <p className="w-100 text-center font-lora italic">No results found</p>
           </div>
         </div>
       )}

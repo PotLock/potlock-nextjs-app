@@ -1,16 +1,9 @@
-const ReferrerIcon = (
-  props: React.SVGProps<SVGSVGElement> & { pathClassName?: any },
-) => {
+const ReferrerIcon = (props: React.SVGProps<SVGSVGElement> & { pathClassName?: any }) => {
   const _props = { ...props };
   delete _props.pathClassName;
 
   return (
-    <svg
-      {..._props}
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg {..._props} viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         className={props.pathClassName}
         d="M12.375 9.5625C14.6925 7.455 16.875 5.4825 16.875 3.7875C16.875 2.4 15.7875 1.3125 14.4 1.3125C13.62 1.3125 12.8625 1.68 12.375 2.25C11.88 1.68 11.13 1.3125 10.35 1.3125C8.9625 1.3125 7.875 2.4 7.875 3.7875C7.875 5.4825 10.0575 7.455 12.375 9.5625ZM10.35 2.8125C10.68 2.8125 11.0175 2.97 11.235 3.225L12.375 4.5675L13.515 3.225C13.7325 2.97 14.07 2.8125 14.4 2.8125C14.955 2.8125 15.375 3.2325 15.375 3.7875C15.375 4.6275 13.845 6.165 12.375 7.53C10.905 6.165 9.375 4.62 9.375 3.7875C9.375 3.2325 9.795 2.8125 10.35 2.8125Z"

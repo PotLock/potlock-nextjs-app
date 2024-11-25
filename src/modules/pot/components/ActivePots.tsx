@@ -29,29 +29,25 @@ const ActivePots = () => {
       case "least_pots":
         sortedPots.sort(
           (a, b) =>
-            Big(b.matching_pool_balance).toNumber() -
-            Big(a.matching_pool_balance).toNumber(),
+            Big(b.matching_pool_balance).toNumber() - Big(a.matching_pool_balance).toNumber(),
         );
         break;
       case "most_pots":
         sortedPots.sort(
           (a, b) =>
-            Big(a.matching_pool_balance).toNumber() -
-            Big(b.matching_pool_balance).toNumber(),
+            Big(a.matching_pool_balance).toNumber() - Big(b.matching_pool_balance).toNumber(),
         );
         break;
       case "most_donations":
         sortedPots.sort(
           (a, b) =>
-            Big(b.total_public_donations).toNumber() -
-            Big(a.total_public_donations).toNumber(),
+            Big(b.total_public_donations).toNumber() - Big(a.total_public_donations).toNumber(),
         );
         break;
       case "least_donations":
         sortedPots.sort(
           (a, b) =>
-            Big(a.total_public_donations).toNumber() -
-            Big(b.total_public_donations).toNumber(),
+            Big(a.total_public_donations).toNumber() - Big(b.total_public_donations).toNumber(),
         );
         break;
     }
@@ -113,8 +109,7 @@ const ActivePots = () => {
 
       <div className="flex w-full justify-between gap-8">
         <p className="font-600 mb-4 flex items-center gap-4 text-[18px]">
-          Completed Pots{" "}
-          <span className="font-600">{completedPots.length}</span>
+          Completed Pots <span className="font-600">{completedPots.length}</span>
         </p>
       </div>
       <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">

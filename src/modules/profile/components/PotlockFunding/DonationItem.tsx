@@ -84,16 +84,11 @@ const DonationItem = ({
         <div className="funding-src">
           <Link href={url} target="_blank">
             {isPot && (
-              <span className="pot-name">
-                {" "}
-                {projectId ? "Matching Pool" : "Sponsor"} :
-              </span>
+              <span className="pot-name"> {projectId ? "Matching Pool" : "Sponsor"} :</span>
             )}{" "}
             {name}
           </Link>
-          <div className="type">
-            {isPot ? "Matched donation" : "Direct donation"}
-          </div>
+          <div className="type">{isPot ? "Matched donation" : "Direct donation"}</div>
         </div>
       </FundingSrc>
       <div className="price tab">
@@ -101,11 +96,7 @@ const DonationItem = ({
           {ftId === "near" ? (
             <NearIcon />
           ) : (
-            <img
-              className="h-[21px] w-[21px]"
-              src={token.icon}
-              alt="Token icon"
-            />
+            <img className="h-[21px] w-[21px]" src={token.icon} alt="Token icon" />
           )}
         </div>
         {addTrailingZeros(donationAmount)}

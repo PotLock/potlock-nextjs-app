@@ -57,12 +57,7 @@ export const useProjectsFilters = (
     } finally {
       setLoading(false);
     }
-  }, [
-    setCurrentFilterCategory,
-    setCurrentFilterStatus,
-    setLoading,
-    filteredRegistrations,
-  ]);
+  }, [setCurrentFilterCategory, setCurrentFilterStatus, setLoading, filteredRegistrations]);
 
   // fetchByStatus
 

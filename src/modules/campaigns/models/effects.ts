@@ -1,7 +1,4 @@
-import {
-  ExecutionStatus,
-  ExecutionStatusBasic,
-} from "near-api-js/lib/providers/provider";
+import { ExecutionStatus, ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 
 import { nearRpc, walletApi } from "@/common/api/near";
 import { AppDispatcher } from "@/store";
@@ -9,14 +6,11 @@ import { AppDispatcher } from "@/store";
 import { CampaignEnumType } from "../types";
 
 export const effects = (dispatch: AppDispatcher) => ({
-  handleCampaignContractActions: async (
-    transactionHash: string,
-  ): Promise<void> => {
+  handleCampaignContractActions: async (transactionHash: string): Promise<void> => {
     const { accountId: owner_account_id } = walletApi;
     if (owner_account_id) {
       nearRpc.txStatus(transactionHash, owner_account_id).then((response) => {
-        const method =
-          response.transaction?.actions[0]?.FunctionCall?.method_name;
+        const method = response.transaction?.actions[0]?.FunctionCall?.method_name;
         let status;
         let type;
 

@@ -9,13 +9,7 @@ type GetPotPayoutsResponse = {
   results: PotPayout[];
 };
 
-export const getPotPayouts = async ({
-  potId,
-  pageSize,
-}: {
-  potId: string;
-  pageSize?: number;
-}) => {
+export const getPotPayouts = async ({ potId, pageSize }: { potId: string; pageSize?: number }) => {
   const res = await fetch(
     `${INDEXER_API_ENDPOINT_URL}/api/v1/pots/${potId}/payouts${pageSize ? `?page_size=${pageSize}` : ""}`,
   );

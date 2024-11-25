@@ -25,9 +25,7 @@ import { ListFormModalType } from "../types";
 export const useListForm = () => {
   const { push, query } = useRouter();
   const [transferAccountField, setTransferAccountField] = useState<string>("");
-  const [transferAccountError, setTransferAccountError] = useState<
-    string | undefined
-  >("");
+  const [transferAccountError, setTransferAccountError] = useState<string | undefined>("");
   const [finishModal, setFinishModal] = useState<{
     open: boolean;
     type: ListFormModalType;
@@ -146,9 +144,7 @@ export const useListForm = () => {
     });
   };
 
-  const handleChangeTransferOwnerField = async (
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleChangeTransferOwnerField = async (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setTransferAccountField(value);
     const data = await validateAccountId(value);
