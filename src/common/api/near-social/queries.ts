@@ -153,14 +153,14 @@ export const fetchTimeByBlockHeight = async (
             ? `${(diffSec / 3600000) | 0}h`
             : date.getFullYear() === dateNow.getFullYear()
               ? date.toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-              })
+                  month: "short",
+                  day: "numeric",
+                })
               : date.toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              });
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                });
 
     return timeAgo(dateNow.getTime() - timeMs);
   } catch (error) {
