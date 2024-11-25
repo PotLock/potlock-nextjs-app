@@ -47,10 +47,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   }, [close]);
 
   const isKnownDonationType =
-    !isSingleProjectDonation &&
-    !isPotDonation &&
-    !isListDonation &&
-    !isCampaignDonation;
+    !isSingleProjectDonation && !isPotDonation && !isListDonation && !isCampaignDonation;
 
   return (
     <Dialog open={self.visible}>
@@ -72,13 +69,7 @@ export const DonationModal = create((props: DonationModalProps) => {
             heading="Donation"
             title="Authentication required"
             callToAction={
-              <div
-                un-flex="~"
-                un-items="center"
-                un-justify="center"
-                un-gap="2"
-                un-text="primary"
-              >
+              <div un-flex="~" un-items="center" un-justify="center" un-gap="2" un-text="primary">
                 <span className="prose" un-text="lg">
                   {"Please"}
                 </span>
@@ -101,10 +92,7 @@ export const DonationModal = create((props: DonationModalProps) => {
         ) : (
           <>
             {isKnownDonationType ? (
-              <ModalErrorBody
-                heading="Donation"
-                title="Unable to determine donation type."
-              />
+              <ModalErrorBody heading="Donation" title="Unable to determine donation type." />
             ) : (
               <DonationFlow closeModal={close} {...props} />
             )}

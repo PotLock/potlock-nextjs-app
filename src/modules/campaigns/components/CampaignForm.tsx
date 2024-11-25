@@ -5,11 +5,7 @@ import { Campaign } from "@/common/contracts/core";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { Button, Form, FormField } from "@/common/ui/components";
-import {
-  NearInputField,
-  TextAreaField,
-  TextField,
-} from "@/common/ui/form-fields";
+import { NearInputField, TextAreaField, TextField } from "@/common/ui/form-fields";
 
 import { useCampaignForm } from "../hooks/forms";
 
@@ -37,10 +33,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
       form.setValue("recipient", existingData?.recipient);
       form.setValue("name", existingData?.name);
       form.setValue("description", existingData?.description);
-      form.setValue(
-        "target_amount",
-        yoctoNearToFloat(existingData?.target_amount),
-      );
+      form.setValue("target_amount", yoctoNearToFloat(existingData?.target_amount));
       if (existingData.min_amount != undefined) {
         form.setValue("min_amount", yoctoNearToFloat(existingData.min_amount));
       }
@@ -49,15 +42,11 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
       }
       form.setValue(
         "start_ms",
-        existingData?.start_ms
-          ? formatTimestampForInput(existingData?.start_ms)
-          : "",
+        existingData?.start_ms ? formatTimestampForInput(existingData?.start_ms) : "",
       );
       form.setValue(
         "end_ms",
-        existingData?.end_ms
-          ? formatTimestampForInput(existingData?.end_ms)
-          : "",
+        existingData?.end_ms ? formatTimestampForInput(existingData?.end_ms) : "",
       );
     }
   }, [isUpdate, existingData]);
@@ -89,8 +78,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
         >
           <div>
             <h3 className="mb-2 mt-10 text-xl font-semibold">
-              Upload campaign image{" "}
-              <span className="font-normal text-gray-500">(Optional)</span>
+              Upload campaign image <span className="font-normal text-gray-500">(Optional)</span>
             </h3>
             <div
               className="relative flex h-[320px] w-full items-center justify-center rounded-md bg-gray-100"
@@ -109,9 +97,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               />
               <button
                 type="button"
-                onClick={() =>
-                  document.getElementById("uploadCoverImage")?.click()
-                }
+                onClick={() => document.getElementById("uploadCoverImage")?.click()}
                 className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span>{" "}
@@ -237,11 +223,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
             {isUpdate && (
-              <Button
-                onClick={handleDeleteCampaign}
-                type="button"
-                variant="brand-tonal"
-              >
+              <Button onClick={handleDeleteCampaign} type="button" variant="brand-tonal">
                 Delete Campaign
               </Button>
             )}

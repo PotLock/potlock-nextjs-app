@@ -6,10 +6,7 @@ export type CheckboxFieldProps = Pick<
   "checked" | "disabled" | "onCheckedChange"
 > & { label?: React.ReactNode };
 
-export const CheckboxField: React.FC<CheckboxFieldProps> = ({
-  label,
-  ...props
-}) => {
+export const CheckboxField: React.FC<CheckboxFieldProps> = ({ label, ...props }) => {
   return (
     <FormItem className="flex-row items-center">
       <FormControl>

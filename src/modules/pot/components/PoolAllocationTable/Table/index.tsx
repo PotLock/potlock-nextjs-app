@@ -91,10 +91,7 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
     <Row>
       <div>#{index + 1}</div>
       <Link className="address" href={url}>
-        <AccountProfilePicture
-          accountId={donorId}
-          className="h-[18px] w-[18px]"
-        />
+        <AccountProfilePicture accountId={donorId} className="h-[18px] w-[18px]" />
         {truncate(profile.profile?.name || donorId, 15)}
       </Link>
       <div>

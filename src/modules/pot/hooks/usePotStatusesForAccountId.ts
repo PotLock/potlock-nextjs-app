@@ -1,22 +1,14 @@
 import { useEffect, useState } from "react";
 
 import { Pot } from "@/common/api/indexer";
-import {
-  Application,
-  Challenge,
-} from "@/common/contracts/core/interfaces/pot.interfaces";
+import { Application, Challenge } from "@/common/contracts/core/interfaces/pot.interfaces";
 import * as potContract from "@/common/contracts/core/pot";
 import { getDateTime, yoctosToUsdWithFallback } from "@/modules/core";
 
-export const usePotStatusesForAccountId = (props: {
-  potDetail: Pot;
-  accountId: string;
-}) => {
+export const usePotStatusesForAccountId = (props: { potDetail: Pot; accountId: string }) => {
   const now = Date.now();
   const { potDetail } = props;
-  const matchingPoolUsdBalance = yoctosToUsdWithFallback(
-    potDetail.matching_pool_balance,
-  );
+  const matchingPoolUsdBalance = yoctosToUsdWithFallback(potDetail.matching_pool_balance);
 
   // Check if current accountId is a existing application
   const [existingApplication, setExistingApplication] = useState<Application>();
@@ -65,21 +57,15 @@ export const usePotStatusesForAccountId = (props: {
     potDetail.admins.find((adm) => adm.id === props.accountId) ||
     props.potDetail.owner.id === props.accountId;
 
-  const userIsChefOrGreater =
-    userIsAdminOrGreater || props.potDetail.chef?.id === props.accountId;
+  const userIsChefOrGreater = userIsAdminOrGreater || props.potDetail.chef?.id === props.accountId;
 
   const applicationOpen =
-    now >= getDateTime(potDetail.application_start) &&
-    now < getDateTime(potDetail.application_end);
+    now >= getDateTime(potDetail.application_start) && now < getDateTime(potDetail.application_end);
 
-  const canApply =
-    applicationOpen &&
-    existingApplication === undefined &&
-    !userIsChefOrGreater;
+  const canApply = applicationOpen && existingApplication === undefined && !userIsChefOrGreater;
 
   const canChallengePayouts = potDetail.cooldown_end
-    ? now > getDateTime(potDetail.matching_round_end) &&
-      now < getDateTime(potDetail.cooldown_end)
+    ? now > getDateTime(potDetail.matching_round_end) && now < getDateTime(potDetail.cooldown_end)
     : false;
 
   const existingChallengeForUser = payoutsChallenges.find(

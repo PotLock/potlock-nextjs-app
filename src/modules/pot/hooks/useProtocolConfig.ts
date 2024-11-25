@@ -7,8 +7,9 @@ import { ConfigProtocol } from "../models/types";
 
 export const useProtocolConfig = (potDetail: Pot) => {
   // Get Protocol Config
-  const [configContractId, configViewMethodName] =
-    potDetail.protocol_config_provider?.split(":") || ["", ""];
+  const [configContractId, configViewMethodName] = potDetail.protocol_config_provider?.split(
+    ":",
+  ) || ["", ""];
 
   const [protocolConfig, setConfig] = useState<ConfigProtocol>();
 

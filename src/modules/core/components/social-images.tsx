@@ -1,9 +1,6 @@
 import { useMemo } from "react";
 
-import {
-  LazyLoadImage,
-  LazyLoadImageProps,
-} from "react-lazy-load-image-component";
+import { LazyLoadImage, LazyLoadImageProps } from "react-lazy-load-image-component";
 
 import { IMAGES_ASSET_ENDPOINT_URL } from "@/common/constants";
 import { ByAccountId } from "@/common/types";

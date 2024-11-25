@@ -1,13 +1,6 @@
 import { useState } from "react";
 
-import {
-  DropdownLabel,
-  FilterButton,
-  FilterIcon,
-  FilterItem,
-  FilterMenu,
-  Screen,
-} from "./styles";
+import { DropdownLabel, FilterButton, FilterIcon, FilterItem, FilterMenu, Screen } from "./styles";
 
 export type Option = {
   label: string;
@@ -30,10 +23,7 @@ const Dropdown = (props: Props) => {
   return (
     <>
       {openFilter && <Screen onClick={() => setOpenFilter(false)} />}
-      <div
-        style={{ position: "relative" }}
-        onClick={() => setOpenFilter(!openFilter)}
-      >
+      <div style={{ position: "relative" }} onClick={() => setOpenFilter(!openFilter)}>
         <FilterButton>
           {selectedOption ? (
             <DropdownLabel digit={2}>
@@ -68,8 +58,7 @@ const Dropdown = (props: Props) => {
                   onSelect(option);
                 }}
               >
-                {option.label}{" "}
-                {!hideCounter && <div className="count">{option.count}</div>}
+                {option.label} {!hideCounter && <div className="count">{option.count}</div>}
               </FilterItem>
             ))}
           </FilterMenu>

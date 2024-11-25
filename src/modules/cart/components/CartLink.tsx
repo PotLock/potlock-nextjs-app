@@ -30,9 +30,7 @@ export const CartLink: React.FC<CartLinkProps> = ({ disabled }) => {
 
         {numberOfItems > 0 && (
           <div className="ml-2 flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full bg-[#f86b3f]">
-            <p className="ml-[-1px] mt-[2px] text-center text-[10px] font-bold">
-              {numberOfItems}
-            </p>
+            <p className="ml-[-1px] mt-[2px] text-center text-[10px] font-bold">{numberOfItems}</p>
           </div>
         )}
       </Link>

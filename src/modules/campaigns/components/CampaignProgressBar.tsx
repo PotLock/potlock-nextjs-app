@@ -33,9 +33,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   const value = amount >= target ? 100 : Math.floor((amount / target) * 100);
 
   const getDaysLeft = endDate ? getTimePassed(endDate, false, true) : null;
-  const timeUp = endDate
-    ? getTimePassed(Number(endDate), false, true)?.includes("-")
-    : false;
+  const timeUp = endDate ? getTimePassed(Number(endDate), false, true)?.includes("-") : false;
 
   return (
     <div className="flex w-full flex-col">
@@ -44,9 +42,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
       ) : target > amount ? (
         <p className="mb-2 font-semibold">
           {(target - amount)?.toFixed(2)} NEAR{" "}
-          <span className="font-semibold text-[#7B7B7B]">
-            Left to meet goal
-          </span>
+          <span className="font-semibold text-[#7B7B7B]">Left to meet goal</span>
         </p>
       ) : (
         <p className="mb-2 font-semibold">

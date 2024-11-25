@@ -5,17 +5,9 @@ import { useRouter } from "next/router";
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
 import Spinner from "@/common/ui/components/Spinner";
-import {
-  PotLayout,
-  SponsorsBoard,
-  SponsorsTable,
-  useOrderedDonations,
-} from "@/modules/pot";
+import { PotLayout, SponsorsBoard, SponsorsTable, useOrderedDonations } from "@/modules/pot";
 import { CustomDonationType } from "@/modules/pot/models/types";
-import {
-  Container,
-  TableContainer,
-} from "@/modules/pot/styles/sponsors-styles";
+import { Container, TableContainer } from "@/modules/pot/styles/sponsors-styles";
 
 const SponsorsTab = () => {
   const router = useRouter();
@@ -24,9 +16,7 @@ const SponsorsTab = () => {
   };
 
   const { donations } = useOrderedDonations(potId, true);
-  const [sponsorshipDonations, setSponsorshipDonations] = useState<
-    CustomDonationType[]
-  >([]);
+  const [sponsorshipDonations, setSponsorshipDonations] = useState<CustomDonationType[]>([]);
 
   useEffect(() => {
     const sponsorshipDonations: Record<string, CustomDonationType> = {};
@@ -39,9 +29,7 @@ const SponsorsTab = () => {
           ? yoctoNearToFloat(donation.net_amount)
           : parseFloat(
               formatWithCommas(
-                SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(
-                  donation.net_amount,
-                ),
+                SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(donation.net_amount),
               ),
             );
 
@@ -60,17 +48,13 @@ const SponsorsTab = () => {
     const sponsorshipDonationsValues = Object.values(sponsorshipDonations).sort(
       (a: any, b: any) => b.amount - a.amount,
     );
-    const sponsorshipDonationsList = sponsorshipDonationsValues.map(
-      (donation) => {
-        return {
-          ...donation,
-          // add % share of total to each donation
-          percentage_share: ((donation.amount / total) * 100)
-            .toFixed(2)
-            .replace(/[.,]00$/, ""),
-        };
-      },
-    );
+    const sponsorshipDonationsList = sponsorshipDonationsValues.map((donation) => {
+      return {
+        ...donation,
+        // add % share of total to each donation
+        percentage_share: ((donation.amount / total) * 100).toFixed(2).replace(/[.,]00$/, ""),
+      };
+    });
     setSponsorshipDonations(sponsorshipDonationsList);
   }, [donations]);
 

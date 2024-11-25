@@ -8,10 +8,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import {
-  fetchSinglePost,
-  fetchTimeByBlockHeight,
-} from "@/common/api/near-social";
+import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { PROFILE_DEFAULTS } from "@/modules/profile/constants";
@@ -115,11 +112,7 @@ const SinglePost = () => {
           },
           img: (node) => (
             <div className="mt-4 flex w-full items-center justify-center">
-              <img
-                src={node.src}
-                alt=""
-                className="w-100 h-max object-contain"
-              />
+              <img src={node.src} alt="" className="w-100 h-max object-contain" />
             </div>
           ),
         }}

@@ -56,9 +56,7 @@ export const NoListItem = ({
         <p className="w-100 text-center font-lora italic">{text}</p>
         {showButton && (
           <Button onClick={route} variant="standard-filled">
-            {type === NoListItemType.FAVORITE_LISTS
-              ? "Start Curating"
-              : "Create List"}
+            {type === NoListItemType.FAVORITE_LISTS ? "Start Curating" : "Create List"}
           </Button>
         )}
       </div>

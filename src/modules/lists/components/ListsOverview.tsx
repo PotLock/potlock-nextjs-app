@@ -63,15 +63,13 @@ export const ListsOverview = ({
     switch (sortType) {
       case "recent":
         projects.sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
         setFilteredRegistrations(projects);
         break;
       case "older":
         projects.sort(
-          (a, b) =>
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
         );
         setFilteredRegistrations(projects);
         break;
@@ -85,9 +83,7 @@ export const ListsOverview = ({
       return registration.name.toLowerCase().includes(search);
     };
 
-    const filtered = registrations?.filter((registration) =>
-      handleSearch(registration),
-    );
+    const filtered = registrations?.filter((registration) => handleSearch(registration));
     setFilteredRegistrations(filtered);
   }, [search, registrations, setFilteredRegistrations]);
 
@@ -108,9 +104,7 @@ export const ListsOverview = ({
         <div className="md:flex-row md:items-center md:gap-0 flex flex-col justify-between gap-3">
           <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             {currentListType}
-            <span
-              style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
-            >
+            <span style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}>
               {filteredRegistrations?.length}
             </span>
           </div>
@@ -139,9 +133,7 @@ export const ListsOverview = ({
         </div>
       </div>
       {loading ? (
-        Array.from({ length: 6 }, (_, index) => (
-          <ListCardSkeleton key={index} />
-        ))
+        Array.from({ length: 6 }, (_, index) => <ListCardSkeleton key={index} />)
       ) : filteredRegistrations.length ? (
         <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8 pb-10">
           {filteredRegistrations.map((item, index) => {

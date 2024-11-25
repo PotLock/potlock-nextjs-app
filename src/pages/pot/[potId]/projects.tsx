@@ -20,9 +20,7 @@ const ProjectsTab = () => {
   // NOTE: not working
   // const potProjectsData = usePotApplications(query.potId);
   const [potProjects, setPotProjects] = useState<Application[]>([]);
-  const [filteredPotProjects, setFilteredPotProjects] = useState<Application[]>(
-    [],
-  );
+  const [filteredPotProjects, setFilteredPotProjects] = useState<Application[]>([]);
   const [search, setSearch] = useState("");
   const registrationsProfile = useTypedSelector((state) => state.profiles);
   const [index, setIndex] = useState(1);
@@ -63,14 +61,11 @@ const ProjectsTab = () => {
     };
 
     if (search) {
-      const filteredApplicationProjects = potProjects.filter(
-        (applicationProject) => {
-          const profile =
-            registrationsProfile[applicationProject.project_id] || {};
+      const filteredApplicationProjects = potProjects.filter((applicationProject) => {
+        const profile = registrationsProfile[applicationProject.project_id] || {};
 
-          return handleSearch(applicationProject, profile);
-        },
-      );
+        return handleSearch(applicationProject, profile);
+      });
 
       setFilteredPotProjects(filteredApplicationProjects);
     }
@@ -98,16 +93,11 @@ const ProjectsTab = () => {
           setIndex={setIndex}
           size={MAXIMUM_CARDS_PER_INDEX}
           renderItem={(application: Application) => (
-            <ProjectCard
-              projectId={application.project_id}
-              key={application.project_id}
-            />
+            <ProjectCard projectId={application.project_id} key={application.project_id} />
           )}
         />
       ) : (
-        <div style={{ alignSelf: "flex-start", margin: "24px 0px" }}>
-          No projects
-        </div>
+        <div style={{ alignSelf: "flex-start", margin: "24px 0px" }}>No projects</div>
       )}
     </div>
   );

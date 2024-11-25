@@ -1,10 +1,7 @@
 import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { PageWithBanner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import {
-  PotEditor,
-  useDeploymentSuccessWalletRedirect,
-} from "@/modules/pot-editor";
+import { PotEditor, useDeploymentSuccessWalletRedirect } from "@/modules/pot-editor";
 
 export default function PotDeployPage() {
   useDeploymentSuccessWalletRedirect();
@@ -27,11 +24,7 @@ export default function PotDeployPage() {
         <span un-flex="~" un-gap="2" un-items="center">
           <InfoIcon />
 
-          <a
-            href="https://wtfisqf.com"
-            target="_blank"
-            un-decoration="underline"
-          >
+          <a href="https://wtfisqf.com" target="_blank" un-decoration="underline">
             Learn more about quadratic funding
           </a>
         </span>

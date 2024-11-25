@@ -9,20 +9,17 @@ import { ByAccountId } from "@/common/types";
 import { TOTAL_FEE_BASIS_POINTS } from "@/modules/core/constants";
 
 import { DonationInputs, WithDonationFormAPI } from "../models";
-import {
-  DonationBreakdown,
-  DonationGroupAllocationStrategyEnum,
-  WithTotalAmount,
-} from "../types";
+import { DonationBreakdown, DonationGroupAllocationStrategyEnum, WithTotalAmount } from "../types";
 import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
 export type DonationShareAllocationDeps = WithDonationFormAPI;
 
-export const useDonationEvenShareAllocation = ({
-  form,
-}: DonationShareAllocationDeps) => {
-  const [amount, groupAllocationStrategy, groupAllocationPlan = []] =
-    form.watch(["amount", "groupAllocationStrategy", "groupAllocationPlan"]);
+export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocationDeps) => {
+  const [amount, groupAllocationStrategy, groupAllocationPlan = []] = form.watch([
+    "amount",
+    "groupAllocationStrategy",
+    "groupAllocationPlan",
+  ]);
 
   const recipientShareAmount = useMemo(
     () => intoShareValue(amount, groupAllocationPlan.length),
@@ -32,9 +29,7 @@ export const useDonationEvenShareAllocation = ({
   useEffect(() => {
     if (
       groupAllocationStrategy === DonationGroupAllocationStrategyEnum.evenly &&
-      groupAllocationPlan.some(
-        piped(prop("amount"), isNot(isStrictEqual(recipientShareAmount))),
-      )
+      groupAllocationPlan.some(piped(prop("amount"), isNot(isStrictEqual(recipientShareAmount))))
     ) {
       form.setValue(
         "groupAllocationPlan",
@@ -47,12 +42,7 @@ export const useDonationEvenShareAllocation = ({
         { shouldDirty: true },
       );
     }
-  }, [
-    form,
-    groupAllocationPlan,
-    groupAllocationStrategy,
-    recipientShareAmount,
-  ]);
+  }, [form, groupAllocationPlan, groupAllocationStrategy, recipientShareAmount]);
 
   return useCallback(
     (recipient: ByAccountId) => {
@@ -65,12 +55,9 @@ export const useDonationEvenShareAllocation = ({
           "groupAllocationPlan",
 
           assign
-            ? groupAllocationPlan.concat(
-                isAssigned ? [] : [{ account_id: recipient.accountId }],
-              )
+            ? groupAllocationPlan.concat(isAssigned ? [] : [{ account_id: recipient.accountId }])
             : groupAllocationPlan.filter(
-                (recipientShare) =>
-                  recipientShare.account_id !== recipient.accountId,
+                (recipientShare) => recipientShare.account_id !== recipient.accountId,
               ),
 
           { shouldDirty: true },
@@ -82,9 +69,7 @@ export const useDonationEvenShareAllocation = ({
   );
 };
 
-export const useDonationManualShareAllocation = ({
-  form,
-}: DonationShareAllocationDeps) => {
+export const useDonationManualShareAllocation = ({ form }: DonationShareAllocationDeps) => {
   const [groupAllocationPlan = []] = form.watch(["groupAllocationPlan"]);
 
   return useCallback(
@@ -104,9 +89,7 @@ export const useDonationManualShareAllocation = ({
               (updatedShares = [], recipientShare) => {
                 if (recipientShare.account_id === recipient.accountId) {
                   return recipientShareAmount > 0
-                    ? updatedShares.concat([
-                        { ...recipientShare, amount: recipientShareAmount },
-                      ])
+                    ? updatedShares.concat([{ ...recipientShare, amount: recipientShareAmount }])
                     : updatedShares;
                 } else return updatedShares.concat([recipientShare]);
               },
@@ -156,46 +139,32 @@ export const useDonationAllocationBreakdown = ({
    *? Protocol fee:
    */
 
-  const protocolFeeInitialBasisPoints =
-    potlockDonationConfig?.protocol_fee_basis_points ?? 0;
+  const protocolFeeInitialBasisPoints = potlockDonationConfig?.protocol_fee_basis_points ?? 0;
 
-  const protocolFeeBasisPoints = bypassProtocolFee
-    ? 0
-    : protocolFeeInitialBasisPoints;
+  const protocolFeeBasisPoints = bypassProtocolFee ? 0 : protocolFeeInitialBasisPoints;
 
   const protocolFeeAmount =
-    protocolFeeFinalAmount ??
-    (totalAmountFloat * protocolFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
+    protocolFeeFinalAmount ?? (totalAmountFloat * protocolFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
-  const protocolFeePercent = donationFeeBasisPointsToPercents(
-    protocolFeeInitialBasisPoints,
-  );
+  const protocolFeePercent = donationFeeBasisPointsToPercents(protocolFeeInitialBasisPoints);
 
-  const protocolFeeRecipientAccountId =
-    potlockDonationConfig?.protocol_fee_recipient_account;
+  const protocolFeeRecipientAccountId = potlockDonationConfig?.protocol_fee_recipient_account;
 
   /**
    *? Referral fee:
    */
 
-  const potlockReferralFeeBasisPoints =
-    potlockDonationConfig?.referral_fee_basis_points ?? 0;
+  const potlockReferralFeeBasisPoints = potlockDonationConfig?.referral_fee_basis_points ?? 0;
 
   const referralFeeInitialBasisPoints =
-    pot?.referral_fee_public_round_basis_points ??
-    potlockReferralFeeBasisPoints;
+    pot?.referral_fee_public_round_basis_points ?? potlockReferralFeeBasisPoints;
 
-  const referralFeeBasisPoints = referrerAccountId
-    ? referralFeeInitialBasisPoints
-    : 0;
+  const referralFeeBasisPoints = referrerAccountId ? referralFeeInitialBasisPoints : 0;
 
   const referralFeeAmount =
-    referralFeeFinalAmount ??
-    (totalAmountFloat * referralFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
+    referralFeeFinalAmount ?? (totalAmountFloat * referralFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
-  const referralFeePercent = donationFeeBasisPointsToPercents(
-    referralFeeBasisPoints,
-  );
+  const referralFeePercent = donationFeeBasisPointsToPercents(referralFeeBasisPoints);
 
   /**
    *? Chef fee:
@@ -206,29 +175,21 @@ export const useDonationAllocationBreakdown = ({
 
   const chefFeeBasisPoints = bypassChefFee ? 0 : chefFeeInitialBasisPoints;
 
-  const chefFeeAmount =
-    (totalAmountFloat * chefFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
+  const chefFeeAmount = (totalAmountFloat * chefFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
-  const chefFeePercent = donationFeeBasisPointsToPercents(
-    chefFeeInitialBasisPoints,
-  );
+  const chefFeePercent = donationFeeBasisPointsToPercents(chefFeeInitialBasisPoints);
 
   /**
    *? Project allocation:
    */
 
   const projectAllocationBasisPoints =
-    TOTAL_FEE_BASIS_POINTS -
-    protocolFeeBasisPoints -
-    chefFeeBasisPoints -
-    referralFeeBasisPoints;
+    TOTAL_FEE_BASIS_POINTS - protocolFeeBasisPoints - chefFeeBasisPoints - referralFeeBasisPoints;
 
   const projectAllocationAmount =
     (totalAmountFloat * projectAllocationBasisPoints) / TOTAL_FEE_BASIS_POINTS;
 
-  const projectAllocationPercent = donationFeeBasisPointsToPercents(
-    projectAllocationBasisPoints,
-  );
+  const projectAllocationPercent = donationFeeBasisPointsToPercents(projectAllocationBasisPoints);
 
   return {
     projectAllocationAmount,

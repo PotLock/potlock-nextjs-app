@@ -71,9 +71,7 @@ const NewApplicationModal = ({ open, onCloseClick, potDetail }: Props) => {
               {inProgress ? (
                 <Spinner />
               ) : (
-                <>
-                  {asDao ? "Propose to Send Application" : "Send application"}
-                </>
+                <>{asDao ? "Propose to Send Application" : "Send application"}</>
               )}
             </Button>
           </div>

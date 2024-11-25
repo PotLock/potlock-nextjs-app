@@ -26,24 +26,14 @@ export type TokenIconProps = {
   size?: TokenIconSize;
 };
 
-export const TokenIcon = ({
-  tokenId,
-  className,
-  size = "medium",
-}: TokenIconProps) => {
+export const TokenIcon = ({ tokenId, className, size = "medium" }: TokenIconProps) => {
   const { data: token } = ftService.useRegisteredToken({ tokenId });
   const { sizePx, rootClass, placeholderClass } = variants[size];
 
   return (
-    <span
-      className={cn("flex items-center justify-center", rootClass, className)}
-    >
+    <span className={cn("flex items-center justify-center", rootClass, className)}>
       {tokenId === NATIVE_TOKEN_ID ? (
-        <NearIcon
-          width={sizePx + 4}
-          height={sizePx + 4}
-          className="color-neutral-950 m--1"
-        />
+        <NearIcon width={sizePx + 4} height={sizePx + 4} className="color-neutral-950 m--1" />
       ) : (
         <>
           {token?.metadata.icon ? (
@@ -54,9 +44,7 @@ export const TokenIcon = ({
               height={sizePx}
             />
           ) : (
-            <span className={cn("prose", placeholderClass)}>
-              {token?.metadata.symbol ?? "..."}
-            </span>
+            <span className={cn("prose", placeholderClass)}>{token?.metadata.symbol ?? "..."}</span>
           )}
         </>
       )}

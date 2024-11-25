@@ -1,6 +1,4 @@
-export const VolunteerIcon: React.FC<React.HTMLAttributes<SVGSVGElement>> = (
-  props,
-) => (
+export const VolunteerIcon: React.FC<React.HTMLAttributes<SVGSVGElement>> = (props) => (
   <svg
     className="cursor-pointer transition-all ease-in-out hover:scale-[1.1]"
     width="18"
