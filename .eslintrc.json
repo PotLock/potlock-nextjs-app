@@ -34,7 +34,7 @@
     ],
     "@typescript-eslint/no-explicit-any": 1,
     "@typescript-eslint/ban-types": "off",
-    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/ban-ts-comment": "error",
     "prettier/prettier": [
       "error",
       {
