@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from "react";
 
 import ReactMarkdown from "react-markdown";
@@ -18,7 +17,7 @@ import { useTypedSelector } from "@/store";
 import ChallengeModal from "./ChallengeModal";
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import NewApplicationModal from "./NewApplicationModal";
-import PoolAllocationTable from "./PoolAllocationTable";
+import { PoolAllocationTable } from "./PoolAllocationTable";
 import { PotTimeline } from "./PotTimeline";
 import { POT_METAPOOL_APPLICATION_REQUIREMENTS } from "../constants";
 import { usePotUserPermissions } from "../hooks/permissions";
@@ -41,30 +40,34 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
     window.location.origin + window.location.pathname + `&referrerId=${userAccountId}`;
 
   const potStatuses = usePotUserPermissions({
-    potDetail: pot,
+    potId,
     accountId: asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId),
   });
 
   return (
     <>
-      <FundMatchingPoolModal
-        potDetail={pot}
-        open={fundModalOpen}
-        onCloseClick={() => setFundModalOpen(false)}
-      />
+      {pot && (
+        <>
+          <FundMatchingPoolModal
+            potDetail={pot}
+            open={fundModalOpen}
+            onCloseClick={() => setFundModalOpen(false)}
+          />
 
-      <NewApplicationModal
-        potDetail={pot}
-        open={applyModalOpen}
-        onCloseClick={() => setApplyModalOpen(false)}
-      />
+          <NewApplicationModal
+            potDetail={pot}
+            open={applyModalOpen}
+            onCloseClick={() => setApplyModalOpen(false)}
+          />
 
-      <ChallengeModal
-        potDetail={pot}
-        open={challengeModalOpen}
-        previousChallenge={potStatuses.existingChallengeForUser}
-        onCloseClick={() => setChallengeModalOpen(false)}
-      />
+          <ChallengeModal
+            potDetail={pot}
+            open={challengeModalOpen}
+            previousChallenge={potStatuses.existingChallengeForUser}
+            onCloseClick={() => setChallengeModalOpen(false)}
+          />
+        </>
+      )}
 
       <div
         className={cn(
@@ -212,7 +215,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                       ))}
                     </div>
                   ) : (
-                    <PoolAllocationTable potDetail={pot} />
+                    pot && <PoolAllocationTable potDetail={pot} />
                   )}
                 </div>
 
@@ -251,7 +254,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                 {potStatuses.canApply && (
                   <Button
                     onClick={() => setApplyModalOpen(true)}
-                  >{`Apply to ${"Round" ?? "Pot"}`}</Button>
+                  >{`Apply to ${isStakeWeightedPot ? "Round" : "Pot"}`}</Button>
                 )}
 
                 {potStatuses.canDonate && <DonateToPotProjects {...{ potId }} />}

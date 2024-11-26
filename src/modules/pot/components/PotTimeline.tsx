@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { styled } from "styled-components";
 
@@ -6,30 +6,68 @@ import { ByPotId, indexer } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
 import { PotTimelineFragment } from "./PotTimelineFragment";
-import { Container, Loader } from "./styles";
 import TimeLeft from "./TimeLeft";
 import { potIndexedDataToTimeline } from "../utils/timeline";
 import { isPotStakeWeighted } from "../utils/voting";
 
-const Wrapper = styled.div`
-  position: relative;
+/**
+ * @deprecated convert to Tailwind classes
+ */
+const Container = styled.div<{
+  containerHeight: number;
+  showActiveState: number;
+}>`
   display: flex;
-  align-items: center;
-  pointer-events: none;
+  width: 100%;
+  justify-content: center;
+  transition: all 300ms ease-in-out;
 
-  .spread-indicator {
-    height: auto;
-    width: 12px;
+  .mobile-selected {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1rem 0;
     transition: all 300ms ease-in-out;
-    display: none;
   }
 
   @media only screen and (max-width: 1280px) {
-    pointer-events: all;
-    cursor: pointer;
-    .spread-indicator {
-      display: block;
+    justify-content: left;
+    height: ${(props) => props.containerHeight / 4}px;
+    overflow: hidden;
+
+    .mobile-selected {
+      margin: 10px 0;
+      transform: translateY(${(props) => -props.showActiveState}px);
+      flex-direction: column;
     }
+  }
+`;
+
+/**
+ * @deprecated convert to Tailwind classes
+ */
+const Loader = styled.div`
+  position: relative;
+  background: #dbdbdb;
+  border-radius: 1px;
+  height: 4px;
+  width: 95px;
+
+  @media only screen and (max-width: 1400px) {
+    width: 90px;
+  }
+
+  @media only screen and (max-width: 1280px) {
+    height: 40px;
+    width: 4px;
+    position: absolute;
+    left: 10px;
+    z-index: 0;
+    top: 50%;
+  }
+
+  @media only screen and (min-width: 1536px) {
+    width: 145px;
   }
 `;
 
@@ -41,6 +79,7 @@ export type PotTimelineProps = ByPotId & {
 
 export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) => {
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
+  const toggleMobileMenu = useCallback(() => setMobileMenuActive((isActive) => !isActive), []);
   const { data: pot } = indexer.usePot({ potId });
   const isStakeWeightedPot = isPotStakeWeighted({ potId });
 
@@ -67,9 +106,13 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
   const showActiveState = getIndexOfActive() * (containerHeight / 4);
 
   return (
-    <Wrapper
-      onClick={() => setMobileMenuActive(!mobileMenuActive)}
-      className={cn("px-4", classNames?.root)}
+    <div
+      onClick={toggleMobileMenu}
+      className={cn(
+        "xl:pointer-events-none cursor-pointer",
+        "h-a xl:h-14 flex items-center justify-center gap-4 p-4",
+        classNames?.root,
+      )}
     >
       <Container
         containerHeight={containerHeight}
@@ -124,7 +167,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
       </Container>
 
       <svg
-        className="spread-indicator"
+        className="xl:block display-[none] transition-300 w-3 transition-all ease-in-out"
         style={{
           rotate: mobileMenuActive ? "180deg" : "0deg",
         }}
@@ -137,6 +180,6 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
           fill="#7B7B7B"
         />
       </svg>
-    </Wrapper>
+    </div>
   );
 };

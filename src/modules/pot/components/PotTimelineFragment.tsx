@@ -1,4 +1,32 @@
-import { ProgressBarWrapper } from "./styles";
+import { styled } from "styled-components";
+
+/**
+ * @deprecated convert to Tailwind classes
+ */
+const Wrapper = styled.div`
+  position: relative;
+  display: flex;
+
+  .circle {
+    width: 24px;
+    height: 24px;
+    transform: rotate(-90deg);
+  }
+
+  .check {
+    width: 12px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+  }
+
+  @media only screen and (max-width: 1280px) {
+    z-index: 1;
+    background: white;
+    padding: 2px 0;
+  }
+`;
 
 export type PotTimelineFragmentProps = {
   progress: number;
@@ -11,7 +39,7 @@ export const PotTimelineFragment: React.FC<PotTimelineFragmentProps> = ({
   completed,
   started,
 }) => (
-  <ProgressBarWrapper>
+  <Wrapper>
     <svg viewBox="0 0 160 160" className="circle">
       <circle
         r="70"
@@ -42,5 +70,5 @@ export const PotTimelineFragment: React.FC<PotTimelineFragmentProps> = ({
         }}
       />
     </svg>
-  </ProgressBarWrapper>
+  </Wrapper>
 );

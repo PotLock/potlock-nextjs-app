@@ -1,71 +1,75 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { Pot } from "@/common/api/indexer";
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
+import { ByAccountId } from "@/common/types";
 import { getDateTime } from "@/modules/core";
 
-export const usePotUserPermissions = (props: { potDetail: Pot; accountId: string }) => {
+export const usePotUserPermissions = ({ potId, accountId }: ByPotId & ByAccountId) => {
+  const { data: pot } = indexer.usePot({ potId });
   const now = Date.now();
-  const { potDetail } = props;
 
-  // Check if current accountId is a existing application
   const [existingApplication, setExistingApplication] = useState<Application>();
   const [payoutsChallenges, setPayoutsChallenges] = useState<Challenge[]>([]);
 
-  // Fetch needed data
+  // INFO: Using this because the Indexer service doesn't provide these APIs
+  // TODO: Request and cover the required endpoints and throw this away
   useEffect(() => {
-    // INFO: Using this because the Indexer service doesn't provide these APIs
-    if (props.accountId && props.potDetail) {
-      (async () => {
-        // Get Application By Project ID
-        try {
-          const _existingApp = await potClient.getApplicationByProjectId({
-            potId: props.potDetail.account,
-            project_id: props.accountId,
-          });
-          setExistingApplication(_existingApp);
-        } catch (e) {
-          console.error(
-            `Application ${props.accountId} does not exist on pot ${props.potDetail.account}`,
-          );
-        }
+    potClient
+      // Check if current account has a existing application
+      .getApplicationByProjectId({ potId, project_id: accountId })
+      .then(setExistingApplication)
+      .catch(() => console.error(`Application ${accountId} does not exist on pot ${potId}`));
 
-        // Get Payouts Challenges for pot
-        try {
-          const _payoutsChallenges = await potClient.getPayoutsChallenges({
-            potId: props.potDetail.account,
-          });
-          setPayoutsChallenges(_payoutsChallenges);
-        } catch (e) {
-          console.error(e);
-        }
-      })();
-    }
-  }, [props.accountId, props.potDetail]);
+    potClient.getPayoutsChallenges({ potId }).then(setPayoutsChallenges).catch(console.error);
+  }, [accountId, pot, potId]);
 
-  const publicRoundOpen =
-    now >= getDateTime(potDetail.matching_round_start) &&
-    now < getDateTime(potDetail.matching_round_end);
-  const canDonate = publicRoundOpen && props.accountId;
-  const canFund = now < getDateTime(potDetail.matching_round_end);
+  const publicRoundOpen = useMemo(
+    () =>
+      pot &&
+      now >= getDateTime(pot.matching_round_start) &&
+      now < getDateTime(pot.matching_round_end),
 
-  const userIsAdminOrGreater =
-    potDetail.admins.find((adm) => adm.id === props.accountId) ||
-    props.potDetail.owner.id === props.accountId;
+    [pot, now],
+  );
 
-  const userIsChefOrGreater = userIsAdminOrGreater || props.potDetail.chef?.id === props.accountId;
+  const canDonate = useMemo(() => publicRoundOpen && accountId, [publicRoundOpen, accountId]);
+  const canFund = useMemo(() => pot && now < getDateTime(pot.matching_round_end), [pot, now]);
 
-  const applicationOpen =
-    now >= getDateTime(potDetail.application_start) && now < getDateTime(potDetail.application_end);
+  const userIsAdminOrGreater = useMemo(
+    () => pot?.admins.find((adm) => adm.id === accountId) || pot?.owner.id === accountId,
+    [pot, accountId],
+  );
 
-  const canApply = applicationOpen && existingApplication === undefined && !userIsChefOrGreater;
+  const userIsChefOrGreater = useMemo(
+    () => userIsAdminOrGreater || pot?.chef?.id === accountId,
+    [userIsAdminOrGreater, pot, accountId],
+  );
 
-  const canChallengePayouts = potDetail.cooldown_end
-    ? now > getDateTime(potDetail.matching_round_end) && now < getDateTime(potDetail.cooldown_end)
-    : false;
+  const applicationOpen = useMemo(
+    () =>
+      pot && now >= getDateTime(pot.application_start) && now < getDateTime(pot.application_end),
 
-  const existingChallengeForUser = payoutsChallenges.find(
-    (challenge) => challenge.challenger_id === props.accountId,
+    [pot, now],
+  );
+
+  const canApply = useMemo(
+    () => applicationOpen && existingApplication === undefined && !userIsChefOrGreater,
+    [applicationOpen, existingApplication, userIsChefOrGreater],
+  );
+
+  const canChallengePayouts = useMemo(
+    () =>
+      pot?.cooldown_end
+        ? now > getDateTime(pot.matching_round_end) && now < getDateTime(pot.cooldown_end)
+        : false,
+
+    [pot, now],
+  );
+
+  const existingChallengeForUser = useMemo(
+    () => payoutsChallenges.find((challenge) => challenge.challenger_id === accountId),
+    [payoutsChallenges, accountId],
   );
 
   return {

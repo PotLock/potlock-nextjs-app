@@ -3,7 +3,7 @@ import { Pot } from "@/common/api/indexer";
 import Table from "./Table";
 import { useOrderedDonations } from "../../hooks";
 
-const PoolAllocationTable = ({ potDetail }: { potDetail: Pot }) => {
+export const PoolAllocationTable = ({ potDetail }: { potDetail: Pot }) => {
   const {
     orderedPayouts,
     totalAmountNearPayouts,
