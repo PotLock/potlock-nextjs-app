@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { MdAppRegistration } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -18,16 +19,16 @@ import ChallengeModal from "./ChallengeModal";
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import NewApplicationModal from "./NewApplicationModal";
 import { PoolAllocationTable } from "./PoolAllocationTable";
+import { PotApplicationRequirements } from "./PotApplicationRequirements";
 import { PotTimeline } from "./PotTimeline";
-import { POT_METAPOOL_APPLICATION_REQUIREMENTS } from "../constants";
 import { usePotUserPermissions } from "../hooks/permissions";
-import { isPotStakeWeighted } from "../utils/voting";
+import { isPotVotingBased } from "../utils/voting";
 
 export type PotHeroProps = ByPotId & {};
 
 export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
   const { data: pot } = indexer.usePot({ potId });
-  const isStakeWeightedPot = isPotStakeWeighted({ potId });
+  const isVotingBasedPot = isPotVotingBased({ potId });
   const { isSignedIn } = useWallet();
   const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
   const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
@@ -174,7 +175,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                       "justify-start gap-2 self-stretch py-2",
                     )}
                   >
-                    <div className="relative h-6 w-6" />
+                    <MdAppRegistration className="h-6 w-6" />
 
                     <div
                       className={cn(
@@ -186,34 +187,8 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                     </div>
                   </div>
 
-                  {isStakeWeightedPot ? (
-                    <div
-                      className={cn(
-                        "flex h-44 flex-col",
-                        "items-start justify-start gap-4 self-stretch",
-                        "rounded-lg bg-white p-4 shadow",
-                      )}
-                    >
-                      {POT_METAPOOL_APPLICATION_REQUIREMENTS.map((text) => (
-                        <div
-                          className={cn(
-                            "inline-flex items-center justify-start gap-2 self-stretch",
-                          )}
-                          key={text}
-                        >
-                          <div className="relative h-6 w-6" />
-
-                          <div
-                            className={cn(
-                              "shrink grow basis-0",
-                              "text-sm font-normal leading-tight text-neutral-600",
-                            )}
-                          >
-                            {text}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  {isVotingBasedPot ? (
+                    <PotApplicationRequirements {...{ potId }} />
                   ) : (
                     pot && <PoolAllocationTable potDetail={pot} />
                   )}
@@ -254,7 +229,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                 {potStatuses.canApply && (
                   <Button
                     onClick={() => setApplyModalOpen(true)}
-                  >{`Apply to ${isStakeWeightedPot ? "Round" : "Pot"}`}</Button>
+                  >{`Apply to ${isVotingBasedPot ? "Round" : "Pot"}`}</Button>
                 )}
 
                 {potStatuses.canDonate && <DonateToPotProjects {...{ potId }} />}

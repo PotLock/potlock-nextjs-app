@@ -9,7 +9,7 @@ export const usePotUserPermissions = ({ potId, accountId }: ByPotId & ByAccountI
   const { data: pot } = indexer.usePot({ potId });
   const now = Date.now();
 
-  const [existingApplication, setExistingApplication] = useState<Application>();
+  const [existingApplication, setExistingApplication] = useState<Application | undefined>();
   const [payoutsChallenges, setPayoutsChallenges] = useState<Challenge[]>([]);
 
   // INFO: Using this because the Indexer service doesn't provide these APIs
@@ -19,7 +19,7 @@ export const usePotUserPermissions = ({ potId, accountId }: ByPotId & ByAccountI
       // Check if current account has a existing application
       .getApplicationByProjectId({ potId, project_id: accountId })
       .then(setExistingApplication)
-      .catch(() => console.error(`Application ${accountId} does not exist on pot ${potId}`));
+      .catch(() => setExistingApplication(undefined));
 
     potClient.getPayoutsChallenges({ potId }).then(setPayoutsChallenges).catch(console.error);
   }, [accountId, pot, potId]);

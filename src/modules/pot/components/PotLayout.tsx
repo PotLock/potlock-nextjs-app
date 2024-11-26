@@ -10,7 +10,7 @@ import { DonationSybilWarning } from "@/modules/donation";
 import { PotHero } from "./PotHero";
 import Tabs from "./Tabs";
 import { POT_TABS_CONFIG } from "../constants";
-import { isPotStakeWeighted } from "../utils/voting";
+import { isPotVotingBased } from "../utils/voting";
 
 export type PotLayoutProps = {
   children: React.ReactNode;
@@ -26,7 +26,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   };
 
   const { potId } = query;
-  const isStakeWeightedPot = isPotStakeWeighted({ potId });
+  const isVotingBasedPot = isPotVotingBased({ potId });
   const { data: pot } = indexer.usePot({ potId });
 
   // Modals
@@ -35,13 +35,13 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
   const tabs = useMemo(
     () =>
-      isStakeWeightedPot
+      isVotingBasedPot
         ? POT_TABS_CONFIG.filter(({ id }) => id !== "projects").map((tab) =>
             tab.id === "donations" ? { ...tab, label: "History" } : tab,
           )
         : POT_TABS_CONFIG,
 
-    [isStakeWeightedPot],
+    [isVotingBasedPot],
   );
 
   const [selectedTab, setSelectedTab] = useState(
@@ -50,7 +50,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0]);
-  }, [isStakeWeightedPot, pathname, tabs]);
+  }, [isVotingBasedPot, pathname, tabs]);
 
   return !pot ? null : (
     <PageWithBanner>

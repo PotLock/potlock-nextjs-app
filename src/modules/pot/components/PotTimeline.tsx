@@ -8,7 +8,7 @@ import { cn } from "@/common/ui/utils";
 import { PotTimelineFragment } from "./PotTimelineFragment";
 import TimeLeft from "./TimeLeft";
 import { potIndexedDataToTimeline } from "../utils/timeline";
-import { isPotStakeWeighted } from "../utils/voting";
+import { isPotVotingBased } from "../utils/voting";
 
 /**
  * @deprecated convert to Tailwind classes
@@ -81,12 +81,12 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
   const toggleMobileMenu = useCallback(() => setMobileMenuActive((isActive) => !isActive), []);
   const { data: pot } = indexer.usePot({ potId });
-  const isStakeWeightedPot = isPotStakeWeighted({ potId });
+  const isVotingBasedPot = isPotVotingBased({ potId });
 
   const statuses = pot
     ? potIndexedDataToTimeline({
         ...pot,
-        isVotingEnabled: isStakeWeightedPot,
+        isVotingEnabled: isVotingBasedPot,
       })
     : [];
 
@@ -167,7 +167,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
       </Container>
 
       <svg
-        className="xl:block display-[none] transition-300 w-3 transition-all ease-in-out"
+        className="xl:display-[none] transition-300 w-3 transition-all ease-in-out"
         style={{
           rotate: mobileMenuActive ? "180deg" : "0deg",
         }}
