@@ -7,10 +7,7 @@ export type TokenBalanceProps = ByTokenId & {
   classNames?: { root?: string; amount?: string };
 };
 
-export const TokenBalance: React.FC<TokenBalanceProps> = ({
-  tokenId,
-  classNames,
-}) => {
+export const TokenBalance: React.FC<TokenBalanceProps> = ({ tokenId, classNames }) => {
   const { data: token, error: tokenError } = ftService.useRegisteredToken({
     tokenId,
   });
@@ -18,9 +15,7 @@ export const TokenBalance: React.FC<TokenBalanceProps> = ({
   return !token ? (
     <>
       {tokenError ? (
-        <span
-          className={cn("prose text-sm text-destructive", classNames?.amount)}
-        >
+        <span className={cn("prose text-sm text-destructive", classNames?.amount)}>
           {tokenError.message}
         </span>
       ) : (

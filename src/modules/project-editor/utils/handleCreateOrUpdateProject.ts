@@ -6,16 +6,9 @@ import {
 } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
-import {
-  LISTS_CONTRACT_ACCOUNT_ID,
-  SOCIAL_CONTRACT_ACCOUNT_ID,
-} from "@/common/_config";
+import { LISTS_CONTRACT_ACCOUNT_ID, SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import {
-  FIFTY_TGAS,
-  FULL_TGAS,
-  MIN_PROPOSAL_DEPOSIT_FALLBACK,
-} from "@/common/constants";
+import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK } from "@/common/constants";
 import * as socialDb from "@/common/contracts/social";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
@@ -46,9 +39,7 @@ const handleCreateOrUpdateProject = async () => {
   const daoPolicy = data.isDao ? await getDaoPolicy(accountId) : null;
 
   // Validate DAO Address
-  const isDaoAddressValid = data.isDao
-    ? validateNearAddress(data.daoAddress || "")
-    : true;
+  const isDaoAddressValid = data.isDao ? validateNearAddress(data.daoAddress || "") : true;
   if (!isDaoAddressValid) {
     return { success: false, error: "DAO: Invalid NEAR account Id" };
   }
@@ -59,9 +50,7 @@ const handleCreateOrUpdateProject = async () => {
   // If there is an existing social data, make the diff between then
   const existingSocialData = await getSocialData(accountId);
 
-  const diff = existingSocialData
-    ? deepObjectDiff(existingSocialData, socialData)
-    : socialData;
+  const diff = existingSocialData ? deepObjectDiff(existingSocialData, socialData) : socialData;
 
   const socialArgs = {
     data: {
@@ -111,9 +100,7 @@ const handleCreateOrUpdateProject = async () => {
           method_name: tx.method,
           gas: FIFTY_TGAS,
           deposit: tx.deposit || "0",
-          args: Buffer.from(JSON.stringify(tx.args), "utf-8").toString(
-            "base64",
-          ),
+          args: Buffer.from(JSON.stringify(tx.args), "utf-8").toString("base64"),
         };
 
         return {
@@ -142,13 +129,9 @@ const handleCreateOrUpdateProject = async () => {
     const callbackUrl = `${location.origin}${location.pathname}?done=true`;
     try {
       if (data.isDao) {
-        await naxiosInstance
-          .contractApi()
-          .callMultiple(daoTransactions, callbackUrl);
+        await naxiosInstance.contractApi().callMultiple(daoTransactions, callbackUrl);
       } else {
-        await naxiosInstance
-          .contractApi()
-          .callMultiple(transactions, callbackUrl);
+        await naxiosInstance.contractApi().callMultiple(transactions, callbackUrl);
       }
 
       return {

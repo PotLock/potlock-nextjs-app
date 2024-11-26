@@ -1,10 +1,7 @@
 import Big from "big.js";
 
 import { DirectDonation } from "@/common/contracts/core/donation/interface";
-import {
-  PayoutDetailed,
-  PotDonation,
-} from "@/common/contracts/core/interfaces/pot.interfaces";
+import { PayoutDetailed, PotDonation } from "@/common/contracts/core/interfaces/pot.interfaces";
 
 export const getTotalAmountNear = (
   donations: (PotDonation | DirectDonation)[],
@@ -19,9 +16,7 @@ export const getTotalAmountNear = (
       ("ft_id" in donation && donation.ft_id === "near") || // For DirectDonation
       potId
     ) {
-      totalDonationAmountNear = totalDonationAmountNear.plus(
-        Big(donation.total_amount),
-      );
+      totalDonationAmountNear = totalDonationAmountNear.plus(Big(donation.total_amount));
     }
   }
   return totalDonationAmountNear.toString();

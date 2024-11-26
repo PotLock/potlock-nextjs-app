@@ -17,8 +17,7 @@ const Tabs = ({ navOptions, selectedTab, onSelect, asLink }: Props) => {
   const router = useRouter();
   const { potId: potIdPathParam } = router.query;
 
-  const potId =
-    typeof potIdPathParam === "string" ? potIdPathParam : potIdPathParam?.at(0);
+  const potId = typeof potIdPathParam === "string" ? potIdPathParam : potIdPathParam?.at(0);
 
   return (
     <div className="mb-8 flex w-full flex-row flex-wrap gap-2">

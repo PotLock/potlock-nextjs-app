@@ -11,9 +11,7 @@ const ProfileFeedsTab = () => {
     query: { userId: userIdPathParam },
   } = useRouteQuery();
   const userId =
-    (typeof userIdPathParam === "string"
-      ? userIdPathParam
-      : userIdPathParam?.at(0)) ?? "unknown";
+    (typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0)) ?? "unknown";
 
   return <ProfileFeeds accountId={userId} />;
 };

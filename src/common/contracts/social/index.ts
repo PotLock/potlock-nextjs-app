@@ -1,7 +1,8 @@
-import { StorageCache } from "@wpdas/naxios";
+import { StorageCache, buildTransaction } from "@wpdas/naxios";
 
 import { SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
+import { AccountId } from "@/common/types";
 
 /**
  * NEAR Social DB Contract API
@@ -107,10 +108,7 @@ type NEARSocialGetResponse = {
  * Get User Profile Info from NEAR Social DB
  * @returns
  */
-export const getSocialProfile = async (input: {
-  accountId: string;
-  useCache?: boolean;
-}) => {
+export const getSocialProfile = async (input: { accountId: string; useCache?: boolean }) => {
   try {
     const response = await nearSocialDbContractApi.view<
       NEARSocialUserProfileInput,
@@ -169,10 +167,9 @@ export const getSocialData = async <R>({ path }: { path: string }) => {
 
 export const getPolicy = async () => {
   try {
-    const response = await nearSocialDbContractApi.view<
-      any,
-      { proposal_bond: string }
-    >("get_policy");
+    const response = await nearSocialDbContractApi.view<any, { proposal_bond: string }>(
+      "get_policy",
+    );
 
     return response;
   } catch (e) {
@@ -180,11 +177,7 @@ export const getPolicy = async () => {
   }
 };
 
-export const setSocialData = async ({
-  data,
-}: {
-  data: Record<string, any>;
-}) => {
+export const setSocialData = async ({ data }: { data: Record<string, any> }) => {
   try {
     const response = await nearSocialDbContractApi.call("set", {
       args: {
@@ -195,5 +188,47 @@ export const setSocialData = async ({
     return response;
   } catch (e) {
     console.error("setSocialData", e);
+  }
+};
+
+export const createPost = async ({
+  accountId,
+  content,
+}: {
+  accountId: AccountId;
+  content: { type: string; text: string };
+}) => {
+  try {
+    const buildContract = buildTransaction("set", {
+      receiverId: SOCIAL_CONTRACT_ACCOUNT_ID,
+      args: {
+        data: {
+          [accountId]: {
+            post: {
+              main: JSON.stringify(content),
+            },
+            index: {
+              post: JSON.stringify({
+                key: "main",
+                value: {
+                  type: content.type,
+                },
+              }),
+            },
+          },
+        },
+      },
+    });
+    await naxiosInstance
+      .contractApi()
+      .callMultiple([buildContract])
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } catch (error) {
+    console.error(error);
   }
 };

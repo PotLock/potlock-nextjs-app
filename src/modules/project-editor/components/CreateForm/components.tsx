@@ -14,21 +14,11 @@ import {
 import useProfileData from "@/modules/profile/hooks/data";
 import { useTypedSelector } from "@/store";
 
-export const Row = ({
-  children,
-}: {
-  children: JSX.Element | JSX.Element[];
-}) => (
-  <div className="max-md:grid-cols-[100%] mt-6 grid grid-cols-2 gap-6">
-    {children}
-  </div>
+export const Row = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
+  <div className="max-md:grid-cols-[100%] mt-6 grid grid-cols-2 gap-6">{children}</div>
 );
 
-export const InputContainer = ({
-  children,
-}: {
-  children: JSX.Element | JSX.Element[];
-}) => (
+export const InputContainer = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
   <div className="flex w-full flex-col items-start justify-start gap-[0.45em] p-0 text-[14px]">
     {children}
   </div>
@@ -70,11 +60,7 @@ export const CustomInput = ({
   <InputContainer>
     <Label className={`m-0 ${className}`}>
       {label}
-      {optional && (
-        <span className="font-400 ml-1 text-[14px] text-[#292929]">
-          (optional)
-        </span>
-      )}
+      {optional && <span className="font-400 ml-1 text-[14px] text-[#292929]">(optional)</span>}
     </Label>
     {prefix ? (
       <div className="flex w-full items-center">
@@ -125,12 +111,7 @@ export const SelectCategory = ({
   }, [value, onValuesChange]);
 
   return (
-    <MultiSelector
-      values={value}
-      onValuesChange={setValue}
-      loop={false}
-      className="w-full"
-    >
+    <MultiSelector values={value} onValuesChange={setValue} loop={false} className="w-full">
       <Label>Select category (select multiple) *</Label>
       <MultiSelectorTrigger
         className="py-[.53rem] text-[.875rem] shadow-[0px_0px_0px_1px_#00000038_inset,0px_-1px_1px_0px_#00000038_inset]"
@@ -193,13 +174,7 @@ export const CustomTextForm = ({
 const NO_IMAGE =
   "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
 
-const AccountStackItem = ({
-  accountId,
-  style,
-}: {
-  accountId: string;
-  style?: CSSProperties;
-}) => {
+const AccountStackItem = ({ accountId, style }: { accountId: string; style?: CSSProperties }) => {
   const profileInfo = useProfileData(accountId);
   const [hasError, setHasError] = useState(false);
 
@@ -235,9 +210,7 @@ export const AccountStack = () => {
     <div className="flex">
       {hidden > 0 && (
         <div className="z-10 flex h-[28px] w-[28px] items-center justify-center rounded-[50%] bg-[#dd3345]">
-          <p className="font-600 text-align-center text-[12px] text-white">
-            {hidden}+
-          </p>
+          <p className="font-600 text-align-center text-[12px] text-white">{hidden}+</p>
         </div>
       )}
       {shown.map((memberAccountId, index) => (
@@ -245,9 +218,7 @@ export const AccountStack = () => {
           key={memberAccountId}
           accountId={memberAccountId}
           style={
-            index > 0 || (index === 0 && hidden > 0)
-              ? { marginLeft: -8, zIndex: index * -1 }
-              : {}
+            index > 0 || (index === 0 && hidden > 0) ? { marginLeft: -8, zIndex: index * -1 } : {}
           }
         />
       ))}

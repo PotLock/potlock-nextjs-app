@@ -4,8 +4,7 @@ import { CircleAlert } from "lucide-react";
 
 import { cn } from "../../utils";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 

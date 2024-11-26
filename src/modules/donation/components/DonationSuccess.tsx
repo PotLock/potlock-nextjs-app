@@ -36,14 +36,9 @@ export type DonationSuccessProps = WithDonationFormAPI & {
   closeModal: VoidFunction;
 };
 
-const staticResultIndicatorClassName =
-  "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
+const staticResultIndicatorClassName = "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
 
-export const DonationSuccess = ({
-  form,
-  transactionHash,
-  closeModal,
-}: DonationSuccessProps) => {
+export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationSuccessProps) => {
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
   const [potId] = form.watch(["potAccountId"]);
@@ -57,14 +52,11 @@ export const DonationSuccess = ({
   });
 
   const tokenId =
-    "ft_id" in (finalOutcome ?? {})
-      ? (finalOutcome as DirectDonation).ft_id
-      : NATIVE_TOKEN_ID;
+    "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID;
 
   const { data: token } = ftService.useRegisteredToken({ tokenId });
 
-  const isLoading =
-    isResultLoading || recipient === undefined || token === undefined;
+  const isLoading = isResultLoading || recipient === undefined || token === undefined;
 
   const totalAmountFloat = bigStringToFloat(
     finalOutcome?.total_amount ?? "0",
@@ -149,14 +141,7 @@ export const DonationSuccess = ({
         {isResultLoading ? (
           <Skeleton className="w-41 h-4.5" />
         ) : (
-          <Button
-            asChild
-            variant="standard-filled"
-            className="bg-neutral-950 py-1.5 shadow-none"
-            onClick={() => {
-              window.open(twitterIntent, "_blank");
-            }}
-          >
+          <Button asChild variant="standard-filled" className="bg-neutral-950 py-1.5 shadow-none">
             <Link href="#">
               <span className="prose" un-font="500">
                 {"Share on"}
@@ -172,10 +157,7 @@ export const DonationSuccess = ({
         {isLoading ? (
           <Skeleton className="h-7 w-44" />
         ) : (
-          <TokenTotalValue
-            amountBigString={finalOutcome.total_amount}
-            {...{ tokenId }}
-          />
+          <TokenTotalValue amountBigString={finalOutcome.total_amount} {...{ tokenId }} />
         )}
 
         {isLoading ? (
@@ -185,10 +167,7 @@ export const DonationSuccess = ({
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
 
-              <AccountProfileLink
-                accountId={recipient.id}
-                classNames={{ name: "font-600" }}
-              />
+              <AccountProfileLink accountId={recipient.id} classNames={{ name: "font-600" }} />
             </div>
 
             {pot?.name && (

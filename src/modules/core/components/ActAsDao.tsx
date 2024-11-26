@@ -18,11 +18,7 @@ import {
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { validateUserInDao } from "@/modules/core";
-import {
-  addOrRemoveDaoAddress,
-  markDaoAsDefault,
-  toggleDao,
-} from "@/modules/profile/utils";
+import { addOrRemoveDaoAddress, markDaoAsDefault, toggleDao } from "@/modules/profile/utils";
 import { useTypedSelector } from "@/store";
 
 const ActAsDao = () => {
@@ -34,9 +30,7 @@ const ActAsDao = () => {
 
   const { addresses, defaultAddress, toggle } = actAsDao;
 
-  const handleAddDao = async (
-    e: FormEvent<HTMLFormElement> | FocusEvent<HTMLInputElement>,
-  ) => {
+  const handleAddDao = async (e: FormEvent<HTMLFormElement> | FocusEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (!daoAddress && addresses.length) return;
     else setDaoError("Please enter a valid DAO address.");
@@ -66,12 +60,7 @@ const ActAsDao = () => {
       <div className="flex w-full items-center justify-between">
         <Label htmlFor="act-dao" className="flex items-center gap-2">
           Act as DAO
-          <Image
-            src="/assets/icons/info-icon.svg"
-            width={18}
-            height={18}
-            alt="info"
-          />
+          <Image src="/assets/icons/info-icon.svg" width={18} height={18} alt="info" />
         </Label>
         <Switch
           checked={toggle}
@@ -85,11 +74,7 @@ const ActAsDao = () => {
       </div>
       {toggle && (
         <>
-          <Accordion
-            className="flex w-full flex-col gap-2"
-            type="single"
-            collapsible
-          >
+          <Accordion className="flex w-full flex-col gap-2" type="single" collapsible>
             {addresses?.map((address: string, idx: number) => {
               const isActive = address === defaultAddress;
               return (
@@ -121,9 +106,7 @@ const ActAsDao = () => {
                   </AccordionTrigger>
                   <AccordionContent className="flex items-center gap-2 px-3 py-[10px]">
                     <Checkbox
-                      onCheckedChange={(checked) =>
-                        handleDefaultCheck(!!checked, address)
-                      }
+                      onCheckedChange={(checked) => handleDefaultCheck(!!checked, address)}
                       checked={isActive}
                       className="h-6 w-6 border-[#A6A6A6]"
                       id={`${address}-dao-default`}
@@ -134,11 +117,7 @@ const ActAsDao = () => {
                     >
                       {isActive ? "Default" : "Set as default"}
                     </label>
-                    <Button
-                      className="ml-auto"
-                      variant={"standard-plain"}
-                      asChild
-                    >
+                    <Button className="ml-auto" variant={"standard-plain"} asChild>
                       <div>
                         <Trash
                           width={14}
@@ -165,10 +144,7 @@ const ActAsDao = () => {
               </button>
             </form>
           ) : (
-            <Button
-              onClick={() => setInputActive(!inputActive)}
-              variant="standard-plain"
-            >
+            <Button onClick={() => setInputActive(!inputActive)} variant="standard-plain">
               <Plus color="#A6A6A6" size={14} />
               Add {!addresses?.length ? "" : "another"} DAO
             </Button>

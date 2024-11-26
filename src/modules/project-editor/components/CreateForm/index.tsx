@@ -11,13 +11,7 @@ import ErrorModal from "@/modules/core/components/ErrorModal";
 import routesPath from "@/modules/core/routes";
 import { dispatch, useTypedSelector } from "@/store";
 
-import {
-  AccountStack,
-  CustomInput,
-  CustomTextForm,
-  Row,
-  SelectCategory,
-} from "./components";
+import { AccountStack, CustomInput, CustomTextForm, Row, SelectCategory } from "./components";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
 import { useCreateProjectForm } from "../../hooks/forms";
@@ -38,9 +32,7 @@ const CreateForm = () => {
   const { projectId: projectIdPathParam } = router.query;
 
   const projectId =
-    typeof projectIdPathParam === "string"
-      ? projectIdPathParam
-      : projectIdPathParam?.at(0);
+    typeof projectIdPathParam === "string" ? projectIdPathParam : projectIdPathParam?.at(0);
 
   const projectProps = useTypedSelector((state) => state.projectEditor);
   const { wallet, isWalletReady } = useWallet();
@@ -148,28 +140,16 @@ const CreateForm = () => {
 
   // Wait for wallet
   if (!isWalletReady) {
-    return (
-      <InfoSegment title="Checking account." description="Please, wait..." />
-    );
+    return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
-  if (
-    isAuthenticated &&
-    projectProps.checkPreviousProjectDataStatus !== "ready"
-  ) {
-    return (
-      <InfoSegment title="Checking account." description="Please, wait..." />
-    );
+  if (isAuthenticated && projectProps.checkPreviousProjectDataStatus !== "ready") {
+    return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
   // must be signed in
   if (!isAuthenticated) {
-    return (
-      <InfoSegment
-        title="Not logged in!"
-        description="You must log in first!"
-      />
-    );
+    return <InfoSegment title="Not logged in!" description="You must log in first!" />;
   }
 
   // If it is Edit & not the owner
@@ -191,17 +171,12 @@ const CreateForm = () => {
     return <DAOInProgress />;
   }
 
-  if (
-    projectProps.submissionStatus === "done" &&
-    location.pathname === routesPath.CREATE_PROJECT
-  ) {
+  if (projectProps.submissionStatus === "done" && location.pathname === routesPath.CREATE_PROJECT) {
     return (
       <div className="md:p-[4rem_0px] m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px]">
         <SuccessfulRegister
           registeredProject={
-            projectProps.isDao
-              ? projectProps.daoAddress || ""
-              : wallet?.accountId || ""
+            projectProps.isDao ? projectProps.daoAddress || "" : wallet?.accountId || ""
           }
           isEdit={projectProps.isEdit}
         />
@@ -262,9 +237,7 @@ const CreateForm = () => {
         />
 
         <SubHeader
-          title={
-            projectProps.isDao ? "Project details (DAO)" : "Project details"
-          }
+          title={projectProps.isDao ? "Project details (DAO)" : "Project details"}
           required
           className="mt-16"
         />

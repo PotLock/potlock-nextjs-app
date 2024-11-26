@@ -23,11 +23,9 @@ export const ProjectCardSkeleton = () => {
         </div>
         {/* Tags */}
         <div className="flex flex-wrap gap-2 text-base">
-          {Array.from({ length: 4 }, (_, index) => `key_${index}`).map(
-            (key) => (
-              <Skeleton className="h-9 w-24" key={key} />
-            ),
-          )}
+          {Array.from({ length: 4 }, (_, index) => `key_${index}`).map((key) => (
+            <Skeleton className="h-9 w-24" key={key} />
+          ))}
         </div>
         {/* Donations Info */}
         <div className="mt-auto flex items-center gap-4">

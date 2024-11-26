@@ -37,18 +37,15 @@ const ChallengeResolveModal = ({
   });
 
   const reason = adminModalChallengerId
-    ? payoutsChallenges.find(
-        (challenge) => challenge.challenger_id === adminModalChallengerId,
-      )?.reason
+    ? payoutsChallenges.find((challenge) => challenge.challenger_id === adminModalChallengerId)
+        ?.reason
     : "";
 
   return (
     <Dialog open={open}>
       <DialogContent className="max-w-130" onCloseClick={onCloseClick}>
         <DialogHeader>
-          <DialogTitle>
-            Update Challenge from {adminModalChallengerId}
-          </DialogTitle>
+          <DialogTitle>Update Challenge from {adminModalChallengerId}</DialogTitle>
         </DialogHeader>
 
         <Form {...form} onSubmit={onSubmit}>

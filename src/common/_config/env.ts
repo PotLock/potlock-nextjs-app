@@ -7,11 +7,7 @@ export const supportedNetworks = ["mainnet" as const, "testnet" as const];
 
 export type SupportedNetwork = UnionFromStringList<typeof supportedNetworks>;
 
-export const envTags = [
-  "production" as const,
-  "staging" as const,
-  "test" as const,
-];
+export const envTags = ["production" as const, "staging" as const, "test" as const];
 
 export type EnvTag = UnionFromStringList<typeof envTags>;
 
@@ -33,9 +29,7 @@ const getDeFiConfig = (envConfig: EnvConfig) => ({
   refFinance: {
     exchangeContract: {
       accountId:
-        envConfig.network === "mainnet"
-          ? "v2.ref-finance.near"
-          : "ref-finance-101.testnet",
+        envConfig.network === "mainnet" ? "v2.ref-finance.near" : "ref-finance-101.testnet",
     },
   },
 });
@@ -45,9 +39,7 @@ export const getEnvConfig = () => {
 
   const activeEnvironmentConfig =
     envConfigRegistry[
-      isEnvTag((deploymentEnvTag ?? "test") as EnvTag)
-        ? (deploymentEnvTag as EnvTag)
-        : "test"
+      isEnvTag((deploymentEnvTag ?? "test") as EnvTag) ? (deploymentEnvTag as EnvTag) : "test"
     ];
 
   return {

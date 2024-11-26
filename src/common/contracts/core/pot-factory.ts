@@ -19,17 +19,14 @@ export const contractApi = naxiosInstance.contractApi({
   cache: new MemoryCache({ expirationTime: 5 }), // 10 seg
 });
 
-export const get_config = () =>
-  contractApi.view<{}, PotFactoryConfig>("get_config");
+export const get_config = () => contractApi.view<{}, PotFactoryConfig>("get_config");
 
 export const calculate_min_deployment_deposit = (args: {
   args: PotArgs;
 }): Promise<undefined | string> =>
   contractApi
     .view<typeof args, string>("calculate_min_deployment_deposit", { args })
-    .then((amount) =>
-      Big(amount).plus(Big("20000000000000000000000")).toFixed(),
-    )
+    .then((amount) => Big(amount).plus(Big("20000000000000000000000")).toFixed())
     .catch((error) => {
       console.error(error);
       return undefined;
@@ -49,10 +46,7 @@ export const deploy_pot = async (args: {
 export const isDeploymentAvailable = async ({ accountId }: ByAccountId) => {
   const config = await get_config();
   if (config) {
-    return (
-      !config.require_whitelist ||
-      config.whitelisted_deployers.includes(accountId)
-    );
+    return !config.require_whitelist || config.whitelisted_deployers.includes(accountId);
   }
 
   return false;

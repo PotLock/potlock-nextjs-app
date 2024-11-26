@@ -12,13 +12,11 @@ const PotsSubPage = () => {
   const router = useRouter();
   const { userId: userIdPathParam } = router.query;
 
-  const userId =
-    typeof userIdPathParam === "string"
-      ? userIdPathParam
-      : userIdPathParam?.at(0);
+  const userId = typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0);
 
-  const { data: paginatedPotApplications, isLoading } =
-    indexer.useAccountPotApplications({ accountId: userId });
+  const { data: paginatedPotApplications, isLoading } = indexer.useAccountPotApplications({
+    accountId: userId,
+  });
 
   const potApplications = paginatedPotApplications?.results ?? [];
 

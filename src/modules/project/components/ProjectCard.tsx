@@ -27,11 +27,7 @@ export type ProjectCardProps = {
   payoutDetails?: PayoutDetailed;
 };
 
-export const ProjectCard = ({
-  projectId,
-  allowDonate = true,
-  payoutDetails,
-}: ProjectCardProps) => {
+export const ProjectCard = ({ projectId, allowDonate = true, payoutDetails }: ProjectCardProps) => {
   const { openDonationModal } = useDonation({ accountId: projectId });
 
   const { isLoading: isAccountLoading, data: account } = indexer.useAccount({
@@ -43,8 +39,7 @@ export const ProjectCard = ({
     tokenId: NATIVE_TOKEN_ID,
   });
 
-  const { name, description, plCategories } =
-    account?.near_social_profile_data ?? {};
+  const { name, description, plCategories } = account?.near_social_profile_data ?? {};
 
   const categories = plCategories ? JSON.parse(plCategories) : [];
 
@@ -118,9 +113,7 @@ export const ProjectCard = ({
                   {`$${account?.total_donations_in_usd ?? "0"}`}
                 </div>
 
-                <div className="text-sm font-medium leading-4  text-neutral-600">
-                  Raised
-                </div>
+                <div className="text-sm font-medium leading-4  text-neutral-600">Raised</div>
               </div>
 
               {payoutDetails && (
@@ -137,11 +130,7 @@ export const ProjectCard = ({
             </div>
 
             {allowDonate && (
-              <Button
-                className="w-full"
-                variant="standard-outline"
-                onClick={openDonationModal}
-              >
+              <Button className="w-full" variant="standard-outline" onClick={openDonationModal}>
                 Donate
               </Button>
             )}
@@ -163,9 +152,7 @@ export const ProjectCard = ({
                 Estimated Matched Amount
               </span>
 
-              <span className="font-600 text-nowrap">
-                {estimatedMatchedAmount}
-              </span>
+              <span className="font-600 text-nowrap">{estimatedMatchedAmount}</span>
             </div>
           )}
         </div>

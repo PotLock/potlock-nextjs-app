@@ -19,21 +19,8 @@ const addTrailingZeros = (number: number) => {
 const FALLBACK_URL =
   "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
 
-const DonationItem = ({
-  donation,
-  projectId,
-}: {
-  donation: Donation;
-  projectId: string;
-}) => {
-  const {
-    donor,
-    total_amount,
-    net_amount: amount,
-    pot,
-    donated_at,
-    token,
-  } = donation;
+const DonationItem = ({ donation, projectId }: { donation: Donation; projectId: string }) => {
+  const { donor, total_amount, net_amount: amount, pot, donated_at, token } = donation;
 
   const { id: donorId } = donor;
   const baseCurrency = pot?.base_currency;
@@ -94,11 +81,7 @@ const DonationItem = ({
           {ftId === "near" ? (
             <NearIcon />
           ) : (
-            <img
-              className="h-[21px] w-[21px]"
-              src={token.icon || ""}
-              alt="Token icon"
-            />
+            <img className="h-[21px] w-[21px]" src={token.icon || ""} alt="Token icon" />
           )}
         </div>
         {addTrailingZeros(donationAmount)}

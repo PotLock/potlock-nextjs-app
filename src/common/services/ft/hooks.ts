@@ -10,14 +10,9 @@ import { ByTokenId } from "@/common/types";
 import { useFtRegistryStore } from "./models";
 
 export const useTokenRegistry = () => {
-  const { data, error } = useFtRegistryStore(
-    useShallow(pick(["data", "error"])),
-  );
+  const { data, error } = useFtRegistryStore(useShallow(pick(["data", "error"])));
 
-  const isLoading = useMemo(
-    () => data === undefined && error === undefined,
-    [data, error],
-  );
+  const isLoading = useMemo(() => data === undefined && error === undefined, [data, error]);
 
   return { isLoading, data, error };
 };
@@ -37,9 +32,7 @@ export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
   const error = useMemo(
     () =>
       metadata === null
-        ? new Error(
-            `Fungible token ${tokenId} is not supported on this platform.`,
-          )
+        ? new Error(`Fungible token ${tokenId} is not supported on this platform.`)
         : undefined,
 
     [metadata, tokenId],
@@ -60,8 +53,5 @@ export const useTokenUsdDisplayValue = ({
   const { data: oneTokenUsdPrice } = coingecko.useTokenUsdPrice({ tokenId });
   const value = oneTokenUsdPrice ? amountFloat * oneTokenUsdPrice : 0.0;
 
-  return useMemo(
-    () => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`),
-    [value],
-  );
+  return useMemo(() => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`), [value]);
 };

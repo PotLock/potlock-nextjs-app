@@ -31,71 +31,56 @@ export const getPotEditorDeploymentSchema = () =>
       path: ["public_round_end_ms"],
     });
 
-export type PotEditorDeploymentSchema = ReturnType<
-  typeof getPotEditorDeploymentSchema
->;
+export type PotEditorDeploymentSchema = ReturnType<typeof getPotEditorDeploymentSchema>;
 
 export type PotEditorDeploymentInputs = FromSchema<PotEditorDeploymentSchema>;
 
-export const potEditorDeploymentCrossFieldValidationTargets: (keyof PotEditorDeploymentInputs)[] =
-  ["application_end_ms", "public_round_end_ms", "public_round_start_ms"];
+export const potEditorDeploymentCrossFieldValidationTargets: (keyof PotEditorDeploymentInputs)[] = [
+  "application_end_ms",
+  "public_round_end_ms",
+  "public_round_start_ms",
+];
 
 export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
   const schema =
     potIndexedData === undefined
       ? potSchema
       : potSchema.extend({
-          application_start_ms: timestamp
-            .describe("Application period start timestamp.")
-            .refine(
-              (value) =>
-                value >=
-                Temporal.Instant.from(potIndexedData.application_start)
-                  .epochMilliseconds,
+          application_start_ms: timestamp.describe("Application period start timestamp.").refine(
+            (value) =>
+              value >= Temporal.Instant.from(potIndexedData.application_start).epochMilliseconds,
 
-              {
-                message: "Cannot be earlier than the date set upon deployment.",
-              },
-            ),
+            {
+              message: "Cannot be earlier than the date set upon deployment.",
+            },
+          ),
 
-          application_end_ms: timestamp
-            .describe("Application period end timestamp.")
-            .refine(
-              (value) =>
-                value >=
-                Temporal.Instant.from(potIndexedData.application_end)
-                  .epochMilliseconds,
+          application_end_ms: timestamp.describe("Application period end timestamp.").refine(
+            (value) =>
+              value >= Temporal.Instant.from(potIndexedData.application_end).epochMilliseconds,
 
-              {
-                message: "Cannot be earlier than the date set upon deployment.",
-              },
-            ),
+            {
+              message: "Cannot be earlier than the date set upon deployment.",
+            },
+          ),
 
-          public_round_start_ms: timestamp
-            .describe("Matching round start timestamp.")
-            .refine(
-              (value) =>
-                value >=
-                Temporal.Instant.from(potIndexedData.matching_round_start)
-                  .epochMilliseconds,
+          public_round_start_ms: timestamp.describe("Matching round start timestamp.").refine(
+            (value) =>
+              value >= Temporal.Instant.from(potIndexedData.matching_round_start).epochMilliseconds,
 
-              {
-                message: "Cannot be earlier than the date set upon deployment.",
-              },
-            ),
+            {
+              message: "Cannot be earlier than the date set upon deployment.",
+            },
+          ),
 
-          public_round_end_ms: timestamp
-            .describe("Matching round end timestamp.")
-            .refine(
-              (value) =>
-                value >=
-                Temporal.Instant.from(potIndexedData.matching_round_end)
-                  .epochMilliseconds,
+          public_round_end_ms: timestamp.describe("Matching round end timestamp.").refine(
+            (value) =>
+              value >= Temporal.Instant.from(potIndexedData.matching_round_end).epochMilliseconds,
 
-              {
-                message: "Cannot be earlier than the date set upon deployment.",
-              },
-            ),
+            {
+              message: "Cannot be earlier than the date set upon deployment.",
+            },
+          ),
         });
 
   /**
@@ -119,11 +104,12 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
     });
 };
 
-export type PotEditorSettingsSchema = ReturnType<
-  typeof getPotEditorSettingsSchema
->;
+export type PotEditorSettingsSchema = ReturnType<typeof getPotEditorSettingsSchema>;
 
 export type PotEditorSettings = FromSchema<PotEditorSettingsSchema>;
 
-export const potEditorSettingsCrossFieldValidationTargets: (keyof PotEditorSettings)[] =
-  ["application_end_ms", "public_round_end_ms", "public_round_start_ms"];
+export const potEditorSettingsCrossFieldValidationTargets: (keyof PotEditorSettings)[] = [
+  "application_end_ms",
+  "public_round_end_ms",
+  "public_round_start_ms",
+];

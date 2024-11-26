@@ -4,9 +4,7 @@ import { Button } from "@/common/ui/components";
 import { useTypedSelector } from "@/store";
 
 const DAOInProgress = () => {
-  const { daoProjectProposal, daoAddress } = useTypedSelector(
-    (state) => state.projectEditor,
-  );
+  const { daoProjectProposal, daoAddress } = useTypedSelector((state) => state.projectEditor);
 
   if (!daoProjectProposal || !daoAddress) {
     return "";
@@ -17,18 +15,13 @@ const DAOInProgress = () => {
       className="flex w-full flex-col items-center justify-center p-[32px_16px]"
       style={{ wordWrap: "break-word" }}
     >
-      <h1 className="font-600 mb-4 text-center">
-        You have a DAO proposal in progress.
-      </h1>
+      <h1 className="font-600 mb-4 text-center">You have a DAO proposal in progress.</h1>
       <h5 className="mb-1 text-center" style={{ wordWrap: "break-word" }}>
         Please come back once voting on your proposal has been completed.
       </h5>
-      <p
-        className="sans-serif text-center italic"
-        style={{ wordWrap: "break-word" }}
-      >
-        <strong>NB:</strong> This proposal consists of 2 steps (individual
-        proposals): Register information on NEAR Social and register on Potlock.
+      <p className="sans-serif text-center italic" style={{ wordWrap: "break-word" }}>
+        <strong>NB:</strong> This proposal consists of 2 steps (individual proposals): Register
+        information on NEAR Social and register on Potlock.
       </p>
       <Link
         className="mt-4"

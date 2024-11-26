@@ -7,10 +7,7 @@ import { NATIVE_TOKEN_DECIMALS } from "../constants";
  * @deprecated Use `yoctoNearToFloat`
  */
 export const yoctosToNear = (amountYoctoNear: string, abbreviate?: boolean) => {
-  return (
-    formatWithCommas(Big(amountYoctoNear).div(1e24).toFixed(2)) +
-    (abbreviate ? "N" : " NEAR")
-  );
+  return formatWithCommas(Big(amountYoctoNear).div(1e24).toFixed(2)) + (abbreviate ? "N" : " NEAR");
 };
 
 export const bigNumFromString = (amount: string, decimals: number) =>

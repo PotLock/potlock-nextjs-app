@@ -11,11 +11,8 @@ export default function RegisterPage() {
   useInitProjectState();
 
   // state used to show spinner during the data post
-  const {
-    submissionStatus,
-    checkRegistrationStatus,
-    checkPreviousProjectDataStatus,
-  } = useTypedSelector((state) => state.projectEditor);
+  const { submissionStatus, checkRegistrationStatus, checkPreviousProjectDataStatus } =
+    useTypedSelector((state) => state.projectEditor);
 
   const showSpinner = isAuthenticated
     ? submissionStatus === "sending" ||
@@ -36,9 +33,7 @@ export default function RegisterPage() {
         </h1>
 
         <h2 className="prose md:text-lg max-w-[600px] text-center">
-          {
-            "Create a profile for your project to receive donations and qualify for funding rounds."
-          }
+          {"Create a profile for your project to receive donations and qualify for funding rounds."}
         </h2>
       </section>
 

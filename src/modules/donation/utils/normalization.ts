@@ -1,10 +1,7 @@
 import { floatToYoctoNear } from "@/common/lib";
 
 import { DonationInputs } from "../models";
-import {
-  DonationBatchCallDraft,
-  DonationGroupAllocationStrategyEnum,
-} from "../types";
+import { DonationBatchCallDraft, DonationGroupAllocationStrategyEnum } from "../types";
 
 export const donationInputsToBatchDonationDraft = ({
   potAccountId,
@@ -30,13 +27,9 @@ export const donationInputsToBatchDonationDraft = ({
           : txs.concat([
               {
                 args: {
-                  ...(potAccountId
-                    ? { project_id: account_id }
-                    : { recipient_id: account_id }),
+                  ...(potAccountId ? { project_id: account_id } : { recipient_id: account_id }),
 
-                  ...(potAccountId && bypassChefFee
-                    ? { custom_chef_fee_basis_points: 0 }
-                    : {}),
+                  ...(potAccountId && bypassChefFee ? { custom_chef_fee_basis_points: 0 } : {}),
 
                   referrer_id: referrerAccountId,
                   bypass_protocol_fee: bypassProtocolFee,

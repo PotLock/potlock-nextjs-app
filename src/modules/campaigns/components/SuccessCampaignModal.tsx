@@ -29,10 +29,7 @@ export const SuccessCampaignModal: React.FC<SuccessModalProps> = ({
         className="md:w-[604px] h-[500px] w-[90%]  max-w-full rounded-md bg-white shadow-lg"
       >
         <div className="flex justify-end p-4">
-          <button
-            onClick={onClose}
-            className="font-bold text-gray-500 hover:text-gray-700"
-          >
+          <button onClick={onClose} className="font-bold text-gray-500 hover:text-gray-700">
             X
           </button>
         </div>

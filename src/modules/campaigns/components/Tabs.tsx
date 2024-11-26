@@ -17,10 +17,7 @@ const Tabs = ({ navOptions, selectedTab, onSelect, asLink }: Props) => {
   const router = useRouter();
   const { campaignId: campaignIdParam } = router.query;
 
-  const campaignId =
-    typeof campaignIdParam === "string"
-      ? campaignIdParam
-      : campaignIdParam?.at(0);
+  const campaignId = typeof campaignIdParam === "string" ? campaignIdParam : campaignIdParam?.at(0);
 
   return (
     <div className="mb-8 flex w-full flex-row flex-wrap gap-2">
