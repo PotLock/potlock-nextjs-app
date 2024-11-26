@@ -28,7 +28,7 @@ export const useProjectsFilters = (
     setLoading(true);
     try {
       if (data) {
-        setRegistrations(data);
+        setRegistrations(data.results);
         setFilteredProjects(filteredRegistrations);
       }
     } catch (error) {
@@ -49,8 +49,8 @@ export const useProjectsFilters = (
     try {
       if (filteredRegistrations) {
         setLoading(true);
-        setCurrentFilterCategory(filteredRegistrations.join(","));
-        setCurrentFilterStatus(filteredRegistrations.join(","));
+        setCurrentFilterCategory(filteredRegistrations.results.join(","));
+        setCurrentFilterStatus(filteredRegistrations.results.join(","));
       }
     } catch (error) {
       console.log("Error fetching filtered registrations", error);

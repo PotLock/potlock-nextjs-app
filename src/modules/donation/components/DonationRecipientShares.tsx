@@ -37,21 +37,15 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
     status: PotApplicationStatus.Approved,
   });
 
-  const { data: listRegistrations = [], error: listRegistrationsError } =
-    indexer.useListRegistrations({
-      listId,
-      // TODO: Consider integrating infinite scroll in the future instead
-      page_size: 999,
-      status: ListRegistrationStatus.Approved,
-    });
-
-  const handleEvenShareAllocation = useDonationEvenShareAllocation({
-    form,
+  const { data: listRegistrations, error: listRegistrationsError } = indexer.useListRegistrations({
+    listId,
+    // TODO: Consider integrating infinite scroll in the future instead
+    page_size: 999,
+    status: ListRegistrationStatus.Approved,
   });
 
-  const handleManualShareAllocation = useDonationManualShareAllocation({
-    form,
-  });
+  const handleEvenShareAllocation = useDonationEvenShareAllocation({ form });
+  const handleManualShareAllocation = useDonationManualShareAllocation({ form });
 
   const errorDetails = useMemo(() => {
     if (potApplicationsError) {
@@ -77,7 +71,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
 
   const recipientCandidateIds = useMemo(
     () =>
-      [...potApplications, ...listRegistrations].map((entry) =>
+      [...potApplications, ...(listRegistrations?.results ?? [])].map((entry) =>
         "registrant" in entry ? entry.registrant.id : entry.applicant.id,
       ),
 

@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "tailwind.config.ts",
-    "css": "src/common/ui/global.css",
+    "css": "src/common/ui/styles/theme.css",
     "baseColor": "slate",
     "cssVariables": true,
     "prefix": ""
@@ -13,6 +13,6 @@
   "aliases": {
     "components": "src/common/ui",
     "utils": "@/common/ui/utils",
-    "ui": "src/common/ui/components"
+    "ui": "@/common/ui/components"
   }
 }

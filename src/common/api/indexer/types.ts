@@ -1,6 +1,10 @@
-import { ListRegistration, Pot, PotApplication } from "./generated/client";
+import { ListRegistration, Pot, PotApplication } from "./internal/client.generated";
 
-export * from "./generated/client";
+/**
+ *! Heads Up!
+ *!  This won't reexport enums as well as object mappings, make manual reexports below if needed.
+ */
+export type * from "./internal/client.generated";
 
 export type PotId = Pot["account"];
 
@@ -8,14 +12,10 @@ export interface ByPotId {
   potId: PotId;
 }
 
-export interface AcceptsPotData {
-  pot: Pot;
-}
-
 export {
   StatusF24Enum as ListRegistrationStatus,
   Status68eEnum as PotApplicationStatus,
-} from "./generated/client";
+} from "./internal/client.generated";
 
 export type ListRegistrationStatusString = ListRegistration["status"];
 export type PotApplicationStatusString = PotApplication["status"];

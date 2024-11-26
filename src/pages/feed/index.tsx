@@ -15,13 +15,13 @@ export default function GlobalFeedsPage() {
   const loadingRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(40);
 
-  const { data: registrations = [] } = indexer.useListRegistrations({
+  const { data: registrations } = indexer.useListRegistrations({
     listId: POTLOCK_REGISTRY_LIST_ID,
     page_size: 999,
   });
 
   const accountIds = useMemo(
-    () => registrations.map(({ registrant }) => registrant.id),
+    () => registrations?.results.map(({ registrant }) => registrant.id) ?? [],
     [registrations],
   );
 
