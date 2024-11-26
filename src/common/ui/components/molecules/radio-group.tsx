@@ -39,8 +39,8 @@ export const RadioGroupItem = forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "border-1 rounded-md text-current ring-offset-background",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "border-1 ring-offset-background rounded-md text-current",
+        "focus-visible:ring-ring focus:outline-none focus-visible:ring-2",
         "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
 
         {

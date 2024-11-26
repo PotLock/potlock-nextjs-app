@@ -15,7 +15,7 @@ export const TokenBalance: React.FC<TokenBalanceProps> = ({ tokenId, classNames 
   return !token ? (
     <>
       {tokenError ? (
-        <span className={cn("prose text-sm text-destructive", classNames?.amount)}>
+        <span className={cn("prose text-destructive text-sm", classNames?.amount)}>
           {tokenError.message}
         </span>
       ) : (

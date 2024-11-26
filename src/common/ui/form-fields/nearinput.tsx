@@ -28,7 +28,7 @@ export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
           <div un-flex="~" un-items="center" un-gap="1">
             {label && <FormLabel className="font-500 text-sm">{label}</FormLabel>}
 
-            {props.required && <span className="line-height-none text-xl text-destructive">*</span>}
+            {props.required && <span className="line-height-none text-destructive text-xl">*</span>}
           </div>
 
           {labelExtension ??
