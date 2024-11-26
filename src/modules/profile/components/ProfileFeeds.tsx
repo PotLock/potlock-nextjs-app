@@ -63,19 +63,21 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
       )}
       <InfiniteScrollWrapper
         className="space-y-4"
-        dataLength={40}
+        dataLength={100}
         scrollThreshold={1}
         hasMore={true}
         next={loadMorePosts}
         loader={
-          <div ref={loadingRef} className="mt-4 min-h-12 text-center">
-            <div className="">Loading...</div>
-          </div>
+          isLoading && (
+            <div ref={loadingRef} className="mt-4 min-h-12 text-center">
+              <div className="">Loading...</div>
+            </div>
+          )
         }
       >
         {posts?.map((post) => <FeedCard key={post?.blockHeight} post={post} />)}
       </InfiniteScrollWrapper>
-      {posts.length === 0 && <NoResults />}
+      {posts.length === 0 && !isLoading && <NoResults />}
     </div>
   );
 };
