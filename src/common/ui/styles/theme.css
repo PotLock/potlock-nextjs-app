@@ -54,6 +54,9 @@
     --accent: 30 89% 96%;
     --accent-foreground: 21 82% 53%;
 
+    --success: 86 78% 35%;
+    --success-foreground: 210 40% 98%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
@@ -107,12 +110,6 @@
     --button-tonal: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
       0px 1px 1px 1px #000 inset, 0px 0px 0px 2px #000 inset,
       0px 1.5px 0px 0px rgba(255, 255, 255, 0.84);
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
   }
 }
 

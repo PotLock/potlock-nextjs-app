@@ -72,25 +72,20 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
       <div
         className={cn(
-          "lg:p-2 flex flex-col items-center justify-start",
-          "rounded-2xl bg-[#f7f7f7] p-2",
+          "lg:p-2 flex flex-col items-center justify-start p-1",
+          "md:w-a md:bg-neutral-50 w-full rounded-2xl",
         )}
       >
         {pot ? <PotTimeline {...{ potId }} /> : <Skeleton className="h-96 w-full" />}
 
         <div
           className={cn(
-            "min-h-122 flex flex-col items-start justify-start p-14",
-            "lg:gap-8 gap-10 self-stretch rounded-lg bg-background",
+            "min-h-122 md:p-14 flex flex-col items-start justify-start",
+            "lg:gap-8 bg-background gap-10 self-stretch rounded-lg",
           )}
         >
           <div className="lg:flex-row flex flex-col items-start justify-between gap-10 self-stretch">
-            <div
-              className={cn(
-                "inline-flex w-[506px] flex-col",
-                "items-start justify-start gap-10 self-stretch",
-              )}
-            >
+            <div className="max-w-126.5 min-w-87.5 flex flex-col items-start justify-start gap-10">
               {pot ? (
                 <div
                   className={cn(
@@ -110,31 +105,10 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                 {pot ? (
                   <div
                     className={cn(
-                      "self-stretch",
-                      "text-[17px] font-normal leading-normal text-neutral-600",
+                      "self-stretch text-[17px] font-normal leading-normal text-neutral-600",
                     )}
                   >
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        a: ({ node: _, ...props }) => (
-                          <a
-                            {...props}
-                            className="text-blue-500 underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                            }}
-                          >
-                            {"More Info"}
-                          </a>
-                        ),
-                      }}
-                      className="markdown-link"
-                    >
-                      {pot.description}
-                    </ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{pot.description}</ReactMarkdown>
                   </div>
                 ) : (
                   <Skeleton className="h-9 w-full" />
@@ -170,8 +144,8 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
           <div
             className={cn(
-              "inline-flex items-center justify-between self-stretch",
-              "w-full border-t border-neutral-200 pt-4",
+              "md:flex-row flex flex-col items-center justify-between gap-8",
+              "w-full self-stretch border-t border-neutral-200 pt-4",
             )}
           >
             <div className="inline-flex flex-col items-start justify-center gap-1">

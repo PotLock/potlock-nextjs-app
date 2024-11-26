@@ -158,7 +158,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
       </Container>
 
       <svg
-        className="xl:display-[none] transition-300 w-4 transition-all ease-in-out"
+        className="xl:not-displayed transition-300 w-4 transition-all ease-in-out"
         style={{
           rotate: isMobileMenuActive ? "180deg" : "0deg",
         }}

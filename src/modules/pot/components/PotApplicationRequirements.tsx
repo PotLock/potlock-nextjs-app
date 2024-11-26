@@ -13,7 +13,7 @@ export const PotApplicationRequirements: React.FC<PotApplicationRequirementsProp
   return (
     <div
       className={cn(
-        "xl:w-126.5 flex h-[232px] w-full flex-col items-start justify-start",
+        "xl:w-126.5 min-w-87.5 lg:w-fit flex h-[232px] w-full flex-col items-start justify-start",
         "rounded-2xl bg-[#f7f7f7] p-2",
       )}
     >
@@ -42,7 +42,7 @@ export const PotApplicationRequirements: React.FC<PotApplicationRequirementsProp
             className={cn("inline-flex items-center justify-start gap-2 self-stretch")}
             key={text}
           >
-            <MdCheckCircleOutline className="relative h-6 w-6" />
+            <MdCheckCircleOutline className="color-success relative h-6 w-6" />
             <span className="text-sm font-normal leading-tight text-neutral-600">{text}</span>
           </div>
         ))}
