@@ -23,8 +23,7 @@ const links = [
   },
 
   { label: "Feed", url: routesPath.FEED, disabled: false },
-  // { label: "Donors", url: routesPath.DONORS, disabled: false },
-
+  { label: "Donors", url: routesPath.DONORS, disabled: false },
   {
     label: "Lists",
     url: routesPath.LIST,

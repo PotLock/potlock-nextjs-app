@@ -4,6 +4,7 @@
  * See https://atomicdesign.bradfrost.com/chapter-2/
  */
 export * from "./dropdown-menu";
+export * from "./filter-chip";
 export * from "./InfiniteScroll";
 export * from "./popover";
 export * from "./scroll-area";

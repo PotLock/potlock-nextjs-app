@@ -20,6 +20,10 @@ You can see original features <https://potlock.notion.site/All-Features-Potlock-
 
 Core contracts can be found at <https://github.com/PotLock/core> and documentation <https://docs.potlock.io/contracts/contracts-overview>
 
+You can see original features <https://potlock.notion.site/All-Features-Potlock-NextJS-App-5f543fa8b31840aa88bf5b8cf57ead3d?pvs=4>
+
+Core contracts can be found at <https://github.com/PotLock/core> and documentation <https://docs.potlock.io/contracts/contracts-overview>
+
 ## Development
 
 ### Getting Started
