@@ -4,9 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import ReactMarkdown from "react-markdown";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import Markdown from "react-markdown";
 
 import { fetchTimeByBlockHeight } from "@/common/api/near-social";
+import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 
@@ -18,6 +20,7 @@ interface PostType {
     accountId: string;
     content: string;
     blockHeight: bigint;
+    imageIPFSHash?: string;
   };
 }
 
@@ -59,7 +62,7 @@ export const FeedCard = ({ post }: PostType) => {
           <div
             role="button"
             onClick={handleProfileClick}
-            className="  flex items-center space-x-2 hover:underline"
+            className="flex items-center space-x-2 hover:underline"
           >
             <Image
               src={profileImg}
@@ -71,7 +74,7 @@ export const FeedCard = ({ post }: PostType) => {
               className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
               alt="profile-image"
             />
-            <p className="font-bold text-black ">{truncate(post.accountId, 20)}</p>
+            <p className="font-bold text-black ">{truncate(post.accountId, 10)}</p>
           </div>
           <div className="flex items-center">
             {time && (
@@ -86,7 +89,7 @@ export const FeedCard = ({ post }: PostType) => {
       </div>
 
       <div className="mt-2 text-black">
-        <ReactMarkdown
+        <Markdown
           components={{
             a: ({ node, ...props }) => (
               <a
@@ -95,19 +98,28 @@ export const FeedCard = ({ post }: PostType) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(event) => {
-                  event.stopPropagation(); // Prevent the click from bubbling up
+                  event.stopPropagation();
                 }}
               />
             ),
             img: (node) => (
               <div className="mt-4 flex w-full items-center justify-center">
-                <img src={node.src} alt="" width={500} height={300} />
+                <img src={node.src} alt="" className="w-100 h-max object-contain" />
               </div>
             ),
           }}
         >
           {post.content}
-        </ReactMarkdown>
+        </Markdown>
+        {post?.imageIPFSHash && (
+          <LazyLoadImage
+            src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
+            alt=""
+            className="w-100 h-max object-contain"
+            width={500}
+            height={500}
+          />
+        )}
       </div>
     </div>
   );

@@ -69,6 +69,7 @@ export const fetchAccountFeedPosts = async ({ accountId, offset = 20 }: any) => 
         accountId: accountId,
         blockHeight: item.blockHeight,
         content: parsedContent.text || "No content available",
+        imageIPFSHash: parsedContent?.image?.ipfs_cid || "",
       };
     }),
   );
@@ -80,7 +81,12 @@ export const fetchSinglePost = async ({
 }: {
   accountId: string;
   blockHeight: number | bigint;
-}): Promise<{ accountId: string; blockHeight: number; content: string }> => {
+}): Promise<{
+  accountId: string;
+  blockHeight: number;
+  content: string;
+  imageIPFSHash?: string;
+}> => {
   try {
     // Fetch the post using the accountId and blockHeight
     const getResult = (await nearSocialClient.get({
@@ -102,6 +108,7 @@ export const fetchSinglePost = async ({
       accountId: accountId,
       blockHeight: Number(blockHeight),
       content: parsedContent.text || "No content available",
+      imageIPFSHash: parsedContent?.image?.ipfs_cid || "",
     };
   } catch (error) {
     console.error("Error fetching single post:", error);

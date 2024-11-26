@@ -84,6 +84,11 @@ export const POT_TABS_CONFIG = [
     href: "/payouts",
   },
   {
+    label: "Feeds",
+    id: "feeds",
+    href: "/feeds",
+  },
+  {
     label: "Settings",
     id: "settings",
     href: "/settings",

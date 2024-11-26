@@ -4,9 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
+import { walletApi } from "@/common/api/near";
 import { fetchAccountFeedPosts } from "@/common/api/near-social";
 import { IndexPostResultItem, ProfileFeedsProps } from "@/common/contracts/social/types";
 
+import { CreatePost } from "./CreatePost";
 import { FeedCard } from "./FeedCard";
 
 export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
@@ -25,7 +27,6 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
 
   const loadMorePosts = async () => {
     setIsLoading(true);
-
     const fetchedPosts = await fetchAccountFeedPosts({
       accountId,
       offset,
@@ -54,6 +55,7 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
 
   return (
     <div className="my-8 h-full max-h-80 w-full">
+      {accountId === walletApi?.accountId && <CreatePost accountId={accountId} />}
       <InfiniteScrollWrapper
         className="space-y-4"
         dataLength={40}
@@ -66,9 +68,7 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
           </div>
         }
       >
-        {posts.map((post) => (
-          <FeedCard key={post.blockHeight} post={post} />
-        ))}
+        {posts?.map((post) => <FeedCard key={post?.blockHeight} post={post} />)}
       </InfiniteScrollWrapper>
       {posts.length === 0 && <NoResults />}
     </div>

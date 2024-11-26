@@ -1,7 +1,8 @@
-import { StorageCache } from "@wpdas/naxios";
+import { StorageCache, buildTransaction } from "@wpdas/naxios";
 
 import { SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
+import { AccountId } from "@/common/types";
 
 /**
  * NEAR Social DB Contract API
@@ -187,5 +188,47 @@ export const setSocialData = async ({ data }: { data: Record<string, any> }) => 
     return response;
   } catch (e) {
     console.error("setSocialData", e);
+  }
+};
+
+export const createPost = async ({
+  accountId,
+  content,
+}: {
+  accountId: AccountId;
+  content: { type: string; text: string };
+}) => {
+  try {
+    const buildContract = buildTransaction("set", {
+      receiverId: SOCIAL_CONTRACT_ACCOUNT_ID,
+      args: {
+        data: {
+          [accountId]: {
+            post: {
+              main: JSON.stringify(content),
+            },
+            index: {
+              post: JSON.stringify({
+                key: "main",
+                value: {
+                  type: content.type,
+                },
+              }),
+            },
+          },
+        },
+      },
+    });
+    await naxiosInstance
+      .contractApi()
+      .callMultiple([buildContract])
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } catch (error) {
+    console.error(error);
   }
 };
