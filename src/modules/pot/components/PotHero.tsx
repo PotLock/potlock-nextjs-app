@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { MdAppRegistration } from "react-icons/md";
+import { MdArrowOutward } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -72,7 +72,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
       <div
         className={cn(
-          "md:p-2 h-140 flex flex-col items-center justify-start",
+          "lg:p-2 flex flex-col items-center justify-start",
           "rounded-2xl bg-[#f7f7f7] p-2",
         )}
       >
@@ -80,174 +80,135 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
         <div
           className={cn(
-            "flex h-[488px] flex-col",
-            "items-start justify-start",
-            "gap-0.5 self-stretch rounded-lg bg-background",
+            "min-h-122 flex flex-col items-start justify-start p-14",
+            "lg:gap-8 gap-10 self-stretch rounded-lg bg-background",
           )}
         >
-          <div
-            className={cn(
-              "flex h-[488px] flex-col",
-              "items-start justify-start gap-8 self-stretch p-14",
-            )}
-          >
-            <div className="inline-flex items-start justify-between self-stretch">
+          <div className="lg:flex-row flex flex-col items-start justify-between gap-10 self-stretch">
+            <div
+              className={cn(
+                "inline-flex w-[506px] flex-col",
+                "items-start justify-start gap-10 self-stretch",
+              )}
+            >
+              {pot ? (
+                <div
+                  className={cn(
+                    "self-stretch font-lora",
+                    "text-[53px] font-medium uppercase leading-[61px] text-[#292929]",
+                  )}
+                >
+                  {pot.name}
+                </div>
+              ) : (
+                <Skeleton className="h-8 w-32" />
+              )}
+
               <div
-                className={cn(
-                  "inline-flex w-[506px] flex-col",
-                  "items-start justify-start gap-10 self-stretch",
-                )}
+                className={cn("flex h-32 flex-col items-start justify-start gap-4 self-stretch")}
               >
                 {pot ? (
                   <div
                     className={cn(
-                      "self-stretch font-lora",
-                      "text-[53px] font-medium uppercase leading-[61px] text-[#292929]",
+                      "self-stretch",
+                      "text-[17px] font-normal leading-normal text-neutral-600",
                     )}
                   >
-                    {pot.name}
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        a: ({ node: _, ...props }) => (
+                          <a
+                            {...props}
+                            className="text-blue-500 underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                            }}
+                          >
+                            {"More Info"}
+                          </a>
+                        ),
+                      }}
+                      className="markdown-link"
+                    >
+                      {pot.description}
+                    </ReactMarkdown>
                   </div>
                 ) : (
-                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="h-9 w-full" />
                 )}
 
-                <div
-                  className={cn("flex h-32 flex-col items-start justify-start gap-4 self-stretch")}
-                >
-                  {pot ? (
-                    <div
-                      className={cn(
-                        "self-stretch",
-                        "text-[17px] font-normal leading-normal text-neutral-600",
-                      )}
-                    >
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          a: ({ node: _, ...props }) => (
-                            <a
-                              {...props}
-                              className="text-blue-500 underline"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                              }}
-                            >
-                              {"More Info"}
-                            </a>
-                          ),
-                        }}
-                        className="markdown-link"
-                      >
-                        {pot.description}
-                      </ReactMarkdown>
-                    </div>
-                  ) : (
-                    <Skeleton className="h-9 w-full" />
-                  )}
+                {pot ? (
+                  <Button variant="brand-outline">
+                    <MdArrowOutward />
 
-                  {pot ? (
-                    <Button variant="brand-outline">
-                      <div className="relative h-[18px] w-[18px]" />
-
-                      <div className="text-center text-sm font-medium leading-tight text-[#292929]">
-                        {"More info"}
-                      </div>
-                    </Button>
-                  ) : null}
-                </div>
-              </div>
-
-              <div
-                className={cn("inline-flex w-[506px] flex-col", "items-end justify-start gap-6")}
-              >
-                <div
-                  className={cn(
-                    "flex h-[232px] flex-col",
-                    "items-start justify-start self-stretch",
-                    "rounded-2xl bg-[#f7f7f7] p-2",
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "inline-flex items-center",
-                      "justify-start gap-2 self-stretch py-2",
-                    )}
-                  >
-                    <MdAppRegistration className="h-6 w-6" />
-
-                    <div
-                      className={cn(
-                        "shrink grow basis-0",
-                        "text-[17px] font-semibold leading-normal text-[#292929]",
-                      )}
-                    >
-                      {"Application Requirements"}
-                    </div>
-                  </div>
-
-                  {isVotingBasedPot ? (
-                    <PotApplicationRequirements {...{ potId }} />
-                  ) : (
-                    pot && <PoolAllocationTable potDetail={pot} />
-                  )}
-                </div>
-
-                {isSignedIn && (
-                  <div className="flex items-center gap-[12px] text-[14px]">
-                    <ClipboardCopyButton text={referrerPotLink} customIcon={<VolunteerIcon />} />
-                    <p>{"Earn referral fees"}</p>
-                  </div>
-                )}
+                    <span className="text-center text-sm font-medium leading-tight text-[#292929]">
+                      {"More info"}
+                    </span>
+                  </Button>
+                ) : null}
               </div>
             </div>
 
-            <div
-              className={cn(
-                "inline-flex items-center",
-                "justify-between self-stretch",
-                "border-t border-neutral-200 pt-4",
+            <div className="lg:w-a flex w-full flex-col gap-6">
+              {isVotingBasedPot ? (
+                <PotApplicationRequirements {...{ potId }} />
+              ) : (
+                pot && <PoolAllocationTable potDetail={pot} />
               )}
-            >
-              <div className="inline-flex flex-col items-start justify-center gap-1">
-                <span className="self-stretch text-sm font-medium leading-tight text-neutral-500">
-                  {"Matching Funds Available"}
-                </span>
 
-                {pot ? (
-                  <TokenTotalValue
-                    tokenId={NATIVE_TOKEN_ID}
-                    amountBigString={pot.matching_pool_balance}
-                  />
-                ) : (
-                  <Skeleton className="w-34 h-5" />
-                )}
-              </div>
+              {isSignedIn && (
+                <div className="flex items-center justify-end gap-2 text-sm">
+                  <ClipboardCopyButton text={referrerPotLink} customIcon={<VolunteerIcon />} />
+                  <p>{"Earn referral fees"}</p>
+                </div>
+              )}
+            </div>
+          </div>
 
-              <div className={cn("flex items-center justify-start gap-4")}>
-                {potStatuses.canApply && (
-                  <Button
-                    onClick={() => setApplyModalOpen(true)}
-                  >{`Apply to ${isVotingBasedPot ? "Round" : "Pot"}`}</Button>
-                )}
+          <div
+            className={cn(
+              "inline-flex items-center justify-between self-stretch",
+              "w-full border-t border-neutral-200 pt-4",
+            )}
+          >
+            <div className="inline-flex flex-col items-start justify-center gap-1">
+              <span className="self-stretch text-sm font-medium leading-tight text-neutral-500">
+                {"Matching Funds Available"}
+              </span>
 
-                {potStatuses.canDonate && <DonateToPotProjects {...{ potId }} />}
+              {pot ? (
+                <TokenTotalValue
+                  tokenId={NATIVE_TOKEN_ID}
+                  amountBigString={pot.matching_pool_balance}
+                />
+              ) : (
+                <Skeleton className="w-34 h-5" />
+              )}
+            </div>
 
-                {potStatuses.canFund && (
-                  <Button variant="tonal-filled" onClick={() => setFundModalOpen(true)}>
-                    {"Fund matching pool"}
-                  </Button>
-                )}
+            <div className="flex items-center justify-start gap-4">
+              {potStatuses.canApply && (
+                <Button
+                  onClick={() => setApplyModalOpen(true)}
+                >{`Apply to ${isVotingBasedPot ? "Round" : "Pot"}`}</Button>
+              )}
 
-                {potStatuses.canChallengePayouts && (
-                  <Button onClick={() => setChallengeModalOpen(true)}>
-                    {potStatuses.existingChallengeForUser
-                      ? "Update challenge"
-                      : "Challenge payouts"}
-                  </Button>
-                )}
-              </div>
+              {potStatuses.canDonate && <DonateToPotProjects {...{ potId }} />}
+
+              {potStatuses.canFund && (
+                <Button variant="tonal-filled" onClick={() => setFundModalOpen(true)}>
+                  {"Fund matching pool"}
+                </Button>
+              )}
+
+              {potStatuses.canChallengePayouts && (
+                <Button onClick={() => setChallengeModalOpen(true)}>
+                  {potStatuses.existingChallengeForUser ? "Update challenge" : "Challenge payouts"}
+                </Button>
+              )}
             </div>
           </div>
         </div>
