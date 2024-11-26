@@ -4,10 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema, ZodError } from "zod";
 
-import {
-  CONTRACT_SOURCECODE_REPO_URL,
-  CONTRACT_SOURCECODE_VERSION,
-} from "@/common/_config";
+import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { PotConfig } from "@/common/contracts/core";
@@ -25,10 +22,7 @@ import {
   potEditorDeploymentCrossFieldValidationTargets,
   potEditorSettingsCrossFieldValidationTargets,
 } from "../models";
-import {
-  potConfigToSettings,
-  potIndexedDataToPotInputs,
-} from "../utils/normalization";
+import { potConfigToSettings, potIndexedDataToPotInputs } from "../utils/normalization";
 
 export type PotEditorFormArgs =
   | (ByPotId & {
@@ -49,10 +43,7 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   } = useCoreState();
 
   const existingValues = useMemo<Partial<Values>>(
-    () =>
-      potIndexedData === undefined
-        ? {}
-        : potIndexedDataToPotInputs(potIndexedData),
+    () => (potIndexedData === undefined ? {} : potIndexedDataToPotInputs(potIndexedData)),
 
     [potIndexedData],
   );
@@ -69,11 +60,9 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
       max_projects: 25,
       min_matching_pool_donation_amount: 0.1,
 
-      referral_fee_matching_pool_basis_points:
-        donationFeeBasisPointsToPercents(100),
+      referral_fee_matching_pool_basis_points: donationFeeBasisPointsToPercents(100),
 
-      referral_fee_public_round_basis_points:
-        donationFeeBasisPointsToPercents(100),
+      referral_fee_public_round_basis_points: donationFeeBasisPointsToPercents(100),
 
       chef_fee_basis_points: donationFeeBasisPointsToPercents(100),
       isPgRegistrationRequired: true,
@@ -94,14 +83,11 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   const values = useWatch(self);
 
   const handleAdminsUpdate = useCallback(
-    (accountIds: AccountId[]) =>
-      self.setValue("admins", accountIds, { shouldDirty: true }),
+    (accountIds: AccountId[]) => self.setValue("admins", accountIds, { shouldDirty: true }),
     [self],
   );
 
-  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<Values>>(
-    {},
-  );
+  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<Values>>({});
 
   useEffect(
     () =>
@@ -146,8 +132,7 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) =>
       dispatch.potEditor.save({
-        onUpdate: (config: PotConfig) =>
-          self.reset(potConfigToSettings(config)),
+        onUpdate: (config: PotConfig) => self.reset(potConfigToSettings(config)),
 
         ...(isNewPot
           ? (values as PotEditorDeploymentInputs)

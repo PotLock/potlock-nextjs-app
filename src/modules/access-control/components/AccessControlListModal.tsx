@@ -34,12 +34,7 @@ export type AccessControlListModalProps = {
 };
 
 export const AccessControlListModal = create(
-  ({
-    title,
-    value: entries,
-    onSubmit,
-    handleRemoveAccounts,
-  }: AccessControlListModalProps) => {
+  ({ title, value: entries, onSubmit, handleRemoveAccounts }: AccessControlListModalProps) => {
     const self = useModal();
 
     const accountIds = entries.map(prop("accountId"));
@@ -54,8 +49,7 @@ export const AccessControlListModal = create(
     const allAccountsSelectToggle = useCallback(
       () =>
         setSelectedAccounts(
-          selectedAccounts.length > 0 &&
-            selectedAccounts.length === accountIds.length
+          selectedAccounts.length > 0 && selectedAccounts.length === accountIds.length
             ? []
             : accountIds,
         ),
@@ -87,8 +81,7 @@ export const AccessControlListModal = create(
       mode: "onChange",
     });
 
-    const isAccountFormDisabled =
-      form.formState.isSubmitting || !form.formState.isValid;
+    const isAccountFormDisabled = form.formState.isSubmitting || !form.formState.isValid;
 
     const onAccountSubmit = form.handleSubmit(({ accountId }) => {
       onSubmit([...accountIds, accountId]);
@@ -97,9 +90,7 @@ export const AccessControlListModal = create(
 
     const handleAccountRemove = useCallback(
       (accountId: AccountId) => () =>
-        onSubmit(
-          accountIds.filter((listedAccountId) => accountId !== listedAccountId),
-        ),
+        onSubmit(accountIds.filter((listedAccountId) => accountId !== listedAccountId)),
 
       [accountIds, onSubmit],
     );
@@ -110,9 +101,7 @@ export const AccessControlListModal = create(
       );
       if (handleRemoveAccounts) {
         handleRemoveAccounts(
-          entries.filter((entry) =>
-            selectedAccountsToRemove.includes(entry.accountId),
-          ),
+          entries.filter((entry) => selectedAccountsToRemove.includes(entry.accountId)),
         );
       } else {
         onSubmit(selectedAccountsToRemove);
@@ -164,9 +153,7 @@ export const AccessControlListModal = create(
 
                 <span className="prose font-500 text-neutral-600">
                   {`${accountIds.length} Account(s)` +
-                    (selectedAccounts.length > 0
-                      ? `, ${selectedAccounts.length} selected`
-                      : "")}
+                    (selectedAccounts.length > 0 ? `, ${selectedAccounts.length} selected` : "")}
                 </span>
               </div>
 
@@ -179,9 +166,7 @@ export const AccessControlListModal = create(
               >
                 <MdDeleteOutline width={18} height={18} />
 
-                <span className="prose line-height-none">
-                  {"Remove all selected"}
-                </span>
+                <span className="prose line-height-none">{"Remove all selected"}</span>
               </Button>
             </div>
 
@@ -207,9 +192,7 @@ export const AccessControlListModal = create(
                       >
                         <MdDeleteOutline width={18} height={18} />
 
-                        <span className="prose font-500 line-height-none">
-                          {"Remove"}
-                        </span>
+                        <span className="prose font-500 line-height-none">{"Remove"}</span>
                       </Button>
                     }
                     {...{ accountId }}

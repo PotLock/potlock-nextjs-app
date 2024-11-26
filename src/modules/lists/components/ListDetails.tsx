@@ -9,17 +9,8 @@ import { prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import {
-  AdminUserIcon,
-  DeleteListIcon,
-  DotsIcons,
-  PenIcon,
-} from "@/common/assets/svgs";
-import {
-  register_batch,
-  remove_upvote,
-  upvote,
-} from "@/common/contracts/core/lists";
+import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
+import { register_batch, remove_upvote, upvote } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import {
@@ -48,21 +39,15 @@ interface ListDetailsType {
   savedUsers: SavedUsersType;
 }
 
-export const ListDetails = ({
-  admins,
-  listDetails,
-  savedUsers,
-}: ListDetailsType) => {
+export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType) => {
   const {
     push,
     query: { id },
   } = useRouter();
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [listOwnerImage, setListOwnerImage] = useState<string>("");
-  const [isApplicationSuccessful, setIsApplicationSuccessful] =
-    useState<boolean>(false);
-  const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] =
-    useState({ open: false });
+  const [isApplicationSuccessful, setIsApplicationSuccessful] = useState<boolean>(false);
+  const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] = useState({ open: false });
 
   const { wallet } = useWallet();
   const adminsModalId = useId();
@@ -82,15 +67,9 @@ export const ListDetails = ({
     if (id) fetchProfileImage();
   }, [id, listDetails?.owner?.id]);
 
-  const openRegistrantsModal = useCallback(
-    () => show(registrantsModalId),
-    [registrantsModalId],
-  );
+  const openRegistrantsModal = useCallback(() => show(registrantsModalId), [registrantsModalId]);
 
-  const openAccountsModal = useCallback(
-    () => show(adminsModalId),
-    [adminsModalId],
-  );
+  const openAccountsModal = useCallback(() => show(adminsModalId), [adminsModalId]);
 
   const {
     handleDeleteList,
@@ -136,13 +115,12 @@ export const ListDetails = ({
   }
 
   const isAdmin =
-    admins.includes(walletApi?.accountId ?? "") ||
-    listDetails.owner?.id === walletApi?.accountId;
+    admins.includes(walletApi?.accountId ?? "") || listDetails.owner?.id === walletApi?.accountId;
 
   const handleUpvote = () => {
     if (isUpvoted) {
-      remove_upvote({ list_id: Number(listDetails.on_chain_id) }).catch(
-        (error) => console.error("Error upvoting:", error),
+      remove_upvote({ list_id: Number(listDetails.on_chain_id) }).catch((error) =>
+        console.error("Error upvoting:", error),
       );
       dispatch.listEditor.handleListToast({
         name: truncate(listDetails?.name, 15),
@@ -164,9 +142,7 @@ export const ListDetails = ({
 
   const nameContent = (
     <>
-      <p className="mb-2 font-lora text-2xl font-semibold">
-        {listDetails.name}
-      </p>
+      <p className="mb-2 font-lora text-2xl font-semibold">{listDetails.name}</p>
       <div className="mb-2 flex items-center space-x-2 text-[12px] text-[#656565]">
         BY{" "}
         <img
@@ -174,9 +150,7 @@ export const ListDetails = ({
           src={listOwnerImage || NO_IMAGE}
           alt="Owner"
         />
-        <Link href={`/profile/${listDetails.owner?.id}`}>
-          {listDetails.owner?.id}
-        </Link>
+        <Link href={`/profile/${listDetails.owner?.id}`}>{listDetails.owner?.id}</Link>
         <span className="text-gray-500">
           Created {new Date(listDetails.created_at).toLocaleDateString()}
         </span>
@@ -190,9 +164,7 @@ export const ListDetails = ({
         <div className="md:w[45%] md:px-0 flex-col items-start px-[1rem]">
           <div className="md:flex hidden flex-col">{nameContent}</div>
           <div className="mt-4 w-full pt-0">
-            <p className="mb-4 text-lg text-[#525252]">
-              {listDetails.description}
-            </p>
+            <p className="mb-4 text-lg text-[#525252]">{listDetails.description}</p>
             <div className="mb-4 flex items-center gap-6">
               <div className="mb-6 flex flex-col items-start space-y-2">
                 <span className="mr-4 font-semibold text-gray-700">Admins</span>
@@ -262,9 +234,7 @@ export const ListDetails = ({
                         Add/Remove accounts
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() =>
-                          setIsListConfirmationModalOpen({ open: true })
-                        }
+                        onClick={() => setIsListConfirmationModalOpen({ open: true })}
                         className="cursor-pointer p-2 hover:bg-gray-200"
                       >
                         <DeleteListIcon className="mr-1 max-w-[22px]" />
@@ -291,16 +261,9 @@ export const ListDetails = ({
             width={500}
             height={300}
           />
-          <div
-            className="md:rounded-[12px] m-0  w-full p-0"
-            un-w="full"
-            un-flex="~ col"
-          >
+          <div className="md:rounded-[12px] m-0  w-full p-0" un-w="full" un-flex="~ col">
             <LazyLoadImage
-              src={
-                listDetails.cover_image_url ||
-                "/assets/images/list-gradient-3.png"
-              }
+              src={listDetails.cover_image_url || "/assets/images/list-gradient-3.png"}
               alt="cover"
               width={500}
               height={300}
@@ -308,9 +271,7 @@ export const ListDetails = ({
             />
           </div>
           <div className="md:rounded-bl-md md:rounded-br-md flex h-16 items-center justify-between border border-[#dadbda] p-4">
-            <p className="text-[14px] font-[500]">
-              {listDetails?.registrations_count} Accounts
-            </p>
+            <p className="text-[14px] font-[500]">{listDetails?.registrations_count} Accounts</p>
             <div className="flex flex-row items-center gap-3">
               <button onClick={handleUpvote} className="focus:outline-none">
                 {isUpvoted ? (
@@ -319,9 +280,7 @@ export const ListDetails = ({
                   <FaRegHeart className="text-gray-500" size={22} />
                 )}
               </button>
-              <div className="font-semibold">
-                {listDetails && listDetails?.upvotes?.length}
-              </div>
+              <div className="font-semibold">{listDetails && listDetails?.upvotes?.length}</div>
               <SocialsShare variant="icon" />
             </div>
           </div>
@@ -352,8 +311,7 @@ export const ListDetails = ({
         onSubmit={(admins) => {
           const newAdmins =
             admins?.filter(
-              (admin) =>
-                !savedUsers.admins?.map(prop("accountId"))?.includes(admin),
+              (admin) => !savedUsers.admins?.map(prop("accountId"))?.includes(admin),
             ) ?? [];
           handleSaveAdminsSettings(newAdmins);
         }}
@@ -366,8 +324,7 @@ export const ListDetails = ({
         onSubmit={(accounts) => {
           const newAccounts =
             accounts?.filter(
-              (admin) =>
-                !savedUsers.accounts?.map(prop("accountId"))?.includes(admin),
+              (admin) => !savedUsers.accounts?.map(prop("accountId"))?.includes(admin),
             ) ?? [];
           handleRegisterBatch(newAccounts);
         }}

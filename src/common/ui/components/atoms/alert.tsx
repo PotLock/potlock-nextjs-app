@@ -39,11 +39,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
     <div
       ref={ref}
       role="alert"
-      className={cn(
-        alertVariants({ variant }),
-        { "flex-row": compact },
-        className,
-      )}
+      className={cn(alertVariants({ variant }), { "flex-row": compact }, className)}
       {...props}
     />
   ),
@@ -51,41 +47,35 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
 
 Alert.displayName = "Alert";
 
-const AlertTitle = forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h5
-    ref={ref}
-    className={cn(
-      "font-500 important:pl-8 leading-5 tracking-normal",
-      className,
-    )}
-    {...props}
-  />
-));
+const AlertTitle = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h5
+      ref={ref}
+      className={cn("font-500 important:pl-8 leading-5 tracking-normal", className)}
+      {...props}
+    />
+  ),
+);
 
 AlertTitle.displayName = "AlertTitle";
 
-export type AlertDescriptionProps =
-  React.HTMLAttributes<HTMLParagraphElement> & {
-    inline?: boolean;
-  };
+export type AlertDescriptionProps = React.HTMLAttributes<HTMLParagraphElement> & {
+  inline?: boolean;
+};
 
-const AlertDescription = forwardRef<
-  HTMLParagraphElement,
-  AlertDescriptionProps
->(({ className, inline = false, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "prose font-500 text-sm text-neutral-600 [&_p]:leading-relaxed",
-      { "important:pl-0": inline, "important:pl-8": !inline },
-      className,
-    )}
-    {...props}
-  />
-));
+const AlertDescription = forwardRef<HTMLParagraphElement, AlertDescriptionProps>(
+  ({ className, inline = false, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "prose font-500 text-sm text-neutral-600 [&_p]:leading-relaxed",
+        { "important:pl-0": inline, "important:pl-8": !inline },
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 
 AlertDescription.displayName = "AlertDescription";
 

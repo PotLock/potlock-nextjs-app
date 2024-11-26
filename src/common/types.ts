@@ -35,8 +35,7 @@ export type EnvConfig = {
 
 export type { infer as FromSchema } from "zod";
 
-export type UnionFromStringList<ListOfMembers extends string[]> =
-  ListOfMembers[number];
+export type UnionFromStringList<ListOfMembers extends string[]> = ListOfMembers[number];
 
 export type ClientConfig = { swr?: SWRConfiguration };
 

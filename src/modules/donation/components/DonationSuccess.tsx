@@ -1,10 +1,17 @@
+import { useMemo } from "react";
+
 import { Check } from "lucide-react";
 import Link from "next/link";
 
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import TwitterSvg from "@/common/assets/svgs/twitter";
-import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import {
+  DEFAULT_SHARE_HASHTAGS,
+  NATIVE_TOKEN_DECIMALS,
+  NATIVE_TOKEN_ID,
+  POTLOCK_TWITTER_ACCOUNT_ID,
+} from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
 import { bigStringToFloat, truncate } from "@/common/lib";
 import { ftService } from "@/common/services";
@@ -30,14 +37,9 @@ export type DonationSuccessProps = WithDonationFormAPI & {
   closeModal: VoidFunction;
 };
 
-const staticResultIndicatorClassName =
-  "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
+const staticResultIndicatorClassName = "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
 
-export const DonationSuccess = ({
-  form,
-  transactionHash,
-  closeModal,
-}: DonationSuccessProps) => {
+export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationSuccessProps) => {
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
   const [potId] = form.watch(["potAccountId"]);
@@ -51,14 +53,11 @@ export const DonationSuccess = ({
   });
 
   const tokenId =
-    "ft_id" in (finalOutcome ?? {})
-      ? (finalOutcome as DirectDonation).ft_id
-      : NATIVE_TOKEN_ID;
+    "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID;
 
   const { data: token } = ftService.useRegisteredToken({ tokenId });
 
-  const isLoading =
-    isResultLoading || recipient === undefined || token === undefined;
+  const isLoading = isResultLoading || recipient === undefined || token === undefined;
 
   const totalAmountFloat = bigStringToFloat(
     finalOutcome?.total_amount ?? "0",
@@ -82,6 +81,28 @@ export const DonationSuccess = ({
     protocolFeeFinalAmount: protocolFeeAmountFloat,
     referralFeeFinalAmount: referralFeeFinalAmountFloat,
   });
+
+  const twitterIntent = useMemo(() => {
+    if (!recipient?.near_social_profile_data) return;
+    const twitterIntentBase = "https://twitter.com/intent/tweet?text=";
+
+    const profile: any = recipient?.near_social_profile_data;
+    const singlePorject = profile
+      ? profile.linktree?.twitter
+        ? `@${profile.linktree.twitter}`
+        : profile.name
+      : recipient.id;
+
+    const tag = `${singlePorject}`;
+
+    let url = `https://alpha.potlock.io${routesPath.PROFILE}/${recipient.id}/funding-raised`;
+    let text = `I just donated to ${tag} on @${POTLOCK_TWITTER_ACCOUNT_ID}! Support public goods at `;
+    text = encodeURIComponent(text);
+    url = encodeURIComponent(url);
+    return (
+      twitterIntentBase + text + `&url=${url}` + `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
+    );
+  }, [recipient?.id, recipient?.near_social_profile_data]);
 
   return recipientDataError !== undefined ? (
     <ModalErrorBody
@@ -118,12 +139,8 @@ export const DonationSuccess = ({
         {isResultLoading ? (
           <Skeleton className="w-41 h-4.5" />
         ) : (
-          <Button
-            asChild
-            variant="standard-filled"
-            className="bg-neutral-950 py-1.5 shadow-none"
-          >
-            <Link href="#">
+          <Button asChild variant="standard-filled" className="bg-neutral-950 py-1.5 shadow-none">
+            <Link href={`${twitterIntent}`} target="_blank">
               <span className="prose" un-font="500">
                 {"Share on"}
               </span>
@@ -138,10 +155,7 @@ export const DonationSuccess = ({
         {isLoading ? (
           <Skeleton className="h-7 w-44" />
         ) : (
-          <TokenTotalValue
-            amountBigString={finalOutcome.total_amount}
-            {...{ tokenId }}
-          />
+          <TokenTotalValue amountBigString={finalOutcome.total_amount} {...{ tokenId }} />
         )}
 
         {isLoading ? (
@@ -151,10 +165,7 @@ export const DonationSuccess = ({
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
 
-              <AccountProfileLink
-                accountId={recipient.id}
-                classNames={{ name: "font-600" }}
-              />
+              <AccountProfileLink accountId={recipient.id} classNames={{ name: "font-600" }} />
             </div>
 
             {pot?.name && (

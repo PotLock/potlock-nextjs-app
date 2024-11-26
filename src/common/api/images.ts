@@ -31,12 +31,7 @@ type MetadateRes = {
  * @param
  * @returns
  */
-export const getImage = async ({
-  accountId,
-  image,
-  type,
-  fallbackurl,
-}: Props) => {
+export const getImage = async ({ accountId, image, type, fallbackurl }: Props) => {
   let socialImage: any = image;
 
   try {
@@ -62,14 +57,11 @@ export const getImage = async ({
         })
       ).metadata;
 
-      const nftMetadata = await contractApi.view<TokenInput, MetadateRes>(
-        "nft_metadata",
-        {
-          args: {
-            token_id: tokenId,
-          },
+      const nftMetadata = await contractApi.view<TokenInput, MetadateRes>("nft_metadata", {
+        args: {
+          token_id: tokenId,
         },
-      );
+      });
 
       const tokenMedia = tokenMetadata.media || "";
 
@@ -92,9 +84,7 @@ export const getImage = async ({
             nftMetadata.base_uri === "https://arweave.net" &&
             !tokenMetadata.reference.startsWith("https://")
           ) {
-            const data = await fetch(
-              `${nftMetadata.base_uri}/${tokenMetadata.reference}`,
-            );
+            const data = await fetch(`${nftMetadata.base_uri}/${tokenMetadata.reference}`);
             const res = await data.json();
 
             imageUrl = res.body?.media;

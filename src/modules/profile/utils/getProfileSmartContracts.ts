@@ -5,11 +5,9 @@ const getProfileSmartContracts = (profile?: NEARSocialUserProfile) => {
     ? Object.entries(JSON.parse(profile.plSmartContracts)).reduce(
         (accumulator, [chain, contracts]: any) => {
           // Iterate over each contract address in the current chain
-          const contractsForChain: any = Object.keys(contracts).map(
-            (contractAddress) => {
-              return [chain, contractAddress]; // Create an array with the chain and contract address
-            },
-          );
+          const contractsForChain: any = Object.keys(contracts).map((contractAddress) => {
+            return [chain, contractAddress]; // Create an array with the chain and contract address
+          });
 
           return accumulator.concat(contractsForChain); // Add the arrays for this chain to the accumulator
         },

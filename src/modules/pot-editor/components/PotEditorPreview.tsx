@@ -6,11 +6,7 @@ import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { isAccountId } from "@/common/lib";
-import {
-  Button,
-  DataLoadingPlaceholder,
-  Skeleton,
-} from "@/common/ui/components";
+import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/modules/access-control";
 import { AccountProfileLink } from "@/modules/account";

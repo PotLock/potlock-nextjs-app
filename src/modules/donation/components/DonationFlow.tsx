@@ -31,21 +31,15 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     query: { referrerId: referrerIdSearchParam },
   } = useRouteQuery();
 
-  const {
-    form,
-    matchingPots,
-    minAmountError,
-    isDisabled,
-    onSubmit,
-    totalAmountFloat,
-  } = useDonationForm({
-    ...props,
+  const { form, matchingPots, minAmountError, isDisabled, onSubmit, totalAmountFloat } =
+    useDonationForm({
+      ...props,
 
-    referrerAccountId:
-      typeof referrerIdSearchParam === "string"
-        ? referrerIdSearchParam
-        : (finalOutcome?.referrer_id ?? undefined),
-  });
+      referrerAccountId:
+        typeof referrerIdSearchParam === "string"
+          ? referrerIdSearchParam
+          : (finalOutcome?.referrer_id ?? undefined),
+    });
 
   const inputs = form.watch();
   const { data: token } = ftService.useRegisteredToken(inputs);
@@ -85,23 +79,14 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
   const currentScreen = useMemo(() => {
     const defaultErrorScreen = (
-      <ModalErrorBody
-        heading="Donation"
-        title="Unable to proceed with the next step."
-      />
+      <ModalErrorBody heading="Donation" title="Unable to proceed with the next step." />
     );
 
     switch (currentStep) {
       case "allocation": {
-        if (
-          "accountId" in allocationScreenProps ||
-          "campaignId" in allocationScreenProps
-        ) {
+        if ("accountId" in allocationScreenProps || "campaignId" in allocationScreenProps) {
           return <DonationDirectAllocation {...allocationScreenProps} />;
-        } else if (
-          "potId" in allocationScreenProps ||
-          "listId" in allocationScreenProps
-        ) {
+        } else if ("potId" in allocationScreenProps || "listId" in allocationScreenProps) {
           return <DonationGroupAllocation {...allocationScreenProps} />;
         } else return defaultErrorScreen;
       }
@@ -115,12 +100,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       default:
         return defaultErrorScreen;
     }
-  }, [
-    allocationScreenProps,
-    confirmationScreenProps,
-    currentStep,
-    successScreenProps,
-  ]);
+  }, [allocationScreenProps, confirmationScreenProps, currentStep, successScreenProps]);
 
   return (
     <Form {...form}>
@@ -130,12 +110,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
         {currentStep !== "success" && (
           <DialogFooter>
             {currentStep === "allocation" && (
-              <Button
-                type="button"
-                variant="brand-outline"
-                color="black"
-                disabled
-              >
+              <Button type="button" variant="brand-outline" color="black" disabled>
                 {"Add to cart"}
               </Button>
             )}
@@ -143,17 +118,11 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
             <Button
               type="button"
               variant="brand-filled"
-              onClick={
-                currentStep === "confirmation"
-                  ? onSubmit
-                  : dispatch.donation.nextStep
-              }
+              onClick={currentStep === "confirmation" ? onSubmit : dispatch.donation.nextStep}
               disabled={isDisabled || !isBalanceSufficient}
               className={cn({ "w-full": currentStep === "confirmation" })}
             >
-              {currentStep === "confirmation"
-                ? "Confirm donation"
-                : "Proceed to donate"}
+              {currentStep === "confirmation" ? "Confirm donation" : "Proceed to donate"}
             </Button>
           </DialogFooter>
         )}

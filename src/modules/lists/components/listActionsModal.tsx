@@ -5,12 +5,7 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
 
 import SuccessRedIcon from "@/common/assets/svgs/success-red-icon";
-import {
-  Button,
-  DataLoadingPlaceholder,
-  Dialog,
-  DialogContent,
-} from "@/common/ui/components";
+import { Button, DataLoadingPlaceholder, Dialog, DialogContent } from "@/common/ui/components";
 import { dispatch } from "@/store";
 
 import DonationSuccess from "./DonationSuccess";
@@ -88,35 +83,21 @@ export const ListActionsModal = create((_: ListActionsModal) => {
     type,
   ]);
 
-  return [
-    ListFormModalType.CREATE_LIST,
-    ListFormModalType.UPDATE_LIST,
-  ].includes(type) ? (
+  return [ListFormModalType.CREATE_LIST, ListFormModalType.UPDATE_LIST].includes(type) ? (
     <SuccessModalCreateList
       isOpen={self.visible}
       onClose={close}
       listName={data?.name as string}
       isUpdate={type === ListFormModalType.UPDATE_LIST}
       onViewList={() =>
-        push(
-          `/list/${data?.id ?? (Array.isArray(data) ? data[0]?.id : undefined)}`,
-        )
+        push(`/list/${data?.id ?? (Array.isArray(data) ? data[0]?.id : undefined)}`)
       }
     />
   ) : (
     <Dialog open={self.visible}>
-      <DialogContent
-        contrastActions
-        className="max-w-115 "
-        onCloseClick={close}
-      >
-        {data === undefined &&
-        !deleteType &&
-        type !== ListFormModalType.UNREGISTER ? (
-          <DataLoadingPlaceholder
-            text="Loading List Changes..."
-            className="h-106"
-          />
+      <DialogContent contrastActions className="max-w-115 " onCloseClick={close}>
+        {data === undefined && !deleteType && type !== ListFormModalType.UNREGISTER ? (
+          <DataLoadingPlaceholder text="Loading List Changes..." className="h-106" />
         ) : (
           content
         )}

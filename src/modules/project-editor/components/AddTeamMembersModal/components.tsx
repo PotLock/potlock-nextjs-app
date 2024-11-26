@@ -28,10 +28,7 @@ export const GroupIcon = () => (
       d="M12 6C13.66 6 15 4.66 15 3C15 1.34 13.66 0 12 0C10.34 0 9 1.34 9 3C9 4.66 10.34 6 12 6ZM12 2C12.55 2 13 2.45 13 3C13 3.55 12.55 4 12 4C11.45 4 11 3.55 11 3C11 2.45 11.45 2 12 2Z"
       fill="#151A23"
     />
-    <path
-      d="M3.9999 2.49687L1.49677 5L3.9999 7.50313L6.50303 5L3.9999 2.49687Z"
-      fill="#151A23"
-    />
+    <path d="M3.9999 2.49687L1.49677 5L3.9999 7.50313L6.50303 5L3.9999 2.49687Z" fill="#151A23" />
     <path d="M20 3L17.5 7H22.5L20 3Z" fill="#151A23" />
   </svg>
 );
@@ -89,11 +86,7 @@ export const AccountItems = ({ accountIds }: AccountItemProps) => {
   return (
     <>
       {accountIds.map((accountId) => (
-        <Item
-          key={accountId}
-          accountId={accountId}
-          onRemove={removeAccountHandler}
-        />
+        <Item key={accountId} accountId={accountId} onRemove={removeAccountHandler} />
       ))}
     </>
   );

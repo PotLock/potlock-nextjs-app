@@ -56,11 +56,9 @@ export const useCampaignForm = () => {
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-        timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds >
-          Date.now()
+        timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds > Date.now()
           ? {
-              start_ms: timeToMiliSeconds(values.start_ms.toString())
-                .epochMilliseconds,
+              start_ms: timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds,
             }
           : {}),
         ...(values.end_ms && {

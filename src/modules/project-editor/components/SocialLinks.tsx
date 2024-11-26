@@ -20,9 +20,7 @@ const SocialLinks = () => {
   const [githubValue, setGithubValue] = useState<string>(
     github?.replace("https://github.com/", "") || "",
   );
-  const [websiteValue, setWebsiteValue] = useState<string>(
-    website?.replace("https://", "") || "",
-  );
+  const [websiteValue, setWebsiteValue] = useState<string>(website?.replace("https://", "") || "");
 
   const onChangeHandler = useCallback((socialKey: string, value: string) => {
     dispatch.projectEditor.updateSocialLinks({ [socialKey]: value });
@@ -38,14 +36,9 @@ const SocialLinks = () => {
           value: twitterValue.replace("https://x.com/", ""),
           placeholder: "",
           onChange: (e) =>
-            setTwitterValue(
-              extractFromUrl(e.target.value, urlPatters.twitter) || "",
-            ),
+            setTwitterValue(extractFromUrl(e.target.value, urlPatters.twitter) || ""),
           onBlur: (_) => {
-            onChangeHandler(
-              "twitter",
-              twitterValue ? `https://x.com/${twitterValue}` : "",
-            );
+            onChangeHandler("twitter", twitterValue ? `https://x.com/${twitterValue}` : "");
           },
         }}
       />
@@ -58,14 +51,9 @@ const SocialLinks = () => {
           value: telegramValue.replace("https://t.me/", ""),
           placeholder: "",
           onChange: (e) =>
-            setTelegramValue(
-              extractFromUrl(e.target.value, urlPatters.telegram) || "",
-            ),
+            setTelegramValue(extractFromUrl(e.target.value, urlPatters.telegram) || ""),
           onBlur: (_) => {
-            onChangeHandler(
-              "telegram",
-              telegramValue ? `https://t.me/${telegramValue}` : "",
-            );
+            onChangeHandler("telegram", telegramValue ? `https://t.me/${telegramValue}` : "");
           },
         }}
       />
@@ -77,15 +65,9 @@ const SocialLinks = () => {
         inputProps={{
           value: githubValue.replace("https://github.com/", ""),
           placeholder: "",
-          onChange: (e) =>
-            setGithubValue(
-              extractFromUrl(e.target.value, urlPatters.github) || "",
-            ),
+          onChange: (e) => setGithubValue(extractFromUrl(e.target.value, urlPatters.github) || ""),
           onBlur: (_) => {
-            onChangeHandler(
-              "github",
-              githubValue ? `https://github.com/${githubValue}` : "",
-            );
+            onChangeHandler("github", githubValue ? `https://github.com/${githubValue}` : "");
           },
         }}
       />
@@ -98,14 +80,9 @@ const SocialLinks = () => {
           value: websiteValue.replace("https://", ""),
           placeholder: "",
           onChange: (e) =>
-            setWebsiteValue(
-              extractFromUrl(e.target.value, urlPatters.website) || "",
-            ),
+            setWebsiteValue(extractFromUrl(e.target.value, urlPatters.website) || ""),
           onBlur: (_) => {
-            onChangeHandler(
-              "website",
-              websiteValue ? `https://${websiteValue}` : "",
-            );
+            onChangeHandler("website", websiteValue ? `https://${websiteValue}` : "");
           },
         }}
       />

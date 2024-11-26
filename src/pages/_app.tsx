@@ -37,10 +37,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-export default function RootLayout({
-  Component,
-  pageProps,
-}: AppPropsWithLayout) {
+export default function RootLayout({ Component, pageProps }: AppPropsWithLayout) {
   useEffect(() => void dispatch.core.init(), []);
 
   const getLayout = Component.getLayout ?? ((page) => page);

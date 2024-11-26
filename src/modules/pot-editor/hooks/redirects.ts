@@ -25,19 +25,12 @@ export const useDeploymentSuccessWalletRedirect = () => {
     if (isTransactionOutcomeDetected && !resultModal.visible) {
       dispatch.potEditor.reset();
 
-      dispatch.potEditor
-        .handleDeploymentOutcome(transactionHash)
-        .finally(() => {
-          resultModal.show();
-          setSearchParams({ transactionHashes: null });
-        });
+      dispatch.potEditor.handleDeploymentOutcome(transactionHash).finally(() => {
+        resultModal.show();
+        setSearchParams({ transactionHashes: null });
+      });
     }
-  }, [
-    isTransactionOutcomeDetected,
-    resultModal,
-    setSearchParams,
-    transactionHash,
-  ]);
+  }, [isTransactionOutcomeDetected, resultModal, setSearchParams, transactionHash]);
 };
 
 // TODO: https://github.com/PotLock/potlock-nextjs-app/issues/86

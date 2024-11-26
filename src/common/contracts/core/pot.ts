@@ -49,65 +49,41 @@ export const getMatchingPoolDonations = async (args: {
   from_index?: number;
   limit?: number;
 }) =>
-  contractApi(args.potId).view<typeof args, PotDonation[]>(
-    "get_matching_pool_donations",
-    {
-      args,
-    },
-  );
+  contractApi(args.potId).view<typeof args, PotDonation[]>("get_matching_pool_donations", {
+    args,
+  });
 
 /**
  * Get round funding donations
  */
-export const getDonationsForDonor = async (args: {
-  potId: string;
-  donor_id: string;
-}) =>
-  contractApi(args.potId).view<typeof args, PotDonation[]>(
-    "get_donations_for_donor",
-    {
-      args,
-    },
-  );
+export const getDonationsForDonor = async (args: { potId: string; donor_id: string }) =>
+  contractApi(args.potId).view<typeof args, PotDonation[]>("get_donations_for_donor", {
+    args,
+  });
 
 /**
  * Get round donations for a project id
  */
-export const getDonationsForProject = async (args: {
-  potId: string;
-  project_id: string;
-}) =>
-  contractApi(args.potId).view<typeof args, PotDonation[]>(
-    "get_donations_for_project",
-    {
-      args,
-    },
-  );
+export const getDonationsForProject = async (args: { potId: string; project_id: string }) =>
+  contractApi(args.potId).view<typeof args, PotDonation[]>("get_donations_for_project", {
+    args,
+  });
 
 /**
  * Get application by project id
  */
-export const getApplicationByProjectId = async (args: {
-  potId: string;
-  project_id: string;
-}) =>
-  contractApi(args.potId).view<typeof args, Application>(
-    "get_application_by_project_id",
-    {
-      args,
-    },
-  );
+export const getApplicationByProjectId = async (args: { potId: string; project_id: string }) =>
+  contractApi(args.potId).view<typeof args, Application>("get_application_by_project_id", {
+    args,
+  });
 
 /**
  * Get round approved applications
  */
 export const getApprovedApplications = async (args: { potId: string }) =>
-  contractApi(args.potId).view<typeof args, ApprovedApplication[]>(
-    "get_approved_applications",
-    {
-      args,
-    },
-  );
+  contractApi(args.potId).view<typeof args, ApprovedApplication[]>("get_approved_applications", {
+    args,
+  });
 
 /**
  * Get round applications
@@ -121,9 +97,7 @@ export const getApplications = async (args: { potId: string }) =>
  * Get round payout challanges
  */
 export const getPayoutsChallenges = async (args: { potId: string }) =>
-  contractApi(args.potId).view<typeof args, Challenge[]>(
-    "get_payouts_challenges",
-  );
+  contractApi(args.potId).view<typeof args, Challenge[]>("get_payouts_challenges");
 
 /**
  * Get round payouts
@@ -137,24 +111,15 @@ export const getPayouts = async (args: { potId: string }) =>
 /**
  * Challenge round payout
  */
-export const challengePayouts = ({
-  potId,
-  reason,
-}: {
-  potId: string;
-  reason: string;
-}) => {
+export const challengePayouts = ({ potId, reason }: { potId: string; reason: string }) => {
   const args = { reason };
   const deposit = parseNearAmount(calculateDepositByDataSize(args))!;
 
-  return contractApi(potId).call<{ reason: string }, Challenge[]>(
-    "challenge_payouts",
-    {
-      args,
-      deposit,
-      gas: FULL_TGAS,
-    },
-  );
+  return contractApi(potId).call<{ reason: string }, Challenge[]>("challenge_payouts", {
+    args,
+    deposit,
+    gas: FULL_TGAS,
+  });
 };
 
 /**
@@ -168,14 +133,11 @@ export const adminUpdatePayoutsChallenge = (args: {
 }) => {
   const depositFloat = args.notes.length * 0.00003;
 
-  contractApi(args.potId).call<typeof args, Challenge[]>(
-    "admin_update_payouts_challenge",
-    {
-      args,
-      deposit: `${depositFloat}`,
-      gas: FULL_TGAS,
-    },
-  );
+  contractApi(args.potId).call<typeof args, Challenge[]>("admin_update_payouts_challenge", {
+    args,
+    deposit: `${depositFloat}`,
+    gas: FULL_TGAS,
+  });
 };
 
 /**
@@ -198,21 +160,14 @@ export const adminProcessPayouts = (args: { potId: string }) =>
     gas: FULL_TGAS,
   });
 
-export const donate = (
-  potAccountId: PotId,
-  args: PotDonationArgs,
-  depositAmountYocto: string,
-) =>
+export const donate = (potAccountId: PotId, args: PotDonationArgs, depositAmountYocto: string) =>
   contractApi(potAccountId).call<typeof args, PotDonation>("donate", {
     args,
     deposit: depositAmountYocto,
     callbackUrl: window.location.href,
   });
 
-export const donateBatch = (
-  potAccountId: PotId,
-  txDrafts: PotBatchDonationItem[],
-) =>
+export const donateBatch = (potAccountId: PotId, txDrafts: PotBatchDonationItem[]) =>
   contractApi(potAccountId).callMultiple<PotDonationArgs>(
     txDrafts.map(({ amountYoctoNear, ...txDraft }) => ({
       method: "donate",
