@@ -144,10 +144,10 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
                   {idx !== 3 && (
                     <Loader
                       className={cn("relative flex h-1 rounded-[1px]", {
+                        "not-displayed": !isMobileMenuActive && idx === 0,
                         "bg-neutral-200": !completed,
                         "bg-[#629D13]": completed,
                       })}
-                      style={{ display: !isMobileMenuActive && idx === 0 ? "none" : undefined }}
                     />
                   )}
                 </div>

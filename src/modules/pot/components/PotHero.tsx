@@ -48,7 +48,11 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
   const [description, embeddedLink] = pot?.description.split("More info ") ?? [null, null];
 
-  const linkedDocumentUrl = embeddedLink;
+  //! WARNING: This is a strictly temporary solution!
+  //!  Pot v2 will have a designated document link field
+  const linkedDocumentUrl = embeddedLink ? `https://${embeddedLink}` : null;
+
+  console.log(embeddedLink, linkedDocumentUrl);
 
   return (
     <>
@@ -123,7 +127,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                   <Skeleton className="h-9 w-full" />
                 )}
 
-                {pot && linkedDocumentUrl ? (
+                {pot && linkedDocumentUrl !== null ? (
                   <Button asChild variant="brand-outline">
                     <Link href={linkedDocumentUrl} target="_blank">
                       <MdArrowOutward className="h-4.5 w-4.5" />
