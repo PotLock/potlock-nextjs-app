@@ -22,10 +22,7 @@ import { ModalErrorBody } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { TokenTotalValue } from "@/modules/token";
 
-import {
-  DEFAULT_SHARE_HASHTAGS,
-  POTLOCK_TWITTER_ACCOUNT_ID,
-} from "../constants";
+import { DEFAULT_SHARE_HASHTAGS, POTLOCK_TWITTER_ACCOUNT_ID } from "../constants";
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import { useDonationAllocationBreakdown } from "../hooks";
@@ -99,10 +96,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     text = encodeURIComponent(text);
     url = encodeURIComponent(url);
     return (
-      twitterIntentBase +
-      text +
-      `&url=${url}` +
-      `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
+      twitterIntentBase + text + `&url=${url}` + `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
     );
   }, [recipient?.id, recipient?.near_social_profile_data]);
 
