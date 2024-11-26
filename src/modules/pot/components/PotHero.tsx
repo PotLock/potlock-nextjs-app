@@ -160,7 +160,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
               )}
 
               {isSignedIn && (
-                <div className="flex items-center justify-end gap-2 text-sm">
+                <div className="lg:justify-end flex items-center gap-2 text-sm">
                   <ClipboardCopyButton text={referrerPotLink} customIcon={<VolunteerIcon />} />
                   <p>{"Earn referral fees"}</p>
                 </div>

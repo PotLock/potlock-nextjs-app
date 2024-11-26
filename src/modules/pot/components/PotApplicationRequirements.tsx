@@ -1,4 +1,4 @@
-import { MdAppRegistration } from "react-icons/md";
+import { MdAppRegistration, MdCheckCircleOutline } from "react-icons/md";
 
 import { ByPotId } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
@@ -42,16 +42,8 @@ export const PotApplicationRequirements: React.FC<PotApplicationRequirementsProp
             className={cn("inline-flex items-center justify-start gap-2 self-stretch")}
             key={text}
           >
-            <div className="relative h-6 w-6" />
-
-            <div
-              className={cn(
-                "shrink grow basis-0",
-                "text-sm font-normal leading-tight text-neutral-600",
-              )}
-            >
-              {text}
-            </div>
+            <MdCheckCircleOutline className="relative h-6 w-6" />
+            <span className="text-sm font-normal leading-tight text-neutral-600">{text}</span>
           </div>
         ))}
       </div>
