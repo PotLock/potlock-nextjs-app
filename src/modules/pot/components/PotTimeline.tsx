@@ -97,7 +97,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
       onClick={toggleMobileMenu}
       className={cn(
         "xl:pointer-events-none h-a xl:h-14 cursor-pointer",
-        "flex w-full items-center justify-center gap-4 p-4",
+        "flex w-full items-center justify-center gap-4 px-4",
         classNames?.root,
       )}
     >

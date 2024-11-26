@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import Link from "next/link";
 import { MdArrowOutward } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -45,6 +46,10 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
     accountId: asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId),
   });
 
+  const [description, embeddedLink] = pot?.description.split("More info ") ?? [null, null];
+
+  const linkedDocumentUrl = embeddedLink;
+
   return (
     <>
       {pot && (
@@ -72,15 +77,19 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
       <div
         className={cn(
-          "lg:p-2 flex flex-col items-center justify-start p-1",
+          "md:p-2 flex flex-col items-center justify-start p-1",
           "md:w-a md:bg-neutral-50 w-full rounded-2xl",
         )}
       >
-        {pot ? <PotTimeline {...{ potId }} /> : <Skeleton className="h-96 w-full" />}
+        {pot ? (
+          <PotTimeline classNames={{ root: "bg-neutral-50 md:transparent" }} {...{ potId }} />
+        ) : (
+          <Skeleton className="h-96 w-full" />
+        )}
 
         <div
           className={cn(
-            "min-h-122 md:p-14 flex flex-col items-start justify-start",
+            "min-h-122 md:p-14 md:pt-14 flex flex-col items-start justify-start pt-10",
             "lg:gap-8 bg-background gap-10 self-stretch rounded-lg",
           )}
         >
@@ -102,25 +111,27 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
               <div
                 className={cn("flex h-32 flex-col items-start justify-start gap-4 self-stretch")}
               >
-                {pot ? (
+                {description ? (
                   <div
                     className={cn(
                       "self-stretch text-[17px] font-normal leading-normal text-neutral-600",
                     )}
                   >
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{pot.description}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
                   </div>
                 ) : (
                   <Skeleton className="h-9 w-full" />
                 )}
 
-                {pot ? (
-                  <Button variant="brand-outline">
-                    <MdArrowOutward />
+                {pot && linkedDocumentUrl ? (
+                  <Button asChild variant="brand-outline">
+                    <Link href={linkedDocumentUrl} target="_blank">
+                      <MdArrowOutward className="h-4.5 w-4.5" />
 
-                    <span className="text-center text-sm font-medium leading-tight text-[#292929]">
-                      {"More info"}
-                    </span>
+                      <span className="text-center text-sm font-medium leading-tight text-[#292929]">
+                        {"More info"}
+                      </span>
+                    </Link>
                   </Button>
                 ) : null}
               </div>
@@ -144,7 +155,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
           <div
             className={cn(
-              "md:flex-row flex flex-col items-center justify-between gap-8",
+              "md:flex-row md:items-center flex flex-col justify-between gap-8",
               "w-full self-stretch border-t border-neutral-200 pt-4",
             )}
           >
