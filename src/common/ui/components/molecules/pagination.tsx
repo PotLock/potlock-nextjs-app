@@ -5,7 +5,10 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { cn } from "../../utils";
 import { ButtonProps, buttonVariants } from "../atoms/button";
 
-export const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
+export const Pagination = ({
+  className,
+  ...props
+}: React.ComponentProps<"nav">) => (
   <nav
     role="navigation"
     aria-label="pagination"
@@ -16,17 +19,25 @@ export const Pagination = ({ className, ...props }: React.ComponentProps<"nav">)
 
 Pagination.displayName = "Pagination";
 
-export const PaginationContent = forwardRef<HTMLUListElement, React.ComponentProps<"ul">>(
-  ({ className, ...props }, ref) => (
-    <ul ref={ref} className={cn("flex flex-row items-center gap-1", className)} {...props} />
-  ),
-);
+export const PaginationContent = forwardRef<
+  HTMLUListElement,
+  React.ComponentProps<"ul">
+>(({ className, ...props }, ref) => (
+  <ul
+    ref={ref}
+    className={cn("flex flex-row items-center gap-1", className)}
+    {...props}
+  />
+));
 
 PaginationContent.displayName = "PaginationContent";
 
-export const PaginationItem = forwardRef<HTMLLIElement, React.ComponentProps<"li">>(
-  ({ className, ...props }, ref) => <li ref={ref} className={cn("", className)} {...props} />,
-);
+export const PaginationItem = forwardRef<
+  HTMLLIElement,
+  React.ComponentProps<"li">
+>(({ className, ...props }, ref) => (
+  <li ref={ref} className={cn("", className)} {...props} />
+));
 
 PaginationItem.displayName = "PaginationItem";
 
@@ -90,7 +101,10 @@ export const PaginationNext = ({
 
 PaginationNext.displayName = "PaginationNext";
 
-export const PaginationEllipsis = ({ className, ...props }: React.ComponentProps<"span">) => (
+export const PaginationEllipsis = ({
+  className,
+  ...props
+}: React.ComponentProps<"span">) => (
   <span
     aria-hidden
     className={cn("flex h-9 w-9 items-center justify-center", className)}
