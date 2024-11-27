@@ -70,12 +70,7 @@ export const ProjectDiscovery = () => {
       } as Group<GroupType.single>,
     ],
 
-    [
-      projectCategoryFilter,
-      projectStatusFilter,
-      setProjectCategoryFilter,
-      setProjectStatusFilter,
-    ],
+    [projectCategoryFilter, projectStatusFilter, setProjectCategoryFilter, setProjectStatusFilter],
   );
 
   const pageNumberButtons = useMemo(
@@ -143,9 +138,7 @@ export const ProjectDiscovery = () => {
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           <span>{"All projects"}</span>
 
-          <span className="text-primary-600 font-600 ml-2">
-            {totalProjectCount}
-          </span>
+          <span className="text-primary-600 font-600 ml-2">{totalProjectCount}</span>
         </div>
 
         <div className="flex w-full items-center gap-4">
@@ -171,10 +164,7 @@ export const ProjectDiscovery = () => {
           <ProjectLookupPlaceholder />
         ) : (
           projects.map((registration: ListRegistration) => (
-            <ProjectCard
-              projectId={registration.registrant.id}
-              key={registration.id}
-            />
+            <ProjectCard projectId={registration.registrant.id} key={registration.id} />
           ))
         )}
       </div>
@@ -184,14 +174,10 @@ export const ProjectDiscovery = () => {
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                onClick={() =>
-                  setProjectLookupPageNumber((prev) => Math.max(prev - 1, 1))
-                }
+                onClick={() => setProjectLookupPageNumber((prev) => Math.max(prev - 1, 1))}
               />
             </PaginationItem>
-
-            {pageNumberButtons}
-
+            {pageNumberButtons}a
             <PaginationItem>
               <PaginationNext
                 onClick={() =>
@@ -214,9 +200,7 @@ export const ProjectDiscovery = () => {
           />
 
           <div className="md:flex-row flex flex-col items-center justify-center gap-2">
-            <p className="w-100 text-center font-lora italic">
-              {"No results found"}
-            </p>
+            <p className="w-100 text-center font-lora italic">{"No results found"}</p>
           </div>
         </div>
       )}
