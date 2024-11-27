@@ -37,7 +37,7 @@ export const ProjectDiscovery = () => {
     setProjectSortingOrder,
     projectStatusFilter,
     setProjectStatusFilter,
-    isProjectLookupPending: loading,
+    isProjectLookupPending,
     projects,
     totalProjectCount,
   } = useProjectLookup({ listId: 1 });
@@ -109,7 +109,7 @@ export const ProjectDiscovery = () => {
         </div>
       </div>
 
-      {loading ? (
+      {isProjectLookupPending ? (
         Array.from({ length: 6 }, (_, index) => (
           <ListCardSkeleton key={index} />
         ))
@@ -207,7 +207,7 @@ export const ProjectDiscovery = () => {
         <div className="min-h-100 flex w-full flex-col items-center justify-center">
           <Image
             src="/assets/icons/no-list.svg"
-            alt=""
+            alt="No results found"
             width={200}
             height={200}
             className="mb-4 h-[200px] w-[200px]"
@@ -215,7 +215,7 @@ export const ProjectDiscovery = () => {
 
           <div className="md:flex-row flex flex-col items-center justify-center gap-2">
             <p className="w-100 text-center font-lora italic">
-              No results found
+              {"No results found"}
             </p>
           </div>
         </div>
