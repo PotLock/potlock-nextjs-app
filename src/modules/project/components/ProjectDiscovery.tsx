@@ -26,6 +26,9 @@ import { useProjectLookup } from "../hooks/lookup";
 import { ProjectCategory, ProjectListingStatusVariant } from "../types";
 import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
 
+const ProjectLookupPlaceholder = () =>
+  Array.from({ length: 6 }, (_, index) => <ProjectCardSkeleton key={index} />);
+
 export const ProjectDiscovery = () => {
   const {
     projectCategoryFilter,
@@ -110,16 +113,16 @@ export const ProjectDiscovery = () => {
       </div>
 
       <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
-        {isProjectLookupPending
-          ? Array.from({ length: 6 }, (_, index) => (
-              <ProjectCardSkeleton key={index} />
-            ))
-          : projects.map((registration: ListRegistration) => (
-              <ProjectCard
-                projectId={registration.registrant.id}
-                key={registration.id}
-              />
-            ))}
+        {isProjectLookupPending ? (
+          <ProjectLookupPlaceholder />
+        ) : (
+          projects.map((registration: ListRegistration) => (
+            <ProjectCard
+              projectId={registration.registrant.id}
+              key={registration.id}
+            />
+          ))
+        )}
       </div>
 
       {totalProjectCount ? (
