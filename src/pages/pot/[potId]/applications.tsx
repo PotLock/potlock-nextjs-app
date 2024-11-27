@@ -31,7 +31,7 @@ import {
   Status,
 } from "@/modules/pot/styles/application-styles";
 import { useProfileData } from "@/modules/profile";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 const ApplicationsTab = () => {
   const router = useRouter();
@@ -42,7 +42,7 @@ const ApplicationsTab = () => {
   const { data: potDetail } = usePot({ potId });
   const [applications, setApplications] = useState<Application[]>([]);
   const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
-  const { actAsDao, accountId: _accountId } = useTypedSelector((state) => state.nav);
+  const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
   const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 

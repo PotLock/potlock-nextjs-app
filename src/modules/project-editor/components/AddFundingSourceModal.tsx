@@ -9,7 +9,7 @@ import {
   Form,
   FormField,
 } from "@/common/ui/components";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput, CustomTextForm } from "./CreateForm/components";
 import { useAddFundingSourceForm } from "../hooks/forms";
@@ -23,7 +23,7 @@ type Props = {
 
 const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) => {
   const { form, errors } = useAddFundingSourceForm();
-  const fundingSources = useTypedSelector((state) => state.projectEditor.fundingSources || []);
+  const fundingSources = useGlobalStoreSelector((state) => state.projectEditor.fundingSources || []);
   const isEdit = editFundingIndex !== undefined;
 
   const resetForm = useCallback(() => {

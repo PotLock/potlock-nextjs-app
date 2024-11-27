@@ -3,7 +3,7 @@ import { merge, mergeAll, prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
@@ -18,7 +18,7 @@ const listEditorStateDefaults: ListEditorState = {
   donation: { amount: 0, breakdown: [], selectedProjects: [] },
 };
 
-export const useListActionsState = () => useTypedSelector(prop(listModelKey));
+export const useListActionsState = () => useGlobalStoreSelector(prop(listModelKey));
 
 const handleList = (state: ListEditorState, stateUpdate?: Partial<ListEditorState>) =>
   mergeAll([state, stateUpdate ?? {}]);

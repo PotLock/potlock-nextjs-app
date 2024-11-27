@@ -2,7 +2,7 @@ import { createModel } from "@rematch/core";
 import { merge, mergeAll, prop } from "remeda";
 
 import { PotData } from "@/modules/pot";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
@@ -12,7 +12,7 @@ export * from "./schemas";
 
 export const potEditorModelKey = "potEditor";
 
-export const usePotEditorState = () => useTypedSelector(prop(potEditorModelKey));
+export const usePotEditorState = () => useGlobalStoreSelector(prop(potEditorModelKey));
 
 const potEditorStateDefaults: PotEditorState = {
   currentStep: "configuration",

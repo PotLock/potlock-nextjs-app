@@ -1,5 +1,6 @@
 {
-  "name": "@potlock/nextjs-frontend",
+  "name": "@potlock/next",
+  "description": "Decentralized funding stack for public goods",
   "version": "2.0.0",
   "packageManager": "yarn@1.22.22",
   "private": true,

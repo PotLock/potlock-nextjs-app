@@ -4,7 +4,7 @@ import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
 
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";
 import { AddChainSelector, CHAIN_OPTIONS } from "./SmartContracts";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const EditSmartContractModal = ({ open, onCloseClick, contractIndex }: Props) => {
-  const contracts = useTypedSelector((state) => state.projectEditor.smartContracts || [["", ""]]);
+  const contracts = useGlobalStoreSelector((state) => state.projectEditor.smartContracts || [["", ""]]);
 
   const [chain, setChain] = useState(
     contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][0] : "",

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { MdArrowOutward } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -15,26 +16,32 @@ import { cn } from "@/common/ui/utils";
 import { useWallet } from "@/modules/auth";
 import { DonateToPotProjects } from "@/modules/donation";
 import { TokenTotalValue } from "@/modules/token";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { ChallengeModal } from "./ChallengeModal";
-import { PotApplicationClearanceStatus } from "./clearance";
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import NewApplicationModal from "./NewApplicationModal";
 import { PotStats } from "./PotStats";
 import { PotTimeline } from "./PotTimeline";
+import { RequirementsList } from "./requirements";
+import { usePotApplicationUserClearance, usePotVotingUserClearance } from "../hooks/clearance";
 import { usePotUserPermissions } from "../hooks/permissions";
 import { isPotVotingBased } from "../utils/voting";
 
 export type PotHeroProps = ByPotId & {};
 
 export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
+  const router = useRouter();
+  const isOnVotingPage = router.pathname.includes("voting");
   const { data: pot } = indexer.usePot({ potId });
   const isVotingBasedPot = isPotVotingBased({ potId });
   const { isSignedIn } = useWallet();
-  const { actAsDao, accountId } = useTypedSelector(prop("nav"));
+  const { actAsDao, accountId } = useGlobalStoreSelector(prop("nav"));
   const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
   const userAccountId = asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId);
+  const applicationClearanceBreakdown = usePotApplicationUserClearance();
+  const votingClearanceBreakdown = usePotVotingUserClearance();
+
   const [fundModalOpen, setFundModalOpen] = useState(false);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
@@ -150,7 +157,19 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
             <div className="lg:w-a flex w-full flex-col gap-6">
               {isVotingBasedPot ? (
-                <PotApplicationClearanceStatus {...{ potId }} />
+                <>
+                  {isOnVotingPage ? (
+                    <RequirementsList
+                      title="Voting Requirements"
+                      breakdown={votingClearanceBreakdown}
+                    />
+                  ) : (
+                    <RequirementsList
+                      title="Application Requirements"
+                      breakdown={applicationClearanceBreakdown}
+                    />
+                  )}
+                </>
               ) : (
                 pot && <PotStats potDetail={pot} />
               )}

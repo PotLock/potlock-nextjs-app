@@ -24,7 +24,7 @@ import { AccountProfilePicture, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { ListRegistrationStatus, listRegistrationStatuses } from "@/modules/lists";
 import { updateAccountId, updateNadabotVerification } from "@/modules/profile/utils";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import ActAsDao from "./ActAsDao";
 
@@ -49,7 +49,7 @@ export const UserDropdown = () => {
   const wallet = useWallet();
   const accountId = wallet?.wallet?.accountId || "";
   const { registration } = useRegistration(accountId);
-  const actAsDao = useTypedSelector((state) => state.nav.actAsDao);
+  const actAsDao = useGlobalStoreSelector((state) => state.nav.actAsDao);
 
   const [status, setStatus] = useState<ListRegistrationStatus>(registration.status);
 

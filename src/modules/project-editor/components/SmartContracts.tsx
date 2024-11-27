@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/common/ui/components";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput, Label } from "./CreateForm/components";
 import validateEVMAddress from "../utils/validateEVMAddress";
@@ -211,7 +211,7 @@ type SmartContractsProps = {
 };
 
 export const SmartContracts = ({ onEditClickHandler }: SmartContractsProps) => {
-  const smartContracts = useTypedSelector((state) => state.projectEditor.smartContracts);
+  const smartContracts = useGlobalStoreSelector((state) => state.projectEditor.smartContracts);
 
   if (smartContracts && smartContracts.length > 0) {
     return (

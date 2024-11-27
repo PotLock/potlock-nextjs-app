@@ -12,7 +12,7 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { useChallengeForm } from "../hooks";
 
@@ -24,7 +24,7 @@ type Props = {
 };
 
 export const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Props) => {
-  const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
+  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
 
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;

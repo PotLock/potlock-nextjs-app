@@ -5,14 +5,14 @@ import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import routesPath from "@/modules/core/routes";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { AddFundingSourceInputs, CreateProjectInputs } from "./types";
 
 export const projectEditorModelKey = "projectEditor";
 
-export const useProjectEditorState = () => useTypedSelector(prop(projectEditorModelKey));
+export const useProjectEditorState = () => useGlobalStoreSelector(prop(projectEditorModelKey));
 
 type CheckStatus = "pending" | "done" | "sending";
 type FetchStatus = "pending" | "fetching" | "ready";

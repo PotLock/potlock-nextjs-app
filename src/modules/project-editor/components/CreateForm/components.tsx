@@ -12,7 +12,7 @@ import {
   MultiSelectorTrigger,
 } from "@/common/ui/components/molecules/multi-select";
 import useProfileData from "@/modules/profile/hooks/data";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 export const Row = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
   <div className="max-md:grid-cols-[100%] mt-6 grid grid-cols-2 gap-6">{children}</div>
@@ -202,7 +202,7 @@ const AccountStackItem = ({ accountId, style }: { accountId: string; style?: CSS
 const MAX_DISPLAY_MEMBERS = 5;
 
 export const AccountStack = () => {
-  const members = useTypedSelector((state) => state.projectEditor.teamMembers);
+  const members = useGlobalStoreSelector((state) => state.projectEditor.teamMembers);
   const shown = members.slice(0, MAX_DISPLAY_MEMBERS);
   const hidden = Math.max(members.length - MAX_DISPLAY_MEMBERS, 0);
 

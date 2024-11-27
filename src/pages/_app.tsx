@@ -20,7 +20,7 @@ import { APP_METADATA } from "@/common/constants";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
 import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
-import { Nav } from "@/modules/core";
+import { AppBar } from "@/modules/core";
 import { dispatch, store } from "@/store";
 
 const lora = Lora({
@@ -55,7 +55,7 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
             <div
               className={`${cn("flex h-full flex-col items-center font-lora antialiased", lora.variable)}`}
             >
-              <Nav />
+              <AppBar />
               {getLayout(<Component {...pageProps} />)}
             </div>
           </AuthProvider>

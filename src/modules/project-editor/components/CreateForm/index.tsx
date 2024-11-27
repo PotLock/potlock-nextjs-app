@@ -5,11 +5,11 @@ import { Form } from "react-hook-form";
 
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/modules/auth/hooks/store";
 import useWallet from "@/modules/auth/hooks/wallet";
 import ErrorModal from "@/modules/core/components/ErrorModal";
 import routesPath from "@/modules/core/routes";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { AccountStack, CustomInput, CustomTextForm, Row, SelectCategory } from "./components";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
@@ -34,7 +34,7 @@ const CreateForm = () => {
   const projectId =
     typeof projectIdPathParam === "string" ? projectIdPathParam : projectIdPathParam?.at(0);
 
-  const projectProps = useTypedSelector((state) => state.projectEditor);
+  const projectProps = useGlobalStoreSelector((state) => state.projectEditor);
   const { wallet, isWalletReady } = useWallet();
   const { isAuthenticated } = useAuth();
   const { form, errors, onSubmit } = useCreateProjectForm();

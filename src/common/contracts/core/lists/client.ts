@@ -2,7 +2,7 @@ import { MemoryCache } from "@wpdas/naxios";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 
@@ -32,7 +32,7 @@ export const getLists = () => contractApi.view<{}, List[]>("get_lists");
 
 export const get_admin_list = () =>
   contractApi.view<{}, List[]>("list_admins_by_list_id", {
-    args: { list_id: POTLOCK_REGISTRY_LIST_ID, accountId: "harrydhillon.near" },
+    args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID, accountId: "harrydhillon.near" },
   });
 
 export const create_list = ({
@@ -188,7 +188,7 @@ export const get_upvoted_lists_for_account = (args: { account_id: string }) =>
  * Get Registrations for a list
  */
 export const getRegistrations = (
-  args: { list_id: number } = { list_id: POTLOCK_REGISTRY_LIST_ID },
+  args: { list_id: number } = { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
 ) => {
   return contractApi.view<typeof args, Registration[]>(
     "get_registrations_for_list",
@@ -210,7 +210,7 @@ export const getRegistration = async (args: { list_id?: number; registrant_id: s
     },
   );
   const registration = registrations.find(
-    (registration) => registration.list_id === args.list_id || POTLOCK_REGISTRY_LIST_ID,
+    (registration) => registration.list_id === args.list_id || PUBLIC_GOODS_REGISTRY_LIST_ID,
   );
   return registration;
 };
