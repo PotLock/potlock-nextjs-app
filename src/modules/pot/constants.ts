@@ -69,6 +69,11 @@ export const POT_TABS_CONFIG = [
     href: "/applications",
   },
   {
+    label: "Votes",
+    id: "votes",
+    href: "/votes",
+  },
+  {
     label: "Donations",
     id: "donations",
     href: "/donations",

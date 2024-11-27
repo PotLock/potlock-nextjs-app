@@ -8,7 +8,7 @@ import { ErrorModal, SuccessModal } from "@/modules/core";
 import { DonationSybilWarning } from "@/modules/donation";
 
 import { PotHero } from "./PotHero";
-import Tabs from "./Tabs";
+import { PotLayoutTabPanel } from "./PotLayoutTabPanel";
 import { POT_TABS_CONFIG } from "../constants";
 import { isPotVotingBased } from "../utils/voting";
 
@@ -44,13 +44,15 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
     [isVotingBasedPot],
   );
 
+  const defaultTab = isVotingBasedPot ? POT_TABS_CONFIG[1] : POT_TABS_CONFIG[0];
+
   const [selectedTab, setSelectedTab] = useState(
-    tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0],
+    tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab,
   );
 
   useEffect(() => {
-    setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0]);
-  }, [isVotingBasedPot, pathname, tabs]);
+    setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab);
+  }, [defaultTab, isVotingBasedPot, pathname, tabs]);
 
   return !pot ? null : (
     <PageWithBanner>
@@ -69,7 +71,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       <DonationSybilWarning classNames={{ root: "w-full mb-4 md:mb-8" }} {...{ potId }} />
       <PotHero potId={potId} />
 
-      <Tabs
+      <PotLayoutTabPanel
         asLink
         navOptions={tabs}
         selectedTab={selectedTab.id}

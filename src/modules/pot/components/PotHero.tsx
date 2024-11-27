@@ -158,7 +158,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
               {isSignedIn && (
                 <div className="lg:justify-end flex items-center gap-2 text-sm">
                   <ClipboardCopyButton text={referrerPotLink} customIcon={<VolunteerIcon />} />
-                  <p>{"Earn referral fees"}</p>
+                  <span className="text-neutral-950">{"Earn referral fees"}</span>
                 </div>
               )}
             </div>
@@ -167,7 +167,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
           <div
             className={cn(
               "md:flex-row md:items-center flex flex-col justify-between gap-8",
-              "w-full self-stretch border-t border-neutral-200 pt-4",
+              "mt-a w-full self-stretch border-t border-neutral-200 pt-4",
             )}
           >
             <div className="inline-flex flex-col items-start justify-center gap-1">
