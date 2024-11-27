@@ -137,6 +137,8 @@ export const ProjectDiscovery = () => {
     [projectLookupPageNumber, setProjectLookupPageNumber, totalProjectCount],
   );
 
+  const totalNumberOfPages = Math.ceil(totalProjectCount / 30);
+
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
       <div className="flex w-full flex-col gap-5">
@@ -180,27 +182,29 @@ export const ProjectDiscovery = () => {
       </div>
 
       {totalProjectCount ? (
-        <Pagination className="mt-[24px]">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() =>
-                  setProjectLookupPageNumber((prev) => Math.max(prev - 1, 1))
-                }
-              />
-            </PaginationItem>
-            <>{pageNumberButtons}</>
-            <PaginationItem>
-              <PaginationNext
-                onClick={() =>
-                  setProjectLookupPageNumber((prev) =>
-                    Math.min(prev + 1, Math.ceil(totalProjectCount / 30)),
-                  )
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        totalNumberOfPages > 1 && (
+          <Pagination className="mt-[24px]">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() =>
+                    setProjectLookupPageNumber((prev) => Math.max(prev - 1, 1))
+                  }
+                />
+              </PaginationItem>
+              <>{pageNumberButtons}</>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    setProjectLookupPageNumber((prev) =>
+                      Math.min(prev + 1, Math.ceil(totalProjectCount / 30)),
+                    )
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )
       ) : (
         <div className="min-h-140 flex w-full flex-col items-center justify-center">
           <Image
