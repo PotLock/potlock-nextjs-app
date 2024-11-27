@@ -4,13 +4,11 @@ import Image from "next/image";
 
 import { ListRegistration } from "@/common/api/indexer";
 import { CHRONOLOGICAL_SORT_OPTIONS } from "@/common/constants";
-import { toChronologicalOrder } from "@/common/lib";
 import { ChronologicalSortOrderVariant } from "@/common/types";
 import {
   Filter,
   Group,
   GroupType,
-  InfiniteScroll,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -30,18 +28,13 @@ import { useProjectLookup } from "../hooks/lookup";
 import { ProjectCategory, ProjectListingStatusVariant } from "../types";
 
 export const ProjectDiscovery = () => {
-  const [index, setIndex] = useState(1);
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<ChronologicalSortOrderVariant>("recent");
   const {
     projectCategoryFilter,
     setProjectCategoryFilter,
-    projectLookupError,
     projectLookupPageNumber,
     setProjectLookupPageNumber,
     projectSearchTerm,
     setProjectSearchTerm,
-    projectSortingOrder,
     setProjectSortingOrder,
     projectStatusFilter,
     setProjectStatusFilter,
@@ -52,48 +45,43 @@ export const ProjectDiscovery = () => {
 
   console.log(projects.map((project) => project.registrant.id));
 
-  const tagList: (Group<GroupType.multiple> | Group<GroupType.single>)[] = [
-    {
-      label: "Category",
-      options: categories,
-      type: GroupType.multiple,
-      props: {
-        value: projectCategoryFilter,
-        onValueChange: (value: ProjectCategory[]) => {
-          setProjectCategoryFilter(value);
-          console.log({ projectCategoryFilter });
+  const tagList = useMemo(
+    () => [
+      {
+        label: "Category",
+        options: categories,
+        type: GroupType.multiple,
+        props: {
+          value: projectCategoryFilter,
+          onValueChange: (value: ProjectCategory[]) => {
+            setProjectCategoryFilter(value);
+            console.log({ projectCategoryFilter });
+          },
         },
-      },
-    },
-    {
-      label: "Status",
-      options: statuses,
-      type: GroupType.single,
-      props: {
-        value: projectStatusFilter,
-        onValueChange: (value: ProjectListingStatusVariant) => {
-          if (value === "all") {
-            setProjectStatusFilter("Approved");
-          } else {
-            setProjectStatusFilter(value);
-          }
+      } as Group<GroupType.multiple>,
+      {
+        label: "Status",
+        options: statuses,
+        type: GroupType.single,
+        props: {
+          value: projectStatusFilter,
+          onValueChange: (value: ProjectListingStatusVariant) => {
+            if (value === "all") {
+              setProjectStatusFilter("Approved");
+            } else {
+              setProjectStatusFilter(value);
+            }
+          },
         },
-      },
-    },
-  ];
-
-  const handleSort = (sortType: string) => {
-    switch (sortType) {
-      case "recent":
-        return projects.toReversed();
-        break;
-      case "older":
-        return projects;
-        break;
-      default:
-        break;
-    }
-  };
+      } as Group<GroupType.single>,
+    ],
+    [
+      projectCategoryFilter,
+      projectStatusFilter,
+      setProjectCategoryFilter,
+      setProjectStatusFilter,
+    ],
+  );
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
       <div className="flex w-full flex-col gap-5">
@@ -109,20 +97,20 @@ export const ProjectDiscovery = () => {
         <div className="flex w-full items-center gap-4">
           <SearchBar
             placeholder="Search projects"
-            onChange={(e) => setSearch(e.target.value.toLowerCase())}
+            defaultValue={projectSearchTerm}
+            onChange={(e) => setProjectSearchTerm(e.target.value.toLowerCase())}
           />
 
           <Filter groups={tagList} />
 
           <SortSelect
             options={CHRONOLOGICAL_SORT_OPTIONS}
-            onValueChange={handleSort}
+            onValueChange={(value) => {
+              setProjectSortingOrder(value as ChronologicalSortOrderVariant);
+            }}
           />
         </div>
       </div>
-
-      {/* TODO: Use regular pagination from `@/common/ui/components` */}
-      {/* Guide: https://ui.shadcn.com/docs/components/pagination */}
       {loading ? (
         Array.from({ length: 6 }, (_, index) => (
           <ListCardSkeleton key={index} />
