@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import Link from "next/link";
 import { MdArrowOutward } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { prop } from "remeda";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
@@ -31,7 +32,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
   const { data: pot } = indexer.usePot({ potId });
   const isVotingBasedPot = isPotVotingBased({ potId });
   const { isSignedIn } = useWallet();
-  const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
+  const { actAsDao, accountId } = useTypedSelector(prop("nav"));
   const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
   const userAccountId = asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId);
   const [fundModalOpen, setFundModalOpen] = useState(false);
@@ -46,13 +47,19 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
     accountId: asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId),
   });
 
-  const [description, embeddedLink] = pot?.description.split("More info ") ?? [null, null];
+  const [description, linkedDocumentUrl] = useMemo(() => {
+    const linkPattern = /(More info )?(?:https?:\/\/)?([^\s]+\.[^\s]+)/i;
+    const detectedPatterns = pot?.description?.match(linkPattern);
 
-  //! WARNING: This is a strictly temporary solution!
-  //!  Pot v2 will have a designated document link field
-  const linkedDocumentUrl = embeddedLink ? `https://${embeddedLink}` : null;
-
-  console.log(embeddedLink, linkedDocumentUrl);
+    if (detectedPatterns) {
+      return [
+        pot?.description?.split(detectedPatterns[0])[0].trim(),
+        detectedPatterns[0].startsWith("http")
+          ? detectedPatterns[0]
+          : `https://${detectedPatterns[2]}`,
+      ];
+    } else return [pot?.description ?? null, null];
+  }, [pot?.description]);
 
   return (
     <>
@@ -97,7 +104,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
             "lg:gap-8 bg-background gap-10 self-stretch rounded-lg",
           )}
         >
-          <div className="lg:flex-row flex flex-col items-start justify-between gap-10 self-stretch">
+          <div className="lg:flex-row flex w-full flex-col items-start justify-between gap-10">
             <div className="max-w-126.5 min-w-87.5 flex flex-col items-start justify-start gap-10">
               {pot ? (
                 <div

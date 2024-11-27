@@ -28,7 +28,7 @@ const Table = ({
   const { data: nearToUsdValue } = coingecko.useOneNearUsdPrice();
 
   return (
-    <Container>
+    <Container className="min-w-100 xl:w-126.5">
       <div className="header">
         {usdToggle
           ? `~$${(parseFloat(totalAmount) * nearToUsdValue).toFixed(2)}`
@@ -93,7 +93,7 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
       <div>#{index + 1}</div>
       <Link className="address" href={url}>
         <AccountProfilePicture accountId={donorId} className="h-[18px] w-[18px]" />
-        {truncate(profile.profile?.name || donorId, 15)}
+        {truncate(profile.profile?.name || donorId, 22)}
       </Link>
       <div>
         {matchedAmount} {usdToggle ? "$" : "N"}
