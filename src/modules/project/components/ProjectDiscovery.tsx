@@ -19,6 +19,7 @@ import {
   SearchBar,
   SortSelect,
 } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 
 import { ProjectCard } from "./ProjectCard";
 import { categories, statuses } from "../constants";
@@ -51,18 +52,19 @@ export const ProjectDiscovery = () => {
         label: "Category",
         options: categories,
         type: GroupType.multiple,
+
         props: {
           value: projectCategoryFilter,
-          onValueChange: (value: ProjectCategory[]) => {
-            setProjectCategoryFilter(value);
-            console.log({ projectCategoryFilter });
-          },
+          onValueChange: (value: ProjectCategory[]) =>
+            setProjectCategoryFilter(value),
         },
       } as Group<GroupType.multiple>,
+
       {
         label: "Status",
         options: statuses,
         type: GroupType.single,
+
         props: {
           value: projectStatusFilter,
           onValueChange: (value: ProjectListingStatusVariant) => {
@@ -75,6 +77,7 @@ export const ProjectDiscovery = () => {
         },
       } as Group<GroupType.single>,
     ],
+
     [
       projectCategoryFilter,
       projectStatusFilter,
@@ -182,11 +185,10 @@ export const ProjectDiscovery = () => {
                   ) : (
                     <PaginationLink
                       onClick={() => setProjectLookupPageNumber(page)}
-                      className={
-                        projectLookupPageNumber === page
-                          ? "border-black font-bold"
-                          : ""
-                      }
+                      className={cn({
+                        "border-black font-bold":
+                          projectLookupPageNumber === page,
+                      })}
                     >
                       {page}
                     </PaginationLink>
