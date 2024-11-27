@@ -42,7 +42,9 @@ type Props = {
 };
 
 const Repositories = ({ onChange }: Props) => {
-  const repositories = useGlobalStoreSelector((state) => state.projectEditor.githubRepositories || []);
+  const repositories = useGlobalStoreSelector(
+    (state) => state.projectEditor.githubRepositories || [],
+  );
 
   const [repos, setRepos] = useState(repositories.length > 0 ? repositories : [""]);
 

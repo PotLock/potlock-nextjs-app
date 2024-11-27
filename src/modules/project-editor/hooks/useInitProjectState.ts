@@ -9,9 +9,8 @@ import routesPath from "@/modules/core/routes";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 const useInitProjectState = () => {
-  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } = useGlobalStoreSelector(
-    (state) => state.projectEditor,
-  );
+  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
+    useGlobalStoreSelector((state) => state.projectEditor);
 
   const {
     query: { projectId: projectIdPathParam, done, transactionHashes, errorMessage },

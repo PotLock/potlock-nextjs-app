@@ -17,7 +17,9 @@ type Props = {
 };
 
 const EditSmartContractModal = ({ open, onCloseClick, contractIndex }: Props) => {
-  const contracts = useGlobalStoreSelector((state) => state.projectEditor.smartContracts || [["", ""]]);
+  const contracts = useGlobalStoreSelector(
+    (state) => state.projectEditor.smartContracts || [["", ""]],
+  );
 
   const [chain, setChain] = useState(
     contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][0] : "",

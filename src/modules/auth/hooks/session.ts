@@ -26,5 +26,11 @@ export const useAuthSession = (): AuthSession => {
     [actAsDao.defaultAddress, asDao, wallet?.accountId],
   );
 
-  return { accountId, isSignedIn };
+  const account = useMemo(
+    () => data?.results?.find(({ registrant }) => registrant.id === accountId)?.registrant,
+
+    [accountId, data?.results],
+  );
+
+  return { isSignedIn, accountId, account };
 };
