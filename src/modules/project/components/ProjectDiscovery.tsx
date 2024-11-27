@@ -109,21 +109,21 @@ export const ProjectDiscovery = () => {
         </div>
       </div>
 
-      {isProjectLookupPending ? (
-        Array.from({ length: 6 }, (_, index) => (
-          <ProjectCardSkeleton key={index} />
-        ))
-      ) : totalProjectCount ? (
-        <>
-          <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
-            {projects.map((registration: ListRegistration) => (
+      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+        {isProjectLookupPending
+          ? Array.from({ length: 6 }, (_, index) => (
+              <ProjectCardSkeleton key={index} />
+            ))
+          : projects.map((registration: ListRegistration) => (
               <ProjectCard
                 projectId={registration.registrant.id}
                 key={registration.id}
               />
             ))}
-          </div>
+      </div>
 
+      {totalProjectCount ? (
+        <>
           <Pagination className="mt-[24px]">
             <PaginationContent>
               <PaginationItem>
