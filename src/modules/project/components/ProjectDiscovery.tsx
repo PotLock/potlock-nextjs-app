@@ -189,7 +189,9 @@ export const ProjectDiscovery = () => {
                 }
               />
             </PaginationItem>
-            <>{pageNumberButtons}</>
+
+            {pageNumberButtons}
+
             <PaginationItem>
               <PaginationNext
                 onClick={() =>
