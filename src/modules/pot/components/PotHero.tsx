@@ -18,9 +18,9 @@ import { TokenTotalValue } from "@/modules/token";
 import { useTypedSelector } from "@/store";
 
 import { ChallengeModal } from "./ChallengeModal";
+import { PotApplicationClearanceStatus } from "./clearance";
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import NewApplicationModal from "./NewApplicationModal";
-import { PotApplicationRequirements } from "./PotApplicationRequirements";
 import { PotStats } from "./PotStats";
 import { PotTimeline } from "./PotTimeline";
 import { usePotUserPermissions } from "../hooks/permissions";
@@ -150,7 +150,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
 
             <div className="lg:w-a flex w-full flex-col gap-6">
               {isVotingBasedPot ? (
-                <PotApplicationRequirements {...{ potId }} />
+                <PotApplicationClearanceStatus {...{ potId }} />
               ) : (
                 pot && <PotStats potDetail={pot} />
               )}

@@ -2,6 +2,8 @@ import { Big } from "big.js";
 import { utils } from "near-api-js";
 import { Metadata } from "next";
 
+import { NETWORK } from "./_config";
+
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
@@ -68,6 +70,9 @@ export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
 
 export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
+
+export const STAKE_WEIGHTED_POT_IDS =
+  NETWORK === "mainnet" ? ["mpdao.v1.potfactory.potlock.near"] : [];
 
 /**
  * @deprecated use `ftService` hooks instead
