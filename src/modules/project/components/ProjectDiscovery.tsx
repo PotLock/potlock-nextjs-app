@@ -19,12 +19,12 @@ import {
   SearchBar,
   SortSelect,
 } from "@/common/ui/components";
-import { ListCardSkeleton } from "@/modules/lists/components/ListCardSkeleton";
 
 import { ProjectCard } from "./ProjectCard";
 import { categories, statuses } from "../constants";
 import { useProjectLookup } from "../hooks/lookup";
 import { ProjectCategory, ProjectListingStatusVariant } from "../types";
+import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
 
 export const ProjectDiscovery = () => {
   const {
@@ -111,7 +111,7 @@ export const ProjectDiscovery = () => {
 
       {isProjectLookupPending ? (
         Array.from({ length: 6 }, (_, index) => (
-          <ListCardSkeleton key={index} />
+          <ProjectCardSkeleton key={index} />
         ))
       ) : totalProjectCount ? (
         <>
@@ -133,6 +133,7 @@ export const ProjectDiscovery = () => {
                   }
                 />
               </PaginationItem>
+
               {(() => {
                 const totalPages = Math.ceil(totalProjectCount / 30);
                 const pages: (number | "ellipsis")[] = [];
@@ -191,6 +192,7 @@ export const ProjectDiscovery = () => {
                   </PaginationItem>
                 ));
               })()}
+
               <PaginationItem>
                 <PaginationNext
                   onClick={() =>
