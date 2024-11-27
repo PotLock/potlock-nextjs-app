@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { use, useMemo } from "react";
 
 import Image from "next/image";
 
@@ -128,6 +128,8 @@ export const ProjectDiscovery = () => {
     ));
   }, [projectLookupPageNumber, setProjectLookupPageNumber, totalProjectCount]);
 
+  const numberOfPages = useMemo(() => Math.ceil(totalProjectCount / 30), [totalProjectCount]);
+
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
       <div className="flex w-full flex-col gap-5">
@@ -163,8 +165,7 @@ export const ProjectDiscovery = () => {
           ))
         )}
       </div>
-
-      {totalProjectCount ? (
+      {numberOfPages > 1 && (
         <Pagination className="mt-[24px]">
           <PaginationContent>
             <PaginationItem>
@@ -185,8 +186,9 @@ export const ProjectDiscovery = () => {
               />
             </PaginationItem>
           </PaginationContent>
-        </Pagination>
-      ) : (
+        </Pagination>)}
+
+      {!totalProjectCount && (
         <div className="min-h-140 flex w-full flex-col items-center justify-center">
           <Image
             src="/assets/icons/no-list.svg"
