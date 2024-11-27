@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import Image from "next/image";
 
@@ -22,7 +22,6 @@ import {
 import { ListCardSkeleton } from "@/modules/lists/components/ListCardSkeleton";
 
 import { ProjectCard } from "./ProjectCard";
-// import { useProjectsFilters } from "../hooks/useProjectsFilters";
 import { categories, statuses } from "../constants";
 import { useProjectLookup } from "../hooks/lookup";
 import { ProjectCategory, ProjectListingStatusVariant } from "../types";
@@ -42,8 +41,6 @@ export const ProjectDiscovery = () => {
     projects,
     totalProjectCount,
   } = useProjectLookup({ listId: 1 });
-
-  console.log(projects.map((project) => project.registrant.id));
 
   const tagList = useMemo(
     () => [
@@ -82,14 +79,14 @@ export const ProjectDiscovery = () => {
       setProjectStatusFilter,
     ],
   );
+
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
-          All projects
-          <span
-            style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
-          >
+          <span>{"All projects"}</span>
+
+          <span className="text-primary-600 font-600 ml-2">
             {totalProjectCount}
           </span>
         </div>
@@ -111,6 +108,7 @@ export const ProjectDiscovery = () => {
           />
         </div>
       </div>
+
       {loading ? (
         Array.from({ length: 6 }, (_, index) => (
           <ListCardSkeleton key={index} />
@@ -125,6 +123,7 @@ export const ProjectDiscovery = () => {
               />
             ))}
           </div>
+
           <Pagination className="mt-[24px]">
             <PaginationContent>
               <PaginationItem>
