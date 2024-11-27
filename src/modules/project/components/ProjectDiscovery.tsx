@@ -5,56 +5,95 @@ import Image from "next/image";
 import { ListRegistration } from "@/common/api/indexer";
 import { CHRONOLOGICAL_SORT_OPTIONS } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
+import { ChronologicalSortOrderVariant } from "@/common/types";
 import {
   Filter,
+  Group,
+  GroupType,
   InfiniteScroll,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
   SearchBar,
   SortSelect,
 } from "@/common/ui/components";
 import { ListCardSkeleton } from "@/modules/lists/components/ListCardSkeleton";
 
 import { ProjectCard } from "./ProjectCard";
-import { useProjectsFilters } from "../hooks/useProjectsFilters";
+// import { useProjectsFilters } from "../hooks/useProjectsFilters";
+import { categories, statuses } from "../constants";
+import { useProjectLookup } from "../hooks/lookup";
+import { ProjectCategory, ProjectListingStatusVariant } from "../types";
 
-export const ProjectDiscovery = ({
-  // TODO: Delete
-  setCurrentFilterCategory,
-  // TODO: Delete
-  filteredRegistrations,
-  // TODO: Delete
-  setFilteredRegistrations,
-}: {
-  // TODO: Delete
-  setCurrentFilterCategory: (type: string[]) => void;
-  // TODO: Delete
-  filteredRegistrations: ListRegistration[];
-  // TODO: Delete
-  setFilteredRegistrations: (type: any) => void;
-}) => {
+export const ProjectDiscovery = () => {
   const [index, setIndex] = useState(1);
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<ChronologicalSortOrderVariant>("recent");
+  const {
+    projectCategoryFilter,
+    setProjectCategoryFilter,
+    projectLookupError,
+    projectLookupPageNumber,
+    setProjectLookupPageNumber,
+    projectSearchTerm,
+    setProjectSearchTerm,
+    projectSortingOrder,
+    setProjectSortingOrder,
+    projectStatusFilter,
+    setProjectStatusFilter,
+    isProjectLookupPending: loading,
+    projects,
+    totalProjectCount,
+  } = useProjectLookup({ listId: 1 });
 
-  const { tagList, loading } = useProjectsFilters((type: string) =>
-    setCurrentFilterCategory([type]),
-  );
+  console.log(projects.map((project) => project.registrant.id));
 
-  const chronologicallySortedProjects = useMemo(() => {
-    return toChronologicalOrder("submitted_at", filteredRegistrations);
-  }, [filteredRegistrations]);
+  const tagList: (Group<GroupType.multiple> | Group<GroupType.single>)[] = [
+    {
+      label: "Category",
+      options: categories,
+      type: GroupType.multiple,
+      props: {
+        value: projectCategoryFilter,
+        onValueChange: (value: ProjectCategory[]) => {
+          setProjectCategoryFilter(value);
+          console.log({ projectCategoryFilter });
+        },
+      },
+    },
+    {
+      label: "Status",
+      options: statuses,
+      type: GroupType.single,
+      props: {
+        value: projectStatusFilter,
+        onValueChange: (value: ProjectListingStatusVariant) => {
+          if (value === "all") {
+            setProjectStatusFilter("Approved");
+          } else {
+            setProjectStatusFilter(value);
+          }
+        },
+      },
+    },
+  ];
 
   const handleSort = (sortType: string) => {
     switch (sortType) {
       case "recent":
-        setFilteredRegistrations(chronologicallySortedProjects.toReversed());
+        return projects.toReversed();
         break;
       case "older":
-        setFilteredRegistrations(chronologicallySortedProjects);
+        return projects;
         break;
       default:
         break;
     }
   };
-
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
       <div className="flex w-full flex-col gap-5">
@@ -63,7 +102,7 @@ export const ProjectDiscovery = ({
           <span
             style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
           >
-            {filteredRegistrations?.length}
+            {totalProjectCount}
           </span>
         </div>
 
@@ -88,20 +127,95 @@ export const ProjectDiscovery = ({
         Array.from({ length: 6 }, (_, index) => (
           <ListCardSkeleton key={index} />
         ))
-      ) : filteredRegistrations?.length ? (
-        <InfiniteScroll
-          className="p-0.5"
-          items={filteredRegistrations}
-          index={index}
-          setIndex={setIndex}
-          size={30}
-          renderItem={(registration: ListRegistration) => (
-            <ProjectCard
-              projectId={registration.registrant.id}
-              key={registration.id}
-            />
-          )}
-        />
+      ) : totalProjectCount ? (
+        <>
+          <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+            {projects.map((registration: ListRegistration) => (
+              <ProjectCard
+                projectId={registration.registrant.id}
+                key={registration.id}
+              />
+            ))}
+          </div>
+          <Pagination className="mt-[24px]">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() =>
+                    setProjectLookupPageNumber((prev) => Math.max(prev - 1, 1))
+                  }
+                />
+              </PaginationItem>
+              {(() => {
+                const totalPages = Math.ceil(totalProjectCount / 30);
+                const pages: (number | "ellipsis")[] = [];
+
+                if (totalPages <= 7) {
+                  // Show all pages if total is 7 or less
+                  pages.push(
+                    ...Array.from({ length: totalPages }, (_, i) => i + 1),
+                  );
+                } else {
+                  // Always show first page
+                  pages.push(1);
+
+                  if (projectLookupPageNumber <= 4) {
+                    // Near start
+                    pages.push(2, 3, 4, 5, "ellipsis", totalPages);
+                  } else if (projectLookupPageNumber >= totalPages - 3) {
+                    // Near end
+                    pages.push(
+                      "ellipsis",
+                      totalPages - 4,
+                      totalPages - 3,
+                      totalPages - 2,
+                      totalPages - 1,
+                      totalPages,
+                    );
+                  } else {
+                    // Middle
+                    pages.push(
+                      "ellipsis",
+                      projectLookupPageNumber - 1,
+                      projectLookupPageNumber,
+                      projectLookupPageNumber + 1,
+                      "ellipsis",
+                      totalPages,
+                    );
+                  }
+                }
+
+                return pages.map((page, i) => (
+                  <PaginationItem key={i}>
+                    {page === "ellipsis" ? (
+                      <PaginationEllipsis />
+                    ) : (
+                      <PaginationLink
+                        onClick={() => setProjectLookupPageNumber(page)}
+                        className={
+                          projectLookupPageNumber === page
+                            ? "border-black font-bold"
+                            : ""
+                        }
+                      >
+                        {page}
+                      </PaginationLink>
+                    )}
+                  </PaginationItem>
+                ));
+              })()}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    setProjectLookupPageNumber((prev) =>
+                      Math.min(prev + 1, Math.ceil(totalProjectCount / 30)),
+                    )
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </>
       ) : (
         <div className="min-h-100 flex w-full flex-col items-center justify-center">
           <Image

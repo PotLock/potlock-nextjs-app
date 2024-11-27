@@ -2,11 +2,7 @@ import { useMemo, useState } from "react";
 
 import { indexer } from "@/common/api/indexer";
 import { toChronologicalOrder } from "@/common/lib";
-import {
-  ByListId,
-  ChronologicalSortOrder,
-  ChronologicalSortOrderVariant,
-} from "@/common/types";
+import { ByListId, ChronologicalSortOrder, ChronologicalSortOrderVariant } from "@/common/types";
 
 import { ProjectCategory, ProjectListingStatusVariant } from "../types";
 
@@ -17,11 +13,11 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [categoryFilter, setCategoryFilter] = useState<ProjectCategory[]>([]);
 
-  const [statusFilter, setStatusFilter] =
-    useState<ProjectListingStatusVariant>("Approved");
+  const [statusFilter, setStatusFilter] = useState<ProjectListingStatusVariant>("Approved");
 
-  const [sortingOrder, setSortingOrder] =
-    useState<ChronologicalSortOrderVariant>(ChronologicalSortOrder.recent);
+  const [sortingOrder, setSortingOrder] = useState<ChronologicalSortOrderVariant>(
+    ChronologicalSortOrder.recent,
+  );
 
   const {
     data: listRegistrations,
@@ -36,14 +32,9 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
   });
 
   const results = useMemo(() => {
-    const oldToRecent = toChronologicalOrder(
-      "submitted_at",
-      listRegistrations?.results ?? [],
-    );
+    const oldToRecent = toChronologicalOrder("submitted_at", listRegistrations?.results ?? []);
 
-    return sortingOrder === ChronologicalSortOrder.older
-      ? oldToRecent
-      : oldToRecent.toReversed();
+    return sortingOrder === ChronologicalSortOrder.older ? oldToRecent : oldToRecent.toReversed();
   }, [listRegistrations?.results, sortingOrder]);
 
   return {
