@@ -186,7 +186,8 @@ export const ProjectDiscovery = () => {
               />
             </PaginationItem>
           </PaginationContent>
-        </Pagination>)}
+        </Pagination>
+      )}
 
       {!totalProjectCount && (
         <div className="min-h-140 flex w-full flex-col items-center justify-center">
