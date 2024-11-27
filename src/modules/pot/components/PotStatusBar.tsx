@@ -16,10 +16,7 @@ export type PotStatusBarProps = {
   };
 };
 
-export const PotStatusBar: React.FC<PotStatusBarProps> = ({
-  classNames,
-  potIndexedData,
-}) => {
+export const PotStatusBar: React.FC<PotStatusBarProps> = ({ classNames, potIndexedData }) => {
   const [mobileMenuActive, setMobileMenuActive] = useState(false);
 
   if (potIndexedData === null) return "";
@@ -68,11 +65,7 @@ export const PotStatusBar: React.FC<PotStatusBarProps> = ({
                     },
                   )}
                 >
-                  <ProgressBar
-                    progress={progress}
-                    started={started}
-                    completed={completed}
-                  />
+                  <ProgressBar progress={progress} started={started} completed={completed} />
 
                   <div className="flex">
                     {label}

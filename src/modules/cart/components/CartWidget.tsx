@@ -37,9 +37,7 @@ export const CartWidget: React.FC<CartWidgetProps> = () => {
           </CardHeader>
 
           <CardContent className="flex flex-col gap-4">
-            <p className="text-sm text-muted-foreground">
-              Matching Round 2: NDC Grassroots
-            </p>
+            <p className="text-sm text-muted-foreground">Matching Round 2: NDC Grassroots</p>
 
             <div className="flex items-center justify-between">
               <span>NEAR</span>

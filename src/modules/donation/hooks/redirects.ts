@@ -11,29 +11,17 @@ export const useDonationSuccessWalletRedirect = () => {
   const donationModal = useModal(DonationModal);
 
   const {
-    query: {
-      donateTo,
-      donateToPot,
-      donateToList,
-      donateToCampaign,
-      transactionHashes,
-    },
+    query: { donateTo, donateToPot, donateToList, donateToCampaign, transactionHashes },
     setSearchParams,
   } = useRouteQuery();
 
-  const recipientAccountId =
-    typeof donateTo === "string" ? donateTo : undefined;
+  const recipientAccountId = typeof donateTo === "string" ? donateTo : undefined;
 
-  const potAccountId =
-    typeof donateToPot === "string" ? donateToPot : undefined;
+  const potAccountId = typeof donateToPot === "string" ? donateToPot : undefined;
 
-  const listId =
-    typeof donateToList === "string" ? parseInt(donateToList) : undefined;
+  const listId = typeof donateToList === "string" ? parseInt(donateToList) : undefined;
 
-  const campaignId =
-    typeof donateToCampaign === "string"
-      ? parseInt(donateToCampaign)
-      : undefined;
+  const campaignId = typeof donateToCampaign === "string" ? parseInt(donateToCampaign) : undefined;
 
   const transactionHash =
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??

@@ -16,13 +16,10 @@ const campaignEditorStateDefaults: CampaignEditorState = {
   modalTextState: { header: "", description: "" },
 };
 
-const handleCampaign = (
-  state: CampaignEditorState,
-  stateUpdate?: Partial<CampaignEditorState>,
-) => mergeAll([state, stateUpdate ?? {}]);
+const handleCampaign = (state: CampaignEditorState, stateUpdate?: Partial<CampaignEditorState>) =>
+  mergeAll([state, stateUpdate ?? {}]);
 
-export const useCampaignActionState = () =>
-  useTypedSelector(prop(campaignModelKey));
+export const useCampaignActionState = () => useTypedSelector(prop(campaignModelKey));
 
 export const campaignEditorModel = createModel<AppModel>()({
   state: campaignEditorStateDefaults,

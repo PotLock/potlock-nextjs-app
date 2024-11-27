@@ -32,9 +32,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { data: pot } = indexer.usePot({ potId });
 
   // Modals
-  const [resultModalOpen, setSuccessModalOpen] = useState(
-    !!query.done && !query.errorMessage,
-  );
+  const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
 
   const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
 
@@ -54,9 +52,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    setSelectedTab(
-      tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0],
-    );
+    setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? POT_TABS_CONFIG[0]);
   }, [isStakeWeightedPot, pathname, tabs]);
 
   return !pot ? null : (
@@ -92,9 +88,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       />
 
       {/* Tab Content */}
-      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">
-        {children}
-      </div>
+      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">{children}</div>
     </PageWithBanner>
   );
 };

@@ -49,9 +49,7 @@ export const SocialsShare = ({
           <div className="flex w-full items-center justify-evenly">
             <button
               className="flex h-[48px] w-[48px] items-center justify-center rounded border border-[#DBDBDB] bg-[#F7F7F7]"
-              onClick={() =>
-                window.open(`https://t.me/share/url?url=${share}`, "_blank")
-              }
+              onClick={() => window.open(`https://t.me/share/url?url=${share}`, "_blank")}
               aria-label="Share on Telegram"
             >
               <TelegramShareIcon />
@@ -70,9 +68,7 @@ export const SocialsShare = ({
             </button>
             <button
               className="flex h-[48px] w-[48px] items-center justify-center rounded border border-[#DBDBDB] bg-[#F7F7F7]"
-              onClick={() =>
-                window.open(`https://www.instagram.com/?url=${share}`, "_blank")
-              }
+              onClick={() => window.open(`https://www.instagram.com/?url=${share}`, "_blank")}
               aria-label="Share on Instagram"
             >
               <InstagramShareIcon />
@@ -84,16 +80,9 @@ export const SocialsShare = ({
             <div className="h-px flex-grow bg-[#DBDBDB]" />
           </div>
           <CopyToClipboard {...{ text: share, onCopy }}>
-            <Button
-              className="w-full hover:cursor-pointer"
-              variant="standard-outline"
-            >
-              {copied ? (
-                <Check color="#A6A6A6" size={20} className="" />
-              ) : (
-                <CopyPasteIcon />
-              )}{" "}
-              Copy Link
+            <Button className="w-full hover:cursor-pointer" variant="standard-outline">
+              {copied ? <Check color="#A6A6A6" size={20} className="" /> : <CopyPasteIcon />} Copy
+              Link
             </Button>
           </CopyToClipboard>
         </div>

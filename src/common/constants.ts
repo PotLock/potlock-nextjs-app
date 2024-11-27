@@ -8,6 +8,8 @@ export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
+export const POTLOCK_TWITTER_ACCOUNT_ID = "PotLock_";
+export const DEFAULT_SHARE_HASHTAGS = ["PublicGoods", "Donations"];
 
 export const APP_METADATA: Metadata & {
   title: string;

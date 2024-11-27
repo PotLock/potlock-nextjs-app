@@ -8,13 +8,7 @@ import useProfileData from "@/modules/profile/hooks/data";
 import { Container } from "./styles";
 import { CustomDonationType } from "../../models/types";
 
-const Sponsor = ({
-  donation,
-  colIdx,
-}: {
-  donation: CustomDonationType;
-  colIdx: number;
-}) => {
+const Sponsor = ({ donation, colIdx }: { donation: CustomDonationType; colIdx: number }) => {
   const amount = donation.amount;
   const donorId = donation.donor.id;
   const percentageShare = donation.percentage_share;
@@ -24,18 +18,12 @@ const Sponsor = ({
   return (
     <div className={`item ${colIdx === 2 && "first"}`}>
       <AccountProfilePicture accountId={donorId} className={avatarSize} />
-      <Link
-        href={`${routesPath.PROFILE}/${donorId}`}
-        target="_blank"
-        className="name"
-      >
+      <Link href={`${routesPath.PROFILE}/${donorId}`} target="_blank" className="name">
         {truncate(profile?.name || donorId, 20)}
       </Link>
       <p>{truncate(profile?.description || "", colIdx === 2 ? 120 : 35)}</p>
       <div className="footer">
-        <p className={`amount ${colIdx === 2 ? "font-lora" : ""}`}>
-          {amount.toFixed(2)} NEAR
-        </p>
+        <p className={`amount ${colIdx === 2 ? "font-lora" : ""}`}>{amount.toFixed(2)} NEAR</p>
         <p className="percentage">{percentageShare}%</p>
       </div>
     </div>
@@ -56,11 +44,7 @@ const SponsorsBoard = (props: { donations: CustomDonationType[] }) => {
       {sponsorsLeaderboard.map((donationsCol, colIdx) => (
         <div className="col" key={colIdx}>
           {donationsCol.map((donation: any, idx: number) => (
-            <Sponsor
-              key={colIdx + idx}
-              donation={donation}
-              colIdx={colIdx + 1}
-            />
+            <Sponsor key={colIdx + idx} donation={donation} colIdx={colIdx + 1} />
           ))}
         </div>
       ))}

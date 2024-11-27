@@ -1,11 +1,8 @@
 import { Category, NEARSocialUserProfile } from "@/common/contracts/social";
 
-const isEmptyObject = (obj: object): boolean =>
-  obj && Object.keys(obj).length === 0;
+const isEmptyObject = (obj: object): boolean => obj && Object.keys(obj).length === 0;
 
-export const getTagsFromSocialProfileData = (
-  profileData: NEARSocialUserProfile,
-) => {
+export const getTagsFromSocialProfileData = (profileData: NEARSocialUserProfile) => {
   // first try to get tags from plCategories, then category (deprecated/old format), then default to empty array
 
   if (!profileData || isEmptyObject(profileData)) return [];
@@ -26,10 +23,7 @@ export const getTagsFromSocialProfileData = (
   if (profileData.category) {
     if (typeof profileData.category === "string") {
       tags.push(Category[profileData.category] || profileData.category);
-    } else if (
-      typeof profileData.category === "object" &&
-      "text" in profileData.category
-    ) {
+    } else if (typeof profileData.category === "object" && "text" in profileData.category) {
       tags.push(profileData.category.text);
     }
   }

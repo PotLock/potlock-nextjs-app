@@ -12,8 +12,7 @@ export * from "./schemas";
 
 export const potEditorModelKey = "potEditor";
 
-export const usePotEditorState = () =>
-  useTypedSelector(prop(potEditorModelKey));
+export const usePotEditorState = () => useTypedSelector(prop(potEditorModelKey));
 
 const potEditorStateDefaults: PotEditorState = {
   currentStep: "configuration",

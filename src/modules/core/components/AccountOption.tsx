@@ -34,9 +34,8 @@ export const AccountOption = ({
 
   const avatarSrc = useMemo(
     () =>
-      (typeof profile?.image === "string"
-        ? profile?.image
-        : profile?.image?.url) ?? profileImages.image,
+      (typeof profile?.image === "string" ? profile?.image : profile?.image?.url) ??
+      profileImages.image,
 
     [profile?.image, profileImages.image],
   );
@@ -45,18 +44,10 @@ export const AccountOption = ({
     () =>
       profileReady ? (
         <Avatar className={cn("h-10 w-10", classNames?.avatar)} {...{ title }}>
-          <AvatarImage
-            src={avatarSrc}
-            alt={`Avatar of ${accountId}`}
-            width={40}
-            height={40}
-          />
+          <AvatarImage src={avatarSrc} alt={`Avatar of ${accountId}`} width={40} height={40} />
         </Avatar>
       ) : (
-        <Skeleton
-          className={cn("h-10 w-10 rounded-full", classNames?.avatar)}
-          {...{ title }}
-        />
+        <Skeleton className={cn("h-10 w-10 rounded-full", classNames?.avatar)} {...{ title }} />
       ),
 
     [accountId, avatarSrc, classNames?.avatar, profileReady, title],

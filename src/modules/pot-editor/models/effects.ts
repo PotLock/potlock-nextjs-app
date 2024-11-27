@@ -3,20 +3,13 @@ import { omit } from "remeda";
 
 import { ByPotId } from "@/common/api/indexer";
 import { nearRpc, walletApi } from "@/common/api/near";
-import {
-  PotConfig,
-  PotDeploymentResult,
-  pot,
-  potFactory,
-} from "@/common/contracts/core";
+import { PotConfig, PotDeploymentResult, pot, potFactory } from "@/common/contracts/core";
 import { AppDispatcher } from "@/store";
 
 import { PotEditorDeploymentInputs, PotEditorSettings } from "./schemas";
 import { potInputsToPotArgs } from "../utils/normalization";
 
-const UnknownDeploymentStatusError = new Error(
-  "Unable to get pot deployment status.",
-);
+const UnknownDeploymentStatusError = new Error("Unable to get pot deployment status.");
 
 type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
   Partial<ByPotId> & {
@@ -27,9 +20,7 @@ export const effects = (dispatch: AppDispatcher) => ({
   handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
     void pot
       .getConfig({ potId: id })
-      .then((potConfig) =>
-        dispatch.potEditor.deploymentSuccess({ id, ...potConfig }),
-      ),
+      .then((potConfig) => dispatch.potEditor.deploymentSuccess({ id, ...potConfig })),
 
   save: async ({
     onUpdate,

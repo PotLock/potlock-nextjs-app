@@ -1,9 +1,6 @@
 import { ReactElement } from "react";
 
-import {
-  CampaignLayout,
-  CampaignSettings,
-} from "@/modules/campaigns/components";
+import { CampaignLayout, CampaignSettings } from "@/modules/campaigns/components";
 
 const Settings = () => {
   return <CampaignSettings />;

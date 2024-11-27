@@ -13,16 +13,13 @@ const DonationsTab = () => {
   const { userId: userIdPathParam } = router.query;
 
   const userId =
-    (typeof userIdPathParam === "string"
-      ? userIdPathParam
-      : userIdPathParam?.at(0)) ?? "unknown";
+    (typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0)) ?? "unknown";
 
   const { data: donationsData } = useAccountDonationsSent({
     accountId: userId,
   });
 
-  const hasDonations =
-    donationsData?.results && donationsData.results.length > 0;
+  const hasDonations = donationsData?.results && donationsData.results.length > 0;
 
   return !hasDonations ? (
     // No Results

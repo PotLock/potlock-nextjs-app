@@ -21,8 +21,7 @@ const contractApi = naxiosInstance.contractApi({
 /**
  * Get donate contract config
  */
-export const getConfig = () =>
-  contractApi.view<{}, DirectDonationConfig>("get_config");
+export const getConfig = () => contractApi.view<{}, DirectDonationConfig>("get_config");
 
 /**
  * Get direct donations
@@ -34,10 +33,7 @@ export const getDonations = (args: { fromIndex?: number; limit?: number }) =>
  * Get donations for a recipient id
  */
 export const getDonationsForRecipient = (args: { recipient_id: string }) =>
-  contractApi.view<typeof args, DirectDonation[]>(
-    "get_donations_for_recipient",
-    { args },
-  );
+  contractApi.view<typeof args, DirectDonation[]>("get_donations_for_recipient", { args });
 
 /**
  * Get donations for donor id

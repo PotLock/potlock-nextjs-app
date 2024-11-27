@@ -20,14 +20,9 @@ const getPotTags = (pot: Pot) => {
   const now = Date.now();
   const applicationOpen = now >= applicationStartMs && now < applicationEndMs;
   const publicRoundOpen = now >= publicRoundStartMs && now < publicRoundEndMs;
-  const cooldownPending =
-    publicRoundEndMs && now >= publicRoundEndMs && !cooldownEndMs;
-  const cooldownOpen = Boolean(
-    cooldownEndMs && now >= publicRoundEndMs && now < cooldownEndMs,
-  );
-  const payoutsPending = Boolean(
-    cooldownEndMs && now >= cooldownEndMs && !all_paid_out,
-  );
+  const cooldownPending = publicRoundEndMs && now >= publicRoundEndMs && !cooldownEndMs;
+  const cooldownOpen = Boolean(cooldownEndMs && now >= publicRoundEndMs && now < cooldownEndMs);
+  const payoutsPending = Boolean(cooldownEndMs && now >= cooldownEndMs && !all_paid_out);
   const payoutsCompleted = all_paid_out;
 
   const tags = [

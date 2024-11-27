@@ -19,8 +19,7 @@ export enum DonationAllocationStrategyEnum {
   share = "share",
 }
 
-export type DonationAllocationStrategy =
-  keyof typeof DonationAllocationStrategyEnum;
+export type DonationAllocationStrategy = keyof typeof DonationAllocationStrategyEnum;
 
 export type DonationAllocationStrategyOption = {
   label: string;
@@ -34,8 +33,7 @@ export enum DonationGroupAllocationStrategyEnum {
   manually = "manually",
 }
 
-export type DonationGroupAllocationStrategy =
-  keyof typeof DonationGroupAllocationStrategyEnum;
+export type DonationGroupAllocationStrategy = keyof typeof DonationGroupAllocationStrategyEnum;
 
 export type DonationGroupAllocationStrategyOption = {
   label: string;
@@ -74,6 +72,4 @@ export type DonationPotBatchCallDraft = {
   entries: PotBatchDonationItem[];
 };
 
-export type DonationBatchCallDraft =
-  | DonationPotBatchCallDraft
-  | DonationDirectBatchCallDraft;
+export type DonationBatchCallDraft = DonationPotBatchCallDraft | DonationDirectBatchCallDraft;

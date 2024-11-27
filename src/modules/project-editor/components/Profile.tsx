@@ -55,9 +55,7 @@ const Profile = () => {
         >
           <CameraIcon width={18} />
           {bgImageStatus.status === "ready" ? (
-            <p className="font-500 max-md:hidden text-[14px]">
-              Add cover photo
-            </p>
+            <p className="font-500 max-md:hidden text-[14px]">Add cover photo</p>
           ) : (
             <Spinner width={18} height={18} />
           )}
@@ -77,8 +75,7 @@ const Profile = () => {
         className="relative h-[120px] w-[120px] rounded-full"
         style={{
           transform: "translateY(-37%)",
-          boxShadow:
-            "0px 0px 0px 3px #fff, 0px 0px 0px 1px rgba(199, 199, 199, 0.22) inset",
+          boxShadow: "0px 0px 0px 3px #fff, 0px 0px 0px 1px rgba(199, 199, 199, 0.22) inset",
         }}
       >
         {profileImage && (

@@ -43,11 +43,7 @@ const SuccessRedIcon = (props: React.SVGProps<SVGSVGElement>) => (
           type="matrix"
           values="0 0 0 0 0.996078 0 0 0 0 0.901961 0 0 0 0 0.898039 0 0 0 1 0"
         />
-        <feBlend
-          mode="normal"
-          in2="BackgroundImageFix"
-          result="effect1_dropShadow_12276_29409"
-        />
+        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_12276_29409" />
         <feBlend
           mode="normal"
           in="SourceGraphic"

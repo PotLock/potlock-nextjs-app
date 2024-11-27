@@ -39,10 +39,7 @@ export const CampaignSettings = () => {
               href={`/profile/${campaign?.owner}`}
               className="flex items-center gap-2"
             >
-              <AccountProfilePicture
-                accountId={campaign?.owner as string}
-                className="h-6 w-6"
-              />
+              <AccountProfilePicture accountId={campaign?.owner as string} className="h-6 w-6" />
               <p className="font-medium">{campaign?.owner}</p>
             </Link>
           </div>
@@ -116,15 +113,7 @@ export const CampaignSettings = () => {
   );
 };
 
-const BarCard = ({
-  title,
-  value,
-  hasLogo,
-}: {
-  title: string;
-  value: any;
-  hasLogo?: boolean;
-}) => {
+const BarCard = ({ title, value, hasLogo }: { title: string; value: any; hasLogo?: boolean }) => {
   return (
     <div className="mb-5 flex w-[50%] flex-col items-start gap-1">
       <p className="text-sm text-[#656565]">{title}</p>

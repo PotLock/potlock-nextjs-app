@@ -46,12 +46,8 @@ const ApplicationsTab = () => {
   };
   const { data: potDetail } = usePot({ potId });
   const [applications, setApplications] = useState<Application[]>([]);
-  const [filteredApplications, setFilteredApplications] = useState<
-    Application[]
-  >([]);
-  const { actAsDao, accountId: _accountId } = useTypedSelector(
-    (state) => state.nav,
-  );
+  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
+  const { actAsDao, accountId: _accountId } = useTypedSelector((state) => state.nav);
   const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 
@@ -94,9 +90,7 @@ const ApplicationsTab = () => {
 
   // Admin - Edit Project
   const [projectId, setProjectId] = useState("");
-  const [projectStatus, setProjectStatus] = useState<
-    "Approved" | "Rejected" | ""
-  >("");
+  const [projectStatus, setProjectStatus] = useState<"Approved" | "Rejected" | "">("");
 
   const handleApproveApplication = (projectId: string) => {
     setProjectId(projectId);
@@ -119,9 +113,7 @@ const ApplicationsTab = () => {
       const { message, project_id, review_notes, status } = application;
       const searchFields = [message, project_id, review_notes, status];
       return searchFields.some((field) =>
-        field
-          ? field.toLowerCase().includes(searchTerm.toLowerCase().trim())
-          : "",
+        field ? field.toLowerCase().includes(searchTerm.toLowerCase().trim()) : "",
       );
     });
     return filteredApplications;
@@ -138,10 +130,7 @@ const ApplicationsTab = () => {
     [applications],
   );
 
-  const applicationsFilters: Record<
-    string,
-    { label: string; val: string; count?: number }
-  > = {
+  const applicationsFilters: Record<string, { label: string; val: string; count?: number }> = {
     ALL: {
       label: "All applications",
       val: "ALL",
@@ -172,17 +161,13 @@ const ApplicationsTab = () => {
       return searchApplications(searchTerm);
     }
     const filtered = applications?.filter((application: any) => {
-      return (
-        application.status === applicationsFilters[key].label.split(" ")[0]
-      );
+      return application.status === applicationsFilters[key].label.split(" ")[0];
     });
     return filtered;
   };
 
   const isChefOrGreater =
-    accountId === chef ||
-    admins.includes(accountId || "") ||
-    accountId === owner;
+    accountId === chef || admins.includes(accountId || "") || accountId === owner;
 
   const [filterValue, setFilterValue] = useState("ALL");
   const handleSort = (key: string) => {
@@ -192,13 +177,10 @@ const ApplicationsTab = () => {
   };
 
   const DropdownValue = () => {
-    const digit =
-      applicationsFilters[filterValue]?.count?.toString().length || 0;
+    const digit = applicationsFilters[filterValue]?.count?.toString().length || 0;
     return (
       <DropdownLabel>
-        <div className="label">
-          {applicationsFilters[filterValue]?.label || ""}
-        </div>
+        <div className="label">{applicationsFilters[filterValue]?.label || ""}</div>
         <div
           className="count"
           style={{
@@ -295,10 +277,8 @@ const ApplicationData = ({
   handleApproveApplication: (projectId: string) => void;
   handleRejectApplication: (projectId: string) => void;
 }) => {
-  const { project_id, status, message, review_notes, submitted_at } =
-    applicationData;
-  const { borderColor, color, icon, label, background } =
-    applicationsFiltersTags[status];
+  const { project_id, status, message, review_notes, submitted_at } = applicationData;
+  const { borderColor, color, icon, label, background } = applicationsFiltersTags[status];
   const { profile } = useProfileData(project_id, true, false);
 
   return (
@@ -306,13 +286,8 @@ const ApplicationData = ({
       <input type="checkbox" className="toggle-check" />
       <div className="header">
         <div className="header-info">
-          <AccountProfilePicture
-            accountId={project_id}
-            className="profile-image"
-          />
-          {profile?.name && (
-            <div className="name">{truncate(profile?.name, 15)}</div>
-          )}
+          <AccountProfilePicture accountId={project_id} className="profile-image" />
+          {profile?.name && <div className="name">{truncate(profile?.name, 15)}</div>}
 
           {/* Tooltip */}
           <TooltipProvider>
@@ -368,17 +343,12 @@ const ApplicationData = ({
         {isChefOrGreater && (
           <>
             {status !== "Approved" && (
-              <Button
-                variant="tonal-filled"
-                onClick={() => handleApproveApplication(project_id)}
-              >
+              <Button variant="tonal-filled" onClick={() => handleApproveApplication(project_id)}>
                 Approve
               </Button>
             )}
             {status !== "Rejected" && (
-              <Button onClick={() => handleRejectApplication(project_id)}>
-                Reject
-              </Button>
+              <Button onClick={() => handleRejectApplication(project_id)}>Reject</Button>
             )}
           </>
         )}

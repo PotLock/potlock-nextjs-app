@@ -32,9 +32,7 @@ const Header = ({ potDetail }: Props) => {
   const potStatuses = usePotStatusesForAccountId({
     potDetail,
 
-    accountId: asDao
-      ? actAsDao.defaultAddress
-      : (walletApi.accountId ?? accountId),
+    accountId: asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId),
   });
 
   const [fundModalOpen, setFundModalOpen] = useState(false);
@@ -106,27 +104,18 @@ const Header = ({ potDetail }: Props) => {
           </div>
           {/* ButtonsWrapper */}
           <div className="flex flex-row flex-wrap gap-8 max-xs:flex-col max-xs:gap-4">
-            {potStatuses.canDonate && (
-              <DonateToPotProjects potId={potDetail.account} />
-            )}
+            {potStatuses.canDonate && <DonateToPotProjects potId={potDetail.account} />}
             {potStatuses.canFund && (
-              <Button
-                variant="tonal-filled"
-                onClick={() => setFundModalOpen(true)}
-              >
+              <Button variant="tonal-filled" onClick={() => setFundModalOpen(true)}>
                 Fund matching pool
               </Button>
             )}
             {potStatuses.canApply && (
-              <Button onClick={() => setApplyModalOpen(true)}>
-                Apply to pot
-              </Button>
+              <Button onClick={() => setApplyModalOpen(true)}>Apply to pot</Button>
             )}
             {potStatuses.canChallengePayouts && (
               <Button onClick={() => setChallengeModalOpen(true)}>
-                {potStatuses.existingChallengeForUser
-                  ? "Update challenge"
-                  : "Challenge payouts"}
+                {potStatuses.existingChallengeForUser ? "Update challenge" : "Challenge payouts"}
               </Button>
             )}
           </div>

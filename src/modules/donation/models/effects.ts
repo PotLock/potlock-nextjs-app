@@ -46,9 +46,7 @@ const getTransactionStatus = ({
   });
 
 export const effects = (dispatch: AppDispatcher) => ({
-  submit: async (
-    inputs: DonationAllocationKey & DonationInputs,
-  ): Promise<void> => {
+  submit: async (inputs: DonationAllocationKey & DonationInputs): Promise<void> => {
     const {
       amount,
       listId,
@@ -256,9 +254,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         .then((result) => dispatch.donation.success(result as CampaignDonation))
         .catch((error) => dispatch.donation.failure(error));
     } else if (isPotDonation && groupAllocationPlan !== undefined) {
-      const batchTxDraft = donationInputsToBatchDonationDraft(
-        inputs,
-      ) as DonationPotBatchCallDraft;
+      const batchTxDraft = donationInputsToBatchDonationDraft(inputs) as DonationPotBatchCallDraft;
 
       return void pot
         .donateBatch(batchTxDraft.potAccountId, batchTxDraft.entries)
@@ -272,9 +268,7 @@ export const effects = (dispatch: AppDispatcher) => ({
 
       return void donationClient.donateBatch(batchTxDraft.entries);
     } else {
-      return void dispatch.donation.failure(
-        new Error("Unable to determine donation type."),
-      );
+      return void dispatch.donation.failure(new Error("Unable to determine donation type."));
     }
   },
 
