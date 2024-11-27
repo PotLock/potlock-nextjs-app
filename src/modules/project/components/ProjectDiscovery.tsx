@@ -207,7 +207,7 @@ export const ProjectDiscovery = () => {
             alt="No results found"
             width={200}
             height={200}
-            className="mb-4 h-[200px] w-[200px]"
+            className="h-50 w-50 mb-4"
           />
 
           <div className="md:flex-row flex flex-col items-center justify-center gap-2">
