@@ -133,7 +133,6 @@ export const ProjectDiscovery = () => {
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           <span>{"All projects"}</span>
-
           <span className="text-primary-600 font-600 ml-2">{totalProjectCount}</span>
         </div>
 
@@ -173,7 +172,9 @@ export const ProjectDiscovery = () => {
                 onClick={() => setProjectLookupPageNumber((prev) => Math.max(prev - 1, 1))}
               />
             </PaginationItem>
-            {pageNumberButtons}a
+
+            {pageNumberButtons}
+
             <PaginationItem>
               <PaginationNext
                 onClick={() =>
