@@ -8,10 +8,7 @@ import { GroupIcon } from "@/common/assets/svgs";
 import { Button } from "@/common/ui/components";
 import { AccountOption, AccountOptionProps } from "@/modules/core";
 
-import {
-  AccessControlListModal,
-  AccessControlListModalProps,
-} from "./AccessControlListModal";
+import { AccessControlListModal, AccessControlListModalProps } from "./AccessControlListModal";
 
 /* prettier-ignore */
 export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &

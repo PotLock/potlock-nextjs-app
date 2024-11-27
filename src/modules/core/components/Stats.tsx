@@ -14,12 +14,7 @@ export type Stat = {
   hideSeparator?: boolean;
 };
 
-const Stats = ({
-  sortOptions,
-  selectedSortOption,
-  stats,
-  onSelectSortOption,
-}: Props) => {
+const Stats = ({ sortOptions, selectedSortOption, stats, onSelectSortOption }: Props) => {
   if (stats.length === 1) {
     stats[0].hideSeparator = true;
   }

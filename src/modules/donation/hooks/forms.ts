@@ -13,15 +13,8 @@ import { toChronologicalOrder } from "@/common/lib";
 import { useIsHuman } from "@/modules/core";
 import { dispatch } from "@/store";
 
-import {
-  DONATION_MIN_NEAR_AMOUNT,
-  DONATION_MIN_NEAR_AMOUNT_ERROR,
-} from "../constants";
-import {
-  DonationInputs,
-  donationCrossFieldValidationTargets,
-  donationSchema,
-} from "../models";
+import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
+import { DonationInputs, donationCrossFieldValidationTargets, donationSchema } from "../models";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
@@ -33,10 +26,7 @@ export type DonationFormParams = DonationAllocationKey & {
   referrerAccountId?: string;
 };
 
-export const useDonationForm = ({
-  referrerAccountId,
-  ...params
-}: DonationFormParams) => {
+export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormParams) => {
   const isSingleProjectDonation = "accountId" in params;
   const isPotDonation = "potId" in params;
   const isListDonation = "listId" in params;
@@ -45,9 +35,7 @@ export const useDonationForm = ({
   const listId = isListDonation ? params.listId : undefined;
   const campaignId = isCampaignDonation ? params.campaignId : undefined;
 
-  const recipientAccountId = isSingleProjectDonation
-    ? params.accountId
-    : undefined;
+  const recipientAccountId = isSingleProjectDonation ? params.accountId : undefined;
 
   const { data: recipientActivePots = [] } = indexer.useAccountActivePots({
     accountId: recipientAccountId,
@@ -63,8 +51,7 @@ export const useDonationForm = ({
   );
 
   const defaultPotAccountId = useMemo(
-    () =>
-      toChronologicalOrder("matching_round_end", matchingPots).at(0)?.account,
+    () => toChronologicalOrder("matching_round_end", matchingPots).at(0)?.account,
 
     [matchingPots],
   );
@@ -117,14 +104,10 @@ export const useDonationForm = ({
   const totalAmountFloat =
     isSingleProjectDonation || isCampaignDonation
       ? amount
-      : (values.groupAllocationPlan?.reduce(
-          (total, { amount }) => total + (amount ?? 0.0),
-          0.0,
-        ) ?? 0.0);
+      : (values.groupAllocationPlan?.reduce((total, { amount }) => total + (amount ?? 0.0), 0.0) ??
+        0.0);
 
-  const [crossFieldErrors, setCrossFieldErrors] = useState<
-    FieldErrors<DonationInputs>
-  >({});
+  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<DonationInputs>>({});
 
   useEffect(
     () =>
@@ -152,15 +135,12 @@ export const useDonationForm = ({
 
   const hasChanges = useMemo(
     () =>
-      entries(values).some(
-        ([key, value]) => value !== defaultValues[key as keyof DonationInputs],
-      ),
+      entries(values).some(([key, value]) => value !== defaultValues[key as keyof DonationInputs]),
 
     [defaultValues, values],
   );
 
-  const isDisabled =
-    !hasChanges || !self.formState.isValid || self.formState.isSubmitting;
+  const isDisabled = !hasChanges || !self.formState.isValid || self.formState.isSubmitting;
 
   const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
 
@@ -186,20 +166,12 @@ export const useDonationForm = ({
     ) {
       self.setValue("potAccountId", defaultPotAccountId);
     }
-  }, [
-    values,
-    defaultPotAccountId,
-    self,
-    hasChanges,
-    params,
-    isSingleProjectDonation,
-  ]);
+  }, [values, defaultPotAccountId, self, hasChanges, params, isSingleProjectDonation]);
 
   useEffect(() => {
     if (
       (values.allocationStrategy === "full" && values.tokenId === undefined) ||
-      (values.allocationStrategy === "share" &&
-        values.tokenId !== NATIVE_TOKEN_ID)
+      (values.allocationStrategy === "share" && values.tokenId !== NATIVE_TOKEN_ID)
     ) {
       self.setValue("tokenId", NATIVE_TOKEN_ID, {
         shouldDirty: true,

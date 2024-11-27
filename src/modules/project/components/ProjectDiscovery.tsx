@@ -70,84 +70,70 @@ export const ProjectDiscovery = () => {
       } as Group<GroupType.single>,
     ],
 
-    [
-      projectCategoryFilter,
-      projectStatusFilter,
-      setProjectCategoryFilter,
-      setProjectStatusFilter,
-    ],
+    [projectCategoryFilter, projectStatusFilter, setProjectCategoryFilter, setProjectStatusFilter],
   );
 
-  const pageNumberButtons = useMemo(
-    () =>
-      (() => {
-        const totalPages = Math.ceil(totalProjectCount / 30);
-        const pages: (number | "ellipsis")[] = [];
+  const pageNumberButtons = useMemo(() => {
+    const totalPages = Math.ceil(totalProjectCount / 30);
+    const pages: (number | "ellipsis")[] = [];
 
-        if (totalPages <= 7) {
-          // Show all pages if total is 7 or less
-          pages.push(...Array.from({ length: totalPages }, (_, i) => i + 1));
-        } else {
-          // Always show first page
-          pages.push(1);
+    if (totalPages <= 7) {
+      // Show all pages if total is 7 or less
+      pages.push(...Array.from({ length: totalPages }, (_, i) => i + 1));
+    } else {
+      // Always show first page
+      pages.push(1);
 
-          if (projectLookupPageNumber <= 4) {
-            // Near start
-            pages.push(2, 3, 4, 5, "ellipsis", totalPages);
-          } else if (projectLookupPageNumber >= totalPages - 3) {
-            // Near end
-            pages.push(
-              "ellipsis",
-              totalPages - 4,
-              totalPages - 3,
-              totalPages - 2,
-              totalPages - 1,
-              totalPages,
-            );
-          } else {
-            // Middle
-            pages.push(
-              "ellipsis",
-              projectLookupPageNumber - 1,
-              projectLookupPageNumber,
-              projectLookupPageNumber + 1,
-              "ellipsis",
-              totalPages,
-            );
-          }
-        }
+      if (projectLookupPageNumber <= 4) {
+        // Near start
+        pages.push(2, 3, 4, 5, "ellipsis", totalPages);
+      } else if (projectLookupPageNumber >= totalPages - 3) {
+        // Near end
+        pages.push(
+          "ellipsis",
+          totalPages - 4,
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages,
+        );
+      } else {
+        // Middle
+        pages.push(
+          "ellipsis",
+          projectLookupPageNumber - 1,
+          projectLookupPageNumber,
+          projectLookupPageNumber + 1,
+          "ellipsis",
+          totalPages,
+        );
+      }
+    }
 
-        return pages.map((page, i) => (
-          <PaginationItem key={i}>
-            {page === "ellipsis" ? (
-              <PaginationEllipsis />
-            ) : (
-              <PaginationLink
-                onClick={() => setProjectLookupPageNumber(page)}
-                className={cn({
-                  "border-black font-bold": projectLookupPageNumber === page,
-                })}
-              >
-                {page}
-              </PaginationLink>
-            )}
-          </PaginationItem>
-        ));
-      })(),
-    [projectLookupPageNumber, setProjectLookupPageNumber, totalProjectCount],
-  );
-
-  const totalNumberOfPages = Math.ceil(totalProjectCount / 30);
+    return pages.map((page, i) => (
+      <PaginationItem key={i}>
+        {page === "ellipsis" ? (
+          <PaginationEllipsis />
+        ) : (
+          <PaginationLink
+            onClick={() => setProjectLookupPageNumber(page)}
+            className={cn({
+              "border-black font-bold": projectLookupPageNumber === page,
+            })}
+          >
+            {page}
+          </PaginationLink>
+        )}
+      </PaginationItem>
+    ));
+  }, [projectLookupPageNumber, setProjectLookupPageNumber, totalProjectCount]);
 
   return (
     <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           <span>{"All projects"}</span>
-
-          <span className="text-primary-600 font-600 ml-2">
-            {totalProjectCount}
-          </span>
+          <span className="text-primary-600 font-600 ml-2">{totalProjectCount}</span>
         </div>
 
         <div className="flex w-full items-center gap-4">
@@ -173,38 +159,33 @@ export const ProjectDiscovery = () => {
           <ProjectLookupPlaceholder />
         ) : (
           projects.map((registration: ListRegistration) => (
-            <ProjectCard
-              projectId={registration.registrant.id}
-              key={registration.id}
-            />
+            <ProjectCard projectId={registration.registrant.id} key={registration.id} />
           ))
         )}
       </div>
 
       {totalProjectCount ? (
-        totalNumberOfPages > 1 && (
-          <Pagination className="mt-[24px]">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() =>
-                    setProjectLookupPageNumber((prev) => Math.max(prev - 1, 1))
-                  }
-                />
-              </PaginationItem>
-              <>{pageNumberButtons}</>
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() =>
-                    setProjectLookupPageNumber((prev) =>
-                      Math.min(prev + 1, Math.ceil(totalProjectCount / 30)),
-                    )
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )
+        <Pagination className="mt-[24px]">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setProjectLookupPageNumber((prev) => Math.max(prev - 1, 1))}
+              />
+            </PaginationItem>
+
+            {pageNumberButtons}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() =>
+                  setProjectLookupPageNumber((prev) =>
+                    Math.min(prev + 1, Math.ceil(totalProjectCount / 30)),
+                  )
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       ) : (
         <div className="min-h-140 flex w-full flex-col items-center justify-center">
           <Image
@@ -216,9 +197,7 @@ export const ProjectDiscovery = () => {
           />
 
           <div className="md:flex-row flex flex-col items-center justify-center gap-2">
-            <p className="w-100 text-center font-lora italic">
-              {"No results found"}
-            </p>
+            <p className="w-100 text-center font-lora italic">{"No results found"}</p>
           </div>
         </div>
       )}

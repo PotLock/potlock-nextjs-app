@@ -70,7 +70,7 @@
     "@tanstack/react-table": "^8.20.5",
     "@unocss/reset": "^0.60.4",
     "@web3modal/wagmi": "^5.1.10",
-    "@wpdas/naxios": "^2.2.0",
+    "@wpdas/naxios": "2.2.3",
     "axios": "^1.7.2",
     "big.js": "^6.2.1",
     "class-variance-authority": "^0.7.0",

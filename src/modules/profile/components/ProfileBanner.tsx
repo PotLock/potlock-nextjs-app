@@ -1,9 +1,4 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Skeleton,
-} from "@/common/ui/components";
+import { Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useIsHuman, useRegistration } from "@/modules/core";
 import { projectStatusIcons } from "@/modules/project/components/ProjectStatusIcons";
@@ -19,10 +14,7 @@ export type ProfileBannerProps = {
   containerStyle?: any;
 };
 
-export const ProfileBanner: React.FC<ProfileBannerProps> = ({
-  isProject,
-  accountId,
-}) => {
+export const ProfileBanner: React.FC<ProfileBannerProps> = ({ isProject, accountId }) => {
   const { avatarSrc, backgroundSrc } = useProfileData(accountId);
 
   // get nadabot status on the donor page
@@ -99,9 +91,7 @@ export const ProfileBanner: React.FC<ProfileBannerProps> = ({
             >
               {projectStatusIcons.Approved.icon}
 
-              <div style={{ color: projectStatusIcons.Approved.color }}>
-                Verified
-              </div>
+              <div style={{ color: projectStatusIcons.Approved.color }}>Verified</div>
             </div>
           ) : (
             <div style={{ width: "10px" }} />

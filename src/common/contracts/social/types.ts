@@ -1,11 +1,13 @@
 export interface PostContent {
   text: string;
+  image?: { ipfs_cid?: string };
 }
 
 export interface IndexPostResultItem {
   accountId: string;
   blockHeight: bigint;
   content: string;
+  imageIPFSHash?: string;
 }
 
 export interface FeedsResult {
@@ -17,5 +19,5 @@ export interface FeedsResult {
 }
 
 export interface ProfileFeedsProps {
-  accountId: string; // Define the type for accountId
+  accountId: string | string[];
 }

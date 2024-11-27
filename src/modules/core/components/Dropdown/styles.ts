@@ -91,11 +91,4 @@ const DropdownLabel = styled.div<{ digit: number }>`
   }
 `;
 
-export {
-  FilterButton,
-  FilterIcon,
-  FilterItem,
-  FilterMenu,
-  Screen,
-  DropdownLabel,
-};
+export { FilterButton, FilterIcon, FilterItem, FilterMenu, Screen, DropdownLabel };

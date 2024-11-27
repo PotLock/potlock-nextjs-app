@@ -2,20 +2,12 @@ import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 
 import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
-import {
-  DonationAllocationStrategy,
-  DonationAllocationStrategyEnum,
-} from "../types";
+import { DonationAllocationStrategy, DonationAllocationStrategyEnum } from "../types";
 
 export type DonationAmountValidationInputs = ByTokenId & { amount: number };
 
-export const isDonationAmountSufficient = ({
-  tokenId,
-  amount,
-}: DonationAmountValidationInputs) =>
-  tokenId === NATIVE_TOKEN_ID
-    ? amount >= DONATION_MIN_NEAR_AMOUNT
-    : amount > 0.0;
+export const isDonationAmountSufficient = ({ tokenId, amount }: DonationAmountValidationInputs) =>
+  tokenId === NATIVE_TOKEN_ID ? amount >= DONATION_MIN_NEAR_AMOUNT : amount > 0.0;
 
 export type DonationMatchingPotValidationInputs = {
   allocationStrategy: DonationAllocationStrategy;
@@ -28,7 +20,6 @@ export const isDonationMatchingPotSelected = ({
   potAccountId,
   listId,
 }: DonationMatchingPotValidationInputs) =>
-  allocationStrategy === DonationAllocationStrategyEnum.share &&
-  listId === undefined
+  allocationStrategy === DonationAllocationStrategyEnum.share && listId === undefined
     ? Boolean(potAccountId)
     : true;

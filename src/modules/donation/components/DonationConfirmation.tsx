@@ -23,16 +23,12 @@ import { cn } from "@/common/ui/utils";
 import { AccountProfileLink } from "@/modules/account";
 import { TokenTotalValue } from "@/modules/token";
 
-import {
-  DonationGroupAllocationBreakdown,
-  DonationSummaryBreakdown,
-} from "./breakdowns";
+import { DonationGroupAllocationBreakdown, DonationSummaryBreakdown } from "./breakdowns";
 import { useDonationAllocationBreakdown } from "../hooks";
 import { WithDonationFormAPI } from "../models";
 import { WithTotalAmount } from "../types";
 
-export type DonationConfirmationProps = WithTotalAmount &
-  WithDonationFormAPI & {};
+export type DonationConfirmationProps = WithTotalAmount & WithDonationFormAPI & {};
 
 export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
@@ -78,15 +74,12 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     form.resetField("message");
   }, [form]);
 
-  const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } =
-    breakdown;
+  const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } = breakdown;
 
   const totalAmount = useMemo(
     () => (
       <div className="flex flex-col items-start justify-between gap-1">
-        <span className="prose font-600 text-neutral-600">
-          {"Total amount"}
-        </span>
+        <span className="prose font-600 text-neutral-600">{"Total amount"}</span>
 
         <TokenTotalValue tokenId={tokenId} amountFloat={totalAmountFloat} />
       </div>
@@ -106,10 +99,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           totalAmount
         ) : (
           <Accordion collapsible type="single">
-            <AccordionItem
-              value={detailedBreakdownAccordionId}
-              className="border-none"
-            >
+            <AccordionItem value={detailedBreakdownAccordionId} className="border-none">
               <AccordionTrigger className="hover:decoration-none p-0">
                 {totalAmount}
               </AccordionTrigger>
@@ -137,9 +127,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                       <span className="prose">{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
 
                       {protocolFeeRecipientAccountId && (
-                        <AccountProfileLink
-                          accountId={protocolFeeRecipientAccountId}
-                        />
+                        <AccountProfileLink accountId={protocolFeeRecipientAccountId} />
                       )}
                     </>
                   }
@@ -160,9 +148,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                     <>
                       <span>{`Remove ${chefFeePercent}% Chef Fees`}</span>
 
-                      {pot?.chef?.id && (
-                        <AccountProfileLink accountId={pot?.chef?.id} />
-                      )}
+                      {pot?.chef?.id && <AccountProfileLink accountId={pot?.chef?.id} />}
                     </>
                   }
                 />
@@ -186,9 +172,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                 >
                   <Button
                     asChild
-                    onClick={
-                      isNoteAttached ? onDeleteNoteClick : onAddNoteClick
-                    }
+                    onClick={isNoteAttached ? onDeleteNoteClick : onAddNoteClick}
                     variant="brand-plain"
                     className={cn("p-0", {
                       "color-neutral-500": !isNoteAttached,
@@ -201,9 +185,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                     </FormLabel>
                   </Button>
 
-                  <FormControl
-                    className={cn({ hidden: !isMessageFieldVisible })}
-                  >
+                  <FormControl className={cn({ hidden: !isMessageFieldVisible })}>
                     <Textarea className="resize-none" {...field} />
                   </FormControl>
                 </FormItem>

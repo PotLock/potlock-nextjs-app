@@ -21,15 +21,9 @@ type Props = {
   editFundingIndex?: number;
 };
 
-const AddFundingSourceModal = ({
-  open,
-  onCloseClick,
-  editFundingIndex,
-}: Props) => {
+const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) => {
   const { form, errors } = useAddFundingSourceForm();
-  const fundingSources = useTypedSelector(
-    (state) => state.projectEditor.fundingSources || [],
-  );
+  const fundingSources = useTypedSelector((state) => state.projectEditor.fundingSources || []);
   const isEdit = editFundingIndex !== undefined;
 
   const resetForm = useCallback(() => {
@@ -75,31 +69,22 @@ const AddFundingSourceModal = ({
 
   return (
     <Dialog open={open}>
-      <DialogContent
-        className="max-w-130 max-h-screen"
-        onCloseClick={onCloseHandler}
-      >
+      <DialogContent className="max-w-130 max-h-screen" onCloseClick={onCloseHandler}>
         <DialogHeader>
-          <DialogTitle>
-            {isEdit ? "Edit Funding Source" : "Add Funding Source"}
-          </DialogTitle>
+          <DialogTitle>{isEdit ? "Edit Funding Source" : "Add Funding Source"}</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(
-              isEdit
-                ? onSubmitEditedFundingSourceHandler
-                : onSubmitFundingSourceHandler,
+              isEdit ? onSubmitEditedFundingSourceHandler : onSubmitFundingSourceHandler,
             )}
             className="flex h-full flex-col overflow-y-scroll p-6"
           >
             <FormField
               control={form.control}
               name="investorName"
-              defaultValue={
-                isEdit ? fundingSources[editFundingIndex].investorName : ""
-              }
+              defaultValue={isEdit ? fundingSources[editFundingIndex].investorName : ""}
               render={({ field }) => (
                 <CustomInput
                   label="Name of investor"
@@ -133,9 +118,7 @@ const AddFundingSourceModal = ({
             <FormField
               control={form.control}
               name="description"
-              defaultValue={
-                isEdit ? fundingSources[editFundingIndex].description : ""
-              }
+              defaultValue={isEdit ? fundingSources[editFundingIndex].description : ""}
               render={({ field }) => (
                 <CustomTextForm
                   className="pt-8"
@@ -150,9 +133,7 @@ const AddFundingSourceModal = ({
             <FormField
               control={form.control}
               name="denomination"
-              defaultValue={
-                isEdit ? fundingSources[editFundingIndex].denomination : ""
-              }
+              defaultValue={isEdit ? fundingSources[editFundingIndex].denomination : ""}
               render={({ field }) => (
                 <CustomInput
                   className="pt-8"
@@ -168,9 +149,7 @@ const AddFundingSourceModal = ({
             <FormField
               control={form.control}
               name="amountReceived"
-              defaultValue={
-                isEdit ? fundingSources[editFundingIndex].amountReceived : ""
-              }
+              defaultValue={isEdit ? fundingSources[editFundingIndex].amountReceived : ""}
               render={({ field }) => (
                 <CustomInput
                   className="pt-8"

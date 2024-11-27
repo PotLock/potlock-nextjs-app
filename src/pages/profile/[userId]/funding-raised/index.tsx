@@ -18,9 +18,7 @@ const FundingRaisedTab = () => {
   const { userId: userIdPathParam } = router.query;
 
   const userId =
-    (typeof userIdPathParam === "string"
-      ? userIdPathParam
-      : userIdPathParam?.at(0)) ?? "unknown";
+    (typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0)) ?? "unknown";
 
   const { donations } = useDonationsForProject(userId);
   const { profile } = useProfileData(userId);
@@ -44,16 +42,10 @@ const FundingRaisedTab = () => {
   ) : (
     // Container
     <div className="mb-18 flex w-full flex-col">
-      {externalFunding.length > 0 && (
-        <ExternalFunding externalFunding={externalFunding} />
-      )}
-      {externalFunding.length > 0 && donations && donations.length > 0 && (
-        <Line />
-      )}
+      {externalFunding.length > 0 && <ExternalFunding externalFunding={externalFunding} />}
+      {externalFunding.length > 0 && donations && donations.length > 0 && <Line />}
 
-      {donations && donations.length > 0 && (
-        <PotlockFunding accountId={userId} />
-      )}
+      {donations && donations.length > 0 && <PotlockFunding accountId={userId} />}
     </div>
   );
 };

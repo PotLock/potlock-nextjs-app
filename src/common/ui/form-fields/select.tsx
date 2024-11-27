@@ -46,10 +46,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
       <>
         <Select {...props}>
           <FormControl>
-            <SelectTrigger
-              disabled={props.disabled}
-              className={classes?.trigger}
-            >
+            <SelectTrigger disabled={props.disabled} className={classes?.trigger}>
               <SelectValue {...{ placeholder }} />
             </SelectTrigger>
           </FormControl>
@@ -67,15 +64,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
       </>
     ),
 
-    [
-      children,
-      classes?.trigger,
-      description,
-      embedded,
-      label,
-      placeholder,
-      props,
-    ],
+    [children, classes?.trigger, description, embedded, label, placeholder, props],
   );
 
   return embedded ? (

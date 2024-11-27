@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Donation, PotPayout } from "@/common/api/indexer";
-import {
-  getPotDonations,
-  getPotPayouts,
-} from "@/common/api/indexer/deprecated/pots.deprecated";
+import { getPotDonations, getPotPayouts } from "@/common/api/indexer/deprecated/pots.deprecated";
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
 
@@ -13,10 +10,7 @@ export type JoinDonation = {
   nearAmount: number;
 };
 
-export const useOrderedDonations = (
-  potId: string,
-  includeNearFoundationPayment = false,
-) => {
+export const useOrderedDonations = (potId: string, includeNearFoundationPayment = false) => {
   const [donations, setDonations] = useState<Donation[]>([]);
   // INFO: Also know as sponsors
   const [orderedDonations, setOrderedDonations] = useState<JoinDonation[]>([]);
@@ -48,16 +42,13 @@ export const useOrderedDonations = (
       const joinedDonations: Record<string, JoinDonation> = {};
       filteredDonations.forEach((donation) => {
         const key = donation.donor.id || donation.pot.account;
-        const tokenName =
-          donation.token.name || donation.token.account || "NEAR";
+        const tokenName = donation.token.name || donation.token.account || "NEAR";
         const nearAmount =
           tokenName.toUpperCase() === "NEAR"
             ? yoctoNearToFloat(donation.net_amount)
             : parseFloat(
                 formatWithCommas(
-                  SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(
-                    donation.net_amount,
-                  ),
+                  SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(donation.net_amount),
                 ),
               );
 
@@ -77,9 +68,7 @@ export const useOrderedDonations = (
       Object.keys(joinedDonations).forEach((donor) => {
         donationList.push(joinedDonations[donor]);
       });
-      const sortedDonationsList = donationList.sort(
-        (a, b) => b.nearAmount - a.nearAmount,
-      );
+      const sortedDonationsList = donationList.sort((a, b) => b.nearAmount - a.nearAmount);
       setOrderedDonations(sortedDonationsList);
 
       let totalNearDonation = 0;
@@ -111,9 +100,7 @@ export const useOrderedDonations = (
             ? yoctoNearToFloat(payout.amount)
             : parseFloat(
                 formatWithCommas(
-                  SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(
-                    payout.amount,
-                  ),
+                  SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(payout.amount),
                 ),
               );
 
@@ -135,9 +122,7 @@ export const useOrderedDonations = (
         payoutsList.push(joinedPayouts[donor]);
       });
 
-      const sortedPayoutList = payoutsList.sort(
-        (a, b) => b.nearAmount - a.nearAmount,
-      );
+      const sortedPayoutList = payoutsList.sort((a, b) => b.nearAmount - a.nearAmount);
 
       setOrderedPayouts(sortedPayoutList);
 

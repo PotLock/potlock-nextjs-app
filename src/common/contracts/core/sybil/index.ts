@@ -3,11 +3,7 @@ import { Provider } from "near-api-js/lib/providers";
 
 import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import {
-  FULL_TGAS,
-  ONE_HUNDREDTH_NEAR,
-  TWO_HUNDREDTHS_NEAR,
-} from "@/common/constants";
+import { FULL_TGAS, ONE_HUNDREDTH_NEAR, TWO_HUNDREDTHS_NEAR } from "@/common/constants";
 
 import { GetHumanScoreInput, HumanScoreResponse } from "./interface/is-human";
 import { Config } from "./interface/lib";

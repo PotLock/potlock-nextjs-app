@@ -8,10 +8,7 @@ import { donationModel, donationModelKey } from "@/modules/donation";
 import { listEditorModel } from "@/modules/lists";
 import { potEditorModel, potEditorModelKey } from "@/modules/pot-editor";
 import { navModel, profilesModel } from "@/modules/profile";
-import {
-  projectEditorModel,
-  projectEditorModelKey,
-} from "@/modules/project-editor";
+import { projectEditorModel, projectEditorModelKey } from "@/modules/project-editor";
 
 export interface AppModel extends Models<AppModel> {
   core: typeof core;

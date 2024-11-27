@@ -2,10 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { getImage } from "@/common/api/images";
 import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
-import {
-  NEARSocialUserProfile,
-  getSocialProfile,
-} from "@/common/contracts/social";
+import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
 import useRegistration from "@/modules/core/hooks/useRegistration";
 
 export const useProfileData = (

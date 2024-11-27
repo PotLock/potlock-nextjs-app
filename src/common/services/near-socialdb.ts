@@ -1,8 +1,5 @@
 import { getImage } from "@/common/api/images";
-import {
-  NEARSocialUserProfile,
-  getSocialProfile,
-} from "@/common/contracts/social";
+import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
 import { ByAccountId } from "@/common/types";
 
 export type SocialImagesInputs = ByAccountId & {
@@ -12,10 +9,7 @@ export type SocialImagesInputs = ByAccountId & {
 /**
  * Use profile info to get profile and background images
  */
-export const fetchSocialImages = async ({
-  socialData,
-  accountId,
-}: SocialImagesInputs) => {
+export const fetchSocialImages = async ({ socialData, accountId }: SocialImagesInputs) => {
   let currentProfile: NEARSocialUserProfile | null | undefined = socialData;
 
   if (!currentProfile) {
