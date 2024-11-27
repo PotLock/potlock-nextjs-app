@@ -42,4 +42,3 @@ export const TimeLeft = ({ daysLeft }: { daysLeft: number }) => {
 
   return timeLeft;
 };
-

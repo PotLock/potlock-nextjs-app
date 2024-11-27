@@ -1,13 +1,12 @@
-import { PageWithBanner } from "@/common/ui/components";
-import {ActivePots} from "@/modules/pot";
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
 import { potFactoryClient } from "@/common/contracts/core";
-import { Button } from "@/common/ui/components";
+import { Button, PageWithBanner } from "@/common/ui/components";
 import { useWallet } from "@/modules/auth";
-import {hrefByRouteName} from "@/modules/core";
+import { hrefByRouteName } from "@/modules/core";
+import { ActivePots } from "@/modules/pot";
 
 const Banner = () => {
   const { wallet } = useWallet();

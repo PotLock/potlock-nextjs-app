@@ -3,10 +3,10 @@ import { useCallback, useState } from "react";
 import { styled } from "styled-components";
 
 import { ByPotId } from "@/common/api/indexer";
+import { TimeLeft } from "@/common/ui/components/_legacy/TimeLeft";
 import { cn } from "@/common/ui/utils";
 
 import { PotTimelineFragment } from "./PotTimelineFragment";
-import { TimeLeft } from "@/common/ui/components/_legacy/TimeLeft";
 import { usePotLifecycle } from "../hooks/lifecycle";
 
 /**
