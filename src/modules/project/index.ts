@@ -1,3 +1,4 @@
 export * from "./components/ProjectCard";
-export * from "./components/ProjectsOverview";
-export * from "./components/ProjectsOverviewFeatured";
+export * from "./components/ProjectDiscovery";
+export * from "./components/ProjectDiscoveryFeatured";
+export * from "./hooks/lookup";

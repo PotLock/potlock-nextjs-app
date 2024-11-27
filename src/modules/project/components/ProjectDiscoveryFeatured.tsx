@@ -6,7 +6,7 @@ const featuredProjectIds =
     ? ["v1.foodbank.near", "potlock.near", "yearofchef.near"]
     : ["amichaeltest.testnet", "root.akaia.testnet", "yearofchef.testnet"];
 
-export const ProjectsOverviewFeatured = () => {
+export const ProjectDiscoveryFeatured = () => {
   return (
     <div className="md:px-10 md:pt-12 flex w-full flex-col gap-10 px-2 pt-10">
       <div className="flex w-full flex-col gap-5">

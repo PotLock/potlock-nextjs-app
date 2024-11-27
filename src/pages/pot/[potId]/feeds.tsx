@@ -37,7 +37,7 @@ const FeedsTab = () => {
             "text-center font-lora text-[#292929]",
           )}
         >
-          {"No social posts available at the moment."}
+          {"No social posts available."}
         </p>
 
         <img
@@ -102,9 +102,11 @@ const FeedsTab = () => {
             hasMore={true}
             next={loadMorePosts}
             loader={
-              <div ref={loadingRef} className="mt-4 min-h-12 w-full text-center">
-                {noResults}
-              </div>
+              isLoading && (
+                <div ref={loadingRef} className="mt-4 min-h-12 text-center">
+                  <div className="">Loading...</div>
+                </div>
+              )
             }
           >
             {feedPosts.map((post) => (

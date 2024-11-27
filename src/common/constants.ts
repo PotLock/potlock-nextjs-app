@@ -3,11 +3,14 @@ import { utils } from "near-api-js";
 import { Metadata } from "next";
 
 import { NETWORK } from "./_config";
+import { ChronologicalSortOrderVariant } from "./types";
 
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
+export const POTLOCK_TWITTER_ACCOUNT_ID = "PotLock_";
+export const DEFAULT_SHARE_HASHTAGS = ["PublicGoods", "Donations"];
 
 export const APP_METADATA: Metadata & {
   title: string;
@@ -73,6 +76,14 @@ export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
 
 export const STAKE_WEIGHTED_POT_IDS =
   NETWORK === "mainnet" ? ["mpdao.v1.potfactory.potlock.near"] : [];
+
+export const CHRONOLOGICAL_SORT_OPTIONS: {
+  label: string;
+  value: ChronologicalSortOrderVariant;
+}[] = [
+  { label: "Most recent", value: "recent" },
+  { label: "Least recent", value: "older" },
+];
 
 /**
  * @deprecated use `ftService` hooks instead

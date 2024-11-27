@@ -14,7 +14,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/common/ui/components/tooltip";
+} from "@/common/ui/components/atoms/tooltip";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { PotLayout, applicationsFiltersTags } from "@/modules/pot";

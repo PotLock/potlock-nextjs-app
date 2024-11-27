@@ -6,6 +6,8 @@ import { AccountId } from "@/common/types";
 import { CampaignCard } from "@/modules/campaigns/components";
 import { ProfileLayout } from "@/modules/profile";
 
+import { NoResults } from "./lists";
+
 const ProfileCampaigns = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const {
@@ -23,8 +25,14 @@ const ProfileCampaigns = () => {
       });
   }, [userId]);
   return (
-    <div className="my-4 flex flex-wrap gap-8">
-      {campaigns?.map((data) => <CampaignCard data={data} key={data.id} />)}
+    <div className="w-full">
+      {campaigns?.length ? (
+        <div className="my-4 flex flex-wrap gap-8">
+          {campaigns?.map((data) => <CampaignCard data={data} key={data.id} />)}
+        </div>
+      ) : (
+        <NoResults text="This Project has no Campaigns" />
+      )}
     </div>
   );
 };
