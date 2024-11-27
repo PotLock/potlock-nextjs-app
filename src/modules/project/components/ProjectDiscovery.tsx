@@ -23,9 +23,8 @@ import { cn } from "@/common/ui/utils";
 
 import { ProjectCard } from "./ProjectCard";
 import { categories, statuses } from "../constants";
-import { useProjectLookup } from "../hooks/lookup";
-import { ProjectCategory, ProjectListingStatusVariant } from "../types";
 import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
+import { useProjectLookup } from "../hooks/lookup";
 
 const ProjectLookupPlaceholder = () =>
   Array.from({ length: 6 }, (_, index) => <ProjectCardSkeleton key={index} />);
@@ -55,8 +54,7 @@ export const ProjectDiscovery = () => {
 
         props: {
           value: projectCategoryFilter,
-          onValueChange: (value: ProjectCategory[]) =>
-            setProjectCategoryFilter(value),
+          onValueChange: setProjectCategoryFilter,
         },
       } as Group<GroupType.multiple>,
 
@@ -67,13 +65,7 @@ export const ProjectDiscovery = () => {
 
         props: {
           value: projectStatusFilter,
-          onValueChange: (value: ProjectListingStatusVariant) => {
-            if (value === "all") {
-              setProjectStatusFilter("Approved");
-            } else {
-              setProjectStatusFilter(value);
-            }
-          },
+          onValueChange: setProjectStatusFilter,
         },
       } as Group<GroupType.single>,
     ],
