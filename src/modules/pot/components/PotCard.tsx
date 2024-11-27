@@ -4,15 +4,15 @@ import { Pot } from "@/common/api/indexer";
 import routesPath from "@/modules/core/routes";
 
 import Indicator from "./Indicator";
-import Tag from "./Tag";
+import { PotTag } from "./PotTag";
 import useNearAndUsdByPot from "../hooks/useNearAndUsdByPot";
 import getPotTags from "../utils/getPotTags";
 
-type Props = {
+export type PotCardProps = {
   pot: Pot;
 };
 
-export const PotCard = ({ pot }: Props) => {
+export const PotCard: React.FC<PotCardProps> = ({ pot }) => {
   const { amountNear, amountUsd } = useNearAndUsdByPot({ pot });
 
   const preLoadingText = `Pot ${pot.account} not found.`;
@@ -60,7 +60,7 @@ export const PotCard = ({ pot }: Props) => {
         {tags.map(
           (tag) =>
             tag.visibility && (
-              <Tag
+              <PotTag
                 backgroundColor={tag.backgroundColor}
                 borderColor={tag.borderColor}
                 textColor={tag.textColor}
@@ -74,5 +74,3 @@ export const PotCard = ({ pot }: Props) => {
     </Link>
   );
 };
-
-export default PotCard;

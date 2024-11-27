@@ -3,14 +3,15 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { coingecko } from "@/common/api/coingecko";
+import { Pot } from "@/common/api/indexer";
 import { Toggle } from "@/common/assets/svgs";
 import { truncate } from "@/common/lib";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { JoinDonation } from "@/modules/pot/hooks";
+import { JoinDonation, useOrderedDonations } from "@/modules/pot/hooks";
 import { useProfileData } from "@/modules/profile";
 
-import { Container, Row } from "./styles";
+import { Container, Row } from "./styled";
 
 const Table = ({
   donations,
@@ -101,4 +102,34 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
   );
 };
 
-export default Table;
+export const PotStats = ({ potDetail }: { potDetail: Pot }) => {
+  const {
+    orderedPayouts,
+    totalAmountNearPayouts,
+    orderedDonations,
+    uniqueDonationDonors,
+    totalAmountNearDonations,
+  } = useOrderedDonations(potDetail.account);
+
+  const { public_donations_count } = potDetail;
+
+  if (public_donations_count > 0 && orderedPayouts.length > 0) {
+    return (
+      <Table
+        title="matching pool allocations"
+        totalAmount={totalAmountNearPayouts.toString()}
+        totalUniqueDonors={uniqueDonationDonors}
+        donations={orderedPayouts.slice(0, 5)}
+      />
+    );
+  } else if (orderedDonations.length > 0) {
+    return (
+      <Table
+        title="sponsors"
+        totalAmount={totalAmountNearDonations.toString()}
+        totalUniqueDonors={uniqueDonationDonors}
+        donations={orderedDonations.slice(0, 5)}
+      />
+    );
+  }
+};

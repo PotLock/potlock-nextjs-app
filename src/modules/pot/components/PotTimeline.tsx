@@ -6,7 +6,7 @@ import { ByPotId } from "@/common/api/indexer";
 import { cn } from "@/common/ui/utils";
 
 import { PotTimelineFragment } from "./PotTimelineFragment";
-import TimeLeft from "./TimeLeft";
+import { TimeLeft } from "@/common/ui/components/_legacy/TimeLeft";
 import { usePotLifecycle } from "../hooks/lifecycle";
 
 /**

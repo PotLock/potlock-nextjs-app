@@ -23,7 +23,7 @@ type Props = {
   previousChallenge?: Challenge;
 };
 
-const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Props) => {
+export const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Props) => {
   const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
 
   // AccountID (Address)
@@ -79,5 +79,3 @@ const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Pr
     </Dialog>
   );
 };
-
-export default ChallengeModal;

@@ -16,11 +16,11 @@ import { DonateToPotProjects } from "@/modules/donation";
 import { TokenTotalValue } from "@/modules/token";
 import { useTypedSelector } from "@/store";
 
-import ChallengeModal from "./ChallengeModal";
+import { ChallengeModal } from "./ChallengeModal";
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import NewApplicationModal from "./NewApplicationModal";
-import { PoolAllocationTable } from "./PoolAllocationTable";
 import { PotApplicationRequirements } from "./PotApplicationRequirements";
+import { PotStats } from "./PotStats";
 import { PotTimeline } from "./PotTimeline";
 import { usePotUserPermissions } from "../hooks/permissions";
 import { isPotVotingBased } from "../utils/voting";
@@ -145,7 +145,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
               {isVotingBasedPot ? (
                 <PotApplicationRequirements {...{ potId }} />
               ) : (
-                pot && <PoolAllocationTable potDetail={pot} />
+                pot && <PotStats potDetail={pot} />
               )}
 
               {isSignedIn && (
