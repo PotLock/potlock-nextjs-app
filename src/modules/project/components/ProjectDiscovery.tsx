@@ -207,7 +207,7 @@ export const ProjectDiscovery = () => {
           </PaginationContent>
         </Pagination>
       ) : (
-        <div className="min-h-100 flex w-full flex-col items-center justify-center">
+        <div className="min-h-140 flex w-full flex-col items-center justify-center">
           <Image
             src="/assets/icons/no-list.svg"
             alt="No results found"
