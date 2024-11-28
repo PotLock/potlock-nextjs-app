@@ -9,6 +9,8 @@ export const {
 
   contractMetadata: { version: CONTRACT_SOURCECODE_VERSION, repoUrl: CONTRACT_SOURCECODE_REPO_URL },
 
+  features: FEATURE_REGISTRY,
+
   campaigns: {
     contract: { accountId: CAMPAIGNS_CONTRACT_ACCOUNT_ID },
   },
