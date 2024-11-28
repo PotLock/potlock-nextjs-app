@@ -29,6 +29,7 @@ export * from "./atoms/popover";
 export * from "./atoms/progress";
 export * from "./atoms/scroll-area";
 export * from "./atoms/select";
+export * from "./atoms/separator";
 export * from "./atoms/skeleton";
 export * from "./atoms/switch";
 export * from "./atoms/table";
@@ -42,6 +43,7 @@ export * from "./atoms/typography";
  *
  * See https://atomicdesign.bradfrost.com/chapter-2/#molecules
  */
+export * from "./molecules/checklist";
 export * from "./molecules/clipboard-copy-button";
 export * from "./molecules/data-loading-placeholder";
 export * from "./molecules/dialog";

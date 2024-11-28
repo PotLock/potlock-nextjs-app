@@ -37,6 +37,7 @@ export default function SingleList() {
     listId: parseInt(id as string),
   });
 
+  // TODO: stop creating additional state wrappers for reactive resources
   useEffect(() => {
     setFilteredRegistrations(data?.results ?? []);
   }, [data]);

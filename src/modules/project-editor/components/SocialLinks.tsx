@@ -1,15 +1,15 @@
 import { useCallback, useState } from "react";
 
 import { extractFromUrl, urlPatters } from "@/modules/core/utils";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";
 
 const SocialLinks = () => {
-  const twitter = useTypedSelector((state) => state.projectEditor.twitter);
-  const telegram = useTypedSelector((state) => state.projectEditor.telegram);
-  const github = useTypedSelector((state) => state.projectEditor.github);
-  const website = useTypedSelector((state) => state.projectEditor.website);
+  const twitter = useGlobalStoreSelector((state) => state.projectEditor.twitter);
+  const telegram = useGlobalStoreSelector((state) => state.projectEditor.telegram);
+  const github = useGlobalStoreSelector((state) => state.projectEditor.github);
+  const website = useGlobalStoreSelector((state) => state.projectEditor.website);
 
   const [twitterValue, setTwitterValue] = useState<string>(
     twitter?.replace("https://x.com/", "") || "",

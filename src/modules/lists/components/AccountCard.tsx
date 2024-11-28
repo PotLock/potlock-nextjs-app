@@ -8,8 +8,7 @@ import { ListRegistration } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import DownArrow from "@/common/assets/svgs/DownArrow";
 import { ListNoteIcon } from "@/common/assets/svgs/list-note";
-import { RegistrationStatus } from "@/common/contracts/core";
-import { update_registered_project } from "@/common/contracts/core/lists";
+import { RegistrationStatus, listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import {
   Button,
@@ -88,11 +87,12 @@ export const AccountCard = ({
   );
 
   const handleUpdateStatus = () => {
-    update_registered_project({
-      registration_id: dataForList.id,
-      ...(note && { notes: note }),
-      status: statusChange.status as RegistrationStatus,
-    })
+    listsClient
+      .update_registered_project({
+        registration_id: dataForList.id,
+        ...(note && { notes: note }),
+        status: statusChange.status as RegistrationStatus,
+      })
       .then((data) => setRegistrationStatus(data.status))
       .catch((err) => console.error(err));
 

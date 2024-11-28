@@ -6,14 +6,7 @@ import { prop } from "remeda";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import {
-  add_admins_to_list,
-  delete_list,
-  register_batch,
-  remove_admins_from_list,
-  transfer_list_ownership,
-  unregister_from_list,
-} from "@/common/contracts/core/lists";
+import { listsClient } from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { AccountKey } from "@/modules/account";
@@ -38,13 +31,16 @@ export const useListForm = () => {
 
   const handleDeleteList = (id: number) => {
     if (!id) return;
-    delete_list({ list_id: id })
+
+    listsClient
+      .delete_list({ list_id: id })
       .then(() => {
         push("/lists");
       })
       .catch((error) => {
         console.error("Error deleting list", error);
       });
+
     dispatch.listEditor.updateListModalState({
       header: "List Deleted Successfully",
       description,
@@ -53,20 +49,22 @@ export const useListForm = () => {
   };
 
   const handleRegisterBatch = (registrants: string[]) => {
-    register_batch({
-      list_id: parseInt(id as any) as any,
-      registrations: registrants.map((data: string) => ({
-        registrant_id: data,
-        status: "Approved",
-        submitted_ms: Date.now(),
-        updated_ms: Date.now(),
-        notes: "",
-      })),
-    })
+    listsClient
+      .register_batch({
+        list_id: parseInt(id as any) as any,
+        registrations: registrants.map((data: string) => ({
+          registrant_id: data,
+          status: "Approved",
+          submitted_ms: Date.now(),
+          updated_ms: Date.now(),
+          notes: "",
+        })),
+      })
       .then(() => {
         setFinishModal({ open: true, type: ListFormModalType.BATCH_REGISTER });
       })
       .catch((error) => console.error(error));
+
     dispatch.listEditor.updateListModalState({
       header: "Account(s) Registered Successfully",
       description,
@@ -108,10 +106,12 @@ export const useListForm = () => {
 
   const handleRemoveAdmin = (accounts: AccountKey[]) => {
     const accountIds = accounts.map(prop("accountId"));
-    remove_admins_from_list({
-      list_id: Number(id),
-      admins: accountIds,
-    })
+
+    listsClient
+      .remove_admins_from_list({
+        list_id: Number(id),
+        admins: accountIds,
+      })
       .then(() => {
         setFinishModal({ open: true, type: ListFormModalType.REMOVE_ADMINS });
       })
@@ -127,16 +127,19 @@ export const useListForm = () => {
 
   const handleSaveAdminsSettings = (admins: AccountId[]) => {
     if (!id) return;
-    add_admins_to_list({
-      list_id: Number(id),
-      admins,
-    })
+
+    listsClient
+      .add_admins_to_list({
+        list_id: Number(id),
+        admins,
+      })
       .then(() => {
         setFinishModal({ open: true, type: ListFormModalType.ADD_ADMINS });
       })
       .catch((error) => {
         console.error("Error adding admins to list", error);
       });
+
     dispatch.listEditor.updateListModalState({
       header: "Admin(s) Added Successfully",
       description,
@@ -154,10 +157,12 @@ export const useListForm = () => {
   const handleTransferOwner = () => {
     if (transferAccountError && !transferAccountField) return;
     if (!id) return; // Ensure id is available
-    transfer_list_ownership({
-      list_id: parseInt(id as string),
-      new_owner_id: transferAccountField,
-    })
+
+    listsClient
+      .transfer_list_ownership({
+        list_id: parseInt(id as string),
+        new_owner_id: transferAccountField,
+      })
       .then((data) => {
         if (data) {
           setFinishModal({
@@ -169,6 +174,7 @@ export const useListForm = () => {
       .catch((error) => {
         console.error("Error Transferring Owner", error);
       });
+
     dispatch.listEditor.updateListModalState({
       header: "Transfer of Ownership Successfully",
       description,

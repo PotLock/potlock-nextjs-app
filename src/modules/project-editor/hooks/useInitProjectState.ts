@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import * as potlockLists from "@/common/contracts/core/lists";
+import { listsClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import { useWallet } from "@/modules/auth";
 import routesPath from "@/modules/core/routes";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 const useInitProjectState = () => {
-  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } = useTypedSelector(
-    (state) => state.projectEditor,
-  );
+  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
+    useGlobalStoreSelector((state) => state.projectEditor);
 
   const {
     query: { projectId: projectIdPathParam, done, transactionHashes, errorMessage },
@@ -22,7 +21,7 @@ const useInitProjectState = () => {
 
   const {
     actAsDao: { defaultAddress: daoAddress, toggle: isDao },
-  } = useTypedSelector((state) => state.nav);
+  } = useGlobalStoreSelector((state) => state.nav);
 
   const { wallet, isWalletReady } = useWallet();
 
@@ -84,7 +83,7 @@ const useInitProjectState = () => {
 
       (async () => {
         try {
-          const register = await potlockLists.getRegistration({
+          const register = await listsClient.getRegistration({
             registrant_id: accountId,
           });
 

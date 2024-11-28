@@ -1,8 +1,4 @@
-import {
-  ListRegistration,
-  Pot,
-  PotApplication,
-} from "./internal/client.generated";
+import { ListRegistration, Pot, PotApplication } from "./internal/client.generated";
 
 /**
  *! Heads Up!

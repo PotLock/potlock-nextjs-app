@@ -1,7 +1,7 @@
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { Challenge } from "@/common/contracts/core/interfaces/pot.interfaces";
+import { Challenge } from "@/common/contracts/core";
 import {
   Button,
   Dialog,
@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
   FormField,
+  Spinner,
   Textarea,
 } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/Spinner";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { useChallengeForm } from "../hooks";
 
@@ -23,8 +23,8 @@ type Props = {
   previousChallenge?: Challenge;
 };
 
-const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Props) => {
-  const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
+export const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Props) => {
+  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
 
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
@@ -79,5 +79,3 @@ const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Pr
     </Dialog>
   );
 };
-
-export default ChallengeModal;

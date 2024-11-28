@@ -3,7 +3,12 @@ import { omit } from "remeda";
 
 import { ByPotId } from "@/common/api/indexer";
 import { nearRpc, walletApi } from "@/common/api/near";
-import { PotConfig, PotDeploymentResult, pot, potFactory } from "@/common/contracts/core";
+import {
+  PotConfig,
+  PotDeploymentResult,
+  potClient,
+  potFactoryClient,
+} from "@/common/contracts/core";
 import { AppDispatcher } from "@/store";
 
 import { PotEditorDeploymentInputs, PotEditorSettings } from "./schemas";
@@ -18,7 +23,7 @@ type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
 
 export const effects = (dispatch: AppDispatcher) => ({
   handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
-    void pot
+    void potClient
       .getConfig({ potId: id })
       .then((potConfig) => dispatch.potEditor.deploymentSuccess({ id, ...potConfig })),
 
@@ -45,7 +50,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       });
 
       if (isNewPot) {
-        potFactory
+        potFactoryClient
           .deploy_pot({
             pot_args,
             pot_handle: (pot_handle?.length ?? 0) > 0 ? pot_handle : undefined,
@@ -53,7 +58,7 @@ export const effects = (dispatch: AppDispatcher) => ({
           .then(dispatch.potEditor.handleDeploymentSuccess)
           .catch(dispatch.potEditor.deploymentFailure);
       } else {
-        pot
+        potClient
           .admin_dangerously_set_pot_config(potId, {
             update_args: omit(pot_args, ["custom_sybil_checks"]),
           })

@@ -1,12 +1,6 @@
-# PotLock - NextJS frontend
+# PotLock Next
 
 PotLock frontend application built on NextJS featuring project exploration, pages, donations, and Pots (quadratic funding for now) on the NEAR Blockchain
-
-To-Do
-
-- Feeds
-- Campaigns
-- Lists
 
 The backlog to the NextJS App can be found at <https://potlock.org/next-backlog>
 
@@ -18,7 +12,8 @@ You can access BOS PotLock version using one of the environments below:
 
 You can see original features <https://potlock.notion.site/All-Features-Potlock-NextJS-App-5f543fa8b31840aa88bf5b8cf57ead3d?pvs=4>
 
-Core contracts can be found at <https://github.com/PotLock/core> and documentation <https://docs.potlock.io/contracts/contracts-overview>
+Core contracts can be found at <https://github.com/PotLock/core>
+Contract documentation: <https://docs.potlock.io/contracts/contracts-overview>
 
 ## Development
 
@@ -38,10 +33,9 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### DJango Indexer API
+### Backend ( Indexer API )
 
-This project is using an indexer service.
-You can access its docs here: <https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints>
+Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
 **URI**: <http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1>
 
@@ -59,16 +53,17 @@ aspects of the application within each module:
 │
 ├── global.d.ts <--- # Globally available type definitions
 │
+│
 ├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings,
 │   │               # utility libraries, reusable primitives, and assets, used in layouts and
 │   │               # business logic across the codebase. MUST NOT contain business logic by itself.
 │   │               # AKA "shared" ( see link 2. )
 │   │
 │   ├── constants.ts <--- # Static reusable values, e.g.
-│   │                      export const DEFAULT_NETWORK = "testnet"
-│   │                      export const MAX_GAS = 100
+│   │                      export const NATIVE_TOKEN_ID = "near";
+│   │                      export const MAX_GAS = 100;
 │   │
-│   ├── [ api ] <--- # Facilitates network interaction with backend(s)
+│   ├── [ api ] <--- # Basic network and data layer
 │   │
 │   ├── [ assets ] <--- # Globally used assets, e.g. images or icons
 │   │
@@ -88,7 +83,6 @@ aspects of the application within each module:
 │
 │
 │
-│
 ├── [ modules ] <--- # Business logic units broken down into categories. Simply put, this is
 │   │                # a collection of directories that contain code implementing specific
 │   │                # groups of app use cases and are named after functionalities they provide.
@@ -101,14 +95,16 @@ aspects of the application within each module:
 │   │
 │   ├── [ profile ] <--- # A feature-specific module
 │   │   │
+│   │   ├── index.ts <--- # Module entry point for public exports ( available for external use )
+│   │   │
 │   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
-│   │   │                       export const POTLOCK_REGISTRY_LIST_ID = 1
+│   │   │                       export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1
 │   │   │
 │   │   ├── models.ts <--- # Feature state definitions ( See link 3. )
 │   │   │                  # If this file grows over 300 LoC, consider turning it into a directory
 │   │   │                  # with the same name by applying code-splitting techniques.
 │   │   │
-│   │   ├── types.d.ts <--- # Module-specific shared types and interfaces
+│   │   ├── types.ts <--- # Module-specific shared types and interfaces
 │   │   │
 │   │   ├── [ components ] <--- # Feature-specific React components
 │   │   │
@@ -123,10 +119,8 @@ aspects of the application within each module:
 │
 │
 │
-│
 ├── [ pages ] <--- # Entry point of the application.
 │                  # Follows Nextjs Pages routing specification ( see link 1. )
-│
 │
 │
 │

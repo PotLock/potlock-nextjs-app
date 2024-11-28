@@ -17,5 +17,3 @@ export type GetUsersForStampInput = {
   from_index?: number;
   limit?: number;
 };
-
-export type AccountId = string;

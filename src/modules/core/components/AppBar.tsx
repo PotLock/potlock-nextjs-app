@@ -92,7 +92,7 @@ const MobileNav = () => {
   );
 };
 
-export const Nav = () => {
+export const AppBar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isClient = useIsClient();
   const router = useRouter();

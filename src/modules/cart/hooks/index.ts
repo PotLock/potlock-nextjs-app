@@ -1,7 +1,7 @@
 import { prop } from "remeda";
 
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { CART_KEY } from "../constants";
 
-export const useCart = () => ({ ...useTypedSelector(prop(CART_KEY)) });
+export const useCart = () => ({ ...useGlobalStoreSelector(prop(CART_KEY)) });

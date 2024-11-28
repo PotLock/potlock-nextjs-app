@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-
 import { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
@@ -39,11 +37,11 @@ export const FeedCard = ({ post }: PostType) => {
       setProfileImg(image);
     };
     if (post.accountId) fetchProfileImage();
-  }, [post.accountId]);
+  }, [post.accountId, post.blockHeight]);
 
   const handleCardClick = useCallback(() => {
     router.push(`/feed/${post.accountId}/${post.blockHeight}`);
-  }, [post]);
+  }, [post.accountId, post.blockHeight, router]);
 
   const handleProfileClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {

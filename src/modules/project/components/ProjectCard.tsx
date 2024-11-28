@@ -51,7 +51,7 @@ export const ProjectCard = ({ projectId, allowDonate = true, payoutDetails }: Pr
         <div
           className={cn(
             "transition-duration-300 max-w-105 mx-auto flex h-full w-full flex-col",
-            "overflow-hidden rounded-md bg-card transition-all",
+            "bg-card overflow-hidden rounded-md transition-all",
           )}
           style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"

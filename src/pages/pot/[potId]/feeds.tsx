@@ -5,8 +5,7 @@ import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { walletApi } from "@/common/api/near";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
-import { Application } from "@/common/contracts/core";
-import * as potContract from "@/common/contracts/core/pot";
+import { Application, potClient } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { PotLayout } from "@/modules/pot";
@@ -69,7 +68,7 @@ const FeedsTab = () => {
     // Fetch applications
     (async () => {
       try {
-        const applicationsData: Application[] = await potContract.getApplications({ potId });
+        const applicationsData: Application[] = await potClient.getApplications({ potId });
         fetchGlobalFeeds({
           accountIds: applicationsData?.map((application) => application?.project_id),
         })

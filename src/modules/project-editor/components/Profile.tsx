@@ -7,10 +7,10 @@ import CameraIcon from "@/common/assets/svgs/CameraIcon";
 import { Button } from "@/common/ui/components";
 import Spinner from "@/common/ui/components/Spinner";
 import useStatus from "@/modules/core/hooks/usStatus";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 const Profile = () => {
-  const { accountId, backgroundImage, profileImage } = useTypedSelector(
+  const { accountId, backgroundImage, profileImage } = useGlobalStoreSelector(
     (state) => state.projectEditor,
   );
 

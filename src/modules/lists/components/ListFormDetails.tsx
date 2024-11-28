@@ -7,15 +7,14 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { walletApi } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { RegistrationStatus } from "@/common/contracts/core/interfaces/lists.interfaces";
-import { create_list, getList, update_list } from "@/common/contracts/core/lists";
+import { RegistrationStatus, listsClient } from "@/common/contracts/core";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/modules/access-control";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import useWallet from "@/modules/auth/hooks/wallet";
 import { AccountOption } from "@/modules/core";
 import { useListForm } from "@/modules/lists/hooks/useListForm";
 import { createListSchema } from "@/modules/lists/models/schema";
@@ -91,7 +90,7 @@ export const ListFormDetails: React.FC = () => {
   useEffect(() => {
     const fetchListDetails = async () => {
       try {
-        const response: any = await getList({
+        const response: any = await listsClient.getList({
           list_id: parseInt(id as string) as any,
         });
         setValue("name", response.name);
@@ -130,7 +129,7 @@ export const ListFormDetails: React.FC = () => {
     ) { return; }
 
     if (onEditPage) {
-      update_list({
+      listsClient.update_list({
         ...data,
         admins,
         list_id: parseInt(id as any),
@@ -146,9 +145,10 @@ export const ListFormDetails: React.FC = () => {
         .catch((error) => {
           console.error("Error updating list:", error);
         });
+
       dispatch.listEditor.reset()
     } else {
-      create_list({
+      listsClient.create_list({
         ...data,
         admins,
         accounts: accounts.map((account) => ({
@@ -284,11 +284,11 @@ export const ListFormDetails: React.FC = () => {
                   />
                   <div
                     className={cn(
-                      "h-4.5 w-4.5 peer shrink-0 rounded-sm border border-[var(--primary-600)] ring-offset-background",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      "h-4.5 w-4.5 ring-offset-background peer shrink-0 rounded-sm border border-[var(--primary-600)]",
+                      "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2",
                       "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                      "data-[state=checked]:bg-[var(--primary-600)] data-[state=checked]:text-primary-foreground",
-                      "peer-checked:bg-[var(--primary-600)] peer-checked:text-primary-foreground",
+                      "data-[state=checked]:text-primary-foreground data-[state=checked]:bg-[var(--primary-600)]",
+                      "peer-checked:text-primary-foreground peer-checked:bg-[var(--primary-600)]",
                     )}
                   >
                     <Check className="flex hidden h-4 w-4 items-center justify-center text-white peer-checked:block" />

@@ -1,10 +1,10 @@
 import { PageWithBanner } from "@/common/ui/components";
 import ScreenSpinner from "@/common/ui/components/ScreenSpinner";
 import { cn } from "@/common/ui/utils";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/modules/auth/hooks/store";
 import CreateForm from "@/modules/project-editor/components/CreateForm";
 import useInitProjectState from "@/modules/project-editor/hooks/useInitProjectState";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 export default function EditProjectPage() {
   const { isAuthenticated } = useAuth();
@@ -12,7 +12,7 @@ export default function EditProjectPage() {
 
   // state used to show spinner during the data post
   const { submissionStatus, checkRegistrationStatus, checkPreviousProjectDataStatus } =
-    useTypedSelector((state) => state.projectEditor);
+    useGlobalStoreSelector((state) => state.projectEditor);
 
   const showSpinner = isAuthenticated
     ? submissionStatus === "sending" ||

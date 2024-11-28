@@ -8,7 +8,7 @@ import { FormSubmitHandler, useForm } from "react-hook-form";
 import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/api/near";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
-import * as potService from "@/common/contracts/core/pot";
+import { potClient } from "@/common/contracts/core";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 
 import {
@@ -241,7 +241,7 @@ export const useChallengeForm = ({
       setInProgress(true);
 
       try {
-        await potService.challengePayouts({
+        await potClient.challengePayouts({
           potId: potDetail.account,
           reason: formData.data.message,
         });

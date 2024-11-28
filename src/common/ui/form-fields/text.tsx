@@ -45,7 +45,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             <div un-flex="~" un-items="center" un-gap="1">
               {label && <FormLabel className="text-sm">{label}</FormLabel>}
 
-              {required && <span className="line-height-none text-xl text-destructive">*</span>}
+              {required && <span className="line-height-none text-destructive text-xl">*</span>}
             </div>
 
             {labelExtension ? (

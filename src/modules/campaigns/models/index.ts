@@ -2,7 +2,7 @@ import { createModel } from "@rematch/core";
 import { mergeAll, prop } from "remeda";
 
 import { Campaign } from "@/common/contracts/core";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { CampaignEditorState, CampaignEnumType } from "../types";
@@ -19,7 +19,7 @@ const campaignEditorStateDefaults: CampaignEditorState = {
 const handleCampaign = (state: CampaignEditorState, stateUpdate?: Partial<CampaignEditorState>) =>
   mergeAll([state, stateUpdate ?? {}]);
 
-export const useCampaignActionState = () => useTypedSelector(prop(campaignModelKey));
+export const useCampaignActionState = () => useGlobalStoreSelector(prop(campaignModelKey));
 
 export const campaignEditorModel = createModel<AppModel>()({
   state: campaignEditorStateDefaults,

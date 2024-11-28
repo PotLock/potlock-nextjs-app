@@ -1,4 +1,4 @@
-import { RegistrationStatus } from "@/common/contracts/core/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@/common/contracts/core";
 
 export const TOTAL_FEE_BASIS_POINTS = 10_000;
 

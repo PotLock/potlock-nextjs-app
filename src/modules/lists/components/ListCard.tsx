@@ -8,7 +8,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { walletApi } from "@/common/api/near";
 import { LayersIcon } from "@/common/assets/svgs";
 import { LikeIcon } from "@/common/assets/svgs/like";
-import { remove_upvote, upvote } from "@/common/contracts/core/lists";
+import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { dispatch } from "@/store";
@@ -46,13 +46,15 @@ export const ListCard = ({
   const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isUpvoted) {
-      remove_upvote({ list_id: dataForList?.on_chain_id });
+      listsClient.remove_upvote({ list_id: dataForList?.on_chain_id });
+
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name, 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      upvote({ list_id: dataForList?.on_chain_id });
+      listsClient.upvote({ list_id: dataForList?.on_chain_id });
+
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name, 15),
         type: ListFormModalType.UPVOTE,

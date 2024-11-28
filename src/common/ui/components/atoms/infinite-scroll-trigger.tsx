@@ -66,9 +66,7 @@ export const InfiniteScrollTrigger: React.FC<InfiniteScrollTriggerProps> = ({
   return (
     <>
       {flattenChildren.map((child, index) => {
-        const isObserveTarget = reverse
-          ? index === 0
-          : index === flattenChildren.length - 1;
+        const isObserveTarget = reverse ? index === 0 : index === flattenChildren.length - 1;
 
         const ref = isObserveTarget ? observerRef : null;
 

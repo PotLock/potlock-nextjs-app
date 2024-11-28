@@ -44,13 +44,8 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
     status: ListRegistrationStatus.Approved,
   });
 
-  const handleEvenShareAllocation = useDonationEvenShareAllocation({
-    form,
-  });
-
-  const handleManualShareAllocation = useDonationManualShareAllocation({
-    form,
-  });
+  const handleEvenShareAllocation = useDonationEvenShareAllocation({ form });
+  const handleManualShareAllocation = useDonationManualShareAllocation({ form });
 
   const errorDetails = useMemo(() => {
     if (potApplicationsError) {

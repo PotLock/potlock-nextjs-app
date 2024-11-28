@@ -7,7 +7,7 @@ type Props = {
   errorMessage?: string;
 };
 
-const ErrorModal = ({ open, onCloseClick, errorMessage }: Props) => {
+export const ErrorModal = ({ open, onCloseClick, errorMessage }: Props) => {
   const closeHandler = () => {
     dispatch.projectEditor.submissionStatus("pending");
     dispatch.projectEditor.setSubmissionError("");

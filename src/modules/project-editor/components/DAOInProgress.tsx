@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 const DAOInProgress = () => {
-  const { daoProjectProposal, daoAddress } = useTypedSelector((state) => state.projectEditor);
+  const { daoProjectProposal, daoAddress } = useGlobalStoreSelector((state) => state.projectEditor);
 
   if (!daoProjectProposal || !daoAddress) {
     return "";

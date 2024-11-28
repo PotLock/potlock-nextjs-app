@@ -1,16 +1,16 @@
 import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import { useAuth } from "@/modules/auth/hooks/store";
+import useWallet from "@/modules/auth/hooks/wallet";
 import { GeneralStats, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { DonateRandomly } from "@/modules/donation";
 import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/modules/project";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 const WelcomeBanner = () => {
-  const { defaultAddress, toggle } = useTypedSelector((state) => state.nav.actAsDao);
+  const { defaultAddress, toggle } = useGlobalStoreSelector((state) => state.nav.actAsDao);
 
   const daoAddress = toggle && defaultAddress ? defaultAddress : "";
   const wallet = useWallet();

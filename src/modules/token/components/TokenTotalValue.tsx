@@ -41,7 +41,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
             { "mt-0.7": !textOnly },
             classNames?.amount,
           )}
-        >{`${amount} ${token?.metadata.symbol ?? "⋯"}`}</span>
+        >{`${amount} ${token?.metadata.symbol ?? "🪙"}`}</span>
       }
 
       {totalAmountUsdValue && (

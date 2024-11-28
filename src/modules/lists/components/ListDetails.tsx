@@ -10,7 +10,7 @@ import { prop } from "remeda";
 import { List } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
-import { register_batch, remove_upvote, upvote } from "@/common/contracts/core/lists";
+import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import {
@@ -21,7 +21,7 @@ import {
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { AccessControlListModal } from "@/modules/access-control/components/AccessControlListModal";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import useWallet from "@/modules/auth/hooks/wallet";
 import { AccountOption } from "@/modules/core";
 import { DonateToListProjects } from "@/modules/donation";
 import { dispatch } from "@/store";
@@ -80,23 +80,24 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   } = useListForm();
 
   const applyToListModal = (note: string) => {
-    register_batch({
-      list_id: parseInt(listDetails?.on_chain_id as any) as any,
-      notes: note,
-      registrations: [
-        {
-          registrant_id: wallet?.accountId ?? "",
-          status:
-            listDetails?.owner?.id === walletApi.accountId
-              ? "Approved"
-              : listDetails?.default_registration_status,
+    listsClient
+      .register_batch({
+        list_id: parseInt(listDetails?.on_chain_id as any) as any,
+        notes: note,
+        registrations: [
+          {
+            registrant_id: wallet?.accountId ?? "",
+            status:
+              listDetails?.owner?.id === walletApi.accountId
+                ? "Approved"
+                : listDetails?.default_registration_status,
 
-          submitted_ms: Date.now(),
-          updated_ms: Date.now(),
-          notes: note,
-        },
-      ],
-    })
+            submitted_ms: Date.now(),
+            updated_ms: Date.now(),
+            notes: note,
+          },
+        ],
+      })
       .then((data) => {
         setIsApplicationSuccessful(true);
       })
@@ -119,17 +120,19 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
 
   const handleUpvote = () => {
     if (isUpvoted) {
-      remove_upvote({ list_id: Number(listDetails.on_chain_id) }).catch((error) =>
-        console.error("Error upvoting:", error),
-      );
+      listsClient
+        .remove_upvote({ list_id: Number(listDetails.on_chain_id) })
+        .catch((error) => console.error("Error upvoting:", error));
+
       dispatch.listEditor.handleListToast({
         name: truncate(listDetails?.name, 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      upvote({ list_id: Number(listDetails.on_chain_id) }).catch((error) =>
-        console.error("Error upvoting:", error),
-      );
+      listsClient
+        .upvote({ list_id: Number(listDetails.on_chain_id) })
+        .catch((error) => console.error("Error upvoting:", error));
+
       dispatch.listEditor.handleListToast({
         name: truncate(listDetails?.name, 15),
         type: ListFormModalType.UPVOTE,

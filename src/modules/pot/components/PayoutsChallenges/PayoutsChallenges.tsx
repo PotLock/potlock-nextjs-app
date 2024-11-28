@@ -4,18 +4,17 @@ import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
 import AdminIcon from "@/common/assets/svgs/AdminIcon";
-import { Challenge as ChallengeType } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
+import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { Challenge, Container, Line, Table, Title } from "./styles";
 import ChallengeResolveModal from "../ChallengeResolveModal";
 
 const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
-  const { actAsDao, accountId: _accId } = useTypedSelector((state) => state.nav);
+  const { actAsDao, accountId: _accId } = useGlobalStoreSelector((state) => state.nav);
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = asDao ? actAsDao.defaultAddress : _accId;
@@ -32,7 +31,7 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
       // Get Payouts Challenges for pot
       if (potDetail?.account) {
         try {
-          const _payoutsChallenges = await potContract.getPayoutsChallenges({
+          const _payoutsChallenges = await potClient.getPayoutsChallenges({
             potId: potDetail?.account,
           });
           setPayoutsChallenges(_payoutsChallenges);

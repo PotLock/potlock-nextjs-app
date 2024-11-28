@@ -4,7 +4,7 @@ import { walletApi } from "@/common/api/near";
 
 import { Wallet } from "../types";
 
-const useWallet = () => {
+export const useWallet = () => {
   const [isWalletReady, setReady] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [wallet, setWallet] = useState<Wallet>();

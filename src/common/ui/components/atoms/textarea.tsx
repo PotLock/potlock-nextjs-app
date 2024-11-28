@@ -20,9 +20,9 @@ export const Textarea = forwardRef<
       <textarea
         className={cn(
           "flex min-h-[80px] w-full px-3 py-2.5",
-          "rounded-md border border-neutral-300 bg-background ring-offset-background",
-          "text-sm placeholder:text-muted-foreground",
-          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "bg-background ring-offset-background rounded-md border border-neutral-300",
+          "placeholder:text-muted-foreground text-sm",
+          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2",
           "focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           className,
         )}

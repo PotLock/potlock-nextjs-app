@@ -15,7 +15,7 @@ import {
   PotDonation,
   PotDonationArgs,
   UpdatePotArgs,
-} from "./interfaces/pot.interfaces";
+} from "./interface";
 
 /**
  * NEAR Contract API

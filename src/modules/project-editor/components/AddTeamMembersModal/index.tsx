@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { validateNearAddress } from "@wpdas/naxios";
 
 import { Button, Dialog, DialogContent, Input } from "@/common/ui/components";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { AccountItems, GroupIcon } from "./components";
 
@@ -14,7 +14,7 @@ type Props = {
 };
 
 const AddTeamMembersModal = ({ open, onCloseClick, onMembersChange }: Props) => {
-  const members = useTypedSelector((state) => state.projectEditor.teamMembers);
+  const members = useGlobalStoreSelector((state) => state.projectEditor.teamMembers);
   const [account, setAccount] = useState("");
   const [invalidNearAcc, setInvalidNearAcc] = useState(false);
 

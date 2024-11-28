@@ -1,6 +1,6 @@
 import { Form } from "react-hook-form";
 
-import { Challenge } from "@/common/contracts/core/interfaces/pot.interfaces";
+import { Challenge } from "@/common/contracts/core";
 import {
   Button,
   Checkbox,
@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   FormField,
+  Spinner,
   Textarea,
 } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/Spinner";
 
 import { useChallengeResolveForm } from "../hooks";
 
