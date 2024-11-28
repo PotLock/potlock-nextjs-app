@@ -14,6 +14,8 @@ import { refExchangeClient } from "@/common/contracts/ref-finance";
 import { bigStringToFloat } from "@/common/lib";
 import { AccountId, FungibleTokenMetadata, TokenId } from "@/common/types";
 
+import { MANUALLY_LISTED_ACCOUNT_IDS } from "./constants";
+
 export type FtRegistryEntry = {
   contract_account_id: TokenId;
   metadata: FungibleTokenMetadata;
@@ -74,38 +76,40 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                   ] as [TokenId, FtRegistryEntry],
               ),
 
-            ...tokenContractAccountIds.map(async (contract_account_id) => {
-              const ftClient = naxiosInstance.contractApi({
-                contractId: contract_account_id,
-                cache: new MemoryCache({ expirationTime: 600 }),
-              });
+            ...MANUALLY_LISTED_ACCOUNT_IDS.concat(tokenContractAccountIds).map(
+              async (contract_account_id) => {
+                const ftClient = naxiosInstance.contractApi({
+                  contractId: contract_account_id,
+                  cache: new MemoryCache({ expirationTime: 600 }),
+                });
 
-              const metadata = await ftClient
-                .view<{}, FungibleTokenMetadata>("ft_metadata")
-                .catch(() => undefined);
+                const metadata = await ftClient
+                  .view<{}, FungibleTokenMetadata>("ft_metadata")
+                  .catch(() => undefined);
 
-              const balance = await ftClient
-                .view<{ account_id: AccountId }, string>("ft_balance_of", {
-                  args: { account_id: walletApi.accountId ?? "unknown" },
-                })
-                .catch(() => undefined);
+                const balance = await ftClient
+                  .view<{ account_id: AccountId }, string>("ft_balance_of", {
+                    args: { account_id: walletApi.accountId ?? "unknown" },
+                  })
+                  .catch(() => undefined);
 
-              return metadata === undefined
-                ? null
-                : ([
-                    contract_account_id,
-                    {
+                return metadata === undefined
+                  ? null
+                  : ([
                       contract_account_id,
-                      metadata,
-                      balance,
+                      {
+                        contract_account_id,
+                        metadata,
+                        balance,
 
-                      balanceFloat:
-                        balance === undefined
-                          ? balance
-                          : bigStringToFloat(balance, metadata.decimals),
-                    },
-                  ] as [TokenId, FtRegistryEntry]);
-            }),
+                        balanceFloat:
+                          balance === undefined
+                            ? balance
+                            : bigStringToFloat(balance, metadata.decimals),
+                      },
+                    ] as [TokenId, FtRegistryEntry]);
+              },
+            ),
           ]).then(
             piped(
               filter(isNonNull),

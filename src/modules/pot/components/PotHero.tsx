@@ -21,22 +21,20 @@ import NewApplicationModal from "./NewApplicationModal";
 import { PotStats } from "./PotStats";
 import { PotTimeline } from "./PotTimeline";
 import {
-  usePotUserApplicationRequirements,
+  usePotUserApplicationClearance,
   usePotUserPermissions,
-  usePotUserVotingRequirements,
+  usePotUserVotingClearance,
 } from "../hooks/clearance";
 import { isPotVotingBased } from "../utils/voting";
 
 export type PotHeroProps = ByPotId & {};
 
 export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
-  const router = useRouter();
-  const isOnVotingPage = router.pathname.includes("votes");
   const { data: pot } = indexer.usePot({ potId });
   const isVotingBasedPot = isPotVotingBased({ potId });
   const { isSignedIn, accountId } = useAuthSession();
-  const applicationClearanceBreakdown = usePotUserApplicationRequirements();
-  const votingClearanceBreakdown = usePotUserVotingRequirements();
+  const applicationClearance = usePotUserApplicationClearance({ potId });
+  const votingClearance = usePotUserVotingClearance({ potId });
 
   const { canApply, canDonate, canFund, canChallengePayouts, existingChallengeForUser } =
     usePotUserPermissions({ potId });
@@ -61,6 +59,13 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
       ];
     } else return [pot?.description ?? null, null];
   }, [pot?.description]);
+
+  // TODO: Implement proper voting stage check
+  const isVotingStage = useMemo(() => {
+    if (!pot) return false;
+    // Add proper voting stage logic here
+    return false;
+  }, [pot]);
 
   return (
     <>
@@ -156,12 +161,15 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
             <div className="lg:w-a flex w-full flex-col gap-6">
               {isVotingBasedPot ? (
                 <>
-                  {isOnVotingPage ? (
-                    <Checklist title="Voting Requirements" breakdown={votingClearanceBreakdown} />
+                  {isVotingStage ? (
+                    <Checklist
+                      title="Voting Requirements"
+                      requirements={votingClearance.requirements ?? []}
+                    />
                   ) : (
                     <Checklist
                       title="Application Requirements"
-                      breakdown={applicationClearanceBreakdown}
+                      requirements={applicationClearance.requirements ?? []}
                     />
                   )}
                 </>
