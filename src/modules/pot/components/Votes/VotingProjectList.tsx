@@ -366,7 +366,9 @@ export default function VotingProjectList() {
                 <Checkbox checked={true} />
                 <span>{selectedProjects.size} Selected Projects</span>
               </div>
-              <Button onClick={handleVoteAll}>Vote All</Button>
+              <Button variant={"standard-filled"} onClick={handleVoteAll}>
+                Vote All
+              </Button>
             </div>
           )}
         </div>
