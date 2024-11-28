@@ -284,7 +284,7 @@ export default function VotingProjectList() {
                       x{initWeightBoost}
                     </span>
                   </span>
-                  <ChevronRight className="md:block relative hidden h-[18px] w-[18px]" />
+                  <ChevronRight className="md:block relative hidden h-[18px] w-[18px] text-[#EA6A25]" />
                 </div>
                 <div
                   className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
@@ -294,7 +294,7 @@ export default function VotingProjectList() {
                   <span className="md:inline-flex hidden items-center gap-2 whitespace-nowrap font-medium">
                     {showVotingRules ? "Hide" : "View"} Voting Rules
                   </span>
-                  <ChevronRight className="md:block hidden h-[18px] w-[18px]" />
+                  <ChevronRight className="md:block hidden h-[18px] w-[18px] text-[#EA6A25]" />
                 </div>
               </div>
             </div>
