@@ -1,5 +1,5 @@
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { ByCampaignId, ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -12,7 +12,7 @@ export const DonateRandomly = () => {
     data: randomPGRegistryEntry,
     mutate: refetchRandomPGRegistryEntry,
   } = indexer.useRandomListRegistration({
-    listId: POTLOCK_REGISTRY_LIST_ID,
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     status: "Approved",
   });
 
@@ -40,9 +40,7 @@ export const DonateRandomly = () => {
 
 export type DonateToPotProjectsProps = ByPotId & {};
 
-export const DonateToPotProjects: React.FC<DonateToPotProjectsProps> = ({
-  potId,
-}) => {
+export const DonateToPotProjects: React.FC<DonateToPotProjectsProps> = ({ potId }) => {
   const { openDonationModal } = useDonation({ potId });
 
   return <Button onClick={openDonationModal}>{"Donate to Projects"}</Button>;
@@ -50,9 +48,7 @@ export const DonateToPotProjects: React.FC<DonateToPotProjectsProps> = ({
 
 export type DonateToListProjectsProps = ByListId & {};
 
-export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({
-  listId,
-}) => {
+export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({ listId }) => {
   const { openDonationModal } = useDonation({ listId });
 
   return <Button onClick={openDonationModal}>{"Donate to list"}</Button>;
@@ -64,9 +60,12 @@ export type DonationToCampaignProjectsProps = ByCampaignId & {
   variant?: "standard-outline";
 };
 
-export const DonateToCampaignProjects: React.FC<
-  DonationToCampaignProjectsProps
-> = ({ campaignId, className, disabled, variant }) => {
+export const DonateToCampaignProjects: React.FC<DonationToCampaignProjectsProps> = ({
+  campaignId,
+  className,
+  disabled,
+  variant,
+}) => {
   const { openDonationModal } = useDonation({ campaignId });
   return (
     <Button

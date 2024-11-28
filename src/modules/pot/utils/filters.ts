@@ -8,8 +8,7 @@ export const filters: Record<string, (round: Pot) => boolean> = {
   application_open: (round: Pot) =>
     currentDate > new Date(round.application_start).getTime() &&
     currentDate < new Date(round.application_end).getTime(),
-  application_closed: (round: Pot) =>
-    currentDate > new Date(round.application_end).getTime(),
+  application_closed: (round: Pot) => currentDate > new Date(round.application_end).getTime(),
   // round_end: (round: Pot) =>
   //   currentDate > new Date(round.matching_round_end).getTime(),
   round_open: (round: Pot) =>

@@ -31,9 +31,7 @@ const DialogOverlay = forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-export type DialogContentProps = React.ComponentPropsWithoutRef<
-  typeof DialogPrimitive.Content
-> & {
+export type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
   contrastActions?: boolean;
   onBackClick?: VoidFunction;
   onCloseClick?: VoidFunction;
@@ -44,14 +42,7 @@ const DialogContent = forwardRef<
   DialogContentProps
 >(
   (
-    {
-      className,
-      children,
-      contrastActions = false,
-      onBackClick,
-      onCloseClick,
-      ...props
-    },
+    { className, children, contrastActions = false, onBackClick, onCloseClick, ...props },
 
     ref,
   ) => {
@@ -68,7 +59,7 @@ const DialogContent = forwardRef<
           className={cn(
             "sm:min-w-auto fixed left-[50%] top-[50%] z-50 flex h-full w-full min-w-full flex-col",
             "sm:h-auto sm:max-w-xl sm:rounded-lg items-stretch",
-            "translate-x-[-50%] translate-y-[-50%] bg-background shadow-lg",
+            "bg-background translate-x-[-50%] translate-y-[-50%] shadow-lg",
             "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -80,30 +71,20 @@ const DialogContent = forwardRef<
         >
           {children}
 
-          <div
-            un-w="full"
-            un-flex="~"
-            un-justify="end"
-            un-position="absolute top-4"
-            un-px="4"
-          >
+          <div un-w="full" un-flex="~" un-justify="end" un-position="absolute top-4" un-px="4">
             {typeof onBackClick === "function" && (
               <Button
                 variant="standard-plain"
                 size="icon"
                 onClick={onBackClick}
                 className={cn(
-                  "mr-auto h-auto w-auto rounded-sm opacity-70 ring-offset-background transition-opacity",
-                  "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
-                  "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
+                  "ring-offset-background mr-auto h-auto w-auto rounded-sm opacity-70 transition-opacity",
+                  "focus:ring-ring hover:opacity-100 focus:outline-none focus:ring-2",
+                  "data-[state=open]:bg-accent focus:ring-offset-2 disabled:pointer-events-none",
                   "data-[state=open]:text-muted-foreground",
                 )}
               >
-                <ArrowLeft
-                  className={actionIconClassName}
-                  width="24"
-                  height="24"
-                />
+                <ArrowLeft className={actionIconClassName} width="24" height="24" />
                 <span className="sr-only">Previous step</span>
               </Button>
             )}
@@ -111,9 +92,9 @@ const DialogContent = forwardRef<
             <DialogPrimitive.Close
               onClick={onCloseClick}
               className={cn(
-                "z-100 rounded-sm opacity-70 ring-offset-background transition-opacity",
-                "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring",
-                "focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent",
+                "z-100 ring-offset-background rounded-sm opacity-70 transition-opacity",
+                "focus:ring-ring hover:opacity-100 focus:outline-none focus:ring-2",
+                "data-[state=open]:bg-accent focus:ring-offset-2 disabled:pointer-events-none",
                 "data-[state=open]:text-muted-foreground",
               )}
             >
@@ -185,11 +166,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
   </svg>
 );
 
-const DialogHeader = ({
-  className,
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+const DialogHeader = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
       "pt-13 sm:rounded-t-lg sm:px-5 flex h-[max-content] w-full flex-col gap-2 bg-[var(--primary-600)] px-4 pb-5",
@@ -215,14 +192,8 @@ const DialogHeader = ({
 
 DialogHeader.displayName = "DialogHeader";
 
-const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("mt-auto flex justify-between gap-4 p-5", className)}
-    {...props}
-  />
+const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={cn("mt-auto flex justify-between gap-4 p-5", className)} {...props} />
 );
 
 DialogFooter.displayName = "DialogFooter";

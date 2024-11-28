@@ -1,10 +1,7 @@
 import { createModel } from "@rematch/core";
 
-import { PayoutDetailed, donationClient, pot } from "@/common/contracts/core";
-import {
-  NEARSocialUserProfile,
-  getSocialProfile,
-} from "@/common/contracts/social";
+import { PayoutDetailed, donationClient, potClient } from "@/common/contracts/core";
+import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { yoctosToUsdWithFallback } from "@/modules/core";
 import {
@@ -64,7 +61,7 @@ export const profilesModel = createModel<AppModel>()({
 
       const donationsPromise =
         potId && !payoutDetails
-          ? pot.getDonationsForProject({
+          ? potClient.getDonationsForProject({
               potId,
               project_id: projectId,
             })
@@ -74,10 +71,7 @@ export const profilesModel = createModel<AppModel>()({
               })
             : Promise.resolve([]);
 
-      const [socialImages, donations] = await Promise.all([
-        socialImagesResponse,
-        donationsPromise,
-      ]);
+      const [socialImages, donations] = await Promise.all([socialImagesResponse, donationsPromise]);
 
       const totalAmountNear = yoctosToUsdWithFallback(
         getTotalAmountNear(donations, potId, payoutDetails),

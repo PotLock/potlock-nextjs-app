@@ -6,17 +6,15 @@ import { nearRpc, walletApi } from "@/common/api/near";
 import {
   PotConfig,
   PotDeploymentResult,
-  pot,
-  potFactory,
+  potClient,
+  potFactoryClient,
 } from "@/common/contracts/core";
 import { AppDispatcher } from "@/store";
 
 import { PotEditorDeploymentInputs, PotEditorSettings } from "./schemas";
 import { potInputsToPotArgs } from "../utils/normalization";
 
-const UnknownDeploymentStatusError = new Error(
-  "Unable to get pot deployment status.",
-);
+const UnknownDeploymentStatusError = new Error("Unable to get pot deployment status.");
 
 type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
   Partial<ByPotId> & {
@@ -25,11 +23,9 @@ type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
 
 export const effects = (dispatch: AppDispatcher) => ({
   handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
-    void pot
+    void potClient
       .getConfig({ potId: id })
-      .then((potConfig) =>
-        dispatch.potEditor.deploymentSuccess({ id, ...potConfig }),
-      ),
+      .then((potConfig) => dispatch.potEditor.deploymentSuccess({ id, ...potConfig })),
 
   save: async ({
     onUpdate,
@@ -54,7 +50,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       });
 
       if (isNewPot) {
-        potFactory
+        potFactoryClient
           .deploy_pot({
             pot_args,
             pot_handle: (pot_handle?.length ?? 0) > 0 ? pot_handle : undefined,
@@ -62,7 +58,7 @@ export const effects = (dispatch: AppDispatcher) => ({
           .then(dispatch.potEditor.handleDeploymentSuccess)
           .catch(dispatch.potEditor.deploymentFailure);
       } else {
-        pot
+        potClient
           .admin_dangerously_set_pot_config(potId, {
             update_args: omit(pot_args, ["custom_sybil_checks"]),
           })

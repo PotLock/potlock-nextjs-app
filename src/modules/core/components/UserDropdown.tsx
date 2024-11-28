@@ -19,18 +19,12 @@ import {
   DropdownMenuTrigger,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import useWallet from "@/modules/auth/hooks/wallet";
 import { AccountProfilePicture, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import {
-  ListRegistrationStatus,
-  listRegistrationStatuses,
-} from "@/modules/lists";
-import {
-  updateAccountId,
-  updateNadabotVerification,
-} from "@/modules/profile/utils";
-import { useTypedSelector } from "@/store";
+import { ListRegistrationStatus, listRegistrationStatuses } from "@/modules/lists";
+import { updateAccountId, updateNadabotVerification } from "@/modules/profile/utils";
+import { useGlobalStoreSelector } from "@/store";
 
 import ActAsDao from "./ActAsDao";
 
@@ -55,11 +49,9 @@ export const UserDropdown = () => {
   const wallet = useWallet();
   const accountId = wallet?.wallet?.accountId || "";
   const { registration } = useRegistration(accountId);
-  const actAsDao = useTypedSelector((state) => state.nav.actAsDao);
+  const actAsDao = useGlobalStoreSelector((state) => state.nav.actAsDao);
 
-  const [status, setStatus] = useState<ListRegistrationStatus>(
-    registration.status,
-  );
+  const [status, setStatus] = useState<ListRegistrationStatus>(registration.status);
 
   const logoutHandler = useCallback(() => {
     walletApi.wallet?.signOut();
@@ -67,9 +59,7 @@ export const UserDropdown = () => {
 
   useEffect(() => {
     if (accountId) {
-      fetchSocialImages({ accountId }).then(({ profile }) =>
-        setProfile(profile ?? {}),
-      );
+      fetchSocialImages({ accountId }).then(({ profile }) => setProfile(profile ?? {}));
     }
 
     // Add accountId to the nav model
@@ -97,10 +87,7 @@ export const UserDropdown = () => {
         {actAsDaoEnabled ? (
           daoProfileImage
         ) : (
-          <AccountProfilePicture
-            accountId={accountId}
-            className="h-full w-full"
-          />
+          <AccountProfilePicture accountId={accountId} className="h-full w-full" />
         )}
       </DropdownMenuTrigger>
 
@@ -129,25 +116,18 @@ export const UserDropdown = () => {
             {actAsDaoEnabled ? (
               daoProfileImage
             ) : (
-              <AccountProfilePicture
-                accountId={accountId}
-                className="h-10 w-10"
-              />
+              <AccountProfilePicture accountId={accountId} className="h-10 w-10" />
             )}
 
             <div className="flex flex-col">
-              {profile?.name && (
-                <p className="font-semibold">{truncate(profile?.name, 30)}</p>
-              )}
+              {profile?.name && <p className="font-semibold">{truncate(profile?.name, 30)}</p>}
 
               {actAsDaoEnabled ? (
                 <p className="color-[#656565] text-xs">
                   {truncate(`Acting as ${actAsDao.defaultAddress}`, 36)}
                 </p>
               ) : (
-                <p className="prose color-[#656565] text-xs">
-                  {truncate(accountId, 40)}
-                </p>
+                <p className="prose color-[#656565] text-xs">{truncate(accountId, 40)}</p>
               )}
             </div>
           </DropdownMenuLabel>
@@ -161,10 +141,7 @@ export const UserDropdown = () => {
               </DropdownMenuItem>
             </Link>
 
-            <Link
-              href={`https://near.social/mob.near/widget/NotificationFeed`}
-              target="_blank"
-            >
+            <Link href={`https://near.social/mob.near/widget/NotificationFeed`} target="_blank">
               <DropdownMenuItem className="px-3 py-2.5 font-medium">
                 {"Notifications"}
               </DropdownMenuItem>

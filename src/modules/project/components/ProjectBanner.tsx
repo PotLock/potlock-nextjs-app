@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { RegistrationStatus } from "@/common/contracts/core/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@/common/contracts/core";
 import { useRegistration } from "@/modules/core";
 import { statuses } from "@/modules/core/constants";
 
@@ -9,9 +9,7 @@ const ProjectBanner = ({ projectId }: { projectId: string }) => {
 
   const { registration, loading } = useRegistration(projectId);
 
-  const registrationStatus = registration
-    ? statuses[registration.status]
-    : statuses.Unregistered;
+  const registrationStatus = registration ? statuses[registration.status] : statuses.Unregistered;
 
   return loading || registration.status === RegistrationStatus.Approved ? (
     ""

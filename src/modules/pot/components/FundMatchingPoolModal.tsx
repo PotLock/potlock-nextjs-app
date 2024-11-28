@@ -19,7 +19,7 @@ import {
 } from "@/common/ui/components";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { useFundMatchingPoolForm, useProtocolConfig } from "../hooks";
 
@@ -30,7 +30,7 @@ type Props = {
 };
 
 const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
-  const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
+  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
 
   const router = useRouter();
   const query = router.query as { referrerId?: string };
@@ -47,12 +47,8 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
     referrerId,
   });
 
-  const hasMinimumAmount = ["0", "1"].includes(
-    potDetail.min_matching_pool_donation_amount,
-  );
-  const yoctoMinimumAmout = yoctoNearToFloat(
-    potDetail.min_matching_pool_donation_amount,
-  );
+  const hasMinimumAmount = ["0", "1"].includes(potDetail.min_matching_pool_donation_amount);
+  const yoctoMinimumAmout = yoctoNearToFloat(potDetail.min_matching_pool_donation_amount);
 
   // Get Protocol Config
   const protocolConfig = useProtocolConfig(potDetail);
@@ -65,24 +61,18 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
 
   const protocolFeeAmountNear = formValues.bypassProtocolFee
     ? 0
-    : (formValues.amountNEAR * (protocolConfig?.basis_points || 0)) / 10_000 ||
-      0;
+    : (formValues.amountNEAR * (protocolConfig?.basis_points || 0)) / 10_000 || 0;
 
   const chefFeeAmountNear = formValues.bypassChefFee
     ? 0
     : (formValues.amountNEAR * potDetail.chef_fee_basis_points) / 10_000 || 0;
 
   const referrerFeeAmountNear = referrerId
-    ? (formValues.amountNEAR *
-        potDetail.referral_fee_matching_pool_basis_points) /
-        10_000 || 0
+    ? (formValues.amountNEAR * potDetail.referral_fee_matching_pool_basis_points) / 10_000 || 0
     : 0;
 
   const netDonationAmountNear =
-    formValues.amountNEAR -
-    protocolFeeAmountNear -
-    chefFeeAmountNear -
-    referrerFeeAmountNear;
+    formValues.amountNEAR - protocolFeeAmountNear - chefFeeAmountNear - referrerFeeAmountNear;
 
   return (
     <Dialog open={open}>
@@ -96,9 +86,7 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
             {/*NEAR Input */}
             <p className="my-2 break-words text-[16px] font-normal leading-[20px] text-[#525252]">
               Enter matching pool contribution amount in NEAR{" "}
-              {hasMinimumAmount
-                ? "(no minimum)"
-                : `(Min. ${yoctoMinimumAmout})`}
+              {hasMinimumAmount ? "(no minimum)" : `(Min. ${yoctoMinimumAmout})`}
             </p>
 
             {/* Amount NEAR input */}
@@ -153,10 +141,7 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
               </div>
 
               {protocolConfig && (
-                <Link
-                  href={`/${routesPath.PROFILE}/${protocolConfig.account_id}`}
-                  target="_blank"
-                >
+                <Link href={`/${routesPath.PROFILE}/${protocolConfig.account_id}`} target="_blank">
                   <Badge variant="secondary" className="gap-1">
                     <AccountProfilePicture
                       accountId={protocolConfig.account_id}
@@ -190,10 +175,7 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
                 </div>
 
                 {/* Avatar - Account */}
-                <Link
-                  href={`/${routesPath.PROFILE}/${potDetail.chef?.id}`}
-                  target="_blank"
-                >
+                <Link href={`/${routesPath.PROFILE}/${potDetail.chef?.id}`} target="_blank">
                   <Badge variant="secondary" className="gap-1">
                     <AccountProfilePicture
                       accountId={potDetail.chef?.id}
@@ -227,10 +209,7 @@ const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
             {/* Net Donation */}
             <p className="mt-3 flex flex-row items-center break-words text-[14px] font-normal leading-[20px] text-[#292929]">
               Net donation amount:{" "}
-              {!isNaN(netDonationAmountNear)
-                ? netDonationAmountNear.toFixed(2)
-                : 0}{" "}
-              NEAR
+              {!isNaN(netDonationAmountNear) ? netDonationAmountNear.toFixed(2) : 0} NEAR
             </p>
 
             <Button

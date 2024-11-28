@@ -1,5 +1,3 @@
-/* prettier-ignore */
-
 import { useCallback, useId, useMemo } from "react";
 
 import { show } from "@ebay/nice-modal-react";
@@ -8,12 +6,8 @@ import { GroupIcon } from "@/common/assets/svgs";
 import { Button } from "@/common/ui/components";
 import { AccountOption, AccountOptionProps } from "@/modules/core";
 
-import {
-  AccessControlListModal,
-  AccessControlListModalProps,
-} from "./AccessControlListModal";
+import { AccessControlListModal, AccessControlListModalProps } from "./AccessControlListModal";
 
-/* prettier-ignore */
 export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &
   (
     | (AccessControlListModalProps & {
@@ -26,7 +20,6 @@ export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &
       })
   );
 
-/* prettier-ignore */
 export const AccessControlList: React.FC<AccessControlListProps> = ({
   isEditable = false,
   showAccountList = true,
@@ -65,11 +58,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
         {showAccountList && accountList}
 
         {isEditingEnabled && (
-          <Button
-            type="button"
-            onClick={openAccountsModal}
-            variant="brand-plain"
-          >
+          <Button type="button" onClick={openAccountsModal} variant="brand-plain">
             {showAccountList && <GroupIcon />}
 
             <span className="prose line-height-none font-500">

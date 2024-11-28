@@ -8,7 +8,7 @@ import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import { useAuth } from "@/modules/auth";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import useWallet from "@/modules/auth/hooks/wallet";
 import routesPath, { hrefByRouteName } from "@/modules/core/routes";
 
 import DonationsInfo from "./DonationsInfo";
@@ -87,9 +87,7 @@ const Info = ({ accountId, isProject }: Props) => {
             {/* Account */}
             <div className="flex flex-row content-start items-center gap-2">
               {/* Account Id */}
-              <p className="text-size-base font-400 md:text-size-sm">
-                @ {truncate(accountId, 15)}
-              </p>
+              <p className="text-size-base font-400 md:text-size-sm">@ {truncate(accountId, 15)}</p>
               {/* Copy Icon */}
               <ClipboardCopyButton text={accountId} />
             </div>
@@ -112,10 +110,7 @@ const Info = ({ accountId, isProject }: Props) => {
           <DonationsInfo accountId={accountId} />
         ) : (
           <div>
-            <FollowButton
-              accountId={accountId}
-              className="w-[160px] py-[10px]"
-            />
+            <FollowButton accountId={accountId} className="w-[160px] py-[10px]" />
           </div>
         )}
       </div>

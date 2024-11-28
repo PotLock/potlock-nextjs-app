@@ -10,9 +10,10 @@ export type PotDeploymentSuccessProps = {
   potData: PotData;
 };
 
-export const PotEditorDeploymentSuccess: React.FC<
-  PotDeploymentSuccessProps
-> = ({ onViewPotClick, potData }) => (
+export const PotEditorDeploymentSuccess: React.FC<PotDeploymentSuccessProps> = ({
+  onViewPotClick,
+  potData,
+}) => (
   <DialogDescription className="gap-8">
     <div className="flex w-full flex-col items-center border-b-[1px] border-neutral-100 py-4">
       <ChefHatIcon />
@@ -30,12 +31,7 @@ export const PotEditorDeploymentSuccess: React.FC<
       </p>
     </div>
 
-    <Button
-      asChild
-      onClick={onViewPotClick}
-      variant="brand-filled"
-      className="w-full"
-    >
+    <Button asChild onClick={onViewPotClick} variant="brand-filled" className="w-full">
       <Link href={`${routesPath.POT_DETAIL}/${potData.id}`}>{"View Pot"}</Link>
     </Button>
   </DialogDescription>

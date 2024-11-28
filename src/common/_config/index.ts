@@ -7,10 +7,9 @@ export const {
     api: { endpointUrl: INDEXER_API_ENDPOINT_URL },
   },
 
-  contractMetadata: {
-    version: CONTRACT_SOURCECODE_VERSION,
-    repoUrl: CONTRACT_SOURCECODE_REPO_URL,
-  },
+  contractMetadata: { version: CONTRACT_SOURCECODE_VERSION, repoUrl: CONTRACT_SOURCECODE_REPO_URL },
+
+  features: FEATURE_REGISTRY,
 
   campaigns: {
     contract: { accountId: CAMPAIGNS_CONTRACT_ACCOUNT_ID },
@@ -46,6 +45,4 @@ export const {
 } = getEnvConfig();
 
 export const BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL =
-  NETWORK === "mainnet"
-    ? "https://nearblocks.io/txns"
-    : "https://testnet.nearblocks.io/txns";
+  NETWORK === "mainnet" ? "https://nearblocks.io/txns" : "https://testnet.nearblocks.io/txns";

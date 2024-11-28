@@ -1,21 +1,18 @@
 import { PageWithBanner } from "@/common/ui/components";
 import ScreenSpinner from "@/common/ui/components/ScreenSpinner";
 import { cn } from "@/common/ui/utils";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/modules/auth/hooks/store";
 import CreateForm from "@/modules/project-editor/components/CreateForm";
 import useInitProjectState from "@/modules/project-editor/hooks/useInitProjectState";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 export default function RegisterPage() {
   const { isAuthenticated } = useAuth();
   useInitProjectState();
 
   // state used to show spinner during the data post
-  const {
-    submissionStatus,
-    checkRegistrationStatus,
-    checkPreviousProjectDataStatus,
-  } = useTypedSelector((state) => state.projectEditor);
+  const { submissionStatus, checkRegistrationStatus, checkPreviousProjectDataStatus } =
+    useGlobalStoreSelector((state) => state.projectEditor);
 
   const showSpinner = isAuthenticated
     ? submissionStatus === "sending" ||
@@ -36,9 +33,7 @@ export default function RegisterPage() {
         </h1>
 
         <h2 className="prose md:text-lg max-w-[600px] text-center">
-          {
-            "Create a profile for your project to receive donations and qualify for funding rounds."
-          }
+          {"Create a profile for your project to receive donations and qualify for funding rounds."}
         </h2>
       </section>
 

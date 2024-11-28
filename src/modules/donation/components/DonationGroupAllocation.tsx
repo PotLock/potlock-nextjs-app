@@ -25,10 +25,7 @@ import { TokenBalance, TokenSelector, TokenTotalValue } from "@/modules/token";
 import { DonationRecipientShares } from "./DonationRecipientShares";
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
-import {
-  DonationAllocationInputs,
-  donationGroupAllocationStrategies,
-} from "../models";
+import { DonationAllocationInputs, donationGroupAllocationStrategies } from "../models";
 import {
   DonationGroupAllocationKey,
   DonationGroupAllocationStrategyEnum,
@@ -39,9 +36,7 @@ export type DonationGroupAllocationProps = WithTotalAmount &
   DonationGroupAllocationKey &
   DonationAllocationInputs & {};
 
-export const DonationGroupAllocation: React.FC<
-  DonationGroupAllocationProps
-> = ({
+export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = ({
   form,
   isBalanceSufficient,
   balanceFloat,
@@ -58,20 +53,9 @@ export const DonationGroupAllocation: React.FC<
   ]);
 
   const isListDonation = listId !== undefined;
-
   const { data: token } = ftService.useRegisteredToken({ tokenId });
-
-  const {
-    isLoading: isPotLoading,
-    data: pot,
-    error: potError,
-  } = indexer.usePot({ potId });
-
-  const {
-    data: list,
-    isLoading: isListLoading,
-    error: listError,
-  } = indexer.useList({ listId });
+  const { isLoading: isPotLoading, data: pot, error: potError } = indexer.usePot({ potId });
+  const { data: list, isLoading: isListLoading, error: listError } = indexer.useList({ listId });
 
   const totalAmountUsdValue = token?.usdPrice
     ? `~$ ${token.usdPrice.mul(totalAmountFloat).toFixed(2)}`
@@ -92,26 +76,18 @@ export const DonationGroupAllocation: React.FC<
             {isPotLoading || isListLoading ? (
               <Skeleton className="w-59 h-3.5" />
             ) : (
-              <FormLabel className="font-600">
-                {"How do you want to allocate funds?"}
-              </FormLabel>
+              <FormLabel className="font-600">{"How do you want to allocate funds?"}</FormLabel>
             )}
 
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
                 {values(donationGroupAllocationStrategies).map(
                   ({ label, hint, hintIfDisabled, value }) => (
                     <FormItem key={value}>
                       <RadioGroupItem
                         id={`group-allocation-strategy-${value}`}
                         isLoading={isPotLoading || isListLoading}
-                        checked={
-                          field.value ===
-                          DonationGroupAllocationStrategyEnum[value]
-                        }
+                        checked={field.value === DonationGroupAllocationStrategyEnum[value]}
                         onClick={onEvenShareAllocationClick}
                         hint={field.disabled ? hintIfDisabled : hint}
                         disabled={field.disabled}
@@ -151,21 +127,16 @@ export const DonationGroupAllocation: React.FC<
   ) : (
     <>
       <DialogHeader>
-        {pot && (
-          <DialogTitle>{`Donation to Projects in ${pot.name}`}</DialogTitle>
-        )}
+        {pot && <DialogTitle>{`Donation to Projects in ${pot.name}`}</DialogTitle>}
 
-        {list && (
-          <DialogTitle>{`Donation to Projects in ${list.name}`}</DialogTitle>
-        )}
+        {list && <DialogTitle>{`Donation to Projects in ${list.name}`}</DialogTitle>}
       </DialogHeader>
 
       <DialogDescription>
         {strategySelector}
         {potId && <DonationSybilWarning {...{ potId }} />}
 
-        {groupAllocationStrategy ===
-        DonationGroupAllocationStrategyEnum.evenly ? (
+        {groupAllocationStrategy === DonationGroupAllocationStrategyEnum.evenly ? (
           <FormField
             control={form.control}
             name="amount"
@@ -193,16 +164,12 @@ export const DonationGroupAllocation: React.FC<
                 }
                 type="number"
                 placeholder="0.00"
-                min={yoctoNearToFloat(
-                  pot?.min_matching_pool_donation_amount ?? "0",
-                )}
+                min={yoctoNearToFloat(pot?.min_matching_pool_donation_amount ?? "0")}
                 max={balanceFloat ?? undefined}
                 step={0.01}
                 appendix={totalAmountUsdValue}
                 customErrorMessage={
-                  isBalanceSufficient
-                    ? null
-                    : DONATION_INSUFFICIENT_BALANCE_ERROR
+                  isBalanceSufficient ? null : DONATION_INSUFFICIENT_BALANCE_ERROR
                 }
               />
             )}
@@ -212,17 +179,10 @@ export const DonationGroupAllocation: React.FC<
             <div className="flex flex-col">
               <span className="prose">{"Total allocated"}</span>
 
-              <TokenTotalValue
-                textOnly
-                amountFloat={totalAmountFloat}
-                {...{ tokenId }}
-              />
+              <TokenTotalValue textOnly amountFloat={totalAmountFloat} {...{ tokenId }} />
             </div>
 
-            <TokenBalance
-              {...{ tokenId }}
-              classNames={{ amount: "text-base" }}
-            />
+            <TokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />
           </div>
         )}
       </DialogDescription>

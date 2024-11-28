@@ -175,8 +175,7 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
     {
       name: "FT Registry",
 
-      merge: (persistedState, currentState) =>
-        merge(persistedState, currentState),
+      merge: (persistedState, currentState) => merge(persistedState, currentState),
     },
   ),
 );

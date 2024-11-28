@@ -1,18 +1,9 @@
 import { forwardRef, useMemo } from "react";
 
-import {
-  FormControl,
-  FormDescription,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../components";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "../components";
 import { cn } from "../utils";
 
-export type TextFieldProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "className"
-> & {
+export type TextFieldProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "className"> & {
   type: "email" | "text" | "number" | "tel" | "url" | "datetime-local";
   label?: string;
   labelExtension?: React.ReactNode;
@@ -54,11 +45,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             <div un-flex="~" un-items="center" un-gap="1">
               {label && <FormLabel className="text-sm">{label}</FormLabel>}
 
-              {required && (
-                <span className="line-height-none text-xl text-destructive">
-                  *
-                </span>
-              )}
+              {required && <span className="line-height-none text-destructive text-xl">*</span>}
             </div>
 
             {labelExtension ? (
@@ -73,9 +60,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               </>
             ) : (
               !required && (
-                <span className="line-height-none text-sm text-neutral-600">
-                  (optional)
-                </span>
+                <span className="line-height-none text-sm text-neutral-600">(optional)</span>
               )
             )}
           </div>
@@ -94,9 +79,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             un-justify="center"
           >
             {typeof inputExtension === "string" ? (
-              <span className="prose pl-4 pr-2 text-neutral-500">
-                {inputExtension}
-              </span>
+              <span className="prose pl-4 pr-2 text-neutral-500">{inputExtension}</span>
             ) : (
               inputExtension
             )}

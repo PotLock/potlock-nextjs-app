@@ -1,4 +1,4 @@
-import { DirectDonation } from "@/common/contracts/core/donation/interface";
+import { DirectDonation } from "@/common/contracts/core";
 
 export const directDonationMock: DirectDonation = {
   id: 2665,

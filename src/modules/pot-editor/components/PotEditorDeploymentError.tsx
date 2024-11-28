@@ -5,22 +5,14 @@ import { ModalErrorBody } from "@/modules/core";
 
 export type PotEditorDeploymentErrorProps = { message?: string };
 
-export const PotEditorDeploymentError: React.FC<
-  PotEditorDeploymentErrorProps
-> = ({ message }) => {
+export const PotEditorDeploymentError: React.FC<PotEditorDeploymentErrorProps> = ({ message }) => {
   const router = useRouter();
 
   return (
     <ModalErrorBody
       title={message ?? "Unable to retrieve deployment status"}
       callToAction={
-        <div
-          un-flex="~"
-          un-items="center"
-          un-justify="center"
-          un-gap="2"
-          un-text="primary"
-        >
+        <div un-flex="~" un-items="center" un-justify="center" un-gap="2" un-text="primary">
           <span className="prose" un-text="lg">
             Please
           </span>

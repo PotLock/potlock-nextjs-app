@@ -4,10 +4,7 @@ import { APP_METADATA, DEBUG } from "@/common/constants";
 
 export default function Document() {
   return (
-    <Html
-      lang="en"
-      style={DEBUG ? { background: "#000!important" } : undefined}
-    >
+    <Html lang="en" style={DEBUG ? { background: "#000!important" } : undefined}>
       <Head>
         {/* Meta tags for description and image */}
         <meta name="description" content={APP_METADATA.description} />
@@ -23,11 +20,7 @@ export default function Document() {
         <meta property="twitter:card" content="summary_large_image" />
 
         {/* Preconnect to fonts CDN */}
-        <link
-          rel="preconnect"
-          href="https://fonts.cdnfonts.com"
-          crossOrigin="anonymous"
-        />
+        <link rel="preconnect" href="https://fonts.cdnfonts.com" crossOrigin="anonymous" />
       </Head>
 
       <body

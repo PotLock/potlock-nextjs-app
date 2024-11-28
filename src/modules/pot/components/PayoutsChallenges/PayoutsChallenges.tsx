@@ -4,30 +4,24 @@ import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
 import AdminIcon from "@/common/assets/svgs/AdminIcon";
-import { Challenge as ChallengeType } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
+import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { Challenge, Container, Line, Table, Title } from "./styles";
 import ChallengeResolveModal from "../ChallengeResolveModal";
 
 const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
-  const { actAsDao, accountId: _accId } = useTypedSelector(
-    (state) => state.nav,
-  );
+  const { actAsDao, accountId: _accId } = useGlobalStoreSelector((state) => state.nav);
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = asDao ? actAsDao.defaultAddress : _accId;
-  const [payoutsChallenges, setPayoutsChallenges] = useState<ChallengeType[]>(
-    [],
-  );
+  const [payoutsChallenges, setPayoutsChallenges] = useState<ChallengeType[]>([]);
 
   const userIsAdminOrGreater =
-    !!potDetail?.admins.find((adm) => adm.id === accountId) ||
-    potDetail?.owner.id === accountId;
+    !!potDetail?.admins.find((adm) => adm.id === accountId) || potDetail?.owner.id === accountId;
 
   // Fetch needed data
   useEffect(() => {
@@ -37,7 +31,7 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
       // Get Payouts Challenges for pot
       if (potDetail?.account) {
         try {
-          const _payoutsChallenges = await potContract.getPayoutsChallenges({
+          const _payoutsChallenges = await potClient.getPayoutsChallenges({
             potId: potDetail?.account,
           });
           setPayoutsChallenges(_payoutsChallenges);
@@ -78,65 +72,55 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
           </svg>
         </Title>
         <Table className={`${!toggleChallenges ? "hidden" : ""}`}>
-          {payoutsChallenges.map(
-            ({ challenger_id, admin_notes, created_at, reason, resolved }) => (
-              <Challenge key={challenger_id}>
-                <div className="content">
-                  <div className="header">
-                    <AccountProfilePicture
-                      accountId={challenger_id}
-                      className="h-[42px] w-[42px]"
-                    />
-                    <Link
-                      className="id"
-                      href={`${routesPath.PROFILE}/${challenger_id}`}
-                    >
-                      {challenger_id}
-                    </Link>
-                    <div className="title">Challenged payout</div>
-                    <div className="date"> {getTimePassed(created_at)}</div>
-                  </div>
-                  <div className="reason">{reason}</div>
-                  <div className="admin-header">
-                    <div className="admin-icon">
-                      <AdminIcon />
-                    </div>
-                    <div
-                      className="resolved-state"
-                      style={{
-                        color: resolved ? "#4a7714" : "#C7C7C7",
-                      }}
-                    >
-                      {resolved ? "Resolved" : "Unresolved"}
-                    </div>
-
-                    {resolved ? (
-                      <>
-                        <div className="dot" />
-                        <div>1 Response</div>
-                      </>
-                    ) : userIsAdminOrGreater ? (
-                      <>
-                        <div className="dot" />
-                        <button
-                          className="resolve-btn"
-                          onClick={() =>
-                            setAdminModalChallengerId(challenger_id)
-                          }
-                        >
-                          Reply
-                        </button>
-                      </>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-
-                  <div className="reason">{admin_notes}</div>
+          {payoutsChallenges.map(({ challenger_id, admin_notes, created_at, reason, resolved }) => (
+            <Challenge key={challenger_id}>
+              <div className="content">
+                <div className="header">
+                  <AccountProfilePicture accountId={challenger_id} className="h-[42px] w-[42px]" />
+                  <Link className="id" href={`${routesPath.PROFILE}/${challenger_id}`}>
+                    {challenger_id}
+                  </Link>
+                  <div className="title">Challenged payout</div>
+                  <div className="date"> {getTimePassed(created_at)}</div>
                 </div>
-              </Challenge>
-            ),
-          )}
+                <div className="reason">{reason}</div>
+                <div className="admin-header">
+                  <div className="admin-icon">
+                    <AdminIcon />
+                  </div>
+                  <div
+                    className="resolved-state"
+                    style={{
+                      color: resolved ? "#4a7714" : "#C7C7C7",
+                    }}
+                  >
+                    {resolved ? "Resolved" : "Unresolved"}
+                  </div>
+
+                  {resolved ? (
+                    <>
+                      <div className="dot" />
+                      <div>1 Response</div>
+                    </>
+                  ) : userIsAdminOrGreater ? (
+                    <>
+                      <div className="dot" />
+                      <button
+                        className="resolve-btn"
+                        onClick={() => setAdminModalChallengerId(challenger_id)}
+                      >
+                        Reply
+                      </button>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
+
+                <div className="reason">{admin_notes}</div>
+              </div>
+            </Challenge>
+          ))}
         </Table>
         {/* Admin update challenge modal */}
 

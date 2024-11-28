@@ -2,13 +2,12 @@ import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { Application } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
+import { Application, potClient } from "@/common/contracts/core";
 import { InfiniteScroll, SearchBar } from "@/common/ui/components";
 import { PotLayout } from "@/modules/pot";
 import { Profile } from "@/modules/profile/models";
 import { ProjectCard } from "@/modules/project";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 // import { usePotApplications } from "@/common/api/potlock/hooks";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
@@ -20,17 +19,15 @@ const ProjectsTab = () => {
   // NOTE: not working
   // const potProjectsData = usePotApplications(query.potId);
   const [potProjects, setPotProjects] = useState<Application[]>([]);
-  const [filteredPotProjects, setFilteredPotProjects] = useState<Application[]>(
-    [],
-  );
+  const [filteredPotProjects, setFilteredPotProjects] = useState<Application[]>([]);
   const [search, setSearch] = useState("");
-  const registrationsProfile = useTypedSelector((state) => state.profiles);
+  const registrationsProfile = useGlobalStoreSelector((state) => state.profiles);
   const [index, setIndex] = useState(1);
 
   useEffect(() => {
     if (query.potId) {
       (async () => {
-        const _projects = await potContract.getApplications({
+        const _projects = await potClient.getApplications({
           potId: query.potId,
         });
 
@@ -63,14 +60,11 @@ const ProjectsTab = () => {
     };
 
     if (search) {
-      const filteredApplicationProjects = potProjects.filter(
-        (applicationProject) => {
-          const profile =
-            registrationsProfile[applicationProject.project_id] || {};
+      const filteredApplicationProjects = potProjects.filter((applicationProject) => {
+        const profile = registrationsProfile[applicationProject.project_id] || {};
 
-          return handleSearch(applicationProject, profile);
-        },
-      );
+        return handleSearch(applicationProject, profile);
+      });
 
       setFilteredPotProjects(filteredApplicationProjects);
     }
@@ -98,16 +92,11 @@ const ProjectsTab = () => {
           setIndex={setIndex}
           size={MAXIMUM_CARDS_PER_INDEX}
           renderItem={(application: Application) => (
-            <ProjectCard
-              projectId={application.project_id}
-              key={application.project_id}
-            />
+            <ProjectCard projectId={application.project_id} key={application.project_id} />
           )}
         />
       ) : (
-        <div style={{ alignSelf: "flex-start", margin: "24px 0px" }}>
-          No projects
-        </div>
+        <div style={{ alignSelf: "flex-start", margin: "24px 0px" }}>No projects</div>
       )}
     </div>
   );

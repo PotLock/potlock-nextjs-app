@@ -1,4 +1,4 @@
-import { NETWORK, POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { TabNav } from "@/modules/profile/types";
 
 export const POT_MIN_NAME_LENGTH = 3;
@@ -7,8 +7,7 @@ export const POT_MAX_NAME_LENGTH = 64;
 
 export const POT_MAX_DESCRIPTION_LENGTH = 256;
 
-export const POT_MAX_HANDLE_LENGTH =
-  64 - `.${POT_FACTORY_CONTRACT_ACCOUNT_ID}`.length;
+export const POT_MAX_HANDLE_LENGTH = 64 - `.${POT_FACTORY_CONTRACT_ACCOUNT_ID}`.length;
 
 export const POT_MAX_APPROVED_PROJECTS = 100;
 
@@ -70,6 +69,11 @@ export const POT_TABS_CONFIG = [
     href: "/applications",
   },
   {
+    label: "Votes",
+    id: "votes",
+    href: "/votes",
+  },
+  {
     label: "Donations",
     id: "donations",
     href: "/donations",
@@ -85,11 +89,13 @@ export const POT_TABS_CONFIG = [
     href: "/payouts",
   },
   {
+    label: "Feeds",
+    id: "feeds",
+    href: "/feeds",
+  },
+  {
     label: "Settings",
     id: "settings",
     href: "/settings",
   },
 ] as TabNav[];
-
-export const STAKE_WEIGHTED_POT_IDS =
-  NETWORK === "mainnet" ? ["mpdao.v1.potfactory.potlock.near"] : [];

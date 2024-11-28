@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import { values } from "remeda";
 
+import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ftService } from "@/common/services";
@@ -18,32 +19,20 @@ import {
   RadioGroupItem,
   Skeleton,
 } from "@/common/ui/components";
-import {
-  SelectField,
-  SelectFieldOption,
-  TextField,
-} from "@/common/ui/form-fields";
+import { SelectField, SelectFieldOption, TextField } from "@/common/ui/form-fields";
 import { ModalErrorBody } from "@/modules/core";
 import { TokenBalance, TokenSelector } from "@/modules/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";
-import {
-  DONATION_INSUFFICIENT_BALANCE_ERROR,
-  DONATION_MIN_NEAR_AMOUNT,
-} from "../constants";
-import {
-  DonationAllocationInputs,
-  donationAllocationStrategies,
-} from "../models";
+import { DONATION_INSUFFICIENT_BALANCE_ERROR, DONATION_MIN_NEAR_AMOUNT } from "../constants";
+import { DonationAllocationInputs, donationAllocationStrategies } from "../models";
 import { DonationAllocationStrategyEnum } from "../types";
 
 export type DonationDirectAllocationProps = Partial<ByAccountId> &
   Partial<ByCampaignId> &
   DonationAllocationInputs & { matchingPots?: Pot[] };
 
-export const DonationDirectAllocation: React.FC<
-  DonationDirectAllocationProps
-> = ({
+export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> = ({
   form,
   isBalanceSufficient,
   minAmountError,
@@ -71,6 +60,7 @@ export const DonationDirectAllocation: React.FC<
   const isCampaignDonation = campaignId !== undefined;
 
   const isFtSupportAvailable =
+    FEATURE_REGISTRY.DirectFtDonation.isEnabled &&
     !isCampaignDonation &&
     allocationStrategy === DonationAllocationStrategyEnum.full;
 
@@ -89,31 +79,22 @@ export const DonationDirectAllocation: React.FC<
               {isRecipientDataLoading ? (
                 <Skeleton className="w-59 h-3.5" />
               ) : (
-                <FormLabel className="font-600">
-                  {"How do you want to allocate funds?"}
-                </FormLabel>
+                <FormLabel className="font-600">{"How do you want to allocate funds?"}</FormLabel>
               )}
 
               <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
                   {values(donationAllocationStrategies).map(
                     ({ label, hint, hintIfDisabled, value }) => {
                       const disabled =
-                        value === DonationAllocationStrategyEnum.share &&
-                        !hasMatchingPots;
+                        value === DonationAllocationStrategyEnum.share && !hasMatchingPots;
 
                       return (
                         <FormItem key={value}>
                           <RadioGroupItem
                             id={`donation-options-${value}`}
                             isLoading={isRecipientDataLoading}
-                            checked={
-                              field.value ===
-                              DonationAllocationStrategyEnum[value]
-                            }
+                            checked={field.value === DonationAllocationStrategyEnum[value]}
                             hint={disabled ? hintIfDisabled : hint}
                             {...{ disabled, label, value }}
                           />
@@ -145,10 +126,7 @@ export const DonationDirectAllocation: React.FC<
               onValueChange={field.onChange}
             >
               {matchingPots?.map(({ account: optionAccountId, name }) => (
-                <SelectFieldOption
-                  key={optionAccountId}
-                  value={optionAccountId}
-                >
+                <SelectFieldOption key={optionAccountId} value={optionAccountId}>
                   {name}
                 </SelectFieldOption>
               ))}
@@ -179,8 +157,9 @@ export const DonationDirectAllocation: React.FC<
       <DialogDescription>
         {strategySelector}
 
-        {allocationStrategy === DonationAllocationStrategyEnum.share &&
-          potAccountId && <DonationSybilWarning potId={potAccountId} />}
+        {allocationStrategy === DonationAllocationStrategyEnum.share && potAccountId && (
+          <DonationSybilWarning potId={potAccountId} />
+        )}
 
         {potSelector}
 
@@ -212,9 +191,7 @@ export const DonationDirectAllocation: React.FC<
               step={0.01}
               appendix={totalAmountUsdValue}
               customErrorMessage={
-                isBalanceSufficient
-                  ? minAmountError
-                  : DONATION_INSUFFICIENT_BALANCE_ERROR
+                isBalanceSufficient ? minAmountError : DONATION_INSUFFICIENT_BALANCE_ERROR
               }
             />
           )}

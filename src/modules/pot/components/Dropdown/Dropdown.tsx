@@ -1,12 +1,6 @@
 import { useState } from "react";
 
-import {
-  FilterButton,
-  FilterIcon,
-  FilterItem,
-  FilterMenu,
-  Screen,
-} from "./styles";
+import { FilterButton, FilterIcon, FilterItem, FilterMenu, Screen } from "./styles";
 
 type Option = {
   label: string;
@@ -27,24 +21,15 @@ type Props = {
 
 const Dropdown = (componentProps: Props) => {
   const [openFilter, setOpenFilter] = useState(false);
-  const {
-    sortList,
-    sortVal,
-    title,
-    handleSortChange,
-    FilterMenuCustomClass,
-    showCount,
-  } = componentProps;
+  const { sortList, sortVal, title, handleSortChange, FilterMenuCustomClass, showCount } =
+    componentProps;
   const menuStyle = componentProps.menuStyle || {};
   const buttonStyle = componentProps.buttonStyle || {};
 
   return (
     <>
       {openFilter && <Screen onClick={() => setOpenFilter(false)} />}
-      <div
-        style={{ position: "relative" }}
-        onClick={() => setOpenFilter(!openFilter)}
-      >
+      <div style={{ position: "relative" }} onClick={() => setOpenFilter(!openFilter)}>
         <FilterButton style={buttonStyle || {}}>
           {sortVal || title || ""}
           <FilterIcon>
@@ -76,8 +61,7 @@ const Dropdown = (componentProps: Props) => {
                   handleSortChange(option);
                 }}
               >
-                {option.label}{" "}
-                <div className="count">{showCount ? option.count : ""}</div>
+                {option.label} <div className="count">{showCount ? option.count : ""}</div>
               </FilterItem>
             ))}
           </FilterMenu>

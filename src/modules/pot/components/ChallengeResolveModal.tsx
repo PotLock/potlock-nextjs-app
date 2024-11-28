@@ -1,6 +1,6 @@
 import { Form } from "react-hook-form";
 
-import { Challenge } from "@/common/contracts/core/interfaces/pot.interfaces";
+import { Challenge } from "@/common/contracts/core";
 import {
   Button,
   Checkbox,
@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   FormField,
+  Spinner,
   Textarea,
 } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/Spinner";
 
 import { useChallengeResolveForm } from "../hooks";
 
@@ -37,18 +37,15 @@ const ChallengeResolveModal = ({
   });
 
   const reason = adminModalChallengerId
-    ? payoutsChallenges.find(
-        (challenge) => challenge.challenger_id === adminModalChallengerId,
-      )?.reason
+    ? payoutsChallenges.find((challenge) => challenge.challenger_id === adminModalChallengerId)
+        ?.reason
     : "";
 
   return (
     <Dialog open={open}>
       <DialogContent className="max-w-130" onCloseClick={onCloseClick}>
         <DialogHeader>
-          <DialogTitle>
-            Update Challenge from {adminModalChallengerId}
-          </DialogTitle>
+          <DialogTitle>Update Challenge from {adminModalChallengerId}</DialogTitle>
         </DialogHeader>
 
         <Form {...form} onSubmit={onSubmit}>

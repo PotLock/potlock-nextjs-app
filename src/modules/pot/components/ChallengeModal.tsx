@@ -1,7 +1,7 @@
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { Challenge } from "@/common/contracts/core/interfaces/pot.interfaces";
+import { Challenge } from "@/common/contracts/core";
 import {
   Button,
   Dialog,
@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
   FormField,
+  Spinner,
   Textarea,
 } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/Spinner";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { useChallengeForm } from "../hooks";
 
@@ -23,13 +23,8 @@ type Props = {
   previousChallenge?: Challenge;
 };
 
-const ChallengeModal = ({
-  open,
-  onCloseClick,
-  potDetail,
-  previousChallenge,
-}: Props) => {
-  const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
+export const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Props) => {
+  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
 
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
@@ -52,8 +47,7 @@ const ChallengeModal = ({
           <div className="flex flex-col p-6">
             {/*NEAR Input */}
             <p className="my-2 break-words text-[16px] font-normal leading-[20px] text-[#525252]">
-              Explain the reason for your challenge{" "}
-              <span style={{ color: "#DD3345" }}>*</span>
+              Explain the reason for your challenge <span style={{ color: "#DD3345" }}>*</span>
             </p>
 
             {/* Optional Message */}
@@ -66,9 +60,7 @@ const ChallengeModal = ({
                   rows={5}
                   className="mt-2"
                   {...field}
-                  defaultValue={
-                    previousChallenge ? previousChallenge.reason : ""
-                  }
+                  defaultValue={previousChallenge ? previousChallenge.reason : ""}
                   error={errors.message?.message}
                 />
               )}
@@ -87,5 +79,3 @@ const ChallengeModal = ({
     </Dialog>
   );
 };
-
-export default ChallengeModal;

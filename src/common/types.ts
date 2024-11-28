@@ -6,6 +6,27 @@ import { Network } from "@wpdas/naxios";
 import { Account } from "near-api-js";
 import { SWRConfiguration } from "swr";
 
+export enum FeatureId {
+  /**
+   * Donation to a single account using fungible token.
+   */
+  DirectFtDonation = "DirectFtDonation",
+
+  /**
+   * Donation to a single account using blockchain's native token.
+   */
+  DirectNativeTokenDonation = "DirectNativeTokenDonation",
+}
+
+export type FeatureFlags = { isEnabled: boolean };
+
+export type Feature = FeatureFlags & {
+  id: FeatureId;
+  name: string;
+};
+
+export type FeatureRegistry = Record<FeatureId, Feature>;
+
 export type AccountId = Account["accountId"];
 
 export interface ByAccountId {
@@ -18,9 +39,10 @@ export type EnvConfig = {
   network: Network;
   contractMetadata: { version: string; repoUrl: string };
   indexer: { api: { endpointUrl: string } };
+  features: FeatureRegistry;
 
-  deFi?: {
-    refFinance?: {
+  deFi: {
+    refFinance: {
       exchangeContract: ContractConfig;
     };
   };
@@ -35,8 +57,7 @@ export type EnvConfig = {
 
 export type { infer as FromSchema } from "zod";
 
-export type UnionFromStringList<ListOfMembers extends string[]> =
-  ListOfMembers[number];
+export type UnionFromStringList<ListOfMembers extends string[]> = ListOfMembers[number];
 
 export type ClientConfig = { swr?: SWRConfiguration };
 
@@ -98,3 +119,12 @@ export type FungibleTokenMetadata = {
   reference_hash: string | null;
   decimals: number;
 };
+
+export enum ChronologicalSortOrder {
+  recent = "recent",
+  older = "older",
+}
+
+export type ChronologicalSortOrderVariant = keyof typeof ChronologicalSortOrder;
+
+export type BasicRequirement = { title: string; isSatisfied: boolean };

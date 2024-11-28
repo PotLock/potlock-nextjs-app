@@ -6,7 +6,7 @@ import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
 import { walletApi } from "@/common/api/near";
-import { campaign } from "@/common/contracts/core";
+import { campaignsClient } from "@/common/contracts/core";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
@@ -33,7 +33,7 @@ export const useCampaignForm = () => {
 
   const handleDeleteCampaign = () => {
     if (!campaignId) return;
-    campaign.delete_campaign({ args: { campaign_id: Number(campaignId) } });
+    campaignsClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
     dispatch.campaignEditor.updateCampaignModalState({
       header: `Campaign Deleted Successfully`,
       description: "You can now proceed to close this window",
@@ -56,11 +56,9 @@ export const useCampaignForm = () => {
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-        timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds >
-          Date.now()
+        timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds > Date.now()
           ? {
-              start_ms: timeToMiliSeconds(values.start_ms.toString())
-                .epochMilliseconds,
+              start_ms: timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds,
             }
           : {}),
         ...(values.end_ms && {
@@ -71,21 +69,21 @@ export const useCampaignForm = () => {
       };
 
       if (campaignId) {
-        campaign.update_campaign({
+        campaignsClient.update_campaign({
           args: { campaign_id: Number(campaignId), ...args },
         });
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaign for ${values.name}.`,
+          header: `You’ve successfully created a campaignsClient for ${values.name}.`,
           description:
-            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+            "If you are not a member of the project, the campaignsClient will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.UPDATE_CAMPAIGN,
         });
       } else {
-        campaign.create_campaign({ args });
+        campaignsClient.create_campaign({ args });
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaign for ${values.name}.`,
+          header: `You’ve successfully created a campaignsClient for ${values.name}.`,
           description:
-            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+            "If you are not a member of the project, the campaignsClient will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.CREATE_CAMPAIGN,
         });
       }

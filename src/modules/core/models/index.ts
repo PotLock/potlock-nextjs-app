@@ -2,7 +2,7 @@ import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
 import { ContractMetadata } from "@/common/types";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 export * from "./schemas";
@@ -65,4 +65,4 @@ export const core = createModel<AppModel>()({
   }),
 });
 
-export const useCoreState = () => useTypedSelector(prop("core"));
+export const useCoreState = () => useGlobalStoreSelector(prop("core"));

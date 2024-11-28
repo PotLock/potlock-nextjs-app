@@ -24,10 +24,7 @@ type Policy = {
   bounty_forgiveness_period: string;
 };
 
-export function doesUserHaveDaoFunctionCallProposalPermissions(
-  accountId: string,
-  policy: Policy,
-) {
+export function doesUserHaveDaoFunctionCallProposalPermissions(accountId: string, policy: Policy) {
   const userRoles = policy.roles.filter((role: any) => {
     if (role.kind === "Everyone") return true;
     return role.kind.Group && role.kind.Group.includes(accountId);
@@ -48,16 +45,11 @@ export function doesUserHaveDaoFunctionCallProposalPermissions(
 
 export const checkIfDaoAddress = (address: string): boolean => {
   return address.endsWith(
-    process.env.NEXT_PUBLIC_NETWORK
-      ? "sputnik-dao.near"
-      : "sputnik-dao.testnet", // TODO: not sure about this one
+    process.env.NEXT_PUBLIC_NETWORK ? "sputnik-dao.near" : "sputnik-dao.testnet", // TODO: not sure about this one
   );
 };
 
-export const validateUserInDao = async (
-  daoAddress: string,
-  accountId: string,
-) => {
+export const validateUserInDao = async (daoAddress: string, accountId: string) => {
   const isValidAddress = checkIfDaoAddress(daoAddress);
 
   if (!isValidAddress) return "Please enter a valid DAO address.";
@@ -68,10 +60,7 @@ export const validateUserInDao = async (
 
   const policy = await daoContractApi.view<{}, Policy>("get_policy");
 
-  const hasPermission = doesUserHaveDaoFunctionCallProposalPermissions(
-    accountId,
-    policy,
-  );
+  const hasPermission = doesUserHaveDaoFunctionCallProposalPermissions(accountId, policy);
 
   if (!hasPermission) return "The user does not have permission on this DAO.";
   return "";

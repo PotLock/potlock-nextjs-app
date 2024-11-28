@@ -9,12 +9,7 @@ export const DataLoadingPlaceholder: React.FC<DataLoadingPlaceholderProps> = ({
   className,
 }) => {
   return (
-    <div
-      className={cn(
-        "flex h-full w-full flex-col items-center justify-center",
-        className,
-      )}
-    >
+    <div className={cn("flex h-full w-full flex-col items-center justify-center", className)}>
       <LabeledIcon
         caption={text}
         positioning="icon-text"

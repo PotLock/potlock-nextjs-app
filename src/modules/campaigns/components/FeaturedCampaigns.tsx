@@ -11,7 +11,7 @@ import {
   CarouselApi,
   CarouselContent,
   CarouselItem,
-} from "@/common/ui/components/carousel";
+} from "@/common/ui/components/molecules/carousel";
 import { DonateToCampaignProjects } from "@/modules/donation";
 import { useProfileData } from "@/modules/profile";
 
@@ -60,11 +60,7 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
       <Carousel opts={{ loop: true }} setApi={setApi}>
         <CarouselContent>
           {data?.length &&
-            data
-              ?.slice(0, 3)
-              ?.map((data) => (
-                <FeaturedCampaignCard key={data.id} data={data} />
-              ))}
+            data?.slice(0, 3)?.map((data) => <FeaturedCampaignCard key={data.id} data={data} />)}
         </CarouselContent>
       </Carousel>
     </div>
@@ -137,19 +133,11 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
         </div>
         <div className="md:w-[28%] md:p-0 flex w-full flex-col items-start p-4">
           <CampaignProgressBar
-            target={
-              data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0
-            }
-            minAmount={
-              data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0
-            }
+            target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}
+            minAmount={data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0}
             isStarted={isStarted}
             targetMet={data?.total_raised_amount === data?.max_amount}
-            amount={
-              data?.total_raised_amount
-                ? yoctoNearToFloat(data?.total_raised_amount)
-                : 0
-            }
+            amount={data?.total_raised_amount ? yoctoNearToFloat(data?.total_raised_amount) : 0}
             endDate={Number(data?.end_ms)}
           />
           <p className="mt-4 text-start">
@@ -158,11 +146,7 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
           <DonateToCampaignProjects
             campaignId={data.id}
             className="mt-4"
-            disabled={
-              isStarted ||
-              isEnded ||
-              data?.total_raised_amount === data?.max_amount
-            }
+            disabled={isStarted || isEnded || data?.total_raised_amount === data?.max_amount}
           />
         </div>
       </Link>

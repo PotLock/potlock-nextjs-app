@@ -30,10 +30,7 @@ export const CampaignDonorsTable = () => {
       accessorKey: "donor_id",
       cell: ({ row }) => (
         <div key={row.id} className="flex gap-2">
-          <AccountProfilePicture
-            className="h-5 w-5"
-            accountId={row.original.donor_id}
-          />
+          <AccountProfilePicture className="h-5 w-5" accountId={row.original.donor_id} />
           <span>{row.original.donor_id}</span>
         </div>
       ),
@@ -44,9 +41,7 @@ export const CampaignDonorsTable = () => {
       cell: ({ row }) => (
         <div className="flex gap-1">
           <NearIcon className="h-5 w-5" />
-          <p className="font-semibold">
-            {yoctoNearToFloat(row.original.total_amount)}
-          </p>
+          <p className="font-semibold">{yoctoNearToFloat(row.original.total_amount)}</p>
         </div>
       ),
     },

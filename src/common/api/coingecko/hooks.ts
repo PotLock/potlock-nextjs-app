@@ -13,12 +13,9 @@ export const useTokenUsdPrice = ({ tokenId }: Partial<ByTokenId>) => {
       ? `/simple/price?ids=${key}&vs_currencies=usd`
       : `/simple/token_price?vs_currencies=usd&contract_addresses=${key}`,
 
-    (url: string) =>
-      client.get(url).then((response) => response.data[key ?? "unknown"].usd),
-
+    (url: string) => client.get(url).then((response) => response.data[key ?? "unknown"].usd),
     { ...CLIENT_CONFIG.swr, enabled: key !== null },
   );
 };
 
-export const useOneNearUsdPrice = () =>
-  useTokenUsdPrice({ tokenId: NATIVE_TOKEN_ID });
+export const useOneNearUsdPrice = () => useTokenUsdPrice({ tokenId: NATIVE_TOKEN_ID });

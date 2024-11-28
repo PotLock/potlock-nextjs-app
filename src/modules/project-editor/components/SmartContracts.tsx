@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/common/ui/components";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput, Label } from "./CreateForm/components";
 import validateEVMAddress from "../utils/validateEVMAddress";
@@ -187,11 +187,7 @@ const SmartContract = ({
             </>
           ) : (
             <div className="ml-4 self-end">
-              <Button
-                onClick={onAddHandler}
-                variant="standard-filled"
-                disabled={!!error}
-              >
+              <Button onClick={onAddHandler} variant="standard-filled" disabled={!!error}>
                 Add
               </Button>
             </div>
@@ -215,9 +211,7 @@ type SmartContractsProps = {
 };
 
 export const SmartContracts = ({ onEditClickHandler }: SmartContractsProps) => {
-  const smartContracts = useTypedSelector(
-    (state) => state.projectEditor.smartContracts,
-  );
+  const smartContracts = useGlobalStoreSelector((state) => state.projectEditor.smartContracts);
 
   if (smartContracts && smartContracts.length > 0) {
     return (

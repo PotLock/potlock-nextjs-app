@@ -8,7 +8,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { walletApi } from "@/common/api/near";
 import { LayersIcon } from "@/common/assets/svgs";
 import { LikeIcon } from "@/common/assets/svgs/like";
-import { remove_upvote, upvote } from "@/common/contracts/core/lists";
+import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { dispatch } from "@/store";
@@ -35,11 +35,7 @@ export const ListCard = ({
       setProfileImage(image);
     };
     if (dataForList.owner) fetchProfileImage();
-    setIsUpvoted(
-      dataForList.upvotes?.some(
-        (data: any) => data?.account === walletApi.accountId,
-      ),
-    );
+    setIsUpvoted(dataForList.upvotes?.some((data: any) => data?.account === walletApi.accountId));
   }, [dataForList.owner]);
 
   const handleRoute = useCallback(
@@ -50,13 +46,15 @@ export const ListCard = ({
   const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isUpvoted) {
-      remove_upvote({ list_id: dataForList?.on_chain_id });
+      listsClient.remove_upvote({ list_id: dataForList?.on_chain_id });
+
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name, 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      upvote({ list_id: dataForList?.on_chain_id });
+      listsClient.upvote({ list_id: dataForList?.on_chain_id });
+
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name, 15),
         type: ListFormModalType.UPVOTE,
@@ -81,11 +79,7 @@ export const ListCard = ({
       className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]"
     >
       <Image
-        src={
-          dataForList?.cover_image_url
-            ? "/assets/images/default-backdrop.png"
-            : backdrop
-        }
+        src={dataForList?.cover_image_url ? "/assets/images/default-backdrop.png" : backdrop}
         alt="backdrop"
         width={500}
         height={5}
@@ -108,9 +102,7 @@ export const ListCard = ({
             className="absolute bottom-4 right-4 flex items-center gap-1 rounded-[4px] bg-white px-4 py-2"
           >
             <LayersIcon />
-            <p className="text-[12px] font-[600]">
-              {dataForList?.registrations_count} Accounts
-            </p>
+            <p className="text-[12px] font-[600]">{dataForList?.registrations_count} Accounts</p>
           </div>
         </div>
         <div className="flex h-[112px] flex-col justify-between p-3">

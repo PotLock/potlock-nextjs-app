@@ -47,8 +47,7 @@ const Linktree = ({ accountId }: Props) => {
   const fullUrls: Record<string, any> = {
     twitter: (handle: string) => `https://twitter.com/${handle.trim()}`,
     github: (username: string) => `https://github.com/${username.trim()}`,
-    website: (url: string) =>
-      url.includes("http") ? url : `https://${url.trim()}`,
+    website: (url: string) => (url.includes("http") ? url : `https://${url.trim()}`),
   };
 
   return (

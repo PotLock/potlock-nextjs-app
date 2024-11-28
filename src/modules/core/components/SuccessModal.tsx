@@ -1,10 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/common/ui/components";
+import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
 import { dispatch } from "@/store";
 
 type Props = {
@@ -13,7 +7,7 @@ type Props = {
   successMessage?: string;
 };
 
-const SuccessModal = ({ open, onCloseClick, successMessage }: Props) => {
+export const SuccessModal = ({ open, onCloseClick, successMessage }: Props) => {
   const closeHandler = () => {
     dispatch.projectEditor.submissionStatus("pending");
     dispatch.projectEditor.setSubmissionError("");
@@ -33,11 +27,7 @@ const SuccessModal = ({ open, onCloseClick, successMessage }: Props) => {
         <div className="flex flex-col p-6">
           <p>{successMessage}</p>
 
-          <Button
-            className="mt-6 self-end"
-            variant="standard-filled"
-            onClick={closeHandler}
-          >
+          <Button className="mt-6 self-end" variant="standard-filled" onClick={closeHandler}>
             Ok
           </Button>
         </div>

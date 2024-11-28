@@ -9,8 +9,7 @@ import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import useSwr from "swr";
 import type { Key, SWRConfiguration } from "swr";
-export type GetTokenSearchRep =
-  (typeof GetTokenSearchRep)[keyof typeof GetTokenSearchRep];
+export type GetTokenSearchRep = (typeof GetTokenSearchRep)[keyof typeof GetTokenSearchRep];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetTokenSearchRep = {
@@ -160,25 +159,19 @@ export type GetListTokenPriceQueryError = AxiosError<unknown>;
  * @summary List token prices with detailed information
  */
 export const useGetListTokenPrice = <TError = AxiosError<unknown>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getListTokenPrice>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getListTokenPrice>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetListTokenPriceKey() : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetListTokenPriceKey() : null));
   const swrFn = () => getListTokenPrice(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -190,17 +183,13 @@ export const useGetListTokenPrice = <TError = AxiosError<unknown>>(options?: {
  * Retrieves a list of token prices with standard precision
  * @summary Get token prices
  */
-export const getPrices = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetPrices200>> => {
+export const getPrices = (options?: AxiosRequestConfig): Promise<AxiosResponse<GetPrices200>> => {
   return axios.get(`/prices`, options);
 };
 
 export const getGetPricesKey = () => [`/prices`] as const;
 
-export type GetPricesQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getPrices>>
->;
+export type GetPricesQueryResult = NonNullable<Awaited<ReturnType<typeof getPrices>>>;
 export type GetPricesQueryError = AxiosError<unknown>;
 
 /**
@@ -216,15 +205,10 @@ export const useGetPrices = <TError = AxiosError<unknown>>(options?: {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getGetPricesKey() : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetPricesKey() : null));
   const swrFn = () => getPrices(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -244,33 +228,26 @@ export const getSuperPrecise = (
 
 export const getGetSuperPreciseKey = () => [`/super-precise`] as const;
 
-export type GetSuperPreciseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getSuperPrecise>>
->;
+export type GetSuperPreciseQueryResult = NonNullable<Awaited<ReturnType<typeof getSuperPrecise>>>;
 export type GetSuperPreciseQueryError = AxiosError<unknown>;
 
 /**
  * @summary Get token prices with high precision
  */
 export const useGetSuperPrecise = <TError = AxiosError<unknown>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getSuperPrecise>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getSuperPrecise>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getGetSuperPreciseKey() : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetSuperPreciseKey() : null));
   const swrFn = () => getSuperPrecise(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -295,9 +272,7 @@ export const getGetTokenPrice = (
 export const getGetGetTokenPriceKey = (params: GetGetTokenPriceParams) =>
   [`/get-token-price`, ...(params ? [params] : [])] as const;
 
-export type GetGetTokenPriceQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getGetTokenPrice>>
->;
+export type GetGetTokenPriceQueryResult = NonNullable<Awaited<ReturnType<typeof getGetTokenPrice>>>;
 export type GetGetTokenPriceQueryError = AxiosError<unknown>;
 
 /**
@@ -306,26 +281,20 @@ export type GetGetTokenPriceQueryError = AxiosError<unknown>;
 export const useGetGetTokenPrice = <TError = AxiosError<unknown>>(
   params: GetGetTokenPriceParams,
   options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof getGetTokenPrice>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getGetTokenPrice>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
     axios?: AxiosRequestConfig;
   },
 ) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetGetTokenPriceKey(params) : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetGetTokenPriceKey(params) : null));
   const swrFn = () => getGetTokenPrice(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -350,9 +319,7 @@ export const getPrice = (
 export const getGetPriceKey = (params: GetPriceParams) =>
   [`/price`, ...(params ? [params] : [])] as const;
 
-export type GetPriceQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getPrice>>
->;
+export type GetPriceQueryResult = NonNullable<Awaited<ReturnType<typeof getPrice>>>;
 export type GetPriceQueryError = AxiosError<unknown>;
 
 /**
@@ -371,15 +338,10 @@ export const useGetPrice = <TError = AxiosError<unknown>>(
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getGetPriceKey(params) : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetPriceKey(params) : null));
   const swrFn = () => getPrice(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -401,9 +363,8 @@ export const getSuperPrecisePrice = (
   });
 };
 
-export const getGetSuperPrecisePriceKey = (
-  params: GetSuperPrecisePriceParams,
-) => [`/super-precise-price`, ...(params ? [params] : [])] as const;
+export const getGetSuperPrecisePriceKey = (params: GetSuperPrecisePriceParams) =>
+  [`/super-precise-price`, ...(params ? [params] : [])] as const;
 
 export type GetSuperPrecisePriceQueryResult = NonNullable<
   Awaited<ReturnType<typeof getSuperPrecisePrice>>
@@ -416,10 +377,10 @@ export type GetSuperPrecisePriceQueryError = AxiosError<unknown>;
 export const useGetSuperPrecisePrice = <TError = AxiosError<unknown>>(
   params: GetSuperPrecisePriceParams,
   options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof getSuperPrecisePrice>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getSuperPrecisePrice>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
     axios?: AxiosRequestConfig;
   },
 ) => {
@@ -427,15 +388,10 @@ export const useGetSuperPrecisePrice = <TError = AxiosError<unknown>>(
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetSuperPrecisePriceKey(params) : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetSuperPrecisePriceKey(params) : null));
   const swrFn = () => getSuperPrecisePrice(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -453,8 +409,7 @@ export const getHardcodedListTokenPrice = (
   return axios.get(`/hardcoded/list-token-price`, options);
 };
 
-export const getGetHardcodedListTokenPriceKey = () =>
-  [`/hardcoded/list-token-price`] as const;
+export const getGetHardcodedListTokenPriceKey = () => [`/hardcoded/list-token-price`] as const;
 
 export type GetHardcodedListTokenPriceQueryResult = NonNullable<
   Awaited<ReturnType<typeof getHardcodedListTokenPrice>>
@@ -464,28 +419,21 @@ export type GetHardcodedListTokenPriceQueryError = AxiosError<unknown>;
 /**
  * @summary List hardcoded token prices with detailed information
  */
-export const useGetHardcodedListTokenPrice = <
-  TError = AxiosError<unknown>,
->(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getHardcodedListTokenPrice>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+export const useGetHardcodedListTokenPrice = <TError = AxiosError<unknown>>(options?: {
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getHardcodedListTokenPrice>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetHardcodedListTokenPriceKey() : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetHardcodedListTokenPriceKey() : null));
   const swrFn = () => getHardcodedListTokenPrice(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -514,25 +462,19 @@ export type GetHardcodedPricesQueryError = AxiosError<unknown>;
  * @summary Get hardcoded token prices
  */
 export const useGetHardcodedPrices = <TError = AxiosError<unknown>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getHardcodedPrices>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getHardcodedPrices>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetHardcodedPricesKey() : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetHardcodedPricesKey() : null));
   const swrFn = () => getHardcodedPrices(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -550,8 +492,7 @@ export const getHardcodedSuperPrecise = (
   return axios.get(`/hardcoded/super-precise`, options);
 };
 
-export const getGetHardcodedSuperPreciseKey = () =>
-  [`/hardcoded/super-precise`] as const;
+export const getGetHardcodedSuperPreciseKey = () => [`/hardcoded/super-precise`] as const;
 
 export type GetHardcodedSuperPreciseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getHardcodedSuperPrecise>>
@@ -561,28 +502,21 @@ export type GetHardcodedSuperPreciseQueryError = AxiosError<unknown>;
 /**
  * @summary Get hardcoded token prices with high precision
  */
-export const useGetHardcodedSuperPrecise = <
-  TError = AxiosError<unknown>,
->(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getHardcodedSuperPrecise>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+export const useGetHardcodedSuperPrecise = <TError = AxiosError<unknown>>(options?: {
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getHardcodedSuperPrecise>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetHardcodedSuperPreciseKey() : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetHardcodedSuperPreciseKey() : null));
   const swrFn = () => getHardcodedSuperPrecise(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -604,9 +538,8 @@ export const getHardcodedGetTokenPrice = (
   });
 };
 
-export const getGetHardcodedGetTokenPriceKey = (
-  params: GetHardcodedGetTokenPriceParams,
-) => [`/hardcoded/get-token-price`, ...(params ? [params] : [])] as const;
+export const getGetHardcodedGetTokenPriceKey = (params: GetHardcodedGetTokenPriceParams) =>
+  [`/hardcoded/get-token-price`, ...(params ? [params] : [])] as const;
 
 export type GetHardcodedGetTokenPriceQueryResult = NonNullable<
   Awaited<ReturnType<typeof getHardcodedGetTokenPrice>>
@@ -619,10 +552,10 @@ export type GetHardcodedGetTokenPriceQueryError = AxiosError<unknown>;
 export const useGetHardcodedGetTokenPrice = <TError = AxiosError<unknown>>(
   params: GetHardcodedGetTokenPriceParams,
   options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof getHardcodedGetTokenPrice>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getHardcodedGetTokenPrice>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
     axios?: AxiosRequestConfig;
   },
 ) => {
@@ -630,15 +563,10 @@ export const useGetHardcodedGetTokenPrice = <TError = AxiosError<unknown>>(
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetHardcodedGetTokenPriceKey(params) : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetHardcodedGetTokenPriceKey(params) : null));
   const swrFn = () => getHardcodedGetTokenPrice(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -674,26 +602,20 @@ export type GetHardcodedPriceQueryError = AxiosError<unknown>;
 export const useGetHardcodedPrice = <TError = AxiosError<unknown>>(
   params: GetHardcodedPriceParams,
   options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof getHardcodedPrice>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getHardcodedPrice>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
     axios?: AxiosRequestConfig;
   },
 ) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetHardcodedPriceKey(params) : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetHardcodedPriceKey(params) : null));
   const swrFn = () => getHardcodedPrice(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -715,9 +637,8 @@ export const getHardcodedSuperPrecisePrice = (
   });
 };
 
-export const getGetHardcodedSuperPrecisePriceKey = (
-  params: GetHardcodedSuperPrecisePriceParams,
-) => [`/hardcoded/super-precise-price`, ...(params ? [params] : [])] as const;
+export const getGetHardcodedSuperPrecisePriceKey = (params: GetHardcodedSuperPrecisePriceParams) =>
+  [`/hardcoded/super-precise-price`, ...(params ? [params] : [])] as const;
 
 export type GetHardcodedSuperPrecisePriceQueryResult = NonNullable<
   Awaited<ReturnType<typeof getHardcodedSuperPrecisePrice>>
@@ -730,10 +651,10 @@ export type GetHardcodedSuperPrecisePriceQueryError = AxiosError<unknown>;
 export const useGetHardcodedSuperPrecisePrice = <TError = AxiosError<unknown>>(
   params: GetHardcodedSuperPrecisePriceParams,
   options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof getHardcodedSuperPrecisePrice>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getHardcodedSuperPrecisePrice>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
     axios?: AxiosRequestConfig;
   },
 ) => {
@@ -741,15 +662,10 @@ export const useGetHardcodedSuperPrecisePrice = <TError = AxiosError<unknown>>(
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetHardcodedSuperPrecisePriceKey(params) : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetHardcodedSuperPrecisePriceKey(params) : null));
   const swrFn = () => getHardcodedSuperPrecisePrice(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -761,17 +677,13 @@ export const useGetHardcodedSuperPrecisePrice = <TError = AxiosError<unknown>>(
  * Retrieves detailed information for all tokens, including prices, metadata, and supply information
  * @summary Get detailed information for all tokens
  */
-export const getTokens = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetTokens200>> => {
+export const getTokens = (options?: AxiosRequestConfig): Promise<AxiosResponse<GetTokens200>> => {
   return axios.get(`/tokens`, options);
 };
 
 export const getGetTokensKey = () => [`/tokens`] as const;
 
-export type GetTokensQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getTokens>>
->;
+export type GetTokensQueryResult = NonNullable<Awaited<ReturnType<typeof getTokens>>>;
 export type GetTokensQueryError = AxiosError<unknown>;
 
 /**
@@ -787,15 +699,10 @@ export const useGetTokens = <TError = AxiosError<unknown>>(options?: {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokensKey() : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokensKey() : null));
   const swrFn = () => getTokens(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -820,9 +727,7 @@ export const getToken = (
 export const getGetTokenKey = (params: GetTokenParams) =>
   [`/token`, ...(params ? [params] : [])] as const;
 
-export type GetTokenQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getToken>>
->;
+export type GetTokenQueryResult = NonNullable<Awaited<ReturnType<typeof getToken>>>;
 export type GetTokenQueryError = AxiosError<GetToken404>;
 
 /**
@@ -841,15 +746,10 @@ export const useGetToken = <TError = AxiosError<GetToken404>>(
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokenKey(params) : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokenKey(params) : null));
   const swrFn = () => getToken(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -874,9 +774,7 @@ export const getTokenSearch = (
 export const getGetTokenSearchKey = (params: GetTokenSearchParams) =>
   [`/token-search`, ...(params ? [params] : [])] as const;
 
-export type GetTokenSearchQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getTokenSearch>>
->;
+export type GetTokenSearchQueryResult = NonNullable<Awaited<ReturnType<typeof getTokenSearch>>>;
 export type GetTokenSearchQueryError = AxiosError<unknown>;
 
 /**
@@ -885,26 +783,20 @@ export type GetTokenSearchQueryError = AxiosError<unknown>;
 export const useGetTokenSearch = <TError = AxiosError<unknown>>(
   params: GetTokenSearchParams,
   options?: {
-    swr?: SWRConfiguration<
-      Awaited<ReturnType<typeof getTokenSearch>>,
-      TError
-    > & { swrKey?: Key; enabled?: boolean };
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getTokenSearch>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
     axios?: AxiosRequestConfig;
   },
 ) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetTokenSearchKey(params) : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokenSearchKey(params) : null));
   const swrFn = () => getTokenSearch(params, axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -924,33 +816,26 @@ export const getTokenSpamList = (
 
 export const getGetTokenSpamListKey = () => [`/token-spam-list`] as const;
 
-export type GetTokenSpamListQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getTokenSpamList>>
->;
+export type GetTokenSpamListQueryResult = NonNullable<Awaited<ReturnType<typeof getTokenSpamList>>>;
 export type GetTokenSpamListQueryError = AxiosError<unknown>;
 
 /**
  * @summary Get list of spam tokens
  */
 export const useGetTokenSpamList = <TError = AxiosError<unknown>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getTokenSpamList>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getTokenSpamList>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokenSpamListKey() : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokenSpamListKey() : null));
   const swrFn = () => getTokenSpamList(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -968,8 +853,7 @@ export const getTokenUnknownOrBetterList = (
   return axios.get(`/token-unknown-or-better-list`, options);
 };
 
-export const getGetTokenUnknownOrBetterListKey = () =>
-  [`/token-unknown-or-better-list`] as const;
+export const getGetTokenUnknownOrBetterListKey = () => [`/token-unknown-or-better-list`] as const;
 
 export type GetTokenUnknownOrBetterListQueryResult = NonNullable<
   Awaited<ReturnType<typeof getTokenUnknownOrBetterList>>
@@ -979,28 +863,21 @@ export type GetTokenUnknownOrBetterListQueryError = AxiosError<unknown>;
 /**
  * @summary Get list of tokens with Unknown or better reputation
  */
-export const useGetTokenUnknownOrBetterList = <
-  TError = AxiosError<unknown>,
->(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getTokenUnknownOrBetterList>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+export const useGetTokenUnknownOrBetterList = <TError = AxiosError<unknown>>(options?: {
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getTokenUnknownOrBetterList>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetTokenUnknownOrBetterListKey() : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokenUnknownOrBetterListKey() : null));
   const swrFn = () => getTokenUnknownOrBetterList(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -1018,8 +895,7 @@ export const getTokenNotfakeOrBetterList = (
   return axios.get(`/token-notfake-or-better-list`, options);
 };
 
-export const getGetTokenNotfakeOrBetterListKey = () =>
-  [`/token-notfake-or-better-list`] as const;
+export const getGetTokenNotfakeOrBetterListKey = () => [`/token-notfake-or-better-list`] as const;
 
 export type GetTokenNotfakeOrBetterListQueryResult = NonNullable<
   Awaited<ReturnType<typeof getTokenNotfakeOrBetterList>>
@@ -1029,28 +905,21 @@ export type GetTokenNotfakeOrBetterListQueryError = AxiosError<unknown>;
 /**
  * @summary Get list of tokens with NotFake or better reputation
  */
-export const useGetTokenNotfakeOrBetterList = <
-  TError = AxiosError<unknown>,
->(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getTokenNotfakeOrBetterList>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+export const useGetTokenNotfakeOrBetterList = <TError = AxiosError<unknown>>(options?: {
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getTokenNotfakeOrBetterList>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetTokenNotfakeOrBetterListKey() : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokenNotfakeOrBetterListKey() : null));
   const swrFn = () => getTokenNotfakeOrBetterList(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -1070,33 +939,26 @@ export const getReputableList = (
 
 export const getGetReputableListKey = () => [`/reputable-list`] as const;
 
-export type GetReputableListQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getReputableList>>
->;
+export type GetReputableListQueryResult = NonNullable<Awaited<ReturnType<typeof getReputableList>>>;
 export type GetReputableListQueryError = AxiosError<unknown>;
 
 /**
  * @summary Get list of reputable tokens
  */
 export const useGetReputableList = <TError = AxiosError<unknown>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getReputableList>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getReputableList>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getGetReputableListKey() : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetReputableListKey() : null));
   const swrFn = () => getReputableList(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -1114,8 +976,7 @@ export const getTokensUnknownOrBetter = (
   return axios.get(`/tokens-unknown-or-better`, options);
 };
 
-export const getGetTokensUnknownOrBetterKey = () =>
-  [`/tokens-unknown-or-better`] as const;
+export const getGetTokensUnknownOrBetterKey = () => [`/tokens-unknown-or-better`] as const;
 
 export type GetTokensUnknownOrBetterQueryResult = NonNullable<
   Awaited<ReturnType<typeof getTokensUnknownOrBetter>>
@@ -1125,28 +986,21 @@ export type GetTokensUnknownOrBetterQueryError = AxiosError<unknown>;
 /**
  * @summary Get detailed information for tokens with Unknown or better reputation
  */
-export const useGetTokensUnknownOrBetter = <
-  TError = AxiosError<unknown>,
->(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getTokensUnknownOrBetter>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+export const useGetTokensUnknownOrBetter = <TError = AxiosError<unknown>>(options?: {
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getTokensUnknownOrBetter>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetTokensUnknownOrBetterKey() : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokensUnknownOrBetterKey() : null));
   const swrFn = () => getTokensUnknownOrBetter(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -1164,8 +1018,7 @@ export const getTokensNotfakeOrBetter = (
   return axios.get(`/tokens-notfake-or-better`, options);
 };
 
-export const getGetTokensNotfakeOrBetterKey = () =>
-  [`/tokens-notfake-or-better`] as const;
+export const getGetTokensNotfakeOrBetterKey = () => [`/tokens-notfake-or-better`] as const;
 
 export type GetTokensNotfakeOrBetterQueryResult = NonNullable<
   Awaited<ReturnType<typeof getTokensNotfakeOrBetter>>
@@ -1175,28 +1028,21 @@ export type GetTokensNotfakeOrBetterQueryError = AxiosError<unknown>;
 /**
  * @summary Get detailed information for tokens with NotFake or better reputation
  */
-export const useGetTokensNotfakeOrBetter = <
-  TError = AxiosError<unknown>,
->(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getTokensNotfakeOrBetter>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+export const useGetTokensNotfakeOrBetter = <TError = AxiosError<unknown>>(options?: {
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getTokensNotfakeOrBetter>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetTokensNotfakeOrBetterKey() : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokensNotfakeOrBetterKey() : null));
   const swrFn = () => getTokensNotfakeOrBetter(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
@@ -1225,25 +1071,19 @@ export type GetTokensReputableQueryError = AxiosError<unknown>;
  * @summary Get detailed information for reputable tokens
  */
 export const useGetTokensReputable = <TError = AxiosError<unknown>>(options?: {
-  swr?: SWRConfiguration<
-    Awaited<ReturnType<typeof getTokensReputable>>,
-    TError
-  > & { swrKey?: Key; enabled?: boolean };
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof getTokensReputable>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
   axios?: AxiosRequestConfig;
 }) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetTokensReputableKey() : null));
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokensReputableKey() : null));
   const swrFn = () => getTokensReputable(axiosOptions);
 
-  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-    swrKey,
-    swrFn,
-    swrOptions,
-  );
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,

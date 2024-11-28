@@ -37,8 +37,9 @@ export default function SingleList() {
     listId: parseInt(id as string),
   });
 
+  // TODO: stop creating additional state wrappers for reactive resources
   useEffect(() => {
-    setFilteredRegistrations(data ?? []);
+    setFilteredRegistrations(data?.results ?? []);
   }, [data]);
 
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function SingleList() {
     setListDetails(listData);
     setSavedUsers({
       accounts:
-        data?.map((registration) => ({
+        data?.results.map((registration) => ({
           accountId: registration?.registrant?.id,
           registrationId: registration?.id,
         })) ?? [],

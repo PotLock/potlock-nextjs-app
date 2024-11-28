@@ -11,7 +11,7 @@ import {
   Textarea,
 } from "@/common/ui/components";
 import Spinner from "@/common/ui/components/Spinner";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { useNewApplicationForm } from "../hooks";
 
@@ -22,7 +22,7 @@ type Props = {
 };
 
 const NewApplicationModal = ({ open, onCloseClick, potDetail }: Props) => {
-  const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
+  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
 
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
@@ -71,9 +71,7 @@ const NewApplicationModal = ({ open, onCloseClick, potDetail }: Props) => {
               {inProgress ? (
                 <Spinner />
               ) : (
-                <>
-                  {asDao ? "Propose to Send Application" : "Send application"}
-                </>
+                <>{asDao ? "Propose to Send Application" : "Send application"}</>
               )}
             </Button>
           </div>

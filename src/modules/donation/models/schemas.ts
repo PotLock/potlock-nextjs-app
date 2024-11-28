@@ -15,18 +15,9 @@ import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { safePositiveNumber } from "@/common/lib";
 import { TokenAvailableBalance } from "@/modules/token";
 
-import {
-  DONATION_MAX_MESSAGE_LENGTH,
-  DONATION_MIN_NEAR_AMOUNT_ERROR,
-} from "../constants";
-import {
-  DonationAllocationStrategyEnum,
-  DonationGroupAllocationStrategyEnum,
-} from "../types";
-import {
-  isDonationAmountSufficient,
-  isDonationMatchingPotSelected,
-} from "../utils/validation";
+import { DONATION_MAX_MESSAGE_LENGTH, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
+import { DonationAllocationStrategyEnum, DonationGroupAllocationStrategyEnum } from "../types";
+import { isDonationAmountSufficient, isDonationMatchingPotSelected } from "../utils/validation";
 
 export const donationTokenSchema = literal(NATIVE_TOKEN_ID)
   .or(string().min(6))
@@ -44,8 +35,7 @@ export const donationAmount = safePositiveNumber;
  *  and convert it back to basis points before passing to the contract.
  */
 export const donationFee = preprocess(
-  (value) =>
-    typeof value === "string" ? safePositiveNumber.parse(value) : value,
+  (value) => (typeof value === "string" ? safePositiveNumber.parse(value) : value),
 
   safePositiveNumber,
 ).refine((percents) => percents < 100, {
@@ -61,10 +51,7 @@ export const donationSchema = object({
   listId: number().optional().describe("List id."),
   campaignId: number().optional().describe("Campaign id."),
 
-  message: string()
-    .max(DONATION_MAX_MESSAGE_LENGTH)
-    .optional()
-    .describe("Donation message."),
+  message: string().max(DONATION_MAX_MESSAGE_LENGTH).optional().describe("Donation message."),
 
   allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {
     message: "Incorrect allocation strategy.",
@@ -74,9 +61,7 @@ export const donationSchema = object({
     message: "Incorrect group allocation strategy.",
   }).default(DonationGroupAllocationStrategyEnum.evenly),
 
-  groupAllocationPlan: array(
-    object({ account_id: string(), amount: donationAmount.optional() }),
-  )
+  groupAllocationPlan: array(object({ account_id: string(), amount: donationAmount.optional() }))
     .min(1, { message: "You have to select at least one recipient." })
     .optional(),
 

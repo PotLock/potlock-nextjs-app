@@ -7,13 +7,8 @@ import { FormSubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/api/near";
-import {
-  FIFTY_TGAS,
-  FULL_TGAS,
-  MIN_PROPOSAL_DEPOSIT_FALLBACK,
-  ONE_TGAS,
-} from "@/common/constants";
-import * as potService from "@/common/contracts/core/pot";
+import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
+import { potClient } from "@/common/contracts/core";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 
 import {
@@ -54,9 +49,7 @@ export const useFundMatchingPoolForm = ({
         matching_pool: true,
         referrer_id: referrerId,
         bypass_protocol_fee: formData.data.bypassProtocolFee,
-        custom_chef_fee_basis_points: formData.data.bypassChefFee
-          ? 0
-          : undefined,
+        custom_chef_fee_basis_points: formData.data.bypassChefFee ? 0 : undefined,
       };
 
       // INFO: broken logic
@@ -103,8 +96,7 @@ export const useFundMatchingPoolForm = ({
             .contractApi({ contractId: accountId }) // INFO: In this case, the accountId has daoAddress value
             .call("add_proposal", {
               args: daoTransactionArgs,
-              deposit:
-                daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
+              deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
               gas: FULL_TGAS,
               callbackUrl,
             });
@@ -113,8 +105,7 @@ export const useFundMatchingPoolForm = ({
             .contractApi({ contractId: potDetail.account }) // INFO: In this case, the accountId is a regular pot account
             .call("donate", {
               args,
-              deposit:
-                parseNearAmount(formData.data.amountNEAR.toString()) || "0",
+              deposit: parseNearAmount(formData.data.amountNEAR.toString()) || "0",
               gas: ONE_TGAS.mul(100).toString(),
               callbackUrl,
             });
@@ -200,8 +191,7 @@ export const useNewApplicationForm = ({
             .contractApi({ contractId: accountId }) // INFO: In this case, the accountId has daoAddress value
             .call("add_proposal", {
               args: daoTransactionArgs,
-              deposit:
-                daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
+              deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
               gas: FULL_TGAS,
               callbackUrl,
             });
@@ -251,7 +241,7 @@ export const useChallengeForm = ({
       setInProgress(true);
 
       try {
-        await potService.challengePayouts({
+        await potClient.challengePayouts({
           potId: potDetail.account,
           reason: formData.data.message,
         });

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import Delete from "@/common/assets/svgs/Delete";
 import Edit from "@/common/assets/svgs/Edit";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { Table } from "./styles";
 
@@ -11,9 +11,7 @@ type Props = {
 };
 
 const FundingSourceTable = ({ onEditClick }: Props) => {
-  const fundingSources = useTypedSelector(
-    (state) => state.projectEditor.fundingSources,
-  );
+  const fundingSources = useGlobalStoreSelector((state) => state.projectEditor.fundingSources);
 
   const onDeleteHandler = useCallback((fundingIndex: number) => {
     dispatch.projectEditor.removeFundingSource(fundingIndex);

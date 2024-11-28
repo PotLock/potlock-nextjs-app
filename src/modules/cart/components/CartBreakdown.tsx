@@ -1,12 +1,6 @@
 import { useState } from "react";
 
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/common/ui/components";
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@/common/ui/components";
 
 import { useCart } from "../hooks";
 

@@ -9,19 +9,10 @@ export const campaignFormSchema = z
       .string()
       .min(3, "Name must be at least 3 characters")
       .max(100, "Name must be less than 100 characters"),
-    description: z
-      .string()
-      .max(250, "Description must be less than 100 characters")
-      .optional(),
+    description: z.string().max(250, "Description must be less than 100 characters").optional(),
     target_amount: z.number().min(0.1, "Target amount must be at least 0.1"),
-    min_amount: z
-      .number()
-      .min(0.1, "Min amount must be at least 0.1")
-      .optional(),
-    max_amount: z
-      .number()
-      .min(0.1, "Max amount must be at least 0.1")
-      .optional(),
+    min_amount: z.number().min(0.1, "Min amount must be at least 0.1").optional(),
+    max_amount: z.number().min(0.1, "Max amount must be at least 0.1").optional(),
     cover_image_url: z.string().optional(),
     start_ms: z.string().min(1, "Start Time is Required"),
     end_ms: z.string()?.optional(),

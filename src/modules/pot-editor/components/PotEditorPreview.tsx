@@ -6,11 +6,7 @@ import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { isAccountId } from "@/common/lib";
-import {
-  Button,
-  DataLoadingPlaceholder,
-  Skeleton,
-} from "@/common/ui/components";
+import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/modules/access-control";
 import { AccountProfileLink } from "@/modules/account";
@@ -26,7 +22,6 @@ type PotEditorPreviewSectionProps = {
   children?: React.ReactNode;
 };
 
-/* prettier-ignore */
 const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
   isLoading,
   heading,
@@ -56,16 +51,11 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
     </>
   );
 
-/* prettier-ignore */
 export type PotEditorPreviewProps = Partial<ByPotId> & {
   onEditClick: () => void;
 };
 
-/* prettier-ignore */
-export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
-  potId,
-  onEditClick,
-}) => {
+export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({ potId, onEditClick }) => {
   const { isLoading, data } = indexer.usePot({ potId });
   const adminAccountIds = data?.admins.map(prop("id"));
   const isDataAvailable = data !== undefined && adminAccountIds !== undefined;
@@ -73,25 +63,15 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
   const isEditingAllowed =
     walletApi.accountId !== undefined &&
     isDataAvailable &&
-    [...data.admins, data.owner].some(
-      piped(prop("id"), isStrictEqual(walletApi.accountId)),
-    );
+    [...data.admins, data.owner].some(piped(prop("id"), isStrictEqual(walletApi.accountId)));
 
   const tableContent = useMemo(
     () =>
       isDataAvailable
         ? entries(omit(POT_EDITOR_FIELDS, ["owner", "admins"])).map(
             ([key, { index = "none", ...attrs }]) => (
-              <PotEditorPreviewSection
-                key={key}
-                heading={attrs.title}
-                {...{ isLoading }}
-              >
-                {potIndexedFieldToString(
-                  key,
-                  data[index as keyof typeof data],
-                  attrs,
-                )}
+              <PotEditorPreviewSection key={key} heading={attrs.title} {...{ isLoading }}>
+                {potIndexedFieldToString(key, data[index as keyof typeof data], attrs)}
               </PotEditorPreviewSection>
             ),
           )
@@ -104,9 +84,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
     <div className="max-w-195 flex w-full flex-col gap-8">
       <div className="flex flex-wrap gap-8">
         <div un-pr="4" un-flex="~ col" un-gap="2">
-          <span className="prose font-500 text-sm text-neutral-500">
-            {"Owner"}
-          </span>
+          <span className="prose font-500 text-sm text-neutral-500">{"Owner"}</span>
 
           {isDataAvailable ? (
             <AccountOption
@@ -120,15 +98,13 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
         </div>
 
         <div un-w="50" un-flex="~ col" un-gap="2">
-          <span className="prose font-500 text-sm text-neutral-500">
-            {"Admins"}
-          </span>
+          <span className="prose font-500 text-sm text-neutral-500">{"Admins"}</span>
 
           {isDataAvailable ? (
             <>
               {adminAccountIds.length > 0 ? (
                 <AccessControlList
-                  value={adminAccountIds?.map(admin => ({accountId: admin}))}
+                  value={adminAccountIds?.map((admin) => ({ accountId: admin }))}
                   classNames={{ avatar: "w-6 h-6" }}
                 />
               ) : (
@@ -147,9 +123,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
           <Button type="button" onClick={onEditClick} variant="brand-plain">
             <Pencil width={14} height={14} />
 
-            <span className="prose line-height-none font-500">
-              {"Edit Pot Settings"}
-            </span>
+            <span className="prose line-height-none font-500">{"Edit Pot Settings"}</span>
           </Button>
         </div>
       </div>
@@ -159,9 +133,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
           "min-h-114 rounded-3 md:p-6 md:gap-4 flex flex-col gap-6 border border-neutral-200 p-4",
         )}
       >
-        {!isDataAvailable && isLoading && (
-          <DataLoadingPlaceholder text="Loading pot data..." />
-        )}
+        {!isDataAvailable && isLoading && <DataLoadingPlaceholder text="Loading pot data..." />}
 
         {tableContent}
       </div>
