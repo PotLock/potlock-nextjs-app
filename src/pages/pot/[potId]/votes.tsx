@@ -6,7 +6,7 @@ const PotVotesTab = () => {
   const potId = query.potId as string;
 
   return (
-    <div className="md:py-12 flex w-full flex-col py-10">
+    <div className="md:py-12 flex w-full flex-col py-5">
       <VotingProjectList />
     </div>
   );
