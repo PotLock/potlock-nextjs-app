@@ -1,1 +1,1 @@
-export type * from "./generated/client";
+export type * from "./internal/client.generated";

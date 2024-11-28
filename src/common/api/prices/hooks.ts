@@ -1,13 +1,13 @@
 import { ByTokenId } from "@/common/types";
 
-import { PRICES_REQUEST_CONFIG } from "./config";
-import * as swrBindings from "./generated/client";
+import * as generatedClient from "./internal/client.generated";
+import { PRICES_REQUEST_CONFIG } from "./internal/config";
 
 /**
  * https://prices.intear.tech/swagger-ui/#/Token%20Prices/get_get_token_price
  */
 export const useTokenUsdPrice = ({ tokenId }: Partial<ByTokenId>) => {
-  const queryResult = swrBindings.useGetGetTokenPrice(
+  const queryResult = generatedClient.useGetGetTokenPrice(
     { token_id: tokenId ?? "unknown" },
 
     {
