@@ -1,4 +1,4 @@
-import { Star, X } from "lucide-react";
+import { X } from "lucide-react";
 
 import FileText from "@/common/assets/svgs/FileText";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
