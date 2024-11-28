@@ -31,7 +31,7 @@ export type PotHeroProps = ByPotId & {};
 
 export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
   const router = useRouter();
-  const isOnVotingPage = router.pathname.includes("voting");
+  const isOnVotingPage = router.pathname.includes("votes");
   const { data: pot } = indexer.usePot({ potId });
   const isVotingBasedPot = isPotVotingBased({ potId });
   const { isSignedIn, accountId } = useAuthSession();
@@ -157,15 +157,10 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
               {isVotingBasedPot ? (
                 <>
                   {isOnVotingPage ? (
-                    <Checklist
-                      title="Voting Requirements"
-                      isFinalized={isSignedIn}
-                      breakdown={votingClearanceBreakdown}
-                    />
+                    <Checklist title="Voting Requirements" breakdown={votingClearanceBreakdown} />
                   ) : (
                     <Checklist
                       title="Application Requirements"
-                      isFinalized={isSignedIn}
                       breakdown={applicationClearanceBreakdown}
                     />
                   )}

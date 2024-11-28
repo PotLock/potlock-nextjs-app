@@ -1,8 +1,8 @@
 import {
   MdAppRegistration,
   MdCheckCircleOutline,
-  MdNotAccessible,
-  MdOutlineQuestionMark,
+  MdOutlineCircle,
+  MdOutlinePending,
 } from "react-icons/md";
 
 import { BasicRequirement } from "@/common/types";
@@ -18,7 +18,7 @@ export type ChecklistProps = {
 export const Checklist: React.FC<ChecklistProps> = ({ title, breakdown, isFinalized = true }) => (
   <div
     className={cn(
-      "xl:w-126.5 min-w-87.5 lg:w-fit flex h-[232px] w-full flex-col items-start justify-start",
+      "xl:w-126.5 min-w-87.5 lg:w-fit flex h-fit w-full flex-col items-start justify-start",
       "rounded-2xl bg-neutral-50 p-2",
     )}
   >
@@ -36,7 +36,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ title, breakdown, isFinali
 
     <div
       className={cn(
-        "flex h-44 flex-col items-start justify-start gap-4 self-stretch",
+        "flex h-fit flex-col items-start justify-start gap-4 self-stretch",
         "rounded-lg bg-white p-4 shadow",
       )}
     >
@@ -47,9 +47,9 @@ export const Checklist: React.FC<ChecklistProps> = ({ title, breakdown, isFinali
           ) : (
             <>
               {isFinalized ? (
-                <MdNotAccessible className="color-destructive h-6 w-6" />
+                <MdOutlineCircle className="color-gray h-6 w-6" />
               ) : (
-                <MdOutlineQuestionMark className="h-6 w-6" />
+                <MdOutlinePending className="h-6 w-6" />
               )}
             </>
           )}
