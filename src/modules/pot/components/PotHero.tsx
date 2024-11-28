@@ -5,27 +5,26 @@ import { useRouter } from "next/router";
 import { MdArrowOutward } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { prop } from "remeda";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
 import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Button, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
+import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useWallet } from "@/modules/auth";
+import { useAuthSession } from "@/modules/auth";
 import { DonateToPotProjects } from "@/modules/donation";
 import { TokenTotalValue } from "@/modules/token";
-import { useGlobalStoreSelector } from "@/store";
 
 import { ChallengeModal } from "./ChallengeModal";
 import FundMatchingPoolModal from "./FundMatchingPoolModal";
 import NewApplicationModal from "./NewApplicationModal";
 import { PotStats } from "./PotStats";
 import { PotTimeline } from "./PotTimeline";
-import { RequirementsList } from "./requirements";
-import { usePotApplicationUserClearance, usePotVotingUserClearance } from "../hooks/clearance";
-import { usePotUserPermissions } from "../hooks/permissions";
+import {
+  usePotUserApplicationRequirements,
+  usePotUserPermissions,
+  usePotUserVotingRequirements,
+} from "../hooks/clearance";
 import { isPotVotingBased } from "../utils/voting";
 
 export type PotHeroProps = ByPotId & {};
@@ -35,24 +34,19 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
   const isOnVotingPage = router.pathname.includes("voting");
   const { data: pot } = indexer.usePot({ potId });
   const isVotingBasedPot = isPotVotingBased({ potId });
-  const { isSignedIn } = useWallet();
-  const { actAsDao, accountId } = useGlobalStoreSelector(prop("nav"));
-  const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
-  const userAccountId = asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId);
-  const applicationClearanceBreakdown = usePotApplicationUserClearance();
-  const votingClearanceBreakdown = usePotVotingUserClearance();
+  const { isSignedIn, accountId } = useAuthSession();
+  const applicationClearanceBreakdown = usePotUserApplicationRequirements();
+  const votingClearanceBreakdown = usePotUserVotingRequirements();
+
+  const { canApply, canDonate, canFund, canChallengePayouts, existingChallengeForUser } =
+    usePotUserPermissions({ potId });
+
+  const referrerPotLink =
+    window.location.origin + window.location.pathname + `&referrerId=${accountId}`;
 
   const [fundModalOpen, setFundModalOpen] = useState(false);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
-
-  const referrerPotLink =
-    window.location.origin + window.location.pathname + `&referrerId=${userAccountId}`;
-
-  const potStatuses = usePotUserPermissions({
-    potId,
-    accountId: asDao ? actAsDao.defaultAddress : (walletApi.accountId ?? accountId),
-  });
 
   const [description, linkedDocumentUrl] = useMemo(() => {
     const linkPattern = /(More info )?(?:https?:\/\/)?([^\s]+\.[^\s]+)/i;
@@ -87,7 +81,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
           <ChallengeModal
             potDetail={pot}
             open={challengeModalOpen}
-            previousChallenge={potStatuses.existingChallengeForUser}
+            previousChallenge={existingChallengeForUser}
             onCloseClick={() => setChallengeModalOpen(false)}
           />
         </>
@@ -146,7 +140,11 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
                     <Link href={linkedDocumentUrl} target="_blank">
                       <MdArrowOutward className="h-4.5 w-4.5" />
 
-                      <span className="text-center text-sm font-medium leading-tight text-[#292929]">
+                      <span
+                        className={cn(
+                          "text-center text-sm font-medium leading-tight text-[#292929]",
+                        )}
+                      >
                         {"More info"}
                       </span>
                     </Link>
@@ -159,13 +157,15 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
               {isVotingBasedPot ? (
                 <>
                   {isOnVotingPage ? (
-                    <RequirementsList
+                    <Checklist
                       title="Voting Requirements"
+                      isFinalized={isSignedIn}
                       breakdown={votingClearanceBreakdown}
                     />
                   ) : (
-                    <RequirementsList
+                    <Checklist
                       title="Application Requirements"
+                      isFinalized={isSignedIn}
                       breakdown={applicationClearanceBreakdown}
                     />
                   )}
@@ -205,23 +205,23 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
             </div>
 
             <div className="flex items-center justify-start gap-4">
-              {potStatuses.canApply && (
+              {canApply && (
                 <Button
                   onClick={() => setApplyModalOpen(true)}
                 >{`Apply to ${isVotingBasedPot ? "Round" : "Pot"}`}</Button>
               )}
 
-              {potStatuses.canDonate && <DonateToPotProjects {...{ potId }} />}
+              {canDonate && <DonateToPotProjects {...{ potId }} />}
 
-              {potStatuses.canFund && (
+              {canFund && (
                 <Button variant="tonal-filled" onClick={() => setFundModalOpen(true)}>
                   {"Fund matching pool"}
                 </Button>
               )}
 
-              {potStatuses.canChallengePayouts && (
+              {canChallengePayouts && (
                 <Button onClick={() => setChallengeModalOpen(true)}>
-                  {potStatuses.existingChallengeForUser ? "Update challenge" : "Challenge payouts"}
+                  {existingChallengeForUser ? "Update challenge" : "Challenge payouts"}
                 </Button>
               )}
             </div>

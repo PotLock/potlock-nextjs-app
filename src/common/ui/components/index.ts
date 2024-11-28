@@ -43,6 +43,7 @@ export * from "./atoms/typography";
  *
  * See https://atomicdesign.bradfrost.com/chapter-2/#molecules
  */
+export * from "./molecules/checklist";
 export * from "./molecules/clipboard-copy-button";
 export * from "./molecules/data-loading-placeholder";
 export * from "./molecules/dialog";

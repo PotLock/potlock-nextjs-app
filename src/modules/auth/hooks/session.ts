@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { prop } from "remeda";
 
-import { indexer } from "@/common/api/indexer";
+import { ListRegistrationStatus, indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { AccountId } from "@/common/types";
 import { useGlobalStoreSelector } from "@/store";
@@ -22,15 +22,32 @@ export const useAuthSession = (): AuthSession => {
 
   const accountId: AccountId | undefined = useMemo(
     () => (asDao ? actAsDao.defaultAddress : wallet?.accountId),
-
     [actAsDao.defaultAddress, asDao, wallet?.accountId],
   );
 
-  const account = useMemo(
-    () => data?.results?.find(({ registrant }) => registrant.id === accountId)?.registrant,
+  const { registrant, status } = useMemo(
+    () =>
+      data?.results?.find(({ registrant }) => registrant.id === accountId) ?? {
+        registrant: undefined,
+        status: undefined,
+      },
 
     [accountId, data?.results],
   );
 
-  return { isSignedIn, accountId, account };
+  if (isSignedIn && accountId) {
+    return {
+      isSignedIn: true,
+      accountId,
+      account: registrant,
+      isVerifiedPublicGoodsProvider: status === ListRegistrationStatus.Approved,
+    };
+  } else {
+    return {
+      isSignedIn: false,
+      accountId: undefined,
+      account: undefined,
+      isVerifiedPublicGoodsProvider: false,
+    };
+  }
 };

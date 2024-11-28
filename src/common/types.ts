@@ -104,3 +104,5 @@ export enum ChronologicalSortOrder {
 }
 
 export type ChronologicalSortOrderVariant = keyof typeof ChronologicalSortOrder;
+
+export type BasicRequirement = { title: string; isSatisfied: boolean };
