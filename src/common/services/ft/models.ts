@@ -16,7 +16,7 @@ import {
   TOP_LEVEL_ROOT_ACCOUNT_ID,
 } from "@/common/constants";
 import { refExchangeClient } from "@/common/contracts/ref-finance";
-import { bigStringToFloat } from "@/common/lib";
+import { bigStringToFloat, isNetworkAccountId } from "@/common/lib";
 import { AccountId, FungibleTokenMetadata, TokenId } from "@/common/types";
 
 export type FtRegistryEntry = {
@@ -66,9 +66,7 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
            * Use with caution.
            */
           const optimisticAccountId =
-            walletApi.accountId === undefined ||
-            // TODO: Needs to be reconsidered to support Ethereum wallets
-            walletApi.accountId.endsWith(NETWORK)
+            walletApi.accountId === undefined || !isNetworkAccountId(walletApi.accountId)
               ? TOP_LEVEL_ROOT_ACCOUNT_ID
               : walletApi.accountId;
 
