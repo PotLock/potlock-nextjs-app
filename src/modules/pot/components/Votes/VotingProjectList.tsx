@@ -307,7 +307,7 @@ export default function VotingProjectList() {
             </div>
           </div>
           {/* Project List */}
-          <div className="mb:mt-0 mt-30 space-y-4">
+          <div className="md:mt-1 mt-30 space-y-4">
             {filteredProjects.map((project) => (
               <div
                 key={project.id}
