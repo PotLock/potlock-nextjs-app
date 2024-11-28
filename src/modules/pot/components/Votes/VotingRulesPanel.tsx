@@ -50,7 +50,7 @@ export function VotingRulesPanel({
         <DialogHeader className="mb-4">
           {" "}
           <DialogTitle className="flex flex-row items-center gap-2">
-            <FileText className="h-6 w-6" fill="#A6A6A6" />
+            <FileText className="h-6 w-6" fill="#ebebeb" />
             <h4>Voting Rules</h4>
           </DialogTitle>
         </DialogHeader>
