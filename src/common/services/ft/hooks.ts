@@ -26,23 +26,23 @@ export const useTokenRegistry = () => {
  * Fungible token data for a supported token.
  */
 export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
-  const { metadata, ...data } = useFtRegistryStore(
-    useShallow((registry) => registry.data?.[tokenId] ?? { metadata: null }),
-  );
+  const { isLoading, data: tokenRegistry } = useTokenRegistry();
+
+  const token = useMemo(() => tokenRegistry?.[tokenId], [tokenRegistry, tokenId]);
 
   const error = useMemo(
     () =>
-      metadata === null
+      !isLoading && token === null
         ? new Error(`Fungible token ${tokenId} is not supported on this platform.`)
         : undefined,
 
-    [metadata, tokenId],
+    [isLoading, token, tokenId],
   );
 
   useEffect(() => void (error ? console.error(error) : null), [error]);
 
   return {
-    data: metadata ? { metadata, ...data } : undefined,
+    data: token,
     error,
   };
 };

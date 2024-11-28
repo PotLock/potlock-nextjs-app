@@ -5,6 +5,7 @@ import { filter, fromEntries, isError, isNonNull, merge, piped } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { NETWORK } from "@/common/_config";
 import { coingeckoClient } from "@/common/api/coingecko";
 import { naxiosInstance, nearRpc, walletApi } from "@/common/api/near";
 import { PRICES_REQUEST_CONFIG, pricesClient } from "@/common/api/prices";
@@ -12,6 +13,7 @@ import {
   ICONS_ASSET_ENDPOINT_URL,
   NATIVE_TOKEN_DECIMALS,
   NATIVE_TOKEN_ID,
+  TOP_LEVEL_ROOT_ACCOUNT_ID,
 } from "@/common/constants";
 import { refExchangeClient } from "@/common/contracts/ref-finance";
 import { bigStringToFloat } from "@/common/lib";
@@ -54,12 +56,28 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
     (set) => {
       refExchangeClient
         .get_whitelisted_tokens()
-        .then((tokenContractAccountIds) =>
-          Promise.all([
+        .then((tokenContractAccountIds) => {
+          /**
+           * Either session account ID or the network's root account.
+           *
+           * Serves as a workaround for the case when the user is not signed in
+           *  or the wallet is connected to the wrong network.
+           *
+           * Use with caution.
+           */
+          const optimisticAccountId =
+            walletApi.accountId === undefined ||
+            // TODO: Needs to be reconsidered to support Ethereum wallets
+            walletApi.accountId.endsWith(NETWORK)
+              ? TOP_LEVEL_ROOT_ACCOUNT_ID
+              : walletApi.accountId;
+
+          return Promise.all([
             nearRpc
               .query<AccountView>({
                 request_type: "view_account",
-                account_id: walletApi.accountId ?? "unknown",
+                // TODO: skip the balance retrieval when the session is invalid instead.
+                account_id: optimisticAccountId,
                 finality: "final",
               })
               .then(async ({ amount }) => {
@@ -155,9 +173,9 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
               (registryEntries) => fromEntries(registryEntries),
               (data) => set({ data }),
             ),
-          ),
-        )
-        .catch((error) =>
+          );
+        })
+        .catch((error) => {
           set({
             error: isError(error)
               ? error
@@ -166,8 +184,8 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                     ? (error as Record<string, unknown> & { type: string }).type
                     : error,
                 ),
-          }),
-        );
+          });
+        });
 
       return { data: undefined, error: undefined };
     },

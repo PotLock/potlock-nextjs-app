@@ -6,7 +6,7 @@ import SuspenseLoading from "@/modules/auth/components/SuspenseLoading";
 import { dispatch, resetStore } from "@/store";
 
 import { useAuth } from "../hooks/store";
-import useWallet from "../hooks/wallet";
+import { useWallet } from "../hooks/wallet";
 
 type AuthProviderProps = {
   children: React.ReactNode;
