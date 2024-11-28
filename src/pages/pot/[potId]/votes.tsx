@@ -1,11 +1,15 @@
 import { useRouteQuery } from "@/common/lib";
-import { PotLayout } from "@/modules/pot";
+import { PotLayout, VotingProjectList } from "@/modules/pot";
 
 const PotVotesTab = () => {
   const { query } = useRouteQuery();
   const potId = query.potId as string;
 
-  return <div className="md:py-12 flex w-full flex-col py-10"></div>;
+  return (
+    <div className="md:py-12 flex w-full flex-col py-10">
+      <VotingProjectList />
+    </div>
+  );
 };
 
 PotVotesTab.getLayout = function getLayout(page: React.ReactNode) {
