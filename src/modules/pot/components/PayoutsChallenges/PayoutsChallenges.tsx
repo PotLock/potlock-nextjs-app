@@ -16,24 +16,17 @@ import ChallengeResolveModal from "../ChallengeResolveModal";
 
 const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
   const [tab, setTab] = useState<string>("UNRESOLVED");
-  const [filteredChallenges, setFilteredChallenges] = useState<ChallengeType[]>(
-    [],
-  );
-  const { actAsDao, accountId: _accId } = useTypedSelector(
-    (state) => state.nav,
-  );
+  const [filteredChallenges, setFilteredChallenges] = useState<ChallengeType[]>([]);
+  const { actAsDao, accountId: _accId } = useTypedSelector((state) => state.nav);
   const [adminModalChallengerId, setAdminModalChallengerId] = useState("");
 
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = asDao ? actAsDao.defaultAddress : _accId;
-  const [payoutsChallenges, setPayoutsChallenges] = useState<ChallengeType[]>(
-    [],
-  );
+  const [payoutsChallenges, setPayoutsChallenges] = useState<ChallengeType[]>([]);
 
   const userIsAdminOrGreater =
-    !!potDetail?.admins.find((adm) => adm.id === accountId) ||
-    potDetail?.owner.id === accountId;
+    !!potDetail?.admins.find((adm) => adm.id === accountId) || potDetail?.owner.id === accountId;
 
   // Fetch needed data
   useEffect(() => {
@@ -99,10 +92,7 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
                       accountId={challenger_id}
                       className="h-[42px] w-[42px]"
                     />
-                    <Link
-                      className="id"
-                      href={`${routesPath.PROFILE}/${challenger_id}`}
-                    >
+                    <Link className="id" href={`${routesPath.PROFILE}/${challenger_id}`}>
                       {challenger_id}
                     </Link>
                     <div className="title">Challenged payout</div>
@@ -132,9 +122,7 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
                         <div className="dot" />
                         <button
                           className="resolve-btn"
-                          onClick={() =>
-                            setAdminModalChallengerId(challenger_id)
-                          }
+                          onClick={() => setAdminModalChallengerId(challenger_id)}
                         >
                           Reply
                         </button>
