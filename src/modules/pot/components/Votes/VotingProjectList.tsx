@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, FileText, Star } from "lucide-react";
 import {
   Button,
   Checkbox,
+  FilterChip,
   Input,
   Pagination,
   PaginationContent,
@@ -17,7 +18,6 @@ import {
   PaginationPrevious,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useMediaQuery } from "@/modules/pot/hooks";
 
 // import { VotingRulesPanel } from "./voting-rules-panel";
 // import { WeightBoostPanel } from "./weight-boost-panel";
@@ -105,6 +105,12 @@ export default function VotingProjectList() {
   const [showVotingRules, setShowVotingRules] = useState(false);
   const [showWeightBoost, setShowWeightBoost] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
+  const [allProjectsCount, votedCount, pendingCount] = useMemo(() => {
+    const allProjects = DUMMY_PROJECTS.length;
+    const voted = DUMMY_PROJECTS.filter((project) => project.voted).length;
+    const pending = DUMMY_PROJECTS.length - voted;
+    return [allProjects, voted, pending];
+  }, []);
 
   const handleProjectSelect = (projectId: string) => {
     const newSelected = new Set(selectedProjects);
@@ -133,9 +139,16 @@ export default function VotingProjectList() {
     return filtered.slice(startIndex, endIndex);
   }, [activeTab, pageNumber]);
 
-  const totalProjectCount = DUMMY_PROJECTS.length;
+  const totalProjectCountPerTab = useMemo(() => {
+    if (activeTab === "voted") return votedCount;
+    if (activeTab === "pending") return pendingCount;
+    return allProjectsCount;
+  }, [activeTab, allProjectsCount, votedCount, pendingCount]);
 
-  const numberOfPages = useMemo(() => Math.ceil(totalProjectCount / 5), [totalProjectCount]);
+  const numberOfPages = useMemo(
+    () => Math.ceil(totalProjectCountPerTab / 5),
+    [totalProjectCountPerTab],
+  );
 
   const pageNumberButtons = useMemo(() => {
     const totalPages = Math.ceil(numberOfPages);
@@ -183,7 +196,7 @@ export default function VotingProjectList() {
         )}
       </PaginationItem>
     ));
-  }, [pageNumber, setPageNumber, totalProjectCount]);
+  }, [pageNumber, setPageNumber, numberOfPages]);
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 p-4">
@@ -200,28 +213,39 @@ export default function VotingProjectList() {
 
       {/* Tabs */}
       <div className="flex gap-2">
-        <Button
-          variant={activeTab === "all" ? "brand-outline" : "brand-filled"}
+        <FilterChip
+          variant={activeTab === "all" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("all")}
-          className={cn(
-            "bg-orange-50 text-black hover:bg-orange-100",
-            activeTab === "all" && "bg-orange-100",
-          )}
         >
-          All <span className="ml-1 text-gray-500">80</span>
-        </Button>
-        <Button
-          variant={activeTab === "voted" ? "brand-outline" : "brand-filled"}
+          All{" "}
+          <span
+            className={`ml-1 rounded-full px-1.5 ${activeTab === "all" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
+          >
+            {allProjectsCount}
+          </span>
+        </FilterChip>
+        <FilterChip
+          variant={activeTab === "voted" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("voted")}
         >
-          Voted <span className="ml-1 text-gray-500">10</span>
-        </Button>
-        <Button
-          variant={activeTab === "pending" ? "brand-outline" : "brand-filled"}
+          Voted{" "}
+          <span
+            className={`ml-1 rounded-full px-1.5 ${activeTab === "voted" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
+          >
+            {votedCount}
+          </span>
+        </FilterChip>
+        <FilterChip
+          variant={activeTab === "pending" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("pending")}
         >
-          Pending <span className="ml-1 text-gray-500">70</span>
-        </Button>
+          Pending{" "}
+          <span
+            className={`ml-1 rounded-full px-1.5 ${activeTab === "pending" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
+          >
+            {pendingCount}
+          </span>
+        </FilterChip>
       </div>
 
       {/* Header */}
