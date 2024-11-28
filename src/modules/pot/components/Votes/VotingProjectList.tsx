@@ -118,6 +118,7 @@ export default function VotingProjectList() {
   }, []);
 
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const initWeightBoost = 10;
 
   const handleProjectSelect = (projectId: string) => {
     const newSelected = new Set(selectedProjects);
@@ -223,35 +224,38 @@ export default function VotingProjectList() {
         <FilterChip
           variant={activeTab === "all" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("all")}
+          className="font-medium"
         >
           All{" "}
-          <span
+          <h5
             className={`ml-1 rounded-full px-1.5 ${activeTab === "all" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
           >
             {allProjectsCount}
-          </span>
+          </h5>
         </FilterChip>
         <FilterChip
           variant={activeTab === "voted" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("voted")}
+          className="font-medium"
         >
           Voted{" "}
-          <span
+          <h5
             className={`ml-1 rounded-full px-1.5 ${activeTab === "voted" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
           >
             {votedCount}
-          </span>
+          </h5>
         </FilterChip>
         <FilterChip
           variant={activeTab === "pending" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("pending")}
+          className="font-medium"
         >
           Pending{" "}
-          <span
+          <h5
             className={`ml-1 rounded-full px-1.5 ${activeTab === "pending" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
           >
             {pendingCount}
-          </span>
+          </h5>
         </FilterChip>
       </div>
 
@@ -259,10 +263,10 @@ export default function VotingProjectList() {
         <div className="w-full">
           {/* Header */}
           <div className="md:static absolute inset-x-0 w-full">
-            <div className="md:rounded-tl-lg md:rounded-tr-lg flex items-center justify-between bg-[#fce9d5] p-4 text-[17px] font-semibold">
+            <div className="md:rounded-tl-lg md:rounded-tr-lg flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]">
               <div className="flex items-center gap-2">
                 <HowToVote className="h-6 w-6" />
-                <span>
+                <span className="font-semibold">
                   {votedCount} Project{votedCount > 1 ? "s" : ""} Voted
                 </span>
               </div>
@@ -273,11 +277,11 @@ export default function VotingProjectList() {
                 >
                   <Star className="h-[18px] w-[18px]" />
                   <span className="flex items-center gap-2">
-                    <span className="md:inline-flex hidden whitespace-nowrap">
+                    <span className="md:inline-flex hidden whitespace-nowrap font-medium">
                       {showWeightBoost ? "Hide" : "View"} Weight Boost{" "}
                     </span>
-                    <span className="text-center text-sm font-medium leading-tight text-[#ea6a25]">
-                      x0
+                    <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
+                      x{initWeightBoost}
                     </span>
                   </span>
                   <ChevronRight className="md:block relative hidden h-[18px] w-[18px]" />
@@ -287,7 +291,7 @@ export default function VotingProjectList() {
                   onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
                 >
                   <FileText className="h-[18px] w-[18px]" />
-                  <span className="md:inline-flex hidden items-center gap-2 whitespace-nowrap">
+                  <span className="md:inline-flex hidden items-center gap-2 whitespace-nowrap font-medium">
                     {showVotingRules ? "Hide" : "View"} Voting Rules
                   </span>
                   <ChevronRight className="md:block hidden h-[18px] w-[18px]" />
@@ -295,10 +299,10 @@ export default function VotingProjectList() {
               </div>
             </div>
             <div className="flex justify-between bg-[#f7f7f7] px-7 py-2 text-sm font-semibold text-gray-500">
-              <p>PROJECTS</p>
+              <h4 className="font-semibold">PROJECTS</h4>
               <div className="flex gap-6">
-                <p className="md:block hidden text-right">VOTES</p>
-                <p className="md:block hidden text-right">ACTIONS</p>
+                <h4 className="md:block hidden text-right font-semibold">VOTES</h4>
+                <h4 className="md:block hidden text-right font-semibold">ACTIONS</h4>
               </div>
             </div>
           </div>
@@ -380,7 +384,7 @@ export default function VotingProjectList() {
                 open={true}
                 onOpenChange={() => setShowWeightBoost(false)}
                 mode="panel"
-                weightBoost={0}
+                weightBoost={initWeightBoost}
               />
             )}
           </div>

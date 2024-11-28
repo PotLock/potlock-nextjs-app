@@ -35,7 +35,7 @@ export function VotingRulesPanel({
         <div className="mb-4 flex items-center justify-between border-b py-2">
           <div className="flex items-center gap-2">
             <FileText className="h-6 w-6" fill="#A6A6A6" />
-            <h2 className="text-lg font-semibold">Voting Rules</h2>
+            <h2 className="min-w-[214px] text-lg font-semibold">Voting Rules</h2>
           </div>
           <X onClick={() => onOpenChange(true)} className="h-6 w-6 cursor-pointer text-[#A6A6A6]" />
         </div>
