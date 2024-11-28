@@ -99,9 +99,7 @@ const DUMMY_PROJECTS: Project[] = [
 type TabType = "all" | "voted" | "pending";
 
 export default function VotingProjectList() {
-  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(
-    new Set(),
-  );
+  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<TabType>("all");
   const [showVotingRules, setShowVotingRules] = useState(false);
@@ -137,10 +135,7 @@ export default function VotingProjectList() {
 
   const totalProjectCount = DUMMY_PROJECTS.length;
 
-  const numberOfPages = useMemo(
-    () => Math.ceil(totalProjectCount / 5),
-    [totalProjectCount],
-  );
+  const numberOfPages = useMemo(() => Math.ceil(totalProjectCount / 5), [totalProjectCount]);
 
   const pageNumberButtons = useMemo(() => {
     const totalPages = Math.ceil(numberOfPages);
@@ -168,14 +163,7 @@ export default function VotingProjectList() {
         );
       } else {
         // Middle
-        pages.push(
-          "ellipsis",
-          pageNumber - 1,
-          pageNumber,
-          pageNumber + 1,
-          "ellipsis",
-          totalPages,
-        );
+        pages.push("ellipsis", pageNumber - 1, pageNumber, pageNumber + 1, "ellipsis", totalPages);
       }
     }
 
@@ -271,30 +259,18 @@ export default function VotingProjectList() {
         </div>
 
         {filteredProjects.map((project) => (
-          <div
-            key={project.id}
-            className="flex items-center gap-4 rounded-lg p-4 hover:bg-gray-50"
-          >
+          <div key={project.id} className="flex items-center gap-4 rounded-lg p-4 hover:bg-gray-50">
             <Checkbox
               checked={selectedProjects.has(project.id)}
               onCheckedChange={() => handleProjectSelect(project.id)}
             />
-            <img
-              src={project.imageUrl}
-              alt=""
-              className="h-10 w-10 rounded-full"
-            />
+            <img src={project.imageUrl} alt="" className="h-10 w-10 rounded-full" />
             <div className="min-w-0 flex-1">
               <div className="truncate font-medium">{project.name}</div>
-              <div className="md:hidden text-sm text-gray-500">
-                {project.votes} Votes
-              </div>
+              <div className="md:hidden text-sm text-gray-500">{project.votes} Votes</div>
             </div>
             <div className="md:block hidden text-right">{project.votes}</div>
-            <Button
-              variant={project.voted ? "brand-outline" : "brand-filled"}
-              className="ml-auto"
-            >
+            <Button variant={project.voted ? "brand-outline" : "brand-filled"} className="ml-auto">
               {project.voted ? "Voted" : "Vote"}
             </Button>
           </div>
@@ -306,9 +282,7 @@ export default function VotingProjectList() {
         <Pagination className="mt-[24px]">
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
-              />
+              <PaginationPrevious onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))} />
             </PaginationItem>
 
             {pageNumberButtons}
@@ -316,9 +290,7 @@ export default function VotingProjectList() {
             <PaginationItem>
               <PaginationNext
                 onClick={() =>
-                  setPageNumber((prev) =>
-                    Math.min(prev + 1, Math.ceil(numberOfPages)),
-                  )
+                  setPageNumber((prev) => Math.min(prev + 1, Math.ceil(numberOfPages)))
                 }
               />
             </PaginationItem>
