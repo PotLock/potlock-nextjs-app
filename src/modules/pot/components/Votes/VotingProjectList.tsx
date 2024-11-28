@@ -2,8 +2,11 @@
 
 import { useMemo, useState } from "react";
 
-import { ChevronLeft, ChevronRight, FileText, Star } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
+import FileText from "@/common/assets/svgs/FileText";
+import HowToVote from "@/common/assets/svgs/HowToVote";
+import Star from "@/common/assets/svgs/Star";
 import {
   Button,
   Checkbox,
@@ -18,6 +21,10 @@ import {
   PaginationPrevious,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+
+import { VotingRulesPanel } from "./VotingRulesPanel";
+import { WeightBoostPanel } from "./WeightBoostPanel";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 // import { VotingRulesPanel } from "./voting-rules-panel";
 // import { WeightBoostPanel } from "./weight-boost-panel";
@@ -112,6 +119,8 @@ export default function VotingProjectList() {
     return [allProjects, voted, pending];
   }, []);
 
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+
   const handleProjectSelect = (projectId: string) => {
     const newSelected = new Set(selectedProjects);
     if (newSelected.has(projectId)) {
@@ -199,7 +208,7 @@ export default function VotingProjectList() {
   }, [pageNumber, setPageNumber, numberOfPages]);
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-4 p-4">
+    <div className="md:p-4 mx-auto w-full max-w-6xl space-y-4">
       {/* Search */}
       <div className="relative">
         <Input
@@ -212,7 +221,7 @@ export default function VotingProjectList() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <FilterChip
           variant={activeTab === "all" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("all")}
@@ -248,100 +257,133 @@ export default function VotingProjectList() {
         </FilterChip>
       </div>
 
-      {/* Header */}
-      <div className="flex items-center justify-between rounded-lg bg-orange-50 p-4">
-        <div className="flex items-center gap-2">
-          <Star className="h-5 w-5" />
-          <span>10 Projects Voted</span>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="brand-outline"
-            className="md:flex hidden items-center gap-2"
-            onClick={() => setShowWeightBoost(true)}
-          >
-            <Star className="h-4 w-4" />
-            {showWeightBoost ? "Hide" : "View"} Weight Boost{" "}
-            <span className="text-orange-500">x0</span>
-          </Button>
-          <Button
-            variant="brand-outline"
-            className="md:inline-block hidden"
-            onClick={() => setShowVotingRules(true)}
-          >
-            {showVotingRules ? "Hide" : "View"} Voting Rules
-          </Button>
-        </div>
-      </div>
-
-      {/* Project List */}
-      <div className="space-y-4">
-        <div className="md:grid hidden grid-cols-3 gap-4 px-4 py-2 text-sm font-medium text-gray-500">
-          <div>PROJECTS</div>
-          <div className="text-right">VOTES</div>
-          <div className="text-right">ACTIONS</div>
-        </div>
-
-        {filteredProjects.map((project) => (
-          <div key={project.id} className="flex items-center gap-4 rounded-lg p-4 hover:bg-gray-50">
-            <Checkbox
-              checked={selectedProjects.has(project.id)}
-              onCheckedChange={() => handleProjectSelect(project.id)}
-            />
-            <img src={project.imageUrl} alt="" className="h-10 w-10 rounded-full" />
-            <div className="min-w-0 flex-1">
-              <div className="truncate font-medium">{project.name}</div>
-              <div className="md:hidden text-sm text-gray-500">{project.votes} Votes</div>
+      <div className="flex flex-row gap-4">
+        <div className="w-full">
+          {/* Header */}
+          <div className="flex items-center justify-between rounded-tl-lg rounded-tr-lg bg-[#fce9d5] p-4 text-[17px] font-semibold">
+            <div className="flex items-center gap-2">
+              <HowToVote className="h-6 w-6" />
+              <span>
+                {votedCount} Project{votedCount > 1 ? "s" : ""} Voted
+              </span>
             </div>
-            <div className="md:block hidden text-right">{project.votes}</div>
-            <Button variant={project.voted ? "brand-outline" : "brand-filled"} className="ml-auto">
-              {project.voted ? "Voted" : "Vote"}
-            </Button>
+            <div className="flex gap-2">
+              <div
+                className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
+                onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
+              >
+                <Star className="h-[18px] w-[18px]" />
+                <span className="flex items-center gap-2">
+                  <span className="md:inline-flex hidden">
+                    {showWeightBoost ? "Hide" : "View"} Weight Boost{" "}
+                  </span>
+                  <span className="font-['Mona Sans'] text-center text-sm font-medium leading-tight text-[#ea6a25]">
+                    x0
+                  </span>
+                </span>
+                <ChevronRight className="md:block relative hidden h-[18px] w-[18px]" />
+              </div>
+              <div
+                className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
+                onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
+              >
+                <FileText className="h-[18px] w-[18px]" />
+                <span className="md:inline-flex hidden items-center gap-2">
+                  {showVotingRules ? "Hide" : "View"} Voting Rules
+                </span>
+                <ChevronRight className="md:block hidden h-[18px] w-[18px]" />
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-
-      {/* Pagination */}
-      {numberOfPages > 1 && (
-        <Pagination className="mt-[24px]">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))} />
-            </PaginationItem>
-
-            {pageNumberButtons}
-
-            <PaginationItem>
-              <PaginationNext
-                onClick={() =>
-                  setPageNumber((prev) => Math.min(prev + 1, Math.ceil(numberOfPages)))
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
-
-      {/* Floating Action Bar */}
-      {selectedProjects.size > 0 && (
-        <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-lg border bg-white p-4 shadow-lg">
-          <div className="flex items-center gap-2">
-            <Checkbox checked={true} />
-            <span>{selectedProjects.size} Selected Projects</span>
+          {/* Project List */}
+          <div className="space-y-4">
+            <div className="md:static absolute inset-x-0 flex justify-between bg-[#f7f7f7] px-7 py-2 text-sm font-medium text-gray-500">
+              <div>PROJECTS</div>
+              <div className="flex gap-6">
+                <div className="md:block hidden text-right">VOTES</div>
+                <div className="md:block hidden text-right">ACTIONS</div>
+              </div>
+            </div>
+            {filteredProjects.map((project) => (
+              <div
+                key={project.id}
+                className="flex items-center gap-4 rounded-lg p-4 hover:bg-gray-50"
+              >
+                <Checkbox
+                  checked={selectedProjects.has(project.id)}
+                  onCheckedChange={() => handleProjectSelect(project.id)}
+                />
+                <img src={project.imageUrl} alt="" className="h-10 w-10 rounded-full" />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">{project.name}</div>
+                  <div className="md:hidden text-sm text-gray-500">{project.votes} Votes</div>
+                </div>
+                <div className="md:block hidden text-right">{project.votes}</div>
+                <Button variant={"standard-outline"} disabled={project.voted} className="ml-auto">
+                  {project.voted ? "Voted" : "Vote"}
+                </Button>
+              </div>
+            ))}
           </div>
-          <Button onClick={handleVoteAll}>Vote All</Button>
+          {/* Pagination */}
+          {numberOfPages > 1 && (
+            <Pagination className="mt-[24px]">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
+                  />
+                </PaginationItem>
+                {pageNumberButtons}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      setPageNumber((prev) => Math.min(prev + 1, Math.ceil(numberOfPages)))
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+          {/* Floating Action Bar */}
+          {selectedProjects.size > 0 && (
+            <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-lg border bg-white p-4 shadow-lg">
+              <div className="flex items-center gap-2">
+                <Checkbox checked={true} />
+                <span>{selectedProjects.size} Selected Projects</span>
+              </div>
+              <Button onClick={handleVoteAll}>Vote All</Button>
+            </div>
+          )}
         </div>
+        {/* Dialogs */}
+        {/* Side Panels */}
+        {isDesktop && (
+          <div className="space-y-4">
+            {showWeightBoost && (
+              <WeightBoostPanel
+                open={true}
+                onOpenChange={() => setShowWeightBoost(false)}
+                mode="panel"
+              />
+            )}
+            {showVotingRules && (
+              <VotingRulesPanel
+                open={true}
+                onOpenChange={() => setShowVotingRules(false)}
+                mode="panel"
+              />
+            )}
+          </div>
+        )}
+      </div>
+      {/* Mobile Dialogs */}
+      {!isDesktop && (
+        <>
+          <WeightBoostPanel open={showWeightBoost} onOpenChange={setShowWeightBoost} />
+          <VotingRulesPanel open={showVotingRules} onOpenChange={setShowVotingRules} />
+        </>
       )}
-
-      {/* Dialogs */}
-      {/* <VotingRulesDialog
-        open={showVotingRules}
-        onOpenChange={setShowVotingRules}
-      />
-      <WeightBoostDialog
-        open={showWeightBoost}
-        onOpenChange={setShowWeightBoost}
-      /> */}
     </div>
   );
 }
