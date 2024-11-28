@@ -259,7 +259,7 @@ export default function VotingProjectList() {
         </FilterChip>
       </div>
 
-      <div className="flex flex-row gap-6">
+      <div className="flex flex-row">
         <div className="w-full">
           {/* Header */}
           <div className="md:static absolute inset-x-0 w-full">
