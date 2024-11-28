@@ -309,13 +309,15 @@ export default function VotingProjectList() {
           {/* Project List */}
           <div className="md:mt-1 mt-30 space-y-4">
             {filteredProjects.map((project) => (
-              <div
+              <label
                 key={project.id}
                 className="md:p-4 flex items-center gap-4 rounded-lg py-4 hover:bg-gray-50"
+                htmlFor={project.id}
               >
                 <Checkbox
                   checked={selectedProjects.has(project.id)}
                   onCheckedChange={() => handleProjectSelect(project.id)}
+                  id={project.id}
                 />
                 <Image
                   src={project.imageUrl}
@@ -336,7 +338,7 @@ export default function VotingProjectList() {
                 >
                   {project.voted ? "Voted" : "Vote"}
                 </Button>
-              </div>
+              </label>
             ))}
           </div>
           {/* Pagination */}
