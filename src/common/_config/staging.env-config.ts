@@ -8,6 +8,50 @@ export const envConfig: EnvConfig = {
     repoUrl: "https://github.com/PotLock/core",
   },
 
+  indexer: {
+    api: { endpointUrl: "https://dev.potlock.io" },
+  },
+
+  core: {
+    donation: {
+      contract: { accountId: "donate.staging.potlock.near" },
+    },
+
+    campaigns: {
+      contract: { accountId: "campaigns.staging.potlock.near" },
+    },
+
+    lists: {
+      contract: { accountId: "lists.staging.potlock.near" },
+    },
+
+    potFactory: {
+      contract: { accountId: "potfactory.staging.potlock.near" },
+    },
+
+    sybil: {
+      app: { url: "https://staging.nada.bot" },
+      contract: { accountId: "v2new.staging.nadabot.near" },
+    },
+
+    voting: {
+      contract: { accountId: "v1.voting.potlock.near" },
+    },
+  },
+
+  social: {
+    app: { url: "https://near.social" },
+    contract: { accountId: "social.near" },
+  },
+
+  deFi: {
+    refFinance: {
+      exchangeContract: {
+        accountId: "v2.ref-finance.near",
+      },
+    },
+  },
+
   features: {
     [FeatureId.DirectFtDonation]: {
       id: FeatureId.DirectFtDonation,
@@ -24,43 +68,5 @@ export const envConfig: EnvConfig = {
       name: "Direct native token donation",
       isEnabled: true,
     },
-  },
-
-  deFi: {
-    refFinance: {
-      exchangeContract: {
-        accountId: "v2.ref-finance.near",
-      },
-    },
-  },
-
-  donation: {
-    contract: { accountId: "donate.staging.potlock.near" },
-  },
-
-  campaigns: {
-    contract: { accountId: "campaigns.staging.potlock.near" },
-  },
-
-  lists: {
-    contract: { accountId: "lists.staging.potlock.near" },
-  },
-
-  potFactory: {
-    contract: { accountId: "potfactory.staging.potlock.near" },
-  },
-
-  sybil: {
-    app: { url: "https://staging.nada.bot" },
-    contract: { accountId: "v2new.staging.nadabot.near" },
-  },
-
-  social: {
-    app: { url: "https://near.social" },
-    contract: { accountId: "social.near" },
-  },
-
-  indexer: {
-    api: { endpointUrl: "https://dev.potlock.io" },
   },
 };

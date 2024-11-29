@@ -125,7 +125,7 @@ export const usePotUserApplicationClearance = ({
       ...(isVotingBasedPot
         ? [
             { title: "An equivalent of 25 USD staked in NEAR on Meta Pool", isSatisfied: false },
-            { title: "A minimum of 5000 voting power", isSatisfied: false },
+            { title: "Voting power 5000 or more", isSatisfied: false },
 
             {
               title: "A total of 10 points accumulated for the RPGF score",
