@@ -46,23 +46,20 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
   const isPotDonation = "potId" in props;
   const potId = isPotDonation ? props.potId : undefined;
 
-  const [amount, tokenId, listId, groupAllocationStrategy] = form.watch([
-    "amount",
+  const [tokenId, listId, groupAllocationStrategy] = form.watch([
     "tokenId",
     "listId",
     "groupAllocationStrategy",
   ]);
 
   const isListDonation = listId !== undefined;
-
+  const { data: token } = ftService.useRegisteredToken({ tokenId });
   const { isLoading: isPotLoading, data: pot, error: potError } = indexer.usePot({ potId });
-
   const { data: list, isLoading: isListLoading, error: listError } = indexer.useList({ listId });
 
-  const amountUsdValue = ftService.useTokenUsdDisplayValue({
-    amountFloat: amount,
-    tokenId,
-  });
+  const totalAmountUsdValue = token?.usdPrice
+    ? `~$ ${token.usdPrice.mul(totalAmountFloat).toFixed(2)}`
+    : null;
 
   const onEvenShareAllocationClick = useCallback(
     () => form.setValue("amount", totalAmountFloat, { shouldDirty: true }),
@@ -170,7 +167,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
                 min={yoctoNearToFloat(pot?.min_matching_pool_donation_amount ?? "0")}
                 max={balanceFloat ?? undefined}
                 step={0.01}
-                appendix={amountUsdValue}
+                appendix={totalAmountUsdValue}
                 customErrorMessage={
                   isBalanceSufficient ? null : DONATION_INSUFFICIENT_BALANCE_ERROR
                 }

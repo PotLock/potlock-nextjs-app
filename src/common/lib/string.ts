@@ -9,5 +9,9 @@ export const truncate = (input: string, maxLength: number) => {
   return input.substring(0, maxLength - 3) + "...";
 };
 
-export const isAccountId = (input: string): boolean =>
-  input.endsWith(`.${NETWORK === "mainnet" ? "near" : "testnet"}`);
+export const isEthereumAddress = (address: string): boolean => {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
+};
+
+export const isNetworkAccountId = (input: string): boolean =>
+  isEthereumAddress(input) || input.endsWith(`.${NETWORK === "mainnet" ? "near" : "testnet"}`);

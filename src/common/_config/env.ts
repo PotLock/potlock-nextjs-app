@@ -25,25 +25,10 @@ const envConfigRegistry: EnvConfigRegistry = {
   test: { ...testEnvConfig, envTag: "test" },
 };
 
-const getDeFiConfig = (envConfig: EnvConfig) => ({
-  refFinance: {
-    exchangeContract: {
-      accountId:
-        envConfig.network === "mainnet" ? "v2.ref-finance.near" : "ref-finance-101.testnet",
-    },
-  },
-});
-
-export const getEnvConfig = () => {
+export const getEnvConfig = (): EnvConfig => {
   const deploymentEnvTag = process.env.NEXT_PUBLIC_ENV?.toLowerCase();
 
-  const activeEnvironmentConfig =
-    envConfigRegistry[
-      isEnvTag((deploymentEnvTag ?? "test") as EnvTag) ? (deploymentEnvTag as EnvTag) : "test"
-    ];
-
-  return {
-    ...activeEnvironmentConfig,
-    deFi: getDeFiConfig(activeEnvironmentConfig),
-  };
+  return envConfigRegistry[
+    isEnvTag((deploymentEnvTag ?? "test") as EnvTag) ? (deploymentEnvTag as EnvTag) : "test"
+  ];
 };

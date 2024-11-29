@@ -1,10 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { Big } from "big.js";
+import { prop } from "remeda";
+
+import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
-import { BasicRequirement } from "@/common/types";
+import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
+import { u128StringToBigNum } from "@/common/lib";
+import { ftService } from "@/common/services";
+import { AccessControlClearanceCheckResult } from "@/modules/access-control";
 import { useAuthSession } from "@/modules/auth";
 import { getDateTime, useIsHuman } from "@/modules/core";
+
+import { isPotVotingBased } from "../utils/voting";
 
 export const usePotUserPermissions = ({ potId }: ByPotId) => {
   const { isSignedIn, accountId } = useAuthSession();
@@ -40,14 +49,17 @@ export const usePotUserPermissions = ({ potId }: ByPotId) => {
   const canDonate = useMemo(() => publicRoundOpen && accountId, [publicRoundOpen, accountId]);
   const canFund = useMemo(() => pot && now < getDateTime(pot.matching_round_end), [pot, now]);
 
-  const userIsAdminOrGreater = useMemo(
-    () => pot?.admins.find((adm) => adm.id === accountId) || pot?.owner.id === accountId,
+  const isAdminOrGreater = useMemo(
+    () =>
+      pot?.admins.find(({ id: adminAccountId }) => adminAccountId === accountId) ||
+      pot?.owner.id === accountId,
+
     [pot, accountId],
   );
 
-  const userIsChefOrGreater = useMemo(
-    () => userIsAdminOrGreater || pot?.chef?.id === accountId,
-    [userIsAdminOrGreater, pot, accountId],
+  const isChefOrGreater = useMemo(
+    () => isAdminOrGreater || pot?.chef?.id === accountId,
+    [isAdminOrGreater, pot, accountId],
   );
 
   const applicationOpen = useMemo(
@@ -58,8 +70,8 @@ export const usePotUserPermissions = ({ potId }: ByPotId) => {
   );
 
   const canApply = useMemo(
-    () => applicationOpen && existingApplication === undefined && !userIsChefOrGreater,
-    [applicationOpen, existingApplication, userIsChefOrGreater],
+    () => applicationOpen && existingApplication === undefined && !isChefOrGreater,
+    [applicationOpen, existingApplication, isChefOrGreater],
   );
 
   const canChallengePayouts = useMemo(
@@ -91,38 +103,90 @@ export const usePotUserPermissions = ({ potId }: ByPotId) => {
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**
- *! Heads up! At the moment, this hook only covers one specific use case,
- *!  as it's built for the mpDAO milestone.
+ * Heads up! At the moment, this hook only covers one specific use case,
+ *  as it's built for the mpDAO milestone.
  */
-export const usePotUserApplicationRequirements = (): BasicRequirement[] => {
-  const { accountId, isVerifiedPublicGoodsProvider } = useAuthSession();
+export const usePotUserApplicationClearance = ({
+  potId,
+}: ByPotId): AccessControlClearanceCheckResult => {
+  const { accountId: _, isVerifiedPublicGoodsProvider } = useAuthSession();
+  const isVotingBasedPot = isPotVotingBased({ potId });
 
-  // TODO!: calculate this for fox sake
+  const { data: stNear } = ftService.useRegisteredToken({
+    tokenId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
+  });
+
+  // TODO: Get voting power from the snapshot
+  const votingPowerU128StringMock = "0";
+
+  // TODO: calculate this
   const metaPoolDaoRpgfScore = 0;
 
-  return [
-    { title: "Verified Project on Potlock", isSatisfied: isVerifiedPublicGoodsProvider },
-    { title: "A minimum stake of 500 USD in Meta Pool", isSatisfied: false },
-    { title: "A minimum of 50,000 votes", isSatisfied: false },
+  return useMemo(() => {
+    const requirements = [
+      { title: "Verified Project on Potlock", isSatisfied: isVerifiedPublicGoodsProvider },
 
-    {
-      title: "A total of 25 points accumulated for the RPGF score",
-      isSatisfied: metaPoolDaoRpgfScore >= 25,
-    },
-  ];
+      ...(isVotingBasedPot
+        ? [
+            {
+              title: "An equivalent of 25 USD staked in NEAR on Meta Pool",
+              isSatisfied: stNear?.balanceUsd?.gte(25) ?? false,
+            },
+
+            {
+              title: "Voting power 5000 or more",
+              isSatisfied: u128StringToBigNum(
+                votingPowerU128StringMock,
+                METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
+              ).gte(5000),
+            },
+
+            {
+              title: "A total of 10 points accumulated for the RPGF score",
+              isSatisfied: metaPoolDaoRpgfScore >= 10,
+            },
+          ]
+        : []),
+    ];
+
+    return {
+      requirements,
+      isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
+      error: null,
+    };
+  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd]);
 };
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**
- *! Heads up! At the moment, this hook only covers one specific use case,
- *!  as it's built for the mpDAO milestone.
+ * Heads up! At the moment, this hook only covers one specific use case,
+ *  as it's built for the mpDAO milestone.
  */
-export const usePotUserVotingRequirements = (): BasicRequirement[] => {
-  const { accountId, account } = useAuthSession();
+export const usePotUserVotingClearance = ({
+  potId,
+}: ByPotId): AccessControlClearanceCheckResult => {
+  const { accountId, isVerifiedPublicGoodsProvider } = useAuthSession();
   const { nadaBotVerified: isHuman } = useIsHuman(accountId);
+  const isVotingBasedPot = isPotVotingBased({ potId });
 
-  return [
-    { title: "Must have an account on Potlock.", isSatisfied: account !== undefined },
-    { title: "Must have human verification.", isSatisfied: isHuman },
-  ];
+  return useMemo(() => {
+    if (!isVotingBasedPot) {
+      return {
+        requirements: null,
+        isEveryRequirementSatisfied: false,
+        error: new Error("This pot doesn't support voting mechanisms."),
+      };
+    } else {
+      const requirements = [
+        { title: "Must have an account on Potlock.", isSatisfied: isVerifiedPublicGoodsProvider },
+        { title: "Must have human verification.", isSatisfied: isHuman },
+      ];
+
+      return {
+        requirements,
+        isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
+        error: null,
+      };
+    }
+  }, [isHuman, isVerifiedPublicGoodsProvider, isVotingBasedPot]);
 };
