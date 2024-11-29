@@ -6,6 +6,8 @@ import { prop } from "remeda";
 import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
+import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
+import { u128StringToBigNum } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { AccessControlClearanceCheckResult } from "@/modules/access-control";
 import { useAuthSession } from "@/modules/auth";
@@ -115,7 +117,7 @@ export const usePotUserApplicationClearance = ({
   });
 
   // TODO: Get voting power from the snapshot
-  const votingPower = Big(0);
+  const votingPowerU128StringMock = "0";
 
   // TODO: calculate this
   const metaPoolDaoRpgfScore = 0;
@@ -131,7 +133,13 @@ export const usePotUserApplicationClearance = ({
               isSatisfied: stNear?.balanceUsd?.gte(25) ?? false,
             },
 
-            { title: "Voting power 5000 or more", isSatisfied: votingPower.gte(5000) },
+            {
+              title: "Voting power 5000 or more",
+              isSatisfied: u128StringToBigNum(
+                votingPowerU128StringMock,
+                METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
+              ).gte(5000),
+            },
 
             {
               title: "A total of 10 points accumulated for the RPGF score",
@@ -146,7 +154,7 @@ export const usePotUserApplicationClearance = ({
       isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
       error: null,
     };
-  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd, votingPower]);
+  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd]);
 };
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
