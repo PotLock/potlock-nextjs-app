@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { prop } from "remeda";
 
+import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { MPDAO_TOKEN_CONTRACT_ACCOUNT_ID } from "@/common/constants";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
@@ -110,10 +111,10 @@ export const usePotUserApplicationClearance = ({
   const isVotingBasedPot = isPotVotingBased({ potId });
 
   const { data: stNear } = ftService.useRegisteredToken({
-    tokenId: MPDAO_TOKEN_CONTRACT_ACCOUNT_ID,
+    tokenId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
   });
 
-  console.log(stNear?.balanceFloat);
+  console.log(stNear?.usdPrice?.toFixed(2));
 
   // TODO: calculate this
   const metaPoolDaoRpgfScore = 0;

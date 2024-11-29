@@ -43,7 +43,7 @@ export const {
 
   deFi: {
     metapool: {
-      lockupStakeContract: { accountId: METAPOOL_LOCKUP_STAKE_CONTRACT_ACCOUNT_ID },
+      liquidStakingContract: { accountId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID },
     },
 
     refFinance: {

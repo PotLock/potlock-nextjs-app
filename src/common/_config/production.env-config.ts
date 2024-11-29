@@ -46,8 +46,8 @@ export const envConfig: EnvConfig = {
 
   deFi: {
     metapool: {
-      lockupStakeContract: {
-        accountId: "lockup.meta-pool.near",
+      liquidStakingContract: {
+        accountId: "meta-pool.near",
       },
     },
 

@@ -5,7 +5,7 @@ import routesPath from "@/modules/core/routes";
 
 import Indicator from "./Indicator";
 import { PotTag } from "./PotTag";
-import useNearAndUsdByPot from "../hooks/useNearAndUsdByPot";
+import { useNearAndUsdByPot } from "../hooks/useNearAndUsdByPot";
 import getPotTags from "../utils/getPotTags";
 
 export type PotCardProps = {

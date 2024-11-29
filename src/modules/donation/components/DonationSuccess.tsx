@@ -13,7 +13,7 @@ import {
   POTLOCK_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
-import { bigStringToFloat, truncate } from "@/common/lib";
+import { u128StringToFloat, truncate } from "@/common/lib";
 import { ftService } from "@/common/services";
 import {
   Button,
@@ -59,17 +59,17 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
 
   const isLoading = isResultLoading || recipient === undefined || token === undefined;
 
-  const totalAmountFloat = bigStringToFloat(
+  const totalAmountFloat = u128StringToFloat(
     finalOutcome?.total_amount ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const protocolFeeAmountFloat = bigStringToFloat(
+  const protocolFeeAmountFloat = u128StringToFloat(
     finalOutcome?.protocol_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const referralFeeFinalAmountFloat = bigStringToFloat(
+  const referralFeeFinalAmountFloat = u128StringToFloat(
     finalOutcome?.referrer_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );

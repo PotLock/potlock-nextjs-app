@@ -5,7 +5,6 @@ import { filter, fromEntries, isError, isNonNull, merge, piped } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { NETWORK } from "@/common/_config";
 import { coingeckoClient } from "@/common/api/coingecko";
 import { naxiosInstance, nearRpc, walletApi } from "@/common/api/near";
 import { PRICES_REQUEST_CONFIG, pricesClient } from "@/common/api/prices";
@@ -16,7 +15,7 @@ import {
   TOP_LEVEL_ROOT_ACCOUNT_ID,
 } from "@/common/constants";
 import { refExchangeClient } from "@/common/contracts/ref-finance";
-import { bigStringToFloat, isNetworkAccountId } from "@/common/lib";
+import { isNetworkAccountId, u128StringToBigNum, u128StringToFloat } from "@/common/lib";
 import { AccountId, FungibleTokenMetadata, TokenId } from "@/common/types";
 
 import { MANUALLY_LISTED_ACCOUNT_IDS } from "./constants";
@@ -26,7 +25,8 @@ export type FtRegistryEntry = {
   metadata: FungibleTokenMetadata;
   balance?: Big.Big;
   balanceFloat?: number;
-  balanceUsdApproximation?: string | null;
+  balanceUsd?: Big.Big;
+  balanceUsdStringApproximation?: string | null;
   usdPrice?: Big.Big;
 };
 
@@ -81,7 +81,7 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                 finality: "final",
               })
               .then(async ({ amount }) => {
-                const balanceFloat = bigStringToFloat(
+                const balanceFloat = u128StringToFloat(
                   amount,
                   NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY.metadata.decimals,
                 );
@@ -100,7 +100,7 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                     ...NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY,
                     balance,
                     balanceFloat,
-                    balanceUsdApproximation: usdPrice?.mul(balance).toFixed(2),
+                    balanceUsdStringApproximation: usdPrice?.mul(balance).toFixed(2),
                     usdPrice,
                   },
                 ] as [TokenId, FtRegistryEntry];
@@ -142,12 +142,15 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                           .catch(() => undefined),
                       ]);
 
+                const balance =
+                  metadata === undefined || balanceRaw === undefined
+                    ? undefined
+                    : u128StringToBigNum(balanceRaw, metadata.decimals);
+
                 const balanceFloat =
                   metadata === undefined || balanceRaw === undefined
                     ? undefined
-                    : bigStringToFloat(balanceRaw, metadata.decimals);
-
-                const balance = balanceFloat ? Big(balanceFloat) : undefined;
+                    : u128StringToFloat(balanceRaw, metadata.decimals);
 
                 return metadata === undefined
                   ? null
@@ -159,7 +162,10 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                         balance,
                         balanceFloat,
 
-                        balanceUsdApproximation:
+                        balanceUsd:
+                          balance?.gt(0) && usdPrice?.gt(0) ? balance?.mul(usdPrice) : undefined,
+
+                        balanceUsdStringApproximation:
                           balance?.gt(0) && usdPrice?.gt(0)
                             ? `~$ ${usdPrice.mul(balance).toFixed(2)}`
                             : null,

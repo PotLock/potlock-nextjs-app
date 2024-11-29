@@ -53,7 +53,7 @@ export type EnvConfig = {
 
   deFi: {
     metapool: {
-      lockupStakeContract: ContractConfig;
+      liquidStakingContract: ContractConfig;
     };
 
     refFinance: {
@@ -67,6 +67,8 @@ export type EnvConfig = {
 export type { infer as FromSchema } from "zod";
 
 export type UnionFromStringList<ListOfMembers extends string[]> = ListOfMembers[number];
+
+export type U128String = string;
 
 export type ClientConfig = { swr?: SWRConfiguration };
 
