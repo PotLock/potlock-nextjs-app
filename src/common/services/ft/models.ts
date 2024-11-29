@@ -5,7 +5,6 @@ import { filter, fromEntries, isError, isNonNull, merge, piped } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { NETWORK } from "@/common/_config";
 import { coingeckoClient } from "@/common/api/coingecko";
 import { naxiosInstance, nearRpc, walletApi } from "@/common/api/near";
 import { PRICES_REQUEST_CONFIG, pricesClient } from "@/common/api/prices";
@@ -16,15 +15,18 @@ import {
   TOP_LEVEL_ROOT_ACCOUNT_ID,
 } from "@/common/constants";
 import { refExchangeClient } from "@/common/contracts/ref-finance";
-import { bigStringToFloat, isNetworkAccountId } from "@/common/lib";
+import { isNetworkAccountId, u128StringToBigNum, u128StringToFloat } from "@/common/lib";
 import { AccountId, FungibleTokenMetadata, TokenId } from "@/common/types";
+
+import { MANUALLY_LISTED_ACCOUNT_IDS } from "./constants";
 
 export type FtRegistryEntry = {
   contract_account_id: TokenId;
   metadata: FungibleTokenMetadata;
   balance?: Big.Big;
   balanceFloat?: number;
-  balanceUsdApproximation?: string | null;
+  balanceUsd?: Big.Big;
+  balanceUsdStringApproximation?: string;
   usdPrice?: Big.Big;
 };
 
@@ -79,7 +81,7 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                 finality: "final",
               })
               .then(async ({ amount }) => {
-                const balanceFloat = bigStringToFloat(
+                const balanceFloat = u128StringToFloat(
                   amount,
                   NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY.metadata.decimals,
                 );
@@ -98,73 +100,82 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                     ...NATIVE_TOKEN_PSEUDO_FT_REGISTRY_ENTRY,
                     balance,
                     balanceFloat,
-                    balanceUsdApproximation: usdPrice?.mul(balance).toFixed(2),
+                    balanceUsdStringApproximation: usdPrice?.mul(balance).toFixed(2),
                     usdPrice,
                   },
                 ] as [TokenId, FtRegistryEntry];
               }),
 
-            ...tokenContractAccountIds.map(async (contract_account_id) => {
-              const ftClient = naxiosInstance.contractApi({
-                contractId: contract_account_id,
-                cache: new MemoryCache({ expirationTime: 600 }),
-              });
+            ...MANUALLY_LISTED_ACCOUNT_IDS.concat(tokenContractAccountIds).map(
+              async (contract_account_id) => {
+                const ftClient = naxiosInstance.contractApi({
+                  contractId: contract_account_id,
+                  cache: new MemoryCache({ expirationTime: 600 }),
+                });
 
-              const metadata = await ftClient
-                .view<{}, FungibleTokenMetadata>("ft_metadata")
-                .catch(() => undefined);
+                const metadata = await ftClient
+                  .view<{}, FungibleTokenMetadata>("ft_metadata")
+                  .catch(() => undefined);
 
-              const [balanceRaw, usdPrice] =
-                metadata === undefined
-                  ? [undefined, undefined]
-                  : await Promise.all([
-                      ftClient
-                        .view<{ account_id: AccountId }, string>(
-                          "ft_balance_of",
+                const [balanceRaw, usdPrice] =
+                  metadata === undefined
+                    ? [undefined, undefined]
+                    : await Promise.all([
+                        ftClient
+                          .view<{ account_id: AccountId }, string>(
+                            "ft_balance_of",
 
-                          {
-                            args: {
-                              account_id: walletApi.accountId ?? "unknown",
+                            {
+                              args: {
+                                account_id: walletApi.accountId ?? "unknown",
+                              },
                             },
-                          },
-                        )
-                        .catch(() => undefined),
+                          )
+                          .catch(() => undefined),
 
-                      pricesClient
-                        .getSuperPrecisePrice(
-                          { token_id: contract_account_id },
-                          PRICES_REQUEST_CONFIG.axios,
-                        )
-                        .then(({ data }) => Big(data))
-                        .catch(() => undefined),
-                    ]);
+                        pricesClient
+                          .getSuperPrecisePrice(
+                            { token_id: contract_account_id },
+                            PRICES_REQUEST_CONFIG.axios,
+                          )
+                          .then(({ data }) => Big(data))
+                          .catch(() => undefined),
+                      ]);
 
-              const balanceFloat =
-                metadata === undefined || balanceRaw === undefined
-                  ? undefined
-                  : bigStringToFloat(balanceRaw, metadata.decimals);
+                const balance =
+                  metadata === undefined || balanceRaw === undefined
+                    ? undefined
+                    : u128StringToBigNum(balanceRaw, metadata.decimals);
 
-              const balance = balanceFloat ? Big(balanceFloat) : undefined;
+                const balanceFloat =
+                  metadata === undefined || balanceRaw === undefined
+                    ? undefined
+                    : u128StringToFloat(balanceRaw, metadata.decimals);
 
-              return metadata === undefined
-                ? null
-                : ([
-                    contract_account_id,
-                    {
+                const balanceUsd =
+                  balance?.gt(0) && usdPrice?.gt(0) ? balance?.mul(usdPrice) : Big(0);
+
+                return metadata === undefined
+                  ? null
+                  : ([
                       contract_account_id,
-                      metadata,
-                      balance,
-                      balanceFloat,
+                      {
+                        contract_account_id,
+                        metadata,
+                        balance,
+                        balanceFloat,
+                        balanceUsd,
 
-                      balanceUsdApproximation:
-                        balance?.gt(0) && usdPrice?.gt(0)
-                          ? `~$ ${usdPrice.mul(balance).toFixed(2)}`
-                          : null,
+                        balanceUsdStringApproximation:
+                          balance?.gt(0) && usdPrice?.gt(0)
+                            ? `~$ ${usdPrice.mul(balance).toFixed(2)}`
+                            : "$ 0",
 
-                      usdPrice,
-                    },
-                  ] as [TokenId, FtRegistryEntry]);
-            }),
+                        usdPrice,
+                      },
+                    ] as [TokenId, FtRegistryEntry]);
+              },
+            ),
           ]).then(
             piped(
               filter(isNonNull),

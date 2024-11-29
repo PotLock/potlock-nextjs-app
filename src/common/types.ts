@@ -39,25 +39,36 @@ export type EnvConfig = {
   network: Network;
   contractMetadata: { version: string; repoUrl: string };
   indexer: { api: { endpointUrl: string } };
-  features: FeatureRegistry;
+
+  core: {
+    campaigns: { contract: { accountId: string } };
+    donation: { contract: ContractConfig };
+    lists: { contract: ContractConfig };
+    potFactory: { contract: ContractConfig };
+    sybil: { app: { url: string }; contract: ContractConfig };
+    voting: { contract: ContractConfig };
+  };
+
+  social: { app: { url: string }; contract: ContractConfig };
 
   deFi: {
+    metapool: {
+      liquidStakingContract: ContractConfig;
+    };
+
     refFinance: {
       exchangeContract: ContractConfig;
     };
   };
 
-  campaigns: { contract: { accountId: string } };
-  donation: { contract: ContractConfig };
-  lists: { contract: ContractConfig };
-  potFactory: { contract: ContractConfig };
-  sybil: { app: { url: string }; contract: ContractConfig };
-  social: { app: { url: string }; contract: ContractConfig };
+  features: FeatureRegistry;
 };
 
 export type { infer as FromSchema } from "zod";
 
 export type UnionFromStringList<ListOfMembers extends string[]> = ListOfMembers[number];
+
+export type U128String = string;
 
 export type ClientConfig = { swr?: SWRConfiguration };
 

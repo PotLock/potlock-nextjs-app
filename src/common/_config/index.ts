@@ -9,28 +9,31 @@ export const {
 
   contractMetadata: { version: CONTRACT_SOURCECODE_VERSION, repoUrl: CONTRACT_SOURCECODE_REPO_URL },
 
-  features: FEATURE_REGISTRY,
-
-  campaigns: {
-    contract: { accountId: CAMPAIGNS_CONTRACT_ACCOUNT_ID },
-  },
-
-  deFi: {
-    refFinance: {
-      exchangeContract: { accountId: REF_EXCHANGE_CONTRACT_ACCOUNT_ID },
+  core: {
+    campaigns: {
+      contract: { accountId: CAMPAIGNS_CONTRACT_ACCOUNT_ID },
     },
-  },
 
-  donation: {
-    contract: { accountId: DONATION_CONTRACT_ACCOUNT_ID },
-  },
+    donation: {
+      contract: { accountId: DONATION_CONTRACT_ACCOUNT_ID },
+    },
 
-  lists: {
-    contract: { accountId: LISTS_CONTRACT_ACCOUNT_ID },
-  },
+    lists: {
+      contract: { accountId: LISTS_CONTRACT_ACCOUNT_ID },
+    },
 
-  potFactory: {
-    contract: { accountId: POT_FACTORY_CONTRACT_ACCOUNT_ID },
+    potFactory: {
+      contract: { accountId: POT_FACTORY_CONTRACT_ACCOUNT_ID },
+    },
+
+    sybil: {
+      app: { url: SYBIL_APP_LINK_URL },
+      contract: { accountId: SYBIL_CONTRACT_ACCOUNT_ID },
+    },
+
+    voting: {
+      contract: { accountId: VOTING_CONTRACT_ACCOUNT_ID },
+    },
   },
 
   social: {
@@ -38,10 +41,17 @@ export const {
     contract: { accountId: SOCIAL_CONTRACT_ACCOUNT_ID },
   },
 
-  sybil: {
-    app: { url: SYBIL_APP_LINK_URL },
-    contract: { accountId: SYBIL_CONTRACT_ACCOUNT_ID },
+  deFi: {
+    metapool: {
+      liquidStakingContract: { accountId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID },
+    },
+
+    refFinance: {
+      exchangeContract: { accountId: REF_EXCHANGE_CONTRACT_ACCOUNT_ID },
+    },
   },
+
+  features: FEATURE_REGISTRY,
 } = getEnvConfig();
 
 export const BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL =
