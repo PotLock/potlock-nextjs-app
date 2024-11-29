@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { Big } from "big.js";
 import { prop } from "remeda";
 
 import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
@@ -114,6 +115,7 @@ export const usePotUserApplicationClearance = ({
   });
 
   // TODO: Get voting power from the snapshot
+  const votingPower = Big(0);
 
   // TODO: calculate this
   const metaPoolDaoRpgfScore = 0;
@@ -129,7 +131,7 @@ export const usePotUserApplicationClearance = ({
               isSatisfied: stNear?.balanceUsd?.gte(25) ?? false,
             },
 
-            { title: "Voting power 5000 or more", isSatisfied: false },
+            { title: "Voting power 5000 or more", isSatisfied: votingPower.gte(5000) },
 
             {
               title: "A total of 10 points accumulated for the RPGF score",
@@ -144,7 +146,7 @@ export const usePotUserApplicationClearance = ({
       isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
       error: null,
     };
-  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd]);
+  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd, votingPower]);
 };
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
