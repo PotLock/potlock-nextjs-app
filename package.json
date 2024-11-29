@@ -9,6 +9,7 @@
     "lint": "next lint",
     "format": "yarn lint --fix ./",
     "typecheck": "tsc --noEmit",
+    "generate:contract-clients": "near2ts ./src/common/contracts/core/voting/abi.json",
     "generate:api-clients": "orval --config api.config.cjs",
     "generate:clients": "concurrently 'yarn generate:api-clients'",
     "generate:css": "unocss 'src/**/*.tsx' --out-file=src/common/ui/styles/uno.generated.css --write-transformed",
