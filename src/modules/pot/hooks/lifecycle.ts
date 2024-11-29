@@ -72,5 +72,17 @@ export const usePotLifecycle = ({ potId }: PotLifecycleCalculationInputs) => {
     } else return [];
   }, [isVotingEnabled, now, pot]);
 
+  // const getActiveStageIndex = () => {
+  //   let index = 0;
+  //
+  //   stages.forEach((status, idx) => {
+  //     if (status.started && !status.completed) {
+  //       index = idx;
+  //     }
+  //   });
+  //
+  //   return index === null ? 3 : index;
+  // };
+
   return stages;
 };

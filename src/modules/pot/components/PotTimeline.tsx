@@ -9,11 +9,12 @@ import { cn } from "@/common/ui/utils";
 import { PotTimelineFragment } from "./PotTimelineFragment";
 import { usePotLifecycle } from "../hooks/lifecycle";
 
+const containerHeight = 181;
+
 /**
  * @deprecated convert to div with Tailwind classes
  */
 const Container = styled.div<{
-  containerHeight: number;
   showActiveState: number;
 }>`
   display: flex;
@@ -31,7 +32,7 @@ const Container = styled.div<{
 
   @media only screen and (max-width: 1280px) {
     justify-content: left;
-    height: ${(props) => props.containerHeight / 4}px;
+    height: ${containerHeight / 4}px;
     overflow: hidden;
 
     .mobile-selected {
@@ -89,7 +90,6 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
     return index;
   };
 
-  const containerHeight = 181;
   const showActiveState = getIndexOfActive() * (containerHeight / 4);
 
   return (
@@ -102,9 +102,8 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
       )}
     >
       <Container
-        containerHeight={containerHeight}
         showActiveState={showActiveState}
-        style={isMobileMenuActive ? { height: containerHeight + "px" } : {}}
+        style={isMobileMenuActive ? { height: `${containerHeight}px` } : {}}
       >
         <div
           className={cn("mobile-selected w-full", {
