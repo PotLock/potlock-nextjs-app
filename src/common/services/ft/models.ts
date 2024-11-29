@@ -26,7 +26,7 @@ export type FtRegistryEntry = {
   balance?: Big.Big;
   balanceFloat?: number;
   balanceUsd?: Big.Big;
-  balanceUsdStringApproximation?: string | null;
+  balanceUsdStringApproximation?: string;
   usdPrice?: Big.Big;
 };
 
@@ -152,6 +152,9 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                     ? undefined
                     : u128StringToFloat(balanceRaw, metadata.decimals);
 
+                const balanceUsd =
+                  balance?.gt(0) && usdPrice?.gt(0) ? balance?.mul(usdPrice) : Big(0);
+
                 return metadata === undefined
                   ? null
                   : ([
@@ -161,14 +164,12 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
                         metadata,
                         balance,
                         balanceFloat,
-
-                        balanceUsd:
-                          balance?.gt(0) && usdPrice?.gt(0) ? balance?.mul(usdPrice) : undefined,
+                        balanceUsd,
 
                         balanceUsdStringApproximation:
                           balance?.gt(0) && usdPrice?.gt(0)
                             ? `~$ ${usdPrice.mul(balance).toFixed(2)}`
-                            : null,
+                            : "$ 0",
 
                         usdPrice,
                       },

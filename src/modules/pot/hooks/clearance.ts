@@ -4,7 +4,6 @@ import { prop } from "remeda";
 
 import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { MPDAO_TOKEN_CONTRACT_ACCOUNT_ID } from "@/common/constants";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
 import { ftService } from "@/common/services";
 import { AccessControlClearanceCheckResult } from "@/modules/access-control";
@@ -114,7 +113,7 @@ export const usePotUserApplicationClearance = ({
     tokenId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
   });
 
-  console.log(stNear?.usdPrice?.toFixed(2));
+  // TODO: Get voting power from the snapshot
 
   // TODO: calculate this
   const metaPoolDaoRpgfScore = 0;
@@ -125,7 +124,11 @@ export const usePotUserApplicationClearance = ({
 
       ...(isVotingBasedPot
         ? [
-            { title: "An equivalent of 25 USD staked in NEAR on Meta Pool", isSatisfied: false },
+            {
+              title: "An equivalent of 25 USD staked in NEAR on Meta Pool",
+              isSatisfied: stNear?.balanceUsd?.gte(25) ?? false,
+            },
+
             { title: "Voting power 5000 or more", isSatisfied: false },
 
             {
@@ -141,7 +144,7 @@ export const usePotUserApplicationClearance = ({
       isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
       error: null,
     };
-  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, metaPoolDaoRpgfScore]);
+  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd]);
 };
 
 // TODO: refactor to support multi-mechanism for the V2 milestone

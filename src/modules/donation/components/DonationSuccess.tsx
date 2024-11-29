@@ -13,7 +13,7 @@ import {
   POTLOCK_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
-import { u128StringToFloat, truncate } from "@/common/lib";
+import { truncate, u128StringToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import {
   Button,
