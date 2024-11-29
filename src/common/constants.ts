@@ -43,6 +43,7 @@ export const APP_METADATA: Metadata & {
   },
 };
 
+export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
 export const NATIVE_TOKEN_ID = "near";
 export const NATIVE_TOKEN_DECIMALS = 24;
 

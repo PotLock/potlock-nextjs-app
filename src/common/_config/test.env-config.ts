@@ -1,4 +1,4 @@
-import { EnvConfig } from "@/common/types";
+import { EnvConfig, FeatureId } from "@/common/types";
 
 export const envConfig: EnvConfig = {
   network: "testnet" as const,
@@ -6,6 +6,32 @@ export const envConfig: EnvConfig = {
   contractMetadata: {
     version: "0.1.0",
     repoUrl: "https://github.com/PotLock/core",
+  },
+
+  features: {
+    [FeatureId.DirectFtDonation]: {
+      id: FeatureId.DirectFtDonation,
+      name: "Direct FT donation",
+
+      /**
+       * The implementation is not finished yet
+       */
+      isEnabled: false,
+    },
+
+    [FeatureId.DirectNativeTokenDonation]: {
+      id: FeatureId.DirectNativeTokenDonation,
+      name: "Direct native token donation",
+      isEnabled: true,
+    },
+  },
+
+  deFi: {
+    refFinance: {
+      exchangeContract: {
+        accountId: "ref-finance-101.testnet",
+      },
+    },
   },
 
   donation: {

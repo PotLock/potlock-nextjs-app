@@ -1,7 +1,8 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 import { values } from "remeda";
 
+import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ftService } from "@/common/services";
@@ -47,6 +48,8 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     "potAccountId",
   ]);
 
+  const { data: token } = ftService.useRegisteredToken({ tokenId });
+
   const {
     isLoading: isRecipientDataLoading,
     data: recipient,
@@ -56,13 +59,14 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
-  const isFtSupportAvailable = false; // temporarily disabled as this feature is WIP
-  // !isCampaignDonation && allocationStrategy === DonationAllocationStrategyEnum.full;
+  const isFtSupportAvailable =
+    FEATURE_REGISTRY.DirectFtDonation.isEnabled &&
+    !isCampaignDonation &&
+    allocationStrategy === DonationAllocationStrategyEnum.full;
 
-  const totalAmountUsdValue = ftService.useTokenUsdDisplayValue({
-    amountFloat: amount,
-    tokenId,
-  });
+  const totalAmountUsdValue = token?.usdPrice
+    ? `~$ ${token.usdPrice.mul(amount).toFixed(2)}`
+    : null;
 
   const strategySelector = useMemo(
     () =>

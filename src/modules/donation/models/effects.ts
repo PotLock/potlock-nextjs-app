@@ -1,7 +1,10 @@
+import { ONE_YOCTO } from "@builddao/near-social-js";
 import axios from "axios";
+import { Big } from "big.js";
 
-import { RPC_NODE_URL, walletApi } from "@/common/api/near";
-import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near";
+import { FULL_TGAS, NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   CampaignDonation,
   DirectCampaignDonationArgs,
@@ -14,7 +17,7 @@ import {
   potClient,
 } from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
-import { AccountId, TxExecutionStatus } from "@/common/types";
+import { AccountId, FungibleTokenMetadata, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
@@ -66,147 +69,181 @@ export const effects = (dispatch: AppDispatcher) => ({
     const isListDonation = listId !== undefined;
     const isCampaignDonation = campaignId !== undefined;
 
-    const requiredDepositFloat =
-      /* Additional 0.0001 NEAR per message character */
-      DONATION_BASE_STORAGE_DEPOSIT_FLOAT + 0.0001 * (message?.length ?? 0);
-
-    // const storageBalanceBounds = Near.view<any>(
-    //   selectedDenomination.id,
-    //   "storage_balance_bounds",
-    //   {},
-    // );
-
-    // const storageBalanceProtocolFeeRecipient = Near.view<any>(
-    //   selectedDenomination.id,
-    //   "storage_balance_of",
-    //   {
-    //     account_id: protocolFeeRecipientAccount,
-    //   },
-    // );
-
-    // const storageBalanceReferrer = referrerId
-    //   ? Near.view<any>(selectedDenomination.id, "storage_balance_of", {
-    //       account_id: referrerId,
-    //     })
-    //   : null;
-
-    // const storageBalanceDonationContract = Near.view<any>(
-    //   selectedDenomination.id,
-    //   "storage_balance_of",
-    //   {
-    //     account_id: DONATION_CONTRACT_ACCOUNT_ID,
-    //   },
-    // );
-
     if (isSingleProjectDonation) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
+          const { protocol_fee_recipient_account } = await donationClient.getConfig();
+
           if (tokenId !== NATIVE_TOKEN_ID) {
             console.log("FT direct donation mode ON");
 
-            // const transactions = [];
+            const tokenClient = naxiosInstance.contractApi({
+              contractId: tokenId,
+            });
 
-            // // adding storage deposit
-            // transactions.push({
-            //   contractName: DONATION_CONTRACT_ACCOUNT_ID,
-            //   methodName: "storage_deposit",
-            //   args: {},
-            //   deposit: Big(requiredDepositFloat).mul(Big(10).pow(24)),
-            //   gas: "100000000000000",
-            // });
+            const requiredDepositNear = Big(DONATION_BASE_STORAGE_DEPOSIT_FLOAT).plus(
+              /* Additional 0.0001 NEAR per message character */
+              Big(0.0001).mul(Big(message?.length ?? 0)),
+            );
 
-            // const { min, max } = storageBalanceBounds;
-            // const storageMaxBig = Big(max);
+            const referrerStorageBalance = referrerAccountId
+              ? await tokenClient.view<
+                  { account_id: AccountId },
+                  { total: string; available: string }
+                >("storage_balance_of", {
+                  args: { account_id: referrerAccountId },
+                })
+              : null;
 
-            // // check storage balance for each account
-            // if (
-            //   !bypassProtocolFee &&
-            //   (!storageBalanceProtocolFeeRecipient ||
-            //     Big(storageBalanceProtocolFeeRecipient.total).lt(storageMaxBig))
-            // ) {
-            //   transactions.push({
-            //     contractName: tokenId,
-            //     methodName: "storage_deposit",
-            //     args: { account_id: protocolFeeRecipientAccount },
-            //     deposit: storageMaxBig.minus(
-            //       Big(storageBalanceProtocolFeeRecipient || 0),
-            //     ),
-            //     gas: "100000000000000",
-            //   });
-            // }
+            const [
+              ftMetadata = null,
+              ftStorageBalanceBounds = null,
+              protocolFeeRecipientFtStorageBalance = null,
+              donationContractFtStorageBalance = null,
+              recipientFtStorageBalance = null,
+            ] = await Promise.all([
+              tokenClient.view<{}, FungibleTokenMetadata>("ft_metadata"),
 
-            // // referrer
-            // if (
-            //   referrerAccountId &&
-            //   (!storageBalanceReferrer ||
-            //     Big(storageBalanceReferrer.total).lt(storageMaxBig))
-            // ) {
-            //   transactions.push({
-            //     contractName: tokenId,
-            //     methodName: "storage_deposit",
-            //     args: { account_id: referrerAccountId },
-            //     deposit: storageMaxBig.minus(Big(storageBalanceReferrer || 0)),
-            //     gas: "100000000000000",
-            //   });
-            // }
+              tokenClient.view<{}, { min: string; max: string }>("storage_balance_bounds"),
 
-            // // donation contract
-            // if (
-            //   !storageBalanceDonationContract ||
-            //   Big(storageBalanceDonationContract.total).lt(storageMaxBig)
-            // ) {
-            //   transactions.push({
-            //     contractName: tokenId,
-            //     methodName: "storage_deposit",
-            //     args: { account_id: constants.DONATION_CONTRACT_ID },
-            //     deposit: storageMaxBig.minus(
-            //       Big(storageBalanceDonationContract || 0),
-            //     ),
-            //     gas: "100000000000000",
-            //   });
-            // }
+              tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
+                "storage_balance_of",
+                {
+                  args: { account_id: protocol_fee_recipient_account },
+                },
+              ),
 
-            // // project (can't do this till this point)
-            // Near.asyncView(tokenId, "storage_balance_of", {
-            //   account_id: params.accountId,
-            // }).then((balance) => {
-            //   if (!balance || Big(balance.total).lt(storageMaxBig)) {
-            //     transactions.push({
-            //       contractName: tokenId,
-            //       methodName: "storage_deposit",
-            //       args: { account_id: params.accountId },
-            //       deposit: storageMaxBig.minus(Big(balance || 0)),
-            //       gas: "100000000000000",
-            //     });
-            //   }
+              tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
+                "storage_balance_of",
+                {
+                  args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
+                },
+              ),
 
-            //   // add donation transaction
-            //   transactions.push({
-            //     contractName: tokenId,
-            //     methodName: "ft_transfer_call",
-            //     args: {
-            //       receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
+              tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
+                "storage_balance_of",
+                {
+                  args: { account_id: params.accountId },
+                },
+              ),
+            ]);
 
-            //       amount: Big(amount)
-            //         .mul(new Big(10).pow(selectedDenomination.decimals))
-            //         .toFixed(0),
+            const maxFtStorageBalance =
+              ftStorageBalanceBounds === null ? null : Big(ftStorageBalanceBounds.max);
 
-            //       msg: JSON.stringify({
-            //         recipient_id: params.accountId,
-            //         referrer_id: referrerAccountId || null,
-            //         bypass_protocol_fee: bypassProtocolFee,
-            //         message,
-            //       }),
-            //     },
+            const transactions = [
+              /**
+               *? FT storage balance replenishment for protocol fee recipient account
+               */
+              ...(!bypassProtocolFee &&
+              (protocolFeeRecipientFtStorageBalance === null ||
+                (maxFtStorageBalance !== null &&
+                  Big(protocolFeeRecipientFtStorageBalance.total).lt(maxFtStorageBalance)))
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: protocol_fee_recipient_account },
 
-            //     deposit: "1",
-            //     gas: "300000000000000",
-            //   });
+                      deposit: maxFtStorageBalance?.minus(
+                        Big(protocolFeeRecipientFtStorageBalance?.total ?? 0),
+                      ),
 
-            //   Near.call(transactions);
-            // });
+                      gas: "100000000000000",
+                    },
+                  ]
+                : []),
 
-            return void "WIP";
+              /**
+               *? FT contract storage balance replenishment for referrer account
+               */
+              ...(referrerAccountId &&
+              (referrerStorageBalance === null ||
+                (maxFtStorageBalance !== null &&
+                  Big(referrerStorageBalance.total).lt(maxFtStorageBalance)))
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: referrerAccountId },
+
+                      deposit: maxFtStorageBalance?.minus(Big(referrerStorageBalance?.total || 0)),
+
+                      gas: "100000000000000",
+                    },
+                  ]
+                : []),
+
+              /**
+               *? FT contract storage balance replenishment for donation contract account
+               */
+              ...(donationContractFtStorageBalance === null ||
+              (maxFtStorageBalance !== null &&
+                Big(donationContractFtStorageBalance.total).lt(maxFtStorageBalance))
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
+
+                      deposit: maxFtStorageBalance?.minus(
+                        Big(donationContractFtStorageBalance?.total || 0),
+                      ),
+
+                      gas: "100000000000000",
+                    },
+                  ]
+                : []),
+
+              /**
+               *? FT contract storage balance replenishment for donation recipient account
+               */
+              ...(recipientFtStorageBalance === null ||
+              (maxFtStorageBalance !== null &&
+                Big(recipientFtStorageBalance.total).lt(maxFtStorageBalance))
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: params.accountId },
+
+                      deposit: maxFtStorageBalance?.minus(
+                        Big(recipientFtStorageBalance?.total || 0),
+                      ),
+
+                      gas: "100000000000000",
+                    },
+                  ]
+                : []),
+
+              {
+                method: "ft_transfer_call",
+
+                args: {
+                  receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
+
+                  amount: Big(amount)
+                    .mul(new Big(10).pow(ftMetadata?.decimals ?? NATIVE_TOKEN_DECIMALS))
+                    .toFixed(0),
+
+                  msg: JSON.stringify({
+                    recipient_id: params.accountId,
+                    referrer_id: referrerAccountId || null,
+                    bypass_protocol_fee: bypassProtocolFee,
+                    message,
+                  }),
+                },
+
+                deposit: ONE_YOCTO,
+                gas: FULL_TGAS,
+              },
+            ];
+
+            console.log(transactions);
+
+            return void donationClient
+              .storage_deposit(requiredDepositNear.mul(Big(10).pow(24)).toString())
+              .then((updatedStorageBalance) =>
+                // @ts-expect-error WIP
+                tokenClient.callMultiple(transactions),
+              )
+              .catch((error) => dispatch.donation.failure(error));
           } else {
             const args: DirectDonationArgs = {
               recipient_id: params.accountId,
@@ -224,7 +261,7 @@ export const effects = (dispatch: AppDispatcher) => ({
 
         case DonationAllocationStrategyEnum.share: {
           if (!params.potAccountId) {
-            return void dispatch.donation.failure(new Error("No pot selected"));
+            return void dispatch.donation.failure(new Error("No pot selected."));
           }
 
           const args: PotDonationArgs = {
