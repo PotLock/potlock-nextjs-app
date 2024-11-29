@@ -7,14 +7,16 @@ export type Wallet = Omit<WalletManager, "changeWalletStatus" | "status">;
 
 export type AuthSession =
   | {
-      isSignedIn: true;
       accountId: AccountId;
       account?: Account;
+      isSignedIn: true;
+      isAccountInfoLoading: boolean;
       isVerifiedPublicGoodsProvider: boolean;
     }
   | {
-      isSignedIn: false;
       accountId: undefined;
       account: undefined;
+      isSignedIn: false;
+      isAccountInfoLoading: false;
       isVerifiedPublicGoodsProvider: false;
     };

@@ -1,5 +1,22 @@
 import { styled } from "styled-components";
 
+import { Progress, ProgressProps } from "@/common/ui/components";
+
+import { PotLifecycleStage } from "../types";
+
+export type PotLifecycleStageProgressIndicatorProps = Omit<PotLifecycleStage, "progress"> & {
+  progressPercent: ProgressProps["value"];
+};
+
+export const PotLifecycleStageProgressIndicator: React.FC<
+  PotLifecycleStageProgressIndicatorProps
+> = ({ started, progressPercent, completed }) => (
+  <Progress
+    value={progressPercent}
+    bgColor={completed ? "#629D13" : started ? "#7B7B7B" : "#C7C7C7"}
+  />
+);
+
 /**
  * @deprecated convert to Tailwind classes
  */
@@ -27,17 +44,15 @@ const Wrapper = styled.div`
   }
 `;
 
-export type PotTimelineFragmentProps = {
+export type PotLifecycleStageCircularProgressIndicatorProps = {
   progress: number;
   completed: boolean;
   started: boolean;
 };
 
-export const PotTimelineFragment: React.FC<PotTimelineFragmentProps> = ({
-  progress,
-  completed,
-  started,
-}) => (
+export const PotLifecycleStageCircularProgressIndicator: React.FC<
+  PotLifecycleStageCircularProgressIndicatorProps
+> = ({ progress, completed, started }) => (
   <Wrapper>
     <svg viewBox="0 0 160 160" className="circle">
       <circle

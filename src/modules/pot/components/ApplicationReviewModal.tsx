@@ -10,7 +10,7 @@ import {
   FormField,
   Textarea,
 } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/Spinner";
+import Spinner from "@/common/ui/components/atoms/spinner";
 
 import { useApplicationReviewForm } from "../hooks";
 

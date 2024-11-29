@@ -12,41 +12,43 @@ import { AuthSession } from "../types";
 
 export const useAuthSession = (): AuthSession => {
   const { isSignedIn, wallet } = useWallet();
-  const { actAsDao } = useGlobalStoreSelector(prop("nav"));
+  const { actAsDao, accountId: lastActiveAccountId } = useGlobalStoreSelector(prop("nav"));
   const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
 
-  const { data } = indexer.useListRegistrations({
-    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
-    page_size: 9999,
-  });
-
   const accountId: AccountId | undefined = useMemo(
-    () => (asDao ? actAsDao.defaultAddress : wallet?.accountId),
-    [actAsDao.defaultAddress, asDao, wallet?.accountId],
+    () => (asDao ? actAsDao.defaultAddress : (wallet?.accountId ?? lastActiveAccountId)),
+    [actAsDao.defaultAddress, asDao, lastActiveAccountId, wallet?.accountId],
   );
 
-  const { registrant, status } = useMemo(
-    () =>
-      data?.results?.find(({ registrant }) => registrant.id === accountId) ?? {
-        registrant: undefined,
-        status: undefined,
-      },
+  const { isLoading: isAccountListRegistryLoading, data: accountListRegistrations } =
+    indexer.useAccountListRegistrations({
+      accountId,
+      page_size: 9999,
+    });
 
-    [accountId, data?.results],
+  const { registrant: publicGoodsRegistryAccount, status } = useMemo(
+    () =>
+      accountListRegistrations?.results?.find(
+        ({ list }) => list.id === PUBLIC_GOODS_REGISTRY_LIST_ID,
+      ) ?? { registrant: undefined, status: undefined },
+
+    [accountListRegistrations?.results],
   );
 
   if (isSignedIn && accountId) {
     return {
-      isSignedIn: true,
       accountId,
-      account: registrant,
+      account: publicGoodsRegistryAccount,
+      isSignedIn: true,
+      isAccountInfoLoading: isAccountListRegistryLoading,
       isVerifiedPublicGoodsProvider: status === ListRegistrationStatus.Approved,
     };
   } else {
     return {
-      isSignedIn: false,
       accountId: undefined,
       account: undefined,
+      isSignedIn: false,
+      isAccountInfoLoading: false,
       isVerifiedPublicGoodsProvider: false,
     };
   }

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Big } from "big.js";
 import { prop } from "remeda";
 
 import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
@@ -109,22 +108,25 @@ export const usePotUserPermissions = ({ potId }: ByPotId) => {
 export const usePotUserApplicationClearance = ({
   potId,
 }: ByPotId): AccessControlClearanceCheckResult => {
-  const { accountId: _, isVerifiedPublicGoodsProvider } = useAuthSession();
+  const { accountId: _, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useAuthSession();
+
   const isVotingBasedPot = isPotVotingBased({ potId });
 
   const { data: stNear } = ftService.useRegisteredToken({
     tokenId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
   });
 
-  // TODO: Get voting power from the snapshot
+  // TODO: Get voting power from the snapshot endpoint's real data
+  // TODO: Get voting power from the snapshot GH gist
   const votingPowerU128StringMock = "0";
-
-  // TODO: calculate this
-  const metaPoolDaoRpgfScore = 0;
 
   return useMemo(() => {
     const requirements = [
-      { title: "Verified Project on Potlock", isSatisfied: isVerifiedPublicGoodsProvider },
+      {
+        title: "Verified Project on Potlock",
+        isFulfillmentAssessmentPending: isAccountInfoLoading,
+        isSatisfied: isVerifiedPublicGoodsProvider,
+      },
 
       ...(isVotingBasedPot
         ? [
@@ -135,15 +137,12 @@ export const usePotUserApplicationClearance = ({
 
             {
               title: "Voting power 5000 or more",
+              hasFulfillmentAssessmentInputs: false,
+
               isSatisfied: u128StringToBigNum(
                 votingPowerU128StringMock,
                 METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
               ).gte(5000),
-            },
-
-            {
-              title: "A total of 10 points accumulated for the RPGF score",
-              isSatisfied: metaPoolDaoRpgfScore >= 10,
             },
           ]
         : []),
@@ -154,7 +153,7 @@ export const usePotUserApplicationClearance = ({
       isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
       error: null,
     };
-  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd]);
+  }, [isAccountInfoLoading, isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd]);
 };
 
 // TODO: refactor to support multi-mechanism for the V2 milestone

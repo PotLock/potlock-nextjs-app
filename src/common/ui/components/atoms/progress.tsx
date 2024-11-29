@@ -4,7 +4,9 @@ import * as ProgressPrimitive from "@radix-ui/react-progress";
 
 import { cn } from "../../utils";
 
-const Progress = forwardRef<
+export type ProgressProps = ProgressPrimitive.ProgressProps;
+
+export const Progress = forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & {
     bgColor?: string;
@@ -24,6 +26,5 @@ const Progress = forwardRef<
     />
   </ProgressPrimitive.Root>
 ));
-Progress.displayName = ProgressPrimitive.Root.displayName;
 
-export { Progress };
+Progress.displayName = ProgressPrimitive.Root.displayName;
