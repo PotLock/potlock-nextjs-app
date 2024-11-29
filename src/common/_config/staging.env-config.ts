@@ -1,4 +1,4 @@
-import { EnvConfig } from "@/common/types";
+import { EnvConfig, FeatureId } from "@/common/types";
 
 export const envConfig: EnvConfig = {
   network: "mainnet" as const,
@@ -8,25 +8,35 @@ export const envConfig: EnvConfig = {
     repoUrl: "https://github.com/PotLock/core",
   },
 
-  donation: {
-    contract: { accountId: "donate.staging.potlock.near" },
+  indexer: {
+    api: { endpointUrl: "https://dev.potlock.io" },
   },
 
-  campaigns: {
-    contract: { accountId: "campaigns.staging.potlock.near" },
-  },
+  core: {
+    donation: {
+      contract: { accountId: "donate.staging.potlock.near" },
+    },
 
-  lists: {
-    contract: { accountId: "lists.staging.potlock.near" },
-  },
+    campaigns: {
+      contract: { accountId: "campaigns.staging.potlock.near" },
+    },
 
-  potFactory: {
-    contract: { accountId: "potfactory.staging.potlock.near" },
-  },
+    lists: {
+      contract: { accountId: "lists.staging.potlock.near" },
+    },
 
-  sybil: {
-    app: { url: "https://staging.nada.bot" },
-    contract: { accountId: "v2new.staging.nadabot.near" },
+    potFactory: {
+      contract: { accountId: "potfactory.staging.potlock.near" },
+    },
+
+    sybil: {
+      app: { url: "https://staging.nada.bot" },
+      contract: { accountId: "v2new.staging.nadabot.near" },
+    },
+
+    voting: {
+      contract: { accountId: "v1.voting.potlock.near" },
+    },
   },
 
   social: {
@@ -34,7 +44,35 @@ export const envConfig: EnvConfig = {
     contract: { accountId: "social.near" },
   },
 
-  indexer: {
-    api: { endpointUrl: "https://dev.potlock.io" },
+  deFi: {
+    metapool: {
+      liquidStakingContract: {
+        accountId: "meta-pool.near",
+      },
+    },
+
+    refFinance: {
+      exchangeContract: {
+        accountId: "v2.ref-finance.near",
+      },
+    },
+  },
+
+  features: {
+    [FeatureId.DirectFtDonation]: {
+      id: FeatureId.DirectFtDonation,
+      name: "Direct FT donation",
+
+      /**
+       * The implementation is not finished yet
+       */
+      isEnabled: false,
+    },
+
+    [FeatureId.DirectNativeTokenDonation]: {
+      id: FeatureId.DirectNativeTokenDonation,
+      name: "Direct native token donation",
+      isEnabled: true,
+    },
   },
 };
