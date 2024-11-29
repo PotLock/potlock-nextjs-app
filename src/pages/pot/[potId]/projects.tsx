@@ -7,7 +7,7 @@ import { InfiniteScroll, SearchBar } from "@/common/ui/components";
 import { PotLayout } from "@/modules/pot";
 import { Profile } from "@/modules/profile/models";
 import { ProjectCard } from "@/modules/project";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 // import { usePotApplications } from "@/common/api/potlock/hooks";
 
 const MAXIMUM_CARDS_PER_INDEX = 9;
@@ -21,7 +21,7 @@ const ProjectsTab = () => {
   const [potProjects, setPotProjects] = useState<Application[]>([]);
   const [filteredPotProjects, setFilteredPotProjects] = useState<Application[]>([]);
   const [search, setSearch] = useState("");
-  const registrationsProfile = useTypedSelector((state) => state.profiles);
+  const registrationsProfile = useGlobalStoreSelector((state) => state.profiles);
   const [index, setIndex] = useState(1);
 
   useEffect(() => {

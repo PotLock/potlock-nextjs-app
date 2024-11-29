@@ -1,4 +1,4 @@
-# PotLock - NextJS frontend
+# PotLock Next
 
 PotLock frontend application built on NextJS featuring project exploration, pages, donations, and Pots (quadratic funding for now) on the NEAR Blockchain
 
@@ -98,7 +98,7 @@ aspects of the application within each module:
 │   │   ├── index.ts <--- # Module entry point for public exports ( available for external use )
 │   │   │
 │   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
-│   │   │                       export const POTLOCK_REGISTRY_LIST_ID = 1
+│   │   │                       export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1
 │   │   │
 │   │   ├── models.ts <--- # Feature state definitions ( See link 3. )
 │   │   │                  # If this file grows over 300 LoC, consider turning it into a directory

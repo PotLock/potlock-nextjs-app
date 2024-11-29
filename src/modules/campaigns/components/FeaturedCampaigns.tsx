@@ -11,7 +11,7 @@ import {
   CarouselApi,
   CarouselContent,
   CarouselItem,
-} from "@/common/ui/components/carousel";
+} from "@/common/ui/components/molecules/carousel";
 import { DonateToCampaignProjects } from "@/modules/donation";
 import { useProfileData } from "@/modules/profile";
 

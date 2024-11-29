@@ -19,14 +19,14 @@ import {
 import { cn } from "@/common/ui/utils";
 import { validateUserInDao } from "@/modules/core";
 import { addOrRemoveDaoAddress, markDaoAsDefault, toggleDao } from "@/modules/profile/utils";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 const ActAsDao = () => {
   const [inputActive, setInputActive] = useState(false);
   const [daoAddress, setDaoAddress] = useState("");
   const [daoError, setDaoError] = useState("");
 
-  const { accountId, actAsDao } = useTypedSelector((state) => state.nav);
+  const { accountId, actAsDao } = useGlobalStoreSelector((state) => state.nav);
 
   const { addresses, defaultAddress, toggle } = actAsDao;
 

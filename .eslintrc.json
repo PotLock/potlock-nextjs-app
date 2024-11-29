@@ -56,9 +56,7 @@
         "allowSeparatedGroups": true
       }
     ],
-    // turn on errors for missing imports
     "import/no-unresolved": "error",
-    // "import/no-named-as-default-member": "off",
     "import/order": [
       "error",
       {
@@ -92,6 +90,9 @@
         }
       }
     ],
+    "import/no-default-export": [
+      "warn"
+    ],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
@@ -100,5 +101,23 @@
         "varsIgnorePattern": "^_"
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/pages/**/*"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": [
+        "src/app/**/{page,layout,not-found}.tsx"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    }
+  ]
 }

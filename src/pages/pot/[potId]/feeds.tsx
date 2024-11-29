@@ -5,19 +5,26 @@ import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { walletApi } from "@/common/api/near";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
-import { Application, potClient } from "@/common/contracts/core";
+import { Application, ApplicationStatus, potClient } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { PotLayout } from "@/modules/pot";
 import { FeedCard } from "@/modules/profile";
 import { CreatePost } from "@/modules/profile/components/CreatePost";
 
+const tabs = [
+  { name: "Approved Applicants", value: ApplicationStatus.Approved },
+  { name: "Pending Applicants", value: ApplicationStatus.Pending },
+  { name: "Rejected Applicants", value: ApplicationStatus.Rejected },
+];
+
 const FeedsTab = () => {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const loadingRef = useRef<HTMLDivElement | null>(null);
-  const [offset, setOffset] = useState(40);
+  const [offset, setOffset] = useState(100);
   const [potApplications, setPotApplications] = useState<AccountId[]>([]);
+  const [tab, setTab] = useState<ApplicationStatus>(ApplicationStatus.Approved);
   const router = useRouter();
   const { potId } = router.query as {
     potId: string;
@@ -37,7 +44,7 @@ const FeedsTab = () => {
             "text-center font-lora text-[#292929]",
           )}
         >
-          {"No social posts available at the moment."}
+          {"No social posts available."}
         </p>
 
         <img
@@ -56,21 +63,21 @@ const FeedsTab = () => {
       offset,
     });
 
-    // Filter out previously fetched posts
-    const newPosts = fetchedPosts.slice(offset - 20);
+    const newPosts = fetchedPosts.slice(offset - 100);
 
-    // Update state with new posts and increment offset
     setFeedPosts((prevPosts) => [...prevPosts, ...newPosts]);
-    setOffset((prevOffset) => prevOffset + 20);
+    setOffset((prevOffset) => prevOffset + 100);
   }, [offset, potApplications]);
 
   useEffect(() => {
-    // Fetch applications
+    setIsLoading(true);
     (async () => {
       try {
         const applicationsData: Application[] = await potClient.getApplications({ potId });
         fetchGlobalFeeds({
-          accountIds: applicationsData?.map((application) => application?.project_id),
+          accountIds: applicationsData
+            ?.filter((data) => data.status === tab)
+            ?.map((application) => application?.project_id),
         })
           .then((posts) => {
             setFeedPosts(posts);
@@ -84,27 +91,44 @@ const FeedsTab = () => {
         console.error(error);
       }
     })();
-  }, [potId]);
+  }, [potId, tab]);
+
+  const handleSwitchTab = (tab: ApplicationStatus) => {
+    setTab(tab);
+  };
 
   return (
     <div className="w-full">
       {walletApi?.accountId && potApplications?.includes(walletApi?.accountId) && (
         <CreatePost accountId={walletApi?.accountId} />
       )}
+      <div className="md:gap-1 my-6 flex items-center gap-3">
+        {tabs.map((selectedTab) => (
+          <button
+            key={selectedTab.value}
+            onClick={() => handleSwitchTab(selectedTab.value)}
+            className={`border px-3 py-1 text-sm transition-all duration-200 ease-in-out ${tab === selectedTab.value ? "rounded-sm border-[#F4B37D] bg-[#FCE9D5]  text-[#91321B]" : "border-[#DBDBDB] bg-white text-black"}`}
+          >
+            {selectedTab.name}
+          </button>
+        ))}
+      </div>
       <div>
         {feedPosts.length === 0 && !isLoading ? (
           noResults
         ) : (
           <InfiniteScrollWrapper
             className="space-y-4"
-            dataLength={2000}
+            dataLength={999}
             scrollThreshold={1}
             hasMore={true}
             next={loadMorePosts}
             loader={
-              <div ref={loadingRef} className="mt-4 min-h-12 w-full text-center">
-                {noResults}
-              </div>
+              isLoading && (
+                <div ref={loadingRef} className="mt-4 min-h-12 text-center">
+                  <div className="">Loading...</div>
+                </div>
+              )
             }
           >
             {feedPosts.map((post) => (

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 import { pick } from "remeda";
 import { useShallow } from "zustand/shallow";

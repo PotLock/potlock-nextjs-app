@@ -19,7 +19,7 @@ import {
 } from "@/common/ui/components";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 
 import { useFundMatchingPoolForm, useProtocolConfig } from "../hooks";
 
@@ -30,7 +30,7 @@ type Props = {
 };
 
 const FundMatchingPoolModal = ({ open, onCloseClick, potDetail }: Props) => {
-  const { actAsDao, accountId } = useTypedSelector((state) => state.nav);
+  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
 
   const router = useRouter();
   const query = router.query as { referrerId?: string };

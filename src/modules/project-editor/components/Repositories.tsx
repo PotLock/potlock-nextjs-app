@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { extractFromUrl, urlPatters } from "@/modules/core";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";
 
@@ -42,7 +42,9 @@ type Props = {
 };
 
 const Repositories = ({ onChange }: Props) => {
-  const repositories = useTypedSelector((state) => state.projectEditor.githubRepositories || []);
+  const repositories = useGlobalStoreSelector(
+    (state) => state.projectEditor.githubRepositories || [],
+  );
 
   const [repos, setRepos] = useState(repositories.length > 0 ? repositories : [""]);
 

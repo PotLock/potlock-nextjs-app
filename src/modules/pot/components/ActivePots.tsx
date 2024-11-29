@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Big from "big.js";
 
@@ -10,7 +10,7 @@ import { POT_SORT_OPTIONS, POT_STATUSES } from "../constants";
 import { useFilteredPots } from "../hooks";
 import { filters } from "../utils/filters";
 
-const ActivePots = () => {
+export const ActivePots = () => {
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
   // Fetch Pots
@@ -118,5 +118,3 @@ const ActivePots = () => {
     </div>
   );
 };
-
-export default ActivePots;

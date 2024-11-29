@@ -284,11 +284,11 @@ export const ListFormDetails: React.FC = () => {
                   />
                   <div
                     className={cn(
-                      "h-4.5 w-4.5 peer shrink-0 rounded-sm border border-[var(--primary-600)] ring-offset-background",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      "h-4.5 w-4.5 ring-offset-background peer shrink-0 rounded-sm border border-[var(--primary-600)]",
+                      "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2",
                       "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                      "data-[state=checked]:bg-[var(--primary-600)] data-[state=checked]:text-primary-foreground",
-                      "peer-checked:bg-[var(--primary-600)] peer-checked:text-primary-foreground",
+                      "data-[state=checked]:text-primary-foreground data-[state=checked]:bg-[var(--primary-600)]",
+                      "peer-checked:text-primary-foreground peer-checked:bg-[var(--primary-600)]",
                     )}
                   >
                     <Check className="flex hidden h-4 w-4 items-center justify-center text-white peer-checked:block" />

@@ -2,7 +2,7 @@ import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
 import { CampaignDonation, DirectDonation, PotDonation } from "@/common/contracts/core";
-import { useTypedSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
@@ -21,7 +21,7 @@ export * from "./schemas";
 
 export const donationModelKey = "donation";
 
-export const useDonationState = () => useTypedSelector(prop(donationModelKey));
+export const useDonationState = () => useGlobalStoreSelector(prop(donationModelKey));
 
 export const donationAllocationStrategies: Record<
   DonationAllocationStrategy,

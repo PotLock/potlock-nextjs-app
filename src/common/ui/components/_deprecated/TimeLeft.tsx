@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const TimeLeft = ({ daysLeft }: { daysLeft: number }) => {
+export const TimeLeft = ({ daysLeft }: { daysLeft: number }) => {
   const [timeLeft, setTimeLeft] = useState("-");
 
   function formatTimeLeft(targetTimestamp: number) {
@@ -42,5 +42,3 @@ const TimeLeft = ({ daysLeft }: { daysLeft: number }) => {
 
   return timeLeft;
 };
-
-export default TimeLeft;

@@ -40,7 +40,7 @@ export const { dispatch } = store;
 
 export const useDispatch = () => useReduxDispatch<AppDispatcher>();
 
-export const useTypedSelector: TypedUseSelectorHook<AppState> = useSelector;
+export const useGlobalStoreSelector: TypedUseSelectorHook<AppState> = useSelector;
 
 export const resetStore = () => {
   dispatch.projectEditor.RESET();

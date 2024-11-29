@@ -2,16 +2,15 @@ import { useCallback, useState } from "react";
 
 import { styled } from "styled-components";
 
-import { ByPotId, indexer } from "@/common/api/indexer";
+import { ByPotId } from "@/common/api/indexer";
+import { TimeLeft } from "@/common/ui/components/_deprecated/TimeLeft";
 import { cn } from "@/common/ui/utils";
 
 import { PotTimelineFragment } from "./PotTimelineFragment";
-import TimeLeft from "./TimeLeft";
-import { potIndexedDataToTimeline } from "../utils/timeline";
-import { isPotStakeWeighted } from "../utils/voting";
+import { usePotLifecycle } from "../hooks/lifecycle";
 
 /**
- * @deprecated convert to Tailwind classes
+ * @deprecated convert to div with Tailwind classes
  */
 const Container = styled.div<{
   containerHeight: number;
@@ -44,13 +43,9 @@ const Container = styled.div<{
 `;
 
 /**
- * @deprecated convert to Tailwind classes
+ * @deprecated convert to div with Tailwind classes
  */
 const Loader = styled.div`
-  position: relative;
-  background: #dbdbdb;
-  border-radius: 1px;
-  height: 4px;
   width: 95px;
 
   @media only screen and (max-width: 1400px) {
@@ -58,12 +53,12 @@ const Loader = styled.div`
   }
 
   @media only screen and (max-width: 1280px) {
-    height: 40px;
-    width: 4px;
-    position: absolute;
-    left: 10px;
     z-index: 0;
-    top: 50%;
+    position: absolute;
+    top: 24px;
+    left: 10px;
+    width: 4px;
+    height: 24px;
   }
 
   @media only screen and (min-width: 1536px) {
@@ -78,22 +73,14 @@ export type PotTimelineProps = ByPotId & {
 };
 
 export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) => {
-  const [mobileMenuActive, setMobileMenuActive] = useState(false);
-  const toggleMobileMenu = useCallback(() => setMobileMenuActive((isActive) => !isActive), []);
-  const { data: pot } = indexer.usePot({ potId });
-  const isStakeWeightedPot = isPotStakeWeighted({ potId });
-
-  const statuses = pot
-    ? potIndexedDataToTimeline({
-        ...pot,
-        isVotingEnabled: isStakeWeightedPot,
-      })
-    : [];
+  const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
+  const toggleMobileMenu = useCallback(() => setIsMobileMenuActive((isActive) => !isActive), []);
+  const lifecycleStages = usePotLifecycle({ potId });
 
   // TODO: Refactor this code ( original owner: @M-Rb3 )
   const getIndexOfActive = () => {
     let index = 0;
-    statuses.forEach((status, idx) => {
+    lifecycleStages.forEach((status, idx) => {
       if (status.started && !status.completed) {
         index = idx;
       }
@@ -109,21 +96,22 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
     <div
       onClick={toggleMobileMenu}
       className={cn(
-        "xl:pointer-events-none cursor-pointer",
-        "h-a xl:h-14 flex items-center justify-center gap-4 p-4",
+        "xl:pointer-events-none h-a xl:h-14 cursor-pointer",
+        "flex w-full items-center justify-center gap-4 px-4",
         classNames?.root,
       )}
     >
       <Container
         containerHeight={containerHeight}
         showActiveState={showActiveState}
-        style={mobileMenuActive ? { height: containerHeight + "px" } : {}}
+        style={isMobileMenuActive ? { height: containerHeight + "px" } : {}}
       >
         <div
-          className="mobile-selected"
-          style={mobileMenuActive ? { transform: "translateY(0px)" } : {}}
+          className={cn("mobile-selected w-full", {
+            isMobileMenuActive: "transform-translate-y-0",
+          })}
         >
-          {statuses.map(
+          {lifecycleStages.map(
             // TODO: Improve this code (built by mohamed)
             ({ label, daysLeft, progress, started, completed }, idx) => {
               return (
@@ -142,9 +130,9 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
 
                     {started && !completed && daysLeft && (
                       <>
-                        <p className="mx-1">ends in</p>
+                        <span className="mx-1">ends in</span>
 
-                        <span className="prose text-primary-600 font-600">
+                        <span className="prose text-primary-600 font-600 min-w-31">
                           <TimeLeft daysLeft={daysLeft} />
                         </span>
                       </>
@@ -153,12 +141,15 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
                     {idx === 0 && !started && " hasn’t started"}
                   </div>
 
-                  <Loader
-                    style={{
-                      background: completed ? "#629D13" : "#dbdbdb",
-                      display: idx === 3 ? "none" : "flex",
-                    }}
-                  />
+                  {idx !== 3 && (
+                    <Loader
+                      className={cn("relative flex h-1 rounded-[1px]", {
+                        "not-displayed": !isMobileMenuActive && idx === 0,
+                        "bg-neutral-200": !completed,
+                        "bg-[#629D13]": completed,
+                      })}
+                    />
+                  )}
                 </div>
               );
             },
@@ -167,9 +158,9 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
       </Container>
 
       <svg
-        className="xl:block display-[none] transition-300 w-3 transition-all ease-in-out"
+        className="xl:not-displayed transition-300 w-4 transition-all ease-in-out"
         style={{
-          rotate: mobileMenuActive ? "180deg" : "0deg",
+          rotate: isMobileMenuActive ? "180deg" : "0deg",
         }}
         viewBox="0 0 12 8"
         fill="none"

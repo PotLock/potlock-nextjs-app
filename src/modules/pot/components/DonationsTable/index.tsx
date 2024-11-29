@@ -21,6 +21,7 @@ const DonationsTable = ({ potId }: Props) => {
     potId,
     page_size: 999,
   });
+
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter (amount | date)

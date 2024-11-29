@@ -1,5 +1,5 @@
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { ByCampaignId, ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -12,7 +12,7 @@ export const DonateRandomly = () => {
     data: randomPGRegistryEntry,
     mutate: refetchRandomPGRegistryEntry,
   } = indexer.useRandomListRegistration({
-    listId: POTLOCK_REGISTRY_LIST_ID,
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     status: "Approved",
   });
 

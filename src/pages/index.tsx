@@ -1,19 +1,16 @@
-import { useState } from "react";
-
 import Link from "next/link";
 
-import { ListRegistration } from "@/common/api/indexer";
 import { Button } from "@/common/ui/components";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/modules/auth/hooks/store";
 import useWallet from "@/modules/auth/hooks/wallet";
 import { GeneralStats, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { DonateRandomly } from "@/modules/donation";
-import { ProjectsOverview, ProjectsOverviewFeatured } from "@/modules/project";
-import { useTypedSelector } from "@/store";
+import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/modules/project";
+import { useGlobalStoreSelector } from "@/store";
 
 const WelcomeBanner = () => {
-  const { defaultAddress, toggle } = useTypedSelector((state) => state.nav.actAsDao);
+  const { defaultAddress, toggle } = useGlobalStoreSelector((state) => state.nav.actAsDao);
 
   const daoAddress = toggle && defaultAddress ? defaultAddress : "";
   const wallet = useWallet();
@@ -58,20 +55,12 @@ const WelcomeBanner = () => {
 };
 
 export default function Home() {
-  const [currentFilterCategory, setCurrentFilterCategory] = useState<string[]>([]);
-  const [currentFilterStatus, setCurrentFilterStatus] = useState<string>("all");
-  const [filteredRegistrations, setFilteredRegistrations] = useState<ListRegistration[]>([]);
   return (
     <main className="container flex flex-col items-center">
       <WelcomeBanner />
       <GeneralStats />
-      <ProjectsOverviewFeatured />
-      <ProjectsOverview
-        setCurrentFilterCategory={setCurrentFilterCategory}
-        setCurrentFilterStatus={setCurrentFilterStatus}
-        filteredRegistrations={filteredRegistrations}
-        setFilteredRegistrations={setFilteredRegistrations}
-      />
+      <ProjectDiscoveryFeatured />
+      <ProjectDiscovery />
     </main>
   );
 }

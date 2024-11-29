@@ -6,12 +6,11 @@ import { listsClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
 import { useWallet } from "@/modules/auth";
 import routesPath from "@/modules/core/routes";
-import { dispatch, useTypedSelector } from "@/store";
+import { dispatch, useGlobalStoreSelector } from "@/store";
 
 const useInitProjectState = () => {
-  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } = useTypedSelector(
-    (state) => state.projectEditor,
-  );
+  const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
+    useGlobalStoreSelector((state) => state.projectEditor);
 
   const {
     query: { projectId: projectIdPathParam, done, transactionHashes, errorMessage },
@@ -22,7 +21,7 @@ const useInitProjectState = () => {
 
   const {
     actAsDao: { defaultAddress: daoAddress, toggle: isDao },
-  } = useTypedSelector((state) => state.nav);
+  } = useGlobalStoreSelector((state) => state.nav);
 
   const { wallet, isWalletReady } = useWallet();
 
