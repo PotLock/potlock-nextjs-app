@@ -61,9 +61,9 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
   }, [pot?.description]);
 
   // TODO: Implement proper voting stage check
-  const isVotingStage = useMemo(() => {
+  const isVotingRoundOngoing = useMemo(() => {
     if (!pot) return false;
-    // Add proper voting stage logic here
+
     return false;
   }, [pot]);
 
@@ -161,7 +161,7 @@ export const PotHero: React.FC<PotHeroProps> = ({ potId }) => {
             <div className="lg:w-a flex w-full flex-col gap-6">
               {isVotingBasedPot ? (
                 <>
-                  {isVotingStage ? (
+                  {isVotingRoundOngoing ? (
                     <Checklist
                       title="Voting Requirements"
                       requirements={votingClearance.requirements ?? []}

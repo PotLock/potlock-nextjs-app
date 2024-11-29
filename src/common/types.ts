@@ -52,6 +52,10 @@ export type EnvConfig = {
   social: { app: { url: string }; contract: ContractConfig };
 
   deFi: {
+    metapool: {
+      lockupStakeContract: ContractConfig;
+    };
+
     refFinance: {
       exchangeContract: ContractConfig;
     };

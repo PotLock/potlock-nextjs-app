@@ -1,5 +1,7 @@
+import { AccountId } from "@/common/types";
+
 export type MpDaoVoter = {
-  voter_id: string;
+  voter_id: AccountId;
   balance_in_contract: string;
 
   locking_positions: {

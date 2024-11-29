@@ -32,6 +32,15 @@ export const POT_VOTER_MOCK: MpDaoVoter = {
   ],
 };
 
+/**
+ * - Human-verified Users: Votes are weighted at 10% for verified users [KYC].
+ *
+ * - mpDAO Governance Participants: Users with at least 10,000 votes in mpDAO governance
+ *  receive an additional 25% vote weight. Those with 25,000 votes gain another 25%.
+ *
+ * - stNEAR Stakeholders: Users with 2 stNEAR staked in Meta Pool receive a 10% boost,
+ *  and those with 10 stNEAR staked gain a 30% vote weight increase.
+ */
 export const usePotUserVoteWeight = ({ potId }: ByPotId) => {
   const { accountId } = useAuthSession();
   const isVotingBasedPot = isPotVotingBased({ potId });
