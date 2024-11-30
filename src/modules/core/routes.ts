@@ -1,16 +1,22 @@
-const routesPath = {
-  CREATE_PROJECT: "/createproject",
-  EDIT_PROJECT: "/editproject",
+export const hrefByRouteName = {
+  CURRENT: "",
+  CREATE_PROJECT: "/register",
+  EDIT_PROJECT: "/edit-project",
   PROJECTS_LIST: "/",
-  PROJECT: "/user",
+  PROJECT: "/profile",
   CART: "/cart",
-  FEED: "feed",
+  FEED: "/feed",
   POTS: "/pots",
-  DEPLOY_POT: "deploypot",
-  POT_DETAIL: "pot",
+  POT_DETAIL: "/pot",
+  DEPLOY_POT: "/deploy",
   DONORS: "/donors",
-  PROFILE: "/user",
+  LIST: "/lists",
+  PROFILE: "/profile",
+  CAMPAIGNS: "/campaigns",
   EDIT_PROFILE: "/editprofile",
 };
 
-export default routesPath;
+// ?INFO: This default export is for temporary backwards compatibility
+// !INFO: default exports are evil.
+// TODO: Remove in the future
+export default hrefByRouteName;

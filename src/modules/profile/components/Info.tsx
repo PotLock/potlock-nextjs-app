@@ -1,27 +1,28 @@
-"use client";
-
 import { useState } from "react";
 
+import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
-import { DEFAULT_URL } from "@/common/constants";
-import truncate from "@/common/lib/truncate";
-import { Button } from "@/common/ui/components/button";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import { truncate } from "@/common/lib";
+import { Button, ClipboardCopyButton } from "@/common/ui/components";
+import { useAuth } from "@/modules/auth";
+import useWallet from "@/modules/auth/hooks/wallet";
+import routesPath, { hrefByRouteName } from "@/modules/core/routes";
 
-import CopyIcon from "./CopyIcon";
 import DonationsInfo from "./DonationsInfo";
+import FollowButton from "./FollowButton";
 import Linktree from "./Linktree";
 import ProfileTags from "./ProfileTags";
+import { useProfileData } from "../hooks/data";
 
 type Props = {
   accountId: string;
+  isProject: boolean;
 };
 
-const LinksWrapper = ({ accountId }: Props) => {
+const LinksWrapper = ({ accountId }: { accountId: string }) => {
   const { isAuthenticated } = useAuth();
   const { wallet } = useWallet();
   const [copied, setCopied] = useState(false);
@@ -31,7 +32,10 @@ const LinksWrapper = ({ accountId }: Props) => {
       <Linktree accountId={accountId} />
       {isAuthenticated && (
         <CopyToClipboard
-          text={`${DEFAULT_URL}?tab=project&projectId=${accountId}&referrerId=${wallet?.accountId}`}
+          text={
+            window.location.origin +
+            `${hrefByRouteName.PROFILE}/${accountId}?referrerId=${wallet?.accountId}`
+          }
           onCopy={() => {
             setCopied(true);
             setTimeout(() => {
@@ -59,14 +63,17 @@ const LinksWrapper = ({ accountId }: Props) => {
   );
 };
 
-const Info = ({ accountId }: Props) => {
+const Info = ({ accountId, isProject }: Props) => {
   const { wallet } = useWallet();
+  const { profile } = useProfileData(accountId);
 
-  const name = "Near Social Bridge";
+  const name = profile?.name || "";
   const isOwner = wallet?.accountId === accountId;
 
   return (
-    <div className="mb-[66px] flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
+    <div
+      className={`md:px-[4.5rem] flex w-full flex-row flex-wrap gap-2 px-[1rem] ${!isProject ? "mb-12" : ""}`}
+    >
       {/* NameContainer */}
       <div className="flex w-full flex-wrap gap-8">
         {/* Left */}
@@ -80,17 +87,17 @@ const Info = ({ accountId }: Props) => {
             {/* Account */}
             <div className="flex flex-row content-start items-center gap-2">
               {/* Account Id */}
-              <p className="text-size-base font-400 md:text-size-sm">
-                @ {truncate(accountId, 15)}
-              </p>
+              <p className="text-size-base font-400 md:text-size-sm">@ {truncate(accountId, 15)}</p>
               {/* Copy Icon */}
-              <CopyIcon textToCopy={accountId} />
+              <ClipboardCopyButton text={accountId} />
             </div>
             {isOwner && (
               <div className="ml-[auto] self-center" style={{}}>
-                <Button variant="brand-tonal" className="ml-[auto]">
-                  Edit profile
-                </Button>
+                <Link href={`${routesPath.EDIT_PROJECT}/${accountId}`}>
+                  <Button variant="brand-tonal" className="ml-[auto]">
+                    Edit project
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
@@ -99,7 +106,13 @@ const Info = ({ accountId }: Props) => {
         </div>
 
         {/* Right */}
-        <DonationsInfo accountId={accountId} />
+        {isProject ? (
+          <DonationsInfo accountId={accountId} />
+        ) : (
+          <div>
+            <FollowButton accountId={accountId} className="w-[160px] py-[10px]" />
+          </div>
+        )}
       </div>
     </div>
   );

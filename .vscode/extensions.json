@@ -4,6 +4,7 @@
     "aaron-bond.better-comments",
     "streetsidesoftware.code-spell-checker",
     "gruntfuggly.todo-tree",
-    "naumovs.color-highlight"
+    "naumovs.color-highlight",
+    "usernamehw.errorlens"
   ]
 }

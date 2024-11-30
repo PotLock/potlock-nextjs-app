@@ -1,7 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2022,
     "sourceType": "module"
   },
   "env": {
@@ -24,18 +24,21 @@
     "prettier"
   ],
   "rules": {
+    "@next/next/no-img-element": "off",
     "camelcase": [
-      "warn",
+      "off",
       {
-        "properties": "never"
+        "properties": "never",
+        "ignoreDestructuring": true
       }
     ],
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-explicit-any": 1,
     "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/ban-ts-comment": "error",
     "prettier/prettier": [
       "error",
       {
-        "endOfLine": "auto"
+        "endOfLine": "lf"
       }
     ],
     "sort-imports": [
@@ -53,9 +56,7 @@
         "allowSeparatedGroups": true
       }
     ],
-    // turn on errors for missing imports
     "import/no-unresolved": "error",
-    // "import/no-named-as-default-member": "off",
     "import/order": [
       "error",
       {
@@ -89,12 +90,34 @@
         }
       }
     ],
+    "import/no-default-export": [
+      "warn"
+    ],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
-        "argsIgnorePattern": "^_"
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/pages/**/*"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": [
+        "src/app/**/{page,layout,not-found}.tsx"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    }
+  ]
 }

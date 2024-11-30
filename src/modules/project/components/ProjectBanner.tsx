@@ -1,19 +1,15 @@
-"use client";
-
 import { useState } from "react";
 
-import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@/common/contracts/core";
+import { useRegistration } from "@/modules/core";
 import { statuses } from "@/modules/core/constants";
-import useRegistration from "@/modules/core/hooks/useRegistration";
 
 const ProjectBanner = ({ projectId }: { projectId: string }) => {
   const [toggle, setToggle] = useState(false);
 
   const { registration, loading } = useRegistration(projectId);
 
-  const registrationStatus = registration
-    ? statuses[registration.status]
-    : statuses.Unregistered;
+  const registrationStatus = registration ? statuses[registration.status] : statuses.Unregistered;
 
   return loading || registration.status === RegistrationStatus.Approved ? (
     ""
@@ -26,7 +22,7 @@ const ProjectBanner = ({ projectId }: { projectId: string }) => {
     >
       <div className="flex flex-row items-center justify-center">
         <div
-          className="text-center text-xs font-semibold uppercase tracking-[0.015em] md:text-xl"
+          className="md:text-xl text-center text-xs font-semibold uppercase tracking-[0.015em]"
           onClick={() => (registration.admin_notes ? setToggle(!toggle) : "")}
           style={{
             color: registrationStatus.textColor,
@@ -36,14 +32,14 @@ const ProjectBanner = ({ projectId }: { projectId: string }) => {
           {registrationStatus.text}
           {registration.admin_notes && (
             <div
-              className={`ml-2 items-center gap-2 whitespace-nowrap text-xs font-semibold md:text-xl`}
+              className={`md:text-xl ml-2 items-center gap-2 whitespace-nowrap text-xs font-semibold`}
               style={{
                 color: registrationStatus.toggleColor,
               }}
             >
               (See {toggle ? "Less" : "Why"})
               <svg
-                className={`w-2 transition-all duration-300 ease-in-out md:w-3`}
+                className={`md:w-3 w-2 transition-all duration-300 ease-in-out`}
                 style={{
                   rotate: toggle ? "180deg" : "0deg",
                 }}

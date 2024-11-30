@@ -1,11 +1,11 @@
 import { styled } from "styled-components";
 
+import { NearIcon } from "@/common/assets/svgs";
 import GithubSvg from "@/common/assets/svgs/github";
-import NearSvg from "@/common/assets/svgs/near";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import WebsiteSvg from "@/common/assets/svgs/website";
 
-import useProfileData from "../hooks/useProfileData";
+import { useProfileData } from "../hooks/data";
 
 const LinktreeItemContainer = styled.a`
   display: flex;
@@ -31,7 +31,7 @@ type Props = {
 };
 
 const Linktree = ({ accountId }: Props) => {
-  const profile = useProfileData(accountId);
+  const { profile } = useProfileData(accountId);
 
   const linktree = profile?.linktree;
 
@@ -41,14 +41,13 @@ const Linktree = ({ accountId }: Props) => {
     github: <GithubSvg />,
     twitter: <TwitterSvg />,
     website: <WebsiteSvg />,
-    NEAR: <NearSvg />,
+    NEAR: <NearIcon />,
   };
 
   const fullUrls: Record<string, any> = {
     twitter: (handle: string) => `https://twitter.com/${handle.trim()}`,
     github: (username: string) => `https://github.com/${username.trim()}`,
-    website: (url: string) =>
-      url.includes("http") ? url : `https://${url.trim()}`,
+    website: (url: string) => (url.includes("http") ? url : `https://${url.trim()}`),
   };
 
   return (

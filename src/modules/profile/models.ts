@@ -1,20 +1,15 @@
 import { createModel } from "@rematch/core";
 
-import { RootModel } from "@/app/_store/models";
-import { getDonationsForRecipient } from "@/common/contracts/potlock/donate";
-import { PayoutDetailed } from "@/common/contracts/potlock/interfaces/pot.interfaces";
-import { getDonationsForProject } from "@/common/contracts/potlock/pot";
-import {
-  NEARSocialUserProfile,
-  getSocialProfile,
-} from "@/common/contracts/social";
-import { yoctosToUsdWithFallback } from "@/common/lib/yoctosToUsdWithFallback";
-import { fetchSocialImages } from "@/modules/core/services/socialImages";
+import { PayoutDetailed, donationClient, potClient } from "@/common/contracts/core";
+import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
+import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { yoctosToUsdWithFallback } from "@/modules/core";
 import {
   getTagsFromSocialProfileData,
   getTeamMembersFromProfile,
   getTotalAmountNear,
 } from "@/modules/project/utils";
+import { AppModel } from "@/store/models";
 
 export type Profile = {
   socialData: NEARSocialUserProfile;
@@ -30,7 +25,7 @@ export type Profile = {
 
 type ProfileIndex = Record<string, Profile>;
 
-export const profilesModel = createModel<RootModel>()({
+export const profilesModel = createModel<AppModel>()({
   state: {} as ProfileIndex,
   reducers: {
     update(state, payload: ProfileIndex) {
@@ -39,7 +34,12 @@ export const profilesModel = createModel<RootModel>()({
         ...payload,
       };
     },
+    RESET() {
+      return {};
+    },
   },
+  // TODO: This should've received a method
+  // e.g.: effects: (dispatch) => ({
   effects: {
     async loadProfile({
       projectId,
@@ -55,28 +55,25 @@ export const profilesModel = createModel<RootModel>()({
       });
 
       const socialImagesResponse = fetchSocialImages({
-        socialData,
+        socialData: socialData ? socialData : undefined,
         accountId: projectId,
       });
 
       const donationsPromise =
         potId && !payoutDetails
-          ? getDonationsForProject({
+          ? potClient.getDonationsForProject({
               potId,
               project_id: projectId,
             })
           : !potId
-            ? getDonationsForRecipient({
+            ? donationClient.getDonationsForRecipient({
                 recipient_id: projectId,
               })
             : Promise.resolve([]);
 
-      const [socialImages, donations] = await Promise.all([
-        socialImagesResponse,
-        donationsPromise,
-      ]);
+      const [socialImages, donations] = await Promise.all([socialImagesResponse, donationsPromise]);
 
-      const totalAmountNear = await yoctosToUsdWithFallback(
+      const totalAmountNear = yoctosToUsdWithFallback(
         getTotalAmountNear(donations, potId, payoutDetails),
       );
 
@@ -105,53 +102,38 @@ export type NavState = {
   actAsDao: ActAsDao;
 };
 
-const updateList = (list: string[], item: string): string[] => {
-  const index = list.indexOf(item);
-  if (index === -1) {
-    // Item does not exist, add it
-    list.push(item);
-  } else {
-    // Item exists, remove it
-    list.splice(index, 1);
-  }
-  return list;
+const initialState: NavState = {
+  // TODO: add is registry admin
+  accountId: "",
+  isNadabotVerified: false,
+  actAsDao: {
+    defaultAddress: "",
+    toggle: false,
+    addresses: [],
+  },
 };
 
-export const navModel = createModel<RootModel>()({
-  state: {
-    // TODO: add is registry admin
-    accountId: "",
-    isNadabotVerified: false,
-    actAsDao: {
-      defaultAddress: "",
-      toggle: false,
-      addresses: [],
-    },
-  } as NavState,
+export const navModel = createModel<AppModel>()({
+  state: initialState,
   reducers: {
+    // Reset to the initial state
+    RESET() {
+      return initialState;
+    },
+
+    updateActAsDao(state, payload) {
+      return {
+        ...state,
+        actAsDao: {
+          ...state.actAsDao,
+          ...payload,
+        },
+      };
+    },
     update(state, payload) {
       return {
         ...state,
         ...payload,
-      };
-    },
-    markDaoAsDefault(state, daoAddress: string) {
-      return {
-        ...state,
-        actAsDao: {
-          ...state.actAsDao,
-          defaultAddress: daoAddress,
-        },
-      };
-    },
-    addOrRemoveDaoAddress(state, daoAddress: string) {
-      const addresses = state.actAsDao.addresses;
-      return {
-        ...state,
-        actAsDao: {
-          ...state.actAsDao,
-          addresses: updateList(addresses, daoAddress),
-        },
       };
     },
   },

@@ -1,16 +1,15 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import { getSocialData, setSocialData } from "@/common/contracts/social";
-import { Button } from "@/common/ui/components/button";
-import useWallet from "@/modules/auth/hooks/useWallet";
+import { Button } from "@/common/ui/components";
+import useWallet from "@/modules/auth/hooks/wallet";
 
 type Props = {
   accountId: string;
+  className?: string;
 };
 
-const FollowButton = ({ accountId }: Props) => {
+const FollowButton = ({ accountId, className }: Props) => {
   const { wallet } = useWallet();
 
   const [followEdge, setFollowEdge] = useState<Record<string, any>>();
@@ -98,7 +97,7 @@ const FollowButton = ({ accountId }: Props) => {
   return (
     <Button
       variant="brand-outline"
-      className="hover:bg-[#dd3345] hover:text-white"
+      className={`hover:bg-[#dd3345] hover:text-white ${className}`}
       // font-600 is not working
       style={{ fontWeight: 600 }}
       disabled={updating || buttonText === "Following"}

@@ -1,19 +1,30 @@
+import { AlertCircle } from "lucide-react";
+
 import { Alert, AlertDescription, AlertTitle } from "@/common/ui/components";
 
 export type RuntimeErrorAlertProps = {
-  customMessage?: string;
+  title?: string;
+  message?: string;
+  callToAction?: React.ReactNode;
 };
 
 export const RuntimeErrorAlert: React.FC<RuntimeErrorAlertProps> = ({
-  customMessage,
+  title = "Something went wrong!",
+  message,
+  callToAction,
 }) => (
   <Alert variant="destructive" className="flex flex-col gap-4 bg-white">
-    <AlertTitle>Runtime error!</AlertTitle>
+    <AlertCircle className="h-4 w-4" />
+    <AlertTitle>{title}</AlertTitle>
 
     <AlertDescription className="flex flex-col gap-4">
-      {customMessage}
+      {message}
 
-      <span>Please contact PotLock team for help.</span>
+      {callToAction ?? (
+        <span className="prose" un-text="primary">
+          Please contact PotLock team for help.
+        </span>
+      )}
     </AlertDescription>
   </Alert>
 );

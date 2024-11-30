@@ -1,9 +1,9 @@
-import { naxiosInstance } from "@/common/contracts/index";
+import { naxiosInstance } from "@/common/api/near";
 import { Image, getSocialProfile } from "@/common/contracts/social";
 
 type Props = {
   accountId?: string;
-  image?: Image;
+  image?: Image | string;
   type?: "backgroundImage" | "image";
   fallbackurl?: string;
 };
@@ -31,13 +31,8 @@ type MetadateRes = {
  * @param
  * @returns
  */
-export const getImage = async ({
-  accountId,
-  image,
-  type,
-  fallbackurl,
-}: Props) => {
-  let socialImage = image;
+export const getImage = async ({ accountId, image, type, fallbackurl }: Props) => {
+  let socialImage: any = image;
 
   try {
     if (!socialImage && accountId) {
@@ -62,14 +57,11 @@ export const getImage = async ({
         })
       ).metadata;
 
-      const nftMetadata = await contractApi.view<TokenInput, MetadateRes>(
-        "nft_metadata",
-        {
-          args: {
-            token_id: tokenId,
-          },
+      const nftMetadata = await contractApi.view<TokenInput, MetadateRes>("nft_metadata", {
+        args: {
+          token_id: tokenId,
         },
-      );
+      });
 
       const tokenMedia = tokenMetadata.media || "";
 
@@ -92,9 +84,7 @@ export const getImage = async ({
             nftMetadata.base_uri === "https://arweave.net" &&
             !tokenMetadata.reference.startsWith("https://")
           ) {
-            const data = await fetch(
-              `${nftMetadata.base_uri}/${tokenMetadata.reference}`,
-            );
+            const data = await fetch(`${nftMetadata.base_uri}/${tokenMetadata.reference}`);
             const res = await data.json();
 
             imageUrl = res.body?.media;
@@ -121,13 +111,13 @@ export const getImage = async ({
     } else if (socialImage?.ipfs_cid) {
       return `https://ipfs.near.social/ipfs/${socialImage.ipfs_cid}`;
     } else {
-      return fallbackurl ?? type === "image"
+      return (fallbackurl ?? type === "image")
         ? "/assets/images/profile-image.png"
         : "/assets/images/profile-banner.png";
     }
   } catch (err) {
     console.log("error fetching image ", err);
-    return fallbackurl ?? type === "image"
+    return (fallbackurl ?? type === "image")
       ? "/assets/images/profile-image.png"
       : "/assets/images/profile-banner.png";
   }

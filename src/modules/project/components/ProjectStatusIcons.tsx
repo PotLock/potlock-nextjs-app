@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { RegistrationStatus } from "@/common/contracts/potlock/interfaces/lists.interfaces";
+import { RegistrationStatus } from "@/common/contracts/core";
 
 type ProjectStatusIcons = {
   [key in RegistrationStatus]: {

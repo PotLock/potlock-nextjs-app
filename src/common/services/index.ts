@@ -1,1 +1,1 @@
-export * from "./fetchNearPrice";
+export * as ftService from "./ft";

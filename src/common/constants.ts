@@ -1,102 +1,105 @@
-import { Network } from "@wpdas/naxios";
-import { AxiosRequestConfig } from "axios";
-import Big from "big.js";
+import { Big } from "big.js";
 import { utils } from "near-api-js";
+import { Metadata } from "next";
 
-// NETWORK
-export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK ||
-  "testnet") as Network;
+import { NETWORK } from "./_config";
+import { ChronologicalSortOrderVariant } from "./types";
 
-/**
- * Docs: https://dev.potlock.io/api/schema/swagger-ui/
- */
-export const POTLOCK_API_ENDPOINT =
-  NETWORK === "mainnet"
-    ? "https://dev.potlock.io"
-    : "https://test-dev.potlock.io";
-
-/**
- * Request config for SWR
- */
-export const POTLOCK_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
-  axios: { baseURL: POTLOCK_API_ENDPOINT },
-};
-
-/**
- * Docs: https://console.pagoda.co/apis?tab=enhancedApi#/
- */
-export const PAGODA_API_ENDPOINT =
-  NETWORK === "mainnet"
-    ? "https://near-mainnet.api.pagoda.co/eapi/v1/"
-    : "https://near-testnet.api.pagoda.co/eapi/v1/";
-
+export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
+export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
+export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
+export const POTLOCK_TWITTER_ACCOUNT_ID = "PotLock_";
+export const DEFAULT_SHARE_HASHTAGS = ["PublicGoods", "Donations"];
 
-/**
- * Request config for SWR
- */
-export const PAGODA_REQUEST_CONFIG: Record<"axios", AxiosRequestConfig> = {
-  axios: {
-    baseURL: PAGODA_API_ENDPOINT,
+export const APP_METADATA: Metadata & {
+  title: string;
+  description: NonNullable<Metadata["description"]>;
+  manifest: NonNullable<Metadata["manifest"]>;
 
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": PAGODA_API_KEY,
+  openGraph: {
+    url: NonNullable<Metadata["openGraph"]>["url"];
+    type: "website";
+    images: { url: string };
+  };
+} = {
+  title: "Potlock",
+  description: "Bringing public goods funding to the table, built on NEAR",
+  manifest: "/manifest.json",
+
+  icons: {
+    icon: "/favicon.png",
+    apple: "/logo.png",
+  },
+
+  // Facebook Meta / Twitter Tags
+  openGraph: {
+    url: "https://bos.potlock.org/?tab=project&projectId=opact.near",
+    type: "website",
+
+    images: {
+      url: "https://bos.potlock.org/preview.png",
     },
   },
 };
 
-export const COINGECKO_API_ENDPOINT = "https://api.coingecko.com/api/v3";
+export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
+export const NATIVE_TOKEN_ID = "near";
+export const NATIVE_TOKEN_DECIMALS = 24;
 
-// SYBIL CONTRACT
-export const NADABOT_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_NADABOT_CONTRACT_ID as string;
+export const MPDAO_TOKEN_CONTRACT_ACCOUNT_ID =
+  NETWORK === "mainnet" ? "mpdao-token.near" : "mpdao-token.testnet";
 
-// SOCIAL DB CONTRACT
-export const SOCIAL_DB_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_SOCIAL_DB_CONTRACT_ID as string;
+// List ID of PotLock Public Goods Registry
+export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1;
 
-// POTLOCK LISTS CONTRACT
-export const POTLOCK_LISTS_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_POTLOCK_LISTS_CONTRACT_ID as string;
+// Separates contract_id and method_name in ProviderId
+export const PROVIDER_ID_DELIMITER = ":";
 
-// POTLOCK DONATE CONTRACT
-export const POTLOCK_DONATE_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_POTLOCK_DONATE_CONTRACT_ID as string;
-
-// POTLOCK DONATE CONTRACT
-export const POTLOCK_POT_FACTORY_CONTRACT_ID = process.env
-  .NEXT_PUBLIC_POTLOCK_POT_FACTORY_CONTRACT_ID as string;
-
-// POTLOCK REGISTRY LIST ID
-export const POTLOCK_REGISTRY_LIST_ID = 1;
-
-export const NEAR_TOKEN_DENOM = "near";
-
-export const NEAR_DEFAULT_TOKEN_DECIMALS = 24;
-
-// 1 NEAR
 export const ONE_NEAR = utils.format.parseNearAmount("1")!;
-// 0.5 NEAR
 export const HALF_NEAR = utils.format.parseNearAmount("0.5")!;
-// 0.1 NEAR
 export const ONE_TENTH_NEAR = utils.format.parseNearAmount("0.1")!;
-// 0.01 NEAR
 export const ONE_HUNDREDTH_NEAR = utils.format.parseNearAmount("0.01")!;
-// 0.02 NEAR
 export const TWO_HUNDREDTHS_NEAR = utils.format.parseNearAmount("0.02")!;
-// 300 Gas (full)
+
+// 300 TGas (full)
 export const FULL_TGAS = "300000000000000";
+export const FIFTY_TGAS = "50000000000000";
+
 // 0 Gas
 export const NO_DEPOSIT_TGAS = "0";
+
+export const MIN_PROPOSAL_DEPOSIT_FALLBACK = "100000000000000000000000"; // 0.1N
+export const ONE_TGAS = Big(1_000_000_000_000);
 
 // IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
 export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
 
-export const DEFAULT_URL = "https://app.potlock.org/";
+export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
 
-export const SUPPORTED_FTS = {
+export const VOTING_BASED_POT_IDS =
+  NETWORK === "mainnet" ? ["mpdao.v1.potfactory.potlock.near"] : [];
+
+export const CHRONOLOGICAL_SORT_OPTIONS: {
+  label: string;
+  value: ChronologicalSortOrderVariant;
+}[] = [
+  { label: "Most recent", value: "recent" },
+  { label: "Least recent", value: "older" },
+];
+
+/**
+ * @deprecated use `ftService` hooks instead
+ */
+export const SUPPORTED_FTS: Record<
+  string,
+  {
+    iconUrl: string;
+    toIndivisible: (amount: any) => Big.Big;
+    fromIndivisible: (amount: any, decimals?: any) => string;
+  }
+> = {
   NEAR: {
     iconUrl:
       "https://nftstorage.link/ipfs/bafkreidnqlap4cp5o334lzbhgbabwr6yzkj6albia62l6ipjsasokjm6mi",

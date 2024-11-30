@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { getIsHuman } from "@/common/contracts/sybil.nadabot";
+import { getIsHuman } from "@/common/contracts/core/sybil";
 
-const useIsHuman = (accountId: string) => {
+export const useIsHuman = (accountId?: string) => {
   const [nadaBotVerified, setNadaBotVerified] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
@@ -10,7 +10,7 @@ const useIsHuman = (accountId: string) => {
   useEffect(() => {
     const fetchHumanStatus = async () => {
       try {
-        const isHuman = await getIsHuman({ account_id: accountId });
+        const isHuman = await getIsHuman({ account_id: accountId || "" });
         setNadaBotVerified(isHuman);
         setLoading(false);
       } catch (error) {
@@ -18,7 +18,10 @@ const useIsHuman = (accountId: string) => {
         setError(error);
       }
     };
-    fetchHumanStatus();
+
+    if (accountId) {
+      fetchHumanStatus();
+    }
   }, [accountId]);
 
   return {
@@ -27,5 +30,3 @@ const useIsHuman = (accountId: string) => {
     error,
   };
 };
-
-export default useIsHuman;
