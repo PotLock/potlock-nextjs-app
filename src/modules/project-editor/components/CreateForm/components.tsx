@@ -2,16 +2,19 @@
 
 import { CSSProperties, useEffect, useState } from "react";
 
-import { Input, InputProps, Textarea } from "@/common/ui/components";
 import {
+  Input,
+  InputProps,
   MultiSelector,
   MultiSelectorContent,
   MultiSelectorInput,
   MultiSelectorItem,
   MultiSelectorList,
   MultiSelectorTrigger,
-} from "@/common/ui/components/molecules/multi-select";
-import useProfileData from "@/modules/profile/hooks/data";
+  Textarea,
+} from "@/common/ui/components";
+import { useProfileData } from "@/modules/profile";
+import { ProjectCategoryVariant } from "@/modules/project";
 import { useGlobalStoreSelector } from "@/store";
 
 export const Row = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
@@ -84,9 +87,9 @@ export const CustomInput = ({
   </InputContainer>
 );
 
-const options = [
+const options: ProjectCategoryVariant[] = [
   "Social Impact",
-  "NonProfit",
+  "Non Profit",
   "Climate",
   "Public Good",
   "DeSci",
@@ -95,7 +98,7 @@ const options = [
   "Education",
 ];
 
-export const SelectCategory = ({
+export const ProjectCategoryPicker = ({
   onValuesChange,
   defaultValues,
 }: {
@@ -112,7 +115,7 @@ export const SelectCategory = ({
 
   return (
     <MultiSelector values={value} onValuesChange={setValue} loop={false} className="w-full">
-      <Label>Select category (select multiple) *</Label>
+      <Label>Select categories *</Label>
       <MultiSelectorTrigger
         className="py-[.53rem] text-[.875rem] shadow-[0px_0px_0px_1px_#00000038_inset,0px_-1px_1px_0px_#00000038_inset]"
         style={{ marginTop: ".4rem" }}

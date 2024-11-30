@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
+import { prop } from "remeda";
 
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
@@ -11,10 +12,16 @@ import ErrorModal from "@/modules/core/components/ErrorModal";
 import routesPath from "@/modules/core/routes";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { AccountStack, CustomInput, CustomTextForm, Row, SelectCategory } from "./components";
+import {
+  AccountStack,
+  CustomInput,
+  CustomTextForm,
+  ProjectCategoryPicker,
+  Row,
+} from "./components";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
-import { useCreateProjectForm } from "../../hooks/forms";
+import { useProjectEditorForm } from "../../hooks/forms";
 import AddFundingSourceModal from "../AddFundingSourceModal";
 import AddTeamMembersModal from "../AddTeamMembersModal";
 import DAOInProgress from "../DAOInProgress";
@@ -34,14 +41,14 @@ const CreateForm = () => {
   const projectId =
     typeof projectIdPathParam === "string" ? projectIdPathParam : projectIdPathParam?.at(0);
 
-  const projectProps = useGlobalStoreSelector((state) => state.projectEditor);
+  const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
   const { wallet, isWalletReady } = useWallet();
   const { isAuthenticated } = useAuth();
-  const { form, errors, onSubmit } = useCreateProjectForm();
+  const { form, errors, onSubmit } = useProjectEditorForm();
   const values = form.watch();
 
-  const isOwner = projectProps.isDao
-    ? projectId === projectProps.daoAddress
+  const isOwner = projectTemplate.isDao
+    ? projectId === projectTemplate.daoAddress
     : projectId === wallet?.accountId;
 
   useEffect(() => {
@@ -50,33 +57,17 @@ const CreateForm = () => {
   }, [form]);
 
   // Set default values by profile
-  useEffect(() => {
-    form.setValue("isDao", false); // default value
-    form.setValue("backgroundImage", projectProps.backgroundImage);
-    form.setValue("profileImage", projectProps.profileImage);
-    form.setValue("description", projectProps.description);
-    form.setValue("publicGoodReason", projectProps.publicGoodReason);
-    form.setValue("fundingSources", projectProps.fundingSources);
-    form.setValue("categories", projectProps.categories);
-  }, [
-    projectProps.backgroundImage,
-    projectProps.profileImage,
-    projectProps.description,
-    projectProps.publicGoodReason,
-    projectProps.fundingSources,
-    projectProps.categories,
-    form,
-  ]);
+  useEffect(() => form.reset(projectTemplate), [form, projectTemplate]);
 
   // Set initial name
   const [initialNameSet, setInitialNameSet] = useState(false);
   useEffect(() => {
-    if (!initialNameSet && projectProps.name) {
-      form.setValue("name", projectProps.name);
+    if (!initialNameSet && projectTemplate.name) {
+      form.setValue("name", projectTemplate.name);
       form.trigger(); // re-validate
       setInitialNameSet(true);
     }
-  }, [initialNameSet, projectProps.name, form]);
+  }, [initialNameSet, projectTemplate.name, form]);
 
   // Store description, public good reason and daoAddress
   useEffect(() => {
@@ -124,17 +115,17 @@ const CreateForm = () => {
   const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
-  const projectEditorText = projectProps.isEdit
-    ? projectProps.isDao
+  const projectEditorText = projectTemplate.isEdit
+    ? projectTemplate.isDao
       ? "Add proposal to update project"
       : "Update your project"
-    : projectProps.isDao
+    : projectTemplate.isDao
       ? "Add proposal to create project"
       : "Create new project";
 
-  const isRepositoriesValid = projectProps.isRepositoryRequired
-    ? projectProps.githubRepositories
-      ? projectProps.githubRepositories?.length > 0
+  const isRepositoriesValid = projectTemplate.isRepositoryRequired
+    ? projectTemplate.githubRepositories
+      ? projectTemplate.githubRepositories?.length > 0
       : true
     : true;
 
@@ -143,7 +134,7 @@ const CreateForm = () => {
     return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
-  if (isAuthenticated && projectProps.checkPreviousProjectDataStatus !== "ready") {
+  if (isAuthenticated && projectTemplate.checkPreviousProjectDataStatus !== "ready") {
     return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
@@ -153,7 +144,7 @@ const CreateForm = () => {
   }
 
   // If it is Edit & not the owner
-  if (!isOwner && projectProps.isEdit) {
+  if (!isOwner && projectTemplate.isEdit) {
     return (
       <InfoSegment
         title="You're not the owner of this project!"
@@ -164,21 +155,24 @@ const CreateForm = () => {
 
   // DAO Status - In Progress
   if (
-    projectProps.isDao &&
-    projectProps.daoProjectProposal &&
-    projectProps.daoProjectProposal?.status === "InProgress"
+    projectTemplate.isDao &&
+    projectTemplate.daoProjectProposal &&
+    projectTemplate.daoProjectProposal?.status === "InProgress"
   ) {
     return <DAOInProgress />;
   }
 
-  if (projectProps.submissionStatus === "done" && location.pathname === routesPath.CREATE_PROJECT) {
+  if (
+    projectTemplate.submissionStatus === "done" &&
+    location.pathname === routesPath.CREATE_PROJECT
+  ) {
     return (
       <div className="md:p-[4rem_0px] m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px]">
         <SuccessfulRegister
           registeredProject={
-            projectProps.isDao ? projectProps.daoAddress || "" : wallet?.accountId || ""
+            projectTemplate.isDao ? projectTemplate.daoAddress || "" : wallet?.accountId || ""
           }
-          isEdit={projectProps.isEdit}
+          isEdit={projectTemplate.isEdit}
         />
       </div>
     );
@@ -197,7 +191,7 @@ const CreateForm = () => {
               className="font-600"
               onClick={() => setAddTeamModalOpen(true)}
             >
-              {projectProps.teamMembers.length > 0
+              {projectTemplate.teamMembers.length > 0
                 ? "Add or remove team members"
                 : "Add team members"}
             </Button>
@@ -231,13 +225,13 @@ const CreateForm = () => {
         />
 
         <ErrorModal
-          open={!!projectProps.submissionError}
-          errorMessage={projectProps.submissionError}
+          open={!!projectTemplate.submissionError}
+          errorMessage={projectTemplate.submissionError}
           onCloseClick={resetUrl}
         />
 
         <SubHeader
-          title={projectProps.isDao ? "Project details (DAO)" : "Project details"}
+          title={projectTemplate.isDao ? "Project details (DAO)" : "Project details"}
           required
           className="mt-16"
         />
@@ -246,7 +240,7 @@ const CreateForm = () => {
           <FormField
             control={form.control}
             name="name"
-            defaultValue={projectProps.name}
+            defaultValue={projectTemplate.name}
             render={({ field }) => (
               <CustomInput
                 label="Project name *"
@@ -259,9 +253,9 @@ const CreateForm = () => {
             )}
           />
 
-          <SelectCategory
+          <ProjectCategoryPicker
             onValuesChange={categoryChangeHandler}
-            defaultValues={projectProps.categories}
+            defaultValues={projectTemplate.categories}
           />
         </Row>
 
@@ -276,7 +270,7 @@ const CreateForm = () => {
                 placeholder="Type description"
                 error={errors.description?.message}
                 field={field}
-                currentText={projectProps.description}
+                currentText={projectTemplate.description}
               />
             )}
           />
@@ -291,7 +285,7 @@ const CreateForm = () => {
                 placeholder="Type the reason"
                 error={errors.publicGoodReason?.message}
                 field={field}
-                currentText={projectProps.publicGoodReason}
+                currentText={projectTemplate.publicGoodReason}
               />
             )}
           />
@@ -322,7 +316,7 @@ const CreateForm = () => {
 
         <SubHeader
           title="Repositories"
-          required={projectProps.isRepositoryRequired}
+          required={projectTemplate.isRepositoryRequired}
           className="mt-16"
         />
 

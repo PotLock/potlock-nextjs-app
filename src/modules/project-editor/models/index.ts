@@ -4,11 +4,11 @@ import { prop } from "remeda";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
-import routesPath from "@/modules/core/routes";
+import { hrefByRouteName } from "@/modules/core";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
-import { AddFundingSourceInputs, CreateProjectInputs } from "./types";
+import { AddFundingSourceInputs, ProjectEditorInputs } from "./types";
 
 export const projectEditorModelKey = "projectEditor";
 
@@ -34,12 +34,12 @@ type ExtraTypes = {
   daoProjectProposal: Proposal | null;
   isRepositoryRequired: boolean;
 };
-export type CreateProjectState = CreateProjectInputs & ExtraTypes;
+export type ProjectEditorState = ProjectEditorInputs & ExtraTypes;
 
 /**
  * Create Project State
  */
-const initialState: CreateProjectState = {
+const initialState: ProjectEditorState = {
   // Extra types
   accountId: "",
   submissionError: "",
@@ -83,89 +83,89 @@ export const projectEditorModel = createModel<AppModel>()({
   state: initialState,
 
   reducers: {
-    updateSocialLinks(state: CreateProjectState, links: Record<string, string>) {
+    updateSocialLinks(state: ProjectEditorState, links: Record<string, string>) {
       state.website = links.website || state.website;
       state.twitter = links.twitter || state.twitter;
       state.telegram = links.telegram || state.telegram;
       state.github = links.github || state.github;
     },
 
-    setDaoProjectProposal(state: CreateProjectState, daoProjectProposal: Proposal | null) {
+    setDaoProjectProposal(state: ProjectEditorState, daoProjectProposal: Proposal | null) {
       state.daoProjectProposal = daoProjectProposal;
     },
 
-    submissionStatus(state: CreateProjectState, status: CheckStatus) {
+    submissionStatus(state: ProjectEditorState, status: CheckStatus) {
       state.submissionStatus = status;
     },
 
-    checkRegistrationStatus(state: CreateProjectState, status: FetchStatus) {
+    checkRegistrationStatus(state: ProjectEditorState, status: FetchStatus) {
       state.checkRegistrationStatus = status;
     },
 
-    checkPreviousProjectDataStatus(state: CreateProjectState, status: FetchStatus) {
+    checkPreviousProjectDataStatus(state: ProjectEditorState, status: FetchStatus) {
       state.checkPreviousProjectDataStatus = status;
     },
 
-    isEdit(state: CreateProjectState, value: boolean) {
+    isEdit(state: ProjectEditorState, value: boolean) {
       state.isEdit = value;
     },
 
-    isRegistered(state: CreateProjectState, value: boolean) {
+    isRegistered(state: ProjectEditorState, value: boolean) {
       state.isRegistered = value;
     },
 
-    setSubmissionError(state: CreateProjectState, error: string) {
+    setSubmissionError(state: ProjectEditorState, error: string) {
       state.submissionError = error;
     },
 
-    updateDescription(state: CreateProjectState, description: string) {
+    updateDescription(state: ProjectEditorState, description: string) {
       state.description = description;
     },
 
-    updatePublicGoodReason(state: CreateProjectState, publicGoodReason: string) {
+    updatePublicGoodReason(state: ProjectEditorState, publicGoodReason: string) {
       state.publicGoodReason = publicGoodReason;
     },
 
-    setAccountId(state: CreateProjectState, accountId: string) {
+    setAccountId(state: ProjectEditorState, accountId: string) {
       state.accountId = accountId;
     },
 
-    setProjectName(state: CreateProjectState, name?: string) {
+    setProjectName(state: ProjectEditorState, name?: string) {
       state.name = name || "";
     },
 
-    setIsDao(state: CreateProjectState, isDao: boolean) {
+    setIsDao(state: ProjectEditorState, isDao: boolean) {
       state.isDao = isDao;
     },
 
-    setDaoAddress(state: CreateProjectState, daoAddress: string) {
+    setDaoAddress(state: ProjectEditorState, daoAddress: string) {
       state.daoAddress = daoAddress;
     },
 
-    setCategories(state: CreateProjectState, categories: string[]) {
+    setCategories(state: ProjectEditorState, categories: string[]) {
       state.isRepositoryRequired = categories.includes("Open Source");
       state.categories = categories;
     },
 
-    addTeamMember(state: CreateProjectState, accountId: string) {
+    addTeamMember(state: ProjectEditorState, accountId: string) {
       if (state.teamMembers.indexOf(accountId) === -1) {
         state.teamMembers = [...state.teamMembers, accountId];
       }
     },
 
-    setTeamMembers(state: CreateProjectState, members: string[]) {
+    setTeamMembers(state: ProjectEditorState, members: string[]) {
       state.teamMembers = members;
     },
 
-    removeTeamMember(state: CreateProjectState, accountId: string) {
+    removeTeamMember(state: ProjectEditorState, accountId: string) {
       state.teamMembers = state.teamMembers.filter((_accountId) => _accountId !== accountId);
     },
 
-    setFundingSources(state: CreateProjectState, fundingSources: AddFundingSourceInputs[]) {
+    setFundingSources(state: ProjectEditorState, fundingSources: AddFundingSourceInputs[]) {
       state.fundingSources = fundingSources;
     },
 
-    addFundingSource(state: CreateProjectState, fundingSourceData: AddFundingSourceInputs) {
+    addFundingSource(state: ProjectEditorState, fundingSourceData: AddFundingSourceInputs) {
       if (state.fundingSources) {
         state.fundingSources = [...state.fundingSources, fundingSourceData];
       } else {
@@ -173,13 +173,13 @@ export const projectEditorModel = createModel<AppModel>()({
       }
     },
 
-    removeFundingSource(state: CreateProjectState, index: number) {
+    removeFundingSource(state: ProjectEditorState, index: number) {
       const currentFundingSources = state.fundingSources || [];
       state.fundingSources = currentFundingSources.filter((_, _index) => _index !== index);
     },
 
     updateFundingSource(
-      state: CreateProjectState,
+      state: ProjectEditorState,
       payload: { fundingSourceData: AddFundingSourceInputs; index: number },
     ) {
       const currentFundingSources = state.fundingSources || [];
@@ -188,23 +188,23 @@ export const projectEditorModel = createModel<AppModel>()({
       state.fundingSources = updatedFunding;
     },
 
-    setSmartContracts(state: CreateProjectState, smartContracts: string[][]) {
+    setSmartContracts(state: ProjectEditorState, smartContracts: string[][]) {
       state.smartContracts = smartContracts;
     },
 
-    addSmartContract(state: CreateProjectState, smartContract: string[], index: number) {
+    addSmartContract(state: ProjectEditorState, smartContract: string[], index: number) {
       const previousState = state.smartContracts || [];
       previousState[index] = smartContract;
       state.smartContracts = previousState;
     },
 
-    removeSmartContract(state: CreateProjectState, index: number) {
+    removeSmartContract(state: ProjectEditorState, index: number) {
       const currentSmartContracts = state.smartContracts || [];
       state.smartContracts = currentSmartContracts.filter((_, _index) => _index !== index);
     },
 
     editSmartContract(
-      state: CreateProjectState,
+      state: ProjectEditorState,
       payload: { data: string[]; contractIndex: number },
     ) {
       const currentSmartContracts = state.smartContracts || [];
@@ -212,28 +212,28 @@ export const projectEditorModel = createModel<AppModel>()({
       state.smartContracts = currentSmartContracts;
     },
 
-    setRepositories(state: CreateProjectState, repositories: string[]) {
+    setRepositories(state: ProjectEditorState, repositories: string[]) {
       state.githubRepositories = repositories;
     },
 
-    addRepository(state: CreateProjectState) {
+    addRepository(state: ProjectEditorState) {
       const repos = state.githubRepositories || [];
       state.githubRepositories = [...repos, ""];
     },
 
-    updateRepositories(state: CreateProjectState, repositories: string[]) {
+    updateRepositories(state: ProjectEditorState, repositories: string[]) {
       state.githubRepositories = repositories.filter((repo) => repo.length > 0);
     },
 
-    UPDATE_BACKGROUND_IMAGE(state: CreateProjectState, backgroundUrl: string) {
+    UPDATE_BACKGROUND_IMAGE(state: ProjectEditorState, backgroundUrl: string) {
       state.backgroundImage = backgroundUrl;
     },
 
-    UPDATE_PROFILE_IMAGE(state: CreateProjectState, profileImageUrl: string) {
+    UPDATE_PROFILE_IMAGE(state: ProjectEditorState, profileImageUrl: string) {
       state.profileImage = profileImageUrl;
     },
 
-    SET_INITIAL_DATA(state: CreateProjectState, initialData: Partial<CreateProjectState>) {
+    SET_INITIAL_DATA(state: ProjectEditorState, initialData: Partial<ProjectEditorState>) {
       state = updateState(state, initialData);
     },
 
@@ -271,10 +271,10 @@ export const projectEditorModel = createModel<AppModel>()({
     },
 
     async loadProjectData(accountId: string) {
-      const data: Partial<CreateProjectState> = {};
+      const data: Partial<ProjectEditorState> = {};
 
       // Set the isEdit status
-      data.isEdit = location.pathname.includes(routesPath.EDIT_PROJECT);
+      data.isEdit = location.pathname.includes(hrefByRouteName.EDIT_PROJECT);
 
       // Get profile data & profile images
       const projectProfileData = await fetchSocialImages({

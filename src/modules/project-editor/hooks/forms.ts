@@ -7,17 +7,17 @@ import useWallet from "@/modules/auth/hooks/wallet";
 import { dispatch } from "@/store";
 
 import { addFundingSourceSchema, projectEditorSchema } from "../models/schemas";
-import { AddFundingSourceInputs, CreateProjectInputs } from "../models/types";
+import { AddFundingSourceInputs, ProjectEditorInputs } from "../models/types";
 import handleCreateOrUpdateProject from "../utils/handleCreateOrUpdateProject";
 
-export const useCreateProjectForm = () => {
-  const form = useForm<CreateProjectInputs>({
+export const useProjectEditorForm = () => {
+  const form = useForm<ProjectEditorInputs>({
     resolver: zodResolver(projectEditorSchema),
     mode: "onChange",
   });
   const { wallet } = useWallet();
 
-  const onSubmit: SubmitHandler<CreateProjectInputs> = useCallback(
+  const onSubmit: SubmitHandler<ProjectEditorInputs> = useCallback(
     async (_) => {
       // not using form data, using store data provided by form
       if (wallet) {

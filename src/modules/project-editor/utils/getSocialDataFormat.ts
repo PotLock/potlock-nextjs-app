@@ -1,6 +1,6 @@
-import { CreateProjectState } from "../models";
+import { ProjectEditorState } from "../models";
 
-const getSocialDataFormat = (data: CreateProjectState) => {
+const getSocialDataFormat = (data: ProjectEditorState) => {
   const body = {
     // Basic Profile details
     profile: {

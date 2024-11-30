@@ -89,6 +89,7 @@ const handleCreateOrUpdateProject = async () => {
           receiverId: LISTS_CONTRACT_ACCOUNT_ID,
           args: potlockRegistryArgs,
           deposit: parseNearAmount("0.05")!,
+          gas: FULL_TGAS,
         }),
       );
     }
