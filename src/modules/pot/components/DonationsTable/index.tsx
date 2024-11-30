@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Donation, indexer } from "@/common/api/indexer";
-import Spinner from "@/common/ui/components/Spinner";
+import Spinner from "@/common/ui/components/atoms/spinner";
 import Pagination from "@/modules/core/components/Pagination";
 
 import Arrow from "./Arrow";

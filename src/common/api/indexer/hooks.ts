@@ -5,7 +5,6 @@ import type {
   V1AccountsActivePotsRetrieveParams,
   V1AccountsDonationsReceivedRetrieveParams,
   V1AccountsDonationsSentRetrieveParams,
-  V1AccountsPotApplicationsRetrieveParams,
   V1AccountsRetrieveParams,
   V1AccountsUpvotedListsRetrieveParams,
   V1DonateContractConfigRetrieveParams,
@@ -20,7 +19,7 @@ import { INDEXER_CLIENT_CONFIG } from "./internal/config";
 import { ByPotId } from "./types";
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_stats_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_stats_retrieve
  */
 export const useStats = () => {
   const queryResult = generatedClient.useV1StatsRetrieve(INDEXER_CLIENT_CONFIG);
@@ -29,7 +28,7 @@ export const useStats = () => {
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve
  */
 export const useDonationConfig = (params?: V1DonateContractConfigRetrieveParams) => {
   const queryResult = generatedClient.useV1DonateContractConfigRetrieve(
@@ -41,7 +40,7 @@ export const useDonationConfig = (params?: V1DonateContractConfigRetrieveParams)
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve
  */
 export const useAccounts = (params?: V1AccountsRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsRetrieve(params, {
@@ -52,7 +51,7 @@ export const useAccounts = (params?: V1AccountsRetrieveParams) => {
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve_2
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve_2
  */
 export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
   const queryResult = generatedClient.useV1AccountsRetrieve2(accountId ?? "unknown", {
@@ -64,7 +63,7 @@ export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_active_pots_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_active_pots_retrieve
  */
 export const useAccountActivePots = ({
   accountId,
@@ -80,23 +79,47 @@ export const useAccountActivePots = ({
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_pot_applications_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_list_registrations_retrieve
  */
-export const useAccountPotApplications = ({
+export const useAccountListRegistrations = ({
   accountId,
   ...params
-}: Partial<ByAccountId> & V1AccountsPotApplicationsRetrieveParams) => {
-  const queryResult = generatedClient.useV1AccountsPotApplicationsRetrieve(
+}: Partial<ByAccountId> & generatedClient.V1AccountsListRegistrationsRetrieveParams) => {
+  const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(
     accountId ?? "unknown",
     params,
-    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
+
+    {
+      ...INDEXER_CLIENT_CONFIG,
+      swr: { enabled: Boolean(accountId) },
+    },
   );
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_pot_applications_retrieve
+ */
+export const useAccountPotApplications = ({
+  accountId,
+  ...params
+}: Partial<ByAccountId> & generatedClient.V1AccountsPotApplicationsRetrieveParams) => {
+  const queryResult = generatedClient.useV1AccountsPotApplicationsRetrieve(
+    accountId ?? "unknown",
+    params,
+
+    {
+      ...INDEXER_CLIENT_CONFIG,
+      swr: { enabled: Boolean(accountId) },
+    },
+  );
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve
  */
 export const usePots = (params?: V1PotsRetrieveParams) => {
   const queryResult = generatedClient.useV1PotsRetrieve(params, {
@@ -108,7 +131,7 @@ export const usePots = (params?: V1PotsRetrieveParams) => {
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_applications_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_applications_retrieve
  */
 export const usePotApplications = ({
   potId,
@@ -123,7 +146,7 @@ export const usePotApplications = ({
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_received_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_received_retrieve
  */
 export const useAccountDonationsReceived = ({
   accountId,
@@ -160,7 +183,7 @@ export const usePotDonations = ({ potId, ...params }: ByPotId & V1PotsDonationsR
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_sent_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_sent_retrieve
  */
 export const useAccountDonationsSent = ({
   accountId,
@@ -176,7 +199,7 @@ export const useAccountDonationsSent = ({
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve_2
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve_2
  */
 export const usePot = ({ potId }: Partial<ByPotId>) => {
   const queryResult = generatedClient.useV1PotsRetrieve2(potId ?? "unknown", {
@@ -188,7 +211,7 @@ export const usePot = ({ potId }: Partial<ByPotId>) => {
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_retrieve
  */
 export const useList = ({ listId }: Partial<ByListId>) => {
   const queryResult = generatedClient.useV1ListsRetrieve2(listId ?? 0, {
@@ -200,7 +223,7 @@ export const useList = ({ listId }: Partial<ByListId>) => {
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_random_registration_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_random_registration_retrieve
  *
  * Note: automatic refresh is disabled for optimization.
  *  Call `mutate()` for manual refresh.
@@ -223,7 +246,7 @@ export const useRandomListRegistration = ({
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_registrations_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_registrations_retrieve
  */
 export const useListRegistrations = ({
   listId,
@@ -243,7 +266,7 @@ export const useListRegistrations = ({
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/lists
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/lists
  */
 
 export const useLists = ({ ...params }: V1ListsRetrieveParams = {}) => {

@@ -6,7 +6,7 @@ import { ByPotId } from "@/common/api/indexer";
 import { TimeLeft } from "@/common/ui/components/_deprecated/TimeLeft";
 import { cn } from "@/common/ui/utils";
 
-import { PotTimelineFragment } from "./PotTimelineFragment";
+import { PotLifecycleStageCircularProgressIndicator } from "./progress";
 import { usePotLifecycle } from "../hooks/lifecycle";
 
 const containerHeight = 181;
@@ -120,8 +120,10 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
                     "color-neutral-500": !(completed || started),
                   })}
                 >
-                  {/* @ts-expect-error timeline fragments don't have proper typings */}
-                  <PotTimelineFragment {...{ progress, completed, started }} />
+                  <PotLifecycleStageCircularProgressIndicator
+                    started={started ?? false}
+                    {...{ progress, completed }}
+                  />
 
                   <div className="flex">
                     {label}

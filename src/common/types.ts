@@ -138,4 +138,9 @@ export enum ChronologicalSortOrder {
 
 export type ChronologicalSortOrderVariant = keyof typeof ChronologicalSortOrder;
 
-export type BasicRequirement = { title: string; isSatisfied: boolean };
+export type BasicRequirement = {
+  title: string;
+  hasFulfillmentAssessmentInputs?: boolean;
+  isFulfillmentAssessmentPending?: boolean;
+  isSatisfied: boolean;
+};
