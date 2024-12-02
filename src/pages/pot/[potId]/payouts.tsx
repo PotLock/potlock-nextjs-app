@@ -270,7 +270,7 @@ export default function PayoutsTab() {
   };
 
   return (
-    <div className="md:flex-row m-0  flex w-full flex-col-reverse items-start justify-between p-0 transition-all duration-500 ease-in-out">
+    <div className="md:flex-row m-0 flex  w-full flex-col-reverse items-start justify-between gap-3 p-0 transition-all duration-500 ease-in-out">
       <div
         className={cn(
           "flex w-full flex-col items-center justify-between p-0 transition-all duration-500 ease-in-out",
@@ -284,7 +284,7 @@ export default function PayoutsTab() {
           {!!totalChallenges && (
             <div
               onClick={() => setShowChallenges(!showChallenges)}
-              className="flex cursor-pointer flex-row items-center"
+              className="flex cursor-pointer flex-row items-center transition-all duration-500 ease-in-out hover:opacity-60"
             >
               <p className="text-sm font-medium">{showChallenges ? "Hide" : "Show"} Challenges</p>
               <p className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 p-1 text-[12px] font-semibold text-white">
@@ -429,7 +429,7 @@ export default function PayoutsTab() {
       <div
         className={cn(
           showChallenges ? "md:block" : "hidden",
-          "hidden w-full transition-all duration-500 ease-in-out",
+          "md:w-[33%] hidden w-full transition-all duration-500 ease-in-out",
         )}
       >
         <PotPayoutChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />
