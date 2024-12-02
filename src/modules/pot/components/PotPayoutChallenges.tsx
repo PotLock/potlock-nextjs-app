@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { set } from "date-fns";
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
@@ -13,10 +12,9 @@ import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useGlobalStoreSelector } from "@/store";
 
-import { Challenge } from "./styles";
-import ChallengeResolveModal from "../ChallengeResolveModal";
+import ChallengeResolveModal from "./ChallengeResolveModal";
 
-const PayoutsChallenges = ({
+export const PotPayoutChallenges = ({
   potDetail,
   setTotalChallenges,
 }: {
@@ -39,8 +37,6 @@ const PayoutsChallenges = ({
 
   // Fetch needed data
   useEffect(() => {
-    // INFO: Using this because the Indexer service doesn't provide these APIs
-
     (async () => {
       // Get Payouts Challenges for pot
       if (potDetail?.account) {
@@ -56,7 +52,7 @@ const PayoutsChallenges = ({
         }
       }
     })();
-  }, [potDetail?.account, accountId]);
+  }, [potDetail?.account, accountId, setTotalChallenges]);
 
   const handleSwitchTab = (tab: string) => {
     setTab(tab);
@@ -182,5 +178,3 @@ const PayoutsChallenges = ({
     </div>
   );
 };
-
-export default PayoutsChallenges;

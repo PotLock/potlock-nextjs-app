@@ -1,4 +1,4 @@
-// TODO: refactor using tailwind
+// TODO: refactor using tailwind!
 
 import { styled } from "styled-components";
 
@@ -79,5 +79,48 @@ export const Row = styled.div`
     height: 18px;
     border-radius: 50%;
     display: flex !important;
+  }
+`;
+
+export const FundingSrc = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  max-width: 100%;
+  gap: 1rem;
+  .profile-image {
+    width: 24px;
+    height: 24px;
+    display: flex !important;
+  }
+  .funding-src {
+    display: flex;
+    flex-direction: column;
+    .pot-name {
+      color: inherit;
+      font-weight: inherit;
+      display: none;
+    }
+    a {
+      color: #292929;
+      transition: 300ms;
+      font-weight: 600;
+      :hover {
+        text-decoration: none;
+        color: #dd3345;
+      }
+    }
+    .type {
+      color: #7b7b7b;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .funding-src .type {
+      display: none;
+    }
+    .funding-src .pot-name {
+      display: inline-block;
+    }
   }
 `;

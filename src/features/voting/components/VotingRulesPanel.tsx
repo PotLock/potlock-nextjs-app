@@ -11,12 +11,12 @@ interface VotingRulesPanelProps {
   mode?: "modal" | "panel";
 }
 
-export function VotingRulesPanel({
+export const VotingRulesPanel = ({
   open,
   onOpenChange,
   className,
   mode = "modal",
-}: VotingRulesPanelProps) {
+}: VotingRulesPanelProps) => {
   const Content = () => (
     <div className="space-y-4">
       <ul className="list-disc space-y-2 pl-4 text-[#525252]">
@@ -60,4 +60,4 @@ export function VotingRulesPanel({
       </DialogContent>
     </Dialog>
   );
-}
+};

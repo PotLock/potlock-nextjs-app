@@ -1,12 +1,11 @@
-/* eslint-disable @next/next/no-img-element */
-import Big from "big.js";
+import { Big } from "big.js";
 import Link from "next/link";
 
 import { Donation } from "@/common/api/indexer";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import routesPath from "@/modules/core/routes";
-import useProfileData from "@/modules/profile/hooks/data";
+import { useProfileData } from "@/modules/profile";
 
 import NearIcon from "./NearIcon";
 import { FundingSrc } from "./styled";
@@ -19,7 +18,13 @@ const addTrailingZeros = (number: number) => {
 const FALLBACK_URL =
   "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
 
-const DonationItem = ({ donation, projectId }: { donation: Donation; projectId: string }) => {
+export const PotDonationEntry = ({
+  donation,
+  projectId,
+}: {
+  donation: Donation;
+  projectId: string;
+}) => {
   const { donor, total_amount, net_amount: amount, pot, donated_at, token } = donation;
 
   const { id: donorId } = donor;
@@ -92,5 +97,3 @@ const DonationItem = ({ donation, projectId }: { donation: Donation; projectId: 
     </div>
   );
 };
-
-export default DonationItem;

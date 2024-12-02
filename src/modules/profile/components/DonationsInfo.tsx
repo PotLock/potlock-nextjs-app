@@ -1,8 +1,8 @@
 import { styled } from "styled-components";
 
 import { Button } from "@/common/ui/components";
+import { useDonation } from "@/features/donation";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
-import { useDonation } from "@/modules/donation";
 
 import FollowButton from "./FollowButton";
 

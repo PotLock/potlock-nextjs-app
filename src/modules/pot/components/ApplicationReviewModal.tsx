@@ -8,13 +8,13 @@ import {
   DialogHeader,
   DialogTitle,
   FormField,
+  Spinner,
   Textarea,
 } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/atoms/spinner";
 
 import { useApplicationReviewForm } from "../hooks";
 
-type Props = {
+export type PotApplicationReviewModalProps = {
   potDetail?: Pot;
   projectId: string;
   projectStatus: "Approved" | "Rejected" | "";
@@ -22,13 +22,13 @@ type Props = {
   onCloseClick?: () => void;
 };
 
-const ApplicationReviewModal = ({
+export const PotApplicationReviewModal: React.FC<PotApplicationReviewModalProps> = ({
   open,
   onCloseClick,
   potDetail,
   projectId,
   projectStatus,
-}: Props) => {
+}) => {
   // Form settings
   const { form, errors, onSubmit, inProgress } = useApplicationReviewForm({
     potDetail: potDetail!,
@@ -84,5 +84,3 @@ const ApplicationReviewModal = ({
     </Dialog>
   );
 };
-
-export default ApplicationReviewModal;

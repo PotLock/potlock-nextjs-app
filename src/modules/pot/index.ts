@@ -1,7 +1,12 @@
-export * from "./components";
 export * from "./components/ActivePots";
+export * from "./components/ApplicationReviewModal";
 export * from "./components/PotCard";
+export * from "./components/PotDonationEntry";
+export * from "./components/PotFilters";
 export * from "./components/PotLayout";
+export * from "./components/PotPayoutChallenges";
+export * from "./components/PotSponsorsBoard";
+export * from "./components/PotSponsorsTable";
 export * from "./constants";
 export * from "./hooks";
 export { type PotInputs, potSchema } from "./models";

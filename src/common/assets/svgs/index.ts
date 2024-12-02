@@ -1,4 +1,5 @@
 export { AdminUserIcon } from "./AdminUserIcon";
+export { Arrow } from "./Arrow";
 export { default as ChefHatIcon } from "./chef-hat.svg";
 export { default as CartIcon } from "./cart.svg";
 export { CopyPasteIcon } from "./CopyPasteIcon";

@@ -10,7 +10,7 @@ import {
   donationAmount,
   donationFeeBasisPointsToPercents,
   donationFeePercentsToBasisPoints,
-} from "@/modules/donation";
+} from "@/features/donation";
 import { PotInputs } from "@/modules/pot";
 
 import { POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES } from "../constants";

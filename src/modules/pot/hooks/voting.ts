@@ -1,36 +1,8 @@
 import { ByPotId } from "@/common/api/indexer";
-import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS, Voter } from "@/common/contracts/metapool";
+import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { useAuthSession } from "@/modules/auth";
 
 import { isPotVotingBased } from "../utils/voting";
-
-export const POT_MPDAO_VOTER_MOCK: Voter = {
-  voter_id: "lucascasp.near",
-  balance_in_contract: "0",
-
-  locking_positions: [
-    {
-      index: 0,
-      amount: "1447929400",
-      locking_period: 300,
-      voting_power: "7239647000000000000000000000",
-      unlocking_started_at: null,
-      is_unlocked: false,
-      is_unlocking: false,
-      is_locked: true,
-    },
-  ],
-
-  voting_power: "0",
-
-  vote_positions: [
-    {
-      votable_address: "metastaking.app",
-      votable_object_id: "luganodes.pool.near",
-      voting_power: "7239647000000000000000000000",
-    },
-  ],
-};
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,

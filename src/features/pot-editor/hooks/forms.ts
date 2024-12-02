@@ -9,8 +9,8 @@ import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { PotConfig } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
+import { donationFeeBasisPointsToPercents } from "@/features/donation";
 import { useCoreState } from "@/modules/core";
-import { donationFeeBasisPointsToPercents } from "@/modules/donation";
 import { PotInputs } from "@/modules/pot";
 import { dispatch } from "@/store";
 

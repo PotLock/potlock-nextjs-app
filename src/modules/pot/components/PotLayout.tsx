@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
+import { DonationSybilWarning } from "@/features/donation";
 import { ErrorModal, SuccessModal } from "@/modules/core";
-import { DonationSybilWarning } from "@/modules/donation";
 
 import { PotHero } from "./PotHero";
 import { PotLayoutTabPanel } from "./PotLayoutTabPanel";

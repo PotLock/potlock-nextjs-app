@@ -5,7 +5,7 @@ import Star from "@/common/assets/svgs/Star";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
-interface WeightBoostPanelProps {
+export interface VotingWeightBoostPanelProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   className?: string;
@@ -13,13 +13,13 @@ interface WeightBoostPanelProps {
   weightBoost: number;
 }
 
-export function WeightBoostPanel({
+export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
   open,
   onOpenChange,
   className,
   mode = "modal",
   weightBoost,
-}: WeightBoostPanelProps) {
+}) => {
   const Content = () => (
     <div className="space-y-4">
       <div className="space-y-4">
@@ -101,4 +101,4 @@ export function WeightBoostPanel({
       </DialogContent>
     </Dialog>
   );
-}
+};

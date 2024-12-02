@@ -12,7 +12,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/common/ui/components/molecules/carousel";
-import { DonateToCampaignProjects } from "@/modules/donation";
+import { DonateToCampaignProjects } from "@/features/donation";
 import { useProfileData } from "@/modules/profile";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";

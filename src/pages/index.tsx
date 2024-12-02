@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
+import { DonateRandomly } from "@/features/donation";
 import { useAuth } from "@/modules/auth/hooks/store";
 import useWallet from "@/modules/auth/hooks/wallet";
 import { GeneralStats, useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
-import { DonateRandomly } from "@/modules/donation";
 import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/modules/project";
 import { useGlobalStoreSelector } from "@/store";
 

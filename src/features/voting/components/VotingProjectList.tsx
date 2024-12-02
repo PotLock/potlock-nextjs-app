@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
@@ -21,11 +19,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/common/ui/components";
+import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 
 import { VotingRulesPanel } from "./VotingRulesPanel";
-import { WeightBoostPanel } from "./WeightBoostPanel";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { VotingWeightBoostPanel } from "./VotingWeightBoostPanel";
 
 interface Project {
   id: string;
@@ -38,9 +36,9 @@ interface Project {
 const DUMMY_PROJECTS: Project[] = [
   {
     id: "1",
-    name: "Creativesportfolio.near",
+    name: "Mike.near",
     votes: 2000,
-    voted: true,
+    voted: false,
     imageUrl: "https://picsum.photos/200/200/?blur",
   },
   {
@@ -92,18 +90,11 @@ const DUMMY_PROJECTS: Project[] = [
     voted: false,
     imageUrl: "https://picsum.photos/200/200/?blur",
   },
-  {
-    id: "9",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
 ];
 
 type TabType = "all" | "voted" | "pending";
 
-export default function VotingProjectList() {
+export const VotingProjectList: React.FC = () => {
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<TabType>("all");
@@ -384,7 +375,7 @@ export default function VotingProjectList() {
               />
             )}
             {showWeightBoost && (
-              <WeightBoostPanel
+              <VotingWeightBoostPanel
                 open={true}
                 onOpenChange={() => setShowWeightBoost(false)}
                 mode="panel"
@@ -397,7 +388,7 @@ export default function VotingProjectList() {
       {/* Mobile Dialogs */}
       {!isDesktop && (
         <>
-          <WeightBoostPanel
+          <VotingWeightBoostPanel
             open={showWeightBoost}
             onOpenChange={setShowWeightBoost}
             weightBoost={0}
@@ -407,4 +398,4 @@ export default function VotingProjectList() {
       )}
     </div>
   );
-}
+};
