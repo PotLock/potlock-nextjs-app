@@ -6,9 +6,9 @@ import { prop } from "remeda";
 
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
+import { hrefByRouteName } from "@/modules/core";
 import { useWallet } from "@/modules/session";
 import { useAuth } from "@/modules/session/hooks/store";
-import { hrefByRouteName } from "@/modules/core";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { ErrorModal } from "../ErrorModal";

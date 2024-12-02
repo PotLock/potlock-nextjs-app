@@ -3,10 +3,10 @@ import Link from "next/link";
 import { indexer } from "@/common/api/indexer";
 import { Button } from "@/common/ui/components";
 import { DonateRandomly } from "@/features/donation";
-import { useAuth, useWallet } from "@/modules/session";
 import { useRegistration } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/modules/project";
+import { useAuth, useWallet } from "@/modules/session";
 import { useGlobalStoreSelector } from "@/store";
 
 export const GeneralStats = () => {

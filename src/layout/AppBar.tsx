@@ -7,8 +7,8 @@ import { useRouter } from "next/router";
 import { NETWORK } from "@/common/_config";
 import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
-import { SignInButton, useAuth } from "@/modules/session";
 import { CartLink } from "@/modules/cart";
+import { SignInButton, useAuth } from "@/modules/session";
 
 import { UserDropdown } from "./UserDropdown";
 import routesPath, { hrefByRouteName } from "../modules/core/routes";

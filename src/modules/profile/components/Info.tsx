@@ -7,9 +7,9 @@ import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
+import routesPath, { hrefByRouteName } from "@/modules/core/routes";
 import { useAuth } from "@/modules/session";
 import useWallet from "@/modules/session/hooks/wallet";
-import routesPath, { hrefByRouteName } from "@/modules/core/routes";
 
 import DonationsInfo from "./DonationsInfo";
 import FollowButton from "./FollowButton";
