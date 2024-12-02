@@ -39,8 +39,15 @@ export default defineConfig({
         },
       },
 
+      corn: {
+        50: "#fDfCe9",
+      },
+
       peach: {
         50: "#fef6ee",
+        300: "#f4b37d",
+        400: "#EE8949",
+        700: "#B63D18",
       },
 
       neutral: {

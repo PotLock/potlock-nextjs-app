@@ -1,6 +1,6 @@
 import React from "react";
 
-import Spinner from "./Spinner";
+import Spinner from "./atoms/spinner";
 
 const ScreenSpinner = () => (
   <div

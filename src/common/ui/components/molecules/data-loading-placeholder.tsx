@@ -1,6 +1,6 @@
 import { cn } from "../../utils";
+import { Spinner } from "../atoms/spinner";
 import { LabeledIcon } from "../atoms/typography";
-import { Spinner } from "../Spinner";
 
 export type DataLoadingPlaceholderProps = { className?: string; text?: string };
 

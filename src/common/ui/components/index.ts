@@ -5,7 +5,6 @@
  */
 export * from "./_deprecated/InfiniteScroll";
 export * from "./SearchBar";
-export * from "./Spinner";
 export * from "./DataTable";
 
 /**
@@ -31,6 +30,7 @@ export * from "./atoms/scroll-area";
 export * from "./atoms/select";
 export * from "./atoms/separator";
 export * from "./atoms/skeleton";
+export * from "./atoms/spinner";
 export * from "./atoms/switch";
 export * from "./atoms/table";
 export * from "./atoms/textarea";

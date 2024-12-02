@@ -5,7 +5,7 @@ import Files from "react-files";
 
 import CameraIcon from "@/common/assets/svgs/CameraIcon";
 import { Button } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/Spinner";
+import Spinner from "@/common/ui/components/atoms/spinner";
 import useStatus from "@/modules/core/hooks/usStatus";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 

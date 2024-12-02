@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Big } from "big.js";
 import { prop } from "remeda";
+import useSWR from "swr";
 
 import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
-import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
+import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS, Voter } from "@/common/contracts/metapool";
 import { u128StringToBigNum } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { AccessControlClearanceCheckResult } from "@/modules/access-control";
@@ -109,22 +109,30 @@ export const usePotUserPermissions = ({ potId }: ByPotId) => {
 export const usePotUserApplicationClearance = ({
   potId,
 }: ByPotId): AccessControlClearanceCheckResult => {
-  const { accountId: _, isVerifiedPublicGoodsProvider } = useAuthSession();
+  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useAuthSession();
+
   const isVotingBasedPot = isPotVotingBased({ potId });
 
   const { data: stNear } = ftService.useRegisteredToken({
     tokenId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
   });
 
-  // TODO: Get voting power from the snapshot
-  const votingPowerU128StringMock = "0";
+  // TODO: Get snapshot from the indexer endpoint
+  const { data: votingSnapshot } = useSWR<Voter[]>(
+    "/mpdao-voting.snapshot.json",
+    (urlString: string) => fetch(urlString).then((response) => response.json()),
+  );
 
-  // TODO: calculate this
-  const metaPoolDaoRpgfScore = 0;
+  const votingPowerU128String =
+    votingSnapshot?.find(({ voter_id }) => voter_id === accountId)?.voting_power ?? "0";
 
   return useMemo(() => {
     const requirements = [
-      { title: "Verified Project on Potlock", isSatisfied: isVerifiedPublicGoodsProvider },
+      {
+        title: "Verified Project on Potlock",
+        isFulfillmentAssessmentPending: isAccountInfoLoading,
+        isSatisfied: isVerifiedPublicGoodsProvider,
+      },
 
       ...(isVotingBasedPot
         ? [
@@ -135,15 +143,11 @@ export const usePotUserApplicationClearance = ({
 
             {
               title: "Voting power 5000 or more",
+
               isSatisfied: u128StringToBigNum(
-                votingPowerU128StringMock,
+                votingPowerU128String,
                 METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
               ).gte(5000),
-            },
-
-            {
-              title: "A total of 10 points accumulated for the RPGF score",
-              isSatisfied: metaPoolDaoRpgfScore >= 10,
             },
           ]
         : []),
@@ -154,7 +158,13 @@ export const usePotUserApplicationClearance = ({
       isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
       error: null,
     };
-  }, [isVerifiedPublicGoodsProvider, isVotingBasedPot, stNear?.balanceUsd]);
+  }, [
+    isAccountInfoLoading,
+    isVerifiedPublicGoodsProvider,
+    isVotingBasedPot,
+    stNear?.balanceUsd,
+    votingPowerU128String,
+  ]);
 };
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
