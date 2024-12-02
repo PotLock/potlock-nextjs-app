@@ -6,14 +6,11 @@ interface AuthState {
   isAuthenticated: boolean;
 }
 
-/**
- * Auth State
- */
 const initialState: AuthState = {
   isAuthenticated: false,
 };
 
-export const auth = createModel<AppModel>()({
+export const sessionModel = createModel<AppModel>()({
   state: initialState,
 
   reducers: {
@@ -21,7 +18,6 @@ export const auth = createModel<AppModel>()({
       state.isAuthenticated = isAuthenticated;
     },
 
-    // Rese t to the initial state
     RESET() {
       return initialState;
     },
@@ -29,7 +25,7 @@ export const auth = createModel<AppModel>()({
 
   effects: (dispatch) => ({
     setAuthData(props: AuthState) {
-      dispatch.auth.SET_DATA(props);
+      dispatch.session.SET_DATA(props);
     },
   }),
 });

@@ -18,7 +18,7 @@ const initialState: CoreState = {
   oneNearUsdPrice: 0,
 };
 
-export const core = createModel<AppModel>()({
+export const coreModel = createModel<AppModel>()({
   state: initialState,
 
   reducers: {
@@ -62,5 +62,3 @@ export const core = createModel<AppModel>()({
     },
   }),
 });
-
-export const useCoreState = () => useGlobalStoreSelector(prop("core"));

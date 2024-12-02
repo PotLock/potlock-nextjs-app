@@ -16,8 +16,6 @@ const useDonationsSent = (accountId?: string) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
   const [directDonations, setDirectDonations] = useState<DonationInfo[]>();
   const [matchedDonations, setMatchedDonations] = useState<DonationInfo[]>();
-  // const { data: oneNearUsdPrice } = coingecko.useOneNearUsdPrice();
-  // const value = oneNearUsdPrice ? amountNearFloat * oneNearUsdPrice : 0.0;
 
   const { data: donationsData } = useAccountDonationsSent({
     accountId: accountId || "",

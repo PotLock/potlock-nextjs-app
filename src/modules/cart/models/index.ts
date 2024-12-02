@@ -1,37 +1,46 @@
-import { createModel } from "@rematch/core";
-import { mergeAll } from "remeda";
+import { create } from "zustand";
 
-import { AppModel } from "@/store/models";
+import { CartItem, CartOrderExecutionOutcome, CartOrderStep, CartState } from "../types";
 
-import { effects } from "./effects";
-import { CartOrderExecutionOutcome, CartOrderStep, CartState } from "../types";
+interface CartStore extends CartState {
+  reset: () => void;
+  ordersExecuted: (data: CartOrderExecutionOutcome[]) => void;
+  orderExecutionFailure: (error: Error) => void;
+  checkout: () => void;
+}
 
-export * from "./schemas";
-
-const cartStateDefaults: CartState = {
+const initialState: CartState = {
   items: {},
   orderStep: "details",
   finalOutcome: { error: null },
 };
 
-const handleStep = (state: CartState, orderStep: CartOrderStep, stateUpdate?: Partial<CartState>) =>
-  mergeAll([state, stateUpdate ?? {}, { orderStep }]);
+export const useCartStore = create<CartStore>((set) => ({
+  ...initialState,
 
-export const cartModel = createModel<AppModel>()({
-  state: cartStateDefaults,
-  effects,
+  reset: () => set(initialState),
 
-  reducers: {
-    reset: () => cartStateDefaults,
+  ordersExecuted: (data: CartOrderExecutionOutcome[]) =>
+    set((state) => ({
+      ...state,
+      orderStep: "result" as CartOrderStep,
+      finalOutcome: { data, error: null },
+    })),
 
-    ordersExecuted: (state, data: CartOrderExecutionOutcome[]) =>
-      handleStep(state, "result", {
-        finalOutcome: { data, error: null },
-      }),
+  orderExecutionFailure: (error: Error) =>
+    set((state) => ({
+      ...state,
+      orderStep: "result" as CartOrderStep,
+      finalOutcome: { data: null, error },
+    })),
 
-    orderExecutionFailure: (state, error: Error) =>
-      handleStep(state, "result", {
-        finalOutcome: { data: null, error },
-      }),
+  checkout: () => {
+    console.log("checkout");
+    set(initialState);
   },
-});
+}));
+
+// Export for backward compatibility if needed
+export const cartModel = {
+  state: initialState,
+};

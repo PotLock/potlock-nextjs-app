@@ -7,11 +7,15 @@ import { useCart } from "../hooks";
 export type CartBreakdownProps = {};
 
 export const CartBreakdown: React.FC<CartBreakdownProps> = () => {
-  const { items } = useCart();
+  const { items, checkout } = useCart();
 
   const [matchingAmount, setMatchingAmount] = useState(0);
   const [directAmount, setDirectAmount] = useState(0);
   const totalAmount = matchingAmount + directAmount;
+
+  const handleDonate = () => {
+    checkout();
+  };
 
   return (
     <Card className="md:w-80 h-fit w-full">
@@ -46,7 +50,7 @@ export const CartBreakdown: React.FC<CartBreakdownProps> = () => {
           <span>${totalAmount.toFixed(2)}</span>
         </div>
 
-        <Button className="w-full bg-red-500 text-white hover:bg-red-600">
+        <Button className="w-full bg-red-500 text-white hover:bg-red-600" onClick={handleDonate}>
           Donate ${totalAmount.toFixed(2)}
         </Button>
       </CardContent>

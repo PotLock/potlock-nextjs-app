@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 
 import { walletApi } from "@/common/api/near";
 import useIsClient from "@/common/lib/useIsClient";
-import SuspenseLoading from "@/modules/session/components/SuspenseLoading";
 import { dispatch, resetStore } from "@/store";
 
+import SuspenseLoading from "../components/SuspenseLoading";
 import { useAuth } from "../hooks/store";
 import { useWallet } from "../hooks/wallet";
 
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const isSignedIn = walletApi.walletSelector.isSignedIn();
 
       if (isSignedIn !== isAuthenticated) {
-        dispatch.auth.setAuthData({ isAuthenticated: isSignedIn });
+        dispatch.session.setAuthData({ isAuthenticated: isSignedIn });
 
         if (!isSignedIn) {
           // Clean up states

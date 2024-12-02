@@ -1,7 +1,16 @@
-import { prop } from "remeda";
+import { useCartStore } from "../models";
 
-import { useGlobalStoreSelector } from "@/store";
+export const useCart = () => {
+  const { items, orderStep, finalOutcome, reset, ordersExecuted, orderExecutionFailure, checkout } =
+    useCartStore();
 
-import { CART_KEY } from "../constants";
-
-export const useCart = () => ({ ...useGlobalStoreSelector(prop(CART_KEY)) });
+  return {
+    items,
+    orderStep,
+    finalOutcome,
+    reset,
+    ordersExecuted,
+    orderExecutionFailure,
+    checkout,
+  };
+};

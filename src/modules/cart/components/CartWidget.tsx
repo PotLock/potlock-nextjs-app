@@ -12,16 +12,19 @@ import {
   Checkbox,
   Input,
 } from "@/common/ui/components";
-import { CartBreakdown } from "@/modules/cart/components/CartBreakdown";
+
+import { CartBreakdown } from "./CartBreakdown";
+import { useCart } from "../hooks";
 
 export type CartWidgetProps = {};
 
 export const CartWidget: React.FC<CartWidgetProps> = () => {
+  const { items } = useCart();
   const [matchingAmount, setMatchingAmount] = useState(0);
   const [directAmount, setDirectAmount] = useState(0);
 
   return (
-    <div className="md:flex-row flex h-fit  flex-col gap-6 p-6">
+    <div className="md:flex-row flex h-fit flex-col gap-6 p-6">
       <div className="flex h-fit flex-1 flex-col gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">

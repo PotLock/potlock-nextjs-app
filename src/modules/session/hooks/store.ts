@@ -1,6 +1,8 @@
+import { prop } from "remeda";
+
 import { useGlobalStoreSelector } from "@/store";
 
 export const useAuth = () => {
-  const auth = useGlobalStoreSelector((state) => state.auth);
+  const auth = useGlobalStoreSelector(prop("session"));
   return auth;
 };
