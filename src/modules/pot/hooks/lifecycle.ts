@@ -3,6 +3,8 @@ import { useMemo } from "react";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { getDateTime } from "@/modules/core";
 
+import { PotLifecycleStageTagEnum } from "../types";
+
 export type PotLifecycleCalculationInputs = ByPotId & { hasVoting?: boolean };
 
 export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInputs) => {
@@ -21,6 +23,7 @@ export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInp
 
       return [
         {
+          tag: PotLifecycleStageTagEnum.Application,
           label: "Applications round",
           daysLeft: application_end_ms,
           started: now >= application_start_ms,
@@ -33,6 +36,7 @@ export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInp
         },
 
         {
+          tag: PotLifecycleStageTagEnum.Matching,
           label: `${hasVoting ? "Voting" : "Matching"} round`,
           daysLeft: public_round_end_ms,
           started: now >= public_round_start_ms,
@@ -45,10 +49,10 @@ export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInp
         },
 
         {
+          tag: PotLifecycleStageTagEnum.Cooldown,
           label: "Cooldown period",
           daysLeft: cooldown_end_ms,
           started: now >= public_round_end_ms,
-
           completed: cooldown_end_ms ? now > cooldown_end_ms && !!cooldown_end_ms : false,
 
           progress: cooldown_end_ms
@@ -59,6 +63,7 @@ export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInp
         },
 
         {
+          tag: PotLifecycleStageTagEnum.Completed,
           label: "Payouts completed",
           daysLeft: null,
           started: null,
@@ -69,17 +74,10 @@ export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInp
     } else return [];
   }, [hasVoting, now, pot]);
 
-  // const getActiveStageIndex = () => {
-  //   let index = 0;
-  //
-  //   stages.forEach((status, idx) => {
-  //     if (status.started && !status.completed) {
-  //       index = idx;
-  //     }
-  //   });
-  //
-  //   return index === null ? 3 : index;
-  // };
+  const currentStage = useMemo(
+    () => stages.find((stage) => stage.started && !stage.completed),
+    [stages],
+  );
 
-  return stages;
+  return { stages, currentStage };
 };

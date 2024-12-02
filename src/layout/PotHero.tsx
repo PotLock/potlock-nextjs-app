@@ -13,7 +13,7 @@ import { cn } from "@/common/ui/utils";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
 import { useVotingUserClearance } from "@/features/voting";
-import { PotStats, PotTimeline, usePotUserPermissions } from "@/modules/pot";
+import { PotStats, PotTimeline, usePotLifecycle, usePotUserPermissions } from "@/modules/pot";
 import { useAuthSession } from "@/modules/session";
 import { TokenTotalValue } from "@/modules/token";
 
@@ -35,6 +35,12 @@ export const PotHero: React.FC<PotHeroProps> = ({
   const { isSignedIn, accountId } = useAuthSession();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
   const votingClearance = useVotingUserClearance({ potId });
+  const lifecycle = usePotLifecycle({ potId, hasVoting });
+
+  const isVotingRoundOngoing = useMemo(
+    () => lifecycle.currentStage?.tag === "Matching",
+    [lifecycle.currentStage?.tag],
+  );
 
   const { canApply, canDonate, canFund, canChallengePayouts, existingChallengeForUser } =
     usePotUserPermissions({ potId });
@@ -55,13 +61,6 @@ export const PotHero: React.FC<PotHeroProps> = ({
       ];
     } else return [pot?.description ?? null, null];
   }, [pot?.description]);
-
-  // TODO: Implement proper voting stage check
-  const isVotingRoundOngoing = useMemo(() => {
-    if (!pot) return false;
-
-    return false;
-  }, [pot]);
 
   return (
     <div

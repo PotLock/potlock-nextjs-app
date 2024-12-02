@@ -83,7 +83,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, has
   // TODO: Refactor this code ( original owner: @M-Rb3 )
   const getIndexOfActive = () => {
     let index = 0;
-    lifecycle.forEach((status, idx) => {
+    lifecycle.stages.forEach((status, idx) => {
       if (status.started && !status.completed) {
         index = idx;
       }
@@ -112,7 +112,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, has
             isMobileMenuActive: "transform-translate-y-0",
           })}
         >
-          {lifecycle.map(
+          {lifecycle.stages.map(
             // TODO: Improve this code (built by mohamed)
             ({ label, daysLeft, progress, started, completed }, idx) => {
               return (

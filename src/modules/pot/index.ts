@@ -12,5 +12,6 @@ export * from "./constants";
 export { type PotInputs, potSchema } from "./models/schemas";
 export * from "./types";
 export * from "./utils/validation";
+export * from "./hooks/lifecycle";
 export * from "./hooks/permissions";
 export * from "./hooks/useOrderedDonations";
