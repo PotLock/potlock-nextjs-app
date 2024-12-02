@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { MdArrowOutward } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
