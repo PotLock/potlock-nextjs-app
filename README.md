@@ -15,9 +15,7 @@ You can see original features <https://potlock.notion.site/All-Features-Potlock-
 Core contracts can be found at <https://github.com/PotLock/core>
 Contract documentation: <https://docs.potlock.io/contracts/contracts-overview>
 
-## Development
-
-### Getting Started
+## Getting Started
 
 ```bash
 # using the right node version
@@ -33,7 +31,7 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Backend ( Indexer API )
+## Backend ( Indexer API )
 
 Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
@@ -41,7 +39,7 @@ Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
 **Swagger UI**: <https://dev.potlock.io/api/schema/swagger-ui/#/>
 
-### Project Structure
+## Project Structure
 
 Provides explicit separation between abstract and business-logic-heavy parts of the codebase,
 for which it offers a highly modular approach, defining clear boundaries for different
@@ -129,13 +127,13 @@ aspects of the application within each module:
 
 ```
 
-#### Links
+### Links
 
 1. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
 2. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
 3. [Rematch models](https://rematchjs.org/docs/api-reference/models)
 
-### Testing
+## Testing
 
 We use Vitest testing framework coupled with React Testing Library to specifically target UI.
 
@@ -160,7 +158,7 @@ All tests should be located in the `_tests/` directory. ... for each specific pa
 
 ```
 
-#### Commands
+### Commands
 
 Execute all unit tests:
 
