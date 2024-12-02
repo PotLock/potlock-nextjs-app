@@ -3,9 +3,10 @@ import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 
 import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
+import { PotApplicationStatus as ApplicationStatus } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
-import { Application, ApplicationStatus, potClient } from "@/common/contracts/core";
+import { Application, potClient } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { PotLayout } from "@/modules/pot";
@@ -107,7 +108,10 @@ const FeedsTab = () => {
           <button
             key={selectedTab.value}
             onClick={() => handleSwitchTab(selectedTab.value)}
-            className={`border px-3 py-1 text-sm transition-all duration-200 ease-in-out ${tab === selectedTab.value ? "rounded-sm border-[#F4B37D] bg-[#FCE9D5]  text-[#91321B]" : "border-[#DBDBDB] bg-white text-black"}`}
+            className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
+              "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === selectedTab.value,
+              "border-[#DBDBDB] bg-white text-black": tab !== selectedTab.value,
+            })}
           >
             {selectedTab.name}
           </button>

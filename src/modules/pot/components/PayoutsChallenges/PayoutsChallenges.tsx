@@ -8,6 +8,7 @@ import AdminIcon from "@/common/assets/svgs/AdminIcon";
 import { CheckedIcon } from "@/common/assets/svgs/CheckedIcon";
 import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useGlobalStoreSelector } from "@/store";
@@ -79,13 +80,19 @@ const PayoutsChallenges = ({
         <div className="md:gap-1 my-6 flex items-center gap-3">
           <button
             onClick={() => handleSwitchTab("UNRESOLVED")}
-            className={`border px-3 py-1 text-sm transition-all duration-200 ease-in-out ${tab === "UNRESOLVED" ? "rounded-sm border-[#F4B37D] bg-[#FCE9D5]  text-[#91321B]" : "border-[#DBDBDB] bg-white text-black"}`}
+            className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
+              "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === "UNRESOLVED",
+              "border-[#DBDBDB] bg-white text-black": tab !== "UNRESOLVED",
+            })}
           >
             Unresolved
           </button>
           <button
             onClick={() => handleSwitchTab("RESOLVED")}
-            className={`border px-3 py-1 text-sm transition-all duration-200 ease-in-out ${tab === "RESOLVED" ? "rounded-sm border-[#F4B37D] bg-[#FCE9D5]  text-[#91321B]" : "border-[#DBDBDB] bg-white text-black"}`}
+            className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
+              "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === "RESOLVED",
+              "border-[#DBDBDB] bg-white text-black": tab !== "RESOLVED",
+            })}
           >
             Resolved
           </button>
@@ -153,7 +160,7 @@ const PayoutsChallenges = ({
               ),
             )
           ) : (
-            <div className="border-1 mb-7 flex w-full flex-col  items-center justify-center rounded-3xl border border-[##7B7B7B] p-6">
+            <div className="border-1 mb-7 flex w-full flex-col items-center justify-center rounded-3xl border border-[##7B7B7B] p-6 text-center">
               <CheckedIcon />
               {tab === "UNRESOLVED"
                 ? "All Challenges has been resolved."

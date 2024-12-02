@@ -23,7 +23,6 @@ const Wrapper = styled.div`
 
   @media only screen and (max-width: 1280px) {
     z-index: 1;
-    background: white;
     padding: 2px 0;
   }
 `;

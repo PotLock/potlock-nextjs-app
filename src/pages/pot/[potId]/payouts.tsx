@@ -3,10 +3,10 @@ import { ReactElement, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
-import { ArrowRight } from "@/common/assets/svgs";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
 import { Payout, potClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
+import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/modules/core";
 import { PayoutsChallenges, PotLayout, useOrderedDonations } from "@/modules/pot";
 import {
@@ -65,9 +65,14 @@ const PayoutsTab = () => {
   };
 
   return (
-    <div className="md:flex-row m-0 flex w-full flex-col-reverse items-start justify-between p-0 transition-all duration-500 ease-in-out">
+    <div className="md:flex-row m-0  flex w-full flex-col-reverse items-start justify-between p-0 transition-all duration-500 ease-in-out">
       <div
-        className={`flex w-full flex-col items-center p-0 ${showChallenges ? "md:w-[65%]" : ""} justify-between transition-all duration-500 ease-in-out`}
+        className={cn(
+          "flex w-full flex-col items-center justify-between p-0 transition-all duration-500 ease-in-out",
+          {
+            "md:w-[65%]": showChallenges,
+          },
+        )}
       >
         <div className="mb-8 flex w-full flex-row justify-between">
           <h2 className="text-xl font-semibold">Estimated Payout</h2>
@@ -82,13 +87,21 @@ const PayoutsTab = () => {
               </p>
               <ArrowDown
                 style={{ display: "block" }}
-                className={`${showChallenges ? "md:rotate-265 rotate-180" : "md:rotate-90 rotate:45"} ml-3 transition-all duration-300 ease-in-out`}
+                className={cn(
+                  showChallenges ? "md:rotate-265 rotate-180" : "md:rotate-90 rotate:45",
+                  "ml-3 transition-all duration-300 ease-in-out",
+                )}
               />
             </div>
           )}
         </div>
         <div
-          className={`${showChallenges ? "md:block" : "hidden"} md:hidden md:w-[33%] md:max-w-[33%] w-full transition-all duration-500 ease-in-out`}
+          className={cn(
+            "md:w-[33%] md:max-w-[33%] md:hidden block w-full transition-all duration-500 ease-in-out",
+            {
+              hidden: !showChallenges,
+            },
+          )}
         >
           <PayoutsChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />
         </div>
@@ -209,7 +222,10 @@ const PayoutsTab = () => {
         </div>
       </div>
       <div
-        className={`${showChallenges ? "md:block" : "hidden"} md:w-[33%] md:max-w-[33%] hidden w-full transition-all duration-500 ease-in-out`}
+        className={cn(
+          showChallenges ? "md:block" : "hidden",
+          "hidden w-full transition-all duration-500 ease-in-out",
+        )}
       >
         <PayoutsChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />
       </div>
