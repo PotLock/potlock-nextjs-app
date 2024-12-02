@@ -3,12 +3,12 @@ import { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import useWallet from "@/modules/auth/hooks/wallet";
+import { useWallet } from "@/modules/auth";
 import { dispatch } from "@/store";
 
+import { saveProject } from "../models/effects";
 import { addFundingSourceSchema, projectEditorSchema } from "../models/schemas";
 import { AddFundingSourceInputs, ProjectEditorInputs } from "../models/types";
-import handleCreateOrUpdateProject from "../utils/handleCreateOrUpdateProject";
 
 export const useProjectEditorForm = () => {
   const form = useForm<ProjectEditorInputs>({
@@ -23,7 +23,7 @@ export const useProjectEditorForm = () => {
       if (wallet) {
         dispatch.projectEditor.submissionStatus("sending");
 
-        handleCreateOrUpdateProject().then(async (result) => {
+        saveProject().then(async (result) => {
           if (result.success) {
             console.log("Opening wallet for approval...");
           } else {

@@ -1,9 +1,10 @@
 import { coingecko } from "@/common/api/coingecko";
 import { formatWithCommas } from "@/common/lib";
-import { ftService as _ftServiceDocReference } from "@/common/services";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ftService } from "@/common/services";
 
 /**
- * @deprecated use {@link ftService.useRegisteredToken({tokenId:"NEAR"})}
+ * @deprecated Use `usdPrice` from {@link ftService.useRegisteredToken}({ tokenId: NATIVE_TOKEN_ID })
  */
 export const useNearToUsdWithFallback = (amountNear: number, abbreviate?: boolean) => {
   const { data: oneNearUsdPrice } = coingecko.useOneNearUsdPrice();

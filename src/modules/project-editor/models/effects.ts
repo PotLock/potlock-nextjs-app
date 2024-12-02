@@ -4,6 +4,7 @@ import {
   calculateDepositByDataSize,
   validateNearAddress,
 } from "@wpdas/naxios";
+import { Big } from "big.js";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { LISTS_CONTRACT_ACCOUNT_ID, SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
@@ -14,7 +15,7 @@ import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
 import { store } from "@/store";
 
-import getSocialDataFormat from "./getSocialDataFormat";
+import getSocialDataFormat from "../utils/getSocialDataFormat";
 
 const getSocialData = async (accountId: string) => {
   try {
@@ -26,7 +27,7 @@ const getSocialData = async (accountId: string) => {
   }
 };
 
-const handleCreateOrUpdateProject = async () => {
+export const saveProject = async () => {
   const data = store.getState().projectEditor;
 
   const accountId = data.isDao ? data.daoAddress : data.accountId;
@@ -67,8 +68,9 @@ const handleCreateOrUpdateProject = async () => {
     const account = await socialDb.getAccount({ accountId });
 
     let depositFloat = calculateDepositByDataSize(socialArgs);
+
     if (!account) {
-      depositFloat = (Number(depositFloat) + 0.1).toString();
+      depositFloat = Big(depositFloat).add(0.1).toString();
     }
 
     // social.near
@@ -153,5 +155,3 @@ const handleCreateOrUpdateProject = async () => {
     };
   }
 };
-
-export default handleCreateOrUpdateProject;

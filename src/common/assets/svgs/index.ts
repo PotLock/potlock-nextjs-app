@@ -14,3 +14,4 @@ export { SearchIcon } from "./SearchIcon";
 export { Toggle } from "./Toggle";
 export { VolunteerIcon } from "./VolunteerIcon";
 export { WarningIcon } from "./warning";
+export { ArrowRight } from "./ArrowRight";
