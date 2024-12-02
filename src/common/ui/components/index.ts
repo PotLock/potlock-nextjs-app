@@ -50,6 +50,7 @@ export * from "./molecules/data-loading-placeholder";
 export * from "./molecules/dialog";
 export * from "./molecules/filter";
 export * from "./molecules/form";
+export * from "./molecules/multi-select";
 export * from "./molecules/pagination";
 export * from "./molecules/radio-group";
 export * from "./molecules/sort-select";

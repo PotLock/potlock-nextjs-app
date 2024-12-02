@@ -1,4 +1,4 @@
-import { donationFeeBasisPointsToPercents } from "@/modules/donation";
+import { donationFeeBasisPointsToPercents } from "@/features/donation";
 
 import {
   POT_MAX_APPROVED_PROJECTS,

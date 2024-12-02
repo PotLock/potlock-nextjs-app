@@ -13,7 +13,7 @@ import { fetchSocialImages } from "@/common/services/near-socialdb";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccessControlList } from "@/modules/access-control";
+import { AccessControlList } from "@/features/access-control";
 import useWallet from "@/modules/auth/hooks/wallet";
 import { AccountOption } from "@/modules/core";
 import { useListForm } from "@/modules/lists/hooks/useListForm";

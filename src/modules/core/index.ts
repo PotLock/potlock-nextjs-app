@@ -1,7 +1,8 @@
 export * from "./components/social-images";
 export * from "./components/AccountOption";
-export { default as Alert } from "./components/Alert";
+export * from "./components/Alert";
 export * from "./components/ErrorModal";
+export * from "./components/DeprecatedPagination";
 export * from "./components/GeneralStats";
 export * from "./components/ModalErrorBody";
 export * from "./components/AppBar";

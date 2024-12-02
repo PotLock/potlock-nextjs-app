@@ -9,7 +9,7 @@ import { Application, Challenge, potClient } from "@/common/contracts/core";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS, Voter } from "@/common/contracts/metapool";
 import { u128StringToBigNum } from "@/common/lib";
 import { ftService } from "@/common/services";
-import { AccessControlClearanceCheckResult } from "@/modules/access-control";
+import { AccessControlClearanceCheckResult } from "@/features/access-control";
 import { useAuthSession } from "@/modules/auth";
 import { getDateTime, useIsHuman } from "@/modules/core";
 

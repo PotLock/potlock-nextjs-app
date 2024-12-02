@@ -4,8 +4,8 @@ import Link from "next/link";
 import { Campaign } from "@/common/contracts/core";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { DonateToCampaignProjects } from "@/features/donation";
 import { AccountProfilePicture } from "@/modules/core";
-import { DonateToCampaignProjects } from "@/modules/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 

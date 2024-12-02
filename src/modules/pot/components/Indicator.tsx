@@ -4,7 +4,7 @@ type Props = {
   animate?: boolean;
 };
 
-const Indicator = ({ animate, colorInner, colorOuter }: Props) => {
+export const Indicator = ({ animate, colorInner, colorOuter }: Props) => {
   return (
     <div
       className="flex h-[18px] w-[18px] animate-beacon items-center justify-center rounded-full"

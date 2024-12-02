@@ -1,5 +1,6 @@
 import { useRouteQuery } from "@/common/lib";
-import { PotLayout, VotingProjectList } from "@/modules/pot";
+import { VotingProjectList } from "@/features/voting";
+import { PotLayout } from "@/modules/pot";
 
 const PotVotesTab = () => {
   const { query } = useRouteQuery();

@@ -1,14 +1,14 @@
 import { Models } from "@rematch/core";
 
+import { donationModel, donationModelKey } from "@/features/donation";
+import { potEditorModel, potEditorModelKey } from "@/features/pot-editor";
+import { projectEditorModel, projectEditorModelKey } from "@/features/project-editor";
 import { auth } from "@/modules/auth/state";
 import { campaignEditorModel } from "@/modules/campaigns/models";
 import { cartModel } from "@/modules/cart";
 import { core } from "@/modules/core";
-import { donationModel, donationModelKey } from "@/modules/donation";
 import { listEditorModel } from "@/modules/lists";
-import { potEditorModel, potEditorModelKey } from "@/modules/pot-editor";
 import { navModel, profilesModel } from "@/modules/profile";
-import { projectEditorModel, projectEditorModelKey } from "@/modules/project-editor";
 
 export interface AppModel extends Models<AppModel> {
   core: typeof core;

@@ -4,7 +4,7 @@ import { formatWithCommas } from "@/common/lib";
 import { ftService } from "@/common/services";
 
 /**
- * @deprecated Use {@link ftService.useRegisteredToken}({ tokenId: "near" })
+ * @deprecated Use `usdPrice` from {@link ftService.useRegisteredToken}({ tokenId: NATIVE_TOKEN_ID })
  */
 export const useNearToUsdWithFallback = (amountNear: number, abbreviate?: boolean) => {
   const { data: oneNearUsdPrice } = coingecko.useOneNearUsdPrice();

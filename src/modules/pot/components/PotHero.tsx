@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { MdArrowOutward } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -11,8 +10,8 @@ import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { DonateToPotProjects } from "@/features/donation";
 import { useAuthSession } from "@/modules/auth";
-import { DonateToPotProjects } from "@/modules/donation";
 import { TokenTotalValue } from "@/modules/token";
 
 import { ChallengeModal } from "./ChallengeModal";

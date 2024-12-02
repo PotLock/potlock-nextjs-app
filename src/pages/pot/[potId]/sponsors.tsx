@@ -1,13 +1,38 @@
 import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
+import { styled } from "styled-components";
 
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
-import Spinner from "@/common/ui/components/atoms/spinner";
-import { PotLayout, SponsorsBoard, SponsorsTable, useOrderedDonations } from "@/modules/pot";
+import { Spinner } from "@/common/ui/components";
+import { PotLayout, PotSponsorsBoard, PotSponsorsTable, useOrderedDonations } from "@/modules/pot";
 import { CustomDonationType } from "@/modules/pot/models/types";
-import { Container, TableContainer } from "@/modules/pot/styles/sponsors-styles";
+
+// TODO: refactor using tailwind!
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  @media screen and (min-width: 375px) and (max-width: 768px) {
+    width: 99%;
+  }
+  @media screen and (max-width: 390px) {
+    width: 98%;
+  }
+`;
+
+// TODO: refactor using tailwind!
+export const TableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 35px;
+  padding-bottom: 1rem;
+`;
 
 const SponsorsTab = () => {
   const router = useRouter();
@@ -67,10 +92,10 @@ const SponsorsTab = () => {
 
   return (
     <Container>
-      <SponsorsBoard donations={sponsorshipDonations.slice(0, 6)} />
+      <PotSponsorsBoard donations={sponsorshipDonations.slice(0, 6)} />
 
       <TableContainer>
-        <SponsorsTable sponsors={sponsorshipDonations} />
+        <PotSponsorsTable sponsors={sponsorshipDonations} />
       </TableContainer>
     </Container>
   );

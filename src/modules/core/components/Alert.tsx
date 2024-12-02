@@ -34,7 +34,7 @@ type Props = {
   buttonHref?: string; // this has preference over onButtonClick
 };
 
-const Alert = ({ text, buttonLabel, onButtonClick, buttonHref }: Props) => {
+export const Alert = ({ text, buttonLabel, onButtonClick, buttonHref }: Props) => {
   return (
     <Container>
       <div className="flex items-center">

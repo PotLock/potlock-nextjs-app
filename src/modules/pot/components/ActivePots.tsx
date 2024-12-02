@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import Big from "big.js";
+import { Big } from "big.js";
 
 import { Pot } from "@/common/api/indexer";
 import { Filter, Group, GroupType, SortSelect } from "@/common/ui/components";
