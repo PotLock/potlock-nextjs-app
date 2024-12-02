@@ -38,7 +38,7 @@ export const fetchGlobalFeeds = async ({ accountIds, offset = 20 }: any) => {
   );
 };
 
-export const fetchAccountFeedPosts = async ({ accountId, offset = 20 }: any) => {
+export const fetchAccountFeedPosts = async ({ accountId, offset = 100 }: any) => {
   // First, use index to get the list of posts
   const indexResult = (await nearSocialClient.index({
     action: "post",

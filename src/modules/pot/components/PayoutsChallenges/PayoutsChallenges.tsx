@@ -1,19 +1,33 @@
 import { useEffect, useState } from "react";
 
+import { set } from "date-fns";
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
 import AdminIcon from "@/common/assets/svgs/AdminIcon";
+import { CheckedIcon } from "@/common/assets/svgs/CheckedIcon";
 import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { useGlobalStoreSelector } from "@/store";
 
-import { Challenge, Container, Line, Table, Title } from "./styles";
+import { Challenge } from "./styles";
 import ChallengeResolveModal from "../ChallengeResolveModal";
 
-const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
+const PayoutsChallenges = ({
+  potDetail,
+  setTotalChallenges,
+}: {
+  potDetail?: Pot;
+  setTotalChallenges: (amount: number) => void;
+}) => {
+  const [tab, setTab] = useState<string>("UNRESOLVED");
+  const [filteredChallenges, setFilteredChallenges] = useState<ChallengeType[]>([]);
+
+  const [adminModalChallengerId, setAdminModalChallengerId] = useState("");
+
   const { actAsDao, accountId: _accId } = useGlobalStoreSelector((state) => state.nav);
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
@@ -35,6 +49,8 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
             potId: potDetail?.account,
           });
           setPayoutsChallenges(_payoutsChallenges);
+          setFilteredChallenges(_payoutsChallenges?.filter((c) => !c.resolved));
+          setTotalChallenges(_payoutsChallenges?.length);
         } catch (e) {
           console.error(e);
         }
@@ -42,86 +58,117 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
     })();
   }, [potDetail?.account, accountId]);
 
-  const [adminModalChallengerId, setAdminModalChallengerId] = useState("");
-  const [toggleChallenges, setToggleChallenges] = useState(false);
+  const handleSwitchTab = (tab: string) => {
+    setTab(tab);
+    const filteredChallenges = payoutsChallenges.filter((challenges) =>
+      tab === "UNRESOLVED" ? !challenges.resolved : challenges.resolved,
+    );
+    setFilteredChallenges(filteredChallenges);
+  };
 
   return !payoutsChallenges ? (
     "Loading..."
   ) : payoutsChallenges.length === 0 ? (
     ""
   ) : (
-    <>
-      <Container>
-        <Title onClick={() => setToggleChallenges(!toggleChallenges)}>
-          <div>Payout Challenges</div>
-          <div>{payoutsChallenges?.length}</div>
-          <svg
-            width="12"
-            height="8"
-            viewBox="0 0 12 8"
-            style={{
-              rotate: toggleChallenges ? "0deg" : "180deg",
-            }}
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+    <div className="transition-all duration-500 ease-in-out">
+      <div className="flex flex-col">
+        <h2 className="font-sans text-lg font-semibold leading-7 tracking-tight text-neutral-950">
+          Challenges
+        </h2>
+        <div className="my-4 h-px w-full bg-[#DBDBDB]" />
+        <div className="md:gap-1 my-6 flex items-center gap-3">
+          <button
+            onClick={() => handleSwitchTab("UNRESOLVED")}
+            className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
+              "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === "UNRESOLVED",
+              "border-[#DBDBDB] bg-white text-black": tab !== "UNRESOLVED",
+            })}
           >
-            <path
-              d="M6 0.294922L0 6.29492L1.41 7.70492L6 3.12492L10.59 7.70492L12 6.29492L6 0.294922Z"
-              fill="#151A23"
-            />
-          </svg>
-        </Title>
-        <Table className={`${!toggleChallenges ? "hidden" : ""}`}>
-          {payoutsChallenges.map(({ challenger_id, admin_notes, created_at, reason, resolved }) => (
-            <Challenge key={challenger_id}>
-              <div className="content">
-                <div className="header">
-                  <AccountProfilePicture accountId={challenger_id} className="h-[42px] w-[42px]" />
-                  <Link className="id" href={`${routesPath.PROFILE}/${challenger_id}`}>
-                    {challenger_id}
-                  </Link>
-                  <div className="title">Challenged payout</div>
-                  <div className="date"> {getTimePassed(created_at)}</div>
-                </div>
-                <div className="reason">{reason}</div>
-                <div className="admin-header">
-                  <div className="admin-icon">
-                    <AdminIcon />
-                  </div>
-                  <div
-                    className="resolved-state"
-                    style={{
-                      color: resolved ? "#4a7714" : "#C7C7C7",
-                    }}
-                  >
-                    {resolved ? "Resolved" : "Unresolved"}
-                  </div>
+            Unresolved
+          </button>
+          <button
+            onClick={() => handleSwitchTab("RESOLVED")}
+            className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
+              "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === "RESOLVED",
+              "border-[#DBDBDB] bg-white text-black": tab !== "RESOLVED",
+            })}
+          >
+            Resolved
+          </button>
+        </div>
+        <div className="duration-400 hidden:opacity-0 hidden:max-h-0 flex w-full flex-col overflow-hidden rounded-[6px] opacity-100 transition-all ease-in-out">
+          {filteredChallenges.length > 0 ? (
+            filteredChallenges.map(
+              ({ challenger_id, admin_notes, created_at, reason, resolved }, index) => (
+                <div
+                  key={challenger_id}
+                  className="relative mb-5 flex flex-col rounded-lg bg-gray-100 p-4 text-sm"
+                >
+                  <div className="relative">
+                    <div className="absolute bottom-0 left-4  top-10 w-px bg-[#DBDBDB]"></div>
 
-                  {resolved ? (
-                    <>
-                      <div className="dot" />
-                      <div>1 Response</div>
-                    </>
-                  ) : userIsAdminOrGreater ? (
-                    <>
-                      <div className="dot" />
-                      <button
-                        className="resolve-btn"
-                        onClick={() => setAdminModalChallengerId(challenger_id)}
+                    <div className="header flex flex-wrap items-center gap-2">
+                      <AccountProfilePicture
+                        accountId={challenger_id}
+                        className="h-8 w-8 rounded-full"
+                      />
+                      <Link
+                        href={`${routesPath.PROFILE}/${challenger_id}`}
+                        className="md:text-base text-sm font-semibold text-gray-800 hover:text-red-500"
                       >
-                        Reply
-                      </button>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </div>
+                        {challenger_id}
+                      </Link>
+                      <span className="md:text-base text-sm font-semibold text-purple-500">
+                        Challenged payout
+                      </span>
+                      <div className="md:text-sm text-xs text-gray-500">
+                        {getTimePassed(created_at)}
+                      </div>
+                    </div>
 
-                <div className="reason">{admin_notes}</div>
-              </div>
-            </Challenge>
-          ))}
-        </Table>
+                    <div className="my-2 pl-10 text-gray-600">{reason}</div>
+                  </div>
+
+                  <div className="admin-header flex items-center gap-1 pl-1">
+                    <AdminIcon className="h-6 w-6" />
+                    <span
+                      className={`font-semibold ${resolved ? "text-green-600" : "text-gray-400"}`}
+                    >
+                      {resolved ? "Resolved" : "Unresolved"}
+                    </span>
+                    {resolved ? (
+                      <>
+                        <div className="h-1 w-1 rounded-full bg-gray-400"></div>
+                        <span className="text-sm font-semibold text-gray-700">Reply</span>
+                      </>
+                    ) : userIsAdminOrGreater ? (
+                      <>
+                        <div className="h-1 w-1 rounded-full bg-gray-400"></div>
+                        <button
+                          className="text-sm font-semibold text-blue-600 hover:underline"
+                          onClick={() => setAdminModalChallengerId(challenger_id)}
+                        >
+                          Reply
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+
+                  <p className="my-2 w-full pl-10 text-gray-700">{admin_notes}</p>
+                </div>
+              ),
+            )
+          ) : (
+            <div className="border-1 mb-7 flex w-full flex-col items-center justify-center rounded-3xl border border-[##7B7B7B] p-6 text-center">
+              <CheckedIcon />
+              {tab === "UNRESOLVED"
+                ? "All Challenges has been resolved."
+                : "No resolved challenges yet."}
+            </div>
+          )}
+        </div>
+
         {/* Admin update challenge modal */}
 
         <ChallengeResolveModal
@@ -131,9 +178,8 @@ const PayoutsChallenges = ({ potDetail }: { potDetail?: Pot }) => {
           adminModalChallengerId={adminModalChallengerId}
           onCloseClick={() => setAdminModalChallengerId("")}
         />
-      </Container>
-      <Line />
-    </>
+      </div>
+    </div>
   );
 };
 

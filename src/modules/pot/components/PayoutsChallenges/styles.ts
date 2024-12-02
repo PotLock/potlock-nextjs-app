@@ -38,8 +38,10 @@ export const Table = styled.div`
 export const Challenge = styled.div`
   display: flex;
   padding: 1rem;
-  border-bottom: 1px solid #c7c7c7;
+  background: #f6f6f7;
   font-size: 14px;
+  border-radius: 16px;
+  margin-bottom: 20px;
   &:last-of-type {
     border-bottom: none;
   }
