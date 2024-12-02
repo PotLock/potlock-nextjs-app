@@ -15,12 +15,12 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  ModalErrorBody,
   RadioGroup,
   RadioGroupItem,
   Skeleton,
 } from "@/common/ui/components";
 import { SelectField, SelectFieldOption, TextField } from "@/common/ui/form-fields";
-import { ModalErrorBody } from "@/modules/core";
 import { TokenBalance, TokenSelector } from "@/modules/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";

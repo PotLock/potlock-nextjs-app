@@ -1,15 +1,4 @@
-export * from "./components/social-images";
-export * from "./components/AccountOption";
-export * from "./components/Alert";
-export * from "./components/ErrorModal";
-export * from "./components/DeprecatedPagination";
-export * from "./components/GeneralStats";
-export * from "./components/ModalErrorBody";
-export * from "./components/AppBar";
-export * from "./components/RuntimeErrorAlert";
-export * from "./components/SuccessModal";
-export * from "./components/UserDropdown";
 export * from "./hooks";
-export * from "./models";
+export * from "./model";
 export { hrefByRouteName } from "./routes";
 export * from "./utils";

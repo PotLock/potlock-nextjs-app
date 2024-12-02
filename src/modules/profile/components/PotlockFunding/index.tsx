@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
-import { DeprecatedPagination } from "@/modules/core";
-import { Option } from "@/modules/core/components/Dropdown";
-import Stats, { Stat } from "@/modules/core/components/Stats";
+import { DeprecatedPagination } from "@/common/ui/components";
 import useDonationsForProject from "@/modules/core/hooks/useDonationsForProject";
 import useDonationsSent from "@/modules/core/hooks/useDonationsSent";
 
+import { Option, Stat, Stats } from "../Stats";
 import Arrow from "./Arrow";
 import DonationItem from "./DonationItem";
 import { FundingListContainer, SearchBar, Sort } from "./styled";

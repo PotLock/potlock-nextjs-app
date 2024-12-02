@@ -13,7 +13,7 @@ import {
   Textarea,
 } from "@/common/ui/components";
 
-import { useChallengeResolveForm } from "../hooks";
+import { useChallengeResolveForm } from "../hooks/forms";
 
 type Props = {
   adminModalChallengerId: string;

@@ -5,7 +5,7 @@ import { Campaign } from "@/common/contracts/core";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { DonateToCampaignProjects } from "@/features/donation";
-import { AccountProfilePicture } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/account";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 

@@ -20,10 +20,10 @@ import {
   ClipboardCopyButton,
   DialogDescription,
   LabeledIcon,
+  ModalErrorBody,
   Skeleton,
 } from "@/common/ui/components";
 import { AccountProfileLink } from "@/modules/account";
-import { ModalErrorBody } from "@/modules/core";
 import routesPath from "@/modules/core/routes";
 import { TokenTotalValue } from "@/modules/token";
 

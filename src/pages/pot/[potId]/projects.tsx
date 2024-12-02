@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { Application, potClient } from "@/common/contracts/core";
 import { InfiniteScroll, SearchBar } from "@/common/ui/components";
-import { PotLayout } from "@/modules/pot";
+import { PotLayout } from "@/layout/PotLayout";
 import { Profile } from "@/modules/profile/models";
 import { ProjectCard } from "@/modules/project";
 import { useGlobalStoreSelector } from "@/store";

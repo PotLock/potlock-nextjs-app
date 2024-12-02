@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Pot, indexer } from "@/common/api/indexer";
 
-const useFilteredPots = () => {
+export const useFilteredPots = () => {
   const { data: pots, isLoading } = indexer.usePots({ page_size: 200 });
   const [activePots, setActivePots] = useState<Pot[]>([]);
   const [completedPots, setCompletedPots] = useState<Pot[]>([]);

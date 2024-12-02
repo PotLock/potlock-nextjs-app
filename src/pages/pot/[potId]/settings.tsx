@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 import { useRouteQuery } from "@/common/lib";
 import { PotEditor } from "@/features/pot-editor";
-import { PotLayout } from "@/modules/pot";
+import { PotLayout } from "@/layout/PotLayout";
 
 const PotEditorSettingsTab = () => {
   const {

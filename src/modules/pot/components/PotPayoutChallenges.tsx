@@ -8,7 +8,7 @@ import { CheckedIcon } from "@/common/assets/svgs/CheckedIcon";
 import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { cn } from "@/common/ui/utils";
-import { AccountProfilePicture } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/account";
 import routesPath from "@/modules/core/routes";
 import { useGlobalStoreSelector } from "@/store";
 

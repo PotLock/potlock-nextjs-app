@@ -3,12 +3,12 @@ import { Models } from "@rematch/core";
 import { donationModel, donationModelKey } from "@/features/donation";
 import { potEditorModel, potEditorModelKey } from "@/features/pot-editor";
 import { projectEditorModel, projectEditorModelKey } from "@/features/project-editor";
-import { auth } from "@/modules/auth/state";
 import { campaignEditorModel } from "@/modules/campaigns/models";
 import { cartModel } from "@/modules/cart";
 import { core } from "@/modules/core";
 import { listEditorModel } from "@/modules/lists";
 import { navModel, profilesModel } from "@/modules/profile";
+import { auth } from "@/modules/session/state";
 
 export interface AppModel extends Models<AppModel> {
   core: typeof core;

@@ -8,7 +8,7 @@ import { CampaignDonation } from "@/common/contracts/core";
 import { toChronologicalOrder, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { DataTable } from "@/common/ui/components";
-import { AccountProfilePicture } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/account";
 
 import { useCampaign } from "../hooks/useCampaign";
 

@@ -14,7 +14,7 @@ import {
 } from "@/common/ui/components";
 import { useGlobalStoreSelector } from "@/store";
 
-import { useChallengeForm } from "../hooks";
+import { useChallengeForm } from "../hooks/forms";
 
 type Props = {
   potDetail: Pot;

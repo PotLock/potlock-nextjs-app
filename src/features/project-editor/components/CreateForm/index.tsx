@@ -6,12 +6,12 @@ import { prop } from "remeda";
 
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
-import { useAuth } from "@/modules/auth/hooks/store";
-import useWallet from "@/modules/auth/hooks/wallet";
-import ErrorModal from "@/modules/core/components/ErrorModal";
-import routesPath from "@/modules/core/routes";
+import { useWallet } from "@/modules/session";
+import { useAuth } from "@/modules/session/hooks/store";
+import { hrefByRouteName } from "@/modules/core";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
+import { ErrorModal } from "../ErrorModal";
 import {
   AccountStack,
   CustomInput,
@@ -107,7 +107,7 @@ const CreateForm = () => {
   );
 
   const resetUrl = useCallback(() => {
-    router.push(routesPath.CREATE_PROJECT);
+    router.push(hrefByRouteName.CREATE_PROJECT);
   }, [router]);
 
   const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
@@ -164,7 +164,7 @@ const CreateForm = () => {
 
   if (
     projectTemplate.submissionStatus === "done" &&
-    location.pathname === routesPath.CREATE_PROJECT
+    location.pathname === hrefByRouteName.CREATE_PROJECT
   ) {
     return (
       <div className="md:p-[4rem_0px] m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px]">
@@ -345,7 +345,7 @@ const CreateForm = () => {
             className="mr-4"
             variant="standard-outline"
             onClick={() => {
-              router.push(routesPath.PROJECTS_LIST);
+              router.push(hrefByRouteName.PROJECTS_LIST);
             }}
           >
             Cancel

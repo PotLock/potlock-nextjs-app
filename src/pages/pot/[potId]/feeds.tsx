@@ -9,7 +9,7 @@ import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { Application, potClient } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
-import { PotLayout } from "@/modules/pot";
+import { PotLayout } from "@/layout/PotLayout";
 import { FeedCard } from "@/modules/profile";
 import { CreatePost } from "@/modules/profile/components/CreatePost";
 

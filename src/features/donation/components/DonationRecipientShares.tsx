@@ -2,9 +2,9 @@ import { useMemo } from "react";
 
 import { ListRegistrationStatus, PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NearIcon } from "@/common/assets/svgs";
-import { FormField } from "@/common/ui/components";
+import { FormField, RuntimeErrorAlert } from "@/common/ui/components";
 import { CheckboxField, TextField } from "@/common/ui/form-fields";
-import { AccountOption, RuntimeErrorAlert } from "@/modules/core";
+import { AccountOption } from "@/modules/account";
 
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import {
@@ -30,16 +30,14 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
 
   const [groupAllocationStrategy] = form.watch(["groupAllocationStrategy"]);
 
-  const { data: potApplications = [], error: potApplicationsError } = indexer.usePotApplications({
+  const { data: potApplications, error: potApplicationsError } = indexer.usePotApplications({
     potId,
-    // TODO: Consider integrating infinite scroll in the future instead
     page_size: 999,
     status: PotApplicationStatus.Approved,
   });
 
   const { data: listRegistrations, error: listRegistrationsError } = indexer.useListRegistrations({
     listId,
-    // TODO: Consider integrating infinite scroll in the future instead
     page_size: 999,
     status: ListRegistrationStatus.Approved,
   });
@@ -71,7 +69,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
 
   const recipientCandidateIds = useMemo(
     () =>
-      [...potApplications, ...(listRegistrations?.results ?? [])].map((entry) =>
+      [...(potApplications?.results ?? []), ...(listRegistrations?.results ?? [])].map((entry) =>
         "registrant" in entry ? entry.registrant.id : entry.applicant.id,
       ),
 

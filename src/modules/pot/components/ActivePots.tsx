@@ -7,7 +7,7 @@ import { Filter, Group, GroupType, SortSelect } from "@/common/ui/components";
 
 import { PotCard } from "./PotCard";
 import { POT_SORT_OPTIONS, POT_STATUSES } from "../constants";
-import { useFilteredPots } from "../hooks";
+import { useFilteredPots } from "../hooks/useFilteredPots";
 import { filters } from "../utils/filters";
 
 export const ActivePots = () => {

@@ -29,7 +29,7 @@ import { POT_MAX_DESCRIPTION_LENGTH } from "@/modules/pot";
 import { PotEditorPreview } from "./PotEditorPreview";
 import { POT_EDITOR_FIELDS } from "../constants";
 import { usePotEditorForm } from "../hooks/forms";
-import { getPotEditorDeploymentSchema, getPotEditorSettingsSchema } from "../models";
+import { getPotEditorDeploymentSchema, getPotEditorSettingsSchema } from "../model";
 
 export type PotEditorProps = Partial<ByPotId> & {};
 

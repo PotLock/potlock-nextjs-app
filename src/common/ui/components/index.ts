@@ -4,8 +4,8 @@
  * See https://atomicdesign.bradfrost.com/chapter-2/
  */
 export * from "./_deprecated/InfiniteScroll";
+export * from "./_deprecated/DeprecatedPagination";
 export * from "./SearchBar";
-export * from "./DataTable";
 
 /**
  * Atoms
@@ -47,13 +47,16 @@ export * from "./atoms/filter-chip";
 export * from "./molecules/checklist";
 export * from "./molecules/clipboard-copy-button";
 export * from "./molecules/data-loading-placeholder";
+export * from "./molecules/data-table";
 export * from "./molecules/dialog";
 export * from "./molecules/filter";
 export * from "./molecules/form";
+export * from "./molecules/error";
 export * from "./molecules/multi-select";
 export * from "./molecules/pagination";
 export * from "./molecules/radio-group";
 export * from "./molecules/sort-select";
+export * from "./molecules/spinner-overlay";
 export * from "./molecules/toggle-group";
 
 /**
@@ -62,6 +65,7 @@ export * from "./molecules/toggle-group";
  * See https://atomicdesign.bradfrost.com/chapter-2/#organisms
  */
 export * from "./organisms/editor";
+export * from "./organisms/modal-body";
 
 /**
  * Templates

@@ -26,7 +26,7 @@ import {
   Textarea,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountProfileCover, AccountProfilePicture } from "@/modules/core";
+import { AccountProfileCover, AccountProfilePicture } from "@/modules/account";
 import { statuses } from "@/modules/project/constants";
 import { dispatch } from "@/store";
 

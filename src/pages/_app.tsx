@@ -19,8 +19,8 @@ import { Provider as ReduxProvider } from "react-redux";
 import { APP_METADATA } from "@/common/constants";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
-import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
-import { AppBar } from "@/modules/core";
+import { AppBar } from "@/layout/AppBar";
+import { AuthProvider } from "@/modules/session";
 import { dispatch, store } from "@/store";
 
 const lora = Lora({

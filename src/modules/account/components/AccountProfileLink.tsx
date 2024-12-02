@@ -3,7 +3,7 @@ import Link from "next/link";
 import { indexer } from "@/common/api/indexer";
 import { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
-import { AccountProfilePicture } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/account";
 import routesPath from "@/modules/core/routes";
 
 export type AccountProfileLinkProps = ByAccountId & {

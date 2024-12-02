@@ -68,20 +68,22 @@ const Loader = styled.div`
 `;
 
 export type PotTimelineProps = ByPotId & {
+  hasVoting?: boolean;
+
   classNames?: {
     root?: string;
   };
 };
 
-export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) => {
+export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, hasVoting }) => {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
   const toggleMobileMenu = useCallback(() => setIsMobileMenuActive((isActive) => !isActive), []);
-  const lifecycleStages = usePotLifecycle({ potId });
+  const lifecycle = usePotLifecycle({ potId, hasVoting });
 
   // TODO: Refactor this code ( original owner: @M-Rb3 )
   const getIndexOfActive = () => {
     let index = 0;
-    lifecycleStages.forEach((status, idx) => {
+    lifecycle.forEach((status, idx) => {
       if (status.started && !status.completed) {
         index = idx;
       }
@@ -110,7 +112,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames }) =
             isMobileMenuActive: "transform-translate-y-0",
           })}
         >
-          {lifecycleStages.map(
+          {lifecycle.map(
             // TODO: Improve this code (built by mohamed)
             ({ label, daysLeft, progress, started, completed }, idx) => {
               return (

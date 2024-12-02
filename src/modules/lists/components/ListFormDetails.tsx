@@ -14,10 +14,8 @@ import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/features/access-control";
-import useWallet from "@/modules/auth/hooks/wallet";
-import { AccountOption } from "@/modules/core";
-import { useListForm } from "@/modules/lists/hooks/useListForm";
-import { createListSchema } from "@/modules/lists/models/schema";
+import { AccountOption } from "@/modules/account";
+import { useWallet } from "@/modules/session";
 import { dispatch } from "@/store";
 
 import {
@@ -26,6 +24,8 @@ import {
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
 import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
+import { useListForm } from "../hooks/useListForm";
+import { createListSchema } from "../models/schema";
 
 interface FormData {
   name: string;

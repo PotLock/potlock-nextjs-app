@@ -9,7 +9,7 @@ import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { DonateToCampaignProjects } from "@/features/donation";
-import { AccountProfilePicture } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/account";
 import { useNearToUsdWithFallback } from "@/modules/core/hooks/useNearToUsdWithFallback";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";

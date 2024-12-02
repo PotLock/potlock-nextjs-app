@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { potFactoryClient } from "@/common/contracts/core";
 import { Button, PageWithBanner } from "@/common/ui/components";
-import { useWallet } from "@/modules/auth";
+import { useWallet } from "@/modules/session";
 import { hrefByRouteName } from "@/modules/core";
 import { ActivePots } from "@/modules/pot";
 

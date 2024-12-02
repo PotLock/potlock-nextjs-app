@@ -6,7 +6,8 @@ import { styled } from "styled-components";
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
 import { Spinner } from "@/common/ui/components";
-import { PotLayout, PotSponsorsBoard, PotSponsorsTable, useOrderedDonations } from "@/modules/pot";
+import { PotLayout } from "@/layout/PotLayout";
+import { PotSponsorsBoard, PotSponsorsTable, useOrderedDonations } from "@/modules/pot";
 import { CustomDonationType } from "@/modules/pot/models/types";
 
 // TODO: refactor using tailwind!

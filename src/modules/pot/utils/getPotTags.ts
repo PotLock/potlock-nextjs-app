@@ -1,7 +1,7 @@
 import { Pot } from "@/common/api/indexer";
 import daysUntil from "@/common/lib/daysUntil";
 
-const getPotTags = (pot: Pot) => {
+export const getPotTags = (pot: Pot) => {
   const {
     application_start,
     application_end,

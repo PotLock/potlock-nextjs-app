@@ -14,7 +14,7 @@ import {
 import { PotInputs } from "@/modules/pot";
 
 import { POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES } from "../constants";
-import { PotEditorSettings } from "../models";
+import { PotEditorSettings } from "../model";
 import { PotEditorField, PotEditorFieldKey } from "../types";
 
 export const potConfigToSettings = ({

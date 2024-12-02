@@ -8,7 +8,7 @@ import { ftService } from "@/common/services";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useDonation } from "@/features/donation";
-import { AccountProfileCover, AccountProfilePicture } from "@/modules/core";
+import { AccountProfileCover, AccountProfilePicture } from "@/modules/account";
 import routesPath from "@/modules/core/routes";
 
 import { ProjectCardSkeleton } from "./ProjectCardSkeleton";

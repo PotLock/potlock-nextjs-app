@@ -2,7 +2,7 @@ import Link from "next/link";
 import { styled } from "styled-components";
 
 import { truncate } from "@/common/lib";
-import { AccountProfilePicture } from "@/modules/core";
+import { AccountProfilePicture } from "@/modules/account";
 import routesPath from "@/modules/core/routes";
 import { useProfileData } from "@/modules/profile";
 

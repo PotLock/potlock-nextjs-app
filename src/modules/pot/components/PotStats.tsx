@@ -6,12 +6,12 @@ import { coingecko } from "@/common/api/coingecko";
 import { Pot } from "@/common/api/indexer";
 import { Toggle } from "@/common/assets/svgs";
 import { truncate } from "@/common/lib";
-import { AccountProfilePicture } from "@/modules/core";
-import routesPath from "@/modules/core/routes";
-import { JoinDonation, useOrderedDonations } from "@/modules/pot/hooks";
+import { AccountProfilePicture } from "@/modules/account";
+import { hrefByRouteName } from "@/modules/core/routes";
 import { useProfileData } from "@/modules/profile";
 
 import { Container, Row } from "./styled";
+import { JoinDonation, useOrderedDonations } from "../hooks/useOrderedDonations";
 
 const Table = ({
   donations,
@@ -86,7 +86,7 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
     ? (nearAmount * oneNearUsdPrice).toFixed(2)
     : nearAmount.toFixed(2);
 
-  const url = `${routesPath.PROJECT}/${donorId}`;
+  const url = `${hrefByRouteName.PROJECT}/${donorId}`;
 
   return (
     <Row>

@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 
-import { Button } from "@/common/ui/components";
-import { ModalErrorBody } from "@/modules/core";
+import { Button, ModalErrorBody } from "@/common/ui/components";
 
 export type PotEditorDeploymentErrorProps = { message?: string };
 

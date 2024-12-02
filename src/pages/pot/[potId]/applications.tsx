@@ -9,21 +9,18 @@ import { SearchIcon } from "@/common/assets/svgs";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import { Application, potClient } from "@/common/contracts/core";
 import { daysAgo, truncate } from "@/common/lib";
-import { Button } from "@/common/ui/components";
 import {
+  Button,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/common/ui/components/atoms/tooltip";
-import { AccountProfilePicture } from "@/modules/core";
+} from "@/common/ui/components";
+import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
+import { PotLayout } from "@/layout/PotLayout";
+import { AccountProfilePicture } from "@/modules/account";
 import routesPath from "@/modules/core/routes";
-import {
-  PotApplicationReviewModal,
-  PotFilters,
-  PotLayout,
-  applicationsFiltersTags,
-} from "@/modules/pot";
+import { PotFilters } from "@/modules/pot";
 import { useProfileData } from "@/modules/profile";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -516,7 +513,7 @@ const ApplicationData = ({
   handleRejectApplication: (projectId: string) => void;
 }) => {
   const { project_id, status, message, review_notes, submitted_at } = applicationData;
-  const { borderColor, color, icon, label, background } = applicationsFiltersTags[status];
+  const { borderColor, color, icon, label, background } = potApplicationFiltersTags[status];
   const { profile } = useProfileData(project_id, true, false);
 
   return (

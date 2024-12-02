@@ -21,7 +21,7 @@ import {
   PotEditorSettingsSchema,
   potEditorDeploymentCrossFieldValidationTargets,
   potEditorSettingsCrossFieldValidationTargets,
-} from "../models";
+} from "../model";
 import { potConfigToSettings, potIndexedDataToPotInputs } from "../utils/normalization";
 
 export type PotEditorFormArgs =

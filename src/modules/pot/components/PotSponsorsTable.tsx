@@ -5,15 +5,16 @@ import { styled } from "styled-components";
 
 import { truncate } from "@/common/lib";
 import {
+  DeprecatedPagination,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/common/ui/components/atoms/tooltip";
-import { AccountProfilePicture, DeprecatedPagination } from "@/modules/core";
+} from "@/common/ui/components";
+import { AccountProfilePicture } from "@/modules/account";
 import routesPath from "@/modules/core/routes";
 
-import { CustomDonationType } from "../models";
+import { CustomDonationType } from "../models/types";
 
 const Container = styled.div`
   width: 100%;

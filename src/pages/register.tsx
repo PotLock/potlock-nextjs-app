@@ -1,9 +1,8 @@
-import { PageWithBanner } from "@/common/ui/components";
-import ScreenSpinner from "@/common/ui/components/ScreenSpinner";
+import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import CreateForm from "@/features/project-editor/components/CreateForm";
 import useInitProjectState from "@/features/project-editor/hooks/useInitProjectState";
-import { useAuth } from "@/modules/auth/hooks/store";
+import { useAuth } from "@/modules/session/hooks/store";
 import { useGlobalStoreSelector } from "@/store";
 
 export default function RegisterPage() {
@@ -37,7 +36,7 @@ export default function RegisterPage() {
         </h2>
       </section>
 
-      {showSpinner && <ScreenSpinner />}
+      {showSpinner && <SpinnerOverlay />}
       <CreateForm />
     </PageWithBanner>
   );

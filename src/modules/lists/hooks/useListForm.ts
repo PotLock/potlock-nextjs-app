@@ -9,8 +9,7 @@ import { naxiosInstance } from "@/common/api/near";
 import { listsClient } from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
-import { AccountKey } from "@/modules/account";
-import { validateAccountId } from "@/modules/core";
+import { AccountKey, validateAccountId } from "@/modules/account";
 import { dispatch } from "@/store";
 
 import { ListFormModalType } from "../types";
