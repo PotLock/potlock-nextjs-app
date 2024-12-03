@@ -207,7 +207,7 @@ export default function PotVotesTab() {
   }, [pageNumber, setPageNumber, numberOfPages]);
 
   return (
-    <div className="md:px-4 md:space-y-6 mx-auto w-full space-y-5">
+    <div className="flex w-full flex-col gap-6">
       {/* Search */}
       <div className="relative">
         <Input
@@ -215,7 +215,7 @@ export default function PotVotesTab() {
           placeholder="Search Projects"
           className="w-full bg-gray-50"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
         />
       </div>
 
@@ -246,7 +246,10 @@ export default function PotVotesTab() {
           <span>{"Voted"}</span>
 
           <h5
-            className={`ml-1 rounded-full px-1.5 ${activeFilter === "voted" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
+            className={cn("ml-1 rounded-full px-1.5", {
+              "border-orange-300 bg-orange-200 font-semibold": activeFilter === "voted",
+              "border-gray-300 bg-gray-200": activeFilter !== "voted",
+            })}
           >
             {votedCount}
           </h5>
@@ -260,7 +263,10 @@ export default function PotVotesTab() {
           <span>{"Pending"}</span>
 
           <h5
-            className={`ml-1 rounded-full px-1.5 ${activeFilter === "pending" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
+            className={cn("ml-1 rounded-full px-1.5", {
+              "border-orange-300 bg-orange-200 font-semibold": activeFilter === "pending",
+              "border-gray-300 bg-gray-200": activeFilter !== "pending",
+            })}
           >
             {pendingCount}
           </h5>
