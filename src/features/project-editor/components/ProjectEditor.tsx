@@ -178,7 +178,7 @@ export const ProjectEditor = () => {
     );
   }
 
-  console.log(form.formState.isValid, isRepositoriesValid);
+  console.log(form.formState);
 
   return (
     // Container
