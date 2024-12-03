@@ -156,52 +156,25 @@ export default function PotVotesTab() {
           variant={activeFilter === "all" ? "brand-filled" : "brand-outline"}
           onClick={() => setFilter("all")}
           className="font-medium"
-        >
-          <span>{"All"}</span>
-
-          <h5
-            className={cn("ml-1 rounded-full px-1.5", {
-              "border-orange-300 bg-orange-200 font-semibold": activeFilter === "all",
-              "border-gray-300 bg-gray-200": activeFilter !== "all",
-            })}
-          >
-            {allProjectsCount}
-          </h5>
-        </FilterChip>
+          label="All"
+          count={allProjectsCount}
+        />
 
         <FilterChip
           variant={activeFilter === "voted" ? "brand-filled" : "brand-outline"}
           onClick={() => setFilter("voted")}
           className="font-medium"
-        >
-          <span>{"Voted"}</span>
-
-          <h5
-            className={cn("ml-1 rounded-full px-1.5", {
-              "border-orange-300 bg-orange-200 font-semibold": activeFilter === "voted",
-              "border-gray-300 bg-gray-200": activeFilter !== "voted",
-            })}
-          >
-            {votedCount}
-          </h5>
-        </FilterChip>
+          label="Voted"
+          count={votedCount}
+        />
 
         <FilterChip
           variant={activeFilter === "pending" ? "brand-filled" : "brand-outline"}
           onClick={() => setFilter("pending")}
           className="font-medium"
-        >
-          <span>{"Pending"}</span>
-
-          <h5
-            className={cn("ml-1 rounded-full px-1.5", {
-              "border-orange-300 bg-orange-200 font-semibold": activeFilter === "pending",
-              "border-gray-300 bg-gray-200": activeFilter !== "pending",
-            })}
-          >
-            {pendingCount}
-          </h5>
-        </FilterChip>
+          label="Pending"
+          count={pendingCount}
+        />
       </div>
 
       <div className="flex flex-row">
