@@ -11,7 +11,8 @@ import { useWallet } from "@/entities/session";
 import { useSessionReduxStore } from "@/entities/session/hooks/redux-store";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { ErrorModal } from "../ErrorModal";
+import AddFundingSourceModal from "./AddFundingSourceModal";
+import AddTeamMembersModal from "./AddTeamMembersModal";
 import {
   AccountStack,
   CustomInput,
@@ -19,22 +20,21 @@ import {
   ProjectCategoryPicker,
   Row,
 } from "./components";
+import DAOInProgress from "./DAOInProgress";
+import EditSmartContractModal from "./EditSmartContractModal";
+import { ErrorModal } from "./ErrorModal";
+import FundingSourceTable from "./FundingSourceTable";
+import InfoSegment from "./InfoSegment/InfoSegment";
+import Profile from "./Profile";
+import Repositories from "./Repositories";
+import { SmartContracts } from "./SmartContracts";
+import SocialLinks from "./SocialLinks";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
-import { useProjectEditorForm } from "../../hooks/forms";
-import AddFundingSourceModal from "../AddFundingSourceModal";
-import AddTeamMembersModal from "../AddTeamMembersModal";
-import DAOInProgress from "../DAOInProgress";
-import EditSmartContractModal from "../EditSmartContractModal";
-import FundingSourceTable from "../FundingSourceTable";
-import InfoSegment from "../InfoSegment/InfoSegment";
-import Profile from "../Profile";
-import Repositories from "../Repositories";
-import { SmartContracts } from "../SmartContracts";
-import SocialLinks from "../SocialLinks";
-import SuccessfulRegister from "../SuccessfulRegister";
+import SuccessfulRegister from "./SuccessfulRegister";
+import { useProjectEditorForm } from "../hooks/forms";
 
-const CreateForm = () => {
+export const ProjectEditor = () => {
   const router = useRouter();
   const { projectId: projectIdPathParam } = router.query;
 
@@ -362,5 +362,3 @@ const CreateForm = () => {
     </Form>
   );
 };
-
-export default CreateForm;

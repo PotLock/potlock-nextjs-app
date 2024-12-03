@@ -10,6 +10,7 @@ import { ftService } from "@/common/services";
 import { useIsHuman } from "@/entities/core";
 import { useSessionAuth } from "@/entities/session";
 
+// TODO: refactor to support multi-mechanism for the V2 milestone
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
  *  as it's built for the mpDAO milestone.

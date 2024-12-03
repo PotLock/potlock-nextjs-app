@@ -15,7 +15,7 @@ import {
 } from "@/common/ui/components";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { CustomInput, Label } from "./CreateForm/components";
+import { CustomInput, Label } from "./components";
 import validateEVMAddress from "../utils/validateEVMAddress";
 
 type AddChainSelectorProps = {

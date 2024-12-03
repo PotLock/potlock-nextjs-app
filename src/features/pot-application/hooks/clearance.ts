@@ -1,5 +1,3 @@
-// TODO: refactor to support multi-mechanism for the V2 milestone
-
 import { useMemo } from "react";
 
 import { prop } from "remeda";
@@ -14,8 +12,9 @@ import { useSessionAuth } from "@/entities/session";
 
 import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
 
+// TODO: refactor to support multi-mechanism for the V2 milestone
 /**
- * Heads up! At the moment, this hook only covers one specific use case,
+ * Heads up! At the moment, this hook only covers one specific voting round,
  *  as it's built for the mpDAO milestone.
  */
 export const usePotApplicationUserClearance = ({

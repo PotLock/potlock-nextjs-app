@@ -1,8 +1,7 @@
 import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useSessionReduxStore } from "@/entities/session/hooks/redux-store";
-import CreateForm from "@/features/project-editor/components/CreateForm";
-import useInitProjectState from "@/features/project-editor/hooks/useInitProjectState";
+import { ProjectEditor, useInitProjectState } from "@/features/project-editor";
 import { useGlobalStoreSelector } from "@/store";
 
 export default function EditProjectPage() {
@@ -37,7 +36,7 @@ export default function EditProjectPage() {
       </section>
 
       {showSpinner && <SpinnerOverlay />}
-      <CreateForm />
+      <ProjectEditor />
     </PageWithBanner>
   );
 }
