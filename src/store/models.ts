@@ -1,13 +1,13 @@
 import { Models } from "@rematch/core";
 
-import { donationModel, donationModelKey } from "@/features/donation";
-import { potEditorModel, potEditorModelKey } from "@/features/pot-editor";
-import { projectEditorModel, projectEditorModelKey } from "@/features/project-editor";
 import { campaignEditorModel } from "@/entities/campaigns/models";
 import { coreModel } from "@/entities/core/model";
 import { listEditorModel } from "@/entities/lists";
 import { navModel, profilesModel } from "@/entities/profile";
 import { sessionModel } from "@/entities/session/model";
+import { donationModel, donationModelKey } from "@/features/donation";
+import { potEditorModel, potEditorModelKey } from "@/features/pot-editor";
+import { projectEditorModel, projectEditorModelKey } from "@/features/project-editor";
 
 export interface AppModel extends Models<AppModel> {
   core: typeof coreModel;

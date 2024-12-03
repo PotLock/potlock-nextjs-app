@@ -6,12 +6,12 @@ import { Account, Pot } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, PROVIDER_ID_DELIMITER } from "@/common/constants";
 import { ContractSourceMetadata, PotArgs, PotConfig } from "@/common/contracts/core";
 import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
+import { PotInputs } from "@/entities/pot";
 import {
   donationAmount,
   donationFeeBasisPointsToPercents,
   donationFeePercentsToBasisPoints,
 } from "@/features/donation";
-import { PotInputs } from "@/entities/pot";
 
 import { POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES } from "../constants";
 import { PotEditorSettings } from "../model";

@@ -16,12 +16,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/common/ui/components";
-import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
-import { PotLayout } from "@/layout/PotLayout";
 import { AccountProfilePicture } from "@/entities/account";
 import routesPath from "@/entities/core/routes";
 import { PotFilters } from "@/entities/pot";
 import { useProfileData } from "@/entities/profile";
+import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
+import { PotLayout } from "@/layout/PotLayout";
 import { useGlobalStoreSelector } from "@/store";
 
 const Container = styled.div`

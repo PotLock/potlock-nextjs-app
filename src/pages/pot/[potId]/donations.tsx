@@ -6,8 +6,8 @@ import { styled } from "styled-components";
 import { Donation, indexer } from "@/common/api/indexer";
 import { Arrow } from "@/common/assets/svgs";
 import { DeprecatedPagination, Spinner } from "@/common/ui/components";
-import { PotLayout } from "@/layout/PotLayout";
 import { PotDonationEntry } from "@/entities/pot";
+import { PotLayout } from "@/layout/PotLayout";
 
 const SearchBar = styled.div`
   display: flex;

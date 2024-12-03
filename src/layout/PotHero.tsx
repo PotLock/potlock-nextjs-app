@@ -10,12 +10,12 @@ import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { DonateToPotProjects } from "@/features/donation";
-import { usePotApplicationUserClearance } from "@/features/pot-application";
-import { useVotingUserClearance } from "@/features/voting";
 import { PotStats, PotTimeline, usePotLifecycle, usePotUserPermissions } from "@/entities/pot";
 import { useAuthSession } from "@/entities/session";
 import { TokenTotalValue } from "@/entities/token";
+import { DonateToPotProjects } from "@/features/donation";
+import { usePotApplicationUserClearance } from "@/features/pot-application";
+import { useVotingUserClearance } from "@/features/voting";
 
 export type PotHeroProps = ByPotId & {
   hasVoting?: boolean;

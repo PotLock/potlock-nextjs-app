@@ -12,8 +12,8 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/common/ui/components/molecules/carousel";
-import { DonateToCampaignProjects } from "@/features/donation";
 import { useProfileData } from "@/entities/profile";
+import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 

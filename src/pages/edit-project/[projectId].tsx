@@ -1,8 +1,8 @@
 import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useAuth } from "@/entities/session/hooks/store";
 import CreateForm from "@/features/project-editor/components/CreateForm";
 import useInitProjectState from "@/features/project-editor/hooks/useInitProjectState";
-import { useAuth } from "@/entities/session/hooks/store";
 import { useGlobalStoreSelector } from "@/store";
 
 export default function EditProjectPage() {

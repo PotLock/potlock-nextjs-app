@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
+import { ChallengeModal, POT_TABS_CONFIG, usePotUserPermissions } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolFundingModal } from "@/features/matching-pool-funding";
 import { PotApplicationModal } from "@/features/pot-application";
@@ -11,7 +12,6 @@ import { PotApplicationModal } from "@/features/pot-application";
 import { ErrorModal } from "@/features/project-editor/components/ErrorModal";
 import { SuccessModal } from "@/features/project-editor/components/SuccessModal";
 import { isVotingEnabled } from "@/features/voting";
-import { ChallengeModal, POT_TABS_CONFIG, usePotUserPermissions } from "@/entities/pot";
 
 import { PotHero } from "./PotHero";
 import { PotLayoutTabPanel } from "./PotLayoutTabPanel";

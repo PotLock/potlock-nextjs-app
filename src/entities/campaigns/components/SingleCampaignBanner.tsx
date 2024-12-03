@@ -8,9 +8,9 @@ import { Campaign, campaignsClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
-import { DonateToCampaignProjects } from "@/features/donation";
 import { AccountProfilePicture } from "@/entities/account";
 import { useNearToUsdWithFallback } from "@/entities/core/hooks/useNearToUsdWithFallback";
+import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 

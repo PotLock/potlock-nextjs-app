@@ -22,9 +22,9 @@ import {
   TextField,
 } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
+import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
 import { AccessControlList } from "@/features/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/features/donation";
-import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
 
 import { PotEditorPreview } from "./PotEditorPreview";
 import { POT_EDITOR_FIELDS } from "../constants";

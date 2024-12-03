@@ -1,8 +1,8 @@
 import { infer as FromSchema, array, boolean, object, string, z } from "zod";
 
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
-import { donationAmount, donationFee, donationFeeBasisPointsToPercents } from "@/features/donation";
 import { validAccountIdOrNothing } from "@/entities/account";
+import { donationAmount, donationFee, donationFeeBasisPointsToPercents } from "@/features/donation";
 
 import {
   POT_MAX_APPROVED_PROJECTS,

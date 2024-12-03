@@ -7,9 +7,9 @@ import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useDonation } from "@/features/donation";
 import { AccountProfileCover, AccountProfilePicture } from "@/entities/account";
 import routesPath from "@/entities/core/routes";
+import { useDonation } from "@/features/donation";
 
 import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
 import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";

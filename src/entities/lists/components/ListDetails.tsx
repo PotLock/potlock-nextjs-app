@@ -20,10 +20,10 @@ import {
   DropdownMenuTrigger,
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
-import { AccessControlListModal } from "@/features/access-control";
-import { DonateToListProjects } from "@/features/donation";
 import { AccountOption } from "@/entities/account";
 import { useWallet } from "@/entities/session";
+import { AccessControlListModal } from "@/features/access-control";
+import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";
 
 import { ApplyToListModal } from "./ApplyToListModal";
