@@ -1,6 +1,6 @@
 import { ByPotId } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
-import { useAuthSession } from "@/modules/session";
+import { useAuthSession } from "@/entities/session";
 
 import { isVotingEnabled } from "../utils/voting";
 

@@ -23,9 +23,9 @@ import {
   ModalErrorBody,
   Skeleton,
 } from "@/common/ui/components";
-import { AccountProfileLink } from "@/modules/account";
-import routesPath from "@/modules/core/routes";
-import { TokenTotalValue } from "@/modules/token";
+import { AccountProfileLink } from "@/entities/account";
+import routesPath from "@/entities/core/routes";
+import { TokenTotalValue } from "@/entities/token";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationSybilWarning } from "./DonationSybilWarning";

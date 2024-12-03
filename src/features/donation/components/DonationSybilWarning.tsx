@@ -5,7 +5,7 @@ import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { WarningIcon } from "@/common/assets/svgs";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/components";
-import { useIsHuman } from "@/modules/core";
+import { useIsHuman } from "@/entities/core";
 
 export type DonationSybilWarningProps = ByPotId & {
   classNames?: {

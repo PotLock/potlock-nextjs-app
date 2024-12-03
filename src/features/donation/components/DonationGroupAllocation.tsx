@@ -20,7 +20,7 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
-import { TokenBalance, TokenSelector, TokenTotalValue } from "@/modules/token";
+import { TokenBalance, TokenSelector, TokenTotalValue } from "@/entities/token";
 
 import { DonationRecipientShares } from "./DonationRecipientShares";
 import { DonationSybilWarning } from "./DonationSybilWarning";

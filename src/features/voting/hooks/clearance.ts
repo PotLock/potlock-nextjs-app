@@ -6,8 +6,8 @@ import { prop } from "remeda";
 
 import { ByPotId } from "@/common/api/indexer";
 import { ClearanceCheckResult } from "@/common/types";
-import { useIsHuman } from "@/modules/core";
-import { useAuthSession } from "@/modules/session";
+import { useIsHuman } from "@/entities/core";
+import { useAuthSession } from "@/entities/session";
 
 import { isVotingEnabled } from "../utils/voting";
 

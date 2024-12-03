@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 import { Campaign, campaignsClient } from "@/common/contracts/core";
 import { PageWithBanner } from "@/common/ui/components";
-import { CampaignBanner } from "@/modules/campaigns/components/CampaignBanner";
-import { CampaignsList } from "@/modules/campaigns/components/CampaignsList";
-import { FeaturedCampaigns } from "@/modules/campaigns/components/FeaturedCampaigns";
+import { CampaignBanner } from "@/entities/campaigns/components/CampaignBanner";
+import { CampaignsList } from "@/entities/campaigns/components/CampaignsList";
+import { FeaturedCampaigns } from "@/entities/campaigns/components/FeaturedCampaigns";
 
 export default function Campaigns() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);

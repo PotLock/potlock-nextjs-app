@@ -18,10 +18,10 @@ import {
 } from "@/common/ui/components";
 import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
 import { PotLayout } from "@/layout/PotLayout";
-import { AccountProfilePicture } from "@/modules/account";
-import routesPath from "@/modules/core/routes";
-import { PotFilters } from "@/modules/pot";
-import { useProfileData } from "@/modules/profile";
+import { AccountProfilePicture } from "@/entities/account";
+import routesPath from "@/entities/core/routes";
+import { PotFilters } from "@/entities/pot";
+import { useProfileData } from "@/entities/profile";
 import { useGlobalStoreSelector } from "@/store";
 
 const Container = styled.div`

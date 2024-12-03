@@ -3,11 +3,11 @@ import { Models } from "@rematch/core";
 import { donationModel, donationModelKey } from "@/features/donation";
 import { potEditorModel, potEditorModelKey } from "@/features/pot-editor";
 import { projectEditorModel, projectEditorModelKey } from "@/features/project-editor";
-import { campaignEditorModel } from "@/modules/campaigns/models";
-import { coreModel } from "@/modules/core/model";
-import { listEditorModel } from "@/modules/lists";
-import { navModel, profilesModel } from "@/modules/profile";
-import { sessionModel } from "@/modules/session/model";
+import { campaignEditorModel } from "@/entities/campaigns/models";
+import { coreModel } from "@/entities/core/model";
+import { listEditorModel } from "@/entities/lists";
+import { navModel, profilesModel } from "@/entities/profile";
+import { sessionModel } from "@/entities/session/model";
 
 export interface AppModel extends Models<AppModel> {
   core: typeof coreModel;

@@ -4,9 +4,9 @@ import Link from "next/link";
 
 import { potFactoryClient } from "@/common/contracts/core";
 import { Button, PageWithBanner } from "@/common/ui/components";
-import { hrefByRouteName } from "@/modules/core";
-import { ActivePots } from "@/modules/pot";
-import { useWallet } from "@/modules/session";
+import { hrefByRouteName } from "@/entities/core";
+import { ActivePots } from "@/entities/pot";
+import { useWallet } from "@/entities/session";
 
 const Banner = () => {
   const { wallet } = useWallet();

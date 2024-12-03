@@ -8,7 +8,7 @@ import {
   isPotPublicRoundStartAfterApplicationEnd,
   isPotPublicRoundStartBeforeEnd,
   potSchema,
-} from "@/modules/pot";
+} from "@/entities/pot";
 
 export const getPotEditorDeploymentSchema = () =>
   potSchema

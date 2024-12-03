@@ -17,8 +17,8 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { AccountProfilePicture } from "@/modules/account";
-import { hrefByRouteName } from "@/modules/core";
+import { AccountProfilePicture } from "@/entities/account";
+import { hrefByRouteName } from "@/entities/core";
 import { useGlobalStoreSelector } from "@/store";
 
 import { useMatchingPoolFundingForm } from "../hooks/forms";

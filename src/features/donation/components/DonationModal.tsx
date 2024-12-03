@@ -6,7 +6,7 @@ import { walletApi } from "@/common/api/near";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useAuth } from "@/modules/session";
+import { useAuth } from "@/entities/session";
 import { dispatch } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";

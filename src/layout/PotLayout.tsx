@@ -11,7 +11,7 @@ import { PotApplicationModal } from "@/features/pot-application";
 import { ErrorModal } from "@/features/project-editor/components/ErrorModal";
 import { SuccessModal } from "@/features/project-editor/components/SuccessModal";
 import { isVotingEnabled } from "@/features/voting";
-import { ChallengeModal, POT_TABS_CONFIG, usePotUserPermissions } from "@/modules/pot";
+import { ChallengeModal, POT_TABS_CONFIG, usePotUserPermissions } from "@/entities/pot";
 
 import { PotHero } from "./PotHero";
 import { PotLayoutTabPanel } from "./PotLayoutTabPanel";

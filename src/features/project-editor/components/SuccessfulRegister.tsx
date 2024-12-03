@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
-import routesPath from "@/modules/core/routes";
+import routesPath from "@/entities/core/routes";
 import { dispatch } from "@/store";
 
 const SuccessfulRegister = ({

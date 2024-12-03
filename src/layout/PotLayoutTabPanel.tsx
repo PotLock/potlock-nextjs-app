@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { cn } from "@/common/ui/utils";
-import { TabNav } from "@/modules/profile/types";
+import { TabNav } from "@/entities/profile/types";
 
 export type PotLayoutTabPanelProps = {
   navOptions: TabNav[];

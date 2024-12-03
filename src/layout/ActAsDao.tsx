@@ -17,8 +17,8 @@ import {
   Switch,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { validateUserInDao } from "@/modules/profile";
-import { addOrRemoveDaoAddress, markDaoAsDefault, toggleDao } from "@/modules/profile/utils";
+import { validateUserInDao } from "@/entities/profile";
+import { addOrRemoveDaoAddress, markDaoAsDefault, toggleDao } from "@/entities/profile/utils";
 import { useGlobalStoreSelector } from "@/store";
 
 const ActAsDao = () => {

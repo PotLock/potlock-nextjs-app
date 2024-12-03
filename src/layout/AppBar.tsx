@@ -7,11 +7,11 @@ import { useRouter } from "next/router";
 import { NETWORK } from "@/common/_config";
 import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
-import { CartLink } from "@/modules/cart";
-import { SignInButton, useAuth } from "@/modules/session";
+import { CartLink } from "@/entities/cart";
+import { SignInButton, useAuth } from "@/entities/session";
 
 import { UserDropdown } from "./UserDropdown";
-import routesPath, { hrefByRouteName } from "../modules/core/routes";
+import routesPath, { hrefByRouteName } from "../entities/core/routes";
 
 const links = [
   { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },

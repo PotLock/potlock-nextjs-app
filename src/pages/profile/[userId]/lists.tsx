@@ -2,8 +2,8 @@ import { ReactElement } from "react";
 
 import { indexer } from "@/common/api/indexer";
 import { useRouteQuery } from "@/common/lib";
-import { ListCard, getRandomBackgroundImage } from "@/modules/lists";
-import { ProfileLayout } from "@/modules/profile";
+import { ListCard, getRandomBackgroundImage } from "@/entities/lists";
+import { ProfileLayout } from "@/entities/profile";
 
 export const NoResults = ({ text }: { text: string }) => (
   <div className="md:flex-col md:px-[105px] md:py-[68px] flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px]">

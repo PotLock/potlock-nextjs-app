@@ -23,7 +23,7 @@ import {
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { AccountKey, AccountOption, validAccountId } from "@/modules/account";
+import { AccountKey, AccountOption, validAccountId } from "@/entities/account";
 
 export type AccessControlListModalProps = {
   title: string;

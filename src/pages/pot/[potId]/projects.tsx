@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import { Application, potClient } from "@/common/contracts/core";
 import { InfiniteScroll, SearchBar } from "@/common/ui/components";
 import { PotLayout } from "@/layout/PotLayout";
-import { Profile } from "@/modules/profile/models";
-import { ProjectCard } from "@/modules/project";
+import { Profile } from "@/entities/profile/models";
+import { ProjectCard } from "@/entities/project";
 import { useGlobalStoreSelector } from "@/store";
 // import { usePotApplications } from "@/common/api/potlock/hooks";
 

@@ -4,7 +4,7 @@ import { ListRegistrationStatus, PotApplicationStatus, indexer } from "@/common/
 import { NearIcon } from "@/common/assets/svgs";
 import { FormField, RuntimeErrorAlert } from "@/common/ui/components";
 import { CheckboxField, TextField } from "@/common/ui/form-fields";
-import { AccountOption } from "@/modules/account";
+import { AccountOption } from "@/entities/account";
 
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import {

@@ -13,9 +13,9 @@ import { cn } from "@/common/ui/utils";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
 import { useVotingUserClearance } from "@/features/voting";
-import { PotStats, PotTimeline, usePotLifecycle, usePotUserPermissions } from "@/modules/pot";
-import { useAuthSession } from "@/modules/session";
-import { TokenTotalValue } from "@/modules/token";
+import { PotStats, PotTimeline, usePotLifecycle, usePotUserPermissions } from "@/entities/pot";
+import { useAuthSession } from "@/entities/session";
+import { TokenTotalValue } from "@/entities/token";
 
 export type PotHeroProps = ByPotId & {
   hasVoting?: boolean;

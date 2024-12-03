@@ -9,7 +9,7 @@ import { isNetworkAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccessControlList } from "@/features/access-control";
-import { AccountOption, AccountProfileLink } from "@/modules/account";
+import { AccountOption, AccountProfileLink } from "@/entities/account";
 
 import { POT_EDITOR_FIELDS } from "../constants";
 import { potIndexedFieldToString } from "../utils/normalization";

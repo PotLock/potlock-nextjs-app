@@ -2,12 +2,12 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { ProfileLayout } from "@/modules/profile";
-import AboutItem from "@/modules/profile/components/AboutItem";
-import Github from "@/modules/profile/components/Github";
-import SmartContract from "@/modules/profile/components/SmartContract";
-import Team from "@/modules/profile/components/Team";
-import useProfileData from "@/modules/profile/hooks/data";
+import { ProfileLayout } from "@/entities/profile";
+import AboutItem from "@/entities/profile/components/AboutItem";
+import Github from "@/entities/profile/components/Github";
+import SmartContract from "@/entities/profile/components/SmartContract";
+import Team from "@/entities/profile/components/Team";
+import useProfileData from "@/entities/profile/hooks/data";
 
 const HomeTab = () => {
   const router = useRouter();

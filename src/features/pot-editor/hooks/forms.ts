@@ -10,8 +10,8 @@ import { walletApi } from "@/common/api/near";
 import { PotConfig } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 import { donationFeeBasisPointsToPercents } from "@/features/donation";
-import { useCoreState } from "@/modules/core";
-import { PotInputs } from "@/modules/pot";
+import { useCoreState } from "@/entities/core";
+import { PotInputs } from "@/entities/pot";
 import { dispatch } from "@/store";
 
 import {

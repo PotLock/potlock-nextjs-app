@@ -7,8 +7,8 @@ import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
 import { Spinner } from "@/common/ui/components";
 import { PotLayout } from "@/layout/PotLayout";
-import { PotSponsorsBoard, PotSponsorsTable, useOrderedDonations } from "@/modules/pot";
-import { CustomDonationType } from "@/modules/pot/models/types";
+import { PotSponsorsBoard, PotSponsorsTable, useOrderedDonations } from "@/entities/pot";
+import { CustomDonationType } from "@/entities/pot/models/types";
 
 // TODO: refactor using tailwind!
 export const Container = styled.div`

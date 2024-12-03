@@ -8,9 +8,9 @@ import ArrowDown from "@/common/assets/svgs/ArrowDown";
 import { Payout, potClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import { cn } from "@/common/ui/utils";
+import { AccountProfilePicture } from "@/entities/account";
+import { PotPayoutChallenges, useOrderedDonations } from "@/entities/pot";
 import { PotLayout } from "@/layout/PotLayout";
-import { AccountProfilePicture } from "@/modules/account";
-import { PotPayoutChallenges, useOrderedDonations } from "@/modules/pot";
 
 const TableContainer = styled.div`
   display: flex;

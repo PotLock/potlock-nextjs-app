@@ -6,7 +6,7 @@ import { indexer } from "@/common/api/indexer";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
-import { FeedCard } from "@/modules/profile";
+import { FeedCard } from "@/entities/profile";
 
 export default function GlobalFeedsPage() {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);

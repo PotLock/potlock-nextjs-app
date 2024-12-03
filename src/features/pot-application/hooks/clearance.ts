@@ -10,7 +10,7 @@ import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapoo
 import { u128StringToBigNum } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { ClearanceCheckResult } from "@/common/types";
-import { useAuthSession } from "@/modules/session";
+import { useAuthSession } from "@/entities/session";
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,

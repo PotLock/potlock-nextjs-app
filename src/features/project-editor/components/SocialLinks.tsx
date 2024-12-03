@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import { extractFromUrl, urlPatters } from "@/modules/core/utils";
+import { extractFromUrl, urlPatters } from "@/entities/core/utils";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput } from "./CreateForm/components";

@@ -2,7 +2,7 @@
 import { useCallback, useState } from "react";
 
 import { Button } from "@/common/ui/components";
-import useProfileData from "@/modules/profile/hooks/data";
+import useProfileData from "@/entities/profile/hooks/data";
 import { dispatch } from "@/store";
 
 export const GroupIcon = () => (

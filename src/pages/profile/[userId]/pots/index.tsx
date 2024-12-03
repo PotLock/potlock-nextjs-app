@@ -5,8 +5,8 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
-import { PotCard } from "@/modules/pot";
-import { ProfileLayout } from "@/modules/profile";
+import { PotCard } from "@/entities/pot";
+import { ProfileLayout } from "@/entities/profile";
 
 const PotsSubPage = () => {
   const router = useRouter();

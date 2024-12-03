@@ -56,7 +56,7 @@ aspects of the application within each module:
 ├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings,
 │   │               # utility libraries, reusable primitives, and assets, used in layouts and
 │   │               # business logic across the codebase. MUST NOT contain business logic by itself.
-│   │               # AKA "shared" ( see link 2. )
+│   │               # AKA "shared" ( see link 1. )
 │   │
 │   ├── constants.ts <--- # Static reusable values, e.g.
 │   │                      export const NATIVE_TOKEN_ID = "near";
@@ -82,7 +82,7 @@ aspects of the application within each module:
 │
 │
 │
-├── [ entities ] <--- # Business units organized into codebase slices
+├── [ entities ] <--- # Business units organized into codebase slices ( See link 2. )
 │   │
 │  ...
 │   │
@@ -94,7 +94,7 @@ aspects of the application within each module:
 │   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
 │   │   │                       export const POT_MIN_NAME_LENGTH = 3;
 │   │   │
-│   │   ├── model.ts <--- # Entity state definitions ( See link 3. )
+│   │   ├── model.ts <--- # Entity state definitions ( See link 4. )
 │   │   │
 │   │   ├── types.ts <--- # Entity-specific shared types and interfaces
 │   │   │
@@ -112,7 +112,7 @@ aspects of the application within each module:
 │
 │
 ├── [ features ] <--- # A collection of codebase slices implementing various use cases
-│   │                 # and are named after functionalities they provide.
+│   │                 # and are named after functionalities they provide. ( See link 3. )
 │   │
 │  ...
 │   │
@@ -124,7 +124,7 @@ aspects of the application within each module:
 │   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
 │   │   │                       export const DONATION_MIN_NEAR_AMOUNT = 0.1;
 │   │   │
-│   │   ├── model.ts <--- # Feature state definitions ( See link 3. )
+│   │   ├── model.ts <--- # Feature state definitions ( See link 4. )
 │   │   │
 │   │   ├── types.ts <--- # Feature-specific shared types and interfaces
 │   │   │
@@ -150,7 +150,7 @@ aspects of the application within each module:
 │
 │
 ├── [ pages ] <--- # Entry point of the application.
-│                  # Follows Nextjs Pages routing specification ( see link 1. )
+│                  # Follows Nextjs Pages routing specification ( see link 5. )
 │
 │
 │
@@ -161,9 +161,11 @@ aspects of the application within each module:
 
 ### Links
 
-1. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
-2. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
-3. [Rematch models](https://rematchjs.org/docs/api-reference/models)
+1. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
+2. [Entities layer specification](https://feature-sliced.design/docs/reference/layers#entities)
+3. [Features layer specification](https://feature-sliced.design/docs/reference/layers#features)
+4. [Rematch models](https://rematchjs.org/docs/api-reference/models)
+5. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
 
 ## Testing
 

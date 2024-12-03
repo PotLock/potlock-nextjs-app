@@ -4,7 +4,7 @@ import { show } from "@ebay/nice-modal-react";
 
 import { GroupIcon } from "@/common/assets/svgs";
 import { Button } from "@/common/ui/components";
-import { AccountOption, AccountOptionProps } from "@/modules/account";
+import { AccountOption, AccountOptionProps } from "@/entities/account";
 
 import { AccessControlListModal, AccessControlListModalProps } from "./AccessControlListModal";
 

@@ -19,12 +19,12 @@ import {
   DropdownMenuTrigger,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountProfilePicture } from "@/modules/account";
-import { useRegistration } from "@/modules/core";
-import routesPath from "@/modules/core/routes";
-import { ListRegistrationStatus, listRegistrationStatuses } from "@/modules/lists";
-import { updateAccountId, updateNadabotVerification } from "@/modules/profile/utils";
-import { useWallet } from "@/modules/session";
+import { AccountProfilePicture } from "@/entities/account";
+import { useRegistration } from "@/entities/core";
+import routesPath from "@/entities/core/routes";
+import { ListRegistrationStatus, listRegistrationStatuses } from "@/entities/lists";
+import { updateAccountId, updateNadabotVerification } from "@/entities/profile/utils";
+import { useWallet } from "@/entities/session";
 import { useGlobalStoreSelector } from "@/store";
 
 import ActAsDao from "./ActAsDao";

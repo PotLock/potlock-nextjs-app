@@ -4,7 +4,7 @@ import { prop } from "remeda";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { hrefByRouteName } from "@/modules/core";
+import { hrefByRouteName } from "@/entities/core";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 

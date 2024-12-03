@@ -10,7 +10,7 @@ import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
-import { useIsHuman } from "@/modules/core";
+import { useIsHuman } from "@/entities/core";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";

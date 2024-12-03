@@ -1,7 +1,7 @@
 import { createModel } from "@rematch/core";
 import { merge, mergeAll, prop } from "remeda";
 
-import { PotData } from "@/modules/pot";
+import { PotData } from "@/entities/pot";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
