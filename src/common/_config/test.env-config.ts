@@ -1,6 +1,7 @@
 import { EnvConfig, FeatureId } from "@/common/types";
 
 export const envConfig: EnvConfig = {
+  platformName: "Potlock",
   network: "testnet" as const,
 
   contractMetadata: {
@@ -35,7 +36,7 @@ export const envConfig: EnvConfig = {
     },
 
     voting: {
-      contract: { accountId: "v1.voting.potlock.testnet" },
+      contract: { accountId: "mpdaovoting.potlock.testnet" },
     },
   },
 

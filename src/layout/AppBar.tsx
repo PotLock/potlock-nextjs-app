@@ -8,7 +8,7 @@ import { NETWORK } from "@/common/_config";
 import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
 import { CartLink } from "@/entities/cart";
-import { SignInButton, useAuth } from "@/entities/session";
+import { SessionSignInButton, useSessionReduxStore } from "@/entities/session";
 
 import { UserDropdown } from "./UserDropdown";
 import routesPath, { hrefByRouteName } from "../entities/core/routes";
@@ -33,12 +33,12 @@ const links = [
 ];
 
 const AuthButton = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionReduxStore();
   const isClient = useIsClient();
 
   if (!isClient) return;
 
-  return isAuthenticated ? <UserDropdown /> : <SignInButton />;
+  return isAuthenticated ? <UserDropdown /> : <SessionSignInButton />;
 };
 
 const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {

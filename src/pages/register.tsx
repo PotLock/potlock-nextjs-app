@@ -1,12 +1,12 @@
 import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useAuth } from "@/entities/session/hooks/store";
+import { useSessionReduxStore } from "@/entities/session/hooks/redux-store";
 import CreateForm from "@/features/project-editor/components/CreateForm";
 import useInitProjectState from "@/features/project-editor/hooks/useInitProjectState";
 import { useGlobalStoreSelector } from "@/store";
 
 export default function RegisterPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionReduxStore();
   useInitProjectState();
 
   // state used to show spinner during the data post

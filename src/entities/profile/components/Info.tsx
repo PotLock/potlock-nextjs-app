@@ -8,7 +8,7 @@ import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import routesPath, { hrefByRouteName } from "@/entities/core/routes";
-import { useAuth } from "@/entities/session";
+import { useSessionReduxStore } from "@/entities/session";
 import useWallet from "@/entities/session/hooks/wallet";
 
 import DonationsInfo from "./DonationsInfo";
@@ -23,7 +23,7 @@ type Props = {
 };
 
 const LinksWrapper = ({ accountId }: { accountId: string }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionReduxStore();
   const { wallet } = useWallet();
   const [copied, setCopied] = useState(false);
 

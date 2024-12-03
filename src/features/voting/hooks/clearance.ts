@@ -7,7 +7,7 @@ import { prop } from "remeda";
 import { ByPotId } from "@/common/api/indexer";
 import { ClearanceCheckResult } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
-import { useAuthSession } from "@/entities/session";
+import { useSessionAuth } from "@/entities/session";
 
 import { isVotingEnabled } from "../utils/mechanisms";
 
@@ -16,8 +16,8 @@ import { isVotingEnabled } from "../utils/mechanisms";
  *  as it's built for the mpDAO milestone.
  */
 export const useVotingUserClearance = ({ potId }: ByPotId): ClearanceCheckResult => {
-  const { accountId, isVerifiedPublicGoodsProvider } = useAuthSession();
-  const { nadaBotVerified: isHuman } = useIsHuman(accountId);
+  const { accountId, isVerifiedPublicGoodsProvider } = useSessionAuth();
+  const { isHumanVerified: isHuman } = useIsHuman(accountId);
   const isVotingSupported = isVotingEnabled({ potId });
 
   return useMemo(() => {

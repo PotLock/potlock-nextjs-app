@@ -8,7 +8,7 @@ import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapoo
 import { u128StringToBigNum } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { useIsHuman } from "@/entities/core";
-import { useAuthSession } from "@/entities/session";
+import { useSessionAuth } from "@/entities/session";
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
@@ -26,8 +26,8 @@ import { useAuthSession } from "@/entities/session";
  */
 export const usePotUserVoteWeight = ({ potId: _ }: ByPotId) => {
   const basicWeight = Big(1);
-  const { accountId } = useAuthSession();
-  const { nadaBotVerified } = useIsHuman(accountId);
+  const { accountId } = useSessionAuth();
+  const { isHumanVerified } = useIsHuman(accountId);
 
   const { data: stNear } = ftService.useRegisteredToken({
     tokenId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
@@ -45,7 +45,7 @@ export const usePotUserVoteWeight = ({ potId: _ }: ByPotId) => {
     const finalWeightBig = basicWeight
       .add(
         // Human verification bonus: +10%
-        nadaBotVerified ? 0.1 : 0,
+        isHumanVerified ? 0.1 : 0,
       )
       .add(
         // mpDAO Governance bonus: +25% for 10k+ votes
@@ -58,12 +58,12 @@ export const usePotUserVoteWeight = ({ potId: _ }: ByPotId) => {
       .add(
         // stNEAR staking bonus: +30% for 10+ stNEAR
         ((stNearBalance.gte(10) ? 0.3 : undefined) ??
-          // stNEAR staking bonus: +10% for 2+ stNEAR
+          // ...or only +10% for (2 >= x < 10) stNEAR
           stNearBalance.gte(2))
           ? 0.1
           : 0,
       );
 
     return finalWeightBig.toNumber();
-  }, [basicWeight, nadaBotVerified, votingPower, stNearBalance]);
+  }, [basicWeight, isHumanVerified, votingPower, stNearBalance]);
 };

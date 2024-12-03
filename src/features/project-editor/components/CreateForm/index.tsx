@@ -8,7 +8,7 @@ import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
 import { hrefByRouteName } from "@/entities/core";
 import { useWallet } from "@/entities/session";
-import { useAuth } from "@/entities/session/hooks/store";
+import { useSessionReduxStore } from "@/entities/session/hooks/redux-store";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { ErrorModal } from "../ErrorModal";
@@ -43,7 +43,7 @@ const CreateForm = () => {
 
   const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
   const { wallet, isWalletReady } = useWallet();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionReduxStore();
   const { form, errors, onSubmit } = useProjectEditorForm();
   const values = form.watch();
 

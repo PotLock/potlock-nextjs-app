@@ -5,7 +5,7 @@ import { Button } from "@/common/ui/components";
 import { useRegistration } from "@/entities/core";
 import routesPath from "@/entities/core/routes";
 import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/entities/project";
-import { useAuth, useWallet } from "@/entities/session";
+import { useSessionReduxStore, useWallet } from "@/entities/session";
 import { DonateRandomly } from "@/features/donation";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -38,7 +38,7 @@ const WelcomeBanner = () => {
   const daoAddress = toggle && defaultAddress ? defaultAddress : "";
   const wallet = useWallet();
   const accountId = daoAddress || wallet?.wallet?.accountId || "";
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionReduxStore();
 
   const { loading, isRegisteredProject } = useRegistration(accountId);
 

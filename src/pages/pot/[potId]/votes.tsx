@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { MdHowToVote } from "react-icons/md";
 
 import FileText from "@/common/assets/svgs/FileText";
-import HowToVote from "@/common/assets/svgs/HowToVote";
 import Star from "@/common/assets/svgs/Star";
 import { useRouteQuery } from "@/common/lib";
 import {
@@ -22,77 +22,10 @@ import {
 } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { VotingRulesPanel, VotingWeightBoostPanel } from "@/features/voting";
+import { VOTING_DUMMY_PROJECTS, VotingRulesPanel, VotingWeightBoostPanel } from "@/features/voting";
 import { PotLayout } from "@/layout/PotLayout";
 
-interface Project {
-  id: string;
-  name: string;
-  votes: number;
-  voted: boolean;
-  imageUrl: string;
-}
-
-const DUMMY_PROJECTS: Project[] = [
-  {
-    id: "1",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "2",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "3",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "4",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "5",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "6",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "7",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "8",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-];
-
-type TabType = "all" | "voted" | "pending";
+type FilterType = "all" | "voted" | "pending";
 
 export default function PotVotesTab() {
   const {
@@ -105,15 +38,18 @@ export default function PotVotesTab() {
 
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setFilter] = useState<TabType>("all");
+  const [activeFilter, setFilter] = useState<FilterType>("all");
   const [showVotingRules, setShowVotingRules] = useState(false);
   const [showWeightBoost, setShowWeightBoost] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
 
   const [allProjectsCount, votedCount, pendingCount] = useMemo(() => {
-    const allProjects = DUMMY_PROJECTS.length;
-    const voted = DUMMY_PROJECTS.filter((project) => project.voted).length;
-    const pending = DUMMY_PROJECTS.length - voted;
+    const allProjects = VOTING_DUMMY_PROJECTS.length;
+
+    const voted = VOTING_DUMMY_PROJECTS.filter((project) => project.voted).length;
+
+    const pending = VOTING_DUMMY_PROJECTS.length - voted;
+
     return [allProjects, voted, pending];
   }, []);
 
@@ -136,7 +72,7 @@ export default function PotVotesTab() {
   };
 
   const filteredProjects = useMemo(() => {
-    const filtered = DUMMY_PROJECTS.filter((project) => {
+    const filtered = VOTING_DUMMY_PROJECTS.filter((project) => {
       if (activeFilter === "voted") return project.voted;
       if (activeFilter === "pending") return !project.voted;
       return true;
@@ -163,17 +99,13 @@ export default function PotVotesTab() {
     const pages: (number | "ellipsis")[] = [];
 
     if (totalPages <= 7) {
-      // Show all pages if total is 7 or less
       pages.push(...Array.from({ length: totalPages }, (_, i) => i + 1));
     } else {
-      // Always show first page
       pages.push(1);
 
       if (pageNumber <= 4) {
-        // Near start
         pages.push(2, 3, 4, 5, "ellipsis", totalPages);
       } else if (pageNumber >= totalPages - 3) {
-        // Near end
         pages.push(
           "ellipsis",
           totalPages - 4,
@@ -183,7 +115,6 @@ export default function PotVotesTab() {
           totalPages,
         );
       } else {
-        // Middle
         pages.push("ellipsis", pageNumber - 1, pageNumber, pageNumber + 1, "ellipsis", totalPages);
       }
     }
@@ -207,13 +138,13 @@ export default function PotVotesTab() {
   }, [pageNumber, setPageNumber, numberOfPages]);
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className={cn("flex w-full flex-col gap-6")}>
       {/* Search */}
       <div className="relative">
         <Input
           type="search"
-          placeholder="Search Projects"
-          className="w-full bg-gray-50"
+          placeholder={"Search Projects"}
+          className={cn("w-full bg-gray-50")}
           value={searchQuery}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
         />
@@ -276,58 +207,95 @@ export default function PotVotesTab() {
       <div className="flex flex-row">
         <div className="w-full">
           {/* Header */}
-          <div className="md:static absolute inset-x-0 w-full">
-            <div className="md:rounded-tl-lg md:rounded-tr-lg flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]">
+          <div className={cn("md:static absolute inset-x-0 w-full")}>
+            <div
+              className={cn(
+                "flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]",
+                "md:rounded-tl-lg md:rounded-tr-lg",
+              )}
+            >
               <div className="flex items-center gap-2">
-                <HowToVote className="h-6 w-6" />
+                <MdHowToVote className="h-6 w-6" />
+
                 <span className="font-semibold">
-                  {votedCount} Project{votedCount > 1 ? "s" : ""} Voted
+                  {`${votedCount} Project${votedCount > 1 ? "s" : ""} Voted`}
                 </span>
               </div>
+
               <div className="flex gap-2">
                 <div
-                  className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
+                  className={cn(
+                    "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
+                    "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
+                  )}
                   onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
                 >
                   <Star className="h-[18px] w-[18px]" />
+
                   <span className="flex items-center gap-2">
-                    <span className="md:inline-flex hidden whitespace-nowrap font-medium">
-                      {showWeightBoost ? "Hide" : "View"} Weight Boost{" "}
+                    <span className={cn("md:inline-flex hidden whitespace-nowrap font-medium")}>
+                      {`${showWeightBoost ? "Hide" : "View"} Weight Boost`}{" "}
                     </span>
+
                     <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
-                      x{initWeightBoost}
+                      {`x${initWeightBoost}`}
                     </span>
                   </span>
-                  <ChevronRight className="md:block relative hidden h-[18px] w-[18px] text-[#EA6A25]" />
+
+                  <ChevronRight
+                    className={cn("md:block relative hidden h-[18px] w-[18px] text-[#EA6A25]")}
+                  />
                 </div>
+
                 <div
-                  className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
+                  className={cn(
+                    "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
+                    "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
+                  )}
                   onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
                 >
                   <FileText className="h-[18px] w-[18px]" />
-                  <span className="md:inline-flex hidden items-center gap-2 whitespace-nowrap font-medium">
-                    {showVotingRules ? "Hide" : "View"} Voting Rules
+
+                  <span
+                    className={cn(
+                      "md:inline-flex hidden items-center gap-2 whitespace-nowrap font-medium",
+                    )}
+                  >
+                    {`${showVotingRules ? "Hide" : "View"} Voting Rules`}
                   </span>
-                  <ChevronRight className="md:block hidden h-[18px] w-[18px] text-[#EA6A25]" />
+
+                  <ChevronRight
+                    className={cn("md:block hidden h-[18px] w-[18px] text-[#EA6A25]")}
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-between bg-[#f7f7f7] px-7 py-2 text-sm font-semibold text-gray-500">
-              <h4 className="font-semibold">PROJECTS</h4>
+            <div
+              className={cn(
+                "flex justify-between bg-[#f7f7f7] px-7 py-2",
+                "text-sm font-semibold text-gray-500",
+              )}
+            >
+              <h4 className="font-semibold">{"PROJECTS"}</h4>
+
               <div className="flex gap-6">
-                <h4 className="md:block hidden text-right font-semibold">VOTES</h4>
-                <h4 className="md:block hidden text-right font-semibold">ACTIONS</h4>
+                <h4 className={cn("md:block hidden text-right font-semibold")}>{"VOTES"}</h4>
+                <h4 className={cn("md:block hidden text-right font-semibold")}>{"ACTIONS"}</h4>
               </div>
             </div>
           </div>
 
           {/* Project List */}
-          <div className="md:mt-1 mt-30 space-y-4">
+          <div className={cn("md:mt-1 mt-30 space-y-4")}>
             {filteredProjects.map((project) => (
               <label
                 key={project.id}
-                className="md:p-4 flex items-center gap-4 rounded-lg py-4 hover:bg-gray-50"
+                className={cn(
+                  "flex items-center gap-4 rounded-lg",
+                  "py-4 hover:bg-gray-50",
+                  "md:p-4",
+                )}
                 htmlFor={project.id}
               >
                 <Checkbox
@@ -346,10 +314,12 @@ export default function PotVotesTab() {
 
                 <div className="min-w-0 flex-1">
                   <div className="truncate font-medium">{project.name}</div>
-                  <div className="md:hidden text-sm text-gray-500">{project.votes} Votes</div>
+                  <div
+                    className={cn("md:hidden text-sm text-gray-500")}
+                  >{`${project.votes} Votes`}</div>
                 </div>
 
-                <div className="md:block hidden text-right">{project.votes}</div>
+                <div className={cn("md:block hidden text-right")}>{project.votes}</div>
 
                 <Button
                   variant={"standard-outline"}
@@ -362,7 +332,6 @@ export default function PotVotesTab() {
             ))}
           </div>
 
-          {/* Pagination */}
           {numberOfPages > 1 && (
             <Pagination className="mt-[24px]">
               <PaginationContent>
@@ -387,13 +356,19 @@ export default function PotVotesTab() {
 
           {/* Floating Action Bar */}
           {selectedProjects.size > 0 && (
-            <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-lg border bg-white p-4 shadow-lg">
+            <div
+              className={cn(
+                "fixed bottom-4 left-1/2 flex -translate-x-1/2",
+                "items-center gap-4 rounded-lg border bg-white p-4 shadow-lg",
+              )}
+            >
               <div className="flex items-center gap-2">
                 <Checkbox checked={true} />
-                <span>{selectedProjects.size} Selected Projects</span>
+                <span>{`${selectedProjects.size} Selected Projects`}</span>
               </div>
+
               <Button variant={"standard-filled"} onClick={handleVoteAll}>
-                Vote All
+                {"Vote All"}
               </Button>
             </div>
           )}
@@ -408,6 +383,7 @@ export default function PotVotesTab() {
                 mode="panel"
               />
             )}
+
             {showWeightBoost && (
               <VotingWeightBoostPanel
                 open={true}

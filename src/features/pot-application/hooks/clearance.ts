@@ -4,43 +4,47 @@ import { useMemo } from "react";
 
 import { prop } from "remeda";
 
-import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { PLATFORM_NAME } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { u128StringToBigNum } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { ClearanceCheckResult } from "@/common/types";
-import { useAuthSession } from "@/entities/session";
+import { useSessionAuth } from "@/entities/session";
+
+import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
  *  as it's built for the mpDAO milestone.
  */
 export const usePotApplicationUserClearance = ({
-  potId: _,
+  potId,
   hasVoting,
 }: ByPotId & { hasVoting?: boolean }): ClearanceCheckResult => {
-  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useAuthSession();
-
-  const { data: stNear } = ftService.useRegisteredToken({
-    tokenId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
-  });
-
+  const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
+  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useSessionAuth();
+  const { data: pot } = indexer.usePot({ potId });
+  const { data: stNear } = ftService.useRegisteredToken({ tokenId: staking.tokenId });
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
   return useMemo(() => {
     const requirements = [
-      {
-        title: "Verified Project on Potlock",
-        isFulfillmentAssessmentPending: isAccountInfoLoading,
-        isSatisfied: isVerifiedPublicGoodsProvider,
-      },
+      ...(pot?.sybil_wrapper_provider === "string"
+        ? [
+            {
+              title: `Verified Project on ${PLATFORM_NAME}`,
+              isFulfillmentAssessmentPending: isAccountInfoLoading,
+              isSatisfied: isVerifiedPublicGoodsProvider,
+            },
+          ]
+        : []),
 
       ...(hasVoting
         ? [
             {
-              title: "An equivalent of 25 USD staked in NEAR on Meta Pool",
-              isSatisfied: stNear?.balanceUsd?.gte(25) ?? false,
+              title: `An equivalent of ${staking.minAmountUsd} USD staked in NEAR on ${staking.platformName}`,
+              isSatisfied: stNear?.balanceUsd?.gte(staking.minAmountUsd) ?? false,
             },
 
             {
@@ -57,14 +61,20 @@ export const usePotApplicationUserClearance = ({
 
     return {
       requirements,
-      isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
+
+      isEveryRequirementSatisfied:
+        requirements.length > 0 ? requirements.every(prop("isSatisfied")) : true,
+
       error: null,
     };
   }, [
     hasVoting,
     isAccountInfoLoading,
     isVerifiedPublicGoodsProvider,
+    pot?.sybil_wrapper_provider,
     stNear?.balanceUsd,
+    staking.minAmountUsd,
+    staking.platformName,
     voterInfo?.voting_power,
   ]);
 };

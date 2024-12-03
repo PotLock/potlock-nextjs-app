@@ -1,22 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { walletApi } from "@/common/api/near";
-import useIsClient from "@/common/lib/useIsClient";
 import { dispatch, resetStore } from "@/store";
 
-import SuspenseLoading from "../components/SuspenseLoading";
-import { useAuth } from "../hooks/store";
+import { useSessionReduxStore } from "../hooks/redux-store";
 import { useWallet } from "../hooks/wallet";
 
-type AuthProviderProps = {
+type SessionProviderProps = {
   children: React.ReactNode;
 };
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const SessionProvider = ({ children }: SessionProviderProps) => {
   const [ready, setReady] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionReduxStore();
   const { wallet } = useWallet();
-  const isClient = useIsClient();
 
   // Check wallet
   const checkWallet = useCallback(async () => {
@@ -58,10 +55,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
   }, [checkWallet, wallet]);
-
-  if (!wallet || !isClient || !ready) {
-    return <SuspenseLoading />;
-  }
 
   return <>{children}</>;
 };

@@ -6,7 +6,7 @@ import { walletApi } from "@/common/api/near";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useAuth } from "@/entities/session";
+import { useSessionReduxStore } from "@/entities/session";
 import { dispatch } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
@@ -23,7 +23,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   const isListDonation = "listId" in props;
   const isCampaignDonation = "campaignId" in props;
   const { currentStep } = useDonationState();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionReduxStore();
   const { setSearchParams } = useRouteQuery();
 
   const close = useCallback(() => {

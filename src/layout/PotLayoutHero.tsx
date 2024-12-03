@@ -10,21 +10,26 @@ import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { PotStats, PotTimeline, usePotLifecycle, usePotUserPermissions } from "@/entities/pot";
-import { useAuthSession } from "@/entities/session";
+import {
+  PotLifecycleStageTagEnum,
+  PotStats,
+  PotTimeline,
+  usePotBasicUserPermissions,
+  usePotLifecycle,
+} from "@/entities/pot";
+import { useSessionAuth } from "@/entities/session";
 import { TokenTotalValue } from "@/entities/token";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
-import { useVotingUserClearance } from "@/features/voting";
 
-export type PotHeroProps = ByPotId & {
+export type PotLayoutHeroProps = ByPotId & {
   hasVoting?: boolean;
   onApplyClick?: () => void;
   onChallengePayoutsClick?: () => void;
   onFundMatchingPoolClick?: () => void;
 };
 
-export const PotHero: React.FC<PotHeroProps> = ({
+export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   potId,
   hasVoting,
   onApplyClick,
@@ -32,18 +37,18 @@ export const PotHero: React.FC<PotHeroProps> = ({
   onFundMatchingPoolClick,
 }) => {
   const { data: pot } = indexer.usePot({ potId });
-  const { isSignedIn, accountId } = useAuthSession();
+  const { isSignedIn, accountId } = useSessionAuth();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
-  const votingClearance = useVotingUserClearance({ potId });
+  // const votingClearance = useVotingUserClearance({ potId });
   const lifecycle = usePotLifecycle({ potId, hasVoting });
 
-  const isVotingRoundOngoing = useMemo(
-    () => lifecycle.currentStage?.tag === "Matching",
+  const isApplicationPeriodOngoing = useMemo(
+    () => lifecycle.currentStage?.tag === PotLifecycleStageTagEnum.Application,
     [lifecycle.currentStage?.tag],
   );
 
   const { canApply, canDonate, canFund, canChallengePayouts, existingChallengeForUser } =
-    usePotUserPermissions({ potId });
+    usePotBasicUserPermissions({ potId });
 
   const referrerPotLink =
     window.location.origin + window.location.pathname + `&referrerId=${accountId}`;
@@ -84,14 +89,14 @@ export const PotHero: React.FC<PotHeroProps> = ({
         <div className="lg:flex-row flex w-full flex-col items-start justify-between gap-10">
           <div className="max-w-126.5 min-w-87.5 flex flex-col items-start justify-start gap-10">
             {pot ? (
-              <div
+              <h1
                 className={cn(
                   "self-stretch font-lora",
-                  "text-[53px] font-medium uppercase leading-[61px] text-[#292929]",
+                  "text-[53px] font-medium uppercase leading-[61px] text-neutral-950",
                 )}
               >
                 {pot.name}
-              </div>
+              </h1>
             ) : (
               <Skeleton className="h-8 w-32" />
             )}
@@ -115,7 +120,9 @@ export const PotHero: React.FC<PotHeroProps> = ({
                     <MdArrowOutward className="h-4.5 w-4.5" />
 
                     <span
-                      className={cn("text-center text-sm font-medium leading-tight text-[#292929]")}
+                      className={cn(
+                        "text-center text-sm font-medium leading-tight text-neutral-950",
+                      )}
                     >
                       {"More info"}
                     </span>
@@ -126,20 +133,11 @@ export const PotHero: React.FC<PotHeroProps> = ({
           </div>
 
           <div className="lg:w-a flex w-full flex-col gap-6">
-            {hasVoting ? (
-              <>
-                {isVotingRoundOngoing ? (
-                  <Checklist
-                    title="Voting Requirements"
-                    requirements={votingClearance.requirements ?? []}
-                  />
-                ) : (
-                  <Checklist
-                    title="Application Requirements"
-                    requirements={applicationClearance.requirements ?? []}
-                  />
-                )}
-              </>
+            {isApplicationPeriodOngoing ? (
+              <Checklist
+                title="Application Requirements"
+                requirements={applicationClearance.requirements ?? []}
+              />
             ) : (
               pot && <PotStats potDetail={pot} />
             )}
@@ -166,6 +164,7 @@ export const PotHero: React.FC<PotHeroProps> = ({
 
             {pot ? (
               <TokenTotalValue
+                textOnly
                 tokenId={NATIVE_TOKEN_ID}
                 amountBigString={pot.matching_pool_balance}
               />
@@ -175,7 +174,7 @@ export const PotHero: React.FC<PotHeroProps> = ({
           </div>
 
           <div className="flex items-center justify-start gap-4">
-            {canApply && (
+            {canApply && applicationClearance.isEveryRequirementSatisfied && (
               <Button onClick={onApplyClick}>{`Apply to ${hasVoting ? "Round" : "Pot"}`}</Button>
             )}
 

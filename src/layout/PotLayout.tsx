@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
-import { ChallengeModal, POT_TABS_CONFIG, usePotUserPermissions } from "@/entities/pot";
+import { ChallengeModal, POT_TABS_CONFIG, usePotBasicUserPermissions } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolFundingModal } from "@/features/matching-pool-funding";
 import { PotApplicationModal } from "@/features/pot-application";
@@ -13,7 +13,7 @@ import { ErrorModal } from "@/features/project-editor/components/ErrorModal";
 import { SuccessModal } from "@/features/project-editor/components/SuccessModal";
 import { isVotingEnabled } from "@/features/voting";
 
-import { PotHero } from "./PotHero";
+import { PotLayoutHero } from "./PotLayoutHero";
 import { PotLayoutTabPanel } from "./PotLayoutTabPanel";
 
 export type PotLayoutProps = {
@@ -32,7 +32,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { potId } = query;
   const hasVoting = isVotingEnabled({ potId });
   const { data: pot } = indexer.usePot({ potId });
-  const { existingChallengeForUser } = usePotUserPermissions({ potId });
+  const { existingChallengeForUser } = usePotBasicUserPermissions({ potId });
 
   // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
@@ -104,7 +104,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
       <DonationSybilWarning classNames={{ root: "w-full mb-4 md:mb-8" }} {...{ potId }} />
 
-      <PotHero
+      <PotLayoutHero
         onApplyClick={openApplicationModal}
         onChallengePayoutsClick={openChallengeModal}
         onFundMatchingPoolClick={openMatchingPoolFundingModal}

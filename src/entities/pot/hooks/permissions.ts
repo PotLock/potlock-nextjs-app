@@ -3,10 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
 import { getDateTime } from "@/entities/core";
-import { useAuthSession } from "@/entities/session";
+import { useSessionAuth } from "@/entities/session";
 
-export const usePotUserPermissions = ({ potId }: ByPotId) => {
-  const { isSignedIn, accountId } = useAuthSession();
+export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
+  const { isSignedIn, accountId } = useSessionAuth();
   const { data: pot } = indexer.usePot({ potId });
   const now = Date.now();
 

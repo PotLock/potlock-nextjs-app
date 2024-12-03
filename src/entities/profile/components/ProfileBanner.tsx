@@ -18,10 +18,10 @@ export const ProfileBanner: React.FC<ProfileBannerProps> = ({ isProject, account
   const { avatarSrc, backgroundSrc } = useProfileData(accountId);
 
   // get nadabot status on the donor page
-  let nadaBotVerified = false;
+  let isHumanVerified = false;
   const isHuman = useIsHuman(accountId);
   if (!isHuman.loading && !isProject) {
-    nadaBotVerified = isHuman.nadaBotVerified;
+    isHumanVerified = isHuman.isHumanVerified;
   }
 
   // get registration if it is on project page
@@ -82,7 +82,7 @@ export const ProfileBanner: React.FC<ProfileBannerProps> = ({ isProject, account
                 {registration.status}
               </div>
             </div>
-          ) : nadaBotVerified ? (
+          ) : isHumanVerified ? (
             <div
               className={cn(
                 "flex items-center gap-1 overflow-hidden rounded-[20px] bg-white",
