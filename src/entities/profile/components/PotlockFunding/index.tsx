@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
+import { Arrow } from "@/common/assets/svgs";
 import { DeprecatedPagination } from "@/common/ui/components";
 import useDonationsForProject from "@/entities/core/hooks/useDonationsForProject";
 import useDonationsSent from "@/entities/core/hooks/useDonationsSent";
 
 import { Option, Stat, Stats } from "../Stats";
-import Arrow from "./Arrow";
 import DonationItem from "./DonationItem";
 import { FundingListContainer, SearchBar, Sort } from "./styled";
 
