@@ -10,8 +10,8 @@ import {
   ListDetails,
   SavedUsersType,
   useListDeploymentSuccessRedirect,
-} from "@/entities/lists";
-import { useListForm } from "@/entities/lists/hooks/useListForm";
+} from "@/entities/list";
+import { useListForm } from "@/entities/list/hooks/useListForm";
 
 export default function SingleList() {
   useListDeploymentSuccessRedirect();

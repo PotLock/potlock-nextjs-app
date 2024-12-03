@@ -1,8 +1,8 @@
 import { Models } from "@rematch/core";
 
-import { campaignEditorModel } from "@/entities/campaigns/models";
+import { campaignEditorModel } from "@/entities/campaign/models";
 import { coreModel } from "@/entities/core/model";
-import { listEditorModel } from "@/entities/lists";
+import { listEditorModel } from "@/entities/list";
 import { navModel, profilesModel } from "@/entities/profile";
 import { sessionModel } from "@/entities/session/model";
 import { donationModel, donationModelKey } from "@/features/donation";

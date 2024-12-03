@@ -18,10 +18,10 @@ import { isVotingEnabled } from "../utils/voting";
 export const useVotingUserClearance = ({ potId }: ByPotId): ClearanceCheckResult => {
   const { accountId, isVerifiedPublicGoodsProvider } = useAuthSession();
   const { nadaBotVerified: isHuman } = useIsHuman(accountId);
-  const isVotingBasedPot = isVotingEnabled({ potId });
+  const isVotingSupported = isVotingEnabled({ potId });
 
   return useMemo(() => {
-    if (!isVotingBasedPot) {
+    if (!isVotingSupported) {
       return {
         requirements: null,
         isEveryRequirementSatisfied: false,
@@ -39,5 +39,5 @@ export const useVotingUserClearance = ({ potId }: ByPotId): ClearanceCheckResult
         error: null,
       };
     }
-  }, [isHuman, isVerifiedPublicGoodsProvider, isVotingBasedPot]);
+  }, [isHuman, isVerifiedPublicGoodsProvider, isVotingSupported]);
 };

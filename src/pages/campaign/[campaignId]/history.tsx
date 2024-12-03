@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 
-import { CampaignLayout } from "@/entities/campaigns/components";
+import { CampaignLayout } from "@/entities/campaign/components";
 
 const CampaignHistory = () => {
   return <div className="">Hello</div>;

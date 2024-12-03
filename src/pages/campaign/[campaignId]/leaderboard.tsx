@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 
-import { CampaignDonorsTable, CampaignLayout } from "@/entities/campaigns/components";
+import { CampaignDonorsTable, CampaignLayout } from "@/entities/campaign/components";
 
 const CampaignLeaderBoard = () => {
   return <CampaignDonorsTable />;

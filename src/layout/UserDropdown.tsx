@@ -22,7 +22,7 @@ import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { useRegistration } from "@/entities/core";
 import routesPath from "@/entities/core/routes";
-import { ListRegistrationStatus, listRegistrationStatuses } from "@/entities/lists";
+import { ListRegistrationStatus, listRegistrationStatuses } from "@/entities/list";
 import { updateAccountId, updateNadabotVerification } from "@/entities/profile/utils";
 import { useWallet } from "@/entities/session";
 import { useGlobalStoreSelector } from "@/store";

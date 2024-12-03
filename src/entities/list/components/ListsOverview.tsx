@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { SearchBar, SortSelect } from "@/common/ui/components";
-import { ListCard } from "@/entities/lists/components/ListCard";
-import { useAllLists } from "@/entities/lists/hooks/useAllLists";
+import { ListCard } from "@/entities/list/components/ListCard";
+import { useAllLists } from "@/entities/list/hooks/useAllLists";
 
 import { ListCardSkeleton } from "./ListCardSkeleton";
 import { NoListItem } from "./NoListItem";

@@ -3,7 +3,7 @@ import { ReactElement, useEffect, useState } from "react";
 import { Campaign, campaignsClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
 import { AccountId } from "@/common/types";
-import { CampaignCard } from "@/entities/campaigns/components";
+import { CampaignCard } from "@/entities/campaign/components";
 import { ProfileLayout } from "@/entities/profile";
 
 import { NoResults } from "./lists";

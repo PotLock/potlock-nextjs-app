@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 import { PageWithBanner } from "@/common/ui/components";
-import { ListHero, ListsOverview } from "@/entities/lists";
-import { useListDeploymentSuccessRedirect } from "@/entities/lists/hooks/redirects";
+import { ListHero, ListsOverview } from "@/entities/list";
+import { useListDeploymentSuccessRedirect } from "@/entities/list/hooks/redirects";
 
 export default function Page() {
   useListDeploymentSuccessRedirect();

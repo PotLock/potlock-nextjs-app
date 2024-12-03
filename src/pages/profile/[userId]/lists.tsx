@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 import { indexer } from "@/common/api/indexer";
 import { useRouteQuery } from "@/common/lib";
-import { ListCard, getRandomBackgroundImage } from "@/entities/lists";
+import { ListCard, getRandomBackgroundImage } from "@/entities/list";
 import { ProfileLayout } from "@/entities/profile";
 
 export const NoResults = ({ text }: { text: string }) => (

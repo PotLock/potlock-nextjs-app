@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 import { walletApi } from "@/common/api/near";
 import { Button } from "@/common/ui/components";
-import { useAllLists } from "@/entities/lists/hooks/useAllLists";
+import { useAllLists } from "@/entities/list/hooks/useAllLists";
 
 export const ListHero = ({
   setCurrentListType,
