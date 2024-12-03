@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+// nothing here really
 
 import FileText from "@/common/assets/svgs/FileText";
 import HowToVote from "@/common/assets/svgs/HowToVote";
