@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { ChefHatIcon } from "@/common/assets/svgs";
 import { Button, DialogDescription } from "@/common/ui/components";
-import routesPath from "@/modules/core/routes";
-import { PotData } from "@/modules/pot";
+import routesPath from "@/entities/core/routes";
+import { PotData } from "@/entities/pot";
 
 export type PotDeploymentSuccessProps = {
   onViewPotClick: VoidFunction;

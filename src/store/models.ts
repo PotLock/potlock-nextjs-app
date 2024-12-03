@@ -1,19 +1,17 @@
 import { Models } from "@rematch/core";
 
+import { campaignEditorModel } from "@/entities/campaign/models";
+import { coreModel } from "@/entities/core/model";
+import { listEditorModel } from "@/entities/list";
+import { navModel, profilesModel } from "@/entities/profile";
+import { sessionModel } from "@/entities/session/model";
 import { donationModel, donationModelKey } from "@/features/donation";
 import { potEditorModel, potEditorModelKey } from "@/features/pot-editor";
 import { projectEditorModel, projectEditorModelKey } from "@/features/project-editor";
-import { auth } from "@/modules/auth/state";
-import { campaignEditorModel } from "@/modules/campaigns/models";
-import { cartModel } from "@/modules/cart";
-import { core } from "@/modules/core";
-import { listEditorModel } from "@/modules/lists";
-import { navModel, profilesModel } from "@/modules/profile";
 
 export interface AppModel extends Models<AppModel> {
-  core: typeof core;
-  auth: typeof auth;
-  cart: typeof cartModel;
+  core: typeof coreModel;
+  session: typeof sessionModel;
   [donationModelKey]: typeof donationModel;
   nav: typeof navModel;
   [potEditorModelKey]: typeof potEditorModel;
@@ -24,9 +22,8 @@ export interface AppModel extends Models<AppModel> {
 }
 
 export const models: AppModel = {
-  core,
-  auth,
-  cart: cartModel,
+  core: coreModel,
+  session: sessionModel,
   [donationModelKey]: donationModel,
   nav: navModel,
   listEditor: listEditorModel,

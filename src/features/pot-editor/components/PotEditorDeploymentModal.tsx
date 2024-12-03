@@ -6,7 +6,7 @@ import { DataLoadingPlaceholder, Dialog, DialogContent } from "@/common/ui/compo
 
 import { PotEditorDeploymentError } from "./PotEditorDeploymentError";
 import { PotEditorDeploymentSuccess } from "./PotEditorDeploymentSuccess";
-import { usePotEditorState } from "../models";
+import { usePotEditorState } from "../model";
 
 export type PotEditorDeploymentModalProps = {};
 

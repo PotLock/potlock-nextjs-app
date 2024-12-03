@@ -13,7 +13,7 @@ import {
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { safePositiveNumber } from "@/common/lib";
-import { TokenAvailableBalance } from "@/modules/token";
+import { TokenAvailableBalance } from "@/entities/token";
 
 import { DONATION_MAX_MESSAGE_LENGTH, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
 import { DonationAllocationStrategyEnum, DonationGroupAllocationStrategyEnum } from "../types";

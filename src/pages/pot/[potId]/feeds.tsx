@@ -9,9 +9,9 @@ import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { Application, potClient } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
-import { PotLayout } from "@/modules/pot";
-import { FeedCard } from "@/modules/profile";
-import { CreatePost } from "@/modules/profile/components/CreatePost";
+import { FeedCard } from "@/entities/profile";
+import { CreatePost } from "@/entities/profile/components/CreatePost";
+import { PotLayout } from "@/layout/PotLayout";
 
 const tabs = [
   { name: "Approved Applicants", value: ApplicationStatus.Approved },

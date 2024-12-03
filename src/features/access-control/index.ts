@@ -1,2 +1,2 @@
 export * from "./components/AccessControlList";
-export * from "./types";
+export * from "./components/AccessControlListModal";

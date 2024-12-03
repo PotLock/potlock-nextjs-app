@@ -328,6 +328,12 @@ export type V1ProjectStatsRetrieveParams = {
   page_size?: number;
 };
 
+export interface VotePosition {
+  votable_address: string;
+  votable_object_id: string;
+  voting_power: string;
+}
+
 export interface Vote {
   readonly pair: string;
   /**
@@ -992,11 +998,50 @@ export interface PaginatedAccountsResponse {
   results: Account[];
 }
 
+export interface NearSocialProfileData {
+  backgroundImage?: Image;
+  description?: string;
+  image?: Image;
+  linktree?: Linktree;
+  name?: string;
+  /** JSON-stringified array of category strings */
+  plCategories?: string;
+  /** JSON-stringified array of funding source objects */
+  plFundingSources?: string;
+  /** JSON-stringified array of URLs */
+  plGithubRepos?: string;
+  plPublicGoodReason?: string;
+  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
+  plSmartContracts?: string;
+  /** JSON-stringified array of team member account ID strings */
+  plTeam?: string;
+}
+
 export interface Nft {
   baseUri?: string;
   contractId?: string;
   media?: string;
   tokenId?: string;
+}
+
+export interface LockingPosition {
+  amount: string;
+  index: number;
+  is_locked: boolean;
+  is_unlocked: boolean;
+  is_unlocking: boolean;
+  locking_period: number;
+  /** @nullable */
+  unlocking_started_at: string | null;
+  voting_power: string;
+}
+
+export interface MpdaoVoter {
+  balance_in_contract: string;
+  locking_positions: LockingPosition[];
+  vote_positions: VotePosition[];
+  voter_id: string;
+  voting_power: string;
 }
 
 export interface ListUpvote {
@@ -1021,25 +1066,6 @@ export interface Image {
   ipfs_cid?: string;
   nft?: Nft;
   url?: string;
-}
-
-export interface NearSocialProfileData {
-  backgroundImage?: Image;
-  description?: string;
-  image?: Image;
-  linktree?: Linktree;
-  name?: string;
-  /** JSON-stringified array of category strings */
-  plCategories?: string;
-  /** JSON-stringified array of funding source objects */
-  plFundingSources?: string;
-  /** JSON-stringified array of URLs */
-  plGithubRepos?: string;
-  plPublicGoodReason?: string;
-  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
-  plSmartContracts?: string;
-  /** JSON-stringified array of team member account ID strings */
-  plTeam?: string;
 }
 
 export interface DonationContractConfig {
@@ -2060,6 +2086,44 @@ export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
     swrOptions?.swrKey ??
     (() => (isEnabled ? getV1ListsRegistrationsRetrieveKey(listId, params) : null));
   const swrFn = () => v1ListsRegistrationsRetrieve(listId, params, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export const v1MpdaoVoterInfoRetrieve = (
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<MpdaoVoter>> => {
+  return axios.get(`/api/v1/mpdao/voter-info`, options);
+};
+
+export const getV1MpdaoVoterInfoRetrieveKey = () => [`/api/v1/mpdao/voter-info`] as const;
+
+export type V1MpdaoVoterInfoRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1MpdaoVoterInfoRetrieve>>
+>;
+export type V1MpdaoVoterInfoRetrieveQueryError = AxiosError<void>;
+
+export const useV1MpdaoVoterInfoRetrieve = <TError = AxiosError<void>>(
+  p0: string,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1MpdaoVoterInfoRetrieve>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+  const swrKey =
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1MpdaoVoterInfoRetrieveKey() : null));
+  const swrFn = () => v1MpdaoVoterInfoRetrieve(axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 

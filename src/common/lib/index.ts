@@ -5,3 +5,4 @@ export * from "./navigation";
 export * from "./daysAgo";
 export * from "./number";
 export * from "./datetime";
+export * from "./protocol-config";

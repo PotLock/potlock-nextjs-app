@@ -2,9 +2,8 @@ import { useMemo } from "react";
 
 import { useRouteQuery } from "@/common/lib";
 import { ftService } from "@/common/services";
-import { Button, DialogFooter, Form } from "@/common/ui/components";
+import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { ModalErrorBody } from "@/modules/core";
 import { dispatch } from "@/store";
 
 import { DonationConfirmation } from "./DonationConfirmation";

@@ -1,6 +1,6 @@
 import { PageWithBanner } from "@/common/ui/components";
-import { CampaignForm } from "@/modules/campaigns/components/CampaignForm";
-import { useCampaignDeploymentRedirect } from "@/modules/campaigns/hooks/redirects";
+import { CampaignForm } from "@/entities/campaign/components/CampaignForm";
+import { useCampaignDeploymentRedirect } from "@/entities/campaign/hooks/redirects";
 
 export default function CreateCampaign() {
   useCampaignDeploymentRedirect();

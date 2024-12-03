@@ -8,9 +8,8 @@ import { walletApi } from "@/common/api/near";
 import { isNetworkAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { AccountOption, AccountProfileLink } from "@/entities/account";
 import { AccessControlList } from "@/features/access-control";
-import { AccountProfileLink } from "@/modules/account";
-import { AccountOption } from "@/modules/core";
 
 import { POT_EDITOR_FIELDS } from "../constants";
 import { potIndexedFieldToString } from "../utils/normalization";

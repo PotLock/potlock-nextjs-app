@@ -41,7 +41,8 @@ Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
 ## Project Structure
 
-Provides explicit separation between abstract and business-logic-heavy parts of the codebase,
+The architectural methodology is heavily based on [Feature-Sliced Design](https://feature-sliced.design/docs/reference/layers).
+This provides explicit separation between abstract and business-logic-heavy parts of the codebase,
 for which it offers a highly modular approach, defining clear boundaries for different
 aspects of the application within each module:
 
@@ -52,10 +53,11 @@ aspects of the application within each module:
 ├── global.d.ts <--- # Globally available type definitions
 │
 │
+│
 ├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings,
 │   │               # utility libraries, reusable primitives, and assets, used in layouts and
 │   │               # business logic across the codebase. MUST NOT contain business logic by itself.
-│   │               # AKA "shared" ( see link 2. )
+│   │               # AKA "shared" ( see link 1. )
 │   │
 │   ├── constants.ts <--- # Static reusable values, e.g.
 │   │                      export const NATIVE_TOKEN_ID = "near";
@@ -81,28 +83,51 @@ aspects of the application within each module:
 │
 │
 │
-├── [ modules ] <--- # Business logic units broken down into categories. Simply put, this is
-│   │                # a collection of directories that contain code implementing specific
-│   │                # groups of app use cases and are named after functionalities they provide.
+├── [ entities ] <--- # Business units organized into codebase slices ( See link 2. )
 │   │
 │  ...
 │   │
 │   │
-│   ├── [ core ] <--- # Follows the same structure as any other module, but contains business logic,
-│   │                 # that is shared between all or some of the other modules
-│   │
-│   ├── [ profile ] <--- # A feature-specific module
+│   ├── [ pot ] <--- # An entity-specific codebase slice
 │   │   │
-│   │   ├── index.ts <--- # Module entry point for public exports ( available for external use )
+│   │   ├── index.ts <--- # Entry point for public exports ( available for external use )
 │   │   │
 │   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
-│   │   │                       export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1
+│   │   │                       export const POT_MIN_NAME_LENGTH = 3;
 │   │   │
-│   │   ├── models.ts <--- # Feature state definitions ( See link 3. )
-│   │   │                  # If this file grows over 300 LoC, consider turning it into a directory
-│   │   │                  # with the same name by applying code-splitting techniques.
+│   │   ├── model.ts <--- # Entity state definitions ( See link 4. )
 │   │   │
-│   │   ├── types.ts <--- # Module-specific shared types and interfaces
+│   │   ├── types.ts <--- # Entity-specific shared types and interfaces
+│   │   │
+│   │   ├── [ components ] <--- # Entity-specific React components
+│   │   │
+│   │   ├── [ hooks ] <--- # Entity-specific React hooks
+│   │   │
+│   │   └── [ utils ] <--- # Entity-specific utilities, like value converters or validators
+│   │
+│   │
+│   ├── ...
+│   │
+│  ...
+│
+│
+│
+├── [ features ] <--- # A collection of codebase slices implementing various use cases
+│   │                 # and are named after functionalities they provide. ( See link 3. )
+│   │
+│  ...
+│   │
+│   │
+│   ├── [ donation ] <--- # A feature-specific module
+│   │   │
+│   │   ├── index.ts <--- # Entry point for public exports ( available for external use )
+│   │   │
+│   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
+│   │   │                       export const DONATION_MIN_NEAR_AMOUNT = 0.1;
+│   │   │
+│   │   ├── model.ts <--- # Feature state definitions ( See link 4. )
+│   │   │
+│   │   ├── types.ts <--- # Feature-specific shared types and interfaces
 │   │   │
 │   │   ├── [ components ] <--- # Feature-specific React components
 │   │   │
@@ -117,8 +142,16 @@ aspects of the application within each module:
 │
 │
 │
+├── [ layout ] <--- # Since Next's Pages Router doesn't support non-routable page subdirectories
+│                   # ( e.g. _components ), layout composition is addressed in this layer.
+│                   # It allows to keep complex page-related UI elements that combine
+│                   # more than one feature and/or entity without introducing cross-imports
+│                   # within those codebase slices, which helps to avoid circular dependencies.
+│
+│
+│
 ├── [ pages ] <--- # Entry point of the application.
-│                  # Follows Nextjs Pages routing specification ( see link 1. )
+│                  # Follows Nextjs Pages routing specification ( see link 5. )
 │
 │
 │
@@ -129,9 +162,11 @@ aspects of the application within each module:
 
 ### Links
 
-1. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
-2. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
-3. [Rematch models](https://rematchjs.org/docs/api-reference/models)
+1. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
+2. [Entities layer specification](https://feature-sliced.design/docs/reference/layers#entities)
+3. [Features layer specification](https://feature-sliced.design/docs/reference/layers#features)
+4. [Rematch models](https://rematchjs.org/docs/api-reference/models)
+5. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
 
 ## Testing
 

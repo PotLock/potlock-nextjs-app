@@ -13,8 +13,8 @@ import {
   MultiSelectorTrigger,
   Textarea,
 } from "@/common/ui/components";
-import { useProfileData } from "@/modules/profile";
-import { ProjectCategoryVariant } from "@/modules/project";
+import { useProfileData } from "@/entities/profile";
+import { ProjectCategoryVariant } from "@/entities/project";
 import { useGlobalStoreSelector } from "@/store";
 
 export const Row = ({ children }: { children: JSX.Element | JSX.Element[] }) => (

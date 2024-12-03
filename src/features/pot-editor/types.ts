@@ -1,5 +1,5 @@
 import { Pot } from "@/common/api/indexer";
-import { PotData, PotInputs } from "@/modules/pot";
+import { PotData, PotInputs } from "@/entities/pot";
 
 export type PotEditorStep = "configuration" | "result";
 

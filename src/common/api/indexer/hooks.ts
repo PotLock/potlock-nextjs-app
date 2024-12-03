@@ -1,20 +1,9 @@
+import useSWR from "swr";
+
+import { Voter } from "@/common/contracts/metapool";
 import { ByAccountId, ByListId } from "@/common/types";
 
 import * as generatedClient from "./internal/client.generated";
-import type {
-  V1AccountsActivePotsRetrieveParams,
-  V1AccountsDonationsReceivedRetrieveParams,
-  V1AccountsDonationsSentRetrieveParams,
-  V1AccountsRetrieveParams,
-  V1AccountsUpvotedListsRetrieveParams,
-  V1DonateContractConfigRetrieveParams,
-  V1ListsRandomRegistrationRetrieveParams,
-  V1ListsRegistrationsRetrieveParams,
-  V1ListsRetrieveParams,
-  V1PotsApplicationsRetrieveParams,
-  V1PotsDonationsRetrieveParams,
-  V1PotsRetrieveParams,
-} from "./internal/client.generated";
 import { INDEXER_CLIENT_CONFIG } from "./internal/config";
 import { ByPotId } from "./types";
 
@@ -30,7 +19,9 @@ export const useStats = () => {
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve
  */
-export const useDonationConfig = (params?: V1DonateContractConfigRetrieveParams) => {
+export const useDonationConfig = (
+  params?: generatedClient.V1DonateContractConfigRetrieveParams,
+) => {
   const queryResult = generatedClient.useV1DonateContractConfigRetrieve(
     params,
     INDEXER_CLIENT_CONFIG,
@@ -42,7 +33,7 @@ export const useDonationConfig = (params?: V1DonateContractConfigRetrieveParams)
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve
  */
-export const useAccounts = (params?: V1AccountsRetrieveParams) => {
+export const useAccounts = (params?: generatedClient.V1AccountsRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsRetrieve(params, {
     ...INDEXER_CLIENT_CONFIG,
   });
@@ -68,7 +59,7 @@ export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
 export const useAccountActivePots = ({
   accountId,
   ...params
-}: Partial<ByAccountId> & V1AccountsActivePotsRetrieveParams) => {
+}: Partial<ByAccountId> & generatedClient.V1AccountsActivePotsRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(
     accountId ?? "unknown",
     params,
@@ -121,7 +112,7 @@ export const useAccountPotApplications = ({
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve
  */
-export const usePots = (params?: V1PotsRetrieveParams) => {
+export const usePots = (params?: generatedClient.V1PotsRetrieveParams) => {
   const queryResult = generatedClient.useV1PotsRetrieve(params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { refreshInterval: 3000 },
@@ -136,13 +127,13 @@ export const usePots = (params?: V1PotsRetrieveParams) => {
 export const usePotApplications = ({
   potId,
   ...params
-}: Partial<ByPotId> & V1PotsApplicationsRetrieveParams) => {
+}: Partial<ByPotId> & generatedClient.V1PotsApplicationsRetrieveParams) => {
   const queryResult = generatedClient.useV1PotsApplicationsRetrieve(potId ?? "unknown", params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId) },
   });
 
-  return { ...queryResult, data: queryResult.data?.data.results };
+  return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
@@ -151,7 +142,7 @@ export const usePotApplications = ({
 export const useAccountDonationsReceived = ({
   accountId,
   ...params
-}: ByAccountId & V1AccountsDonationsReceivedRetrieveParams) => {
+}: ByAccountId & generatedClient.V1AccountsDonationsReceivedRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsDonationsReceivedRetrieve(
     accountId,
     params,
@@ -165,7 +156,10 @@ export const useAccountDonationsReceived = ({
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_donations_retrieve
  */
 
-export const usePotDonations = ({ potId, ...params }: ByPotId & V1PotsDonationsRetrieveParams) => {
+export const usePotDonations = ({
+  potId,
+  ...params
+}: ByPotId & generatedClient.V1PotsDonationsRetrieveParams) => {
   const queryResult = generatedClient.useV1PotsDonationsRetrieve(
     potId,
     params,
@@ -188,7 +182,7 @@ export const usePotDonations = ({ potId, ...params }: ByPotId & V1PotsDonationsR
 export const useAccountDonationsSent = ({
   accountId,
   ...params
-}: ByAccountId & V1AccountsDonationsSentRetrieveParams) => {
+}: ByAccountId & generatedClient.V1AccountsDonationsSentRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsDonationsSentRetrieve(
     accountId,
     params,
@@ -231,7 +225,7 @@ export const useList = ({ listId }: Partial<ByListId>) => {
 export const useRandomListRegistration = ({
   listId,
   ...params
-}: ByListId & V1ListsRandomRegistrationRetrieveParams) => {
+}: ByListId & generatedClient.V1ListsRandomRegistrationRetrieveParams) => {
   const queryResult = generatedClient.useV1ListsRandomRegistrationRetrieve(
     listId,
     params,
@@ -251,7 +245,7 @@ export const useRandomListRegistration = ({
 export const useListRegistrations = ({
   listId,
   ...params
-}: Partial<ByListId> & V1ListsRegistrationsRetrieveParams) => {
+}: Partial<ByListId> & generatedClient.V1ListsRegistrationsRetrieveParams) => {
   const queryResult = generatedClient.useV1ListsRegistrationsRetrieve(
     listId ?? 0,
     params,
@@ -269,7 +263,7 @@ export const useListRegistrations = ({
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/lists
  */
 
-export const useLists = ({ ...params }: V1ListsRetrieveParams = {}) => {
+export const useLists = ({ ...params }: generatedClient.V1ListsRetrieveParams = {}) => {
   const queryResult = generatedClient.useV1ListsRetrieve(params, INDEXER_CLIENT_CONFIG);
   return { ...queryResult, data: queryResult.data?.data };
 };
@@ -280,7 +274,7 @@ export const useLists = ({ ...params }: V1ListsRetrieveParams = {}) => {
 export const useAccountUpvotedLists = ({
   accountId,
   ...params
-}: { accountId: string } & V1AccountsUpvotedListsRetrieveParams) => {
+}: { accountId: string } & generatedClient.V1AccountsUpvotedListsRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsUpvotedListsRetrieve(accountId, params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(accountId) },
@@ -289,4 +283,19 @@ export const useAccountUpvotedLists = ({
     ...queryResult,
     data: queryResult.data?.data.results,
   };
+};
+
+export const useMpdaoVoterInfo = ({ accountId }: Partial<ByAccountId>) => {
+  // const queryResult = generatedClient.useV1MpdaoVoterInfoRetrieve(accountId ?? "unknown", {
+  //   ...INDEXER_CLIENT_CONFIG,
+  //   swr: { enabled: Boolean(accountId) },
+  // });
+
+  // return { ...queryResult, data: queryResult.data?.data };
+
+  const queryResult = useSWR<Voter[]>("/mpdao-voting.snapshot.json", (urlString: string) =>
+    fetch(urlString).then((response) => response.json()),
+  );
+
+  return { ...queryResult, data: queryResult.data?.find(({ voter_id }) => voter_id === accountId) };
 };

@@ -5,8 +5,8 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
-import { ProfileLayout } from "@/modules/profile";
-import PotlockFunding from "@/modules/profile/components/PotlockFunding";
+import { ProfileLayout } from "@/entities/profile";
+import PotlockFunding from "@/entities/profile/components/PotlockFunding";
 
 const DonationsTab = () => {
   const router = useRouter();

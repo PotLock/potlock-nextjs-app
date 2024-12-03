@@ -9,9 +9,9 @@ import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { PotConfig } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
+import { useCoreState } from "@/entities/core";
+import { PotInputs } from "@/entities/pot";
 import { donationFeeBasisPointsToPercents } from "@/features/donation";
-import { useCoreState } from "@/modules/core";
-import { PotInputs } from "@/modules/pot";
 import { dispatch } from "@/store";
 
 import {
@@ -21,7 +21,7 @@ import {
   PotEditorSettingsSchema,
   potEditorDeploymentCrossFieldValidationTargets,
   potEditorSettingsCrossFieldValidationTargets,
-} from "../models";
+} from "../model";
 import { potConfigToSettings, potIndexedDataToPotInputs } from "../utils/normalization";
 
 export type PotEditorFormArgs =
