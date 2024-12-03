@@ -178,6 +178,8 @@ export const ProjectEditor = () => {
     );
   }
 
+  console.log(form.formState.isValid, isRepositoriesValid);
+
   return (
     // Container
     <Form {...form}>
