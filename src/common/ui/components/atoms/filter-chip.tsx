@@ -63,13 +63,17 @@ export interface FilterChipProps
 }
 
 const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
-  ({ className, variant, font, size, asChild = false, label, children, count, ...props }, ref) => {
+  (
+    { className, variant, font, size, asChild = false, label, children, count = 0, ...props },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : "button";
     return (
       <div
-        className={cn(
-          `rounded-1.5 border ${variant === "brand-filled" ? "border-[#f4b37d]" : "border-[#dadada]"} bg-none  pt-[1.5px]`,
-        )}
+        className={cn("rounded-1.5 border bg-none pt-[1.5px]", {
+          "border-[#f4b37d]": variant === "brand-filled",
+          "border-[#dadada]": variant !== "brand-filled",
+        })}
       >
         <Comp
           className={cn(filterChipVariants({ variant, size, font, className }))}
@@ -77,14 +81,17 @@ const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
           {...props}
         >
           {label ?? children}
-          {count && (
+          {count !== undefined ? (
             <span
-              className={cn(
-                `rounded-2xl px-1.5 py-0.5 text-xs font-semibold leading-none ${variant === "brand-filled" ? " bg-[#f8d3b0]  font-semibold" : "bg-[#f7f7f7] text-[#7a7a7a]"}`,
-              )}
+              className={cn("rounded-2xl px-1.5 py-0.5 text-xs font-semibold leading-none", {
+                "bg-[#f8d3b0]": variant === "brand-filled",
+                "bg-[#f7f7f7] text-[#7a7a7a]": variant !== "brand-filled",
+              })}
             >
               {count}
             </span>
+          ) : (
+            ""
           )}
         </Comp>
       </div>
