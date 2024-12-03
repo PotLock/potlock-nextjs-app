@@ -59,7 +59,7 @@ export interface FilterChipProps
     VariantProps<typeof filterChipVariants> {
   asChild?: boolean;
   count?: number;
-  label: string;
+  label?: string;
 }
 
 const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
