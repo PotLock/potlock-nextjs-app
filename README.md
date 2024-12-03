@@ -41,7 +41,8 @@ Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
 ## Project Structure
 
-Provides explicit separation between abstract and business-logic-heavy parts of the codebase,
+The architectural methodology is heavily based on [Feature-Sliced Design](https://feature-sliced.design/docs/reference/layers).
+This provides explicit separation between abstract and business-logic-heavy parts of the codebase,
 for which it offers a highly modular approach, defining clear boundaries for different
 aspects of the application within each module:
 
