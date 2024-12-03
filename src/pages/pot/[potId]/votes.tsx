@@ -105,7 +105,7 @@ export default function PotVotesTab() {
 
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<TabType>("all");
+  const [activeFilter, setFilter] = useState<TabType>("all");
   const [showVotingRules, setShowVotingRules] = useState(false);
   const [showWeightBoost, setShowWeightBoost] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
@@ -137,21 +137,21 @@ export default function PotVotesTab() {
 
   const filteredProjects = useMemo(() => {
     const filtered = DUMMY_PROJECTS.filter((project) => {
-      if (activeTab === "voted") return project.voted;
-      if (activeTab === "pending") return !project.voted;
+      if (activeFilter === "voted") return project.voted;
+      if (activeFilter === "pending") return !project.voted;
       return true;
     });
 
     const startIndex = (pageNumber - 1) * 5;
     const endIndex = startIndex + 5;
     return filtered.slice(startIndex, endIndex);
-  }, [activeTab, pageNumber]);
+  }, [activeFilter, pageNumber]);
 
   const totalProjectCountPerTab = useMemo(() => {
-    if (activeTab === "voted") return votedCount;
-    if (activeTab === "pending") return pendingCount;
+    if (activeFilter === "voted") return votedCount;
+    if (activeFilter === "pending") return pendingCount;
     return allProjectsCount;
-  }, [activeTab, allProjectsCount, votedCount, pendingCount]);
+  }, [activeFilter, allProjectsCount, votedCount, pendingCount]);
 
   const numberOfPages = useMemo(
     () => Math.ceil(totalProjectCountPerTab / 5),
@@ -207,206 +207,225 @@ export default function PotVotesTab() {
   }, [pageNumber, setPageNumber, numberOfPages]);
 
   return (
-    <div className="md:py-12 flex w-full flex-col py-5">
-      <div className="md:px-4 font-['Mona Sans'] md:space-y-6 mx-auto w-full max-w-6xl space-y-5">
-        {/* Search */}
-        <div className="relative">
-          <Input
-            type="search"
-            placeholder="Search Projects"
-            className="w-full bg-gray-50"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+    <div className="md:px-4 md:space-y-6 mx-auto w-full space-y-5">
+      {/* Search */}
+      <div className="relative">
+        <Input
+          type="search"
+          placeholder="Search Projects"
+          className="w-full bg-gray-50"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-        {/* Tabs */}
-        <div className="flex gap-3">
-          <FilterChip
-            variant={activeTab === "all" ? "brand-filled" : "brand-outline"}
-            onClick={() => setActiveTab("all")}
-            className="font-medium"
-          >
-            All{" "}
-            <h5
-              className={`ml-1 rounded-full px-1.5 ${activeTab === "all" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-            >
-              {allProjectsCount}
-            </h5>
-          </FilterChip>
-          <FilterChip
-            variant={activeTab === "voted" ? "brand-filled" : "brand-outline"}
-            onClick={() => setActiveTab("voted")}
-            className="font-medium"
-          >
-            Voted{" "}
-            <h5
-              className={`ml-1 rounded-full px-1.5 ${activeTab === "voted" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-            >
-              {votedCount}
-            </h5>
-          </FilterChip>
-          <FilterChip
-            variant={activeTab === "pending" ? "brand-filled" : "brand-outline"}
-            onClick={() => setActiveTab("pending")}
-            className="font-medium"
-          >
-            Pending{" "}
-            <h5
-              className={`ml-1 rounded-full px-1.5 ${activeTab === "pending" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-            >
-              {pendingCount}
-            </h5>
-          </FilterChip>
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-3">
+        <FilterChip
+          variant={activeFilter === "all" ? "brand-filled" : "brand-outline"}
+          onClick={() => setFilter("all")}
+          className="font-medium"
+        >
+          <span>{"All"}</span>
 
-        <div className="flex flex-row">
-          <div className="w-full">
-            {/* Header */}
-            <div className="md:static absolute inset-x-0 w-full">
-              <div className="md:rounded-tl-lg md:rounded-tr-lg flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]">
-                <div className="flex items-center gap-2">
-                  <HowToVote className="h-6 w-6" />
-                  <span className="font-semibold">
-                    {votedCount} Project{votedCount > 1 ? "s" : ""} Voted
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <div
-                    className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
-                    onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
-                  >
-                    <Star className="h-[18px] w-[18px]" />
-                    <span className="flex items-center gap-2">
-                      <span className="md:inline-flex hidden whitespace-nowrap font-medium">
-                        {showWeightBoost ? "Hide" : "View"} Weight Boost{" "}
-                      </span>
-                      <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
-                        x{initWeightBoost}
-                      </span>
-                    </span>
-                    <ChevronRight className="md:block relative hidden h-[18px] w-[18px] text-[#EA6A25]" />
-                  </div>
-                  <div
-                    className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
-                    onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
-                  >
-                    <FileText className="h-[18px] w-[18px]" />
-                    <span className="md:inline-flex hidden items-center gap-2 whitespace-nowrap font-medium">
-                      {showVotingRules ? "Hide" : "View"} Voting Rules
-                    </span>
-                    <ChevronRight className="md:block hidden h-[18px] w-[18px] text-[#EA6A25]" />
-                  </div>
-                </div>
+          <h5
+            className={cn("ml-1 rounded-full px-1.5", {
+              "border-orange-300 bg-orange-200 font-semibold": activeFilter === "all",
+              "border-gray-300 bg-gray-200": activeFilter !== "all",
+            })}
+          >
+            {allProjectsCount}
+          </h5>
+        </FilterChip>
+
+        <FilterChip
+          variant={activeFilter === "voted" ? "brand-filled" : "brand-outline"}
+          onClick={() => setFilter("voted")}
+          className="font-medium"
+        >
+          <span>{"Voted"}</span>
+
+          <h5
+            className={`ml-1 rounded-full px-1.5 ${activeFilter === "voted" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
+          >
+            {votedCount}
+          </h5>
+        </FilterChip>
+
+        <FilterChip
+          variant={activeFilter === "pending" ? "brand-filled" : "brand-outline"}
+          onClick={() => setFilter("pending")}
+          className="font-medium"
+        >
+          <span>{"Pending"}</span>
+
+          <h5
+            className={`ml-1 rounded-full px-1.5 ${activeFilter === "pending" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
+          >
+            {pendingCount}
+          </h5>
+        </FilterChip>
+      </div>
+
+      <div className="flex flex-row">
+        <div className="w-full">
+          {/* Header */}
+          <div className="md:static absolute inset-x-0 w-full">
+            <div className="md:rounded-tl-lg md:rounded-tr-lg flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]">
+              <div className="flex items-center gap-2">
+                <HowToVote className="h-6 w-6" />
+                <span className="font-semibold">
+                  {votedCount} Project{votedCount > 1 ? "s" : ""} Voted
+                </span>
               </div>
-              <div className="flex justify-between bg-[#f7f7f7] px-7 py-2 text-sm font-semibold text-gray-500">
-                <h4 className="font-semibold">PROJECTS</h4>
-                <div className="flex gap-6">
-                  <h4 className="md:block hidden text-right font-semibold">VOTES</h4>
-                  <h4 className="md:block hidden text-right font-semibold">ACTIONS</h4>
-                </div>
-              </div>
-            </div>
-            {/* Project List */}
-            <div className="md:mt-1 mt-30 space-y-4">
-              {filteredProjects.map((project) => (
-                <label
-                  key={project.id}
-                  className="md:p-4 flex items-center gap-4 rounded-lg py-4 hover:bg-gray-50"
-                  htmlFor={project.id}
+              <div className="flex gap-2">
+                <div
+                  className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
+                  onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
                 >
-                  <Checkbox
-                    checked={selectedProjects.has(project.id)}
-                    onCheckedChange={() => handleProjectSelect(project.id)}
-                    id={project.id}
-                  />
-                  <Image
-                    src={project.imageUrl}
-                    alt={`Avatar for ${project.name}`}
-                    className="rounded-full"
-                    width={40}
-                    height={40}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate font-medium">{project.name}</div>
-                    <div className="md:hidden text-sm text-gray-500">{project.votes} Votes</div>
-                  </div>
-                  <div className="md:block hidden text-right">{project.votes}</div>
-                  <Button
-                    variant={"standard-outline"}
-                    disabled={project.voted}
-                    className="ml-auto w-20"
-                  >
-                    {project.voted ? "Voted" : "Vote"}
-                  </Button>
-                </label>
-              ))}
-            </div>
-            {/* Pagination */}
-            {numberOfPages > 1 && (
-              <Pagination className="mt-[24px]">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
-                    />
-                  </PaginationItem>
-                  {pageNumberButtons}
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() =>
-                        setPageNumber((prev) => Math.min(prev + 1, Math.ceil(numberOfPages)))
-                      }
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            )}
-            {/* Floating Action Bar */}
-            {selectedProjects.size > 0 && (
-              <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-lg border bg-white p-4 shadow-lg">
-                <div className="flex items-center gap-2">
-                  <Checkbox checked={true} />
-                  <span>{selectedProjects.size} Selected Projects</span>
+                  <Star className="h-[18px] w-[18px]" />
+                  <span className="flex items-center gap-2">
+                    <span className="md:inline-flex hidden whitespace-nowrap font-medium">
+                      {showWeightBoost ? "Hide" : "View"} Weight Boost{" "}
+                    </span>
+                    <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
+                      x{initWeightBoost}
+                    </span>
+                  </span>
+                  <ChevronRight className="md:block relative hidden h-[18px] w-[18px] text-[#EA6A25]" />
                 </div>
-                <Button variant={"standard-filled"} onClick={handleVoteAll}>
-                  Vote All
-                </Button>
+                <div
+                  className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
+                  onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
+                >
+                  <FileText className="h-[18px] w-[18px]" />
+                  <span className="md:inline-flex hidden items-center gap-2 whitespace-nowrap font-medium">
+                    {showVotingRules ? "Hide" : "View"} Voting Rules
+                  </span>
+                  <ChevronRight className="md:block hidden h-[18px] w-[18px] text-[#EA6A25]" />
+                </div>
               </div>
-            )}
+            </div>
+
+            <div className="flex justify-between bg-[#f7f7f7] px-7 py-2 text-sm font-semibold text-gray-500">
+              <h4 className="font-semibold">PROJECTS</h4>
+              <div className="flex gap-6">
+                <h4 className="md:block hidden text-right font-semibold">VOTES</h4>
+                <h4 className="md:block hidden text-right font-semibold">ACTIONS</h4>
+              </div>
+            </div>
           </div>
-          {isDesktop && (
-            <div className="space-y-4">
-              {showVotingRules && (
-                <VotingRulesPanel
-                  open={true}
-                  onOpenChange={() => setShowVotingRules(false)}
-                  mode="panel"
+
+          {/* Project List */}
+          <div className="md:mt-1 mt-30 space-y-4">
+            {filteredProjects.map((project) => (
+              <label
+                key={project.id}
+                className="md:p-4 flex items-center gap-4 rounded-lg py-4 hover:bg-gray-50"
+                htmlFor={project.id}
+              >
+                <Checkbox
+                  checked={selectedProjects.has(project.id)}
+                  onCheckedChange={() => handleProjectSelect(project.id)}
+                  id={project.id}
                 />
-              )}
-              {showWeightBoost && (
-                <VotingWeightBoostPanel
-                  open={true}
-                  onOpenChange={() => setShowWeightBoost(false)}
-                  mode="panel"
-                  weightBoost={initWeightBoost}
+
+                <Image
+                  src={project.imageUrl}
+                  alt={`Avatar for ${project.name}`}
+                  className="rounded-full"
+                  width={40}
+                  height={40}
                 />
-              )}
+
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">{project.name}</div>
+                  <div className="md:hidden text-sm text-gray-500">{project.votes} Votes</div>
+                </div>
+
+                <div className="md:block hidden text-right">{project.votes}</div>
+
+                <Button
+                  variant={"standard-outline"}
+                  disabled={project.voted}
+                  className="ml-auto w-20"
+                >
+                  {project.voted ? "Voted" : "Vote"}
+                </Button>
+              </label>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {numberOfPages > 1 && (
+            <Pagination className="mt-[24px]">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
+                  />
+                </PaginationItem>
+
+                {pageNumberButtons}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      setPageNumber((prev) => Math.min(prev + 1, Math.ceil(numberOfPages)))
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+
+          {/* Floating Action Bar */}
+          {selectedProjects.size > 0 && (
+            <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-lg border bg-white p-4 shadow-lg">
+              <div className="flex items-center gap-2">
+                <Checkbox checked={true} />
+                <span>{selectedProjects.size} Selected Projects</span>
+              </div>
+              <Button variant={"standard-filled"} onClick={handleVoteAll}>
+                Vote All
+              </Button>
             </div>
           )}
         </div>
-        {/* Mobile Dialogs */}
-        {!isDesktop && (
-          <>
-            <VotingWeightBoostPanel
-              open={showWeightBoost}
-              onOpenChange={setShowWeightBoost}
-              weightBoost={0}
-            />
-            <VotingRulesPanel open={showVotingRules} onOpenChange={setShowVotingRules} />
-          </>
+
+        {isDesktop && (
+          <div className="space-y-4">
+            {showVotingRules && (
+              <VotingRulesPanel
+                open={true}
+                onOpenChange={() => setShowVotingRules(false)}
+                mode="panel"
+              />
+            )}
+            {showWeightBoost && (
+              <VotingWeightBoostPanel
+                open={true}
+                onOpenChange={() => setShowWeightBoost(false)}
+                mode="panel"
+                weightBoost={initWeightBoost}
+              />
+            )}
+          </div>
         )}
       </div>
+
+      {/* Mobile Dialogs */}
+      {!isDesktop && (
+        <>
+          <VotingWeightBoostPanel
+            open={showWeightBoost}
+            onOpenChange={setShowWeightBoost}
+            weightBoost={0}
+          />
+
+          <VotingRulesPanel open={showVotingRules} onOpenChange={setShowVotingRules} />
+        </>
+      )}
     </div>
   );
 }

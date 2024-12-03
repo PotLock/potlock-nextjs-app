@@ -9,7 +9,7 @@ import { ClearanceCheckResult } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
 import { useAuthSession } from "@/entities/session";
 
-import { isVotingEnabled } from "../utils/voting";
+import { isVotingEnabled } from "../utils/mechanisms";
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,

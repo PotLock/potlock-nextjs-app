@@ -121,7 +121,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       />
 
       {/* Tab Content */}
-      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2 px-[1rem]">{children}</div>
+      <div className="flex w-full flex-row flex-wrap gap-2">{children}</div>
     </PageWithBanner>
   );
 };
