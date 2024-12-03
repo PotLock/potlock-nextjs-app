@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
+//import { isClient } from "@wpdas/naxios";
+
 import { walletApi } from "@/common/api/near";
+import useIsClient from "@/common/lib/useIsClient";
+import { SuspenseLoading } from "@/common/ui/components";
 import { dispatch, resetStore } from "@/store";
 
 import { useSessionReduxStore } from "../hooks/redux-store";
@@ -13,6 +17,7 @@ type SessionProviderProps = {
 export const SessionProvider = ({ children }: SessionProviderProps) => {
   const [ready, setReady] = useState(false);
   const { isAuthenticated } = useSessionReduxStore();
+  const isClient = useIsClient();
   const { wallet } = useWallet();
 
   // Check wallet
@@ -56,5 +61,5 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
     };
   }, [checkWallet, wallet]);
 
-  return <>{children}</>;
+  return isClient ? <>{children}</> : <SuspenseLoading />;
 };

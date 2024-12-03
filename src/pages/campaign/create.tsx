@@ -1,5 +1,3 @@
-"use client";
-
 import { PageWithBanner } from "@/common/ui/components";
 import { CampaignForm } from "@/entities/campaign/components/CampaignForm";
 import { useCampaignDeploymentRedirect } from "@/entities/campaign/hooks/redirects";
