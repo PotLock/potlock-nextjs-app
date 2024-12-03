@@ -8,9 +8,9 @@ import { cn } from "../../utils";
 // TODO: add correct hover effects
 const filterChipVariants = cva(
   cn(
-    "flex text-sm leading-[157%] items-center justify-center text-[#292929] gap-2 font-medium whitespace-nowrap px-12px py-6px",
+    "flex text-sm leading-tight items-center justify-center text-[#292929] gap-2 font-medium whitespace-nowrap font-['Mona Sans']",
     "no-underline cursor-pointer transition-all duration-200 ease-in-out w-fit rounded-md",
-    "border-none focus:shadow-button-focus disabled:cursor-not-allowed",
+    "border-none disabled:cursor-not-allowed",
   ),
 
   {
@@ -18,7 +18,7 @@ const filterChipVariants = cva(
       variant: {
         // Brand
         "brand-filled": cn(
-          "bg-#fce9d5 shadow-amber outline-none translate-y-[-1.5px] text-#91321B font-bold border border-#f4b37d border-solid hover:translate-y-0 focus:shadow-#f4b37d",
+          "gap-2 text-[#91321b]  hover:translate-y-0 bg-[#fce9d5]",
           "hover:shadow-[0px_0px_0px_1px_rgba(244, 179, 125, 1)_inset,0px_1px_1px_1px_rgba(252, 233, 213, 1)_inset,0px_0px_0px_2px_rgba(252, 233, 213, 1)_inset]",
           "disabled:text-[#a6a6a6] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset] disabled:bg-[var(--neutral-100)]",
         ),
@@ -29,14 +29,13 @@ const filterChipVariants = cva(
         ),
 
         "brand-outline": cn(
-          "bg-white hover:bg-[var(--neutral-50) outline-none focus:shadow-[0px_0px_0px_1px_rgba(0,0,0,0.22)_inset,0px_-1px_0px_0px_rgba(15,15,15,0.15)_inset,0px_1px_2px_-0.5px_rgba(5,5,5,0.08)]",
-          "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.22)_inset,0px_-1px_0px_0px_rgba(15,15,15,0.15)_inset,0px_1px_2px_-0.5px_rgba(5,5,5,0.08)]",
+          "bg-white hover:bg-[var(--neutral-50) outline-none",
           "disabled:text-[#c7c7c7] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset]",
         ),
       },
 
       size: {
-        default: "px-4 py-[9px]",
+        default: "pt-[4.5px] px-4 pb-1.5",
         icon: "h-10 w-10",
       },
 
@@ -59,17 +58,36 @@ export interface FilterChipProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof filterChipVariants> {
   asChild?: boolean;
+  count?: number;
+  label: string;
 }
 
 const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
-  ({ className, variant, font, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, font, size, asChild = false, label, children, count, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
-      <Comp
-        className={cn(filterChipVariants({ variant, size, font, className }))}
-        ref={ref}
-        {...props}
-      />
+      <div
+        className={cn(
+          `rounded-1.5 border ${variant === "brand-filled" ? "border-[#f4b37d]" : "border-[#dadada]"} bg-none  pt-[1.5px]`,
+        )}
+      >
+        <Comp
+          className={cn(filterChipVariants({ variant, size, font, className }))}
+          ref={ref}
+          {...props}
+        >
+          {label ?? children}
+          {count && (
+            <span
+              className={cn(
+                `rounded-2xl px-1.5 py-0.5 text-xs font-semibold leading-none ${variant === "brand-filled" ? " bg-[#f8d3b0]  font-semibold" : "bg-[#f7f7f7] text-[#7a7a7a]"}`,
+              )}
+            >
+              {count}
+            </span>
+          )}
+        </Comp>
+      </div>
     );
   },
 );

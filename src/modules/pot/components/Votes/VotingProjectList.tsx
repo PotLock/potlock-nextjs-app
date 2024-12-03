@@ -225,38 +225,23 @@ export default function VotingProjectList() {
           variant={activeTab === "all" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("all")}
           className="font-medium"
-        >
-          All{" "}
-          <h5
-            className={`ml-1 rounded-full px-1.5 ${activeTab === "all" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-          >
-            {allProjectsCount}
-          </h5>
-        </FilterChip>
+          count={allProjectsCount}
+          label={"All"}
+        />
         <FilterChip
           variant={activeTab === "voted" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("voted")}
           className="font-medium"
-        >
-          Voted{" "}
-          <h5
-            className={`ml-1 rounded-full px-1.5 ${activeTab === "voted" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-          >
-            {votedCount}
-          </h5>
-        </FilterChip>
+          label={"Voted"}
+          count={votedCount}
+        />
         <FilterChip
           variant={activeTab === "pending" ? "brand-filled" : "brand-outline"}
           onClick={() => setActiveTab("pending")}
           className="font-medium"
-        >
-          Pending{" "}
-          <h5
-            className={`ml-1 rounded-full px-1.5 ${activeTab === "pending" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-          >
-            {pendingCount}
-          </h5>
-        </FilterChip>
+          count={pendingCount}
+          label={"Pending"}
+        />
       </div>
 
       <div className="flex flex-row">
@@ -266,7 +251,7 @@ export default function VotingProjectList() {
             <div className="md:rounded-tl-lg md:rounded-tr-lg flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]">
               <div className="flex items-center gap-2">
                 <HowToVote className="h-6 w-6" />
-                <span className="font-semibold">
+                <span className="font-medium">
                   {votedCount} Project{votedCount > 1 ? "s" : ""} Voted
                 </span>
               </div>
