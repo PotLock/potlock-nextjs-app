@@ -80,25 +80,15 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, has
   const toggleMobileMenu = useCallback(() => setIsMobileMenuActive((isActive) => !isActive), []);
   const lifecycle = usePotLifecycle({ potId, hasVoting });
 
-  // TODO: Refactor this code ( original owner: @M-Rb3 )
-  const getIndexOfActive = () => {
-    let index = 0;
-    lifecycle.stages.forEach((status, idx) => {
-      if (status.started && !status.completed) {
-        index = idx;
-      }
-    });
-    if (index === null) return 3;
-    return index;
-  };
-
-  const showActiveState = getIndexOfActive() * (containerHeight / 4);
+  const showActiveState =
+    (lifecycle.currentStage === undefined ? 0 : lifecycle.stages.indexOf(lifecycle.currentStage)) *
+    (containerHeight / 4);
 
   return (
     <div
       onClick={toggleMobileMenu}
       className={cn(
-        "xl:pointer-events-none h-a xl:h-14 cursor-pointer",
+        "2xl:pointer-events-none h-a 2xl:h-14 cursor-pointer",
         "flex w-full items-center justify-center gap-4 px-4",
         classNames?.root,
       )}
@@ -147,7 +137,6 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, has
                   {idx !== 3 && (
                     <Loader
                       className={cn("relative flex h-1 rounded-[1px]", {
-                        "not-displayed": !isMobileMenuActive && idx === 0,
                         "bg-neutral-200": !completed,
                         "bg-[#629D13]": completed,
                       })}
@@ -161,7 +150,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, has
       </Container>
 
       <svg
-        className="xl:not-displayed transition-300 w-4 transition-all ease-in-out"
+        className="xl:hidden transition-300 w-4 transition-all ease-in-out"
         style={{
           rotate: isMobileMenuActive ? "180deg" : "0deg",
         }}
