@@ -24,7 +24,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, handleDeleteCampaign } = useCampaignForm();
+  const { form, onChange, isValid, onSubmit, handleDeleteCampaign } = useCampaignForm();
 
   useEffect(() => {
     if (isUpdate && existingData) {
@@ -157,10 +157,10 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
             name="target_amount"
             render={({ field }) => (
               <NearInputField
+                {...field}
                 className="md:w-[42%] appearance-none"
                 label="Target Amount"
                 required
-                {...field}
                 onChange={(e) => field.onChange(Number(e.target.value))}
               />
             )}
@@ -171,9 +171,9 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               name="min_amount"
               render={({ field }) => (
                 <NearInputField
+                  {...field}
                   className="lg:w-90"
                   label="Minimum Target Amount"
-                  {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               )}
@@ -183,9 +183,9 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               name="max_amount"
               render={({ field }) => (
                 <NearInputField
+                  {...field}
                   className="lg:w-90"
                   label="Maximum Target Amount"
-                  {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               )}
@@ -219,7 +219,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
             />
           </div>
           <div className="my-10 flex flex-row-reverse justify-between">
-            <Button variant="standard-filled" type="submit">
+            <Button disabled={!isValid} variant="standard-filled" type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
             {isUpdate && (

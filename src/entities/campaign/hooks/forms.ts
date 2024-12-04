@@ -1,9 +1,9 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
-import { infer as FromSchema } from "zod";
+import { infer as FromSchema, ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
 import { campaignsClient } from "@/common/contracts/core";
@@ -31,6 +31,7 @@ export const useCampaignForm = () => {
     return Temporal.Instant.from(time + "Z");
   };
 
+
   const handleDeleteCampaign = () => {
     if (!campaignId) return;
     campaignsClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
@@ -50,16 +51,16 @@ export const useCampaignForm = () => {
         cover_image_url: values.cover_image_url || "",
         ...(values.min_amount &&
           !campaignId && {
-            min_amount: floatToYoctoNear(values.min_amount) as any,
-          }),
+          min_amount: floatToYoctoNear(values.min_amount) as any,
+        }),
         ...(values.max_amount && {
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-        timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds > Date.now()
+          timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds > Date.now()
           ? {
-              start_ms: timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds,
-            }
+            start_ms: timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds,
+          }
           : {}),
         ...(values.end_ms && {
           end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
@@ -91,9 +92,12 @@ export const useCampaignForm = () => {
     [campaignId],
   );
 
+
+
   const onChange = (field: keyof Values, value: string) => {
     self.setValue(field, value);
   };
+
 
   return {
     form: {
@@ -105,6 +109,7 @@ export const useCampaignForm = () => {
     },
     onSubmit,
     values,
+    isValid: self.formState.isValid,
     onChange,
     handleDeleteCampaign,
   };
