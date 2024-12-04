@@ -5,11 +5,11 @@ export const CreateListHero = ({ onEditPage }: { onEditPage: boolean }) => {
     </div>
   ) : (
     <div className="relative flex w-full flex-col justify-center overflow-hidden bg-hero">
-      <div className="md:px-10 md:py-16 relative z-[1] flex flex-col justify-center  px-5 py-12 text-center">
-        <h1 className="lett md:text-[32px] md:mb-6 m-0 mb-2  font-lora text-[24px] font-medium leading-none tracking-tight">
+      <div className="relative z-[1] flex flex-col justify-center px-5 py-12  text-center md:px-10 md:py-16">
+        <h1 className="lett m-0 mb-2 font-lora text-[24px]  font-medium leading-none tracking-tight md:mb-6 md:text-[32px]">
           CREATE A
         </h1>
-        <h1 className="md:text-[72px] font-lora text-[64px] leading-none tracking-[-5px]">
+        <h1 className="font-lora text-[64px] leading-none tracking-[-5px] md:text-[72px]">
           NEW LIST
         </h1>
       </div>

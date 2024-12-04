@@ -89,6 +89,10 @@ export type V1PotsPayoutsRetrieveParams = {
    * Number of results per page
    */
   page_size?: number;
+  /**
+   * Search by recipient name or account ID
+   */
+  search?: string;
 };
 
 export type V1PotsDonationsRetrieveParams = {
@@ -111,6 +115,10 @@ export type V1PotsApplicationsRetrieveParams = {
    * Number of results per page
    */
   page_size?: number;
+  /**
+   * Search by applicant name or account ID
+   */
+  search?: string;
   /**
    * Filter by application status
    */
@@ -137,6 +145,13 @@ export type V1PotfactoriesRetrieveParams = {
    * Number of results per page
    */
   page_size?: number;
+};
+
+export type V1MpdaoVoterInfoRetrieveParams = {
+  /**
+   * NEAR account ID of the voter
+   */
+  voter_id?: string;
 };
 
 export type V1ListsRegistrationsRetrieveParams = {
@@ -456,7 +471,7 @@ export interface Round {
   /**
    * Compliance period in ms.
    * @minimum 0
-   * @maximum 2147483647
+   * @maximum 9223372036854776000
    * @nullable
    */
   compliance_period_ms?: number | null;
@@ -471,7 +486,7 @@ export interface Round {
   /**
    * Round cooldown period in ms.
    * @minimum 0
-   * @maximum 2147483647
+   * @maximum 9223372036854776000
    * @nullable
    */
   cooldown_period_ms?: number | null;
@@ -2096,12 +2111,17 @@ export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
 };
 
 export const v1MpdaoVoterInfoRetrieve = (
+  params?: V1MpdaoVoterInfoRetrieveParams,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<MpdaoVoter>> => {
-  return axios.get(`/api/v1/mpdao/voter-info`, options);
+  return axios.get(`/api/v1/mpdao/voter-info`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getV1MpdaoVoterInfoRetrieveKey = () => [`/api/v1/mpdao/voter-info`] as const;
+export const getV1MpdaoVoterInfoRetrieveKey = (params?: V1MpdaoVoterInfoRetrieveParams) =>
+  [`/api/v1/mpdao/voter-info`, ...(params ? [params] : [])] as const;
 
 export type V1MpdaoVoterInfoRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1MpdaoVoterInfoRetrieve>>
@@ -2109,7 +2129,7 @@ export type V1MpdaoVoterInfoRetrieveQueryResult = NonNullable<
 export type V1MpdaoVoterInfoRetrieveQueryError = AxiosError<void>;
 
 export const useV1MpdaoVoterInfoRetrieve = <TError = AxiosError<void>>(
-  p0: string,
+  params?: V1MpdaoVoterInfoRetrieveParams,
   options?: {
     swr?: SWRConfiguration<Awaited<ReturnType<typeof v1MpdaoVoterInfoRetrieve>>, TError> & {
       swrKey?: Key;
@@ -2122,8 +2142,8 @@ export const useV1MpdaoVoterInfoRetrieve = <TError = AxiosError<void>>(
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getV1MpdaoVoterInfoRetrieveKey() : null));
-  const swrFn = () => v1MpdaoVoterInfoRetrieve(axiosOptions);
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1MpdaoVoterInfoRetrieveKey(params) : null));
+  const swrFn = () => v1MpdaoVoterInfoRetrieve(params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 

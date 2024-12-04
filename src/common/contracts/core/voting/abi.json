@@ -1,1166 +1,1137 @@
 {
-	"schema_version": "0.4.0",
-	"metadata": {
-		"name": "voting-contract",
-		"version": "0.1.0",
-		"build": {
-			"compiler": "rustc 1.82.0",
-			"builder": "cargo-near cargo-near-build 0.3.2"
-		},
-		"wasm_hash": "J4SFdHE3unkD7PxBHxs9bvhSn4JonKxyqsYJRj1XFjpC"
-	},
-	"body": {
-		"functions": [
-			{
-				"name": "apply",
-				"kind": "call",
-				"modifiers": [
-					"payable"
-				],
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				}
-			},
-			{
-				"name": "contract_source_metadata",
-				"kind": "view"
-			},
-			{
-				"name": "create_election",
-				"kind": "call",
-				"modifiers": [
-					"payable"
-				],
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "title",
-							"type_schema": {
-								"type": "string"
-							}
-						},
-						{
-							"name": "description",
-							"type_schema": {
-								"type": "string"
-							}
-						},
-						{
-							"name": "start_date",
-							"type_schema": {
-								"type": "string"
-							}
-						},
-						{
-							"name": "end_date",
-							"type_schema": {
-								"type": "string"
-							}
-						},
-						{
-							"name": "votes_per_voter",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint32",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "voter_eligibility",
-							"type_schema": {
-								"$ref": "#/definitions/EligibilityType"
-							}
-						},
-						{
-							"name": "voting_type",
-							"type_schema": {
-								"$ref": "#/definitions/VotingType"
-							}
-						},
-						{
-							"name": "election_type",
-							"type_schema": {
-								"$ref": "#/definitions/ElectionType"
-							}
-						},
-						{
-							"name": "candidates",
-							"type_schema": {
-								"type": "array",
-								"items": {
-									"$ref": "#/definitions/AccountId"
-								}
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "integer",
-						"format": "uint64",
-						"minimum": 0.0
-					}
-				}
-			},
-			{
-				"name": "eligible_voting_callback",
-				"kind": "call",
-				"modifiers": [
-					"private"
-				],
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "voter",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						},
-						{
-							"name": "election",
-							"type_schema": {
-								"$ref": "#/definitions/Election"
-							}
-						},
-						{
-							"name": "votes",
-							"type_schema": {
-								"type": "array",
-								"items": [
-									{
-										"$ref": "#/definitions/AccountId"
-									},
-									{
-										"type": "integer",
-										"format": "uint32",
-										"minimum": 0.0
-									}
-								],
-								"maxItems": 2,
-								"minItems": 2
-							}
-						}
-					]
-				},
-				"callbacks": [
-					{
-						"serialization_type": "json",
-						"type_schema": {
-							"type": "boolean"
-						}
-					}
-				],
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "boolean"
-					}
-				}
-			},
-			{
-				"name": "get_active_elections",
-				"doc": " Returns all active elections (in nomination or voting period)",
-				"kind": "view",
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "array",
-						"items": {
-							"type": "array",
-							"items": [
-								{
-									"type": "integer",
-									"format": "uint64",
-									"minimum": 0.0
-								},
-								{
-									"$ref": "#/definitions/Election"
-								}
-							],
-							"maxItems": 2,
-							"minItems": 2
-						}
-					}
-				}
-			},
-			{
-				"name": "get_candidate_vote_count",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "candidate_id",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "integer",
-						"format": "uint32",
-						"minimum": 0.0
-					}
-				}
-			},
-			{
-				"name": "get_candidate_vote_weight",
-				"doc": " Returns the total weight/points received by a candidate",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "candidate_id",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "integer",
-						"format": "uint64",
-						"minimum": 0.0
-					}
-				}
-			},
-			{
-				"name": "get_candidate_votes",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "candidate_id",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "array",
-						"items": {
-							"$ref": "#/definitions/Vote"
-						}
-					}
-				}
-			},
-			{
-				"name": "get_election",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"anyOf": [
-							{
-								"$ref": "#/definitions/Election"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				}
-			},
-			{
-				"name": "get_election_candidates",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "array",
-						"items": {
-							"$ref": "#/definitions/Candidate"
-						}
-					}
-				}
-			},
-			{
-				"name": "get_election_phase",
-				"doc": " Returns the current phase of an election",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"anyOf": [
-							{
-								"$ref": "#/definitions/ElectionPhase"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				}
-			},
-			{
-				"name": "get_election_results",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "array",
-						"items": {
-							"type": "array",
-							"items": [
-								{
-									"$ref": "#/definitions/AccountId"
-								},
-								{
-									"type": "integer",
-									"format": "uint32",
-									"minimum": 0.0
-								}
-							],
-							"maxItems": 2,
-							"minItems": 2
-						}
-					}
-				}
-			},
-			{
-				"name": "get_election_vote_count",
-				"doc": " Returns the total number of votes cast in an election",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "integer",
-						"format": "uint64",
-						"minimum": 0.0
-					}
-				}
-			},
-			{
-				"name": "get_election_votes",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "array",
-						"items": {
-							"$ref": "#/definitions/Vote"
-						}
-					}
-				}
-			},
-			{
-				"name": "get_elections",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "from_index",
-							"type_schema": {
-								"type": [
-									"integer",
-									"null"
-								],
-								"format": "uint128",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "limit",
-							"type_schema": {
-								"type": [
-									"integer",
-									"null"
-								],
-								"format": "uint128",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "array",
-						"items": {
-							"$ref": "#/definitions/Election"
-						}
-					}
-				}
-			},
-			{
-				"name": "get_elections_by_creator",
-				"doc": " Returns all elections created by a specific account",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "creator",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "array",
-						"items": {
-							"type": "array",
-							"items": [
-								{
-									"type": "integer",
-									"format": "uint64",
-									"minimum": 0.0
-								},
-								{
-									"$ref": "#/definitions/Election"
-								}
-							],
-							"maxItems": 2,
-							"minItems": 2
-						}
-					}
-				}
-			},
-			{
-				"name": "get_time_remaining",
-				"doc": " Returns time remaining (in nanoseconds) in the current phase",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": [
-							"integer",
-							"null"
-						],
-						"format": "uint64",
-						"minimum": 0.0
-					}
-				}
-			},
-			{
-				"name": "get_voter_remaining_capacity",
-				"doc": " Returns the remaining votes/points available for a voter in an election",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "voter",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": [
-							"integer",
-							"null"
-						],
-						"format": "uint32",
-						"minimum": 0.0
-					}
-				}
-			},
-			{
-				"name": "get_voter_votes",
-				"doc": " Returns all votes cast by a specific voter in a given election",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "voter",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": [
-							"array",
-							"null"
-						],
-						"items": {
-							"$ref": "#/definitions/Vote"
-						}
-					}
-				}
-			},
-			{
-				"name": "handle_voting",
-				"kind": "call",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "voter",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						},
-						{
-							"name": "election",
-							"type_schema": {
-								"$ref": "#/definitions/Election"
-							}
-						},
-						{
-							"name": "votes",
-							"type_schema": {
-								"type": "array",
-								"items": [
-									{
-										"$ref": "#/definitions/AccountId"
-									},
-									{
-										"type": "integer",
-										"format": "uint32",
-										"minimum": 0.0
-									}
-								],
-								"maxItems": 2,
-								"minItems": 2
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "boolean"
-					}
-				}
-			},
-			{
-				"name": "has_voter_participated",
-				"doc": " Returns whether a voter has participated in an election",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "voter",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "boolean"
-					}
-				}
-			},
-			{
-				"name": "is_election_ended",
-				"doc": " Returns whether an election has ended",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "boolean"
-					}
-				}
-			},
-			{
-				"name": "is_voting_period",
-				"doc": " Returns whether an election is currently in the voting period",
-				"kind": "view",
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"type": "boolean"
-					}
-				}
-			},
-			{
-				"name": "new",
-				"kind": "call",
-				"modifiers": [
-					"init"
-				],
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "owner_id",
-							"type_schema": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					]
-				}
-			},
-			{
-				"name": "pause",
-				"kind": "call",
-				"modifiers": [
-					"payable"
-				]
-			},
-			{
-				"name": "unpause",
-				"kind": "call",
-				"modifiers": [
-					"payable"
-				]
-			},
-			{
-				"name": "vote",
-				"kind": "call",
-				"modifiers": [
-					"payable"
-				],
-				"params": {
-					"serialization_type": "json",
-					"args": [
-						{
-							"name": "election_id",
-							"type_schema": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						},
-						{
-							"name": "vote",
-							"type_schema": {
-								"type": "array",
-								"items": [
-									{
-										"$ref": "#/definitions/AccountId"
-									},
-									{
-										"type": "integer",
-										"format": "uint32",
-										"minimum": 0.0
-									}
-								],
-								"maxItems": 2,
-								"minItems": 2
-							}
-						}
-					]
-				},
-				"result": {
-					"serialization_type": "json",
-					"type_schema": {
-						"$ref": "#/definitions/PromiseOrValueBoolean"
-					}
-				}
-			}
-		],
-		"root_schema": {
-			"$schema": "http://json-schema.org/draft-07/schema#",
-			"title": "String",
-			"type": "string",
-			"definitions": {
-				"AccountId": {
-					"description": "NEAR Account Identifier.\n\nThis is a unique, syntactically valid, human-readable account identifier on the NEAR network.\n\n[See the crate-level docs for information about validation.](index.html#account-id-rules)\n\nAlso see [Error kind precedence](AccountId#error-kind-precedence).\n\n## Examples\n\n``` use near_account_id::AccountId;\n\nlet alice: AccountId = \"alice.near\".parse().unwrap();\n\nassert!(\"ƒelicia.near\".parse::<AccountId>().is_err()); // (ƒ is not f) ```",
-					"type": "string"
-				},
-				"ApplicationStatus": {
-					"type": "string",
-					"enum": [
-						"Pending",
-						"Approved",
-						"Rejected"
-					]
-				},
-				"Candidate": {
-					"type": "object",
-					"required": [
-						"account_id",
-						"application_date",
-						"status",
-						"votes_received"
-					],
-					"properties": {
-						"account_id": {
-							"$ref": "#/definitions/AccountId"
-						},
-						"application_date": {
-							"type": "string"
-						},
-						"status": {
-							"$ref": "#/definitions/ApplicationStatus"
-						},
-						"votes_received": {
-							"type": "integer",
-							"format": "uint64",
-							"minimum": 0.0
-						}
-					}
-				},
-				"Election": {
-					"type": "object",
-					"required": [
-						"creating_project",
-						"description",
-						"election_type",
-						"end_date",
-						"id",
-						"owner",
-						"start_date",
-						"status",
-						"title",
-						"voter_eligibility",
-						"votes_per_voter",
-						"voting_type",
-						"winner_ids"
-					],
-					"properties": {
-						"challenge_period_end": {
-							"type": [
-								"string",
-								"null"
-							]
-						},
-						"creating_project": {
-							"$ref": "#/definitions/AccountId"
-						},
-						"description": {
-							"type": "string"
-						},
-						"election_type": {
-							"$ref": "#/definitions/ElectionType"
-						},
-						"end_date": {
-							"type": "string"
-						},
-						"id": {
-							"type": "integer",
-							"format": "uint64",
-							"minimum": 0.0
-						},
-						"owner": {
-							"$ref": "#/definitions/AccountId"
-						},
-						"start_date": {
-							"type": "string"
-						},
-						"status": {
-							"$ref": "#/definitions/ElectionStatus"
-						},
-						"title": {
-							"type": "string"
-						},
-						"voter_eligibility": {
-							"$ref": "#/definitions/EligibilityType"
-						},
-						"votes_per_voter": {
-							"type": "integer",
-							"format": "uint32",
-							"minimum": 0.0
-						},
-						"voting_type": {
-							"$ref": "#/definitions/VotingType"
-						},
-						"winner_ids": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/AccountId"
-							}
-						}
-					}
-				},
-				"ElectionPhase": {
-					"type": "string",
-					"enum": [
-						"Pending",
-						"Nomination",
-						"Voting",
-						"Ended"
-					]
-				},
-				"ElectionStatus": {
-					"type": "string",
-					"enum": [
-						"Pending",
-						"NominationPeriod",
-						"VotingPeriod",
-						"ChallengePeriod",
-						"Completed",
-						"Cancelled"
-					]
-				},
-				"ElectionType": {
-					"oneOf": [
-						{
-							"type": "string",
-							"enum": [
-								"GeneralElection"
-							]
-						},
-						{
-							"type": "object",
-							"required": [
-								"ProjectProposal"
-							],
-							"properties": {
-								"ProjectProposal": {
-									"$ref": "#/definitions/AccountId"
-								}
-							},
-							"additionalProperties": false
-						},
-						{
-							"type": "object",
-							"required": [
-								"Pot"
-							],
-							"properties": {
-								"Pot": {
-									"$ref": "#/definitions/AccountId"
-								}
-							},
-							"additionalProperties": false
-						},
-						{
-							"type": "object",
-							"required": [
-								"Custom"
-							],
-							"properties": {
-								"Custom": {
-									"type": "array",
-									"items": [
-										{
-											"type": "string"
-										},
-										{
-											"anyOf": [
-												{
-													"$ref": "#/definitions/AccountId"
-												},
-												{
-													"type": "null"
-												}
-											]
-										}
-									],
-									"maxItems": 2,
-									"minItems": 2
-								}
-							},
-							"additionalProperties": false
-						}
-					]
-				},
-				"EligibilityType": {
-					"oneOf": [
-						{
-							"type": "string",
-							"enum": [
-								"Open"
-							]
-						},
-						{
-							"type": "object",
-							"required": [
-								"ListBased"
-							],
-							"properties": {
-								"ListBased": {
-									"type": "array",
-									"items": [
-										{
-											"$ref": "#/definitions/AccountId"
-										},
-										{
-											"type": "string"
-										}
-									],
-									"maxItems": 2,
-									"minItems": 2
-								}
-							},
-							"additionalProperties": false
-						},
-						{
-							"type": "object",
-							"required": [
-								"TokenBased"
-							],
-							"properties": {
-								"TokenBased": {
-									"type": "array",
-									"items": [
-										{
-											"$ref": "#/definitions/AccountId"
-										},
-										{
-											"type": "string"
-										}
-									],
-									"maxItems": 2,
-									"minItems": 2
-								}
-							},
-							"additionalProperties": false
-						},
-						{
-							"type": "object",
-							"required": [
-								"Custom"
-							],
-							"properties": {
-								"Custom": {
-									"type": "string"
-								}
-							},
-							"additionalProperties": false
-						}
-					]
-				},
-				"PromiseOrValueBoolean": {
-					"type": "boolean"
-				},
-				"Vote": {
-					"type": "object",
-					"required": [
-						"candidate_id",
-						"timestamp",
-						"voter",
-						"weight"
-					],
-					"properties": {
-						"candidate_id": {
-							"$ref": "#/definitions/AccountId"
-						},
-						"timestamp": {
-							"type": "string"
-						},
-						"voter": {
-							"$ref": "#/definitions/AccountId"
-						},
-						"weight": {
-							"type": "integer",
-							"format": "uint32",
-							"minimum": 0.0
-						}
-					}
-				},
-				"VotingType": {
-					"oneOf": [
-						{
-							"type": "string",
-							"enum": [
-								"Simple"
-							]
-						},
-						{
-							"type": "object",
-							"required": [
-								"Weighted"
-							],
-							"properties": {
-								"Weighted": {
-									"type": "integer",
-									"format": "uint32",
-									"minimum": 0.0
-								}
-							},
-							"additionalProperties": false
-						}
-					]
-				}
-			}
-		}
-	}
+  "schema_version": "0.4.0",
+  "metadata": {
+    "name": "voting-contract",
+    "version": "0.1.0"
+  },
+  "body": {
+    "functions": [
+      {
+        "name": "contract_source_metadata",
+        "kind": "view"
+      },
+      {
+        "name": "create_election",
+        "kind": "call",
+        "modifiers": [
+          "payable"
+        ],
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "title",
+              "type_schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "description",
+              "type_schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "start_date",
+              "type_schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "end_date",
+              "type_schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "votes_per_voter",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "voter_eligibility",
+              "type_schema": {
+                "$ref": "#/definitions/EligibilityType"
+              }
+            },
+            {
+              "name": "voting_type",
+              "type_schema": {
+                "$ref": "#/definitions/VotingType"
+              }
+            },
+            {
+              "name": "election_type",
+              "type_schema": {
+                "$ref": "#/definitions/ElectionType"
+              }
+            },
+            {
+              "name": "candidates",
+              "type_schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/AccountId"
+                }
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      {
+        "name": "eligible_voting_callback",
+        "kind": "call",
+        "modifiers": [
+          "private"
+        ],
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "voter",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            },
+            {
+              "name": "election",
+              "type_schema": {
+                "$ref": "#/definitions/Election"
+              }
+            },
+            {
+              "name": "votes",
+              "type_schema": {
+                "type": "array",
+                "items": [
+                  {
+                    "$ref": "#/definitions/AccountId"
+                  },
+                  {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0.0
+                  }
+                ],
+                "maxItems": 2,
+                "minItems": 2
+              }
+            }
+          ]
+        },
+        "callbacks": [
+          {
+            "serialization_type": "json",
+            "type_schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "boolean"
+          }
+        }
+      },
+      {
+        "name": "get_active_elections",
+        "doc": " Returns all active elections (in nomination or voting period)",
+        "kind": "view",
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint64",
+                  "minimum": 0.0
+                },
+                {
+                  "$ref": "#/definitions/Election"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            }
+          }
+        }
+      },
+      {
+        "name": "get_candidate_vote_count",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "candidate_id",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0.0
+          }
+        }
+      },
+      {
+        "name": "get_candidate_vote_weight",
+        "doc": " Returns the total weight/points received by a candidate",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "candidate_id",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      {
+        "name": "get_candidate_votes",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "candidate_id",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Vote"
+            }
+          }
+        }
+      },
+      {
+        "name": "get_election",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Election"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "get_election_candidates",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Candidate"
+            }
+          }
+        }
+      },
+      {
+        "name": "get_election_phase",
+        "doc": " Returns the current phase of an election",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/ElectionPhase"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "get_election_results",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/AccountId"
+                },
+                {
+                  "type": "integer",
+                  "format": "uint32",
+                  "minimum": 0.0
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            }
+          }
+        }
+      },
+      {
+        "name": "get_election_vote_count",
+        "doc": " Returns the total number of votes cast in an election",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      {
+        "name": "get_election_votes",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Vote"
+            }
+          }
+        }
+      },
+      {
+        "name": "get_elections",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "from_index",
+              "type_schema": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "format": "uint128",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "limit",
+              "type_schema": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "format": "uint128",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Election"
+            }
+          }
+        }
+      },
+      {
+        "name": "get_elections_by_creator",
+        "doc": " Returns all elections created by a specific account",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "creator",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint64",
+                  "minimum": 0.0
+                },
+                {
+                  "$ref": "#/definitions/Election"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            }
+          }
+        }
+      },
+      {
+        "name": "get_time_remaining",
+        "doc": " Returns time remaining (in nanoseconds) in the current phase",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      {
+        "name": "get_voter_remaining_capacity",
+        "doc": " Returns the remaining votes/points available for a voter in an election",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "voter",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "uint32",
+            "minimum": 0.0
+          }
+        }
+      },
+      {
+        "name": "get_voter_votes",
+        "doc": " Returns all votes cast by a specific voter in a given election",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "voter",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/definitions/Vote"
+            }
+          }
+        }
+      },
+      {
+        "name": "handle_voting",
+        "kind": "call",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "voter",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            },
+            {
+              "name": "election",
+              "type_schema": {
+                "$ref": "#/definitions/Election"
+              }
+            },
+            {
+              "name": "votes",
+              "type_schema": {
+                "type": "array",
+                "items": [
+                  {
+                    "$ref": "#/definitions/AccountId"
+                  },
+                  {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0.0
+                  }
+                ],
+                "maxItems": 2,
+                "minItems": 2
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "boolean"
+          }
+        }
+      },
+      {
+        "name": "has_voter_participated",
+        "doc": " Returns whether a voter has participated in an election",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "voter",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "boolean"
+          }
+        }
+      },
+      {
+        "name": "is_election_ended",
+        "doc": " Returns whether an election has ended",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "boolean"
+          }
+        }
+      },
+      {
+        "name": "is_voting_period",
+        "doc": " Returns whether an election is currently in the voting period",
+        "kind": "view",
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "type": "boolean"
+          }
+        }
+      },
+      {
+        "name": "new",
+        "kind": "call",
+        "modifiers": [
+          "init"
+        ],
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "owner_id",
+              "type_schema": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "pause",
+        "kind": "call",
+        "modifiers": [
+          "payable"
+        ]
+      },
+      {
+        "name": "unpause",
+        "kind": "call",
+        "modifiers": [
+          "payable"
+        ]
+      },
+      {
+        "name": "vote",
+        "kind": "call",
+        "modifiers": [
+          "payable"
+        ],
+        "params": {
+          "serialization_type": "json",
+          "args": [
+            {
+              "name": "election_id",
+              "type_schema": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            {
+              "name": "vote",
+              "type_schema": {
+                "type": "array",
+                "items": [
+                  {
+                    "$ref": "#/definitions/AccountId"
+                  },
+                  {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0.0
+                  }
+                ],
+                "maxItems": 2,
+                "minItems": 2
+              }
+            }
+          ]
+        },
+        "result": {
+          "serialization_type": "json",
+          "type_schema": {
+            "$ref": "#/definitions/PromiseOrValueBoolean"
+          }
+        }
+      }
+    ],
+    "root_schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "String",
+      "type": "string",
+      "definitions": {
+        "AccountId": {
+          "description": "NEAR Account Identifier.\n\nThis is a unique, syntactically valid, human-readable account identifier on the NEAR network.\n\n[See the crate-level docs for information about validation.](index.html#account-id-rules)\n\nAlso see [Error kind precedence](AccountId#error-kind-precedence).\n\n## Examples\n\n``` use near_account_id::AccountId;\n\nlet alice: AccountId = \"alice.near\".parse().unwrap();\n\nassert!(\"ƒelicia.near\".parse::<AccountId>().is_err()); // (ƒ is not f) ```",
+          "type": "string"
+        },
+        "ApplicationStatus": {
+          "type": "string",
+          "enum": [
+            "Pending",
+            "Approved",
+            "Rejected"
+          ]
+        },
+        "Candidate": {
+          "type": "object",
+          "required": [
+            "account_id",
+            "application_date",
+            "status",
+            "votes_received"
+          ],
+          "properties": {
+            "account_id": {
+              "$ref": "#/definitions/AccountId"
+            },
+            "application_date": {
+              "type": "string"
+            },
+            "status": {
+              "$ref": "#/definitions/ApplicationStatus"
+            },
+            "votes_received": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          }
+        },
+        "Election": {
+          "type": "object",
+          "required": [
+            "description",
+            "election_type",
+            "end_date",
+            "id",
+            "owner",
+            "start_date",
+            "status",
+            "title",
+            "voter_eligibility",
+            "votes_per_voter",
+            "voting_type",
+            "winner_ids"
+          ],
+          "properties": {
+            "challenge_period_end": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": "string"
+            },
+            "election_type": {
+              "$ref": "#/definitions/ElectionType"
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "owner": {
+              "$ref": "#/definitions/AccountId"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "status": {
+              "$ref": "#/definitions/ElectionStatus"
+            },
+            "title": {
+              "type": "string"
+            },
+            "voter_eligibility": {
+              "$ref": "#/definitions/EligibilityType"
+            },
+            "votes_per_voter": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0.0
+            },
+            "voting_type": {
+              "$ref": "#/definitions/VotingType"
+            },
+            "winner_ids": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountId"
+              }
+            }
+          }
+        },
+        "ElectionPhase": {
+          "type": "string",
+          "enum": [
+            "Pending",
+            "Nomination",
+            "Voting",
+            "Ended"
+          ]
+        },
+        "ElectionStatus": {
+          "type": "string",
+          "enum": [
+            "Pending",
+            "NominationPeriod",
+            "VotingPeriod",
+            "ChallengePeriod",
+            "Completed",
+            "Cancelled"
+          ]
+        },
+        "ElectionType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "GeneralElection"
+              ]
+            },
+            {
+              "type": "object",
+              "required": [
+                "ProjectProposal"
+              ],
+              "properties": {
+                "ProjectProposal": {
+                  "$ref": "#/definitions/AccountId"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "Pot"
+              ],
+              "properties": {
+                "Pot": {
+                  "$ref": "#/definitions/AccountId"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "Custom"
+              ],
+              "properties": {
+                "Custom": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions/AccountId"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  ],
+                  "maxItems": 2,
+                  "minItems": 2
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "EligibilityType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Open"
+              ]
+            },
+            {
+              "type": "object",
+              "required": [
+                "ListBased"
+              ],
+              "properties": {
+                "ListBased": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "$ref": "#/definitions/AccountId"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "maxItems": 2,
+                  "minItems": 2
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "TokenBased"
+              ],
+              "properties": {
+                "TokenBased": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "$ref": "#/definitions/AccountId"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "maxItems": 2,
+                  "minItems": 2
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "Custom"
+              ],
+              "properties": {
+                "Custom": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "PromiseOrValueBoolean": {
+          "type": "boolean"
+        },
+        "Vote": {
+          "type": "object",
+          "required": [
+            "candidate_id",
+            "timestamp",
+            "voter",
+            "weight"
+          ],
+          "properties": {
+            "candidate_id": {
+              "$ref": "#/definitions/AccountId"
+            },
+            "timestamp": {
+              "type": "string"
+            },
+            "voter": {
+              "$ref": "#/definitions/AccountId"
+            },
+            "weight": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0.0
+            }
+          }
+        },
+        "VotingType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Simple"
+              ]
+            },
+            {
+              "type": "object",
+              "required": [
+                "Weighted"
+              ],
+              "properties": {
+                "Weighted": {
+                  "type": "integer",
+                  "format": "uint32",
+                  "minimum": 0.0
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    }
+  }
 }

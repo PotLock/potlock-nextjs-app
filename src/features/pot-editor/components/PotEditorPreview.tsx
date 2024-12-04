@@ -32,7 +32,7 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
   ) : (
     <>
       {children ? (
-        <div className="md:flex-row md:gap-8 flex flex-col items-center justify-between gap-1">
+        <div className="flex flex-col items-center justify-between gap-1 md:flex-row md:gap-8">
           <span className="prose md:w-73 font-600 w-full text-sm">
             {subheading ? `${heading} (${subheading})` : heading}
           </span>
@@ -129,7 +129,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({ potId, onEdi
 
       <div
         className={cn(
-          "min-h-114 rounded-3 md:p-6 md:gap-4 flex flex-col gap-6 border border-neutral-200 p-4",
+          "min-h-114 rounded-3 flex flex-col gap-6 border border-neutral-200 p-4 md:gap-4 md:p-6",
         )}
       >
         {!isDataAvailable && isLoading && <DataLoadingPlaceholder text="Loading pot data..." />}

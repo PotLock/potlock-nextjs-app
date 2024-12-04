@@ -49,13 +49,13 @@ const Profile = () => {
           />
         )}
         <Button
-          className="max-md:h-[40px] max-md:w-[40px] max-md:rounded-[50%] max-md:p-0 absolute bottom-[1.5rem] right-[1.5rem]"
+          className="absolute bottom-[1.5rem] right-[1.5rem] max-md:h-[40px] max-md:w-[40px] max-md:rounded-[50%] max-md:p-0"
           variant="standard-outline"
           disabled={bgImageStatus.status === "loading"}
         >
           <CameraIcon width={18} />
           {bgImageStatus.status === "ready" ? (
-            <p className="font-500 max-md:hidden text-[14px]">Add cover photo</p>
+            <p className="font-500 text-[14px] max-md:hidden">Add cover photo</p>
           ) : (
             <Spinner width={18} height={18} />
           )}

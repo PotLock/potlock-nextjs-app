@@ -1,5 +1,5 @@
 import * as potClient from "./client";
 
-export * from "./interface.d";
+export * from "./interfaces";
 
 export { potClient };

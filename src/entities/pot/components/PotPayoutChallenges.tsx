@@ -73,7 +73,7 @@ export const PotPayoutChallenges = ({
           Challenges
         </h2>
         <div className="my-4 h-px w-full bg-[#DBDBDB]" />
-        <div className="md:gap-1 my-6 flex items-center gap-3">
+        <div className="my-6 flex items-center gap-3 md:gap-1">
           <button
             onClick={() => handleSwitchTab("UNRESOLVED")}
             className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
@@ -111,14 +111,14 @@ export const PotPayoutChallenges = ({
                       />
                       <Link
                         href={`${routesPath.PROFILE}/${challenger_id}`}
-                        className="md:text-base text-sm font-semibold text-gray-800 hover:text-red-500"
+                        className="text-sm font-semibold text-gray-800 hover:text-red-500 md:text-base"
                       >
                         {challenger_id}
                       </Link>
-                      <span className="md:text-base text-sm font-semibold text-purple-500">
+                      <span className="text-sm font-semibold text-purple-500 md:text-base">
                         Challenged payout
                       </span>
-                      <div className="md:text-sm text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 md:text-sm">
                         {getTimePassed(created_at)}
                       </div>
                     </div>

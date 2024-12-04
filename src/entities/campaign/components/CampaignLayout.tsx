@@ -38,7 +38,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
         selectedTab={selectedTab.id}
         onSelect={(tabId: string) => handleSelectedTab(tabId)}
       />
-      <div className="md:px-8 flex w-full flex-row flex-wrap gap-2">{children}</div>
+      <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
     </PageWithBanner>
   );
 };

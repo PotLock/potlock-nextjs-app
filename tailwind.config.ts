@@ -8,10 +8,6 @@ const config = {
 
   // TODO: Complete theme migration to `uno.config.ts`
   theme: {
-    screens: {
-      xs: "475px",
-    },
-
     container: {
       center: true,
       padding: {

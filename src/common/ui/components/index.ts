@@ -5,6 +5,7 @@
  */
 export * from "./_deprecated/InfiniteScroll";
 export * from "./_deprecated/DeprecatedPagination";
+export * from "./SuspenseLoading";
 export * from "./SearchBar";
 
 /**

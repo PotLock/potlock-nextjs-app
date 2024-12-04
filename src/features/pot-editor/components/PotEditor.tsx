@@ -79,7 +79,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
           </EditorSection>
 
           <EditorSection heading="Pot details">
-            <div className="lg:flex-row flex flex-col gap-8">
+            <div className="flex flex-col gap-8 lg:flex-row">
               <FormField
                 name="pot_name"
                 control={form.control}
@@ -128,7 +128,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               )}
             />
 
-            <div className="lg:flex-row flex flex-col gap-8">
+            <div className="flex flex-col gap-8 lg:flex-row">
               <FormField
                 name="referral_fee_matching_pool_basis_points"
                 control={form.control}
@@ -179,7 +179,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               <AlertDescription inline>{"This fee is fixed by the platform"}</AlertDescription>
             </Alert>
 
-            <div className="lg:flex-row flex flex-col gap-8">
+            <div className="flex flex-col gap-8 lg:flex-row">
               <FormField
                 name="application_start_ms"
                 control={form.control}
@@ -209,7 +209,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               />
             </div>
 
-            <div className="lg:flex-row flex flex-col gap-8">
+            <div className="flex flex-col gap-8 lg:flex-row">
               <FormField
                 name="public_round_start_ms"
                 control={form.control}
@@ -239,7 +239,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               />
             </div>
 
-            <div className="lg:flex-row flex flex-col gap-8">
+            <div className="flex flex-col gap-8 lg:flex-row">
               <FormField
                 control={form.control}
                 name="min_matching_pool_donation_amount"
@@ -275,7 +275,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
           </EditorSection>
 
           <EditorSection heading="Chef details">
-            <div className="lg:flex-row flex flex-col gap-8">
+            <div className="flex flex-col gap-8 lg:flex-row">
               <FormField
                 name="chef_fee_basis_points"
                 control={form.control}
@@ -378,7 +378,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
                 type="submit"
                 disabled={isDisabled}
                 variant="standard-filled"
-                className="lg:w-auto w-full"
+                className="w-full lg:w-auto"
               >
                 {isNewPot ? "Deploy Pot" : "Save changes"}
               </Button>
@@ -386,7 +386,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
               <Button
                 onClick={onCancelClick}
                 variant="standard-outline"
-                className="lg:w-auto w-full"
+                className="w-full lg:w-auto"
               >
                 {isNewPot ? "Cancel" : "Discard"}
               </Button>

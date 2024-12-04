@@ -1,5 +1,5 @@
 import * as listsClient from "./client";
 
-export * from "./interface.d";
+export * from "./interfaces";
 
 export { listsClient };

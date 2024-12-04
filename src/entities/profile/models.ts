@@ -1,14 +1,6 @@
 import { createModel } from "@rematch/core";
 
-import { PayoutDetailed, donationClient, potClient } from "@/common/contracts/core";
-import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { yoctosToUsdWithFallback } from "@/entities/core";
-import {
-  getTagsFromSocialProfileData,
-  getTeamMembersFromProfile,
-  getTotalAmountNear,
-} from "@/entities/project/utils";
+import { NEARSocialUserProfile } from "@/common/contracts/social";
 import { AppModel } from "@/store/models";
 
 export type Profile = {
@@ -22,73 +14,6 @@ export type Profile = {
     backgroundImage: string;
   };
 };
-
-type ProfileIndex = Record<string, Profile>;
-
-export const profilesModel = createModel<AppModel>()({
-  state: {} as ProfileIndex,
-  reducers: {
-    update(state, payload: ProfileIndex) {
-      return {
-        ...state,
-        ...payload,
-      };
-    },
-    RESET() {
-      return {};
-    },
-  },
-  // TODO: This should've received a method
-  // e.g.: effects: (dispatch) => ({
-  effects: {
-    async loadProfile({
-      projectId,
-      potId,
-      payoutDetails,
-    }: {
-      projectId: string;
-      potId?: string;
-      payoutDetails?: PayoutDetailed;
-    }) {
-      const socialData = await getSocialProfile({
-        accountId: projectId,
-      });
-
-      const socialImagesResponse = fetchSocialImages({
-        socialData: socialData ? socialData : undefined,
-        accountId: projectId,
-      });
-
-      const donationsPromise =
-        potId && !payoutDetails
-          ? potClient.getDonationsForProject({
-              potId,
-              project_id: projectId,
-            })
-          : !potId
-            ? donationClient.getDonationsForRecipient({
-                recipient_id: projectId,
-              })
-            : Promise.resolve([]);
-
-      const [socialImages, donations] = await Promise.all([socialImagesResponse, donationsPromise]);
-
-      const totalAmountNear = yoctosToUsdWithFallback(
-        getTotalAmountNear(donations, potId, payoutDetails),
-      );
-
-      const profile: Profile = {
-        socialData: socialData ?? {},
-        tags: getTagsFromSocialProfileData(socialData || {}),
-        team: getTeamMembersFromProfile(socialData),
-        totalAmountNear,
-        socialImages,
-      };
-
-      this.update({ [projectId]: profile });
-    },
-  },
-});
 
 export type ActAsDao = {
   toggle: boolean;

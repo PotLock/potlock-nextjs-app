@@ -1,6 +1,3 @@
-import useSWR from "swr";
-
-import { Voter } from "@/common/contracts/metapool";
 import { ByAccountId, ByListId } from "@/common/types";
 
 import * as generatedClient from "./internal/client.generated";
@@ -79,11 +76,7 @@ export const useAccountListRegistrations = ({
   const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(
     accountId ?? "unknown",
     params,
-
-    {
-      ...INDEXER_CLIENT_CONFIG,
-      swr: { enabled: Boolean(accountId) },
-    },
+    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data };
@@ -99,11 +92,7 @@ export const useAccountPotApplications = ({
   const queryResult = generatedClient.useV1AccountsPotApplicationsRetrieve(
     accountId ?? "unknown",
     params,
-
-    {
-      ...INDEXER_CLIENT_CONFIG,
-      swr: { enabled: Boolean(accountId) },
-    },
+    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data };
@@ -160,15 +149,10 @@ export const usePotDonations = ({
   potId,
   ...params
 }: ByPotId & generatedClient.V1PotsDonationsRetrieveParams) => {
-  const queryResult = generatedClient.useV1PotsDonationsRetrieve(
-    potId,
-    params,
-
-    {
-      ...INDEXER_CLIENT_CONFIG,
-      swr: { enabled: Boolean(potId) },
-    },
-  );
+  const queryResult = generatedClient.useV1PotsDonationsRetrieve(potId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled: Boolean(potId) },
+  });
 
   return {
     ...queryResult,
@@ -250,10 +234,7 @@ export const useListRegistrations = ({
     listId ?? 0,
     params,
 
-    {
-      ...INDEXER_CLIENT_CONFIG,
-      swr: { enabled: Boolean(listId) },
-    },
+    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(listId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data };
@@ -265,6 +246,7 @@ export const useListRegistrations = ({
 
 export const useLists = ({ ...params }: generatedClient.V1ListsRetrieveParams = {}) => {
   const queryResult = generatedClient.useV1ListsRetrieve(params, INDEXER_CLIENT_CONFIG);
+
   return { ...queryResult, data: queryResult.data?.data };
 };
 
@@ -279,23 +261,21 @@ export const useAccountUpvotedLists = ({
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(accountId) },
   });
+
   return {
     ...queryResult,
     data: queryResult.data?.data.results,
   };
 };
 
-export const useMpdaoVoterInfo = ({ accountId }: Partial<ByAccountId>) => {
-  // const queryResult = generatedClient.useV1MpdaoVoterInfoRetrieve(accountId ?? "unknown", {
-  //   ...INDEXER_CLIENT_CONFIG,
-  //   swr: { enabled: Boolean(accountId) },
-  // });
-
-  // return { ...queryResult, data: queryResult.data?.data };
-
-  const queryResult = useSWR<Voter[]>("/mpdao-voting.snapshot.json", (urlString: string) =>
-    fetch(urlString).then((response) => response.json()),
+export const useMpdaoVoterInfo = ({
+  accountId,
+  ...params
+}: Partial<ByAccountId> & Omit<generatedClient.V1MpdaoVoterInfoRetrieveParams, "voter_id">) => {
+  const queryResult = generatedClient.useV1MpdaoVoterInfoRetrieve(
+    { voter_id: accountId ?? "unknown", ...params },
+    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
-  return { ...queryResult, data: queryResult.data?.find(({ voter_id }) => voter_id === accountId) };
+  return { ...queryResult, data: queryResult.data?.data };
 };

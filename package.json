@@ -9,7 +9,7 @@
     "lint": "next lint",
     "format": "yarn lint --fix ./",
     "typecheck": "tsc --noEmit",
-    "generate:core-voting-contract-client": "near2ts ./src/common/contracts/core/voting/abi.json",
+    "generate:core-voting-contract-client": "npx near2ts ./src/common/contracts/core/voting/abi.json",
     "generate:contract-clients": "concurrently 'yarn generate:core-voting-contract-client'",
     "generate:api-clients": "orval --config api.config.cjs",
     "generate:clients": "concurrently 'yarn generate:api-clients'",

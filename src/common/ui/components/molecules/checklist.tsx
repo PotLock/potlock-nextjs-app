@@ -15,7 +15,7 @@ export type ChecklistProps = {
 export const Checklist: React.FC<ChecklistProps> = ({ title, requirements, error }) => (
   <div
     className={cn(
-      "xl:w-126.5 min-w-87.5 lg:w-fit flex h-fit w-full flex-col items-start justify-start",
+      "xl:w-126.5 min-w-87.5 flex h-fit w-full flex-col items-start justify-start lg:w-fit",
       "rounded-2xl bg-neutral-50 p-2",
     )}
   >
@@ -34,43 +34,54 @@ export const Checklist: React.FC<ChecklistProps> = ({ title, requirements, error
     {error ? (
       <span className="text-destructive text-xl">{error.message}</span>
     ) : (
-      <ul
-        className={cn(
-          "flex h-fit flex-col items-start justify-start gap-4 self-stretch",
-          "rounded-lg bg-white p-4 shadow",
-        )}
-      >
-        {requirements.map(
-          ({
-            title,
-            hasFulfillmentAssessmentInputs = true,
-            isFulfillmentAssessmentPending = false,
-            isSatisfied,
-          }) => (
-            <li className="inline-flex items-center justify-start gap-2 self-stretch" key={title}>
-              {isFulfillmentAssessmentPending ? (
-                <Spinner className="h-6 w-6" />
-              ) : (
-                <>
-                  {isSatisfied ? (
-                    <MdCheckCircleOutline className="color-success relative h-6 w-6" />
+      <>
+        {requirements.length === 0 ? (
+          <span className="prose text-xl">{"No special requirements"}</span>
+        ) : (
+          <ul
+            className={cn(
+              "flex h-fit flex-col items-start justify-start gap-4 self-stretch",
+              "rounded-lg bg-white p-4 shadow",
+            )}
+          >
+            {requirements.map(
+              ({
+                title,
+                hasFulfillmentAssessmentInputs = true,
+                isFulfillmentAssessmentPending = false,
+                isSatisfied,
+              }) => (
+                <li
+                  className="inline-flex items-center justify-start gap-2 self-stretch"
+                  key={title}
+                >
+                  {isFulfillmentAssessmentPending ? (
+                    <Spinner className="h-6 w-6" />
                   ) : (
                     <>
-                      {hasFulfillmentAssessmentInputs ? (
-                        <CircleX className="color-destructive h-6 w-6" />
+                      {isSatisfied ? (
+                        <MdCheckCircleOutline className="color-success relative h-6 w-6" />
                       ) : (
-                        <CircleHelp className="color-peach-300 h-6 w-6" />
+                        <>
+                          {hasFulfillmentAssessmentInputs ? (
+                            <CircleX className="color-destructive h-6 w-6" />
+                          ) : (
+                            <CircleHelp className="color-peach-300 h-6 w-6" />
+                          )}
+                        </>
                       )}
                     </>
                   )}
-                </>
-              )}
 
-              <span className="text-sm font-normal leading-tight text-neutral-600">{title}</span>
-            </li>
-          ),
+                  <span className="text-sm font-normal leading-tight text-neutral-600">
+                    {title}
+                  </span>
+                </li>
+              ),
+            )}
+          </ul>
         )}
-      </ul>
+      </>
     )}
   </div>
 );

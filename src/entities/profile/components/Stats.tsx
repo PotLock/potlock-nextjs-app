@@ -95,7 +95,7 @@ export const Stats = ({ sortOptions, selectedSortOption, stats, onSelectSortOpti
 
   return (
     <div className="m-[24px_0] flex flex-wrap items-center">
-      <div className="md:flex hidden">
+      <div className="hidden md:flex">
         {stats.map((stat) => (
           <div key={stat.label} className="flex items-center">
             <div className="flex h-fit items-center gap-2 pr-4">
@@ -106,7 +106,7 @@ export const Stats = ({ sortOptions, selectedSortOption, stats, onSelectSortOpti
           </div>
         ))}
       </div>
-      <div className="sm:ml-auto ml-auto">
+      <div className="ml-auto sm:ml-auto">
         <Dropdown
           selectedOption={selectedSortOption}
           options={sortOptions}

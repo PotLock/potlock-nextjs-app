@@ -10,9 +10,9 @@ import {
   CampaignDonation,
   CampaignFormFields,
   DirectCampaignDonationArgs,
-} from "./interface";
+} from "./interfaces";
 
-export const contractApi = naxiosInstance.contractApi({
+const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }),
 });

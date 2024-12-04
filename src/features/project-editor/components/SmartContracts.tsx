@@ -15,7 +15,7 @@ import {
 } from "@/common/ui/components";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { CustomInput, Label } from "./CreateForm/components";
+import { CustomInput, Label } from "./components";
 import validateEVMAddress from "../utils/validateEVMAddress";
 
 type AddChainSelectorProps = {
@@ -138,7 +138,7 @@ const SmartContract = ({
 
   return (
     <>
-      <div className="bg-neutral-3 md:hidden h-[1px] w-full" />
+      <div className="bg-neutral-3 h-[1px] w-full md:hidden" />
       <AddChainSelector
         defaultValue={chain}
         disabled={isPreview}

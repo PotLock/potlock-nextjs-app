@@ -15,12 +15,9 @@ import {
   PotDonation,
   PotDonationArgs,
   UpdatePotArgs,
-} from "./interface";
+} from "./interfaces";
 
-/**
- * NEAR Contract API
- */
-export const contractApi = (potId: string) =>
+const contractApi = (potId: string) =>
   naxiosInstance.contractApi({
     contractId: potId,
     cache: new MemoryCache({ expirationTime: 10 }), // 10 seg

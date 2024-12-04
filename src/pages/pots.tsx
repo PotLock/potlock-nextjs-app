@@ -25,13 +25,13 @@ const Banner = () => {
 
   return (
     <div className="relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden bg-hero">
-      <div className="z-1 max-md:p-[64px_20px] relative flex flex-col justify-center p-[64px]">
+      <div className="z-1 relative flex flex-col justify-center p-[64px] max-md:p-[64px_20px]">
         <h3 className="font-500 mb-6 mt-0 text-sm uppercase tracking-[1.12px]">Explore Pots</h3>
-        <h1 className="font-500 max-md:text-[36px] m-0 font-lora text-[40px] tracking-tight">
+        <h1 className="font-500 m-0 font-lora text-[40px] tracking-tight max-md:text-[36px]">
           Donate to Matching Rounds <br className="max-md:hidden" /> to Get Your Contributions
           Amplified.
         </h1>
-        <div className="max-md:flex-col max-md:gap-4 mt-6 mt-[40px] flex items-center gap-8 max-xs:w-full max-xs:p-[12px_0px]">
+        <div className="max-xs:w-full max-xs:p-[12px_0px] mt-6 mt-[40px] flex items-center gap-8 max-md:flex-col max-md:gap-4">
           {isPotDeploymentAvailable && (
             <Button asChild>
               <Link href={hrefByRouteName.DEPLOY_POT}>Deploy Pot</Link>

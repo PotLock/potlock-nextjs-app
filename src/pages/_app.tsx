@@ -19,7 +19,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import { APP_METADATA } from "@/common/constants";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
-import { AuthProvider } from "@/entities/session";
+import { SessionProvider } from "@/entities/session";
 import { AppBar } from "@/layout/AppBar";
 import { dispatch, store } from "@/store";
 
@@ -51,14 +51,14 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
 
       <ReduxProvider {...{ store }}>
         <NiceModalProvider>
-          <AuthProvider>
+          <SessionProvider>
             <div
               className={`${cn("flex h-full flex-col items-center font-lora antialiased", lora.variable)}`}
             >
               <AppBar />
               {getLayout(<Component {...pageProps} />)}
             </div>
-          </AuthProvider>
+          </SessionProvider>
         </NiceModalProvider>
         <Toaster />
       </ReduxProvider>

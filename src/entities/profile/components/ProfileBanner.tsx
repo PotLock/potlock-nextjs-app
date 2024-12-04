@@ -18,10 +18,10 @@ export const ProfileBanner: React.FC<ProfileBannerProps> = ({ isProject, account
   const { avatarSrc, backgroundSrc } = useProfileData(accountId);
 
   // get nadabot status on the donor page
-  let nadaBotVerified = false;
+  let isHumanVerified = false;
   const isHuman = useIsHuman(accountId);
   if (!isHuman.loading && !isProject) {
-    nadaBotVerified = isHuman.nadaBotVerified;
+    isHumanVerified = isHuman.isHumanVerified;
   }
 
   // get registration if it is on project page
@@ -43,7 +43,7 @@ export const ProfileBanner: React.FC<ProfileBannerProps> = ({ isProject, account
       </div>
 
       {/* profile image */}
-      <div className="md:pl-16 relative z-[6] flex -translate-y-2/4 items-end pl-2">
+      <div className="relative z-[6] flex -translate-y-2/4 items-end pl-2 md:pl-16">
         <div
           className={cn(
             "p-1.25 relative h-[120px] w-[120px] rounded-full bg-white",
@@ -63,7 +63,7 @@ export const ProfileBanner: React.FC<ProfileBannerProps> = ({ isProject, account
         {/* Status */}
         <div
           className={cn(
-            "md:gap-6 relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-2",
+            "relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-2 md:gap-6",
           )}
         >
           {registration.id ? (
@@ -76,13 +76,13 @@ export const ProfileBanner: React.FC<ProfileBannerProps> = ({ isProject, account
               {projectStatusIcons[registration.status].icon}
 
               <div
-                className="md:block hidden"
+                className="hidden md:block"
                 style={{ color: projectStatusIcons[registration.status].color }}
               >
                 {registration.status}
               </div>
             </div>
-          ) : nadaBotVerified ? (
+          ) : isHumanVerified ? (
             <div
               className={cn(
                 "flex items-center gap-1 overflow-hidden rounded-[20px] bg-white",

@@ -45,5 +45,4 @@ export const useGlobalStoreSelector: TypedUseSelectorHook<AppState> = useSelecto
 export const resetStore = () => {
   dispatch.projectEditor.RESET();
   dispatch.nav.RESET();
-  dispatch.profiles.RESET();
 };

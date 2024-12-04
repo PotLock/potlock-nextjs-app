@@ -68,7 +68,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
   };
 
   return (
-    <div className=" md:rounded-[16px] md:p-5 md:w-full mx-auto my-2 max-w-[896px] p-6 font-sans">
+    <div className=" md:w-full md:rounded-[16px] md:p-5 mx-auto my-2 max-w-[896px] p-6 font-sans">
       <Form {...form}>
         <form
           onSubmit={(e) => {

@@ -24,7 +24,7 @@ export const CartWidget: React.FC<CartWidgetProps> = () => {
   const [directAmount, setDirectAmount] = useState(0);
 
   return (
-    <div className="md:flex-row flex h-fit flex-col gap-6 p-6">
+    <div className="flex h-fit flex-col gap-6 p-6 md:flex-row">
       <div className="flex h-fit flex-1 flex-col gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">

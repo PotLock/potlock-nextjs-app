@@ -68,7 +68,7 @@ const SinglePost = () => {
   return (
     <div
       style={{ boxShadow: "0px 8px 24px rgba(149, 157, 165, 0.2)" }}
-      className="2xl-container md:px-10 px w-full rounded-2xl p-8 px-5 pb-12"
+      className="2xl-container px w-full rounded-2xl p-8 px-5 pb-12 md:px-10"
     >
       <div
         onClick={() => router.push(`/user/${post.accountId}`)}

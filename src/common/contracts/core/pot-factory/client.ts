@@ -6,9 +6,9 @@ import { naxiosInstance } from "@/common/api/near";
 import { FULL_TGAS } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 
-import { PotArgs, PotDeploymentResult, PotFactoryConfig } from "./interface";
+import { PotArgs, PotDeploymentResult, PotFactoryConfig } from "./interfaces";
 
-export const contractApi = naxiosInstance.contractApi({
+const contractApi = naxiosInstance.contractApi({
   contractId: POT_FACTORY_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 5 }), // 10 seg
 });

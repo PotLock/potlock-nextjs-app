@@ -35,13 +35,13 @@ const FeedsTab = () => {
     () => (
       <div
         className={cn(
-          "md:flex-col md:px-[105px] md:py-[68px] rounded-3",
+          "rounded-3 md:flex-col md:px-[105px] md:py-[68px]",
           "flex flex-col-reverse items-center justify-between bg-[#f6f5f3] px-6 py-4",
         )}
       >
         <p
           className={cn(
-            "font-italic font-500 md:text-[22px] text-4 mb-4 max-w-[290px]",
+            "font-italic font-500 text-4 mb-4 max-w-[290px] md:text-[22px]",
             "text-center font-lora text-[#292929]",
           )}
         >
@@ -103,7 +103,7 @@ const FeedsTab = () => {
       {walletApi?.accountId && potApplications?.includes(walletApi?.accountId) && (
         <CreatePost accountId={walletApi?.accountId} />
       )}
-      <div className="md:gap-1 my-6 flex items-center gap-3">
+      <div className="my-6 flex items-center gap-3 md:gap-1">
         {tabs.map((selectedTab) => (
           <button
             key={selectedTab.value}
