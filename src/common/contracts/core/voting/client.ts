@@ -1,4 +1,6 @@
-import naxios, { Network } from "@wpdas/naxios";
+import naxios, { MemoryCache } from "@wpdas/naxios";
+
+import { naxiosInstance } from "@/common/api/near";
 
 import type {
   AccountId,
@@ -24,8 +26,11 @@ class VotingClient implements Omit<VotingContract, "new"> {
    * @param contractId The NEAR account ID of the deployed voting contract
    * @param network The NEAR network to connect to (mainnet, testnet, etc.)
    */
-  constructor(contractId: string, network: Network) {
-    this.contract = new naxios({ contractId, network }).contractApi();
+  constructor(naxiosInstance: naxios, contractId: string) {
+    this.contract = naxiosInstance.contractApi({
+      contractId,
+      cache: new MemoryCache({ expirationTime: 60 }),
+    });
   }
 
   // View Methods
@@ -266,5 +271,5 @@ class VotingClient implements Omit<VotingContract, "new"> {
  * @param contractId The NEAR account ID of the deployed voting contract
  * @param network The NEAR network to connect to
  */
-export const createVotingClient = (contractId: string, network: Network): VotingClient =>
-  new VotingClient(contractId, network);
+export const createVotingClient = (contractId: string): VotingClient =>
+  new VotingClient(naxiosInstance, contractId);
