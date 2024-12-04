@@ -58,7 +58,7 @@ const DialogContent = forwardRef<
           ref={ref}
           className={cn(
             "sm:min-w-auto fixed left-[50%] top-[50%] z-50 flex h-full w-full min-w-full flex-col",
-            "sm:h-auto sm:max-w-xl sm:rounded-lg items-stretch",
+            "items-stretch sm:h-auto sm:max-w-xl sm:rounded-lg",
             "bg-background translate-x-[-50%] translate-y-[-50%] shadow-lg",
             "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -169,7 +169,7 @@ const DialogHeaderPattern: React.FC<{ className?: string }> = (props) => (
 const DialogHeader = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "pt-13 sm:rounded-t-lg sm:px-5 flex h-[max-content] w-full flex-col gap-2 bg-[var(--primary-600)] px-4 pb-5",
+      "pt-13 flex h-[max-content] w-full flex-col gap-2 bg-[var(--primary-600)] px-4 pb-5 sm:rounded-t-lg sm:px-5",
       "text-left text-white",
       className,
     )}

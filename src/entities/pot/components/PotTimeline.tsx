@@ -88,7 +88,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, has
     <div
       onClick={toggleMobileMenu}
       className={cn(
-        "2xl:pointer-events-none h-a 2xl:h-14 cursor-pointer",
+        "h-a cursor-pointer 2xl:pointer-events-none 2xl:h-14",
         "flex w-full items-center justify-center gap-4 px-4",
         classNames?.root,
       )}
@@ -150,7 +150,7 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, has
       </Container>
 
       <svg
-        className="xl:hidden transition-300 w-4 transition-all ease-in-out"
+        className="transition-300 w-4 transition-all ease-in-out xl:hidden"
         style={{
           rotate: isMobileMenuActive ? "180deg" : "0deg",
         }}

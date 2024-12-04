@@ -18,7 +18,7 @@ export const CartBreakdown: React.FC<CartBreakdownProps> = () => {
   };
 
   return (
-    <Card className="md:w-80 h-fit w-full">
+    <Card className="h-fit w-full md:w-80">
       <CardHeader>
         <CardTitle>Breakdown Summary</CardTitle>
       </CardHeader>

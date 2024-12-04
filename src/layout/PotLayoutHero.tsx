@@ -70,8 +70,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   return (
     <div
       className={cn(
-        "md:p-2 flex flex-col items-center justify-start p-1",
-        "md:w-a md:bg-neutral-50 w-full rounded-2xl",
+        "flex flex-col items-center justify-start p-1 md:p-2",
+        "md:w-a w-full rounded-2xl md:bg-neutral-50",
       )}
     >
       {pot ? (
@@ -82,11 +82,11 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
       <div
         className={cn(
-          "min-h-122 md:p-14 md:pt-14 flex flex-col items-start justify-start pt-10",
-          "lg:gap-8 bg-background gap-10 self-stretch rounded-lg",
+          "min-h-122 flex flex-col items-start justify-start pt-10 md:p-14 md:pt-14",
+          "bg-background gap-10 self-stretch rounded-lg lg:gap-8",
         )}
       >
-        <div className="lg:flex-row flex w-full flex-col items-start justify-between gap-10">
+        <div className="flex w-full flex-col items-start justify-between gap-10 lg:flex-row">
           <div className="max-w-126.5 min-w-87.5 flex flex-col items-start justify-start gap-10">
             {pot ? (
               <h1
@@ -143,7 +143,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             )}
 
             {isSignedIn && (
-              <div className="lg:justify-end flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-sm lg:justify-end">
                 <ClipboardCopyButton text={referrerPotLink} customIcon={<VolunteerIcon />} />
                 <span className="text-neutral-950">{"Earn referral fees"}</span>
               </div>
@@ -153,7 +153,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
         <div
           className={cn(
-            "md:flex-row md:items-center flex flex-col justify-between gap-8",
+            "flex flex-col justify-between gap-8 md:flex-row md:items-center",
             "mt-a w-full self-stretch border-t border-neutral-200 pt-4",
           )}
         >

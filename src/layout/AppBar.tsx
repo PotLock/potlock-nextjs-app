@@ -45,7 +45,7 @@ const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <button
       type="button"
-      className="md:hidden flex items-center justify-between focus:outline-none"
+      className="flex items-center justify-between focus:outline-none md:hidden"
       onClick={onClick}
     >
       <svg
@@ -99,14 +99,14 @@ export const AppBar = () => {
 
   return (
     <>
-      <nav className="max-sm:px-1 md:h-[96px] 2xl-container z-50 mx-auto flex w-full content-between items-center justify-between self-stretch bg-transparent px-10 pb-6 pt-6">
+      <nav className="2xl-container z-50 mx-auto flex w-full content-between items-center justify-between self-stretch bg-transparent px-10 pb-6 pt-6 max-sm:px-1 md:h-[96px]">
         {/* Left */}
         <div className="flex">
           <div className="mr-12 flex flex-row items-center justify-center">
             {/* Logo */}
             <Link
               href="/"
-              className="decoration-none hover:decoration-none max-sm:mr-0 sm:mr-4 mr-12 flex items-baseline gap-2"
+              className="decoration-none hover:decoration-none mr-12 flex items-baseline gap-2 max-sm:mr-0 sm:mr-4"
             >
               <Image
                 src="https://ipfs.near.social/ipfs/bafkreiafms2jag3gjbypfceafz2uvs66o25qc7m6u6hkxfyrzfoeyvj7ru"
@@ -115,12 +115,12 @@ export const AppBar = () => {
                 height={23.94}
               />
 
-              <p className="max-sm:hidden text-center text-xl font-bold">{"POTLOCK"}</p>
+              <p className="text-center text-xl font-bold max-sm:hidden">{"POTLOCK"}</p>
             </Link>
           </div>
 
           <div className="flex flex-row items-center justify-center">
-            <div className="max-md:hidden flex flex-row items-center justify-center">
+            <div className="flex flex-row items-center justify-center max-md:hidden">
               {links.map(({ url, label, disabled }) => {
                 const isActive = isClient ? url === router.pathname : false;
                 return (

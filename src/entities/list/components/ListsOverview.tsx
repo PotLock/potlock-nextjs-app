@@ -99,9 +99,9 @@ export const ListsOverview = ({
   const createRoute = useCallback(() => push(`/list/create`), []);
 
   return (
-    <div className="md:px-10 md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
+    <div className="flex w-full flex-col px-2 pt-10 md:px-10 md:pb-0 md:pt-12">
       <div className="flex w-full flex-col gap-5">
-        <div className="md:flex-row md:items-center md:gap-0 flex flex-col justify-between gap-3">
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-0">
           <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             {currentListType}
             <span style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}>
@@ -117,7 +117,7 @@ export const ListsOverview = ({
 
           <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
         </div>
-        <div className="md:gap-1 flex items-center gap-3">
+        <div className="flex items-center gap-3 md:gap-1">
           {buttons.map(
             ({ label, fetchFunction, type, condition = true }) =>
               condition && (
@@ -135,7 +135,7 @@ export const ListsOverview = ({
       {loading ? (
         Array.from({ length: 6 }, (_, index) => <ListCardSkeleton key={index} />)
       ) : filteredRegistrations.length ? (
-        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8 pb-10">
+        <div className="mt-8 grid w-full grid-cols-1 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3">
           {filteredRegistrations.map((item, index) => {
             // Check if cover_image is present, otherwise use a random background image
             let background = "";

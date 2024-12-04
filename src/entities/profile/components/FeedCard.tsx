@@ -53,7 +53,7 @@ export const FeedCard = ({ post }: PostType) => {
   return (
     <div
       onClick={handleCardClick}
-      className="md:w-100 md:w-full mb-4 cursor-pointer rounded-lg bg-white p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg"
+      className="md:w-100 mb-4 cursor-pointer rounded-lg bg-white p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg md:w-full"
     >
       <div className="mb-4 flex items-center justify-between">
         <div className="flex">

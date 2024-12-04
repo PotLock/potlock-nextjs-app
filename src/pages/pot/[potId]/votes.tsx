@@ -180,7 +180,7 @@ export default function PotVotesTab() {
       <div className="flex flex-row">
         <div className="w-full">
           {/* Header */}
-          <div className={cn("md:static absolute inset-x-0 w-full")}>
+          <div className={cn("absolute inset-x-0 w-full md:static")}>
             <div
               className={cn(
                 "flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]",
@@ -206,7 +206,7 @@ export default function PotVotesTab() {
                   <Star className="h-[18px] w-[18px]" />
 
                   <span className="flex items-center gap-2">
-                    <span className={cn("md:inline-flex hidden whitespace-nowrap font-medium")}>
+                    <span className={cn("hidden whitespace-nowrap font-medium md:inline-flex")}>
                       {`${showWeightBoost ? "Hide" : "View"} Weight Boost`}{" "}
                     </span>
 
@@ -216,7 +216,7 @@ export default function PotVotesTab() {
                   </span>
 
                   <ChevronRight
-                    className={cn("md:block relative hidden h-[18px] w-[18px] text-[#EA6A25]")}
+                    className={cn("relative hidden h-[18px] w-[18px] text-[#EA6A25] md:block")}
                   />
                 </div>
 
@@ -231,14 +231,14 @@ export default function PotVotesTab() {
 
                   <span
                     className={cn(
-                      "md:inline-flex hidden items-center gap-2 whitespace-nowrap font-medium",
+                      "hidden items-center gap-2 whitespace-nowrap font-medium md:inline-flex",
                     )}
                   >
                     {`${showVotingRules ? "Hide" : "View"} Voting Rules`}
                   </span>
 
                   <ChevronRight
-                    className={cn("md:block hidden h-[18px] w-[18px] text-[#EA6A25]")}
+                    className={cn("hidden h-[18px] w-[18px] text-[#EA6A25] md:block")}
                   />
                 </div>
               </div>
@@ -253,14 +253,14 @@ export default function PotVotesTab() {
               <h4 className="font-semibold">{"PROJECTS"}</h4>
 
               <div className="flex gap-6">
-                <h4 className={cn("md:block hidden text-right font-semibold")}>{"VOTES"}</h4>
-                <h4 className={cn("md:block hidden text-right font-semibold")}>{"ACTIONS"}</h4>
+                <h4 className={cn("hidden text-right font-semibold md:block")}>{"VOTES"}</h4>
+                <h4 className={cn("hidden text-right font-semibold md:block")}>{"ACTIONS"}</h4>
               </div>
             </div>
           </div>
 
           {/* Project List */}
-          <div className={cn("md:mt-1 mt-30 space-y-4")}>
+          <div className={cn("mt-30 space-y-4 md:mt-1")}>
             {filteredProjects.map((project) => (
               <label
                 key={project.id}
@@ -288,11 +288,11 @@ export default function PotVotesTab() {
                 <div className="min-w-0 flex-1">
                   <div className="truncate font-medium">{project.name}</div>
                   <div
-                    className={cn("md:hidden text-sm text-gray-500")}
+                    className={cn("text-sm text-gray-500 md:hidden")}
                   >{`${project.votes} Votes`}</div>
                 </div>
 
-                <div className={cn("md:block hidden text-right")}>{project.votes}</div>
+                <div className={cn("hidden text-right md:block")}>{project.votes}</div>
 
                 <Button
                   variant={"standard-outline"}

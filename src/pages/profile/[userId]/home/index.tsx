@@ -21,7 +21,7 @@ const HomeTab = () => {
     <div className="mb-18 flex w-full flex-col">
       {/* Header Container */}
       <div className="gap-2xl flex flex-col items-start justify-start">
-        <h2 className="font-500 md:text-[40px] font-lora text-[32px] text-[#2e2e2e]">
+        <h2 className="font-500 font-lora text-[32px] text-[#2e2e2e] md:text-[40px]">
           About {profile?.name}
         </h2>
       </div>

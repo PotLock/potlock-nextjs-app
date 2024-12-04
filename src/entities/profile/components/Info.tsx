@@ -72,7 +72,7 @@ const Info = ({ accountId, isProject }: Props) => {
 
   return (
     <div
-      className={`md:px-[4.5rem] flex w-full flex-row flex-wrap gap-2 px-[1rem] ${!isProject ? "mb-12" : ""}`}
+      className={`flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem] ${!isProject ? "mb-12" : ""}`}
     >
       {/* NameContainer */}
       <div className="flex w-full flex-wrap gap-8">

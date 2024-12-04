@@ -230,7 +230,7 @@ export const ListFormDetails: React.FC = () => {
 
   return (
     <>
-      <div className=" md:border md:border-[#DBDBDB] md:rounded-[16px] md:p-10 md:w-[720px] mx-auto my-8 max-w-[896px] p-6 font-sans">
+      <div className=" mx-auto my-8 max-w-[896px] p-6 font-sans md:w-[720px] md:rounded-[16px] md:border md:border-[#DBDBDB] md:p-10">
         <h2 className="mb-6 text-[18px] font-semibold">List Details</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
@@ -306,15 +306,15 @@ export const ListFormDetails: React.FC = () => {
               style={{
                 boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
               }}
-              className=" md:items-start md:space-y-0 m-0 !mb-10 flex min-h-[100px] w-full flex-col items-start rounded-[8px] p-0 "
+              className=" m-0 !mb-10 flex min-h-[100px] w-full flex-col items-start rounded-[8px] p-0 md:items-start md:space-y-0 "
             >
-              <div className="md:mr-5 flex w-full flex-row items-start justify-between gap-3  p-2 px-4">
+              <div className="flex w-full flex-row items-start justify-between gap-3 p-2  px-4 md:mr-5">
                 <span className="mr-4 mt-2 font-semibold text-gray-700">Owner</span>
                 <div className="flex items-center gap-2 p-2">
                   <img
                     src={profileImage || "https://via.placeholder.com/40"}
                     alt="Owner"
-                    className="md:w-[24px] md:h-[24px] h-7 w-7 rounded-full  "
+                    className="h-7 w-7 rounded-full md:h-[24px] md:w-[24px]  "
                   />
                   <span className="text-[14px] text-[#292929]">
                     {onEditPage ? watch("owner") : walletApi?.accountId}
@@ -338,7 +338,7 @@ export const ListFormDetails: React.FC = () => {
                         type: "TRANSFER_OWNERSHIP",
                       })
                     }
-                    className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70 md:mb-0"
                   >
                     Transfer
                   </button>
@@ -350,7 +350,7 @@ export const ListFormDetails: React.FC = () => {
             style={{
               boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
             }}
-            className="md:flex-row md:items-start md:space-y-0 flex min-h-[100px] flex-col  items-start rounded-[8px] p-4"
+            className="flex min-h-[100px] flex-col items-start rounded-[8px] p-4  md:flex-row md:items-start md:space-y-0"
           >
             <div className="flex items-center"></div>
             <div className="w-full translate-y-1">
@@ -389,7 +389,7 @@ export const ListFormDetails: React.FC = () => {
               style={{
                 boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
               }}
-              className="md:flex-row md:items-start md:space-y-0 flex min-h-[100px] w-full flex-col items-start rounded-[8px] p-4"
+              className="flex min-h-[100px] w-full flex-col items-start rounded-[8px] p-4 md:flex-row md:items-start md:space-y-0"
             >
               <div className=" w-full translate-y-1">
                 <div className="flex w-full flex-col items-start  gap-3">
@@ -446,7 +446,7 @@ export const ListFormDetails: React.FC = () => {
             </div>
           </div>
           <div
-            className={`md:flex-row md:flex-row flex w-full flex-col-reverse justify-between  ${onEditPage ? "" : "md:justify-end"} `}
+            className={`flex w-full flex-col-reverse justify-between md:flex-row md:flex-row  ${onEditPage ? "" : "md:justify-end"} `}
           >
             {onEditPage && watch("owner") === walletApi?.accountId && (
               <button
@@ -456,7 +456,7 @@ export const ListFormDetails: React.FC = () => {
                 Delete List
               </button>
             )}
-            <div className="md:justify-end md:flex-row md:space-y-0 md:space-x-4 flex flex-col-reverse justify-center">
+            <div className="flex flex-col-reverse justify-center md:flex-row md:justify-end md:space-x-4 md:space-y-0">
               <button
                 type="button"
                 className="mb-4 rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition hover:bg-gray-200"
@@ -467,7 +467,7 @@ export const ListFormDetails: React.FC = () => {
               <button
                 type="submit"
                 id="list-submit-button"
-                className="md:mb-0 mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800"
+                className="mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 md:mb-0"
               >
                 {onEditPage ? "Save Settings" : "Save List"}
               </button>

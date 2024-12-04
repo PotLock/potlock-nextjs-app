@@ -15,7 +15,7 @@ export type ChecklistProps = {
 export const Checklist: React.FC<ChecklistProps> = ({ title, requirements, error }) => (
   <div
     className={cn(
-      "xl:w-126.5 min-w-87.5 lg:w-fit flex h-fit w-full flex-col items-start justify-start",
+      "xl:w-126.5 min-w-87.5 flex h-fit w-full flex-col items-start justify-start lg:w-fit",
       "rounded-2xl bg-neutral-50 p-2",
     )}
   >

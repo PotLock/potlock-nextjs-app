@@ -37,10 +37,10 @@ export const Filter = ({ groups, popoverProps }: Props) => {
       <PopoverTrigger asChild>
         <Button variant="standard-outline">
           <Image src={"/assets/icons/filter-icon.svg"} alt="sort" width={18} height={18} />
-          <p className="md:block hidden">Filter</p>
+          <p className="hidden md:block">Filter</p>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="sm:w-[466px] flex w-80 flex-col gap-6">
+      <PopoverContent className="flex w-80 flex-col gap-6 sm:w-[466px]">
         {groups.map(({ label, options, props, type }) => (
           <div className="flex flex-col gap-3" key={label}>
             <Label className=" w-full text-[#656565] first-of-type:mt-0">Filter by {label}</Label>

@@ -92,7 +92,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const appendixElement = useMemo(
       () =>
         appendix ? (
-          <span className="prose sm:text-sm flex items-center text-nowrap text-gray-500">
+          <span className="prose flex items-center text-nowrap text-gray-500 sm:text-sm">
             {appendix}
           </span>
         ) : null,

@@ -85,7 +85,7 @@ export const ActivePots = () => {
   }, [completedPots]);
 
   return (
-    <div className="md:px-10 md:py-12 flex w-full flex-col px-[0px] py-10">
+    <div className="flex w-full flex-col px-[0px] py-10 md:px-10 md:py-12">
       <div className="flex w-full justify-between gap-5">
         <p className="font-600 mb-4 flex items-center gap-4 text-[18px]">
           Active Pots <span className="font-600">{activePots.length}</span>
@@ -97,7 +97,7 @@ export const ActivePots = () => {
       </div>
       {isLoading && <p className="m-[24px_0px] self-start">Loading</p>}
       {!isLoading && activePots.length ? (
-        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+        <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {activePotCards}
         </div>
       ) : (
@@ -112,7 +112,7 @@ export const ActivePots = () => {
           Completed Pots <span className="font-600">{completedPots.length}</span>
         </p>
       </div>
-      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+      <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {completedPotCards}
       </div>
     </div>

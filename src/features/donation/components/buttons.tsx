@@ -28,10 +28,10 @@ export const DonateRandomly = () => {
   };
 
   return isRandomPGRegistryEntryLoading ? (
-    <Skeleton className="md:w-[180px] h-10 w-full bg-[rgba(246,118,122,0.3)]" />
+    <Skeleton className="h-10 w-full bg-[rgba(246,118,122,0.3)] md:w-[180px]" />
   ) : (
     randomProjectAccountId && (
-      <Button className="md:w-[180px] w-full" onClick={onDonateRandomlyClick}>
+      <Button className="w-full md:w-[180px]" onClick={onDonateRandomlyClick}>
         {"Donate Randomly"}
       </Button>
     )

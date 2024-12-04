@@ -231,7 +231,7 @@ export default function PotDonationsTab() {
   }
 
   return (
-    <div className="md:py-12 flex w-full flex-col py-10">
+    <div className="flex w-full flex-col py-10 md:py-12">
       <div className="flex flex-col gap-[1.5rem]">
         <div className="font-600 text-[18px] text-[#292929]">
           All Donations
