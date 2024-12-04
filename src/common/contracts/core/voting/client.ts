@@ -10,7 +10,7 @@ import type {
   Vote,
   VotingContract,
   VotingType,
-} from "./interface";
+} from "./interfaces";
 
 /**
  * Client implementation for interacting with the Voting smart contract
@@ -25,11 +25,7 @@ class VotingClient implements Omit<VotingContract, "new"> {
    * @param network The NEAR network to connect to (mainnet, testnet, etc.)
    */
   constructor(contractId: string, network: Network) {
-    const naxiosInstance = new naxios({
-      contractId,
-      network,
-    });
-    this.contract = naxiosInstance.contractApi();
+    this.contract = new naxios({ contractId, network }).contractApi();
   }
 
   // View Methods

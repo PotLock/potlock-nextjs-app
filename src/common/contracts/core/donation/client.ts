@@ -9,7 +9,7 @@ import {
   DirectDonation,
   DirectDonationArgs,
   DirectDonationConfig,
-} from "./interface";
+} from "./interfaces";
 
 const contractApi = naxiosInstance.contractApi({
   contractId: DONATION_CONTRACT_ACCOUNT_ID,

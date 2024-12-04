@@ -1,5 +1,7 @@
-import * as votingClient from "./client";
+import { NETWORK, VOTING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 
-// export * from "./interface.d";
+import { createVotingClient } from "./client";
 
-export { votingClient };
+export * from "./interfaces";
+
+export const votingClient = createVotingClient(VOTING_CONTRACT_ACCOUNT_ID, NETWORK);
