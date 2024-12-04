@@ -10,14 +10,14 @@ export default function PotDeployPage() {
     <PageWithBanner>
       <section
         className={cn(
-          "md:px-10 md:py-16 mb-6 flex w-full flex-col gap-6 border-[#f8d3b0] bg-hero px-5 py-12",
+          "mb-6 flex w-full flex-col gap-6 border-[#f8d3b0] bg-hero px-5 py-12 md:px-10 md:py-16",
         )}
       >
         <span className="prose uppercase" un-font="500" un-text="2.75 md:sm">
           Deploy Pot
         </span>
 
-        <h1 className="prose font-500 md:text-5xl text-8 font-lora">
+        <h1 className="prose font-500 text-8 font-lora md:text-5xl">
           Deploy a Quadratic Funding Round
         </h1>
 

@@ -29,9 +29,9 @@ export const CampaignSettings = () => {
       timeZone: "UTC",
     });
   return (
-    <div className="md:mx-3 md:w-[70%] w-full">
-      <div className="md:gap-0 md:flex-row md:items-center flex w-full flex-col justify-between gap-6">
-        <div className="md:w-[40%] md:flex-row md:items-center flex flex-wrap items-start justify-between gap-5">
+    <div className="w-full md:mx-3 md:w-[70%]">
+      <div className="flex w-full flex-col justify-between gap-6 md:flex-row md:items-center md:gap-0">
+        <div className="flex flex-wrap items-start justify-between gap-5 md:w-[40%] md:flex-row md:items-center">
           <div className="flex flex-col gap-2">
             <p className="text-[#7B7B7B]">Organizer</p>
             <Link
@@ -76,7 +76,7 @@ export const CampaignSettings = () => {
             <h1 className="mb-4 text-xl font-semibold">{campaign?.name}</h1>
             <p className="text-[#292929]">{campaign?.description}</p>
           </div>
-          <div className="md:w-[80%] mt-12 flex w-full flex-wrap items-center justify-between">
+          <div className="mt-12 flex w-full flex-wrap items-center justify-between md:w-[80%]">
             <BarCard
               title="Funding goal"
               value={`${yoctoNearToFloat(campaign?.target_amount as string)} NEAR`}

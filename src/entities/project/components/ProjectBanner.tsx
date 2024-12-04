@@ -22,7 +22,7 @@ const ProjectBanner = ({ projectId }: { projectId: string }) => {
     >
       <div className="flex flex-row items-center justify-center">
         <div
-          className="md:text-xl text-center text-xs font-semibold uppercase tracking-[0.015em]"
+          className="text-center text-xs font-semibold uppercase tracking-[0.015em] md:text-xl"
           onClick={() => (registration.admin_notes ? setToggle(!toggle) : "")}
           style={{
             color: registrationStatus.textColor,
@@ -32,14 +32,14 @@ const ProjectBanner = ({ projectId }: { projectId: string }) => {
           {registrationStatus.text}
           {registration.admin_notes && (
             <div
-              className={`md:text-xl ml-2 items-center gap-2 whitespace-nowrap text-xs font-semibold`}
+              className={`ml-2 items-center gap-2 whitespace-nowrap text-xs font-semibold md:text-xl`}
               style={{
                 color: registrationStatus.toggleColor,
               }}
             >
               (See {toggle ? "Less" : "Why"})
               <svg
-                className={`md:w-3 w-2 transition-all duration-300 ease-in-out`}
+                className={`w-2 transition-all duration-300 ease-in-out md:w-3`}
                 style={{
                   rotate: toggle ? "180deg" : "0deg",
                 }}

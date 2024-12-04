@@ -54,7 +54,7 @@ export const PotDonationEntry = ({
 
   return (
     <div
-      className="funding-row lg:flex-row flex-col"
+      className="funding-row flex-col lg:flex-row"
       style={{ borderTop: "1px solid rgb(199 199 199 / 50%)" }}
     >
       <FundingSrc>
@@ -91,7 +91,7 @@ export const PotDonationEntry = ({
         </div>
         {addTrailingZeros(donationAmount)}
       </div>
-      <div className="lg:justify-end flex w-[156px] items-center">
+      <div className="flex w-[156px] items-center lg:justify-end">
         {getTimePassed(paidAt, true)} ago
       </div>
     </div>

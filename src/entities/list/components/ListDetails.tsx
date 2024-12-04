@@ -163,9 +163,9 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
 
   return (
     <>
-      <div className="md:flex-row flex flex-col-reverse items-start justify-between">
-        <div className="md:w[45%] md:px-0 flex-col items-start px-[1rem]">
-          <div className="md:flex hidden flex-col">{nameContent}</div>
+      <div className="flex flex-col-reverse items-start justify-between md:flex-row">
+        <div className="md:w[45%] flex-col items-start px-[1rem] md:px-0">
+          <div className="hidden flex-col md:flex">{nameContent}</div>
           <div className="mt-4 w-full pt-0">
             <p className="mb-4 text-lg text-[#525252]">{listDetails.description}</p>
             <div className="mb-4 flex items-center gap-6">
@@ -251,8 +251,8 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
           </div>
         </div>
 
-        <div className="md:max-w-[54%] md:mb-0 mb-4 w-full">
-          <div className="md:hidden flex flex-col p-[1rem]">{nameContent}</div>
+        <div className="mb-4 w-full md:mb-0 md:max-w-[54%]">
+          <div className="flex flex-col p-[1rem] md:hidden">{nameContent}</div>
           <LazyLoadImage
             alt="alt-text"
             src={
@@ -264,16 +264,16 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
             width={500}
             height={300}
           />
-          <div className="md:rounded-[12px] m-0  w-full p-0" un-w="full" un-flex="~ col">
+          <div className="m-0 w-full  p-0 md:rounded-[12px]" un-w="full" un-flex="~ col">
             <LazyLoadImage
               src={listDetails.cover_image_url || "/assets/images/list-gradient-3.png"}
               alt="cover"
               width={500}
               height={300}
-              className="md:h-[320px] md:rounded-tl-[12px] md:rounded-tr-[12px] h-[188px] w-full object-cover"
+              className="h-[188px] w-full object-cover md:h-[320px] md:rounded-tl-[12px] md:rounded-tr-[12px]"
             />
           </div>
-          <div className="md:rounded-bl-md md:rounded-br-md flex h-16 items-center justify-between border border-[#dadbda] p-4">
+          <div className="flex h-16 items-center justify-between border border-[#dadbda] p-4 md:rounded-bl-md md:rounded-br-md">
             <p className="text-[14px] font-[500]">{listDetails?.registrations_count} Accounts</p>
             <div className="flex flex-row items-center gap-3">
               <button onClick={handleUpvote} className="focus:outline-none">

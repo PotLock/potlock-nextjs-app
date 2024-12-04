@@ -17,7 +17,7 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
   potId,
   classNames,
 }) => {
-  const { nadaBotVerified: isDonorNadabotVerified } = useIsHuman(walletApi.accountId ?? "unknown");
+  const { isHumanVerified: isDonorNadabotVerified } = useIsHuman(walletApi.accountId ?? "unknown");
 
   const { data: pot } = indexer.usePot({ potId });
 

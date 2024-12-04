@@ -13,12 +13,9 @@ import {
   Registration,
   RegistrationStatus,
   UpdateRegistration,
-} from "./interface";
+} from "./interfaces";
 
-/**
- * NEAR Contract API
- */
-export const contractApi = naxiosInstance.contractApi({
+const contractApi = naxiosInstance.contractApi({
   contractId: LISTS_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });

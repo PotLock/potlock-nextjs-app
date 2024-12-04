@@ -36,6 +36,7 @@ export interface ByAccountId {
 export type ContractConfig = ByAccountId & {};
 
 export type EnvConfig = {
+  platformName: string;
   network: Network;
   contractMetadata: { version: string; repoUrl: string };
   indexer: { api: { endpointUrl: string } };

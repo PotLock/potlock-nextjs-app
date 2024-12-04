@@ -8,7 +8,9 @@ import routesPath from "@/entities/core/routes";
 import { useWallet } from "@/entities/session";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-const useInitProjectState = () => {
+// TODO: Ditch Redux for this use case entirely!
+//! All form state management should be handled by react-hook-form
+export const useInitProjectState = () => {
   const { checkRegistrationStatus, accountId, checkPreviousProjectDataStatus } =
     useGlobalStoreSelector((state) => state.projectEditor);
 
@@ -40,14 +42,11 @@ const useInitProjectState = () => {
     if (isWalletReady) {
       if (isDao && daoAddress) {
         dispatch.projectEditor.setAccountId(daoAddress);
+        dispatch.projectEditor.setIsDao(isDao);
+        dispatch.projectEditor.setDaoAddress(daoAddress);
       } else if (wallet?.accountId) {
         dispatch.projectEditor.setAccountId(projectId || wallet.accountId);
       }
-
-      // Is Dao
-      dispatch.projectEditor.setIsDao(isDao);
-      // Dao Address
-      dispatch.projectEditor.setDaoAddress(isDao ? daoAddress : "");
     }
   }, [accountId, isDao, daoAddress, wallet?.accountId, isWalletReady, projectId]);
 
@@ -140,5 +139,3 @@ const useInitProjectState = () => {
     })();
   }, [isDao, daoAddress]);
 };
-
-export default useInitProjectState;

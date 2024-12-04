@@ -2,7 +2,7 @@ import { Big } from "big.js";
 import { utils } from "near-api-js";
 import { Metadata } from "next";
 
-import { NETWORK } from "./_config";
+import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant } from "./types";
 
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
@@ -23,7 +23,7 @@ export const APP_METADATA: Metadata & {
     images: { url: string };
   };
 } = {
-  title: "Potlock",
+  title: PLATFORM_NAME,
   description: "Bringing public goods funding to the table, built on NEAR",
   manifest: "/manifest.json",
 

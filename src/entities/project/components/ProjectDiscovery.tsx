@@ -131,7 +131,7 @@ export const ProjectDiscovery = () => {
   const numberOfPages = useMemo(() => Math.ceil(totalProjectCount / 30), [totalProjectCount]);
 
   return (
-    <div className="md:px-10 md:py-12 flex w-full flex-col px-2 py-10">
+    <div className="flex w-full flex-col px-2 py-10 md:px-10 md:py-12">
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           <span>{"All projects"}</span>
@@ -156,7 +156,7 @@ export const ProjectDiscovery = () => {
         </div>
       </div>
 
-      <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+      <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {isProjectLookupPending ? (
           <ProjectLookupPlaceholder />
         ) : (
@@ -199,7 +199,7 @@ export const ProjectDiscovery = () => {
             className="h-50 w-50 mb-4"
           />
 
-          <div className="md:flex-row flex flex-col items-center justify-center gap-2">
+          <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
             <p className="w-100 text-center font-lora italic">{"No results found"}</p>
           </div>
         </div>

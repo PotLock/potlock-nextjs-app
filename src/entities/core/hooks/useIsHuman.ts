@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getIsHuman } from "@/common/contracts/core/sybil";
 
 export const useIsHuman = (accountId?: string) => {
-  const [nadaBotVerified, setNadaBotVerified] = useState(false);
+  const [isHumanVerified, setNadaBotVerified] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
 
@@ -25,7 +25,7 @@ export const useIsHuman = (accountId?: string) => {
   }, [accountId]);
 
   return {
-    nadaBotVerified,
+    isHumanVerified,
     loading,
     error,
   };

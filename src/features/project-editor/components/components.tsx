@@ -18,7 +18,7 @@ import { ProjectCategoryVariant } from "@/entities/project";
 import { useGlobalStoreSelector } from "@/store";
 
 export const Row = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
-  <div className="max-md:grid-cols-[100%] mt-6 grid grid-cols-2 gap-6">{children}</div>
+  <div className="mt-6 grid grid-cols-2 gap-6 max-md:grid-cols-[100%]">{children}</div>
 );
 
 export const InputContainer = ({ children }: { children: JSX.Element | JSX.Element[] }) => (

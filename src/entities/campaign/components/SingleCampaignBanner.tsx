@@ -49,17 +49,17 @@ export const SingleCampaignBanner = () => {
     : false;
 
   return (
-    <div className="md:flex-row md:gap-0 flex w-full flex-col justify-between gap-4">
-      <div className="md:w-[70%] w-full  rounded-xl border border-gray-300">
+    <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:gap-0">
+      <div className="w-full rounded-xl  border border-gray-300 md:w-[70%]">
         <div className="relative">
           <LazyLoadImage
-            className="md:rounded inset-1 h-[348px] w-full rounded-xl object-cover"
+            className="inset-1 h-[348px] w-full rounded-xl object-cover md:rounded"
             src={campaign?.cover_image_url || "/assets/images/list-gradient-3.png"}
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
           <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
             <h1 className="text-[24px] font-bold text-white">{campaign?.name}</h1>
-            <div className="md:flex-row md:items-center md:text-[15px] m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white">
+            <div className="m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
               <div className="flex gap-1">
                 <p className="font-semibold">FOR</p>
                 <Link href={`/profile/${campaign?.recipient}`} target="_blank">
@@ -72,7 +72,7 @@ export const SingleCampaignBanner = () => {
                   </div>
                 </Link>
               </div>
-              <div className="md:flex hidden flex-col items-center bg-gray-800">
+              <div className="hidden flex-col items-center bg-gray-800 md:flex">
                 <span className="h-[18px] w-[2px] bg-white text-white" />{" "}
               </div>
               <div className="flex gap-1">
@@ -92,7 +92,7 @@ export const SingleCampaignBanner = () => {
         </div>
         <p className="p-6">{campaign?.description}</p>
       </div>
-      <div className="md:w-[27%] h-max w-full rounded-xl border border-[#DBDBDB] p-4">
+      <div className="h-max w-full rounded-xl border border-[#DBDBDB] p-4 md:w-[27%]">
         <div className="mb-5 border border-solid border-[#f4b37d] bg-[#fef6ee] p-4">
           <p className="text-[11px] font-semibold tracking-widest text-[#EA6A25]">
             TOTAL AMOUNT RAISED

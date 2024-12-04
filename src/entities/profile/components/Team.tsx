@@ -15,7 +15,7 @@ const TeamAvatar = ({ teamMemberId }: { teamMemberId: string }) => {
   const { profileImages } = useProfileData(teamMemberId);
 
   return (
-    <div className="md:h-[180px] md:w-[180px] h-[160px] w-[160px]">
+    <div className="h-[160px] w-[160px] md:h-[180px] md:w-[180px]">
       <img
         sizes="(max-width: 768px) 100vw"
         className="grayscale-100 h-full w-full rounded-[6px] object-cover transition-all hover:grayscale-0"
@@ -63,13 +63,13 @@ const Team = ({ profile }: Props) => {
   }, [profile]);
 
   return (
-    <div className="md:flex-row mt-8 flex flex-col items-start justify-start">
+    <div className="mt-8 flex flex-col items-start justify-start md:flex-row">
       {/* col 1 */}
-      <div className="md:w-[272px] mb-4 flex w-full">
+      <div className="mb-4 flex w-full md:w-[272px]">
         <h2 className="font-600 text-base text-[#2e2e2e]">Team members</h2>
       </div>
       {/* col 2 */}
-      <div className="md:ml-16 flex w-full">
+      <div className="flex w-full md:ml-16">
         {/* Team Members Container */}
         <div className="flex flex-wrap items-center justify-start gap-8">
           {team.length > 0 ? <Members team={team} /> : <NoTeam />}

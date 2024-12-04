@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { MdHowToVote } from "react-icons/md";
 
 import FileText from "@/common/assets/svgs/FileText";
-import HowToVote from "@/common/assets/svgs/HowToVote";
 import Star from "@/common/assets/svgs/Star";
 import { useRouteQuery } from "@/common/lib";
 import {
@@ -22,77 +22,10 @@ import {
 } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { VotingRulesPanel, VotingWeightBoostPanel } from "@/features/voting";
+import { VOTING_DUMMY_PROJECTS, VotingRulesPanel, VotingWeightBoostPanel } from "@/features/voting";
 import { PotLayout } from "@/layout/PotLayout";
 
-interface Project {
-  id: string;
-  name: string;
-  votes: number;
-  voted: boolean;
-  imageUrl: string;
-}
-
-const DUMMY_PROJECTS: Project[] = [
-  {
-    id: "1",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "2",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "3",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "4",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "5",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "6",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "7",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-  {
-    id: "8",
-    name: "Mike.near",
-    votes: 2000,
-    voted: false,
-    imageUrl: "https://picsum.photos/200/200/?blur",
-  },
-];
-
-type TabType = "all" | "voted" | "pending";
+type FilterType = "all" | "voted" | "pending";
 
 export default function PotVotesTab() {
   const {
@@ -105,15 +38,18 @@ export default function PotVotesTab() {
 
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<TabType>("all");
+  const [activeFilter, setFilter] = useState<FilterType>("all");
   const [showVotingRules, setShowVotingRules] = useState(false);
   const [showWeightBoost, setShowWeightBoost] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
 
   const [allProjectsCount, votedCount, pendingCount] = useMemo(() => {
-    const allProjects = DUMMY_PROJECTS.length;
-    const voted = DUMMY_PROJECTS.filter((project) => project.voted).length;
-    const pending = DUMMY_PROJECTS.length - voted;
+    const allProjects = VOTING_DUMMY_PROJECTS.length;
+
+    const voted = VOTING_DUMMY_PROJECTS.filter((project) => project.voted).length;
+
+    const pending = VOTING_DUMMY_PROJECTS.length - voted;
+
     return [allProjects, voted, pending];
   }, []);
 
@@ -136,22 +72,22 @@ export default function PotVotesTab() {
   };
 
   const filteredProjects = useMemo(() => {
-    const filtered = DUMMY_PROJECTS.filter((project) => {
-      if (activeTab === "voted") return project.voted;
-      if (activeTab === "pending") return !project.voted;
+    const filtered = VOTING_DUMMY_PROJECTS.filter((project) => {
+      if (activeFilter === "voted") return project.voted;
+      if (activeFilter === "pending") return !project.voted;
       return true;
     });
 
     const startIndex = (pageNumber - 1) * 5;
     const endIndex = startIndex + 5;
     return filtered.slice(startIndex, endIndex);
-  }, [activeTab, pageNumber]);
+  }, [activeFilter, pageNumber]);
 
   const totalProjectCountPerTab = useMemo(() => {
-    if (activeTab === "voted") return votedCount;
-    if (activeTab === "pending") return pendingCount;
+    if (activeFilter === "voted") return votedCount;
+    if (activeFilter === "pending") return pendingCount;
     return allProjectsCount;
-  }, [activeTab, allProjectsCount, votedCount, pendingCount]);
+  }, [activeFilter, allProjectsCount, votedCount, pendingCount]);
 
   const numberOfPages = useMemo(
     () => Math.ceil(totalProjectCountPerTab / 5),
@@ -163,17 +99,13 @@ export default function PotVotesTab() {
     const pages: (number | "ellipsis")[] = [];
 
     if (totalPages <= 7) {
-      // Show all pages if total is 7 or less
       pages.push(...Array.from({ length: totalPages }, (_, i) => i + 1));
     } else {
-      // Always show first page
       pages.push(1);
 
       if (pageNumber <= 4) {
-        // Near start
         pages.push(2, 3, 4, 5, "ellipsis", totalPages);
       } else if (pageNumber >= totalPages - 3) {
-        // Near end
         pages.push(
           "ellipsis",
           totalPages - 4,
@@ -183,7 +115,6 @@ export default function PotVotesTab() {
           totalPages,
         );
       } else {
-        // Middle
         pages.push("ellipsis", pageNumber - 1, pageNumber, pageNumber + 1, "ellipsis", totalPages);
       }
     }
@@ -207,206 +138,249 @@ export default function PotVotesTab() {
   }, [pageNumber, setPageNumber, numberOfPages]);
 
   return (
-    <div className="md:py-12 flex w-full flex-col py-5">
-      <div className="md:px-4 font-['Mona Sans'] md:space-y-6 mx-auto w-full max-w-6xl space-y-5">
-        {/* Search */}
-        <div className="relative">
-          <Input
-            type="search"
-            placeholder="Search Projects"
-            className="w-full bg-gray-50"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+    <div className={cn("flex w-full flex-col gap-6")}>
+      {/* Search */}
+      <div className="relative">
+        <Input
+          type="search"
+          placeholder={"Search Projects"}
+          className={cn("w-full bg-gray-50")}
+          value={searchQuery}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-        {/* Tabs */}
-        <div className="flex gap-3">
-          <FilterChip
-            variant={activeTab === "all" ? "brand-filled" : "brand-outline"}
-            onClick={() => setActiveTab("all")}
-            className="font-medium"
-          >
-            All{" "}
-            <h5
-              className={`ml-1 rounded-full px-1.5 ${activeTab === "all" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-            >
-              {allProjectsCount}
-            </h5>
-          </FilterChip>
-          <FilterChip
-            variant={activeTab === "voted" ? "brand-filled" : "brand-outline"}
-            onClick={() => setActiveTab("voted")}
-            className="font-medium"
-          >
-            Voted{" "}
-            <h5
-              className={`ml-1 rounded-full px-1.5 ${activeTab === "voted" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-            >
-              {votedCount}
-            </h5>
-          </FilterChip>
-          <FilterChip
-            variant={activeTab === "pending" ? "brand-filled" : "brand-outline"}
-            onClick={() => setActiveTab("pending")}
-            className="font-medium"
-          >
-            Pending{" "}
-            <h5
-              className={`ml-1 rounded-full px-1.5 ${activeTab === "pending" ? "border-orange-300 bg-orange-200 font-semibold" : "border-gray-300 bg-gray-200"}`}
-            >
-              {pendingCount}
-            </h5>
-          </FilterChip>
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-3">
+        <FilterChip
+          variant={activeFilter === "all" ? "brand-filled" : "brand-outline"}
+          onClick={() => setFilter("all")}
+          className="font-medium"
+          label="All"
+          count={allProjectsCount}
+        />
 
-        <div className="flex flex-row">
-          <div className="w-full">
-            {/* Header */}
-            <div className="md:static absolute inset-x-0 w-full">
-              <div className="md:rounded-tl-lg md:rounded-tr-lg flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]">
-                <div className="flex items-center gap-2">
-                  <HowToVote className="h-6 w-6" />
-                  <span className="font-semibold">
-                    {votedCount} Project{votedCount > 1 ? "s" : ""} Voted
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <div
-                    className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
-                    onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
-                  >
-                    <Star className="h-[18px] w-[18px]" />
-                    <span className="flex items-center gap-2">
-                      <span className="md:inline-flex hidden whitespace-nowrap font-medium">
-                        {showWeightBoost ? "Hide" : "View"} Weight Boost{" "}
-                      </span>
-                      <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
-                        x{initWeightBoost}
-                      </span>
-                    </span>
-                    <ChevronRight className="md:block relative hidden h-[18px] w-[18px] text-[#EA6A25]" />
-                  </div>
-                  <div
-                    className="inline-flex h-10 cursor-pointer items-center justify-start gap-2 rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5"
-                    onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
-                  >
-                    <FileText className="h-[18px] w-[18px]" />
-                    <span className="md:inline-flex hidden items-center gap-2 whitespace-nowrap font-medium">
-                      {showVotingRules ? "Hide" : "View"} Voting Rules
-                    </span>
-                    <ChevronRight className="md:block hidden h-[18px] w-[18px] text-[#EA6A25]" />
-                  </div>
-                </div>
+        <FilterChip
+          variant={activeFilter === "voted" ? "brand-filled" : "brand-outline"}
+          onClick={() => setFilter("voted")}
+          className="font-medium"
+          label="Voted"
+          count={votedCount}
+        />
+
+        <FilterChip
+          variant={activeFilter === "pending" ? "brand-filled" : "brand-outline"}
+          onClick={() => setFilter("pending")}
+          className="font-medium"
+          label="Pending"
+          count={pendingCount}
+        />
+      </div>
+
+      <div className="flex flex-row">
+        <div className="w-full">
+          {/* Header */}
+          <div className={cn("absolute inset-x-0 w-full md:static")}>
+            <div
+              className={cn(
+                "flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]",
+                "md:rounded-tl-lg md:rounded-tr-lg",
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <MdHowToVote className="h-6 w-6" />
+
+                <span className="font-semibold">
+                  {`${votedCount} Project${votedCount > 1 ? "s" : ""} Voted`}
+                </span>
               </div>
-              <div className="flex justify-between bg-[#f7f7f7] px-7 py-2 text-sm font-semibold text-gray-500">
-                <h4 className="font-semibold">PROJECTS</h4>
-                <div className="flex gap-6">
-                  <h4 className="md:block hidden text-right font-semibold">VOTES</h4>
-                  <h4 className="md:block hidden text-right font-semibold">ACTIONS</h4>
-                </div>
-              </div>
-            </div>
-            {/* Project List */}
-            <div className="md:mt-1 mt-30 space-y-4">
-              {filteredProjects.map((project) => (
-                <label
-                  key={project.id}
-                  className="md:p-4 flex items-center gap-4 rounded-lg py-4 hover:bg-gray-50"
-                  htmlFor={project.id}
+
+              <div className="flex gap-2">
+                <div
+                  className={cn(
+                    "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
+                    "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
+                  )}
+                  onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
                 >
-                  <Checkbox
-                    checked={selectedProjects.has(project.id)}
-                    onCheckedChange={() => handleProjectSelect(project.id)}
-                    id={project.id}
+                  <Star className="h-[18px] w-[18px]" />
+
+                  <span className="flex items-center gap-2">
+                    <span className={cn("hidden whitespace-nowrap font-medium md:inline-flex")}>
+                      {`${showWeightBoost ? "Hide" : "View"} Weight Boost`}{" "}
+                    </span>
+
+                    <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
+                      {`x${initWeightBoost}`}
+                    </span>
+                  </span>
+
+                  <ChevronRight
+                    className={cn("relative hidden h-[18px] w-[18px] text-[#EA6A25] md:block")}
                   />
-                  <Image
-                    src={project.imageUrl}
-                    alt={`Avatar for ${project.name}`}
-                    className="rounded-full"
-                    width={40}
-                    height={40}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate font-medium">{project.name}</div>
-                    <div className="md:hidden text-sm text-gray-500">{project.votes} Votes</div>
-                  </div>
-                  <div className="md:block hidden text-right">{project.votes}</div>
-                  <Button
-                    variant={"standard-outline"}
-                    disabled={project.voted}
-                    className="ml-auto w-20"
-                  >
-                    {project.voted ? "Voted" : "Vote"}
-                  </Button>
-                </label>
-              ))}
-            </div>
-            {/* Pagination */}
-            {numberOfPages > 1 && (
-              <Pagination className="mt-[24px]">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
-                    />
-                  </PaginationItem>
-                  {pageNumberButtons}
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() =>
-                        setPageNumber((prev) => Math.min(prev + 1, Math.ceil(numberOfPages)))
-                      }
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            )}
-            {/* Floating Action Bar */}
-            {selectedProjects.size > 0 && (
-              <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-lg border bg-white p-4 shadow-lg">
-                <div className="flex items-center gap-2">
-                  <Checkbox checked={true} />
-                  <span>{selectedProjects.size} Selected Projects</span>
                 </div>
-                <Button variant={"standard-filled"} onClick={handleVoteAll}>
-                  Vote All
-                </Button>
+
+                <div
+                  className={cn(
+                    "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
+                    "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
+                  )}
+                  onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
+                >
+                  <FileText className="h-[18px] w-[18px]" />
+
+                  <span
+                    className={cn(
+                      "hidden items-center gap-2 whitespace-nowrap font-medium md:inline-flex",
+                    )}
+                  >
+                    {`${showVotingRules ? "Hide" : "View"} Voting Rules`}
+                  </span>
+
+                  <ChevronRight
+                    className={cn("hidden h-[18px] w-[18px] text-[#EA6A25] md:block")}
+                  />
+                </div>
               </div>
-            )}
+            </div>
+
+            <div
+              className={cn(
+                "flex justify-between bg-[#f7f7f7] px-7 py-2",
+                "text-sm font-semibold text-gray-500",
+              )}
+            >
+              <h4 className="font-semibold">{"PROJECTS"}</h4>
+
+              <div className="flex gap-6">
+                <h4 className={cn("hidden text-right font-semibold md:block")}>{"VOTES"}</h4>
+                <h4 className={cn("hidden text-right font-semibold md:block")}>{"ACTIONS"}</h4>
+              </div>
+            </div>
           </div>
-          {isDesktop && (
-            <div className="space-y-4">
-              {showVotingRules && (
-                <VotingRulesPanel
-                  open={true}
-                  onOpenChange={() => setShowVotingRules(false)}
-                  mode="panel"
+
+          {/* Project List */}
+          <div className={cn("mt-30 space-y-4 md:mt-1")}>
+            {filteredProjects.map((project) => (
+              <label
+                key={project.id}
+                className={cn(
+                  "flex items-center gap-4 rounded-lg",
+                  "py-4 hover:bg-gray-50",
+                  "md:p-4",
+                )}
+                htmlFor={project.id}
+              >
+                <Checkbox
+                  checked={selectedProjects.has(project.id)}
+                  onCheckedChange={() => handleProjectSelect(project.id)}
+                  id={project.id}
                 />
-              )}
-              {showWeightBoost && (
-                <VotingWeightBoostPanel
-                  open={true}
-                  onOpenChange={() => setShowWeightBoost(false)}
-                  mode="panel"
-                  weightBoost={initWeightBoost}
+
+                <Image
+                  src={project.imageUrl}
+                  alt={`Avatar for ${project.name}`}
+                  className="rounded-full"
+                  width={40}
+                  height={40}
                 />
+
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">{project.name}</div>
+                  <div
+                    className={cn("text-sm text-gray-500 md:hidden")}
+                  >{`${project.votes} Votes`}</div>
+                </div>
+
+                <div className={cn("hidden text-right md:block")}>{project.votes}</div>
+
+                <Button
+                  variant={"standard-outline"}
+                  disabled={project.voted}
+                  className="ml-auto w-20"
+                >
+                  {project.voted ? "Voted" : "Vote"}
+                </Button>
+              </label>
+            ))}
+          </div>
+
+          {numberOfPages > 1 && (
+            <Pagination className="mt-[24px]">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
+                  />
+                </PaginationItem>
+
+                {pageNumberButtons}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      setPageNumber((prev) => Math.min(prev + 1, Math.ceil(numberOfPages)))
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+
+          {/* Floating Action Bar */}
+          {selectedProjects.size > 0 && (
+            <div
+              className={cn(
+                "fixed bottom-4 left-1/2 flex -translate-x-1/2",
+                "items-center gap-4 rounded-lg border bg-white p-4 shadow-lg",
               )}
+            >
+              <div className="flex items-center gap-2">
+                <Checkbox checked={true} />
+                <span>{`${selectedProjects.size} Selected Projects`}</span>
+              </div>
+
+              <Button variant={"standard-filled"} onClick={handleVoteAll}>
+                {"Vote All"}
+              </Button>
             </div>
           )}
         </div>
-        {/* Mobile Dialogs */}
-        {!isDesktop && (
-          <>
-            <VotingWeightBoostPanel
-              open={showWeightBoost}
-              onOpenChange={setShowWeightBoost}
-              weightBoost={0}
-            />
-            <VotingRulesPanel open={showVotingRules} onOpenChange={setShowVotingRules} />
-          </>
+
+        {isDesktop && (
+          <div className="space-y-4">
+            {showVotingRules && (
+              <VotingRulesPanel
+                open={true}
+                onOpenChange={() => setShowVotingRules(false)}
+                mode="panel"
+              />
+            )}
+
+            {showWeightBoost && (
+              <VotingWeightBoostPanel
+                open={true}
+                onOpenChange={() => setShowWeightBoost(false)}
+                mode="panel"
+                weightBoost={initWeightBoost}
+              />
+            )}
+          </div>
         )}
       </div>
+
+      {/* Mobile Dialogs */}
+      {!isDesktop && (
+        <>
+          <VotingWeightBoostPanel
+            open={showWeightBoost}
+            onOpenChange={setShowWeightBoost}
+            weightBoost={0}
+          />
+
+          <VotingRulesPanel open={showVotingRules} onOpenChange={setShowVotingRules} />
+        </>
+      )}
     </div>
   );
 }

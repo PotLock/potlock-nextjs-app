@@ -37,7 +37,7 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 
   return (
     <div className="mt-8 w-full p-0 ">
-      <div className="md:p-0 mb-4 flex w-full flex-row justify-between p-2">
+      <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
         <div className=" flex items-center gap-4 ">
           <h1 className=" text-[18px] font-semibold ">Featured Campaigns</h1>
           <p className="text-[18px]">{current + 1}/3</p>
@@ -79,22 +79,22 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
   return (
     <CarouselItem key={data.id}>
       <Link
-        className="md:flex-row flex w-full flex-col items-start justify-between gap-4"
+        className="flex w-full flex-col items-start justify-between gap-4 md:flex-row"
         href={`/campaign/${data.id}/leaderboard`}
         passHref
       >
-        <div className="md:h-[285px] h-293px md:w-[68%] relative">
+        <div className="h-293px relative md:h-[285px] md:w-[68%]">
           <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
             alt=""
-            className="md:rounded inset-1 h-full w-full object-cover"
+            className="inset-1 h-full w-full object-cover md:rounded"
             width={500}
             height={300}
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
           <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
             <h1 className="text-[24px] font-bold text-white">{data.name}</h1>
-            <div className="md:flex-row md:items-center md:text-[15px] m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white">
+            <div className="m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
               <div className="flex gap-1">
                 <p className="font-semibold">FOR</p>
                 <Link href={`/profile/${data.recipient}`} target="_blank">
@@ -110,7 +110,7 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
                   </div>
                 </Link>
               </div>
-              <div className="md:flex hidden flex-col items-center bg-gray-800">
+              <div className="hidden flex-col items-center bg-gray-800 md:flex">
                 <span className="h-[18px] w-[2px] bg-white text-white" />{" "}
               </div>
               <div className="flex gap-1">
@@ -131,7 +131,7 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
             </div>
           </div>
         </div>
-        <div className="md:w-[28%] md:p-0 flex w-full flex-col items-start p-4">
+        <div className="flex w-full flex-col items-start p-4 md:w-[28%] md:p-0">
           <CampaignProgressBar
             target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}
             minAmount={data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0}

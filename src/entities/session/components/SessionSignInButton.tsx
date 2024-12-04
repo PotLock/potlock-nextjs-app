@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { walletApi } from "@/common/api/near";
 import { Button } from "@/common/ui/components";
 
-export const SignInButton: React.FC = () => {
+export const SessionSignInButton: React.FC = () => {
   const onClick = useCallback(() => {
     walletApi.signInModal();
   }, []);

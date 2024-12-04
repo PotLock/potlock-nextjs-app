@@ -8,7 +8,7 @@ import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import routesPath, { hrefByRouteName } from "@/entities/core/routes";
-import { useAuth } from "@/entities/session";
+import { useSessionReduxStore } from "@/entities/session";
 import useWallet from "@/entities/session/hooks/wallet";
 
 import DonationsInfo from "./DonationsInfo";
@@ -23,7 +23,7 @@ type Props = {
 };
 
 const LinksWrapper = ({ accountId }: { accountId: string }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionReduxStore();
   const { wallet } = useWallet();
   const [copied, setCopied] = useState(false);
 
@@ -72,7 +72,7 @@ const Info = ({ accountId, isProject }: Props) => {
 
   return (
     <div
-      className={`md:px-[4.5rem] flex w-full flex-row flex-wrap gap-2 px-[1rem] ${!isProject ? "mb-12" : ""}`}
+      className={`flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem] ${!isProject ? "mb-12" : ""}`}
     >
       {/* NameContainer */}
       <div className="flex w-full flex-wrap gap-8">

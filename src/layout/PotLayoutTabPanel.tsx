@@ -23,7 +23,7 @@ export const PotLayoutTabPanel: React.FC<PotLayoutTabPanelProps> = ({
   const potId = typeof potIdPathParam === "string" ? potIdPathParam : potIdPathParam?.at(0);
 
   return (
-    <div className="mb-8 flex w-full flex-row flex-wrap gap-2">
+    <div className="mb-6 flex w-full flex-row flex-wrap gap-2 md:mb-12">
       <div
         className={cn(
           "flex w-full justify-start gap-8 overflow-y-auto",

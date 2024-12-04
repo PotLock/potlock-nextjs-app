@@ -271,7 +271,7 @@ export default function PayoutsTab() {
   };
 
   return (
-    <div className="md:flex-row m-0 flex  w-full flex-col-reverse items-start justify-between gap-3 p-0 transition-all duration-500 ease-in-out">
+    <div className="m-0 flex w-full  flex-col-reverse items-start justify-between gap-3 p-0 transition-all duration-500 ease-in-out md:flex-row">
       <div
         className={cn(
           "flex w-full flex-col items-center justify-between p-0 transition-all duration-500 ease-in-out",
@@ -294,7 +294,7 @@ export default function PayoutsTab() {
               <ArrowDown
                 style={{ display: "block" }}
                 className={cn(
-                  showChallenges ? "md:rotate-265 rotate-180" : "md:rotate-90 rotate:45",
+                  showChallenges ? "md:rotate-265 rotate-180" : "rotate:45 md:rotate-90",
                   "ml-3 transition-all duration-300 ease-in-out",
                 )}
               />
@@ -303,7 +303,7 @@ export default function PayoutsTab() {
         </div>
         <div
           className={cn(
-            "md:w-[33%] md:max-w-[33%] md:hidden block w-full transition-all duration-500 ease-in-out",
+            "block w-full transition-all duration-500 ease-in-out md:hidden md:w-[33%] md:max-w-[33%]",
             {
               hidden: !showChallenges,
             },
@@ -311,7 +311,7 @@ export default function PayoutsTab() {
         >
           <PotPayoutChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />
         </div>
-        <div className="md:flex-row mb-16 flex w-full flex-col items-start gap-6">
+        <div className="mb-16 flex w-full flex-col items-start gap-6 md:flex-row">
           <div className=" w-full">
             {!potDetail?.all_paid_out && (
               <InfoContainer>
@@ -430,7 +430,7 @@ export default function PayoutsTab() {
       <div
         className={cn(
           showChallenges ? "md:block" : "hidden",
-          "md:w-[33%] hidden w-full transition-all duration-500 ease-in-out",
+          "hidden w-full transition-all duration-500 ease-in-out md:w-[33%]",
         )}
       >
         <PotPayoutChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />

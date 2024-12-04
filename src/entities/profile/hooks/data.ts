@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { getImage } from "@/common/api/images";
-import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
+import { indexer } from "@/common/api/indexer";
 import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
-import useRegistration from "@/entities/core/hooks/useRegistration";
+import { useRegistration } from "@/entities/core";
 
 export const useProfileData = (
   accountId?: string,
@@ -18,7 +18,7 @@ export const useProfileData = (
   const [profileReady, setProfileReady] = useState(false);
 
   // Donations
-  const { data: donationsData } = useAccountDonationsSent({
+  const { data: donationsData } = indexer.useAccountDonationsSent({
     accountId: getDonationsSent ? accountId || "" : "",
     page_size: 9999,
   });

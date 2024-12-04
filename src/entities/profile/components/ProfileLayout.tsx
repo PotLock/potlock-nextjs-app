@@ -53,7 +53,7 @@ export function ProfileLayout({ children }: Props) {
       />
 
       {/* Tab Content */}
-      <div className="md:px-[4.5rem] flex w-full flex-row flex-wrap gap-2 px-[1rem]">
+      <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
         {children}
       </div>
     </main>

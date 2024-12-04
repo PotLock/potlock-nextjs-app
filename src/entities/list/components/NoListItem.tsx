@@ -52,7 +52,7 @@ export const NoListItem = ({
         height={200}
         className="mb-4 h-[200px] w-[200px]"
       />
-      <div className="md:flex-row flex flex-col items-center justify-center gap-2">
+      <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
         <p className="w-100 text-center font-lora italic">{text}</p>
         {showButton && (
           <Button onClick={route} variant="standard-filled">

@@ -1,9 +1,16 @@
-import { ByPotId } from "@/common/api/indexer";
+import { useMemo } from "react";
+
+import { Big } from "big.js";
+
+import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
-import { useAuthSession } from "@/entities/session";
+import { u128StringToBigNum } from "@/common/lib";
+import { ftService } from "@/common/services";
+import { useIsHuman } from "@/entities/core";
+import { useSessionAuth } from "@/entities/session";
 
-import { isVotingEnabled } from "../utils/voting";
-
+// TODO: refactor to support multi-mechanism for the V2 milestone
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
  *  as it's built for the mpDAO milestone.
@@ -18,10 +25,46 @@ import { isVotingEnabled } from "../utils/voting";
  *
  * https://docs.google.com/document/d/1P5iSBBSuh7nep29r7N3S-g4Y1bDbF4xLU_3v7XHmJR8
  */
-export const usePotUserVoteWeight = ({ potId }: ByPotId) => {
-  const { accountId } = useAuthSession();
-  const isVotingBasedPot = isVotingEnabled({ potId });
+export const usePotUserVoteWeight = ({ potId: _ }: ByPotId) => {
+  const basicWeight = Big(1);
+  const { accountId } = useSessionAuth();
+  const { isHumanVerified } = useIsHuman(accountId);
 
-  // TODO: calculate voting amplifiers
-  METAPOOL_MPDAO_VOTING_POWER_DECIMALS;
+  const { data: stNear } = ftService.useRegisteredToken({
+    tokenId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
+  });
+
+  const stNearBalance = useMemo(() => stNear?.balance ?? Big(0), [stNear]);
+  const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
+
+  const votingPower = useMemo(
+    () => u128StringToBigNum(voterInfo?.voting_power ?? "0", METAPOOL_MPDAO_VOTING_POWER_DECIMALS),
+    [voterInfo?.voting_power],
+  );
+
+  return useMemo(() => {
+    const finalWeightBig = basicWeight
+      .add(
+        // Human verification bonus: +10%
+        isHumanVerified ? 0.1 : 0,
+      )
+      .add(
+        // mpDAO Governance bonus: +25% for 10k+ votes
+        votingPower.gte(10000) ? 0.25 : 0,
+      )
+      .add(
+        // mpDAO Governance bonus: additional +25% for 25k+ votes
+        votingPower.gte(25000) ? 0.25 : 0,
+      )
+      .add(
+        // stNEAR staking bonus: +30% for 10+ stNEAR
+        ((stNearBalance.gte(10) ? 0.3 : undefined) ??
+          // ...or only +10% for (2 >= x < 10) stNEAR
+          stNearBalance.gte(2))
+          ? 0.1
+          : 0,
+      );
+
+    return finalWeightBig.toNumber();
+  }, [basicWeight, isHumanVerified, votingPower, stNearBalance]);
 };

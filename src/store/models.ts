@@ -3,7 +3,7 @@ import { Models } from "@rematch/core";
 import { campaignEditorModel } from "@/entities/campaign/models";
 import { coreModel } from "@/entities/core/model";
 import { listEditorModel } from "@/entities/list";
-import { navModel, profilesModel } from "@/entities/profile";
+import { navModel } from "@/entities/profile";
 import { sessionModel } from "@/entities/session/model";
 import { donationModel, donationModelKey } from "@/features/donation";
 import { potEditorModel, potEditorModelKey } from "@/features/pot-editor";
@@ -15,7 +15,6 @@ export interface AppModel extends Models<AppModel> {
   [donationModelKey]: typeof donationModel;
   nav: typeof navModel;
   [potEditorModelKey]: typeof potEditorModel;
-  profiles: typeof profilesModel;
   listEditor: typeof listEditorModel;
   campaignEditor: typeof campaignEditorModel;
   [projectEditorModelKey]: typeof projectEditorModel;
@@ -29,6 +28,5 @@ export const models: AppModel = {
   listEditor: listEditorModel,
   campaignEditor: campaignEditorModel,
   [potEditorModelKey]: potEditorModel,
-  profiles: profilesModel,
   [projectEditorModelKey]: projectEditorModel,
 };

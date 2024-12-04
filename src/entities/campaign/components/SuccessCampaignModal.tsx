@@ -26,7 +26,7 @@ export const SuccessCampaignModal: React.FC<SuccessModalProps> = ({
           boxShadow:
             "0px 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 24px 24px -12px rgba(5, 5, 5, 0.08), 0px 40px 40px -20px rgba(5, 5, 5, 0.08), 0px 64px 80px 0px rgba(5, 5, 5, 0.08)",
         }}
-        className="md:w-[604px] h-[500px] w-[90%]  max-w-full rounded-md bg-white shadow-lg"
+        className="h-[500px] w-[90%] max-w-full  rounded-md bg-white shadow-lg md:w-[604px]"
       >
         <div className="flex justify-end p-4">
           <button onClick={onClose} className="font-bold text-gray-500 hover:text-gray-700">
@@ -41,11 +41,11 @@ export const SuccessCampaignModal: React.FC<SuccessModalProps> = ({
               className="h-26 w-28"
             />
           </div>
-          <h2 className="md:text-[32px] mb-4 text-center font-lora text-2xl font-medium  tracking-wide text-red-600">
+          <h2 className="mb-4 text-center font-lora text-2xl font-medium tracking-wide  text-red-600 md:text-[32px]">
             {header}
           </h2>
           <p className="mb-6 text-center text-[#292929]">{description}</p>
-          <div className="md:mt-12 w-full px-4 align-baseline">
+          <div className="w-full px-4 align-baseline md:mt-12">
             <Button
               onClick={() => {
                 onViewCampaign();
