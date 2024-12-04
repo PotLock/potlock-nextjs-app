@@ -43,7 +43,7 @@ export const useInitProjectState = () => {
       if (isDao && daoAddress) {
         dispatch.projectEditor.setAccountId(daoAddress);
         dispatch.projectEditor.setIsDao(isDao);
-        dispatch.projectEditor.setDaoAddress(isDao ? daoAddress : "");
+        dispatch.projectEditor.setDaoAddress(daoAddress);
       } else if (wallet?.accountId) {
         dispatch.projectEditor.setAccountId(projectId || wallet.accountId);
       }

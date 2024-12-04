@@ -178,7 +178,7 @@ export const ProjectEditor = () => {
     );
   }
 
-  console.log(form.formState);
+  console.log(form.formState.errors);
 
   return (
     // Container
