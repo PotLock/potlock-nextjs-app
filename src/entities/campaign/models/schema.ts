@@ -70,7 +70,7 @@ export const campaignFormSchema = z
       });
     }
 
-    if (data.target_amount < (data.min_amount ?? 0)) {
+    if (data?.min_amount && data.target_amount < data.min_amount) {
       ctx.addIssue({
         path: ["min_amount"],
         message: "Target amount cannot be less than minimum amount",
@@ -78,7 +78,7 @@ export const campaignFormSchema = z
       });
     }
 
-    if (data.target_amount > (data.max_amount ?? Infinity)) {
+    if (data.max_amount && data.target_amount > data.max_amount) {
       ctx.addIssue({
         path: ["target_amount"],
         message: "Target amount cannot be more than maximum amount",
