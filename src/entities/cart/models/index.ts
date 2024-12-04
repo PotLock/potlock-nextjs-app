@@ -2,6 +2,8 @@ import { create } from "zustand";
 
 import { CartItem, CartOrderExecutionOutcome, CartOrderStep, CartState } from "../types";
 
+// TODO: Use { buildTransaction } from '@wpdas/naxios'
+
 interface CartStore extends CartState {
   reset: () => void;
   ordersExecuted: (data: CartOrderExecutionOutcome[]) => void;
