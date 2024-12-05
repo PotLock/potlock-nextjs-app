@@ -188,6 +188,18 @@ export const usePot = ({ potId }: Partial<ByPotId>) => {
   return { ...queryResult, data: queryResult.data?.data };
 };
 
+export const usePotPayout = ({
+  potId,
+  ...params
+}: Partial<ByPotId> & generatedClient.V1PotsPayoutsRetrieveParams) => {
+  const queryResult = generatedClient.useV1PotsPayoutsRetrieve(potId ?? "unknown", params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled: Boolean(potId), refreshInterval: 3000 },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data?.results };
+};
+
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_retrieve
  */
