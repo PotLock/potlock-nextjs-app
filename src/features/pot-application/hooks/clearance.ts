@@ -24,7 +24,7 @@ export const usePotApplicationUserClearance = ({
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
   const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useSessionAuth();
   const { data: pot } = indexer.usePot({ potId });
-  const { data: stNear } = ftService.useRegisteredToken({ tokenId: staking.tokenId });
+  const { data: stakingToken } = ftService.useRegisteredToken({ tokenId: staking.tokenId });
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
   return useMemo(() => {
@@ -43,7 +43,7 @@ export const usePotApplicationUserClearance = ({
         ? [
             {
               title: `An equivalent of ${staking.minAmountUsd} USD staked in NEAR on ${staking.platformName}`,
-              isSatisfied: stNear?.balanceUsd?.gte(staking.minAmountUsd) ?? false,
+              isSatisfied: stakingToken?.balanceUsd?.gte(staking.minAmountUsd) ?? false,
             },
 
             {
@@ -71,9 +71,9 @@ export const usePotApplicationUserClearance = ({
     isAccountInfoLoading,
     isVerifiedPublicGoodsProvider,
     pot?.sybil_wrapper_provider,
-    stNear?.balanceUsd,
     staking.minAmountUsd,
     staking.platformName,
+    stakingToken?.balanceUsd,
     voterInfo?.voting_power,
   ]);
 };

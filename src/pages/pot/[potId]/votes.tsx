@@ -23,12 +23,85 @@ import {
 } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { VOTING_DUMMY_PROJECTS, VotingRulesPanel, VotingWeightBoostPanel } from "@/features/voting";
+import {
+  VotingRulesPanel,
+  VotingWeightBoostPanel,
+  useVotingAuthenticatedParticipantVoteWeight,
+} from "@/features/voting";
 import { PotLayout } from "@/layout/PotLayout";
+
+interface Project {
+  id: string;
+  name: string;
+  votes: number;
+  voted: boolean;
+  imageUrl: string;
+}
+
+const VOTING_DUMMY_PROJECTS: Project[] = [
+  {
+    id: "1",
+    name: "Mike.near",
+    votes: 2000,
+    voted: false,
+    imageUrl: "https://picsum.photos/200/200/?blur",
+  },
+  {
+    id: "2",
+    name: "Mike.near",
+    votes: 2000,
+    voted: false,
+    imageUrl: "https://picsum.photos/200/200/?blur",
+  },
+  {
+    id: "3",
+    name: "Mike.near",
+    votes: 2000,
+    voted: false,
+    imageUrl: "https://picsum.photos/200/200/?blur",
+  },
+  {
+    id: "4",
+    name: "Mike.near",
+    votes: 2000,
+    voted: false,
+    imageUrl: "https://picsum.photos/200/200/?blur",
+  },
+  {
+    id: "5",
+    name: "Mike.near",
+    votes: 2000,
+    voted: false,
+    imageUrl: "https://picsum.photos/200/200/?blur",
+  },
+  {
+    id: "6",
+    name: "Mike.near",
+    votes: 2000,
+    voted: false,
+    imageUrl: "https://picsum.photos/200/200/?blur",
+  },
+  {
+    id: "7",
+    name: "Mike.near",
+    votes: 2000,
+    voted: false,
+    imageUrl: "https://picsum.photos/200/200/?blur",
+  },
+  {
+    id: "8",
+    name: "Mike.near",
+    votes: 2000,
+    voted: false,
+    imageUrl: "https://picsum.photos/200/200/?blur",
+  },
+];
 
 type FilterType = "all" | "voted" | "pending";
 
 export default function PotVotesTab() {
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+
   const {
     query: { potId: potIdRouteQueryParam },
   } = useRouteQuery();
@@ -36,6 +109,8 @@ export default function PotVotesTab() {
   const potId = Array.isArray(potIdRouteQueryParam)
     ? (potIdRouteQueryParam.at(0) as PotId)
     : (potIdRouteQueryParam as PotId);
+
+  const { voteWeight } = useVotingAuthenticatedParticipantVoteWeight({ potId });
 
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,16 +129,15 @@ export default function PotVotesTab() {
     return [allProjects, voted, pending];
   }, []);
 
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const initWeightBoost = 10;
-
   const handleProjectSelect = (projectId: string) => {
     const newSelected = new Set(selectedProjects);
+
     if (newSelected.has(projectId)) {
       newSelected.delete(projectId);
     } else {
       newSelected.add(projectId);
     }
+
     setSelectedProjects(newSelected);
   };
 
@@ -208,11 +282,11 @@ export default function PotVotesTab() {
 
                   <span className="flex items-center gap-2">
                     <span className={cn("hidden whitespace-nowrap font-medium md:inline-flex")}>
-                      {`${showWeightBoost ? "Hide" : "View"} Weight Boost`}{" "}
+                      {`${showWeightBoost ? "Hide" : "View"} Weight Boost`}
                     </span>
 
                     <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
-                      {`x${initWeightBoost}`}
+                      {`${voteWeight.mul(100).toNumber()} %`}
                     </span>
                   </span>
 
@@ -363,7 +437,6 @@ export default function PotVotesTab() {
                 open={true}
                 onOpenChange={() => setShowWeightBoost(false)}
                 mode="panel"
-                weightBoost={initWeightBoost}
                 {...{ potId }}
               />
             )}
@@ -377,7 +450,6 @@ export default function PotVotesTab() {
           <VotingWeightBoostPanel
             open={showWeightBoost}
             onOpenChange={setShowWeightBoost}
-            weightBoost={0}
             {...{ potId }}
           />
 

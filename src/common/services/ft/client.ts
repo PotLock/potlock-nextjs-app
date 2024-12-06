@@ -30,18 +30,28 @@ export const getFtBoundNativeTokenData = async ({
           finality: "final",
         })
         .then(({ amount }) => {
+          const balance = stringifiedU128ToBigNum(
+            amount,
+            FT_NATIVE_TOKEN_BINDING.metadata.decimals,
+          );
+
           const balanceFloat = stringifiedU128ToFloat(
             amount,
             FT_NATIVE_TOKEN_BINDING.metadata.decimals,
           );
 
-          const balance = Big(balanceFloat);
+          const balanceUsd = balance?.gt(0) && usdPrice?.gt(0) ? balance?.mul(usdPrice) : Big(0);
 
           return {
             ...FT_NATIVE_TOKEN_BINDING,
             balance,
             balanceFloat,
-            balanceUsdStringApproximation: usdPrice?.mul(balance).toFixed(2),
+            balanceUsd,
+
+            balanceUsdStringApproximation: balanceUsd?.gt(0)
+              ? `~$ ${balanceUsd.toFixed(2)}`
+              : "$ 0",
+
             usdPrice,
           };
         })
@@ -100,10 +110,7 @@ export const getFtData = async ({
         balance,
         balanceFloat,
         balanceUsd,
-
-        balanceUsdStringApproximation:
-          balance?.gt(0) && usdPrice?.gt(0) ? `~$ ${usdPrice.mul(balance).toFixed(2)}` : "$ 0",
-
+        balanceUsdStringApproximation: balanceUsd?.gt(0) ? `~$ ${balanceUsd.toFixed(2)}` : "$ 0",
         usdPrice,
       };
 };
