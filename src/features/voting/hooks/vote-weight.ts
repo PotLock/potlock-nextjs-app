@@ -32,47 +32,48 @@ export const useVotingParticipantVoteWeight = ({
     accountId,
   });
 
-  const voteWeight = useMemo(
-    () =>
-      accountId === undefined
-        ? Big(0)
-        : votingMechanismConfig.voteWeightAmplificationRules.reduce((weight, rule) => {
-            const participantStatsValue = participantStats[rule.participantStatsPropertyKey];
+  const voteWeight = useMemo(() => {
+    const initialWeight = Big(votingMechanismConfig.initialWeight);
 
-            switch (rule.comparator) {
-              case "isTruthy": {
-                return typeof participantStatsValue === "boolean" &&
-                  isTruthy(participantStatsValue) === rule.expectation
+    return accountId === undefined
+      ? Big(0)
+      : votingMechanismConfig.voteWeightAmplificationRules.reduce((weight, rule) => {
+          const participantStatsValue = participantStats[rule.participantStatsPropertyKey];
+
+          switch (rule.comparator) {
+            case "isTruthy": {
+              if (
+                typeof participantStatsValue === "boolean" &&
+                isTruthy(participantStatsValue) === rule.expectation
+              ) {
+                return weight.add(
+                  Big(rule.amplificationPercent)
+                    .div(100)
+                    .mul(initialWeight.gt(0) ? initialWeight : 1),
+                );
+              } else return weight;
+            }
+
+            default: {
+              if (VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS.includes(rule.comparator)) {
+                return isBigSource(participantStatsValue) &&
+                  Big(participantStatsValue as BigSource)[rule.comparator](rule.threshold)
                   ? weight.add(
                       Big(rule.amplificationPercent)
                         .div(100)
-                        .mul(votingMechanismConfig.basicWeight),
+                        .mul(initialWeight.gt(0) ? initialWeight : 1),
                     )
                   : weight;
-              }
-
-              default: {
-                if (VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS.includes(rule.comparator)) {
-                  return isBigSource(participantStatsValue) &&
-                    Big(participantStatsValue as BigSource)[rule.comparator](rule.threshold)
-                    ? weight.add(
-                        Big(rule.amplificationPercent)
-                          .div(100)
-                          .mul(votingMechanismConfig.basicWeight),
-                      )
-                    : weight;
-                } else return weight;
-              }
+              } else return weight;
             }
-          }, Big(votingMechanismConfig.basicWeight)),
-
-    [
-      accountId,
-      participantStats,
-      votingMechanismConfig.basicWeight,
-      votingMechanismConfig.voteWeightAmplificationRules,
-    ],
-  );
+          }
+        }, initialWeight);
+  }, [
+    accountId,
+    participantStats,
+    votingMechanismConfig.initialWeight,
+    votingMechanismConfig.voteWeightAmplificationRules,
+  ]);
 
   return {
     ...pick(votingMechanismConfig, ["voteWeightAmplificationRules"]),

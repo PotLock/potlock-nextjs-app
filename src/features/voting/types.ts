@@ -20,7 +20,7 @@ export type VotingWeightAmplificationRule = {
 );
 
 export type VotingMechanismConfig = {
-  basicWeight: number;
+  initialWeight: number;
   stakingContractAccountId?: TokenId;
   documentUrl?: string;
   voteWeightAmplificationRules: VotingWeightAmplificationRule[];

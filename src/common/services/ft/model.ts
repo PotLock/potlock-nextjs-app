@@ -20,7 +20,8 @@ type FtRegistryStoreState = {
 interface FtRegistryStore extends FtRegistryStoreState {}
 
 export const useFtRegistryStore = create<FtRegistryStore>()(
-  /** persist( */
+  // persist(
+
   (set) =>
     refExchangeClient
       .get_whitelisted_tokens()
