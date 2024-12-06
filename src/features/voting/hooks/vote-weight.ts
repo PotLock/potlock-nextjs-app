@@ -24,20 +24,21 @@ export const useVotingParticipantVoteWeight = ({
   accountId,
   potId: _,
 }: VotingParticipantVoteWeightInputs) => {
-  // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
-  const votingMechanismConfig = VOTING_MECHANISM_CONFIG_MPDAO;
+  const { initialWeight, stakingContractAccountId, voteWeightAmplificationRules } =
+    // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
+    VOTING_MECHANISM_CONFIG_MPDAO;
 
   const participantStats = useVotingParticipantStats({
-    ...pick(votingMechanismConfig, ["stakingContractAccountId"]),
     accountId,
+    stakingContractAccountId,
   });
 
   const voteWeight = useMemo(() => {
-    const initialWeight = Big(votingMechanismConfig.initialWeight);
+    const initialWeightBig = Big(initialWeight);
 
     return accountId === undefined
       ? Big(0)
-      : votingMechanismConfig.voteWeightAmplificationRules.reduce((weight, rule) => {
+      : voteWeightAmplificationRules.reduce((weight, rule) => {
           const participantStatsValue = participantStats[rule.participantStatsPropertyKey];
 
           switch (rule.comparator) {
@@ -49,7 +50,7 @@ export const useVotingParticipantVoteWeight = ({
                 return weight.add(
                   Big(rule.amplificationPercent)
                     .div(100)
-                    .mul(initialWeight.gt(0) ? initialWeight : 1),
+                    .mul(initialWeightBig.gt(0) ? initialWeightBig : 1),
                 );
               } else return weight;
             }
@@ -61,23 +62,18 @@ export const useVotingParticipantVoteWeight = ({
                   ? weight.add(
                       Big(rule.amplificationPercent)
                         .div(100)
-                        .mul(initialWeight.gt(0) ? initialWeight : 1),
+                        .mul(initialWeightBig.gt(0) ? initialWeightBig : 1),
                     )
                   : weight;
               } else return weight;
             }
           }
-        }, initialWeight);
-  }, [
-    accountId,
-    participantStats,
-    votingMechanismConfig.initialWeight,
-    votingMechanismConfig.voteWeightAmplificationRules,
-  ]);
+        }, initialWeightBig);
+  }, [accountId, initialWeight, participantStats, voteWeightAmplificationRules]);
 
   return {
-    ...pick(votingMechanismConfig, ["voteWeightAmplificationRules"]),
     voteWeight,
+    voteWeightAmplificationRules,
   };
 };
 
