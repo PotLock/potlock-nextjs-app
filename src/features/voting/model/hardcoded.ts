@@ -4,7 +4,7 @@ import { VotingMechanismConfig } from "../types";
 
 // TODO: Convert into publicly available configurable JSON ( Pots V2 milestone ) and validate with Zod
 export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
-  basicWeight: 1,
+  basicWeight: 0,
   stakingContractAccountId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
   documentUrl: "https://docs.google.com/document/d/1P5iSBBSuh7nep29r7N3S-g4Y1bDbF4xLU_3v7XHmJR8",
 
