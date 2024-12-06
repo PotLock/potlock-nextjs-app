@@ -23,7 +23,7 @@ export const useVotingParticipantVoteWeight = ({ potId: _ }: ByPotId) => {
     accountId,
   });
 
-  return useMemo(
+  const result = useMemo(
     () =>
       VOTING_MECHANISM_CONFIG_MPDAO.rules.reduce((weight, rule) => {
         const participantStatsValue = participantStats[rule.participantStatsPropertyKey];
@@ -49,4 +49,6 @@ export const useVotingParticipantVoteWeight = ({ potId: _ }: ByPotId) => {
 
     [participantStats],
   );
+
+  return result;
 };

@@ -33,7 +33,6 @@ export const useVotingParticipantStats = ({
   return useMemo(
     () => ({
       isHumanVerified,
-
       stakingTokenBalance: stakingTokenData ? (stakingTokenData.balance ?? Big(0)) : undefined,
 
       stakingTokenBalanceUsd: stakingTokenData
