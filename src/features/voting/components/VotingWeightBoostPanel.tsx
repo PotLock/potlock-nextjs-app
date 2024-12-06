@@ -67,7 +67,7 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
       <div className="mb-4 flex items-center gap-2 border-b py-2 text-lg font-semibold">
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-row items-center gap-2">
-            <MdStar className="h-6 w-6" />
+            <MdStar className="color-corn-500 h-6 w-6" />
             <h2 className="min-w-[214px] text-lg font-semibold">{"Weight Boost"}</h2>
           </div>
 
@@ -89,7 +89,7 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <MdStar className="h-6 w-6" />
+            <MdStar className="color-corn-500 h-6 w-6" />
             <h4 className="prose">{"Weight Boost"}</h4>
             <span className="font-semibold text-white">{`${voteWeight.mul(100).toNumber()} %`}</span>
           </DialogTitle>

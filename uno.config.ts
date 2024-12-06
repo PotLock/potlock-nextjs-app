@@ -45,12 +45,14 @@ export default defineConfig({
 
       corn: {
         50: "#fDfCe9",
+        500: "#ECC113",
       },
 
       peach: {
         50: "#fef6ee",
         300: "#f4b37d",
         400: "#EE8949",
+        500: "#EA6A25",
         700: "#B63D18",
       },
 

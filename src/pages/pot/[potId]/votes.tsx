@@ -229,7 +229,7 @@ export default function PotVotesTab() {
                   )}
                   onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
                 >
-                  <MdStar className="h-[18px] w-[18px]" />
+                  <MdStar className="color-corn-500 h-4.5 w-4.5" />
 
                   <span className="flex items-center gap-2">
                     <span className={cn("hidden whitespace-nowrap font-medium md:inline-flex")}>
@@ -253,7 +253,7 @@ export default function PotVotesTab() {
                   )}
                   onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
                 >
-                  <MdOutlineDescription className="h-[18px] w-[18px]" />
+                  <MdOutlineDescription className="color-peach-500 h-4.5 w-4.5" />
 
                   <span
                     className={cn(
