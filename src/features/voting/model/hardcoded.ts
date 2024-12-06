@@ -16,7 +16,7 @@ import { VotingMechanismConfig } from "../types";
  */
 export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
   basicWeight: 1,
-  stakingTokenContractAccountId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
+  stakingContractAccountId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
   documentUrl: "https://docs.google.com/document/d/1P5iSBBSuh7nep29r7N3S-g4Y1bDbF4xLU_3v7XHmJR8",
 
   voteWeightAmplificationRules: [

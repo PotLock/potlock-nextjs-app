@@ -20,13 +20,13 @@ import { VotingParticipantStats } from "../types";
  */
 export const useVotingParticipantStats = ({
   accountId,
-  stakingTokenContractAccountId,
-}: Partial<ByAccountId> & { stakingTokenContractAccountId?: TokenId }): VotingParticipantStats => {
+  stakingContractAccountId,
+}: Partial<ByAccountId> & { stakingContractAccountId?: TokenId }): VotingParticipantStats => {
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
   const { data: stakingTokenData } = useSWR(
-    stakingTokenContractAccountId ? stakingTokenContractAccountId : null,
+    stakingContractAccountId ? stakingContractAccountId : null,
     (tokenId) => (isAccountId(tokenId) ? ftService.getFtData({ tokenId }) : undefined),
   );
 

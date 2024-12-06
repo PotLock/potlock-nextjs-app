@@ -28,7 +28,7 @@ export const useVotingParticipantVoteWeight = ({
   const votingMechanismConfig = VOTING_MECHANISM_CONFIG_MPDAO;
 
   const participantStats = useVotingParticipantStats({
-    ...pick(votingMechanismConfig, ["stakingTokenContractAccountId"]),
+    ...pick(votingMechanismConfig, ["stakingContractAccountId"]),
     accountId,
   });
 
