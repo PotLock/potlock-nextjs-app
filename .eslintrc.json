@@ -24,6 +24,7 @@
     "prettier"
   ],
   "rules": {
+    "no-nested-ternary": "warn",
     "@next/next/no-img-element": "off",
     "camelcase": [
       "off",

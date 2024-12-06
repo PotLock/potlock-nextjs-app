@@ -2,11 +2,9 @@ import { useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { MdHowToVote } from "react-icons/md";
+import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
 import { PotId } from "@/common/api/indexer";
-import FileText from "@/common/assets/svgs/FileText";
-import Star from "@/common/assets/svgs/Star";
 import { useRouteQuery } from "@/common/lib";
 import {
   Button,
@@ -23,10 +21,11 @@ import {
 } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
+import { useSessionAuth } from "@/entities/session";
 import {
   VotingRulesPanel,
   VotingWeightBoostPanel,
-  useVotingAuthenticatedParticipantVoteWeight,
+  useVotingParticipantVoteWeight,
 } from "@/features/voting";
 import { PotLayout } from "@/layout/PotLayout";
 
@@ -61,7 +60,8 @@ export default function PotVotesTab() {
     ? (potIdRouteQueryParam.at(0) as PotId)
     : (potIdRouteQueryParam as PotId);
 
-  const { voteWeight } = useVotingAuthenticatedParticipantVoteWeight({ potId });
+  const { accountId } = useSessionAuth();
+  const { voteWeight } = useVotingParticipantVoteWeight({ accountId, potId });
 
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
@@ -229,7 +229,7 @@ export default function PotVotesTab() {
                   )}
                   onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
                 >
-                  <Star className="h-[18px] w-[18px]" />
+                  <MdStar className="h-[18px] w-[18px]" />
 
                   <span className="flex items-center gap-2">
                     <span className={cn("hidden whitespace-nowrap font-medium md:inline-flex")}>
@@ -253,7 +253,7 @@ export default function PotVotesTab() {
                   )}
                   onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
                 >
-                  <FileText className="h-[18px] w-[18px]" />
+                  <MdOutlineDescription className="h-[18px] w-[18px]" />
 
                   <span
                     className={cn(

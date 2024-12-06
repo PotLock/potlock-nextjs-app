@@ -8,7 +8,7 @@ You can access BOS PotLock version using one of the environments below:
 
 - [Production](https://bos.potlock.org/)
 - [Staging](https://bos.potlock.org/staging.potlock.near/widget/IndexLoader)
-= [Repo](https://github.com/potlock/bos-alem-app)
+- [Repo](https://github.com/potlock/bos-alem-app)
 
 You can see original features <https://potlock.notion.site/All-Features-Potlock-NextJS-App-5f543fa8b31840aa88bf5b8cf57ead3d?pvs=4>
 
@@ -16,6 +16,12 @@ Core contracts can be found at <https://github.com/PotLock/core>
 Contract documentation: <https://docs.potlock.io/contracts/contracts-overview>
 
 ## Getting Started
+
+### IDE setup
+
+First, make sure to install **every extension** from the "recommended" section of VSCode extension panel!
+
+### Environment setup
 
 ```bash
 # using the right node version

@@ -1,5 +1,3 @@
-// TODO: refactor to support multi-mechanism for the V2 milestone
-
 import { useMemo } from "react";
 
 import { prop } from "remeda";
@@ -11,6 +9,7 @@ import { useSessionAuth } from "@/entities/session";
 
 import { isVotingEnabled } from "../utils/mechanisms";
 
+// TODO: refactor to support multi-mechanism for the V2 milestone
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
  *  as it's built for the mpDAO milestone.

@@ -1,14 +1,17 @@
 import { useMemo } from "react";
 
 import { X } from "lucide-react";
+import { MdCheckCircleOutline, MdStar } from "react-icons/md";
 
 import { ByPotId } from "@/common/api/indexer";
-import CheckCircle from "@/common/assets/svgs/CheckCircle";
-import Star from "@/common/assets/svgs/Star";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useSessionAuth } from "@/entities/session";
 
-import { useVotingAuthenticatedParticipantVoteWeight } from "../hooks/vote-weight";
+import {
+  useVotingParticipantVoteWeight,
+  useVotingParticipantVoteWeightAmplifiers,
+} from "../hooks/vote-weight";
 
 export type VotingWeightBoostPanelProps = ByPotId & {
   mode?: "modal" | "panel";
@@ -24,24 +27,31 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
   className,
   mode = "modal",
 }) => {
-  const { voteWeight, voteWeightAmplificationRules } = useVotingAuthenticatedParticipantVoteWeight({
-    potId,
-  });
+  const { accountId } = useSessionAuth();
+  const { voteWeight } = useVotingParticipantVoteWeight({ accountId, potId });
+
+  const { voteWeightAmplifiers } = useVotingParticipantVoteWeightAmplifiers({ accountId, potId });
 
   const breakdown = useMemo(
     () => (
       <div className="space-y-4">
         <div className="space-y-4">
-          {voteWeightAmplificationRules.map(({ name, description, amplificationPercent }) => (
-            <div className="flex items-center justify-between text-sm" key={name + description}>
+          {voteWeightAmplifiers.map(({ name, description, amplificationPercent, isApplicable }) => (
+            <div
+              key={name + amplificationPercent + isApplicable}
+              title={description}
+              className={"flex items-center justify-between text-sm"}
+            >
               <span className="prose">{name}</span>
 
               <div className="flex items-center gap-2 font-bold">
                 <span className="font-600">{`${amplificationPercent} %`}</span>
-                <CheckCircle className="h-6 w-6" color="#629D13" />
 
-                {/** TODO: provide `isSatisfied` and display the variant below if it's `false` */}
-                {/** <CheckCircle className="h-6 w-6" color="#C7C7C7" /> */}
+                {isApplicable ? (
+                  <MdCheckCircleOutline className="color-conifer-600 h-6 w-6" />
+                ) : (
+                  <MdCheckCircleOutline className="color-neutral-300 h-6 w-6" />
+                )}
               </div>
             </div>
           ))}
@@ -49,15 +59,15 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
       </div>
     ),
 
-    [voteWeightAmplificationRules],
+    [voteWeightAmplifiers],
   );
 
   return mode === "panel" ? (
-    <div className={cn("rounded-lg border bg-[#f7f7f7] px-4 pb-5 pt-3", className)}>
+    <div className={cn("rounded-lg border bg-neutral-50 px-4 pb-5 pt-3", className)}>
       <div className="mb-4 flex items-center gap-2 border-b py-2 text-lg font-semibold">
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-row items-center gap-2">
-            <Star className="h-6 w-6" />
+            <MdStar className="h-6 w-6" />
             <h2 className="min-w-[214px] text-lg font-semibold">{"Weight Boost"}</h2>
           </div>
 
@@ -66,7 +76,7 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
 
             <X
               onClick={() => onOpenChange(true)}
-              className="h-6 w-6 cursor-pointer text-[#A6A6A6]"
+              className="h-6 w-6 cursor-pointer text-neutral-400"
             />
           </div>
         </div>
@@ -79,7 +89,7 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Star className="h-6 w-6" />
+            <MdStar className="h-6 w-6" />
             <h4 className="prose">{"Weight Boost"}</h4>
             <span className="font-semibold text-white">{`${voteWeight.mul(100).toNumber()} %`}</span>
           </DialogTitle>

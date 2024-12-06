@@ -11,20 +11,17 @@ import { VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS } from "../constants";
 import { VOTING_MECHANISM_CONFIG_MPDAO } from "../model/hardcoded";
 import { VotingParticipantKey, VotingVoteWeightAmplifier } from "../types";
 
-export const useVotingParticipantVoteWeightAmplifiers = () => {
-  const { initialWeight, stakingContractAccountId, voteWeightAmplificationRules } =
-    // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
-    VOTING_MECHANISM_CONFIG_MPDAO;
-};
-
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
  *  as it's built for the mpDAO milestone.
  *
- * Calculates the vote weight of a given participant for a given voting round.
+ * Calculates vote weight amplifiers for a given participant in a given voting round.
  */
-export const useVotingParticipantVoteWeight = ({ accountId, potId: _ }: VotingParticipantKey) => {
-  const { initialWeight, stakingContractAccountId, voteWeightAmplificationRules } =
+export const useVotingParticipantVoteWeightAmplifiers = ({
+  accountId,
+  potId: _,
+}: VotingParticipantKey): { voteWeightAmplifiers: VotingVoteWeightAmplifier[] } => {
+  const { stakingContractAccountId, voteWeightAmplificationRules } =
     // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
     VOTING_MECHANISM_CONFIG_MPDAO;
 
@@ -33,60 +30,75 @@ export const useVotingParticipantVoteWeight = ({ accountId, potId: _ }: VotingPa
     stakingContractAccountId,
   });
 
-  const voteWeight = useMemo(() => {
-    const initialWeightBig = Big(initialWeight);
-
-    return accountId === undefined
-      ? Big(0)
-      : voteWeightAmplificationRules.reduce((weight, rule) => {
-          const participantStatsValue = participantStats[rule.participantStatsPropertyKey];
+  return useMemo(
+    () => ({
+      voteWeightAmplifiers: voteWeightAmplificationRules.map(
+        ({ name, description, participantStatsPropertyKey, amplificationPercent, ...rule }) => {
+          const staticAmplifierProps = { name, description, amplificationPercent };
+          const participantStatsValue = participantStats[participantStatsPropertyKey];
 
           switch (rule.comparator) {
             case "isTruthy": {
-              if (
-                typeof participantStatsValue === "boolean" &&
-                isTruthy(participantStatsValue) === rule.expectation
-              ) {
-                return weight.add(
-                  Big(rule.amplificationPercent)
-                    .div(100)
-                    .mul(initialWeightBig.gt(0) ? initialWeightBig : 1),
-                );
-              } else return weight;
+              return {
+                ...staticAmplifierProps,
+
+                isApplicable:
+                  typeof participantStatsValue === "boolean" &&
+                  isTruthy(participantStatsValue) === rule.expectation,
+              };
             }
 
             default: {
               if (VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS.includes(rule.comparator)) {
-                return isBigSource(participantStatsValue) &&
-                  Big(participantStatsValue as BigSource)[rule.comparator](rule.threshold)
-                  ? weight.add(
-                      Big(rule.amplificationPercent)
-                        .div(100)
-                        .mul(initialWeightBig.gt(0) ? initialWeightBig : 1),
-                    )
-                  : weight;
-              } else return weight;
+                return {
+                  ...staticAmplifierProps,
+
+                  isApplicable:
+                    isBigSource(participantStatsValue) &&
+                    Big(participantStatsValue as BigSource)[rule.comparator](rule.threshold),
+                };
+              } else return { ...staticAmplifierProps, isApplicable: false };
             }
           }
-        }, initialWeightBig);
-  }, [accountId, initialWeight, participantStats, voteWeightAmplificationRules]);
+        },
+      ),
+    }),
 
-  return {
-    voteWeight,
-    voteWeightAmplificationRules,
-  };
+    [participantStats, voteWeightAmplificationRules],
+  );
 };
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
  *  as it's built for the mpDAO milestone.
  *
- * Calculates the vote weight of the currently authenticated participant for a given voting round.
+ * Calculates the vote weight of a given participant in a given voting round.
  */
-export const useVotingAuthenticatedParticipantVoteWeight = (
-  inputs: Pick<VotingParticipantKey, "potId">,
-) => {
-  const { accountId } = useSessionAuth();
+export const useVotingParticipantVoteWeight = ({ accountId, potId }: VotingParticipantKey) => {
+  const { initialWeight } =
+    // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
+    VOTING_MECHANISM_CONFIG_MPDAO;
 
-  return useVotingParticipantVoteWeight({ ...inputs, accountId });
+  const { voteWeightAmplifiers } = useVotingParticipantVoteWeightAmplifiers({ accountId, potId });
+
+  return useMemo(() => {
+    if (accountId === undefined) {
+      return { voteWeight: Big(0) };
+    } else {
+      return {
+        voteWeight: voteWeightAmplifiers.reduce(
+          (accumulatedWeight, rule) =>
+            rule.isApplicable
+              ? accumulatedWeight.add(
+                  Big(rule.amplificationPercent)
+                    .div(100)
+                    .mul(accumulatedWeight.gt(0) ? accumulatedWeight : 1),
+                )
+              : accumulatedWeight,
+
+          Big(initialWeight),
+        ),
+      };
+    }
+  }, [accountId, initialWeight, voteWeightAmplifiers]);
 };

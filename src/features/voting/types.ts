@@ -26,7 +26,7 @@ export type VotingVoteWeightAmplifier = Pick<
   VotingWeightAmplificationRule,
   "name" | "description" | "amplificationPercent"
 > & {
-  isActive: boolean;
+  isApplicable: boolean;
 };
 
 export type VotingMechanismConfig = {

@@ -39,6 +39,10 @@ export default defineConfig({
         },
       },
 
+      conifer: {
+        600: "#629D13",
+      },
+
       corn: {
         50: "#fDfCe9",
       },
