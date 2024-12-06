@@ -1,25 +1,33 @@
 import { X } from "lucide-react";
 
+import { ByPotId } from "@/common/api/indexer";
 import CheckCircle from "@/common/assets/svgs/CheckCircle";
 import Star from "@/common/assets/svgs/Star";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
-export interface VotingWeightBoostPanelProps {
+import { useVotingAuthenticatedParticipantVoteWeight } from "../hooks/vote-weight";
+
+export type VotingWeightBoostPanelProps = ByPotId & {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   className?: string;
   mode?: "modal" | "panel";
   weightBoost: number;
-}
+};
 
 export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
+  potId,
   open,
   onOpenChange,
   className,
   mode = "modal",
   weightBoost,
 }) => {
+  const { voteWeight, voteWeightAmplificationRules } = useVotingAuthenticatedParticipantVoteWeight({
+    potId,
+  });
+
   const Content = () => (
     <div className="space-y-4">
       <div className="space-y-4">
@@ -100,10 +108,11 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Star className="h-6 w-6" />
-            <h4>Weight Boost</h4>
+            <h4 className="prose">{"Weight Boost"}</h4>
             <span className="font-semibold text-white">x{weightBoost}</span>
           </DialogTitle>
         </DialogHeader>
+
         <div className="p-6">
           <Content />
         </div>

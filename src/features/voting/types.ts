@@ -23,5 +23,5 @@ export type VotingMechanismConfig = {
   basicWeight: number;
   stakingTokenContractAccountId?: TokenId;
   documentUrl?: string;
-  rules: VotingWeightAmplificationRule[];
+  voteWeightAmplificationRules: VotingWeightAmplificationRule[];
 };

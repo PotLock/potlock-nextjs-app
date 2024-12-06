@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { MdHowToVote } from "react-icons/md";
 
+import { PotId } from "@/common/api/indexer";
 import FileText from "@/common/assets/svgs/FileText";
 import Star from "@/common/assets/svgs/Star";
 import { useRouteQuery } from "@/common/lib";
@@ -33,8 +34,8 @@ export default function PotVotesTab() {
   } = useRouteQuery();
 
   const potId = Array.isArray(potIdRouteQueryParam)
-    ? potIdRouteQueryParam.at(0)
-    : potIdRouteQueryParam;
+    ? (potIdRouteQueryParam.at(0) as PotId)
+    : (potIdRouteQueryParam as PotId);
 
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
@@ -363,6 +364,7 @@ export default function PotVotesTab() {
                 onOpenChange={() => setShowWeightBoost(false)}
                 mode="panel"
                 weightBoost={initWeightBoost}
+                {...{ potId }}
               />
             )}
           </div>
@@ -376,6 +378,7 @@ export default function PotVotesTab() {
             open={showWeightBoost}
             onOpenChange={setShowWeightBoost}
             weightBoost={0}
+            {...{ potId }}
           />
 
           <VotingRulesPanel open={showVotingRules} onOpenChange={setShowVotingRules} />

@@ -19,7 +19,7 @@ export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
   stakingTokenContractAccountId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
   documentUrl: "https://docs.google.com/document/d/1P5iSBBSuh7nep29r7N3S-g4Y1bDbF4xLU_3v7XHmJR8",
 
-  rules: [
+  voteWeightAmplificationRules: [
     {
       name: "Human Verification",
       description: "Human-verified Users: Votes are weighted at 10% for verified users [KYC].",

@@ -34,7 +34,12 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
           ]).then(
             piped(
               filter(isNonNull),
-              reduce((acc, data) => ({ ...acc, [data.tokenId]: data }), {}),
+
+              reduce(
+                (registryAccumulator, data) => ({ ...registryAccumulator, [data.tokenId]: data }),
+                {},
+              ),
+
               (data: FtRegistry) => set({ data }),
             ),
           ),
