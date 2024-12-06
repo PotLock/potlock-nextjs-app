@@ -47,6 +47,8 @@ export const PotPayoutChallenges = ({
           setPayoutsChallenges(_payoutsChallenges);
           setFilteredChallenges(_payoutsChallenges?.filter((c) => !c.resolved));
           setTotalChallenges(_payoutsChallenges?.length);
+
+          console.log(_payoutsChallenges);
         } catch (e) {
           console.error(e);
         }

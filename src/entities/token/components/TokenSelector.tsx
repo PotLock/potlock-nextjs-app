@@ -28,7 +28,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
     >
       {tokenOptions.map((token) =>
         token && (token.balanceFloat ?? 0) > 0 ? (
-          <SelectFieldOption key={token.contract_account_id} value={token.contract_account_id}>
+          <SelectFieldOption key={token.tokenId} value={token.tokenId}>
             {token.metadata.symbol}
           </SelectFieldOption>
         ) : null,

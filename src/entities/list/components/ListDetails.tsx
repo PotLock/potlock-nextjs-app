@@ -12,7 +12,7 @@ import { walletApi } from "@/common/api/near";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import {
   DropdownMenu,
   DropdownMenuContent,

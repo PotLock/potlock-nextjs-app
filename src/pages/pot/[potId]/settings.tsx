@@ -4,7 +4,7 @@ import { useRouteQuery } from "@/common/lib";
 import { PotEditor } from "@/features/pot-editor";
 import { PotLayout } from "@/layout/PotLayout";
 
-const PotEditorSettingsTab = () => {
+export default function PotEditorSettingsTab() {
   const {
     query: { potId },
   } = useRouteQuery();
@@ -14,10 +14,8 @@ const PotEditorSettingsTab = () => {
       <PotEditor potId={typeof potId === "string" ? potId : "unknown"} />
     </div>
   );
-};
+}
 
 PotEditorSettingsTab.getLayout = function getLayout(page: ReactElement) {
   return <PotLayout>{page}</PotLayout>;
 };
-
-export default PotEditorSettingsTab;

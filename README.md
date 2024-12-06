@@ -39,6 +39,13 @@ Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
 **Swagger UI**: <https://dev.potlock.io/api/schema/swagger-ui/#/>
 
+## Dependencies
+
+### Nice Modal for modals
+
+[Documentation](https://github.com/eBay/nice-modal-react?tab=readme-ov-file#nice-modal)
+[Examples](https://opensource.ebay.com/nice-modal-react/)
+
 ## Project Structure
 
 The architectural methodology is heavily based on [Feature-Sliced Design](https://feature-sliced.design/docs/reference/layers).

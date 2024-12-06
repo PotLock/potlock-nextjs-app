@@ -9,7 +9,7 @@ import { RegistrationStatus } from "@/common/contracts/core";
 import { getIsHuman } from "@/common/contracts/core/sybil";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import {
   Button,
   DropdownMenu,

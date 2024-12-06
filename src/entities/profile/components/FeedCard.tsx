@@ -8,7 +8,7 @@ import Markdown from "react-markdown";
 import { fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 
 import FeedCardOptionsSelect from "./FeedCardOptionsSelect";
 import { PROFILE_DEFAULTS } from "../constants";
