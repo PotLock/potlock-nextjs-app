@@ -1,7 +1,7 @@
 import { Big, BigSource } from "big.js";
 import { number, preprocess } from "zod";
 
-export const isBigSource = (value: unknown) => {
+export const isBigSource = (value: unknown | BigSource) => {
   try {
     /** Attempt to create a new Big instance */
     new Big(value as BigSource);
