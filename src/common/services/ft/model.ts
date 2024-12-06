@@ -20,46 +20,50 @@ type FtRegistryStoreState = {
 interface FtRegistryStore extends FtRegistryStoreState {}
 
 export const useFtRegistryStore = create<FtRegistryStore>()(
-  persist(
-    (set) =>
-      refExchangeClient
-        .get_whitelisted_tokens()
-        .then((tokenContractAccountIds) =>
-          Promise.all([
-            ftClient.getFtBoundNativeTokenData({ accountId: walletApi.accountId }),
+  /** persist( */
+  (set) =>
+    refExchangeClient
+      .get_whitelisted_tokens()
+      .then((tokenContractAccountIds) =>
+        Promise.all([
+          ftClient.getFtBoundNativeTokenData({ accountId: walletApi.accountId }),
 
-            ...MANUALLY_LISTED_ACCOUNT_IDS.concat(tokenContractAccountIds).map((tokenId) =>
-              ftClient.getFtData({ accountId: walletApi.accountId, tokenId }),
-            ),
-          ]).then(
-            piped(
-              filter(isNonNull),
-
-              reduce(
-                (registryAccumulator, data) => ({ ...registryAccumulator, [data.tokenId]: data }),
-                {},
-              ),
-
-              (data: FtRegistry) => set({ data }),
-            ),
+          ...MANUALLY_LISTED_ACCOUNT_IDS.concat(tokenContractAccountIds).map((tokenId) =>
+            ftClient.getFtData({ accountId: walletApi.accountId, tokenId }),
           ),
-        )
-        .catch((error: unknown) => {
-          const errorMessage =
-            error instanceof Error
-              ? error.message
-              : typeof error === "object" && error !== null && "type" in error
-                ? String((error as { type: string }).type)
-                : String(error);
+        ]).then(
+          piped(
+            filter(isNonNull),
 
-          set({
-            error: new Error(errorMessage),
-          });
-        }),
+            reduce(
+              (registryAccumulator, data: FtData) => ({
+                ...registryAccumulator,
+                [data.tokenId]: data,
+              }),
 
-    {
-      name: "FT Registry",
-      merge: (persistedState, currentState) => merge(persistedState, currentState),
-    },
-  ),
+              {},
+            ),
+
+            (data: FtRegistry) => set({ data }),
+          ),
+        ),
+      )
+      .catch((error: unknown) => {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : typeof error === "object" && error !== null && "type" in error
+              ? String((error as { type: string }).type)
+              : String(error);
+
+        set({
+          error: new Error(errorMessage),
+        });
+      }),
+
+  //   {
+  //     name: "FT Registry",
+  //     merge: (persistedState, currentState) => merge(persistedState, currentState),
+  //   },
+  // ),
 );
