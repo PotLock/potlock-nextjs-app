@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import { PROFILE_DEFAULTS } from "@/entities/profile/constants";
 
 const SinglePost = () => {

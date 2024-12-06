@@ -10,7 +10,7 @@ import { LayersIcon } from "@/common/assets/svgs";
 import { LikeIcon } from "@/common/assets/svgs/like";
 import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import { dispatch } from "@/store";
 
 import { ListFormModalType } from "../types";

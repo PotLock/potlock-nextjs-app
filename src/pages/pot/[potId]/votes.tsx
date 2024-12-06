@@ -177,7 +177,7 @@ export default function PotVotesTab() {
         />
       </div>
 
-      <div className="flex flex-row">
+      <div className="flex flex-row gap-6">
         <div className="w-full">
           {/* Header */}
           <div className={cn("absolute inset-x-0 w-full md:static")}>
@@ -188,7 +188,7 @@ export default function PotVotesTab() {
               )}
             >
               <div className="flex items-center gap-2">
-                <MdHowToVote className="h-6 w-6" />
+                <MdHowToVote className="color-peach-400 h-6 w-6" />
 
                 <span className="font-semibold">
                   {`${votedCount} Project${votedCount > 1 ? "s" : ""} Voted`}
@@ -348,7 +348,7 @@ export default function PotVotesTab() {
         </div>
 
         {isDesktop && (
-          <div className="space-y-4">
+          <div className="flex flex-col gap-6">
             {showVotingRules && (
               <VotingRulesPanel
                 open={true}

@@ -5,7 +5,7 @@ import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
-import { isNetworkAccountId } from "@/common/lib";
+import { isAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountOption, AccountProfileLink } from "@/entities/account";
@@ -37,7 +37,7 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
             {subheading ? `${heading} (${subheading})` : heading}
           </span>
 
-          {typeof children === "string" && isNetworkAccountId(children) ? (
+          {typeof children === "string" && isAccountId(children) ? (
             <AccountProfileLink
               accountId={children}
               classNames={{ root: "mr-a", name: "text-sm" }}

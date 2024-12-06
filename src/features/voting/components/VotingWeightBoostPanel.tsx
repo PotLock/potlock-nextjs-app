@@ -25,36 +25,45 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
       <div className="space-y-4">
         <div className="flex items-center justify-between text-black">
           <span>Human Verification</span>
+
           <div className="flex items-center gap-2">
-            <span>x10</span>
+            <span>10%</span>
             <CheckCircle className="h-6 w-6" color="#629D13" />
           </div>
         </div>
+
         <div className="flex items-center justify-between text-[#525252]">
-          <span>Upto 10,000 votes in mpDAO</span>
+          <span>Up to 10,000 votes in mpDAO</span>
+
           <div className="flex items-center gap-2">
-            <span>x25</span>
+            <span>25%</span>
             <CheckCircle className="h-6 w-6" color="#C7C7C7" />
           </div>
         </div>
+
         <div className="flex items-center justify-between text-[#525252]">
-          <span>Upto 25,000 votes in mpDAO</span>
+          <span>Up to 25,000 votes in mpDAO</span>
+
           <div className="flex items-center gap-2">
-            <span>x25</span>
+            <span>25%</span>
             <CheckCircle className="h-6 w-6" color="#C7C7C7" />
           </div>
         </div>
+
         <div className="flex items-center justify-between text-[#525252]">
-          <span>Stake at least 2 Near</span>
+          <span>Stake at least 2 NEAR</span>
+
           <div className="flex items-center gap-2">
-            <span>x10</span>
+            <span>10%</span>
             <CheckCircle className="h-6 w-6" color="#C7C7C7" />
           </div>
         </div>
+
         <div className="flex items-center justify-between text-[#525252]">
-          <span>Stake at least 10 Near</span>
+          <span>Stake at least 10 NEAR</span>
+
           <div className="flex items-center gap-2">
-            <span>x30</span>
+            <span>30%</span>
             <CheckCircle className="h-6 w-6" color="#C7C7C7" />
           </div>
         </div>

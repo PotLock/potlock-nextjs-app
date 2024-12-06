@@ -1,5 +1,5 @@
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
-import { u128StringToFloat } from "@/common/lib";
+import { stringifiedU128ToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { ByTokenId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
@@ -23,7 +23,10 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   const amount =
     "amountFloat" in props
       ? props.amountFloat
-      : u128StringToFloat(props.amountBigString, token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS);
+      : stringifiedU128ToFloat(
+          props.amountBigString,
+          token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+        );
 
   const amountUsd = token?.usdPrice?.gt(0) ? token?.usdPrice?.mul(amount).toFixed(2) : null;
 

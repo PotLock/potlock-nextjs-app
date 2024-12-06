@@ -9,7 +9,7 @@ import { walletApi } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus, listsClient } from "@/common/contracts/core";
 import uploadFileToIPFS from "@/common/services/ipfs";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
