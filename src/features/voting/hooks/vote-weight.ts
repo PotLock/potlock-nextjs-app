@@ -1,18 +1,21 @@
 import { useMemo } from "react";
 
 import { Big, BigSource } from "big.js";
-import { isTruthy, pick } from "remeda";
+import { isTruthy } from "remeda";
 
-import { ByPotId } from "@/common/api/indexer";
 import { isBigSource } from "@/common/lib";
-import { ByAccountId } from "@/common/types";
 import { useSessionAuth } from "@/entities/session";
 
 import { useVotingParticipantStats } from "./participant-stats";
 import { VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS } from "../constants";
 import { VOTING_MECHANISM_CONFIG_MPDAO } from "../model/hardcoded";
+import { VotingParticipantKey, VotingVoteWeightAmplifier } from "../types";
 
-export type VotingParticipantVoteWeightInputs = Partial<ByAccountId> & ByPotId;
+export const useVotingParticipantVoteWeightAmplifiers = () => {
+  const { initialWeight, stakingContractAccountId, voteWeightAmplificationRules } =
+    // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
+    VOTING_MECHANISM_CONFIG_MPDAO;
+};
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
@@ -20,10 +23,7 @@ export type VotingParticipantVoteWeightInputs = Partial<ByAccountId> & ByPotId;
  *
  * Calculates the vote weight of a given participant for a given voting round.
  */
-export const useVotingParticipantVoteWeight = ({
-  accountId,
-  potId: _,
-}: VotingParticipantVoteWeightInputs) => {
+export const useVotingParticipantVoteWeight = ({ accountId, potId: _ }: VotingParticipantKey) => {
   const { initialWeight, stakingContractAccountId, voteWeightAmplificationRules } =
     // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
     VOTING_MECHANISM_CONFIG_MPDAO;
@@ -84,7 +84,7 @@ export const useVotingParticipantVoteWeight = ({
  * Calculates the vote weight of the currently authenticated participant for a given voting round.
  */
 export const useVotingAuthenticatedParticipantVoteWeight = (
-  inputs: Pick<VotingParticipantVoteWeightInputs, "potId">,
+  inputs: Pick<VotingParticipantKey, "potId">,
 ) => {
   const { accountId } = useSessionAuth();
 
