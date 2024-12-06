@@ -33,11 +33,11 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
       <div className="space-y-4">
         <div className="space-y-4">
           {voteWeightAmplificationRules.map(({ name, description, amplificationPercent }) => (
-            <div className="flex items-center justify-between text-black" key={name + description}>
+            <div className="flex items-center justify-between text-sm" key={name + description}>
               <span className="prose">{name}</span>
 
-              <div className="flex items-center gap-2">
-                <span>{`${amplificationPercent} %`}</span>
+              <div className="flex items-center gap-2 font-bold">
+                <span className="font-600">{`${amplificationPercent} %`}</span>
                 <CheckCircle className="h-6 w-6" color="#629D13" />
 
                 {/** TODO: provide `isSatisfied` and display the variant below if it's `false` */}

@@ -55,12 +55,12 @@ export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
       name: "Stake at least 10 Near",
 
       description:
-        "Users with at least 10 stNEAR staked in Meta Pool receive a 20% boost in addition to the 10% boost from staking at least 2 Near.",
+        "Users with at least 10 stNEAR staked in Meta Pool receive a 30% boost in addition to the 10% boost from staking at least 2 Near.",
 
       participantStatsPropertyKey: "stakingTokenBalance",
       comparator: "gte",
       threshold: 10,
-      amplificationPercent: 20,
+      amplificationPercent: 30,
     },
   ],
 };
