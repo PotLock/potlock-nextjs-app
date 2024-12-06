@@ -62,7 +62,7 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="font-semibold">{`${voteWeight.mul(100).toNumber()} %`}</span>
+            <span className="prose text-nowrap font-semibold">{`${voteWeight.mul(100).toNumber()} %`}</span>
 
             <X
               onClick={() => onOpenChange(true)}
