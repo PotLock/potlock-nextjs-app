@@ -11,12 +11,16 @@ import { Application, potClient } from "@/common/contracts/core";
 import { daysAgo, truncate } from "@/common/lib";
 import {
   Button,
+  FilterChip,
+  Input,
+  SearchBar,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/common/ui/components";
-import { AccountProfilePicture } from "@/entities/account";
+import { cn } from "@/common/ui/utils";
+import { AccountOption, AccountProfilePicture } from "@/entities/account";
 import routesPath from "@/entities/core/routes";
 import { PotFilters } from "@/entities/pot";
 import { useProfileData } from "@/entities/profile";
@@ -28,12 +32,12 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   margin-bottom: 4rem;
+  flex-direction: column;
   gap: 2rem;
   .dropdown {
     display: none;
   }
   @media only screen and (max-width: 768px) {
-    flex-direction: column;
     gap: 1.5rem;
     .dropdown {
       display: flex;
@@ -81,56 +85,38 @@ const Filter = styled.div`
 
 const ApplicationsWrapper = styled.div`
   border-radius: 6px;
-  border: 1px solid #7b7b7b;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-width: 711px;
   width: 100%;
 `;
 
-const SearchBar = styled.div`
-  display: flex;
-  position: relative;
-  svg {
-    position: absolute;
-    left: 1.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  input {
-    font-size: 14px;
-    background: #f6f5f3;
-    width: 100%;
-    height: 100%;
-    padding: 8px 24px 8px 60px;
-    border: none;
-    outline: none;
-  }
-  @media only screen and (max-width: 768px) {
-    svg {
-      left: 1rem;
-    }
+// const SearchBar = styled.div`
+//   display: flex;
+//   svg {
+//   }
+//   input {
+//     font-size: 14px;
+//     background: none;
+//     width: 100%;
+//     height: 100%;
+//     padding: 10px 10px 10px 10px;
+//     border: none;
+//     outline: none;
+//   }
+//   @media only screen and (max-width: 768px) {
+//     input {
+//       padding: 8px 24px 8px 54px;
+//     }
+//   }
+// `;
 
-    input {
-      padding: 8px 24px 8px 54px;
-    }
-  }
-`;
-
-const ApplicationRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-  font-size: 14px;
-  position: relative;
-  border-top: 1px solid #c7c7c7;
+const ApplicationCard = styled.div`
   .header {
     display: flex;
-    gap: 1rem;
+    width: 100%;
     justify-content: space-between;
     position: relative;
-    align-items: center;
+    align-items: flex-start;
   }
   .header-info {
     display: flex;
@@ -153,9 +139,6 @@ const ApplicationRow = styled.div`
     color: #7b7b7b;
     font-weight: 600;
     cursor: pointer;
-    transition: all 300ms;
-    position: relative;
-    z-index: 2;
     &:hover {
       color: #292929;
     }
@@ -164,11 +147,18 @@ const ApplicationRow = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    overflow: hidden;
-    transition: all 300ms ease-in-out;
-    max-height: 0;
+    margin-left: 70px;
+    font-size: 17px;
     .message {
-      padding-top: 1rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      max-width: 100%;
+      a {
+        word-break: break-word;
+        display: inline-block;
+        max-width: 100%;
+      }
     }
     .notes {
       display: flex;
@@ -182,78 +172,10 @@ const ApplicationRow = styled.div`
       width: fit-content;
     }
   }
-  .arrow {
-    rotate: 180deg;
-    transition: all 300ms;
-  }
-  .toggle-check {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 67px;
-    z-index: 1;
-    opacity: 0;
-    cursor: pointer;
-  }
-  .toggle-check:checked + .header .arrow {
-    rotate: 0deg;
-  }
-  .toggle-check:checked + .header + .content {
-    max-height: 100%;
-  }
-  @media only screen and (max-width: 768px) {
-    padding: 1rem;
-    .header-info {
-      flex-wrap: wrap;
-      gap: 0px;
-    }
-    .name {
-      margin: 0 8px;
-    }
-    .date {
-      line-height: 1;
-      width: 100%;
-      margin-left: 2.5rem;
-    }
-  }
-`;
-
-const Dot = styled.div`
-  width: 6px;
-  height: 6px;
-  background: #7b7b7b;
-  border-radius: 50%;
-
-  @media only screen and (max-width: 768px) {
-    display: none;
-  }
 `;
 
 const Status = styled.div`
   display: flex;
-  padding: 6px 12px;
-  gap: 8px;
-  align-items: center;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 4px;
-  margin-left: auto;
-  div {
-    font-weight: 500;
-  }
-  svg {
-    width: 1rem;
-  }
-  @media only screen and (max-width: 768px) {
-    padding: 6px;
-    div {
-      display: none;
-    }
-    svg {
-      width: 16px;
-    }
-  }
 `;
 
 const DropdownLabel = styled.div`
@@ -367,23 +289,23 @@ const ApplicationsTab = () => {
 
   const applicationsFilters: Record<string, { label: string; val: string; count?: number }> = {
     ALL: {
-      label: "All applications",
+      label: "All",
       val: "ALL",
       count: getApplicationCount("All")!,
     },
+    APPROVED: {
+      label: "Approved",
+      val: "APPROVED",
+      count: getApplicationCount("Approved")!,
+    },
     PENDING: {
-      label: "Pending applications",
+      label: "Pending",
       val: "PENDING",
 
       count: getApplicationCount("Pending")!,
     },
-    APPROVED: {
-      label: "Approved applications",
-      val: "APPROVED",
-      count: getApplicationCount("Approved")!,
-    },
     REJECTED: {
-      label: "Rejected applications",
+      label: "Rejected",
       val: "REJECTED",
       count: getApplicationCount("Rejected")!,
     },
@@ -411,24 +333,6 @@ const ApplicationsTab = () => {
     setFilterValue(key);
   };
 
-  const DropdownValue = () => {
-    const digit = applicationsFilters[filterValue]?.count?.toString().length || 0;
-    return (
-      <DropdownLabel>
-        <div className="label">{applicationsFilters[filterValue]?.label || ""}</div>
-        <div
-          className="count"
-          style={{
-            width: `${24 + (digit - 1) * 6}px`,
-            height: `${24 + (digit - 1) * 6}px`,
-          }}
-        >
-          {applicationsFilters[filterValue]?.count || 0}
-        </div>
-      </DropdownLabel>
-    );
-  };
-
   return (
     <Container>
       {/* Modal */}
@@ -439,63 +343,37 @@ const ApplicationsTab = () => {
         projectStatus={projectStatus}
         onCloseClick={handleCloseModal}
       />
-
-      <div className="dropdown">
-        <PotFilters
-          {...{
-            sortVal: <DropdownValue />,
-            showCount: true,
-            sortList: Object.values(applicationsFilters),
-            menuStyle: { left: "auto", right: "auto" },
-            handleSortChange: ({ val }) => {
-              handleSort(val);
-            },
-          }}
-        />
-      </div>
-      <Filter>
+      <div className="flex gap-3">
         {Object.keys(applicationsFilters).map((key) => (
-          <div
-            key={key}
-            className={`item ${filterValue === key ? "active" : ""}`}
+          <FilterChip
+            variant={filterValue === key ? "brand-filled" : "brand-outline"}
             onClick={() => handleSort(key)}
-          >
-            <CheckIcon width={14} height={12} />
-
-            <div> {applicationsFilters[key].label}</div>
-            <div className="count">{applicationsFilters[key].count}</div>
-          </div>
-        ))}
-      </Filter>
-      <ApplicationsWrapper>
-        <SearchBar>
-          <SearchIcon />
-          <input
-            type="text"
-            placeholder="Search applications"
-            className="search-input"
-            onChange={(e) => {
-              const results = searchApplications(e.target.value);
-              setSearchTerm(e.target.value);
-              setFilteredApplications(results);
-            }}
+            className="font-medium"
+            label={applicationsFilters[key].label}
+            count={applicationsFilters[key].count}
+            key={key}
           />
-        </SearchBar>
-        {filteredApplications.length ? (
-          filteredApplications.map((application) => {
-            return (
-              <ApplicationData
-                key={application.project_id}
-                applicationData={application}
-                isChefOrGreater={isChefOrGreater}
-                handleApproveApplication={handleApproveApplication}
-                handleRejectApplication={handleRejectApplication}
-              />
-            );
-          })
-        ) : (
-          <div style={{ padding: "1rem" }}>No applications to display</div>
-        )}
+        ))}
+      </div>
+      <ApplicationsWrapper>
+        <SearchBar />
+        <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2">
+          {filteredApplications.length ? (
+            filteredApplications.map((application) => {
+              return (
+                <ApplicationData
+                  key={application.project_id}
+                  applicationData={application}
+                  isChefOrGreater={isChefOrGreater}
+                  handleApproveApplication={handleApproveApplication}
+                  handleRejectApplication={handleRejectApplication}
+                />
+              );
+            })
+          ) : (
+            <div style={{ padding: "1rem" }}>No applications to display</div>
+          )}
+        </div>
       </ApplicationsWrapper>
     </Container>
   );
@@ -517,57 +395,43 @@ const ApplicationData = ({
   const { profile } = useProfileData(project_id, true, false);
 
   return (
-    <ApplicationRow key={project_id}>
-      <input type="checkbox" className="toggle-check" />
+    <ApplicationCard
+      key={project_id}
+      className="flex min-w-[234px] flex-col items-start justify-start gap-4 rounded-2xl border border-[#eaeaea] bg-white p-5 md:min-w-[600px]"
+    >
       <div className="header">
         <div className="header-info">
-          <AccountProfilePicture accountId={project_id} className="profile-image" />
-          {profile?.name && <div className="name">{truncate(profile?.name, 15)}</div>}
-
-          {/* Tooltip */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Link
-                  className="address"
-                  href={`${routesPath.PROJECT}/${project_id}`}
-                  target="_blank"
-                >
-                  {truncate(project_id, 15)}
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>{project_id}</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <Dot />
-          <div className="date">{daysAgo(submitted_at)}</div>
+          <AccountOption
+            title="user Account"
+            accountId={project_id}
+            highlightOnHover={true}
+            isRounded={true}
+            daysAgoData={submitted_at}
+          />
         </div>
         <Status
-          style={{
-            borderColor,
-            color,
-            background,
-          }}
+          className={cn(
+            "inline-flex items-center justify-center gap-2 rounded-md border py-1.5 pl-2 pr-3",
+            {
+              "border-[#f4b37d] bg-[#fdfce9]": status === "Pending",
+              "border-[#58f0db] bg-[#effefa]": status === "Approved",
+              "border-[#faa7a8] bg-[#fef3f2]": status === "Rejected",
+            },
+          )}
         >
-          <div>{label}</div>
           {icon}
+          <div
+            className={cn("font-['Mona Sans'] text-sm font-medium leading-tight", {
+              "text-[#b63d18]": status === "Pending",
+              "text-[#0b7a74]": status === "Approved",
+              "text-[#b8182d]": status === "Rejected",
+            })}
+          >
+            {label}
+          </div>
         </Status>
-        <svg
-          width="12"
-          height="8"
-          viewBox="0 0 12 8"
-          fill="none"
-          className="arrow"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6 0.294922L0 6.29492L1.41 7.70492L6 3.12492L10.59 7.70492L12 6.29492L6 0.294922Z"
-            fill="#7B7B7B"
-          />
-        </svg>
       </div>
-      <div className="content">
+      <div className="content text-neutral-600">
         <div className="message">{message}</div>
         {review_notes && (
           <div className="notes">
@@ -588,7 +452,7 @@ const ApplicationData = ({
           </>
         )}
       </div>
-    </ApplicationRow>
+    </ApplicationCard>
   );
 };
 
