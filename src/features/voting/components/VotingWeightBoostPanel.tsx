@@ -47,11 +47,12 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
               <div className="flex items-center gap-2 font-bold">
                 <span className="font-600">{`${amplificationPercent} %`}</span>
 
-                {isApplicable ? (
-                  <MdCheckCircleOutline className="color-conifer-600 h-6 w-6" />
-                ) : (
-                  <MdCheckCircleOutline className="color-neutral-300 h-6 w-6" />
-                )}
+                <MdCheckCircleOutline
+                  className={cn("h-6 w-6", {
+                    "color-conifer-600": isApplicable,
+                    "color-neutral-300": !isApplicable,
+                  })}
+                />
               </div>
             </div>
           ))}
