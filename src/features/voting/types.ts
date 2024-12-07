@@ -35,3 +35,5 @@ export type VotingMechanismConfig = {
   documentUrl?: string;
   voteWeightAmplificationRules: VotingWeightAmplificationRule[];
 };
+
+export type VotingElectionCandidateFilter = "all" | "voted" | "pending";

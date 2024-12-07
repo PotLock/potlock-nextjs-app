@@ -7,7 +7,7 @@ import { ClearanceCheckResult } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
 import { useSessionAuth } from "@/entities/session";
 
-import { isVotingEnabled } from "../utils/mechanisms";
+import { isVotingEnabled } from "../model/hardcoded";
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**

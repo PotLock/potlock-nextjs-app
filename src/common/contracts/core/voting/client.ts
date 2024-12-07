@@ -9,8 +9,8 @@ import type {
   ElectionPhase,
   ElectionType,
   EligibilityType,
+  IVotingContract,
   Vote,
-  VotingContract,
   VotingType,
 } from "./interfaces";
 
@@ -18,7 +18,7 @@ import type {
  * Client implementation for interacting with the Voting smart contract
  * Provides methods to create and manage elections, cast votes, and query election data
  */
-class VotingClient implements Omit<VotingContract, "new"> {
+class VotingClient implements Omit<IVotingContract, "new"> {
   private contract: ReturnType<typeof naxios.prototype.contractApi>;
 
   /**

@@ -5,9 +5,15 @@ export type AccountId = string;
  */
 export interface Vote {
   voter: AccountId;
-  candidate: AccountId;
+  candidate_id: AccountId;
   weight: number;
   timestamp: number;
+}
+
+export enum ApplicationStatus {
+  Pending = "Pending",
+  Approved = "Approved",
+  Rejected = "Rejected",
 }
 
 /**
@@ -15,9 +21,9 @@ export interface Vote {
  */
 export interface Candidate {
   account_id: AccountId;
-  votes: Vote[];
-  vote_count: number;
-  vote_weight: number;
+  status: ApplicationStatus;
+  votes_received: number;
+  application_date: number;
 }
 
 /**
@@ -77,7 +83,7 @@ export interface Election {
 /**
  * Contract interface for the voting system
  */
-export interface VotingContract {
+export interface IVotingContract {
   contract_source_metadata(): Promise<string>;
 
   create_election(args: {
