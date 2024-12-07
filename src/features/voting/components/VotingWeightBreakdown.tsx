@@ -20,7 +20,7 @@ import {
 } from "../hooks/vote-weight";
 
 export type VotingWeightBoostBreakdownProps = ByPotId & {
-  mode?: "modal" | "panel";
+  mode: "modal" | "panel";
   open: boolean;
   onOpenChange: (open: boolean) => void;
   className?: string;
@@ -30,9 +30,10 @@ export const VotingWeightBoostBreakdown: React.FC<VotingWeightBoostBreakdownProp
   potId,
   open,
   onOpenChange,
+  mode,
   className,
-  mode = "modal",
 }) => {
+  const isDialogOpen = useMemo(() => open && mode === "modal", [mode, open]);
   const { accountId } = useSessionAuth();
   const { voteWeight } = useVotingParticipantVoteWeight({ accountId, potId });
   const { voteWeightAmplifiers } = useVotingParticipantVoteWeightAmplifiers({ accountId, potId });
@@ -73,46 +74,49 @@ export const VotingWeightBoostBreakdown: React.FC<VotingWeightBoostBreakdownProp
     [mode, voteWeightAmplifiers],
   );
 
-  return mode === "panel" ? (
-    <div
-      className={cn(
-        "flex flex-col gap-2 rounded-lg border bg-neutral-50 px-4 pb-5 pt-2",
-        className,
-      )}
-    >
-      <div className="flex items-center py-2 text-lg font-semibold">
-        <div className="flex w-full items-center justify-between">
-          <div className="flex flex-row items-center gap-2">
-            <MdStar className="color-corn-500 h-6 w-6" />
-            <h2 className="min-w-[214px] text-lg font-semibold">{"Weight Boost"}</h2>
-          </div>
+  return (
+    <>
+      <div
+        className={cn(
+          "w-100 flex flex-col gap-2 rounded-lg border bg-neutral-50 px-4 pb-5 pt-2",
+          { hidden: mode !== "panel" || (mode === "panel" && !open) },
+          className,
+        )}
+      >
+        <div className="flex items-center py-2 text-lg font-semibold">
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-row items-center gap-2">
+              <MdStar className="color-corn-500 h-6 w-6" />
+              <h2 className="min-w-[214px] text-lg font-semibold">{"Weight Boost"}</h2>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <span className="prose text-nowrap font-semibold">{`${voteWeight.mul(100).toNumber()} %`}</span>
+            <div className="flex items-center gap-2">
+              <span className="prose text-nowrap font-semibold">{`${voteWeight.mul(100).toNumber()} %`}</span>
 
-            <X
-              onClick={() => onOpenChange(false)}
-              className="h-6 w-6 cursor-pointer text-neutral-400"
-            />
+              <X
+                onClick={() => onOpenChange(false)}
+                className="h-6 w-6 cursor-pointer text-neutral-400"
+              />
+            </div>
           </div>
         </div>
+
+        {checklist}
       </div>
 
-      {checklist}
-    </div>
-  ) : (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <MdStar className="color-corn-500 h-6 w-6" />
-            <h4 className="prose">{"Weight Boost"}</h4>
-            <span className="font-semibold text-white">{`${voteWeight.mul(100).toNumber()} %`}</span>
-          </DialogTitle>
-        </DialogHeader>
+      <Dialog open={isDialogOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MdStar className="color-corn-500 h-6 w-6" />
+              <h4 className="prose">{"Weight Boost"}</h4>
+              <span className="font-semibold text-white">{`${voteWeight.mul(100).toNumber()} %`}</span>
+            </DialogTitle>
+          </DialogHeader>
 
-        <div className="p-6">{checklist}</div>
-      </DialogContent>
-    </Dialog>
+          <div className="p-6">{checklist}</div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

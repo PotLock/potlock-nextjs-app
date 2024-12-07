@@ -4,59 +4,70 @@ import { X } from "lucide-react";
 import { MdOutlineDescription } from "react-icons/md";
 
 import { ByPotId } from "@/common/api/indexer";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  Separator,
+} from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
 export type VotingRulesProps = ByPotId & {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   className?: string;
-  mode?: "modal" | "panel";
+  mode: "modal" | "panel";
 };
 
 export const VotingRules = ({
   potId: _,
   open,
   onOpenChange,
+  mode,
   className,
-  mode = "modal",
 }: VotingRulesProps) => {
   const isDialogOpen = useMemo(() => open && mode === "modal", [mode, open]);
 
   const ruleList = useMemo(
     () => (
-      <div className="space-y-4">
-        <ul className="list-disc space-y-2 pl-4 text-neutral-700">
+      <div className="pl-2">
+        <ul className="flex list-disc flex-col gap-2 text-neutral-700">
+          <Separator className={cn({ hidden: mode === "modal" })} />
+
           <li>{"Anyone can vote."}</li>
-          <li>{"Donations to projects won't be counted as votes."}</li>
+          <li>{"Donations won't be counted as votes."}</li>
           <li>{"You can vote for different projects."}</li>
           <li>{"You can assign only one vote per project."}</li>
           <li>{"You cannot change a vote after voting."}</li>
         </ul>
       </div>
     ),
-    [],
+
+    [mode],
   );
 
   return (
     <>
       <div
         className={cn(
-          "rounded-lg border bg-[#f7f7f7] px-4 pb-5 pt-3",
+          "w-100 flex flex-col gap-2 rounded-lg border bg-neutral-50 px-4 pb-5 pt-2",
           { hidden: mode !== "panel" || (mode === "panel" && !open) },
           className,
         )}
       >
-        <div className="mb-4 flex items-center justify-between border-b py-2">
-          <div className="flex items-center gap-2">
-            <MdOutlineDescription className="color-neutral-400 h-6 w-6" />
-            <h2 className="min-w-[214px] text-lg font-semibold">{"Voting Rules"}</h2>
-          </div>
+        <div className="flex items-center py-2 text-lg font-semibold">
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-row items-center gap-2">
+              <MdOutlineDescription className="color-neutral-400 h-6 w-6" />
+              <h2 className="min-w-[214px] text-lg font-semibold">{"Voting Rules"}</h2>
+            </div>
 
-          <X
-            onClick={() => onOpenChange(false)}
-            className="h-6 w-6 cursor-pointer text-neutral-400"
-          />
+            <X
+              onClick={() => onOpenChange(false)}
+              className="h-6 w-6 cursor-pointer text-neutral-400"
+            />
+          </div>
         </div>
 
         {ruleList}
