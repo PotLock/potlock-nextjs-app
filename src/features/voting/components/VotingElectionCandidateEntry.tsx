@@ -30,8 +30,10 @@ export const VotingElectionCandidateEntry: React.FC<VotingElectionCandidateEntry
     [accountId, electionVotes],
   );
 
+  // TODO: Implement voting
   const canReceiveVotes = useMemo(
-    () => receivedVotes.find(({ voter }) => voter === userSession.accountId) === undefined,
+    () => false, // receivedVotes.find(({ voter }) => voter === userSession.accountId) === undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [receivedVotes, userSession.accountId],
   );
 
