@@ -231,12 +231,12 @@ export default function PotVotesTab() {
                 >
                   <MdStar className="color-corn-500 h-4.5 w-4.5" />
 
-                  <span className="flex items-center gap-2">
-                    <span className={cn("hidden whitespace-nowrap font-medium md:inline-flex")}>
+                  <span className="flex items-center gap-2 text-sm">
+                    <span className="font-500 hidden whitespace-nowrap md:inline-flex">
                       {`${showWeightBoost ? "Hide" : "View"} Weight Boost`}
                     </span>
 
-                    <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
+                    <span className="text-center font-semibold leading-tight text-[#ea6a25]">
                       {`${voteWeight.mul(100).toNumber()} %`}
                     </span>
                   </span>
@@ -257,7 +257,8 @@ export default function PotVotesTab() {
 
                   <span
                     className={cn(
-                      "hidden items-center gap-2 whitespace-nowrap font-medium md:inline-flex",
+                      "hidden items-center gap-2 whitespace-nowrap md:inline-flex",
+                      "font-500 text-sm",
                     )}
                   >
                     {`${showVotingRules ? "Hide" : "View"} Voting Rules`}

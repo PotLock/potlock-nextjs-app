@@ -177,7 +177,7 @@ export default defineConfig({
     },
   },
 
-  rules: [["hidden", { display: "none !important" }]],
+  rules: [["hidden", { display: "none" }]],
 
   shortcuts: {
     "btn-primary": "bg-primary text-primary-foreground hover:bg-primary/90",

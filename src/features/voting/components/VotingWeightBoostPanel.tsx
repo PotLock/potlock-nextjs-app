@@ -4,7 +4,13 @@ import { X } from "lucide-react";
 import { MdCheckCircleOutline, MdStar } from "react-icons/md";
 
 import { ByPotId } from "@/common/api/indexer";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  Separator,
+} from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useSessionAuth } from "@/entities/session";
 
@@ -34,13 +40,18 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
 
   const breakdown = useMemo(
     () => (
-      <div className="space-y-4">
-        <div className="space-y-4">
+      <div className="pl-8">
+        <div className="flex flex-col gap-3">
+          <Separator />
+
           {voteWeightAmplifiers.map(({ name, description, amplificationPercent, isApplicable }) => (
             <div
               key={name + amplificationPercent + isApplicable}
               title={description}
-              className={"flex items-center justify-between text-sm"}
+              className={cn("flex items-center justify-between text-sm", {
+                "text-neutral-950": isApplicable,
+                "text-neutral-500": !isApplicable,
+              })}
             >
               <span className="prose">{name}</span>
 
@@ -65,7 +76,7 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
 
   return mode === "panel" ? (
     <div className={cn("rounded-lg border bg-neutral-50 px-4 pb-5 pt-3", className)}>
-      <div className="mb-4 flex items-center gap-2 border-b py-2 text-lg font-semibold">
+      <div className="mb-4 flex items-center gap-2 text-lg font-semibold">
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-row items-center gap-2">
             <MdStar className="color-corn-500 h-6 w-6" />
