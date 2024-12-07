@@ -1,9 +1,9 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
-import { infer as FromSchema } from "zod";
+import { infer as FromSchema, ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near";
 import { campaignsClient } from "@/common/contracts/core";
@@ -105,6 +105,7 @@ export const useCampaignForm = () => {
     },
     onSubmit,
     values,
+    isValid: self.formState.isValid,
     onChange,
     handleDeleteCampaign,
   };
