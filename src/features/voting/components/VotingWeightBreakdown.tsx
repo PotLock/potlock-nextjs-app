@@ -42,7 +42,7 @@ export const VotingWeightBoostBreakdown: React.FC<VotingWeightBoostBreakdownProp
     () => (
       <div className="pl-8">
         <div className="flex flex-col gap-3">
-          <Separator className={cn({ hidden: mode === "modal" })} />
+          <Separator className={cn("color-neutral-200", { hidden: mode === "modal" })} />
 
           {voteWeightAmplifiers.map(({ name, description, amplificationPercent, isApplicable }) => (
             <div

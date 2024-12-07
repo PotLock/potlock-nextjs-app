@@ -31,9 +31,9 @@ export const VotingRules = ({
 
   const ruleList = useMemo(
     () => (
-      <div className="pl-2">
-        <ul className="flex list-disc flex-col gap-2 text-neutral-700">
-          <Separator className={cn({ hidden: mode === "modal" })} />
+      <div className="pl-8">
+        <ul className="flex list-disc flex-col gap-3 text-neutral-700">
+          <Separator className={cn("color-neutral-200", { hidden: mode === "modal" })} />
 
           <li>{"Anyone can vote."}</li>
           <li>{"Donations won't be counted as votes."}</li>
