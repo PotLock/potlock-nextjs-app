@@ -6,7 +6,7 @@ import { VotingMechanismConfig } from "../types";
 
 const VOTING_SUPPORTED_POT_IDS_BY_ENV: Record<EnvTag, PotId[]> = {
   production: ["mpdao.v1.potfactory.potlock.near"],
-  staging: ["mpdao.v1.potfactory.potlock.near"],
+  staging: ["mpdao-retropgf.potfactory.staging.potlock.near"],
   test: [],
 };
 
