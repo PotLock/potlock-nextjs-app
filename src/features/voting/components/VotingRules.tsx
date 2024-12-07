@@ -3,22 +3,26 @@ import { useMemo } from "react";
 import { X } from "lucide-react";
 import { MdOutlineDescription } from "react-icons/md";
 
+import { ByPotId } from "@/common/api/indexer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
-interface VotingRulesPanelProps {
+export type VotingRulesProps = ByPotId & {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   className?: string;
   mode?: "modal" | "panel";
-}
+};
 
-export const VotingRulesPanel = ({
+export const VotingRules = ({
+  potId: _,
   open,
   onOpenChange,
   className,
   mode = "modal",
-}: VotingRulesPanelProps) => {
+}: VotingRulesProps) => {
+  const isDialogOpen = useMemo(() => open && mode === "modal", [mode, open]);
+
   const ruleList = useMemo(
     () => (
       <div className="space-y-4">
@@ -34,9 +38,15 @@ export const VotingRulesPanel = ({
     [],
   );
 
-  if (mode === "panel") {
-    return (
-      <div className={cn("rounded-lg border bg-[#f7f7f7] px-4 pb-5 pt-3", className)}>
+  return (
+    <>
+      <div
+        className={cn(
+          "rounded-lg border bg-[#f7f7f7] px-4 pb-5 pt-3",
+          { hidden: mode !== "panel" || (mode === "panel" && !open) },
+          className,
+        )}
+      >
         <div className="mb-4 flex items-center justify-between border-b py-2">
           <div className="flex items-center gap-2">
             <MdOutlineDescription className="color-neutral-400 h-6 w-6" />
@@ -44,28 +54,26 @@ export const VotingRulesPanel = ({
           </div>
 
           <X
-            onClick={() => onOpenChange(true)}
+            onClick={() => onOpenChange(false)}
             className="h-6 w-6 cursor-pointer text-neutral-400"
           />
         </div>
 
         {ruleList}
       </div>
-    );
-  }
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="mb-4">
-          <DialogTitle className="flex flex-row items-center gap-2">
-            <MdOutlineDescription className="color-white h-6 w-6" />
-            <h4>{"Voting Rules"}</h4>
-          </DialogTitle>
-        </DialogHeader>
+      <Dialog open={isDialogOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex flex-row items-center gap-2">
+              <MdOutlineDescription className="color-white h-6 w-6" />
+              <h4>{"Voting Rules"}</h4>
+            </DialogTitle>
+          </DialogHeader>
 
-        <div className="p-6">{ruleList}</div>
-      </DialogContent>
-    </Dialog>
+          <div className="p-6">{ruleList}</div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

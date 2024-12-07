@@ -23,8 +23,8 @@ import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useSessionAuth } from "@/entities/session";
 import {
-  VotingRulesPanel,
-  VotingWeightBoostPanel,
+  VotingRules,
+  VotingWeightBoostBreakdown,
   useVotingParticipantVoteWeight,
 } from "@/features/voting";
 import { PotLayout } from "@/layout/PotLayout";
@@ -374,40 +374,22 @@ export default function PotVotesTab() {
           )}
         </div>
 
-        {isDesktop && (
-          <div className="flex flex-col gap-6">
-            {showVotingRules && (
-              <VotingRulesPanel
-                open={true}
-                onOpenChange={() => setShowVotingRules(false)}
-                mode="panel"
-              />
-            )}
-
-            {showWeightBoost && (
-              <VotingWeightBoostPanel
-                open={true}
-                onOpenChange={() => setShowWeightBoost(false)}
-                mode="panel"
-                {...{ potId }}
-              />
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Mobile Dialogs */}
-      {!isDesktop && (
-        <>
-          <VotingWeightBoostPanel
-            open={showWeightBoost}
-            onOpenChange={setShowWeightBoost}
+        <div className="flex flex-col gap-6">
+          <VotingRules
+            open={showVotingRules}
+            onOpenChange={setShowVotingRules}
+            mode={isDesktop ? "panel" : "modal"}
             {...{ potId }}
           />
 
-          <VotingRulesPanel open={showVotingRules} onOpenChange={setShowVotingRules} />
-        </>
-      )}
+          <VotingWeightBoostBreakdown
+            open={showWeightBoost}
+            onOpenChange={setShowWeightBoost}
+            mode={isDesktop ? "panel" : "modal"}
+            {...{ potId }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

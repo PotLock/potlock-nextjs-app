@@ -19,14 +19,14 @@ import {
   useVotingParticipantVoteWeightAmplifiers,
 } from "../hooks/vote-weight";
 
-export type VotingWeightBoostPanelProps = ByPotId & {
+export type VotingWeightBoostBreakdownProps = ByPotId & {
   mode?: "modal" | "panel";
   open: boolean;
   onOpenChange: (open: boolean) => void;
   className?: string;
 };
 
-export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
+export const VotingWeightBoostBreakdown: React.FC<VotingWeightBoostBreakdownProps> = ({
   potId,
   open,
   onOpenChange,
@@ -35,14 +35,13 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
 }) => {
   const { accountId } = useSessionAuth();
   const { voteWeight } = useVotingParticipantVoteWeight({ accountId, potId });
-
   const { voteWeightAmplifiers } = useVotingParticipantVoteWeightAmplifiers({ accountId, potId });
 
-  const breakdown = useMemo(
+  const checklist = useMemo(
     () => (
       <div className="pl-8">
         <div className="flex flex-col gap-3">
-          <Separator />
+          <Separator className={cn({ hidden: mode === "modal" })} />
 
           {voteWeightAmplifiers.map(({ name, description, amplificationPercent, isApplicable }) => (
             <div
@@ -55,7 +54,7 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
             >
               <span className="prose">{name}</span>
 
-              <div className="flex items-center gap-2 font-bold">
+              <div className="flex items-center gap-2">
                 <span className="font-600">{`${amplificationPercent} %`}</span>
 
                 <MdCheckCircleOutline
@@ -71,30 +70,35 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
       </div>
     ),
 
-    [voteWeightAmplifiers],
+    [mode, voteWeightAmplifiers],
   );
 
   return mode === "panel" ? (
-    <div className={cn("rounded-lg border bg-neutral-50 px-4 pb-5 pt-3", className)}>
-      <div className="mb-4 flex items-center gap-2 text-lg font-semibold">
+    <div
+      className={cn(
+        "flex flex-col gap-2 rounded-lg border bg-neutral-50 px-4 pb-5 pt-2",
+        className,
+      )}
+    >
+      <div className="flex items-center py-2 text-lg font-semibold">
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-row items-center gap-2">
             <MdStar className="color-corn-500 h-6 w-6" />
             <h2 className="min-w-[214px] text-lg font-semibold">{"Weight Boost"}</h2>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span className="prose text-nowrap font-semibold">{`${voteWeight.mul(100).toNumber()} %`}</span>
 
             <X
-              onClick={() => onOpenChange(true)}
+              onClick={() => onOpenChange(false)}
               className="h-6 w-6 cursor-pointer text-neutral-400"
             />
           </div>
         </div>
       </div>
 
-      {breakdown}
+      {checklist}
     </div>
   ) : (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -107,7 +111,7 @@ export const VotingWeightBoostPanel: React.FC<VotingWeightBoostPanelProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="p-6">{breakdown}</div>
+        <div className="p-6">{checklist}</div>
       </DialogContent>
     </Dialog>
   );
