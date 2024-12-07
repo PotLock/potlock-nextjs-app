@@ -43,7 +43,7 @@ export default function PotVotesTab() {
   const { data: candidates } = usePotBenefactorCandidates({ potId });
 
   // TODO: Remove after release
-  console.log(election, candidates);
+  // console.log(election, candidates);
 
   const authenticatedVoter = useVotingParticipantVoteWeight({
     accountId: userSession.accountId,
@@ -70,11 +70,6 @@ export default function PotVotesTab() {
     return [voted, pending];
   }, [candidates]);
 
-  const handleVoteAll = () => {
-    // TODO: Implement
-    console.log("Voting for projects:", Array.from(selectedCandidateAccountIds.values()));
-  };
-
   const pageSearchResults = useMemo(() => {
     const filtered = (candidates ?? []).filter((candidate) => {
       if (activeFilter === "voted") return candidate.votes_received > 0;
@@ -87,6 +82,11 @@ export default function PotVotesTab() {
 
     return filtered.slice(startIndex, endIndex);
   }, [activeFilter, candidates, pageNumber]);
+
+  const handleVoteAll = () => {
+    // TODO: Implement
+    console.log("Voting for projects:", Array.from(selectedCandidateAccountIds.values()));
+  };
 
   const numberOfPages = useMemo(() => {
     switch (activeFilter) {
@@ -144,7 +144,7 @@ export default function PotVotesTab() {
 
   return (
     <div className={cn("flex w-full flex-col gap-6")}>
-      {/* Search ( unimplemented ) */}
+      {/* Search */}
       <div className="relative">
         <Input
           type="search"
@@ -183,7 +183,7 @@ export default function PotVotesTab() {
       </div>
 
       <div className="flex flex-row gap-6">
-        <div className="w-full">
+        <div className="min-h-137 w-full">
           {/* Header */}
           <div className={cn("absolute inset-x-0 w-full md:static")}>
             <div
@@ -195,9 +195,7 @@ export default function PotVotesTab() {
               <div className="flex items-center gap-2">
                 <MdHowToVote className="color-peach-400 h-6 w-6" />
 
-                <span className="font-semibold">
-                  {`${votedCount} Project${votedCount > 1 ? "s" : ""} Voted`}
-                </span>
+                <span className="font-semibold">{`${votedCount} Project(s)`}</span>
               </div>
 
               <div className="flex gap-2">
