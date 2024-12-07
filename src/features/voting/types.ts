@@ -31,6 +31,7 @@ export type VotingVoteWeightAmplifier = Pick<
 
 export type VotingMechanismConfig = {
   initialWeight: number;
+  basicWeight?: number;
   stakingContractAccountId?: TokenId;
   documentUrl?: string;
   voteWeightAmplificationRules: VotingWeightAmplificationRule[];

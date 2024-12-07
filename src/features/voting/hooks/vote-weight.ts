@@ -4,7 +4,6 @@ import { Big, BigSource } from "big.js";
 import { isTruthy } from "remeda";
 
 import { isBigSource } from "@/common/lib";
-import { useSessionAuth } from "@/entities/session";
 
 import { useVotingParticipantStats } from "./participant-stats";
 import { VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS } from "../constants";
@@ -75,7 +74,7 @@ export const useVotingParticipantVoteWeightAmplifiers = ({
  * Calculates the vote weight of a given participant in a given voting round.
  */
 export const useVotingParticipantVoteWeight = ({ accountId, potId }: VotingParticipantKey) => {
-  const { initialWeight } =
+  const { initialWeight, basicWeight } =
     // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
     VOTING_MECHANISM_CONFIG_MPDAO;
 
@@ -92,7 +91,7 @@ export const useVotingParticipantVoteWeight = ({ accountId, potId }: VotingParti
               ? accumulatedWeight.add(
                   Big(rule.amplificationPercent)
                     .div(100)
-                    .mul(accumulatedWeight.gt(0) ? accumulatedWeight : 1),
+                    .mul(basicWeight ?? (accumulatedWeight.gt(0) ? accumulatedWeight : 1)),
                 )
               : accumulatedWeight,
 
@@ -100,5 +99,5 @@ export const useVotingParticipantVoteWeight = ({ accountId, potId }: VotingParti
         ),
       };
     }
-  }, [accountId, initialWeight, voteWeightAmplifiers]);
+  }, [accountId, voteWeightAmplifiers, initialWeight, basicWeight]);
 };

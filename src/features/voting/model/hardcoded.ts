@@ -1,6 +1,7 @@
 import { ENV_TAG, METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { EnvTag } from "@/common/_config/env";
 import { ByPotId, PotId } from "@/common/api/indexer";
+import { ElectionId } from "@/common/contracts/core/voting";
 
 import { VotingMechanismConfig } from "../types";
 
@@ -12,9 +13,15 @@ const VOTING_SUPPORTED_POT_IDS_BY_ENV: Record<EnvTag, PotId[]> = {
 
 export const VOTING_SUPPORTED_POT_IDS = VOTING_SUPPORTED_POT_IDS_BY_ENV[ENV_TAG];
 
+export const VOTING_ELECTION_ID_BY_POT_ID: Record<PotId, ElectionId | undefined> = {
+  "mpdao.v1.potfactory.potlock.near": 1,
+  "mpdao-retropgf.potfactory.staging.potlock.near": 1,
+};
+
 // TODO: Convert into publicly available configurable JSON ( Pots V2 milestone ) and validate with Zod
 export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
   initialWeight: 0,
+  basicWeight: 1,
   stakingContractAccountId: METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID,
   documentUrl: "https://docs.google.com/document/d/1P5iSBBSuh7nep29r7N3S-g4Y1bDbF4xLU_3v7XHmJR8",
 

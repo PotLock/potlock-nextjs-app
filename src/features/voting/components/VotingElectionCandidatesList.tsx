@@ -1,22 +1,28 @@
-import { VotingContract } from "@/common/contracts/core";
+import { Candidate, Vote } from "@/common/contracts/core/voting";
 
-import { VotingElectionCandidateEntry } from "./VotingElectionCandidateEntry";
+import {
+  VotingElectionCandidateEntry,
+  VotingElectionCandidateEntryProps,
+} from "./VotingElectionCandidateEntry";
 
 export type VotingElectionCandidatesListProps = {
-  data: VotingContract.Candidate[];
+  data: Candidate[];
+  onEntrySelect?: VotingElectionCandidateEntryProps["onSelect"];
 };
 
 export const VotingElectionCandidatesList: React.FC<VotingElectionCandidatesListProps> = ({
   data,
+  onEntrySelect,
 }) => {
-  const electionVotes: VotingContract.Vote[] = [];
+  const electionVotes: Vote[] = [];
 
   return (
-    <div className="mt-30 space-y-4 md:mt-1">
+    <div className="flex flex-col">
       {data.map((candidate) => (
         <VotingElectionCandidateEntry
           key={candidate.account_id}
           electionVotes={electionVotes}
+          onSelect={onEntrySelect}
           {...candidate}
         />
       ))}

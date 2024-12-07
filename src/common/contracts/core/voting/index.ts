@@ -1,7 +1,7 @@
-import { VOTING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import * as votingClientHooks from "./hooks";
 
-import { createVotingClient } from "./client";
+export type * from "./hooks";
+export * from "./interfaces";
+export { votingClient } from "./singleton.client";
 
-export * as VotingContract from "./interfaces";
-
-export const votingClient = createVotingClient(VOTING_CONTRACT_ACCOUNT_ID);
+export { votingClientHooks };
