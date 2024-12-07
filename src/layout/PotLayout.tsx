@@ -8,7 +8,6 @@ import { ChallengeModal, POT_TABS_CONFIG, usePotBasicUserPermissions } from "@/e
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolFundingModal } from "@/features/matching-pool-funding";
 import { PotApplicationModal } from "@/features/pot-application";
-// TODO: THESE MODALS ARE NOT SUPPOSED TO BE REUSABLE
 import { ErrorModal } from "@/features/project-editor/components/ErrorModal";
 import { SuccessModal } from "@/features/project-editor/components/SuccessModal";
 import { isVotingEnabled } from "@/features/voting";
@@ -50,7 +49,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         ? POT_TABS_CONFIG.filter(({ id }) => id !== "projects").map((tab) =>
             tab.id === "donations" ? { ...tab, label: "History" } : tab,
           )
-        : POT_TABS_CONFIG,
+        : POT_TABS_CONFIG.filter(({ id }) => id !== "votes"),
 
     [hasVoting],
   );
@@ -67,12 +66,22 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
   return !pot ? null : (
     <PageWithBanner>
+      {/**
+       * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
+       * //! AND SHOULD BE REPLACED WITH AN IMPLEMENTATION SPECIFIC TO THE POT ENTITY
+       * //! THIS IS THE EXACT ROOT CAUSE OF THE POT TRANSACTION CONFIRMATION BUGS
+       */}
       <SuccessModal
         successMessage="Transaction sent successfully"
         open={resultModalOpen}
         onCloseClick={() => setSuccessModalOpen(false)}
       />
 
+      {/**
+       * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
+       * //! AND SHOULD BE REPLACED WITH AN IMPLEMENTATION SPECIFIC TO THE POT ENTITY
+       * //! THIS IS THE EXACT ROOT CAUSE OF THE POT TRANSACTION CONFIRMATION BUGS
+       */}
       <ErrorModal
         errorMessage={decodeURIComponent(query.errorMessage || "")}
         open={errorModalOpen}

@@ -39,14 +39,20 @@ export default defineConfig({
         },
       },
 
+      conifer: {
+        600: "#629D13",
+      },
+
       corn: {
         50: "#fDfCe9",
+        500: "#ECC113",
       },
 
       peach: {
         50: "#fef6ee",
         300: "#f4b37d",
         400: "#EE8949",
+        500: "#EA6A25",
         700: "#B63D18",
       },
 
@@ -171,7 +177,7 @@ export default defineConfig({
     },
   },
 
-  rules: [["hidden", { display: "none !important" }]],
+  rules: [["hidden", { display: "none" }]],
 
   shortcuts: {
     "btn-primary": "bg-primary text-primary-foreground hover:bg-primary/90",

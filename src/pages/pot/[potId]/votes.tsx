@@ -2,11 +2,9 @@ import { useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { MdHowToVote } from "react-icons/md";
+import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
 import { PotId } from "@/common/api/indexer";
-import FileText from "@/common/assets/svgs/FileText";
-import Star from "@/common/assets/svgs/Star";
 import { useRouteQuery } from "@/common/lib";
 import {
   Button,
@@ -23,10 +21,12 @@ import {
 } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
+import { useSessionAuth } from "@/entities/session";
 import {
-  VotingRulesPanel,
-  VotingWeightBoostPanel,
-  useVotingAuthenticatedParticipantVoteWeight,
+  VotingElectionCandidateFilter,
+  VotingRules,
+  VotingWeightBoostBreakdown,
+  useVotingParticipantVoteWeight,
 } from "@/features/voting";
 import { PotLayout } from "@/layout/PotLayout";
 
@@ -48,8 +48,6 @@ const VOTING_DUMMY_PROJECTS: Project[] = [
   // },
 ];
 
-type FilterType = "all" | "voted" | "pending";
-
 export default function PotVotesTab() {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
@@ -61,27 +59,28 @@ export default function PotVotesTab() {
     ? (potIdRouteQueryParam.at(0) as PotId)
     : (potIdRouteQueryParam as PotId);
 
-  const { voteWeight } = useVotingAuthenticatedParticipantVoteWeight({ potId });
+  const { accountId } = useSessionAuth();
+  const { voteWeight } = useVotingParticipantVoteWeight({ accountId, potId });
 
-  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
+  const [selectedCandidates, setSelectedCandidates] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setFilter] = useState<FilterType>("all");
+  const [activeFilter, setFilter] = useState<VotingElectionCandidateFilter>("all");
   const [showVotingRules, setShowVotingRules] = useState(false);
   const [showWeightBoost, setShowWeightBoost] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const [allProjectsCount, votedCount, pendingCount] = useMemo(() => {
-    const allProjects = VOTING_DUMMY_PROJECTS.length;
+  const [allCandidatesCount, votedCount, pendingCount] = useMemo(() => {
+    const allCandidates = VOTING_DUMMY_PROJECTS.length;
 
-    const voted = VOTING_DUMMY_PROJECTS.filter((project) => project.voted).length;
+    const voted = VOTING_DUMMY_PROJECTS.filter((candidate) => candidate.voted).length;
 
     const pending = VOTING_DUMMY_PROJECTS.length - voted;
 
-    return [allProjects, voted, pending];
+    return [allCandidates, voted, pending];
   }, []);
 
   const handleProjectSelect = (projectId: string) => {
-    const newSelected = new Set(selectedProjects);
+    const newSelected = new Set(selectedCandidates);
 
     if (newSelected.has(projectId)) {
       newSelected.delete(projectId);
@@ -89,18 +88,18 @@ export default function PotVotesTab() {
       newSelected.add(projectId);
     }
 
-    setSelectedProjects(newSelected);
+    setSelectedCandidates(newSelected);
   };
 
   const handleVoteAll = () => {
-    console.log("Voting for projects:", Array.from(selectedProjects));
-    setSelectedProjects(new Set());
+    console.log("Voting for projects:", Array.from(selectedCandidates));
+    setSelectedCandidates(new Set());
   };
 
-  const filteredProjects = useMemo(() => {
-    const filtered = VOTING_DUMMY_PROJECTS.filter((project) => {
-      if (activeFilter === "voted") return project.voted;
-      if (activeFilter === "pending") return !project.voted;
+  const pageSearchResults = useMemo(() => {
+    const filtered = VOTING_DUMMY_PROJECTS.filter((candidate) => {
+      if (activeFilter === "voted") return candidate.voted;
+      if (activeFilter === "pending") return !candidate.voted;
       return true;
     });
 
@@ -112,8 +111,8 @@ export default function PotVotesTab() {
   const totalProjectCountPerTab = useMemo(() => {
     if (activeFilter === "voted") return votedCount;
     if (activeFilter === "pending") return pendingCount;
-    return allProjectsCount;
-  }, [activeFilter, allProjectsCount, votedCount, pendingCount]);
+    return allCandidatesCount;
+  }, [activeFilter, allCandidatesCount, votedCount, pendingCount]);
 
   const numberOfPages = useMemo(
     () => Math.ceil(totalProjectCountPerTab / 5),
@@ -183,7 +182,7 @@ export default function PotVotesTab() {
           onClick={() => setFilter("all")}
           className="font-medium"
           label="All"
-          count={allProjectsCount}
+          count={allCandidatesCount}
         />
 
         <FilterChip
@@ -229,14 +228,14 @@ export default function PotVotesTab() {
                   )}
                   onClick={() => setShowWeightBoost((prev: Boolean) => !prev)}
                 >
-                  <Star className="h-[18px] w-[18px]" />
+                  <MdStar className="color-corn-500 h-4.5 w-4.5" />
 
-                  <span className="flex items-center gap-2">
-                    <span className={cn("hidden whitespace-nowrap font-medium md:inline-flex")}>
+                  <span className="flex items-center gap-2 text-sm">
+                    <span className="font-500 hidden whitespace-nowrap md:inline-flex">
                       {`${showWeightBoost ? "Hide" : "View"} Weight Boost`}
                     </span>
 
-                    <span className="text-center text-sm font-semibold leading-tight text-[#ea6a25]">
+                    <span className="text-center font-semibold leading-tight text-[#ea6a25]">
                       {`${voteWeight.mul(100).toNumber()} %`}
                     </span>
                   </span>
@@ -253,11 +252,12 @@ export default function PotVotesTab() {
                   )}
                   onClick={() => setShowVotingRules((prev: Boolean) => !prev)}
                 >
-                  <FileText className="h-[18px] w-[18px]" />
+                  <MdOutlineDescription className="color-peach-500 h-4.5 w-4.5" />
 
                   <span
                     className={cn(
-                      "hidden items-center gap-2 whitespace-nowrap font-medium md:inline-flex",
+                      "hidden items-center gap-2 whitespace-nowrap md:inline-flex",
+                      "font-500 text-sm",
                     )}
                   >
                     {`${showVotingRules ? "Hide" : "View"} Voting Rules`}
@@ -287,45 +287,45 @@ export default function PotVotesTab() {
 
           {/* Project List */}
           <div className={cn("mt-30 space-y-4 md:mt-1")}>
-            {filteredProjects.map((project) => (
+            {pageSearchResults.map((candidate) => (
               <label
-                key={project.id}
+                key={candidate.id}
                 className={cn(
                   "flex items-center gap-4 rounded-lg",
                   "py-4 hover:bg-gray-50",
                   "md:p-4",
                 )}
-                htmlFor={project.id}
+                htmlFor={candidate.id}
               >
                 <Checkbox
-                  checked={selectedProjects.has(project.id)}
-                  onCheckedChange={() => handleProjectSelect(project.id)}
-                  id={project.id}
+                  checked={selectedCandidates.has(candidate.id)}
+                  onCheckedChange={() => handleProjectSelect(candidate.id)}
+                  id={candidate.id}
                 />
 
                 <Image
-                  src={project.imageUrl}
-                  alt={`Avatar for ${project.name}`}
+                  src={candidate.imageUrl}
+                  alt={`Avatar for ${candidate.name}`}
                   className="rounded-full"
                   width={40}
                   height={40}
                 />
 
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-medium">{project.name}</div>
+                  <div className="truncate font-medium">{candidate.name}</div>
                   <div
                     className={cn("text-sm text-gray-500 md:hidden")}
-                  >{`${project.votes} Votes`}</div>
+                  >{`${candidate.votes} Votes`}</div>
                 </div>
 
-                <div className={cn("hidden text-right md:block")}>{project.votes}</div>
+                <div className={cn("hidden text-right md:block")}>{candidate.votes}</div>
 
                 <Button
                   variant={"standard-outline"}
-                  disabled={project.voted}
+                  disabled={candidate.voted}
                   className="ml-auto w-20"
                 >
-                  {project.voted ? "Voted" : "Vote"}
+                  {candidate.voted ? "Voted" : "Vote"}
                 </Button>
               </label>
             ))}
@@ -354,7 +354,7 @@ export default function PotVotesTab() {
           )}
 
           {/* Floating Action Bar */}
-          {selectedProjects.size > 0 && (
+          {selectedCandidates.size > 0 && (
             <div
               className={cn(
                 "fixed bottom-4 left-1/2 flex -translate-x-1/2",
@@ -363,7 +363,7 @@ export default function PotVotesTab() {
             >
               <div className="flex items-center gap-2">
                 <Checkbox checked={true} />
-                <span>{`${selectedProjects.size} Selected Projects`}</span>
+                <span>{`${selectedCandidates.size} Selected Candidates`}</span>
               </div>
 
               <Button variant={"standard-filled"} onClick={handleVoteAll}>
@@ -373,40 +373,22 @@ export default function PotVotesTab() {
           )}
         </div>
 
-        {isDesktop && (
-          <div className="flex flex-col gap-6">
-            {showVotingRules && (
-              <VotingRulesPanel
-                open={true}
-                onOpenChange={() => setShowVotingRules(false)}
-                mode="panel"
-              />
-            )}
-
-            {showWeightBoost && (
-              <VotingWeightBoostPanel
-                open={true}
-                onOpenChange={() => setShowWeightBoost(false)}
-                mode="panel"
-                {...{ potId }}
-              />
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Mobile Dialogs */}
-      {!isDesktop && (
-        <>
-          <VotingWeightBoostPanel
-            open={showWeightBoost}
-            onOpenChange={setShowWeightBoost}
+        <div className="flex flex-col gap-6">
+          <VotingRules
+            open={showVotingRules}
+            onOpenChange={setShowVotingRules}
+            mode={isDesktop ? "panel" : "modal"}
             {...{ potId }}
           />
 
-          <VotingRulesPanel open={showVotingRules} onOpenChange={setShowVotingRules} />
-        </>
-      )}
+          <VotingWeightBoostBreakdown
+            open={showWeightBoost}
+            onOpenChange={setShowWeightBoost}
+            mode={isDesktop ? "panel" : "modal"}
+            {...{ potId }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

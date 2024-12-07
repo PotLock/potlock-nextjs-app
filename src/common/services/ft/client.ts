@@ -64,31 +64,33 @@ export const getFtData = async ({
 }: Partial<ByAccountId> & ByTokenId): Promise<FtData | null> => {
   const ftContractClient = naxiosInstance.contractApi({
     contractId: tokenId,
-    cache: new MemoryCache({ expirationTime: 600 }),
+    cache: new MemoryCache({ expirationTime: 120 }),
   });
 
   const metadata = await ftContractClient
     .view<{}, FungibleTokenMetadata>("ft_metadata")
     .catch(() => undefined);
 
-  const [balanceRaw, usdPrice] =
-    metadata === undefined
-      ? [undefined, undefined]
-      : await Promise.all([
-          typeof accountId === "string" && isAccountId(accountId)
-            ? ftContractClient
-                .view<
-                  { account_id: AccountId },
-                  string
-                >("ft_balance_of", { args: { account_id: accountId } })
-                .catch(() => undefined)
-            : new Promise((resolve) => resolve(undefined)).then(() => undefined),
+  const [balanceRaw, usdPrice] = await Promise.all([
+    typeof accountId === "string" && isAccountId(accountId)
+      ? ftContractClient
+          .view<
+            { account_id: AccountId },
+            string
+          >("ft_balance_of", { args: { account_id: accountId } })
+          .catch(() => undefined)
+      : new Promise((resolve) => resolve(undefined)).then(() => undefined),
 
-          pricesClient
-            .getSuperPrecisePrice({ token_id: tokenId }, PRICES_REQUEST_CONFIG.axios)
-            .then(({ data }) => Big(data))
-            .catch(() => undefined),
-        ]);
+    pricesClient
+      .getSuperPrecisePrice({ token_id: tokenId }, PRICES_REQUEST_CONFIG.axios)
+      .then(({ data }) => Big(data))
+      .catch(() => undefined),
+  ]);
+
+  if (tokenId === "meta-pool.near") {
+    console.log(tokenId, balanceRaw);
+    console.log(metadata);
+  }
 
   const balance =
     metadata === undefined || balanceRaw === undefined

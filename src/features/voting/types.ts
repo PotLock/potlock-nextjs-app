@@ -1,4 +1,7 @@
-import { TokenId } from "@/common/types";
+import { ByPotId } from "@/common/api/indexer";
+import { ByAccountId, TokenId } from "@/common/types";
+
+export type VotingParticipantKey = Partial<ByAccountId> & ByPotId;
 
 export type VotingParticipantStats = {
   isHumanVerified: boolean;
@@ -19,9 +22,18 @@ export type VotingWeightAmplificationRule = {
   | { comparator: "isTruthy"; expectation: boolean }
 );
 
+export type VotingVoteWeightAmplifier = Pick<
+  VotingWeightAmplificationRule,
+  "name" | "description" | "amplificationPercent"
+> & {
+  isApplicable: boolean;
+};
+
 export type VotingMechanismConfig = {
   initialWeight: number;
   stakingContractAccountId?: TokenId;
   documentUrl?: string;
   voteWeightAmplificationRules: VotingWeightAmplificationRule[];
 };
+
+export type VotingElectionCandidateFilter = "all" | "voted" | "pending";
