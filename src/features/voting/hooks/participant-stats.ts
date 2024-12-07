@@ -25,9 +25,8 @@ export const useVotingParticipantStats = ({
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const { data: stakingTokenData } = useSWR(
-    stakingContractAccountId ? stakingContractAccountId : null,
-    (tokenId) => (isAccountId(tokenId) ? ftService.getFtData({ tokenId }) : undefined),
+  const { data: stakingTokenData } = useSWR(stakingContractAccountId ?? null, (tokenId) =>
+    isAccountId(tokenId) ? ftService.getFtData({ accountId, tokenId }) : undefined,
   );
 
   return useMemo(

@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
 
+import { useSet } from "@uidotdev/usehooks";
 import { ChevronRight } from "lucide-react";
-import Image from "next/image";
+import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
-import { PotId } from "@/common/api/indexer";
-import { useRouteQuery } from "@/common/lib";
 import {
   Button,
   Checkbox,
@@ -24,100 +23,83 @@ import { cn } from "@/common/ui/utils";
 import { useSessionAuth } from "@/entities/session";
 import {
   VotingElectionCandidateFilter,
+  VotingElectionCandidatesList,
   VotingRules,
   VotingWeightBoostBreakdown,
+  usePotBenefactorCandidates,
+  usePotBenefactorsElection,
   useVotingParticipantVoteWeight,
 } from "@/features/voting";
 import { PotLayout } from "@/layout/PotLayout";
 
-interface Project {
-  id: string;
-  name: string;
-  votes: number;
-  voted: boolean;
-  imageUrl: string;
-}
-
-const VOTING_DUMMY_PROJECTS: Project[] = [
-  // {
-  //   id: "1",
-  //   name: "Mike.near",
-  //   votes: 2000,
-  //   voted: false,
-  //   imageUrl: "https://picsum.photos/200/200/?blur",
-  // },
-];
+const PAGE_SIZE = 10;
 
 export default function PotVotesTab() {
+  const { query: routeQuery } = useRouter();
+  const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const userSession = useSessionAuth();
+  const { data: election } = usePotBenefactorsElection({ potId });
+  const { data: candidates } = usePotBenefactorCandidates({ potId });
 
-  const {
-    query: { potId: potIdRouteQueryParam },
-  } = useRouteQuery();
+  // TODO: Remove after release
+  // console.log(election, candidates);
 
-  const potId = Array.isArray(potIdRouteQueryParam)
-    ? (potIdRouteQueryParam.at(0) as PotId)
-    : (potIdRouteQueryParam as PotId);
+  const authenticatedVoter = useVotingParticipantVoteWeight({
+    accountId: userSession.accountId,
+    potId,
+  });
 
-  const { accountId } = useSessionAuth();
-  const { voteWeight } = useVotingParticipantVoteWeight({ accountId, potId });
+  const selectedCandidateAccountIds = useSet();
 
-  const [selectedCandidates, setSelectedCandidates] = useState<Set<string>>(new Set());
+  const handleCandidateSelect = (accountId: string, isSelected: boolean): void =>
+    void (isSelected
+      ? selectedCandidateAccountIds.add(accountId)
+      : selectedCandidateAccountIds.delete(accountId));
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setFilter] = useState<VotingElectionCandidateFilter>("all");
   const [showVotingRules, setShowVotingRules] = useState(false);
   const [showWeightBoost, setShowWeightBoost] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const [allCandidatesCount, votedCount, pendingCount] = useMemo(() => {
-    const allCandidates = VOTING_DUMMY_PROJECTS.length;
+  const [votedCount, pendingCount] = useMemo(() => {
+    const voted = (candidates ?? []).filter((candidate) => candidate.votes_received > 0).length;
+    const pending = (candidates ?? []).filter((candidate) => candidate.votes_received === 0).length;
 
-    const voted = VOTING_DUMMY_PROJECTS.filter((candidate) => candidate.voted).length;
-
-    const pending = VOTING_DUMMY_PROJECTS.length - voted;
-
-    return [allCandidates, voted, pending];
-  }, []);
-
-  const handleProjectSelect = (projectId: string) => {
-    const newSelected = new Set(selectedCandidates);
-
-    if (newSelected.has(projectId)) {
-      newSelected.delete(projectId);
-    } else {
-      newSelected.add(projectId);
-    }
-
-    setSelectedCandidates(newSelected);
-  };
-
-  const handleVoteAll = () => {
-    console.log("Voting for projects:", Array.from(selectedCandidates));
-    setSelectedCandidates(new Set());
-  };
+    return [voted, pending];
+  }, [candidates]);
 
   const pageSearchResults = useMemo(() => {
-    const filtered = VOTING_DUMMY_PROJECTS.filter((candidate) => {
-      if (activeFilter === "voted") return candidate.voted;
-      if (activeFilter === "pending") return !candidate.voted;
+    const filtered = (candidates ?? []).filter((candidate) => {
+      if (activeFilter === "voted") return candidate.votes_received > 0;
+      if (activeFilter === "pending") return candidate.votes_received === 0;
       return true;
     });
 
-    const startIndex = (pageNumber - 1) * 5;
-    const endIndex = startIndex + 5;
+    const startIndex = (pageNumber - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE;
+
     return filtered.slice(startIndex, endIndex);
-  }, [activeFilter, pageNumber]);
+  }, [activeFilter, candidates, pageNumber]);
 
-  const totalProjectCountPerTab = useMemo(() => {
-    if (activeFilter === "voted") return votedCount;
-    if (activeFilter === "pending") return pendingCount;
-    return allCandidatesCount;
-  }, [activeFilter, allCandidatesCount, votedCount, pendingCount]);
+  const handleVoteAll = () => {
+    // TODO: Implement
+    console.log("Voting for projects:", Array.from(selectedCandidateAccountIds.values()));
+  };
 
-  const numberOfPages = useMemo(
-    () => Math.ceil(totalProjectCountPerTab / 5),
-    [totalProjectCountPerTab],
-  );
+  const numberOfPages = useMemo(() => {
+    switch (activeFilter) {
+      case "voted":
+        return Math.ceil(votedCount / PAGE_SIZE);
+
+      case "pending":
+        return Math.ceil(pendingCount / PAGE_SIZE);
+
+      default:
+        return Math.ceil(candidates?.length ?? 0 / PAGE_SIZE);
+    }
+  }, [activeFilter, candidates?.length, pendingCount, votedCount]);
 
   const pageNumberButtons = useMemo(() => {
     const totalPages = Math.ceil(numberOfPages);
@@ -151,9 +133,7 @@ export default function PotVotesTab() {
         ) : (
           <PaginationLink
             onClick={() => setPageNumber(page)}
-            className={cn({
-              "border-black font-bold": pageNumber === page,
-            })}
+            className={cn({ "border-black font-bold": pageNumber === page })}
           >
             {page}
           </PaginationLink>
@@ -175,14 +155,14 @@ export default function PotVotesTab() {
         />
       </div>
 
-      {/* Tabs */}
+      {/* Filter */}
       <div className="flex gap-3">
         <FilterChip
           variant={activeFilter === "all" ? "brand-filled" : "brand-outline"}
           onClick={() => setFilter("all")}
           className="font-medium"
           label="All"
-          count={allCandidatesCount}
+          count={candidates?.length ?? 0}
         />
 
         <FilterChip
@@ -203,7 +183,7 @@ export default function PotVotesTab() {
       </div>
 
       <div className="flex flex-row gap-6">
-        <div className="w-full">
+        <div className="min-h-137 w-full">
           {/* Header */}
           <div className={cn("absolute inset-x-0 w-full md:static")}>
             <div
@@ -215,9 +195,7 @@ export default function PotVotesTab() {
               <div className="flex items-center gap-2">
                 <MdHowToVote className="color-peach-400 h-6 w-6" />
 
-                <span className="font-semibold">
-                  {`${votedCount} Project${votedCount > 1 ? "s" : ""} Voted`}
-                </span>
+                <span className="font-semibold">{`${votedCount} Project(s)`}</span>
               </div>
 
               <div className="flex gap-2">
@@ -236,7 +214,7 @@ export default function PotVotesTab() {
                     </span>
 
                     <span className="text-center font-semibold leading-tight text-[#ea6a25]">
-                      {`${voteWeight.mul(100).toNumber()} %`}
+                      {`${authenticatedVoter.voteWeight.mul(100).toNumber()} %`}
                     </span>
                   </span>
 
@@ -276,60 +254,24 @@ export default function PotVotesTab() {
                 "text-sm font-semibold text-gray-500",
               )}
             >
-              <h4 className="font-semibold">{"PROJECTS"}</h4>
+              <h4 className="font-semibold uppercase">{"Projects"}</h4>
 
               <div className="flex gap-6">
-                <h4 className={cn("hidden text-right font-semibold md:block")}>{"VOTES"}</h4>
-                <h4 className={cn("hidden text-right font-semibold md:block")}>{"ACTIONS"}</h4>
+                <h4 className={cn("hidden text-right font-semibold uppercase md:block")}>
+                  {"Votes"}
+                </h4>
+
+                <h4 className={cn("hidden text-right font-semibold uppercase md:block")}>
+                  {"Actions"}
+                </h4>
               </div>
             </div>
           </div>
 
-          {/* Project List */}
-          <div className={cn("mt-30 space-y-4 md:mt-1")}>
-            {pageSearchResults.map((candidate) => (
-              <label
-                key={candidate.id}
-                className={cn(
-                  "flex items-center gap-4 rounded-lg",
-                  "py-4 hover:bg-gray-50",
-                  "md:p-4",
-                )}
-                htmlFor={candidate.id}
-              >
-                <Checkbox
-                  checked={selectedCandidates.has(candidate.id)}
-                  onCheckedChange={() => handleProjectSelect(candidate.id)}
-                  id={candidate.id}
-                />
-
-                <Image
-                  src={candidate.imageUrl}
-                  alt={`Avatar for ${candidate.name}`}
-                  className="rounded-full"
-                  width={40}
-                  height={40}
-                />
-
-                <div className="min-w-0 flex-1">
-                  <div className="truncate font-medium">{candidate.name}</div>
-                  <div
-                    className={cn("text-sm text-gray-500 md:hidden")}
-                  >{`${candidate.votes} Votes`}</div>
-                </div>
-
-                <div className={cn("hidden text-right md:block")}>{candidate.votes}</div>
-
-                <Button
-                  variant={"standard-outline"}
-                  disabled={candidate.voted}
-                  className="ml-auto w-20"
-                >
-                  {candidate.voted ? "Voted" : "Vote"}
-                </Button>
-              </label>
-            ))}
-          </div>
+          <VotingElectionCandidatesList
+            data={pageSearchResults}
+            onEntrySelect={handleCandidateSelect}
+          />
 
           {numberOfPages > 1 && (
             <Pagination className="mt-[24px]">
@@ -354,7 +296,7 @@ export default function PotVotesTab() {
           )}
 
           {/* Floating Action Bar */}
-          {selectedCandidates.size > 0 && (
+          {selectedCandidateAccountIds.size > 0 && (
             <div
               className={cn(
                 "fixed bottom-4 left-1/2 flex -translate-x-1/2",
@@ -363,7 +305,7 @@ export default function PotVotesTab() {
             >
               <div className="flex items-center gap-2">
                 <Checkbox checked={true} />
-                <span>{`${selectedCandidates.size} Selected Candidates`}</span>
+                <span>{`${selectedCandidateAccountIds.size} Selected Candidates`}</span>
               </div>
 
               <Button variant={"standard-filled"} onClick={handleVoteAll}>

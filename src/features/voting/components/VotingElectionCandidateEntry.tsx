@@ -3,14 +3,14 @@ import { useCallback, useMemo } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 
 import { indexer } from "@/common/api/indexer";
-import { VotingContract } from "@/common/contracts/core";
+import { Candidate, Vote } from "@/common/contracts/core/voting";
 import { Button, Checkbox } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { useSessionAuth } from "@/entities/session";
 
-export type VotingElectionCandidateEntryProps = VotingContract.Candidate & {
-  electionVotes: VotingContract.Vote[];
+export type VotingElectionCandidateEntryProps = Candidate & {
+  electionVotes: Vote[];
   isSelected?: boolean;
   onSelect?: (accountId: string, isSelected: boolean) => void;
 };
@@ -30,8 +30,10 @@ export const VotingElectionCandidateEntry: React.FC<VotingElectionCandidateEntry
     [accountId, electionVotes],
   );
 
+  // TODO: Implement voting
   const canReceiveVotes = useMemo(
-    () => receivedVotes.find(({ voter }) => voter === userSession.accountId) === undefined,
+    () => false, // receivedVotes.find(({ voter }) => voter === userSession.accountId) === undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [receivedVotes, userSession.accountId],
   );
 
@@ -42,7 +44,10 @@ export const VotingElectionCandidateEntry: React.FC<VotingElectionCandidateEntry
 
   return (
     <div className={cn("flex items-center gap-4 rounded-lg", "py-4 hover:bg-gray-50", "md:p-4")}>
-      <Checkbox checked={isSelected} onCheckedChange={onCheckboxTriggered} />
+      {typeof onSelect === "function" && (
+        <Checkbox checked={isSelected} onCheckedChange={onCheckboxTriggered} />
+      )}
+
       <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
 
       <div className="min-w-0 flex-1">

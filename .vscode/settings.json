@@ -6,6 +6,7 @@
   "editor.rulers": [
     100
   ],
+  "editor.tabSize": 2,
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": "active",
   "editor.codeActionsOnSave": {
@@ -78,9 +79,11 @@
     "stnear",
     "svgr",
     "typecheck",
+    "uidotdev",
     "unocss",
     "upvote",
     "Upvoted",
+    "usehooks",
     "welldone",
     "wpdas",
     "xdefi",

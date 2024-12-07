@@ -92,9 +92,9 @@ class VotingClient implements Omit<IVotingContract, "new"> {
   /**
    * Returns detailed information about a specific election
    *
-   * Returns null if the election doesn't exist
+   * Returns null or undefined if the election doesn't exist
    */
-  async get_election(args: { election_id: number }): Promise<Election | null> {
+  async get_election(args: { election_id: number }): Promise<Election | null | undefined> {
     return this.contract.view("get_election", { args });
   }
 
@@ -112,7 +112,9 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Can be Registration, Voting, or Ended
    */
-  async get_election_phase(args: { election_id: number }): Promise<ElectionPhase | null> {
+  async get_election_phase(args: {
+    election_id: number;
+  }): Promise<ElectionPhase | null | undefined> {
     return this.contract.view("get_election_phase", { args });
   }
 
@@ -158,10 +160,12 @@ class VotingClient implements Omit<IVotingContract, "new"> {
   /**
    * Returns the time remaining until an election ends
    *
-   * Returns null if the election has ended or doesn't exist
+   * Returns null or undefined if the election has ended or doesn't exist
    */
-  async get_time_remaining(args: { election_id: number }): Promise<number | null> {
-    return this.contract.view("get_time_remaining", { args });
+  async get_time_remaining(args: { election_id: number }) {
+    return this.contract.view<typeof args, number | null | undefined>("get_time_remaining", {
+      args,
+    });
   }
 
   /**
@@ -169,25 +173,25 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Based on the election's votes_per_voter limit
    */
-  async get_voter_remaining_capacity(args: {
-    election_id: number;
-    voter: AccountId;
-  }): Promise<number | null> {
-    return this.contract.view("get_voter_remaining_capacity", { args });
+  async get_voter_remaining_capacity(args: { election_id: number; voter: AccountId }) {
+    return this.contract.view<typeof args, number | null | undefined>(
+      "get_voter_remaining_capacity",
+      { args },
+    );
   }
 
   /**
    * Returns all votes cast by a specific voter in an election
    */
-  async get_voter_votes(args: { election_id: number; voter: AccountId }): Promise<Vote[] | null> {
-    return this.contract.view("get_voter_votes", { args });
+  async get_voter_votes(args: { election_id: number; voter: AccountId }) {
+    return this.contract.view<typeof args, Vote[] | null | undefined>("get_voter_votes", { args });
   }
 
   /**
    * Checks if a voter has cast any votes in an election
    */
-  async has_voter_participated(args: { election_id: number; voter: AccountId }): Promise<boolean> {
-    return this.contract.view("has_voter_participated", { args });
+  async has_voter_participated(args: { election_id: number; voter: AccountId }) {
+    return this.contract.view<typeof args, boolean>("has_voter_participated", { args });
   }
 
   /**

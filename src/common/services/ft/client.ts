@@ -87,11 +87,6 @@ export const getFtData = async ({
       .catch(() => undefined),
   ]);
 
-  if (tokenId === "meta-pool.near") {
-    console.log(tokenId, balanceRaw);
-    console.log(metadata);
-  }
-
   const balance =
     metadata === undefined || balanceRaw === undefined
       ? undefined
