@@ -22,6 +22,7 @@ const SinglePost = () => {
     content: string;
     imageIPFSHash?: string;
   } | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [time, setTime] = useState("");
 
@@ -129,4 +130,5 @@ const SinglePost = () => {
     </div>
   );
 };
+
 export default SinglePost;

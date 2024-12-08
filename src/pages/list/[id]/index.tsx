@@ -17,16 +17,19 @@ export default function SingleList() {
   useListDeploymentSuccessRedirect();
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
   const [listDetails, setListDetails] = useState<any>(null);
+
   const [savedUsers, setSavedUsers] = useState<SavedUsersType>({
     accounts: [],
     admins: [],
   });
+
   const [status, setStatus] = useState<string>("all");
 
   const { admins, setAdmins } = useListForm();
 
   const router = useRouter();
   const { id } = router.query;
+
   const { data, isLoading } = indexer.useListRegistrations({
     listId: parseInt(id as string),
     page_size: 500,
@@ -46,6 +49,7 @@ export default function SingleList() {
     if (loadingListData) return;
     setAdmins(listData?.admins?.map((admin) => admin?.id) as AccountId[]);
     setListDetails(listData);
+
     setSavedUsers({
       accounts:
         data?.results.map((registration) => ({

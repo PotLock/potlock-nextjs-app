@@ -22,6 +22,7 @@ export const useRegistration = (projectId: string) => {
             (await listsClient.getRegistration({
               registrant_id: projectId,
             })) || UNREGISTERED_PROJECT;
+
           setRegistration(registration);
           setLoading(false);
         }
@@ -30,6 +31,7 @@ export const useRegistration = (projectId: string) => {
         setLoading(false);
       }
     };
+
     fetchRegistration();
   }, [projectId]);
 

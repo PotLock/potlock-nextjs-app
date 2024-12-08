@@ -36,6 +36,7 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
           resetStore();
         }
       }
+
       setReady(true);
     }
   }, [isAuthenticated, wallet]);

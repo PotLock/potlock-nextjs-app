@@ -23,6 +23,7 @@ const ProfileLists = () => {
   const {
     query: { userId },
   } = useRouteQuery();
+
   const { data } = indexer.useLists({
     account: userId as string,
   });
@@ -34,9 +35,11 @@ const ProfileLists = () => {
           {data?.results?.map((item: any) => {
             let background = "";
             let backdrop = "";
+
             if (!item.cover_image) {
               ({ background, backdrop } = getRandomBackgroundImage());
             }
+
             return (
               <ListCard
                 background={background}

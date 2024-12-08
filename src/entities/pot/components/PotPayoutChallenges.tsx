@@ -44,6 +44,7 @@ export const PotPayoutChallenges = ({
           const _payoutsChallenges = await potClient.getPayoutsChallenges({
             potId: potDetail?.account,
           });
+
           setPayoutsChallenges(_payoutsChallenges);
           setFilteredChallenges(_payoutsChallenges?.filter((c) => !c.resolved));
           setTotalChallenges(_payoutsChallenges?.length);
@@ -58,9 +59,11 @@ export const PotPayoutChallenges = ({
 
   const handleSwitchTab = (tab: string) => {
     setTab(tab);
+
     const filteredChallenges = payoutsChallenges.filter((challenges) =>
       tab === "UNRESOLVED" ? !challenges.resolved : challenges.resolved,
     );
+
     setFilteredChallenges(filteredChallenges);
   };
 

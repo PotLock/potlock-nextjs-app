@@ -12,15 +12,18 @@ export const useAllLists = (
   const wallet = walletApi;
 
   const { data, isLoading } = indexer.useLists();
+
   const { data: myLists } = indexer.useLists({
     account: wallet?.accountId,
   });
+
   const { data: myFavourites } = indexer.useAccountUpvotedLists({
     accountId: wallet?.accountId as string,
   });
 
   const fetchAllLists = useCallback(async () => {
     setLoading(true);
+
     try {
       if (data) {
         setRegistrations(data.results);
@@ -38,6 +41,7 @@ export const useAllLists = (
     if (!wallet?.accountId) return;
     setLoading(true);
     setCurrentListType("My Lists");
+
     try {
       if (myLists) {
         setRegistrations(myLists.results);
@@ -53,6 +57,7 @@ export const useAllLists = (
   const fetchFavourites = useCallback(async () => {
     if (!wallet?.accountId) return;
     setLoading(true);
+
     try {
       if (myFavourites) {
         setRegistrations(myFavourites);

@@ -2,6 +2,7 @@ import { NEARSocialUserProfile } from "@/common/contracts/social";
 
 const getProfileTeamMembersData = (profileData?: NEARSocialUserProfile) => {
   if (!profileData) return [];
+
   const team = profileData.plTeam
     ? JSON.parse(profileData.plTeam)
     : profileData.team
@@ -9,6 +10,7 @@ const getProfileTeamMembersData = (profileData?: NEARSocialUserProfile) => {
           .filter(([_, v]) => v !== null)
           .map(([k, _]) => k)
       : [];
+
   return team;
 };
 

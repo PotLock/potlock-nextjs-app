@@ -5,12 +5,14 @@ export async function middleware(request: NextRequest) {
 
   // PROFILE - INIT
   const isProfilePage = request.nextUrl.pathname.startsWith("/profile/");
+
   if (
     isProfilePage &&
     (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
   ) {
     return NextResponse.rewrite(`${request.url}/home`);
   }
+
   if (
     isProfilePage &&
     (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))
@@ -21,12 +23,14 @@ export async function middleware(request: NextRequest) {
 
   // POT - INIT
   const isPotPage = request.nextUrl.pathname.startsWith("/pot/");
+
   if (
     isPotPage &&
     (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
   ) {
     return NextResponse.rewrite(`${request.url}/projects`);
   }
+
   if (
     isPotPage &&
     (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))

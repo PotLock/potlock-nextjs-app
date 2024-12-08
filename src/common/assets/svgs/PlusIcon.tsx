@@ -6,4 +6,5 @@ const PlusIcon = (props: React.SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
+
 export default PlusIcon;

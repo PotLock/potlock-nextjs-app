@@ -26,11 +26,13 @@ export const NoListItem = ({
         setText(
           "No list? Create on chain lists of your favorite projects, and build your own discovery portal.",
         );
+
         break;
       case NoListItemType.FAVORITE_LISTS:
         setText(
           "Curate a personalized lists by upvoting your favorites and build your own discovery portal.",
         );
+
         break;
       case NoListItemType.NO_RESULTS:
         setText("No Results found");
@@ -39,6 +41,7 @@ export const NoListItem = ({
         setText(
           "No list? Create on chain lists of your favorite projects, and build your own discovery portal.",
         );
+
         break;
     }
   }, [type]);

@@ -32,10 +32,12 @@ export const FeedCard = ({ post }: PostType) => {
       const { image } = await fetchSocialImages({
         accountId: post.accountId,
       });
+
       const time = await fetchTimeByBlockHeight(Number(post.blockHeight));
       setTime(time);
       setProfileImg(image);
     };
+
     if (post.accountId) fetchProfileImage();
   }, [post.accountId, post.blockHeight]);
 
@@ -50,6 +52,7 @@ export const FeedCard = ({ post }: PostType) => {
     },
     [router, post.accountId],
   );
+
   return (
     <div
       onClick={handleCardClick}

@@ -8,6 +8,7 @@ import { CampaignEnumType } from "../types";
 export const effects = (dispatch: AppDispatcher) => ({
   handleCampaignContractActions: async (transactionHash: string): Promise<void> => {
     const { accountId: owner_account_id } = walletApi;
+
     if (owner_account_id) {
       nearRpc.txStatus(transactionHash, owner_account_id).then((response) => {
         const method = response.transaction?.actions[0]?.FunctionCall?.method_name;
@@ -19,19 +20,23 @@ export const effects = (dispatch: AppDispatcher) => ({
             type = CampaignEnumType.CREATE_CAMPAIGN;
             break;
           }
+
           case "update_campaign": {
             type = CampaignEnumType.UPDATE_CAMPAIGN;
             break;
           }
+
           case "delete_campaign": {
             type = CampaignEnumType.DELETE_CAMPAIGN;
             break;
           }
+
           default: {
             type = CampaignEnumType.NONE;
             break;
           }
         }
+
         for (let i = 0; i <= 6; i++) {
           status = response.receipts_outcome.at(i)?.outcome?.status;
 

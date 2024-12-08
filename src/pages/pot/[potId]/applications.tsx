@@ -274,10 +274,12 @@ const DropdownLabel = styled.div`
 
 const ApplicationsTab = () => {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
     // transactionHashes: string;
   };
+
   const { data: potDetail } = usePot({ potId });
   const [applications, setApplications] = useState<Application[]>([]);
   const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
@@ -351,6 +353,7 @@ const ApplicationsTab = () => {
         field ? field.toLowerCase().includes(searchTerm.toLowerCase().trim()) : "",
       );
     });
+
     return filteredApplications;
   };
 
@@ -395,9 +398,11 @@ const ApplicationsTab = () => {
     if (key === "ALL") {
       return searchApplications(searchTerm);
     }
+
     const filtered = applications?.filter((application: any) => {
       return application.status === applicationsFilters[key].label.split(" ")[0];
     });
+
     return filtered;
   };
 
@@ -405,6 +410,7 @@ const ApplicationsTab = () => {
     accountId === chef || admins.includes(accountId || "") || accountId === owner;
 
   const [filterValue, setFilterValue] = useState("ALL");
+
   const handleSort = (key: string) => {
     const sorted = sortApplications(key);
     setFilteredApplications(sorted);

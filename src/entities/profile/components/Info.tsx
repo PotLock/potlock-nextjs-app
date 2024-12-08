@@ -38,6 +38,7 @@ const LinksWrapper = ({ accountId }: { accountId: string }) => {
           }
           onCopy={() => {
             setCopied(true);
+
             setTimeout(() => {
               setCopied(false);
             }, 2000);

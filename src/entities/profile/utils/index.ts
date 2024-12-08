@@ -10,6 +10,7 @@ export const updateAccountId = (accountId: string) =>
   dispatch.nav.update({
     accountId,
   });
+
 export const updateNadabotVerification = (isNadabotVerified: boolean) =>
   dispatch.nav.update({
     isNadabotVerified,
@@ -25,6 +26,7 @@ export const markDaoAsDefault = (daoAddress: string) =>
   dispatch.nav.updateActAsDao({
     defaultAddress: daoAddress,
   });
+
 export const addOrRemoveDaoAddress = (addresses: string[]) =>
   dispatch.nav.updateActAsDao({
     addresses,

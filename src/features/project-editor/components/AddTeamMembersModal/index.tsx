@@ -56,6 +56,7 @@ const AddTeamMembersModal = ({ open, onCloseClick, onMembersChange }: Props) => 
                 if (invalidNearAcc) {
                   setInvalidNearAcc(false);
                 }
+
                 setAccount(e.target.value);
               }}
               onKeyUp={(e) => {

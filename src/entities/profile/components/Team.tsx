@@ -31,6 +31,7 @@ const Members = ({ team }: { team?: string[] }) => {
 
   const members = team.map((teamMember) => {
     const match = teamMember.match(/.near/i);
+
     if (match && match.length > 0) {
       return (
         <Link

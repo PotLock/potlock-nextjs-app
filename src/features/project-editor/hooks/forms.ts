@@ -15,6 +15,7 @@ export const useProjectEditorForm = () => {
     resolver: zodResolver(projectEditorSchema),
     mode: "onChange",
   });
+
   const { wallet } = useWallet();
 
   const onSubmit: SubmitHandler<ProjectEditorInputs> = useCallback(

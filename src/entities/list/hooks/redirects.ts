@@ -23,6 +23,7 @@ export const useListDeploymentSuccessRedirect = () => {
 
   const voteType =
     listValues.type === ListFormModalType.UPVOTE || listValues.type === ListFormModalType.DOWNVOTE;
+
   const transactionHash =
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
     (typeof transactionHashes === "string" ? transactionHashes : undefined);
@@ -35,12 +36,14 @@ export const useListDeploymentSuccessRedirect = () => {
         className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
         title: `Account Status Updated to ${listValues.name} Successfully`,
       });
+
       setSearchParams({ transactionHashes: null });
     } else if (voteType && isTransactionOutcomeDetected && listValues.name) {
       toast({
         className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
         title: `${listValues.name} has been ${listValues.type === ListFormModalType.UPVOTE ? "added" : "removed"} to your favorites`,
       });
+
       setSearchParams({ transactionHashes: null });
     } else if (isTransactionOutcomeDetected && !voteType) {
       dispatch.listEditor.handleListContractActions(transactionHash).finally(() => {

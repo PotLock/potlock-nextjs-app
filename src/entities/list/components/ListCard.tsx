@@ -27,13 +27,16 @@ export const ListCard = ({
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [profileImage, setProfileImage] = useState("");
   const { push } = useRouter();
+
   useEffect(() => {
     const fetchProfileImage = async () => {
       const { image } = await fetchSocialImages({
         accountId: dataForList.owner,
       });
+
       setProfileImage(image);
     };
+
     if (dataForList.owner) fetchProfileImage();
     setIsUpvoted(dataForList.upvotes?.some((data: any) => data?.account === walletApi.accountId));
   }, [dataForList.owner]);
@@ -45,6 +48,7 @@ export const ListCard = ({
 
   const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation();
+
     if (isUpvoted) {
       listsClient.remove_upvote({ list_id: dataForList?.on_chain_id });
 

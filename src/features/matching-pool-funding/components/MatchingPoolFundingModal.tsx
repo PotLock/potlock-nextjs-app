@@ -56,9 +56,11 @@ export const MatchingPoolFundingModal: React.FC<MatchingPoolFundingModalProps> =
 
   // Get Protocol Config
   const protocolConfig = useProtocolConfig(potDetail);
+
   const bypassProtocolPercentage = protocolConfig?.basis_points
     ? protocolConfig.basis_points / 100
     : "-";
+
   const bypassChefFeePercentage = potDetail.chef_fee_basis_points / 100;
 
   const formValues = form.watch();

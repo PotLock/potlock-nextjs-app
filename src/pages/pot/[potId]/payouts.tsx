@@ -236,6 +236,7 @@ const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 
 export default function PayoutsTab() {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };
@@ -263,10 +264,12 @@ export default function PayoutsTab() {
       const searchFields = [project_id];
       return searchFields.some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()));
     });
+
     _filteredPayouts.sort((a: any, b: any) => {
       // sort by matching pool allocation, highest to lowest
       return b.amount - a.amount;
     });
+
     return _filteredPayouts;
   };
 
@@ -372,13 +375,17 @@ export default function PayoutsTab() {
                   const donationsForProject = allDonations.filter(
                     (donation) => donation.recipient?.id === project_id,
                   );
+
                   const uniqueDonors: Record<string, any> = {};
+
                   donationsForProject.forEach((donation) => {
                     if (!uniqueDonors[donation.donor.id]) {
                       uniqueDonors[donation.donor.id] = true;
                     }
                   });
+
                   const donorCount = Object.keys(uniqueDonors).length;
+
                   const totalAmount = donationsForProject
                     .reduce(
                       (previous, donation) => previous + yoctoNearToFloat(donation.net_amount),
