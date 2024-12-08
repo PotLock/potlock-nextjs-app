@@ -115,6 +115,7 @@
     "zustand": "^5.0.1"
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin": "^2.11.0",
     "@svgr/webpack": "^8.1.0",
     "@testing-library/react": "^15.0.7",
     "@types/big.js": "^6.2.2",
