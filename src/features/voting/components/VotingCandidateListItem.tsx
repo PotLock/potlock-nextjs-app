@@ -25,23 +25,22 @@ export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = (
 }) => {
   const userSession = useSessionAuth();
   const { data: account } = indexer.useAccount({ accountId });
-  const { data: votes, mutate } = useVotingCandidateVotes({ potId, accountId });
+  const { data: votes, mutate: revalidateVotes } = useVotingCandidateVotes({ potId, accountId });
 
-  // TODO: Implement voting
   const canReceiveVotes = useMemo(
     () => votes?.find(({ voter }) => voter === userSession.accountId) === undefined,
     [votes, userSession.accountId],
   );
 
+  // TODO: Election ID is hardcoded
+  const handleVoteCast = useCallback(() => {
+    votingClient.vote({ election_id: 1, vote: [accountId, 1] }).then(() => revalidateVotes());
+  }, [accountId, revalidateVotes]);
+
   const onCheckTriggered = useCallback(
     (checked: CheckedState) => onSelect?.(accountId, Boolean(checked)),
     [accountId, onSelect],
   );
-
-  // TODO: Election ID is hardcoded
-  const handleVoteCast = useCallback(() => {
-    votingClient.vote({ election_id: 1, vote: [accountId, 1] }).then(() => mutate());
-  }, [accountId, mutate]);
 
   return (
     <div className="flex items-center gap-4 rounded-none px-4 py-2 hover:bg-neutral-50">
