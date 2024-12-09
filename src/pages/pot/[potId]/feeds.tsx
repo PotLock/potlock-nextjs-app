@@ -26,6 +26,7 @@ const tabs = [
 const FeedsTab = () => {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isPotApplicantsReady, setIsPotApplicantsReady] = useState<boolean>(false);
   const loadingRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(50);
   const [tab, setTab] = useState<ApplicationStatus>(ApplicationStatus.Approved);
@@ -72,31 +73,47 @@ const FeedsTab = () => {
   );
 
   const loadMorePosts = useCallback(async () => {
-    const fetchedPosts = await fetchGlobalFeeds({
-      accountIds: potApplicants?.ids,
-      offset,
-    });
-
-    const newPosts = fetchedPosts.slice(offset - 50);
-
-    const filteredPosts = newPosts.filter((post) => post !== undefined);
-
-    setFeedPosts((prevPosts) => [...prevPosts, ...filteredPosts]);
-    setOffset((prevOffset) => prevOffset + 50);
-  }, [offset, potApplicants?.ids]);
+    try {
+      const fetchedPosts = await fetchGlobalFeeds({
+        accountIds: potApplicants?.ids,
+        offset,
+      });
+    
+      const existingBlockHeights = new Set(feedPosts.map(post => post?.blockHeight));
+      const uniquePosts = new Set();
+    
+      fetchedPosts.forEach((post) => {
+        if (post !== undefined && !existingBlockHeights.has(post?.blockHeight)) {
+          uniquePosts.add(post);
+        }
+      });
+    
+      const filteredPosts = Array.from(uniquePosts);
+    
+      setFeedPosts((prevPosts) => [...prevPosts, ...filteredPosts]);
+      setOffset((prevOffset) => prevOffset + 50);
+    } catch (error) {
+      console.error("Unable to fetch feeds:", error);
+    }
+  }, [offset, potApplicants?.ids, feedPosts]);
+  
+  
 
   useEffect(() => {
     setIsLoading(true);
-
-    (async () => {
+    if(isPotApplicantsReady && !potApplicants?.ids) return 
       try {
         fetchGlobalFeeds({
           accountIds: potApplicants?.ids,
+          offset: 50,
         })
-          .then((posts) => {
-            const filteredPosts = posts.filter((post) => post !== undefined);
-            setFeedPosts(filteredPosts);
-            setIsLoading(false);
+        .then((posts) => {
+          const filteredPosts = posts.filter((post) => post !== undefined);
+          setFeedPosts(filteredPosts);
+          console.log('checking 4', filteredPosts.length)
+          setIsLoading(false);
+          setOffset(100)
+          setIsPotApplicantsReady(true);
           })
           .catch((err) => {
             console.error("Unable to fetch feeds:", err);
@@ -104,12 +121,12 @@ const FeedsTab = () => {
       } catch (error) {
         console.error(error);
       }
-    })();
-  }, [potId, tab]);
+  }, [potId, potApplicants, isPotApplicantsReady, tab]);
 
   const handleSwitchTab = (tab: ApplicationStatus) => {
     setTab(tab);
     setFeedPosts([]);
+    setIsPotApplicantsReady(false);
     setOffset(50);
   };
 
