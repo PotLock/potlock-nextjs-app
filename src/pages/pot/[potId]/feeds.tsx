@@ -3,7 +3,12 @@ import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 
 import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
-import { Account, PotApplicationStatus as ApplicationStatus, indexer, PotApplication } from "@/common/api/indexer";
+import {
+  Account,
+  PotApplicationStatus as ApplicationStatus,
+  PotApplication,
+  indexer,
+} from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { AccountId } from "@/common/types";
@@ -25,19 +30,20 @@ const FeedsTab = () => {
   const [offset, setOffset] = useState(50);
   const [tab, setTab] = useState<ApplicationStatus>(ApplicationStatus.Approved);
   const router = useRouter();
-  
+
   const { potId } = router.query as {
     potId: string;
   };
-  const {data} = indexer.usePotApplications({ potId, status: tab });
+
+  const { data } = indexer.usePotApplications({ potId, status: tab });
 
   const potApplicants = useMemo(() => {
     return {
       ids: data?.results?.map((application) => application?.applicant?.id),
-      applicants: data?.results
+      applicants: data?.results,
     };
   }, [data?.results]);
-  
+
   const noResults = useMemo(
     () => (
       <div
@@ -73,30 +79,28 @@ const FeedsTab = () => {
 
     const newPosts = fetchedPosts.slice(offset - 50);
 
-    const filteredPosts = newPosts.filter(post => post !== undefined);
+    const filteredPosts = newPosts.filter((post) => post !== undefined);
 
     setFeedPosts((prevPosts) => [...prevPosts, ...filteredPosts]);
     setOffset((prevOffset) => prevOffset + 50);
   }, [offset, potApplicants?.ids]);
 
-
   useEffect(() => {
     setIsLoading(true);
+
     (async () => {
       try {
-
         fetchGlobalFeeds({
-          accountIds: potApplicants?.ids
+          accountIds: potApplicants?.ids,
         })
           .then((posts) => {
-            const filteredPosts = posts.filter(post => post !== undefined);
+            const filteredPosts = posts.filter((post) => post !== undefined);
             setFeedPosts(filteredPosts);
-            setIsLoading(false);        
+            setIsLoading(false);
           })
           .catch((err) => {
             console.error("Unable to fetch feeds:", err);
           });
-
       } catch (error) {
         console.error(error);
       }
@@ -105,10 +109,9 @@ const FeedsTab = () => {
 
   const handleSwitchTab = (tab: ApplicationStatus) => {
     setTab(tab);
-    setFeedPosts([])
-    setOffset(50)
+    setFeedPosts([]);
+    setOffset(50);
   };
-
 
   return (
     <div className="w-full">
@@ -147,19 +150,16 @@ const FeedsTab = () => {
               )
             }
           >
-           {!!feedPosts?.length && feedPosts.map((post) => {
-      const applicant = potApplicants?.applicants?.find(applicant => applicant.applicant.id === post.accountId);
-      const status = applicant ? applicant.status : undefined;
+            {!!feedPosts?.length &&
+              feedPosts.map((post) => {
+                const applicant = potApplicants?.applicants?.find(
+                  (applicant) => applicant.applicant.id === post.accountId,
+                );
 
-  return (
-    <FeedCard 
-      isPot 
-      status={status} 
-      key={post?.blockHeight} 
-      post={post} 
-    />
-  );
-})}
+                const status = applicant ? applicant.status : undefined;
+
+                return <FeedCard isPot status={status} key={post?.blockHeight} post={post} />;
+              })}
           </InfiniteScrollWrapper>
         )}
       </div>

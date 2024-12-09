@@ -5,19 +5,19 @@ import { useRouter } from "next/navigation";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Markdown from "react-markdown";
 
+import { PotApplicationStatus } from "@/common/api/indexer";
 import { fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/social";
+import { potApplicationFiltersTags } from "@/features/pot-application";
 
 import FeedCardOptionsSelect from "./FeedCardOptionsSelect";
 import { PROFILE_DEFAULTS } from "../constants";
-import { PotApplicationStatus } from "@/common/api/indexer";
-import { potApplicationFiltersTags } from "@/features/pot-application";
 
 interface PostType {
   isPot?: boolean;
-  status?: PotApplicationStatus
+  status?: PotApplicationStatus;
   post: {
     accountId: string;
     content: string;
@@ -90,20 +90,21 @@ export const FeedCard = ({ post, isPot, status }: PostType) => {
             )}
           </div>
         </div>
-        <div className="flex md:gap-2 items-center">
-            {isPot && status && 
-            <div 
-            style={{
-              borderColor: potApplicationFiltersTags[status].borderColor,
-              background: potApplicationFiltersTags[status].background,
-              color: potApplicationFiltersTags[status].color,
-            }}
-            className="flex items-center border-1 rounded md:px-4 text-[13px] p-1 md:text-sm md:py-2 gap-2">
+        <div className="flex items-center md:gap-2">
+          {isPot && status && (
+            <div
+              style={{
+                borderColor: potApplicationFiltersTags[status].borderColor,
+                background: potApplicationFiltersTags[status].background,
+                color: potApplicationFiltersTags[status].color,
+              }}
+              className="border-1 flex items-center gap-2 rounded p-1 text-[13px] md:px-4 md:py-2 md:text-sm"
+            >
               {potApplicationFiltersTags[status].icon}
               {status}
             </div>
-            }
-        <FeedCardOptionsSelect post={post} />
+          )}
+          <FeedCardOptionsSelect post={post} />
         </div>
       </div>
 
