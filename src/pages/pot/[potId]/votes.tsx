@@ -13,6 +13,7 @@ import { useSessionAuth } from "@/entities/session";
 import {
   VotingCandidateFilter,
   VotingCandidateList,
+  VotingCandidatesTableHead,
   VotingRules,
   VotingWeightBoostBreakdown,
   useVotingCandidates,
@@ -160,7 +161,7 @@ export default function PotVotesTab() {
             >
               <div className="flex items-center gap-2">
                 <MdHowToVote className="color-peach-400 h-6 w-6" />
-                <span className="font-semibold">{`${election?.total_votes ?? 0} Votes(s) Casted`}</span>
+                <span className="font-semibold">{`${election?.total_votes ?? 0} Vote(s) Casted`}</span>
               </div>
 
               <div className="flex gap-2">
@@ -213,24 +214,7 @@ export default function PotVotesTab() {
               </div>
             </div>
 
-            <div
-              className={cn(
-                "flex justify-between bg-[#f7f7f7] px-7 py-2",
-                "text-sm font-semibold text-gray-500",
-              )}
-            >
-              <h4 className="font-semibold uppercase">{"Projects"}</h4>
-
-              <div className="flex gap-6">
-                <h4 className={cn("hidden text-right font-semibold uppercase md:block")}>
-                  {"Votes"}
-                </h4>
-
-                <h4 className={cn("hidden text-right font-semibold uppercase md:block")}>
-                  {"Actions"}
-                </h4>
-              </div>
-            </div>
+            <VotingCandidatesTableHead />
           </div>
 
           {candidateList}

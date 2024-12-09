@@ -109,7 +109,6 @@ const FeedsTab = () => {
         .then((posts) => {
           const filteredPosts = posts.filter((post) => post !== undefined);
           setFeedPosts(filteredPosts);
-          console.log("checking 4", filteredPosts.length);
           setIsLoading(false);
           setOffset(100);
           setIsPotApplicantsReady(true);

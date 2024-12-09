@@ -35,7 +35,7 @@ export const VotingConfiguration: React.FC<VotingConfigurationProps> = ({
 
   return (
     <Card className={cn("w-full", className)}>
-      <CardHeader>
+      {/* <CardHeader>
         <CardTitle>{"Voting Contract"}</CardTitle>
 
         <CardDescription>
@@ -43,7 +43,7 @@ export const VotingConfiguration: React.FC<VotingConfigurationProps> = ({
             "A blockchain-based governance system where stakeholders can directly participate in decision - making through secure, transparent voting mechanisms that determine project direction and resource allocation."
           }
         </CardDescription>
-      </CardHeader>
+      </CardHeader> */}
 
       <CardContent>
         {isVotingConfigured ? null : (
