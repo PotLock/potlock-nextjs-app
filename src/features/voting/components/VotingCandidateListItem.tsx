@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { Candidate } from "@/common/contracts/core/voting";
+import { Candidate, votingClient } from "@/common/contracts/core/voting";
 import { Button, Checkbox } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
@@ -25,12 +25,11 @@ export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = (
 }) => {
   const userSession = useSessionAuth();
   const { data: account } = indexer.useAccount({ accountId });
-  const { data: votes } = useVotingCandidateVotes({ potId, accountId });
+  const { data: votes, mutate } = useVotingCandidateVotes({ potId, accountId });
 
   // TODO: Implement voting
   const canReceiveVotes = useMemo(
-    () => false, // votes.find(({ voter }) => voter === userSession.accountId) === undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    () => votes?.find(({ voter }) => voter === userSession.accountId) === undefined,
     [votes, userSession.accountId],
   );
 
@@ -39,8 +38,14 @@ export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = (
     [accountId, onSelect],
   );
 
+  // TODO: Election ID is hardcoded
+  const handleVoteCast = useCallback(() => {
+    // mutate();
+    votingClient.vote({ election_id: 1, vote: [accountId, 1] });
+  }, [mutate]);
+
   return (
-    <div className={cn("flex items-center gap-4 rounded-lg", "py-4 hover:bg-gray-50", "md:p-4")}>
+    <div className="flex items-center gap-4 rounded-none px-4 py-2 hover:bg-neutral-50">
       {typeof onSelect === "function" && (
         <Checkbox checked={isSelected} onCheckedChange={onCheckTriggered} />
       )}
@@ -57,10 +62,20 @@ export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = (
         <div className={cn("text-sm text-gray-500 md:hidden")}>{`${votesCount} Votes`}</div>
       </div>
 
-      <div className={cn("hidden text-right md:block")}>{votesCount}</div>
+      <div className="hidden h-16 w-24 items-center justify-end gap-3 p-4 md:inline-flex">
+        <div className="text-right text-sm font-medium leading-tight text-zinc-800">
+          {votesCount}
+        </div>
+      </div>
 
-      <Button variant="standard-outline" disabled={!canReceiveVotes} className="ml-auto w-20">
-        {canReceiveVotes ? "Vote" : "Voted"}
+      <Button
+        variant="standard-outline"
+        disabled={!canReceiveVotes}
+        title={canReceiveVotes ? undefined : "You have already voted for this project"}
+        onClick={handleVoteCast}
+        className="ml-auto"
+      >
+        {"Vote"}
       </Button>
     </div>
   );
