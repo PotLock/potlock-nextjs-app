@@ -161,7 +161,7 @@ export default function PotVotesTab() {
             >
               <div className="flex items-center gap-2">
                 <MdHowToVote className="color-peach-400 h-6 w-6" />
-                <span className="font-semibold">{`${election?.total_votes ?? 0} Votes(s) Casted`}</span>
+                <span className="font-semibold">{`${election?.total_votes ?? 0} Vote(s) Casted`}</span>
               </div>
 
               <div className="flex gap-2">

@@ -40,9 +40,8 @@ export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = (
 
   // TODO: Election ID is hardcoded
   const handleVoteCast = useCallback(() => {
-    // mutate();
-    votingClient.vote({ election_id: 1, vote: [accountId, 1] });
-  }, [mutate]);
+    votingClient.vote({ election_id: 1, vote: [accountId, 1] }).then(() => mutate());
+  }, [accountId, mutate]);
 
   return (
     <div className="flex items-center gap-4 rounded-none px-4 py-2 hover:bg-neutral-50">
