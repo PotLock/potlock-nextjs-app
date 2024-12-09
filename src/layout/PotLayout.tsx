@@ -40,12 +40,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       { label: "Projects", href: `${rootPathnames.pot}/${potId}/projects`, isHidden: hasVoting },
       { label: "Applications", href: `${rootPathnames.pot}/${potId}/applications` },
       { label: "Votes", href: `${rootPathnames.pot}/${potId}/votes`, isHidden: !hasVoting },
-
-      {
-        label: hasVoting ? "Funding" : "Donations",
-        href: `${rootPathnames.pot}/${potId}/donations`,
-      },
-
+      { label: "Donations", href: `${rootPathnames.pot}/${potId}/donations`, isHidden: hasVoting },
       { label: "Sponsors", href: `${rootPathnames.pot}/${potId}/sponsors` },
       { label: "Payouts", href: `${rootPathnames.pot}/${potId}/payouts` },
       { label: "Feeds", href: `${rootPathnames.pot}/${potId}/feeds` },
