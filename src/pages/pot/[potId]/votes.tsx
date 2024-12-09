@@ -11,8 +11,8 @@ import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useSessionAuth } from "@/entities/session";
 import {
+  VotingCandidateFilter,
   VotingCandidateList,
-  VotingElectionCandidateFilter,
   VotingRules,
   VotingWeightBoostBreakdown,
   useVotingCandidates,
@@ -28,7 +28,7 @@ export default function PotVotesTab() {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isVotingRuleListDisplayed, setIsVotingRuleListDisplayed] = useState(false);
   const [isWeightBoostBreakdownDisplayed, setIsWeightBoostBreakdownDisplayed] = useState(false);
-  const [candidateFilter, setFilter] = useState<VotingElectionCandidateFilter>("all");
+  const [candidateFilter, setFilter] = useState<VotingCandidateFilter>("all");
   const selectedCandidateAccountIds = useSet();
 
   const authenticatedVoter = useVotingParticipantVoteWeight({
