@@ -8,3 +8,11 @@ export const useVotingElection = ({ potId }: ByPotId) => {
 
   return votingClientHooks.useElection({ electionId });
 };
+
+export const useActivePotElections = ({ potId }: ByPotId) => {
+  const { data: activeElections } = votingClientHooks.useActiveElections();
+
+  console.log(activeElections);
+
+  return void "unimplemented!";
+};

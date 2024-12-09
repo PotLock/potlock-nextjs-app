@@ -29,7 +29,7 @@ export const VotingConfiguration: React.FC<VotingConfigurationProps> = ({
   className,
 }) => {
   const { data: associatedElection } = useVotingElection({ potId });
-  const isVotingConfigured = isNonNullish(associatedElection);
+  const isVotingConfigured = true || isNonNullish(associatedElection);
 
   const form = useForm({ resolver: zodResolver(votingConfigurationSchema) });
 

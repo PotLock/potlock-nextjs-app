@@ -9,6 +9,9 @@ export interface ByElectionId {
   electionId: ElectionId;
 }
 
+export const useActiveElections = () =>
+  useSWR(["get_active_elections"], () => votingClient.get_active_elections());
+
 export const useElection = ({ electionId }: ByElectionId) =>
   useSWR(
     [electionId],
