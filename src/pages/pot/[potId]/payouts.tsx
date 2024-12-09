@@ -1,7 +1,7 @@
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import { ReactElement, useMemo, useState } from "react";
 
+import { Info } from "lucide-react";
 import { useRouter } from "next/router";
-import { styled } from "styled-components";
 
 import { indexer } from "@/common/api/indexer";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
@@ -21,91 +21,6 @@ import { AccountProfilePicture } from "@/entities/account";
 import { PotPayoutChallenges } from "@/entities/pot";
 import { usePotPayoutLookup } from "@/entities/pot/hooks/usePotPayoutLookup";
 import { PotLayout } from "@/layout/PotLayout";
-
-const RowItem = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  width: 110px;
-  justify-content: right;
-  &:hover {
-    text-decoration: none;
-  }
-  &.project {
-    flex: 1;
-    display: flex;
-    gap: 1rem;
-    justify-content: left;
-    transition: 200ms;
-    a {
-      color: #292929;
-      font-weight: 600;
-      transition: 200ms;
-      &:hover {
-        color: #dd3345;
-        text-decoration: none;
-      }
-    }
-  }
-  @media screen and (max-width: 768px) {
-    &.project {
-      gap: 0.5rem;
-    }
-    &.donors,
-    &.amount {
-      display: none;
-    }
-  }
-`;
-
-const RowText = styled.div`
-  color: #292929;
-  font-size: 14px;
-  font-weight: 600;
-  word-wrap: break-word;
-  span {
-    color: #7b7b7b;
-    font-weight: 600;
-    display: none;
-  }
-  @media screen and (max-width: 768px) {
-    span {
-      display: inline;
-    }
-    &:last-of-type {
-      display: flex;
-      gap: 4px;
-    }
-  }
-`;
-
-const InfoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border: 1px solid #f4b37d;
-  border-radius: 6px;
-  background: #fef6ee;
-  gap: 1rem;
-  margin-left: auto;
-  margin-bottom: 1.5rem;
-`;
-
-const WarningText = styled.div`
-  text-align: center;
-  color: #dd3345;
-  font-weight: 500;
-  font-size: 14px;
-`;
-
-const AlertSvg = styled.svg`
-  width: 18px;
-  @media screen and (max-width: 768px) {
-    width: 1rem;
-  }
-`;
 
 const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 
@@ -188,6 +103,8 @@ export default function PayoutsTab() {
 
   const numberOfPages = useMemo(() => Math.ceil(totalPayoutCount / 10), [totalPayoutCount]);
 
+  console.log(potDetail);
+
   return (
     <div className="m-0 flex w-full  flex-col-reverse items-start justify-between gap-3 p-0 transition-all duration-500 ease-in-out md:flex-row">
       <div
@@ -231,21 +148,16 @@ export default function PayoutsTab() {
         </div>
         <div className="mb-16 flex w-full flex-col items-start gap-6 md:flex-row">
           <div className=" w-full">
-            {!potDetail?.all_paid_out && (
-              <InfoContainer>
-                <AlertSvg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M7.25 4.25H8.75V5.75H7.25V4.25ZM7.25 7.25H8.75V11.75H7.25V7.25ZM8 0.5C3.86 0.5 0.5 3.86 0.5 8C0.5 12.14 3.86 15.5 8 15.5C12.14 15.5 15.5 12.14 15.5 8C15.5 3.86 12.14 0.5 8 0.5ZM8 14C4.6925 14 2 11.3075 2 8C2 4.6925 4.6925 2 8 2C11.3075 2 14 4.6925 14 8C14 11.3075 11.3075 14 8 14Z"
-                    fill="#EE8949"
-                  />
-                </AlertSvg>
+            {potDetail?.all_paid_out && (
+              <div className="flex gap-4">
+                <Info />
 
-                <WarningText>
+                <div className="text-center text-sm font-light text-[#dd3345]">
                   {potDetail?.cooldown_end
                     ? "These payouts have been set on the contract but have not been paid out yet."
                     : "These payouts are estimated amounts only and have not been set on the contract yet."}
-                </WarningText>
-              </InfoContainer>
+                </div>
+              </div>
             )}
             <div className="mb-4 flex w-full items-center gap-4 rounded-lg bg-[#f6f6f7] p-2.5 px-4 md:gap-2">
               <div className="flex h-6 w-6 items-center justify-center">
@@ -310,19 +222,23 @@ export default function PayoutsTab() {
                       className="relative flex w-full flex-row items-center justify-between gap-8 p-4 md:flex-wrap md:gap-2"
                       key={index}
                     >
-                      <RowItem className="project">
+                      <div className="flex w-[110px] flex-1 flex-row items-center justify-start gap-4 transition duration-200 hover:no-underline">
                         <AccountProfilePicture
                           accountId={project_id}
                           className="h-[24px] w-[24px]"
                         />
-                        <a href={`?tab=project&projectId=${project_id}`} target={"_blank"}>
+                        <a
+                          className="font-semibold text-gray-800 no-underline transition duration-200 hover:text-red-600"
+                          href={`?tab=project&projectId=${project_id}`}
+                          target={"_blank"}
+                        >
                           {project_id.length > MAX_ACCOUNT_ID_DISPLAY_LENGTH
                             ? project_id.slice(0, MAX_ACCOUNT_ID_DISPLAY_LENGTH) + "..."
                             : project_id}
                         </a>
-                      </RowItem>
+                      </div>
                       {/* Total Raised */}
-                      <RowItem>{/* <RowText>{totalAmount}N</RowText> */}</RowItem>
+                      <div>{/* <RowText>{totalAmount}N</RowText> */}</div>
                       {/* <MobileAmount>
                         <span>{totalAmount}N</span> raised from
                         <span>{donorCount}</span> unique donors
@@ -332,9 +248,11 @@ export default function PayoutsTab() {
                         <RowText>{donorCount}</RowText>
                       </RowItem> */}
                       {/* Matching Pool Allocation */}
-                      <RowItem>
-                        <RowText>{yoctoNearToFloat(amount)}N</RowText>
-                      </RowItem>
+                      <div className="">
+                        <div className="break-words text-sm font-semibold text-gray-800">
+                          {yoctoNearToFloat(amount)}N
+                        </div>
+                      </div>
                     </div>
                   );
                 })
