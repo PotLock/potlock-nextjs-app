@@ -68,7 +68,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
   };
 
   return (
-    <div className=" md:w-full md:rounded-[16px] md:p-5 mx-auto my-2 max-w-[896px] p-6 font-sans">
+    <div className=" mx-auto my-2 max-w-[896px] p-6 font-sans md:w-full md:rounded-[16px] md:p-5">
       <Form {...form}>
         <form
           onSubmit={(e) => {
@@ -107,7 +107,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               </button>
             </div>
           </div>
-          <div className="md:flex-row md:flex-row mb-8 mt-8 flex w-full flex-col justify-between">
+          <div className="mb-8 mt-8 flex w-full flex-col justify-between md:flex-row md:flex-row">
             <FormField
               control={form.control}
               name="recipient"
@@ -157,7 +157,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
             name="target_amount"
             render={({ field }) => (
               <NearInputField
-                className="md:w-[42%] appearance-none"
+                className="appearance-none md:w-[42%]"
                 label="Target Amount"
                 required
                 {...field}
@@ -165,7 +165,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               />
             )}
           />
-          <div className="md:flex-row mt-8 flex w-full min-w-full flex-col justify-between">
+          <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row">
             <FormField
               control={form.control}
               name="min_amount"
@@ -191,7 +191,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               )}
             />
           </div>
-          <div className="md:flex-row mt-8 flex w-full min-w-full flex-col justify-between">
+          <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row">
             <FormField
               control={form.control}
               name="start_ms"

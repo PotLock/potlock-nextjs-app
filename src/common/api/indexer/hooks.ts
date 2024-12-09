@@ -197,7 +197,7 @@ export const usePotPayout = ({
     swr: { enabled: Boolean(potId), refreshInterval: 3000 },
   });
 
-  return { ...queryResult, data: queryResult.data?.data?.results };
+  return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**

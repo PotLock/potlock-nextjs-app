@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 import { styled } from "styled-components";
@@ -6,9 +6,20 @@ import { styled } from "styled-components";
 import { indexer } from "@/common/api/indexer";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
 import { yoctoNearToFloat } from "@/common/lib";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  Skeleton,
+} from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
-import { PotPayoutChallenges, useOrderedDonations } from "@/entities/pot";
+import { PotPayoutChallenges } from "@/entities/pot";
+import { usePotPayoutLookup } from "@/entities/pot/hooks/usePotPayoutLookup";
 import { PotLayout } from "@/layout/PotLayout";
 
 const RowItem = styled.div`
@@ -105,53 +116,80 @@ export default function PayoutsTab() {
   };
 
   const { data: potDetail } = indexer.usePot({ potId });
-  const { data: potPayouts, isLoading } = indexer.usePotPayout({ potId });
-  const { donations: allDonations } = useOrderedDonations(potId);
+  const {
+    payouts,
+    isPayoutsPending,
+    setPayoutSearchTerm,
+    payoutSearchTerm,
+    payoutPageNumber,
+    setPayoutPageNumber,
+    totalPayoutCount,
+  } = usePotPayoutLookup({
+    potId,
+  });
 
-  const [allPayouts, setAllPayouts] = useState<any[]>([]);
-  const [filteredPayouts, setFilteredPayouts] = useState<any[]>([]);
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
   const [showChallenges, setShowChallenges] = useState<boolean>(false);
 
-  useEffect(() => {
-    console.log(potPayouts);
-    if (potPayouts?.length) {
-      setAllPayouts(
-        potPayouts?.map((payout) => ({
-          project_id: payout?.recipient?.id,
-          id: payout?.id,
-          amount: payout?.amount,
-        })),
-      );
-      setFilteredPayouts(
-        potPayouts?.map((payout) => ({
-          project_id: payout?.recipient?.id,
-          id: payout?.id,
-          amount: payout?.amount,
-        })),
-      );
-    }
-    // const payouts = [];
-    // setAllPayouts(payouts);
-    // setFilteredPayouts(payouts);
-  }, [potId, isLoading]);
+  const pageNumberButtons = useMemo(() => {
+    const totalPages = Math.ceil(totalPayoutCount / 10);
+    const pages: (number | "ellipsis")[] = [];
 
-  const searchPayouts = (searchTerm: string) => {
-    // filter payouts that match the search term (donor_id, project_id)
-    const _filteredPayouts = allPayouts.filter((payout) => {
-      const { project_id } = payout;
-      const searchFields = [project_id];
-      return searchFields.some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()));
-    });
-    _filteredPayouts.sort((a: any, b: any) => {
-      // sort by matching pool allocation, highest to lowest
-      return b.amount - a.amount;
-    });
-    return _filteredPayouts;
-  };
+    if (totalPages <= 7) {
+      // Show all pages if total is 7 or less
+      pages.push(...Array.from({ length: totalPages }, (_, i) => i + 1));
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      if (payoutPageNumber <= 4) {
+        // Near start
+        pages.push(2, 3, 4, 5, "ellipsis", totalPages);
+      } else if (payoutPageNumber >= totalPages - 3) {
+        // Near end
+        pages.push(
+          "ellipsis",
+          totalPages - 4,
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages,
+        );
+      } else {
+        // Middle
+        pages.push(
+          "ellipsis",
+          payoutPageNumber - 1,
+          payoutPageNumber,
+          payoutPageNumber + 1,
+          "ellipsis",
+          totalPages,
+        );
+      }
+    }
+
+    return pages.map((page, i) => (
+      <PaginationItem key={i}>
+        {page === "ellipsis" ? (
+          <PaginationEllipsis />
+        ) : (
+          <PaginationLink
+            onClick={() => setPayoutPageNumber(page)}
+            className={cn({
+              "border-black font-bold": payoutPageNumber === page,
+            })}
+          >
+            {page}
+          </PaginationLink>
+        )}
+      </PaginationItem>
+    ));
+  }, [payoutPageNumber, setPayoutPageNumber, totalPayoutCount]);
+
+  const numberOfPages = useMemo(() => Math.ceil(totalPayoutCount / 10), [totalPayoutCount]);
 
   return (
-    <div className="md:flex-row m-0 flex  w-full flex-col-reverse items-start justify-between gap-3 p-0 transition-all duration-500 ease-in-out">
+    <div className="m-0 flex w-full  flex-col-reverse items-start justify-between gap-3 p-0 transition-all duration-500 ease-in-out md:flex-row">
       <div
         className={cn(
           "flex w-full flex-col items-center justify-between p-0 transition-all duration-500 ease-in-out",
@@ -183,7 +221,7 @@ export default function PayoutsTab() {
         </div>
         <div
           className={cn(
-            "md:hidden md:w-[33%] md:max-w-[33%] block w-full transition-all duration-500 ease-in-out",
+            "block w-full transition-all duration-500 ease-in-out md:hidden md:w-[33%] md:max-w-[33%]",
             {
               hidden: !showChallenges,
             },
@@ -191,7 +229,7 @@ export default function PayoutsTab() {
         >
           <PotPayoutChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />
         </div>
-        <div className="md:flex-row mb-16 flex w-full flex-col items-start gap-6">
+        <div className="mb-16 flex w-full flex-col items-start gap-6 md:flex-row">
           <div className=" w-full">
             {!potDetail?.all_paid_out && (
               <InfoContainer>
@@ -209,7 +247,7 @@ export default function PayoutsTab() {
                 </WarningText>
               </InfoContainer>
             )}
-            <div className="md:gap-2 mb-4 flex w-full items-center gap-4 rounded-lg bg-[#f6f6f7] p-2.5 px-4">
+            <div className="mb-4 flex w-full items-center gap-4 rounded-lg bg-[#f6f6f7] p-2.5 px-4 md:gap-2">
               <div className="flex h-6 w-6 items-center justify-center">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -219,12 +257,10 @@ export default function PayoutsTab() {
                 </svg>
               </div>
               <input
-                onChange={({ target: { value } }) => {
-                  const filteredPayouts = searchPayouts(value);
-                  setFilteredPayouts(filteredPayouts);
-                }}
+                onChange={({ target: { value } }) => setPayoutSearchTerm(value)}
                 className="h-full w-full border-none bg-transparent p-2 pl-2 focus:outline-none"
                 type="text"
+                value={payoutSearchTerm}
                 placeholder="Search..."
               />
             </div>
@@ -235,56 +271,43 @@ export default function PayoutsTab() {
                     PROJECTS
                   </div>
                 </div>
-                <div className="flex w-28 flex-row items-center justify-start">
+                {/* <div className="flex w-28 flex-row items-center justify-start">
                   <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
                     VOTES
                   </div>
-                </div>
+                </div> */}
                 {/* <div className="flex w-28 flex-row items-center justify-start">
                   <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
                     Unique Donors
                   </div>
                 </div> */}
-                <div className="flex w-28 flex-row items-center justify-start">
+                <div className="flex flex-row items-center justify-start">
                   <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
                     POOL ALLOCATION
                   </div>
                 </div>
               </div>
 
-              {!filteredPayouts ? (
-                <div>Loading</div>
-              ) : filteredPayouts.length === 0 ? (
+              {isPayoutsPending ? (
+                Array.from({ length: 10 }).map((_, index) => (
+                  <div key={index} className="mt-3 w-full">
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ))
+              ) : payouts?.length === 0 ? (
                 <div
-                  className="md:flex-wrap md:gap-2 relative flex w-full flex-row items-center justify-between gap-8 p-4"
+                  className="relative flex w-full flex-row items-center justify-between gap-8 p-4 md:flex-wrap md:gap-2"
                   style={{ padding: "12px" }}
                 >
                   No payouts to display
                 </div>
               ) : (
-                filteredPayouts.map((payout, index) => {
+                payouts?.map((payout, index) => {
                   const { project_id, amount } = payout;
-
-                  // const donationsForProject = allDonations.filter(
-                  //   (donation) => donation.recipient?.id === project_id,
-                  // );
-                  // const uniqueDonors: Record<string, any> = {};
-                  // donationsForProject.forEach((donation) => {
-                  //   if (!uniqueDonors[donation.donor.id]) {
-                  //     uniqueDonors[donation.donor.id] = true;
-                  //   }
-                  // });
-                  // const donorCount = Object.keys(uniqueDonors).length;
-                  // const totalAmount = donationsForProject
-                  //   .reduce(
-                  //     (previous, donation) => previous + yoctoNearToFloat(donation.net_amount),
-                  //     0,
-                  //   )
-                  //   .toFixed(2);
 
                   return (
                     <div
-                      className="md:flex-wrap md:gap-2 relative flex w-full flex-row items-center justify-between gap-8 p-4"
+                      className="relative flex w-full flex-row items-center justify-between gap-8 p-4 md:flex-wrap md:gap-2"
                       key={index}
                     >
                       <RowItem className="project">
@@ -317,13 +340,36 @@ export default function PayoutsTab() {
                 })
               )}
             </div>
+            {numberOfPages > 1 && (
+              <Pagination className="mt-[24px]">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setPayoutPageNumber((prev) => Math.max(prev - 1, 1))}
+                    />
+                  </PaginationItem>
+
+                  {pageNumberButtons}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        setPayoutPageNumber((prev) =>
+                          Math.min(prev + 1, Math.ceil(totalPayoutCount / 10)),
+                        )
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
           </div>
         </div>
       </div>
       <div
         className={cn(
           showChallenges ? "md:block" : "hidden",
-          "md:w-[33%] hidden w-full transition-all duration-500 ease-in-out",
+          "hidden w-full transition-all duration-500 ease-in-out md:w-[33%]",
         )}
       >
         <PotPayoutChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />
