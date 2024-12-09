@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  // Redirect to login page if not authenticated
-
   // PROFILE - INIT
   const isProfilePage = request.nextUrl.pathname.startsWith("/profile/");
 
@@ -11,9 +9,7 @@ export async function middleware(request: NextRequest) {
     (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
   ) {
     return NextResponse.rewrite(`${request.url}/home`);
-  }
-
-  if (
+  } else if (
     isProfilePage &&
     (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))
   ) {

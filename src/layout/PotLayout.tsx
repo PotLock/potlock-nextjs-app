@@ -57,10 +57,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
   // const defaultTab = hasVoting ? tabList[1] : tabList[0];
 
-  // const [selectedTab, setSelectedTab] = useState(
-  //   tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab,
-  // );
-
   // useEffect(() => {
   //   setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab);
   // }, [defaultTab, hasVoting, pathname, tabs]);
