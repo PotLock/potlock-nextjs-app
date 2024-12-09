@@ -78,49 +78,48 @@ const FeedsTab = () => {
         accountIds: potApplicants?.ids,
         offset,
       });
-    
-      const existingBlockHeights = new Set(feedPosts.map(post => post?.blockHeight));
+
+      const existingBlockHeights = new Set(feedPosts.map((post) => post?.blockHeight));
       const uniquePosts = new Set();
-    
+
       fetchedPosts.forEach((post) => {
         if (post !== undefined && !existingBlockHeights.has(post?.blockHeight)) {
           uniquePosts.add(post);
         }
       });
-    
+
       const filteredPosts = Array.from(uniquePosts);
-    
+
       setFeedPosts((prevPosts) => [...prevPosts, ...filteredPosts]);
       setOffset((prevOffset) => prevOffset + 50);
     } catch (error) {
       console.error("Unable to fetch feeds:", error);
     }
   }, [offset, potApplicants?.ids, feedPosts]);
-  
-  
 
   useEffect(() => {
     setIsLoading(true);
-    if(isPotApplicantsReady && !potApplicants?.ids) return 
-      try {
-        fetchGlobalFeeds({
-          accountIds: potApplicants?.ids,
-          offset: 50,
-        })
+    if (isPotApplicantsReady && !potApplicants?.ids) return;
+
+    try {
+      fetchGlobalFeeds({
+        accountIds: potApplicants?.ids,
+        offset: 50,
+      })
         .then((posts) => {
           const filteredPosts = posts.filter((post) => post !== undefined);
           setFeedPosts(filteredPosts);
-          console.log('checking 4', filteredPosts.length)
+          console.log("checking 4", filteredPosts.length);
           setIsLoading(false);
-          setOffset(100)
+          setOffset(100);
           setIsPotApplicantsReady(true);
-          })
-          .catch((err) => {
-            console.error("Unable to fetch feeds:", err);
-          });
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch((err) => {
+          console.error("Unable to fetch feeds:", err);
+        });
+    } catch (error) {
+      console.error(error);
+    }
   }, [potId, potApplicants, isPotApplicantsReady, tab]);
 
   const handleSwitchTab = (tab: ApplicationStatus) => {
