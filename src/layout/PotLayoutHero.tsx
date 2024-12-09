@@ -10,6 +10,7 @@ import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { hrefByRouteName } from "@/entities/core";
 import {
   PotLifecycleStageTagEnum,
   PotStats,
@@ -178,7 +179,13 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
               <Button onClick={onApplyClick}>{`Apply to ${hasVoting ? "Round" : "Pot"}`}</Button>
             )}
 
-            {canDonate && <DonateToPotProjects {...{ potId }} />}
+            {hasVoting ? (
+              <Button asChild>
+                <Link href={`${hrefByRouteName.POT_DETAIL}/${potId}/votes`}>{"Start Voting"}</Link>
+              </Button>
+            ) : (
+              <>{canDonate && <DonateToPotProjects {...{ potId }} />}</>
+            )}
 
             {canFund && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>

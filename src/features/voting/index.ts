@@ -1,6 +1,7 @@
 export * from "./types";
 export * from "./constants";
 export * from "./components/VotingCandidateList";
+export * from "./components/VotingConfiguration";
 export * from "./components/VotingRules";
 export * from "./components/VotingWeightBreakdown";
 export * from "./hooks/candidates";

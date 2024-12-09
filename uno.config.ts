@@ -177,7 +177,18 @@ export default defineConfig({
     },
   },
 
-  rules: [["hidden", { display: "none" }]],
+  rules: [
+    ["hidden", { display: "none" }],
+
+    [
+      "elevation-low",
+
+      {
+        "box-shadow":
+          "0px 0px 1px 0px rgba(0, 0, 0, 0.36), 0px 1px 1px -0.5px rgba(55, 55, 55, 0.04), 0px 2px 2px -1px rgba(5, 5, 5, 0.08), 0px 3px 5px -1.5px rgba(55, 55, 55, 0.04)",
+      },
+    ],
+  ],
 
   shortcuts: {
     "btn-primary": "bg-primary text-primary-foreground hover:bg-primary/90",

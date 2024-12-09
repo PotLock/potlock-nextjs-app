@@ -40,7 +40,7 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
           {typeof children === "string" && isAccountId(children) ? (
             <AccountProfileLink
               accountId={children}
-              classNames={{ root: "mr-a", name: "text-sm" }}
+              classNames={{ root: "md:w-102 w-full", name: "text-sm" }}
             />
           ) : (
             <span className="prose md:w-102 w-full text-sm">{children}</span>
@@ -52,9 +52,14 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
 
 export type PotEditorPreviewProps = Partial<ByPotId> & {
   onEditClick: () => void;
+  className?: string;
 };
 
-export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({ potId, onEditClick }) => {
+export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
+  potId,
+  onEditClick,
+  className,
+}) => {
   const { isLoading, data } = indexer.usePot({ potId });
   const adminAccountIds = data?.admins.map(prop("id"));
   const isDataAvailable = data !== undefined && adminAccountIds !== undefined;
@@ -80,7 +85,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({ potId, onEdi
   );
 
   return (
-    <div className="max-w-195 flex w-full flex-col gap-8">
+    <div className="max-w-206 flex w-full flex-col gap-8">
       <div className="flex flex-wrap gap-8">
         <div un-pr="4" un-flex="~ col" un-gap="2">
           <span className="prose font-500 text-sm text-neutral-500">{"Owner"}</span>
@@ -128,9 +133,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({ potId, onEdi
       </div>
 
       <div
-        className={cn(
-          "min-h-114 rounded-3 flex flex-col gap-6 border border-neutral-200 p-4 md:gap-4 md:p-6",
-        )}
+        className={cn("min-h-114 rounded-2 flex flex-col gap-6 bg-neutral-50 p-4 md:gap-4 md:p-6")}
       >
         {!isDataAvailable && isLoading && <DataLoadingPlaceholder text="Loading pot data..." />}
 
