@@ -102,6 +102,7 @@ export default function PotVotesTab() {
             data={candidatesWithVotes}
             // TODO: temporarily disabled as vote for multiple candidates is unimplemented
             // onEntrySelect={handleCandidateSelect}
+            {...{ potId }}
           />
         );
       }
@@ -112,6 +113,7 @@ export default function PotVotesTab() {
             data={candidatesWithoutVotes}
             // TODO: temporarily disabled as vote for multiple candidates is unimplemented
             // onEntrySelect={handleCandidateSelect}
+            {...{ potId }}
           />
         );
       }
@@ -122,17 +124,12 @@ export default function PotVotesTab() {
             data={candidates ?? []}
             // TODO: temporarily disabled as vote for multiple candidates is unimplemented
             // onEntrySelect={handleCandidateSelect}
+            {...{ potId }}
           />
         );
       }
     }
-  }, [
-    candidateFilter,
-    candidates,
-    candidatesWithVotes,
-    candidatesWithoutVotes,
-    // handleCandidateSelect,
-  ]);
+  }, [candidateFilter, candidates, candidatesWithVotes, candidatesWithoutVotes, potId]);
 
   return (
     <div className={cn("flex w-full flex-col gap-6")}>

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { ByPotId } from "@/common/api/indexer";
 import { Candidate, votingClientHooks } from "@/common/contracts/core/voting";
+import { ByAccountId } from "@/common/types";
 
 import { VOTING_ELECTION_ID_BY_POT_ID } from "../model/hardcoded";
 
@@ -42,4 +43,10 @@ export const useVotingCandidates = ({ potId }: ByPotId) => {
       setCandidateSearchQuery: setSearchQuery,
     };
   }, [data, candidatesQueryResult, searchQuery]);
+};
+
+export const useVotingCandidateVotes = ({ potId, accountId }: ByPotId & ByAccountId) => {
+  const electionId = VOTING_ELECTION_ID_BY_POT_ID[potId] ?? 0;
+
+  return votingClientHooks.useElectionCandidateVotes({ electionId, accountId });
 };

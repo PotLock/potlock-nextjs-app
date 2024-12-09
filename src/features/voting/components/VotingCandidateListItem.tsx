@@ -2,28 +2,30 @@ import { useCallback, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
 
-import { indexer } from "@/common/api/indexer";
-import { Candidate, Vote } from "@/common/contracts/core/voting";
+import { ByPotId, indexer } from "@/common/api/indexer";
+import { Candidate } from "@/common/contracts/core/voting";
 import { Button, Checkbox } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { useSessionAuth } from "@/entities/session";
 
-export type VotingCandidateListItemProps = Candidate & {
-  votes: Vote[];
+import { useVotingCandidateVotes } from "../hooks/candidates";
+
+export type VotingCandidateListItemProps = ByPotId & {
+  data: Candidate;
   isSelected?: boolean;
   onSelect?: (accountId: string, isSelected: boolean) => void;
 };
 
 export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = ({
-  votes,
-  account_id: accountId,
-  votes_received: votesCount,
+  potId,
+  data: { account_id: accountId, votes_received: votesCount },
   isSelected = false,
   onSelect,
 }) => {
   const userSession = useSessionAuth();
   const { data: account } = indexer.useAccount({ accountId });
+  const { data: votes } = useVotingCandidateVotes({ potId, accountId });
 
   // TODO: Implement voting
   const canReceiveVotes = useMemo(
