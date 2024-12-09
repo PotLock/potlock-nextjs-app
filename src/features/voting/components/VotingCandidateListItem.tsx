@@ -9,14 +9,14 @@ import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { useSessionAuth } from "@/entities/session";
 
-export type VotingElectionCandidateEntryProps = Candidate & {
-  electionVotes: Vote[];
+export type VotingCandidateListItemProps = Candidate & {
+  votes: Vote[];
   isSelected?: boolean;
   onSelect?: (accountId: string, isSelected: boolean) => void;
 };
 
-export const VotingElectionCandidateEntry: React.FC<VotingElectionCandidateEntryProps> = ({
-  electionVotes,
+export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = ({
+  votes,
   account_id: accountId,
   votes_received: votesCount,
   isSelected = false,
@@ -25,19 +25,14 @@ export const VotingElectionCandidateEntry: React.FC<VotingElectionCandidateEntry
   const userSession = useSessionAuth();
   const { data: account } = indexer.useAccount({ accountId });
 
-  const receivedVotes = useMemo(
-    () => electionVotes.filter(({ candidate_id }) => candidate_id === accountId),
-    [accountId, electionVotes],
-  );
-
   // TODO: Implement voting
   const canReceiveVotes = useMemo(
-    () => false, // receivedVotes.find(({ voter }) => voter === userSession.accountId) === undefined,
+    () => false, // votes.find(({ voter }) => voter === userSession.accountId) === undefined,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [receivedVotes, userSession.accountId],
+    [votes, userSession.accountId],
   );
 
-  const onCheckboxTriggered = useCallback(
+  const onCheckTriggered = useCallback(
     (checked: CheckedState) => onSelect?.(accountId, Boolean(checked)),
     [accountId, onSelect],
   );
@@ -45,7 +40,7 @@ export const VotingElectionCandidateEntry: React.FC<VotingElectionCandidateEntry
   return (
     <div className={cn("flex items-center gap-4 rounded-lg", "py-4 hover:bg-gray-50", "md:p-4")}>
       {typeof onSelect === "function" && (
-        <Checkbox checked={isSelected} onCheckedChange={onCheckboxTriggered} />
+        <Checkbox checked={isSelected} onCheckedChange={onCheckTriggered} />
       )}
 
       <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
