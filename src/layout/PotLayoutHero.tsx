@@ -76,7 +76,10 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
       )}
     >
       {pot ? (
-        <PotTimeline classNames={{ root: "bg-neutral-50 md:transparent" }} {...{ potId }} />
+        <PotTimeline
+          classNames={{ root: "bg-neutral-50 md:transparent" }}
+          {...{ hasVoting, potId }}
+        />
       ) : (
         <Skeleton className="h-96 w-full" />
       )}
