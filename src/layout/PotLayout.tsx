@@ -39,8 +39,13 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
     () => [
       { label: "Projects", href: `${rootPathnames.pot}/${potId}/projects`, isHidden: hasVoting },
       { label: "Applications", href: `${rootPathnames.pot}/${potId}/applications` },
-      { label: "Votes", href: `${rootPathnames.pot}/${potId}/votes` },
-      { label: "Donations", href: `${rootPathnames.pot}/${potId}/donations` },
+      { label: "Votes", href: `${rootPathnames.pot}/${potId}/votes`, isHidden: !hasVoting },
+
+      {
+        label: hasVoting ? "Funding" : "Donations",
+        href: `${rootPathnames.pot}/${potId}/donations`,
+      },
+
       { label: "Sponsors", href: `${rootPathnames.pot}/${potId}/sponsors` },
       { label: "Payouts", href: `${rootPathnames.pot}/${potId}/payouts` },
       { label: "Feeds", href: `${rootPathnames.pot}/${potId}/feeds` },
@@ -55,27 +60,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
     [asPath, tabList],
   );
 
-  // Modals
-  const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
-  const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
-  const [fundModalOpen, setFundModalOpen] = useState(false);
-  const openMatchingPoolFundingModal = useCallback(() => setFundModalOpen(true), []);
-  const [applyModalOpen, setApplyModalOpen] = useState(false);
-  const openApplicationModal = useCallback(() => setApplyModalOpen(true), []);
-  const [challengeModalOpen, setChallengeModalOpen] = useState(false);
-  const openChallengeModal = useCallback(() => setChallengeModalOpen(true), []);
-
-  // const tabs = useMemo(
-  //   () =>
-  //     hasVoting
-  //       ? tabList
-  //           .filter(({ id }) => id !== "projects")
-  //           .map((tab) => (tab.id === "donations" ? { ...tab, label: "History" } : tab))
-  //       : tabList.filter(({ id }) => id !== "votes"),
-
-  //   [hasVoting, tabList],
-  // );
-
   // const defaultTab = hasVoting ? tabList[1] : tabList[0];
 
   // const [selectedTab, setSelectedTab] = useState(
@@ -85,6 +69,16 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   // useEffect(() => {
   //   setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab);
   // }, [defaultTab, hasVoting, pathname, tabs]);
+
+  // Modals
+  const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
+  const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
+  const [fundModalOpen, setFundModalOpen] = useState(false);
+  const openMatchingPoolFundingModal = useCallback(() => setFundModalOpen(true), []);
+  const [applyModalOpen, setApplyModalOpen] = useState(false);
+  const openApplicationModal = useCallback(() => setApplyModalOpen(true), []);
+  const [challengeModalOpen, setChallengeModalOpen] = useState(false);
+  const openChallengeModal = useCallback(() => setChallengeModalOpen(true), []);
 
   return (
     <PageWithBanner>
