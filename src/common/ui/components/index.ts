@@ -34,6 +34,7 @@ export * from "./atoms/skeleton";
 export * from "./atoms/spinner";
 export * from "./atoms/switch";
 export * from "./atoms/table";
+export * from "./atoms/tabs";
 export * from "./atoms/textarea";
 export * from "./atoms/toggle";
 export * from "./atoms/tooltip";

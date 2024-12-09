@@ -4,7 +4,7 @@ import { prop } from "remeda";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/social";
-import { hrefByRouteName } from "@/entities/core";
+import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
@@ -278,7 +278,7 @@ export const projectEditorModel = createModel<AppModel>()({
       const data: Partial<ProjectEditorState> = {};
 
       // Set the isEdit status
-      data.isEdit = location.pathname.includes(hrefByRouteName.EDIT_PROJECT);
+      data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROJECT);
 
       // Get profile data & profile images
       const projectProfileData = await fetchSocialImages({

@@ -10,7 +10,6 @@ import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { hrefByRouteName } from "@/entities/core";
 import {
   PotLifecycleStageTagEnum,
   PotStats,
@@ -22,6 +21,7 @@ import { useSessionAuth } from "@/entities/session";
 import { TokenTotalValue } from "@/entities/token";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
+import { rootPathnames } from "@/pathnames";
 
 export type PotLayoutHeroProps = ByPotId & {
   hasVoting?: boolean;

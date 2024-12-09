@@ -1,37 +1,59 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
-import { ChallengeModal, POT_TABS_CONFIG, usePotBasicUserPermissions } from "@/entities/pot";
+import { RoutableTabListOption } from "@/common/ui/types";
+import { cn } from "@/common/ui/utils";
+import { ChallengeModal, usePotBasicUserPermissions } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolFundingModal } from "@/features/matching-pool-funding";
 import { PotApplicationModal } from "@/features/pot-application";
 import { ErrorModal } from "@/features/project-editor/components/ErrorModal";
 import { SuccessModal } from "@/features/project-editor/components/SuccessModal";
 import { isVotingEnabled } from "@/features/voting";
+import { rootPathnames } from "@/pathnames";
 
 import { PotLayoutHero } from "./PotLayoutHero";
-import { PotLayoutTabPanel } from "./PotLayoutTabPanel";
 
 export type PotLayoutProps = {
   children: React.ReactNode;
 };
 
 export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
-  const { pathname, query: routeQuery } = useRouter();
+  const { asPath, query: routeQuery } = useRouter();
 
-  const query = routeQuery as {
+  const { potId, ...query } = routeQuery as {
     potId: string;
     done?: string;
     errorMessage?: string;
   };
 
-  const { potId } = query;
   const hasVoting = isVotingEnabled({ potId });
   const { data: pot } = indexer.usePot({ potId });
   const { existingChallengeForUser } = usePotBasicUserPermissions({ potId });
+
+  const tabList: RoutableTabListOption[] = useMemo(
+    () => [
+      { label: "Projects", href: `${rootPathnames.pot}/${potId}/projects`, isHidden: hasVoting },
+      { label: "Applications", href: `${rootPathnames.pot}/${potId}/applications` },
+      { label: "Votes", href: `${rootPathnames.pot}/${potId}/votes` },
+      { label: "Donations", href: `${rootPathnames.pot}/${potId}/donations` },
+      { label: "Sponsors", href: `${rootPathnames.pot}/${potId}/sponsors` },
+      { label: "Payouts", href: `${rootPathnames.pot}/${potId}/payouts` },
+      { label: "Feeds", href: `${rootPathnames.pot}/${potId}/feeds` },
+      { label: "Settings", href: `${rootPathnames.pot}/${potId}/settings` },
+    ],
+
+    [hasVoting, potId],
+  );
+
+  const { href: activeTabHref } = useMemo(
+    () => tabList.find(({ href }) => asPath.includes(href)) ?? { href: null },
+    [asPath, tabList],
+  );
 
   // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
@@ -43,32 +65,32 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
   const openChallengeModal = useCallback(() => setChallengeModalOpen(true), []);
 
-  const tabs = useMemo(
-    () =>
-      hasVoting
-        ? POT_TABS_CONFIG.filter(({ id }) => id !== "projects").map((tab) =>
-            tab.id === "donations" ? { ...tab, label: "History" } : tab,
-          )
-        : POT_TABS_CONFIG.filter(({ id }) => id !== "votes"),
+  // const tabs = useMemo(
+  //   () =>
+  //     hasVoting
+  //       ? tabList
+  //           .filter(({ id }) => id !== "projects")
+  //           .map((tab) => (tab.id === "donations" ? { ...tab, label: "History" } : tab))
+  //       : tabList.filter(({ id }) => id !== "votes"),
 
-    [hasVoting],
-  );
+  //   [hasVoting, tabList],
+  // );
 
-  const defaultTab = hasVoting ? POT_TABS_CONFIG[1] : POT_TABS_CONFIG[0];
+  // const defaultTab = hasVoting ? tabList[1] : tabList[0];
 
-  const [selectedTab, setSelectedTab] = useState(
-    tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab,
-  );
+  // const [selectedTab, setSelectedTab] = useState(
+  //   tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab,
+  // );
 
-  useEffect(() => {
-    setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab);
-  }, [defaultTab, hasVoting, pathname, tabs]);
+  // useEffect(() => {
+  //   setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab);
+  // }, [defaultTab, hasVoting, pathname, tabs]);
 
-  return !pot ? null : (
+  return (
     <PageWithBanner>
       {/**
        * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
-       * //! AND SHOULD BE REPLACED WITH AN IMPLEMENTATION SPECIFIC TO THE POT ENTITY
+       * //! AND MUST BE REPLACED WITH AN IMPLEMENTATION SPECIFIC TO THE POT ENTITY
        * //! THIS IS THE EXACT ROOT CAUSE OF THE POT TRANSACTION CONFIRMATION BUGS
        */}
       <SuccessModal
@@ -79,7 +101,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
       {/**
        * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
-       * //! AND SHOULD BE REPLACED WITH AN IMPLEMENTATION SPECIFIC TO THE POT ENTITY
+       * //! AND MUST BE REPLACED WITH AN IMPLEMENTATION SPECIFIC TO THE POT ENTITY
        * //! THIS IS THE EXACT ROOT CAUSE OF THE POT TRANSACTION CONFIRMATION BUGS
        */}
       <ErrorModal
@@ -120,14 +142,31 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         {...{ potId, hasVoting }}
       />
 
-      <PotLayoutTabPanel
-        asLink
-        navOptions={tabs}
-        selectedTab={selectedTab.id}
-        onSelect={(tabId: string) => {
-          setSelectedTab(tabs.find(({ id }) => id === tabId)!);
-        }}
-      />
+      <div className="mb-6 flex w-full flex-row flex-wrap gap-2 md:mb-12">
+        <div
+          className={cn(
+            "flex w-full justify-start gap-8 overflow-y-auto",
+            "border-b-[1px] border-b-[#c7c7c7] pt-8",
+          )}
+        >
+          {tabList.map(({ label, href, isHidden }) => {
+            return (
+              <Link
+                key={href}
+                className={cn(
+                  "font-500 border-b-solid transition-duration-300 whitespace-nowrap",
+                  "border-b-[2px] border-b-[transparent] px-4 py-[10px] text-sm text-[#7b7b7b]",
+                  "transition-all hover:border-b-[#292929] hover:text-[#292929]",
+                  { hidden: isHidden, "border-b-[#292929] text-[#292929]": href === activeTabHref },
+                )}
+                {...{ href }}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Tab Content */}
       <div className="flex w-full flex-row flex-wrap gap-2">{children}</div>

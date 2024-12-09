@@ -7,9 +7,9 @@ import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
-import routesPath, { hrefByRouteName } from "@/entities/core/routes";
 import { useSessionReduxStore } from "@/entities/session";
 import useWallet from "@/entities/session/hooks/wallet";
+import routesPath, { rootPathnames } from "@/pathnames";
 
 import DonationsInfo from "./DonationsInfo";
 import FollowButton from "./FollowButton";
@@ -34,7 +34,7 @@ const LinksWrapper = ({ accountId }: { accountId: string }) => {
         <CopyToClipboard
           text={
             window.location.origin +
-            `${hrefByRouteName.PROFILE}/${accountId}?referrerId=${wallet?.accountId}`
+            `${rootPathnames.PROFILE}/${accountId}?referrerId=${wallet?.accountId}`
           }
           onCopy={() => {
             setCopied(true);

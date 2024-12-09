@@ -11,7 +11,7 @@ import { CartLink } from "@/entities/cart";
 import { SessionSignInButton, useSessionReduxStore } from "@/entities/session";
 
 import { UserDropdown } from "./UserDropdown";
-import routesPath, { hrefByRouteName } from "../entities/core/routes";
+import routesPath, { rootPathnames } from "../pathnames";
 
 const links = [
   { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },
@@ -73,7 +73,7 @@ const MobileNav = () => {
         return (
           <Link
             key={url + label}
-            href={disabled ? hrefByRouteName.CURRENT : url}
+            href={disabled ? rootPathnames.CURRENT : url}
             className={cn(
               "decoration-none not-last-child hover:decoration-none relative mr-8 text-sm",
 
@@ -126,7 +126,7 @@ export const AppBar = () => {
                 return (
                   <Link
                     key={url + label}
-                    href={disabled ? hrefByRouteName.CURRENT : url}
+                    href={disabled ? rootPathnames.CURRENT : url}
                     className={cn(
                       "decoration-none not-last-child hover:decoration-none relative mr-8 text-sm",
 

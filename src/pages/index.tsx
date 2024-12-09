@@ -3,10 +3,10 @@ import Link from "next/link";
 import { indexer } from "@/common/api/indexer";
 import { Button } from "@/common/ui/components";
 import { useRegistration } from "@/entities/core";
-import routesPath from "@/entities/core/routes";
 import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/entities/project";
 import { useSessionReduxStore, useWallet } from "@/entities/session";
 import { DonateRandomly } from "@/features/donation";
+import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 export const GeneralStats = () => {

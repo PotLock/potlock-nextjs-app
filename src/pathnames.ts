@@ -1,4 +1,4 @@
-export const hrefByRouteName = {
+export const rootPathnames = {
   CURRENT: "",
   CREATE_PROJECT: "/register",
   EDIT_PROJECT: "/edit-project",
@@ -7,7 +7,7 @@ export const hrefByRouteName = {
   CART: "/cart",
   FEED: "/feed",
   POTS: "/pots",
-  POT_DETAIL: "/pot",
+  pot: "/pot",
   DEPLOY_POT: "/deploy",
   DONORS: "/donors",
   LIST: "/lists",
@@ -19,4 +19,4 @@ export const hrefByRouteName = {
 // ?INFO: This default export is for temporary backwards compatibility
 // !INFO: default exports are evil.
 // TODO: Remove in the future
-export default hrefByRouteName;
+export default rootPathnames;

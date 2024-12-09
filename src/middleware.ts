@@ -29,9 +29,7 @@ export async function middleware(request: NextRequest) {
     (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
   ) {
     return NextResponse.rewrite(`${request.url}/projects`);
-  }
-
-  if (
+  } else if (
     isPotPage &&
     (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))
   ) {

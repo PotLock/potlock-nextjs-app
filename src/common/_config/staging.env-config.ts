@@ -36,7 +36,7 @@ export const envConfig: EnvConfig = {
     },
 
     voting: {
-      contract: { accountId: "v1.voting.potlock.near" },
+      contract: { accountId: "mpdao.vote.staging.potlock.near" },
     },
   },
 

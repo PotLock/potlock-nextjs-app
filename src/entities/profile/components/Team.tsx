@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { NEARSocialUserProfile } from "@/common/contracts/social";
-import routesPath from "@/entities/core/routes";
+import routesPath from "@/pathnames";
 
 import { useProfileData } from "../hooks/data";
 import getProfileTeamMembersData from "../utils/getProfileTeamMembersData";

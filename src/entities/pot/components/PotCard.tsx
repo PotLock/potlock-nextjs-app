@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
-import routesPath from "@/entities/core/routes";
+import routesPath from "@/pathnames";
 
 import Indicator from "./Indicator";
 import { PotTag } from "./PotTag";
@@ -36,7 +36,7 @@ export const PotCard: React.FC<PotCardProps> = ({ pot }) => {
   return (
     // Card
     <Link
-      href={`${routesPath.POT_DETAIL}/${pot.account}`}
+      href={`${routesPath.pot}/${pot.account}`}
       className="flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col rounded-[8px] bg-white pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline"
     >
       {/* Card Section */}

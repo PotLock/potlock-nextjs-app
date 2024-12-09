@@ -45,7 +45,7 @@ export function ProfileLayout({ children }: Props) {
       <Info accountId={params.userId} isProject={isProject} />
       <Tabs
         asLink
-        navOptions={tabs}
+        options={tabs}
         selectedTab={selectedTab.id}
         onSelect={(tabId: string) => {
           setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);

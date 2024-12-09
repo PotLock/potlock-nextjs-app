@@ -1,4 +1,4 @@
-import { TabNav } from "./types";
+import { TabOption } from "@/common/ui/types";
 
 export const tabRoutesProject = [
   {
@@ -36,7 +36,7 @@ export const tabRoutesProject = [
     id: "campaigns",
     href: "/campaigns",
   },
-] as TabNav[];
+] as TabOption[];
 
 export const tabRoutesProfile = [
   // INFO: It's needed to have home for regular users as well as pages redirection sends user to /home page (check middleware.ts file)
@@ -50,4 +50,4 @@ export const tabRoutesProfile = [
     id: "donations",
     href: "/donations",
   },
-] as TabNav[];
+] as TabOption[];

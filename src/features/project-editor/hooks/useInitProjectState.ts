@@ -4,8 +4,8 @@ import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
 import { listsClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
-import routesPath from "@/entities/core/routes";
 import { useWallet } from "@/entities/session";
+import routesPath from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 // TODO: Ditch Redux for this use case entirely!

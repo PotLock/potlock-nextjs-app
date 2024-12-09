@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { ChefHatIcon } from "@/common/assets/svgs";
 import { Button, DialogDescription } from "@/common/ui/components";
-import routesPath from "@/entities/core/routes";
 import { PotData } from "@/entities/pot";
+import routesPath from "@/pathnames";
 
 export type PotDeploymentSuccessProps = {
   onViewPotClick: VoidFunction;
@@ -32,7 +32,7 @@ export const PotEditorDeploymentSuccess: React.FC<PotDeploymentSuccessProps> = (
     </div>
 
     <Button asChild onClick={onViewPotClick} variant="brand-filled" className="w-full">
-      <Link href={`${routesPath.POT_DETAIL}/${potData.id}`}>{"View Pot"}</Link>
+      <Link href={`${routesPath.pot}/${potData.id}`}>{"View Pot"}</Link>
     </Button>
   </DialogDescription>
 );

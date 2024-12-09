@@ -21,10 +21,10 @@ import {
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { useRegistration } from "@/entities/core";
-import routesPath from "@/entities/core/routes";
 import { ListRegistrationStatus, listRegistrationStatuses } from "@/entities/list";
 import { updateAccountId, updateNadabotVerification } from "@/entities/profile/utils";
 import { useWallet } from "@/entities/session";
+import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 import ActAsDao from "./ActAsDao";
