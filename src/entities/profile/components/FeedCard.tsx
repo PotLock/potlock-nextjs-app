@@ -12,8 +12,12 @@ import { fetchSocialImages } from "@/common/services/social";
 
 import FeedCardOptionsSelect from "./FeedCardOptionsSelect";
 import { PROFILE_DEFAULTS } from "../constants";
+import { PotApplicationStatus } from "@/common/api/indexer";
+import { potApplicationFiltersTags } from "@/features/pot-application";
 
 interface PostType {
+  isPot?: boolean;
+  status?: PotApplicationStatus
   post: {
     accountId: string;
     content: string;
@@ -22,7 +26,7 @@ interface PostType {
   };
 }
 
-export const FeedCard = ({ post }: PostType) => {
+export const FeedCard = ({ post, isPot, status }: PostType) => {
   const [profileImg, setProfileImg] = useState<string>("");
   const [time, setTime] = useState("");
   const router = useRouter();
@@ -86,7 +90,21 @@ export const FeedCard = ({ post }: PostType) => {
             )}
           </div>
         </div>
+        <div className="flex md:gap-2 items-center">
+            {isPot && status && 
+            <div 
+            style={{
+              borderColor: potApplicationFiltersTags[status].borderColor,
+              background: potApplicationFiltersTags[status].background,
+              color: potApplicationFiltersTags[status].color,
+            }}
+            className="flex items-center border-1 rounded md:px-4 text-[13px] p-1 md:text-sm md:py-2 gap-2">
+              {potApplicationFiltersTags[status].icon}
+              {status}
+            </div>
+            }
         <FeedCardOptionsSelect post={post} />
+        </div>
       </div>
 
       <div className="mt-2 text-black">
