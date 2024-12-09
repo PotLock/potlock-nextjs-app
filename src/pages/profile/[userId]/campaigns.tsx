@@ -10,6 +10,7 @@ import { NoResults } from "./lists";
 
 const ProfileCampaigns = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+
   const {
     query: { userId },
   } = useRouteQuery();
@@ -24,6 +25,7 @@ const ProfileCampaigns = () => {
         console.log(error);
       });
   }, [userId]);
+
   return (
     <div className="w-full">
       {campaigns?.length ? (

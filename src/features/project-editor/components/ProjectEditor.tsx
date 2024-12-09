@@ -61,6 +61,7 @@ export const ProjectEditor = () => {
 
   // Set initial name
   const [initialNameSet, setInitialNameSet] = useState(false);
+
   useEffect(() => {
     if (!initialNameSet && projectTemplate.name) {
       form.setValue("name", projectTemplate.name);
@@ -74,9 +75,11 @@ export const ProjectEditor = () => {
     if (values.name) {
       dispatch.projectEditor.setProjectName(values.name);
     }
+
     if (values.description) {
       dispatch.projectEditor.updateDescription(values.description);
     }
+
     if (values.publicGoodReason) {
       dispatch.projectEditor.updatePublicGoodReason(values.publicGoodReason);
     }

@@ -28,6 +28,7 @@ export const campaignFormSchema = z
           return false; // min_amount cannot be greater than max_amount
         }
       }
+
       return true;
     },
     {
@@ -42,6 +43,7 @@ export const campaignFormSchema = z
           return false; // min_amount cannot be greater than target_amount
         }
       }
+
       return true;
     },
     {
@@ -56,6 +58,7 @@ export const campaignFormSchema = z
           return false; // max_amount cannot be greater than target_amount
         }
       }
+
       return true;
     },
     {
@@ -70,6 +73,7 @@ export const campaignFormSchema = z
           return false; // max_amount cannot be less than min_amount
         }
       }
+
       return true;
     },
     {

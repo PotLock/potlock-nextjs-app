@@ -73,9 +73,11 @@ const initialState: ProjectEditorState = {
 export const updateState = (previousState: {}, inputPayload: {}) => {
   const keys = Object.keys(inputPayload);
   const updatedState: any = previousState || {};
+
   keys.forEach((key) => {
     updatedState[key] = (inputPayload as any)[key];
   });
+
   return updatedState;
 };
 
@@ -246,6 +248,7 @@ export const projectEditorModel = createModel<AppModel>()({
   effects: (dispatch) => ({
     async uploadBackgroundImage(files: File[]) {
       const res = await uploadFileToIPFS(files[0]);
+
       if (res.ok) {
         const data = await res.json();
         dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
@@ -259,6 +262,7 @@ export const projectEditorModel = createModel<AppModel>()({
 
     async uploadProfileImage(files: File[]) {
       const res = await uploadFileToIPFS(files[0]);
+
       if (res.ok) {
         const data = await res.json();
         dispatch.projectEditor.UPDATE_PROFILE_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
@@ -313,6 +317,7 @@ export const projectEditorModel = createModel<AppModel>()({
       if (profile?.plFundingSources) data.fundingSources = JSON.parse(profile.plFundingSources);
       // Repositories
       if (profile?.plGithubRepos) data.githubRepositories = JSON.parse(profile.plGithubRepos);
+
       // Social Links
       if (profile?.linktree) {
         data.website = profile.linktree.website;

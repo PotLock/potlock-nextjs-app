@@ -27,6 +27,7 @@ const FeedsTab = () => {
   const [potApplications, setPotApplications] = useState<AccountId[]>([]);
   const [tab, setTab] = useState<ApplicationStatus>(ApplicationStatus.Approved);
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };
@@ -72,9 +73,11 @@ const FeedsTab = () => {
 
   useEffect(() => {
     setIsLoading(true);
+
     (async () => {
       try {
         const applicationsData: Application[] = await potClient.getApplications({ potId });
+
         fetchGlobalFeeds({
           accountIds: applicationsData
             ?.filter((data) => data.status === tab)
@@ -87,6 +90,7 @@ const FeedsTab = () => {
           .catch((err) => {
             console.error("Unable to fetch feeds:", err);
           });
+
         setPotApplications(applicationsData?.map((application) => application?.project_id));
       } catch (error) {
         console.error(error);

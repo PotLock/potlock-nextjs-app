@@ -70,6 +70,7 @@ export const ListAccounts = ({
 
   const handleSort = (sortType: string) => {
     const projects = [...filteredRegistrations];
+
     switch (sortType) {
       case "recent":
         projects.sort(
@@ -77,6 +78,7 @@ export const ListAccounts = ({
             new Date(b.submitted_at).getTime() -
             new Date(a.submitted_at).getTime(),
         );
+
         setFilteredRegistrations(projects);
         break;
       case "older":
@@ -85,6 +87,7 @@ export const ListAccounts = ({
             new Date(a.submitted_at).getTime() -
             new Date(b.submitted_at).getTime(),
         );
+
         setFilteredRegistrations(projects);
         break;
       default:

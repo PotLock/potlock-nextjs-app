@@ -25,30 +25,35 @@ export const ActivePots = () => {
 
   const handleSort = (sortType: string) => {
     const sortedPots = activePots;
+
     switch (sortType) {
       case "least_pots":
         sortedPots.sort(
           (a, b) =>
             Big(b.matching_pool_balance).toNumber() - Big(a.matching_pool_balance).toNumber(),
         );
+
         break;
       case "most_pots":
         sortedPots.sort(
           (a, b) =>
             Big(a.matching_pool_balance).toNumber() - Big(b.matching_pool_balance).toNumber(),
         );
+
         break;
       case "most_donations":
         sortedPots.sort(
           (a, b) =>
             Big(b.total_public_donations).toNumber() - Big(a.total_public_donations).toNumber(),
         );
+
         break;
       case "least_donations":
         sortedPots.sort(
           (a, b) =>
             Big(a.total_public_donations).toNumber() - Big(b.total_public_donations).toNumber(),
         );
+
         break;
     }
 
@@ -71,6 +76,7 @@ export const ActivePots = () => {
 
   if (categoryFilter) {
     const filterFunction = filters[categoryFilter];
+
     if (typeof filterFunction === "function") {
       filtered = filtered.filter(filterFunction);
     }

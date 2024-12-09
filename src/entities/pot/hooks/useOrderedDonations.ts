@@ -40,9 +40,11 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
 
       // join donators
       const joinedDonations: Record<string, JoinDonation> = {};
+
       filteredDonations.forEach((donation) => {
         const key = donation.donor.id || donation.pot.account;
         const tokenName = donation.token.name || donation.token.account || "NEAR";
+
         const nearAmount =
           tokenName.toUpperCase() === "NEAR"
             ? yoctoNearToFloat(donation.net_amount)
@@ -65,16 +67,20 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
       setDonations(filteredDonations);
 
       const donationList: JoinDonation[] = [];
+
       Object.keys(joinedDonations).forEach((donor) => {
         donationList.push(joinedDonations[donor]);
       });
+
       const sortedDonationsList = donationList.sort((a, b) => b.nearAmount - a.nearAmount);
       setOrderedDonations(sortedDonationsList);
 
       let totalNearDonation = 0;
+
       sortedDonationsList.forEach((donation) => {
         totalNearDonation += donation.nearAmount;
       });
+
       setTotalAmountNearDonations(totalNearDonation);
 
       // Payouts -------------------
@@ -92,9 +98,11 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
 
       // Join payouts to the donors
       const joinedPayouts: Record<string, JoinDonation> = {};
+
       filteredPayouts.forEach((payout) => {
         const key = payout.recipient.id || payout.pot.account;
         const tokenName = payout.token.name || payout.token.account || "NEAR";
+
         const nearAmount =
           tokenName.toUpperCase() === "NEAR"
             ? yoctoNearToFloat(payout.amount)
@@ -118,6 +126,7 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
       setAllPayouts(filteredPayouts);
 
       const payoutsList: JoinDonation[] = [];
+
       Object.keys(joinedPayouts).forEach((donor) => {
         payoutsList.push(joinedPayouts[donor]);
       });
@@ -127,9 +136,11 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
       setOrderedPayouts(sortedPayoutList);
 
       let totalNearPayout = 0;
+
       sortedPayoutList.forEach((donation) => {
         totalNearPayout += donation.nearAmount;
       });
+
       setTotalAmountNearPayouts(totalNearPayout);
 
       setReady(true);

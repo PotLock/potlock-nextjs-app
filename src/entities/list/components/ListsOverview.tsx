@@ -60,17 +60,20 @@ export const ListsOverview = ({
 
   const handleSort = (sortType: string) => {
     const projects = [...filteredRegistrations];
+
     switch (sortType) {
       case "recent":
         projects.sort(
           (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
+
         setFilteredRegistrations(projects);
         break;
       case "older":
         projects.sort(
           (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
         );
+
         setFilteredRegistrations(projects);
         break;
       default:
@@ -140,9 +143,11 @@ export const ListsOverview = ({
             // Check if cover_image is present, otherwise use a random background image
             let background = "";
             let backdrop = "";
+
             if (!item.cover_image) {
               ({ background, backdrop } = getRandomBackgroundImage());
             }
+
             return (
               <ListCard
                 dataForList={item}

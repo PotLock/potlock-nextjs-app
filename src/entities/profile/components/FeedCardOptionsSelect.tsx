@@ -28,6 +28,7 @@ const FeedCardOptionsSelect: React.FC<FeedCardOptionsSelectProps> = ({ post }) =
     const tweetUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(feedRoute)}`;
     window.open(tweetUrl, "_blank");
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -129,6 +129,7 @@ const PER_PAGE = 30; // need to be less than 50
 
 export default function PotDonationsTab() {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };
@@ -142,10 +143,12 @@ export default function PotDonationsTab() {
 
   // Filter (amount | date)
   const [currentFilter, setCurrentFilter] = useState<"date" | "price">("date");
+
   const [filter, setFilter] = useState<any>({
     date: false, // false === ascending
     price: false, // false === ascending
   });
+
   const [filteredDonations, setFilteredDonations] = useState(data || []);
   const [shownDonationItemsList, setShownDonationItemsList] = useState<Donation[]>([]);
 
@@ -172,6 +175,7 @@ export default function PotDonationsTab() {
           ? parseInt(b.total_amount) - parseInt(a.total_amount)
           : parseInt(a.total_amount) - parseInt(b.total_amount),
       );
+
       setFilteredDonations([...sortedDonations]);
 
       // Sort by date
@@ -181,6 +185,7 @@ export default function PotDonationsTab() {
           ? getDate(a.donated_at) - getDate(b.donated_at)
           : getDate(b.donated_at) - getDate(a.donated_at);
       });
+
       setFilteredDonations([...sortedDonations]);
     }
   };
@@ -195,8 +200,10 @@ export default function PotDonationsTab() {
         item.donor.id || "",
         item.pot.account || "",
       ];
+
       return searchIn.some((item) => item.toLowerCase().includes(searchTerm.toLowerCase()));
     });
+
     return filteredApplications;
   };
 

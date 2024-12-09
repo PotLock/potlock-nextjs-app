@@ -65,6 +65,7 @@ const FilterItem = styled.div`
     color: #7b7b7b;
   }
 `;
+
 const Screen = styled.div`
   position: fixed;
   width: 100%;

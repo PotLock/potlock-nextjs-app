@@ -10,11 +10,13 @@ const ProfileFeedsTab = () => {
   const {
     query: { userId: userIdPathParam },
   } = useRouteQuery();
+
   const userId =
     (typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0)) ?? "unknown";
 
   return <ProfileFeeds accountId={userId} />;
 };
+
 ProfileFeedsTab.getLayout = function getLayout(page: ReactElement) {
   return <ProfileLayout>{page}</ProfileLayout>;
 };

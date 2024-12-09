@@ -41,6 +41,7 @@ export const saveProject = async () => {
 
   // Validate DAO Address
   const isDaoAddressValid = data.isDao ? validateNearAddress(data.daoAddress || "") : true;
+
   if (!isDaoAddressValid) {
     return { success: false, error: "DAO: Invalid NEAR account Id" };
   }
@@ -130,6 +131,7 @@ export const saveProject = async () => {
 
     // Final registration step
     const callbackUrl = `${location.origin}${location.pathname}?done=true`;
+
     try {
       if (data.isDao) {
         await naxiosInstance.contractApi().callMultiple(daoTransactions, callbackUrl);

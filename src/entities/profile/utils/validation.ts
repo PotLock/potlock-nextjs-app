@@ -29,8 +29,10 @@ export function doesUserHaveDaoFunctionCallProposalPermissions(accountId: string
     if (role.kind === "Everyone") return true;
     return role.kind.Group && role.kind.Group.includes(accountId);
   });
+
   const kind = "call";
   const action = "AddProposal";
+
   // Check if the user is allowed to perform the action
   const allowed = userRoles.some(({ permissions }: any) => {
     return (
@@ -40,6 +42,7 @@ export function doesUserHaveDaoFunctionCallProposalPermissions(accountId: string
       permissions.includes("*:*")
     );
   });
+
   return allowed;
 }
 
@@ -68,6 +71,7 @@ export const validateUserInDao = async (daoAddress: string, accountId: string) =
 
 export function updateList(list: string[], item: string): string[] {
   const index = list.indexOf(item);
+
   if (index === -1) {
     // Item does not exist, add it
     list.push(item);
@@ -75,5 +79,6 @@ export function updateList(list: string[], item: string): string[] {
     // Item exists, remove it
     list.splice(index, 1);
   }
+
   return list;
 }

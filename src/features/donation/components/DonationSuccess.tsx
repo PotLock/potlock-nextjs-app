@@ -87,6 +87,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     const twitterIntentBase = "https://twitter.com/intent/tweet?text=";
 
     const profile: any = recipient?.near_social_profile_data;
+
     const singlePorject = profile
       ? profile.linktree?.twitter
         ? `@${profile.linktree.twitter}`

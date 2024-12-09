@@ -14,12 +14,15 @@ const SocialLinks = () => {
   const [twitterValue, setTwitterValue] = useState<string>(
     twitter?.replace("https://x.com/", "") || "",
   );
+
   const [telegramValue, setTelegramValue] = useState<string>(
     telegram?.replace("https://t.me/", "") || "",
   );
+
   const [githubValue, setGithubValue] = useState<string>(
     github?.replace("https://github.com/", "") || "",
   );
+
   const [websiteValue, setWebsiteValue] = useState<string>(website?.replace("https://", "") || "");
 
   const onChangeHandler = useCallback((socialKey: string, value: string) => {

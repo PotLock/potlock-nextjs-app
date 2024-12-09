@@ -16,12 +16,14 @@ export const CampaignsList = ({ campaigns }: { campaigns: Campaign[] }) => {
 
   const handleSort = (sortType: string) => {
     const projects = [...campaigns];
+
     switch (sortType) {
       case "recent":
         projects.sort(
           (a, b) =>
             new Date(b.start_ms as string).getTime() - new Date(a.start_ms as string).getTime(),
         );
+
         setFilteredCampaigns(projects);
         break;
       case "older":
@@ -29,6 +31,7 @@ export const CampaignsList = ({ campaigns }: { campaigns: Campaign[] }) => {
           (a, b) =>
             new Date(a.start_ms as string).getTime() - new Date(b.start_ms as string).getTime(),
         );
+
         setFilteredCampaigns(projects);
         break;
       default:

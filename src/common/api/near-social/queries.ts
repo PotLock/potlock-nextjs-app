@@ -22,6 +22,7 @@ export const fetchGlobalFeeds = async ({ accountIds, offset = 20 }: any) => {
 
       const postContent = getResult[item.accountId]?.post?.main;
       let parsedContent: PostContent;
+
       try {
         parsedContent = JSON.parse(postContent);
       } catch (e) {
@@ -58,6 +59,7 @@ export const fetchAccountFeedPosts = async ({ accountId, offset = 100 }: any) =>
 
       const postContent = getResult[accountId]?.post?.main;
       let parsedContent: PostContent;
+
       try {
         parsedContent = JSON.parse(postContent);
       } catch (e) {
@@ -123,6 +125,7 @@ export const fetchTimeByBlockHeight = async (blockHeight: number): Promise<strin
 
   try {
     const res = await fetch(`https://api.near.social/time?blockHeight=${blockHeight}`);
+
     if (!res.ok || res.status !== 200) {
       return "unknown";
     }

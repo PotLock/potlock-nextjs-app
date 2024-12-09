@@ -37,6 +37,7 @@ export const TableContainer = styled.div`
 
 const SponsorsTab = () => {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };
@@ -47,9 +48,11 @@ const SponsorsTab = () => {
   useEffect(() => {
     const sponsorshipDonations: Record<string, CustomDonationType> = {};
     let total = 0;
+
     donations.forEach((donation) => {
       const key = donation.donor.id || donation.pot.account;
       const tokenName = donation.token.name || donation.token.account || "NEAR";
+
       const nearAmount =
         tokenName.toUpperCase() === "NEAR"
           ? yoctoNearToFloat(donation.net_amount)
@@ -60,6 +63,7 @@ const SponsorsTab = () => {
             );
 
       total += nearAmount;
+
       if (!sponsorshipDonations[key]) {
         sponsorshipDonations[key] = {
           amount: nearAmount,
@@ -74,6 +78,7 @@ const SponsorsTab = () => {
     const sponsorshipDonationsValues = Object.values(sponsorshipDonations).sort(
       (a: any, b: any) => b.amount - a.amount,
     );
+
     const sponsorshipDonationsList = sponsorshipDonationsValues.map((donation) => {
       return {
         ...donation,
@@ -81,6 +86,7 @@ const SponsorsTab = () => {
         percentage_share: ((donation.amount / total) * 100).toFixed(2).replace(/[.,]00$/, ""),
       };
     });
+
     setSponsorshipDonations(sponsorshipDonationsList);
   }, [donations]);
 

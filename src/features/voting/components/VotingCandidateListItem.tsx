@@ -2,42 +2,39 @@ import { useCallback, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
 
-import { indexer } from "@/common/api/indexer";
-import { Candidate, Vote } from "@/common/contracts/core/voting";
+import { ByPotId, indexer } from "@/common/api/indexer";
+import { Candidate } from "@/common/contracts/core/voting";
 import { Button, Checkbox } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { useSessionAuth } from "@/entities/session";
 
-export type VotingElectionCandidateEntryProps = Candidate & {
-  electionVotes: Vote[];
+import { useVotingCandidateVotes } from "../hooks/candidates";
+
+export type VotingCandidateListItemProps = ByPotId & {
+  data: Candidate;
   isSelected?: boolean;
   onSelect?: (accountId: string, isSelected: boolean) => void;
 };
 
-export const VotingElectionCandidateEntry: React.FC<VotingElectionCandidateEntryProps> = ({
-  electionVotes,
-  account_id: accountId,
-  votes_received: votesCount,
+export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = ({
+  potId,
+  data: { account_id: accountId, votes_received: votesCount },
   isSelected = false,
   onSelect,
 }) => {
   const userSession = useSessionAuth();
   const { data: account } = indexer.useAccount({ accountId });
-
-  const receivedVotes = useMemo(
-    () => electionVotes.filter(({ candidate_id }) => candidate_id === accountId),
-    [accountId, electionVotes],
-  );
+  const { data: votes } = useVotingCandidateVotes({ potId, accountId });
 
   // TODO: Implement voting
   const canReceiveVotes = useMemo(
-    () => false, // receivedVotes.find(({ voter }) => voter === userSession.accountId) === undefined,
+    () => false, // votes.find(({ voter }) => voter === userSession.accountId) === undefined,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [receivedVotes, userSession.accountId],
+    [votes, userSession.accountId],
   );
 
-  const onCheckboxTriggered = useCallback(
+  const onCheckTriggered = useCallback(
     (checked: CheckedState) => onSelect?.(accountId, Boolean(checked)),
     [accountId, onSelect],
   );
@@ -45,7 +42,7 @@ export const VotingElectionCandidateEntry: React.FC<VotingElectionCandidateEntry
   return (
     <div className={cn("flex items-center gap-4 rounded-lg", "py-4 hover:bg-gray-50", "md:p-4")}>
       {typeof onSelect === "function" && (
-        <Checkbox checked={isSelected} onCheckedChange={onCheckboxTriggered} />
+        <Checkbox checked={isSelected} onCheckedChange={onCheckTriggered} />
       )}
 
       <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
