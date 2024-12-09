@@ -15,26 +15,30 @@ export const fetchGlobalFeeds = async ({ accountIds, offset = 20 }: any) => {
   // Fetch each post individually with its specific block height
   return await Promise.all(
     indexResult.map(async (item) => {
-      const getResult = (await nearSocialClient.get({
-        keys: [`${item.accountId}/post/main`],
-        blockHeight: item.blockHeight,
-      })) as FeedsResult;
-
-      const postContent = getResult[item.accountId]?.post?.main;
-      let parsedContent: PostContent;
-
       try {
-        parsedContent = JSON.parse(postContent);
-      } catch (e) {
-        console.error("Error parsing post content:", e);
-        parsedContent = { text: "Error: Could not parse post content" };
-      }
+        const getResult = (await nearSocialClient.get({
+          keys: [`${item.accountId}/post/main`],
+          blockHeight: item.blockHeight,
+        })) as FeedsResult;
 
-      return {
-        accountId: item.accountId,
-        blockHeight: item.blockHeight,
-        content: parsedContent.text || "No content available",
-      };
+        const postContent = getResult[item.accountId]?.post?.main;
+        let parsedContent: PostContent;
+
+        try {
+          parsedContent = JSON.parse(postContent);
+        } catch (e) {
+          console.error("Error parsing post content:", e);
+          parsedContent = { text: "Error: Could not parse post content" };
+        }
+
+        return {
+          accountId: item.accountId,
+          blockHeight: item.blockHeight,
+          content: parsedContent.text || "No content available",
+        };
+      } catch (error) {
+        console.error("Error fetching global feeds:", error);
+      }
     }),
   );
 };

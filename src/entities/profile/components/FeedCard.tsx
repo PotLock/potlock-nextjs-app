@@ -5,15 +5,19 @@ import { useRouter } from "next/navigation";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Markdown from "react-markdown";
 
+import { PotApplicationStatus } from "@/common/api/indexer";
 import { fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/social";
+import { potApplicationFiltersTags } from "@/features/pot-application";
 
 import FeedCardOptionsSelect from "./FeedCardOptionsSelect";
 import { PROFILE_DEFAULTS } from "../constants";
 
 interface PostType {
+  isPot?: boolean;
+  status?: PotApplicationStatus;
   post: {
     accountId: string;
     content: string;
@@ -22,7 +26,7 @@ interface PostType {
   };
 }
 
-export const FeedCard = ({ post }: PostType) => {
+export const FeedCard = ({ post, isPot, status }: PostType) => {
   const [profileImg, setProfileImg] = useState<string>("");
   const [time, setTime] = useState("");
   const router = useRouter();
@@ -86,7 +90,22 @@ export const FeedCard = ({ post }: PostType) => {
             )}
           </div>
         </div>
-        <FeedCardOptionsSelect post={post} />
+        <div className="flex items-center md:gap-2">
+          {isPot && status && (
+            <div
+              style={{
+                borderColor: potApplicationFiltersTags[status].borderColor,
+                background: potApplicationFiltersTags[status].background,
+                color: potApplicationFiltersTags[status].color,
+              }}
+              className="border-1 flex items-center gap-2 rounded p-1 text-[13px] md:px-4 md:py-2 md:text-sm"
+            >
+              {potApplicationFiltersTags[status].icon}
+              {status}
+            </div>
+          )}
+          <FeedCardOptionsSelect post={post} />
+        </div>
       </div>
 
       <div className="mt-2 text-black">
