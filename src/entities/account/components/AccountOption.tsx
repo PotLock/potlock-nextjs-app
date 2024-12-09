@@ -1,5 +1,8 @@
 import { useMemo } from "react";
 
+import { Dot } from "lucide-react";
+
+import { daysAgo, truncate } from "@/common/lib";
 import { AccountId, ByAccountId } from "@/common/types";
 import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -13,13 +16,13 @@ export type AccountOptionProps = ByAccountId &
     onCheck?: (accountId: AccountId) => void;
     primaryAction?: React.ReactNode;
     secondaryAction?: React.ReactNode;
+    daysAgoData?: number;
 
     classNames?: {
       root?: string;
       avatar?: string;
     };
   };
-
 export const AccountOption = ({
   isRounded = false,
   isThumbnail = false,
@@ -28,10 +31,12 @@ export const AccountOption = ({
   primaryAction,
   secondaryAction,
   title,
+  daysAgoData,
   classNames,
 }: AccountOptionProps) => {
   const { profileImages, profile, profileReady } = useProfileData(accountId);
 
+  const tuncateIndex = window.innerWidth > 768 ? 20 : 5;
   const avatarSrc = useMemo(
     () =>
       (typeof profile?.image === "string" ? profile?.image : profile?.image?.url) ??
@@ -58,7 +63,7 @@ export const AccountOption = ({
   ) : (
     <div
       className={cn(
-        "flex w-full items-center gap-4 px-5 py-2",
+        "font-['Mona Sans'] flex w-full items-center gap-4",
         { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
         classNames?.root,
       )}
@@ -69,10 +74,25 @@ export const AccountOption = ({
         {avatarElement}
 
         <div className="flex flex-col">
-          <span className="prose font-600">
-            {profile?.name ?? accountId.split(".").slice(0, -1).join(".")}
+          <span className="text-[17px] font-semibold leading-normal text-[#292929]">
+            {profile?.name
+              ? truncate(profile?.name, 20)
+              : accountId.split(".").slice(0, -1).join(".")}
           </span>
-          <span className="prose text-neutral-500">{accountId}</span>
+          <div className="inline-flex items-start justify-start text-sm font-normal leading-tight text-[#7a7a7a] ">
+            <p className="flex md:hidden">
+              @{accountId.length > tuncateIndex ? truncate(accountId, tuncateIndex) : accountId}
+            </p>
+            <p className="md:flex">
+              @{accountId.length > tuncateIndex ? truncate(accountId, tuncateIndex) : accountId}
+            </p>
+            {daysAgoData ? (
+              <>
+                <Dot />
+                <p className="whitespace-nowrap">{daysAgo(Number(daysAgoData))}</p>
+              </>
+            ) : null}
+          </div>
         </div>
       </div>
 
