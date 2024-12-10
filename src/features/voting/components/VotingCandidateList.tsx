@@ -33,15 +33,6 @@ export type VotingCandidateListProps = ByPotId & {
   onEntrySelect?: VotingCandidateListItemProps["onSelect"];
 };
 
-const FAKE_DATA: Candidate[] = [
-  {
-    account_id: "carina.akaia.near",
-    status: ApplicationStatus.Approved,
-    votes_received: 2,
-    application_date: 1242421412412343,
-  },
-];
-
 export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
   potId,
   data,

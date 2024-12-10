@@ -117,5 +117,7 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
     [navigateToHref, tabRegistry],
   );
 
+  // TODO: always navigate to the default tab upon root page load
+
   return { defaultTabTag, activeTabHref, orderedTabList, navigateToTab };
 };
