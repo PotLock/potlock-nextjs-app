@@ -4,8 +4,8 @@ import Link from "next/link";
 import { Donation } from "@/common/api/indexer";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import routesPath from "@/entities/core/routes";
 import { useProfileData } from "@/entities/profile";
+import routesPath from "@/pathnames";
 
 import NearIcon from "./NearIcon";
 import { FundingSrc } from "./styled";

@@ -2,6 +2,7 @@ import { getEnvConfig } from "./env";
 
 export const {
   platformName: PLATFORM_NAME,
+  envTag: ENV_TAG,
   network: NETWORK,
 
   indexer: {

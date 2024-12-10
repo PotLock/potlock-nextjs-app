@@ -29,6 +29,7 @@ const DialogOverlay = forwardRef<
     {...props}
   />
 ));
+
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 export type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {

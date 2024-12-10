@@ -1,4 +1,18 @@
+import { Big, BigSource } from "big.js";
 import { number, preprocess } from "zod";
+
+export const isBigSource = (value: unknown | BigSource) => {
+  try {
+    /** Attempt to create a new Big instance */
+    new Big(value as BigSource);
+
+    /** If successful, it's a valid BigSource */
+    return true;
+  } catch (_error) {
+    /** If an error is thrown, it's not a valid BigSource */
+    return false;
+  }
+};
 
 export const safePositiveNumber = preprocess(
   (value) => parseFloat(value as string),

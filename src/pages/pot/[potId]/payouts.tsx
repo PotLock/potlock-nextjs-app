@@ -10,7 +10,7 @@ import { yoctoNearToFloat } from "@/common/lib";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { PotPayoutChallenges, useOrderedDonations } from "@/entities/pot";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const TableContainer = styled.div`
   display: flex;
@@ -236,6 +236,7 @@ const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 
 export default function PayoutsTab() {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };
@@ -248,9 +249,11 @@ export default function PayoutsTab() {
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
   const [showChallenges, setShowChallenges] = useState<boolean>(false);
 
+  // TODO!: REFACTOR TO USE `indexer.usePotPayouts({ potId })`,
+  //! as this effect can be easily broken, which WILL cause runtime crashes !!!
   useEffect(() => {
     (async () => {
-      const payouts = await potClient.getPayouts({ potId });
+      const payouts = await potClient.getPayouts({ potId }).catch(() => []);
       setAllPayouts(payouts);
       setFilteredPayouts(payouts);
     })();
@@ -263,10 +266,12 @@ export default function PayoutsTab() {
       const searchFields = [project_id];
       return searchFields.some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()));
     });
+
     _filteredPayouts.sort((a: any, b: any) => {
       // sort by matching pool allocation, highest to lowest
       return b.amount - a.amount;
     });
+
     return _filteredPayouts;
   };
 
@@ -372,13 +377,17 @@ export default function PayoutsTab() {
                   const donationsForProject = allDonations.filter(
                     (donation) => donation.recipient?.id === project_id,
                   );
+
                   const uniqueDonors: Record<string, any> = {};
+
                   donationsForProject.forEach((donation) => {
                     if (!uniqueDonors[donation.donor.id]) {
                       uniqueDonors[donation.donor.id] = true;
                     }
                   });
+
                   const donorCount = Object.keys(uniqueDonors).length;
+
                   const totalAmount = donationsForProject
                     .reduce(
                       (previous, donation) => previous + yoctoNearToFloat(donation.net_amount),

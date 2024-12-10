@@ -22,16 +22,18 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
 
   // Flagged Addresses are the ones that should not be included
 
+  // TODO!: REFACTOR TO USE `indexer.usePotDonations({ potId })`,
+  //! and `indexer.usePotPayouts({ potId })`,
+  //! as this effect can be easily broken, which WILL cause runtime crashes !!!
   useEffect(() => {
-    // INFO: The generated swr was not working
     (async () => {
       // Donations
       const donationsData = await getPotDonations({
         potId,
         pageSize: 9999,
-      });
+      }).catch(() => undefined);
 
-      const filteredDonations = donationsData.results.filter((donation) => {
+      const filteredDonations = (donationsData?.results ?? []).filter((donation) => {
         // Skip Near Payments?
         return !includeNearFoundationPayment
           ? (donation.donor.id || donation.pot.account) !== "nf-payments.near"
@@ -40,9 +42,11 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
 
       // join donators
       const joinedDonations: Record<string, JoinDonation> = {};
+
       filteredDonations.forEach((donation) => {
         const key = donation.donor.id || donation.pot.account;
         const tokenName = donation.token.name || donation.token.account || "NEAR";
+
         const nearAmount =
           tokenName.toUpperCase() === "NEAR"
             ? yoctoNearToFloat(donation.net_amount)
@@ -65,26 +69,30 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
       setDonations(filteredDonations);
 
       const donationList: JoinDonation[] = [];
+
       Object.keys(joinedDonations).forEach((donor) => {
         donationList.push(joinedDonations[donor]);
       });
+
       const sortedDonationsList = donationList.sort((a, b) => b.nearAmount - a.nearAmount);
       setOrderedDonations(sortedDonationsList);
 
       let totalNearDonation = 0;
+
       sortedDonationsList.forEach((donation) => {
         totalNearDonation += donation.nearAmount;
       });
+
       setTotalAmountNearDonations(totalNearDonation);
 
       // Payouts -------------------
       const payouts = await getPotPayouts({
         potId,
         pageSize: 9999,
-      });
+      }).catch(() => undefined);
 
       // remove Near Payments
-      const filteredPayouts = payouts.results.filter((payout) =>
+      const filteredPayouts = (payouts?.results ?? []).filter((payout) =>
         !includeNearFoundationPayment
           ? (payout.recipient.id || payout.pot.account) !== "nf-payments.near"
           : true,
@@ -92,9 +100,11 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
 
       // Join payouts to the donors
       const joinedPayouts: Record<string, JoinDonation> = {};
+
       filteredPayouts.forEach((payout) => {
         const key = payout.recipient.id || payout.pot.account;
         const tokenName = payout.token.name || payout.token.account || "NEAR";
+
         const nearAmount =
           tokenName.toUpperCase() === "NEAR"
             ? yoctoNearToFloat(payout.amount)
@@ -118,6 +128,7 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
       setAllPayouts(filteredPayouts);
 
       const payoutsList: JoinDonation[] = [];
+
       Object.keys(joinedPayouts).forEach((donor) => {
         payoutsList.push(joinedPayouts[donor]);
       });
@@ -127,9 +138,11 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
       setOrderedPayouts(sortedPayoutList);
 
       let totalNearPayout = 0;
+
       sortedPayoutList.forEach((donation) => {
         totalNearPayout += donation.nearAmount;
       });
+
       setTotalAmountNearPayouts(totalNearPayout);
 
       setReady(true);

@@ -10,6 +10,7 @@ export const getTotalAmountNear = (
   if (payoutDetails) return payoutDetails.totalAmount; // payout is set
   if (!donations) return "0";
   let totalDonationAmountNear = Big(0);
+
   for (const donation of donations) {
     if (
       ("ft_id" in donation && donation.ft_id === "near") || // For DirectDonation
@@ -18,5 +19,6 @@ export const getTotalAmountNear = (
       totalDonationAmountNear = totalDonationAmountNear.plus(Big(donation.total_amount));
     }
   }
+
   return totalDonationAmountNear.toString();
 };

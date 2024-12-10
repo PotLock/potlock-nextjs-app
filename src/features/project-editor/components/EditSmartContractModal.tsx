@@ -24,15 +24,18 @@ const EditSmartContractModal = ({ open, onCloseClick, contractIndex }: Props) =>
   const [chain, setChain] = useState(
     contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][0] : "",
   );
+
   const [address, setAddress] = useState(
     contracts[contractIndex] && contracts[contractIndex][1] ? contracts[contractIndex][1] : "",
   );
+
   const [error, setError] = useState("");
 
   useEffect(() => {
     setChain(
       contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][0] : "",
     );
+
     setAddress(
       contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][1] : "",
     );
@@ -41,6 +44,7 @@ const EditSmartContractModal = ({ open, onCloseClick, contractIndex }: Props) =>
   const saveHandler = useCallback(() => {
     const isEVM = CHAIN_OPTIONS[chain].isEVM;
     const isNEAR = chain === "NEAR";
+
     const isValid = isNEAR
       ? validateNearAddress(address)
       : isEVM

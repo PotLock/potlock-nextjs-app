@@ -1,18 +1,18 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { TabOption } from "@/common/ui/types";
 import { cn } from "@/common/ui/utils";
-import { TabNav } from "@/entities/profile/types";
 
 type Props = {
-  navOptions: TabNav[];
+  options: TabOption[];
   selectedTab: string;
   onSelect?: (tabId: string) => void;
   asLink?: boolean;
 };
 
-const Tabs = ({ navOptions, selectedTab, onSelect, asLink }: Props) => {
-  const _selectedTab = selectedTab || navOptions[0].id;
+const Tabs = ({ options, selectedTab, onSelect, asLink }: Props) => {
+  const _selectedTab = selectedTab || options[0].id;
 
   const router = useRouter();
   const { campaignId: campaignIdParam } = router.query;
@@ -28,7 +28,7 @@ const Tabs = ({ navOptions, selectedTab, onSelect, asLink }: Props) => {
             "border-b-[1px] border-b-[#c7c7c7] pt-8",
           )}
         >
-          {navOptions.map((option) => {
+          {options.map((option) => {
             const selected = option.id == _selectedTab;
 
             if (asLink) {

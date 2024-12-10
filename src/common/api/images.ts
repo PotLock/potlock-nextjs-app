@@ -100,6 +100,7 @@ export const getImage = async ({ accountId, image, type, fallbackurl }: Props) =
             const data = await fetch(
               `${"https://arweave.net"}/${tokenMetadata.reference.split("//")[1]}`,
             );
+
             const res = await data.json();
 
             imageUrl = JSON.parse(res.body).media;

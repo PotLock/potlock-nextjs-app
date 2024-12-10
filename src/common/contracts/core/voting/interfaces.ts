@@ -1,13 +1,21 @@
 export type AccountId = string;
 
+export type ElectionId = number;
+
 /**
  * Represents a vote cast in an election
  */
 export interface Vote {
   voter: AccountId;
-  candidate: AccountId;
+  candidate_id: AccountId;
   weight: number;
   timestamp: number;
+}
+
+export enum ApplicationStatus {
+  Pending = "Pending",
+  Approved = "Approved",
+  Rejected = "Rejected",
 }
 
 /**
@@ -15,9 +23,9 @@ export interface Vote {
  */
 export interface Candidate {
   account_id: AccountId;
-  votes: Vote[];
-  vote_count: number;
-  vote_weight: number;
+  status: ApplicationStatus;
+  votes_received: number;
+  application_date: number;
 }
 
 /**
@@ -59,7 +67,7 @@ export type ElectionPhase = "Registration" | "Voting" | "Ended";
  * Represents an election
  */
 export interface Election {
-  id: number;
+  id: ElectionId;
   creator: AccountId;
   title: string;
   description: string;
@@ -77,7 +85,7 @@ export interface Election {
 /**
  * Contract interface for the voting system
  */
-export interface VotingContract {
+export interface IVotingContract {
   contract_source_metadata(): Promise<string>;
 
   create_election(args: {
@@ -94,47 +102,53 @@ export interface VotingContract {
 
   get_active_elections(): Promise<[number, Election][]>;
 
-  get_candidate_vote_count(args: { election_id: number; candidate_id: AccountId }): Promise<number>;
-
-  get_candidate_vote_weight(args: {
-    election_id: number;
+  get_candidate_vote_count(args: {
+    election_id: ElectionId;
     candidate_id: AccountId;
   }): Promise<number>;
 
-  get_candidate_votes(args: { election_id: number; candidate_id: AccountId }): Promise<Vote[]>;
+  get_candidate_vote_weight(args: {
+    election_id: ElectionId;
+    candidate_id: AccountId;
+  }): Promise<number>;
 
-  get_election(args: { election_id: number }): Promise<Election | null>;
+  get_candidate_votes(args: { election_id: ElectionId; candidate_id: AccountId }): Promise<Vote[]>;
 
-  get_election_candidates(args: { election_id: number }): Promise<Candidate[]>;
+  get_election(args: { election_id: ElectionId }): Promise<Election | null | undefined>;
 
-  get_election_phase(args: { election_id: number }): Promise<ElectionPhase | null>;
+  get_election_candidates(args: { election_id: ElectionId }): Promise<Candidate[]>;
 
-  get_election_results(args: { election_id: number }): Promise<[AccountId, number][]>;
+  get_election_phase(args: { election_id: ElectionId }): Promise<ElectionPhase | null | undefined>;
 
-  get_election_vote_count(args: { election_id: number }): Promise<number>;
+  get_election_results(args: { election_id: ElectionId }): Promise<[AccountId, number][]>;
 
-  get_election_votes(args: { election_id: number }): Promise<Vote[]>;
+  get_election_vote_count(args: { election_id: ElectionId }): Promise<number>;
+
+  get_election_votes(args: { election_id: ElectionId }): Promise<Vote[]>;
 
   get_elections(args: { from_index?: number; limit?: number }): Promise<Election[]>;
 
   get_elections_by_creator(args: { creator: AccountId }): Promise<[number, Election][]>;
 
-  get_time_remaining(args: { election_id: number }): Promise<number | null>;
+  get_time_remaining(args: { election_id: ElectionId }): Promise<number | null | undefined>;
 
   get_voter_remaining_capacity(args: {
-    election_id: number;
+    election_id: ElectionId;
     voter: AccountId;
-  }): Promise<number | null>;
+  }): Promise<number | null | undefined>;
 
-  get_voter_votes(args: { election_id: number; voter: AccountId }): Promise<Vote[] | null>;
+  get_voter_votes(args: {
+    election_id: ElectionId;
+    voter: AccountId;
+  }): Promise<Vote[] | null | undefined>;
 
-  has_voter_participated(args: { election_id: number; voter: AccountId }): Promise<boolean>;
+  has_voter_participated(args: { election_id: ElectionId; voter: AccountId }): Promise<boolean>;
 
-  is_election_ended(args: { election_id: number }): Promise<boolean>;
+  is_election_ended(args: { election_id: ElectionId }): Promise<boolean>;
 
-  is_voting_period(args: { election_id: number }): Promise<boolean>;
+  is_voting_period(args: { election_id: ElectionId }): Promise<boolean>;
 
-  vote(args: { election_id: number; vote: [AccountId, number] }): Promise<boolean>;
+  vote(args: { election_id: ElectionId; vote: [AccountId, number] }): Promise<boolean>;
 
   pause(): Promise<void>;
 

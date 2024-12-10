@@ -31,9 +31,11 @@ import { POT_EDITOR_FIELDS } from "../constants";
 import { usePotEditorForm } from "../hooks/forms";
 import { getPotEditorDeploymentSchema, getPotEditorSettingsSchema } from "../model";
 
-export type PotEditorProps = Partial<ByPotId> & {};
+export type PotEditorProps = Partial<ByPotId> & {
+  className?: string;
+};
 
-export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
+export const PotEditor: React.FC<PotEditorProps> = ({ potId, className }) => {
   const isNewPot = typeof potId !== "string";
   const router = useRouter();
 
@@ -62,7 +64,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId }) => {
   }, [exitEditMode, form, isNewPot, router]);
 
   return isInPreviewMode ? (
-    <PotEditorPreview onEditClick={enterEditMode} {...{ potId }} />
+    <PotEditorPreview onEditClick={enterEditMode} {...{ className, potId }} />
   ) : (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>

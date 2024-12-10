@@ -131,6 +131,7 @@ const usePagination = ({ totalCount, perPage, siblingCount, currentPage }: Pagin
       const middleRange = range(leftSiblingIndex, rightSiblingIndex);
       return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
     }
+
     if (!shouldShowLeftDots && !shouldShowRightDots) {
       return range(1, totalPageCount);
     }

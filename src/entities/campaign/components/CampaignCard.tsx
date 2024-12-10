@@ -11,6 +11,7 @@ import { CampaignProgressBar } from "./CampaignProgressBar";
 
 export const CampaignCard = ({ data }: { data: Campaign }) => {
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
+
   const isEnded = data?.end_ms
     ? getTimePassed(Number(data?.end_ms), false, true)?.includes("-")
     : false;

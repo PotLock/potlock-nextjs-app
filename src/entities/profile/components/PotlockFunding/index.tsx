@@ -23,6 +23,7 @@ const PotlockFunding = ({ accountId, type = "received" }: Props) => {
   const projectId = accountId;
   const receivedDonations = useDonationsForProject(type === "received" ? projectId : ""); // avoid fetch data if type is not "received"
   const sentDonations = useDonationsSent(type === "donated" ? accountId : ""); // avoid fetch data if type is not "donated"
+
   const { donations, near, uniqueDonors, directDonations, matchedDonations, totalMatchedNear } =
     type === "received" ? receivedDonations : sentDonations;
 
@@ -71,6 +72,7 @@ const PotlockFunding = ({ accountId, type = "received" }: Props) => {
           count: matchedDonations?.length,
         },
       ];
+
       setSortDropdownItems(dropdownItems);
       setSelectedSortOptions(dropdownItems[0]);
     }
@@ -114,13 +116,16 @@ const PotlockFunding = ({ accountId, type = "received" }: Props) => {
 
   // Filter (amount | date)
   const [currentFilter, setCurrentFilter] = useState<"date" | "price">("date");
+
   const [filter, setFilter] = useState<any>({
     date: false, // false === ascending
     price: false, // false === ascending
   });
+
   const [filteredDonations, setFilteredDonations] = useState(
     donationsData[selectedSortOption.type].donations || [],
   );
+
   const [totalDonations, setTotalDonations] = useState(
     donationsData[selectedSortOption.type].donations || [],
   );
@@ -144,6 +149,7 @@ const PotlockFunding = ({ accountId, type = "received" }: Props) => {
           ? parseInt(b.total_amount) - parseInt(a.total_amount)
           : parseInt(a.total_amount) - parseInt(b.total_amount),
       );
+
       setFilteredDonations([...sortedDonations]);
 
       // Sort by date
@@ -151,6 +157,7 @@ const PotlockFunding = ({ accountId, type = "received" }: Props) => {
       const sortedDonations = filteredDonations.sort((a, b) => {
         return sort ? getDate(a) - getDate(b) : getDate(b) - getDate(a);
       });
+
       setFilteredDonations([...sortedDonations]);
     }
   };
@@ -168,8 +175,10 @@ const PotlockFunding = ({ accountId, type = "received" }: Props) => {
         item.donor.id || "",
         item.pot?.id || "",
       ];
+
       return searchIn.some((item) => item.toLowerCase().includes(searchTerm.toLowerCase()));
     });
+
     return filteredApplications;
   };
 

@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import { PROFILE_DEFAULTS } from "@/entities/profile/constants";
 
 const SinglePost = () => {
@@ -22,6 +22,7 @@ const SinglePost = () => {
     content: string;
     imageIPFSHash?: string;
   } | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [time, setTime] = useState("");
 
@@ -129,4 +130,5 @@ const SinglePost = () => {
     </div>
   );
 };
+
 export default SinglePost;

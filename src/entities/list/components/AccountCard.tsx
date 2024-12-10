@@ -48,6 +48,7 @@ export const AccountCard = ({
   const [registrationStatus, setRegistrationStatus] = useState<RegistrationStatus>(
     RegistrationStatus.Pending,
   );
+
   const [note, setNote] = useState<string>("");
 
   const status = listRegistrationStatuses[registrationStatus];
@@ -238,6 +239,7 @@ export const AccountCard = ({
                     open: false,
                     status: statusChange.status,
                   });
+
                   setNote("");
                 }}
                 variant="standard-outline"

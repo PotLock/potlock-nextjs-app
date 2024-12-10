@@ -32,7 +32,8 @@ import { useProfileData } from "@/entities/profile";
 import { ProjectListingStatusVariant } from "@/entities/project";
 import { ProjectCardSkeleton } from "@/entities/project/components/ProjectCardSkeleton";
 import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
+import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 const Container = styled.div`
@@ -131,11 +132,13 @@ const Status = styled.div`
 
 const ApplicationsTab = () => {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
     // transactionHashes: string;
   };
-  const { data: potDetail } = usePot({ potId });
+
+  const { data: pot } = usePot({ potId });
   const [applications, setApplications] = useState<Application[]>([]);
   const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
   const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);

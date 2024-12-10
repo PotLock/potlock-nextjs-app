@@ -9,7 +9,7 @@ import { walletApi } from "@/common/api/near";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus, listsClient } from "@/common/contracts/core";
 import uploadFileToIPFS from "@/common/services/ipfs";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -52,16 +52,20 @@ export const ListFormDetails: React.FC = () => {
   } = useForm<FormData>({
     resolver: zodResolver(createListSchema),
   });
+
   useListDeploymentSuccessRedirect();
   const descriptionLength = watch("description")?.length || 0;
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+
   const [listConfirmModal, setOpenListConfirmModal] = useState<ListConfirmationModalProps>({
     open: false,
   });
+
   const [listCreateSuccess, setListCreateSuccess] = useState<CreateSuccess>({
     open: false,
   });
+
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
   const [savedAdmins, setSavedAdmins] = useState<{ account: AccountId }[]>([{ account: "" }]);
 
@@ -84,6 +88,7 @@ export const ListFormDetails: React.FC = () => {
     push,
     query: { id },
   } = useRouter();
+
   const onEditPage = !!id;
   const { wallet } = useWallet();
 
@@ -93,6 +98,7 @@ export const ListFormDetails: React.FC = () => {
         const response: any = await listsClient.getList({
           list_id: parseInt(id as string) as any,
         });
+
         setValue("name", response.name);
         setValue("owner", response.owner);
         setValue("description", response.description);
@@ -114,8 +120,10 @@ export const ListFormDetails: React.FC = () => {
       const { image } = await fetchSocialImages({
         accountId: walletApi.accountId || "",
       });
+
       setProfileImage(image);
     };
+
     if (walletApi?.accountId) fetchProfileImage();
   }, [wallet]);
 
@@ -123,6 +131,7 @@ export const ListFormDetails: React.FC = () => {
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     // Due to conflicting submit buttons (admin and list), this is to make sure only list submit form is submitted.
     dispatch.listEditor.reset()
+
     if (
       (event?.nativeEvent as SubmitEvent)?.submitter?.id !==
       "list-submit-button"
@@ -172,16 +181,19 @@ export const ListFormDetails: React.FC = () => {
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement; // Cast to HTMLInputElement
+
     if (target.files && target.files[0]) {
       const reader = new FileReader();
       setLoadingImageUpload(true);
       const res = await uploadFileToIPFS(target.files[0]); // Use the casted target
+
       if (res.ok) {
         const data = await res.json();
         setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
         setValue("image_cover_url", `${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
         setLoadingImageUpload(false);
       }
+
       reader.readAsDataURL(target.files[0]); // Use the casted target
     }
   };
@@ -372,6 +384,7 @@ export const ListFormDetails: React.FC = () => {
                           ? (accounts: string[]) => {
                               const newAdmins =
                                 accounts?.filter((admin) => !admins?.includes(admin)) ?? [];
+
                               handleSaveAdminsSettings(newAdmins);
                             }
                           : (accounts: string[]) => setAdmins(accounts)

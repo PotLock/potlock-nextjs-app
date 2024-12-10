@@ -6,4 +6,5 @@ const SuccessfulIcon = (props: React.SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
+
 export default SuccessfulIcon;

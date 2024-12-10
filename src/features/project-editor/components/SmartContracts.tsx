@@ -115,6 +115,7 @@ const SmartContract = ({
       // validate
       const isEVM = CHAIN_OPTIONS[chain].isEVM;
       const isNEAR = chain === "NEAR";
+
       const isValid = isNEAR
         ? validateNearAddress(address)
         : isEVM

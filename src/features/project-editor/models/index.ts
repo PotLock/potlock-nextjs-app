@@ -3,8 +3,8 @@ import { prop } from "remeda";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import uploadFileToIPFS from "@/common/services/ipfs";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
-import { hrefByRouteName } from "@/entities/core";
+import { fetchSocialImages } from "@/common/services/social";
+import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
@@ -73,9 +73,11 @@ const initialState: ProjectEditorState = {
 export const updateState = (previousState: {}, inputPayload: {}) => {
   const keys = Object.keys(inputPayload);
   const updatedState: any = previousState || {};
+
   keys.forEach((key) => {
     updatedState[key] = (inputPayload as any)[key];
   });
+
   return updatedState;
 };
 
@@ -246,6 +248,7 @@ export const projectEditorModel = createModel<AppModel>()({
   effects: (dispatch) => ({
     async uploadBackgroundImage(files: File[]) {
       const res = await uploadFileToIPFS(files[0]);
+
       if (res.ok) {
         const data = await res.json();
         dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
@@ -259,6 +262,7 @@ export const projectEditorModel = createModel<AppModel>()({
 
     async uploadProfileImage(files: File[]) {
       const res = await uploadFileToIPFS(files[0]);
+
       if (res.ok) {
         const data = await res.json();
         dispatch.projectEditor.UPDATE_PROFILE_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
@@ -274,7 +278,7 @@ export const projectEditorModel = createModel<AppModel>()({
       const data: Partial<ProjectEditorState> = {};
 
       // Set the isEdit status
-      data.isEdit = location.pathname.includes(hrefByRouteName.EDIT_PROJECT);
+      data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROJECT);
 
       // Get profile data & profile images
       const projectProfileData = await fetchSocialImages({
@@ -313,6 +317,7 @@ export const projectEditorModel = createModel<AppModel>()({
       if (profile?.plFundingSources) data.fundingSources = JSON.parse(profile.plFundingSources);
       // Repositories
       if (profile?.plGithubRepos) data.githubRepositories = JSON.parse(profile.plGithubRepos);
+
       // Social Links
       if (profile?.linktree) {
         data.website = profile.linktree.website;

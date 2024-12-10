@@ -35,6 +35,7 @@ const ActAsDao = () => {
     if (!daoAddress && addresses.length) return;
     else setDaoError("Please enter a valid DAO address.");
     const check = await validateUserInDao(daoAddress, accountId);
+
     if (check) setDaoError(check);
     else if (addresses.includes(daoAddress)) {
       setDaoError("DAO address already exists.");

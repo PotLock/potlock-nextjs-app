@@ -78,9 +78,6 @@ export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
 
 export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
 
-export const VOTING_BASED_POT_IDS =
-  NETWORK === "mainnet" ? ["mpdao.v1.potfactory.potlock.near"] : [];
-
 export const CHRONOLOGICAL_SORT_OPTIONS: {
   label: string;
   value: ChronologicalSortOrderVariant;

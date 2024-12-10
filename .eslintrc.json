@@ -11,7 +11,8 @@
     "@typescript-eslint",
     "prettier",
     "import",
-    "testing-library"
+    "testing-library",
+    "@stylistic"
   ],
   "extends": [
     "next/core-web-vitals",
@@ -24,6 +25,60 @@
     "prettier"
   ],
   "rules": {
+    "@stylistic/padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-const"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-const",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-let"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-let",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-export"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-export",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-block-like"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-block-like",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-expression"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-expression",
+        "next": "*"
+      }
+    ],
+    "no-nested-ternary": "warn",
     "@next/next/no-img-element": "off",
     "camelcase": [
       "off",

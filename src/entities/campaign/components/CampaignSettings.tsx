@@ -14,9 +14,11 @@ import { useCampaign } from "../hooks/useCampaign";
 export const CampaignSettings = () => {
   useCampaignDeploymentRedirect();
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
+
   const {
     query: { campaignId },
   } = useRouteQuery();
+
   const { campaign } = useCampaign({ campaignId: campaignId as string });
 
   if (!campaign) return <></>;
@@ -28,6 +30,7 @@ export const CampaignSettings = () => {
       day: "numeric",
       timeZone: "UTC",
     });
+
   return (
     <div className="w-full md:mx-3 md:w-[70%]">
       <div className="flex w-full flex-col justify-between gap-6 md:flex-row md:items-center md:gap-0">

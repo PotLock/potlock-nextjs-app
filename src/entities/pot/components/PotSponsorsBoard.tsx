@@ -3,8 +3,8 @@ import { styled } from "styled-components";
 
 import { truncate } from "@/common/lib";
 import { AccountProfilePicture } from "@/entities/account";
-import routesPath from "@/entities/core/routes";
 import { useProfileData } from "@/entities/profile";
+import routesPath from "@/pathnames";
 
 import { CustomDonationType } from "../models/types";
 

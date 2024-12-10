@@ -20,6 +20,7 @@ export const ProfileBanner: React.FC<ProfileBannerProps> = ({ isProject, account
   // get nadabot status on the donor page
   let isHumanVerified = false;
   const isHuman = useIsHuman(accountId);
+
   if (!isHuman.loading && !isProject) {
     isHumanVerified = isHuman.isHumanVerified;
   }

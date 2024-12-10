@@ -21,9 +21,9 @@ import { useSessionAuth } from "@/entities/session";
 import { TokenTotalValue } from "@/entities/token";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
+import { isVotingEnabled } from "@/features/voting";
 
 export type PotLayoutHeroProps = ByPotId & {
-  hasVoting?: boolean;
   onApplyClick?: () => void;
   onChallengePayoutsClick?: () => void;
   onFundMatchingPoolClick?: () => void;
@@ -31,12 +31,12 @@ export type PotLayoutHeroProps = ByPotId & {
 
 export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   potId,
-  hasVoting,
   onApplyClick,
   onChallengePayoutsClick,
   onFundMatchingPoolClick,
 }) => {
   const { data: pot } = indexer.usePot({ potId });
+  const hasVoting = isVotingEnabled({ potId });
   const { isSignedIn, accountId } = useSessionAuth();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
   // const votingClearance = useVotingUserClearance({ potId });
@@ -75,7 +75,10 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
       )}
     >
       {pot ? (
-        <PotTimeline classNames={{ root: "bg-neutral-50 md:transparent" }} {...{ potId }} />
+        <PotTimeline
+          classNames={{ root: "bg-neutral-50 md:transparent" }}
+          {...{ hasVoting, potId }}
+        />
       ) : (
         <Skeleton className="h-96 w-full" />
       )}
@@ -178,7 +181,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
               <Button onClick={onApplyClick}>{`Apply to ${hasVoting ? "Round" : "Pot"}`}</Button>
             )}
 
-            {canDonate && <DonateToPotProjects {...{ potId }} />}
+            {hasVoting ? null : <>{canDonate && <DonateToPotProjects {...{ potId }} />}</>}
 
             {canFund && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>

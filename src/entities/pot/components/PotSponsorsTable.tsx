@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/common/ui/components";
 import { AccountProfilePicture } from "@/entities/account";
-import routesPath from "@/entities/core/routes";
+import routesPath from "@/pathnames";
 
 import { CustomDonationType } from "../models/types";
 
