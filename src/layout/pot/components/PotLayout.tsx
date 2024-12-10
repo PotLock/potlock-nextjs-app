@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
-import { RoutableTabListOption } from "@/common/ui/types";
 import { cn } from "@/common/ui/utils";
 import { ChallengeModal, usePotBasicUserPermissions } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
@@ -13,53 +12,20 @@ import { MatchingPoolFundingModal } from "@/features/matching-pool-funding";
 import { PotApplicationModal } from "@/features/pot-application";
 import { ErrorModal } from "@/features/project-editor/components/ErrorModal";
 import { SuccessModal } from "@/features/project-editor/components/SuccessModal";
-import { isVotingEnabled } from "@/features/voting";
-import { rootPathnames } from "@/pathnames";
 
 import { PotLayoutHero } from "./PotLayoutHero";
+import { usePotLayoutTabNavigation } from "../hooks/tab-navigation";
 
 export type PotLayoutProps = {
   children: React.ReactNode;
 };
 
 export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
-  const { asPath, query: routeQuery } = useRouter();
-
-  const { potId, ...query } = routeQuery as {
-    potId: string;
-    done?: string;
-    errorMessage?: string;
-  };
-
-  const hasVoting = isVotingEnabled({ potId });
+  const { query: routeQuery } = useRouter();
+  const { potId, ...query } = routeQuery as { potId: string; done?: string; errorMessage?: string };
+  const { activeTabHref, orderedTabList } = usePotLayoutTabNavigation({ potId });
   const { data: pot } = indexer.usePot({ potId });
   const { existingChallengeForUser } = usePotBasicUserPermissions({ potId });
-
-  const tabList: RoutableTabListOption[] = useMemo(
-    () => [
-      { label: "Projects", href: `${rootPathnames.pot}/${potId}/projects`, isHidden: hasVoting },
-      { label: "Applications", href: `${rootPathnames.pot}/${potId}/applications` },
-      { label: "Votes", href: `${rootPathnames.pot}/${potId}/votes`, isHidden: !hasVoting },
-      { label: "Donations", href: `${rootPathnames.pot}/${potId}/donations`, isHidden: hasVoting },
-      { label: "Sponsors", href: `${rootPathnames.pot}/${potId}/sponsors` },
-      { label: "Payouts", href: `${rootPathnames.pot}/${potId}/payouts` },
-      { label: "Feeds", href: `${rootPathnames.pot}/${potId}/feeds` },
-      { label: "Settings", href: `${rootPathnames.pot}/${potId}/settings` },
-    ],
-
-    [hasVoting, potId],
-  );
-
-  const { href: activeTabHref } = useMemo(
-    () => tabList.find(({ href }) => asPath.includes(href)) ?? { href: null },
-    [asPath, tabList],
-  );
-
-  // const defaultTab = hasVoting ? tabList[1] : tabList[0];
-
-  // useEffect(() => {
-  //   setSelectedTab(tabs.find(({ href }) => pathname.includes(href)) ?? defaultTab);
-  // }, [defaultTab, hasVoting, pathname, tabs]);
 
   // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
@@ -124,7 +90,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onApplyClick={openApplicationModal}
         onChallengePayoutsClick={openChallengeModal}
         onFundMatchingPoolClick={openMatchingPoolFundingModal}
-        {...{ potId, hasVoting }}
+        {...{ potId }}
       />
 
       <div className="mb-6 flex w-full flex-row flex-wrap gap-2 md:mb-12">
@@ -134,7 +100,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
             "border-b-[1px] border-b-[#c7c7c7] pt-8",
           )}
         >
-          {tabList.map(({ label, href, isHidden }) => {
+          {orderedTabList.map(({ tag, href, isHidden }) => {
             return (
               <Link
                 key={href}
@@ -146,7 +112,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
                 )}
                 {...{ href }}
               >
-                {label}
+                {tag}
               </Link>
             );
           })}

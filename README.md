@@ -54,7 +54,7 @@ Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
 ## Project Structure
 
-The architectural methodology is heavily based on [Feature-Sliced Design](https://feature-sliced.design/docs/reference/layers).
+The architectural doctrine of the project is heavily based on [Feature-Sliced Design](https://feature-sliced.design/docs/reference/layers).
 This provides explicit separation between abstract and business-logic-heavy parts of the codebase,
 for which it offers a highly modular approach, defining clear boundaries for different
 aspects of the application within each module:
@@ -156,10 +156,21 @@ aspects of the application within each module:
 │
 │
 ├── [ layout ] <--- # Since Next's Pages Router doesn't support non-routable page subdirectories
-│                   # ( e.g. _components ), layout composition is addressed in this layer.
-│                   # It allows to keep complex page-related UI elements that combine
-│                   # more than one feature and/or entity without introducing cross-imports
-│                   # within those codebase slices, which helps to avoid circular dependencies.
+│   │               # ( components / hooks ), layout composition is addressed in this layer.
+│   │               # It allows to keep complex page-related UI elements that combine
+│   │               # ( A pattern where each page's tab is treated by the router as a sub-page )
+│  ...              # more than one feature and/or entity without introducing cross-imports
+│   │               # within those codebase slices, which helps to avoid circular dependencies.
+│   │               # In addition to conditional redirects, it addresses the routable tab navigation 
+│   │               # ( A pattern where each page's tab is treated by the router as a sub-page )
+│   │
+│   ├── [ pot ]
+│   │   │
+│   │   ├── [ components ] <--- # ONLY components specific to the pages within the /pot namespace.
+│   │   │
+│   │   └── [ hooks ] <--- # ONLY hooks specific to the pages within the /pot namespace.
+│   │
+│  ...
 │
 │
 │
@@ -167,7 +178,7 @@ aspects of the application within each module:
 │                  # Follows Nextjs Pages routing specification ( see link 5. )
 │
 │
-│
+│   # TODO: Should be gradually refactored into separate Zustand stores and SWR hooks
 └── [ store ] <--- # Shared application state root.
                    # Uses Rematch state management library, based on Redux.
 

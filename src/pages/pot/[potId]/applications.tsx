@@ -20,7 +20,7 @@ import { AccountProfilePicture } from "@/entities/account";
 import { PotFilters } from "@/entities/pot";
 import { useProfileData } from "@/entities/profile";
 import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 

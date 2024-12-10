@@ -21,10 +21,9 @@ import { useSessionAuth } from "@/entities/session";
 import { TokenTotalValue } from "@/entities/token";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
-import { rootPathnames } from "@/pathnames";
+import { isVotingEnabled } from "@/features/voting";
 
 export type PotLayoutHeroProps = ByPotId & {
-  hasVoting?: boolean;
   onApplyClick?: () => void;
   onChallengePayoutsClick?: () => void;
   onFundMatchingPoolClick?: () => void;
@@ -32,12 +31,12 @@ export type PotLayoutHeroProps = ByPotId & {
 
 export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   potId,
-  hasVoting,
   onApplyClick,
   onChallengePayoutsClick,
   onFundMatchingPoolClick,
 }) => {
   const { data: pot } = indexer.usePot({ potId });
+  const hasVoting = isVotingEnabled({ potId });
   const { isSignedIn, accountId } = useSessionAuth();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
   // const votingClearance = useVotingUserClearance({ potId });

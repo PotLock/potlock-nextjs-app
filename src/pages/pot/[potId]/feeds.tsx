@@ -15,7 +15,7 @@ import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { FeedCard } from "@/entities/profile";
 import { CreatePost } from "@/entities/profile/components/CreatePost";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const tabs = [
   { name: "Approved Applicants", value: ApplicationStatus.Approved },

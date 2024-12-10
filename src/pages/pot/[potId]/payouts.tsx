@@ -10,7 +10,7 @@ import { yoctoNearToFloat } from "@/common/lib";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { PotPayoutChallenges, useOrderedDonations } from "@/entities/pot";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const TableContainer = styled.div`
   display: flex;
