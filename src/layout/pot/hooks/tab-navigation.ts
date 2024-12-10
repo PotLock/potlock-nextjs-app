@@ -50,32 +50,39 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
         href: `${rootPathnames.pot}/${potId}/projects`,
         isHidden: hasVoting,
       },
+
       [PotLayoutTabTag.Applications]: {
         tag: PotLayoutTabTag.Applications,
         href: `${rootPathnames.pot}/${potId}/applications`,
       },
+
       [PotLayoutTabTag.Votes]: {
         tag: PotLayoutTabTag.Votes,
         href: `${rootPathnames.pot}/${potId}/votes`,
         isHidden: !hasVoting,
       },
+
       [PotLayoutTabTag.Donations]: {
         tag: PotLayoutTabTag.Donations,
         href: `${rootPathnames.pot}/${potId}/donations`,
         isHidden: hasVoting,
       },
+
       [PotLayoutTabTag.Sponsors]: {
         tag: PotLayoutTabTag.Sponsors,
         href: `${rootPathnames.pot}/${potId}/sponsors`,
       },
+
       [PotLayoutTabTag.Payouts]: {
         tag: PotLayoutTabTag.Payouts,
         href: `${rootPathnames.pot}/${potId}/payouts`,
       },
+
       [PotLayoutTabTag.Feeds]: {
         tag: PotLayoutTabTag.Feeds,
         href: `${rootPathnames.pot}/${potId}/feeds`,
       },
+
       [PotLayoutTabTag.Settings]: {
         tag: PotLayoutTabTag.Settings,
         href: `${rootPathnames.pot}/${potId}/settings`,
