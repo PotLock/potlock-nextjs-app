@@ -7,50 +7,49 @@ import { coingecko } from "@/common/api/coingecko";
 import { formatWithCommas } from "@/common/lib/formatWithCommas";
 import { ByTokenId } from "@/common/types";
 
-import { useFtRegistryStore } from "./models";
+import { useFtRegistryStore } from "./model";
 
+/**
+ * Registry of supported fungible tokens.
+ */
 export const useTokenRegistry = () => {
-  const { data, error } = useFtRegistryStore(
-    useShallow(pick(["data", "error"])),
-  );
+  const { data, error } = useFtRegistryStore(useShallow(pick(["data", "error"])));
 
-  const isLoading = useMemo(
-    () => data === undefined && error === undefined,
-    [data, error],
-  );
+  const isLoading = useMemo(() => data === undefined && error === undefined, [data, error]);
+
+  useEffect(() => void (error ? console.error(error) : null), [error]);
 
   return { isLoading, data, error };
 };
 
+/**
+ * Fungible token data for a supported token.
+ */
 export const useRegisteredToken = ({ tokenId }: ByTokenId) => {
-  const { metadata, balance, balanceFloat } = useFtRegistryStore(
-    useShallow(
-      (registry) =>
-        registry.data?.[tokenId] ?? {
-          metadata: null,
-          balance: null,
-          balanceFloat: null,
-        },
-    ),
-  );
+  const { isLoading, data: tokenRegistry } = useTokenRegistry();
+
+  const token = useMemo(() => tokenRegistry?.[tokenId], [tokenRegistry, tokenId]);
 
   const error = useMemo(
     () =>
-      metadata === null
-        ? new Error(
-            `Fungible token ${tokenId} is not supported on this platform.`,
-          )
+      !isLoading && token === null
+        ? new Error(`Fungible token ${tokenId} is not supported on this platform.`)
         : undefined,
 
-    [metadata, tokenId],
+    [isLoading, token, tokenId],
   );
 
+  useEffect(() => void (error ? console.error(error) : null), [error]);
+
   return {
-    data: metadata ? { metadata, balance, balanceFloat } : undefined,
+    data: token,
     error,
   };
 };
 
+/**
+ * @deprecated Use `usdPrice` Big number from `ftService.useRegisteredToken({ tokenId: ... })`
+ */
 export const useTokenUsdDisplayValue = ({
   amountFloat,
   tokenId,
@@ -60,8 +59,5 @@ export const useTokenUsdDisplayValue = ({
   const { data: oneTokenUsdPrice } = coingecko.useTokenUsdPrice({ tokenId });
   const value = oneTokenUsdPrice ? amountFloat * oneTokenUsdPrice : 0.0;
 
-  return useMemo(
-    () => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`),
-    [value],
-  );
+  return useMemo(() => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`), [value]);
 };

@@ -1,11 +1,7 @@
-import * as campaign from "./campaigns";
-import * as pot from "./pot";
-import * as potFactory from "./pot-factory";
+// TODO: dismantle this entry point in favor of direct imports
 
-export * from "./interfaces/campaign.interfaces";
+export * from "./campaigns";
 export * from "./donation";
-export * from "./interfaces/lists.interfaces";
-export * from "./interfaces/pot.interfaces";
-export * from "./interfaces/pot-factory.interfaces";
-
-export { pot, potFactory, campaign };
+export * from "./lists";
+export * from "./pot";
+export * from "./pot-factory";

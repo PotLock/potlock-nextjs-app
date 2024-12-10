@@ -1,12 +1,6 @@
-# PotLock - NextJS frontend
+# PotLock Next
 
 PotLock frontend application built on NextJS featuring project exploration, pages, donations, and Pots (quadratic funding for now) on the NEAR Blockchain
-
-To-Do
-
-- Feeds
-- Campaigns
-- Lists
 
 The backlog to the NextJS App can be found at <https://potlock.org/next-backlog>
 
@@ -14,15 +8,20 @@ You can access BOS PotLock version using one of the environments below:
 
 - [Production](https://bos.potlock.org/)
 - [Staging](https://bos.potlock.org/staging.potlock.near/widget/IndexLoader)
-= [Repo](https://github.com/potlock/bos-alem-app)
+- [Repo](https://github.com/potlock/bos-alem-app)
 
 You can see original features <https://potlock.notion.site/All-Features-Potlock-NextJS-App-5f543fa8b31840aa88bf5b8cf57ead3d?pvs=4>
 
-Core contracts can be found at <https://github.com/PotLock/core> and documentation <https://docs.potlock.io/contracts/contracts-overview>
+Core contracts can be found at <https://github.com/PotLock/core>
+Contract documentation: <https://docs.potlock.io/contracts/contracts-overview>
 
-## Development
+## Getting Started
 
-### Getting Started
+### IDE setup
+
+First, make sure to install **every extension** from the "recommended" section of VSCode extension panel!
+
+### Environment setup
 
 ```bash
 # using the right node version
@@ -38,18 +37,25 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### DJango Indexer API
+## Backend ( Indexer API )
 
-This project is using an indexer service.
-You can access its docs here: <https://github.com/PotLock/django-indexer?tab=readme-ov-file#api-endpoints>
+Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
 **URI**: <http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1>
 
 **Swagger UI**: <https://dev.potlock.io/api/schema/swagger-ui/#/>
 
-### Project Structure
+## Dependencies
 
-Provides explicit separation between abstract and business-logic-heavy parts of the codebase,
+### Nice Modal for modals
+
+[Documentation](https://github.com/eBay/nice-modal-react?tab=readme-ov-file#nice-modal)
+[Examples](https://opensource.ebay.com/nice-modal-react/)
+
+## Project Structure
+
+The architectural doctrine of the project is heavily based on [Feature-Sliced Design](https://feature-sliced.design/docs/reference/layers).
+This provides explicit separation between abstract and business-logic-heavy parts of the codebase,
 for which it offers a highly modular approach, defining clear boundaries for different
 aspects of the application within each module:
 
@@ -59,16 +65,18 @@ aspects of the application within each module:
 │
 ├── global.d.ts <--- # Globally available type definitions
 │
+│
+│
 ├── [ common ] <--- # Low-level foundation of the app, containing endpoint bindings,
 │   │               # utility libraries, reusable primitives, and assets, used in layouts and
 │   │               # business logic across the codebase. MUST NOT contain business logic by itself.
-│   │               # AKA "shared" ( see link 2. )
+│   │               # AKA "shared" ( see link 1. )
 │   │
 │   ├── constants.ts <--- # Static reusable values, e.g.
-│   │                      export const DEFAULT_NETWORK = "testnet"
-│   │                      export const MAX_GAS = 100
+│   │                      export const NATIVE_TOKEN_ID = "near";
+│   │                      export const MAX_GAS = 100;
 │   │
-│   ├── [ api ] <--- # Facilitates network interaction with backend(s)
+│   ├── [ api ] <--- # Basic network and data layer
 │   │
 │   ├── [ assets ] <--- # Globally used assets, e.g. images or icons
 │   │
@@ -88,27 +96,51 @@ aspects of the application within each module:
 │
 │
 │
-│
-├── [ modules ] <--- # Business logic units broken down into categories. Simply put, this is
-│   │                # a collection of directories that contain code implementing specific
-│   │                # groups of app use cases and are named after functionalities they provide.
+├── [ entities ] <--- # Business units organized into codebase slices ( See link 2. )
 │   │
 │  ...
 │   │
 │   │
-│   ├── [ core ] <--- # Follows the same structure as any other module, but contains business logic,
-│   │                 # that is shared between all or some of the other modules
-│   │
-│   ├── [ profile ] <--- # A feature-specific module
+│   ├── [ pot ] <--- # An entity-specific codebase slice
+│   │   │
+│   │   ├── index.ts <--- # Entry point for public exports ( available for external use )
 │   │   │
 │   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
-│   │   │                       export const POTLOCK_REGISTRY_LIST_ID = 1
+│   │   │                       export const POT_MIN_NAME_LENGTH = 3;
 │   │   │
-│   │   ├── models.ts <--- # Feature state definitions ( See link 3. )
-│   │   │                  # If this file grows over 300 LoC, consider turning it into a directory
-│   │   │                  # with the same name by applying code-splitting techniques.
+│   │   ├── model.ts <--- # Entity state definitions ( See link 4. )
 │   │   │
-│   │   ├── types.d.ts <--- # Module-specific shared types and interfaces
+│   │   ├── types.ts <--- # Entity-specific shared types and interfaces
+│   │   │
+│   │   ├── [ components ] <--- # Entity-specific React components
+│   │   │
+│   │   ├── [ hooks ] <--- # Entity-specific React hooks
+│   │   │
+│   │   └── [ utils ] <--- # Entity-specific utilities, like value converters or validators
+│   │
+│   │
+│   ├── ...
+│   │
+│  ...
+│
+│
+│
+├── [ features ] <--- # A collection of codebase slices implementing various use cases
+│   │                 # and are named after functionalities they provide. ( See link 3. )
+│   │
+│  ...
+│   │
+│   │
+│   ├── [ donation ] <--- # A feature-specific module
+│   │   │
+│   │   ├── index.ts <--- # Entry point for public exports ( available for external use )
+│   │   │
+│   │   ├── constants.ts <--- # Module-specific static reusable values, e.g.
+│   │   │                       export const DONATION_MIN_NEAR_AMOUNT = 0.1;
+│   │   │
+│   │   ├── model.ts <--- # Feature state definitions ( See link 4. )
+│   │   │
+│   │   ├── types.ts <--- # Feature-specific shared types and interfaces
 │   │   │
 │   │   ├── [ components ] <--- # Feature-specific React components
 │   │   │
@@ -123,25 +155,44 @@ aspects of the application within each module:
 │
 │
 │
+├── [ layout ] <--- # Since Next's Pages Router doesn't support non-routable page subdirectories
+│   │               # ( components / hooks ), layout composition is addressed in this layer.
+│   │               # It allows to keep complex page-related UI elements that combine
+│   │               # ( A pattern where each page's tab is treated by the router as a sub-page )
+│  ...              # more than one feature and/or entity without introducing cross-imports
+│   │               # within those codebase slices, which helps to avoid circular dependencies.
+│   │               # In addition to conditional redirects, it addresses the routable tab navigation 
+│   │               # ( A pattern where each page's tab is treated by the router as a sub-page )
+│   │
+│   ├── [ pot ]
+│   │   │
+│   │   ├── [ components ] <--- # ONLY components specific to the pages within the /pot namespace.
+│   │   │
+│   │   └── [ hooks ] <--- # ONLY hooks specific to the pages within the /pot namespace.
+│   │
+│  ...
+│
+│
 │
 ├── [ pages ] <--- # Entry point of the application.
-│                  # Follows Nextjs Pages routing specification ( see link 1. )
+│                  # Follows Nextjs Pages routing specification ( see link 5. )
 │
 │
-│
-│
+│   # TODO: Should be gradually refactored into separate Zustand stores and SWR hooks
 └── [ store ] <--- # Shared application state root.
                    # Uses Rematch state management library, based on Redux.
 
 ```
 
-#### Links
+### Links
 
-1. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
-2. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
-3. [Rematch models](https://rematchjs.org/docs/api-reference/models)
+1. [Shared layer from Feature-Sliced Design methodology](https://feature-sliced.design/docs/reference/layers#shared)
+2. [Entities layer specification](https://feature-sliced.design/docs/reference/layers#entities)
+3. [Features layer specification](https://feature-sliced.design/docs/reference/layers#features)
+4. [Rematch models](https://rematchjs.org/docs/api-reference/models)
+5. [Nextjs Routing](https://nextjs.org/docs/pages/building-your-application/routing)
 
-### Testing
+## Testing
 
 We use Vitest testing framework coupled with React Testing Library to specifically target UI.
 
@@ -166,7 +217,7 @@ All tests should be located in the `_tests/` directory. ... for each specific pa
 
 ```
 
-#### Commands
+### Commands
 
 Execute all unit tests:
 

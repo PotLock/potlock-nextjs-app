@@ -21,10 +21,7 @@ export const useFollowerAccountIds = ({
           .then(
             (
               response: AxiosResponse<
-                Record<
-                  AccountId,
-                  { graph: { follow: { [key: AccountId]: boolean } } }
-                >
+                Record<AccountId, { graph: { follow: { [key: AccountId]: boolean } } }>
               >,
             ) => Object.keys(response.data),
           );

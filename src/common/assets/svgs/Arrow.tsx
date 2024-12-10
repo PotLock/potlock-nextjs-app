@@ -1,4 +1,4 @@
-const Arrow = (props: any) => (
+export const Arrow = (props: any) => (
   <svg
     {...props}
     style={{ rotate: !props.active ? "0deg" : "180deg" }}

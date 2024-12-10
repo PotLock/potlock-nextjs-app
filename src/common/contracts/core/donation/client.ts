@@ -9,7 +9,7 @@ import {
   DirectDonation,
   DirectDonationArgs,
   DirectDonationConfig,
-} from "./interface";
+} from "./interfaces";
 
 const contractApi = naxiosInstance.contractApi({
   contractId: DONATION_CONTRACT_ACCOUNT_ID,
@@ -21,8 +21,7 @@ const contractApi = naxiosInstance.contractApi({
 /**
  * Get donate contract config
  */
-export const getConfig = () =>
-  contractApi.view<{}, DirectDonationConfig>("get_config");
+export const getConfig = () => contractApi.view<{}, DirectDonationConfig>("get_config");
 
 /**
  * Get direct donations
@@ -34,10 +33,7 @@ export const getDonations = (args: { fromIndex?: number; limit?: number }) =>
  * Get donations for a recipient id
  */
 export const getDonationsForRecipient = (args: { recipient_id: string }) =>
-  contractApi.view<typeof args, DirectDonation[]>(
-    "get_donations_for_recipient",
-    { args },
-  );
+  contractApi.view<typeof args, DirectDonation[]>("get_donations_for_recipient", { args });
 
 /**
  * Get donations for donor id
@@ -63,3 +59,10 @@ export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
       ...txInput,
     })),
   );
+
+export const storage_deposit = (depositAmountYocto: string) =>
+  contractApi.call<{}, string>("storage_deposit", {
+    deposit: depositAmountYocto,
+    args: {},
+    gas: "100000000000000",
+  });

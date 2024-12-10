@@ -4,9 +4,9 @@ import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { indexer } from "@/common/api/indexer";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
-import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
-import { FeedCard } from "@/modules/profile";
+import { FeedCard } from "@/entities/profile";
 
 export default function GlobalFeedsPage() {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
@@ -15,13 +15,13 @@ export default function GlobalFeedsPage() {
   const loadingRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(40);
 
-  const { data: registrations = [] } = indexer.useListRegistrations({
-    listId: POTLOCK_REGISTRY_LIST_ID,
+  const { data: registrations } = indexer.useListRegistrations({
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     page_size: 999,
   });
 
   const accountIds = useMemo(
-    () => registrations.map(({ registrant }) => registrant.id),
+    () => registrations?.results.map(({ registrant }) => registrant.id) ?? [],
     [registrations],
   );
 
@@ -60,13 +60,13 @@ export default function GlobalFeedsPage() {
     () => (
       <div
         className={cn(
-          "md:flex-col md:px-[105px] md:py-[68px] rounded-3",
+          "rounded-3 md:flex-col md:px-[105px] md:py-[68px]",
           "flex flex-col-reverse items-center justify-between bg-[#f6f5f3] px-6 py-4",
         )}
       >
         <p
           className={cn(
-            "font-italic font-500 md:text-[22px] text-4 mb-4 max-w-[290px]",
+            "font-italic font-500 text-4 mb-4 max-w-[290px] md:text-[22px]",
             "text-center font-lora text-[#292929]",
           )}
         >

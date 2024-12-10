@@ -22,13 +22,8 @@ export const SortSelect = ({
     >
       <Trigger asChild className="w-fit">
         <Button variant="standard-outline">
-          <Image
-            src={"/assets/icons/sort-icon.svg"}
-            alt="sort"
-            width={18}
-            height={18}
-          />
-          <p className="md:block hidden">Sort</p>
+          <Image src={"/assets/icons/sort-icon.svg"} alt="sort" width={18} height={18} />
+          <p className="hidden md:block">Sort</p>
         </Button>
       </Trigger>
       <SelectContent>

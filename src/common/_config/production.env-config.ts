@@ -1,6 +1,7 @@
-import { EnvConfig } from "@/common/types";
+import { EnvConfig, FeatureId } from "@/common/types";
 
 export const envConfig: EnvConfig = {
+  platformName: "Potlock",
   network: "mainnet" as const,
 
   contractMetadata: {
@@ -8,25 +9,37 @@ export const envConfig: EnvConfig = {
     repoUrl: "https://github.com/PotLock/core",
   },
 
-  campaigns: {
-    contract: { accountId: "campaigns.staging.potlock.near" },
+  indexer: {
+    api: { endpointUrl: "https://api.potlock.io" },
   },
 
-  donation: {
-    contract: { accountId: "donate.potlock.near" },
-  },
+  core: {
+    campaigns: {
+      contract: { accountId: "campaigns.staging.potlock.near" },
+    },
 
-  lists: {
-    contract: { accountId: "lists.potlock.near" },
-  },
+    donation: {
+      contract: { accountId: "donate.potlock.near" },
+    },
 
-  potFactory: {
-    contract: { accountId: "v1.potfactory.potlock.near" },
-  },
+    lists: {
+      contract: { accountId: "lists.potlock.near" },
+    },
 
-  sybil: {
-    app: { url: "https://app.nada.bot" },
-    contract: { accountId: "v1.nadabot.near" },
+    potFactory: {
+      contract: { accountId: "v1.potfactory.potlock.near" },
+    },
+
+    sybil: {
+      app: { url: "https://app.nada.bot" },
+      contract: { accountId: "v1.nadabot.near" },
+    },
+
+    voting: {
+      // TODO: Figure out a way to store pot-associated voting contract instances on backend / chain
+      //! Be careful when refactoring this
+      contract: { accountId: "mpdao.vote.potlock.near" },
+    },
   },
 
   social: {
@@ -34,7 +47,35 @@ export const envConfig: EnvConfig = {
     contract: { accountId: "social.near" },
   },
 
-  indexer: {
-    api: { endpointUrl: "https://api.potlock.io" },
+  deFi: {
+    metapool: {
+      liquidStakingContract: {
+        accountId: "meta-pool.near",
+      },
+    },
+
+    refFinance: {
+      exchangeContract: {
+        accountId: "v2.ref-finance.near",
+      },
+    },
+  },
+
+  features: {
+    [FeatureId.DirectFtDonation]: {
+      id: FeatureId.DirectFtDonation,
+      name: "Direct FT donation",
+
+      /**
+       * The implementation is not finished yet
+       */
+      isEnabled: false,
+    },
+
+    [FeatureId.DirectNativeTokenDonation]: {
+      id: FeatureId.DirectNativeTokenDonation,
+      name: "Direct native token donation",
+      isEnabled: true,
+    },
   },
 };

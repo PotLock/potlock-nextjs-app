@@ -2,10 +2,15 @@ import { Big } from "big.js";
 import { utils } from "near-api-js";
 import { Metadata } from "next";
 
+import { NETWORK, PLATFORM_NAME } from "./_config";
+import { ChronologicalSortOrderVariant } from "./types";
+
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
+export const POTLOCK_TWITTER_ACCOUNT_ID = "PotLock_";
+export const DEFAULT_SHARE_HASHTAGS = ["PublicGoods", "Donations"];
 
 export const APP_METADATA: Metadata & {
   title: string;
@@ -18,7 +23,7 @@ export const APP_METADATA: Metadata & {
     images: { url: string };
   };
 } = {
-  title: "Potlock",
+  title: PLATFORM_NAME,
   description: "Bringing public goods funding to the table, built on NEAR",
   manifest: "/manifest.json",
 
@@ -38,11 +43,15 @@ export const APP_METADATA: Metadata & {
   },
 };
 
+export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
 export const NATIVE_TOKEN_ID = "near";
 export const NATIVE_TOKEN_DECIMALS = 24;
 
+export const MPDAO_TOKEN_CONTRACT_ACCOUNT_ID =
+  NETWORK === "mainnet" ? "mpdao-token.near" : "mpdao-token.testnet";
+
 // List ID of PotLock Public Goods Registry
-export const POTLOCK_REGISTRY_LIST_ID = 1;
+export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1;
 
 // Separates contract_id and method_name in ProviderId
 export const PROVIDER_ID_DELIMITER = ":";
@@ -68,6 +77,14 @@ export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
 
 export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
+
+export const CHRONOLOGICAL_SORT_OPTIONS: {
+  label: string;
+  value: ChronologicalSortOrderVariant;
+}[] = [
+  { label: "Most recent", value: "recent" },
+  { label: "Least recent", value: "older" },
+];
 
 /**
  * @deprecated use `ftService` hooks instead

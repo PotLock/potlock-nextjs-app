@@ -1,6 +1,6 @@
 import { cn } from "../../utils";
+import { Spinner } from "../atoms/spinner";
 import { LabeledIcon } from "../atoms/typography";
-import { Spinner } from "../Spinner";
 
 export type DataLoadingPlaceholderProps = { className?: string; text?: string };
 
@@ -9,12 +9,7 @@ export const DataLoadingPlaceholder: React.FC<DataLoadingPlaceholderProps> = ({
   className,
 }) => {
   return (
-    <div
-      className={cn(
-        "flex h-full w-full flex-col items-center justify-center",
-        className,
-      )}
-    >
+    <div className={cn("flex h-full w-full flex-col items-center justify-center", className)}>
       <LabeledIcon
         caption={text}
         positioning="icon-text"

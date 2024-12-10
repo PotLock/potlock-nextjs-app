@@ -60,6 +60,7 @@ const addToRemoveQueue = (toastId: string) => {
 
   const timeout = setTimeout(() => {
     toastTimeouts.delete(toastId);
+
     dispatch({
       type: "REMOVE_TOAST",
       toastId: toastId,
@@ -80,9 +81,7 @@ export const reducer = (state: State, action: Action): State => {
     case "UPDATE_TOAST":
       return {
         ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === action.toast.id ? { ...t, ...action.toast } : t,
-        ),
+        toasts: state.toasts.map((t) => (t.id === action.toast.id ? { ...t, ...action.toast } : t)),
       };
 
     case "DISMISS_TOAST": {
@@ -110,6 +109,7 @@ export const reducer = (state: State, action: Action): State => {
         ),
       };
     }
+
     case "REMOVE_TOAST":
       if (action.toastId === undefined) {
         return {
@@ -117,6 +117,7 @@ export const reducer = (state: State, action: Action): State => {
           toasts: [],
         };
       }
+
       return {
         ...state,
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
@@ -130,6 +131,7 @@ let memoryState: State = { toasts: [] };
 
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action);
+
   listeners.forEach((listener) => {
     listener(memoryState);
   });
@@ -145,6 +147,7 @@ function toast({ ...props }: Toast) {
       type: "UPDATE_TOAST",
       toast: { ...props, id },
     });
+
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
 
   dispatch({
@@ -171,8 +174,10 @@ function useToast() {
 
   React.useEffect(() => {
     listeners.push(setState);
+
     return () => {
       const index = listeners.indexOf(setState);
+
       if (index > -1) {
         listeners.splice(index, 1);
       }

@@ -1,68 +1,301 @@
-// INFO: code partially refactored (original extracted from Além)
-
 import { ReactElement, useCallback, useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { styled } from "styled-components";
 
-// info: not working
-// import { usePotApplications } from "@/common/api/potlock/hooks";
 import { usePot } from "@/common/api/indexer/hooks";
 import { SearchIcon } from "@/common/assets/svgs";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
-import { Application } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
+import { Application, potClient } from "@/common/contracts/core";
 import { daysAgo, truncate } from "@/common/lib";
-import { Button } from "@/common/ui/components";
 import {
+  Button,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/common/ui/components/tooltip";
-import { AccountProfilePicture } from "@/modules/core";
-import routesPath from "@/modules/core/routes";
-import { PotLayout, applicationsFiltersTags } from "@/modules/pot";
-import ApplicationReviewModal from "@/modules/pot/components/ApplicationReviewModal";
-import Dropdown from "@/modules/pot/components/Dropdown/Dropdown";
-import {
-  ApplicationRow,
-  ApplicationsWrapper,
-  Container,
-  Dot,
-  DropdownLabel,
-  Filter,
-  SearchBar,
-  Status,
-} from "@/modules/pot/styles/application-styles";
-import useProfileData from "@/modules/profile/hooks/data";
-import { useTypedSelector } from "@/store";
+} from "@/common/ui/components";
+import { AccountProfilePicture } from "@/entities/account";
+import { PotFilters } from "@/entities/pot";
+import { useProfileData } from "@/entities/profile";
+import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
+import routesPath from "@/pathnames";
+import { useGlobalStoreSelector } from "@/store";
+
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  margin-bottom: 4rem;
+  gap: 2rem;
+  .dropdown {
+    display: none;
+  }
+  @media only screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.5rem;
+    .dropdown {
+      display: flex;
+    }
+  }
+`;
+
+const Filter = styled.div`
+  display: grid;
+  width: 286px;
+  border-radius: 6px;
+  padding: 8px 0;
+  border: 1px solid var(--Neutral-500, #7b7b7b);
+  height: fit-content;
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    cursor: pointer;
+    svg {
+      opacity: 0;
+      transition: all 300ms ease;
+    }
+    &.active {
+      svg {
+        opacity: 1;
+      }
+    }
+    &:hover {
+      svg {
+        opacity: 1;
+      }
+    }
+  }
+  .count {
+    color: #7b7b7b;
+    margin-left: auto;
+  }
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const ApplicationsWrapper = styled.div`
+  border-radius: 6px;
+  border: 1px solid #7b7b7b;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-width: 711px;
+  width: 100%;
+`;
+
+const SearchBar = styled.div`
+  display: flex;
+  position: relative;
+  svg {
+    position: absolute;
+    left: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  input {
+    font-size: 14px;
+    background: #f6f5f3;
+    width: 100%;
+    height: 100%;
+    padding: 8px 24px 8px 60px;
+    border: none;
+    outline: none;
+  }
+  @media only screen and (max-width: 768px) {
+    svg {
+      left: 1rem;
+    }
+
+    input {
+      padding: 8px 24px 8px 54px;
+    }
+  }
+`;
+
+const ApplicationRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  font-size: 14px;
+  position: relative;
+  border-top: 1px solid #c7c7c7;
+  .header {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    position: relative;
+    align-items: center;
+  }
+  .header-info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    cursor: auto;
+  }
+  .profile-image {
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+  }
+  .name {
+    color: #292929;
+    font-weight: 600;
+  }
+  .address {
+    color: #7b7b7b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 300ms;
+    position: relative;
+    z-index: 2;
+    &:hover {
+      color: #292929;
+    }
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: hidden;
+    transition: all 300ms ease-in-out;
+    max-height: 0;
+    .message {
+      padding-top: 1rem;
+    }
+    .notes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      .title {
+        color: #7b7b7b;
+      }
+    }
+    button {
+      width: fit-content;
+    }
+  }
+  .arrow {
+    rotate: 180deg;
+    transition: all 300ms;
+  }
+  .toggle-check {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 67px;
+    z-index: 1;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .toggle-check:checked + .header .arrow {
+    rotate: 0deg;
+  }
+  .toggle-check:checked + .header + .content {
+    max-height: 100%;
+  }
+  @media only screen and (max-width: 768px) {
+    padding: 1rem;
+    .header-info {
+      flex-wrap: wrap;
+      gap: 0px;
+    }
+    .name {
+      margin: 0 8px;
+    }
+    .date {
+      line-height: 1;
+      width: 100%;
+      margin-left: 2.5rem;
+    }
+  }
+`;
+
+const Dot = styled.div`
+  width: 6px;
+  height: 6px;
+  background: #7b7b7b;
+  border-radius: 50%;
+
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const Status = styled.div`
+  display: flex;
+  padding: 6px 12px;
+  gap: 8px;
+  align-items: center;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  margin-left: auto;
+  div {
+    font-weight: 500;
+  }
+  svg {
+    width: 1rem;
+  }
+  @media only screen and (max-width: 768px) {
+    padding: 6px;
+    div {
+      display: none;
+    }
+    svg {
+      width: 16px;
+    }
+  }
+`;
+
+const DropdownLabel = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  .label {
+    font-weight: 500;
+  }
+  .count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ebebeb;
+  }
+`;
 
 const ApplicationsTab = () => {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
     // transactionHashes: string;
   };
-  const { data: potDetail } = usePot({ potId });
+
+  const { data: pot } = usePot({ potId });
   const [applications, setApplications] = useState<Application[]>([]);
-  const [filteredApplications, setFilteredApplications] = useState<
-    Application[]
-  >([]);
-  const { actAsDao, accountId: _accountId } = useTypedSelector(
-    (state) => state.nav,
-  );
+  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
+  const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
   const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 
-  const owner = potDetail?.owner?.id || "";
-  const admins = potDetail?.admins.map((adm) => adm.id) || [];
-  const chef = potDetail?.chef?.id || "";
+  const owner = pot?.owner?.id || "";
+  const admins = pot?.admins.map((adm) => adm.id) || [];
+  const chef = pot?.chef?.id || "";
 
+  //! TODO: please use `indexer.usePotApplications` instead!
   useEffect(() => {
     // Fetch applications
     (async () => {
-      const applicationsData = await potContract.getApplications({ potId });
+      const applicationsData = await potClient.getApplications({ potId }).catch(() => []);
       setApplications(applicationsData);
       setFilteredApplications(applicationsData);
     })();
@@ -94,9 +327,7 @@ const ApplicationsTab = () => {
 
   // Admin - Edit Project
   const [projectId, setProjectId] = useState("");
-  const [projectStatus, setProjectStatus] = useState<
-    "Approved" | "Rejected" | ""
-  >("");
+  const [projectStatus, setProjectStatus] = useState<"Approved" | "Rejected" | "">("");
 
   const handleApproveApplication = (projectId: string) => {
     setProjectId(projectId);
@@ -119,11 +350,10 @@ const ApplicationsTab = () => {
       const { message, project_id, review_notes, status } = application;
       const searchFields = [message, project_id, review_notes, status];
       return searchFields.some((field) =>
-        field
-          ? field.toLowerCase().includes(searchTerm.toLowerCase().trim())
-          : "",
+        field ? field.toLowerCase().includes(searchTerm.toLowerCase().trim()) : "",
       );
     });
+
     return filteredApplications;
   };
 
@@ -138,10 +368,7 @@ const ApplicationsTab = () => {
     [applications],
   );
 
-  const applicationsFilters: Record<
-    string,
-    { label: string; val: string; count?: number }
-  > = {
+  const applicationsFilters: Record<string, { label: string; val: string; count?: number }> = {
     ALL: {
       label: "All applications",
       val: "ALL",
@@ -171,20 +398,19 @@ const ApplicationsTab = () => {
     if (key === "ALL") {
       return searchApplications(searchTerm);
     }
+
     const filtered = applications?.filter((application: any) => {
-      return (
-        application.status === applicationsFilters[key].label.split(" ")[0]
-      );
+      return application.status === applicationsFilters[key].label.split(" ")[0];
     });
+
     return filtered;
   };
 
   const isChefOrGreater =
-    accountId === chef ||
-    admins.includes(accountId || "") ||
-    accountId === owner;
+    accountId === chef || admins.includes(accountId || "") || accountId === owner;
 
   const [filterValue, setFilterValue] = useState("ALL");
+
   const handleSort = (key: string) => {
     const sorted = sortApplications(key);
     setFilteredApplications(sorted);
@@ -192,13 +418,10 @@ const ApplicationsTab = () => {
   };
 
   const DropdownValue = () => {
-    const digit =
-      applicationsFilters[filterValue]?.count?.toString().length || 0;
+    const digit = applicationsFilters[filterValue]?.count?.toString().length || 0;
     return (
       <DropdownLabel>
-        <div className="label">
-          {applicationsFilters[filterValue]?.label || ""}
-        </div>
+        <div className="label">{applicationsFilters[filterValue]?.label || ""}</div>
         <div
           className="count"
           style={{
@@ -214,17 +437,18 @@ const ApplicationsTab = () => {
 
   return (
     <Container>
-      {/* Modal */}
-      <ApplicationReviewModal
-        open={!!projectId}
-        potDetail={potDetail}
-        projectId={projectId}
-        projectStatus={projectStatus}
-        onCloseClick={handleCloseModal}
-      />
+      {pot && (
+        <PotApplicationReviewModal
+          open={!!projectId}
+          potDetail={pot}
+          projectId={projectId}
+          projectStatus={projectStatus}
+          onCloseClick={handleCloseModal}
+        />
+      )}
 
       <div className="dropdown">
-        <Dropdown
+        <PotFilters
           {...{
             sortVal: <DropdownValue />,
             showCount: true,
@@ -295,10 +519,8 @@ const ApplicationData = ({
   handleApproveApplication: (projectId: string) => void;
   handleRejectApplication: (projectId: string) => void;
 }) => {
-  const { project_id, status, message, review_notes, submitted_at } =
-    applicationData;
-  const { borderColor, color, icon, label, background } =
-    applicationsFiltersTags[status];
+  const { project_id, status, message, review_notes, submitted_at } = applicationData;
+  const { borderColor, color, icon, label, background } = potApplicationFiltersTags[status];
   const { profile } = useProfileData(project_id, true, false);
 
   return (
@@ -306,13 +528,8 @@ const ApplicationData = ({
       <input type="checkbox" className="toggle-check" />
       <div className="header">
         <div className="header-info">
-          <AccountProfilePicture
-            accountId={project_id}
-            className="profile-image"
-          />
-          {profile?.name && (
-            <div className="name">{truncate(profile?.name, 15)}</div>
-          )}
+          <AccountProfilePicture accountId={project_id} className="profile-image" />
+          {profile?.name && <div className="name">{truncate(profile?.name, 15)}</div>}
 
           {/* Tooltip */}
           <TooltipProvider>
@@ -368,17 +585,12 @@ const ApplicationData = ({
         {isChefOrGreater && (
           <>
             {status !== "Approved" && (
-              <Button
-                variant="tonal-filled"
-                onClick={() => handleApproveApplication(project_id)}
-              >
+              <Button variant="tonal-filled" onClick={() => handleApproveApplication(project_id)}>
                 Approve
               </Button>
             )}
             {status !== "Rejected" && (
-              <Button onClick={() => handleRejectApplication(project_id)}>
-                Reject
-              </Button>
+              <Button onClick={() => handleRejectApplication(project_id)}>Reject</Button>
             )}
           </>
         )}

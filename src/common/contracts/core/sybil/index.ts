@@ -3,14 +3,11 @@ import { Provider } from "near-api-js/lib/providers";
 
 import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
-import {
-  FULL_TGAS,
-  ONE_HUNDREDTH_NEAR,
-  TWO_HUNDREDTHS_NEAR,
-} from "@/common/constants";
+import { FULL_TGAS, ONE_HUNDREDTH_NEAR, TWO_HUNDREDTHS_NEAR } from "@/common/constants";
+import { AccountId } from "@/common/types";
 
-import { GetHumanScoreInput, HumanScoreResponse } from "./interface/is-human";
-import { Config } from "./interface/lib";
+import { GetHumanScoreInput, HumanScoreResponse } from "./interfaces/is-human";
+import { Config } from "./interfaces/lib";
 import {
   ActivateProviderInput,
   DeactivateProviderInput,
@@ -19,13 +16,12 @@ import {
   RegisterProviderInput,
   UnflagProviderInput,
   UpdateProviderInput,
-} from "./interface/providers";
+} from "./interfaces/providers";
 import {
-  AccountId,
   GetStampsForAccountIdInput,
   GetUsersForStampInput,
   StampExternal,
-} from "./interface/stamps";
+} from "./interfaces/stamps";
 
 /**
  * NEAR Contract API
