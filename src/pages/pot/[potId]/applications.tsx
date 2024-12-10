@@ -295,7 +295,7 @@ const ApplicationsTab = () => {
   useEffect(() => {
     // Fetch applications
     (async () => {
-      const applicationsData = await potClient.getApplications({ potId });
+      const applicationsData = await potClient.getApplications({ potId }).catch(() => []);
       setApplications(applicationsData);
       setFilteredApplications(applicationsData);
     })();
