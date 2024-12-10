@@ -14,7 +14,7 @@ export const categories: ProjectCategoryOption[] = [
 ];
 
 export const statuses: ProjectListingStatusOption[] = [
-  { label: "All", val: "all" },
+  { label: "All", val: "All" },
   { label: "Approved", val: "Approved" },
   { label: "Pending", val: "Pending" },
   { label: "Rejected", val: "Rejected" },

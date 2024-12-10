@@ -175,7 +175,7 @@ export const AccountCard = ({
                     </Trigger>
                     <SelectContent>
                       {statuses
-                        .filter((item) => item.val !== "all")
+                        .filter((item) => item.val !== "All")
                         .map((item) => (
                           <SelectItem value={item.val} key={item.val}>
                             {item.val}
