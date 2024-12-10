@@ -1,10 +1,19 @@
 import { useMemo } from "react";
 
 import { Dot } from "lucide-react";
+import Link from "next/link";
 
 import { daysAgo, truncate } from "@/common/lib";
 import { AccountId, ByAccountId } from "@/common/types";
-import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
+import {
+  Avatar,
+  AvatarImage,
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/entities/profile";
 
@@ -17,6 +26,7 @@ export type AccountOptionProps = ByAccountId &
     primaryAction?: React.ReactNode;
     secondaryAction?: React.ReactNode;
     daysAgoData?: number;
+    accountLink?: string;
 
     classNames?: {
       root?: string;
@@ -34,6 +44,7 @@ export const AccountOption = ({
   title,
   daysAgoData,
   classNames,
+  accountLink,
 }: AccountOptionProps) => {
   const { profileImages, profile, profileReady } = useProfileData(accountId);
 
@@ -61,42 +72,60 @@ export const AccountOption = ({
     [accountId, avatarSrc, classNames?.avatar, profileReady, title],
   );
 
-  return isThumbnail ? (
-    avatarElement
-  ) : (
-    <div
-      className={cn(
-        "font-['Mona Sans'] flex w-full cursor-pointer items-center gap-4",
-        { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
-        classNames?.root,
-      )}
-    >
-      {primaryAction}
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <Link
+            className="address"
+            href={accountLink ? `${accountLink}` : `/profile/${accountId}`}
+            target="_blank"
+          >
+            {isThumbnail ? (
+              avatarElement
+            ) : (
+              <div
+                className={cn(
+                  "font-['Mona Sans'] flex w-full cursor-pointer items-center gap-4 hover:bg-transparent",
+                  { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
+                  classNames?.root,
+                )}
+              >
+                {primaryAction}
 
-      <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
-        {avatarElement}
+                <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
+                  {avatarElement}
 
-        <div className="flex flex-col">
-          <span className="text-[17px] font-semibold leading-normal text-[#292929]">
-            {profile?.name
-              ? truncate(profile?.name, nameTruncateIndex)
-              : accountId.split(".").slice(0, -1).join(".")}
-          </span>
-          <div className="inline-flex items-center justify-start text-sm font-normal leading-tight text-[#7a7a7a] ">
-            <p>
-              @{accountId.length > truncateIndex ? truncate(accountId, truncateIndex) : accountId}
-            </p>
-            {daysAgoData ? (
-              <>
-                <Dot />
-                <p className="whitespace-nowrap">{daysAgo(Number(daysAgoData))}</p>
-              </>
-            ) : null}
-          </div>
-        </div>
-      </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-[17px] font-semibold leading-normal text-[#292929]">
+                      {profile?.name
+                        ? truncate(profile?.name, nameTruncateIndex)
+                        : accountId.split(".").slice(0, -1).join(".")}
+                    </span>
+                    <div className="inline-flex items-center justify-start text-sm font-normal leading-tight text-[#7a7a7a] ">
+                      <p>
+                        @
+                        {accountId.length > truncateIndex
+                          ? truncate(accountId, truncateIndex)
+                          : accountId}
+                      </p>
+                      {daysAgoData ? (
+                        <>
+                          <Dot />
+                          <p className="whitespace-nowrap">{daysAgo(Number(daysAgoData))}</p>
+                        </>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
 
-      {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}
-    </div>
+                {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}
+              </div>
+            )}
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent>{accountId}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
