@@ -28,14 +28,17 @@ export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = (
   const { data: votes, mutate: revalidateVotes } = useVotingCandidateVotes({ potId, accountId });
 
   const canReceiveVotes = useMemo(
-    () => votes?.find(({ voter }) => voter === userSession.accountId) === undefined,
+    // TODO: enable
+    // @ts-expect-error temporarily disabled
+    () => false ?? votes?.find(({ voter }) => voter === userSession.accountId) === undefined,
     [votes, userSession.accountId],
   );
 
   // TODO: Election ID is hardcoded
-  const handleVoteCast = useCallback(() => {
-    votingClient.vote({ election_id: 1, vote: [accountId, 1] }).then(() => revalidateVotes());
-  }, [accountId, revalidateVotes]);
+  const handleVoteCast = useCallback(
+    () => votingClient.vote({ election_id: 1, vote: [accountId, 1] }).then(() => revalidateVotes()),
+    [accountId, revalidateVotes],
+  );
 
   const onCheckTriggered = useCallback(
     (checked: CheckedState) => onSelect?.(accountId, Boolean(checked)),

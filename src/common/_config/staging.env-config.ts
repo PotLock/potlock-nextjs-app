@@ -36,6 +36,8 @@ export const envConfig: EnvConfig = {
     },
 
     voting: {
+      // TODO: Figure out a way to store pot-associated voting contract instances on backend / chain
+      //! Be careful when refactoring this
       contract: { accountId: "mpdao.vote.staging.potlock.near" },
     },
   },

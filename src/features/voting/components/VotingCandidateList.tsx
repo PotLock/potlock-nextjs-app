@@ -1,5 +1,5 @@
 import { ByPotId } from "@/common/api/indexer";
-import { ApplicationStatus, Candidate } from "@/common/contracts/core/voting";
+import { Candidate } from "@/common/contracts/core/voting";
 import { ScrollArea } from "@/common/ui/components";
 
 import { VotingCandidateListItem, VotingCandidateListItemProps } from "./VotingCandidateListItem";
