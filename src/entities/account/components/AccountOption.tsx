@@ -36,7 +36,8 @@ export const AccountOption = ({
 }: AccountOptionProps) => {
   const { profileImages, profile, profileReady } = useProfileData(accountId);
 
-  const tuncateIndex = window.innerWidth > 768 ? 20 : 5;
+  const truncateIndex = window.innerWidth > 768 ? 20 : 8;
+  const nameTruncateIndex = window.innerWidth > 768 ? 24 : 15;
   const avatarSrc = useMemo(
     () =>
       (typeof profile?.image === "string" ? profile?.image : profile?.image?.url) ??
@@ -63,7 +64,7 @@ export const AccountOption = ({
   ) : (
     <div
       className={cn(
-        "font-['Mona Sans'] flex w-full items-center gap-4",
+        "font-['Mona Sans'] flex w-full cursor-pointer items-center gap-4",
         { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
         classNames?.root,
       )}
@@ -76,15 +77,12 @@ export const AccountOption = ({
         <div className="flex flex-col">
           <span className="text-[17px] font-semibold leading-normal text-[#292929]">
             {profile?.name
-              ? truncate(profile?.name, 20)
+              ? truncate(profile?.name, nameTruncateIndex)
               : accountId.split(".").slice(0, -1).join(".")}
           </span>
-          <div className="inline-flex items-start justify-start text-sm font-normal leading-tight text-[#7a7a7a] ">
-            <p className="flex md:hidden">
-              @{accountId.length > tuncateIndex ? truncate(accountId, tuncateIndex) : accountId}
-            </p>
-            <p className="md:flex">
-              @{accountId.length > tuncateIndex ? truncate(accountId, tuncateIndex) : accountId}
+          <div className="inline-flex items-center justify-start text-sm font-normal leading-tight text-[#7a7a7a] ">
+            <p>
+              @{accountId.length > truncateIndex ? truncate(accountId, truncateIndex) : accountId}
             </p>
             {daysAgoData ? (
               <>
