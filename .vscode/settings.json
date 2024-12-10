@@ -13,6 +13,12 @@
     "source.fixAll.eslint": "explicit",
     "source.fixAll": "explicit"
   },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[postcss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
@@ -70,6 +76,7 @@
     "potfactory",
     "POTLOCK",
     "precommit",
+    "preflights",
     "ramper",
     "retropgf",
     "RPGF",
