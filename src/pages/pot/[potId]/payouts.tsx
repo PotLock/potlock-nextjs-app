@@ -10,7 +10,7 @@ import { yoctoNearToFloat } from "@/common/lib";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { PotPayoutChallenges, useOrderedDonations } from "@/entities/pot";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const TableContainer = styled.div`
   display: flex;
@@ -249,9 +249,11 @@ export default function PayoutsTab() {
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
   const [showChallenges, setShowChallenges] = useState<boolean>(false);
 
+  // TODO!: REFACTOR TO USE `indexer.usePotPayouts({ potId })`,
+  //! as this effect can be easily broken, which WILL cause runtime crashes !!!
   useEffect(() => {
     (async () => {
-      const payouts = await potClient.getPayouts({ potId });
+      const payouts = await potClient.getPayouts({ potId }).catch(() => []);
       setAllPayouts(payouts);
       setFilteredPayouts(payouts);
     })();

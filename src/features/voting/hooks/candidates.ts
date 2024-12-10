@@ -29,10 +29,7 @@ export const useVotingCandidates = ({ potId }: ByPotId) => {
           };
         },
 
-        {
-          candidatesWithVotes: [] as Candidate[],
-          candidatesWithoutVotes: [] as Candidate[],
-        },
+        { candidatesWithVotes: [] as Candidate[], candidatesWithoutVotes: [] as Candidate[] },
       );
 
     return {

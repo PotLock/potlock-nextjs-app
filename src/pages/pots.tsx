@@ -4,9 +4,9 @@ import Link from "next/link";
 
 import { potFactoryClient } from "@/common/contracts/core";
 import { Button, PageWithBanner } from "@/common/ui/components";
-import { hrefByRouteName } from "@/entities/core";
 import { ActivePots } from "@/entities/pot";
 import { useWallet } from "@/entities/session";
+import { rootPathnames } from "@/pathnames";
 
 const Banner = () => {
   const { wallet } = useWallet();
@@ -34,7 +34,7 @@ const Banner = () => {
         <div className="max-xs:w-full max-xs:p-[12px_0px] mt-6 mt-[40px] flex items-center gap-8 max-md:flex-col max-md:gap-4">
           {isPotDeploymentAvailable && (
             <Button asChild>
-              <Link href={hrefByRouteName.DEPLOY_POT}>Deploy Pot</Link>
+              <Link href={rootPathnames.DEPLOY_POT}>Deploy Pot</Link>
             </Button>
           )}
           <Link

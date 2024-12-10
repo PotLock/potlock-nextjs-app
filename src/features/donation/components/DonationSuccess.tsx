@@ -24,8 +24,8 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import { AccountProfileLink } from "@/entities/account";
-import routesPath from "@/entities/core/routes";
 import { TokenTotalValue } from "@/entities/token";
+import routesPath from "@/pathnames";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationSybilWarning } from "./DonationSybilWarning";

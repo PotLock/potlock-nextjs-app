@@ -20,7 +20,7 @@ import {
   useVotingElection,
   useVotingParticipantVoteWeight,
 } from "@/features/voting";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotVotesTab() {
   const userSession = useSessionAuth();

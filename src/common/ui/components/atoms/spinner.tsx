@@ -7,7 +7,7 @@ export type SpinnerProps = {
   width?: number;
 
   /**
-   * @deprecated Use `className
+   * @deprecated Use `className`
    */
   height?: number;
 

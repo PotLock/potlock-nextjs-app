@@ -9,30 +9,32 @@ export interface ByElectionId {
   electionId: ElectionId;
 }
 
+export const useElections = () => useSWR(["get_elections"], () => votingClient.get_elections({}));
+
 export const useActiveElections = () =>
   useSWR(["get_active_elections"], () => votingClient.get_active_elections());
 
 export const useElection = ({ electionId }: ByElectionId) =>
   useSWR(
-    [electionId],
+    ["get_election", electionId],
 
-    ([election_id]: [ElectionId]) =>
+    ([_queryKey, election_id]: [string, ElectionId]) =>
       election_id === 0 ? undefined : votingClient.get_election({ election_id }),
   );
 
 export const useElectionCandidates = ({ electionId }: ByElectionId) =>
   useSWR(
-    [electionId],
+    ["get_election_candidates", electionId],
 
-    ([election_id]: [ElectionId]) =>
+    ([_queryKey, election_id]: [string, ElectionId]) =>
       election_id === 0 ? undefined : votingClient.get_election_candidates({ election_id }),
   );
 
 export const useElectionCandidateVotes = ({ electionId, accountId }: ByElectionId & ByAccountId) =>
   useSWR(
-    [electionId, accountId],
+    ["get_candidate_votes", electionId, accountId],
 
-    ([election_id, candidate_id]: [ElectionId, AccountId]) =>
+    ([_queryKey, election_id, candidate_id]: [string, ElectionId, AccountId]) =>
       election_id === 0
         ? undefined
         : votingClient.get_candidate_votes({ election_id, candidate_id }),

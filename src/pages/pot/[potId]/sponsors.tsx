@@ -8,7 +8,7 @@ import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
 import { Spinner } from "@/common/ui/components";
 import { PotSponsorsBoard, PotSponsorsTable, useOrderedDonations } from "@/entities/pot";
 import { CustomDonationType } from "@/entities/pot/models/types";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 // TODO: refactor using tailwind!
 export const Container = styled.div`

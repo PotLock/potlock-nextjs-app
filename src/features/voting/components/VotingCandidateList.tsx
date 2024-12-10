@@ -1,5 +1,5 @@
 import { ByPotId } from "@/common/api/indexer";
-import { ApplicationStatus, Candidate } from "@/common/contracts/core/voting";
+import { Candidate } from "@/common/contracts/core/voting";
 import { ScrollArea } from "@/common/ui/components";
 
 import { VotingCandidateListItem, VotingCandidateListItemProps } from "./VotingCandidateListItem";
@@ -32,15 +32,6 @@ export type VotingCandidateListProps = ByPotId & {
   data: Candidate[];
   onEntrySelect?: VotingCandidateListItemProps["onSelect"];
 };
-
-const FAKE_DATA: Candidate[] = [
-  {
-    account_id: "carina.akaia.near",
-    status: ApplicationStatus.Approved,
-    votes_received: 2,
-    application_date: 1242421412412343,
-  },
-];
 
 export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
   potId,

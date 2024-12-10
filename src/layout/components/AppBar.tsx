@@ -9,25 +9,25 @@ import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
 import { CartLink } from "@/entities/cart";
 import { SessionSignInButton, useSessionReduxStore } from "@/entities/session";
+import { rootPathnames } from "@/pathnames";
 
 import { UserDropdown } from "./UserDropdown";
-import routesPath, { hrefByRouteName } from "../entities/core/routes";
 
 const links = [
-  { label: "Projects", url: routesPath.PROJECTS_LIST, disabled: false },
-  { label: "Pots", url: routesPath.POTS, disabled: false },
+  { label: "Projects", url: rootPathnames.PROJECTS_LIST, disabled: false },
+  { label: "Pots", url: rootPathnames.POTS, disabled: false },
   {
     label: "Campaigns",
-    url: routesPath.CAMPAIGNS,
+    url: rootPathnames.CAMPAIGNS,
     disabled: NETWORK !== "testnet",
   },
 
-  { label: "Feed", url: routesPath.FEED, disabled: false },
-  // { label: "Donors", url: routesPath.DONORS, disabled: false },
+  { label: "Feed", url: rootPathnames.FEED, disabled: false },
+  // { label: "Donors", url: rootPathnames.DONORS, disabled: false },
 
   {
     label: "Lists",
-    url: routesPath.LIST,
+    url: rootPathnames.LIST,
     disabled: false,
   },
 ];
@@ -73,7 +73,7 @@ const MobileNav = () => {
         return (
           <Link
             key={url + label}
-            href={disabled ? hrefByRouteName.CURRENT : url}
+            href={disabled ? rootPathnames.CURRENT : url}
             className={cn(
               "decoration-none not-last-child hover:decoration-none relative mr-8 text-sm",
 
@@ -126,7 +126,7 @@ export const AppBar = () => {
                 return (
                   <Link
                     key={url + label}
-                    href={disabled ? hrefByRouteName.CURRENT : url}
+                    href={disabled ? rootPathnames.CURRENT : url}
                     className={cn(
                       "decoration-none not-last-child hover:decoration-none relative mr-8 text-sm",
 

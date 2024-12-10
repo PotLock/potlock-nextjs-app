@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { PotEditor } from "@/features/pot-editor";
 import { VotingConfiguration, isVotingEnabled } from "@/features/voting";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotEditorSettingsTab() {
   const { query: routeQuery } = useRouter();

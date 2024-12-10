@@ -20,7 +20,7 @@ import { APP_METADATA } from "@/common/constants";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
 import { SessionProvider } from "@/entities/session";
-import { AppBar } from "@/layout/AppBar";
+import { AppBar } from "@/layout/components/AppBar";
 import { dispatch, store } from "@/store";
 
 const lora = Lora({

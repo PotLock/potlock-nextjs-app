@@ -9,7 +9,7 @@ import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
-import routesPath from "@/entities/core/routes";
+import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 import ChallengeResolveModal from "./ChallengeResolveModal";

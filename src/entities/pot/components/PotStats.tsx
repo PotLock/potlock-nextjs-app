@@ -7,8 +7,8 @@ import { Pot } from "@/common/api/indexer";
 import { Toggle } from "@/common/assets/svgs";
 import { truncate } from "@/common/lib";
 import { AccountProfilePicture } from "@/entities/account";
-import { hrefByRouteName } from "@/entities/core/routes";
 import { useProfileData } from "@/entities/profile";
+import { rootPathnames } from "@/pathnames";
 
 import { Container, Row } from "./styled";
 import { JoinDonation, useOrderedDonations } from "../hooks/useOrderedDonations";
@@ -86,7 +86,7 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
     ? (nearAmount * oneNearUsdPrice).toFixed(2)
     : nearAmount.toFixed(2);
 
-  const url = `${hrefByRouteName.PROJECT}/${donorId}`;
+  const url = `${rootPathnames.PROJECT}/${donorId}`;
 
   return (
     <Row>

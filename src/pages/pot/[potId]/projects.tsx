@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { PotApplication, PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { InfiniteScroll, SearchBar } from "@/common/ui/components";
 import { ProjectCard } from "@/entities/project";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const handleSearch = (
   searchTerm: string,

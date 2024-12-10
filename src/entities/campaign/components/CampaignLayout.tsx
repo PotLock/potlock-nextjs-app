@@ -34,7 +34,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
       </div>
       <Tabs
         asLink
-        navOptions={tabs}
+        options={tabs}
         selectedTab={selectedTab.id}
         onSelect={(tabId: string) => handleSelectedTab(tabId)}
       />

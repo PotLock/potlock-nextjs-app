@@ -7,7 +7,7 @@ import { Donation, indexer } from "@/common/api/indexer";
 import { Arrow } from "@/common/assets/svgs";
 import { DeprecatedPagination, Spinner } from "@/common/ui/components";
 import { PotDonationEntry } from "@/entities/pot";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const SearchBar = styled.div`
   display: flex;
@@ -136,7 +136,7 @@ export default function PotDonationsTab() {
 
   const { data, isLoading } = indexer.usePotDonations({
     potId,
-    page_size: 999,
+    page_size: 9999,
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -238,7 +238,7 @@ export default function PotDonationsTab() {
   }
 
   return (
-    <div className="flex w-full flex-col py-10 md:py-12">
+    <div className="flex w-full flex-col pb-10 md:pb-12">
       <div className="flex flex-col gap-[1.5rem]">
         <div className="font-600 text-[18px] text-[#292929]">
           All Donations
