@@ -23,6 +23,7 @@ export type AccountOptionProps = ByAccountId &
       avatar?: string;
     };
   };
+
 export const AccountOption = ({
   isRounded = false,
   isThumbnail = false,
@@ -38,6 +39,7 @@ export const AccountOption = ({
 
   const truncateIndex = window.innerWidth > 768 ? 20 : 8;
   const nameTruncateIndex = window.innerWidth > 768 ? 24 : 15;
+
   const avatarSrc = useMemo(
     () =>
       (typeof profile?.image === "string" ? profile?.image : profile?.image?.url) ??
