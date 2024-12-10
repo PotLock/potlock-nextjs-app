@@ -2,6 +2,7 @@ import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
 import { DialogOverlay } from "@radix-ui/react-dialog";
 import { Dot } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { MdCommentsDisabled } from "react-icons/md";
@@ -17,7 +18,6 @@ import { daysAgo, toChronologicalOrder, truncate } from "@/common/lib";
 import {
   Button,
   FilterChip,
-  Input,
   SearchBar,
   Tooltip,
   TooltipContent,
@@ -26,11 +26,14 @@ import {
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountOption, AccountProfilePicture } from "@/entities/account";
-import { PotFilters } from "@/entities/pot";
 import { useProfileData } from "@/entities/profile";
 import { ProjectListingStatusVariant } from "@/entities/project";
-import { ProjectCardSkeleton } from "@/entities/project/components/ProjectCardSkeleton";
-import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
+import {
+  PotApplicationCardSkeleton,
+  PotApplicationModal,
+  PotApplicationReviewModal,
+  potApplicationFiltersTags,
+} from "@/features/pot-application";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
@@ -139,8 +142,6 @@ const ApplicationsTab = () => {
   };
 
   const { data: potDetail } = usePot({ potId });
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
   const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
   const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = isDao ? actAsDao.defaultAddress : _accountId;
@@ -162,22 +163,10 @@ const ApplicationsTab = () => {
     search: searchTerm,
   });
 
-  const results = useMemo(() => {
+  const sortedResults = useMemo(() => {
     const oldToRecent = toChronologicalOrder("submitted_at", apps?.results ?? []);
     return oldToRecent.toReversed();
   }, [apps?.results]);
-
-  //! TODO: please use `indexer.usePotApplications` instead!
-  // useEffect(() => {
-  //   // if (!apps) return;
-  //   // Fetch applications
-  //   (async () => {
-  //     const applicationsData = await potClient.getApplications({ potId });
-  //     setApplications(applications);
-  //     setFilteredApplications(applicationsData);
-  //   })();
-  // }, [potId]);
-  console.log({ filteredApplications, results });
 
   // Handle update application status for web wallet
   // INFO: Not needed. There's a global transaction successful modal. But leaving it here just in case
@@ -222,18 +211,6 @@ const ApplicationsTab = () => {
     setProjectStatus("");
   };
 
-  // const searchApplications = (searchTerm: string) => {
-  //   // filter applications that match the search term (message, id, review_notes or status)
-  //   const filteredApplications = applications?.filter((application) => {
-  //     const { message, id, review_notes, status } = application;
-  //     const searchFields = [message, id, review_notes, status];
-  //     return searchFields.some((field) =>
-  //       field ? field.toLowerCase().includes(searchTerm.toLowerCase().trim()) : "",
-  //     );
-  //   });
-  //   return filteredApplications;
-  // };
-
   const getApplicationCount = (status: string) => {
     return apps?.results.filter((app) => app.status === status).length;
   };
@@ -262,27 +239,8 @@ const ApplicationsTab = () => {
     },
   };
 
-  // const [searchTerm, setSearchTerm] = useState("");
-
-  // const sortApplications = (key: string) => {
-  //   if (key === "ALL") {
-  //     return searchApplications(searchTerm);
-  //   }
-  //   const filtered = applications?.filter((application: any) => {
-  //     return application.status === applicationsFilters[key].label.split(" ")[0];
-  //   });
-  //   return filtered;
-  // };
-
   const isChefOrGreater =
     accountId === chef || admins.includes(accountId || "") || accountId === owner;
-
-  // const [filterValue, setFilterValue] = useState("ALL");
-  // const handleSort = (key: string) => {
-  //   const sorted = sortApplications(key);
-  //   setFilteredApplications(sorted);
-  //   setFilterValue(key);
-  // };
 
   useEffect(() => {
     if (error) {
@@ -291,6 +249,9 @@ const ApplicationsTab = () => {
 
     console.log({ statusFilter });
   }, [statusFilter, error]);
+
+  const ApplicationLookupPlaceholder = () =>
+    Array.from({ length: 6 }, (_, i) => <PotApplicationCardSkeleton key={i} />);
 
   return (
     <Container className="gap-6">
@@ -325,9 +286,8 @@ const ApplicationsTab = () => {
           defaultValue={searchTerm}
         />
         <div className="flex w-full flex-col flex-wrap justify-between gap-5 md:flex-row">
-          {
-            // filteredApplications.length ? (
-            results.map((application: PotApplication) => (
+          {!areApplicationsLoading ? (
+            sortedResults.map((application: PotApplication) => (
               <ApplicationData
                 key={application.id}
                 applicationData={application}
@@ -337,10 +297,24 @@ const ApplicationsTab = () => {
                 isLoading={areApplicationsLoading}
               />
             ))
-            // ) : (
-            //   <div style={{ padding: "1rem" }}>No applications to display</div>
-            // )
-          }
+          ) : (
+            <ApplicationLookupPlaceholder />
+          )}
+          {!sortedResults && (
+            <div className="min-h-140 flex w-full flex-col items-center justify-center">
+              <Image
+                src="/assets/icons/no-list.svg"
+                alt="No results found"
+                width={200}
+                height={200}
+                className="h-50 w-50 mb-4"
+              />
+
+              <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
+                <p className="w-100 text-center font-lora italic">{"No results found"}</p>
+              </div>
+            </div>
+          )}
         </div>
       </ApplicationsWrapper>
     </Container>
@@ -365,15 +339,13 @@ const ApplicationData = ({
   const { id: projectId } = applicant;
   const review_notes = null;
 
-  const { borderColor, color, icon, label, background } = potApplicationFiltersTags[status];
+  const { icon, label } = potApplicationFiltersTags[status];
   const { profile } = useProfileData(projectId, true, false);
 
-  return areApplicationsLoading ? (
-    <ProjectCardSkeleton />
-  ) : (
+  return (
     <ApplicationCard
       key={projectId}
-      className="mx-auto flex min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border border-[#eaeaea] bg-white p-5 md:min-w-[425px]"
+      className="mx-auto flex min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border border-[#eaeaea] bg-white p-5 md:min-w-[445px]"
     >
       <div className="header">
         <div className="header-info">
@@ -383,6 +355,7 @@ const ApplicationData = ({
             highlightOnHover={true}
             isRounded={true}
             daysAgoData={submittedTimeStamp}
+            accountLink={`${routesPath.PROJECT}/${projectId}`}
           />
         </div>
         <Status
