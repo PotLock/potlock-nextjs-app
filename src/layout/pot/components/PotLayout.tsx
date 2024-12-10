@@ -23,7 +23,7 @@ export type PotLayoutProps = {
 export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { query: routeQuery } = useRouter();
   const { potId, ...query } = routeQuery as { potId: string; done?: string; errorMessage?: string };
-  const { activeTabHref, orderedTabList } = usePotLayoutTabNavigation({ potId });
+  const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
   const { data: pot } = indexer.usePot({ potId });
   const { existingChallengeForUser } = usePotBasicUserPermissions({ potId });
 
@@ -108,7 +108,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
                   "font-500 border-b-solid transition-duration-300 whitespace-nowrap",
                   "border-b-[2px] border-b-[transparent] px-4 py-[10px] text-sm text-[#7b7b7b]",
                   "transition-all hover:border-b-[#292929] hover:text-[#292929]",
-                  { hidden: isHidden, "border-b-[#292929] text-[#292929]": href === activeTabHref },
+                  { hidden: isHidden, "border-b-[#292929] text-[#292929]": tag === activeTab?.tag },
                 )}
                 {...{ href }}
               >

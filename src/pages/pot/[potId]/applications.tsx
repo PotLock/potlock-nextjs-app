@@ -280,16 +280,16 @@ const ApplicationsTab = () => {
     // transactionHashes: string;
   };
 
-  const { data: potDetail } = usePot({ potId });
+  const { data: pot } = usePot({ potId });
   const [applications, setApplications] = useState<Application[]>([]);
   const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
   const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
   const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 
-  const owner = potDetail?.owner?.id || "";
-  const admins = potDetail?.admins.map((adm) => adm.id) || [];
-  const chef = potDetail?.chef?.id || "";
+  const owner = pot?.owner?.id || "";
+  const admins = pot?.admins.map((adm) => adm.id) || [];
+  const chef = pot?.chef?.id || "";
 
   //! TODO: please use `indexer.usePotApplications` instead!
   useEffect(() => {
@@ -437,14 +437,15 @@ const ApplicationsTab = () => {
 
   return (
     <Container>
-      {/* Modal */}
-      <PotApplicationReviewModal
-        open={!!projectId}
-        potDetail={potDetail}
-        projectId={projectId}
-        projectStatus={projectStatus}
-        onCloseClick={handleCloseModal}
-      />
+      {pot && (
+        <PotApplicationReviewModal
+          open={!!projectId}
+          potDetail={pot}
+          projectId={projectId}
+          projectStatus={projectStatus}
+          onCloseClick={handleCloseModal}
+        />
+      )}
 
       <div className="dropdown">
         <PotFilters

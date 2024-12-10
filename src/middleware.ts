@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// import { rootPathnames } from "./pathnames";
+
 export async function middleware(request: NextRequest) {
-  // PROFILE - INIT
   const isProfilePage = request.nextUrl.pathname.startsWith("/profile/");
+  const isPotPage = request.nextUrl.pathname.startsWith("/pot/");
 
   if (
     isProfilePage &&
@@ -15,23 +17,25 @@ export async function middleware(request: NextRequest) {
   ) {
     return NextResponse.rewrite(`${request.url}home`);
   }
-  // PROFILE - END
 
-  // POT - INIT
-  const isPotPage = request.nextUrl.pathname.startsWith("/pot/");
-
-  if (
-    isPotPage &&
-    (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
-  ) {
-    return NextResponse.rewrite(`${request.url}/projects`);
-  } else if (
-    isPotPage &&
-    (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))
-  ) {
-    return NextResponse.rewrite(`${request.url}projects`);
+  // TODO: Consider removing this block in the future
+  if (isPotPage) {
+    // if (
+    //   request.nextUrl.pathname.endsWith(".near") ||
+    //   request.nextUrl.pathname.endsWith(".testnet")
+    // ) {
+    //   return NextResponse.rewrite(`${request.url}/settings`);
+    // } else if (
+    //   request.nextUrl.pathname.endsWith(".near/") ||
+    //   request.nextUrl.pathname.endsWith(".testnet/")
+    // ) {
+    //   return NextResponse.rewrite(`${request.url}settings`);
+    // } else if (request.nextUrl.pathname.includes(`${undefined}`)) {
+    //   const url = request.nextUrl.clone();
+    //   url.pathname = rootPathnames.POTS;
+    //   return NextResponse.rewrite(url);
+    // }
   }
-  // POT - END
 
   return NextResponse.next();
 }

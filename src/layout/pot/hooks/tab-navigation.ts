@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter } from "next/router";
 
@@ -26,13 +26,15 @@ type PotLayoutTabRegistry = Record<PotLayoutTabTag, PotLayoutTabOption>;
 
 interface PotLayoutTabNavigation {
   defaultTabTag: PotLayoutTabTag;
-  activeTabHref: LayoutTabOption["href"];
+  activeTab: PotLayoutTabOption | null;
   navigateToTab: (tag: PotLayoutTabTag) => void;
   orderedTabList: PotLayoutTabOption[];
 }
 
+// TODO: Consider extracting this to a reusable abstract hook and applying performance optimizations
 export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavigation => {
   const { asPath: currentPath, push: navigateToHref } = useRouter();
+  const rootHref = useMemo(() => `${rootPathnames.pot}/${potId}`, [potId]);
   const hasVoting = isVotingEnabled({ potId });
 
   const defaultTabTag = useMemo(() => {
@@ -47,58 +49,55 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
     () => ({
       [PotLayoutTabTag.Projects]: {
         tag: PotLayoutTabTag.Projects,
-        href: `${rootPathnames.pot}/${potId}/projects`,
+        href: `${rootHref}/projects`,
         isHidden: hasVoting,
       },
 
       [PotLayoutTabTag.Applications]: {
         tag: PotLayoutTabTag.Applications,
-        href: `${rootPathnames.pot}/${potId}/applications`,
+        href: `${rootHref}/applications`,
       },
 
       [PotLayoutTabTag.Votes]: {
         tag: PotLayoutTabTag.Votes,
-        href: `${rootPathnames.pot}/${potId}/votes`,
+        href: `${rootHref}/votes`,
         isHidden: !hasVoting,
       },
 
       [PotLayoutTabTag.Donations]: {
         tag: PotLayoutTabTag.Donations,
-        href: `${rootPathnames.pot}/${potId}/donations`,
+        href: `${rootHref}/donations`,
         isHidden: hasVoting,
       },
 
       [PotLayoutTabTag.Sponsors]: {
         tag: PotLayoutTabTag.Sponsors,
-        href: `${rootPathnames.pot}/${potId}/sponsors`,
+        href: `${rootHref}/sponsors`,
       },
 
       [PotLayoutTabTag.Payouts]: {
         tag: PotLayoutTabTag.Payouts,
-        href: `${rootPathnames.pot}/${potId}/payouts`,
+        href: `${rootHref}/payouts`,
       },
 
       [PotLayoutTabTag.Feeds]: {
         tag: PotLayoutTabTag.Feeds,
-        href: `${rootPathnames.pot}/${potId}/feeds`,
+        href: `${rootHref}/feeds`,
       },
 
       [PotLayoutTabTag.Settings]: {
         tag: PotLayoutTabTag.Settings,
-        href: `${rootPathnames.pot}/${potId}/settings`,
+        href: `${rootHref}/settings`,
       },
     }),
-    [hasVoting, potId],
+
+    [hasVoting, rootHref],
   );
 
-  const activeTabHref = useMemo(() => {
-    if (currentPath === tabRegistry[defaultTabTag].href) {
-      return tabRegistry[defaultTabTag].href;
-    }
-
-    const activeTab = Object.values(tabRegistry).find(({ href }) => href === currentPath);
-    return activeTab?.href || tabRegistry[defaultTabTag].href;
-  }, [currentPath, defaultTabTag, tabRegistry]);
+  const activeTab: PotLayoutTabOption | null = useMemo(
+    () => Object.values(tabRegistry).find(({ href }) => href === currentPath) ?? null,
+    [currentPath, tabRegistry],
+  );
 
   const orderedTabList = useMemo(
     () => [
@@ -110,14 +109,14 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
   );
 
   const navigateToTab = useCallback(
-    (tag: PotLayoutTabTag) => {
-      const tabHref = tabRegistry[tag].href;
-      navigateToHref(tabHref);
-    },
+    (tag: PotLayoutTabTag) => void navigateToHref(tabRegistry[tag].href),
     [navigateToHref, tabRegistry],
   );
 
-  // TODO: always navigate to the default tab upon root page load
+  useEffect(() => {
+    if (potId !== undefined && (activeTab === null || currentPath === rootHref))
+      navigateToTab(defaultTabTag);
+  }, [activeTab, currentPath, defaultTabTag, navigateToTab, potId, rootHref]);
 
-  return { defaultTabTag, activeTabHref, orderedTabList, navigateToTab };
+  return { defaultTabTag, activeTab, orderedTabList, navigateToTab };
 };

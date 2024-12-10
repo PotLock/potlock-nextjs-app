@@ -22,16 +22,18 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
 
   // Flagged Addresses are the ones that should not be included
 
+  // TODO!: REFACTOR TO USE `indexer.usePotDonations({ potId })`,
+  //! and `indexer.usePotPayouts({ potId })`,
+  //! as this effect can be easily broken, which WILL cause runtime crashes !!!
   useEffect(() => {
-    // INFO: The generated swr was not working
     (async () => {
       // Donations
       const donationsData = await getPotDonations({
         potId,
         pageSize: 9999,
-      });
+      }).catch(() => undefined);
 
-      const filteredDonations = donationsData.results.filter((donation) => {
+      const filteredDonations = (donationsData?.results ?? []).filter((donation) => {
         // Skip Near Payments?
         return !includeNearFoundationPayment
           ? (donation.donor.id || donation.pot.account) !== "nf-payments.near"
@@ -87,10 +89,10 @@ export const useOrderedDonations = (potId: string, includeNearFoundationPayment 
       const payouts = await getPotPayouts({
         potId,
         pageSize: 9999,
-      });
+      }).catch(() => undefined);
 
       // remove Near Payments
-      const filteredPayouts = payouts.results.filter((payout) =>
+      const filteredPayouts = (payouts?.results ?? []).filter((payout) =>
         !includeNearFoundationPayment
           ? (payout.recipient.id || payout.pot.account) !== "nf-payments.near"
           : true,

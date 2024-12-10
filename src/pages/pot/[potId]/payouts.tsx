@@ -249,9 +249,11 @@ export default function PayoutsTab() {
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
   const [showChallenges, setShowChallenges] = useState<boolean>(false);
 
+  // TODO!: REFACTOR TO USE `indexer.usePotPayouts({ potId })`,
+  //! as this effect can be easily broken, which WILL cause runtime crashes !!!
   useEffect(() => {
     (async () => {
-      const payouts = await potClient.getPayouts({ potId });
+      const payouts = await potClient.getPayouts({ potId }).catch(() => []);
       setAllPayouts(payouts);
       setFilteredPayouts(payouts);
     })();

@@ -15,7 +15,7 @@ import {
 import { usePotApplicationReviewForm } from "../hooks/forms";
 
 export type PotApplicationReviewModalProps = {
-  potDetail?: Pot;
+  potDetail: Pot;
   projectId: string;
   projectStatus: "Approved" | "Rejected" | "";
   open?: boolean;
@@ -31,7 +31,7 @@ export const PotApplicationReviewModal: React.FC<PotApplicationReviewModalProps>
 }) => {
   // Form settings
   const { form, errors, onSubmit, inProgress } = usePotApplicationReviewForm({
-    potDetail: potDetail!,
+    potDetail,
     projectId,
     status: projectStatus,
   });
