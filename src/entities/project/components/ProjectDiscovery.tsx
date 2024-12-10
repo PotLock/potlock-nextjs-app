@@ -200,7 +200,7 @@ export const ProjectDiscovery = () => {
           />
 
           <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
-            <p className="w-100 text-center font-lora italic">{"No results found"}</p>
+            <p className="w-100 font-lora text-center italic">{"No results found"}</p>
           </div>
         </div>
       )}

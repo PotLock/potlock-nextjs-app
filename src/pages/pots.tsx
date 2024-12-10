@@ -24,10 +24,10 @@ const Banner = () => {
   }, [wallet?.accountId]);
 
   return (
-    <div className="relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden bg-hero">
+    <div className="bg-hero relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden">
       <div className="z-1 relative flex flex-col justify-center p-[64px] max-md:p-[64px_20px]">
         <h3 className="font-500 mb-6 mt-0 text-sm uppercase tracking-[1.12px]">Explore Pots</h3>
-        <h1 className="font-500 m-0 font-lora text-[40px] tracking-tight max-md:text-[36px]">
+        <h1 className="font-500 font-lora m-0 text-[40px] tracking-tight max-md:text-[36px]">
           Donate to Matching Rounds <br className="max-md:hidden" /> to Get Your Contributions
           Amplified.
         </h1>

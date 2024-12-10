@@ -94,7 +94,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             {pot ? (
               <h1
                 className={cn(
-                  "self-stretch font-lora",
+                  "font-lora self-stretch",
                   "text-[53px] font-medium uppercase leading-[61px] text-neutral-950",
                 )}
               >

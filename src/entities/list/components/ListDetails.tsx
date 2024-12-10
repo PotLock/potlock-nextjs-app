@@ -149,7 +149,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
 
   const nameContent = (
     <>
-      <p className="mb-2 font-lora text-2xl font-semibold">{listDetails.name}</p>
+      <p className="font-lora mb-2 text-2xl font-semibold">{listDetails.name}</p>
       <div className="mb-2 flex items-center space-x-2 text-[12px] text-[#656565]">
         BY{" "}
         <img
