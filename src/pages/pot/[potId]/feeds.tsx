@@ -3,15 +3,19 @@ import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 
 import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
-import { PotApplicationStatus as ApplicationStatus } from "@/common/api/indexer";
+import {
+  Account,
+  PotApplicationStatus as ApplicationStatus,
+  PotApplication,
+  indexer,
+} from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
-import { Application, potClient } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { FeedCard } from "@/entities/profile";
 import { CreatePost } from "@/entities/profile/components/CreatePost";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const tabs = [
   { name: "Approved Applicants", value: ApplicationStatus.Approved },
@@ -22,14 +26,24 @@ const tabs = [
 const FeedsTab = () => {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isPotApplicantsReady, setIsPotApplicantsReady] = useState<boolean>(false);
   const loadingRef = useRef<HTMLDivElement | null>(null);
-  const [offset, setOffset] = useState(100);
-  const [potApplications, setPotApplications] = useState<AccountId[]>([]);
+  const [offset, setOffset] = useState(50);
   const [tab, setTab] = useState<ApplicationStatus>(ApplicationStatus.Approved);
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };
+
+  const { data } = indexer.usePotApplications({ potId, status: tab });
+
+  const potApplicants = useMemo(() => {
+    return {
+      ids: data?.results?.map((application) => application?.applicant?.id),
+      applicants: data?.results,
+    };
+  }, [data?.results]);
 
   const noResults = useMemo(
     () => (
@@ -59,48 +73,64 @@ const FeedsTab = () => {
   );
 
   const loadMorePosts = useCallback(async () => {
-    const fetchedPosts = await fetchGlobalFeeds({
-      accountIds: potApplications,
-      offset,
-    });
+    try {
+      const fetchedPosts = await fetchGlobalFeeds({
+        accountIds: potApplicants?.ids,
+        offset,
+      });
 
-    const newPosts = fetchedPosts.slice(offset - 100);
+      const existingBlockHeights = new Set(feedPosts.map((post) => post?.blockHeight));
+      const uniquePosts = new Set();
 
-    setFeedPosts((prevPosts) => [...prevPosts, ...newPosts]);
-    setOffset((prevOffset) => prevOffset + 100);
-  }, [offset, potApplications]);
+      fetchedPosts.forEach((post) => {
+        if (post !== undefined && !existingBlockHeights.has(post?.blockHeight)) {
+          uniquePosts.add(post);
+        }
+      });
+
+      const filteredPosts = Array.from(uniquePosts);
+
+      setFeedPosts((prevPosts) => [...prevPosts, ...filteredPosts]);
+      setOffset((prevOffset) => prevOffset + 50);
+    } catch (error) {
+      console.error("Unable to fetch feeds:", error);
+    }
+  }, [offset, potApplicants?.ids, feedPosts]);
 
   useEffect(() => {
     setIsLoading(true);
-    (async () => {
-      try {
-        const applicationsData: Application[] = await potClient.getApplications({ potId });
-        fetchGlobalFeeds({
-          accountIds: applicationsData
-            ?.filter((data) => data.status === tab)
-            ?.map((application) => application?.project_id),
+    if (isPotApplicantsReady && !potApplicants?.ids) return;
+
+    try {
+      fetchGlobalFeeds({
+        accountIds: potApplicants?.ids,
+        offset: 50,
+      })
+        .then((posts) => {
+          const filteredPosts = posts.filter((post) => post !== undefined);
+          setFeedPosts(filteredPosts);
+          setIsLoading(false);
+          setOffset(100);
+          setIsPotApplicantsReady(true);
         })
-          .then((posts) => {
-            setFeedPosts(posts);
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            console.error("Unable to fetch feeds:", err);
-          });
-        setPotApplications(applicationsData?.map((application) => application?.project_id));
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, [potId, tab]);
+        .catch((err) => {
+          console.error("Unable to fetch feeds:", err);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [potId, potApplicants, isPotApplicantsReady, tab]);
 
   const handleSwitchTab = (tab: ApplicationStatus) => {
     setTab(tab);
+    setFeedPosts([]);
+    setIsPotApplicantsReady(false);
+    setOffset(50);
   };
 
   return (
     <div className="w-full">
-      {walletApi?.accountId && potApplications?.includes(walletApi?.accountId) && (
+      {walletApi?.accountId && potApplicants?.ids?.includes(walletApi?.accountId) && (
         <CreatePost accountId={walletApi?.accountId} />
       )}
       <div className="my-6 flex items-center gap-3 md:gap-1">
@@ -135,9 +165,16 @@ const FeedsTab = () => {
               )
             }
           >
-            {feedPosts.map((post) => (
-              <FeedCard key={post.blockHeight} post={post} />
-            ))}
+            {!!feedPosts?.length &&
+              feedPosts.map((post) => {
+                const applicant = potApplicants?.applicants?.find(
+                  (applicant) => applicant.applicant.id === post.accountId,
+                );
+
+                const status = applicant ? applicant.status : undefined;
+
+                return <FeedCard isPot status={status} key={post?.blockHeight} post={post} />;
+              })}
           </InfiniteScrollWrapper>
         )}
       </div>

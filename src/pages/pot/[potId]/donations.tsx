@@ -7,7 +7,7 @@ import { Donation, indexer } from "@/common/api/indexer";
 import { Arrow } from "@/common/assets/svgs";
 import { DeprecatedPagination, Spinner } from "@/common/ui/components";
 import { PotDonationEntry } from "@/entities/pot";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const SearchBar = styled.div`
   display: flex;
@@ -129,23 +129,26 @@ const PER_PAGE = 30; // need to be less than 50
 
 export default function PotDonationsTab() {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };
 
   const { data, isLoading } = indexer.usePotDonations({
     potId,
-    page_size: 999,
+    page_size: 9999,
   });
 
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter (amount | date)
   const [currentFilter, setCurrentFilter] = useState<"date" | "price">("date");
+
   const [filter, setFilter] = useState<any>({
     date: false, // false === ascending
     price: false, // false === ascending
   });
+
   const [filteredDonations, setFilteredDonations] = useState(data || []);
   const [shownDonationItemsList, setShownDonationItemsList] = useState<Donation[]>([]);
 
@@ -172,6 +175,7 @@ export default function PotDonationsTab() {
           ? parseInt(b.total_amount) - parseInt(a.total_amount)
           : parseInt(a.total_amount) - parseInt(b.total_amount),
       );
+
       setFilteredDonations([...sortedDonations]);
 
       // Sort by date
@@ -181,6 +185,7 @@ export default function PotDonationsTab() {
           ? getDate(a.donated_at) - getDate(b.donated_at)
           : getDate(b.donated_at) - getDate(a.donated_at);
       });
+
       setFilteredDonations([...sortedDonations]);
     }
   };
@@ -195,8 +200,10 @@ export default function PotDonationsTab() {
         item.donor.id || "",
         item.pot.account || "",
       ];
+
       return searchIn.some((item) => item.toLowerCase().includes(searchTerm.toLowerCase()));
     });
+
     return filteredApplications;
   };
 
@@ -231,7 +238,7 @@ export default function PotDonationsTab() {
   }
 
   return (
-    <div className="flex w-full flex-col py-10 md:py-12">
+    <div className="flex w-full flex-col pb-10 md:pb-12">
       <div className="flex flex-col gap-[1.5rem]">
         <div className="font-600 text-[18px] text-[#292929]">
           All Donations

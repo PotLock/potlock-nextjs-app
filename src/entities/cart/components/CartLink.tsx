@@ -4,7 +4,7 @@ import { values } from "remeda";
 import { CartIcon } from "@/common/assets/svgs";
 import { Button, ButtonProps } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { hrefByRouteName } from "@/entities/core";
+import { rootPathnames } from "@/pathnames";
 
 import { useCart } from "../hooks";
 
@@ -25,7 +25,7 @@ export const CartLink: React.FC<CartLinkProps> = ({ disabled }) => {
       })}
       {...{ disabled }}
     >
-      <Link href={disabled ? hrefByRouteName.CURRENT : hrefByRouteName.CART}>
+      <Link href={disabled ? rootPathnames.CURRENT : rootPathnames.CART}>
         <CartIcon width={24} height={24} />
 
         {numberOfItems > 0 && (

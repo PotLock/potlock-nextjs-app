@@ -42,6 +42,7 @@ export const SingleCampaignBanner = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
   const isStarted = getTimePassed(Number(campaign?.start_ms), true)?.includes("-");
 
   const isEnded = campaign?.end_ms

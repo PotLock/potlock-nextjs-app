@@ -5,7 +5,7 @@ import Link from "next/link";
 import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import routesPath from "@/entities/core/routes";
+import routesPath from "@/pathnames";
 
 import NearIcon from "./NearIcon";
 // import PotIcon from "./PotIcon";

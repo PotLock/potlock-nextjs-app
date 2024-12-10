@@ -1,7 +1,8 @@
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
-import { u128StringToFloat } from "@/common/lib";
+import { stringifiedU128ToFloat } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { ByTokenId } from "@/common/types";
+import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
 import { TokenIcon } from "./TokenIcon";
@@ -23,7 +24,10 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   const amount =
     "amountFloat" in props
       ? props.amountFloat
-      : u128StringToFloat(props.amountBigString, token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS);
+      : stringifiedU128ToFloat(
+          props.amountBigString,
+          token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+        );
 
   const amountUsd = token?.usdPrice?.gt(0) ? token?.usdPrice?.mul(amount).toFixed(2) : null;
 
@@ -31,21 +35,27 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
     <div className={cn("flex items-center gap-2", classNames?.root)}>
       {!textOnly && <TokenIcon size="medium" {...{ tokenId }} />}
 
-      {
+      {token ? (
         <span
           className={cn(
             "prose line-height-none font-600 text-xl",
             { "mt-0.7": !textOnly },
             classNames?.amount,
           )}
-        >{`${amount} ${token?.metadata.symbol ?? "🪙"}`}</span>
-      }
+        >{`${amount} ${token.metadata.symbol}`}</span>
+      ) : (
+        <Skeleton className="w-35 h-5" />
+      )}
 
       {amountUsd ? (
-        <span className="prose line-height-none mt-0.7 text-xl text-neutral-600" un-mt="0.7">
+        <span
+          className={cn("prose line-height-none text-xl text-neutral-600", { "mt-0.7": !textOnly })}
+        >
           {`~$ ${amountUsd}`}
         </span>
-      ) : null}
+      ) : (
+        <Skeleton className="w-35 h-5" />
+      )}
     </div>
   );
 };

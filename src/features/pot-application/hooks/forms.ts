@@ -41,6 +41,7 @@ export const usePotApplicationForm = ({
 
       const regularDeposit = "0.01";
       const extraDeposit = calculateDepositByDataSize(args);
+
       const deposit = parseNearAmount(
         (parseFloat(regularDeposit) + parseFloat(extraDeposit)).toString(),
       )!;
@@ -70,6 +71,7 @@ export const usePotApplicationForm = ({
       // Final - call step
       // INFO: This is going to take the user to confirm transaction wallet screen
       const callbackUrl = `${location.origin}${location.pathname}?done=true`;
+
       try {
         setInProgress(true);
 

@@ -95,8 +95,10 @@ type Props = {
 
 export const PotFilters = (componentProps: Props) => {
   const [openFilter, setOpenFilter] = useState(false);
+
   const { sortList, sortVal, title, handleSortChange, FilterMenuCustomClass, showCount } =
     componentProps;
+
   const menuStyle = componentProps.menuStyle || {};
   const buttonStyle = componentProps.buttonStyle || {};
 

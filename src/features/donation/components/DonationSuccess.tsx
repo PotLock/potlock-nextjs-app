@@ -13,7 +13,7 @@ import {
   POTLOCK_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
-import { truncate, u128StringToFloat } from "@/common/lib";
+import { stringifiedU128ToFloat, truncate } from "@/common/lib";
 import { ftService } from "@/common/services";
 import {
   Button,
@@ -24,8 +24,8 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import { AccountProfileLink } from "@/entities/account";
-import routesPath from "@/entities/core/routes";
 import { TokenTotalValue } from "@/entities/token";
+import routesPath from "@/pathnames";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationSybilWarning } from "./DonationSybilWarning";
@@ -59,17 +59,17 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
 
   const isLoading = isResultLoading || recipient === undefined || token === undefined;
 
-  const totalAmountFloat = u128StringToFloat(
+  const totalAmountFloat = stringifiedU128ToFloat(
     finalOutcome?.total_amount ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const protocolFeeAmountFloat = u128StringToFloat(
+  const protocolFeeAmountFloat = stringifiedU128ToFloat(
     finalOutcome?.protocol_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const referralFeeFinalAmountFloat = u128StringToFloat(
+  const referralFeeFinalAmountFloat = stringifiedU128ToFloat(
     finalOutcome?.referrer_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
@@ -87,6 +87,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     const twitterIntentBase = "https://twitter.com/intent/tweet?text=";
 
     const profile: any = recipient?.near_social_profile_data;
+
     const singlePorject = profile
       ? profile.linktree?.twitter
         ? `@${profile.linktree.twitter}`

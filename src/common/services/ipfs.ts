@@ -4,4 +4,5 @@ const uploadFileToIPFS = async (body: BodyInit) =>
     headers: { Accept: "application/json" },
     body,
   });
+
 export default uploadFileToIPFS;

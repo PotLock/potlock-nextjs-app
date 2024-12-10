@@ -20,12 +20,13 @@ import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { PotPayoutChallenges } from "@/entities/pot";
 import { usePotPayoutLookup } from "@/entities/pot/hooks/usePotPayoutLookup";
-import { PotLayout } from "@/layout/PotLayout";
+import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 
 export default function PayoutsTab() {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };

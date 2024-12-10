@@ -15,6 +15,7 @@ const deepObjectDiff = (objOriginal: Record<string, any>, objUpdated: Record<str
           (typeof originalValue === "object" && originalValue !== null))
       ) {
         const nestedDiff = originalValue ? findDiff(originalValue, updatedValue, {}) : updatedValue;
+
         if (Object.keys(nestedDiff).length > 0) {
           diffObj[key] = nestedDiff;
         }

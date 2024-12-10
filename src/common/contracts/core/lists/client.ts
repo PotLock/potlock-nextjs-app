@@ -206,9 +206,11 @@ export const getRegistration = async (args: { list_id?: number; registrant_id: s
       args,
     },
   );
+
   const registration = registrations.find(
     (registration) => registration.list_id === args.list_id || PUBLIC_GOODS_REGISTRY_LIST_ID,
   );
+
   return registration;
 };
 

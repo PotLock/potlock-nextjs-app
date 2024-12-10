@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { walletApi } from "@/common/api/near";
 import useIsClient from "@/common/lib/useIsClient";
-import { SuspenseLoading } from "@/common/ui/components";
+import { SplashScreen } from "@/common/ui/components";
 import { dispatch, resetStore } from "@/store";
 
 import { useSessionReduxStore } from "../hooks/redux-store";
@@ -36,6 +36,7 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
           resetStore();
         }
       }
+
       setReady(true);
     }
   }, [isAuthenticated, wallet]);
@@ -61,5 +62,5 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
     };
   }, [checkWallet, wallet]);
 
-  return isClient ? <>{children}</> : <SuspenseLoading />;
+  return isClient ? <>{children}</> : <SplashScreen />;
 };

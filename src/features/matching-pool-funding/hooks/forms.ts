@@ -72,6 +72,7 @@ export const useMatchingPoolFundingForm = ({
       // Final - call step
       // INFO: This is going to take the user to confirm transaction wallet screen
       const callbackUrl = `${location.origin}${location.pathname}?done=true`;
+
       try {
         setInProgress(true);
 

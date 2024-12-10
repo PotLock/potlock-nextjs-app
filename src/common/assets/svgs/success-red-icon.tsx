@@ -54,4 +54,5 @@ const SuccessRedIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 );
+
 export default SuccessRedIcon;

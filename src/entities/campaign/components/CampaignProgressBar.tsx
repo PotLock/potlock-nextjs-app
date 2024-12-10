@@ -30,6 +30,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
         : amount === target
           ? "#7FC41E"
           : "#ECC113";
+
   const value = amount >= target ? 100 : Math.floor((amount / target) * 100);
 
   const getDaysLeft = endDate ? getTimePassed(endDate, false, true) : null;

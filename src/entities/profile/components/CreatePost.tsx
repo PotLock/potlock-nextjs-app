@@ -15,6 +15,7 @@ export const CreatePost = ({ accountId }: { accountId: AccountId }) => {
 
   const handleCreatePost = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+
     try {
       await createPost({
         accountId,

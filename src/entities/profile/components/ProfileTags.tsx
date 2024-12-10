@@ -33,6 +33,7 @@ const ProfileTags = ({ accountId }: Props) => {
   const { profile: projectProfile } = useProfileData(accountId);
 
   const [tags, setTags] = useState<string[]>();
+
   useEffect(() => {
     if (projectProfile && accountId) {
       projectProfile.tags
@@ -52,4 +53,5 @@ const ProfileTags = ({ accountId }: Props) => {
     </TagsContainer>
   );
 };
+
 export default ProfileTags;

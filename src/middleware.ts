@@ -1,39 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  // Redirect to login page if not authenticated
+// import { rootPathnames } from "./pathnames";
 
-  // PROFILE - INIT
+export async function middleware(request: NextRequest) {
   const isProfilePage = request.nextUrl.pathname.startsWith("/profile/");
+  // const isPotPage = request.nextUrl.pathname.startsWith("/pot/");
+
   if (
     isProfilePage &&
     (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
   ) {
     return NextResponse.rewrite(`${request.url}/home`);
-  }
-  if (
+  } else if (
     isProfilePage &&
     (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))
   ) {
     return NextResponse.rewrite(`${request.url}home`);
   }
-  // PROFILE - END
 
-  // POT - INIT
-  const isPotPage = request.nextUrl.pathname.startsWith("/pot/");
-  if (
-    isPotPage &&
-    (request.nextUrl.pathname.endsWith(".near") || request.nextUrl.pathname.endsWith(".testnet"))
-  ) {
-    return NextResponse.rewrite(`${request.url}/projects`);
-  }
-  if (
-    isPotPage &&
-    (request.nextUrl.pathname.endsWith(".near/") || request.nextUrl.pathname.endsWith(".testnet/"))
-  ) {
-    return NextResponse.rewrite(`${request.url}projects`);
-  }
-  // POT - END
+  // TODO: Consider removing this block in the future
+  // if (isPotPage) {
+  //   if (
+  //     request.nextUrl.pathname.endsWith(".near") ||
+  //     request.nextUrl.pathname.endsWith(".testnet")
+  //   ) {
+  //     return NextResponse.rewrite(`${request.url}/settings`);
+  //   } else if (
+  //     request.nextUrl.pathname.endsWith(".near/") ||
+  //     request.nextUrl.pathname.endsWith(".testnet/")
+  //   ) {
+  //     return NextResponse.rewrite(`${request.url}settings`);
+  //   } else if (request.nextUrl.pathname.includes(`${undefined}`)) {
+  //     const url = request.nextUrl.clone();
+  //     url.pathname = rootPathnames.POTS;
+  //     return NextResponse.rewrite(url);
+  //   }
+  // }
 
   return NextResponse.next();
 }

@@ -19,6 +19,7 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
 
   useEffect(() => {
     setIsLoading(true);
+
     fetchAccountFeedPosts({ accountId }).then((res: any) => {
       setIsLoading(false);
       setPosts(res);
@@ -27,6 +28,7 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
 
   const loadMorePosts = async () => {
     setIsLoading(true);
+
     const fetchedPosts = await fetchAccountFeedPosts({
       accountId,
       offset,

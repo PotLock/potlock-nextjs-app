@@ -48,6 +48,7 @@ const Carousel = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>
       },
       plugins,
     );
+
     const [canScrollPrev, setCanScrollPrev] = useState(false);
     const [canScrollNext, setCanScrollNext] = useState(false);
 
@@ -130,6 +131,7 @@ const Carousel = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>
     );
   },
 );
+
 Carousel.displayName = "Carousel";
 
 const CarouselContent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
@@ -151,6 +153,7 @@ const CarouselContent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
     );
   },
 );
+
 CarouselContent.displayName = "CarouselContent";
 
 const CarouselItem = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
@@ -172,6 +175,7 @@ const CarouselItem = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElem
     );
   },
 );
+
 CarouselItem.displayName = "CarouselItem";
 
 const CarouselPrevious = forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
@@ -200,6 +204,7 @@ const CarouselPrevious = forwardRef<HTMLButtonElement, React.ComponentProps<type
     );
   },
 );
+
 CarouselPrevious.displayName = "CarouselPrevious";
 
 const CarouselNext = forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
@@ -228,6 +233,7 @@ const CarouselNext = forwardRef<HTMLButtonElement, React.ComponentProps<typeof B
     );
   },
 );
+
 CarouselNext.displayName = "CarouselNext";
 
 export {

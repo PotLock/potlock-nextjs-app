@@ -5,7 +5,7 @@ import { prop } from "remeda";
 import { PLATFORM_NAME } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
-import { u128StringToBigNum } from "@/common/lib";
+import { stringifiedU128ToBigNum } from "@/common/lib";
 import { ftService } from "@/common/services";
 import { ClearanceCheckResult } from "@/common/types";
 import { useSessionAuth } from "@/entities/session";
@@ -24,7 +24,7 @@ export const usePotApplicationUserClearance = ({
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
   const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useSessionAuth();
   const { data: pot } = indexer.usePot({ potId });
-  const { data: stNear } = ftService.useRegisteredToken({ tokenId: staking.tokenId });
+  const { data: stakingToken } = ftService.useRegisteredToken({ tokenId: staking.tokenId });
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
   return useMemo(() => {
@@ -43,13 +43,13 @@ export const usePotApplicationUserClearance = ({
         ? [
             {
               title: `An equivalent of ${staking.minAmountUsd} USD staked in NEAR on ${staking.platformName}`,
-              isSatisfied: stNear?.balanceUsd?.gte(staking.minAmountUsd) ?? false,
+              isSatisfied: stakingToken?.balanceUsd?.gte(staking.minAmountUsd) ?? false,
             },
 
             {
               title: "Voting power 5000 or more",
 
-              isSatisfied: u128StringToBigNum(
+              isSatisfied: stringifiedU128ToBigNum(
                 voterInfo?.voting_power ?? "0",
                 METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
               ).gte(5000),
@@ -71,9 +71,9 @@ export const usePotApplicationUserClearance = ({
     isAccountInfoLoading,
     isVerifiedPublicGoodsProvider,
     pot?.sybil_wrapper_provider,
-    stNear?.balanceUsd,
     staking.minAmountUsd,
     staking.platformName,
+    stakingToken?.balanceUsd,
     voterInfo?.voting_power,
   ]);
 };

@@ -15,6 +15,7 @@ import {
   PotStats,
   PotTimeline,
   usePotBasicUserPermissions,
+  usePotExtensionFlags,
   usePotLifecycle,
 } from "@/entities/pot";
 import { useSessionAuth } from "@/entities/session";
@@ -23,7 +24,6 @@ import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
 
 export type PotLayoutHeroProps = ByPotId & {
-  hasVoting?: boolean;
   onApplyClick?: () => void;
   onChallengePayoutsClick?: () => void;
   onFundMatchingPoolClick?: () => void;
@@ -31,12 +31,12 @@ export type PotLayoutHeroProps = ByPotId & {
 
 export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   potId,
-  hasVoting,
   onApplyClick,
   onChallengePayoutsClick,
   onFundMatchingPoolClick,
 }) => {
   const { data: pot } = indexer.usePot({ potId });
+  const { hasVoting } = usePotExtensionFlags({ potId });
   const { isSignedIn, accountId } = useSessionAuth();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
   // const votingClearance = useVotingUserClearance({ potId });
@@ -75,7 +75,10 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
       )}
     >
       {pot ? (
-        <PotTimeline classNames={{ root: "bg-neutral-50 md:transparent" }} {...{ potId }} />
+        <PotTimeline
+          classNames={{ root: "bg-neutral-50 md:transparent" }}
+          {...{ hasVoting, potId }}
+        />
       ) : (
         <Skeleton className="h-96 w-full" />
       )}
@@ -132,7 +135,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             </div>
           </div>
 
-          <div className="lg:w-a flex w-full flex-col gap-6">
+          <div className="flex w-full flex-col gap-6 lg:w-fit">
             {isApplicationPeriodOngoing ? (
               <Checklist
                 title="Application Requirements"
@@ -178,7 +181,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
               <Button onClick={onApplyClick}>{`Apply to ${hasVoting ? "Round" : "Pot"}`}</Button>
             )}
 
-            {canDonate && <DonateToPotProjects {...{ potId }} />}
+            {hasVoting ? null : <>{canDonate && <DonateToPotProjects {...{ potId }} />}</>}
 
             {canFund && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>

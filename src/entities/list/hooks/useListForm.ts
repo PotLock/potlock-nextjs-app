@@ -18,10 +18,12 @@ export const useListForm = () => {
   const { push, query } = useRouter();
   const [transferAccountField, setTransferAccountField] = useState<string>("");
   const [transferAccountError, setTransferAccountError] = useState<string | undefined>("");
+
   const [finishModal, setFinishModal] = useState<{
     open: boolean;
     type: ListFormModalType;
   }>({ open: false, type: ListFormModalType.NONE });
+
   const [admins, setAdmins] = useState<AccountId[]>([]);
   const [accounts, setAccounts] = useState<AccountId[]>([]);
   const id = query.id;
@@ -74,6 +76,7 @@ export const useListForm = () => {
   const handleUnRegisterAccount = (registrants: AccountKey[]) => {
     if (!id) return;
     const allTransactions: any = [];
+
     registrants.map((registrant: AccountKey) => {
       allTransactions.push(
         buildTransaction("unregister", {
@@ -87,6 +90,7 @@ export const useListForm = () => {
         }),
       );
     });
+
     naxiosInstance
       .contractApi({
         contractId: LISTS_CONTRACT_ACCOUNT_ID,
@@ -96,6 +100,7 @@ export const useListForm = () => {
         console.log(res);
       })
       .catch((err) => console.error(err));
+
     dispatch.listEditor.updateListModalState({
       header: "Account(s) Deleted From List Successfully",
       description,
@@ -117,6 +122,7 @@ export const useListForm = () => {
       .catch((error) => {
         console.error("Error adding admins to list", error);
       });
+
     dispatch.listEditor.updateListModalState({
       header: "Admin(s) Removed Successfully",
       description,

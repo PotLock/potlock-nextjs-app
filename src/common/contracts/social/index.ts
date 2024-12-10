@@ -219,6 +219,7 @@ export const createPost = async ({
         },
       },
     });
+
     await naxiosInstance
       .contractApi()
       .callMultiple([buildContract])
