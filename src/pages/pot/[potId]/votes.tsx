@@ -10,7 +10,7 @@ import { AccountId } from "@/common/types";
 import { Button, Checkbox, FilterChip, Input } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { usePotActiveElections, usePotElections } from "@/entities/pot";
+import { usePotActiveElections } from "@/entities/pot";
 import { useSessionAuth } from "@/entities/session";
 import {
   VotingCandidateFilter,
@@ -159,7 +159,7 @@ export default function PotVotesTab() {
       <div className="flex flex-row gap-6">
         <div className="min-h-137 w-full">
           {/* Toolbar */}
-          <div className={cn("absolute inset-x-0 w-full md:static")}>
+          <div className="w-full">
             <div
               className={cn(
                 "flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]",
