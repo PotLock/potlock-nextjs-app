@@ -26,7 +26,6 @@ import {
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountOption, AccountProfilePicture } from "@/entities/account";
-import routesPath from "@/entities/core/routes";
 import { PotFilters } from "@/entities/pot";
 import { useProfileData } from "@/entities/profile";
 import { ProjectListingStatusVariant } from "@/entities/project";
@@ -51,6 +50,7 @@ const Container = styled.div`
     }
   }
 `;
+
 const ApplicationsWrapper = styled.div`
   border-radius: 6px;
   display: flex;
@@ -138,7 +138,7 @@ const ApplicationsTab = () => {
     // transactionHashes: string;
   };
 
-  const { data: pot } = usePot({ potId });
+  const { data: potDetail } = usePot({ potId });
   const [applications, setApplications] = useState<Application[]>([]);
   const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
   const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
@@ -288,19 +288,22 @@ const ApplicationsTab = () => {
     if (error) {
       console.log(error);
     }
+
     console.log({ statusFilter });
   }, [statusFilter, error]);
 
   return (
     <Container className="gap-6">
       {/* Modal */}
-      <PotApplicationReviewModal
-        open={!!projectId}
-        potDetail={potDetail}
-        projectId={projectId}
-        projectStatus={projectStatus}
-        onCloseClick={handleCloseModal}
-      />
+      {potDetail && (
+        <PotApplicationReviewModal
+          open={!!projectId}
+          potDetail={potDetail}
+          projectId={projectId}
+          projectStatus={projectStatus}
+          onCloseClick={handleCloseModal}
+        />
+      )}
       <div className="flex gap-3">
         {Object.keys(applicationsFilters).map((key) => (
           <FilterChip
