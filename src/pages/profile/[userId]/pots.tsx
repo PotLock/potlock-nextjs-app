@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-
 import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
@@ -8,7 +6,7 @@ import { indexer } from "@/common/api/indexer";
 import { PotCard } from "@/entities/pot";
 import { ProfileLayout } from "@/entities/profile";
 
-const PotsSubPage = () => {
+export default function ProfilePotsTab() {
   const router = useRouter();
   const { userId: userIdPathParam } = router.query;
 
@@ -38,17 +36,15 @@ const PotsSubPage = () => {
     <div className="mb-18 flex w-full flex-col">
       <div className="mx-auto grid w-fit grid-cols-1 gap-[31px] pb-[32px] pt-[2px] lg:w-full lg:grid-cols-2 xl:grid-cols-3">
         {potApplications.map(({ id, pot }) => (
-          <PotCard key={id} {...{ pot }} />
+          <PotCard key={id} potId={pot.account} />
         ))}
       </div>
 
       {potApplications.length === 0 && !isLoading && <NoResults />}
     </div>
   );
-};
+}
 
-PotsSubPage.getLayout = function getLayout(page: ReactElement) {
+ProfilePotsTab.getLayout = function getLayout(page: ReactElement) {
   return <ProfileLayout>{page}</ProfileLayout>;
 };
-
-export default PotsSubPage;

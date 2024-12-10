@@ -1,23 +1,17 @@
 import { useMemo, useState } from "react";
 
-import { ByPotId } from "@/common/api/indexer";
-import { Candidate, votingClientHooks } from "@/common/contracts/core/voting";
-import { ByAccountId } from "@/common/types";
+import { ByElectionId, Candidate, votingClientHooks } from "@/common/contracts/core/voting";
 
-import { VOTING_ELECTION_ID_BY_POT_ID } from "../model/hardcoded";
-
-export const useVotingCandidates = ({ potId }: ByPotId) => {
-  const electionId = VOTING_ELECTION_ID_BY_POT_ID[potId] ?? 0;
-
+export const useVotingCandidates = ({ electionId }: ByElectionId) => {
   const { data, ...candidatesQueryResult } = votingClientHooks.useElectionCandidates({
     electionId,
   });
 
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   return useMemo(() => {
     const dataByCategory = (data ?? [])
-      .filter((candidate) => candidate.account_id.includes(searchQuery))
+      .filter((candidate) => candidate.account_id.includes(searchTerm))
       .reduce(
         (candidatesByCategory, candidate) => {
           const categoryKey =
@@ -36,14 +30,8 @@ export const useVotingCandidates = ({ potId }: ByPotId) => {
       ...candidatesQueryResult,
       ...dataByCategory,
       candidates: data,
-      candidateSearchQuery: searchQuery,
-      setCandidateSearchQuery: setSearchQuery,
+      candidateSearchTerm: searchTerm,
+      setCandidateSearchTerm: setSearchTerm,
     };
-  }, [data, candidatesQueryResult, searchQuery]);
-};
-
-export const useVotingCandidateVotes = ({ potId, accountId }: ByPotId & ByAccountId) => {
-  const electionId = VOTING_ELECTION_ID_BY_POT_ID[potId] ?? 0;
-
-  return votingClientHooks.useElectionCandidateVotes({ electionId, accountId });
+  }, [data, candidatesQueryResult, searchTerm]);
 };

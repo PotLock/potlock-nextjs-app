@@ -5,10 +5,12 @@ import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
+import { votingClientHooks } from "@/common/contracts/core/voting";
 import { AccountId } from "@/common/types";
 import { Button, Checkbox, FilterChip, Input } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
+import { usePotActiveElections, usePotElections } from "@/entities/pot";
 import { useSessionAuth } from "@/entities/session";
 import {
   VotingCandidateFilter,
@@ -17,7 +19,6 @@ import {
   VotingRules,
   VotingWeightBoostBreakdown,
   useVotingCandidates,
-  useVotingElection,
   useVotingParticipantVoteWeight,
 } from "@/features/voting";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
@@ -37,15 +38,21 @@ export default function PotVotesTab() {
     potId,
   });
 
-  const { data: election } = useVotingElection({ potId });
+  const { potActiveElections } = usePotActiveElections({ potId });
+  // TODO: Figure out a way to know exactly which ONE election is active ( Pots V2 milestone )
+  const [activeElectionId, _activeElection] = potActiveElections?.at(0) ?? [0, undefined];
+
+  const { data: activeElectionVotes } = votingClientHooks.useElectionVotes({
+    electionId: activeElectionId ?? 0,
+  });
 
   const {
     candidates,
     candidatesWithVotes,
     candidatesWithoutVotes,
-    candidateSearchQuery,
-    setCandidateSearchQuery,
-  } = useVotingCandidates({ potId });
+    candidateSearchTerm,
+    setCandidateSearchTerm,
+  } = useVotingCandidates({ electionId: activeElectionId });
 
   // TODO: temporarily disabled as vote for multiple candidates is unimplemented
   const _handleCandidateSelect = (accountId: AccountId, isSelected: boolean): void =>
@@ -100,10 +107,10 @@ export default function PotVotesTab() {
       case "voted": {
         return (
           <VotingCandidateList
+            electionId={activeElectionId}
             data={candidatesWithVotes}
             // TODO: temporarily disabled as vote for multiple candidates is unimplemented
             // onEntrySelect={handleCandidateSelect}
-            {...{ potId }}
           />
         );
       }
@@ -111,10 +118,10 @@ export default function PotVotesTab() {
       case "pending": {
         return (
           <VotingCandidateList
+            electionId={activeElectionId}
             data={candidatesWithoutVotes}
             // TODO: temporarily disabled as vote for multiple candidates is unimplemented
             // onEntrySelect={handleCandidateSelect}
-            {...{ potId }}
           />
         );
       }
@@ -122,15 +129,15 @@ export default function PotVotesTab() {
       default: {
         return (
           <VotingCandidateList
+            electionId={activeElectionId}
             data={candidates ?? []}
             // TODO: temporarily disabled as vote for multiple candidates is unimplemented
             // onEntrySelect={handleCandidateSelect}
-            {...{ potId }}
           />
         );
       }
     }
-  }, [candidateFilter, candidates, candidatesWithVotes, candidatesWithoutVotes, potId]);
+  }, [activeElectionId, candidateFilter, candidates, candidatesWithVotes, candidatesWithoutVotes]);
 
   return (
     <div className={cn("flex w-full flex-col gap-6")}>
@@ -140,9 +147,9 @@ export default function PotVotesTab() {
           type="search"
           placeholder={"Search Projects"}
           className={cn("w-full bg-gray-50")}
-          value={candidateSearchQuery}
+          value={candidateSearchTerm}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setCandidateSearchQuery(e.target.value)
+            setCandidateSearchTerm(e.target.value)
           }
         />
       </div>
@@ -161,7 +168,10 @@ export default function PotVotesTab() {
             >
               <div className="flex items-center gap-2">
                 <MdHowToVote className="color-peach-400 h-6 w-6" />
-                <span className="font-semibold">{`${election?.total_votes ?? 0} Vote(s) Casted`}</span>
+
+                <span className="font-semibold">
+                  {`${activeElectionVotes?.length ?? 0} Vote(s) Casted`}
+                </span>
               </div>
 
               <div className="flex gap-2">

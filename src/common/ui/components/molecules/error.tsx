@@ -1,5 +1,7 @@
 import { AlertCircle } from "lucide-react";
 
+import { PLATFORM_NAME } from "@/common/_config";
+
 import { Alert, AlertDescription, AlertTitle } from "../atoms/alert";
 
 export type RuntimeErrorAlertProps = {
@@ -22,7 +24,7 @@ export const RuntimeErrorAlert: React.FC<RuntimeErrorAlertProps> = ({
 
       {callToAction ?? (
         <span className="prose" un-text="primary">
-          Please contact PotLock team for help.
+          {`Please contact ${PLATFORM_NAME} team for help.`}
         </span>
       )}
     </AlertDescription>

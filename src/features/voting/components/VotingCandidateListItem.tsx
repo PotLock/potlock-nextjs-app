@@ -2,42 +2,76 @@ import { useCallback, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
 
-import { ByPotId, indexer } from "@/common/api/indexer";
-import { Candidate, votingClient } from "@/common/contracts/core/voting";
+import { indexer } from "@/common/api/indexer";
+import {
+  ByElectionId,
+  Candidate,
+  ElectionStatus,
+  votingClient,
+  votingClientHooks,
+} from "@/common/contracts/core/voting";
 import { Button, Checkbox } from "@/common/ui/components";
+import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { useSessionAuth } from "@/entities/session";
 
-import { useVotingCandidateVotes } from "../hooks/candidates";
-
-export type VotingCandidateListItemProps = ByPotId & {
+export type VotingCandidateListItemProps = ByElectionId & {
   data: Candidate;
   isSelected?: boolean;
   onSelect?: (accountId: string, isSelected: boolean) => void;
 };
 
 export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = ({
-  potId,
+  electionId,
   data: { account_id: accountId, votes_received: votesCount },
   isSelected = false,
   onSelect,
 }) => {
+  const { toast } = useToast();
   const userSession = useSessionAuth();
   const { data: account } = indexer.useAccount({ accountId });
-  const { data: votes, mutate: revalidateVotes } = useVotingCandidateVotes({ potId, accountId });
+  const { data: election } = votingClientHooks.useElection({ electionId });
+
+  const { data: votes, mutate: revalidateVotes } = votingClientHooks.useElectionCandidateVotes({
+    electionId,
+    accountId,
+  });
 
   const canReceiveVotes = useMemo(
-    // TODO: enable
-    // @ts-expect-error temporarily disabled
-    () => false ?? votes?.find(({ voter }) => voter === userSession.accountId) === undefined,
-    [votes, userSession.accountId],
+    () =>
+      election?.status === ElectionStatus.VotingPeriod &&
+      votes?.find(({ voter: voterAccountId }) => voterAccountId === userSession.accountId) ===
+        undefined,
+
+    [election, votes, userSession.accountId],
   );
 
-  // TODO: Election ID is hardcoded
   const handleVoteCast = useCallback(
-    () => votingClient.vote({ election_id: 1, vote: [accountId, 1] }).then(() => revalidateVotes()),
-    [accountId, revalidateVotes],
+    () =>
+      votingClient
+        .vote({ election_id: electionId, vote: [accountId, 1] })
+        .then((success) => {
+          if (success) {
+            revalidateVotes();
+
+            toast({
+              title: "Success!",
+              description: "Your vote has been recorded successfully.",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+
+          toast({
+            variant: "destructive",
+            title: "Something went wrong.",
+            description: "An error occurred while casting your vote.",
+          });
+        }),
+
+    [accountId, electionId, revalidateVotes, toast],
   );
 
   const onCheckTriggered = useCallback(

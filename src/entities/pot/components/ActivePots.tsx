@@ -83,11 +83,13 @@ export const ActivePots = () => {
   }
 
   const activePotCards = useMemo(() => {
-    return filtered.map((pot) => <PotCard key={pot.account} pot={pot} />);
+    return filtered.map(({ account: accountId }) => <PotCard key={accountId} potId={accountId} />);
   }, [filtered]);
 
   const completedPotCards = useMemo(() => {
-    return completedPots.map((pot) => <PotCard key={pot.account} pot={pot} />);
+    return completedPots.map(({ account: accountId }) => (
+      <PotCard key={accountId} potId={accountId} />
+    ));
   }, [completedPots]);
 
   return (

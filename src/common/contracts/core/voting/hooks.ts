@@ -39,3 +39,8 @@ export const useElectionCandidateVotes = ({ electionId, accountId }: ByElectionI
         ? undefined
         : votingClient.get_candidate_votes({ election_id, candidate_id }),
   );
+
+export const useElectionVotes = ({ electionId }: ByElectionId) =>
+  useSWR(["get_election_votes", electionId], ([_queryKey, election_id]: [string, ElectionId]) =>
+    election_id === 0 ? undefined : votingClient.get_election_votes({ election_id }),
+  );

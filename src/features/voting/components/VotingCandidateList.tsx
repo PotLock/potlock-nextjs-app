@@ -1,5 +1,5 @@
 import { ByPotId } from "@/common/api/indexer";
-import { Candidate } from "@/common/contracts/core/voting";
+import { ByElectionId, Candidate } from "@/common/contracts/core/voting";
 import { ScrollArea } from "@/common/ui/components";
 
 import { VotingCandidateListItem, VotingCandidateListItemProps } from "./VotingCandidateListItem";
@@ -28,26 +28,26 @@ export const VotingCandidatesTableHead = () => (
   </div>
 );
 
-export type VotingCandidateListProps = ByPotId & {
+export type VotingCandidateListProps = ByElectionId & {
   data: Candidate[];
   onEntrySelect?: VotingCandidateListItemProps["onSelect"];
 };
 
 export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
-  potId,
+  electionId,
   data,
   onEntrySelect,
 }) => {
   // TODO: Use VirtualScroll for better performance
   return (
-    <ScrollArea>
+    <ScrollArea className="h-150">
       <div className="flex flex-col">
         {data.map((candidate) => (
           <VotingCandidateListItem
             key={candidate.account_id}
             data={candidate}
             onSelect={onEntrySelect}
-            {...{ potId }}
+            {...{ electionId }}
           />
         ))}
       </div>
