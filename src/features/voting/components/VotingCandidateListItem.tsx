@@ -6,7 +6,6 @@ import { indexer } from "@/common/api/indexer";
 import {
   ByElectionId,
   Candidate,
-  ElectionStatus,
   votingClient,
   votingClientHooks,
 } from "@/common/contracts/core/voting";
@@ -40,7 +39,7 @@ export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = (
 
   const canReceiveVotes = useMemo(
     () =>
-      election?.status === ElectionStatus.VotingPeriod &&
+      election && // election?.status === ElectionStatus.VotingPeriod &&
       votes?.find(({ voter: voterAccountId }) => voterAccountId === userSession.accountId) ===
         undefined,
 
