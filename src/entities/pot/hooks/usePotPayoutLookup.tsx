@@ -12,7 +12,7 @@ export const usePotPayoutLookup = ({ potId }: PotPayoutLookupParams) => {
     data: potPayouts,
     isLoading,
     error,
-  } = indexer.usePotPayout({
+  } = indexer.usePotPayouts({
     potId,
     page_size: 10,
     page: pageNumber,

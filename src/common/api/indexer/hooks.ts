@@ -188,7 +188,7 @@ export const usePot = ({ potId }: Partial<ByPotId>) => {
   return { ...queryResult, data: queryResult.data?.data };
 };
 
-export const usePotPayout = ({
+export const usePotPayouts = ({
   potId,
   ...params
 }: Partial<ByPotId> & generatedClient.V1PotsPayoutsRetrieveParams) => {

@@ -17,3 +17,4 @@ export * from "./hooks/lifecycle";
 export * from "./hooks/permissions";
 export * from "./hooks/useOrderedDonations";
 export * from "./utils/validation";
+export * from './hooks/usePotPayoutLookup'
