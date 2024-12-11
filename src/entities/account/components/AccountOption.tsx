@@ -61,7 +61,7 @@ export const AccountOption = ({
   return (
     <Link
       className="address"
-      href={accountLink ? `${accountLink}` : `/${rootPathnames.PROFILE}/${accountId}`}
+      href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
       target="_blank"
     >
       {isThumbnail ? (
