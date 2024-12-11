@@ -23,7 +23,7 @@ export type ProjectListingStatusVariant =
   /**
    *? INFO: Only needed for backward compatibility:
    */
-  | "all";
+  | "All";
 
 export type ProjectListingStatusOption = {
   label: string;
