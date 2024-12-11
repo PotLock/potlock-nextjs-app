@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import { indexer } from "@/common/api/indexer";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
 import {
-  Button,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -16,7 +15,6 @@ import {
   PaginationNext,
   PaginationPrevious,
   Skeleton,
-  Textarea,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
