@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import ArrowDown from "@/common/assets/svgs/ArrowDown";
-import { yoctoNearToFloat } from "@/common/lib";
 import {
+  Button,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -15,12 +15,14 @@ import {
   PaginationNext,
   PaginationPrevious,
   Skeleton,
+  Textarea,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { PotPayoutChallenges } from "@/entities/pot";
 import { usePotPayoutLookup } from "@/entities/pot/hooks/usePotPayoutLookup";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
+import { formatNearAmount } from "near-api-js/lib/utils/format";
 
 const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 
@@ -32,6 +34,7 @@ export default function PayoutsTab() {
   };
 
   const { data: potDetail } = indexer.usePot({ potId });
+
   const {
     payouts,
     isPayoutsPending,
@@ -104,7 +107,6 @@ export default function PayoutsTab() {
 
   const numberOfPages = useMemo(() => Math.ceil(totalPayoutCount / 10), [totalPayoutCount]);
 
-  console.log(potDetail);
 
   return (
     <div className="m-0 flex w-full  flex-col-reverse items-start justify-between gap-3 p-0 transition-all duration-500 ease-in-out md:flex-row">
@@ -149,14 +151,22 @@ export default function PayoutsTab() {
         </div>
         <div className="mb-16 flex w-full flex-col items-start gap-6 md:flex-row">
           <div className=" w-full">
-            {potDetail?.all_paid_out && (
-              <div className="flex gap-4">
+            {!potDetail?.all_paid_out && (
+              <div 
+              style={{
+                boxShadow: "0px 0px 1px 0px rgba(0, 0, 0, 0.36), 0px 1px 1px -0.5px rgba(55, 55, 55, 0.04), 0px 2px 2px -1px rgba(5, 5, 5, 0.08), 0px 3px 5px -1.5px rgba(55, 55, 55, 0.04)"
+              }}
+              className="flex bg-[#f6f6f7] items-start mb-4 p-4 gap-4">
                 <Info />
 
-                <div className="text-center text-sm font-light text-[#dd3345]">
+                <div className="text-start">
+                  <h2 className="font-semibold text-[17px]">Justification For Payout Changes</h2>
+                  <p className="text-[#525252] text-sm ">
+
                   {potDetail?.cooldown_end
                     ? "These payouts have been set on the contract but have not been paid out yet."
                     : "These payouts are estimated amounts only and have not been set on the contract yet."}
+                    </p>
                 </div>
               </div>
             )}
@@ -184,16 +194,7 @@ export default function PayoutsTab() {
                     PROJECTS
                   </div>
                 </div>
-                {/* <div className="flex w-28 flex-row items-center justify-start">
-                  <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
-                    VOTES
-                  </div>
-                </div> */}
-                {/* <div className="flex w-28 flex-row items-center justify-start">
-                  <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
-                    Unique Donors
-                  </div>
-                </div> */}
+             
                 <div className="flex flex-row items-center justify-start">
                   <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
                     POOL ALLOCATION
@@ -238,20 +239,10 @@ export default function PayoutsTab() {
                             : project_id}
                         </a>
                       </div>
-                      {/* Total Raised */}
-                      <div>{/* <RowText>{totalAmount}N</RowText> */}</div>
-                      {/* <MobileAmount>
-                        <span>{totalAmount}N</span> raised from
-                        <span>{donorCount}</span> unique donors
-                      </MobileAmount> */}
-                      {/* Total Unique Donors */}
-                      {/* <RowItem>
-                        <RowText>{donorCount}</RowText>
-                      </RowItem> */}
-                      {/* Matching Pool Allocation */}
+                   
                       <div className="">
                         <div className="break-words text-sm font-semibold text-gray-800">
-                          {yoctoNearToFloat(amount)}N
+                          {formatNearAmount(amount, 3)}N
                         </div>
                       </div>
                     </div>
