@@ -171,7 +171,7 @@ export default function PayoutsTab() {
               <>
                 <div className="mb-4 flex w-full items-center gap-4 rounded-lg bg-[#f6f6f7] p-2.5 px-4 md:gap-2">
                   <div className="flex h-6 w-6 items-center justify-center">
-                   <Search className="w-5 h-5 text-[#7B7B7B]" />
+                    <Search className="h-5 w-5 text-[#7B7B7B]" />
                   </div>
                   <input
                     onChange={({ target: { value } }) => setPayoutSearchTerm(value)}
