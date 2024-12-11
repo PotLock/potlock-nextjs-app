@@ -19,7 +19,6 @@ export const usePotPayoutLookup = ({ potId }: PotPayoutLookupParams) => {
     search: searchTerm,
   });
 
-
   const results = useMemo(() => {
     return potPayouts?.results?.map((payout) => ({
       project_id: payout?.recipient?.id,
