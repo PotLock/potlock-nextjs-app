@@ -1,4 +1,5 @@
-import { ByPotId } from "@/common/api/indexer";
+import { useWindowSize } from "@uidotdev/usehooks";
+
 import { ByElectionId, Candidate } from "@/common/contracts/core/voting";
 import { ScrollArea } from "@/common/ui/components";
 
@@ -38,9 +39,11 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
   data,
   onEntrySelect,
 }) => {
+  const { height: windowHeight } = useWindowSize();
+
   // TODO: Use VirtualScroll for better performance
   return (
-    <ScrollArea className="h-150">
+    <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
       <div className="flex flex-col">
         {data.map((candidate) => (
           <VotingCandidateListItem
