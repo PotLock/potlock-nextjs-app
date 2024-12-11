@@ -1,9 +1,12 @@
 import { useMemo } from "react";
 
+import Link from "next/link";
+
 import { AccountId, ByAccountId } from "@/common/types";
 import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/entities/profile";
+import { rootPathnames } from "@/pathnames";
 
 export type AccountOptionProps = ByAccountId &
   Pick<React.HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -13,6 +16,7 @@ export type AccountOptionProps = ByAccountId &
     onCheck?: (accountId: AccountId) => void;
     primaryAction?: React.ReactNode;
     secondaryAction?: React.ReactNode;
+    accountLink?: string;
 
     classNames?: {
       root?: string;
@@ -27,6 +31,7 @@ export const AccountOption = ({
   accountId,
   primaryAction,
   secondaryAction,
+  accountLink,
   title,
   classNames,
 }: AccountOptionProps) => {
@@ -53,30 +58,36 @@ export const AccountOption = ({
     [accountId, avatarSrc, classNames?.avatar, profileReady, title],
   );
 
-  return isThumbnail ? (
-    avatarElement
-  ) : (
-    <div
-      className={cn(
-        "flex w-full items-center gap-4 px-5 py-2",
-        { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
-        classNames?.root,
-      )}
+  return (
+    <Link
+      className="address"
+      href={accountLink ? `${accountLink}` : `/${rootPathnames.PROFILE}/${accountId}`}
+      target="_blank"
     >
-      {primaryAction}
+      {isThumbnail ? (
+        avatarElement
+      ) : (
+        <div
+          className={cn(
+            "flex w-full items-center gap-4 px-5 py-2",
+            { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
+            classNames?.root,
+          )}
+        >
+          {primaryAction}
 
-      <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
-        {avatarElement}
+          <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
+            {avatarElement}
 
-        <div className="flex flex-col">
-          <span className="prose font-600">
-            {profile?.name ?? accountId.split(".").slice(0, -1).join(".")}
-          </span>
-          <span className="prose text-neutral-500">{accountId}</span>
+            <div className="flex flex-col">
+              <span className="prose font-600">{profile?.name ?? accountId}</span>
+              <span className="prose text-neutral-500">{accountId}</span>
+            </div>
+          </div>
+
+          {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}
         </div>
-      </div>
-
-      {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}
-    </div>
+      )}
+    </Link>
   );
 };

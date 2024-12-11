@@ -4,7 +4,7 @@ import { Campaign, campaignsClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { CampaignCard } from "@/entities/campaign/components";
-import { ProfileLayout } from "@/entities/profile";
+import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 import { NoResults } from "./lists";
 

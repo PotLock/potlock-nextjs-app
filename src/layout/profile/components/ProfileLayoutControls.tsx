@@ -7,15 +7,15 @@ import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
-import { useSessionReduxStore } from "@/entities/session";
-import useWallet from "@/entities/session/hooks/wallet";
+import {
+  DonationsInfo,
+  FollowButton,
+  Linktree,
+  ProfileTags,
+  useProfileData,
+} from "@/entities/profile";
+import { useSessionAuth, useWallet } from "@/entities/session";
 import routesPath, { rootPathnames } from "@/pathnames";
-
-import DonationsInfo from "./DonationsInfo";
-import FollowButton from "./FollowButton";
-import Linktree from "./Linktree";
-import ProfileTags from "./ProfileTags";
-import { useProfileData } from "../hooks/data";
 
 type Props = {
   accountId: string;
@@ -23,14 +23,14 @@ type Props = {
 };
 
 const LinksWrapper = ({ accountId }: { accountId: string }) => {
-  const { isAuthenticated } = useSessionReduxStore();
+  const userSession = useSessionAuth();
   const { wallet } = useWallet();
   const [copied, setCopied] = useState(false);
 
   return (
     <div className="mt-4 flex flex-wrap gap-8">
       <Linktree accountId={accountId} />
-      {isAuthenticated && (
+      {userSession.isSignedIn && (
         <CopyToClipboard
           text={
             window.location.origin +
@@ -64,7 +64,7 @@ const LinksWrapper = ({ accountId }: { accountId: string }) => {
   );
 };
 
-const Info = ({ accountId, isProject }: Props) => {
+export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
   const { wallet } = useWallet();
   const { profile } = useProfileData(accountId);
 
@@ -118,5 +118,3 @@ const Info = ({ accountId, isProject }: Props) => {
     </div>
   );
 };
-
-export default Info;
