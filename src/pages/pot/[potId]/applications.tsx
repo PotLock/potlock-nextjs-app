@@ -1,36 +1,21 @@
 import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
-import { DialogOverlay } from "@radix-ui/react-dialog";
 import { Dot } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { MdCommentsDisabled } from "react-icons/md";
-import { sum } from "remeda";
 import { styled } from "styled-components";
 
 import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
-import { SearchIcon } from "@/common/assets/svgs";
-import CheckIcon from "@/common/assets/svgs/CheckIcon";
-import { Application, potClient } from "@/common/contracts/core";
 import { daysAgo, toChronologicalOrder, truncate } from "@/common/lib";
-import {
-  Button,
-  FilterChip,
-  SearchBar,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/common/ui/components";
+import { Button, FilterChip, SearchBar } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountOption, AccountProfilePicture } from "@/entities/account";
 import { useProfileData } from "@/entities/profile";
 import { ProjectListingStatusVariant } from "@/entities/project";
 import {
   PotApplicationCardSkeleton,
-  PotApplicationModal,
   PotApplicationReviewModal,
   potApplicationFiltersTags,
 } from "@/features/pot-application";
@@ -294,7 +279,6 @@ const ApplicationsTab = () => {
                 isChefOrGreater={isChefOrGreater}
                 handleApproveApplication={handleApproveApplication}
                 handleRejectApplication={handleRejectApplication}
-                isLoading={areApplicationsLoading}
               />
             ))
           ) : (
@@ -326,13 +310,11 @@ const ApplicationData = ({
   isChefOrGreater,
   handleApproveApplication,
   handleRejectApplication,
-  isLoading: areApplicationsLoading,
 }: {
   applicationData: PotApplication;
   isChefOrGreater: boolean;
   handleApproveApplication: (projectId: string) => void;
   handleRejectApplication: (projectId: string) => void;
-  isLoading: boolean;
 }) => {
   const { applicant, status, message, submitted_at } = applicationData;
   const submittedTimeStamp = new Date(submitted_at).getTime();
