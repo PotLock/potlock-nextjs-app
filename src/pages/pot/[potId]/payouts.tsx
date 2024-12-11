@@ -169,115 +169,114 @@ export default function PayoutsTab() {
                   </p>
                 </div>
               </div>
-            ): (
+            ) : (
               <>
-              
-              <div className="mb-4 flex w-full items-center gap-4 rounded-lg bg-[#f6f6f7] p-2.5 px-4 md:gap-2">
-                <div className="flex h-6 w-6 items-center justify-center">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M15.7549 14.2549H14.9649L14.6849 13.9849C15.6649 12.8449 16.2549 11.3649 16.2549 9.75488C16.2549 6.16488 13.3449 3.25488 9.75488 3.25488C6.16488 3.25488 3.25488 6.16488 3.25488 9.75488C3.25488 13.3449 6.16488 16.2549 9.75488 16.2549C11.3649 16.2549 12.8449 15.6649 13.9849 14.6849L14.2549 14.9649V15.7549L19.2549 20.7449L20.7449 19.2549L15.7549 14.2549ZM9.75488 14.2549C7.26488 14.2549 5.25488 12.2449 5.25488 9.75488C5.25488 7.26488 7.26488 5.25488 9.75488 5.25488C12.2449 5.25488 14.2549 7.26488 14.2549 9.75488C14.2549 12.2449 12.2449 14.2549 9.75488 14.2549Z"
-                      fill="#C7C7C7"
-                    />
-                  </svg>
+                <div className="mb-4 flex w-full items-center gap-4 rounded-lg bg-[#f6f6f7] p-2.5 px-4 md:gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M15.7549 14.2549H14.9649L14.6849 13.9849C15.6649 12.8449 16.2549 11.3649 16.2549 9.75488C16.2549 6.16488 13.3449 3.25488 9.75488 3.25488C6.16488 3.25488 3.25488 6.16488 3.25488 9.75488C3.25488 13.3449 6.16488 16.2549 9.75488 16.2549C11.3649 16.2549 12.8449 15.6649 13.9849 14.6849L14.2549 14.9649V15.7549L19.2549 20.7449L20.7449 19.2549L15.7549 14.2549ZM9.75488 14.2549C7.26488 14.2549 5.25488 12.2449 5.25488 9.75488C5.25488 7.26488 7.26488 5.25488 9.75488 5.25488C12.2449 5.25488 14.2549 7.26488 14.2549 9.75488C14.2549 12.2449 12.2449 14.2549 9.75488 14.2549Z"
+                        fill="#C7C7C7"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    onChange={({ target: { value } }) => setPayoutSearchTerm(value)}
+                    className="h-full w-full border-none bg-transparent p-2 pl-2 focus:outline-none"
+                    type="text"
+                    value={payoutSearchTerm}
+                    placeholder="Search..."
+                  />
                 </div>
-                <input
-                  onChange={({ target: { value } }) => setPayoutSearchTerm(value)}
-                  className="h-full w-full border-none bg-transparent p-2 pl-2 focus:outline-none"
-                  type="text"
-                  value={payoutSearchTerm}
-                  placeholder="Search..."
-                />
-              </div>
-              <div className="flex w-full flex-col flex-nowrap items-center overflow-x-auto ">
-                <div className="flex w-full flex-row items-center justify-between gap-8  bg-[#f6f6f7] p-2.5 px-4">
-                  <div className="justify-left flex w-28 flex-1 flex-row items-center">
-                    <div className="break-words  text-sm font-semibold leading-6 text-[#7B7B7B]">
-                      PROJECTS
+                <div className="flex w-full flex-col flex-nowrap items-center overflow-x-auto ">
+                  <div className="flex w-full flex-row items-center justify-between gap-8  bg-[#f6f6f7] p-2.5 px-4">
+                    <div className="justify-left flex w-28 flex-1 flex-row items-center">
+                      <div className="break-words  text-sm font-semibold leading-6 text-[#7B7B7B]">
+                        PROJECTS
+                      </div>
+                    </div>
+
+                    <div className="flex flex-row items-center justify-start">
+                      <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
+                        POOL ALLOCATION
+                      </div>
                     </div>
                   </div>
-  
-                  <div className="flex flex-row items-center justify-start">
-                    <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
-                      POOL ALLOCATION
+
+                  {isPayoutsPending ? (
+                    Array.from({ length: 10 }).map((_, index) => (
+                      <div key={index} className="mt-3 w-full">
+                        <Skeleton className="h-10 w-full" />
+                      </div>
+                    ))
+                  ) : payouts?.length === 0 ? (
+                    <div
+                      className="relative flex w-full flex-row items-center justify-between gap-8 p-4 md:flex-wrap md:gap-2"
+                      style={{ padding: "12px" }}
+                    >
+                      No payouts to display
                     </div>
-                  </div>
-                </div>
-  
-                {isPayoutsPending ? (
-                  Array.from({ length: 10 }).map((_, index) => (
-                    <div key={index} className="mt-3 w-full">
-                      <Skeleton className="h-10 w-full" />
-                    </div>
-                  ))
-                ) : payouts?.length === 0 ? (
-                  <div
-                    className="relative flex w-full flex-row items-center justify-between gap-8 p-4 md:flex-wrap md:gap-2"
-                    style={{ padding: "12px" }}
-                  >
-                    No payouts to display
-                  </div>
-                ) : (
-                  payouts?.map((payout, index) => {
-                    const { project_id, amount } = payout;
-  
-                    return (
-                      <div
-                        className="relative flex w-full flex-row items-center justify-between gap-8 p-4 md:flex-wrap md:gap-2"
-                        key={index}
-                      >
-                        <div className="flex w-[110px] flex-1 flex-row items-center justify-start gap-4 transition duration-200 hover:no-underline">
-                          <AccountProfilePicture
-                            accountId={project_id}
-                            className="h-[24px] w-[24px]"
-                          />
-                          <a
-                            className="font-semibold text-gray-800 no-underline transition duration-200 hover:text-red-600"
-                            href={`?tab=project&projectId=${project_id}`}
-                            target={"_blank"}
-                          >
-                            {project_id.length > MAX_ACCOUNT_ID_DISPLAY_LENGTH
-                              ? project_id.slice(0, MAX_ACCOUNT_ID_DISPLAY_LENGTH) + "..."
-                              : project_id}
-                          </a>
-                        </div>
-  
-                        <div className="">
-                          <div className="break-words text-sm font-semibold text-gray-800">
-                            {formatNearAmount(amount, 3)}N
+                  ) : (
+                    payouts?.map((payout, index) => {
+                      const { project_id, amount } = payout;
+
+                      return (
+                        <div
+                          className="relative flex w-full flex-row items-center justify-between gap-8 p-4 md:flex-wrap md:gap-2"
+                          key={index}
+                        >
+                          <div className="flex w-[110px] flex-1 flex-row items-center justify-start gap-4 transition duration-200 hover:no-underline">
+                            <AccountProfilePicture
+                              accountId={project_id}
+                              className="h-[24px] w-[24px]"
+                            />
+                            <a
+                              className="font-semibold text-gray-800 no-underline transition duration-200 hover:text-red-600"
+                              href={`?tab=project&projectId=${project_id}`}
+                              target={"_blank"}
+                            >
+                              {project_id.length > MAX_ACCOUNT_ID_DISPLAY_LENGTH
+                                ? project_id.slice(0, MAX_ACCOUNT_ID_DISPLAY_LENGTH) + "..."
+                                : project_id}
+                            </a>
+                          </div>
+
+                          <div className="">
+                            <div className="break-words text-sm font-semibold text-gray-800">
+                              {formatNearAmount(amount, 3)}N
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })
+                      );
+                    })
+                  )}
+                </div>
+                {numberOfPages > 1 && (
+                  <Pagination className="mt-[24px]">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => setPayoutPageNumber((prev) => Math.max(prev - 1, 1))}
+                        />
+                      </PaginationItem>
+
+                      {pageNumberButtons}
+
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() =>
+                            setPayoutPageNumber((prev) =>
+                              Math.min(prev + 1, Math.ceil(totalPayoutCount / 10)),
+                            )
+                          }
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
                 )}
-              </div>
-              {numberOfPages > 1 && (
-                <Pagination className="mt-[24px]">
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        onClick={() => setPayoutPageNumber((prev) => Math.max(prev - 1, 1))}
-                      />
-                    </PaginationItem>
-  
-                    {pageNumberButtons}
-  
-                    <PaginationItem>
-                      <PaginationNext
-                        onClick={() =>
-                          setPayoutPageNumber((prev) =>
-                            Math.min(prev + 1, Math.ceil(totalPayoutCount / 10)),
-                          )
-                        }
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              )}
               </>
             )}
-            </div>
+          </div>
         </div>
       </div>
       <div
