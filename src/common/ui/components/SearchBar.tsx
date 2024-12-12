@@ -23,7 +23,7 @@ export const SearchBar = ({ className, ...inputProps }: Props) => {
         <Image alt="search" src="/assets/icons/search-icon.svg" width={18} height={18} />
         <Search className="h-3 w-3" />
       </div>
-      <Input type="search" {...(inputProps || {})} />
+      <Input type="search" {...inputProps} />
     </div>
   );
 };
