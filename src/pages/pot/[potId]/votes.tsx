@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
-import { votingClientHooks } from "@/common/contracts/core/voting";
+import { votingHooks } from "@/common/contracts/core/voting";
 import { AccountId } from "@/common/types";
 import { Button, Checkbox, FilterChip, Input } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
@@ -18,7 +18,7 @@ import {
   VotingCandidatesTableHead,
   VotingRules,
   VotingWeightBoostBreakdown,
-  useVotingCandidates,
+  useVotingCandidateLookup,
   useVotingParticipantVoteWeight,
 } from "@/features/voting";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
@@ -28,8 +28,11 @@ export default function PotVotesTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const [isVotingRuleListDisplayed, setIsVotingRuleListDisplayed] = useState(false);
-  const [isWeightBoostBreakdownDisplayed, setIsWeightBoostBreakdownDisplayed] = useState(false);
+  const [isVotingRuleListVisible, setIsVotingRuleListVisible] = useState(false);
+  const [isWeightBoostBreakdownVisible, setIsWeightBoostBreakdownVisible] = useState(false);
+
+  const isSidebarVisible = isDesktop && (isVotingRuleListVisible || isWeightBoostBreakdownVisible);
+
   const [candidateFilter, setFilter] = useState<VotingCandidateFilter>("all");
   const selectedCandidateAccountIds = useSet();
 
@@ -42,17 +45,17 @@ export default function PotVotesTab() {
   // TODO: Figure out a way to know exactly which ONE election is active ( Pots V2 milestone )
   const [activeElectionId, _activeElection] = potActiveElections?.at(0) ?? [0, undefined];
 
-  const { data: activeElectionVotes } = votingClientHooks.useElectionVotes({
+  const { data: activeElectionVotes } = votingHooks.useElectionVotes({
     electionId: activeElectionId ?? 0,
   });
 
   const {
     candidates,
-    candidatesWithVotes,
-    candidatesWithoutVotes,
+    candidatesWithUserVotes,
+    candidatesAvailableForUserVoting,
     candidateSearchTerm,
     setCandidateSearchTerm,
-  } = useVotingCandidates({ electionId: activeElectionId });
+  } = useVotingCandidateLookup({ electionId: activeElectionId });
 
   // TODO: temporarily disabled as vote for multiple candidates is unimplemented
   const _handleCandidateSelect = (accountId: AccountId, isSelected: boolean): void =>
@@ -81,7 +84,7 @@ export default function PotVotesTab() {
           onClick={() => setFilter("voted")}
           className="font-medium"
           label="Voted"
-          count={candidatesWithVotes.length}
+          count={candidatesWithUserVotes.length}
         />
 
         <FilterChip
@@ -89,7 +92,7 @@ export default function PotVotesTab() {
           onClick={() => setFilter("pending")}
           className="font-medium"
           label="Pending"
-          count={candidatesWithoutVotes.length}
+          count={candidatesAvailableForUserVoting.length}
         />
       </div>
     ),
@@ -97,8 +100,8 @@ export default function PotVotesTab() {
     [
       candidateFilter,
       candidates?.length,
-      candidatesWithVotes.length,
-      candidatesWithoutVotes.length,
+      candidatesWithUserVotes.length,
+      candidatesAvailableForUserVoting.length,
     ],
   );
 
@@ -108,7 +111,7 @@ export default function PotVotesTab() {
         return (
           <VotingCandidateList
             electionId={activeElectionId}
-            data={candidatesWithVotes}
+            data={candidatesWithUserVotes}
             // TODO: temporarily disabled as vote for multiple candidates is unimplemented
             // onEntrySelect={handleCandidateSelect}
           />
@@ -119,7 +122,7 @@ export default function PotVotesTab() {
         return (
           <VotingCandidateList
             electionId={activeElectionId}
-            data={candidatesWithoutVotes}
+            data={candidatesAvailableForUserVoting}
             // TODO: temporarily disabled as vote for multiple candidates is unimplemented
             // onEntrySelect={handleCandidateSelect}
           />
@@ -137,7 +140,13 @@ export default function PotVotesTab() {
         );
       }
     }
-  }, [activeElectionId, candidateFilter, candidates, candidatesWithVotes, candidatesWithoutVotes]);
+  }, [
+    activeElectionId,
+    candidateFilter,
+    candidates,
+    candidatesWithUserVotes,
+    candidatesAvailableForUserVoting,
+  ]);
 
   return (
     <div className={cn("flex w-full flex-col gap-6")}>
@@ -180,13 +189,13 @@ export default function PotVotesTab() {
                     "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
                     "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
                   )}
-                  onClick={() => setIsWeightBoostBreakdownDisplayed((prev: Boolean) => !prev)}
+                  onClick={() => setIsWeightBoostBreakdownVisible((prev: Boolean) => !prev)}
                 >
                   <MdStar className="color-corn-500 h-4.5 w-4.5" />
 
                   <span className="flex items-center gap-2 text-sm">
                     <span className="font-500 hidden whitespace-nowrap md:inline-flex">
-                      {`${isWeightBoostBreakdownDisplayed ? "Hide" : "View"} Weight Boost`}
+                      {`${isWeightBoostBreakdownVisible ? "Hide" : "View"} Weight Boost`}
                     </span>
 
                     <span className="text-center font-semibold leading-tight text-[#ea6a25]">
@@ -204,7 +213,7 @@ export default function PotVotesTab() {
                     "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
                     "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
                   )}
-                  onClick={() => setIsVotingRuleListDisplayed((prev: Boolean) => !prev)}
+                  onClick={() => setIsVotingRuleListVisible((prev: Boolean) => !prev)}
                 >
                   <MdOutlineDescription className="color-peach-500 h-4.5 w-4.5" />
 
@@ -214,7 +223,7 @@ export default function PotVotesTab() {
                       "font-500 text-sm",
                     )}
                   >
-                    {`${isVotingRuleListDisplayed ? "Hide" : "View"} Voting Rules`}
+                    {`${isVotingRuleListVisible ? "Hide" : "View"} Voting Rules`}
                   </span>
 
                   <ChevronRight
@@ -251,17 +260,17 @@ export default function PotVotesTab() {
           )}
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className={cn("flex flex-col gap-6", { hidden: !isSidebarVisible })}>
           <VotingRules
-            open={isVotingRuleListDisplayed}
-            onOpenChange={setIsVotingRuleListDisplayed}
+            open={isVotingRuleListVisible}
+            onOpenChange={setIsVotingRuleListVisible}
             mode={isDesktop ? "panel" : "modal"}
             {...{ potId }}
           />
 
           <VotingWeightBoostBreakdown
-            open={isWeightBoostBreakdownDisplayed}
-            onOpenChange={setIsWeightBoostBreakdownDisplayed}
+            open={isWeightBoostBreakdownVisible}
+            onOpenChange={setIsWeightBoostBreakdownVisible}
             mode={isDesktop ? "panel" : "modal"}
             {...{ potId }}
           />

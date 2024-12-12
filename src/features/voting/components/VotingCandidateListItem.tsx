@@ -2,12 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
 
-import {
-  ByElectionId,
-  Candidate,
-  votingClient,
-  votingClientHooks,
-} from "@/common/contracts/core/voting";
+import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
 import { Button, Checkbox } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { AccountOption } from "@/entities/account";
@@ -28,11 +23,11 @@ export const VotingCandidateListItem: React.FC<VotingCandidateListItemProps> = (
   const userSession = useSessionAuth();
   const { toast } = useToast();
 
-  const { data: election } = votingClientHooks.useElection({
+  const { data: election } = votingHooks.useElection({
     electionId,
   });
 
-  const { data: votes, mutate: revalidateVotes } = votingClientHooks.useElectionCandidateVotes({
+  const { data: votes, mutate: revalidateVotes } = votingHooks.useElectionCandidateVotes({
     electionId,
     accountId,
   });

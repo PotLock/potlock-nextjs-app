@@ -1,8 +1,8 @@
 import { ByPotId } from "@/common/api/indexer";
-import { votingClientHooks } from "@/common/contracts/core/voting";
+import { votingHooks } from "@/common/contracts/core/voting";
 
 export const usePotElections = ({ potId }: ByPotId) => {
-  const { data: elections } = votingClientHooks.useElections();
+  const { data: elections } = votingHooks.useElections();
 
   return {
     potElections: elections?.filter(
@@ -13,7 +13,7 @@ export const usePotElections = ({ potId }: ByPotId) => {
 };
 
 export const usePotActiveElections = ({ potId }: ByPotId) => {
-  const { data: activeElections } = votingClientHooks.useActiveElections();
+  const { data: activeElections } = votingHooks.useActiveElections();
 
   return {
     potActiveElections: activeElections?.filter(
