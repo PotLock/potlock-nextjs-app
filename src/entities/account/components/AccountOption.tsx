@@ -80,66 +80,64 @@ export const AccountOption = ({
   );
 
   return (
-      <Tooltip>
-        <TooltipTrigger>
-          <Link
-            className="address"
-            href={accountLink ? `${accountLink}` : `/profile/${accountId}`}
-            target="_blank"
-          >
-            {isThumbnail ? (
-              avatarElement
-            ) : (
-              <div
-                className={cn(
-                  "flex w-full cursor-pointer items-center gap-4 hover:bg-transparent",
-                  { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
-                  classNames?.root,
-                )}
-              >
-                {primaryAction}
+    <Tooltip>
+      <TooltipTrigger>
+        <Link
+          className="address"
+          href={accountLink ? `${accountLink}` : `/profile/${accountId}`}
+          target="_blank"
+        >
+          {isThumbnail ? (
+            avatarElement
+          ) : (
+            <div
+              className={cn(
+                "flex w-full cursor-pointer items-center gap-4 hover:bg-transparent",
+                { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
+                classNames?.root,
+              )}
+            >
+              {primaryAction}
 
-                <div className="mr-a flex w-full cursor-pointer items-center gap-4">
-                  {avatarElement}
+              <div className="mr-a flex w-full cursor-pointer items-center gap-4">
+                {avatarElement}
 
-                  <div className="flex w-full flex-col">
-                    <div className="inline-flex items-center">
-                      <MiddleTruncate className="font-600" end={0}>
-                        {profile?.name ?? accountId}
-                      </MiddleTruncate>
+                <div className="flex w-full flex-col">
+                  <div className="inline-flex items-center">
+                    <MiddleTruncate className="font-600" end={0}>
+                      {profile?.name ?? accountId}
+                    </MiddleTruncate>
 
-                      <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
-                        {statusElement}
-                      </div>
+                    <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
+                      {statusElement}
                     </div>
-
-                    <Link
-                      className={cn(
-                        "underline-solid inline-flex w-full items-center",
-                        "text-nowrap text-neutral-500 underline underline-offset-4",
-                      )}
-                      href={
-                        accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`
-                      }
-                      target="_blank"
-                    >
-                      <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
-                    </Link>
-
-                    {statusElement && (
-                      <span className={cn("mt-2 md:hidden", { hidden: hideStatusOnMobile })}>
-                        {statusElement}
-                      </span>
-                    )}
                   </div>
-                </div>
 
-                {secondaryAction && <div className="">{secondaryAction}</div>}
+                  <Link
+                    className={cn(
+                      "underline-solid inline-flex w-full items-center",
+                      "text-nowrap text-neutral-500 underline underline-offset-4",
+                    )}
+                    href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
+                    target="_blank"
+                  >
+                    <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
+                  </Link>
+
+                  {statusElement && (
+                    <span className={cn("mt-2 md:hidden", { hidden: hideStatusOnMobile })}>
+                      {statusElement}
+                    </span>
+                  )}
+                </div>
               </div>
-            )}
-          </Link>
-        </TooltipTrigger>
-        <TooltipContent>{accountId}</TooltipContent>
-      </Tooltip>
+
+              {secondaryAction && <div className="">{secondaryAction}</div>}
+            </div>
+          )}
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent>{accountId}</TooltipContent>
+    </Tooltip>
   );
 };
