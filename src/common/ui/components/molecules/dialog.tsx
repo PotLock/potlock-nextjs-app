@@ -61,7 +61,7 @@ const DialogContent = forwardRef<
             "sm:min-w-auto fixed left-[50%] top-[50%] z-50 flex h-full w-full min-w-full flex-col",
             "items-stretch sm:h-auto sm:max-w-xl sm:rounded-lg",
             "bg-background translate-x-[-50%] translate-y-[-50%] shadow-lg",
-            "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=open]:animate-in data-[state=closed]:animate-out duration-200",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",

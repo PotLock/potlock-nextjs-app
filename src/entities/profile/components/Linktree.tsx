@@ -30,7 +30,7 @@ type Props = {
   accountId: string;
 };
 
-const Linktree = ({ accountId }: Props) => {
+export const Linktree = ({ accountId }: Props) => {
   const { profile } = useProfileData(accountId);
 
   const linktree = profile?.linktree;
@@ -78,5 +78,3 @@ const Linktree = ({ accountId }: Props) => {
     </div>
   );
 };
-
-export default Linktree;

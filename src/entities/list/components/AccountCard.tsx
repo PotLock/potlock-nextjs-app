@@ -108,7 +108,7 @@ export const AccountCard = ({
       <Link href={`/profile/${dataForList.registrant.id}`}>
         <div className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]">
           <div
-            className="overflow-hidden rounded-md bg-white font-lora shadow-md"
+            className="font-lora overflow-hidden rounded-md bg-white shadow-md"
             data-testid="list-card"
           >
             <AccountProfileCover

@@ -47,7 +47,13 @@ Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
 ## Dependencies
 
-### Nice Modal for modals
+### UnoCSS
+
+More performant and flexible drop-in replacement for Tailwind CSS, created by [Anthony Fu](https://antfu.me)
+
+[Documentation](https://unocss.dev)
+
+### Nice Modal
 
 [Documentation](https://github.com/eBay/nice-modal-react?tab=readme-ov-file#nice-modal)
 [Examples](https://opensource.ebay.com/nice-modal-react/)

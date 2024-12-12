@@ -4,7 +4,7 @@ import { Button } from "@/common/ui/components";
 
 export const CampaignBanner = () => {
   return (
-    <div className="md:p-18 min-h-100  relative flex w-full flex-col items-start justify-center overflow-hidden bg-hero">
+    <div className="md:p-18 min-h-100  bg-hero relative flex w-full flex-col items-start justify-center overflow-hidden">
       <h1 className="font-500  font-lora text-[48px] tracking-[1.12px]">Fund Your Ideas</h1>
       <p className="text-[18px] font-extralight leading-[30px] md:w-[50%]">
         Bring your vision to life with a powerful fundraising campaign to support groundbreaking

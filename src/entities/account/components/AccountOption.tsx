@@ -1,9 +1,12 @@
 import { useMemo } from "react";
 
+import Link from "next/link";
+
 import { AccountId, ByAccountId } from "@/common/types";
 import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/entities/profile";
+import { rootPathnames } from "@/pathnames";
 
 export type AccountOptionProps = ByAccountId &
   Pick<React.HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -13,6 +16,7 @@ export type AccountOptionProps = ByAccountId &
     onCheck?: (accountId: AccountId) => void;
     primaryAction?: React.ReactNode;
     secondaryAction?: React.ReactNode;
+    accountLink?: string;
 
     classNames?: {
       root?: string;
@@ -27,6 +31,7 @@ export const AccountOption = ({
   accountId,
   primaryAction,
   secondaryAction,
+  accountLink,
   title,
   classNames,
 }: AccountOptionProps) => {
@@ -59,20 +64,25 @@ export const AccountOption = ({
     <div
       className={cn(
         "flex w-full items-center gap-4 px-5 py-2",
-        { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
+        { "rounded-full": isRounded, "hover:bg-neutral-50": highlightOnHover },
         classNames?.root,
       )}
     >
       {primaryAction}
 
-      <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
+      <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="4">
         {avatarElement}
 
         <div className="flex flex-col">
-          <span className="prose font-600">
-            {profile?.name ?? accountId.split(".").slice(0, -1).join(".")}
-          </span>
-          <span className="prose text-neutral-500">{accountId}</span>
+          <span className="prose font-600">{profile?.name ?? accountId}</span>
+
+          <Link
+            className="underline-solid inline-flex items-center text-neutral-500 underline underline-offset-4"
+            href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
+            target="_blank"
+          >
+            <span className="prose">{`@${accountId}`}</span>
+          </Link>
         </div>
       </div>
 

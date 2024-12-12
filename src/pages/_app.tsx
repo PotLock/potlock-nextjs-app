@@ -53,7 +53,7 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
         <NiceModalProvider>
           <SessionProvider>
             <div
-              className={`${cn("flex h-full flex-col items-center font-lora antialiased", lora.variable)}`}
+              className={`${cn("font-lora flex h-full flex-col items-center antialiased", lora.variable)}`}
             >
               <AppBar />
               {getLayout(<Component {...pageProps} />)}

@@ -68,7 +68,7 @@ export const CampaignsList = ({ campaigns }: { campaigns: Campaign[] }) => {
           <div className="min-h-100 flex w-full flex-col items-center justify-center">
             <img src="/assets/icons/no-list.svg" alt="" className="mb-4 h-[200px] w-[200px]" />
             <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
-              <p className="w-100 text-center font-lora italic">No Campaign found</p>
+              <p className="w-100 font-lora text-center italic">No Campaign found</p>
             </div>
           </div>
         )}

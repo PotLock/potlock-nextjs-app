@@ -11,6 +11,7 @@ import type {
   EligibilityType,
   IVotingContract,
   Vote,
+  VoteInputs,
   VotingType,
 } from "./interfaces";
 
@@ -247,8 +248,17 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * @param vote Tuple of [candidate_id, vote_weight]
    * @returns Success status of the vote
    */
-  async vote(args: { election_id: number; vote: [AccountId, number] }): Promise<boolean> {
-    return this.contract.call("vote", { args });
+  async vote(args: { election_id: number; vote: VoteInputs }) {
+    return this.contract.call<typeof args, boolean>("vote", { args });
+  }
+
+  /**
+   * Batch vote cast wrapper around {@link vote}
+   */
+  async voteBatch({ election_id, votes }: { election_id: number; votes: VoteInputs[] }) {
+    return this.contract.callMultiple<{ election_id: number; vote: VoteInputs }>(
+      votes.map((voteInputs) => ({ method: "vote", args: { election_id, vote: voteInputs } })),
+    );
   }
 
   /**

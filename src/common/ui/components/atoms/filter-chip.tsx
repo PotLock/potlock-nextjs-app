@@ -8,9 +8,9 @@ import { cn } from "../../utils";
 // TODO: add correct hover effects
 const filterChipVariants = cva(
   cn(
-    "flex text-sm leading-tight items-center justify-center text-[#292929] gap-2 font-medium whitespace-nowrap font-['Mona Sans']",
-    "no-underline cursor-pointer transition-all duration-200 ease-in-out w-fit rounded-md",
-    "border-none disabled:cursor-not-allowed",
+    "flex text-sm leading-tight items-center justify-center text-[#292929] gap-2 font-medium",
+    "whitespace-nowrap no-underline cursor-pointer transition-all duration-200 ease-in-out w-fit",
+    "rounded-md border-none disabled:cursor-not-allowed",
   ),
 
   {
@@ -70,7 +70,7 @@ const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
     const Comp = asChild ? Slot : "button";
     return (
       <div
-        className={cn("rounded-1.5 border bg-none pt-[1.5px]", {
+        className={cn("rounded-1.5 pt-0.25 border bg-none", {
           "border-[#f4b37d]": variant === "brand-filled",
           "border-[#dadada]": variant !== "brand-filled",
         })}

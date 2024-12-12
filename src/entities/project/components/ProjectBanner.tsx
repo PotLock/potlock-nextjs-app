@@ -4,7 +4,7 @@ import { RegistrationStatus } from "@/common/contracts/core";
 import { useRegistration } from "@/entities/core";
 import { statuses } from "@/entities/core/constants";
 
-const ProjectBanner = ({ projectId }: { projectId: string }) => {
+export const ProjectBanner = ({ projectId }: { projectId: string }) => {
   const [toggle, setToggle] = useState(false);
 
   const { registration, loading } = useRegistration(projectId);

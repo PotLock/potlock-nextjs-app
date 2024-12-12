@@ -56,7 +56,7 @@ export const NoListItem = ({
         className="mb-4 h-[200px] w-[200px]"
       />
       <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
-        <p className="w-100 text-center font-lora italic">{text}</p>
+        <p className="w-100 font-lora text-center italic">{text}</p>
         {showButton && (
           <Button onClick={route} variant="standard-filled">
             {type === NoListItemType.FAVORITE_LISTS ? "Start Curating" : "Create List"}

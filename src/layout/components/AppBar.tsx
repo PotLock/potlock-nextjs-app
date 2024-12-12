@@ -99,7 +99,13 @@ export const AppBar = () => {
 
   return (
     <>
-      <nav className="2xl-container z-50 mx-auto flex w-full content-between items-center justify-between self-stretch bg-transparent px-10 pb-6 pt-6 max-sm:px-1 md:h-[96px]">
+      <nav
+        className={cn(
+          "2xl-container z-50 mx-auto flex w-full",
+          "content-between items-center justify-between self-stretch",
+          "bg-transparent px-5 py-3 md:h-[96px] md:px-10 md:py-6",
+        )}
+      >
         {/* Left */}
         <div className="flex">
           <div className="mr-12 flex flex-row items-center justify-center">

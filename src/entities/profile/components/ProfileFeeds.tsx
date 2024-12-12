@@ -43,7 +43,7 @@ export const ProfileFeeds: React.FC<ProfileFeedsProps> = ({ accountId }) => {
 
   const NoResults = () => (
     <div className="flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px] md:flex-col md:px-[105px] md:py-[68px]">
-      <p className="font-italic font-500 mb-4 max-w-[290px] text-center font-lora text-[16px] text-[#292929] md:text-[22px]">
+      <p className="font-italic font-500 font-lora mb-4 max-w-[290px] text-center text-[16px] text-[#292929] md:text-[22px]">
         This project has no Feeds yet.
       </p>
 

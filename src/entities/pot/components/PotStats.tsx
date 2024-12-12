@@ -28,7 +28,7 @@ const Table = ({
   const { data: nearToUsdValue } = coingecko.useOneNearUsdPrice();
 
   return (
-    <Container className="min-w-100 xl:w-126.5">
+    <Container className="md:min-w-100 xl:w-126.5">
       <div className="header">
         {usdToggle
           ? `~$${(parseFloat(totalAmount) * nearToUsdValue).toFixed(2)}`

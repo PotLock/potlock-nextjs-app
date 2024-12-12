@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-const FollowButton = ({ accountId, className }: Props) => {
+export const FollowButton = ({ accountId, className }: Props) => {
   const { wallet } = useWallet();
 
   const [followEdge, setFollowEdge] = useState<Record<string, any>>();

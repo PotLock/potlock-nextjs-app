@@ -1,5 +1,6 @@
 import useSWR from "swr";
 
+import { UNKNOWN_ACCOUNT_ID_PLACEHOLDER } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 
 import { AccountId, ElectionId } from "./interfaces";
@@ -43,4 +44,14 @@ export const useElectionCandidateVotes = ({ electionId, accountId }: ByElectionI
 export const useElectionVotes = ({ electionId }: ByElectionId) =>
   useSWR(["get_election_votes", electionId], ([_queryKey, election_id]: [string, ElectionId]) =>
     election_id === 0 ? undefined : votingClient.get_election_votes({ election_id }),
+  );
+
+export const useVoterVotes = ({ electionId, accountId }: ByElectionId & Partial<ByAccountId>) =>
+  useSWR(
+    ["get_voter_votes", electionId, accountId ?? UNKNOWN_ACCOUNT_ID_PLACEHOLDER],
+
+    ([_queryKey, election_id, voter]: [string, ElectionId, AccountId]) =>
+      election_id === 0 || voter === UNKNOWN_ACCOUNT_ID_PLACEHOLDER
+        ? undefined
+        : votingClient.get_voter_votes({ election_id, voter }),
   );

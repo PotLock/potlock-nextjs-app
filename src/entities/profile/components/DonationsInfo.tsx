@@ -4,9 +4,9 @@ import { Button } from "@/common/ui/components";
 import useDonationsForProject from "@/entities/core/hooks/useDonationsForProject";
 import { useDonation } from "@/features/donation";
 
-import FollowButton from "./FollowButton";
+import { FollowButton } from "./FollowButton";
 
-export const Container = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 24px;
@@ -61,7 +61,7 @@ export const Container = styled.div`
   }
 `;
 
-const DonationsInfo = ({ accountId }: { accountId: string }) => {
+export const DonationsInfo = ({ accountId }: { accountId: string }) => {
   const donationsInfo = useDonationsForProject(accountId);
   const { openDonationModal } = useDonation({ accountId });
 
@@ -82,5 +82,3 @@ const DonationsInfo = ({ accountId }: { accountId: string }) => {
     </Container>
   );
 };
-
-export default DonationsInfo;

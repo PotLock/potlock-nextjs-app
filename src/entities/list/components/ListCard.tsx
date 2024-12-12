@@ -80,7 +80,7 @@ export const ListCard = ({
   return (
     <div
       onClick={handleRoute}
-      className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]"
+      className="cursor-pointer transition-all duration-300 hover:translate-y-[-1rem]"
     >
       <Image
         src={dataForList?.cover_image_url ? "/assets/images/default-backdrop.png" : backdrop}
