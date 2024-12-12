@@ -23,7 +23,7 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "errorLens.followCursor": "allLinesExceptActive",
   "errorLens.scrollbarHackEnabled": true,

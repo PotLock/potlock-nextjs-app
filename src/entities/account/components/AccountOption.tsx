@@ -78,7 +78,7 @@ export const AccountOption = ({
         <TooltipTrigger>
           <Link
             className="address"
-            href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
+            href={accountLink ? `${accountLink}` : `/profile/${accountId}`}
             target="_blank"
           >
             {isThumbnail ? (
