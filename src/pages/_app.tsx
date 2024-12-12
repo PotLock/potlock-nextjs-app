@@ -22,6 +22,7 @@ import { cn } from "@/common/ui/utils";
 import { SessionProvider } from "@/entities/session";
 import { AppBar } from "@/layout/components/AppBar";
 import { dispatch, store } from "@/store";
+import { TooltipProvider } from "@/common/ui/components";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -52,12 +53,14 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
       <ReduxProvider {...{ store }}>
         <NiceModalProvider>
           <SessionProvider>
-            <div
-              className={`${cn("font-lora flex h-full flex-col items-center antialiased", lora.variable)}`}
-            >
-              <AppBar />
-              {getLayout(<Component {...pageProps} />)}
-            </div>
+            <TooltipProvider>
+              <div
+                className={`${cn("font-lora flex h-full flex-col items-center antialiased", lora.variable)}`}
+              >
+                <AppBar />
+                {getLayout(<Component {...pageProps} />)}
+              </div>
+            </TooltipProvider>
           </SessionProvider>
         </NiceModalProvider>
         <Toaster />

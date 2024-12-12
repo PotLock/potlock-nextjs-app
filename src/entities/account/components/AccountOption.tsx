@@ -12,7 +12,6 @@ import {
   Skeleton,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -81,7 +80,6 @@ export const AccountOption = ({
   );
 
   return (
-    <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
           <Link
@@ -143,6 +141,5 @@ export const AccountOption = ({
         </TooltipTrigger>
         <TooltipContent>{accountId}</TooltipContent>
       </Tooltip>
-    </TooltipProvider>
   );
 };
