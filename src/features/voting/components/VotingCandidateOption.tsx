@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 
 import { ByElectionId, Candidate } from "@/common/contracts/core/voting";
-import { Button, Checkbox } from "@/common/ui/components";
+import { Button, Checkbox, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountOption } from "@/entities/account";
 
@@ -21,7 +21,7 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
   isSelected = false,
   onSelect,
 }) => {
-  const { canReceiveVotes, hasUserVotes, handleVoteCast } = useVotingCandidateEntry({
+  const { isLoading, canReceiveVotes, hasUserVotes, handleVoteCast } = useVotingCandidateEntry({
     electionId,
     accountId,
   });
@@ -58,19 +58,27 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
       secondaryAction={
         <div className="flex items-center">
           <div className="hidden h-16 w-24 items-center justify-end p-4 md:inline-flex">
-            <div className="prose text-right text-sm font-medium leading-tight">{votesCount}</div>
+            {isLoading ? (
+              <Skeleton className="h-5 w-11" />
+            ) : (
+              <div className="prose text-right text-sm font-medium leading-tight">{votesCount}</div>
+            )}
           </div>
 
           <div className="hidden h-16 items-center justify-end p-4 pr-0 md:inline-flex">
-            <Button
-              variant="standard-outline"
-              disabled={!canReceiveVotes}
-              title={canReceiveVotes ? undefined : "You have already voted for this project"}
-              onClick={handleVoteCast}
-              className="ml-auto h-fit"
-            >
-              {"Vote"}
-            </Button>
+            {isLoading ? (
+              <Skeleton className="w-15.5 h-10" />
+            ) : (
+              <Button
+                variant="standard-outline"
+                disabled={!canReceiveVotes}
+                title={canReceiveVotes ? undefined : "You have already voted for this project"}
+                onClick={handleVoteCast}
+                className="ml-auto h-fit"
+              >
+                {"Vote"}
+              </Button>
+            )}
           </div>
         </div>
       }

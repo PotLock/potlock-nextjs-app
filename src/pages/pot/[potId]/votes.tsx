@@ -194,7 +194,7 @@ export default function PotVotesTab() {
           variant={candidateFilter === "voted" ? "brand-filled" : "brand-outline"}
           onClick={() => setFilter("voted")}
           className="font-medium"
-          label="Voted"
+          label="Voted By Me"
           count={votedCandidates.length}
         />
 
@@ -202,7 +202,7 @@ export default function PotVotesTab() {
           variant={candidateFilter === "pending" ? "brand-filled" : "brand-outline"}
           onClick={() => setFilter("pending")}
           className="font-medium"
-          label="Pending"
+          label="Not Voted By Me"
           count={votableCandidates.length}
         />
       </div>
