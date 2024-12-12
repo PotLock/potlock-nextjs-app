@@ -80,7 +80,8 @@ export default function PotVotesTab() {
             </span>
 
             <span className="font-500 text-4.25 leading-normal">
-              {`/${remainingVotingCapacity ?? 0} Votes Casted`}
+              {/* {`/${remainingVotingCapacity ?? 0} Votes Casted`} */}
+              {" Votes Casted"}
             </span>
           </span>
         </div>
@@ -200,7 +201,7 @@ export default function PotVotesTab() {
       </div>
 
       <div className="flex w-full justify-between">
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <FilterChip
             variant={candidateFilter === "all" ? "brand-filled" : "brand-outline"}
             onClick={() => setFilter("all")}

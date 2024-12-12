@@ -23,6 +23,14 @@ export const useElection = ({ electionId }: ByElectionId) =>
       election_id === 0 ? undefined : votingClient.get_election({ election_id }),
   );
 
+export const useIsVotingPeriod = ({ electionId }: ByElectionId) =>
+  useSWR(
+    ["is_voting_period", electionId],
+
+    ([_queryKey, election_id]: [string, ElectionId]) =>
+      election_id === 0 ? undefined : votingClient.is_voting_period({ election_id }),
+  );
+
 export const useElectionCandidates = ({ electionId }: ByElectionId) =>
   useSWR(
     ["get_election_candidates", electionId],

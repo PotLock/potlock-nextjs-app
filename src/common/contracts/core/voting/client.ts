@@ -209,8 +209,8 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Based on the current time and election start_date/end_date
    */
-  async is_voting_period(args: { election_id: number }): Promise<boolean> {
-    return this.contract.view("is_voting_period", { args });
+  async is_voting_period(args: { election_id: number }) {
+    return this.contract.view<typeof args, boolean>("is_voting_period", { args });
   }
 
   // Change Methods

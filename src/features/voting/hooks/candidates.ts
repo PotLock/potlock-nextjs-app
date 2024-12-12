@@ -54,16 +54,14 @@ export const useVotingCandidateLookup = ({ electionId }: VotingCandidateLookup) 
 export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId & ByAccountId) => {
   const { toast } = useToast();
   const userSession = useSessionAuth();
-  // const { data: election } = votingHooks.useElection({ electionId });
+
+  const { data: isVotingPeriodOngoing = false } = votingHooks.useIsVotingPeriod({ electionId });
 
   const {
     data: votes,
     mutate: revalidateVotes,
     isLoading: isVoteListLoading,
-  } = votingHooks.useElectionCandidateVotes({
-    electionId,
-    accountId,
-  });
+  } = votingHooks.useElectionCandidateVotes({ electionId, accountId });
 
   const isLoading = useMemo(
     () => votes === undefined && isVoteListLoading,
@@ -80,10 +78,9 @@ export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId 
 
   const canReceiveVotes = useMemo(
     () =>
-      // election?.status === ElectionStatus.VotingPeriod &&
-      votes === undefined ? false : !hasUserVotes,
+      electionId !== 0 && (votes === undefined ? false : isVotingPeriodOngoing && !hasUserVotes),
 
-    [hasUserVotes, votes],
+    [electionId, hasUserVotes, isVotingPeriodOngoing, votes],
   );
 
   const handleVoteCast = useCallback(
