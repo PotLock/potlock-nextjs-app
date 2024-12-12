@@ -1,13 +1,14 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useSet, useWindowSize } from "@uidotdev/usehooks";
 import { MdIndeterminateCheckBox } from "react-icons/md";
 
-import { ByElectionId, Candidate, votingClient } from "@/common/contracts/core/voting";
+import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
 import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
+import { useSessionAuth } from "@/entities/session";
 
 import { VotingCandidateOption } from "./VotingCandidateOption";
 
@@ -24,13 +25,25 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
 }) => {
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
+  const userSession = useSessionAuth();
   const selectedEntries = useSet<AccountId>();
+
+  const { isLoading: _isRemainingUserVotingCapacityLoading, data: remainingUserVotingCapacity } =
+    votingHooks.useVoterRemainingCapacity({
+      accountId: userSession.accountId,
+      electionId,
+    });
 
   const handleEntrySelect = useCallback(
     (accountId: AccountId, isSelected: boolean): void =>
       void (isSelected ? selectedEntries.add(accountId) : selectedEntries.delete(accountId)),
 
     [selectedEntries],
+  );
+
+  const canCastBulkVote = useMemo(
+    () => selectedEntries.size <= (remainingUserVotingCapacity ?? 0),
+    [remainingUserVotingCapacity, selectedEntries],
   );
 
   const handleBulkVote = useCallback(
@@ -121,7 +134,16 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
           <span>{`${selectedEntries.size} Selected Projects`}</span>
         </div>
 
-        <Button variant={"standard-filled"} onClick={handleBulkVote}>
+        <Button
+          variant="standard-filled"
+          disabled={!canCastBulkVote}
+          title={
+            canCastBulkVote
+              ? undefined
+              : `You have exceeded your remaining voting capacity of ${remainingUserVotingCapacity}.`
+          }
+          onClick={handleBulkVote}
+        >
           {"Vote All"}
         </Button>
       </div>
