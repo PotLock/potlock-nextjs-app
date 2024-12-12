@@ -135,11 +135,11 @@ export default function PotVotesTab() {
     ),
 
     [
+      activeElection?.votes_per_voter,
       authenticatedVoter.voteWeight,
       authenticatedVoterVotes?.length,
       isVotingRuleListVisible,
       isWeightBoostBreakdownVisible,
-      remainingVotingCapacity,
     ],
   );
 

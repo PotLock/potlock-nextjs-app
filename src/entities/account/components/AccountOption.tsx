@@ -82,7 +82,7 @@ export const AccountOption = ({
 
         <div className="flex flex-col">
           <div className="inline-flex items-center">
-            <span className="prose font-600">{profile?.name ?? accountId}</span>
+            <span className="prose font-600 text-nowrap">{profile?.name ?? accountId}</span>
 
             <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
               {statusElement}
@@ -92,7 +92,7 @@ export const AccountOption = ({
           <Link
             className={cn(
               "underline-solid inline-flex items-center",
-              "text-neutral-500 underline underline-offset-4",
+              "text-nowrap text-neutral-500 underline underline-offset-4",
             )}
             href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
             target="_blank"
