@@ -2,13 +2,17 @@ export type AccountId = string;
 
 export type ElectionId = number;
 
+export type VoteWeight = number;
+
+export type VoteInputs = [AccountId, VoteWeight];
+
 /**
  * Represents a vote cast in an election
  */
 export interface Vote {
   voter: AccountId;
   candidate_id: AccountId;
-  weight: number;
+  weight: VoteWeight;
   timestamp: number;
 }
 

@@ -51,6 +51,7 @@ export default defineConfig({
       },
 
       conifer: {
+        50: "#F7FDE8",
         600: "#629D13",
       },
 
