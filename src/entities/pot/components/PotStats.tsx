@@ -28,7 +28,7 @@ const Table = ({
   const { data: nearToUsdValue } = coingecko.useOneNearUsdPrice();
 
   return (
-    <Container className="min-w-100 xl:w-126.5">
+    <Container className="md:min-w-100 xl:w-126.5">
       <div className="header">
         {usdToggle
           ? `~$${(parseFloat(totalAmount) * nearToUsdValue).toFixed(2)}`
@@ -119,7 +119,7 @@ export const PotStats = ({ potDetail }: { potDetail: Pot }) => {
         title="matching pool allocations"
         totalAmount={totalAmountNearPayouts.toString()}
         totalUniqueDonors={uniqueDonationDonors}
-        donations={orderedPayouts.slice(0, 5)}
+        donations={orderedPayouts.slice(0, 3)}
       />
     );
   } else if (orderedDonations.length > 0) {
@@ -128,7 +128,7 @@ export const PotStats = ({ potDetail }: { potDetail: Pot }) => {
         title="sponsors"
         totalAmount={totalAmountNearDonations.toString()}
         totalUniqueDonors={uniqueDonationDonors}
-        donations={orderedDonations.slice(0, 5)}
+        donations={orderedDonations.slice(0, 3)}
       />
     );
   }

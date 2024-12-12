@@ -1,23 +1,21 @@
 import { useMemo, useState } from "react";
 
-import { useSet } from "@uidotdev/usehooks";
 import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
-import { AccountId } from "@/common/types";
-import { Button, Checkbox, FilterChip, Input } from "@/common/ui/components";
+import { votingHooks } from "@/common/contracts/core/voting";
+import { FilterChip, Input } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
+import { usePotActiveElections } from "@/entities/pot";
 import { useSessionAuth } from "@/entities/session";
 import {
   VotingCandidateFilter,
   VotingCandidateList,
-  VotingCandidatesTableHead,
   VotingRules,
   VotingWeightBoostBreakdown,
-  useVotingCandidates,
-  useVotingElection,
+  useVotingCandidateLookup,
   useVotingParticipantVoteWeight,
 } from "@/features/voting";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
@@ -27,71 +25,121 @@ export default function PotVotesTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const [isVotingRuleListDisplayed, setIsVotingRuleListDisplayed] = useState(false);
-  const [isWeightBoostBreakdownDisplayed, setIsWeightBoostBreakdownDisplayed] = useState(false);
+
+  const [isVotingRuleListVisible, setIsVotingRuleListVisible] = useState(false);
+  const [isWeightBoostBreakdownVisible, setIsWeightBoostBreakdownVisible] = useState(false);
+  const isSidebarVisible = isDesktop && (isVotingRuleListVisible || isWeightBoostBreakdownVisible);
   const [candidateFilter, setFilter] = useState<VotingCandidateFilter>("all");
-  const selectedCandidateAccountIds = useSet();
+
+  const { potActiveElections } = usePotActiveElections({ potId });
+  // TODO: Figure out a way to know exactly which ONE election is active ( Pots V2 milestone )
+  const [activeElectionId, activeElection] = potActiveElections?.at(0) ?? [0, undefined];
+
+  const { data: activeElectionVoteCount } = votingHooks.useElectionVoteCount({
+    electionId: activeElectionId ?? 0,
+  });
 
   const authenticatedVoter = useVotingParticipantVoteWeight({
     accountId: userSession.accountId,
     potId,
   });
 
-  const { data: election } = useVotingElection({ potId });
+  const { data: authenticatedVoterVotes } = votingHooks.useVoterVotes({
+    accountId: userSession.accountId,
+    electionId: activeElectionId ?? 0,
+  });
+
+  const { data: remainingVotingCapacity } = votingHooks.useVoterRemainingCapacity({
+    accountId: userSession.accountId,
+    electionId: activeElectionId ?? 0,
+  });
 
   const {
     candidates,
-    candidatesWithVotes,
-    candidatesWithoutVotes,
-    candidateSearchQuery,
-    setCandidateSearchQuery,
-  } = useVotingCandidates({ potId });
+    candidateSearchTerm,
+    setCandidateSearchTerm,
+    votedCandidates,
+    votableCandidates,
+    mutate: revalidateCandidates,
+  } = useVotingCandidateLookup({ electionId: activeElectionId });
 
-  // TODO: temporarily disabled as vote for multiple candidates is unimplemented
-  const _handleCandidateSelect = (accountId: AccountId, isSelected: boolean): void =>
-    void (isSelected
-      ? selectedCandidateAccountIds.add(accountId)
-      : selectedCandidateAccountIds.delete(accountId));
-
-  const handleVoteAll = () => {
-    // TODO: Implement vote multicall in `features/voting`
-    console.log("Voting for projects:", Array.from(selectedCandidateAccountIds.values()));
-  };
-
-  const filterPanel = useMemo(
+  const toolbar = useMemo(
     () => (
-      <div className="flex gap-3">
-        <FilterChip
-          variant={candidateFilter === "all" ? "brand-filled" : "brand-outline"}
-          onClick={() => setFilter("all")}
-          className="font-medium"
-          label="All"
-          count={candidates?.length ?? 0}
-        />
+      <div
+        className={cn(
+          "flex w-full items-center justify-between bg-[#fce9d5] p-4 text-[17px]",
+          "md:rounded-tl-lg md:rounded-tr-lg",
+        )}
+      >
+        <div className="flex items-center gap-2">
+          <MdHowToVote className="color-peach-400 h-6 w-6" />
 
-        <FilterChip
-          variant={candidateFilter === "voted" ? "brand-filled" : "brand-outline"}
-          onClick={() => setFilter("voted")}
-          className="font-medium"
-          label="Voted"
-          count={candidatesWithVotes.length}
-        />
+          <span className="inline-flex flex-nowrap items-center font-semibold">
+            <span className="font-600 text-xl leading-loose">
+              {authenticatedVoterVotes?.length ?? 0}
+            </span>
 
-        <FilterChip
-          variant={candidateFilter === "pending" ? "brand-filled" : "brand-outline"}
-          onClick={() => setFilter("pending")}
-          className="font-medium"
-          label="Pending"
-          count={candidatesWithoutVotes.length}
-        />
+            <span className="font-500 text-4.25 leading-normal">
+              {`/${activeElection?.votes_per_voter ?? 0} Votes Casted`}
+            </span>
+          </span>
+        </div>
+
+        <div className="flex gap-2">
+          <div
+            className={cn(
+              "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
+              "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
+            )}
+            onClick={() => setIsWeightBoostBreakdownVisible((prev: Boolean) => !prev)}
+          >
+            <MdStar className="color-corn-500 h-4.5 w-4.5" />
+
+            <span className="flex items-center gap-2 text-sm">
+              <span className="font-500 hidden whitespace-nowrap md:inline-flex">
+                {`${isWeightBoostBreakdownVisible ? "Hide" : "View"} Weight Boost`}
+              </span>
+
+              <span className="text-center font-semibold leading-tight text-[#ea6a25]">
+                {`${authenticatedVoter.voteWeight.mul(100).toNumber()} %`}
+              </span>
+            </span>
+
+            <ChevronRight
+              className={cn("relative hidden h-[18px] w-[18px] text-[#EA6A25] md:block")}
+            />
+          </div>
+
+          <div
+            className={cn(
+              "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
+              "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
+            )}
+            onClick={() => setIsVotingRuleListVisible((prev: Boolean) => !prev)}
+          >
+            <MdOutlineDescription className="color-peach-500 h-4.5 w-4.5" />
+
+            <span
+              className={cn(
+                "hidden items-center gap-2 whitespace-nowrap md:inline-flex",
+                "font-500 text-sm",
+              )}
+            >
+              {`${isVotingRuleListVisible ? "Hide" : "View"} Voting Rules`}
+            </span>
+
+            <ChevronRight className={cn("hidden h-[18px] w-[18px] text-[#EA6A25] md:block")} />
+          </div>
+        </div>
       </div>
     ),
 
     [
-      candidateFilter,
-      candidates?.length,
-      candidatesWithVotes.length,
-      candidatesWithoutVotes.length,
+      activeElection?.votes_per_voter,
+      authenticatedVoter.voteWeight,
+      authenticatedVoterVotes?.length,
+      isVotingRuleListVisible,
+      isWeightBoostBreakdownVisible,
     ],
   );
 
@@ -100,10 +148,9 @@ export default function PotVotesTab() {
       case "voted": {
         return (
           <VotingCandidateList
-            data={candidatesWithVotes}
-            // TODO: temporarily disabled as vote for multiple candidates is unimplemented
-            // onEntrySelect={handleCandidateSelect}
-            {...{ potId }}
+            electionId={activeElectionId}
+            data={votedCandidates}
+            onBulkVoteSuccess={revalidateCandidates}
           />
         );
       }
@@ -111,10 +158,9 @@ export default function PotVotesTab() {
       case "pending": {
         return (
           <VotingCandidateList
-            data={candidatesWithoutVotes}
-            // TODO: temporarily disabled as vote for multiple candidates is unimplemented
-            // onEntrySelect={handleCandidateSelect}
-            {...{ potId }}
+            electionId={activeElectionId}
+            data={votableCandidates}
+            onBulkVoteSuccess={revalidateCandidates}
           />
         );
       }
@@ -122,15 +168,21 @@ export default function PotVotesTab() {
       default: {
         return (
           <VotingCandidateList
+            electionId={activeElectionId}
             data={candidates ?? []}
-            // TODO: temporarily disabled as vote for multiple candidates is unimplemented
-            // onEntrySelect={handleCandidateSelect}
-            {...{ potId }}
+            onBulkVoteSuccess={revalidateCandidates}
           />
         );
       }
     }
-  }, [candidateFilter, candidates, candidatesWithVotes, candidatesWithoutVotes, potId]);
+  }, [
+    candidateFilter,
+    activeElectionId,
+    votedCandidates,
+    revalidateCandidates,
+    votableCandidates,
+    candidates,
+  ]);
 
   return (
     <div className={cn("flex w-full flex-col gap-6")}>
@@ -140,118 +192,62 @@ export default function PotVotesTab() {
           type="search"
           placeholder={"Search Projects"}
           className={cn("w-full bg-gray-50")}
-          value={candidateSearchQuery}
+          value={candidateSearchTerm}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setCandidateSearchQuery(e.target.value)
+            setCandidateSearchTerm(e.target.value)
           }
         />
       </div>
 
-      {filterPanel}
+      <div className="flex w-full justify-between">
+        <div className="flex flex-wrap gap-3">
+          <FilterChip
+            variant={candidateFilter === "all" ? "brand-filled" : "brand-outline"}
+            onClick={() => setFilter("all")}
+            className="font-medium"
+            label="All"
+            count={candidates?.length ?? 0}
+          />
+
+          <FilterChip
+            variant={candidateFilter === "voted" ? "brand-filled" : "brand-outline"}
+            onClick={() => setFilter("voted")}
+            className="font-medium"
+            label="Voted By Me"
+            count={votedCandidates.length}
+          />
+
+          <FilterChip
+            variant={candidateFilter === "pending" ? "brand-filled" : "brand-outline"}
+            onClick={() => setFilter("pending")}
+            className="font-medium"
+            label="Not Voted By Me"
+            count={votableCandidates.length}
+          />
+        </div>
+
+        <span className="hidden font-semibold">
+          {`${activeElectionVoteCount ?? 0} Votes casted by ${activeElectionVoteCount} Voters`}
+        </span>
+      </div>
 
       <div className="flex flex-row gap-6">
         <div className="min-h-137 w-full">
-          {/* Toolbar */}
-          <div className={cn("absolute inset-x-0 w-full md:static")}>
-            <div
-              className={cn(
-                "flex items-center justify-between bg-[#fce9d5] p-4 text-[17px]",
-                "md:rounded-tl-lg md:rounded-tr-lg",
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <MdHowToVote className="color-peach-400 h-6 w-6" />
-                <span className="font-semibold">{`${election?.total_votes ?? 0} Vote(s) Casted`}</span>
-              </div>
-
-              <div className="flex gap-2">
-                <div
-                  className={cn(
-                    "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
-                    "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
-                  )}
-                  onClick={() => setIsWeightBoostBreakdownDisplayed((prev: Boolean) => !prev)}
-                >
-                  <MdStar className="color-corn-500 h-4.5 w-4.5" />
-
-                  <span className="flex items-center gap-2 text-sm">
-                    <span className="font-500 hidden whitespace-nowrap md:inline-flex">
-                      {`${isWeightBoostBreakdownDisplayed ? "Hide" : "View"} Weight Boost`}
-                    </span>
-
-                    <span className="text-center font-semibold leading-tight text-[#ea6a25]">
-                      {`${authenticatedVoter.voteWeight.mul(100).toNumber()} %`}
-                    </span>
-                  </span>
-
-                  <ChevronRight
-                    className={cn("relative hidden h-[18px] w-[18px] text-[#EA6A25] md:block")}
-                  />
-                </div>
-
-                <div
-                  className={cn(
-                    "inline-flex h-10 cursor-pointer items-center justify-start gap-2",
-                    "rounded-lg border border-[#f8d3b0] bg-[#fef6ee] px-3 py-2.5",
-                  )}
-                  onClick={() => setIsVotingRuleListDisplayed((prev: Boolean) => !prev)}
-                >
-                  <MdOutlineDescription className="color-peach-500 h-4.5 w-4.5" />
-
-                  <span
-                    className={cn(
-                      "hidden items-center gap-2 whitespace-nowrap md:inline-flex",
-                      "font-500 text-sm",
-                    )}
-                  >
-                    {`${isVotingRuleListDisplayed ? "Hide" : "View"} Voting Rules`}
-                  </span>
-
-                  <ChevronRight
-                    className={cn("hidden h-[18px] w-[18px] text-[#EA6A25] md:block")}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <VotingCandidatesTableHead />
-          </div>
-
+          {toolbar}
           {candidateList}
-
-          {/* Floating Action Bar */}
-          {selectedCandidateAccountIds.size > 0 && (
-            <div
-              className={cn(
-                "fixed bottom-4 left-1/2 flex -translate-x-1/2",
-                "items-center gap-4 rounded-lg border bg-white p-4 shadow-lg",
-                // TODO: temporarily disabled as vote for multiple candidates is unimplemented
-                { hidden: true /* selectedCandidateAccountIds.size > 0 */ },
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <Checkbox checked={true} />
-                <span>{`${selectedCandidateAccountIds.size} Selected Candidates`}</span>
-              </div>
-
-              <Button variant={"standard-filled"} onClick={handleVoteAll}>
-                {"Vote All"}
-              </Button>
-            </div>
-          )}
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className={cn("flex flex-col gap-6", { hidden: !isSidebarVisible })}>
           <VotingRules
-            open={isVotingRuleListDisplayed}
-            onOpenChange={setIsVotingRuleListDisplayed}
+            open={isVotingRuleListVisible}
+            onOpenChange={setIsVotingRuleListVisible}
             mode={isDesktop ? "panel" : "modal"}
             {...{ potId }}
           />
 
           <VotingWeightBoostBreakdown
-            open={isWeightBoostBreakdownDisplayed}
-            onOpenChange={setIsWeightBoostBreakdownDisplayed}
+            open={isWeightBoostBreakdownVisible}
+            onOpenChange={setIsWeightBoostBreakdownVisible}
             mode={isDesktop ? "panel" : "modal"}
             {...{ potId }}
           />

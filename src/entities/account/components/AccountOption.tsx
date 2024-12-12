@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { MiddleTruncate } from "@re-dev/react-truncate";
 import { Dot } from "lucide-react";
 import Link from "next/link";
 
@@ -16,6 +17,7 @@ import {
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/entities/profile";
+import { rootPathnames } from "@/pathnames";
 
 export type AccountOptionProps = ByAccountId &
   Pick<React.HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -23,6 +25,9 @@ export type AccountOptionProps = ByAccountId &
     isThumbnail?: boolean;
     highlightOnHover?: boolean;
     onCheck?: (accountId: AccountId) => void;
+    statusElement?: React.ReactNode;
+    hideStatusOnDesktop?: boolean;
+    hideStatusOnMobile?: boolean;
     primaryAction?: React.ReactNode;
     secondaryAction?: React.ReactNode;
     daysAgoData?: number;
@@ -39,6 +44,9 @@ export const AccountOption = ({
   isThumbnail = false,
   highlightOnHover = false,
   accountId,
+  statusElement,
+  hideStatusOnDesktop = false,
+  hideStatusOnMobile = false,
   primaryAction,
   secondaryAction,
   title,
@@ -93,33 +101,42 @@ export const AccountOption = ({
               >
                 {primaryAction}
 
-                <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="2">
+                <div className="mr-a flex w-full cursor-pointer items-center gap-4">
                   {avatarElement}
 
-                  <div className="flex flex-col items-start">
-                    <span className="text-[17px] font-semibold leading-normal text-[#292929]">
-                      {profile?.name
-                        ? truncate(profile?.name, nameTruncateIndex)
-                        : accountId.split(".").slice(0, -1).join(".")}
-                    </span>
-                    <div className="inline-flex items-center justify-start text-sm font-normal leading-tight text-[#7a7a7a] ">
-                      <p>
-                        @
-                        {accountId.length > truncateIndex
-                          ? truncate(accountId, truncateIndex)
-                          : accountId}
-                      </p>
-                      {daysAgoData ? (
-                        <>
-                          <Dot />
-                          <p className="whitespace-nowrap">{daysAgo(Number(daysAgoData))}</p>
-                        </>
-                      ) : null}
+                  <div className="flex w-full flex-col">
+                    <div className="inline-flex items-center">
+                      <MiddleTruncate className="font-600" end={0}>
+                        {profile?.name ?? accountId}
+                      </MiddleTruncate>
+
+                      <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
+                        {statusElement}
+                      </div>
                     </div>
+
+                    <Link
+                      className={cn(
+                        "underline-solid inline-flex w-full items-center",
+                        "text-nowrap text-neutral-500 underline underline-offset-4",
+                      )}
+                      href={
+                        accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`
+                      }
+                      target="_blank"
+                    >
+                      <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
+                    </Link>
+
+                    {statusElement && (
+                      <span className={cn("mt-2 md:hidden", { hidden: hideStatusOnMobile })}>
+                        {statusElement}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}
+                {secondaryAction && <div className="">{secondaryAction}</div>}
               </div>
             )}
           </Link>

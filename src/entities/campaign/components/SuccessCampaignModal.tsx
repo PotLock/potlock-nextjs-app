@@ -41,7 +41,7 @@ export const SuccessCampaignModal: React.FC<SuccessModalProps> = ({
               className="h-26 w-28"
             />
           </div>
-          <h2 className="mb-4 text-center font-lora text-2xl font-medium tracking-wide  text-red-600 md:text-[32px]">
+          <h2 className="font-lora mb-4 text-center text-2xl font-medium tracking-wide  text-red-600 md:text-[32px]">
             {header}
           </h2>
           <p className="mb-6 text-center text-[#292929]">{description}</p>

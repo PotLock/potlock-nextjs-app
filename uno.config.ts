@@ -22,6 +22,17 @@ export default defineConfig({
   transformers: [transformerVariantGroup()],
 
   theme: {
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1rem",
+        "2xl": "2rem",
+      },
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     colors: {
       primary: {
         50: "#fef3f2",
@@ -40,6 +51,7 @@ export default defineConfig({
       },
 
       conifer: {
+        50: "#F7FDE8",
         600: "#629D13",
       },
 
@@ -175,14 +187,31 @@ export default defineConfig({
         dark: "hsl(212.7 26.8% 83.9%)",
       },
     },
+    fontSize: {
+      xl: "22px",
+    },
+    borderRadius: {
+      lg: "var(--radius)",
+      md: "calc(var(--radius) - 2px)",
+      sm: "calc(var(--radius) - 4px)",
+    },
+    boxShadow: {
+      "button-focus": "var(--focus-shadow)",
+      "button-primary": "var(--button-primary)",
+      "button-tonal": "var(--button-tonal)",
+    },
+    fontFamily: {
+      lora: ["var(--font-lora)", "sans-serif"],
+    },
   },
 
   rules: [
     ["hidden", { display: "none" }],
 
+    ["bg-hero", { "background-image": "url('/assets/images/hero-bg.svg')" }],
+
     [
       "elevation-low",
-
       {
         "box-shadow":
           "0px 0px 1px 0px rgba(0, 0, 0, 0.36), 0px 1px 1px -0.5px rgba(55, 55, 55, 0.04), 0px 2px 2px -1px rgba(5, 5, 5, 0.08), 0px 3px 5px -1.5px rgba(55, 55, 55, 0.04)",
@@ -199,4 +228,27 @@ export default defineConfig({
     "button-primary": "shadow-[var(--button-primary)]",
     "button-tonal": "shadow-[var(--button-tonal)]",
   },
+
+  // Adding keyframes and animations
+  preflights: [
+    {
+      getCSS: () => `
+        @keyframes accordion-down {
+          from { height: 0 }
+          to { height: var(--radix-accordion-content-height) }
+        }
+        @keyframes accordion-up {
+          from { height: var(--radix-accordion-content-height) }
+          to { height: 0 }
+        }
+        @keyframes beacon {
+          0%, 100% { transform: scale(1) }
+          50% { transform: scale(1.3) }
+        }
+        .animate-accordion-down { animation: accordion-down 0.2s ease-out }
+        .animate-accordion-up { animation: accordion-up 0.2s ease-out }
+        .animate-beacon { animation: beacon 1.5s infinite }
+      `,
+    },
+  ],
 });

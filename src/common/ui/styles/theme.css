@@ -1,116 +1,105 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  --primary-50: #fef3f2;
+  --primary-400: #f6767a;
+  --primary-600: #dd3345;
+  --peach-50: #fef6ee;
+  --neutral-50: #f7f7f7;
+  --neutral-100: #ebebeb;
+  --neutral-200: #dbdbdb;
+  --neutral-300: #c7c7c7;
+  --neutral-400: #a6a6a6;
+  --neutral-500: #7b7b7b;
+  --neutral-600: #656565;
+  --neutral-700: #525252;
+  --neutral-800: #464646;
+  --neutral-900: #2e2e2e;
 
-@layer base {
-  :root {
-    --primary-50: #fef3f2;
-    --primary-400: #f6767a;
-    --primary-600: #dd3345;
-    --peach-50: #fef6ee;
-    --neutral-50: #f7f7f7;
-    --neutral-100: #ebebeb;
-    --neutral-200: #dbdbdb;
-    --neutral-300: #c7c7c7;
-    --neutral-400: #a6a6a6;
-    --neutral-500: #7b7b7b;
-    --neutral-600: #656565;
-    --neutral-700: #525252;
-    --neutral-800: #464646;
-    --neutral-900: #2e2e2e;
+  /* Button */
+  /* Shadow */
+  --focus-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.84) inset,
+    0px 1px 1px 1px rgba(166, 166, 166, 0.3) inset, 0px 0px 0px 2px rgba(166, 166, 166, 0.3) inset,
+    0px 0px 0px 2px #fff, 0px 0px 0px 4px rgba(0, 0, 0, 0.84);
+  --button-primary: 0px 0px 0px 1px rgba(0, 0, 0, 0.84) inset,
+    0px 1px 1px 1px rgba(246, 118, 122, 0.5) inset, 0px 0px 0px 2px rgba(246, 118, 122, 0.5) inset,
+    0px 1.5px 0px 0px rgba(0, 0, 0, 0.84);
+  --button-tonal: 0px 0px 0px 1px rgba(0, 0, 0, 0.84) inset, 0px 1px 1px 1px #fff inset,
+    0px 0px 0px 2px #fff inset, 0px 1.5px 0px 0px rgba(0, 0, 0, 0.84);
 
-    /* Button */
-    /* Shadow */
-    --focus-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.84) inset,
-      0px 1px 1px 1px rgba(166, 166, 166, 0.3) inset,
-      0px 0px 0px 2px rgba(166, 166, 166, 0.3) inset, 0px 0px 0px 2px #fff,
-      0px 0px 0px 4px rgba(0, 0, 0, 0.84);
-    --button-primary: 0px 0px 0px 1px rgba(0, 0, 0, 0.84) inset,
-      0px 1px 1px 1px rgba(246, 118, 122, 0.5) inset,
-      0px 0px 0px 2px rgba(246, 118, 122, 0.5) inset,
-      0px 1.5px 0px 0px rgba(0, 0, 0, 0.84);
-    --button-tonal: 0px 0px 0px 1px rgba(0, 0, 0, 0.84) inset,
-      0px 1px 1px 1px #fff inset, 0px 0px 0px 2px #fff inset,
-      0px 1.5px 0px 0px rgba(0, 0, 0, 0.84);
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
 
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+  --primary: 0 0% 27%;
+  --primary-foreground: 210 40% 98%;
 
-    --primary: 0 0% 27%;
-    --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 30 89% 96%;
+  --accent-foreground: 21 82% 53%;
 
-    --accent: 30 89% 96%;
-    --accent-foreground: 21 82% 53%;
+  --success: 86 78% 35%;
+  --success-foreground: 210 40% 98%;
 
-    --success: 86 78% 35%;
-    --success-foreground: 210 40% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 0 0% 65%;
+  --ring: 0 0% 78%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 0 0% 65%;
-    --ring: 0 0% 78%;
+  --radius: 0.5rem;
+  --un-prose-body: 0 0% 16%;
+}
 
-    --radius: 0.5rem;
-    --un-prose-body: 0 0% 16%;
-  }
+.dark,
+:root.dark {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
 
-  .dark, :root.dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 100%;
 
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 100%;
+  --popover: 0 0% 10%;
+  --popover-foreground: 0 0% 100%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 100%;
+  --primary: 0 100% 68%;
+  --primary-foreground: 0 0% 100%;
 
-    --primary: 0 100% 68%;
-    --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 10%;
+  --secondary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 63%;
+  --muted-foreground: 0 0% 63%;
 
-    --muted: 0 0% 63%;
-    --muted-foreground: 0 0% 63%;
+  --accent: 120 100% 50%;
+  --accent-foreground: 0 0% 100%;
 
-    --accent: 120 100% 50%;
-    --accent-foreground: 0 0% 100%;
+  --destructive: 0 100% 68%;
+  --destructive-foreground: 0 0% 100%;
 
-    --destructive: 0 100% 68%;
-    --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 20%;
+  --input: 0 0% 78%;
+  --ring: 0 100% 68%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 78%;
-    --ring: 0 100% 68%;
-
-    /* Button */
-    /* Shadow */
-    --focus-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
-      0px 1px 1px 1px rgba(89, 89, 89, 0.3) inset,
-      0px 0px 0px 2px rgba(89, 89, 89, 0.3) inset, 0px 0px 0px 2px #000,
-      0px 0px 0px 4px rgba(255, 255, 255, 0.84);
-    --button-primary: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
-      0px 1px 1px 1px rgba(246, 118, 122, 0.5) inset,
-      0px 0px 0px 2px rgba(246, 118, 122, 0.5) inset,
-      0px 1.5px 0px 0px rgba(255, 255, 255, 0.84);
-    --button-tonal: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
-      0px 1px 1px 1px #000 inset, 0px 0px 0px 2px #000 inset,
-      0px 1.5px 0px 0px rgba(255, 255, 255, 0.84);
-  }
+  /* Button */
+  /* Shadow */
+  --focus-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
+    0px 1px 1px 1px rgba(89, 89, 89, 0.3) inset, 0px 0px 0px 2px rgba(89, 89, 89, 0.3) inset,
+    0px 0px 0px 2px #000, 0px 0px 0px 4px rgba(255, 255, 255, 0.84);
+  --button-primary: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset,
+    0px 1px 1px 1px rgba(246, 118, 122, 0.5) inset, 0px 0px 0px 2px rgba(246, 118, 122, 0.5) inset,
+    0px 1.5px 0px 0px rgba(255, 255, 255, 0.84);
+  --button-tonal: 0px 0px 0px 1px rgba(255, 255, 255, 0.84) inset, 0px 1px 1px 1px #000 inset,
+    0px 0px 0px 2px #000 inset, 0px 1.5px 0px 0px rgba(255, 255, 255, 0.84);
 }
 
 body {
@@ -165,5 +154,5 @@ body {
 }
 
 :root.dark .bg-hero > :first-child {
-  background: #000
+  background: #000;
 }

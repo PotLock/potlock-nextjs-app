@@ -56,7 +56,7 @@ const FeedsTab = () => {
         <p
           className={cn(
             "font-italic font-500 text-4 mb-4 max-w-[290px] md:text-[22px]",
-            "text-center font-lora text-[#292929]",
+            "font-lora text-center text-[#292929]",
           )}
         >
           {"No social posts available."}

@@ -2,13 +2,17 @@ export type AccountId = string;
 
 export type ElectionId = number;
 
+export type VoteWeight = number;
+
+export type VoteInputs = [AccountId, VoteWeight];
+
 /**
  * Represents a vote cast in an election
  */
 export interface Vote {
   voter: AccountId;
   candidate_id: AccountId;
-  weight: number;
+  weight: VoteWeight;
   timestamp: number;
 }
 
@@ -48,38 +52,50 @@ export type VotingType = {
   single?: {};
 };
 
+export enum ElectionTypeSimple {
+  GeneralElection = "GeneralElection",
+}
+
 /**
  * Defines the type of election
  */
-export type ElectionType = {
-  simple_majority?: {};
-  threshold?: {
-    threshold: number;
-  };
-};
+export type ElectionType =
+  | ElectionTypeSimple
+  | { ProjectProposal: AccountId }
+  | { Pot: AccountId }
+  | { Custom: [string, AccountId | null | undefined] };
 
 /**
  * Represents the current phase of an election
  */
 export type ElectionPhase = "Registration" | "Voting" | "Ended";
 
+export enum ElectionStatus {
+  Pending = "Pending",
+  NominationPeriod = "NominationPeriod",
+  VotingPeriod = "VotingPeriod",
+  ChallengePeriod = "ChallengePeriod",
+  Completed = "Completed",
+  Cancelled = "Cancelled",
+}
+
 /**
  * Represents an election
  */
 export interface Election {
   id: ElectionId;
-  creator: AccountId;
   title: string;
   description: string;
-  start_date: string;
-  end_date: string;
+  start_date: number;
+  end_date: number;
   votes_per_voter: number;
-  voter_eligibility: EligibilityType;
   voting_type: VotingType;
+  voter_eligibility: EligibilityType;
+  owner: AccountId;
+  status: ElectionStatus;
+  challenge_period_end?: null | number;
+  winner_ids: AccountId[];
   election_type: ElectionType;
-  candidates: Candidate[];
-  total_votes: number;
-  is_active: boolean;
 }
 
 /**

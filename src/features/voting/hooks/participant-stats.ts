@@ -12,6 +12,10 @@ import { useIsHuman } from "@/entities/core";
 
 import { VotingParticipantStats } from "../types";
 
+export type VotingParticipantStatsInputs = Partial<ByAccountId> & {
+  stakingContractAccountId?: TokenId;
+};
+
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
  *  as it's built for the mpDAO milestone.
@@ -21,7 +25,7 @@ import { VotingParticipantStats } from "../types";
 export const useVotingParticipantStats = ({
   accountId,
   stakingContractAccountId,
-}: Partial<ByAccountId> & { stakingContractAccountId?: TokenId }): VotingParticipantStats => {
+}: VotingParticipantStatsInputs): VotingParticipantStats => {
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 

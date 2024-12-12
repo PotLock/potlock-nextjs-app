@@ -1,21 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { isNonNullish } from "remeda";
 
 import { ByPotId } from "@/common/api/indexer";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Form,
-} from "@/common/ui/components";
+import { Card, CardContent, CardFooter, Form } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
+import { usePotExtensionFlags } from "@/entities/pot";
 
-import { useVotingElection } from "../hooks/elections";
 import { votingConfigurationSchema } from "../model/schemas";
 
 export type VotingConfigurationProps = ByPotId & {
@@ -28,8 +19,7 @@ export const VotingConfiguration: React.FC<VotingConfigurationProps> = ({
   footerContent,
   className,
 }) => {
-  const { data: associatedElection } = useVotingElection({ potId });
-  const isVotingConfigured = true || isNonNullish(associatedElection);
+  const { hasVoting } = usePotExtensionFlags({ potId });
 
   const form = useForm({ resolver: zodResolver(votingConfigurationSchema) });
 
@@ -46,7 +36,7 @@ export const VotingConfiguration: React.FC<VotingConfigurationProps> = ({
       </CardHeader> */}
 
       <CardContent>
-        {isVotingConfigured ? null : (
+        {hasVoting ? null : (
           <Form {...form}>
             <TextField type="text" />
           </Form>

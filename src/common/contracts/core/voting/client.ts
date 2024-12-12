@@ -11,6 +11,7 @@ import type {
   EligibilityType,
   IVotingContract,
   Vote,
+  VoteInputs,
   VotingType,
 } from "./interfaces";
 
@@ -130,15 +131,15 @@ class VotingClient implements Omit<IVotingContract, "new"> {
   /**
    * Returns the total number of votes cast in an election
    */
-  async get_election_vote_count(args: { election_id: number }): Promise<number> {
-    return this.contract.view("get_election_vote_count", { args });
+  async get_election_vote_count(args: { election_id: number }) {
+    return this.contract.view<typeof args, number>("get_election_vote_count", { args });
   }
 
   /**
    * Returns all votes cast in an election
    */
-  async get_election_votes(args: { election_id: number }): Promise<Vote[]> {
-    return this.contract.view("get_election_votes", { args });
+  async get_election_votes(args: { election_id: number }) {
+    return this.contract.view<typeof args, Vote[]>("get_election_votes", { args });
   }
 
   /**
@@ -146,8 +147,8 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * @param from_index Optional starting index for pagination
    * @param limit Optional maximum number of elections to return
    */
-  async get_elections(args: { from_index?: number; limit?: number }): Promise<Election[]> {
-    return this.contract.view("get_elections", { args });
+  async get_elections(args: { from_index?: number; limit?: number }) {
+    return this.contract.view<typeof args, Election[]>("get_elections", { args });
   }
 
   /**
@@ -208,8 +209,8 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Based on the current time and election start_date/end_date
    */
-  async is_voting_period(args: { election_id: number }): Promise<boolean> {
-    return this.contract.view("is_voting_period", { args });
+  async is_voting_period(args: { election_id: number }) {
+    return this.contract.view<typeof args, boolean>("is_voting_period", { args });
   }
 
   // Change Methods
@@ -247,8 +248,17 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * @param vote Tuple of [candidate_id, vote_weight]
    * @returns Success status of the vote
    */
-  async vote(args: { election_id: number; vote: [AccountId, number] }): Promise<boolean> {
-    return this.contract.call("vote", { args });
+  async vote(args: { election_id: number; vote: VoteInputs }) {
+    return this.contract.call<typeof args, boolean>("vote", { args });
+  }
+
+  /**
+   * Batch vote cast wrapper around {@link vote}
+   */
+  async voteBatch({ election_id, votes }: { election_id: number; votes: VoteInputs[] }) {
+    return this.contract.callMultiple<{ election_id: number; vote: VoteInputs }>(
+      votes.map((voteInputs) => ({ method: "vote", args: { election_id, vote: voteInputs } })),
+    );
   }
 
   /**

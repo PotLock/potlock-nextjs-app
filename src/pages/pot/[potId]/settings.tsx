@@ -2,14 +2,15 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
+import { usePotExtensionFlags } from "@/entities/pot";
 import { PotEditor } from "@/features/pot-editor";
-import { VotingConfiguration, isVotingEnabled } from "@/features/voting";
+import { VotingConfiguration } from "@/features/voting";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotEditorSettingsTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
-  const hasVoting = isVotingEnabled({ potId });
+  const { hasVoting } = usePotExtensionFlags({ potId });
 
   return (
     <div className="flex w-full flex-col items-center gap-8">

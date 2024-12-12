@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { ByPotId } from "@/common/api/indexer";
 import { LayoutTabOption } from "@/common/ui/types";
-import { isVotingEnabled } from "@/features/voting";
+import { usePotExtensionFlags } from "@/entities/pot";
 import { rootPathnames } from "@/pathnames";
 
 export enum PotLayoutTabTag {
@@ -35,7 +35,7 @@ interface PotLayoutTabNavigation {
 export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavigation => {
   const { asPath: currentPath, push: navigateToHref } = useRouter();
   const rootHref = useMemo(() => `${rootPathnames.pot}/${potId}`, [potId]);
-  const hasVoting = isVotingEnabled({ potId });
+  const { hasVoting } = usePotExtensionFlags({ potId });
 
   const defaultTabTag = useMemo(() => {
     if (hasVoting) {
@@ -109,12 +109,18 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
   );
 
   const navigateToTab = useCallback(
-    (tag: PotLayoutTabTag) => void navigateToHref(tabRegistry[tag].href),
+    (tag: PotLayoutTabTag) => {
+      navigateToHref(tabRegistry[tag].href);
+    },
+
     [navigateToHref, tabRegistry],
   );
 
   useEffect(() => {
-    if (potId !== undefined && (activeTab === null || currentPath === rootHref))
+    if (
+      potId !== undefined &&
+      (activeTab === null || activeTab.isHidden || currentPath === rootHref)
+    )
       navigateToTab(defaultTabTag);
   }, [activeTab, currentPath, defaultTabTag, navigateToTab, potId, rootHref]);
 

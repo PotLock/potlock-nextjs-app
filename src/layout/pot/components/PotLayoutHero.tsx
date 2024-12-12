@@ -15,13 +15,13 @@ import {
   PotStats,
   PotTimeline,
   usePotBasicUserPermissions,
+  usePotExtensionFlags,
   usePotLifecycle,
 } from "@/entities/pot";
 import { useSessionAuth } from "@/entities/session";
 import { TokenTotalValue } from "@/entities/token";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
-import { isVotingEnabled } from "@/features/voting";
 
 export type PotLayoutHeroProps = ByPotId & {
   onApplyClick?: () => void;
@@ -36,7 +36,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onFundMatchingPoolClick,
 }) => {
   const { data: pot } = indexer.usePot({ potId });
-  const hasVoting = isVotingEnabled({ potId });
+  const { hasVoting } = usePotExtensionFlags({ potId });
   const { isSignedIn, accountId } = useSessionAuth();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
   // const votingClearance = useVotingUserClearance({ potId });
@@ -94,7 +94,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             {pot ? (
               <h1
                 className={cn(
-                  "self-stretch font-lora",
+                  "font-lora self-stretch",
                   "text-[53px] font-medium uppercase leading-[61px] text-neutral-950",
                 )}
               >
@@ -135,7 +135,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             </div>
           </div>
 
-          <div className="lg:w-a flex w-full flex-col gap-6">
+          <div className="flex w-full flex-col gap-6 lg:w-fit">
             {isApplicationPeriodOngoing ? (
               <Checklist
                 title="Application Requirements"

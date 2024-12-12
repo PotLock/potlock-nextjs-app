@@ -64,21 +64,21 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
         label: "Protocol fees",
         amount: protocolFeeAmount,
         percentage: protocolFeePercent,
-        isDisplayed: protocolFeeAmount > 0,
+        isVisible: protocolFeeAmount > 0,
       },
 
       {
         label: "Chef fees",
         amount: chefFeeAmount,
         percentage: chefFeePercent,
-        isDisplayed: chefFeeAmount > 0,
+        isVisible: chefFeeAmount > 0,
       },
 
       {
         label: "Referral fees",
         amount: referralFeeAmount,
         percentage: referralFeePercent,
-        isDisplayed: referralFeeAmount > 0,
+        isVisible: referralFeeAmount > 0,
       },
 
       {
@@ -108,8 +108,8 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
 
       <div className="border-1 flex flex-col gap-3 rounded-lg border-neutral-300 p-4">
         {entries.map(
-          ({ isDisplayed = true, label, amount, percentage, tokenId = props.tokenId }) =>
-            isDisplayed && (
+          ({ isVisible = true, label, amount, percentage, tokenId = props.tokenId }) =>
+            isVisible && (
               <div className="flex h-5 items-center justify-between gap-4" key={label}>
                 <span className="prose mt-0.6">
                   {label + (percentage ? ` (${percentage}%)` : "")}

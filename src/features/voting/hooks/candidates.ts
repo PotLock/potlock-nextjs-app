@@ -1,49 +1,132 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { ByPotId } from "@/common/api/indexer";
-import { Candidate, votingClientHooks } from "@/common/contracts/core/voting";
+import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
 import { ByAccountId } from "@/common/types";
+import { useToast } from "@/common/ui/hooks";
+import { useSessionAuth } from "@/entities/session";
 
-import { VOTING_ELECTION_ID_BY_POT_ID } from "../model/hardcoded";
+export interface VotingCandidateLookup extends ByElectionId {}
 
-export const useVotingCandidates = ({ potId }: ByPotId) => {
-  const electionId = VOTING_ELECTION_ID_BY_POT_ID[potId] ?? 0;
+export const useVotingCandidateLookup = ({ electionId }: VotingCandidateLookup) => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const userSession = useSessionAuth();
+  const { data, ...candidatesQueryResult } = votingHooks.useElectionCandidates({ electionId });
 
-  const { data, ...candidatesQueryResult } = votingClientHooks.useElectionCandidates({
+  const { data: userVotes } = votingHooks.useVoterVotes({
+    accountId: userSession.accountId,
     electionId,
   });
 
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
   return useMemo(() => {
-    const dataByCategory = (data ?? [])
-      .filter((candidate) => candidate.account_id.includes(searchQuery))
-      .reduce(
-        (candidatesByCategory, candidate) => {
-          const categoryKey =
-            candidate.votes_received > 0 ? "candidatesWithVotes" : "candidatesWithoutVotes";
+    const searchResults = (data ?? []).filter((candidate) =>
+      candidate.account_id.includes(searchTerm),
+    );
 
-          return {
-            ...candidatesByCategory,
-            [categoryKey]: [...candidatesByCategory[categoryKey], candidate],
-          };
-        },
+    const dataByCategory = searchResults.reduce(
+      (candidatesByCategory, candidate) => {
+        const categoryKey =
+          userVotes?.find(({ candidate_id }) => candidate_id === candidate.account_id) === undefined
+            ? "votableCandidates"
+            : "votedCandidates";
 
-        { candidatesWithVotes: [] as Candidate[], candidatesWithoutVotes: [] as Candidate[] },
-      );
+        return {
+          ...candidatesByCategory,
+          [categoryKey]: [...candidatesByCategory[categoryKey], candidate],
+        };
+      },
+
+      {
+        votedCandidates: [] as Candidate[],
+        votableCandidates: [] as Candidate[],
+      },
+    );
 
     return {
       ...candidatesQueryResult,
       ...dataByCategory,
-      candidates: data,
-      candidateSearchQuery: searchQuery,
-      setCandidateSearchQuery: setSearchQuery,
+      candidates: searchResults,
+      candidateSearchTerm: searchTerm,
+      setCandidateSearchTerm: setSearchTerm,
     };
-  }, [data, candidatesQueryResult, searchQuery]);
+  }, [data, candidatesQueryResult, searchTerm, userVotes]);
 };
 
-export const useVotingCandidateVotes = ({ potId, accountId }: ByPotId & ByAccountId) => {
-  const electionId = VOTING_ELECTION_ID_BY_POT_ID[potId] ?? 0;
+export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId & ByAccountId) => {
+  const { toast } = useToast();
+  const userSession = useSessionAuth();
 
-  return votingClientHooks.useElectionCandidateVotes({ electionId, accountId });
+  const { data: isVotingPeriodOngoing = false } = votingHooks.useIsVotingPeriod({ electionId });
+
+  const { data: remainingUserVotingCapacity, isLoading: isRemainingUserVotingCapacityLoading } =
+    votingHooks.useVoterRemainingCapacity({
+      accountId: userSession.accountId,
+      electionId,
+    });
+
+  const {
+    data: votes,
+    mutate: revalidateVotes,
+    isLoading: isVoteListLoading,
+  } = votingHooks.useElectionCandidateVotes({ electionId, accountId });
+
+  const isLoading = useMemo(
+    () =>
+      (votes === undefined && isVoteListLoading) ||
+      (remainingUserVotingCapacity === undefined && isRemainingUserVotingCapacityLoading),
+
+    [isRemainingUserVotingCapacityLoading, isVoteListLoading, remainingUserVotingCapacity, votes],
+  );
+
+  const hasUserVotes = useMemo(
+    () =>
+      votes?.find(({ voter: voterAccountId }) => voterAccountId === userSession.accountId) !==
+      undefined,
+
+    [votes, userSession.accountId],
+  );
+
+  const canReceiveVotes = useMemo(
+    () =>
+      electionId !== 0 &&
+      (votes === undefined
+        ? false
+        : isVotingPeriodOngoing && !hasUserVotes && remainingUserVotingCapacity !== 0),
+
+    [remainingUserVotingCapacity, electionId, hasUserVotes, isVotingPeriodOngoing, votes],
+  );
+
+  const handleVoteCast = useCallback(
+    () =>
+      votingClient
+        .vote({ election_id: electionId, vote: [accountId, 1] })
+        .then((success) => {
+          if (success) {
+            revalidateVotes();
+
+            toast({
+              title: "Success!",
+              description: "Your vote has been recorded successfully.",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+
+          toast({
+            variant: "destructive",
+            title: "Something went wrong.",
+            description: "An error occurred while casting your vote.",
+          });
+        }),
+
+    [accountId, electionId, revalidateVotes, toast],
+  );
+
+  return {
+    votes,
+    isLoading,
+    canReceiveVotes,
+    hasUserVotes,
+    handleVoteCast,
+  };
 };

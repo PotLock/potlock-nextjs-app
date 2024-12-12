@@ -29,7 +29,7 @@ type Props = {
   accountId: string;
 };
 
-const ProfileTags = ({ accountId }: Props) => {
+export const ProfileTags = ({ accountId }: Props) => {
   const { profile: projectProfile } = useProfileData(accountId);
 
   const [tags, setTags] = useState<string[]>();

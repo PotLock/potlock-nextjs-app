@@ -6,7 +6,5 @@ export * from "./components/VotingRules";
 export * from "./components/VotingWeightBreakdown";
 export * from "./hooks/candidates";
 export * from "./hooks/clearance";
-export * from "./hooks/elections";
 export * from "./hooks/participant-stats";
 export * from "./hooks/vote-weight";
-export { isVotingEnabled } from "./model/hardcoded";

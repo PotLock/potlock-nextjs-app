@@ -5,9 +5,8 @@ import { prop } from "remeda";
 import { ByPotId } from "@/common/api/indexer";
 import { ClearanceCheckResult } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
+import { usePotExtensionFlags } from "@/entities/pot";
 import { useSessionAuth } from "@/entities/session";
-
-import { isVotingEnabled } from "../model/hardcoded";
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**
@@ -17,10 +16,10 @@ import { isVotingEnabled } from "../model/hardcoded";
 export const useVotingUserClearance = ({ potId }: ByPotId): ClearanceCheckResult => {
   const { accountId, isVerifiedPublicGoodsProvider } = useSessionAuth();
   const { isHumanVerified: isHuman } = useIsHuman(accountId);
-  const isVotingSupported = isVotingEnabled({ potId });
+  const { hasVoting } = usePotExtensionFlags({ potId });
 
   return useMemo(() => {
-    if (!isVotingSupported) {
+    if (!hasVoting) {
       return {
         requirements: null,
         isEveryRequirementSatisfied: false,
@@ -38,5 +37,5 @@ export const useVotingUserClearance = ({ potId }: ByPotId): ClearanceCheckResult
         error: null,
       };
     }
-  }, [isHuman, isVerifiedPublicGoodsProvider, isVotingSupported]);
+  }, [isHuman, isVerifiedPublicGoodsProvider, hasVoting]);
 };
