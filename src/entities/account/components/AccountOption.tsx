@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 
 import { MiddleTruncate } from "@re-dev/react-truncate";
-import { Dot } from "lucide-react";
 import Link from "next/link";
 
 import { AccountId, ByAccountId } from "@/common/types";
