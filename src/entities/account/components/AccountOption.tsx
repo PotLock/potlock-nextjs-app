@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { Dot } from "lucide-react";
 import Link from "next/link";
 
 import { AccountId, ByAccountId } from "@/common/types";
@@ -14,6 +15,9 @@ export type AccountOptionProps = ByAccountId &
     isThumbnail?: boolean;
     highlightOnHover?: boolean;
     onCheck?: (accountId: AccountId) => void;
+    statusElement?: React.ReactNode;
+    hideStatusOnDesktop?: boolean;
+    hideStatusOnMobile?: boolean;
     primaryAction?: React.ReactNode;
     secondaryAction?: React.ReactNode;
     accountLink?: string;
@@ -29,6 +33,9 @@ export const AccountOption = ({
   isThumbnail = false,
   highlightOnHover = false,
   accountId,
+  statusElement,
+  hideStatusOnDesktop = false,
+  hideStatusOnMobile = false,
   primaryAction,
   secondaryAction,
   accountLink,
@@ -74,15 +81,30 @@ export const AccountOption = ({
         {avatarElement}
 
         <div className="flex flex-col">
-          <span className="prose font-600">{profile?.name ?? accountId}</span>
+          <div className="inline-flex items-center">
+            <span className="prose font-600">{profile?.name ?? accountId}</span>
+
+            <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
+              {statusElement}
+            </div>
+          </div>
 
           <Link
-            className="underline-solid inline-flex items-center text-neutral-500 underline underline-offset-4"
+            className={cn(
+              "underline-solid inline-flex items-center",
+              "text-neutral-500 underline underline-offset-4",
+            )}
             href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
             target="_blank"
           >
             <span className="prose">{`@${accountId}`}</span>
           </Link>
+
+          {statusElement && (
+            <span className={cn("mt-2 md:hidden", { hidden: hideStatusOnMobile })}>
+              {statusElement}
+            </span>
+          )}
         </div>
       </div>
 

@@ -57,6 +57,12 @@ export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId 
 
   const { data: isVotingPeriodOngoing = false } = votingHooks.useIsVotingPeriod({ electionId });
 
+  const { data: remainingUserVotingCapacity, isLoading: isRemainingUserVotingCapacityLoading } =
+    votingHooks.useVoterRemainingCapacity({
+      accountId: userSession.accountId,
+      electionId,
+    });
+
   const {
     data: votes,
     mutate: revalidateVotes,
@@ -64,8 +70,11 @@ export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId 
   } = votingHooks.useElectionCandidateVotes({ electionId, accountId });
 
   const isLoading = useMemo(
-    () => votes === undefined && isVoteListLoading,
-    [isVoteListLoading, votes],
+    () =>
+      (votes === undefined && isVoteListLoading) ||
+      (remainingUserVotingCapacity === undefined && isRemainingUserVotingCapacityLoading),
+
+    [isRemainingUserVotingCapacityLoading, isVoteListLoading, remainingUserVotingCapacity, votes],
   );
 
   const hasUserVotes = useMemo(
@@ -78,9 +87,12 @@ export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId 
 
   const canReceiveVotes = useMemo(
     () =>
-      electionId !== 0 && (votes === undefined ? false : isVotingPeriodOngoing && !hasUserVotes),
+      electionId !== 0 &&
+      (votes === undefined
+        ? false
+        : isVotingPeriodOngoing && !hasUserVotes && remainingUserVotingCapacity !== 0),
 
-    [electionId, hasUserVotes, isVotingPeriodOngoing, votes],
+    [remainingUserVotingCapacity, electionId, hasUserVotes, isVotingPeriodOngoing, votes],
   );
 
   const handleVoteCast = useCallback(

@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { Dot } from "lucide-react";
 
 import { ByElectionId, Candidate } from "@/common/contracts/core/voting";
 import { Button, Checkbox, Skeleton } from "@/common/ui/components";
@@ -34,12 +35,23 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
   return (
     <AccountOption
       highlightOnHover
+      hideStatusOnDesktop
       classNames={{
         root: cn("px-4", {
           "bg-neutral-50": isSelected,
           "bg-conifer-50 hover:bg-conifer-50": hasUserVotes,
         }),
       }}
+      statusElement={
+        isLoading ? (
+          <Skeleton className="h-5 w-11" />
+        ) : (
+          <div className="color-neutral-500 flex flex-nowrap items-center">
+            <Dot className="hidden md:block" />
+            <span className="prose text-sm font-medium leading-tight">{`${votesCount} Votes`}</span>
+          </div>
+        )
+      }
       primaryAction={
         typeof onSelect === "function" ? (
           <div
@@ -65,7 +77,7 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
             )}
           </div>
 
-          <div className="hidden h-16 items-center justify-end p-4 pr-0 md:inline-flex">
+          <div className="inline-flex h-16 items-center justify-end p-4 pr-0">
             {isLoading ? (
               <Skeleton className="w-15.5 h-10" />
             ) : (
