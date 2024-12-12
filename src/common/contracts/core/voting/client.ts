@@ -131,15 +131,15 @@ class VotingClient implements Omit<IVotingContract, "new"> {
   /**
    * Returns the total number of votes cast in an election
    */
-  async get_election_vote_count(args: { election_id: number }): Promise<number> {
-    return this.contract.view("get_election_vote_count", { args });
+  async get_election_vote_count(args: { election_id: number }) {
+    return this.contract.view<typeof args, number>("get_election_vote_count", { args });
   }
 
   /**
    * Returns all votes cast in an election
    */
-  async get_election_votes(args: { election_id: number }): Promise<Vote[]> {
-    return this.contract.view("get_election_votes", { args });
+  async get_election_votes(args: { election_id: number }) {
+    return this.contract.view<typeof args, Vote[]>("get_election_votes", { args });
   }
 
   /**
@@ -147,8 +147,8 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * @param from_index Optional starting index for pagination
    * @param limit Optional maximum number of elections to return
    */
-  async get_elections(args: { from_index?: number; limit?: number }): Promise<Election[]> {
-    return this.contract.view("get_elections", { args });
+  async get_elections(args: { from_index?: number; limit?: number }) {
+    return this.contract.view<typeof args, Election[]>("get_elections", { args });
   }
 
   /**

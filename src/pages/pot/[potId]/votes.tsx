@@ -25,21 +25,32 @@ export default function PotVotesTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+
   const [isVotingRuleListVisible, setIsVotingRuleListVisible] = useState(false);
   const [isWeightBoostBreakdownVisible, setIsWeightBoostBreakdownVisible] = useState(false);
   const isSidebarVisible = isDesktop && (isVotingRuleListVisible || isWeightBoostBreakdownVisible);
   const [candidateFilter, setFilter] = useState<VotingCandidateFilter>("all");
+
+  const { potActiveElections } = usePotActiveElections({ potId });
+  // TODO: Figure out a way to know exactly which ONE election is active ( Pots V2 milestone )
+  const [activeElectionId, _activeElection] = potActiveElections?.at(0) ?? [0, undefined];
+
+  const { data: activeElectionVoteCount } = votingHooks.useElectionVoteCount({
+    electionId: activeElectionId ?? 0,
+  });
 
   const authenticatedVoter = useVotingParticipantVoteWeight({
     accountId: userSession.accountId,
     potId,
   });
 
-  const { potActiveElections } = usePotActiveElections({ potId });
-  // TODO: Figure out a way to know exactly which ONE election is active ( Pots V2 milestone )
-  const [activeElectionId, _activeElection] = potActiveElections?.at(0) ?? [0, undefined];
+  const { data: authenticatedVoterVotes } = votingHooks.useVoterVotes({
+    accountId: userSession.accountId,
+    electionId: activeElectionId ?? 0,
+  });
 
-  const { data: activeElectionVotes } = votingHooks.useElectionVotes({
+  const { data: remainingVotingCapacity } = votingHooks.useVoterRemainingCapacity({
+    accountId: userSession.accountId,
     electionId: activeElectionId ?? 0,
   });
 
@@ -63,8 +74,14 @@ export default function PotVotesTab() {
         <div className="flex items-center gap-2">
           <MdHowToVote className="color-peach-400 h-6 w-6" />
 
-          <span className="font-semibold">
-            {`Total Votes Casted: ${activeElectionVotes?.length ?? 0}`}
+          <span className="inline-flex flex-nowrap items-center font-semibold">
+            <span className="font-600 text-xl leading-loose">
+              {authenticatedVoterVotes?.length ?? 0}
+            </span>
+
+            <span className="font-500 text-4.25 leading-normal">
+              {`/${remainingVotingCapacity ?? 0} Votes Casted`}
+            </span>
           </span>
         </div>
 
@@ -118,10 +135,11 @@ export default function PotVotesTab() {
     ),
 
     [
-      activeElectionVotes?.length,
       authenticatedVoter.voteWeight,
+      authenticatedVoterVotes?.length,
       isVotingRuleListVisible,
       isWeightBoostBreakdownVisible,
+      remainingVotingCapacity,
     ],
   );
 
@@ -181,30 +199,36 @@ export default function PotVotesTab() {
         />
       </div>
 
-      <div className="flex gap-3">
-        <FilterChip
-          variant={candidateFilter === "all" ? "brand-filled" : "brand-outline"}
-          onClick={() => setFilter("all")}
-          className="font-medium"
-          label="All"
-          count={candidates?.length ?? 0}
-        />
+      <div className="flex w-full justify-between">
+        <div className="flex gap-3">
+          <FilterChip
+            variant={candidateFilter === "all" ? "brand-filled" : "brand-outline"}
+            onClick={() => setFilter("all")}
+            className="font-medium"
+            label="All"
+            count={candidates?.length ?? 0}
+          />
 
-        <FilterChip
-          variant={candidateFilter === "voted" ? "brand-filled" : "brand-outline"}
-          onClick={() => setFilter("voted")}
-          className="font-medium"
-          label="Voted By Me"
-          count={votedCandidates.length}
-        />
+          <FilterChip
+            variant={candidateFilter === "voted" ? "brand-filled" : "brand-outline"}
+            onClick={() => setFilter("voted")}
+            className="font-medium"
+            label="Voted By Me"
+            count={votedCandidates.length}
+          />
 
-        <FilterChip
-          variant={candidateFilter === "pending" ? "brand-filled" : "brand-outline"}
-          onClick={() => setFilter("pending")}
-          className="font-medium"
-          label="Not Voted By Me"
-          count={votableCandidates.length}
-        />
+          <FilterChip
+            variant={candidateFilter === "pending" ? "brand-filled" : "brand-outline"}
+            onClick={() => setFilter("pending")}
+            className="font-medium"
+            label="Not Voted By Me"
+            count={votableCandidates.length}
+          />
+        </div>
+
+        <span className="hidden font-semibold">
+          {`${activeElectionVoteCount ?? 0} Votes casted by ${activeElectionVoteCount} Voters`}
+        </span>
       </div>
 
       <div className="flex flex-row gap-6">
