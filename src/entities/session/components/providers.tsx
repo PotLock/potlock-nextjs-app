@@ -62,5 +62,5 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
     };
   }, [checkWallet, wallet]);
 
-  return isClient ? <>{children}</> : <SplashScreen />;
+  return isClient ? <>{children}</> : <SplashScreen className="h-screen" />;
 };

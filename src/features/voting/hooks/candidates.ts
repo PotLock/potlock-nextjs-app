@@ -88,11 +88,19 @@ export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId 
   const canReceiveVotes = useMemo(
     () =>
       electionId !== 0 &&
+      userSession.isSignedIn &&
       (votes === undefined
         ? false
         : isVotingPeriodOngoing && !hasUserVotes && remainingUserVotingCapacity !== 0),
 
-    [remainingUserVotingCapacity, electionId, hasUserVotes, isVotingPeriodOngoing, votes],
+    [
+      electionId,
+      userSession.isSignedIn,
+      votes,
+      isVotingPeriodOngoing,
+      hasUserVotes,
+      remainingUserVotingCapacity,
+    ],
   );
 
   const handleVoteCast = useCallback(
