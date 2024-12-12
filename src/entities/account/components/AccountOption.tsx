@@ -86,7 +86,7 @@ export const AccountOption = ({
             ) : (
               <div
                 className={cn(
-                  "font-['Mona Sans'] flex w-full cursor-pointer items-center gap-4 hover:bg-transparent",
+                  "flex w-full cursor-pointer items-center gap-4 hover:bg-transparent",
                   { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
                   classNames?.root,
                 )}
