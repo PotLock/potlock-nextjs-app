@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { MiddleTruncate } from "@re-dev/react-truncate";
 import { Dot } from "lucide-react";
 import Link from "next/link";
 
@@ -77,12 +78,14 @@ export const AccountOption = ({
     >
       {primaryAction}
 
-      <div un-cursor="pointer" un-flex="~" un-items="center" un-gap="4">
+      <div className="mr-a flex w-full cursor-pointer items-center gap-4">
         {avatarElement}
 
-        <div className="flex flex-col">
+        <div className="flex w-full flex-col">
           <div className="inline-flex items-center">
-            <span className="prose font-600 text-nowrap">{profile?.name ?? accountId}</span>
+            <MiddleTruncate className="font-600" end={0}>
+              {profile?.name ?? accountId}
+            </MiddleTruncate>
 
             <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
               {statusElement}
@@ -91,13 +94,13 @@ export const AccountOption = ({
 
           <Link
             className={cn(
-              "underline-solid inline-flex items-center",
+              "underline-solid inline-flex w-full items-center",
               "text-nowrap text-neutral-500 underline underline-offset-4",
             )}
             href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
             target="_blank"
           >
-            <span className="prose">{`@${accountId}`}</span>
+            <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
           </Link>
 
           {statusElement && (
@@ -108,7 +111,7 @@ export const AccountOption = ({
         </div>
       </div>
 
-      {secondaryAction && <div className="ml-auto">{secondaryAction}</div>}
+      {secondaryAction && <div className="">{secondaryAction}</div>}
     </div>
   );
 };
