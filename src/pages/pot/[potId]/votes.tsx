@@ -33,7 +33,7 @@ export default function PotVotesTab() {
 
   const { potActiveElections } = usePotActiveElections({ potId });
   // TODO: Figure out a way to know exactly which ONE election is active ( Pots V2 milestone )
-  const [activeElectionId, _activeElection] = potActiveElections?.at(0) ?? [0, undefined];
+  const [activeElectionId, activeElection] = potActiveElections?.at(0) ?? [0, undefined];
 
   const { data: activeElectionVoteCount } = votingHooks.useElectionVoteCount({
     electionId: activeElectionId ?? 0,
@@ -80,8 +80,7 @@ export default function PotVotesTab() {
             </span>
 
             <span className="font-500 text-4.25 leading-normal">
-              {/* {`/${remainingVotingCapacity ?? 0} Votes Casted`} */}
-              {" Votes Casted"}
+              {`/${activeElection?.votes_per_voter ?? 0} Votes Casted`}
             </span>
           </span>
         </div>
