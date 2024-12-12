@@ -91,7 +91,7 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
       </div>
 
       <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
           {data.map((candidate) => (
             <VotingCandidateOption
               key={candidate.account_id}

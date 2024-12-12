@@ -37,9 +37,9 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
       highlightOnHover
       hideStatusOnDesktop
       classNames={{
-        root: cn("px-4", {
+        root: cn("px-4 rounded-lg", {
           "bg-neutral-50": isSelected,
-          "bg-conifer-50 hover:bg-conifer-50": hasUserVotes,
+          "bg-[#CEE9CF] hover:bg-[#CEE9CF]": hasUserVotes,
         }),
       }}
       statusElement={
