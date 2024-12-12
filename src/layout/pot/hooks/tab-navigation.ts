@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/router";
+import { pick } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
@@ -153,23 +154,18 @@ const emptyList: PotLayoutTabOption[] = [];
 
 export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavigation => {
   const { asPath: currentPath, push: navigateToHref } = useRouter();
-  const { hasVoting } = usePotExtensionFlags({ potId });
+  const { isPotExtensionConfigLoading, hasVoting } = usePotExtensionFlags({ potId });
 
   const { setPotConfig, potConfigs, tabRegistries, orderedTabLists } = usePotTabStore(
-    useShallow((state) => ({
-      setPotConfig: state.setPotConfig,
-      potConfigs: state.potConfigs,
-      tabRegistries: state.tabRegistries,
-      orderedTabLists: state.orderedTabLists,
-    })),
+    useShallow(pick(["setPotConfig", "potConfigs", "tabRegistries", "orderedTabLists"])),
   );
 
   // Ensure pot config is set/updated
   useEffect(() => {
-    if (potId) {
+    if (potId && !isPotExtensionConfigLoading) {
       setPotConfig(potId, hasVoting);
     }
-  }, [potId, hasVoting, setPotConfig]);
+  }, [potId, hasVoting, setPotConfig, isPotExtensionConfigLoading]);
 
   const potConfig = potId ? potConfigs[potId] : null;
   const defaultTabTag = potConfig?.defaultTabTag ?? PotLayoutTabTag.Projects;

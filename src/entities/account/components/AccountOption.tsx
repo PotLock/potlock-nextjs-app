@@ -82,7 +82,7 @@ export const AccountOption = ({
         {avatarElement}
 
         <div className="flex w-full flex-col">
-          <div className="inline-flex items-center">
+          <div className="font-600 inline-flex items-center">
             <MiddleTruncate className="font-600" end={0}>
               {profile?.name ?? accountId}
             </MiddleTruncate>
