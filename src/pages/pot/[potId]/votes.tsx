@@ -32,10 +32,14 @@ export default function PotVotesTab() {
   const [candidateFilter, setFilter] = useState<VotingCandidateFilter>("all");
 
   const { potActiveElections } = usePotActiveElections({ potId });
-  // TODO: Figure out a way to know exactly which ONE election is active ( Pots V2 milestone )
+  // TODO: Figure out a way to know exactly which ONE election is considered active ( Pots V2 milestone )
   const [activeElectionId, activeElection] = potActiveElections?.at(0) ?? [0, undefined];
 
   const { data: activeElectionVoteCount } = votingHooks.useElectionVoteCount({
+    electionId: activeElectionId ?? 0,
+  });
+
+  const { data: activeElectionVoterAccountIds } = votingHooks.useUniqueVoters({
     electionId: activeElectionId ?? 0,
   });
 
@@ -45,11 +49,6 @@ export default function PotVotesTab() {
   });
 
   const { data: authenticatedVoterVotes } = votingHooks.useVoterVotes({
-    accountId: userSession.accountId,
-    electionId: activeElectionId ?? 0,
-  });
-
-  const { data: remainingVotingCapacity } = votingHooks.useVoterRemainingCapacity({
     accountId: userSession.accountId,
     electionId: activeElectionId ?? 0,
   });
@@ -226,9 +225,27 @@ export default function PotVotesTab() {
           />
         </div>
 
-        <span className="hidden font-semibold">
-          {`${activeElectionVoteCount ?? 0} Votes casted by ${activeElectionVoteCount} Voters`}
-        </span>
+        <div className="inline-flex h-8 w-60 items-baseline justify-start gap-2 pt-1">
+          <div className="flex items-baseline justify-center gap-1">
+            <div className=" text-sm font-semibold leading-tight text-neutral-950">
+              {`${activeElectionVoteCount ?? 0} Votes`}
+            </div>
+
+            <div className="text-right text-xs uppercase leading-none tracking-wide text-neutral-950">
+              {"casted from"}
+            </div>
+          </div>
+
+          <div className="flex items-baseline justify-center gap-1">
+            <div className="text-sm font-semibold leading-tight text-neutral-950">
+              {activeElectionVoterAccountIds?.length ?? 0}
+            </div>
+
+            <div className="text-right text-xs uppercase leading-none tracking-wide text-neutral-950">
+              {"voters"}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-row gap-6">
