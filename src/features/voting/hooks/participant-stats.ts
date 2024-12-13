@@ -44,10 +44,8 @@ export const useVotingParticipantStats = ({
 
       votingPower:
         mpDaoVoterInfo?.locking_positions.reduce(
-          (sum, position) =>
-            sum.add(
-              stringifiedU128ToBigNum(position.voting_power, METAPOOL_MPDAO_VOTING_POWER_DECIMALS),
-            ),
+          (sum, { voting_power }) =>
+            sum.add(stringifiedU128ToBigNum(voting_power, METAPOOL_MPDAO_VOTING_POWER_DECIMALS)),
 
           Big(0),
         ) ?? Big(0),
