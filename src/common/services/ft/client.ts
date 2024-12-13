@@ -1,4 +1,3 @@
-import { MemoryCache } from "@wpdas/naxios";
 import { Big } from "big.js";
 import { AccountView } from "near-api-js/lib/providers/provider";
 
@@ -62,10 +61,7 @@ export const getFtData = async ({
   accountId,
   tokenId,
 }: Partial<ByAccountId> & ByTokenId): Promise<FtData | null> => {
-  const ftContractClient = naxiosInstance.contractApi({
-    contractId: tokenId,
-    cache: new MemoryCache({ expirationTime: 120 }),
-  });
+  const ftContractClient = naxiosInstance.contractApi({ contractId: tokenId });
 
   const metadata = await ftContractClient
     .view<{}, FungibleTokenMetadata>("ft_metadata")

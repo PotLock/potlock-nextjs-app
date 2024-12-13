@@ -27,7 +27,7 @@ export const useVotingParticipantStats = ({
   stakingContractAccountId,
 }: VotingParticipantStatsInputs): VotingParticipantStats => {
   const { isHumanVerified } = useIsHuman(accountId);
-  const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
+  const { data: mpDaoVoterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
   const { data: stakingTokenData } = useSWR(stakingContractAccountId ?? null, (tokenId) =>
     isAccountId(tokenId) ? ftService.getFtData({ accountId, tokenId }) : undefined,
@@ -42,12 +42,17 @@ export const useVotingParticipantStats = ({
         ? (stakingTokenData?.balanceUsd ?? Big(0))
         : undefined,
 
-      votingPower: stringifiedU128ToBigNum(
-        voterInfo?.voting_power ?? "0",
-        METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
-      ),
+      votingPower:
+        mpDaoVoterInfo?.locking_positions.reduce(
+          (sum, position) =>
+            sum.add(
+              stringifiedU128ToBigNum(position.voting_power, METAPOOL_MPDAO_VOTING_POWER_DECIMALS),
+            ),
+
+          Big(0),
+        ) ?? Big(0),
     }),
 
-    [isHumanVerified, stakingTokenData, voterInfo?.voting_power],
+    [isHumanVerified, stakingTokenData, mpDaoVoterInfo?.locking_positions],
   );
 };
