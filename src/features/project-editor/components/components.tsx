@@ -52,6 +52,7 @@ type CustomInputProps = {
   prefix?: string;
   prefixMinWidth?: number;
 };
+
 export const CustomInput = ({
   label,
   inputProps,

@@ -18,7 +18,7 @@ import {
   Textarea,
 } from "@/common/ui/components";
 import { AccountProfilePicture } from "@/entities/account";
-import { hrefByRouteName } from "@/entities/core";
+import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 import { useMatchingPoolFundingForm } from "../hooks/forms";
@@ -56,9 +56,11 @@ export const MatchingPoolFundingModal: React.FC<MatchingPoolFundingModalProps> =
 
   // Get Protocol Config
   const protocolConfig = useProtocolConfig(potDetail);
+
   const bypassProtocolPercentage = protocolConfig?.basis_points
     ? protocolConfig.basis_points / 100
     : "-";
+
   const bypassChefFeePercentage = potDetail.chef_fee_basis_points / 100;
 
   const formValues = form.watch();
@@ -146,7 +148,7 @@ export const MatchingPoolFundingModal: React.FC<MatchingPoolFundingModalProps> =
 
               {protocolConfig && (
                 <Link
-                  href={`/${hrefByRouteName.PROFILE}/${protocolConfig.account_id}`}
+                  href={`/${rootPathnames.PROFILE}/${protocolConfig.account_id}`}
                   target="_blank"
                 >
                   <Badge variant="secondary" className="gap-1">
@@ -182,7 +184,7 @@ export const MatchingPoolFundingModal: React.FC<MatchingPoolFundingModalProps> =
                 </div>
 
                 {/* Avatar - Account */}
-                <Link href={`/${hrefByRouteName.PROFILE}/${potDetail.chef?.id}`} target="_blank">
+                <Link href={`/${rootPathnames.PROFILE}/${potDetail.chef?.id}`} target="_blank">
                   <Badge variant="secondary" className="gap-1">
                     <AccountProfilePicture
                       accountId={potDetail.chef?.id}

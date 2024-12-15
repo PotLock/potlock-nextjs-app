@@ -39,6 +39,7 @@ export const deploy_pot = async (args: {
 
 export const isDeploymentAvailable = async ({ accountId }: ByAccountId) => {
   const config = await get_config();
+
   if (config) {
     return !config.require_whitelist || config.whitelisted_deployers.includes(accountId);
   }

@@ -98,6 +98,7 @@ export const AccessControlListModal = create(
       const selectedAccountsToRemove = accountIds.filter((accountId) =>
         selectedAccounts.includes(accountId),
       );
+
       if (handleRemoveAccounts) {
         handleRemoveAccounts(
           entries.filter((entry) => selectedAccountsToRemove.includes(entry.accountId)),
@@ -105,6 +106,7 @@ export const AccessControlListModal = create(
       } else {
         onSubmit(selectedAccountsToRemove);
       }
+
       setSelectedAccounts([]);
     }, [accountIds, entries, handleRemoveAccounts, onSubmit, selectedAccounts]);
 

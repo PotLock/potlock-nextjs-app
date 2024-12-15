@@ -4,8 +4,8 @@ import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near";
 import { listsClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
-import routesPath from "@/entities/core/routes";
 import { useWallet } from "@/entities/session";
+import routesPath from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 // TODO: Ditch Redux for this use case entirely!
@@ -88,6 +88,7 @@ export const useInitProjectState = () => {
 
           // If register found, set that it's registered already
           dispatch.projectEditor.isRegistered(!!register);
+
           // Auto set the project to DONE status if it's already registered & this is create project page
           if (register && location.pathname.includes(routesPath.CREATE_PROJECT)) {
             dispatch.projectEditor.submissionStatus("done");
@@ -104,6 +105,7 @@ export const useInitProjectState = () => {
 
   // Reset check registration every time the "isDao" flag is changed
   const [previousDaoFlag] = useState(isDao);
+
   useEffect(() => {
     if (previousDaoFlag !== isDao && daoAddress) {
       window.location.reload();
@@ -119,6 +121,7 @@ export const useInitProjectState = () => {
   // Get DAO proposals - Current DAO Proposal status
   useEffect(() => {
     const checkDao = isDao && daoAddress;
+
     (async () => {
       const proposals = checkDao
         ? await naxiosInstance

@@ -3,11 +3,11 @@ import { ReactElement } from "react";
 import { indexer } from "@/common/api/indexer";
 import { useRouteQuery } from "@/common/lib";
 import { ListCard, getRandomBackgroundImage } from "@/entities/list";
-import { ProfileLayout } from "@/entities/profile";
+import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 export const NoResults = ({ text }: { text: string }) => (
   <div className="flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px] md:flex-col md:px-[105px] md:py-[68px]">
-    <p className="font-italic font-500 mb-4 max-w-[290px] text-center font-lora text-[16px] text-[#292929] md:text-[22px]">
+    <p className="font-italic font-500 font-lora mb-4 max-w-[290px] text-center text-[16px] text-[#292929] md:text-[22px]">
       {text}
     </p>
 
@@ -23,6 +23,7 @@ const ProfileLists = () => {
   const {
     query: { userId },
   } = useRouteQuery();
+
   const { data } = indexer.useLists({
     account: userId as string,
   });
@@ -34,9 +35,11 @@ const ProfileLists = () => {
           {data?.results?.map((item: any) => {
             let background = "";
             let backdrop = "";
+
             if (!item.cover_image) {
               ({ background, backdrop } = getRandomBackgroundImage());
             }
+
             return (
               <ListCard
                 background={background}

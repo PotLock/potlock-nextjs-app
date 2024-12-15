@@ -22,12 +22,14 @@ export const campaignFormSchema = z
     }),
   })
   .superRefine((data, ctx) => {
+    // const {start_ms, end_ms, min_amount, max_amount, target_amount} = data
     if (data.end_ms && data.start_ms >= data.end_ms) {
       ctx.addIssue({
         path: ["start_ms"],
         message: "Start time must be earlier than end time",
         code: "custom",
       });
+
       ctx.addIssue({
         path: ["end_ms"],
         message: "End time must be later than start time",

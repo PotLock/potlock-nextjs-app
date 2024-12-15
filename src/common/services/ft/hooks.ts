@@ -7,7 +7,7 @@ import { coingecko } from "@/common/api/coingecko";
 import { formatWithCommas } from "@/common/lib/formatWithCommas";
 import { ByTokenId } from "@/common/types";
 
-import { useFtRegistryStore } from "./models";
+import { useFtRegistryStore } from "./model";
 
 /**
  * Registry of supported fungible tokens.

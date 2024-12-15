@@ -10,7 +10,7 @@ import { LayersIcon } from "@/common/assets/svgs";
 import { LikeIcon } from "@/common/assets/svgs/like";
 import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import { dispatch } from "@/store";
 
 import { ListFormModalType } from "../types";
@@ -27,13 +27,16 @@ export const ListCard = ({
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [profileImage, setProfileImage] = useState("");
   const { push } = useRouter();
+
   useEffect(() => {
     const fetchProfileImage = async () => {
       const { image } = await fetchSocialImages({
         accountId: dataForList.owner,
       });
+
       setProfileImage(image);
     };
+
     if (dataForList.owner) fetchProfileImage();
     setIsUpvoted(dataForList.upvotes?.some((data: any) => data?.account === walletApi.accountId));
   }, [dataForList.owner]);
@@ -45,6 +48,7 @@ export const ListCard = ({
 
   const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation();
+
     if (isUpvoted) {
       listsClient.remove_upvote({ list_id: dataForList?.on_chain_id });
 
@@ -76,7 +80,7 @@ export const ListCard = ({
   return (
     <div
       onClick={handleRoute}
-      className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]"
+      className="cursor-pointer transition-all duration-300 hover:translate-y-[-1rem]"
     >
       <Image
         src={dataForList?.cover_image_url ? "/assets/images/default-backdrop.png" : backdrop}

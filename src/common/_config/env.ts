@@ -25,10 +25,12 @@ const envConfigRegistry: EnvConfigRegistry = {
   test: { ...testEnvConfig, envTag: "test" },
 };
 
-export const getEnvConfig = (): EnvConfig => {
+export const getEnvConfig = (): ByEnvironmentTag & EnvConfig => {
   const deploymentEnvTag = process.env.NEXT_PUBLIC_ENV?.toLowerCase();
 
-  return envConfigRegistry[
-    isEnvTag((deploymentEnvTag ?? "test") as EnvTag) ? (deploymentEnvTag as EnvTag) : "test"
-  ];
+  const envTag = isEnvTag((deploymentEnvTag ?? "test") as EnvTag)
+    ? (deploymentEnvTag as EnvTag)
+    : "test";
+
+  return envConfigRegistry[envTag];
 };

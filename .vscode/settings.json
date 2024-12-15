@@ -3,10 +3,46 @@
   "eslint.validate": [
     "typescript"
   ],
+  "editor.rulers": [
+    100
+  ],
+  "editor.tabSize": 2,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.fixAll": "explicit"
   },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[postcss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "errorLens.followCursor": "allLinesExceptActive",
+  "errorLens.scrollbarHackEnabled": true,
+  "errorLens.margin": "1%",
+  "errorLens.fontSize": "19px",
+  "errorLens.fontStyleItalic": true,
+  "errorLens.gutterIconSet": "borderless",
+  "errorLens.replaceLinebreaksSymbol": "\t",
+  "errorLens.statusBarMessageEnabled": true,
+  "errorLens.statusBarCommand": "goToProblem",
+  "errorLens.statusBarColorsEnabled": true,
+  "errorLens.statusBarMessageType": "activeLine",
+  "errorLens.warningGutterIconColor": "#ff942f",
   "cSpell.words": [
     "Attributify",
     "bitget",
@@ -36,10 +72,14 @@
     "naxios",
     "nearfi",
     "openapi",
+    "overscan",
+    "partialize",
     "potfactory",
     "POTLOCK",
     "precommit",
+    "preflights",
     "ramper",
+    "retropgf",
     "RPGF",
     "sessionid",
     "shadcn",
@@ -48,9 +88,11 @@
     "stnear",
     "svgr",
     "typecheck",
+    "uidotdev",
     "unocss",
     "upvote",
     "Upvoted",
+    "usehooks",
     "welldone",
     "wpdas",
     "xdefi",

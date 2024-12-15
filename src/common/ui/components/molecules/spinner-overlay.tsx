@@ -1,10 +1,7 @@
 import { Spinner } from "../atoms/spinner";
 
 export const SpinnerOverlay = () => (
-  <div
-    className="fixed z-[999] flex h-screen w-screen items-center justify-center"
-    style={{ top: 0, left: 0, background: "transparent" }}
-  >
-    <Spinner width={32} height={32} />
+  <div className="bg-background fixed left-0 top-0 z-[999] flex h-screen w-screen items-center justify-center">
+    <Spinner className="h-8 w-8" />
   </div>
 );

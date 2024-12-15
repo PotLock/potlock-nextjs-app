@@ -3,10 +3,10 @@ import Link from "next/link";
 import { indexer } from "@/common/api/indexer";
 import { Button } from "@/common/ui/components";
 import { useRegistration } from "@/entities/core";
-import routesPath from "@/entities/core/routes";
 import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/entities/project";
 import { useSessionReduxStore, useWallet } from "@/entities/session";
 import { DonateRandomly } from "@/features/donation";
+import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 export const GeneralStats = () => {
@@ -43,13 +43,13 @@ const WelcomeBanner = () => {
   const { loading, isRegisteredProject } = useRegistration(accountId);
 
   return (
-    <div className="relative flex w-full flex-col justify-center overflow-hidden rounded-xl border border-solid border-[#f8d3b0] bg-hero bg-cover bg-no-repeat">
+    <div className="bg-hero relative flex w-full flex-col justify-center overflow-hidden rounded-xl border border-solid border-[#f8d3b0] bg-cover bg-no-repeat">
       <div className="relative z-[1] flex flex-col justify-center px-5  py-12 md:px-10 md:py-16">
         <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
           Transforming Funding for Public Goods
         </h3>
 
-        <h1 className="lett m-0 font-lora text-4xl font-medium leading-none tracking-tight md:text-[40px]">
+        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
           Discover impact projects, donate directly, &
           <br className="hidden md:block" /> participate in funding rounds.
         </h1>

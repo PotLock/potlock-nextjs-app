@@ -21,6 +21,7 @@ export const useNearAndUsdByPot = ({ pot }: { pot?: Pot }) => {
   const [amountNear, setAmountNear] = useState(
     pot ? yoctoNearToNear(pot.matching_pool_balance, true) : undefined,
   );
+
   const [amountUsd, setAmountUsd] = useState("-");
 
   useEffect(() => {

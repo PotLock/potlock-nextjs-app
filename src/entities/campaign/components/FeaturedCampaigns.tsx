@@ -72,6 +72,7 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
   const { avatarSrc: ownerImage } = useProfileData(data?.owner);
 
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
+
   const isEnded = data?.end_ms
     ? getTimePassed(Number(data?.end_ms), false, true)?.includes("-")
     : false;

@@ -12,7 +12,7 @@ import { walletApi } from "@/common/api/near";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/near-socialdb";
+import { fetchSocialImages } from "@/common/services/social";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,6 +44,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
     push,
     query: { id },
   } = useRouter();
+
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [listOwnerImage, setListOwnerImage] = useState<string>("");
   const [isApplicationSuccessful, setIsApplicationSuccessful] = useState<boolean>(false);
@@ -62,8 +63,10 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
       const { image } = await fetchSocialImages({
         accountId: listDetails?.owner?.id || "",
       });
+
       setListOwnerImage(image);
     };
+
     if (id) fetchProfileImage();
   }, [id, listDetails?.owner?.id]);
 
@@ -102,6 +105,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         setIsApplicationSuccessful(true);
       })
       .catch((error) => console.error("Error applying to list:", error));
+
     dispatch.listEditor.updateListModalState({
       header: `Applied to ${listDetails.name} list Successfully `,
       description: "You can now close this modal.",
@@ -145,7 +149,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
 
   const nameContent = (
     <>
-      <p className="mb-2 font-lora text-2xl font-semibold">{listDetails.name}</p>
+      <p className="font-lora mb-2 text-2xl font-semibold">{listDetails.name}</p>
       <div className="mb-2 flex items-center space-x-2 text-[12px] text-[#656565]">
         BY{" "}
         <img
@@ -316,6 +320,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
             admins?.filter(
               (admin) => !savedUsers.admins?.map(prop("accountId"))?.includes(admin),
             ) ?? [];
+
           handleSaveAdminsSettings(newAdmins);
         }}
       />
@@ -329,6 +334,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
             accounts?.filter(
               (admin) => !savedUsers.accounts?.map(prop("accountId"))?.includes(admin),
             ) ?? [];
+
           handleRegisterBatch(newAccounts);
         }}
       />

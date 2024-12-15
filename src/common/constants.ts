@@ -46,6 +46,7 @@ export const APP_METADATA: Metadata & {
 export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
 export const NATIVE_TOKEN_ID = "near";
 export const NATIVE_TOKEN_DECIMALS = 24;
+export const UNKNOWN_ACCOUNT_ID_PLACEHOLDER = "unknown-account-id";
 
 export const MPDAO_TOKEN_CONTRACT_ACCOUNT_ID =
   NETWORK === "mainnet" ? "mpdao-token.near" : "mpdao-token.testnet";
@@ -77,9 +78,6 @@ export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
 
 export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
-
-export const VOTING_BASED_POT_IDS =
-  NETWORK === "mainnet" ? ["mpdao.v1.potfactory.potlock.near"] : [];
 
 export const CHRONOLOGICAL_SORT_OPTIONS: {
   label: string;

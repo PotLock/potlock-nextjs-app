@@ -16,6 +16,7 @@ export const CampaignDonorsTable = () => {
   const {
     query: { campaignId },
   } = useRouter();
+
   const { donations } = useCampaign({ campaignId: campaignId as string });
 
   const sortedDonations = useMemo(() => {

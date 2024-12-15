@@ -18,6 +18,7 @@ const formatTimestampForInput = (timestamp: string) => {
 export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
   const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
+
   const {
     query: { campaignId },
   } = useRouteQuery();
@@ -34,16 +35,20 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
       form.setValue("name", existingData?.name);
       form.setValue("description", existingData?.description);
       form.setValue("target_amount", yoctoNearToFloat(existingData?.target_amount));
+
       if (existingData.min_amount != undefined) {
         form.setValue("min_amount", yoctoNearToFloat(existingData.min_amount));
       }
+
       if (existingData.max_amount != undefined) {
         form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
       }
+
       form.setValue(
         "start_ms",
         existingData?.start_ms ? formatTimestampForInput(existingData?.start_ms) : "",
       );
+
       form.setValue(
         "end_ms",
         existingData?.end_ms ? formatTimestampForInput(existingData?.end_ms) : "",
@@ -53,16 +58,19 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
+
     if (target.files && target.files[0]) {
       const reader = new FileReader();
       setLoadingImageUpload(true);
       const res = await uploadFileToIPFS(target.files[0]);
+
       if (res.ok) {
         const data = await res.json();
         setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
         onChange("cover_image_url", `${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
         setLoadingImageUpload(false);
       }
+
       reader.readAsDataURL(target.files[0]);
     }
   };

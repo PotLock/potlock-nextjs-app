@@ -1,5 +1,4 @@
 import { POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { TabNav } from "@/entities/profile/types";
 
 export const POT_MIN_NAME_LENGTH = 3;
 
@@ -56,46 +55,3 @@ export const POT_SORT_OPTIONS = [
     value: "least_donations",
   },
 ];
-
-export const POT_TABS_CONFIG = [
-  {
-    label: "Projects",
-    id: "projects",
-    href: "/projects",
-  },
-  {
-    label: "Applications",
-    id: "applications",
-    href: "/applications",
-  },
-  {
-    label: "Votes",
-    id: "votes",
-    href: "/votes",
-  },
-  {
-    label: "Donations",
-    id: "donations",
-    href: "/donations",
-  },
-  {
-    label: "Sponsors",
-    id: "sponsors",
-    href: "/sponsors",
-  },
-  {
-    label: "Payouts",
-    id: "payouts",
-    href: "/payouts",
-  },
-  {
-    label: "Feeds",
-    id: "feeds",
-    href: "/feeds",
-  },
-  {
-    label: "Settings",
-    id: "settings",
-    href: "/settings",
-  },
-] as TabNav[];

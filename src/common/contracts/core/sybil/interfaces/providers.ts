@@ -95,6 +95,7 @@ export interface UpdateProviderInput {
   status?: ProviderStatus; // owner/admin-only
   admin_notes?: string; // owner/admin-only
 }
+
 export interface ActivateProviderInput {
   provider_id: string;
   default_weight: number;

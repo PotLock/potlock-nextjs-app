@@ -26,11 +26,13 @@ export const NoListItem = ({
         setText(
           "No list? Create on chain lists of your favorite projects, and build your own discovery portal.",
         );
+
         break;
       case NoListItemType.FAVORITE_LISTS:
         setText(
           "Curate a personalized lists by upvoting your favorites and build your own discovery portal.",
         );
+
         break;
       case NoListItemType.NO_RESULTS:
         setText("No Results found");
@@ -39,6 +41,7 @@ export const NoListItem = ({
         setText(
           "No list? Create on chain lists of your favorite projects, and build your own discovery portal.",
         );
+
         break;
     }
   }, [type]);
@@ -53,7 +56,7 @@ export const NoListItem = ({
         className="mb-4 h-[200px] w-[200px]"
       />
       <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
-        <p className="w-100 text-center font-lora italic">{text}</p>
+        <p className="w-100 font-lora text-center italic">{text}</p>
         {showButton && (
           <Button onClick={route} variant="standard-filled">
             {type === NoListItemType.FAVORITE_LISTS ? "Start Curating" : "Create List"}

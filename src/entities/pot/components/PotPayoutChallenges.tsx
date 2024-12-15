@@ -9,7 +9,7 @@ import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
-import routesPath from "@/entities/core/routes";
+import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 import ChallengeResolveModal from "./ChallengeResolveModal";
@@ -44,6 +44,7 @@ export const PotPayoutChallenges = ({
           const _payoutsChallenges = await potClient.getPayoutsChallenges({
             potId: potDetail?.account,
           });
+
           setPayoutsChallenges(_payoutsChallenges);
           setFilteredChallenges(_payoutsChallenges?.filter((c) => !c.resolved));
           setTotalChallenges(_payoutsChallenges?.length);
@@ -56,9 +57,11 @@ export const PotPayoutChallenges = ({
 
   const handleSwitchTab = (tab: string) => {
     setTab(tab);
+
     const filteredChallenges = payoutsChallenges.filter((challenges) =>
       tab === "UNRESOLVED" ? !challenges.resolved : challenges.resolved,
     );
+
     setFilteredChallenges(filteredChallenges);
   };
 

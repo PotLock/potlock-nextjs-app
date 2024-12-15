@@ -27,6 +27,7 @@ const getTimePassed = (timestamp: number, abbreviate?: boolean, isFuture?: boole
       ? `${secondsPassed} second${secondsPassed === 1 ? "" : "s"}`
       : `${secondsPassed}s`;
   }
+
   return time;
 };
 

@@ -48,6 +48,7 @@ export const AccountCard = ({
   const [registrationStatus, setRegistrationStatus] = useState<RegistrationStatus>(
     RegistrationStatus.Pending,
   );
+
   const [note, setNote] = useState<string>("");
 
   const status = listRegistrationStatuses[registrationStatus];
@@ -107,7 +108,7 @@ export const AccountCard = ({
       <Link href={`/profile/${dataForList.registrant.id}`}>
         <div className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]">
           <div
-            className="overflow-hidden rounded-md bg-white font-lora shadow-md"
+            className="font-lora overflow-hidden rounded-md bg-white shadow-md"
             data-testid="list-card"
           >
             <AccountProfileCover
@@ -238,6 +239,7 @@ export const AccountCard = ({
                     open: false,
                     status: statusChange.status,
                   });
+
                   setNote("");
                 }}
                 variant="standard-outline"

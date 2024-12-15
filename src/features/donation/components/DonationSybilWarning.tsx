@@ -21,12 +21,12 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
 
   const { data: pot } = indexer.usePot({ potId });
 
-  const isDisplayed = useMemo(
+  const isVisible = useMemo(
     () => typeof pot?.sybil_wrapper_provider === "string" && !isDonorNadabotVerified,
     [isDonorNadabotVerified, pot?.sybil_wrapper_provider],
   );
 
-  return !isDisplayed ? null : (
+  return !isVisible ? null : (
     <Alert variant="warning" className={classNames?.root}>
       <WarningIcon />
 

@@ -17,11 +17,12 @@ export const useCampaignForm = () => {
   const {
     query: { campaignId },
   } = useRouteQuery();
+
   type Values = FromSchema<typeof campaignFormSchema>;
 
   const self = useForm<Values>({
     resolver: zodResolver(campaignFormSchema),
-    mode: "all",
+    mode: "onChange",
     resetOptions: { keepDirtyValues: false },
   });
 
@@ -34,6 +35,7 @@ export const useCampaignForm = () => {
   const handleDeleteCampaign = () => {
     if (!campaignId) return;
     campaignsClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
+
     dispatch.campaignEditor.updateCampaignModalState({
       header: `Campaign Deleted Successfully`,
       description: "You can now proceed to close this window",
@@ -72,6 +74,7 @@ export const useCampaignForm = () => {
         campaignsClient.update_campaign({
           args: { campaign_id: Number(campaignId), ...args },
         });
+
         dispatch.campaignEditor.updateCampaignModalState({
           header: `You’ve successfully created a campaignsClient for ${values.name}.`,
           description:
@@ -80,6 +83,7 @@ export const useCampaignForm = () => {
         });
       } else {
         campaignsClient.create_campaign({ args });
+
         dispatch.campaignEditor.updateCampaignModalState({
           header: `You’ve successfully created a campaignsClient for ${values.name}.`,
           description:
@@ -93,6 +97,7 @@ export const useCampaignForm = () => {
 
   const onChange = (field: keyof Values, value: string) => {
     self.setValue(field, value);
+    self.trigger()
   };
 
   return {

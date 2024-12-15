@@ -21,10 +21,10 @@ export const ListHero = ({
   }, []);
 
   return (
-    <div className="relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden bg-hero">
+    <div className="bg-hero relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden">
       <div className="relative z-[1] flex flex-col items-center justify-center px-5  py-12 md:px-10 md:py-16">
         <div className=" flex flex-col items-center justify-center text-center tracking-normal">
-          <h1 className=" m-0 font-lora text-[56px]  font-medium leading-[100px] md:w-[80%] md:text-[96px]">
+          <h1 className=" font-lora m-0 text-[56px]  font-medium leading-[100px] md:w-[80%] md:text-[96px]">
             LISTS
           </h1>
           <p className="m-0 p-0 text-[16px]">

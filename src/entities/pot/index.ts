@@ -1,3 +1,4 @@
+export * from "./types";
 export * from "./components/ActivePots";
 export * from "./components/ChallengeModal";
 export * from "./components/PotCard";
@@ -10,8 +11,10 @@ export * from "./components/PotTimeline";
 export * from "./components/PotStats";
 export * from "./constants";
 export { type PotInputs, potSchema } from "./models/schemas";
-export * from "./types";
-export * from "./utils/validation";
+export * from "./hooks/elections";
+export * from "./hooks/extensions";
 export * from "./hooks/lifecycle";
 export * from "./hooks/permissions";
 export * from "./hooks/useOrderedDonations";
+export * from "./utils/validation";
+export * from "./hooks/usePotPayoutLookup";

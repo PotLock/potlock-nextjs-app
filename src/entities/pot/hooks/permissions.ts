@@ -22,9 +22,9 @@ export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
         .getApplicationByProjectId({ potId, project_id: accountId })
         .then(setExistingApplication)
         .catch(() => setExistingApplication(undefined));
-    }
 
-    potClient.getPayoutsChallenges({ potId }).then(setPayoutsChallenges).catch(console.error);
+      potClient.getPayoutsChallenges({ potId }).then(setPayoutsChallenges).catch(console.error);
+    }
   }, [accountId, isSignedIn, pot, potId]);
 
   const publicRoundOpen = useMemo(

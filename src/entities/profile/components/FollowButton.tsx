@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-const FollowButton = ({ accountId, className }: Props) => {
+export const FollowButton = ({ accountId, className }: Props) => {
   const { wallet } = useWallet();
 
   const [followEdge, setFollowEdge] = useState<Record<string, any>>();
@@ -21,11 +21,13 @@ const FollowButton = ({ accountId, className }: Props) => {
         const _followEdge = await getSocialData<Record<string, any>>({
           path: `${wallet.accountId}/graph/follow/${accountId}`,
         });
+
         setFollowEdge(_followEdge);
 
         const _inverseEdge = await getSocialData<Record<string, any>>({
           path: `${accountId}/graph/follow/${wallet.accountId}`,
         });
+
         setInverseEdge(_inverseEdge);
       }
     })();
@@ -33,6 +35,7 @@ const FollowButton = ({ accountId, className }: Props) => {
 
   // const loading = followEdge === undefined || inverseEdge === undefined;
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     setLoading(!followEdge || !inverseEdge);
   }, [followEdge, inverseEdge]);
@@ -70,6 +73,7 @@ const FollowButton = ({ accountId, className }: Props) => {
         : inverse
           ? "Follow back"
           : "Follow";
+
     setButtonText(_buttonText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
@@ -83,6 +87,7 @@ const FollowButton = ({ accountId, className }: Props) => {
   const onClickHandler = async () => {
     if (wallet.accountId && buttonText !== "Following") {
       setUpdating(true);
+
       await setSocialData({
         data: {
           [wallet.accountId]: data,

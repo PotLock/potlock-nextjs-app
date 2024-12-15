@@ -1,5 +1,3 @@
-// TODO: refactor to support multi-mechanism for the V2 milestone
-
 import { useMemo } from "react";
 
 import { prop } from "remeda";
@@ -7,10 +5,10 @@ import { prop } from "remeda";
 import { ByPotId } from "@/common/api/indexer";
 import { ClearanceCheckResult } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
+import { usePotExtensionFlags } from "@/entities/pot";
 import { useSessionAuth } from "@/entities/session";
 
-import { isVotingEnabled } from "../utils/mechanisms";
-
+// TODO: refactor to support multi-mechanism for the V2 milestone
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
  *  as it's built for the mpDAO milestone.
@@ -18,10 +16,10 @@ import { isVotingEnabled } from "../utils/mechanisms";
 export const useVotingUserClearance = ({ potId }: ByPotId): ClearanceCheckResult => {
   const { accountId, isVerifiedPublicGoodsProvider } = useSessionAuth();
   const { isHumanVerified: isHuman } = useIsHuman(accountId);
-  const isVotingSupported = isVotingEnabled({ potId });
+  const { hasVoting } = usePotExtensionFlags({ potId });
 
   return useMemo(() => {
-    if (!isVotingSupported) {
+    if (!hasVoting) {
       return {
         requirements: null,
         isEveryRequirementSatisfied: false,
@@ -39,5 +37,5 @@ export const useVotingUserClearance = ({ potId }: ByPotId): ClearanceCheckResult
         error: null,
       };
     }
-  }, [isHuman, isVerifiedPublicGoodsProvider, isVotingSupported]);
+  }, [isHuman, isVerifiedPublicGoodsProvider, hasVoting]);
 };

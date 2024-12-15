@@ -4,7 +4,7 @@ import { indexer } from "@/common/api/indexer";
 import { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
-import routesPath from "@/entities/core/routes";
+import routesPath from "@/pathnames";
 
 export type AccountProfileLinkProps = ByAccountId & {
   classNames?: { root?: string; avatar?: string; name?: string };

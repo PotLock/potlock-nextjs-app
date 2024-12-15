@@ -9,8 +9,9 @@ import type {
   ElectionPhase,
   ElectionType,
   EligibilityType,
+  IVotingContract,
   Vote,
-  VotingContract,
+  VoteInputs,
   VotingType,
 } from "./interfaces";
 
@@ -18,7 +19,7 @@ import type {
  * Client implementation for interacting with the Voting smart contract
  * Provides methods to create and manage elections, cast votes, and query election data
  */
-class VotingClient implements Omit<VotingContract, "new"> {
+class VotingClient implements Omit<IVotingContract, "new"> {
   private contract: ReturnType<typeof naxios.prototype.contractApi>;
 
   /**
@@ -92,9 +93,9 @@ class VotingClient implements Omit<VotingContract, "new"> {
   /**
    * Returns detailed information about a specific election
    *
-   * Returns null if the election doesn't exist
+   * Returns null or undefined if the election doesn't exist
    */
-  async get_election(args: { election_id: number }): Promise<Election | null> {
+  async get_election(args: { election_id: number }): Promise<Election | null | undefined> {
     return this.contract.view("get_election", { args });
   }
 
@@ -112,7 +113,9 @@ class VotingClient implements Omit<VotingContract, "new"> {
    *
    * Can be Registration, Voting, or Ended
    */
-  async get_election_phase(args: { election_id: number }): Promise<ElectionPhase | null> {
+  async get_election_phase(args: {
+    election_id: number;
+  }): Promise<ElectionPhase | null | undefined> {
     return this.contract.view("get_election_phase", { args });
   }
 
@@ -128,15 +131,15 @@ class VotingClient implements Omit<VotingContract, "new"> {
   /**
    * Returns the total number of votes cast in an election
    */
-  async get_election_vote_count(args: { election_id: number }): Promise<number> {
-    return this.contract.view("get_election_vote_count", { args });
+  async get_election_vote_count(args: { election_id: number }) {
+    return this.contract.view<typeof args, number>("get_election_vote_count", { args });
   }
 
   /**
    * Returns all votes cast in an election
    */
-  async get_election_votes(args: { election_id: number }): Promise<Vote[]> {
-    return this.contract.view("get_election_votes", { args });
+  async get_election_votes(args: { election_id: number }) {
+    return this.contract.view<typeof args, Vote[]>("get_election_votes", { args });
   }
 
   /**
@@ -144,8 +147,8 @@ class VotingClient implements Omit<VotingContract, "new"> {
    * @param from_index Optional starting index for pagination
    * @param limit Optional maximum number of elections to return
    */
-  async get_elections(args: { from_index?: number; limit?: number }): Promise<Election[]> {
-    return this.contract.view("get_elections", { args });
+  async get_elections(args: { from_index?: number; limit?: number }) {
+    return this.contract.view<typeof args, Election[]>("get_elections", { args });
   }
 
   /**
@@ -158,10 +161,12 @@ class VotingClient implements Omit<VotingContract, "new"> {
   /**
    * Returns the time remaining until an election ends
    *
-   * Returns null if the election has ended or doesn't exist
+   * Returns null or undefined if the election has ended or doesn't exist
    */
-  async get_time_remaining(args: { election_id: number }): Promise<number | null> {
-    return this.contract.view("get_time_remaining", { args });
+  async get_time_remaining(args: { election_id: number }) {
+    return this.contract.view<typeof args, number | null | undefined>("get_time_remaining", {
+      args,
+    });
   }
 
   /**
@@ -169,25 +174,25 @@ class VotingClient implements Omit<VotingContract, "new"> {
    *
    * Based on the election's votes_per_voter limit
    */
-  async get_voter_remaining_capacity(args: {
-    election_id: number;
-    voter: AccountId;
-  }): Promise<number | null> {
-    return this.contract.view("get_voter_remaining_capacity", { args });
+  async get_voter_remaining_capacity(args: { election_id: number; voter: AccountId }) {
+    return this.contract.view<typeof args, number | null | undefined>(
+      "get_voter_remaining_capacity",
+      { args },
+    );
   }
 
   /**
    * Returns all votes cast by a specific voter in an election
    */
-  async get_voter_votes(args: { election_id: number; voter: AccountId }): Promise<Vote[] | null> {
-    return this.contract.view("get_voter_votes", { args });
+  async get_voter_votes(args: { election_id: number; voter: AccountId }) {
+    return this.contract.view<typeof args, Vote[] | null | undefined>("get_voter_votes", { args });
   }
 
   /**
    * Checks if a voter has cast any votes in an election
    */
-  async has_voter_participated(args: { election_id: number; voter: AccountId }): Promise<boolean> {
-    return this.contract.view("has_voter_participated", { args });
+  async has_voter_participated(args: { election_id: number; voter: AccountId }) {
+    return this.contract.view<typeof args, boolean>("has_voter_participated", { args });
   }
 
   /**
@@ -204,8 +209,8 @@ class VotingClient implements Omit<VotingContract, "new"> {
    *
    * Based on the current time and election start_date/end_date
    */
-  async is_voting_period(args: { election_id: number }): Promise<boolean> {
-    return this.contract.view("is_voting_period", { args });
+  async is_voting_period(args: { election_id: number }) {
+    return this.contract.view<typeof args, boolean>("is_voting_period", { args });
   }
 
   // Change Methods
@@ -243,8 +248,17 @@ class VotingClient implements Omit<VotingContract, "new"> {
    * @param vote Tuple of [candidate_id, vote_weight]
    * @returns Success status of the vote
    */
-  async vote(args: { election_id: number; vote: [AccountId, number] }): Promise<boolean> {
-    return this.contract.call("vote", { args });
+  async vote(args: { election_id: number; vote: VoteInputs }) {
+    return this.contract.call<typeof args, boolean>("vote", { args });
+  }
+
+  /**
+   * Batch vote cast wrapper around {@link vote}
+   */
+  async voteBatch({ election_id, votes }: { election_id: number; votes: VoteInputs[] }) {
+    return this.contract.callMultiple<{ election_id: number; vote: VoteInputs }>(
+      votes.map((voteInputs) => ({ method: "vote", args: { election_id, vote: voteInputs } })),
+    );
   }
 
   /**

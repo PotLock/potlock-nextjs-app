@@ -6,9 +6,9 @@ import { prop } from "remeda";
 
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { Button, FormField } from "@/common/ui/components";
-import { hrefByRouteName } from "@/entities/core";
 import { useWallet } from "@/entities/session";
 import { useSessionReduxStore } from "@/entities/session/hooks/redux-store";
+import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import AddFundingSourceModal from "./AddFundingSourceModal";
@@ -61,6 +61,7 @@ export const ProjectEditor = () => {
 
   // Set initial name
   const [initialNameSet, setInitialNameSet] = useState(false);
+
   useEffect(() => {
     if (!initialNameSet && projectTemplate.name) {
       form.setValue("name", projectTemplate.name);
@@ -74,9 +75,11 @@ export const ProjectEditor = () => {
     if (values.name) {
       dispatch.projectEditor.setProjectName(values.name);
     }
+
     if (values.description) {
       dispatch.projectEditor.updateDescription(values.description);
     }
+
     if (values.publicGoodReason) {
       dispatch.projectEditor.updatePublicGoodReason(values.publicGoodReason);
     }
@@ -107,7 +110,7 @@ export const ProjectEditor = () => {
   );
 
   const resetUrl = useCallback(() => {
-    router.push(hrefByRouteName.CREATE_PROJECT);
+    router.push(rootPathnames.CREATE_PROJECT);
   }, [router]);
 
   const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
@@ -164,7 +167,7 @@ export const ProjectEditor = () => {
 
   if (
     projectTemplate.submissionStatus === "done" &&
-    location.pathname === hrefByRouteName.CREATE_PROJECT
+    location.pathname === rootPathnames.CREATE_PROJECT
   ) {
     return (
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
@@ -178,7 +181,7 @@ export const ProjectEditor = () => {
     );
   }
 
-  console.log(form.formState.errors);
+  console.log(form.formState.errors, form.formState.isValid);
 
   return (
     // Container
@@ -347,7 +350,7 @@ export const ProjectEditor = () => {
             className="mr-4"
             variant="standard-outline"
             onClick={() => {
-              router.push(hrefByRouteName.PROJECTS_LIST);
+              router.push(rootPathnames.PROJECTS_LIST);
             }}
           >
             Cancel

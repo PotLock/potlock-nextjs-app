@@ -5,6 +5,7 @@ export enum ApplicationStatus {
   Approved = "Approved",
   Rejected = "Rejected",
 }
+
 export enum Roles {
   Admin = "admin",
   Owner = "owner",

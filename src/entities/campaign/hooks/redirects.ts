@@ -14,6 +14,7 @@ export const useCampaignDeploymentRedirect = () => {
     query: { transactionHashes },
     setSearchParams,
   } = useRouteQuery();
+
   const transactionHash =
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
     (typeof transactionHashes === "string" ? transactionHashes : undefined);

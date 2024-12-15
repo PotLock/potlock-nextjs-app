@@ -13,6 +13,7 @@ export const getPotPayouts = async ({ potId, pageSize }: { potId: string; pageSi
   const res = await fetch(
     `${INDEXER_API_ENDPOINT_URL}/api/v1/pots/${potId}/payouts${pageSize ? `?page_size=${pageSize}` : ""}`,
   );
+
   const json = await res.json();
   return json as GetPotPayoutsResponse;
 };
@@ -34,6 +35,7 @@ export const getPotDonations = async ({
   const res = await fetch(
     `${INDEXER_API_ENDPOINT_URL}/api/v1/pots/${potId}/donations${pageSize ? `?page_size=${9999}` : ""}`,
   );
+
   const json = await res.json();
   return json as GetPotDonationsResponse;
 };

@@ -23,9 +23,11 @@ type Props = {
 
 const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) => {
   const { form, errors } = useAddFundingSourceForm();
+
   const fundingSources = useGlobalStoreSelector(
     (state) => state.projectEditor.fundingSources || [],
   );
+
   const isEdit = editFundingIndex !== undefined;
 
   const resetForm = useCallback(() => {
@@ -35,9 +37,11 @@ const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) 
   const onSubmitFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
       dispatch.projectEditor.addFundingSource(data);
+
       if (onCloseClick) {
         onCloseClick();
       }
+
       resetForm();
     },
     [resetForm, onCloseClick],

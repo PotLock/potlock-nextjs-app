@@ -11,10 +11,12 @@ export const useProfileData = (
   getDonationsSent = true,
 ) => {
   const [profile, setProfile] = useState<NEARSocialUserProfile>();
+
   const [profileImages, setProfileImages] = useState({
     image: "",
     backgroundImage: "",
   });
+
   const [profileReady, setProfileReady] = useState(false);
 
   // Donations
