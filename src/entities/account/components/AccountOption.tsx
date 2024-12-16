@@ -103,8 +103,8 @@ export const AccountOption = ({
                 {avatarElement}
 
                 <div className="flex w-full flex-col">
-                  <div className="inline-flex items-center">
-                    <MiddleTruncate className="font-600" end={0}>
+                  <div className="inline-flex w-full items-center">
+                    <MiddleTruncate className="font-600 w-full" end={0}>
                       {profile?.name ?? accountId}
                     </MiddleTruncate>
 
@@ -116,7 +116,7 @@ export const AccountOption = ({
                   <Link
                     className={cn(
                       "underline-solid inline-flex w-full items-center",
-                      "text-nowrap text-neutral-500 underline underline-offset-4",
+                      "text-nowrap text-neutral-500 underline-offset-4",
                     )}
                     href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
                     target="_blank"
