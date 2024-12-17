@@ -25,7 +25,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, isValid, onSubmit, handleDeleteCampaign } = useCampaignForm();
+  const { form, onChange, onSubmit, handleDeleteCampaign, watch } = useCampaignForm();
 
   useEffect(() => {
     if (isUpdate && existingData) {
@@ -33,7 +33,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
       form.setValue("cover_image_url", existingData?.cover_image_url);
       form.setValue("recipient", existingData?.recipient);
       form.setValue("name", existingData?.name);
-      form.setValue("description", existingData?.description);
+      form.setValue("description", existingData.description);
       form.setValue("target_amount", yoctoNearToFloat(existingData?.target_amount));
 
       if (existingData.min_amount != undefined) {
@@ -218,6 +218,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               name="end_ms"
               render={({ field }) => (
                 <TextField
+                  required={!!watch("min_amount")}
                   label="End Date"
                   {...field}
                   classNames={{ root: "lg:w-90" }}
@@ -227,7 +228,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
             />
           </div>
           <div className="my-10 flex flex-row-reverse justify-between">
-            <Button disabled={!isValid} variant="standard-filled" type="submit">
+            <Button variant="standard-filled" type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
             {isUpdate && (

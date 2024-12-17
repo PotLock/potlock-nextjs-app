@@ -95,9 +95,9 @@ export const useCampaignForm = () => {
     [campaignId],
   );
 
-  const onChange = (field: keyof Values, value: string) => {
-    self.setValue(field, value);
-    self.trigger()
+  const onChange = async (field: keyof Values, value: string) => {
+    self.setValue(field, value); // Update field value
+    await self.trigger(); // Trigger validation
   };
 
   return {
@@ -110,7 +110,7 @@ export const useCampaignForm = () => {
     },
     onSubmit,
     values,
-    isValid: self.formState.isValid,
+    watch: self.watch,
     onChange,
     handleDeleteCampaign,
   };
