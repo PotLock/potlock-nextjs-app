@@ -5,11 +5,11 @@ import { coingeckoClient } from "@/common/api/coingecko";
 import { naxiosInstance, nearRpc } from "@/common/api/near";
 import { PRICES_REQUEST_CONFIG, pricesClient } from "@/common/api/prices";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
+import type { FtData, FungibleTokenMetadata } from "@/common/contracts/tokens/ft";
 import { isAccountId, stringifiedU128ToBigNum, stringifiedU128ToFloat } from "@/common/lib";
-import { AccountId, ByAccountId, ByTokenId, FungibleTokenMetadata } from "@/common/types";
+import { AccountId, ByAccountId, ByTokenId } from "@/common/types";
 
 import { FT_NATIVE_TOKEN_BINDING } from "./constants";
-import { FtData } from "./types";
 
 export const getFtBoundNativeTokenData = async ({
   accountId,

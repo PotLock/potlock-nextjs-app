@@ -16,8 +16,9 @@ import {
   donationClient,
   potClient,
 } from "@/common/contracts/core";
+import type { FungibleTokenMetadata } from "@/common/contracts/tokens/ft";
 import { floatToYoctoNear } from "@/common/lib";
-import { AccountId, FungibleTokenMetadata, TxExecutionStatus } from "@/common/types";
+import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
