@@ -86,11 +86,14 @@ export interface ByStringId {
 }
 
 /**
- * Either "NEAR" or FT contract account id.
+ * Either "near" or FT contract account id.
  */
 export type TokenId = "near" | AccountId;
 
 export interface ByTokenId {
+  /**
+   * Either "near" or FT contract account id.
+   */
   tokenId: TokenId;
 }
 
@@ -122,16 +125,6 @@ export type TxExecutionStatus =
   | "INCLUDED_FINAL"
   | "EXECUTED"
   | "FINAL";
-
-export type FungibleTokenMetadata = {
-  spec: string;
-  name: string;
-  symbol: string;
-  icon: string | null;
-  reference: string | null;
-  reference_hash: string | null;
-  decimals: number;
-};
 
 export enum ChronologicalSortOrder {
   recent = "recent",

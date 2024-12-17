@@ -4,11 +4,11 @@ import { persist } from "zustand/middleware";
 
 import { walletApi } from "@/common/api/near";
 import { refExchangeClient } from "@/common/contracts/ref-finance";
+import type { FtData } from "@/common/contracts/tokens/ft";
 import { TokenId } from "@/common/types";
 
 import * as ftClient from "./client";
 import { MANUALLY_LISTED_ACCOUNT_IDS } from "./constants";
-import { FtData } from "./types";
 
 export type FtRegistry = Record<TokenId, FtData | undefined>;
 

@@ -61,3 +61,9 @@ export const useTokenUsdDisplayValue = ({
 
   return useMemo(() => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`), [value]);
 };
+
+export const useSupportedToken = ({ tokenId }: ByTokenId) => {
+  const { data } = useRegisteredToken({ tokenId });
+
+  return data;
+};
