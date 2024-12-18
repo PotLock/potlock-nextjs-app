@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import {
   MdHowToVote,
@@ -10,10 +10,9 @@ import {
   MdOutlineTimer,
 } from "react-icons/md";
 
-import { Avatar, Filter, Group, GroupType, SearchBar } from "@/common/ui/components";
+import { Avatar, SearchBar } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
-import { statuses } from "@/entities/project/constants";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 // Types
@@ -272,23 +271,6 @@ function HistoryEntry({ username, votedFor, timestamp, weightBoost }: HistoryEnt
 export default function PotHistoryTab() {
   const [historyData, setHistoryData] = useState<HistoryEntryData[]>(dummyHistoryData);
 
-  const tagList = useMemo(
-    () => [
-      {
-        label: "Voter",
-        options: statuses,
-        type: GroupType.single,
-
-        props: {
-          value: statuses[0].label,
-          onValueChange: undefined,
-        },
-      } as Group<GroupType.single>,
-    ],
-
-    [],
-  );
-
   const handleSearch = (value: string) => {
     const filteredData = dummyHistoryData.filter(
       (entry) =>
@@ -305,7 +287,6 @@ export default function PotHistoryTab() {
         <div className="flex-1">
           <SearchBar onChange={(e) => handleSearch(e.target.value)} />
         </div>
-        <Filter groups={tagList} />
       </div>
 
       <div className="flex flex-col gap-6 ">
