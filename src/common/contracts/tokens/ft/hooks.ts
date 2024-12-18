@@ -12,7 +12,7 @@ import type { FungibleTokenMetadata } from "./interfaces";
 
 export const useFtMetadata = ({ disabled = false, ...params }: ByTokenId & WithDisabled) =>
   useSWR(
-    () => (disabled ? null : [params.tokenId + "ft_metadata", params.tokenId]),
+    () => (disabled ? null : ["ft_metadata", params.tokenId]),
 
     ([_queryKey, tokenId]) => {
       switch (tokenId) {
@@ -44,7 +44,7 @@ export const useFtBalanceOf = ({
   ...params
 }: ByAccountId & ByTokenId & WithDisabled) =>
   useSWR(
-    () => (disabled ? null : [params.tokenId + "ft_balance_of", params.accountId, params.tokenId]),
+    () => (disabled ? null : ["ft_balance_of", params.accountId, params.tokenId]),
 
     ([_queryKey, accountId, tokenId]) => {
       switch (tokenId) {

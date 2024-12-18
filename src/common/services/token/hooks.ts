@@ -35,7 +35,7 @@ export const useTokenRegistry = () => {
   return { isLoading, data, error };
 };
 
-export const useTokenPrice = ({ tokenId, disabled = false }: ByTokenId & WithDisabled) => {
+export const useTokenUsdPrice = ({ tokenId, disabled = false }: ByTokenId & WithDisabled) => {
   const {
     isLoading: isNativeTokenPriceLoading,
     data: oneNativeTokenUsdPrice,
@@ -109,7 +109,7 @@ export const useSupportedToken = ({
     isLoading: isUsdPriceLoading,
     data: oneTokenUsdPrice,
     error: usdPriceError,
-  } = useTokenPrice({
+  } = useTokenUsdPrice({
     disabled: !isValidTokenId,
     tokenId,
   });

@@ -8,7 +8,7 @@ import { tokenService } from "@/common/services";
  * @deprecated Use `usdPrice` from {@link tokenService.useSupportedToken}({ tokenId: NATIVE_TOKEN_ID })
  */
 export const useNearToUsdWithFallback = (amountNear: number, abbreviate?: boolean) => {
-  const { data: oneNearTokenUsdPrice } = tokenService.useTokenPrice({ tokenId: "near" });
+  const { data: oneNearTokenUsdPrice } = tokenService.useTokenUsdPrice({ tokenId: "near" });
 
   return oneNearTokenUsdPrice
     ? "~$" + formatWithCommas(Big(oneNearTokenUsdPrice).mul(amountNear).toFixed(2))
