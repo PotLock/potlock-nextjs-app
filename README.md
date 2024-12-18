@@ -55,8 +55,16 @@ More performant and flexible drop-in replacement for Tailwind CSS, created by [A
 
 ### Nice Modal
 
+Versatile abstraction for modals
+
 [Documentation](https://github.com/eBay/nice-modal-react?tab=readme-ov-file#nice-modal)
 [Examples](https://opensource.ebay.com/nice-modal-react/)
+
+### React Truncate
+
+Painless dynamic text truncation
+
+[Documentation](https://truncate.js.org/reference/middle-truncate/)
 
 ## Project Structure
 

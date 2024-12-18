@@ -84,3 +84,8 @@ export const useVoterRemainingCapacity = ({
         ? undefined
         : votingClient.get_voter_remaining_capacity({ election_id, voter }),
   );
+
+export const useUniqueVoters = ({ electionId }: ByElectionId) =>
+  useSWR(["get_unique_voters", electionId], ([_queryKey, election_id]: [string, ElectionId]) =>
+    election_id === 0 ? undefined : votingClient.get_unique_voters({ election_id }),
+  );

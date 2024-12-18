@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 //import { isClient } from "@wpdas/naxios";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import useIsClient from "@/common/lib/useIsClient";
 import { SplashScreen } from "@/common/ui/components";
 import { dispatch, resetStore } from "@/store";
@@ -62,5 +62,5 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
     };
   }, [checkWallet, wallet]);
 
-  return isClient ? <>{children}</> : <SplashScreen />;
+  return isClient ? <>{children}</> : <SplashScreen className="h-screen" />;
 };

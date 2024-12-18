@@ -5,7 +5,7 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 

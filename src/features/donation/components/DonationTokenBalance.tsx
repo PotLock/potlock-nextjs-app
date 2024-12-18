@@ -1,14 +1,21 @@
-import { ftService } from "@/common/services";
+import { authHooks } from "@/common/services/auth";
+import { tokenHooks } from "@/common/services/token";
 import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
-export type TokenBalanceProps = ByTokenId & {
+export type DonationTokenBalanceProps = ByTokenId & {
   classNames?: { root?: string; amount?: string };
 };
 
-export const TokenBalance: React.FC<TokenBalanceProps> = ({ tokenId, classNames }) => {
-  const { data: token, error: tokenError } = ftService.useRegisteredToken({
+export const DonationTokenBalance: React.FC<DonationTokenBalanceProps> = ({
+  tokenId,
+  classNames,
+}) => {
+  const userSession = authHooks.useUserSession();
+
+  const { data: token, error: tokenError } = tokenHooks.useToken({
+    balanceCheckAccountId: userSession?.accountId,
     tokenId,
   });
 

@@ -1,9 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Dot } from "lucide-react";
 
 import { ByElectionId, Candidate } from "@/common/contracts/core/voting";
+import { authHooks } from "@/common/services/auth";
 import { Button, Checkbox, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountOption } from "@/entities/account";
@@ -22,10 +23,18 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
   isSelected = false,
   onSelect,
 }) => {
+  const user = authHooks.useUserSession();
+
   const { isLoading, canReceiveVotes, hasUserVotes, handleVoteCast } = useVotingCandidateEntry({
     electionId,
     accountId,
   });
+
+  const unableToVoteError = useMemo(() => {
+    if (user.isSignedIn) {
+      if (!canReceiveVotes) return "You cannot vote for this project.";
+    } else return "Please sign in to vote.";
+  }, [canReceiveVotes, user.isSignedIn]);
 
   const onCheckTriggered = useCallback(
     (checked: CheckedState) => onSelect?.(accountId, Boolean(checked)),
@@ -37,9 +46,9 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
       highlightOnHover
       hideStatusOnDesktop
       classNames={{
-        root: cn("px-4", {
+        root: cn("px-4 rounded-lg", {
           "bg-neutral-50": isSelected,
-          "bg-conifer-50 hover:bg-conifer-50": hasUserVotes,
+          "bg-[#CEE9CF] hover:bg-[#CEE9CF]": hasUserVotes,
         }),
       }}
       statusElement={
@@ -84,7 +93,7 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
               <Button
                 variant="standard-outline"
                 disabled={!canReceiveVotes}
-                title={canReceiveVotes ? undefined : "You have already voted for this project"}
+                title={canReceiveVotes ? undefined : unableToVoteError}
                 onClick={handleVoteCast}
                 className="ml-auto h-fit"
               >

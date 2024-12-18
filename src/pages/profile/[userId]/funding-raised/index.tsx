@@ -18,7 +18,7 @@ const FundingRaisedTab = () => {
   const { userId: userIdPathParam } = router.query;
 
   const userId =
-    (typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0)) ?? "unknown";
+    (typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0)) ?? "noop";
 
   const { donations } = useDonationsForProject(userId);
   const { profile } = useProfileData(userId);

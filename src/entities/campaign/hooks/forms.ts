@@ -1,11 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
-import { infer as FromSchema } from "zod";
+import { infer as FromSchema, ZodError } from "zod";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { campaignsClient } from "@/common/contracts/core";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
@@ -22,7 +22,7 @@ export const useCampaignForm = () => {
 
   const self = useForm<Values>({
     resolver: zodResolver(campaignFormSchema),
-    mode: "all",
+    mode: "onChange",
     resetOptions: { keepDirtyValues: false },
   });
 
@@ -95,8 +95,9 @@ export const useCampaignForm = () => {
     [campaignId],
   );
 
-  const onChange = (field: keyof Values, value: string) => {
-    self.setValue(field, value);
+  const onChange = async (field: keyof Values, value: string) => {
+    self.setValue(field, value); // Update field value
+    await self.trigger(); // Trigger validation
   };
 
   return {
@@ -109,6 +110,7 @@ export const useCampaignForm = () => {
     },
     onSubmit,
     values,
+    watch: self.watch,
     onChange,
     handleDeleteCampaign,
   };

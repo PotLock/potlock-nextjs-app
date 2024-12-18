@@ -3,7 +3,7 @@ import axios from "axios";
 import { Big } from "big.js";
 
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near";
+import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near/client";
 import { FULL_TGAS, NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   CampaignDonation,
@@ -16,8 +16,9 @@ import {
   donationClient,
   potClient,
 } from "@/common/contracts/core";
+import type { FungibleTokenMetadata } from "@/common/contracts/tokens/ft";
 import { floatToYoctoNear } from "@/common/lib";
-import { AccountId, FungibleTokenMetadata, TxExecutionStatus } from "@/common/types";
+import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";

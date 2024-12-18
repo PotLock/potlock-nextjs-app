@@ -17,10 +17,10 @@ import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
+import { SessionProvider } from "@/common/services/auth";
 import { TooltipProvider } from "@/common/ui/components";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
-import { SessionProvider } from "@/entities/session";
 import { AppBar } from "@/layout/components/AppBar";
 import { dispatch, store } from "@/store";
 
@@ -55,7 +55,10 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
           <SessionProvider>
             <TooltipProvider>
               <div
-                className={`${cn("font-lora flex h-full flex-col items-center antialiased", lora.variable)}`}
+                className={cn(
+                  "font-lora flex h-full flex-col items-center antialiased",
+                  lora.variable,
+                )}
               >
                 <AppBar />
                 {getLayout(<Component {...pageProps} />)}

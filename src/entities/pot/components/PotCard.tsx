@@ -1,18 +1,52 @@
+import { useMemo } from "react";
+
+import { Big } from "big.js";
 import Link from "next/link";
 
-import { ByPotId, indexer } from "@/common/api/indexer";
+import { ByPotId, Pot, indexer } from "@/common/api/indexer";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { formatWithCommas } from "@/common/lib";
+import { tokenHooks } from "@/common/services/token";
 import routesPath from "@/pathnames";
 
 import { Indicator } from "./Indicator";
 import { PotTag } from "./PotTag";
 import { usePotTags } from "../hooks/tags";
-import { useNearAndUsdByPot } from "../hooks/useNearAndUsdByPot";
+
+/**
+ * @deprecated Use `yoctoNearToFloat`
+ */
+const yoctoNearToNear = (amountYoctoNear: string, abbreviate?: boolean) => {
+  return formatWithCommas(Big(amountYoctoNear).div(1e24).toFixed(2)) + (abbreviate ? "N" : " NEAR");
+};
+
+/**
+ * @deprecated use `tokenHooks` capabilities.
+ */
+export const useMatchingPoolBalance = ({ pot }: { pot?: Pot }) => {
+  const { data: nearToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
+
+  return useMemo(() => {
+    if (pot) {
+      return {
+        amountUsd: nearToken?.usdPrice
+          ? "~$" +
+            formatWithCommas(
+              nearToken?.usdPrice?.mul(pot.matching_pool_balance).div(1e24).toFixed(2),
+            )
+          : "-",
+
+        amountNear: yoctoNearToNear(pot.matching_pool_balance, true),
+      };
+    } else return { amountUsd: "...", amountNear: "..." };
+  }, [nearToken?.usdPrice, pot]);
+};
 
 export type PotCardProps = ByPotId & {};
 
 export const PotCard: React.FC<PotCardProps> = ({ potId }) => {
   const { data: pot, isLoading: isPotLoading } = indexer.usePot({ potId });
-  const { amountNear, amountUsd } = useNearAndUsdByPot({ pot });
+  const { amountNear, amountUsd } = useMatchingPoolBalance({ pot });
   const tags = usePotTags({ potId });
 
   return !pot ? (

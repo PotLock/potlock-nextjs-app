@@ -16,7 +16,7 @@ export type CampaignFormFields = {
 export type Campaign = {
   id: number;
   name: string;
-  description?: string;
+  description: string;
   cover_image_url?: string;
   recipient: AccountId;
   owner: AccountId;

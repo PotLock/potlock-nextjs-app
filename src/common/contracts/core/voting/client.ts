@@ -1,11 +1,12 @@
 import naxios, { MemoryCache } from "@wpdas/naxios";
 
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 
 import type {
   AccountId,
   Candidate,
   Election,
+  ElectionId,
   ElectionPhase,
   ElectionType,
   EligibilityType,
@@ -60,7 +61,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * @param candidate_id The account ID of the candidate
    */
   async get_candidate_vote_count(args: {
-    election_id: number;
+    election_id: ElectionId;
     candidate_id: AccountId;
   }): Promise<number> {
     return this.contract.view("get_candidate_vote_count", { args });
@@ -72,7 +73,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * Only relevant for weighted voting type elections
    */
   async get_candidate_vote_weight(args: {
-    election_id: number;
+    election_id: ElectionId;
     candidate_id: AccountId;
   }): Promise<number> {
     return this.contract.view("get_candidate_vote_weight", { args });
@@ -84,7 +85,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * Includes voter information and vote weights
    */
   async get_candidate_votes(args: {
-    election_id: number;
+    election_id: ElectionId;
     candidate_id: AccountId;
   }): Promise<Vote[]> {
     return this.contract.view("get_candidate_votes", { args });
@@ -95,7 +96,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Returns null or undefined if the election doesn't exist
    */
-  async get_election(args: { election_id: number }): Promise<Election | null | undefined> {
+  async get_election(args: { election_id: ElectionId }): Promise<Election | null | undefined> {
     return this.contract.view("get_election", { args });
   }
 
@@ -104,7 +105,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Includes their vote counts and vote weights
    */
-  async get_election_candidates(args: { election_id: number }): Promise<Candidate[]> {
+  async get_election_candidates(args: { election_id: ElectionId }): Promise<Candidate[]> {
     return this.contract.view("get_election_candidates", { args });
   }
 
@@ -114,7 +115,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * Can be Registration, Voting, or Ended
    */
   async get_election_phase(args: {
-    election_id: number;
+    election_id: ElectionId;
   }): Promise<ElectionPhase | null | undefined> {
     return this.contract.view("get_election_phase", { args });
   }
@@ -124,21 +125,21 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Returns array of [candidate_id, vote_count] pairs
    */
-  async get_election_results(args: { election_id: number }): Promise<[AccountId, number][]> {
+  async get_election_results(args: { election_id: ElectionId }): Promise<[AccountId, number][]> {
     return this.contract.view("get_election_results", { args });
   }
 
   /**
    * Returns the total number of votes cast in an election
    */
-  async get_election_vote_count(args: { election_id: number }) {
+  async get_election_vote_count(args: { election_id: ElectionId }) {
     return this.contract.view<typeof args, number>("get_election_vote_count", { args });
   }
 
   /**
    * Returns all votes cast in an election
    */
-  async get_election_votes(args: { election_id: number }) {
+  async get_election_votes(args: { election_id: ElectionId }) {
     return this.contract.view<typeof args, Vote[]>("get_election_votes", { args });
   }
 
@@ -163,7 +164,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Returns null or undefined if the election has ended or doesn't exist
    */
-  async get_time_remaining(args: { election_id: number }) {
+  async get_time_remaining(args: { election_id: ElectionId }) {
     return this.contract.view<typeof args, number | null | undefined>("get_time_remaining", {
       args,
     });
@@ -174,7 +175,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Based on the election's votes_per_voter limit
    */
-  async get_voter_remaining_capacity(args: { election_id: number; voter: AccountId }) {
+  async get_voter_remaining_capacity(args: { election_id: ElectionId; voter: AccountId }) {
     return this.contract.view<typeof args, number | null | undefined>(
       "get_voter_remaining_capacity",
       { args },
@@ -184,14 +185,18 @@ class VotingClient implements Omit<IVotingContract, "new"> {
   /**
    * Returns all votes cast by a specific voter in an election
    */
-  async get_voter_votes(args: { election_id: number; voter: AccountId }) {
+  async get_voter_votes(args: { election_id: ElectionId; voter: AccountId }) {
     return this.contract.view<typeof args, Vote[] | null | undefined>("get_voter_votes", { args });
+  }
+
+  async get_unique_voters(args: { election_id: ElectionId }) {
+    return this.contract.view<typeof args, AccountId[]>("get_unique_voters", { args });
   }
 
   /**
    * Checks if a voter has cast any votes in an election
    */
-  async has_voter_participated(args: { election_id: number; voter: AccountId }) {
+  async has_voter_participated(args: { election_id: ElectionId; voter: AccountId }) {
     return this.contract.view<typeof args, boolean>("has_voter_participated", { args });
   }
 
@@ -200,7 +205,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Based on the current time and election end_date
    */
-  async is_election_ended(args: { election_id: number }): Promise<boolean> {
+  async is_election_ended(args: { election_id: ElectionId }): Promise<boolean> {
     return this.contract.view("is_election_ended", { args });
   }
 
@@ -209,7 +214,7 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Based on the current time and election start_date/end_date
    */
-  async is_voting_period(args: { election_id: number }) {
+  async is_voting_period(args: { election_id: ElectionId }) {
     return this.contract.view<typeof args, boolean>("is_voting_period", { args });
   }
 
@@ -248,15 +253,15 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    * @param vote Tuple of [candidate_id, vote_weight]
    * @returns Success status of the vote
    */
-  async vote(args: { election_id: number; vote: VoteInputs }) {
+  async vote(args: { election_id: ElectionId; vote: VoteInputs }) {
     return this.contract.call<typeof args, boolean>("vote", { args });
   }
 
   /**
    * Batch vote cast wrapper around {@link vote}
    */
-  async voteBatch({ election_id, votes }: { election_id: number; votes: VoteInputs[] }) {
-    return this.contract.callMultiple<{ election_id: number; vote: VoteInputs }>(
+  async voteBatch({ election_id, votes }: { election_id: ElectionId; votes: VoteInputs[] }) {
+    return this.contract.callMultiple<{ election_id: ElectionId; vote: VoteInputs }>(
       votes.map((voteInputs) => ({ method: "vote", args: { election_id, vote: voteInputs } })),
     );
   }

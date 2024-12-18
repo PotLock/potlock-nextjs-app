@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 import { FULL_TGAS } from "@/common/constants";
 
 import {

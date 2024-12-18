@@ -5,7 +5,7 @@ import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ListRegistration } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import DownArrow from "@/common/assets/svgs/DownArrow";
 import { ListNoteIcon } from "@/common/assets/svgs/list-note";
 import { RegistrationStatus, listsClient } from "@/common/contracts/core";

@@ -1,10 +1,8 @@
 import { useMemo } from "react";
 
 import { MiddleTruncate } from "@re-dev/react-truncate";
-import { Dot } from "lucide-react";
 import Link from "next/link";
 
-import { daysAgo, truncate } from "@/common/lib";
 import { AccountId, ByAccountId } from "@/common/types";
 import {
   Avatar,
@@ -54,9 +52,6 @@ export const AccountOption = ({
   accountLink,
 }: AccountOptionProps) => {
   const { profileImages, profile, profileReady } = useProfileData(accountId);
-
-  const truncateIndex = window.innerWidth > 768 ? 20 : 8;
-  const nameTruncateIndex = window.innerWidth > 768 ? 24 : 15;
 
   const avatarSrc = useMemo(
     () =>

@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { isAccountId, stringifiedU128ToBigNum } from "@/common/lib";
-import { ftService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { ByAccountId, TokenId } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
 
@@ -27,27 +27,28 @@ export const useVotingParticipantStats = ({
   stakingContractAccountId,
 }: VotingParticipantStatsInputs): VotingParticipantStats => {
   const { isHumanVerified } = useIsHuman(accountId);
-  const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
+  const { data: mpDaoVoterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const { data: stakingTokenData } = useSWR(stakingContractAccountId ?? null, (tokenId) =>
-    isAccountId(tokenId) ? ftService.getFtData({ accountId, tokenId }) : undefined,
-  );
+  const { data: stakingToken } = tokenHooks.useToken({
+    tokenId: stakingContractAccountId ?? "noop",
+    balanceCheckAccountId: accountId,
+  });
 
   return useMemo(
     () => ({
       isHumanVerified,
-      stakingTokenBalance: stakingTokenData ? (stakingTokenData.balance ?? Big(0)) : undefined,
+      stakingTokenBalance: stakingToken ? (stakingToken.balance ?? Big(0)) : undefined,
+      stakingTokenBalanceUsd: stakingToken ? (stakingToken.balanceUsd ?? Big(0)) : undefined,
 
-      stakingTokenBalanceUsd: stakingTokenData
-        ? (stakingTokenData?.balanceUsd ?? Big(0))
-        : undefined,
+      votingPower:
+        mpDaoVoterInfo?.locking_positions.reduce(
+          (sum, { voting_power }) =>
+            sum.add(stringifiedU128ToBigNum(voting_power, METAPOOL_MPDAO_VOTING_POWER_DECIMALS)),
 
-      votingPower: stringifiedU128ToBigNum(
-        voterInfo?.voting_power ?? "0",
-        METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
-      ),
+          Big(0),
+        ) ?? Big(0),
     }),
 
-    [isHumanVerified, stakingTokenData, voterInfo?.voting_power],
+    [isHumanVerified, stakingToken, mpDaoVoterInfo?.locking_positions],
   );
 };
