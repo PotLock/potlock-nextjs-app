@@ -1,38 +1,29 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 import { Big } from "big.js";
-import { pick } from "remeda";
 import useSWR from "swr";
-import { useShallow } from "zustand/shallow";
 
 import { coingeckoClient } from "@/common/api/coingecko";
 import { intearPricesHooks } from "@/common/api/intear-prices";
-import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_ACCOUNT_IDS } from "@/common/constants";
+import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_IDS } from "@/common/constants";
 import { refExchangeHooks } from "@/common/contracts/ref-finance";
 import { ftHooks } from "@/common/contracts/tokens";
 import { isAccountId, stringifiedU128ToBigNum, stringifiedU128ToFloat } from "@/common/lib";
 import { formatWithCommas } from "@/common/lib/formatWithCommas";
 import type { AccountId, ByTokenId, WithDisabled } from "@/common/types";
 
-import { type FtData, useFtRegistryStore } from "./models";
+import { type FtData } from "./types";
 
-/**
- * Registry of supported fungible tokens.
- */
-export const useTokenRegistry = () => {
-  const { data, error } = useFtRegistryStore(useShallow(pick(["data", "error"])));
+export const useAllowlist = () => {
+  const { data: refFinanceTokenAllowlist } = refExchangeHooks.useWhitelistedTokens();
 
-  const { data: refFinanceListedTokenAccountIds } = refExchangeHooks.useWhitelistedTokens();
+  return useMemo(
+    () => ({
+      data: PLATFORM_LISTED_TOKEN_IDS.concat(refFinanceTokenAllowlist ?? []),
+    }),
 
-  const listedTokens = PLATFORM_LISTED_TOKEN_ACCOUNT_IDS.concat(
-    refFinanceListedTokenAccountIds ?? [],
+    [refFinanceTokenAllowlist],
   );
-
-  const isLoading = useMemo(() => data === undefined && error === undefined, [data, error]);
-
-  useEffect(() => void (error ? console.error(error) : null), [error]);
-
-  return { isLoading, data, error };
 };
 
 export const useTokenUsdPrice = ({ tokenId, disabled = false }: ByTokenId & WithDisabled) => {
@@ -128,8 +119,6 @@ export const useSupportedToken = ({
     disabled: balanceCheckAccountId === undefined,
     tokenId,
   });
-
-  useEffect(() => void (error ? console.error(error) : null), [error]);
 
   return useMemo(() => {
     return {

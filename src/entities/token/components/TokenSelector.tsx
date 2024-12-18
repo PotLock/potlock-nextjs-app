@@ -1,9 +1,33 @@
-import { useMemo } from "react";
-
-import { values } from "remeda";
-
-import { tokenService } from "@/common/services";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { authService, tokenService } from "@/common/services";
+import type { ByTokenId } from "@/common/types";
 import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form-fields";
+
+const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
+  const userSession = authService.useUserSession();
+
+  const { data: token } = tokenService.useSupportedToken({
+    tokenId,
+    balanceCheckAccountId: userSession?.accountId,
+  });
+
+  switch (tokenId) {
+    case NATIVE_TOKEN_ID: {
+      return (
+        <SelectFieldOption value={tokenId}>
+          {token?.metadata.symbol ?? NATIVE_TOKEN_ID.toUpperCase()}
+        </SelectFieldOption>
+      );
+    }
+
+    // TODO: exclude tokens with zero balance
+    default: {
+      return token ? (
+        <SelectFieldOption value={tokenId}>{token.metadata.symbol}</SelectFieldOption>
+      ) : null;
+    }
+  }
+};
 
 export type TokenSelectorProps = Pick<
   SelectFieldProps,
@@ -11,8 +35,7 @@ export type TokenSelectorProps = Pick<
 > & {};
 
 export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
-  const { data: registeredFts = {} } = tokenService.useTokenRegistry();
-  const tokenOptions = useMemo(() => values(registeredFts), [registeredFts]);
+  const { data: tokenAllowlist } = tokenService.useAllowlist();
 
   return (
     // TODO: Move FormField wrapper from target parent layouts to here
@@ -26,13 +49,9 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
       }}
       {...props}
     >
-      {tokenOptions.map((token) =>
-        token && (token.balanceFloat ?? 0) > 0 ? (
-          <SelectFieldOption key={token.tokenId} value={token.tokenId}>
-            {token.metadata.symbol}
-          </SelectFieldOption>
-        ) : null,
-      )}
+      {tokenAllowlist.map((tokenId) => (
+        <TokenSelectorOption key={tokenId} {...{ tokenId }} />
+      ))}
     </SelectField>
   );
 };

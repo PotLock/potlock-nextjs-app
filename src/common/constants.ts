@@ -3,7 +3,7 @@ import { utils } from "near-api-js";
 import { Metadata } from "next";
 
 import { NETWORK, PLATFORM_NAME } from "./_config";
-import { type AccountId, ChronologicalSortOrderVariant } from "./types";
+import { ChronologicalSortOrderVariant, type TokenId } from "./types";
 
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
@@ -49,10 +49,7 @@ export const NATIVE_TOKEN_DECIMALS = 24;
 export const NATIVE_TOKEN_ICON_URL = `${ICONS_ASSET_ENDPOINT_URL}/near.svg`;
 export const UNKNOWN_ACCOUNT_ID_PLACEHOLDER = "unknown-account-id";
 
-export const MPDAO_TOKEN_CONTRACT_ACCOUNT_ID =
-  NETWORK === "mainnet" ? "mpdao-token.near" : "mpdao-token.testnet";
-
-export const PLATFORM_LISTED_TOKEN_ACCOUNT_IDS: AccountId[] = [MPDAO_TOKEN_CONTRACT_ACCOUNT_ID];
+export const PLATFORM_LISTED_TOKEN_IDS: TokenId[] = [NATIVE_TOKEN_ID];
 
 // List ID of PotLock Public Goods Registry
 export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1;
