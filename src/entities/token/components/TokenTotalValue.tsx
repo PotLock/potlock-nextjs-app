@@ -19,7 +19,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   classNames,
   ...props
 }) => {
-  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useToken({ tokenId });
 
   const amount =
     "amountFloat" in props

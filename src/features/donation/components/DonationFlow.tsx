@@ -44,7 +44,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
   const [tokenId] = form.watch(["tokenId"]);
 
-  const { data: token } = tokenHooks.useSupportedToken({
+  const { data: token } = tokenHooks.useToken({
     tokenId,
     balanceCheckAccountId: userSession?.accountId,
   });

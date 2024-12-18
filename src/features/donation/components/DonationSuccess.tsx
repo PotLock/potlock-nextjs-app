@@ -55,7 +55,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   const tokenId =
     "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID;
 
-  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useToken({ tokenId });
 
   const isLoading = isResultLoading || recipient === undefined || token === undefined;
 

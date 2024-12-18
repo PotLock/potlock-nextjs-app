@@ -5,7 +5,7 @@ import { formatWithCommas } from "@/common/lib";
 import { tokenHooks } from "@/common/services/token";
 
 /**
- * @deprecated Use `usdPrice` from {@link tokenHooks.useSupportedToken}({ tokenId: NATIVE_TOKEN_ID })
+ * @deprecated Use `usdPrice` from {@link tokenHooks.useToken}({ tokenId: NATIVE_TOKEN_ID })
  */
 export const useNearToUsdWithFallback = (amountNear: number, abbreviate?: boolean) => {
   const { data: oneNearTokenUsdPrice } = tokenHooks.useTokenUsdPrice({ tokenId: "near" });

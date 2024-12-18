@@ -29,7 +29,7 @@ export const usePotApplicationUserClearance = ({
 
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const { data: stakingToken } = tokenHooks.useSupportedToken({
+  const { data: stakingToken } = tokenHooks.useToken({
     balanceCheckAccountId: accountId,
     tokenId: staking.tokenId,
   });

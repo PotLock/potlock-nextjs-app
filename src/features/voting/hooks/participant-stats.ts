@@ -29,7 +29,7 @@ export const useVotingParticipantStats = ({
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: mpDaoVoterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const { data: stakingToken } = tokenHooks.useSupportedToken({
+  const { data: stakingToken } = tokenHooks.useToken({
     tokenId: stakingContractAccountId ?? "noop",
     balanceCheckAccountId: accountId,
   });

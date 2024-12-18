@@ -5,7 +5,7 @@ import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { client } from "./client";
 
 /**
- * @deprecated Use `data.usdPrice` from `tokenHooks.useSupportedToken({ tokenId: NATIVE_TOKEN_ID })`
+ * @deprecated Use `data.usdPrice` from `tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID })`
  */
 export const useOneNearUsdPrice = () => {
   return useSWR(

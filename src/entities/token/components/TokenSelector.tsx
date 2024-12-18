@@ -7,7 +7,7 @@ import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/fo
 const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
   const userSession = authHooks.useUserSession();
 
-  const { data: token } = tokenHooks.useSupportedToken({
+  const { data: token } = tokenHooks.useToken({
     tokenId,
     balanceCheckAccountId: userSession?.accountId,
   });

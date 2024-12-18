@@ -26,7 +26,7 @@ const Table = ({
   title: string;
 }) => {
   const [usdToggle, setUsdToggle] = useState(false);
-  const { data: nativeToken } = tokenHooks.useSupportedToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: nativeToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
 
   return (
     <Container className="md:min-w-100 xl:w-126.5">
@@ -80,7 +80,7 @@ type DonationProps = {
 };
 
 const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
-  const { data: nativeToken } = tokenHooks.useSupportedToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: nativeToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
   const profile = useProfileData(donorId);
 
   const matchedAmount = usdToggle

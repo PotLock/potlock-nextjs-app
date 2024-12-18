@@ -49,7 +49,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     "potAccountId",
   ]);
 
-  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useToken({ tokenId });
 
   const {
     isLoading: isRecipientDataLoading,

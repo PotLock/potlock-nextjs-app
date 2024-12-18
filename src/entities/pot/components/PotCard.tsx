@@ -24,7 +24,7 @@ const yoctoNearToNear = (amountYoctoNear: string, abbreviate?: boolean) => {
  * @deprecated use `tokenHooks` capabilities.
  */
 export const useMatchingPoolBalance = ({ pot }: { pot?: Pot }) => {
-  const { data: nearToken } = tokenHooks.useSupportedToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: nearToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
 
   return useMemo(() => {
     if (pot) {

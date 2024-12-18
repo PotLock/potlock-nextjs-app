@@ -27,7 +27,7 @@ export type TokenIconProps = {
 };
 
 export const TokenIcon = ({ tokenId, className, size = "medium" }: TokenIconProps) => {
-  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useToken({ tokenId });
   const { sizePx, rootClass, placeholderClass } = variants[size];
 
   return (

@@ -82,7 +82,7 @@ export type SupportedTokenQueryResult = {
  *
  * When `balanceCheckAccountId` is provided, the balance of the token is also retrieved.
  */
-export const useSupportedToken = ({
+export const useToken = ({
   tokenId,
   balanceCheckAccountId,
 }: SupportedTokenQuery): SupportedTokenQueryResult => {
@@ -216,7 +216,7 @@ export const useSupportedToken = ({
 };
 
 /**
- * @deprecated Use `usdPrice` Big number from `tokenHooks.useSupportedToken({ tokenId: ... })`
+ * @deprecated Use `usdPrice` Big number from `tokenHooks.useToken({ tokenId: ... })`
  */
 export const useTokenUsdDisplayValue = ({
   amountFloat,
@@ -224,7 +224,7 @@ export const useTokenUsdDisplayValue = ({
 }: ByTokenId & {
   amountFloat: number;
 }): string | null => {
-  const { data: token } = useSupportedToken({ tokenId });
+  const { data: token } = useToken({ tokenId });
 
   const value = token ? parseFloat(token.usdPrice?.mul(amountFloat).toFixed(2) ?? "0") : 0;
 

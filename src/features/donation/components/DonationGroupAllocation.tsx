@@ -54,7 +54,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
   ]);
 
   const isListDonation = listId !== undefined;
-  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useToken({ tokenId });
   const { isLoading: isPotLoading, data: pot, error: potError } = indexer.usePot({ potId });
   const { data: list, isLoading: isListLoading, error: listError } = indexer.useList({ listId });
 

@@ -14,7 +14,7 @@ export const DonationTokenBalance: React.FC<DonationTokenBalanceProps> = ({
 }) => {
   const userSession = authHooks.useUserSession();
 
-  const { data: token, error: tokenError } = tokenHooks.useSupportedToken({
+  const { data: token, error: tokenError } = tokenHooks.useToken({
     balanceCheckAccountId: userSession?.accountId,
     tokenId,
   });
