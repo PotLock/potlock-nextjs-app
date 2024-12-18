@@ -228,27 +228,28 @@ const dummyHistoryData: HistoryEntryData[] = [
 ];
 
 // Components
-
 const WeightBoostBadge = ({ data }: { data: WeightBoostItem }) => (
   <div
     className={cn(
       "inline-flex items-center gap-2 rounded-md border px-2 py-1 shadow-inner",
-      data.verified ? "border-[#f8d3b0] bg-[#fef6ee] text-[#b63d18]" : "text-[#7b7b7b]",
+      data.verified
+        ? "border-[#f8d3b0] bg-[#fef6ee] text-[#b63d18]"
+        : "border-[#dadada] bg-[#f7f7f7] text-[#7b7b7b]",
     )}
   >
     {data.icon}
-    <div className="inline-flex flex-col items-center justify-center">
+    <div>
       {data.verified && data.isCurrentStage && (
-        <p className="text-sm font-normal text-inherit">{data.label}</p>
+        <span className="pr-1 text-sm font-normal text-inherit">{data.label}</span>
       )}
-      <p className="text-sm font-normal text-inherit">x{data.percentage}%</p>
+      <span className="text-sm font-normal text-inherit">x{data.percentage}%</span>
     </div>
   </div>
 );
 
 function WeightBoost({ data }: { data: WeightBoostData }) {
   return (
-    <div className="ustify-start inline-flex items-center gap-3">
+    <div className="inline-flex flex-col flex-wrap items-start justify-start gap-3 md:flex-row md:items-center">
       {data.items.map((item, index) => (
         <WeightBoostBadge key={index} data={item} />
       ))}
@@ -258,7 +259,7 @@ function WeightBoost({ data }: { data: WeightBoostData }) {
 
 function HistoryEntry({ username, votedFor, timestamp, weightBoost }: HistoryEntryData) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-[#eaeaea] bg-white p-5 shadow shadow-inner">
+    <div className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-[#eaeaea] bg-white p-5 shadow shadow-inner">
       <div className="flex items-center">
         <Avatar className="mr-4 flex h-12 w-12 items-center justify-center bg-orange-100 p-3">
           <MdHowToVote className="h-6 w-6 text-orange-500" />
