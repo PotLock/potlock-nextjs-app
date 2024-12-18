@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useRouteQuery } from "@/common/lib";
+import { isBigSource, useRouteQuery } from "@/common/lib";
 import { authService, tokenService } from "@/common/services";
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -48,7 +48,9 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     balanceCheckAccountId: userSession?.accountId,
   });
 
-  const isBalanceSufficient = token?.balance?.gt(totalAmountFloat) ?? false;
+  const isBalanceSufficient = isBigSource(totalAmountFloat)
+    ? (token?.balance?.gt(totalAmountFloat) ?? false)
+    : false;
 
   const allocationScreenProps = useMemo(
     () => ({

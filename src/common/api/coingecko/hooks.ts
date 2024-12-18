@@ -1,25 +1,21 @@
 import useSWR from "swr";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { ByTokenId, type WithDisabled } from "@/common/types";
 
-import { CLIENT_CONFIG, client } from "./client";
+import { client } from "./client";
 
-export const useTokenUsdPrice = ({ tokenId, disabled }: ByTokenId & WithDisabled) => {
+/**
+ * @deprecated Use `data.usdPrice` from `tokenService.useSupportedToken({ tokenId: NATIVE_TOKEN_ID })`
+ */
+export const useOneNearUsdPrice = () => {
   return useSWR(
-    [
-      tokenId === NATIVE_TOKEN_ID
-        ? `/simple/price?ids=${tokenId.toLowerCase()}&vs_currencies=usd`
-        : `/simple/token_price?vs_currencies=usd&contract_addresses=${tokenId.toLowerCase()}`,
+    () => ["coingeckoNearUsdPrice"],
 
-      tokenId.toLowerCase(),
-    ],
-
-    ([requestUri, tokenKey]: [string, string]) =>
-      client.get(requestUri).then((response) => response.data[tokenKey].usd),
-
-    { ...CLIENT_CONFIG.swr, enabled: !disabled },
+    (_queryKey) =>
+      client
+        .get(`/simple/price?ids=${NATIVE_TOKEN_ID}&vs_currencies=usd`)
+        .then((response: { data: { [key: string]: { usd: number } } }) =>
+          response.data[NATIVE_TOKEN_ID].usd.toString(),
+        ),
   );
 };
-
-export const useOneNearUsdPrice = () => useTokenUsdPrice({ tokenId: NATIVE_TOKEN_ID });

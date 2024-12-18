@@ -5,21 +5,20 @@ import useSWR from "swr";
 import { nearClient } from "@/common/api/near";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ICON_URL, NATIVE_TOKEN_ID } from "@/common/constants";
 import { isAccountId } from "@/common/lib";
-import type { AccountId, ByAccountId, ByTokenId, TokenId, WithDisabled } from "@/common/types";
+import type { ByAccountId, ByTokenId, WithDisabled } from "@/common/types";
 
 import * as ftClient from "./client";
+import type { FungibleTokenMetadata } from "./interfaces";
 
-export const useFtMetadata = ({ tokenId, disabled = false }: ByTokenId & WithDisabled) =>
+export const useFtMetadata = ({ disabled = false, ...params }: ByTokenId & WithDisabled) =>
   useSWR(
-    ["ft_metadata", tokenId, disabled],
+    () => (disabled ? null : [params.tokenId + "ft_metadata", params.tokenId]),
 
-    ([_queryKey, tokenId, isDisabled]: [string, TokenId, boolean]) => {
-      if (isDisabled) {
-        return undefined;
-      } else {
-        switch (tokenId) {
-          case NATIVE_TOKEN_ID: {
-            return {
+    ([_queryKey, tokenId]) => {
+      switch (tokenId) {
+        case NATIVE_TOKEN_ID: {
+          return new Promise<FungibleTokenMetadata>((resolve) =>
+            resolve({
               spec: "",
               name: NATIVE_TOKEN_ID,
               symbol: NATIVE_TOKEN_ID.toUpperCase(),
@@ -27,49 +26,44 @@ export const useFtMetadata = ({ tokenId, disabled = false }: ByTokenId & WithDis
               reference: null,
               reference_hash: null,
               decimals: NATIVE_TOKEN_DECIMALS,
-            };
-          }
+            }),
+          );
+        }
 
-          default: {
-            if (isAccountId(tokenId)) {
-              return ftClient.ft_metadata({ tokenId }).catch(() => undefined);
-            } else return undefined;
-          }
+        default: {
+          if (isAccountId(tokenId)) {
+            return ftClient.ft_metadata({ tokenId }).catch(() => undefined);
+          } else return undefined;
         }
       }
     },
   );
 
 export const useFtBalanceOf = ({
-  accountId,
-  tokenId,
   disabled = false,
+  ...params
 }: ByAccountId & ByTokenId & WithDisabled) =>
   useSWR(
-    ["ft_balance_of", accountId, tokenId, disabled],
+    () => (disabled ? null : [params.tokenId + "ft_balance_of", params.accountId, params.tokenId]),
 
-    ([_queryKey, accountId, tokenId, isDisabled]: [string, AccountId, TokenId, boolean]) => {
-      if (isDisabled) {
-        return undefined;
-      } else if (isAccountId(accountId)) {
-        switch (tokenId) {
-          case NATIVE_TOKEN_ID: {
-            return nearClient.nearRpc
-              .query<AccountView>({
-                request_type: "view_account",
-                account_id: accountId,
-                finality: "final",
-              })
-              .then(prop("amount"))
-              .catch(() => undefined);
-          }
-
-          default: {
-            if (isAccountId(tokenId)) {
-              return ftClient.ft_balance_of({ accountId, tokenId }).catch(() => undefined);
-            } else return undefined;
-          }
+    ([_queryKey, accountId, tokenId]) => {
+      switch (tokenId) {
+        case NATIVE_TOKEN_ID: {
+          return nearClient.nearRpc
+            .query<AccountView>({
+              request_type: "view_account",
+              account_id: accountId,
+              finality: "final",
+            })
+            .then(prop("amount"))
+            .catch(() => undefined);
         }
-      } else return undefined;
+
+        default: {
+          if (isAccountId(tokenId)) {
+            return ftClient.ft_balance_of({ accountId, tokenId }).catch(() => undefined);
+          } else return undefined;
+        }
+      }
     },
   );

@@ -2,9 +2,10 @@ import { useEffect, useMemo } from "react";
 
 import { Big } from "big.js";
 import { pick } from "remeda";
+import useSWR from "swr";
 import { useShallow } from "zustand/shallow";
 
-import { coingecko } from "@/common/api/coingecko";
+import { coingeckoClient } from "@/common/api/coingecko";
 import { intearPricesHooks } from "@/common/api/intear-prices";
 import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_ACCOUNT_IDS } from "@/common/constants";
 import { refExchangeHooks } from "@/common/contracts/ref-finance";
@@ -21,6 +22,12 @@ import { type FtData, useFtRegistryStore } from "./models";
 export const useTokenRegistry = () => {
   const { data, error } = useFtRegistryStore(useShallow(pick(["data", "error"])));
 
+  const { data: refFinanceListedTokenAccountIds } = refExchangeHooks.useWhitelistedTokens();
+
+  const listedTokens = PLATFORM_LISTED_TOKEN_ACCOUNT_IDS.concat(
+    refFinanceListedTokenAccountIds ?? [],
+  );
+
   const isLoading = useMemo(() => data === undefined && error === undefined, [data, error]);
 
   useEffect(() => void (error ? console.error(error) : null), [error]);
@@ -31,12 +38,18 @@ export const useTokenRegistry = () => {
 export const useTokenPrice = ({ tokenId, disabled = false }: ByTokenId & WithDisabled) => {
   const {
     isLoading: isNativeTokenPriceLoading,
-    data: oneNativeTokenPrice,
+    data: oneNativeTokenUsdPrice,
     error: nativeTokenPriceError,
-  } = coingecko.useTokenUsdPrice({
-    tokenId,
-    disabled: disabled || tokenId !== NATIVE_TOKEN_ID,
-  });
+  } = useSWR(
+    () => (disabled || tokenId !== NATIVE_TOKEN_ID ? null : ["oneNativeTokenUsdPrice", tokenId]),
+
+    ([_queryKey, tokenKey]) =>
+      coingeckoClient
+        .get(`/simple/price?ids=${tokenKey}&vs_currencies=usd`)
+        .then((response: { data: { [key: string]: { usd: number } } }) =>
+          response.data[tokenKey].usd.toString(),
+        ),
+  );
 
   const {
     isLoading: isFungibleTokenPriceLoading,
@@ -47,11 +60,17 @@ export const useTokenPrice = ({ tokenId, disabled = false }: ByTokenId & WithDis
     disabled: disabled || tokenId === NATIVE_TOKEN_ID,
   });
 
-  return {
-    isLoading: isNativeTokenPriceLoading || isFungibleTokenPriceLoading,
-    data: oneFungibleTokenUsdPrice || oneNativeTokenPrice,
-    error: fungibleTokenPriceError || nativeTokenPriceError,
-  };
+  return tokenId === NATIVE_TOKEN_ID
+    ? {
+        isLoading: isNativeTokenPriceLoading,
+        data: oneNativeTokenUsdPrice,
+        error: nativeTokenPriceError,
+      }
+    : {
+        isLoading: isFungibleTokenPriceLoading,
+        data: oneFungibleTokenUsdPrice,
+        error: fungibleTokenPriceError,
+      };
 };
 
 export interface SupportedTokenQuery extends ByTokenId {
@@ -75,20 +94,14 @@ export const useSupportedToken = ({
   tokenId,
   balanceCheckAccountId,
 }: SupportedTokenQuery): SupportedTokenQueryResult => {
-  const { data: refFinanceListedTokenAccountIds } = refExchangeHooks.useWhitelistedTokens();
-
-  const isTokenSupported =
-    tokenId === NATIVE_TOKEN_ID ||
-    (isAccountId(tokenId) &&
-      (refFinanceListedTokenAccountIds?.includes(tokenId) ||
-        PLATFORM_LISTED_TOKEN_ACCOUNT_IDS.includes(tokenId)));
+  const isValidTokenId = tokenId === NATIVE_TOKEN_ID || isAccountId(tokenId);
 
   const {
     isLoading: isMetadataLoading,
     data: metadata,
     error: metadataError,
   } = ftHooks.useFtMetadata({
-    disabled: !isTokenSupported,
+    disabled: !isValidTokenId,
     tokenId,
   });
 
@@ -97,19 +110,17 @@ export const useSupportedToken = ({
     data: oneTokenUsdPrice,
     error: usdPriceError,
   } = useTokenPrice({
-    disabled: !isTokenSupported,
+    disabled: !isValidTokenId,
     tokenId,
   });
 
-  console.log(tokenId, isUsdPriceLoading, oneTokenUsdPrice, usdPriceError);
-
   const error = useMemo(
     () =>
-      !isTokenSupported
-        ? new Error(`Fungible or Native token ${tokenId} is not supported on this platform.`)
+      !isValidTokenId
+        ? new Error(`Token ID ${tokenId} is invalid.`)
         : (metadataError ?? usdPriceError),
 
-    [isTokenSupported, metadataError, tokenId, usdPriceError],
+    [isValidTokenId, metadataError, tokenId, usdPriceError],
   );
 
   const { isLoading: isBalanceLoading, data: balance } = ftHooks.useFtBalanceOf({
@@ -120,7 +131,6 @@ export const useSupportedToken = ({
 
   useEffect(() => void (error ? console.error(error) : null), [error]);
 
-  // TODO: Implement balance and price retrieval
   return useMemo(() => {
     return {
       isLoading: isMetadataLoading,
@@ -163,8 +173,9 @@ export const useTokenUsdDisplayValue = ({
 }: ByTokenId & {
   amountFloat: number;
 }): string | null => {
-  const { data: oneTokenUsdPrice } = coingecko.useTokenUsdPrice({ tokenId });
-  const value = oneTokenUsdPrice ? amountFloat * oneTokenUsdPrice : 0.0;
+  const { data: token } = useSupportedToken({ tokenId });
+
+  const value = token ? parseFloat(token.usdPrice?.mul(amountFloat).toFixed(2) ?? "0") : 0;
 
   return useMemo(() => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`), [value]);
 };
