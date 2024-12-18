@@ -42,7 +42,7 @@ export const useAccounts = (params?: generatedClient.V1AccountsRetrieveParams) =
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve_2
  */
 export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
-  const queryResult = generatedClient.useV1AccountsRetrieve2(accountId ?? "unknown", {
+  const queryResult = generatedClient.useV1AccountsRetrieve2(accountId ?? "noop", {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(accountId) },
   });
@@ -57,11 +57,10 @@ export const useAccountActivePots = ({
   accountId,
   ...params
 }: Partial<ByAccountId> & generatedClient.V1AccountsActivePotsRetrieveParams) => {
-  const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(
-    accountId ?? "unknown",
-    params,
-    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
-  );
+  const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(accountId ?? "noop", params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled: Boolean(accountId) },
+  });
 
   return { ...queryResult, data: queryResult.data?.data.results };
 };
@@ -74,7 +73,7 @@ export const useAccountListRegistrations = ({
   ...params
 }: Partial<ByAccountId> & generatedClient.V1AccountsListRegistrationsRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(
-    accountId ?? "unknown",
+    accountId ?? "noop",
     params,
     { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
@@ -90,7 +89,7 @@ export const useAccountPotApplications = ({
   ...params
 }: Partial<ByAccountId> & generatedClient.V1AccountsPotApplicationsRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsPotApplicationsRetrieve(
-    accountId ?? "unknown",
+    accountId ?? "noop",
     params,
     { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
@@ -117,7 +116,7 @@ export const usePotApplications = ({
   potId,
   ...params
 }: Partial<ByPotId> & generatedClient.V1PotsApplicationsRetrieveParams) => {
-  const queryResult = generatedClient.useV1PotsApplicationsRetrieve(potId ?? "unknown", params, {
+  const queryResult = generatedClient.useV1PotsApplicationsRetrieve(potId ?? "noop", params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId) },
   });
@@ -180,7 +179,7 @@ export const useAccountDonationsSent = ({
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve_2
  */
 export const usePot = ({ potId }: Partial<ByPotId>) => {
-  const queryResult = generatedClient.useV1PotsRetrieve2(potId ?? "unknown", {
+  const queryResult = generatedClient.useV1PotsRetrieve2(potId ?? "noop", {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId), refreshInterval: 3000 },
   });
@@ -192,7 +191,7 @@ export const usePotPayouts = ({
   potId,
   ...params
 }: Partial<ByPotId> & generatedClient.V1PotsPayoutsRetrieveParams) => {
-  const queryResult = generatedClient.useV1PotsPayoutsRetrieve(potId ?? "unknown", params, {
+  const queryResult = generatedClient.useV1PotsPayoutsRetrieve(potId ?? "noop", params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId), refreshInterval: 3000 },
   });
@@ -285,7 +284,7 @@ export const useMpdaoVoterInfo = ({
   ...params
 }: Partial<ByAccountId> & Omit<generatedClient.V1MpdaoVoterInfoRetrieveParams, "voter_id">) => {
   const queryResult = generatedClient.useV1MpdaoVoterInfoRetrieve(
-    { voter_id: accountId ?? "unknown", ...params },
+    { voter_id: accountId ?? "noop", ...params },
     { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 

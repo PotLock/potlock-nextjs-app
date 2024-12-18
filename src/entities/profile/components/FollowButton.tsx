@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import { getSocialData, setSocialData } from "@/common/contracts/social";
+import useWallet from "@/common/services/auth/hooks/wallet";
 import { Button } from "@/common/ui/components";
-import useWallet from "@/entities/session/hooks/wallet";
 
 type Props = {
   accountId: string;

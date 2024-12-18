@@ -17,9 +17,9 @@ import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
+import { SessionProvider } from "@/common/services/auth";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
-import { SessionProvider } from "@/entities/session";
 import { AppBar } from "@/layout/components/AppBar";
 import { dispatch, store } from "@/store";
 

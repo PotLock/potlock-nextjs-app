@@ -7,7 +7,7 @@ import { Temporal } from "temporal-polyfill";
 import { ZodError } from "zod";
 
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
 import { useIsHuman } from "@/entities/core";
@@ -142,7 +142,7 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
 
   const isDisabled = !hasChanges || !self.formState.isValid || self.formState.isSubmitting;
 
-  const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
+  const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "noop");
 
   const minAmountError =
     !isDonationAmountSufficient({ amount, tokenId }) && hasChanges

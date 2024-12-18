@@ -4,11 +4,12 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { RegistrationStatus } from "@/common/contracts/core";
 import { getIsHuman } from "@/common/contracts/core/sybil";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import { truncate } from "@/common/lib";
+import { useWallet } from "@/common/services/auth";
 import { fetchSocialImages } from "@/common/services/social";
 import {
   Button,
@@ -23,7 +24,6 @@ import { AccountProfilePicture } from "@/entities/account";
 import { useRegistration } from "@/entities/core";
 import { ListRegistrationStatus, listRegistrationStatuses } from "@/entities/list";
 import { updateAccountId, updateNadabotVerification } from "@/entities/profile/utils";
-import { useWallet } from "@/entities/session";
 import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 

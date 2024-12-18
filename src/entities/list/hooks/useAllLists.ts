@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { List, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 
 export const useAllLists = (
   setCurrentListType: (type: string) => void,

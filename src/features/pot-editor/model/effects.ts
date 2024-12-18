@@ -2,7 +2,7 @@ import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 import { omit } from "remeda";
 
 import { ByPotId } from "@/common/api/indexer";
-import { nearRpc, walletApi } from "@/common/api/near";
+import { nearRpc, walletApi } from "@/common/api/near/client";
 import {
   PotConfig,
   PotDeploymentResult,

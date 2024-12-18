@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { fetchAccountFeedPosts } from "@/common/api/near-social";
 import { IndexPostResultItem, ProfileFeedsProps } from "@/common/contracts/social/types";
 
