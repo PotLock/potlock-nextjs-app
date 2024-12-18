@@ -1,36 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
-import { Filter, Star, User } from "lucide-react";
 import {
-  MdGroup,
-  MdHowToReg,
   MdHowToVote,
   MdOutlineGroup,
   MdOutlineHowToReg,
   MdOutlinePaid,
   MdOutlineTimer,
-  MdPaid,
 } from "react-icons/md";
 
-import {
-  Avatar,
-  AvatarImage,
-  Badge,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  SearchBar,
-} from "@/common/ui/components";
+import { Avatar, Filter, Group, GroupType, SearchBar } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
+import { statuses } from "@/entities/project/constants";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 // Types
@@ -289,6 +272,23 @@ function HistoryEntry({ username, votedFor, timestamp, weightBoost }: HistoryEnt
 export default function PotHistoryTab() {
   const [historyData, setHistoryData] = useState<HistoryEntryData[]>(dummyHistoryData);
 
+  const tagList = useMemo(
+    () => [
+      {
+        label: "Voter",
+        options: statuses,
+        type: GroupType.single,
+
+        props: {
+          value: statuses[0].label,
+          onValueChange: undefined,
+        },
+      } as Group<GroupType.single>,
+    ],
+
+    [],
+  );
+
   const handleSearch = (value: string) => {
     const filteredData = dummyHistoryData.filter(
       (entry) =>
@@ -305,10 +305,7 @@ export default function PotHistoryTab() {
         <div className="flex-1">
           <SearchBar onChange={(e) => handleSearch(e.target.value)} />
         </div>
-        <Button variant="brand-outline" className="flex items-center gap-2">
-          <Filter className="h-4 w-4" />
-          Filter
-        </Button>
+        <Filter groups={tagList} />
       </div>
 
       <div className="flex flex-col gap-6 ">
