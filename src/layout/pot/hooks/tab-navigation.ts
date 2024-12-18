@@ -100,6 +100,8 @@ const usePotTabStore = create<TabState>()(
           [PotLayoutTabTag.History]: {
             tag: PotLayoutTabTag.History,
             href: `${rootHref}/history`,
+            // TODO: Temporarily disabled
+            isHidden: true || !hasVoting,
           },
           [PotLayoutTabTag.Payouts]: {
             tag: PotLayoutTabTag.Payouts,
