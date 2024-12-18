@@ -3,10 +3,10 @@ import { useMemo } from "react";
 import { prop } from "remeda";
 
 import { ByPotId } from "@/common/api/indexer";
+import { useSessionAuth } from "@/common/services/auth";
 import { ClearanceCheckResult } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
 import { usePotExtensionFlags } from "@/entities/pot";
-import { useSessionAuth } from "@/entities/session";
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**

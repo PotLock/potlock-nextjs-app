@@ -53,3 +53,5 @@ export const useSessionAuth = (): AuthSession => {
     };
   }
 };
+
+export const useUserSession = useSessionAuth;

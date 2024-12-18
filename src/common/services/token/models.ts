@@ -2,13 +2,21 @@ import { filter, isNonNull, merge, piped, reduce } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
+import { PLATFORM_LISTED_TOKEN_ACCOUNT_IDS } from "@/common/constants";
 import { refExchangeClient } from "@/common/contracts/ref-finance";
-import type { FtData } from "@/common/contracts/tokens/ft";
-import { TokenId } from "@/common/types";
+import type { FungibleTokenMetadata } from "@/common/contracts/tokens";
+import type { ByTokenId, TokenId } from "@/common/types";
 
 import * as ftClient from "./client";
-import { MANUALLY_LISTED_ACCOUNT_IDS } from "./constants";
+
+export type FtData = ByTokenId & {
+  metadata: FungibleTokenMetadata;
+  usdPrice?: Big.Big;
+  balance?: Big.Big;
+  balanceFloat?: number;
+  balanceUsd?: Big.Big;
+};
 
 export type FtRegistry = Record<TokenId, FtData | undefined>;
 
@@ -29,7 +37,7 @@ export const useFtRegistryStore = create<FtRegistryStore>()(
         Promise.all([
           ftClient.getFtBoundNativeTokenData({ accountId: walletApi.accountId }),
 
-          ...MANUALLY_LISTED_ACCOUNT_IDS.concat(tokenContractAccountIds).map((tokenId) =>
+          ...PLATFORM_LISTED_TOKEN_ACCOUNT_IDS.concat(tokenContractAccountIds).map((tokenId) =>
             ftClient.getFtData({ accountId: walletApi.accountId, tokenId }),
           ),
         ]).then(

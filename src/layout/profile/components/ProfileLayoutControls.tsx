@@ -6,6 +6,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
+import { useSessionAuth, useWallet } from "@/common/services/auth";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import {
   DonationsInfo,
@@ -14,7 +15,6 @@ import {
   ProfileTags,
   useProfileData,
 } from "@/entities/profile";
-import { useSessionAuth, useWallet } from "@/entities/session";
 import routesPath, { rootPathnames } from "@/pathnames";
 
 type Props = {

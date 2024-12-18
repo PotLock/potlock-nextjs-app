@@ -3,13 +3,13 @@ import { utils } from "near-api-js";
 import { Metadata } from "next";
 
 import { NETWORK, PLATFORM_NAME } from "./_config";
-import { ChronologicalSortOrderVariant } from "./types";
+import { type AccountId, ChronologicalSortOrderVariant } from "./types";
 
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
 export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
-export const POTLOCK_TWITTER_ACCOUNT_ID = "PotLock_";
+export const PLATFORM_TWITTER_ACCOUNT_ID = "PotLock_";
 export const DEFAULT_SHARE_HASHTAGS = ["PublicGoods", "Donations"];
 
 export const APP_METADATA: Metadata & {
@@ -52,6 +52,8 @@ export const UNKNOWN_ACCOUNT_ID_PLACEHOLDER = "unknown-account-id";
 export const MPDAO_TOKEN_CONTRACT_ACCOUNT_ID =
   NETWORK === "mainnet" ? "mpdao-token.near" : "mpdao-token.testnet";
 
+export const PLATFORM_LISTED_TOKEN_ACCOUNT_IDS: AccountId[] = [MPDAO_TOKEN_CONTRACT_ACCOUNT_ID];
+
 // List ID of PotLock Public Goods Registry
 export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1;
 
@@ -89,7 +91,7 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
 ];
 
 /**
- * @deprecated use `ftService` hooks instead
+ * @deprecated use `tokenService` hooks instead
  */
 export const SUPPORTED_FTS: Record<
   string,

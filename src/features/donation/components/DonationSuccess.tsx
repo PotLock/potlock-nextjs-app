@@ -10,11 +10,11 @@ import {
   DEFAULT_SHARE_HASHTAGS,
   NATIVE_TOKEN_DECIMALS,
   NATIVE_TOKEN_ID,
-  POTLOCK_TWITTER_ACCOUNT_ID,
+  PLATFORM_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
 import { stringifiedU128ToFloat, truncate } from "@/common/lib";
-import { ftService } from "@/common/services";
+import { tokenService } from "@/common/services";
 import {
   Button,
   ClipboardCopyButton,
@@ -55,7 +55,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   const tokenId =
     "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID;
 
-  const { data: token } = ftService.useRegisteredToken({ tokenId });
+  const { data: token } = tokenService.useSupportedToken({ tokenId });
 
   const isLoading = isResultLoading || recipient === undefined || token === undefined;
 
@@ -97,7 +97,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     const tag = `${singlePorject}`;
 
     let url = `https://alpha.potlock.io${routesPath.PROFILE}/${recipient.id}/funding-raised`;
-    let text = `I just donated to ${tag} on @${POTLOCK_TWITTER_ACCOUNT_ID}! Support public goods at `;
+    let text = `I just donated to ${tag} on @${PLATFORM_TWITTER_ACCOUNT_ID}! Support public goods at `;
     text = encodeURIComponent(text);
     url = encodeURIComponent(url);
     return (

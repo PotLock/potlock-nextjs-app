@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { createPost } from "@/common/contracts/social";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";

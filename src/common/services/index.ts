@@ -1,1 +1,2 @@
-export * as ftService from "./ft";
+export * as authService from "./auth";
+export * as tokenService from "./token";

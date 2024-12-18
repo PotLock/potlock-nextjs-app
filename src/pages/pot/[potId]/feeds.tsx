@@ -9,7 +9,7 @@ import {
   PotApplication,
   indexer,
 } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";

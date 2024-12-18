@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { values } from "remeda";
 
-import { ftService } from "@/common/services";
+import { tokenService } from "@/common/services";
 import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form-fields";
 
 export type TokenSelectorProps = Pick<
@@ -11,7 +11,7 @@ export type TokenSelectorProps = Pick<
 > & {};
 
 export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
-  const { data: registeredFts = {} } = ftService.useTokenRegistry();
+  const { data: registeredFts = {} } = tokenService.useTokenRegistry();
   const tokenOptions = useMemo(() => values(registeredFts), [registeredFts]);
 
   return (

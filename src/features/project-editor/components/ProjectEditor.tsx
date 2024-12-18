@@ -5,9 +5,9 @@ import { Form } from "react-hook-form";
 import { prop } from "remeda";
 
 import PlusIcon from "@/common/assets/svgs/PlusIcon";
+import { useWallet } from "@/common/services/auth";
+import { useSessionReduxStore } from "@/common/services/auth/hooks/redux-store";
 import { Button, FormField } from "@/common/ui/components";
-import { useWallet } from "@/entities/session";
-import { useSessionReduxStore } from "@/entities/session/hooks/redux-store";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 

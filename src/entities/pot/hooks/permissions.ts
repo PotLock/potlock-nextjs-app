@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
+import { useSessionAuth } from "@/common/services/auth";
 import { getDateTime } from "@/entities/core";
-import { useSessionAuth } from "@/entities/session";
 
 export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
   const { isSignedIn, accountId } = useSessionAuth();

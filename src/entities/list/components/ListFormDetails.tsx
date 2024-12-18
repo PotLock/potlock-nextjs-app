@@ -5,16 +5,16 @@ import { Check } from "lucide-react";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus, listsClient } from "@/common/contracts/core";
+import { useWallet } from "@/common/services/auth";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/social";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountOption } from "@/entities/account";
-import { useWallet } from "@/entities/session";
 import { AccessControlList } from "@/features/access-control";
 import { dispatch } from "@/store";
 

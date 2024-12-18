@@ -8,10 +8,11 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
+import { useWallet } from "@/common/services/auth";
 import { fetchSocialImages } from "@/common/services/social";
 import {
   DropdownMenu,
@@ -21,7 +22,6 @@ import {
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { AccountOption } from "@/entities/account";
-import { useWallet } from "@/entities/session";
 import { AccessControlListModal } from "@/features/access-control";
 import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";

@@ -6,7 +6,7 @@ import { infer as FromSchema, ZodError } from "zod";
 
 import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { PotConfig } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
 import { useCoreState } from "@/entities/core";

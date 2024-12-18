@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 
 import { Wallet } from "../types";
 

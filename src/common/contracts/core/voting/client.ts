@@ -1,6 +1,6 @@
 import naxios, { MemoryCache } from "@wpdas/naxios";
 
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 
 import type {
   AccountId,

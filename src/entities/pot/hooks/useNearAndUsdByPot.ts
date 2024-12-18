@@ -15,7 +15,7 @@ const yoctoNearToNear = (amountYoctoNear: string, abbreviate?: boolean) => {
 };
 
 /**
- * @deprecated use `ftService` capabilities.
+ * @deprecated use `tokenService` capabilities.
  */
 export const useNearAndUsdByPot = ({ pot }: { pot?: Pot }) => {
   const [amountNear, setAmountNear] = useState(

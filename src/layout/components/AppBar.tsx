@@ -6,9 +6,9 @@ import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
 import useIsClient from "@/common/lib/useIsClient";
+import { SessionSignInButton, useSessionReduxStore } from "@/common/services/auth";
 import { cn } from "@/common/ui/utils";
 import { CartLink } from "@/entities/cart";
-import { SessionSignInButton, useSessionReduxStore } from "@/entities/session";
 import { rootPathnames } from "@/pathnames";
 
 import { UserDropdown } from "./UserDropdown";

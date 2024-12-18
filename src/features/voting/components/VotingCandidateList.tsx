@@ -4,11 +4,11 @@ import { useSet, useWindowSize } from "@uidotdev/usehooks";
 import { MdIndeterminateCheckBox } from "react-icons/md";
 
 import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
+import { useSessionAuth } from "@/common/services/auth";
 import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useSessionAuth } from "@/entities/session";
 
 import { VotingCandidateOption } from "./VotingCandidateOption";
 

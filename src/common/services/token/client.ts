@@ -2,14 +2,28 @@ import { Big } from "big.js";
 import { AccountView } from "near-api-js/lib/providers/provider";
 
 import { coingeckoClient } from "@/common/api/coingecko";
-import { naxiosInstance, nearRpc } from "@/common/api/near";
-import { PRICES_REQUEST_CONFIG, pricesClient } from "@/common/api/prices";
-import { NATIVE_TOKEN_ID } from "@/common/constants";
-import type { FtData, FungibleTokenMetadata } from "@/common/contracts/tokens/ft";
+import { PRICES_REQUEST_CONFIG, intearPricesClient } from "@/common/api/intear-prices";
+import { naxiosInstance, nearRpc } from "@/common/api/near/client";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ICON_URL, NATIVE_TOKEN_ID } from "@/common/constants";
+import type { FungibleTokenMetadata } from "@/common/contracts/tokens/ft";
 import { isAccountId, stringifiedU128ToBigNum, stringifiedU128ToFloat } from "@/common/lib";
 import { AccountId, ByAccountId, ByTokenId } from "@/common/types";
 
-import { FT_NATIVE_TOKEN_BINDING } from "./constants";
+import type { FtData } from "./models";
+
+export const FT_NATIVE_TOKEN_BINDING: FtData = {
+  tokenId: NATIVE_TOKEN_ID,
+
+  metadata: {
+    spec: "",
+    name: NATIVE_TOKEN_ID,
+    symbol: NATIVE_TOKEN_ID.toUpperCase(),
+    icon: NATIVE_TOKEN_ICON_URL,
+    reference: null,
+    reference_hash: null,
+    decimals: NATIVE_TOKEN_DECIMALS,
+  },
+};
 
 export const getFtBoundNativeTokenData = async ({
   accountId,
@@ -41,18 +55,7 @@ export const getFtBoundNativeTokenData = async ({
 
           const balanceUsd = balance?.gt(0) && usdPrice?.gt(0) ? balance?.mul(usdPrice) : Big(0);
 
-          return {
-            ...FT_NATIVE_TOKEN_BINDING,
-            balance,
-            balanceFloat,
-            balanceUsd,
-
-            balanceUsdStringApproximation: balanceUsd?.gt(0)
-              ? `~$ ${balanceUsd.toFixed(2)}`
-              : "$ 0",
-
-            usdPrice,
-          };
+          return { ...FT_NATIVE_TOKEN_BINDING, balance, balanceFloat, balanceUsd, usdPrice };
         })
     : { ...FT_NATIVE_TOKEN_BINDING, usdPrice };
 };
@@ -77,7 +80,7 @@ export const getFtData = async ({
           .catch(() => undefined)
       : new Promise((resolve) => resolve(undefined)).then(() => undefined),
 
-    pricesClient
+    intearPricesClient
       .getSuperPrecisePrice({ token_id: tokenId }, PRICES_REQUEST_CONFIG.axios)
       .then(({ data }) => Big(data))
       .catch(() => undefined),
@@ -97,13 +100,5 @@ export const getFtData = async ({
 
   return metadata === undefined
     ? null
-    : {
-        tokenId,
-        metadata,
-        balance,
-        balanceFloat,
-        balanceUsd,
-        balanceUsdStringApproximation: balanceUsd?.gt(0) ? `~$ ${balanceUsd.toFixed(2)}` : "$ 0",
-        usdPrice,
-      };
+    : { tokenId, metadata, balance, balanceFloat, balanceUsd, usdPrice };
 };

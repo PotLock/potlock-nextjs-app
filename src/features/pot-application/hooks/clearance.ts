@@ -6,9 +6,8 @@ import { PLATFORM_NAME } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { stringifiedU128ToBigNum } from "@/common/lib";
-import { ftService } from "@/common/services";
+import { authService, tokenService } from "@/common/services";
 import { ClearanceCheckResult } from "@/common/types";
-import { useSessionAuth } from "@/entities/session";
 
 import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
 
@@ -22,10 +21,17 @@ export const usePotApplicationUserClearance = ({
   hasVoting,
 }: ByPotId & { hasVoting?: boolean }): ClearanceCheckResult => {
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
-  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useSessionAuth();
   const { data: pot } = indexer.usePot({ potId });
-  const { data: stakingToken } = ftService.useRegisteredToken({ tokenId: staking.tokenId });
+
+  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } =
+    authService.useUserSession();
+
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
+
+  const { data: stakingToken } = tokenService.useSupportedToken({
+    balanceCheckAccountId: accountId,
+    tokenId: staking.tokenId,
+  });
 
   return useMemo(() => {
     const requirements = [

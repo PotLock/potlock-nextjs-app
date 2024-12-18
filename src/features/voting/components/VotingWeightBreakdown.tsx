@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { MdCheckCircleOutline, MdStar } from "react-icons/md";
 
 import { ByPotId } from "@/common/api/indexer";
+import { useSessionAuth } from "@/common/services/auth";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,6 @@ import {
   Separator,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSessionAuth } from "@/entities/session";
 
 import {
   useVotingParticipantVoteWeight,

@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
+import { useSessionAuth } from "@/common/services/auth";
 import { ByAccountId } from "@/common/types";
 import { useToast } from "@/common/ui/hooks";
-import { useSessionAuth } from "@/entities/session";
 
 export interface VotingCandidateLookup extends ByElectionId {}
 

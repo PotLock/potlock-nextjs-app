@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
 import { votingHooks } from "@/common/contracts/core/voting";
+import { useSessionAuth } from "@/common/services/auth";
 import { FilterChip, Input } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { usePotActiveElections } from "@/entities/pot";
-import { useSessionAuth } from "@/entities/session";
 import {
   VotingCandidateFilter,
   VotingCandidateList,
