@@ -5,7 +5,7 @@ import { values } from "remeda";
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { tokenService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { ByAccountId, ByCampaignId } from "@/common/types";
 import {
   DialogDescription,
@@ -49,7 +49,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     "potAccountId",
   ]);
 
-  const { data: token } = tokenService.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
 
   const {
     isLoading: isRecipientDataLoading,

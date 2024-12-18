@@ -1,5 +1,6 @@
 import { Big } from "big.js";
 import { utils } from "near-api-js";
+import { NEAR_NOMINATION_EXP } from "near-api-js/lib/utils/format";
 import { Metadata } from "next";
 
 import { NETWORK, PLATFORM_NAME } from "./_config";
@@ -45,7 +46,7 @@ export const APP_METADATA: Metadata & {
 
 export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
 export const NATIVE_TOKEN_ID = "near";
-export const NATIVE_TOKEN_DECIMALS = 24;
+export const NATIVE_TOKEN_DECIMALS = NEAR_NOMINATION_EXP;
 export const NATIVE_TOKEN_ICON_URL = `${ICONS_ASSET_ENDPOINT_URL}/near.svg`;
 export const UNKNOWN_ACCOUNT_ID_PLACEHOLDER = "unknown-account-id";
 
@@ -88,7 +89,7 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
 ];
 
 /**
- * @deprecated use `tokenService` hooks instead
+ * @deprecated use `tokenHooks` hooks instead
  */
 export const SUPPORTED_FTS: Record<
   string,

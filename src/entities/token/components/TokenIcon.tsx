@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { NearIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { tokenService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 
@@ -27,7 +27,7 @@ export type TokenIconProps = {
 };
 
 export const TokenIcon = ({ tokenId, className, size = "medium" }: TokenIconProps) => {
-  const { data: token } = tokenService.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
   const { sizePx, rootClass, placeholderClass } = variants[size];
 
   return (

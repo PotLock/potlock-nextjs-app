@@ -1,6 +1,6 @@
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { stringifiedU128ToFloat } from "@/common/lib";
-import { tokenService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -19,7 +19,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   classNames,
   ...props
 }) => {
-  const { data: token } = tokenService.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
 
   const amount =
     "amountFloat" in props

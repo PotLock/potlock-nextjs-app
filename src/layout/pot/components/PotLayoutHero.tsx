@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { useSessionAuth } from "@/common/services/auth";
+import { authHooks } from "@/common/services/auth";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import {
@@ -37,7 +37,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 }) => {
   const { data: pot } = indexer.usePot({ potId });
   const { hasVoting } = usePotExtensionFlags({ potId });
-  const { isSignedIn, accountId } = useSessionAuth();
+  const { isSignedIn, accountId } = authHooks.useUserSession();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
   // const votingClearance = useVotingUserClearance({ potId });
   const lifecycle = usePotLifecycle({ potId, hasVoting });

@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { isAccountId, stringifiedU128ToBigNum } from "@/common/lib";
-import { tokenService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { ByAccountId, TokenId } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
 
@@ -29,7 +29,7 @@ export const useVotingParticipantStats = ({
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: mpDaoVoterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const { data: stakingToken } = tokenService.useSupportedToken({
+  const { data: stakingToken } = tokenHooks.useSupportedToken({
     tokenId: stakingContractAccountId ?? "noop",
     balanceCheckAccountId: accountId,
   });

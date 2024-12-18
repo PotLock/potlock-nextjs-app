@@ -1,12 +1,13 @@
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { authService, tokenService } from "@/common/services";
+import { authHooks } from "@/common/services/auth";
+import { tokenHooks } from "@/common/services/token";
 import type { ByTokenId } from "@/common/types";
 import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form-fields";
 
 const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
-  const userSession = authService.useUserSession();
+  const userSession = authHooks.useUserSession();
 
-  const { data: token } = tokenService.useSupportedToken({
+  const { data: token } = tokenHooks.useSupportedToken({
     tokenId,
     balanceCheckAccountId: userSession?.accountId,
   });
@@ -36,7 +37,7 @@ export type TokenSelectorProps = Pick<
 > & {};
 
 export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
-  const { data: tokenAllowlist } = tokenService.useAllowlist();
+  const { data: tokenAllowlist } = tokenHooks.useAllowlist();
 
   return (
     // TODO: Move FormField wrapper from target parent layouts to here

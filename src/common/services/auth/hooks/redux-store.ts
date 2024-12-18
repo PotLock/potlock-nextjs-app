@@ -3,9 +3,9 @@ import { prop } from "remeda";
 import { useGlobalStoreSelector } from "@/store";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useSessionAuth } from "./session";
+import { useUserSession } from "./session";
 
 /**
- * @deprecated use {@link useSessionAuth} instead
+ * @deprecated use {@link useUserSession} instead
  */
 export const useSessionReduxStore = () => useGlobalStoreSelector(prop("session"));

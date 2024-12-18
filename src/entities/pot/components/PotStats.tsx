@@ -6,7 +6,7 @@ import { Pot } from "@/common/api/indexer";
 import { Toggle } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncate } from "@/common/lib";
-import { tokenService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { AccountProfilePicture } from "@/entities/account";
 import { useProfileData } from "@/entities/profile";
 import { rootPathnames } from "@/pathnames";
@@ -26,7 +26,7 @@ const Table = ({
   title: string;
 }) => {
   const [usdToggle, setUsdToggle] = useState(false);
-  const { data: nativeToken } = tokenService.useSupportedToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: nativeToken } = tokenHooks.useSupportedToken({ tokenId: NATIVE_TOKEN_ID });
 
   return (
     <Container className="md:min-w-100 xl:w-126.5">
@@ -80,7 +80,7 @@ type DonationProps = {
 };
 
 const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
-  const { data: nativeToken } = tokenService.useSupportedToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: nativeToken } = tokenHooks.useSupportedToken({ tokenId: NATIVE_TOKEN_ID });
   const profile = useProfileData(donorId);
 
   const matchedAmount = usdToggle

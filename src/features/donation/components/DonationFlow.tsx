@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
 import { isBigSource, useRouteQuery } from "@/common/lib";
-import { authService, tokenService } from "@/common/services";
+import { authHooks } from "@/common/services/auth";
+import { tokenHooks } from "@/common/services/token";
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { dispatch } from "@/store";
@@ -24,7 +25,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   closeModal,
   ...props
 }) => {
-  const userSession = authService.useUserSession();
+  const userSession = authHooks.useUserSession();
   const { currentStep, finalOutcome } = useDonationState();
 
   const {
@@ -43,7 +44,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
   const [tokenId] = form.watch(["tokenId"]);
 
-  const { data: token } = tokenService.useSupportedToken({
+  const { data: token } = tokenHooks.useSupportedToken({
     tokenId,
     balanceCheckAccountId: userSession?.accountId,
   });

@@ -4,7 +4,7 @@ import { values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
 import { yoctoNearToFloat } from "@/common/lib";
-import { tokenService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import {
   DialogDescription,
   DialogHeader,
@@ -54,7 +54,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
   ]);
 
   const isListDonation = listId !== undefined;
-  const { data: token } = tokenService.useSupportedToken({ tokenId });
+  const { data: token } = tokenHooks.useSupportedToken({ tokenId });
   const { isLoading: isPotLoading, data: pot, error: potError } = indexer.usePot({ potId });
   const { data: list, isLoading: isListLoading, error: listError } = indexer.useList({ listId });
 

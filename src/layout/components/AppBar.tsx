@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
 import useIsClient from "@/common/lib/useIsClient";
-import { SessionSignInButton, useSessionReduxStore } from "@/common/services/auth";
+import { AuthSignInButton, useSessionReduxStore } from "@/common/services/auth";
 import { cn } from "@/common/ui/utils";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
@@ -38,7 +38,7 @@ const AuthButton = () => {
 
   if (!isClient) return;
 
-  return isAuthenticated ? <UserDropdown /> : <SessionSignInButton />;
+  return isAuthenticated ? <UserDropdown /> : <AuthSignInButton />;
 };
 
 const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {

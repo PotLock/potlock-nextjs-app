@@ -4,7 +4,7 @@ import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { PayoutDetailed } from "@/common/contracts/core";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
-import { tokenService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfileCover, AccountProfilePicture } from "@/entities/account";
@@ -34,7 +34,7 @@ export const ProjectCard = ({ projectId, allowDonate = true, payoutDetails }: Pr
     accountId: projectId,
   });
 
-  const estimatedMatchedAmount = tokenService.useTokenUsdDisplayValue({
+  const estimatedMatchedAmount = tokenHooks.useTokenUsdDisplayValue({
     amountFloat: yoctoNearToFloat(payoutDetails?.amount ?? "0"),
     tokenId: NATIVE_TOKEN_ID,
   });

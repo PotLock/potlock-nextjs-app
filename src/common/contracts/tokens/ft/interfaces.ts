@@ -1,5 +1,3 @@
-import type { ByTokenId } from "@/common/types";
-
 export type FungibleTokenMetadata = {
   spec: string;
   name: string;

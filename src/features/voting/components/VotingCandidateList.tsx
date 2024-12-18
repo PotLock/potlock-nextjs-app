@@ -4,7 +4,7 @@ import { useSet, useWindowSize } from "@uidotdev/usehooks";
 import { MdIndeterminateCheckBox } from "react-icons/md";
 
 import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
-import { useSessionAuth } from "@/common/services/auth";
+import { authHooks } from "@/common/services/auth";
 import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
@@ -25,7 +25,7 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
 }) => {
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
-  const userSession = useSessionAuth();
+  const userSession = authHooks.useUserSession();
   const selectedEntries = useSet<AccountId>();
 
   const { isLoading: _isRemainingUserVotingCapacityLoading, data: remainingUserVotingCapacity } =
