@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 
 import { Big } from "big.js";
-import useSWR from "swr";
 
-import { coingeckoClient } from "@/common/api/coingecko";
+import { coingeckoHooks } from "@/common/api/coingecko";
 import { intearPricesHooks } from "@/common/api/intear-prices";
 import { nearHooks } from "@/common/api/near";
 import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_IDS } from "@/common/constants";
@@ -11,9 +10,25 @@ import { refExchangeHooks } from "@/common/contracts/ref-finance";
 import { ftHooks } from "@/common/contracts/tokens";
 import { isAccountId, stringifiedU128ToBigNum, stringifiedU128ToFloat } from "@/common/lib";
 import { formatWithCommas } from "@/common/lib/formatWithCommas";
-import type { AccountId, ByTokenId, WithDisabled } from "@/common/types";
+import type { ByTokenId } from "@/common/types";
 
-import { type TokenData } from "./types";
+import { type TokenQuery, type TokenQueryResult } from "./types";
+
+/**
+ * @deprecated Use `usdPrice` Big number from `tokenHooks.useToken({ tokenId: ... })`
+ */
+export const useTokenUsdDisplayValue = ({
+  amountFloat,
+  tokenId,
+}: ByTokenId & {
+  amountFloat: number;
+}): string | null => {
+  const { data: token } = useToken({ tokenId });
+
+  const value = token ? parseFloat(token.usdPrice?.mul(amountFloat).toFixed(2) ?? "0") : 0;
+
+  return useMemo(() => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`), [value]);
+};
 
 export const useAllowlist = () => {
   const { data: refFinanceTokenAllowlist } = refExchangeHooks.useWhitelistedTokens();
@@ -27,65 +42,12 @@ export const useAllowlist = () => {
   );
 };
 
-export const useTokenUsdPrice = ({ tokenId, disabled = false }: ByTokenId & WithDisabled) => {
-  const {
-    isLoading: isNativeTokenPriceLoading,
-    data: oneNativeTokenUsdPrice,
-    error: nativeTokenPriceError,
-  } = useSWR(
-    () => (disabled || tokenId !== NATIVE_TOKEN_ID ? null : ["oneNativeTokenUsdPrice", tokenId]),
-
-    ([_queryKey, tokenKey]) =>
-      coingeckoClient
-        .get(`/simple/price?ids=${tokenKey}&vs_currencies=usd`)
-        .then((response: { data: { [key: string]: { usd: number } } }) =>
-          response.data[tokenKey].usd.toString(),
-        ),
-  );
-
-  const {
-    isLoading: isFungibleTokenPriceLoading,
-    data: oneFungibleTokenUsdPrice,
-    error: fungibleTokenPriceError,
-  } = intearPricesHooks.useTokenUsdPrice({
-    tokenId,
-    disabled: disabled || tokenId === NATIVE_TOKEN_ID,
-  });
-
-  return tokenId === NATIVE_TOKEN_ID
-    ? {
-        isLoading: isNativeTokenPriceLoading,
-        data: oneNativeTokenUsdPrice,
-        error: nativeTokenPriceError,
-      }
-    : {
-        isLoading: isFungibleTokenPriceLoading,
-        data: oneFungibleTokenUsdPrice,
-        error: fungibleTokenPriceError,
-      };
-};
-
-export interface SupportedTokenQuery extends ByTokenId {
-  balanceCheckAccountId?: AccountId;
-}
-
-export type SupportedTokenQueryResult = {
-  isLoading: boolean;
-  isUsdPriceLoading: boolean;
-  isBalanceLoading: boolean;
-  data?: TokenData;
-  error?: Error;
-};
-
 /**
  * Smart token data retrieval mechanism that supports both native token and fungible tokens.
  *
  * When `balanceCheckAccountId` is provided, the balance of the token is also retrieved.
  */
-export const useToken = ({
-  tokenId,
-  balanceCheckAccountId,
-}: SupportedTokenQuery): SupportedTokenQueryResult => {
+export const useToken = ({ tokenId, balanceCheckAccountId }: TokenQuery): TokenQueryResult => {
   const isValidFtContractAccountId = isAccountId(tokenId);
 
   const {
@@ -93,6 +55,12 @@ export const useToken = ({
     data: ntMetadata,
     error: ntMetadataError,
   } = nearHooks.useNativeTokenMetadata({ disabled: tokenId !== NATIVE_TOKEN_ID });
+
+  const {
+    isLoading: isNtUsdPriceLoading,
+    data: oneTokenUsdPrice,
+    error: usdPriceError,
+  } = coingeckoHooks.useNativeTokenUsdPrice({ disabled: tokenId !== NATIVE_TOKEN_ID });
 
   const {
     isLoading: isAccountSummaryLoading,
@@ -110,35 +78,38 @@ export const useToken = ({
   } = ftHooks.useFtMetadata({ disabled: !isValidFtContractAccountId, tokenId });
 
   const {
+    isLoading: isFtUsdPriceLoading,
+    data: oneFtUsdPrice,
+    error: ftUsdPriceError,
+  } = intearPricesHooks.useTokenUsdPrice({
+    tokenId,
+    disabled: !isValidFtContractAccountId,
+  });
+
+  const {
     isLoading: isFtBalanceLoading,
     data: ftBalance,
     error: ftBalanceError,
   } = ftHooks.useFtBalanceOf({
     accountId: balanceCheckAccountId ?? "noop",
-    disabled: balanceCheckAccountId === undefined || tokenId === NATIVE_TOKEN_ID,
+    disabled: balanceCheckAccountId === undefined || !isValidFtContractAccountId,
     tokenId,
   });
 
-  const {
-    isLoading: isUsdPriceLoading,
-    data: oneTokenUsdPrice,
-    error: usdPriceError,
-  } = useTokenUsdPrice({ disabled: !isValidFtContractAccountId, tokenId });
-
   return useMemo(() => {
-    const error = !isValidFtContractAccountId
-      ? new Error(`Token ID ${tokenId} is invalid.`)
-      : (ntMetadataError ??
-        accountSummaryError ??
-        ftMetadataError ??
-        ftBalanceError ??
-        usdPriceError);
-
     const status = {
       isLoading: isNtMetadataLoading || isFtMetadataLoading,
-      isUsdPriceLoading,
+      isUsdPriceLoading: isFtUsdPriceLoading || isNtUsdPriceLoading,
       isBalanceLoading: isAccountSummaryLoading || isFtBalanceLoading,
-      error,
+
+      error: !isValidFtContractAccountId
+        ? new Error(`Token ID ${tokenId} is invalid.`)
+        : (ntMetadataError ??
+          ftUsdPriceError ??
+          accountSummaryError ??
+          ftMetadataError ??
+          usdPriceError ??
+          ftBalanceError),
     };
 
     switch (tokenId) {
@@ -177,7 +148,7 @@ export const useToken = ({
             data: {
               tokenId,
               metadata: ftMetadata,
-              usdPrice: oneTokenUsdPrice ? Big(oneTokenUsdPrice) : undefined,
+              usdPrice: oneFtUsdPrice ? Big(oneFtUsdPrice) : undefined,
 
               balance: ftBalance
                 ? stringifiedU128ToBigNum(ftBalance, ftMetadata.decimals)
@@ -188,7 +159,7 @@ export const useToken = ({
                 : undefined,
 
               balanceUsd:
-                ftBalance && oneTokenUsdPrice ? Big(ftBalance).mul(oneTokenUsdPrice) : undefined,
+                ftBalance && oneFtUsdPrice ? Big(ftBalance).mul(oneFtUsdPrice) : undefined,
             },
           };
         } else return status;
@@ -201,32 +172,19 @@ export const useToken = ({
     ftBalanceError,
     ftMetadata,
     ftMetadataError,
+    ftUsdPriceError,
     isAccountSummaryLoading,
     isFtBalanceLoading,
     isFtMetadataLoading,
+    isFtUsdPriceLoading,
     isNtMetadataLoading,
-    isUsdPriceLoading,
+    isNtUsdPriceLoading,
     isValidFtContractAccountId,
     ntMetadata,
     ntMetadataError,
+    oneFtUsdPrice,
     oneTokenUsdPrice,
     tokenId,
     usdPriceError,
   ]);
-};
-
-/**
- * @deprecated Use `usdPrice` Big number from `tokenHooks.useToken({ tokenId: ... })`
- */
-export const useTokenUsdDisplayValue = ({
-  amountFloat,
-  tokenId,
-}: ByTokenId & {
-  amountFloat: number;
-}): string | null => {
-  const { data: token } = useToken({ tokenId });
-
-  const value = token ? parseFloat(token.usdPrice?.mul(amountFloat).toFixed(2) ?? "0") : 0;
-
-  return useMemo(() => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`), [value]);
 };

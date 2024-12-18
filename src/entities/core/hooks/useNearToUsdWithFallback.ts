@@ -1,14 +1,15 @@
 import { Big } from "big.js";
 
+import { coingeckoHooks } from "@/common/api/coingecko";
 import { formatWithCommas } from "@/common/lib";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { tokenHooks } from "@/common/services/token";
 
 /**
- * @deprecated Use `usdPrice` from {@link tokenHooks.useToken}({ tokenId: NATIVE_TOKEN_ID })
+ * @deprecated Use `data.usdPrice` from {@link tokenHooks.useToken}({ tokenId: NATIVE_TOKEN_ID })
  */
 export const useNearToUsdWithFallback = (amountNear: number, abbreviate?: boolean) => {
-  const { data: oneNearTokenUsdPrice } = tokenHooks.useTokenUsdPrice({ tokenId: "near" });
+  const { data: oneNearTokenUsdPrice } = coingeckoHooks.useNativeTokenUsdPrice();
 
   return oneNearTokenUsdPrice
     ? "~$" + formatWithCommas(Big(oneNearTokenUsdPrice).mul(amountNear).toFixed(2))

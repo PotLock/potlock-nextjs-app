@@ -22,7 +22,7 @@ const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
     }
 
     default: {
-      // TODO: exclude tokens with zero balance
+      // TODO: render as null if the user has zero balance
 
       if (token) {
         return <SelectFieldOption value={tokenId}>{token.metadata.symbol}</SelectFieldOption>;

@@ -1,21 +1,20 @@
 import useSWR from "swr";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
+import type { WithDisabled } from "@/common/types";
 
 import { client } from "./client";
 
-/**
- * @deprecated Use `data.usdPrice` from `tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID })`
- */
-export const useOneNearUsdPrice = () => {
-  return useSWR(
-    () => ["coingeckoNearUsdPrice"],
+export const useNativeTokenUsdPrice = (
+  { disabled }: WithDisabled | undefined = { disabled: false },
+) =>
+  useSWR(
+    () => (disabled ? null : ["oneNativeTokenUsdPrice", NATIVE_TOKEN_ID.toLowerCase()]),
 
-    (_queryKey) =>
+    ([_queryKey, tokenId]) =>
       client
-        .get(`/simple/price?ids=${NATIVE_TOKEN_ID}&vs_currencies=usd`)
+        .get(`/simple/price?ids=${tokenId}&vs_currencies=usd`)
         .then((response: { data: { [key: string]: { usd: number } } }) =>
-          response.data[NATIVE_TOKEN_ID].usd.toString(),
+          response.data[tokenId].usd.toString(),
         ),
   );
-};
