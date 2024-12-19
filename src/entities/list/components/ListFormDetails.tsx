@@ -2,19 +2,19 @@ import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "r
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { walletApi } from "@/common/api/near/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus, listsClient } from "@/common/contracts/core";
-import { useWallet } from "@/common/services/auth";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/social";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountOption } from "@/entities/account";
+import { AccountOption, AccountProfilePicture } from "@/entities/account";
 import { AccessControlList } from "@/features/access-control";
 import { dispatch } from "@/store";
 
@@ -90,7 +90,6 @@ export const ListFormDetails: React.FC = () => {
   } = useRouter();
 
   const onEditPage = !!id;
-  const { wallet } = useWallet();
 
   useEffect(() => {
     const fetchListDetails = async () => {
@@ -125,7 +124,7 @@ export const ListFormDetails: React.FC = () => {
     };
 
     if (walletApi?.accountId) fetchProfileImage();
-  }, [wallet]);
+  }, [walletApi?.accountId]);
 
   // prettier-ignore
   const onSubmit: SubmitHandler<any> = async (data, event) => {
@@ -220,16 +219,39 @@ export const ListFormDetails: React.FC = () => {
   const adminsList = useMemo(
     () =>
       admins.length > 0 ? (
-        <div className="flex flex-wrap items-center gap-2">
-          {[...admins].map((accountId) => (
+        <div className="flex items-center gap-2">
+          {admins.slice(0, 4).map((accountId) => (
             <AccountOption
               isThumbnail
               key={accountId}
               title={accountId}
-              classNames={{ avatar: "md:w-[40px] md:h-[40px] w-7 h-7" }}
+              classNames={{ avatar: "md:w-10 md:h-10 w-7 h-7" }}
               {...{ accountId }}
             />
           ))}
+          {admins.length > 4 && (
+            <div
+              style={{
+                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+              }}
+              className="group relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white transition-all duration-500 ease-in-out md:h-10 md:w-10"
+            >
+              {admins.length - 4}+
+              <div className="z-999 absolute top-7 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md bg-white px-1 py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+                {admins.slice(4).map((admin) => (
+                  <Link
+                    href={`/profile/${admin}`}
+                    target="_blank"
+                    key={admin}
+                    className="mb-2 flex cursor-pointer items-center gap-2 p-2 text-[#292929] hover:bg-gray-100"
+                  >
+                    <AccountProfilePicture accountId={admin} className="h-5 w-5" />
+                    {admin}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : null,
 
@@ -375,7 +397,7 @@ export const ListFormDetails: React.FC = () => {
                     <AccessControlList
                       isEditable={true}
                       title="Admins"
-                      showAccountList={false}
+                      showAccountList={true}
                       handleRemoveAccounts={id ? handleRemoveAdmin : undefined}
                       value={admins.map((admin) => ({ accountId: admin }))}
                       classNames={{ avatar: "w-5 h-5" }}

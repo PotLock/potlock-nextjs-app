@@ -1,10 +1,12 @@
-import { useCallback, useId, useMemo } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 
 import { show } from "@ebay/nice-modal-react";
+import Link from "next/link";
 
 import { GroupIcon } from "@/common/assets/svgs";
 import { Button } from "@/common/ui/components";
-import { AccountOption, AccountOptionProps } from "@/entities/account";
+import { cn } from "@/common/ui/utils";
+import { AccountOption, AccountOptionProps, AccountProfilePicture } from "@/entities/account";
 
 import { AccessControlListModal, AccessControlListModalProps } from "./AccessControlListModal";
 
@@ -29,13 +31,14 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
   const { value: accountIds } = props;
   const isEditingEnabled = isEditable && "title" in props;
   const modalId = useId();
+
   const openAccountsModal = useCallback(() => show(modalId), [modalId]);
 
   const accountList = useMemo(
     () =>
       accountIds.length > 0 ? (
         <div un-flex="~" un-items="center" un-gap="2">
-          {accountIds.map((account) => (
+          {accountIds.slice(0, 4).map((account) => (
             <AccountOption
               isThumbnail
               key={account.accountId}
@@ -44,6 +47,32 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
               {...{ accountId: account.accountId }}
             />
           ))}
+          {accountIds.length > 4 && (
+            <div
+              style={{
+                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+              }}
+              className={cn(
+                "z-999 group relative flex items-center justify-center rounded-full border-2 border-white bg-red-500 px-3 py-3 text-sm font-semibold text-white transition-all duration-500 ease-in-out",
+                classNames?.avatar,
+              )}
+            >
+              <span className="text-[11px] font-bold">{accountIds.length - 4}+</span>
+              <div className="z-9999 absolute top-4 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md bg-white py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+                {accountIds.slice(4).map((account) => (
+                  <Link
+                    href={`/profile/${account.accountId}`}
+                    target="_blank"
+                    key={account.accountId}
+                    className="mb-2 flex cursor-pointer items-center gap-2 p-2 text-[#292929] hover:bg-gray-100"
+                  >
+                    <AccountProfilePicture accountId={account.accountId} className="h-5 w-5" />
+                    {account.accountId}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : null,
 
