@@ -1,25 +1,24 @@
-import { ReactElement, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
-import Link from "next/link";
+import { Dot } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import { MdCommentsDisabled } from "react-icons/md";
 import { styled } from "styled-components";
 
+import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
-import { SearchIcon } from "@/common/assets/svgs";
-import CheckIcon from "@/common/assets/svgs/CheckIcon";
-import { Application, potClient } from "@/common/contracts/core";
-import { daysAgo, truncate } from "@/common/lib";
-import {
-  Button,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/common/ui/components";
-import { AccountProfilePicture } from "@/entities/account";
-import { PotFilters } from "@/entities/pot";
+import { daysAgo, toChronologicalOrder, truncate } from "@/common/lib";
+import { Button, FilterChip, SearchBar } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
+import { AccountOption, AccountProfilePicture } from "@/entities/account";
 import { useProfileData } from "@/entities/profile";
-import { PotApplicationReviewModal, potApplicationFiltersTags } from "@/features/pot-application";
+import { ProjectListingStatusVariant } from "@/entities/project";
+import {
+  PotApplicationCardSkeleton,
+  PotApplicationReviewModal,
+  potApplicationFiltersTags,
+} from "@/features/pot-application";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
@@ -28,12 +27,11 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   margin-bottom: 4rem;
-  gap: 2rem;
+  flex-direction: column;
   .dropdown {
     display: none;
   }
   @media only screen and (max-width: 768px) {
-    flex-direction: column;
     gap: 1.5rem;
     .dropdown {
       display: flex;
@@ -41,96 +39,20 @@ const Container = styled.div`
   }
 `;
 
-const Filter = styled.div`
-  display: grid;
-  width: 286px;
-  border-radius: 6px;
-  padding: 8px 0;
-  border: 1px solid var(--Neutral-500, #7b7b7b);
-  height: fit-content;
-  .item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0.5rem 1rem;
-    font-size: 14px;
-    cursor: pointer;
-    svg {
-      opacity: 0;
-      transition: all 300ms ease;
-    }
-    &.active {
-      svg {
-        opacity: 1;
-      }
-    }
-    &:hover {
-      svg {
-        opacity: 1;
-      }
-    }
-  }
-  .count {
-    color: #7b7b7b;
-    margin-left: auto;
-  }
-  @media only screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-
 const ApplicationsWrapper = styled.div`
   border-radius: 6px;
-  border: 1px solid #7b7b7b;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-width: 711px;
   width: 100%;
 `;
 
-const SearchBar = styled.div`
-  display: flex;
-  position: relative;
-  svg {
-    position: absolute;
-    left: 1.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  input {
-    font-size: 14px;
-    background: #f6f5f3;
-    width: 100%;
-    height: 100%;
-    padding: 8px 24px 8px 60px;
-    border: none;
-    outline: none;
-  }
-  @media only screen and (max-width: 768px) {
-    svg {
-      left: 1rem;
-    }
-
-    input {
-      padding: 8px 24px 8px 54px;
-    }
-  }
-`;
-
-const ApplicationRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-  font-size: 14px;
-  position: relative;
-  border-top: 1px solid #c7c7c7;
+const ApplicationCard = styled.div`
   .header {
     display: flex;
-    gap: 1rem;
+    width: 100%;
     justify-content: space-between;
     position: relative;
-    align-items: center;
+    align-items: flex-start;
   }
   .header-info {
     display: flex;
@@ -153,123 +75,47 @@ const ApplicationRow = styled.div`
     color: #7b7b7b;
     font-weight: 600;
     cursor: pointer;
-    transition: all 300ms;
-    position: relative;
-    z-index: 2;
     &:hover {
       color: #292929;
     }
   }
-  .content {
+  .main {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    overflow: hidden;
-    transition: all 300ms ease-in-out;
-    max-height: 0;
-    .message {
-      padding-top: 1rem;
-    }
-    .notes {
+    flex: 1;
+    .content {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      .title {
-        color: #7b7b7b;
+      font-size: 17px;
+      .message {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        max-width: 100%;
+        a {
+          word-break: break-word;
+          display: inline-block;
+          max-width: 100%;
+        }
+      }
+      .notes {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        .title {
+          color: #7b7b7b;
+        }
+      }
+      button {
+        width: fit-content;
       }
     }
-    button {
-      width: fit-content;
-    }
-  }
-  .arrow {
-    rotate: 180deg;
-    transition: all 300ms;
-  }
-  .toggle-check {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 67px;
-    z-index: 1;
-    opacity: 0;
-    cursor: pointer;
-  }
-  .toggle-check:checked + .header .arrow {
-    rotate: 0deg;
-  }
-  .toggle-check:checked + .header + .content {
-    max-height: 100%;
-  }
-  @media only screen and (max-width: 768px) {
-    padding: 1rem;
-    .header-info {
-      flex-wrap: wrap;
-      gap: 0px;
-    }
-    .name {
-      margin: 0 8px;
-    }
-    .date {
-      line-height: 1;
-      width: 100%;
-      margin-left: 2.5rem;
-    }
-  }
-`;
-
-const Dot = styled.div`
-  width: 6px;
-  height: 6px;
-  background: #7b7b7b;
-  border-radius: 50%;
-
-  @media only screen and (max-width: 768px) {
-    display: none;
   }
 `;
 
 const Status = styled.div`
   display: flex;
-  padding: 6px 12px;
-  gap: 8px;
-  align-items: center;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 4px;
-  margin-left: auto;
-  div {
-    font-weight: 500;
-  }
-  svg {
-    width: 1rem;
-  }
-  @media only screen and (max-width: 768px) {
-    padding: 6px;
-    div {
-      display: none;
-    }
-    svg {
-      width: 16px;
-    }
-  }
-`;
-
-const DropdownLabel = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  .label {
-    font-weight: 500;
-  }
-  .count {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #ebebeb;
-  }
 `;
 
 const ApplicationsTab = () => {
@@ -280,26 +126,32 @@ const ApplicationsTab = () => {
     // transactionHashes: string;
   };
 
-  const { data: pot } = usePot({ potId });
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
+  const { data: potDetail } = usePot({ potId });
   const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
   const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 
-  const owner = pot?.owner?.id || "";
-  const admins = pot?.admins.map((adm) => adm.id) || [];
-  const chef = pot?.chef?.id || "";
+  const owner = potDetail?.owner?.id || "";
+  const admins = potDetail?.admins.map((adm) => adm.id) || [];
+  const chef = potDetail?.chef?.id || "";
+  const [statusFilter, setStatusFilter] = useState<ProjectListingStatusVariant>("All");
+  const [pageNumber, setPageNumber] = useState(1);
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
 
-  //! TODO: please use `indexer.usePotApplications` instead!
-  useEffect(() => {
-    // Fetch applications
-    (async () => {
-      const applicationsData = await potClient.getApplications({ potId }).catch(() => []);
-      setApplications(applicationsData);
-      setFilteredApplications(applicationsData);
-    })();
-  }, [potId]);
+  const {
+    isLoading: areApplicationsLoading,
+    error,
+    data: apps,
+  } = indexer.usePotApplications({
+    potId,
+    status: statusFilter === "All" ? undefined : statusFilter,
+    search: searchTerm,
+  });
+
+  const sortedResults = useMemo(() => {
+    const oldToRecent = toChronologicalOrder("submitted_at", apps?.results ?? []);
+    return oldToRecent.toReversed();
+  }, [apps?.results]);
 
   // Handle update application status for web wallet
   // INFO: Not needed. There's a global transaction successful modal. But leaving it here just in case
@@ -331,7 +183,7 @@ const ApplicationsTab = () => {
 
   const handleApproveApplication = (projectId: string) => {
     setProjectId(projectId);
-    setProjectStatus("Approved");
+    setStatusFilter("Approved");
   };
 
   const handleRejectApplication = (projectId: string) => {
@@ -344,165 +196,110 @@ const ApplicationsTab = () => {
     setProjectStatus("");
   };
 
-  const searchApplications = (searchTerm: string) => {
-    // filter applications that match the search term (message, project_id, review_notes or status)
-    const filteredApplications = applications?.filter((application) => {
-      const { message, project_id, review_notes, status } = application;
-      const searchFields = [message, project_id, review_notes, status];
-      return searchFields.some((field) =>
-        field ? field.toLowerCase().includes(searchTerm.toLowerCase().trim()) : "",
-      );
-    });
-
-    return filteredApplications;
+  const getApplicationCount = (status: string) => {
+    return apps?.results.filter((app) => app.status === status).length;
   };
 
-  const getApplicationCount = useCallback(
-    (sortVal: string) => {
-      if (!applications) return;
-      return applications?.filter((application: any) => {
-        if (sortVal === "All") return true;
-        return application.status === sortVal;
-      })?.length;
-    },
-    [applications],
-  );
-
   const applicationsFilters: Record<string, { label: string; val: string; count?: number }> = {
-    ALL: {
-      label: "All applications",
-      val: "ALL",
-      count: getApplicationCount("All")!,
+    All: {
+      label: "All",
+      val: "all",
+      count: apps?.count,
     },
-    PENDING: {
-      label: "Pending applications",
-      val: "PENDING",
+    Approved: {
+      label: "Approved",
+      val: "approved",
+      count: getApplicationCount("Approved")!,
+    },
+    Pending: {
+      label: "Pending",
+      val: "pending",
 
       count: getApplicationCount("Pending")!,
     },
-    APPROVED: {
-      label: "Approved applications",
-      val: "APPROVED",
-      count: getApplicationCount("Approved")!,
-    },
-    REJECTED: {
-      label: "Rejected applications",
-      val: "REJECTED",
+    Rejected: {
+      label: "Rejected",
+      val: "rejected",
       count: getApplicationCount("Rejected")!,
     },
-  };
-
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const sortApplications = (key: string) => {
-    if (key === "ALL") {
-      return searchApplications(searchTerm);
-    }
-
-    const filtered = applications?.filter((application: any) => {
-      return application.status === applicationsFilters[key].label.split(" ")[0];
-    });
-
-    return filtered;
   };
 
   const isChefOrGreater =
     accountId === chef || admins.includes(accountId || "") || accountId === owner;
 
-  const [filterValue, setFilterValue] = useState("ALL");
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+    }
 
-  const handleSort = (key: string) => {
-    const sorted = sortApplications(key);
-    setFilteredApplications(sorted);
-    setFilterValue(key);
-  };
+    console.log({ statusFilter });
+  }, [statusFilter, error]);
 
-  const DropdownValue = () => {
-    const digit = applicationsFilters[filterValue]?.count?.toString().length || 0;
-    return (
-      <DropdownLabel>
-        <div className="label">{applicationsFilters[filterValue]?.label || ""}</div>
-        <div
-          className="count"
-          style={{
-            width: `${24 + (digit - 1) * 6}px`,
-            height: `${24 + (digit - 1) * 6}px`,
-          }}
-        >
-          {applicationsFilters[filterValue]?.count || 0}
-        </div>
-      </DropdownLabel>
-    );
-  };
+  const ApplicationLookupPlaceholder = () =>
+    Array.from({ length: 6 }, (_, i) => <PotApplicationCardSkeleton key={i} />);
 
   return (
-    <Container>
-      {pot && (
+    <Container className="gap-6">
+      {/* Modal */}
+      {potDetail && (
         <PotApplicationReviewModal
           open={!!projectId}
-          potDetail={pot}
+          potDetail={potDetail}
           projectId={projectId}
           projectStatus={projectStatus}
           onCloseClick={handleCloseModal}
         />
       )}
-
-      <div className="dropdown">
-        <PotFilters
-          {...{
-            sortVal: <DropdownValue />,
-            showCount: true,
-            sortList: Object.values(applicationsFilters),
-            menuStyle: { left: "auto", right: "auto" },
-            handleSortChange: ({ val }) => {
-              handleSort(val);
-            },
-          }}
-        />
-      </div>
-      <Filter>
+      <div className="flex gap-3">
         {Object.keys(applicationsFilters).map((key) => (
-          <div
+          <FilterChip
+            variant={statusFilter === key ? "brand-filled" : "brand-outline"}
+            onClick={() =>
+              setStatusFilter(applicationsFilters[key].label as ProjectListingStatusVariant)
+            }
+            className="font-medium"
+            label={applicationsFilters[key].label}
+            count={applicationsFilters[key].count}
             key={key}
-            className={`item ${filterValue === key ? "active" : ""}`}
-            onClick={() => handleSort(key)}
-          >
-            <CheckIcon width={14} height={12} />
-
-            <div> {applicationsFilters[key].label}</div>
-            <div className="count">{applicationsFilters[key].count}</div>
-          </div>
-        ))}
-      </Filter>
-      <ApplicationsWrapper>
-        <SearchBar>
-          <SearchIcon />
-          <input
-            type="text"
-            placeholder="Search applications"
-            className="search-input"
-            onChange={(e) => {
-              const results = searchApplications(e.target.value);
-              setSearchTerm(e.target.value);
-              setFilteredApplications(results);
-            }}
           />
-        </SearchBar>
-        {filteredApplications.length ? (
-          filteredApplications.map((application) => {
-            return (
+        ))}
+      </div>
+      <ApplicationsWrapper className="gap-6">
+        <SearchBar
+          placeholder="Search Applications"
+          onChange={({ target }) => setSearchTerm(target.value.toLowerCase())}
+          defaultValue={searchTerm}
+        />
+        <div className="flex w-full flex-col flex-wrap justify-between gap-5 md:flex-row">
+          {!areApplicationsLoading ? (
+            sortedResults.map((application: PotApplication) => (
               <ApplicationData
-                key={application.project_id}
+                key={application.id}
                 applicationData={application}
                 isChefOrGreater={isChefOrGreater}
                 handleApproveApplication={handleApproveApplication}
                 handleRejectApplication={handleRejectApplication}
               />
-            );
-          })
-        ) : (
-          <div style={{ padding: "1rem" }}>No applications to display</div>
-        )}
+            ))
+          ) : (
+            <ApplicationLookupPlaceholder />
+          )}
+          {!sortedResults && (
+            <div className="min-h-140 flex w-full flex-col items-center justify-center">
+              <Image
+                src="/assets/icons/no-list.svg"
+                alt="No results found"
+                width={200}
+                height={200}
+                className="h-50 w-50 mb-4"
+              />
+
+              <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
+                <p className="w-100 font-lora text-center italic">{"No results found"}</p>
+              </div>
+            </div>
+          )}
+        </div>
       </ApplicationsWrapper>
     </Container>
   );
@@ -514,88 +311,129 @@ const ApplicationData = ({
   handleApproveApplication,
   handleRejectApplication,
 }: {
-  applicationData: Application;
+  applicationData: PotApplication;
   isChefOrGreater: boolean;
   handleApproveApplication: (projectId: string) => void;
   handleRejectApplication: (projectId: string) => void;
 }) => {
-  const { project_id, status, message, review_notes, submitted_at } = applicationData;
-  const { borderColor, color, icon, label, background } = potApplicationFiltersTags[status];
-  const { profile } = useProfileData(project_id, true, false);
+  const { applicant, status, message, submitted_at } = applicationData;
+  const submittedTimeStamp = new Date(submitted_at).getTime();
+  const { id: projectId } = applicant;
+  const review_notes = null;
+
+  const { icon, label } = potApplicationFiltersTags[status];
+  const { profile } = useProfileData(projectId, true, false);
+
+  const daysAgoElement = (
+    <div className="whitespace-nowrap text-[17px] font-normal text-[#7a7a7a]">
+      {daysAgo(submittedTimeStamp)}
+    </div>
+  );
 
   return (
-    <ApplicationRow key={project_id}>
-      <input type="checkbox" className="toggle-check" />
+    <ApplicationCard
+      key={projectId}
+      className="mx-auto flex min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border border-[#eaeaea] bg-white p-5 md:min-w-[445px]"
+    >
       <div className="header">
         <div className="header-info">
-          <AccountProfilePicture accountId={project_id} className="profile-image" />
-          {profile?.name && <div className="name">{truncate(profile?.name, 15)}</div>}
-
-          {/* Tooltip */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Link
-                  className="address"
-                  href={`${routesPath.PROJECT}/${project_id}`}
-                  target="_blank"
-                >
-                  {truncate(project_id, 15)}
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>{project_id}</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <Dot />
-          <div className="date">{daysAgo(submitted_at)}</div>
+          <AccountOption
+            title="user Account"
+            accountId={projectId}
+            highlightOnHover={true}
+            isRounded={true}
+            statusElement={daysAgoElement}
+            accountLink={`${routesPath.PROJECT}/${projectId}`}
+          />
         </div>
         <Status
-          style={{
-            borderColor,
-            color,
-            background,
-          }}
+          className={cn(
+            "inline-flex items-center justify-center gap-2 rounded-md border py-1.5 pl-2 pr-3",
+            {
+              "border-[#f4b37d] bg-[#fdfce9]": status === "Pending",
+              "border-[#58f0db] bg-[#effefa]": status === "Approved",
+              "border-[#faa7a8] bg-[#fef3f2]": status === "Rejected",
+            },
+          )}
         >
-          <div>{label}</div>
           {icon}
-        </Status>
-        <svg
-          width="12"
-          height="8"
-          viewBox="0 0 12 8"
-          fill="none"
-          className="arrow"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6 0.294922L0 6.29492L1.41 7.70492L6 3.12492L10.59 7.70492L12 6.29492L6 0.294922Z"
-            fill="#7B7B7B"
-          />
-        </svg>
-      </div>
-      <div className="content">
-        <div className="message">{message}</div>
-        {review_notes && (
-          <div className="notes">
-            <div className="title">Admin notes:</div>
-            <div>{review_notes}</div>
+          <div
+            className={cn("font-['Mona Sans'] text-sm font-medium leading-tight", {
+              "text-[#b63d18]": status === "Pending",
+              "text-[#0b7a74]": status === "Approved",
+              "text-[#b8182d]": status === "Rejected",
+            })}
+          >
+            {label}
           </div>
-        )}
-        {isChefOrGreater && (
-          <>
-            {status !== "Approved" && (
-              <Button variant="tonal-filled" onClick={() => handleApproveApplication(project_id)}>
-                Approve
-              </Button>
-            )}
-            {status !== "Rejected" && (
-              <Button onClick={() => handleRejectApplication(project_id)}>Reject</Button>
-            )}
-          </>
-        )}
+        </Status>
       </div>
-    </ApplicationRow>
+      <div className="main ml-0 md:ml-12">
+        <div className="content text-neutral-600">
+          <div className="message">{message}</div>
+        </div>
+      </div>
+      {status !== "Pending" && (
+        <div className="ml-0 self-stretch md:ml-12">
+          <div
+            className={cn(
+              "inline-flex w-full flex-col items-start justify-start gap-3 rounded-xl p-5",
+              { "bg-[#fef3f2]": status === "Rejected", "bg-[#f7f7f7]": status !== "Rejected" },
+            )}
+          >
+            <div className="title flex items-center">
+              <div className="flex items-center gap-1">
+                <AccountProfilePicture
+                  accountId={projectId}
+                  className="h-6 w-6 rounded-full shadow-inner"
+                />
+                {profile?.name ? (
+                  <div className="name text-[17px] font-semibold leading-normal text-[#292929]">
+                    {truncate(profile?.name, 15)}
+                  </div>
+                ) : (
+                  <div>{truncate(projectId, 15)}</div>
+                )}
+              </div>{" "}
+              <Dot className="text-[#010101]/50" />
+              <div className="text-[17px] font-semibold text-[#010101]/50 ">Admin</div>
+            </div>
+            {review_notes ? (
+              <div className="text-[17px] font-normal leading-tight text-[#010101]/70">
+                {review_notes}
+              </div>
+            ) : (
+              <div
+                className={
+                  "mx-auto inline-flex w-full items-center justify-center gap-3 rounded-lg bg-white p-2 text-[17px] font-medium text-[#7a7a7a]"
+                }
+              >
+                {" "}
+                <MdCommentsDisabled className="h-6 w-6 text-[#7B7B7B]" />
+                <p>No coment</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {isChefOrGreater && (
+        <div className="flex gap-4 self-end">
+          {status !== "Approved" && (
+            <Button
+              variant={"standard-outline"}
+              onClick={() => handleApproveApplication(projectId)}
+            >
+              Accept
+            </Button>
+          )}
+          {status !== "Rejected" && (
+            <Button variant={"standard-outline"} onClick={() => handleRejectApplication(projectId)}>
+              Reject
+            </Button>
+          )}
+        </div>
+      )}
+    </ApplicationCard>
   );
 };
 
