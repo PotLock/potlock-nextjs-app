@@ -62,5 +62,11 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
     };
   }, [checkWallet, wallet]);
 
-  return isClient ? <>{children}</> : <SplashScreen className="h-screen" />;
+  return isClient &&
+    //? Unfortunately, MyNearWallet refuses to work upon relogin without this hack
+    ready ? (
+    <>{children}</>
+  ) : (
+    <SplashScreen className="h-screen" />
+  );
 };
