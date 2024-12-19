@@ -3,10 +3,10 @@ import { useMemo } from "react";
 import { prop } from "remeda";
 
 import { ByPotId } from "@/common/api/indexer";
+import { authHooks } from "@/common/services/auth";
 import { ClearanceCheckResult } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
 import { usePotExtensionFlags } from "@/entities/pot";
-import { useSessionAuth } from "@/entities/session";
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**
@@ -14,7 +14,7 @@ import { useSessionAuth } from "@/entities/session";
  *  as it's built for the mpDAO milestone.
  */
 export const useVotingUserClearance = ({ potId }: ByPotId): ClearanceCheckResult => {
-  const { accountId, isVerifiedPublicGoodsProvider } = useSessionAuth();
+  const { accountId, isVerifiedPublicGoodsProvider } = authHooks.useUserSession();
   const { isHumanVerified: isHuman } = useIsHuman(accountId);
   const { hasVoting } = usePotExtensionFlags({ potId });
 

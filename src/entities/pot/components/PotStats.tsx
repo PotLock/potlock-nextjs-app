@@ -2,10 +2,11 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { coingecko } from "@/common/api/coingecko";
 import { Pot } from "@/common/api/indexer";
 import { Toggle } from "@/common/assets/svgs";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncate } from "@/common/lib";
+import { tokenHooks } from "@/common/services/token";
 import { AccountProfilePicture } from "@/entities/account";
 import { useProfileData } from "@/entities/profile";
 import { rootPathnames } from "@/pathnames";
@@ -25,13 +26,13 @@ const Table = ({
   title: string;
 }) => {
   const [usdToggle, setUsdToggle] = useState(false);
-  const { data: nearToUsdValue } = coingecko.useOneNearUsdPrice();
+  const { data: nativeToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
 
   return (
     <Container className="md:min-w-100 xl:w-126.5">
       <div className="header">
         {usdToggle
-          ? `~$${(parseFloat(totalAmount) * nearToUsdValue).toFixed(2)}`
+          ? `~$ ${nativeToken?.usdPrice?.mul(totalAmount).toFixed(2) ?? 0}`
           : `${parseFloat(totalAmount).toFixed(2)}N`}
         <span> raised from </span>
         {totalUniqueDonors}
@@ -42,11 +43,11 @@ const Table = ({
         <div
           className="sort-btn"
           style={{
-            cursor: nearToUsdValue ? "pointer" : "default",
+            cursor: nativeToken?.usdPrice ? "pointer" : "default",
           }}
-          onClick={() => (nearToUsdValue ? setUsdToggle(!usdToggle) : "")}
+          onClick={() => (nativeToken?.usdPrice ? setUsdToggle(!usdToggle) : "")}
         >
-          {nearToUsdValue && <Toggle />}
+          {nativeToken?.usdPrice && <Toggle />}
           {usdToggle ? "USD" : "NEAR"}
         </div>
       </div>
@@ -79,11 +80,11 @@ type DonationProps = {
 };
 
 const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
-  const { data: oneNearUsdPrice } = coingecko.useOneNearUsdPrice();
+  const { data: nativeToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
   const profile = useProfileData(donorId);
 
   const matchedAmount = usdToggle
-    ? (nearAmount * oneNearUsdPrice).toFixed(2)
+    ? (nativeToken?.usdPrice?.mul(nearAmount).toFixed(2) ?? 0)
     : nearAmount.toFixed(2);
 
   const url = `${rootPathnames.PROJECT}/${donorId}`;

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { NearIcon } from "@/common/assets/svgs";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import { AccountProfilePicture } from "@/entities/account";

@@ -17,6 +17,7 @@ export enum PotLayoutTabTag {
   Votes = "Votes",
   Donations = "Donations",
   Sponsors = "Sponsors",
+  History = "History",
   Payouts = "Payouts",
   Feeds = "Feeds",
   Settings = "Settings",
@@ -95,6 +96,12 @@ const usePotTabStore = create<TabState>()(
           [PotLayoutTabTag.Sponsors]: {
             tag: PotLayoutTabTag.Sponsors,
             href: `${rootHref}/sponsors`,
+          },
+          [PotLayoutTabTag.History]: {
+            tag: PotLayoutTabTag.History,
+            href: `${rootHref}/history`,
+            // TODO: Temporarily disabled
+            isHidden: true || !hasVoting,
           },
           [PotLayoutTabTag.Payouts]: {
             tag: PotLayoutTabTag.Payouts,

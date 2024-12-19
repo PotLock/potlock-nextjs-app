@@ -5,7 +5,7 @@ import { AccountId } from "@/common/types";
 
 export type Wallet = Omit<WalletManager, "changeWalletStatus" | "status">;
 
-export type AuthSession =
+export type UserSession =
   | {
       accountId: AccountId;
       account?: Account;

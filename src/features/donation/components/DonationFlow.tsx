@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
-import { useRouteQuery } from "@/common/lib";
-import { ftService } from "@/common/services";
+import { isBigSource, useRouteQuery } from "@/common/lib";
+import { authHooks } from "@/common/services/auth";
+import { tokenHooks } from "@/common/services/token";
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { dispatch } from "@/store";
@@ -24,6 +25,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   closeModal,
   ...props
 }) => {
+  const userSession = authHooks.useUserSession();
   const { currentStep, finalOutcome } = useDonationState();
 
   const {
@@ -40,9 +42,16 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
           : (finalOutcome?.referrer_id ?? undefined),
     });
 
-  const inputs = form.watch();
-  const { data: token } = ftService.useRegisteredToken(inputs);
-  const isBalanceSufficient = totalAmountFloat < (token?.balanceFloat ?? 0);
+  const [tokenId] = form.watch(["tokenId"]);
+
+  const { data: token } = tokenHooks.useToken({
+    tokenId,
+    balanceCheckAccountId: userSession?.accountId,
+  });
+
+  const isBalanceSufficient = isBigSource(totalAmountFloat)
+    ? (token?.balance?.gt(totalAmountFloat) ?? false)
+    : false;
 
   const allocationScreenProps = useMemo(
     () => ({

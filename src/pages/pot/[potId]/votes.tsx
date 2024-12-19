@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
 import { votingHooks } from "@/common/contracts/core/voting";
+import { authHooks } from "@/common/services/auth";
 import { FilterChip, Input } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { usePotActiveElections } from "@/entities/pot";
-import { useSessionAuth } from "@/entities/session";
 import {
   VotingCandidateFilter,
   VotingCandidateList,
@@ -21,7 +21,7 @@ import {
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotVotesTab() {
-  const userSession = useSessionAuth();
+  const userSession = authHooks.useUserSession();
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");

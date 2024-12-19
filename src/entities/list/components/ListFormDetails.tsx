@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus, listsClient } from "@/common/contracts/core";
 import uploadFileToIPFS from "@/common/services/ipfs";
@@ -15,7 +15,6 @@ import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountOption, AccountProfilePicture } from "@/entities/account";
-import { useWallet } from "@/entities/session";
 import { AccessControlList } from "@/features/access-control";
 import { dispatch } from "@/store";
 
@@ -91,7 +90,6 @@ export const ListFormDetails: React.FC = () => {
   } = useRouter();
 
   const onEditPage = !!id;
-  const { wallet } = useWallet();
 
   useEffect(() => {
     const fetchListDetails = async () => {
@@ -126,7 +124,7 @@ export const ListFormDetails: React.FC = () => {
     };
 
     if (walletApi?.accountId) fetchProfileImage();
-  }, [wallet]);
+  }, [walletApi?.accountId]);
 
   // prettier-ignore
   const onSubmit: SubmitHandler<any> = async (data, event) => {

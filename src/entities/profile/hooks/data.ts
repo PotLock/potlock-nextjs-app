@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { getImage } from "@/common/api/images";
 import { indexer } from "@/common/api/indexer";
 import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
+import { getImage } from "@/common/services/images";
 import { useRegistration } from "@/entities/core";
 
 export const useProfileData = (

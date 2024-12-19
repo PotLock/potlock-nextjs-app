@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { SYBIL_APP_LINK_URL } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { WarningIcon } from "@/common/assets/svgs";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/components";
 import { useIsHuman } from "@/entities/core";
@@ -17,7 +17,7 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
   potId,
   classNames,
 }) => {
-  const { isHumanVerified: isDonorNadabotVerified } = useIsHuman(walletApi.accountId ?? "unknown");
+  const { isHumanVerified: isDonorNadabotVerified } = useIsHuman(walletApi.accountId ?? "noop");
 
   const { data: pot } = indexer.usePot({ potId });
 

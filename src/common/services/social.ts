@@ -1,5 +1,5 @@
-import { getImage } from "@/common/api/images";
 import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
+import { getImage } from "@/common/services/images";
 import { ByAccountId } from "@/common/types";
 
 export type SocialImagesInputs = ByAccountId & {

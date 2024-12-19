@@ -5,7 +5,7 @@ import { values } from "remeda";
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { ftService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { ByAccountId, ByCampaignId } from "@/common/types";
 import {
   DialogDescription,
@@ -21,12 +21,13 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import { SelectField, SelectFieldOption, TextField } from "@/common/ui/form-fields";
-import { TokenBalance, TokenSelector } from "@/entities/token";
+import { TokenSelector } from "@/entities/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR, DONATION_MIN_NEAR_AMOUNT } from "../constants";
 import { DonationAllocationInputs, donationAllocationStrategies } from "../models";
 import { DonationAllocationStrategyEnum } from "../types";
+import { DonationTokenBalance } from "./DonationTokenBalance";
 
 export type DonationDirectAllocationProps = Partial<ByAccountId> &
   Partial<ByCampaignId> &
@@ -48,7 +49,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     "potAccountId",
   ]);
 
-  const { data: token } = ftService.useRegisteredToken({ tokenId });
+  const { data: token } = tokenHooks.useToken({ tokenId });
 
   const {
     isLoading: isRecipientDataLoading,
@@ -170,7 +171,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
             <TextField
               label="Amount"
               {...field}
-              labelExtension={<TokenBalance {...{ tokenId }} />}
+              labelExtension={<DonationTokenBalance {...{ tokenId }} />}
               inputExtension={
                 <FormField
                   control={form.control}

@@ -8,9 +8,9 @@ import { AccountId } from "@/common/types";
 import { useGlobalStoreSelector } from "@/store";
 
 import { useWallet } from "./wallet";
-import { AuthSession } from "../types";
+import { UserSession } from "../types";
 
-export const useSessionAuth = (): AuthSession => {
+export const useUserSession = (): UserSession => {
   const { isSignedIn, wallet } = useWallet();
   const { actAsDao, accountId: lastActiveAccountId } = useGlobalStoreSelector(prop("nav"));
   const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);

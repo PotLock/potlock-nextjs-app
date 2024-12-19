@@ -6,6 +6,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import CheckIcon from "@/common/assets/svgs/CheckIcon";
 import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
+import { authHooks } from "@/common/services/auth";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import {
   DonationsInfo,
@@ -14,7 +15,6 @@ import {
   ProfileTags,
   useProfileData,
 } from "@/entities/profile";
-import { useSessionAuth, useWallet } from "@/entities/session";
 import routesPath, { rootPathnames } from "@/pathnames";
 
 type Props = {
@@ -23,8 +23,8 @@ type Props = {
 };
 
 const LinksWrapper = ({ accountId }: { accountId: string }) => {
-  const userSession = useSessionAuth();
-  const { wallet } = useWallet();
+  const userSession = authHooks.useUserSession();
+  const { wallet } = authHooks.useWallet();
   const [copied, setCopied] = useState(false);
 
   return (
@@ -65,7 +65,7 @@ const LinksWrapper = ({ accountId }: { accountId: string }) => {
 };
 
 export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
-  const { wallet } = useWallet();
+  const { wallet } = authHooks.useWallet();
   const { profile } = useProfileData(accountId);
 
   const name = profile?.name || "";

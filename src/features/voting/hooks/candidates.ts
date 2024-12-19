@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
+import { authHooks } from "@/common/services/auth";
 import { ByAccountId } from "@/common/types";
 import { useToast } from "@/common/ui/hooks";
-import { useSessionAuth } from "@/entities/session";
 
 export interface VotingCandidateLookup extends ByElectionId {}
 
 export const useVotingCandidateLookup = ({ electionId }: VotingCandidateLookup) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const userSession = useSessionAuth();
+  const userSession = authHooks.useUserSession();
   const { data, ...candidatesQueryResult } = votingHooks.useElectionCandidates({ electionId });
 
   const { data: userVotes } = votingHooks.useVoterVotes({
@@ -53,7 +53,7 @@ export const useVotingCandidateLookup = ({ electionId }: VotingCandidateLookup) 
 
 export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId & ByAccountId) => {
   const { toast } = useToast();
-  const userSession = useSessionAuth();
+  const userSession = authHooks.useUserSession();
 
   const { data: isVotingPeriodOngoing = false } = votingHooks.useIsVotingPeriod({ electionId });
 

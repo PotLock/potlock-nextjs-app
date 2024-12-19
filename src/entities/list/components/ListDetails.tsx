@@ -8,7 +8,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
@@ -21,7 +21,6 @@ import {
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
 import { AccountOption, AccountProfilePicture } from "@/entities/account";
-import { useWallet } from "@/entities/session";
 import { AccessControlListModal } from "@/features/access-control";
 import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";
@@ -50,7 +49,6 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   const [isApplicationSuccessful, setIsApplicationSuccessful] = useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] = useState({ open: false });
 
-  const { wallet } = useWallet();
   const adminsModalId = useId();
   const registrantsModalId = useId();
 
@@ -89,7 +87,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         notes: note,
         registrations: [
           {
-            registrant_id: wallet?.accountId ?? "",
+            registrant_id: walletApi?.accountId ?? "",
             status:
               listDetails?.owner?.id === walletApi.accountId
                 ? "Approved"

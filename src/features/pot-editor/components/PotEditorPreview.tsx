@@ -4,7 +4,7 @@ import { Pencil } from "lucide-react";
 import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { isAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -92,7 +92,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
 
           {isDataAvailable ? (
             <AccountOption
-              accountId={data?.owner.id ?? "unknown"}
+              accountId={data?.owner.id ?? "noop"}
               isRounded
               classNames={{ root: "p-0 pr-2", avatar: "w-6 h-6" }}
             />

@@ -19,7 +19,7 @@ export const DonateRandomly = () => {
   const randomProjectAccountId = randomPGRegistryEntry?.registrant.id;
 
   const { openDonationModal: openRandomDonationModal } = useDonation({
-    accountId: randomProjectAccountId ?? "unknown",
+    accountId: randomProjectAccountId ?? "noop",
   });
 
   const onDonateRandomlyClick = (event: React.MouseEvent) => {

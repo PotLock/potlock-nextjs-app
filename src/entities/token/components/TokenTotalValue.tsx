@@ -1,6 +1,6 @@
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { stringifiedU128ToFloat } from "@/common/lib";
-import { ftService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -19,7 +19,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   classNames,
   ...props
 }) => {
-  const { data: token } = ftService.useRegisteredToken({ tokenId });
+  const { data: token } = tokenHooks.useToken({ tokenId });
 
   const amount =
     "amountFloat" in props
@@ -28,8 +28,6 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
           props.amountBigString,
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         );
-
-  const amountUsd = token?.usdPrice?.gt(0) ? token?.usdPrice?.mul(amount).toFixed(2) : null;
 
   return (
     <div className={cn("flex items-center gap-2", classNames?.root)}>
@@ -47,11 +45,11 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
         <Skeleton className="w-35 h-5" />
       )}
 
-      {amountUsd ? (
+      {token?.usdPrice ? (
         <span
           className={cn("prose line-height-none text-xl text-neutral-600", { "mt-0.7": !textOnly })}
         >
-          {`~$ ${amountUsd}`}
+          {`~$ ${token.usdPrice.mul(amount).toFixed(2)}`}
         </span>
       ) : (
         <Skeleton className="w-35 h-5" />

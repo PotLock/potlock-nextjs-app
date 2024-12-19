@@ -8,7 +8,7 @@ import { Big } from "big.js";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { LISTS_CONTRACT_ACCOUNT_ID, SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK } from "@/common/constants";
 import * as socialDb from "@/common/contracts/social";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";

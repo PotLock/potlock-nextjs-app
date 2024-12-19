@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { isAccountId, stringifiedU128ToBigNum } from "@/common/lib";
-import { ftService } from "@/common/services";
+import { tokenHooks } from "@/common/services/token";
 import { ByAccountId, TokenId } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
 
@@ -29,18 +29,16 @@ export const useVotingParticipantStats = ({
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: mpDaoVoterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const { data: stakingTokenData } = useSWR(stakingContractAccountId ?? null, (tokenId) =>
-    isAccountId(tokenId) ? ftService.getFtData({ accountId, tokenId }) : undefined,
-  );
+  const { data: stakingToken } = tokenHooks.useToken({
+    tokenId: stakingContractAccountId ?? "noop",
+    balanceCheckAccountId: accountId,
+  });
 
   return useMemo(
     () => ({
       isHumanVerified,
-      stakingTokenBalance: stakingTokenData ? (stakingTokenData.balance ?? Big(0)) : undefined,
-
-      stakingTokenBalanceUsd: stakingTokenData
-        ? (stakingTokenData?.balanceUsd ?? Big(0))
-        : undefined,
+      stakingTokenBalance: stakingToken ? (stakingToken.balance ?? Big(0)) : undefined,
+      stakingTokenBalanceUsd: stakingToken ? (stakingToken.balanceUsd ?? Big(0)) : undefined,
 
       votingPower:
         mpDaoVoterInfo?.locking_positions.reduce(
@@ -51,6 +49,6 @@ export const useVotingParticipantStats = ({
         ) ?? Big(0),
     }),
 
-    [isHumanVerified, stakingTokenData, mpDaoVoterInfo?.locking_positions],
+    [isHumanVerified, stakingToken, mpDaoVoterInfo?.locking_positions],
   );
 };

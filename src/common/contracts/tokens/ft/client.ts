@@ -1,4 +1,4 @@
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 import type { AccountId, ByAccountId, ByTokenId } from "@/common/types";
 
 import type { FungibleTokenMetadata } from "./interfaces";

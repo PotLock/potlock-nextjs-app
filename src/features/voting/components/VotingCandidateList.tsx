@@ -4,11 +4,11 @@ import { useSet, useWindowSize } from "@uidotdev/usehooks";
 import { MdIndeterminateCheckBox } from "react-icons/md";
 
 import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
+import { authHooks } from "@/common/services/auth";
 import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useSessionAuth } from "@/entities/session";
 
 import { VotingCandidateOption } from "./VotingCandidateOption";
 
@@ -25,7 +25,7 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
 }) => {
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
-  const userSession = useSessionAuth();
+  const userSession = authHooks.useUserSession();
   const selectedEntries = useSet<AccountId>();
 
   const { isLoading: _isRemainingUserVotingCapacityLoading, data: remainingUserVotingCapacity } =
@@ -104,7 +104,7 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
       </div>
 
       <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
-        <div className="flex flex-col gap-2 pb-8">
+        <div className="flex flex-col gap-2 pb-8 pt-2">
           {data.map((candidate) => (
             <VotingCandidateOption
               key={candidate.account_id}
