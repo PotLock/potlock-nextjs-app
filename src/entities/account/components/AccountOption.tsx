@@ -27,7 +27,6 @@ export type AccountOptionProps = ByAccountId &
     hideStatusOnMobile?: boolean;
     primaryAction?: React.ReactNode;
     secondaryAction?: React.ReactNode;
-    daysAgoData?: number;
     accountLink?: string;
 
     classNames?: {
@@ -47,7 +46,6 @@ export const AccountOption = ({
   primaryAction,
   secondaryAction,
   title,
-  daysAgoData,
   classNames,
   accountLink,
 }: AccountOptionProps) => {
