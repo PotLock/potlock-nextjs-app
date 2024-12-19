@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema, ZodError } from "zod";
 
@@ -12,6 +13,7 @@ import { AccountId } from "@/common/types";
 import { useCoreState } from "@/entities/core";
 import { PotInputs } from "@/entities/pot";
 import { donationFeeBasisPointsToPercents } from "@/features/donation";
+import rootPathnames from "@/pathnames";
 import { dispatch } from "@/store";
 
 import {
@@ -31,6 +33,7 @@ export type PotEditorFormArgs =
   | { schema: PotEditorSettingsSchema };
 
 export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
+  const router = useRouter();
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = "potId" in props && typeof potId !== "string";
 
@@ -132,6 +135,8 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) =>
       dispatch.potEditor.save({
+        onDeploymentSuccess: ({ potId }: ByPotId) => router.push(`${rootPathnames.pot}/${potId}`),
+
         onUpdate: (config: PotConfig) => self.reset(potConfigToSettings(config)),
 
         ...(isNewPot
@@ -139,7 +144,7 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
           : { potId, ...(values as PotEditorSettings) }),
       }),
 
-    [isNewPot, potId, self],
+    [isNewPot, potId, router, self],
   );
 
   return {

@@ -18,16 +18,18 @@ const UnknownDeploymentStatusError = new Error("Unable to get pot deployment sta
 
 type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
   Partial<ByPotId> & {
+    onDeploymentSuccess: (params: ByPotId) => void;
     onUpdate: (config: PotConfig) => void;
   };
 
 export const effects = (dispatch: AppDispatcher) => ({
   handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
-    void potClient
-      .getConfig({ potId: id })
-      .then((potConfig) => dispatch.potEditor.deploymentSuccess({ id, ...potConfig })),
+    void potClient.getConfig({ potId: id }).then((potConfig) => {
+      dispatch.potEditor.deploymentSuccess({ id, ...potConfig });
+    }),
 
   save: async ({
+    onDeploymentSuccess,
     onUpdate,
     potId,
     pot_handle,
@@ -55,7 +57,10 @@ export const effects = (dispatch: AppDispatcher) => ({
             pot_args,
             pot_handle: (pot_handle?.length ?? 0) > 0 ? pot_handle : undefined,
           })
-          .then(dispatch.potEditor.handleDeploymentSuccess)
+          .then((result) => {
+            dispatch.potEditor.handleDeploymentSuccess(result);
+            onDeploymentSuccess({ potId: result.id });
+          })
           .catch(dispatch.potEditor.deploymentFailure);
       } else {
         potClient
