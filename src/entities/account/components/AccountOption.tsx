@@ -95,27 +95,34 @@ export const AccountOption = ({
               <div className="mr-a flex w-full cursor-pointer items-center gap-4">
                 {avatarElement}
 
-                <div className="flex w-full flex-col">
-                  <MiddleTruncate className="font-600 w-full" end={0}>
-                    {profile?.name ?? accountId}
-                  </MiddleTruncate>
-
-                  <Link
-                    className={cn(
-                      "underline-solid inline-flex w-full items-start",
-                      "text-nowrap text-neutral-500 underline-offset-4",
-                    )}
-                    href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
-                    target="_blank"
-                  >
-                    <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
-                  </Link>
-
-                  {statusElement && (
-                    <span className={cn("mt-2 md:hidden", { hidden: hideStatusOnMobile })}>
+                <div className="flex flex-col items-start justify-start">
+                  <div className="inline-flex w-full items-start gap-1.5">
+                    <MiddleTruncate className="font-600 w-full self-start" end={0}>
+                      {profile?.name ?? accountId}
+                    </MiddleTruncate>
+                    <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
                       {statusElement}
-                    </span>
-                  )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      className={cn(
+                        "underline-solid inline-flex w-full items-start",
+                        "text-nowrap text-neutral-500 underline-offset-4",
+                      )}
+                      href={
+                        accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`
+                      }
+                      target="_blank"
+                    >
+                      <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
+                    </Link>
+                    {statusElement && (
+                      <span className={cn("md:hidden", { hidden: hideStatusOnMobile })}>
+                        {statusElement}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 

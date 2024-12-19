@@ -325,7 +325,9 @@ const ApplicationData = ({
   const { profile } = useProfileData(projectId, true, false);
 
   const daysAgoElement = (
-    <div className="text-[17px] font-normal text-[#7a7a7a]">{daysAgo(submittedTimeStamp)}</div>
+    <div className="whitespace-nowrap text-[17px] font-normal text-[#7a7a7a]">
+      {daysAgo(submittedTimeStamp)}
+    </div>
   );
 
   return (
