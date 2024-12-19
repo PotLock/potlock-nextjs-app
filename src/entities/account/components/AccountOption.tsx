@@ -98,15 +98,9 @@ export const AccountOption = ({
                 {avatarElement}
 
                 <div className="flex w-full flex-col">
-                  <div className="inline-flex w-full items-start">
-                    <MiddleTruncate className="font-600 w-full" end={0}>
-                      {profile?.name ?? accountId}
-                    </MiddleTruncate>
-
-                    <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
-                      {statusElement}
-                    </div>
-                  </div>
+                  <MiddleTruncate className="font-600 w-full" end={0}>
+                    {profile?.name ?? accountId}
+                  </MiddleTruncate>
 
                   <Link
                     className={cn(
