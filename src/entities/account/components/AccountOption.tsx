@@ -4,7 +4,14 @@ import { MiddleTruncate } from "@re-dev/react-truncate";
 import Link from "next/link";
 
 import { AccountId, ByAccountId } from "@/common/types";
-import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
+import {
+  Avatar,
+  AvatarImage,
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useProfileData } from "@/entities/profile";
 import { rootPathnames } from "@/pathnames";
@@ -38,9 +45,9 @@ export const AccountOption = ({
   hideStatusOnMobile = false,
   primaryAction,
   secondaryAction,
-  accountLink,
   title,
   classNames,
+  accountLink,
 }: AccountOptionProps) => {
   const { profileImages, profile, profileReady } = useProfileData(accountId);
 
@@ -65,52 +72,66 @@ export const AccountOption = ({
     [accountId, avatarSrc, classNames?.avatar, profileReady, title],
   );
 
-  return isThumbnail ? (
-    avatarElement
-  ) : (
-    <div
-      className={cn(
-        "flex w-full items-center gap-4 px-5 py-2",
-        { "rounded-full": isRounded, "hover:bg-neutral-50": highlightOnHover },
-        classNames?.root,
-      )}
-    >
-      {primaryAction}
+  return (
+    <Tooltip>
+      <TooltipTrigger>
+        <Link
+          className="address"
+          href={accountLink ? `${accountLink}` : `/profile/${accountId}`}
+          target="_blank"
+        >
+          {isThumbnail ? (
+            avatarElement
+          ) : (
+            <div
+              className={cn(
+                "flex w-full cursor-pointer items-center gap-4 hover:bg-transparent",
+                { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
+                classNames?.root,
+              )}
+            >
+              {primaryAction}
 
-      <div className="mr-a flex w-full cursor-pointer items-center gap-4">
-        {avatarElement}
+              <div className="mr-a flex w-full cursor-pointer items-center gap-4">
+                {avatarElement}
 
-        <div className="flex w-full flex-col">
-          <div className="font-600 inline-flex items-center">
-            <MiddleTruncate className="font-600" end={0}>
-              {profile?.name ?? accountId}
-            </MiddleTruncate>
+                <div className="flex flex-col items-start justify-start">
+                  <div className="inline-flex w-full items-start gap-1.5">
+                    <MiddleTruncate className="font-600 w-full self-start" end={0}>
+                      {profile?.name ?? accountId}
+                    </MiddleTruncate>
+                    <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
+                      {statusElement}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      className={cn(
+                        "underline-solid inline-flex w-full items-start",
+                        "text-nowrap text-neutral-500 underline-offset-4",
+                      )}
+                      href={
+                        accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`
+                      }
+                      target="_blank"
+                    >
+                      <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
+                    </Link>
+                    {statusElement && (
+                      <span className={cn("md:hidden", { hidden: hideStatusOnMobile })}>
+                        {statusElement}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-            <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
-              {statusElement}
+              {secondaryAction && <div className="">{secondaryAction}</div>}
             </div>
-          </div>
-
-          <Link
-            className={cn(
-              "underline-solid inline-flex w-full items-center",
-              "text-nowrap text-neutral-500 underline underline-offset-4",
-            )}
-            href={accountLink ? `${accountLink}` : `${rootPathnames.PROFILE}/${accountId}`}
-            target="_blank"
-          >
-            <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
-          </Link>
-
-          {statusElement && (
-            <span className={cn("mt-2 md:hidden", { hidden: hideStatusOnMobile })}>
-              {statusElement}
-            </span>
           )}
-        </div>
-      </div>
-
-      {secondaryAction && <div className="">{secondaryAction}</div>}
-    </div>
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent>{accountId}</TooltipContent>
+    </Tooltip>
   );
 };
