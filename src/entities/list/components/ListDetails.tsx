@@ -12,7 +12,6 @@ import { walletApi } from "@/common/api/near/client";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { useWallet } from "@/common/services/auth";
 import { fetchSocialImages } from "@/common/services/social";
 import {
   DropdownMenu,
@@ -21,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/SocialShare";
-import { AccountOption } from "@/entities/account";
+import { AccountOption, AccountProfilePicture } from "@/entities/account";
 import { AccessControlListModal } from "@/features/access-control";
 import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";
@@ -50,7 +49,6 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   const [isApplicationSuccessful, setIsApplicationSuccessful] = useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] = useState({ open: false });
 
-  const { wallet } = useWallet();
   const adminsModalId = useId();
   const registrantsModalId = useId();
 
@@ -89,7 +87,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         notes: note,
         registrations: [
           {
-            registrant_id: wallet?.accountId ?? "",
+            registrant_id: walletApi?.accountId ?? "",
             status:
               listDetails?.owner?.id === walletApi.accountId
                 ? "Approved"
@@ -157,7 +155,9 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
           src={listOwnerImage || NO_IMAGE}
           alt="Owner"
         />
-        <Link href={`/profile/${listDetails.owner?.id}`}>{listDetails.owner?.id}</Link>
+        <Link target="_blank" href={`/profile/${listDetails.owner?.id}`}>
+          {listDetails.owner?.id}
+        </Link>
         <span className="text-gray-500">
           Created {new Date(listDetails.created_at).toLocaleDateString()}
         </span>
@@ -186,8 +186,26 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                     />
                   ))}
                   {admins.length > 4 && (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white">
+                    <div
+                      style={{
+                        boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                      }}
+                      className="group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white transition-all duration-500 ease-in-out"
+                    >
                       {admins.length - 4}+
+                      <div className="absolute top-5 z-10 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md bg-white py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+                        {admins.slice(4).map((admin) => (
+                          <Link
+                            href={`/profile/${admin}`}
+                            target="_blank"
+                            key={admin}
+                            className="mb-2 flex cursor-pointer items-center gap-2 p-2 text-[#292929] hover:bg-gray-100"
+                          >
+                            <AccountProfilePicture accountId={admin} className="h-5 w-5" />
+                            {admin}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
