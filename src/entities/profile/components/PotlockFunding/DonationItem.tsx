@@ -5,12 +5,12 @@ import Link from "next/link";
 import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { useAccountSocialProfile } from "@/entities/account";
 import routesPath from "@/pathnames";
 
 import NearIcon from "./NearIcon";
 // import PotIcon from "./PotIcon";
 import { FundingSrc } from "./styled";
-import useProfileData from "../../hooks/data";
 
 const addTrailingZeros = (number: number) => {
   if (number < 100 && number >= 0.1) return number.toFixed(1);
@@ -64,8 +64,8 @@ const DonationItem = ({
   // const name = truncate(isPot ? pot.id : donor.id, 15);
   const name = truncate(type === "received" ? donor.id : recipient.id, 15);
 
-  // const { profileImages } = useProfileData(isPot ? pot.id : donor.id);
-  const { profileImages } = useProfileData(
+  // const { profileImages } = useAccountSocialProfile(isPot ? pot.id : donor.id);
+  const { profileImages } = useAccountSocialProfile(
     type === "received" ? donor.id : recipient.id,
     true,
     false,

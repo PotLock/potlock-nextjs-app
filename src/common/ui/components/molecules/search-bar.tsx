@@ -2,10 +2,9 @@ import React from "react";
 
 import { Search } from "lucide-react";
 import Image from "next/image";
-import { MdSearch } from "react-icons/md";
 
-import { cn } from "../utils";
-import { Input, InputProps } from "./atoms/input";
+import { cn } from "../../utils";
+import { Input, InputProps } from "../atoms/input";
 
 type Props = InputProps & {
   className?: string;

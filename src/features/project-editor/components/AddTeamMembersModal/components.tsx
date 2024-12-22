@@ -2,7 +2,7 @@
 import { useCallback, useState } from "react";
 
 import { Button } from "@/common/ui/components";
-import useProfileData from "@/entities/profile/hooks/data";
+import { useAccountSocialProfile } from "@/entities/account";
 import { dispatch } from "@/store";
 
 export const GroupIcon = () => (
@@ -43,7 +43,7 @@ const Item = ({
   accountId: string;
   onRemove: (accountId: string) => void;
 }) => {
-  const profileInfo = useProfileData(accountId);
+  const profileInfo = useAccountSocialProfile(accountId);
   const [hasError, setHasError] = useState(false);
 
   return (

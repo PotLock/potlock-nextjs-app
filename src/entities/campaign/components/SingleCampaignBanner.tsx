@@ -7,7 +7,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Campaign, campaignsClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { SocialsShare } from "@/common/ui/components/SocialShare";
+import { SocialsShare } from "@/common/ui/components/molecules/social-share";
 import { AccountProfilePicture } from "@/entities/account";
 import { useNearToUsdWithFallback } from "@/entities/core/hooks/useNearToUsdWithFallback";
 import { DonateToCampaignProjects } from "@/features/donation";

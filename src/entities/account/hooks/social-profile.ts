@@ -5,7 +5,9 @@ import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/soci
 import { getImage } from "@/common/services/images";
 import { useRegistration } from "@/entities/core";
 
-export const useProfileData = (
+// TODO!: Refactor to retrieve the account information from the indexer
+//!  with a fallback SocialDB lookup ONLY if the account is not indexed.
+export const useAccountSocialProfile = (
   accountId?: string,
   useCache: boolean = true,
   getDonationsSent = true,
@@ -98,5 +100,3 @@ export const useProfileData = (
     registration,
   };
 };
-
-export default useProfileData;

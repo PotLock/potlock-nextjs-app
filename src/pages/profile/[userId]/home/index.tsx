@@ -2,11 +2,11 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
+import { useAccountSocialProfile } from "@/entities/account";
 import AboutItem from "@/entities/profile/components/AboutItem";
 import Github from "@/entities/profile/components/Github";
 import SmartContract from "@/entities/profile/components/SmartContract";
 import Team from "@/entities/profile/components/Team";
-import useProfileData from "@/entities/profile/hooks/data";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 const HomeTab = () => {
@@ -15,7 +15,7 @@ const HomeTab = () => {
 
   const userId = typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0);
 
-  const { profile, profileType } = useProfileData(userId);
+  const { profile, profileType } = useAccountSocialProfile(userId);
 
   return (
     <div className="mb-18 flex w-full flex-col">

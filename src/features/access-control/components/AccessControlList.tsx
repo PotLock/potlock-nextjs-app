@@ -6,11 +6,11 @@ import Link from "next/link";
 import { GroupIcon } from "@/common/assets/svgs";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountOption, AccountOptionProps, AccountProfilePicture } from "@/entities/account";
+import { AccountListItem, AccountListItemProps, AccountProfilePicture } from "@/entities/account";
 
 import { AccessControlListModal, AccessControlListModalProps } from "./AccessControlListModal";
 
-export type AccessControlListProps = Pick<AccountOptionProps, "classNames"> &
+export type AccessControlListProps = Pick<AccountListItemProps, "classNames"> &
   (
     | (AccessControlListModalProps & {
         isEditable?: true;
@@ -39,7 +39,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
       accountIds.length > 0 ? (
         <div un-flex="~" un-items="center" un-gap="2">
           {accountIds.slice(0, 4).map((account) => (
-            <AccountOption
+            <AccountListItem
               isThumbnail
               key={account.accountId}
               title={account.accountId}

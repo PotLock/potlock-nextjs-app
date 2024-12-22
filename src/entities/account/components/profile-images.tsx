@@ -6,7 +6,8 @@ import { IMAGES_ASSET_ENDPOINT_URL } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 import { useImgVisibilityToggle } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useProfileData } from "@/entities/profile";
+
+import { useAccountSocialProfile } from "../hooks/social-profile";
 
 const ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-image.png`;
 
@@ -21,7 +22,7 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
   className,
 }) => {
   const { imgVisibilityClassName, displayImg } = useImgVisibilityToggle();
-  const { avatarSrc: src } = useProfileData(accountId);
+  const { avatarSrc: src } = useAccountSocialProfile(accountId);
 
   return (
     <LazyLoadImage
@@ -47,7 +48,7 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
   className,
 }) => {
   const { imgVisibilityClassName, displayImg } = useImgVisibilityToggle();
-  const { backgroundSrc: src } = useProfileData(accountId);
+  const { backgroundSrc: src } = useAccountSocialProfile(accountId);
 
   const contentClassName = useMemo(
     () =>

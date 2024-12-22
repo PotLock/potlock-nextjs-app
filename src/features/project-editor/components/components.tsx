@@ -13,7 +13,7 @@ import {
   MultiSelectorTrigger,
   Textarea,
 } from "@/common/ui/components";
-import { useProfileData } from "@/entities/profile";
+import { useAccountSocialProfile } from "@/entities/account";
 import { ProjectCategoryVariant } from "@/entities/project";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -179,7 +179,7 @@ const NO_IMAGE =
   "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
 
 const AccountStackItem = ({ accountId, style }: { accountId: string; style?: CSSProperties }) => {
-  const profileInfo = useProfileData(accountId);
+  const profileInfo = useAccountSocialProfile(accountId);
   const [hasError, setHasError] = useState(false);
 
   return (

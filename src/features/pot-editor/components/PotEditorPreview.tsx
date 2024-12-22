@@ -8,7 +8,7 @@ import { walletApi } from "@/common/api/near/client";
 import { isAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountOption, AccountProfileLink } from "@/entities/account";
+import { AccountListItem, AccountProfileLink } from "@/entities/account";
 import { AccessControlList } from "@/features/access-control";
 
 import { POT_EDITOR_FIELDS } from "../constants";
@@ -91,7 +91,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
           <span className="prose font-500 text-sm text-neutral-500">{"Owner"}</span>
 
           {isDataAvailable ? (
-            <AccountOption
+            <AccountListItem
               accountId={data?.owner.id ?? "noop"}
               isRounded
               classNames={{ root: "p-0 pr-2", avatar: "w-6 h-6" }}
