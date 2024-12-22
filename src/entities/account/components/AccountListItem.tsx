@@ -48,7 +48,7 @@ export const AccountListItem = ({
 
   return isThumbnail ? (
     <AccountSummaryPopup {...{ accountId }}>
-      <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
+      <AccountProfilePicture className={cn("h-10 w-10", classNames?.avatar)} {...{ accountId }} />
     </AccountSummaryPopup>
   ) : (
     <div
@@ -63,7 +63,10 @@ export const AccountListItem = ({
 
       <AccountSummaryPopup {...{ accountId }}>
         <div className="mr-a flex w-full items-center gap-4">
-          <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
+          <AccountProfilePicture
+            className={cn("h-10 w-10", classNames?.avatar)}
+            {...{ accountId }}
+          />
 
           <div className="flex w-full flex-col items-start justify-start">
             <div className="max-w-100 inline-flex w-full items-start gap-1.5">
