@@ -114,7 +114,7 @@ export const AccountCard = ({
             <AccountProfileCover
               accountId={dataForList.registrant.id}
               className={cn(
-                "relative -mt-9 h-10 w-10 rounded-full bg-white object-cover",
+                "relative -mt-9 h-10 w-10 bg-white object-cover",
                 "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgb(199,199,199)_inset]",
               )}
               height={150}

@@ -68,7 +68,7 @@ export const AccountListItem = ({
   );
 
   return isThumbnail ? (
-    avatarElement
+    <AccountSummaryPopup {...{ accountId }}>{avatarElement}</AccountSummaryPopup>
   ) : (
     <div
       className={cn(
@@ -79,22 +79,22 @@ export const AccountListItem = ({
     >
       {primaryAction}
 
-      <div className="mr-a flex w-full items-center gap-4">
-        {avatarElement}
+      <AccountSummaryPopup {...{ accountId }}>
+        <div className="mr-a flex w-full items-center gap-4">
+          {avatarElement}
 
-        <div className="flex w-full flex-col items-start justify-start">
-          <div className="max-w-100 inline-flex w-full items-start gap-1.5">
-            <MiddleTruncate className="font-600 w-full self-start" end={0}>
-              {profile?.name ?? accountId}
-            </MiddleTruncate>
+          <div className="flex w-full flex-col items-start justify-start">
+            <div className="max-w-100 inline-flex w-full items-start gap-1.5">
+              <MiddleTruncate className="font-600 w-full self-start" end={0}>
+                {profile?.name ?? accountId}
+              </MiddleTruncate>
 
-            <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
-              {statusElement}
+              <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
+                {statusElement}
+              </div>
             </div>
-          </div>
 
-          <div className="flex w-full flex-col gap-1.5">
-            <AccountSummaryPopup {...{ accountId }}>
+            <div className="max-w-100 flex w-full flex-col gap-1.5">
               <Link
                 className={cn(
                   "underline-solid max-w-100 inline-flex w-full items-start",
@@ -105,16 +105,16 @@ export const AccountListItem = ({
               >
                 <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
               </Link>
-            </AccountSummaryPopup>
 
-            {statusElement && (
-              <span className={cn("md:hidden", { hidden: hideStatusOnMobile })}>
-                {statusElement}
-              </span>
-            )}
+              {statusElement && (
+                <span className={cn("md:hidden", { hidden: hideStatusOnMobile })}>
+                  {statusElement}
+                </span>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </AccountSummaryPopup>
 
       {secondaryAction && <div className="">{secondaryAction}</div>}
     </div>
