@@ -33,9 +33,6 @@ export const GroupIcon = () => (
   </svg>
 );
 
-const NO_IMAGE =
-  "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
-
 const Item = ({
   accountId,
   onRemove,
@@ -44,24 +41,16 @@ const Item = ({
   onRemove: (accountId: string) => void;
 }) => {
   const profileInfo = useAccountSocialProfile(accountId);
-  const [hasError, setHasError] = useState(false);
 
   return (
     <div className="flex flex-row items-center justify-between border-[1px_#f0f0f0_solid] p-[16px_0px]">
       <div className="flex w-full flex-row items-center justify-between gap-4">
         <div className="flex flex-row items-center justify-start gap-4">
-          {profileInfo.profileReady && (
+          {profileInfo.isReady && (
             <img
               alt="profile image"
               className="h-[40px] w-[40px] rounded-[50%] bg-white"
-              src={
-                hasError
-                  ? NO_IMAGE
-                  : profileInfo.profileImages.image
-                    ? profileInfo.profileImages.image
-                    : NO_IMAGE
-              }
-              onError={() => setHasError(true)}
+              src={profileInfo.avatarSrc}
             />
           )}
           <p className="font-400 color-[#2e2e2e] text-[16px]">@{accountId}</p>

@@ -110,7 +110,7 @@ const Sponsor = ({ donation, colIdx }: { donation: CustomDonationType; colIdx: n
   const amount = donation.amount;
   const donorId = donation.donor.id;
   const percentageShare = donation.percentage_share;
-  const { profile } = useAccountSocialProfile(donorId, true, false);
+  const { profile } = useAccountSocialProfile(donorId);
   const avatarSize = colIdx === 2 ? "h-[64px] w-[64px]" : "h-[40px] w-[40px]";
 
   return (

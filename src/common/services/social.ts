@@ -7,7 +7,7 @@ export type SocialImagesInputs = ByAccountId & {
 };
 
 /**
- * Use profile info to get profile and background images
+ * @deprecated Use `useAccountSocialProfile`
  */
 export const fetchSocialImages = async ({ socialData, accountId }: SocialImagesInputs) => {
   let currentProfile: NEARSocialUserProfile | null | undefined = socialData;

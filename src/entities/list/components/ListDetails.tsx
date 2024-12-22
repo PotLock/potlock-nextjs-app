@@ -178,7 +178,6 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                 <div className="flex items-center gap-2">
                   {admins.slice(0, 4).map((admin) => (
                     <AccountListItem
-                      title={admin}
                       key={admin}
                       isThumbnail
                       classNames={{ avatar: "w-7 h-7" }}

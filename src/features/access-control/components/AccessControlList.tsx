@@ -42,7 +42,6 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
             <AccountListItem
               isThumbnail
               key={account.accountId}
-              title={account.accountId}
               classNames={{ avatar: classNames?.avatar }}
               {...{ accountId: account.accountId }}
             />

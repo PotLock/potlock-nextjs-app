@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { MiddleTruncate } from "@re-dev/react-truncate";
 import Link from "next/link";
@@ -11,24 +11,23 @@ import { rootPathnames } from "@/pathnames";
 import { AccountSummaryPopup } from "./AccountSummaryPopup";
 import { useAccountSocialProfile } from "../hooks/social-profile";
 
-export type AccountListItemProps = ByAccountId &
-  Pick<React.HTMLAttributes<HTMLDivElement>, "title"> & {
-    isRounded?: boolean;
-    isThumbnail?: boolean;
-    highlightOnHover?: boolean;
-    onCheck?: (accountId: AccountId) => void;
-    statusElement?: React.ReactNode;
-    hideStatusOnDesktop?: boolean;
-    hideStatusOnMobile?: boolean;
-    primaryAction?: React.ReactNode;
-    secondaryAction?: React.ReactNode;
-    accountLink?: string;
+export type AccountListItemProps = ByAccountId & {
+  isRounded?: boolean;
+  isThumbnail?: boolean;
+  highlightOnHover?: boolean;
+  statusElement?: React.ReactNode;
+  hideStatusOnDesktop?: boolean;
+  hideStatusOnMobile?: boolean;
+  primaryAction?: React.ReactNode;
+  secondaryAction?: React.ReactNode;
+  href?: string;
+  onClick?: (accountId: AccountId) => void;
 
-    classNames?: {
-      root?: string;
-      avatar?: string;
-    };
+  classNames?: {
+    root?: string;
+    avatar?: string;
   };
+};
 
 export const AccountListItem = ({
   isRounded = false,
@@ -40,37 +39,31 @@ export const AccountListItem = ({
   hideStatusOnMobile = false,
   primaryAction,
   secondaryAction,
-  title,
+  href,
+  onClick,
   classNames,
-  accountLink,
 }: AccountListItemProps) => {
-  const { profileImages, profile, profileReady } = useAccountSocialProfile(accountId);
-
-  const avatarSrc = useMemo(
-    () =>
-      (typeof profile?.image === "string" ? profile?.image : profile?.image?.url) ??
-      profileImages.image,
-
-    [profile?.image, profileImages.image],
-  );
+  const handleClick = useCallback((): void => void onClick?.(accountId), [accountId, onClick]);
+  const { profile, isReady, avatarSrc } = useAccountSocialProfile(accountId);
 
   const avatarElement = useMemo(
     () =>
-      profileReady ? (
-        <Avatar className={cn("h-10 w-10", classNames?.avatar)} {...{ title }}>
+      isReady ? (
+        <Avatar className={cn("h-10 w-10", classNames?.avatar)}>
           <AvatarImage src={avatarSrc} alt={`Avatar of ${accountId}`} width={40} height={40} />
         </Avatar>
       ) : (
-        <Skeleton className={cn("h-10 w-10 rounded-full", classNames?.avatar)} {...{ title }} />
+        <Skeleton className={cn("h-10 w-10 rounded-full", classNames?.avatar)} />
       ),
 
-    [accountId, avatarSrc, classNames?.avatar, profileReady, title],
+    [accountId, avatarSrc, classNames?.avatar, isReady],
   );
 
   return isThumbnail ? (
     <AccountSummaryPopup {...{ accountId }}>{avatarElement}</AccountSummaryPopup>
   ) : (
     <div
+      onClick={handleClick}
       className={cn(
         "flex w-full items-center gap-4 hover:bg-transparent",
         { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
@@ -100,7 +93,7 @@ export const AccountListItem = ({
                   "underline-solid max-w-100 inline-flex w-full items-start",
                   "text-nowrap text-neutral-500 underline-offset-4",
                 )}
-                href={accountLink || `${rootPathnames.PROFILE}/${accountId}`}
+                href={href || `${rootPathnames.PROFILE}/${accountId}`}
                 target="_blank"
               >
                 <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>

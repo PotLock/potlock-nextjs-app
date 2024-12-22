@@ -175,28 +175,17 @@ export const CustomTextForm = ({
   );
 };
 
-const NO_IMAGE =
-  "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
-
 const AccountStackItem = ({ accountId, style }: { accountId: string; style?: CSSProperties }) => {
   const profileInfo = useAccountSocialProfile(accountId);
-  const [hasError, setHasError] = useState(false);
 
   return (
     <>
-      {profileInfo.profileReady && (
+      {profileInfo.isReady && (
         <img
           alt="profile image"
           className="h-[28px] w-[28px] rounded-[50%] bg-white"
           style={style}
-          src={
-            hasError
-              ? NO_IMAGE
-              : profileInfo.profileImages.image
-                ? profileInfo.profileImages.image
-                : NO_IMAGE
-          }
-          onError={() => setHasError(true)}
+          src={profileInfo.avatarSrc}
         />
       )}
     </>

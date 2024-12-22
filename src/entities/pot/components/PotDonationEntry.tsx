@@ -15,9 +15,6 @@ const addTrailingZeros = (number: number) => {
   return number;
 };
 
-const FALLBACK_URL =
-  "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
-
 export const PotDonationEntry = ({
   donation,
   projectId,
@@ -49,8 +46,8 @@ export const PotDonationEntry = ({
   const name = truncate(donorId, 15);
   const recipientName = truncate(recipientId, 15);
 
-  const donorProfile = useAccountSocialProfile(donorId, true, false);
-  const recipientProfile = useAccountSocialProfile(recipientId, true, false);
+  const donorProfile = useAccountSocialProfile(donorId);
+  const recipientProfile = useAccountSocialProfile(recipientId);
 
   return (
     <div
@@ -59,7 +56,7 @@ export const PotDonationEntry = ({
     >
       <FundingSrc>
         <img
-          src={donorProfile.profileImages.image || FALLBACK_URL}
+          src={donorProfile.avatarSrc}
           className="h-[24px] w-[24px] rounded-full object-cover align-middle"
           alt="Donor profile image"
         />
@@ -71,7 +68,7 @@ export const PotDonationEntry = ({
       </FundingSrc>
       <FundingSrc>
         <img
-          src={recipientProfile.profileImages.image || FALLBACK_URL}
+          src={recipientProfile.avatarSrc}
           className="h-[24px] w-[24px] rounded-full object-cover align-middle"
           alt="Recipient profile image"
         />

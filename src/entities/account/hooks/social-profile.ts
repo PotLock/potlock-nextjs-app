@@ -1,68 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { indexer } from "@/common/api/indexer";
 import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
-import { getImage } from "@/common/services/images";
 import { useRegistration } from "@/entities/core";
+
+import {
+  ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+  ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
+} from "../constants";
 
 // TODO!: Refactor to retrieve the account information from the indexer
 //!  with a fallback SocialDB lookup ONLY if the account is not indexed.
-export const useAccountSocialProfile = (
-  accountId?: string,
-  useCache: boolean = true,
-  getDonationsSent = true,
-) => {
-  const [profile, setProfile] = useState<NEARSocialUserProfile>();
-
-  const [profileImages, setProfileImages] = useState({
-    image: "",
-    backgroundImage: "",
-  });
-
-  const [profileReady, setProfileReady] = useState(false);
-
-  // Donations
-  const { data: donationsData } = indexer.useAccountDonationsSent({
-    accountId: getDonationsSent ? accountId || "" : "",
-    page_size: 9999,
-  });
+export const useAccountSocialProfile = (accountId?: string) => {
+  const [profile, setProfile] = useState<NEARSocialUserProfile | undefined>(undefined);
+  const [isReady, setProfileReady] = useState(false);
 
   // Registration
   const registration = useRegistration(accountId || "");
-
   const profileType = registration.registration.id ? "project" : "user";
 
   // Fetch profile data
   useEffect(() => {
-    (async () => {
-      if (accountId) {
-        setProfileReady(false);
-        setProfile(undefined);
-
-        const projectProfileData = await getSocialProfile({
-          accountId,
-          useCache,
-        });
-
-        const images = await Promise.all([
-          getImage({ image: projectProfileData?.image, type: "image" }),
-
-          getImage({
-            image: projectProfileData?.backgroundImage,
-            type: "backgroundImage",
-          }),
-        ]);
-
-        setProfileImages({
-          image: images[0],
-          backgroundImage: images[1],
-        });
-
-        setProfile(projectProfileData || undefined);
-        setProfileReady(true);
-      }
-    })();
-  }, [accountId, useCache]);
+    if (accountId) {
+      getSocialProfile({ accountId, useCache: true })
+        .then((data) => setProfile(data ?? undefined))
+        .finally(() => setProfileReady(true));
+    }
+  }, [accountId]);
 
   const avatarSrc = useMemo(
     () =>
@@ -71,9 +34,9 @@ export const useAccountSocialProfile = (
         : (profile?.image?.url ??
           (profile?.image?.ipfs_cid
             ? `https://ipfs.near.social/ipfs/${profile?.image?.ipfs_cid}`
-            : null))) ?? profileImages.image,
+            : null))) ?? ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
 
-    [profile?.image, profileImages.image],
+    [profile?.image],
   );
 
   const backgroundSrc = useMemo(
@@ -83,19 +46,16 @@ export const useAccountSocialProfile = (
         : (profile?.backgroundImage?.url ??
           (profile?.backgroundImage?.ipfs_cid
             ? `https://ipfs.near.social/ipfs/${profile?.backgroundImage?.ipfs_cid}`
-            : null))) ?? profileImages.backgroundImage,
+            : null))) ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
 
-    [profile?.backgroundImage, profileImages.backgroundImage],
+    [profile?.backgroundImage],
   );
 
   return {
-    /** @deprecated use `avatarSrc` and `backgroundSrc` */
-    profileImages,
     avatarSrc,
     backgroundSrc,
-    donationsSent: donationsData?.results,
     profile,
-    profileReady,
+    isReady,
     profileType,
     registration,
   };

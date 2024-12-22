@@ -2,16 +2,12 @@ import { useMemo } from "react";
 
 import { LazyLoadImage, LazyLoadImageProps } from "react-lazy-load-image-component";
 
-import { IMAGES_ASSET_ENDPOINT_URL } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
-import { useImgVisibilityToggle } from "@/common/ui/hooks";
+import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
+import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "../constants";
 import { useAccountSocialProfile } from "../hooks/social-profile";
-
-const ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-image.png`;
-
-const ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-banner.png`;
 
 export type AccountProfilePictureProps = ByAccountId & {
   className?: string;
@@ -21,19 +17,14 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
   accountId,
   className,
 }) => {
-  const { imgVisibilityClassName, displayImg } = useImgVisibilityToggle();
-  const { avatarSrc: src } = useAccountSocialProfile(accountId);
+  const { avatarSrc, isReady } = useAccountSocialProfile(accountId);
 
-  return (
-    <LazyLoadImage
-      alt="Avatar"
-      placeholderSrc={ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC}
-      visibleByDefault={src === ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC}
-      {...{ src }}
-      onLoad={displayImg}
-      wrapperClassName={cn(`h-3 w-3 rounded-full bg-white`, className)}
-      className={cn("h-full w-full rounded-full", imgVisibilityClassName)}
-    />
+  return isReady ? (
+    <Avatar className={cn("h-3 w-3", className)}>
+      <AvatarImage alt={`Profile picture of ${accountId}`} src={avatarSrc} width={40} height={40} />
+    </Avatar>
+  ) : (
+    <Skeleton className={cn("h-3 w-3 rounded-full", className)} />
   );
 };
 
@@ -47,7 +38,6 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
   height = 146,
   className,
 }) => {
-  const { imgVisibilityClassName, displayImg } = useImgVisibilityToggle();
   const { backgroundSrc: src } = useAccountSocialProfile(accountId);
 
   const contentClassName = useMemo(
@@ -71,9 +61,8 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
         visibleByDefault={src === ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
         width="100%"
         {...{ height, src }}
-        onLoad={displayImg}
         wrapperClassName={contentClassName}
-        className={cn(contentClassName, imgVisibilityClassName)}
+        className={contentClassName}
       />
     </div>
   );

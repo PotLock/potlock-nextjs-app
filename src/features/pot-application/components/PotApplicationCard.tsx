@@ -104,7 +104,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
   const review_notes = null;
 
   const { icon, label } = potApplicationFiltersTags[status];
-  const { profile } = useAccountSocialProfile(projectId, true, false);
+  const { profile } = useAccountSocialProfile(projectId);
 
   const daysAgoElement = (
     <div className="whitespace-nowrap text-[17px] font-normal text-[#7a7a7a]">
@@ -120,12 +120,10 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
       <div className="header">
         <div className="header-info">
           <AccountListItem
-            title="user Account"
             accountId={projectId}
             highlightOnHover={true}
             isRounded={true}
             statusElement={daysAgoElement}
-            accountLink={`${routesPath.PROJECT}/${projectId}`}
           />
         </div>
 

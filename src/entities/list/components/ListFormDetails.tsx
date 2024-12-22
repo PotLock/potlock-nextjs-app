@@ -205,7 +205,6 @@ export const ListFormDetails: React.FC = () => {
             <AccountListItem
               isThumbnail
               key={accountId}
-              title={accountId}
               classNames={{ avatar: "md:w-[40px] md:h-[40px] w-7 h-7" }}
               {...{ accountId }}
             />
@@ -224,7 +223,6 @@ export const ListFormDetails: React.FC = () => {
             <AccountListItem
               isThumbnail
               key={accountId}
-              title={accountId}
               classNames={{ avatar: "md:w-10 md:h-10 w-7 h-7" }}
               {...{ accountId }}
             />
