@@ -1,14 +1,14 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import { MiddleTruncate } from "@re-dev/react-truncate";
 import Link from "next/link";
 
 import { AccountId, ByAccountId } from "@/common/types";
-import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { rootPathnames } from "@/pathnames";
 
 import { AccountSummaryPopup } from "./AccountSummaryPopup";
+import { AccountProfilePicture } from "./profile-images";
 import { useAccountSocialProfile } from "../hooks/social-profile";
 
 export type AccountListItemProps = ByAccountId & {
@@ -44,23 +44,12 @@ export const AccountListItem = ({
   classNames,
 }: AccountListItemProps) => {
   const handleClick = useCallback((): void => void onClick?.(accountId), [accountId, onClick]);
-  const { profile, isReady, avatarSrc } = useAccountSocialProfile(accountId);
-
-  const avatarElement = useMemo(
-    () =>
-      isReady ? (
-        <Avatar className={cn("h-10 w-10", classNames?.avatar)}>
-          <AvatarImage src={avatarSrc} alt={`Avatar of ${accountId}`} width={40} height={40} />
-        </Avatar>
-      ) : (
-        <Skeleton className={cn("h-10 w-10 rounded-full", classNames?.avatar)} />
-      ),
-
-    [accountId, avatarSrc, classNames?.avatar, isReady],
-  );
+  const { profile } = useAccountSocialProfile(accountId);
 
   return isThumbnail ? (
-    <AccountSummaryPopup {...{ accountId }}>{avatarElement}</AccountSummaryPopup>
+    <AccountSummaryPopup {...{ accountId }}>
+      <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
+    </AccountSummaryPopup>
   ) : (
     <div
       onClick={handleClick}
@@ -74,7 +63,7 @@ export const AccountListItem = ({
 
       <AccountSummaryPopup {...{ accountId }}>
         <div className="mr-a flex w-full items-center gap-4">
-          {avatarElement}
+          <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
 
           <div className="flex w-full flex-col items-start justify-start">
             <div className="max-w-100 inline-flex w-full items-start gap-1.5">
