@@ -1,24 +1,19 @@
-/* eslint-disable @next/next/no-img-element */
 import Big from "big.js";
 import Link from "next/link";
 
 import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { useAccountSocialProfile } from "@/entities/account";
 import routesPath from "@/pathnames";
 
 import NearIcon from "./NearIcon";
-// import PotIcon from "./PotIcon";
 import { FundingSrc } from "./styled";
-import useProfileData from "../../hooks/data";
 
 const addTrailingZeros = (number: number) => {
   if (number < 100 && number >= 0.1) return number.toFixed(1);
   return number;
 };
-
-const FALLBACK_URL =
-  "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
 
 const DonationItem = ({
   donation,
@@ -64,19 +59,14 @@ const DonationItem = ({
   // const name = truncate(isPot ? pot.id : donor.id, 15);
   const name = truncate(type === "received" ? donor.id : recipient.id, 15);
 
-  // const { profileImages } = useProfileData(isPot ? pot.id : donor.id);
-  const { profileImages } = useProfileData(
-    type === "received" ? donor.id : recipient.id,
-    true,
-    false,
-  );
+  const { avatarSrc } = useAccountSocialProfile(type === "received" ? donor.id : recipient.id);
 
   return (
     <div className="funding-row">
       <FundingSrc>
         <div className="h-[3em] w-[3em]">
           <img
-            src={profileImages.image || FALLBACK_URL}
+            src={avatarSrc}
             className="h-full w-full rounded-full object-cover align-middle"
             alt="Donor profile image"
           />

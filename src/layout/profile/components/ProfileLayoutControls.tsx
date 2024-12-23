@@ -8,13 +8,8 @@ import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { authHooks } from "@/common/services/auth";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
-import {
-  DonationsInfo,
-  FollowButton,
-  Linktree,
-  ProfileTags,
-  useProfileData,
-} from "@/entities/profile";
+import { useAccountSocialProfile } from "@/entities/account";
+import { DonationsInfo, FollowButton, Linktree, ProfileTags } from "@/entities/profile";
 import routesPath, { rootPathnames } from "@/pathnames";
 
 type Props = {
@@ -66,7 +61,7 @@ const LinksWrapper = ({ accountId }: { accountId: string }) => {
 
 export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
   const { wallet } = authHooks.useWallet();
-  const { profile } = useProfileData(accountId);
+  const { profile } = useAccountSocialProfile(accountId);
 
   const name = profile?.name || "";
   const isOwner = wallet?.accountId === accountId;

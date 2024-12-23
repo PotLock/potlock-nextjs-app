@@ -19,8 +19,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
-import { SocialsShare } from "@/common/ui/components/SocialShare";
-import { AccountOption, AccountProfilePicture } from "@/entities/account";
+import { SocialsShare } from "@/common/ui/components/molecules/social-share";
+import { AccountListItem, AccountProfilePicture } from "@/entities/account";
 import { AccessControlListModal } from "@/features/access-control";
 import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";
@@ -177,8 +177,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                 <span className="mr-4 font-semibold text-gray-700">Admins</span>
                 <div className="flex items-center gap-2">
                   {admins.slice(0, 4).map((admin) => (
-                    <AccountOption
-                      title={admin}
+                    <AccountListItem
                       key={admin}
                       isThumbnail
                       classNames={{ avatar: "w-7 h-7" }}

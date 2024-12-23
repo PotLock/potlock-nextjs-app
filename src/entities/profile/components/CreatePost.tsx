@@ -6,12 +6,11 @@ import { walletApi } from "@/common/api/near/client";
 import { createPost } from "@/common/contracts/social";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";
-
-import useProfileData from "../hooks/data";
+import { useAccountSocialProfile } from "@/entities/account";
 
 export const CreatePost = ({ accountId }: { accountId: AccountId }) => {
   const [postText, setPostText] = useState("");
-  const { avatarSrc } = useProfileData(walletApi?.accountId);
+  const { avatarSrc } = useAccountSocialProfile(walletApi?.accountId);
 
   const handleCreatePost = async (e: { preventDefault: () => void }) => {
     e.preventDefault();

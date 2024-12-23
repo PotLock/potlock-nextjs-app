@@ -1,13 +1,26 @@
 import Link from "next/link";
 
+import { NETWORK } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import { useSessionReduxStore, useWallet } from "@/common/services/auth";
 import { Button } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { useRegistration } from "@/entities/core";
-import { ProjectDiscovery, ProjectDiscoveryFeatured } from "@/entities/project";
+import { ProjectCard, ProjectDiscovery } from "@/entities/project";
 import { DonateRandomly } from "@/features/donation";
 import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
+
+export const FEATURED_PROJECT_ACCOUNT_IDS =
+  NETWORK === "mainnet"
+    ? [
+        "v1.foodbank.near",
+        "potlock.near",
+        "yearofchef.near",
+        "indexers.intear.near",
+        "nearblocks.near",
+      ]
+    : ["amichaeltest.testnet", "root.akaia.testnet", "yearofchef.testnet"];
 
 export const GeneralStats = () => {
   const { data: stats } = indexer.useStats();
@@ -43,7 +56,12 @@ const WelcomeBanner = () => {
   const { loading, isRegisteredProject } = useRegistration(accountId);
 
   return (
-    <div className="bg-hero relative flex w-full flex-col justify-center overflow-hidden rounded-xl border border-solid border-[#f8d3b0] bg-cover bg-no-repeat">
+    <div
+      className={cn(
+        "bg-hero relative flex w-full flex-col justify-center overflow-hidden",
+        "rounded-xl border border-solid border-[#f8d3b0] bg-cover bg-no-repeat",
+      )}
+    >
       <div className="relative z-[1] flex flex-col justify-center px-5  py-12 md:px-10 md:py-16">
         <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
           Transforming Funding for Public Goods
@@ -82,7 +100,21 @@ export default function Home() {
     <main className="container flex flex-col items-center">
       <WelcomeBanner />
       <GeneralStats />
-      <ProjectDiscoveryFeatured />
+
+      <div className="flex w-full flex-col gap-10 px-2 pt-10 md:px-10 md:pt-12">
+        <div className="flex w-full flex-col gap-5">
+          <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
+            {"Featured projects"}
+          </div>
+        </div>
+
+        <div className="grid w-full grid-cols-1 gap-8 p-0.5 md:grid-cols-2 lg:grid-cols-3">
+          {FEATURED_PROJECT_ACCOUNT_IDS.map((projectId) => (
+            <ProjectCard key={projectId} projectId={projectId} />
+          ))}
+        </div>
+      </div>
+
       <ProjectDiscovery />
     </main>
   );

@@ -1,7 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useAccountSocialProfile } from "@/entities/account";
 import { useIsHuman, useRegistration } from "@/entities/core";
-import { FollowStats, useProfileData } from "@/entities/profile";
+import { FollowStats } from "@/entities/profile";
 import { projectStatusIcons } from "@/entities/project/components/ProjectStatusIcons";
 
 export type ProfileLayoutHeroProps = {
@@ -13,7 +14,7 @@ export type ProfileLayoutHeroProps = {
 };
 
 export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject, accountId }) => {
-  const { avatarSrc, backgroundSrc } = useProfileData(accountId);
+  const { avatarSrc, backgroundSrc } = useAccountSocialProfile(accountId);
 
   // get nadabot status on the donor page
   let isHumanVerified = false;

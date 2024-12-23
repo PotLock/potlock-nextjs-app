@@ -2,8 +2,7 @@ import Link from "next/link";
 import { styled } from "styled-components";
 
 import { truncate } from "@/common/lib";
-import { AccountProfilePicture } from "@/entities/account";
-import { useProfileData } from "@/entities/profile";
+import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/account";
 import routesPath from "@/pathnames";
 
 import { CustomDonationType } from "../models/types";
@@ -111,7 +110,7 @@ const Sponsor = ({ donation, colIdx }: { donation: CustomDonationType; colIdx: n
   const amount = donation.amount;
   const donorId = donation.donor.id;
   const percentageShare = donation.percentage_share;
-  const { profile } = useProfileData(donorId, true, false);
+  const { profile } = useAccountSocialProfile(donorId);
   const avatarSize = colIdx === 2 ? "h-[64px] w-[64px]" : "h-[40px] w-[40px]";
 
   return (

@@ -4,8 +4,7 @@ import { NearIcon } from "@/common/assets/svgs";
 import GithubSvg from "@/common/assets/svgs/github";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import WebsiteSvg from "@/common/assets/svgs/website";
-
-import { useProfileData } from "../hooks/data";
+import { useAccountSocialProfile } from "@/entities/account";
 
 const LinktreeItemContainer = styled.a`
   display: flex;
@@ -31,7 +30,7 @@ type Props = {
 };
 
 export const Linktree = ({ accountId }: Props) => {
-  const { profile } = useProfileData(accountId);
+  const { profile } = useAccountSocialProfile(accountId);
 
   const linktree = profile?.linktree;
 

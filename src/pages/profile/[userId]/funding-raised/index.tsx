@@ -5,10 +5,10 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { ExternalFundingSource } from "@/common/contracts/social";
+import { useAccountSocialProfile } from "@/entities/account";
 import useDonationsForProject from "@/entities/core/hooks/useDonationsForProject";
 import ExternalFunding from "@/entities/profile/components/ExternalFunding";
 import PotlockFunding from "@/entities/profile/components/PotlockFunding";
-import useProfileData from "@/entities/profile/hooks/data";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 const Line = () => <div className="my-[3rem] h-[1px] w-full bg-[#c7c7c7]" />;
@@ -21,7 +21,7 @@ const FundingRaisedTab = () => {
     (typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0)) ?? "noop";
 
   const { donations } = useDonationsForProject(userId);
-  const { profile } = useProfileData(userId);
+  const { profile } = useAccountSocialProfile(userId);
 
   const externalFunding: ExternalFundingSource[] = profile?.plFundingSources
     ? JSON.parse(profile?.plFundingSources)

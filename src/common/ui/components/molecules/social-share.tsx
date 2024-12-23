@@ -11,8 +11,8 @@ import {
   TwitterShareIcon,
 } from "@/common/assets/svgs/Share";
 
-import { Button } from "./atoms/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./atoms/popover";
+import { Button } from "../atoms/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../atoms/popover";
 
 export const SocialsShare = ({
   shareContent,

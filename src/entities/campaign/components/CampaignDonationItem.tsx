@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { CampaignDonation } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { useProfileData } from "@/entities/profile";
+import { useAccountSocialProfile } from "@/entities/account";
 
 export const CampaignDonationItem = ({
   donation,
@@ -13,7 +13,7 @@ export const CampaignDonationItem = ({
   campaignId: string;
 }) => {
   const { recipient_id, donor_id, total_amount, donated_at_ms } = donation;
-  const { avatarSrc: src } = useProfileData(recipient_id);
+  const { avatarSrc: src } = useAccountSocialProfile(recipient_id);
 
   return (
     <div className="flex flex-wrap justify-between gap-8 p-2 text-sm md:gap-4">

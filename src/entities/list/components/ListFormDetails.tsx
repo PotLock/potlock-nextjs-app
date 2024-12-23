@@ -14,7 +14,7 @@ import { fetchSocialImages } from "@/common/services/social";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountOption, AccountProfilePicture } from "@/entities/account";
+import { AccountListItem, AccountProfilePicture } from "@/entities/account";
 import { AccessControlList } from "@/features/access-control";
 import { dispatch } from "@/store";
 
@@ -202,10 +202,9 @@ export const ListFormDetails: React.FC = () => {
       accounts.length > 0 ? (
         <div className="flex flex-wrap items-center gap-2">
           {[...accounts].map((accountId) => (
-            <AccountOption
+            <AccountListItem
               isThumbnail
               key={accountId}
-              title={accountId}
               classNames={{ avatar: "md:w-[40px] md:h-[40px] w-7 h-7" }}
               {...{ accountId }}
             />
@@ -221,10 +220,9 @@ export const ListFormDetails: React.FC = () => {
       admins.length > 0 ? (
         <div className="flex items-center gap-2">
           {admins.slice(0, 4).map((accountId) => (
-            <AccountOption
+            <AccountListItem
               isThumbnail
               key={accountId}
-              title={accountId}
               classNames={{ avatar: "md:w-10 md:h-10 w-7 h-7" }}
               {...{ accountId }}
             />

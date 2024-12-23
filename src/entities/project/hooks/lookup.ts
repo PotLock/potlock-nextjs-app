@@ -26,7 +26,7 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
   } = indexer.useListRegistrations({
     listId,
     category: categoryFilter.join(","),
-    status: statusFilter === "all" ? undefined : statusFilter,
+    status: statusFilter === "All" ? undefined : statusFilter,
     page: pageNumber,
     search: searchTerm,
   });

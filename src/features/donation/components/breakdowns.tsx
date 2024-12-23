@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
-import { AccountOption } from "@/entities/account";
+import { AccountListItem } from "@/entities/account";
 import { TokenIcon } from "@/entities/token";
 
 import { WithDonationFormAPI } from "../models";
@@ -19,7 +19,7 @@ export const DonationGroupAllocationBreakdown: React.FC<DonationGroupAllocationB
   return (
     <div className="flex flex-col gap-4 rounded-lg bg-neutral-50 p-4">
       {groupAllocationPlan?.map(({ account_id, amount }) => (
-        <AccountOption
+        <AccountListItem
           key={account_id + amount}
           accountId={account_id}
           secondaryAction={

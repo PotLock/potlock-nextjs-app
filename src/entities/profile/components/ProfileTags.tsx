@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 
 import { styled } from "styled-components";
 
+import { useAccountSocialProfile } from "@/entities/account";
 import { getTagsFromSocialProfileData } from "@/entities/project/utils";
-
-import useProfileData from "../hooks/data";
 
 const TagsContainer = styled.div`
   display: flex;
@@ -30,7 +29,7 @@ type Props = {
 };
 
 export const ProfileTags = ({ accountId }: Props) => {
-  const { profile: projectProfile } = useProfileData(accountId);
+  const { profile: projectProfile } = useAccountSocialProfile(accountId);
 
   const [tags, setTags] = useState<string[]>();
 

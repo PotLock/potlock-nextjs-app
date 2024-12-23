@@ -4,22 +4,22 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { NEARSocialUserProfile } from "@/common/contracts/social";
+import { useAccountSocialProfile } from "@/entities/account";
 import routesPath from "@/pathnames";
 
-import { useProfileData } from "../hooks/data";
 import getProfileTeamMembersData from "../utils/getProfileTeamMembersData";
 
 const NoTeam = () => <p className="m-0 flex w-full flex-col">No team members to display</p>;
 
 const TeamAvatar = ({ teamMemberId }: { teamMemberId: string }) => {
-  const { profileImages } = useProfileData(teamMemberId);
+  const { avatarSrc } = useAccountSocialProfile(teamMemberId);
 
   return (
     <div className="h-[160px] w-[160px] md:h-[180px] md:w-[180px]">
       <img
         sizes="(max-width: 768px) 100vw"
         className="grayscale-100 h-full w-full rounded-[6px] object-cover transition-all hover:grayscale-0"
-        src={profileImages.image}
+        src={avatarSrc}
         alt={`Profile @${teamMemberId}`}
       />
     </div>

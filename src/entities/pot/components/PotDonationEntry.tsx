@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Donation } from "@/common/api/indexer";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { useProfileData } from "@/entities/profile";
+import { useAccountSocialProfile } from "@/entities/account";
 import routesPath from "@/pathnames";
 
 import NearIcon from "./NearIcon";
@@ -14,9 +14,6 @@ const addTrailingZeros = (number: number) => {
   if (number < 100 && number >= 0.1) return number.toFixed(1);
   return number;
 };
-
-const FALLBACK_URL =
-  "https://ipfs.near.social/ipfs/bafkreiccpup6f2kihv7bhlkfi4omttbjpawnsns667gti7jbhqvdnj4vsm";
 
 export const PotDonationEntry = ({
   donation,
@@ -49,8 +46,8 @@ export const PotDonationEntry = ({
   const name = truncate(donorId, 15);
   const recipientName = truncate(recipientId, 15);
 
-  const donorProfile = useProfileData(donorId, true, false);
-  const recipientProfile = useProfileData(recipientId, true, false);
+  const donorProfile = useAccountSocialProfile(donorId);
+  const recipientProfile = useAccountSocialProfile(recipientId);
 
   return (
     <div
@@ -59,7 +56,7 @@ export const PotDonationEntry = ({
     >
       <FundingSrc>
         <img
-          src={donorProfile.profileImages.image || FALLBACK_URL}
+          src={donorProfile.avatarSrc}
           className="h-[24px] w-[24px] rounded-full object-cover align-middle"
           alt="Donor profile image"
         />
@@ -71,7 +68,7 @@ export const PotDonationEntry = ({
       </FundingSrc>
       <FundingSrc>
         <img
-          src={recipientProfile.profileImages.image || FALLBACK_URL}
+          src={recipientProfile.avatarSrc}
           className="h-[24px] w-[24px] rounded-full object-cover align-middle"
           alt="Recipient profile image"
         />
