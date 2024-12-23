@@ -21,19 +21,13 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
 }) => {
   const { profile } = useAccountSocialProfile(accountId);
 
-  const categoryTags = useMemo(() => {
-    try {
-      return JSON.parse(profile?.plCategories ?? "[]") as string[];
-    } catch {
-      return [];
-    }
-  }, [profile?.plCategories]);
-
   return (
     <HoverCard>
-      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
+      <HoverCardTrigger asChild className="cursor-pointer">
+        {children}
+      </HoverCardTrigger>
 
-      <HoverCardContent side="top" className="inline-flex h-48 w-80 gap-4 overflow-hidden">
+      <HoverCardContent side="top" className="max-w-84.5 overflow-hidden">
         <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
 
         <div className="flex h-24 flex-col items-start justify-start gap-1 self-stretch">
@@ -41,23 +35,13 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
             <div className="text-sm font-semibold leading-tight text-zinc-800">
               {profile?.name ?? accountId}
             </div>
-
-            <div className="flex h-4 w-4 items-center justify-center overflow-hidden px-0.5 py-0.5" />
           </div>
 
-          <div className="prose h-10 self-stretch text-sm font-normal leading-tight text-slate-950">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {profile?.description ?? "No description provided"}
-            </ReactMarkdown>
-          </div>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose w-62.5 text-sm leading-tight">
+            {profile?.description ?? "No description provided"}
+          </ReactMarkdown>
 
-          <div className="inline-flex hidden items-start justify-start gap-2 self-stretch pt-0.5">
-            {categoryTags.map((tag) => (
-              <Tag key={tag} label={tag} />
-            ))}
-
-            <Tag label={`+ 6 More`} />
-          </div>
+          <div className="prose h-10 self-stretch text-sm font-normal  text-slate-950"></div>
         </div>
       </HoverCardContent>
     </HoverCard>

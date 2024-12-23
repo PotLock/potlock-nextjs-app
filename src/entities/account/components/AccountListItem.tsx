@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { MiddleTruncate } from "@re-dev/react-truncate";
 import Link from "next/link";
@@ -46,10 +46,18 @@ export const AccountListItem = ({
   const handleClick = useCallback((): void => void onClick?.(accountId), [accountId, onClick]);
   const { profile } = useAccountSocialProfile(accountId);
 
+  const avatarElement = useMemo(
+    () => (
+      <AccountSummaryPopup {...{ accountId }}>
+        <AccountProfilePicture className={cn("h-10 w-10", classNames?.avatar)} {...{ accountId }} />
+      </AccountSummaryPopup>
+    ),
+
+    [accountId, classNames?.avatar],
+  );
+
   return isThumbnail ? (
-    <AccountSummaryPopup {...{ accountId }}>
-      <AccountProfilePicture className={cn("h-10 w-10", classNames?.avatar)} {...{ accountId }} />
-    </AccountSummaryPopup>
+    avatarElement
   ) : (
     <div
       onClick={handleClick}
@@ -61,14 +69,11 @@ export const AccountListItem = ({
     >
       {primaryAction}
 
-      <AccountSummaryPopup {...{ accountId }}>
-        <div className="mr-a flex w-full items-center gap-4">
-          <AccountProfilePicture
-            className={cn("h-10 w-10", classNames?.avatar)}
-            {...{ accountId }}
-          />
+      <div className="mr-a flex w-full items-center gap-4">
+        {avatarElement}
 
-          <div className="flex w-full flex-col items-start justify-start">
+        <AccountSummaryPopup {...{ accountId }}>
+          <div className="max-w-100 flex w-full flex-col items-start justify-start">
             <div className="max-w-100 inline-flex w-full items-start gap-1.5">
               <MiddleTruncate className="font-600 w-full self-start" end={0}>
                 {profile?.name ?? accountId}
@@ -98,8 +103,8 @@ export const AccountListItem = ({
               )}
             </div>
           </div>
-        </div>
-      </AccountSummaryPopup>
+        </AccountSummaryPopup>
+      </div>
 
       {secondaryAction && <div className="">{secondaryAction}</div>}
     </div>
