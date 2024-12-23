@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 
 import { PotApplication } from "@/common/api/indexer";
 import { daysAgo, truncate } from "@/common/lib";
+import type { AccountId } from "@/common/types";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import {
@@ -90,6 +91,7 @@ export type PotApplicationCardProps = {
   isChefOrGreater: boolean;
   handleApproveApplication: (projectId: string) => void;
   handleRejectApplication: (projectId: string) => void;
+  approverAccountId: AccountId;
 };
 
 // TODO: Apply performance optimizations ( original owner: @Jikugodwill )
@@ -98,13 +100,15 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
   isChefOrGreater,
   handleApproveApplication,
   handleRejectApplication,
+  approverAccountId,
 }) => {
   const { applicant, status, message, submitted_at } = applicationData;
   const { id: projectId } = applicant;
   const review_notes = null;
 
   const { icon, label } = potApplicationFiltersTags[status];
-  const { profile } = useAccountSocialProfile(projectId);
+  const { profile: applicantProfile } = useAccountSocialProfile(projectId);
+  const { profile: approverProfile } = useAccountSocialProfile(approverAccountId);
 
   const daysAgoElement = useMemo(
     () => (
@@ -175,16 +179,16 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
             <div className="title flex items-center">
               <div className="flex items-center gap-1">
                 <AccountProfilePicture
-                  accountId={projectId}
+                  accountId={approverAccountId}
                   className="h-6 w-6 rounded-full shadow-inner"
                 />
 
-                {profile?.name ? (
+                {approverProfile?.name ? (
                   <div className="name text-[17px] font-semibold leading-normal text-[#292929]">
-                    {truncate(profile?.name, 15)}
+                    {truncate(approverProfile?.name, 15)}
                   </div>
                 ) : (
-                  <div>{truncate(projectId, 15)}</div>
+                  <div>{truncate(approverAccountId, 15)}</div>
                 )}
               </div>
 

@@ -84,6 +84,12 @@ const ApplicationsTab = () => {
   const [projectId, setProjectId] = useState("");
   const [projectStatus, setProjectStatus] = useState<"Approved" | "Rejected" | "">("");
 
+  const approverAccountId = useMemo(
+    () =>
+      potDetail ? (potDetail.chef?.id ?? potDetail.admins.at(0)?.id ?? potDetail.owner.id) : "noop",
+    [potDetail],
+  );
+
   const handleApproveApplication = (projectId: string) => {
     setProjectId(projectId);
     setStatusFilter("Approved");
@@ -170,36 +176,39 @@ const ApplicationsTab = () => {
           onChange={({ target }) => setSearchTerm(target.value.toLowerCase())}
           defaultValue={searchTerm}
         />
-        <div className="flex w-full flex-col flex-wrap justify-between gap-5 md:flex-row">
-          {!areApplicationsLoading ? (
-            sortedResults.map((application: PotApplication) => (
-              <PotApplicationCard
-                key={application.id}
-                applicationData={application}
-                isChefOrGreater={isChefOrGreater}
-                handleApproveApplication={handleApproveApplication}
-                handleRejectApplication={handleRejectApplication}
-              />
-            ))
-          ) : (
-            <ApplicationLookupPlaceholder />
-          )}
-          {!sortedResults && (
-            <div className="min-h-140 flex w-full flex-col items-center justify-center">
-              <Image
-                src="/assets/icons/no-list.svg"
-                alt="No results found"
-                width={200}
-                height={200}
-                className="h-50 w-50 mb-4"
-              />
+        {potDetail && (
+          <div className="flex w-full flex-col flex-wrap justify-between gap-5 md:flex-row">
+            {!areApplicationsLoading ? (
+              sortedResults.map((application: PotApplication) => (
+                <PotApplicationCard
+                  key={application.id}
+                  applicationData={application}
+                  isChefOrGreater={isChefOrGreater}
+                  handleApproveApplication={handleApproveApplication}
+                  handleRejectApplication={handleRejectApplication}
+                  {...{ approverAccountId }}
+                />
+              ))
+            ) : (
+              <ApplicationLookupPlaceholder />
+            )}
+            {!sortedResults && (
+              <div className="min-h-140 flex w-full flex-col items-center justify-center">
+                <Image
+                  src="/assets/icons/no-list.svg"
+                  alt="No results found"
+                  width={200}
+                  height={200}
+                  className="h-50 w-50 mb-4"
+                />
 
-              <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
-                <p className="w-100 font-lora text-center italic">{"No results found"}</p>
+                <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
+                  <p className="w-100 font-lora text-center italic">{"No results found"}</p>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </ApplicationsWrapper>
     </Container>
   );
