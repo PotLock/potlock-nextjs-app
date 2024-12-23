@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { Dot } from "lucide-react";
 import { MdCommentsDisabled } from "react-icons/md";
 import { styled } from "styled-components";
@@ -11,7 +13,6 @@ import {
   AccountProfilePicture,
   useAccountSocialProfile,
 } from "@/entities/account";
-import routesPath from "@/pathnames";
 
 import { potApplicationFiltersTags } from "./tags";
 
@@ -99,30 +100,36 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
   handleRejectApplication,
 }) => {
   const { applicant, status, message, submitted_at } = applicationData;
-  const submittedTimeStamp = new Date(submitted_at).getTime();
   const { id: projectId } = applicant;
   const review_notes = null;
 
   const { icon, label } = potApplicationFiltersTags[status];
   const { profile } = useAccountSocialProfile(projectId);
 
-  const daysAgoElement = (
-    <div className="whitespace-nowrap text-[17px] font-normal text-[#7a7a7a]">
-      {daysAgo(submittedTimeStamp)}
-    </div>
+  const daysAgoElement = useMemo(
+    () => (
+      <div className="whitespace-nowrap text-[17px] font-normal text-[#7a7a7a]">
+        {daysAgo(new Date(submitted_at).getTime())}
+      </div>
+    ),
+
+    [submitted_at],
   );
 
   return (
     <PotApplicationCardContainer
       key={projectId}
-      className="mx-auto flex min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border border-[#eaeaea] bg-white p-5 md:min-w-[445px]"
+      className={cn(
+        "mx-auto flex min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4",
+        "rounded-2xl border border-[#eaeaea] bg-white p-5 md:min-w-[445px]",
+      )}
     >
       <div className="header">
         <div className="header-info">
           <AccountListItem
+            isRounded
+            highlightOnHover
             accountId={projectId}
-            highlightOnHover={true}
-            isRounded={true}
             statusElement={daysAgoElement}
           />
         </div>
@@ -171,6 +178,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
                   accountId={projectId}
                   className="h-6 w-6 rounded-full shadow-inner"
                 />
+
                 {profile?.name ? (
                   <div className="name text-[17px] font-semibold leading-normal text-[#292929]">
                     {truncate(profile?.name, 15)}
@@ -178,9 +186,10 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
                 ) : (
                   <div>{truncate(projectId, 15)}</div>
                 )}
-              </div>{" "}
+              </div>
+
               <Dot className="text-[#010101]/50" />
-              <div className="text-[17px] font-semibold text-[#010101]/50 ">Admin</div>
+              <div className="text-[17px] font-semibold text-[#010101]/50">Admin</div>
             </div>
 
             {review_notes ? (
@@ -189,11 +198,11 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
               </div>
             ) : (
               <div
-                className={
-                  "mx-auto inline-flex w-full items-center justify-center gap-3 rounded-lg bg-white p-2 text-[17px] font-medium text-[#7a7a7a]"
-                }
+                className={cn(
+                  "mx-auto inline-flex w-full items-center justify-center gap-3 rounded-lg",
+                  "bg-white p-2 text-[17px] font-medium text-[#7a7a7a]",
+                )}
               >
-                {" "}
                 <MdCommentsDisabled className="h-6 w-6 text-[#7B7B7B]" />
                 <p>No comment</p>
               </div>
