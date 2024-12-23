@@ -33,12 +33,7 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
     <HoverCard>
       <HoverCardTrigger asChild>{children}</HoverCardTrigger>
 
-      <HoverCardContent
-        side="top"
-        className={cn(
-          "inline-flex h-48 w-80 flex-col items-start justify-start gap-4 overflow-hidden",
-        )}
-      >
+      <HoverCardContent side="top" className="inline-flex h-48 w-80 gap-4 overflow-hidden">
         <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
 
         <div className="flex h-24 flex-col items-start justify-start gap-1 self-stretch">
@@ -56,7 +51,7 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
             </ReactMarkdown>
           </div>
 
-          <div className="inline-flex items-start justify-start gap-2 self-stretch pt-0.5">
+          <div className="inline-flex hidden items-start justify-start gap-2 self-stretch pt-0.5">
             {categoryTags.map((tag) => (
               <Tag key={tag} label={tag} />
             ))}
