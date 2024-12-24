@@ -39,15 +39,18 @@ export default function PotVotesTab() {
   const activeVotingRound = useActiveVotingRound({ potId });
 
   const { data: authenticatedVoterVotes } = votingHooks.useVoterVotes({
-    accountId: userSession.accountId,
+    enabled: activeVotingRound !== undefined && userSession.accountId !== undefined,
     electionId: activeVotingRound?.electionId ?? 0,
+    accountId: userSession.accountId ?? "noop",
   });
 
   const { data: activeElectionVoteCount } = votingHooks.useElectionVoteCount({
+    enabled: activeVotingRound !== undefined,
     electionId: activeVotingRound?.electionId ?? 0,
   });
 
   const { data: activeElectionVoterAccountIds } = votingHooks.useUniqueVoters({
+    enabled: activeVotingRound !== undefined,
     electionId: activeVotingRound?.electionId ?? 0,
   });
 

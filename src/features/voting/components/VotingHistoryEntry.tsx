@@ -32,12 +32,13 @@ export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
   weightBoost,
 }) => {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-[#eaeaea] bg-white p-5 shadow shadow-inner">
-      <div className="flex items-center">
-        <AccountProfilePicture accountId={username} />
+    <div className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border p-5">
+      <div className="flex items-center gap-4">
+        <AccountProfilePicture accountId={username} className="h-12 w-12" />
 
         <div className="flex flex-col">
           <span className="text-[17px] font-semibold text-[#292929]">{username}</span>
+
           <div className="flex items-center gap-1">
             <span className="text-[17px] font-normal text-[#292929]">Voted</span>
             <AccountProfilePicture accountId={username} className="h-6 w-6" />

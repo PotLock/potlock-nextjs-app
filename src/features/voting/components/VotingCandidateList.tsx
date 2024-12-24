@@ -30,8 +30,9 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
 
   const { isLoading: _isRemainingUserVotingCapacityLoading, data: remainingUserVotingCapacity } =
     votingHooks.useVoterRemainingCapacity({
-      accountId: userSession.accountId,
+      enabled: electionId !== 0 && userSession.accountId !== undefined,
       electionId,
+      accountId: userSession.accountId ?? "noop",
     });
 
   const handleEntrySelect = useCallback(

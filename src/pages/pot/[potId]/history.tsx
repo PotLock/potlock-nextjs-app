@@ -3,8 +3,10 @@ import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { MdOutlineGroup, MdOutlineHowToReg, MdOutlinePaid } from "react-icons/md";
 
+import { votingHooks } from "@/common/contracts/core/voting";
 import { SearchBar } from "@/common/ui/components";
 import { VotingHistoryEntry } from "@/features/voting";
+import { useVotingRound } from "@/features/voting/hooks/rounds";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 // Types
@@ -75,17 +77,22 @@ const dummyHistoryData: HistoryEntryData[] = [
   },
 ];
 
-// Main component
 export default function PotHistoryTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
-
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
   const onSearchTermChange = useCallback(
     ({ target }: ChangeEvent<HTMLInputElement>) => setSearchTerm(target.value),
     [],
   );
+
+  const votingRound = useVotingRound({ potId });
+
+  const { data: votes } = votingHooks.useElectionVotes({
+    enabled: votingRound !== undefined,
+    electionId: votingRound?.electionId ?? 0,
+  });
 
   const searchResults = useMemo(
     () =>
@@ -100,13 +107,13 @@ export default function PotHistoryTab() {
     [searchTerm],
   );
 
-  return (
-    <div className="mx-auto w-full space-y-6 p-4">
-      <div className="flex items-center gap-6">
-        <div className="flex-1">
-          <SearchBar onChange={onSearchTermChange} />
-        </div>
-      </div>
+  return votingRound === undefined ? (
+    <div className="h-100 flex w-full flex-col items-center justify-center">
+      <p className="prose text-2xl">{"No voting history."}</p>
+    </div>
+  ) : (
+    <div className="flex w-full flex-col gap-6 p-4 md:p-0">
+      <SearchBar placeholder="Search History" onChange={onSearchTermChange} />
 
       <div className="flex flex-col gap-6 ">
         {searchResults.map((entry) => (
