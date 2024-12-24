@@ -7,7 +7,6 @@ import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
 
 export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
-export const PAGODA_API_KEY = process.env.NEXT_PUBLIC_PAGODA_API_KEY as string;
 export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
 export const PLATFORM_TWITTER_ACCOUNT_ID = "PotLock_";
