@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 
+import { useRouter } from "next/router";
 import { MdOutlineGroup, MdOutlineHowToReg, MdOutlinePaid } from "react-icons/md";
 
 import { SearchBar } from "@/common/ui/components";
@@ -76,28 +77,39 @@ const dummyHistoryData: HistoryEntryData[] = [
 
 // Main component
 export default function PotHistoryTab() {
-  const [historyData, setHistoryData] = useState<HistoryEntryData[]>(dummyHistoryData);
+  const { query: routeQuery } = useRouter();
+  const { potId } = routeQuery as { potId: string };
 
-  const handleSearch = (value: string) => {
-    const filteredData = dummyHistoryData.filter(
-      (entry) =>
-        entry.username.toLowerCase().includes(value.toLowerCase()) ||
-        entry.votedFor.toLowerCase().includes(value.toLowerCase()),
-    );
+  const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
-    setHistoryData(filteredData);
-  };
+  const onSearchTermChange = useCallback(
+    ({ target }: ChangeEvent<HTMLInputElement>) => setSearchTerm(target.value),
+    [],
+  );
+
+  const searchResults = useMemo(
+    () =>
+      searchTerm === null
+        ? dummyHistoryData
+        : dummyHistoryData.filter(
+            (entry) =>
+              entry.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              entry.votedFor.toLowerCase().includes(searchTerm.toLowerCase()),
+          ),
+
+    [searchTerm],
+  );
 
   return (
     <div className="mx-auto w-full space-y-6 p-4">
       <div className="flex items-center gap-6">
         <div className="flex-1">
-          <SearchBar onChange={(e) => handleSearch(e.target.value)} />
+          <SearchBar onChange={onSearchTermChange} />
         </div>
       </div>
 
       <div className="flex flex-col gap-6 ">
-        {historyData.map((entry) => (
+        {searchResults.map((entry) => (
           <VotingHistoryEntry key={entry.id} {...entry} />
         ))}
       </div>

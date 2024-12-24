@@ -9,7 +9,6 @@ import { authHooks } from "@/common/services/auth";
 import { FilterChip, Input } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { usePotActiveVotingRound } from "@/entities/pot";
 import {
   VotingCandidateFilter,
   VotingCandidateList,
@@ -18,6 +17,7 @@ import {
   useVotingCandidateLookup,
   useVotingParticipantVoteWeight,
 } from "@/features/voting";
+import { useActiveVotingRound } from "@/features/voting/hooks/rounds";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotVotesTab() {
@@ -36,7 +36,7 @@ export default function PotVotesTab() {
     potId,
   });
 
-  const activeVotingRound = usePotActiveVotingRound({ potId });
+  const activeVotingRound = useActiveVotingRound({ potId });
 
   const { data: authenticatedVoterVotes } = votingHooks.useVoterVotes({
     accountId: userSession.accountId,
