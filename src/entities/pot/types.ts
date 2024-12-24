@@ -1,5 +1,6 @@
 import { PotId } from "@/common/api/indexer";
 import { PotConfig } from "@/common/contracts/core";
+import type { ByElectionId, Election } from "@/common/contracts/core/voting";
 
 export type PotData = { id: PotId } & PotConfig;
 
@@ -18,3 +19,5 @@ export type PotLifecycleStage = {
   progress: number;
   completed: boolean;
 };
+
+export type PotVotingRound = ByElectionId & { election: Election };

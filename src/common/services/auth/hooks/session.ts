@@ -4,6 +4,7 @@ import { prop } from "remeda";
 
 import { ListRegistrationStatus, indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { isAccountId } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -20,9 +21,15 @@ export const useUserSession = (): UserSession => {
     [actAsDao.defaultAddress, asDao, lastActiveAccountId, wallet?.accountId],
   );
 
+  /**
+   * Account for edge cases in which the wallet is connected to a mismatching network
+   *  ( e.g. testnet account in mainnet-bound environments )
+   */
+  const isAccountIdValid = useMemo(() => isAccountId(accountId), [accountId]);
+
   const { isLoading: isAccountListRegistryLoading, data: accountListRegistrations } =
     indexer.useAccountListRegistrations({
-      accountId,
+      accountId: isAccountIdValid ? accountId : undefined,
       page_size: 9999,
     });
 
@@ -35,7 +42,7 @@ export const useUserSession = (): UserSession => {
     [accountListRegistrations?.results],
   );
 
-  if (isSignedIn && accountId) {
+  if (isSignedIn && accountId && isAccountIdValid) {
     return {
       accountId,
       account: publicGoodsRegistryAccount,
