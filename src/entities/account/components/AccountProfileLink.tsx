@@ -1,10 +1,13 @@
+import { MiddleTruncate } from "@re-dev/react-truncate";
 import Link from "next/link";
 
-import { indexer } from "@/common/api/indexer";
 import { ByAccountId } from "@/common/types";
+import { Badge } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountProfilePicture } from "@/entities/account";
+import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/account";
 import routesPath from "@/pathnames";
+
+import { AccountSummaryPopup } from "./AccountSummaryPopup";
 
 export type AccountProfileLinkProps = ByAccountId & {
   classNames?: { root?: string; avatar?: string; name?: string };
@@ -14,20 +17,25 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
   accountId,
   classNames,
 }) => {
-  const { data: account } = indexer.useAccount({ accountId });
-  const { name } = account?.near_social_profile_data ?? {};
+  const { profile } = useAccountSocialProfile(accountId);
 
   return (
-    <Link
-      href={`${routesPath.PROFILE}/${accountId}`}
-      target="_blank"
-      className={cn("decoration-none flex items-center gap-1", classNames?.root)}
-    >
-      <AccountProfilePicture {...{ accountId }} className={cn("h-5 w-5", classNames?.avatar)} />
+    <AccountSummaryPopup {...{ accountId }}>
+      <Link
+        href={`${routesPath.PROFILE}/${accountId}`}
+        target="_blank"
+        className={cn("decoration-none", classNames?.root)}
+      >
+        <Badge variant="secondary" className="flex w-full max-w-80 items-center gap-2">
+          <AccountProfilePicture {...{ accountId }} className={cn("h-4 w-4", classNames?.avatar)} />
 
-      <span className={cn("prose font-500 hover:underline", classNames?.name)}>
-        {name ?? accountId}
-      </span>
-    </Link>
+          <span className={cn("w-full", classNames?.name)}>
+            <MiddleTruncate end={0} className="font-500">
+              {profile?.name ?? accountId}
+            </MiddleTruncate>
+          </span>
+        </Badge>
+      </Link>
+    </AccountSummaryPopup>
   );
 };

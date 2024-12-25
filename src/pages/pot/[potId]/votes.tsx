@@ -1,12 +1,13 @@
-import { useMemo, useState } from "react";
+import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
+import { nearClient } from "@/common/api/near";
 import { votingHooks } from "@/common/contracts/core/voting";
 import { authHooks } from "@/common/services/auth";
-import { FilterChip, Input } from "@/common/ui/components";
+import { Button, FilterChip, SearchBar } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import {
@@ -21,10 +22,14 @@ import { useActiveVotingRound } from "@/features/voting/hooks/rounds";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotVotesTab() {
-  const userSession = authHooks.useUserSession();
+  const authenticatedUser = authHooks.useUserSession();
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+
+  const onSignInClick = useCallback(() => {
+    nearClient.walletApi.signInModal();
+  }, []);
 
   const [isVotingRuleListVisible, setIsVotingRuleListVisible] = useState(false);
   const [isWeightBoostBreakdownVisible, setIsWeightBoostBreakdownVisible] = useState(false);
@@ -32,16 +37,16 @@ export default function PotVotesTab() {
   const [candidateFilter, setFilter] = useState<VotingCandidateFilter>("all");
 
   const authenticatedVoter = useVotingParticipantVoteWeight({
-    accountId: userSession.accountId,
+    accountId: authenticatedUser.accountId,
     potId,
   });
 
   const activeVotingRound = useActiveVotingRound({ potId });
 
   const { data: authenticatedVoterVotes } = votingHooks.useVoterVotes({
-    enabled: activeVotingRound !== undefined && userSession.accountId !== undefined,
+    enabled: activeVotingRound !== undefined && authenticatedUser.accountId !== undefined,
     electionId: activeVotingRound?.electionId ?? 0,
-    accountId: userSession.accountId ?? "noop",
+    accountId: authenticatedUser.accountId ?? "noop",
   });
 
   const { data: activeElectionVoteCount } = votingHooks.useElectionVoteCount({
@@ -56,12 +61,16 @@ export default function PotVotesTab() {
 
   const {
     candidates,
-    candidateSearchTerm,
     setCandidateSearchTerm,
     votedCandidates,
     votableCandidates,
     mutate: revalidateCandidates,
   } = useVotingCandidateLookup({ electionId: activeVotingRound?.electionId ?? 0 });
+
+  const onSearchTermChange = useCallback(
+    ({ target }: ChangeEvent<HTMLInputElement>) => setCandidateSearchTerm(target.value),
+    [setCandidateSearchTerm],
+  );
 
   const filterPanel = useMemo(
     () => (
@@ -117,18 +126,7 @@ export default function PotVotesTab() {
     </div>
   ) : (
     <div className="flex w-full flex-col gap-6">
-      {/* Search */}
-      <div className="relative">
-        <Input
-          type="search"
-          placeholder={"Search Projects"}
-          className={cn("w-full bg-gray-50")}
-          value={candidateSearchTerm}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setCandidateSearchTerm(e.target.value)
-          }
-        />
-      </div>
+      <SearchBar placeholder="Search Projects" onChange={onSearchTermChange} />
 
       <div className="flex w-full justify-between">
         {filterPanel}
@@ -140,7 +138,7 @@ export default function PotVotesTab() {
             </div>
 
             <div className="text-right text-xs uppercase leading-none tracking-wide text-neutral-950">
-              {"casted from"}
+              {"casted by"}
             </div>
           </div>
 
@@ -167,15 +165,36 @@ export default function PotVotesTab() {
             <div className="flex items-center gap-2">
               <MdHowToVote className="color-peach-400 h-6 w-6" />
 
-              <span className="inline-flex flex-nowrap items-center font-semibold">
-                <span className="font-600 text-xl leading-loose">
-                  {authenticatedVoterVotes?.length ?? 0}
-                </span>
+              {authenticatedUser.isSignedIn ? (
+                <span className="inline-flex flex-nowrap items-center font-semibold">
+                  <span className="font-600 text-xl leading-loose">
+                    {authenticatedVoterVotes?.length ?? 0}
+                  </span>
 
-                <span className="font-500 text-4.25 leading-normal">
-                  {`/${activeVotingRound.election.votes_per_voter ?? 0} Votes Casted`}
+                  <span className="font-500 text-4.25 leading-normal">
+                    {`/${activeVotingRound.election.votes_per_voter ?? 0} Votes Casted by You`}
+                  </span>
                 </span>
-              </span>
+              ) : (
+                <div className="font-500 text-4.25 flex items-center justify-center gap-1">
+                  <span className="prose">{"Please"}</span>
+
+                  <Button
+                    font="semibold"
+                    variant="standard-plain"
+                    onClick={onSignInClick}
+                    className={cn(
+                      "underline-dotted underline-offset-3 underline-neutral-950",
+                      "underline-opacity-30 hover:underline-solid important:text-lg",
+                      "border-none p-0 underline",
+                    )}
+                  >
+                    {"Sign In"}
+                  </Button>
+
+                  <span className="prose">{"to vote."}</span>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2">

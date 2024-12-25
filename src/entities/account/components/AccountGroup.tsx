@@ -1,4 +1,4 @@
-import { useCallback, useId, useMemo, useState } from "react";
+import { useCallback, useId, useMemo } from "react";
 
 import { show } from "@ebay/nice-modal-react";
 import Link from "next/link";
@@ -8,21 +8,21 @@ import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountListItem, AccountListItemProps, AccountProfilePicture } from "@/entities/account";
 
-import { AccessControlListModal, AccessControlListModalProps } from "./AccessControlListModal";
+import { AccountGroupEditModal, AccountGroupEditModalProps } from "./AccountGroupEditModal";
 
-export type AccessControlListProps = Pick<AccountListItemProps, "classNames"> &
+export type AccountGroupProps = Pick<AccountListItemProps, "classNames"> &
   (
-    | (AccessControlListModalProps & {
+    | (AccountGroupEditModalProps & {
         isEditable?: true;
         showAccountList?: boolean;
       })
-    | (Pick<AccessControlListModalProps, "value"> & {
+    | (Pick<AccountGroupEditModalProps, "value"> & {
         isEditable?: false;
         showAccountList?: boolean;
       })
   );
 
-export const AccessControlList: React.FC<AccessControlListProps> = ({
+export const AccountGroup: React.FC<AccountGroupProps> = ({
   isEditable = false,
   showAccountList = true,
   classNames,
@@ -80,7 +80,7 @@ export const AccessControlList: React.FC<AccessControlListProps> = ({
 
   return (
     <>
-      {isEditingEnabled && <AccessControlListModal id={modalId} {...props} />}
+      {isEditingEnabled && <AccountGroupEditModal id={modalId} {...props} />}
 
       <div className="flex items-center justify-between">
         {showAccountList && accountList}

@@ -8,8 +8,7 @@ import { walletApi } from "@/common/api/near/client";
 import { isAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountListItem, AccountProfileLink } from "@/entities/account";
-import { AccessControlList } from "@/features/access-control";
+import { AccountGroup, AccountListItem, AccountProfileLink } from "@/entities/account";
 
 import { POT_EDITOR_FIELDS } from "../constants";
 import { potIndexedFieldToString } from "../utils/normalization";
@@ -60,14 +59,14 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
   onEditClick,
   className,
 }) => {
-  const { isLoading, data } = indexer.usePot({ potId });
-  const adminAccountIds = data?.admins.map(prop("id"));
-  const isDataAvailable = data !== undefined && adminAccountIds !== undefined;
+  const { isLoading, data: pot } = indexer.usePot({ potId });
+  const adminAccountIds = pot?.admins.map(prop("id"));
+  const isDataAvailable = pot !== undefined && adminAccountIds !== undefined;
 
   const isEditingAllowed =
     walletApi.accountId !== undefined &&
     isDataAvailable &&
-    [...data.admins, data.owner].some(piped(prop("id"), isStrictEqual(walletApi.accountId)));
+    [...pot.admins, pot.owner].some(piped(prop("id"), isStrictEqual(walletApi.accountId)));
 
   const tableContent = useMemo(
     () =>
@@ -75,13 +74,13 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
         ? entries(omit(POT_EDITOR_FIELDS, ["owner", "admins"])).map(
             ([key, { index = "none", ...attrs }]) => (
               <PotEditorPreviewSection key={key} heading={attrs.title} {...{ isLoading }}>
-                {potIndexedFieldToString(key, data[index as keyof typeof data], attrs)}
+                {potIndexedFieldToString(key, pot[index as keyof typeof pot], attrs)}
               </PotEditorPreviewSection>
             ),
           )
         : null,
 
-    [data, isDataAvailable, isLoading],
+    [pot, isDataAvailable, isLoading],
   );
 
   return (
@@ -92,7 +91,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
 
           {isDataAvailable ? (
             <AccountListItem
-              accountId={data?.owner.id ?? "noop"}
+              accountId={pot.owner.id}
               isRounded
               classNames={{ root: "p-0 pr-2", avatar: "w-6 h-6" }}
             />
@@ -107,7 +106,7 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
           {isDataAvailable ? (
             <>
               {adminAccountIds.length > 0 ? (
-                <AccessControlList
+                <AccountGroup
                   value={adminAccountIds?.map((admin) => ({ accountId: admin }))}
                   classNames={{ avatar: "w-6 h-6" }}
                 />
@@ -133,7 +132,10 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
       </div>
 
       <div
-        className={cn("min-h-114 rounded-2 flex flex-col gap-6 bg-neutral-50 p-4 md:gap-4 md:p-6")}
+        className={cn(
+          "min-h-114 rounded-2 flex flex-col gap-6",
+          "bg-neutral-50 p-4 md:gap-4 md:p-6",
+        )}
       >
         {!isDataAvailable && isLoading && <DataLoadingPlaceholder text="Loading pot data..." />}
 

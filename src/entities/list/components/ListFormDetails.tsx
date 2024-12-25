@@ -14,8 +14,7 @@ import { fetchSocialImages } from "@/common/services/social";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountListItem, AccountProfilePicture } from "@/entities/account";
-import { AccessControlList } from "@/features/access-control";
+import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/account";
 import { dispatch } from "@/store";
 
 import {
@@ -392,7 +391,7 @@ export const ListFormDetails: React.FC = () => {
                     <p className="font-semibold text-gray-700">Admins</p>
                   </div>
                   <div className="flex h-[35px]  flex-wrap">
-                    <AccessControlList
+                    <AccountGroup
                       isEditable={true}
                       title="Admins"
                       showAccountList={true}
@@ -431,7 +430,7 @@ export const ListFormDetails: React.FC = () => {
                       <p className="pt-[2px] font-semibold text-gray-700">Accounts</p>
                     </div>
                     <div className="flex h-[35px]  flex-wrap">
-                      <AccessControlList
+                      <AccountGroup
                         isEditable
                         title="Accounts"
                         value={accounts?.map((account) => ({

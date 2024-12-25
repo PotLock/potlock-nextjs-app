@@ -89,37 +89,45 @@ export default function PotHistoryTab() {
 
   const votingRound = useVotingRound({ potId });
 
-  const { data: votes } = votingHooks.useElectionVotes({
+  const { isLoading: isListOfVotesLoading, data: votes } = votingHooks.useElectionVotes({
     enabled: votingRound !== undefined,
     electionId: votingRound?.electionId ?? 0,
   });
 
-  const searchResults = useMemo(
-    () =>
-      searchTerm === null
-        ? dummyHistoryData
-        : dummyHistoryData.filter(
-            (entry) =>
-              entry.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              entry.votedFor.toLowerCase().includes(searchTerm.toLowerCase()),
-          ),
+  const searchResults = useMemo(() => {
+    const allEntries = votes ?? [];
 
-    [searchTerm],
-  );
+    return searchTerm === null
+      ? allEntries
+      : allEntries.filter(
+          ({ candidate_id, voter }) =>
+            voter.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            candidate_id.toLowerCase().includes(searchTerm.toLowerCase()),
+        );
+  }, [searchTerm, votes]);
 
   return votingRound === undefined ? (
     <div className="h-100 flex w-full flex-col items-center justify-center">
       <p className="prose text-2xl">{"No voting history."}</p>
     </div>
   ) : (
-    <div className="flex w-full flex-col gap-6 p-4 md:p-0">
+    <div className="flex w-full flex-col gap-6">
       <SearchBar placeholder="Search History" onChange={onSearchTermChange} />
 
-      <div className="flex flex-col gap-6 ">
-        {searchResults.map((entry) => (
-          <VotingHistoryEntry key={entry.id} {...entry} />
-        ))}
-      </div>
+      {searchResults.length === 0 ? (
+        <div className="h-100 flex w-full flex-col items-center justify-center">
+          <p className="prose text-2xl">{"No results found."}</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-6">
+          {searchResults.map((entry) => (
+            <VotingHistoryEntry
+              key={entry.candidate_id + entry.voter + entry.timestamp}
+              data={entry}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
