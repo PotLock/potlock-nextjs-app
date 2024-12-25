@@ -97,7 +97,7 @@ export default function PotHistoryTab() {
   });
 
   const searchResults = useMemo(() => {
-    const allEntries = votes ?? [];
+    const allEntries = votes?.toReversed() ?? [];
 
     return searchTerm === null
       ? allEntries
@@ -122,8 +122,8 @@ export default function PotHistoryTab() {
         </div>
       ) : (
         <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
-          <div className="flex flex-col gap-6">
-            {searchResults.slice(0, 10).map((entry) => (
+          <div className="flex flex-col gap-6 pb-8">
+            {searchResults.map((entry) => (
               <VotingHistoryEntry
                 key={entry.candidate_id + entry.voter + entry.timestamp}
                 data={entry}

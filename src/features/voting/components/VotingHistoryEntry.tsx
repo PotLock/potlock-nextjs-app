@@ -28,7 +28,7 @@ export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
   return (
     <div className="flex w-full flex-wrap items-center justify-between gap-6 rounded-2xl border p-5">
       <div className="flex w-full max-w-[320px] items-center gap-4">
-        <AccountProfilePicture accountId={voterAccountId} className="h-12 w-12" />
+        <AccountProfilePicture accountId={voterAccountId} className="h-12 min-h-12 w-12 min-w-12" />
 
         <div className="flex w-full flex-col">
           <AccountHandle accountId={voterAccountId} />
