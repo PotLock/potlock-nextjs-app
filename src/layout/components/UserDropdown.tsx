@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { MdQuestionMark } from "react-icons/md";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { nearClient } from "@/common/api/near";
@@ -15,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
+  Skeleton,
 } from "@/common/ui/components";
 import { AccountProfilePicture } from "@/entities/account";
 import { listRegistrationStatuses } from "@/entities/list";
@@ -35,12 +35,11 @@ export const UserDropdown = () => {
       <DropdownMenuTrigger className="h-8 w-8 rounded-full">
         {authenticatedUser.isSignedIn ? (
           <AccountProfilePicture
-            disabledSummaryPopup
             accountId={authenticatedUser.accountId}
             className="h-full w-full"
           />
         ) : (
-          <MdQuestionMark className="h-full w-full" />
+          <Skeleton className="h-full w-full rounded-full" />
         )}
       </DropdownMenuTrigger>
 
@@ -68,7 +67,6 @@ export const UserDropdown = () => {
           <DropdownMenuLabel className="flex gap-2 p-0">
             {authenticatedUser.accountId && (
               <AccountProfilePicture
-                disabledSummaryPopup
                 accountId={authenticatedUser.accountId}
                 className="h-10 w-10"
               />

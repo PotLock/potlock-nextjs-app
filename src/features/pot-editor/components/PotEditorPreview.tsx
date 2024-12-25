@@ -32,14 +32,14 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
     <>
       {children ? (
         <div className="flex flex-col items-center justify-between gap-1 md:flex-row md:gap-8">
-          <span className="prose md:w-73 font-600 w-full text-sm">
+          <span className="prose md:w-73 md:max-w-73 font-600 w-full text-sm">
             {subheading ? `${heading} (${subheading})` : heading}
           </span>
 
           {typeof children === "string" && isAccountId(children) ? (
             <AccountProfileLink
               accountId={children}
-              classNames={{ root: "md:w-102 w-full", name: "text-sm" }}
+              classNames={{ root: "mr-a", name: "text-sm" }}
             />
           ) : (
             <span className="prose md:w-102 w-full text-sm">{children}</span>

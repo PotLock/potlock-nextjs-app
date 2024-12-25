@@ -124,6 +124,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
             }
           />
         }
+        classNames={{ root: "px-4" }}
       />
     ))
   );

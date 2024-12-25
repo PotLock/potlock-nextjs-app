@@ -13,7 +13,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ className, ...inputProps }
   return (
     <div
       className={cn(
-        "relative flex h-[40px] items-center rounded-lg",
+        "relative flex h-[40px] w-full items-center rounded-lg",
         "border-none bg-neutral-50 px-2 outline-none",
         className,
       )}

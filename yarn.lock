@@ -4668,11 +4668,6 @@
     slugify "^1.6.5"
     ua-parser-js "^1.0.2"
 
-"@re-dev/react-truncate@^0.4.3":
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/@re-dev/react-truncate/-/react-truncate-0.4.3.tgz#89ed2935a30f271a80f6af8fa66c9fe471baf742"
-  integrity sha512-dMtHgU/uOorC5gQNtJBjIf9Zv5+lRa11+0YSTEbfD1KCyKKb0bcCjVCEVyyKUSv0/vEmiG+twQIt2eVKETaRNA==
-
 "@rematch/core@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@rematch/core/-/core-2.2.0.tgz#c4e6cc9d369d341afe2345842f43c255b7a44e90"

@@ -27,13 +27,13 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
   return disabled ? (
     children
   ) : (
-    <HoverCard openDelay={500}>
+    <HoverCard openDelay={500} closeDelay={0}>
       <HoverCardTrigger asChild className="cursor-pointer">
         {children}
       </HoverCardTrigger>
 
       <HoverCardContent side="top" className="w-84.5 h-fit overflow-hidden">
-        <AccountProfilePicture disabledSummaryPopup className="h-10 w-10" {...{ accountId }} />
+        <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
 
         <div className="flex flex-col items-start justify-start gap-3">
           <span className="text-sm font-semibold leading-tight">{profile?.name ?? accountId}</span>
