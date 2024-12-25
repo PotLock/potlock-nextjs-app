@@ -49,9 +49,7 @@ export const AccountListItem = ({
 
   const avatarElement = useMemo(
     () => (
-      <AccountSummaryPopup {...{ accountId }}>
-        <AccountProfilePicture className={cn("h-10 w-10", classNames?.avatar)} {...{ accountId }} />
-      </AccountSummaryPopup>
+      <AccountProfilePicture className={cn("h-10 w-10", classNames?.avatar)} {...{ accountId }} />
     ),
 
     [accountId, classNames?.avatar],

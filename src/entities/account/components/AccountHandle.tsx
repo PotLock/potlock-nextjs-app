@@ -12,19 +12,22 @@ import { AccountSummaryPopup } from "./AccountSummaryPopup";
 
 export type AccountHandleProps = ByAccountId & {
   href?: string;
-  disableSummaryPopup?: boolean;
+  disabledSummaryPopup?: boolean;
   className?: string;
 };
 
 export const AccountHandle: React.FC<AccountHandleProps> = ({
   accountId,
   href,
-  disableSummaryPopup = false,
+  disabledSummaryPopup = false,
   className,
 }) => {
   const currentWindowSize = useWindowSize();
   const [initialWindowSize, setInitialWindowSize] = useState(currentWindowSize);
-  const [initialDisableSummaryPopup, setInitialDisableSummaryPopup] = useState(disableSummaryPopup);
+
+  const [initialDisableSummaryPopup, setInitialDisableSummaryPopup] =
+    useState(disabledSummaryPopup);
+
   const [isTruncated, setIsTruncated] = useState(false);
 
   const registerTruncate = useCallback(() => {
@@ -47,16 +50,16 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
 
     /**
      * Hack to mitigate the collapse of `MiddleTruncate` component
-     *  when `disableSummaryPopup` is changed is runtime.
+     *  when `disabledSummaryPopup` is changed is runtime.
      */
-    if (disableSummaryPopup !== initialDisableSummaryPopup) {
-      setInitialDisableSummaryPopup(disableSummaryPopup);
+    if (disabledSummaryPopup !== initialDisableSummaryPopup) {
+      setInitialDisableSummaryPopup(disabledSummaryPopup);
       setIsTruncated(false);
     }
-  }, [initialWindowSize, currentWindowSize, disableSummaryPopup, initialDisableSummaryPopup]);
+  }, [initialWindowSize, currentWindowSize, disabledSummaryPopup, initialDisableSummaryPopup]);
 
   return (
-    <AccountSummaryPopup disabled={disableSummaryPopup} {...{ accountId }}>
+    <AccountSummaryPopup disabled={disabledSummaryPopup} {...{ accountId }}>
       <Link
         className={cn(
           "underline-dotted underline-neutral-500 underline-opacity-20 underline-offset-4",

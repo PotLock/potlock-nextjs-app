@@ -33,7 +33,7 @@ export const useUserSession = (): UserSession => {
       page_size: 9999,
     });
 
-  const { registrant: publicGoodsRegistryAccount, status } = useMemo(
+  const { registrant: publicGoodsRegistryAccount, status: registrationStatus } = useMemo(
     () =>
       accountListRegistrations?.results?.find(
         ({ list }) => list.id === PUBLIC_GOODS_REGISTRY_LIST_ID,
@@ -46,14 +46,16 @@ export const useUserSession = (): UserSession => {
     return {
       accountId,
       account: publicGoodsRegistryAccount,
+      registrationStatus,
       isSignedIn: true,
       isAccountInfoLoading: isAccountListRegistryLoading,
-      isVerifiedPublicGoodsProvider: status === ListRegistrationStatus.Approved,
+      isVerifiedPublicGoodsProvider: registrationStatus === ListRegistrationStatus.Approved,
     };
   } else {
     return {
       accountId: undefined,
       account: undefined,
+      registrationStatus: undefined,
       isSignedIn: false,
       isAccountInfoLoading: false,
       isVerifiedPublicGoodsProvider: false,

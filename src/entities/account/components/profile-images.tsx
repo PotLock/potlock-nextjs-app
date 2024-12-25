@@ -7,22 +7,32 @@ import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
 import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "../constants";
+import { AccountSummaryPopup } from "./AccountSummaryPopup";
 import { useAccountSocialProfile } from "../hooks/social-profile";
 
 export type AccountProfilePictureProps = ByAccountId & {
+  disabledSummaryPopup?: boolean;
   className?: string;
 };
 
 export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
   accountId,
+  disabledSummaryPopup,
   className,
 }) => {
   const { avatarSrc, isReady } = useAccountSocialProfile(accountId);
 
   return isReady ? (
-    <Avatar className={cn("h-3 w-3", className)}>
-      <AvatarImage alt={`Profile picture of ${accountId}`} src={avatarSrc} width={40} height={40} />
-    </Avatar>
+    <AccountSummaryPopup disabled={disabledSummaryPopup} {...{ accountId }}>
+      <Avatar className={cn("h-3 w-3", className)}>
+        <AvatarImage
+          alt={`Profile picture of ${accountId}`}
+          src={avatarSrc}
+          width={40}
+          height={40}
+        />
+      </Avatar>
+    </AccountSummaryPopup>
   ) : (
     <Skeleton className={cn("h-3 w-3 rounded-full", className)} />
   );

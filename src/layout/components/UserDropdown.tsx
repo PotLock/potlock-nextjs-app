@@ -1,16 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 
 import { LogOut } from "lucide-react";
 import Link from "next/link";
+import { MdQuestionMark } from "react-icons/md";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { walletApi } from "@/common/api/near/client";
-import { RegistrationStatus } from "@/common/contracts/core";
-import { getIsHuman } from "@/common/contracts/core/sybil";
-import { NEARSocialUserProfile } from "@/common/contracts/social";
+import { nearClient } from "@/common/api/near";
 import { truncate } from "@/common/lib";
-import { useWallet } from "@/common/services/auth";
-import { fetchSocialImages } from "@/common/services/social";
+import { authHooks } from "@/common/services/auth";
 import {
   Button,
   DropdownMenu,
@@ -19,93 +16,48 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
-import { useRegistration } from "@/entities/core";
-import { ListRegistrationStatus, listRegistrationStatuses } from "@/entities/list";
-import { updateAccountId, updateNadabotVerification } from "@/entities/profile/utils";
-import routesPath from "@/pathnames";
-import { useGlobalStoreSelector } from "@/store";
+import { listRegistrationStatuses } from "@/entities/list";
+import { rootPathnames } from "@/pathnames";
 
 import ActAsDao from "./ActAsDao";
 
-const daoProfileImage = (
-  <div
-    className={cn(
-      "flex h-10 w-10 justify-center rounded-full bg-[#292929]",
-      "shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
-    )}
-  >
-    <LazyLoadImage
-      alt="DAO profile image"
-      src="/assets/icons/dao-address-icon.svg"
-      width={17}
-      height={17}
-    />
-  </div>
-);
-
+// TODO: Finish refactoring
 export const UserDropdown = () => {
-  const [profile, setProfile] = useState<NEARSocialUserProfile>({});
-  const wallet = useWallet();
-  const accountId = wallet?.wallet?.accountId || "";
-  const { registration } = useRegistration(accountId);
-  const actAsDao = useGlobalStoreSelector((state) => state.nav.actAsDao);
-
-  const [status, setStatus] = useState<ListRegistrationStatus>(registration.status);
+  const authenticatedUser = authHooks.useUserSession();
 
   const logoutHandler = useCallback(() => {
-    walletApi.wallet?.signOut();
+    nearClient.walletApi.wallet?.signOut();
   }, []);
-
-  useEffect(() => {
-    if (accountId) {
-      fetchSocialImages({ accountId }).then(({ profile }) => setProfile(profile ?? {}));
-    }
-
-    // Add accountId to the nav model
-    updateAccountId(accountId);
-  }, [accountId]);
-
-  useEffect(() => {
-    if (accountId) {
-      getIsHuman({ account_id: accountId }).then((isHuman) => {
-        updateNadabotVerification(isHuman);
-
-        setStatus(
-          (registration.id ? registration.status : undefined) ??
-            (isHuman ? "Human" : RegistrationStatus.Unregistered),
-        );
-      });
-    }
-  }, [accountId, registration]);
-
-  const actAsDaoEnabled = actAsDao.toggle && actAsDao.defaultAddress;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="h-8 w-8 rounded-full">
-        {actAsDaoEnabled ? (
-          daoProfileImage
+        {authenticatedUser.isSignedIn ? (
+          <AccountProfilePicture
+            disabledSummaryPopup
+            accountId={authenticatedUser.accountId}
+            className="h-full w-full"
+          />
         ) : (
-          <AccountProfilePicture accountId={accountId} className="h-full w-full" />
+          <MdQuestionMark className="h-full w-full" />
         )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-72 p-0">
-        {status && (
+        {authenticatedUser.registrationStatus && (
           <DropdownMenuLabel
             className="flex items-center justify-between px-4 py-2"
             style={{
-              color: listRegistrationStatuses[status].color,
-              background: listRegistrationStatuses[status].background,
+              color: listRegistrationStatuses[authenticatedUser.registrationStatus].color,
+              background: listRegistrationStatuses[authenticatedUser.registrationStatus].background,
             }}
           >
-            {registration.status}
+            {authenticatedUser.registrationStatus}
 
             <LazyLoadImage
               alt="Registration status icon"
-              src={listRegistrationStatuses[status].icon}
+              src={listRegistrationStatuses[authenticatedUser.registrationStatus].icon}
               width={18}
               height={18}
             />
@@ -114,33 +66,37 @@ export const UserDropdown = () => {
 
         <div className="flex flex-col gap-6 p-4">
           <DropdownMenuLabel className="flex gap-2 p-0">
-            {actAsDaoEnabled ? (
-              daoProfileImage
-            ) : (
-              <AccountProfilePicture accountId={accountId} className="h-10 w-10" />
+            {authenticatedUser.accountId && (
+              <AccountProfilePicture
+                disabledSummaryPopup
+                accountId={authenticatedUser.accountId}
+                className="h-10 w-10"
+              />
             )}
 
             <div className="flex flex-col">
-              {profile?.name && <p className="font-semibold">{truncate(profile?.name, 30)}</p>}
-
-              {actAsDaoEnabled ? (
-                <p className="color-[#656565] text-xs">
-                  {truncate(`Acting as ${actAsDao.defaultAddress}`, 36)}
+              {authenticatedUser.account?.near_social_profile_data?.name && (
+                <p className="font-semibold">
+                  {truncate(authenticatedUser.account?.near_social_profile_data?.name, 30)}
                 </p>
-              ) : (
-                <p className="prose color-[#656565] text-xs">{truncate(accountId, 40)}</p>
               )}
+
+              <p className="prose color-[#656565] text-xs">
+                {truncate(authenticatedUser.accountId ?? "?", 40)}
+              </p>
             </div>
           </DropdownMenuLabel>
 
           <ActAsDao />
 
           <div className="rounded-md border border-[#DBDBDB]">
-            <Link href={`${routesPath.PROFILE}/${accountId}`}>
-              <DropdownMenuItem className="px-3 py-2.5 font-medium">
-                {registration ? "My Project" : "My Profile"}
-              </DropdownMenuItem>
-            </Link>
+            {authenticatedUser.accountId && (
+              <Link href={`${rootPathnames.PROFILE}/${authenticatedUser.accountId}`}>
+                <DropdownMenuItem className="px-3 py-2.5 font-medium">
+                  {authenticatedUser.isVerifiedPublicGoodsProvider ? "My Project" : "My Profile"}
+                </DropdownMenuItem>
+              </Link>
+            )}
 
             <Link href={`https://near.social/mob.near/widget/NotificationFeed`} target="_blank">
               <DropdownMenuItem className="px-3 py-2.5 font-medium">
