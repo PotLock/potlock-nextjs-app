@@ -24,13 +24,13 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
       <Link
         href={`${routesPath.PROFILE}/${accountId}`}
         target="_blank"
-        className={cn("decoration-none", classNames?.root)}
+        className={cn("decoration-none w-full", classNames?.root)}
       >
         <Badge variant="secondary" className="flex w-full max-w-80 items-center gap-2">
           <AccountProfilePicture {...{ accountId }} className={cn("h-4 w-4", classNames?.avatar)} />
 
           <span className={cn("w-full", classNames?.name)}>
-            <MiddleTruncate end={0} className="font-500">
+            <MiddleTruncate end={0} className="font-500 text-nowrap">
               {profile?.name ?? accountId}
             </MiddleTruncate>
           </span>

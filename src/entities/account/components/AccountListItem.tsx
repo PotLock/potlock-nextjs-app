@@ -1,11 +1,9 @@
 import { useCallback, useMemo } from "react";
 
 import { MiddleTruncate } from "@re-dev/react-truncate";
-import Link from "next/link";
 
 import { AccountId, ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
-import { rootPathnames } from "@/pathnames";
 
 import { AccountHandle } from "./AccountHandle";
 import { AccountSummaryPopup } from "./AccountSummaryPopup";

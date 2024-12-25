@@ -1,4 +1,5 @@
-import { ByAccountId, ByListId } from "@/common/types";
+import { isAccountId, isEthereumAddress } from "@/common/lib";
+import { ByAccountId, ByListId, type ConditionalExecution } from "@/common/types";
 
 import * as generatedClient from "./internal/client.generated";
 import { INDEXER_CLIENT_CONFIG } from "./internal/config";
@@ -41,10 +42,10 @@ export const useAccounts = (params?: generatedClient.V1AccountsRetrieveParams) =
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve_2
  */
-export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
-  const queryResult = generatedClient.useV1AccountsRetrieve2(accountId ?? "noop", {
+export const useAccount = ({ accountId, enabled = true }: ByAccountId & ConditionalExecution) => {
+  const queryResult = generatedClient.useV1AccountsRetrieve2(accountId, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled: Boolean(accountId) },
+    swr: { enabled: enabled && isAccountId(accountId) && !isEthereumAddress(accountId) },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

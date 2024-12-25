@@ -1,10 +1,11 @@
 import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 
+import { useWindowSize } from "@uidotdev/usehooks";
 import { useRouter } from "next/router";
 import { MdOutlineGroup, MdOutlineHowToReg, MdOutlinePaid } from "react-icons/md";
 
 import { votingHooks } from "@/common/contracts/core/voting";
-import { SearchBar } from "@/common/ui/components";
+import { ScrollArea, SearchBar, VirtualScroll } from "@/common/ui/components";
 import { VotingHistoryEntry } from "@/features/voting";
 import { useVotingRound } from "@/features/voting/hooks/rounds";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
@@ -80,6 +81,7 @@ const dummyHistoryData: HistoryEntryData[] = [
 export default function PotHistoryTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
+  const { height: windowHeight } = useWindowSize();
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
   const onSearchTermChange = useCallback(
@@ -119,14 +121,16 @@ export default function PotHistoryTab() {
           <p className="prose text-2xl">{"No results found."}</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
-          {searchResults.map((entry) => (
-            <VotingHistoryEntry
-              key={entry.candidate_id + entry.voter + entry.timestamp}
-              data={entry}
-            />
-          ))}
-        </div>
+        <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
+          <div className="flex flex-col gap-6">
+            {searchResults.slice(0, 10).map((entry) => (
+              <VotingHistoryEntry
+                key={entry.candidate_id + entry.voter + entry.timestamp}
+                data={entry}
+              />
+            ))}
+          </div>
+        </ScrollArea>
       )}
     </div>
   );

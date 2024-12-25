@@ -4,6 +4,8 @@ import { MiddleTruncate } from "@re-dev/react-truncate";
 import { useWindowSize } from "@uidotdev/usehooks";
 import Link from "next/link";
 
+import { ETHEREUM_EXPLORER_ADDRESS_ENDPOINT_URL } from "@/common/constants";
+import { isEthereumAddress } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { rootPathnames } from "@/pathnames";
@@ -24,11 +26,19 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
 }) => {
   const currentWindowSize = useWindowSize();
   const [initialWindowSize, setInitialWindowSize] = useState(currentWindowSize);
+  const [isTruncated, setIsTruncated] = useState(false);
 
   const [initialDisableSummaryPopup, setInitialDisableSummaryPopup] =
     useState(disabledSummaryPopup);
 
-  const [isTruncated, setIsTruncated] = useState(false);
+  const linkHref = useMemo(
+    () =>
+      isEthereumAddress(accountId)
+        ? `${ETHEREUM_EXPLORER_ADDRESS_ENDPOINT_URL}/${accountId}`
+        : href || `${rootPathnames.PROFILE}/${accountId}`,
+
+    [accountId, href],
+  );
 
   const registerTruncate = useCallback(() => {
     setTimeout(() => {
@@ -41,7 +51,7 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
      * We need to temporarily set the wrapper element's width back to `w-full`
      *  when the window size changes, so that the `MiddleTruncate` component
      *  can re-calculate its width correctly, after which we're free to set `w-fit`
-     *  ( see Link's conditional className fragment )
+     *  ( see Link's last conditional className fragment )
      */
     if (currentWindowSize.width !== initialWindowSize.width) {
       setInitialWindowSize(currentWindowSize);
@@ -61,18 +71,17 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
   return (
     <AccountSummaryPopup disabled={disabledSummaryPopup} {...{ accountId }}>
       <Link
+        href={linkHref}
+        target="blank"
         className={cn(
           "underline-dotted underline-neutral-500 underline-opacity-20 underline-offset-4",
           "hover:underline-solid hover:underline-opacity-100 underline",
           "max-w-100 inline-flex items-start text-nowrap text-neutral-500",
+          className,
 
           /* See comments in `useEffect` */
           { "w-full": !isTruncated, "w-fit": isTruncated },
-
-          className,
         )}
-        href={href || `${rootPathnames.PROFILE}/${accountId}`}
-        target="_blank"
       >
         <MiddleTruncate end={0} onTruncate={registerTruncate}>{`@${accountId}`}</MiddleTruncate>
       </Link>

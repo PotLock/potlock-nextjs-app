@@ -21,20 +21,20 @@ export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
   },
 }) => {
   const humanReadableTimestamp = useMemo(
-    () => Temporal.Instant.fromEpochSeconds(timestamp).toLocaleString(),
+    () => Temporal.Instant.fromEpochMilliseconds(timestamp).toLocaleString(),
     [timestamp],
   );
 
   return (
     <div className="flex w-full flex-wrap items-center justify-between gap-6 rounded-2xl border p-5">
-      <div className="flex items-center gap-4">
+      <div className="flex w-full max-w-[320px] items-center gap-4">
         <AccountProfilePicture accountId={voterAccountId} className="h-12 w-12" />
 
-        <div className="flex w-[248px] flex-col">
+        <div className="flex w-full flex-col">
           <AccountHandle accountId={voterAccountId} />
 
           <div className="flex w-full items-center gap-1">
-            <span className="text-[17px] font-normal">{"Voted for"}</span>
+            <span className="text-nowrap text-[17px] font-normal">{"Voted for"}</span>
             <AccountProfileLink accountId={candidateAccountId} />
           </div>
         </div>

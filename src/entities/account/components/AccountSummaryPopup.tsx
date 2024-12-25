@@ -1,4 +1,3 @@
-import { Truncate } from "@re-dev/react-truncate";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -34,23 +33,17 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
       </HoverCardTrigger>
 
       <HoverCardContent side="top" className="w-84.5 h-fit overflow-hidden">
-        <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
+        <AccountProfilePicture disabledSummaryPopup className="h-10 w-10" {...{ accountId }} />
 
-        <div className="flex flex-col items-start justify-start gap-2 self-stretch">
-          <div className="inline-flex items-center justify-start gap-1 self-stretch">
-            <div className="text-sm font-semibold leading-tight text-zinc-800">
-              {profile?.name ?? accountId}
-            </div>
-          </div>
+        <div className="flex flex-col items-start justify-start gap-3">
+          <span className="text-sm font-semibold leading-tight">{profile?.name ?? accountId}</span>
 
-          <Truncate lines={2}>
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              className="prose w-62.5 text-sm leading-tight"
-            >
-              {profile?.description ?? "No description provided"}
-            </ReactMarkdown>
-          </Truncate>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            className="w-62.5 max-h-[52px] overflow-hidden text-sm leading-tight"
+          >
+            {profile?.description ?? "No description provided"}
+          </ReactMarkdown>
 
           {fundingAccount && fundingAccount?.total_donations_in_usd ? (
             <span className="prose inline-flex gap-1 text-sm">

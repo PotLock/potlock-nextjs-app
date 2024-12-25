@@ -78,6 +78,7 @@ export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
 
 export const IPFS_NEAR_SOCIAL_URL = "https://ipfs.near.social/ipfs/";
+export const ETHEREUM_EXPLORER_ADDRESS_ENDPOINT_URL = "https://etherscan.io/address";
 
 export const CHRONOLOGICAL_SORT_OPTIONS: {
   label: string;

@@ -55,7 +55,10 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     isLoading: isRecipientDataLoading,
     data: recipient,
     error: recipientDataError,
-  } = indexer.useAccount({ accountId });
+  } = indexer.useAccount({
+    enabled: accountId !== undefined,
+    accountId: accountId ?? "noop",
+  });
 
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
