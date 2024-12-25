@@ -20,8 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/molecules/social-share";
-import { AccountListItem, AccountProfilePicture } from "@/entities/account";
-import { AccessControlListModal } from "@/features/access-control";
+import { AccountGroupEditModal, AccountListItem, AccountProfilePicture } from "@/entities/account";
 import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";
 
@@ -327,7 +326,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         onSubmitButton={() => handleDeleteList(listDetails.on_chain_id)}
       />
 
-      <AccessControlListModal
+      <AccountGroupEditModal
         id={adminsModalId}
         title="Edit Admin list"
         handleRemoveAccounts={handleRemoveAdmin}
@@ -341,7 +340,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
           handleSaveAdminsSettings(newAdmins);
         }}
       />
-      <AccessControlListModal
+      <AccountGroupEditModal
         id={registrantsModalId}
         title="Edit Accounts"
         value={savedUsers?.accounts ?? []}

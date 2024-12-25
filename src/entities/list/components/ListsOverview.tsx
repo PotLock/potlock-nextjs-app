@@ -116,6 +116,7 @@ export const ListsOverview = ({
           <SearchBar
             placeholder="Search Lists"
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
+            className="w-full"
           />
 
           <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />

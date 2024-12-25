@@ -10,11 +10,16 @@ export interface VotingCandidateLookup extends ByElectionId {}
 export const useVotingCandidateLookup = ({ electionId }: VotingCandidateLookup) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const userSession = authHooks.useUserSession();
-  const { data, ...candidatesQueryResult } = votingHooks.useElectionCandidates({ electionId });
+
+  const { data, ...candidatesQueryResult } = votingHooks.useElectionCandidates({
+    enabled: electionId !== 0,
+    electionId,
+  });
 
   const { data: userVotes } = votingHooks.useVoterVotes({
-    accountId: userSession.accountId,
+    enabled: electionId !== 0 && userSession.accountId !== undefined,
     electionId,
+    accountId: userSession.accountId ?? "noop",
   });
 
   return useMemo(() => {
@@ -55,19 +60,27 @@ export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId 
   const { toast } = useToast();
   const userSession = authHooks.useUserSession();
 
-  const { data: isVotingPeriodOngoing = false } = votingHooks.useIsVotingPeriod({ electionId });
+  const { data: isVotingPeriodOngoing = false } = votingHooks.useIsVotingPeriod({
+    enabled: electionId !== 0,
+    electionId,
+  });
 
   const { data: remainingUserVotingCapacity, isLoading: isRemainingUserVotingCapacityLoading } =
     votingHooks.useVoterRemainingCapacity({
-      accountId: userSession.accountId,
+      enabled: electionId !== 0 && userSession.accountId !== undefined,
       electionId,
+      accountId: userSession.accountId ?? "noop",
     });
 
   const {
     data: votes,
     mutate: revalidateVotes,
     isLoading: isVoteListLoading,
-  } = votingHooks.useElectionCandidateVotes({ electionId, accountId });
+  } = votingHooks.useElectionCandidateVotes({
+    enabled: electionId !== 0,
+    electionId,
+    accountId,
+  });
 
   const isLoading = useMemo(
     () =>

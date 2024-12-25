@@ -45,11 +45,18 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   const [potId] = form.watch(["potAccountId"]);
   const { data: pot } = indexer.usePot({ potId });
 
-  const { data: recipient, error: recipientDataError } = indexer.useAccount({
-    accountId:
+  const recipientAccountId = useMemo(
+    () =>
       "recipient_id" in (finalOutcome ?? {})
         ? (finalOutcome as DirectDonation).recipient_id
         : ((finalOutcome as PotDonation).project_id ?? undefined),
+
+    [finalOutcome],
+  );
+
+  const { data: recipient, error: recipientDataError } = indexer.useAccount({
+    enabled: recipientAccountId !== undefined,
+    accountId: recipientAccountId ?? "noop",
   });
 
   const tokenId =

@@ -38,15 +38,9 @@ export default defineConfig({
         50: "#fef3f2",
         400: "#f6767a",
         600: "#dd3345",
-
         DEFAULT: "hsl(var(--primary))",
-        light: "hsl(0 0% 27%)",
-        dark: "hsl(210 40% 98%)",
-
         foreground: {
           DEFAULT: "hsl(var(--primary-foreground))",
-          light: "hsl(210 40% 98%)",
-          dark: "hsl(222.2 47.4% 11.2%)",
         },
       },
 
@@ -81,111 +75,59 @@ export default defineConfig({
         900: "#2e2e2e",
       },
 
-      background: {
-        DEFAULT: "hsl(var(--background))",
-        light: "hsl(0 0% 100%)",
-        dark: "hsl(222.2 84% 4.9%)",
-      },
+      background: "hsl(var(--background))",
 
       foreground: {
         DEFAULT: "hsl(var(--foreground))",
-        light: "hsl(222.2 84% 4.9%)",
-        dark: "hsl(210 40% 98%)",
       },
 
       card: {
         DEFAULT: "hsl(var(--card))",
-        light: "hsl(0 0% 100%)",
-        dark: "hsl(222.2 84% 4.9%)",
-
         foreground: {
           DEFAULT: "hsl(var(--card-foreground))",
-          light: "hsl(222.2 84% 4.9%)",
-          dark: "hsl(210 40% 98%)",
         },
       },
 
       popover: {
         DEFAULT: "hsl(var(--popover))",
-        light: "hsl(0 0% 100%)",
-        dark: "hsl(222.2 84% 4.9%)",
-
         foreground: {
           DEFAULT: "hsl(var(--popover-foreground))",
-          light: "hsl(222.2 84% 4.9%)",
-          dark: "hsl(210 40% 98%)",
         },
       },
 
       secondary: {
         DEFAULT: "hsl(var(--secondary))",
-        light: "hsl(210 40% 96.1%)",
-        dark: "hsl(217.2 32.6% 17.5%)",
-
         foreground: {
           DEFAULT: "hsl(var(--secondary-foreground))",
-          light: "hsl(222.2 47.4% 11.2%)",
-          dark: "hsl(210 40% 98%)",
         },
       },
 
       muted: {
         DEFAULT: "hsl(var(--muted))",
-        light: "hsl(210 40% 96.1%)",
-        dark: "hsl(217.2 32.6% 17.5%)",
-
         foreground: {
           DEFAULT: "hsl(var(--muted-foreground))",
-          light: "hsl(215.4 16.3% 46.9%)",
-          dark: "hsl(215 20.2% 65.1%)",
         },
       },
 
       accent: {
         DEFAULT: "hsl(var(--accent))",
-        light: "hsl(30 89% 96%)",
-        dark: "hsl(217.2 32.6% 17.5%)",
-
         foreground: {
           DEFAULT: "hsl(var(--accent-foreground))",
-          light: "hsl(21 82% 53%)",
-          dark: "hsl(210 40% 98%)",
         },
       },
 
-      success: {
-        DEFAULT: "hsl(var(--success))",
-      },
+      success: "hsl(var(--success))",
 
       destructive: {
         DEFAULT: "hsl(var(--destructive))",
-        light: "hsl(0 84.2% 60.2%)",
-        dark: "hsl(0 62.8% 30.6%)",
-
         foreground: {
           DEFAULT: "hsl(var(--destructive-foreground))",
-          light: "hsl(210 40% 98%)",
-          dark: "hsl(210 40% 98%)",
         },
       },
 
-      border: {
-        DEFAULT: "hsl(var(--border))",
-        light: "hsl(214.3 31.8% 91.4%)",
-        dark: "hsl(217.2 32.6% 17.5%)",
-      },
-
-      input: {
-        DEFAULT: "hsl(var(--input))",
-        light: "hsl(0 0% 65%)",
-        dark: "hsl(0 0% 86%)",
-      },
-
-      ring: {
-        DEFAULT: "hsl(var(--ring))",
-        light: "hsl(0 0% 78%)",
-        dark: "hsl(212.7 26.8% 83.9%)",
-      },
+      border: "hsl(var(--border))",
+      input: "hsl(var(--input))",
+      ring: "hsl(var(--ring))",
     },
     fontSize: {
       xl: "22px",
@@ -229,7 +171,6 @@ export default defineConfig({
     "button-tonal": "shadow-[var(--button-tonal)]",
   },
 
-  // Adding keyframes and animations
   preflights: [
     {
       getCSS: () => `

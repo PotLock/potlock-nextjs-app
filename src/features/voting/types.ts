@@ -1,4 +1,5 @@
 import { ByPotId } from "@/common/api/indexer";
+import type { ByElectionId, Election } from "@/common/contracts/core/voting";
 import { ByAccountId, TokenId } from "@/common/types";
 
 export type VotingParticipantKey = Partial<ByAccountId> & ByPotId;
@@ -38,3 +39,7 @@ export type VotingMechanismConfig = {
 };
 
 export type VotingCandidateFilter = "all" | "voted" | "pending";
+
+export type VotingRound = ByElectionId & { election: Election };
+
+export type VotingRoundKey = ByPotId;

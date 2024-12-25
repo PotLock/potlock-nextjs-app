@@ -55,6 +55,7 @@ export default function PotProjectsTab() {
           <SearchBar
             placeholder="Search projects"
             onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
+            className="w-full"
           />
         </div>
       </div>

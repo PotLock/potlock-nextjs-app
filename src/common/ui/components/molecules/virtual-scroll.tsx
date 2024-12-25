@@ -6,12 +6,14 @@ import { ScrollArea } from "../atoms/scroll-area";
 
 export type VirtualScrollProps<T> = {
   items: T[];
-  ItemComponent: React.FC<T>;
+  ItemComponent: React.FC<{ data: T }>;
+
   classNames?: {
     root?: string;
   };
 };
 
+// TODO: The component is unfinished
 export const VirtualScroll = <T extends object>({
   classNames,
   items,
@@ -46,7 +48,7 @@ export const VirtualScroll = <T extends object>({
               transform: `translateY(${virtualItem.start}px)`,
             }}
           >
-            <ItemComponent {...items[virtualItem.index]} />
+            <ItemComponent data={items[virtualItem.index]} />
           </div>
         ))}
       </div>

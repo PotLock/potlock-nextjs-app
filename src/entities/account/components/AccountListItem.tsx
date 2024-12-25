@@ -1,12 +1,10 @@
 import { useCallback, useMemo } from "react";
 
-import { MiddleTruncate } from "@re-dev/react-truncate";
-import Link from "next/link";
-
+import { truncate } from "@/common/lib";
 import { AccountId, ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
-import { rootPathnames } from "@/pathnames";
 
+import { AccountHandle } from "./AccountHandle";
 import { AccountSummaryPopup } from "./AccountSummaryPopup";
 import { AccountProfilePicture } from "./profile-images";
 import { useAccountSocialProfile } from "../hooks/social-profile";
@@ -18,6 +16,7 @@ export type AccountListItemProps = ByAccountId & {
   statusElement?: React.ReactNode;
   hideStatusOnDesktop?: boolean;
   hideStatusOnMobile?: boolean;
+  disableHandleSummaryPopup?: boolean;
   primaryAction?: React.ReactNode;
   secondaryAction?: React.ReactNode;
   href?: string;
@@ -37,6 +36,7 @@ export const AccountListItem = ({
   statusElement,
   hideStatusOnDesktop = false,
   hideStatusOnMobile = false,
+  disableHandleSummaryPopup = false,
   primaryAction,
   secondaryAction,
   href,
@@ -49,7 +49,12 @@ export const AccountListItem = ({
   const avatarElement = useMemo(
     () => (
       <AccountSummaryPopup {...{ accountId }}>
-        <AccountProfilePicture className={cn("h-10 w-10", classNames?.avatar)} {...{ accountId }} />
+        <div className="flex h-fit min-h-fit w-fit min-w-fit">
+          <AccountProfilePicture
+            className={cn("h-10 min-h-10 w-10 min-w-10", classNames?.avatar)}
+            {...{ accountId }}
+          />
+        </div>
       </AccountSummaryPopup>
     ),
 
@@ -62,7 +67,7 @@ export const AccountListItem = ({
     <div
       onClick={handleClick}
       className={cn(
-        "flex w-full items-center gap-4 hover:bg-transparent",
+        "flex w-full items-center gap-4 py-2 hover:bg-transparent",
         { "rounded-full": isRounded, "hover:bg-[#FEF6EE]": highlightOnHover },
         classNames?.root,
       )}
@@ -72,38 +77,38 @@ export const AccountListItem = ({
       <div className="mr-a flex w-full items-center gap-4">
         {avatarElement}
 
-        <AccountSummaryPopup {...{ accountId }}>
-          <div className="max-w-100 flex w-full flex-col items-start justify-start">
-            <div className="max-w-100 inline-flex w-full items-start gap-1.5">
-              <MiddleTruncate className="font-600 w-full self-start" end={0}>
-                {profile?.name ?? accountId}
-              </MiddleTruncate>
+        <div className="max-w-100 flex w-full flex-col items-start justify-start">
+          <div
+            className={cn("inline-flex w-full items-start gap-1.5", {
+              "max-w-100": !statusElement,
+              "max-w-150": Boolean(statusElement),
+            })}
+          >
+            <AccountSummaryPopup {...{ accountId }}>
+              <span className="w-fit">{truncate(profile?.name ?? accountId, 40)}</span>
+            </AccountSummaryPopup>
 
+            {statusElement && (
               <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
                 {statusElement}
               </div>
-            </div>
-
-            <div className="max-w-100 flex w-full flex-col gap-1.5">
-              <Link
-                className={cn(
-                  "underline-solid max-w-100 inline-flex w-full items-start",
-                  "text-nowrap text-neutral-500 underline-offset-4",
-                )}
-                href={href || `${rootPathnames.PROFILE}/${accountId}`}
-                target="_blank"
-              >
-                <MiddleTruncate end={0}>{`@${accountId}`}</MiddleTruncate>
-              </Link>
-
-              {statusElement && (
-                <span className={cn("md:hidden", { hidden: hideStatusOnMobile })}>
-                  {statusElement}
-                </span>
-              )}
-            </div>
+            )}
           </div>
-        </AccountSummaryPopup>
+
+          <div className="max-w-100 flex w-full flex-col gap-1.5">
+            <AccountHandle
+              disabledSummaryPopup={disableHandleSummaryPopup}
+              accountId={accountId}
+              href={href}
+            />
+
+            {statusElement && (
+              <span className={cn("md:hidden", { hidden: hideStatusOnMobile })}>
+                {statusElement}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       {secondaryAction && <div className="">{secondaryAction}</div>}

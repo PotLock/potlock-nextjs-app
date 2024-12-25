@@ -189,7 +189,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
       </DialogDescription>
 
       <ScrollArea className="h-49 w-full">
-        <div className="flex flex-col items-center gap-0.5">
+        <div className="flex w-full flex-col items-center gap-0.5">
           {isPotDonation && (
             <DonationRecipientShares
               {...{ balanceFloat, isBalanceSufficient, form }}

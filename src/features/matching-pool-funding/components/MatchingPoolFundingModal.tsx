@@ -17,7 +17,7 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { AccountProfilePicture } from "@/entities/account";
+import { AccountProfileLink, AccountProfilePicture } from "@/entities/account";
 import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -146,21 +146,7 @@ export const MatchingPoolFundingModal: React.FC<MatchingPoolFundingModalProps> =
                 </label>
               </div>
 
-              {protocolConfig && (
-                <Link
-                  href={`/${rootPathnames.PROFILE}/${protocolConfig.account_id}`}
-                  target="_blank"
-                >
-                  <Badge variant="secondary" className="gap-1">
-                    <AccountProfilePicture
-                      accountId={protocolConfig.account_id}
-                      className="h-3 w-3"
-                    />
-
-                    {protocolConfig?.account_id}
-                  </Badge>
-                </Link>
-              )}
+              {protocolConfig && <AccountProfileLink accountId={protocolConfig.account_id} />}
             </div>
 
             {/* Bypass Chef Fee */}
@@ -183,16 +169,7 @@ export const MatchingPoolFundingModal: React.FC<MatchingPoolFundingModalProps> =
                   </label>
                 </div>
 
-                {/* Avatar - Account */}
-                <Link href={`/${rootPathnames.PROFILE}/${potDetail.chef?.id}`} target="_blank">
-                  <Badge variant="secondary" className="gap-1">
-                    <AccountProfilePicture
-                      accountId={potDetail.chef?.id}
-                      className="h-[12px] w-[12px]"
-                    />{" "}
-                    {potDetail.chef?.id}
-                  </Badge>
-                </Link>
+                <AccountProfileLink accountId={potDetail.chef.id} />
               </div>
             )}
 

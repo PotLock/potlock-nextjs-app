@@ -30,13 +30,7 @@ export type PotLayoutTabOption = LayoutTabOption & {
 type PotLayoutTabRegistry = Record<PotLayoutTabTag, PotLayoutTabOption>;
 
 interface TabState {
-  potConfigs: Record<
-    string,
-    {
-      hasVoting: boolean;
-      defaultTabTag: PotLayoutTabTag;
-    }
-  >;
+  potConfigs: Record<string, { hasVoting: boolean; defaultTabTag: PotLayoutTabTag }>;
   tabRegistries: Record<string, PotLayoutTabRegistry>;
   orderedTabLists: Record<string, PotLayoutTabOption[]>;
   setPotConfig: (potId: string, hasVoting: boolean) => void;
@@ -100,8 +94,7 @@ const usePotTabStore = create<TabState>()(
           [PotLayoutTabTag.History]: {
             tag: PotLayoutTabTag.History,
             href: `${rootHref}/history`,
-            // TODO: Temporarily disabled
-            isHidden: true || !hasVoting,
+            isHidden: !hasVoting,
           },
           [PotLayoutTabTag.Payouts]: {
             tag: PotLayoutTabTag.Payouts,
@@ -169,14 +162,12 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
 
   // Ensure pot config is set/updated
   useEffect(() => {
-    if (potId && !isPotExtensionConfigLoading) {
+    if (!isPotExtensionConfigLoading) {
       setPotConfig(potId, hasVoting);
     }
   }, [potId, hasVoting, setPotConfig, isPotExtensionConfigLoading]);
 
-  const potConfig = potId ? potConfigs[potId] : null;
-  const defaultTabTag = potConfig?.defaultTabTag ?? PotLayoutTabTag.Projects;
-
+  const defaultTabTag = potConfigs[potId]?.defaultTabTag ?? PotLayoutTabTag.Projects;
   const tabRegistry = potId ? (tabRegistries[potId] ?? emptyRegistry) : emptyRegistry;
   const orderedTabList = potId ? (orderedTabLists[potId] ?? emptyList) : emptyList;
 
@@ -190,16 +181,17 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
     (tag: PotLayoutTabTag) => {
       const targetTab = tabRegistry[tag];
 
-      if (potId && targetTab && !targetTab.isHidden) {
+      if (targetTab && !targetTab.isHidden) {
         navigateToHref(targetTab.href);
       }
     },
-    [navigateToHref, tabRegistry, potId],
+
+    [navigateToHref, tabRegistry],
   );
 
   // Handle navigation to default tab
   useEffect(() => {
-    const rootPath = potId ? `${rootPathnames.pot}/${potId}` : "";
+    const rootPath = `${rootPathnames.pot}/${potId}`;
 
     if (potId !== undefined && (activeTab === null || currentPath === rootPath)) {
       navigateToTab(defaultTabTag);

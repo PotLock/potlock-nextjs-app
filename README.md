@@ -60,12 +60,6 @@ Versatile abstraction for modals
 [Documentation](https://github.com/eBay/nice-modal-react?tab=readme-ov-file#nice-modal)
 [Examples](https://opensource.ebay.com/nice-modal-react/)
 
-### React Truncate
-
-Painless dynamic text truncation
-
-[Documentation](https://truncate.js.org/reference/middle-truncate/)
-
 ## Project Structure
 
 The architectural doctrine of the project is heavily based on [Feature-Sliced Design](https://feature-sliced.design/docs/reference/layers).

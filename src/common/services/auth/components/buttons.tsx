@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 
-import { walletApi } from "@/common/api/near/client";
+import { nearClient } from "@/common/api/near";
 import { Button } from "@/common/ui/components";
 
 export const AuthSignInButton: React.FC = () => {
   const onClick = useCallback(() => {
-    walletApi.signInModal();
+    nearClient.walletApi.signInModal();
   }, []);
 
   return (

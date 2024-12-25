@@ -25,15 +25,15 @@ import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
 import { AccountKey, AccountListItem, validAccountId } from "@/entities/account";
 
-export type AccessControlListModalProps = {
+export type AccountGroupEditModalProps = {
   title: string;
   value: AccountKey[];
   onSubmit: (accountIds: AccountId[]) => void;
   handleRemoveAccounts?: (accounts: AccountKey[]) => void;
 };
 
-export const AccessControlListModal = create(
-  ({ title, value: entries, onSubmit, handleRemoveAccounts }: AccessControlListModalProps) => {
+export const AccountGroupEditModal = create(
+  ({ title, value: entries, onSubmit, handleRemoveAccounts }: AccountGroupEditModalProps) => {
     const self = useModal();
 
     const accountIds = entries.map(prop("accountId"));
@@ -172,7 +172,7 @@ export const AccessControlListModal = create(
             </div>
 
             <ScrollArea className="w-full whitespace-nowrap rounded-b-lg">
-              <div un-flex="~ col" un-w="full">
+              <div className="flex w-full flex-col">
                 {accountIds.map((accountId) => (
                   <AccountListItem
                     key={accountId}

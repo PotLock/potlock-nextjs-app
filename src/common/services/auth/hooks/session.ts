@@ -4,6 +4,7 @@ import { prop } from "remeda";
 
 import { ListRegistrationStatus, indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { isAccountId } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -20,13 +21,19 @@ export const useUserSession = (): UserSession => {
     [actAsDao.defaultAddress, asDao, lastActiveAccountId, wallet?.accountId],
   );
 
+  /**
+   * Account for edge cases in which the wallet is connected to a mismatching network
+   *  ( e.g. testnet account in mainnet-bound environments )
+   */
+  const isAccountIdValid = useMemo(() => isAccountId(accountId), [accountId]);
+
   const { isLoading: isAccountListRegistryLoading, data: accountListRegistrations } =
     indexer.useAccountListRegistrations({
-      accountId,
+      accountId: isAccountIdValid ? accountId : undefined,
       page_size: 9999,
     });
 
-  const { registrant: publicGoodsRegistryAccount, status } = useMemo(
+  const { registrant: publicGoodsRegistryAccount, status: registrationStatus } = useMemo(
     () =>
       accountListRegistrations?.results?.find(
         ({ list }) => list.id === PUBLIC_GOODS_REGISTRY_LIST_ID,
@@ -35,18 +42,20 @@ export const useUserSession = (): UserSession => {
     [accountListRegistrations?.results],
   );
 
-  if (isSignedIn && accountId) {
+  if (isSignedIn && accountId && isAccountIdValid) {
     return {
       accountId,
       account: publicGoodsRegistryAccount,
+      registrationStatus,
       isSignedIn: true,
       isAccountInfoLoading: isAccountListRegistryLoading,
-      isVerifiedPublicGoodsProvider: status === ListRegistrationStatus.Approved,
+      isVerifiedPublicGoodsProvider: registrationStatus === ListRegistrationStatus.Approved,
     };
   } else {
     return {
       accountId: undefined,
       account: undefined,
+      registrationStatus: undefined,
       isSignedIn: false,
       isAccountInfoLoading: false,
       isVerifiedPublicGoodsProvider: false,

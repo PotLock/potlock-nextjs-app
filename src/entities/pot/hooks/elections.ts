@@ -7,7 +7,7 @@ export const usePotElections = ({ potId }: ByPotId) => {
   return {
     isLoading,
 
-    potElections: elections?.filter(
+    elections: elections?.filter(
       ({ election_type }) =>
         typeof election_type === "object" && "Pot" in election_type && election_type.Pot === potId,
     ),
@@ -18,7 +18,7 @@ export const usePotActiveElections = ({ potId }: ByPotId) => {
   const { data: activeElections } = votingHooks.useActiveElections();
 
   return {
-    potActiveElections: activeElections?.filter(
+    activeElections: activeElections?.filter(
       ([_electionId, { election_type }]) =>
         typeof election_type === "object" && "Pot" in election_type && election_type.Pot === potId,
     ),

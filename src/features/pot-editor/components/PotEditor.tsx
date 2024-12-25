@@ -22,8 +22,8 @@ import {
   TextField,
 } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
+import { AccountGroup } from "@/entities/account";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
-import { AccessControlList } from "@/features/access-control";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/features/donation";
 
 import { PotEditorPreview } from "./PotEditorPreview";
@@ -72,7 +72,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId, className }) => {
 
         <div className="lg:min-w-4xl flex flex-col gap-14">
           <EditorSection heading={POT_EDITOR_FIELDS.admins.title}>
-            <AccessControlList
+            <AccountGroup
               isEditable
               title={POT_EDITOR_FIELDS.admins.title}
               value={values.admins?.map((admin) => ({ accountId: admin })) ?? []}

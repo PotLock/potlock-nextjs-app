@@ -129,7 +129,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
       )}
     >
       <div className="header">
-        <div className="header-info">
+        <div className="header-info w-full">
           <AccountListItem
             isRounded
             highlightOnHover
