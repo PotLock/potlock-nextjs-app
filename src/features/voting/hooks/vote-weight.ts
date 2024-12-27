@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 
 import { Big, BigSource } from "big.js";
-import { isTruthy } from "remeda";
+import { isTruthy, pick } from "remeda";
 
 import { isBigSource } from "@/common/lib";
 
-import { useVotingParticipantStats } from "./participant-stats";
+import { useVoterProfile } from "./voter-profile";
 import { VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS } from "../constants";
 import { VOTING_MECHANISM_CONFIG_MPDAO } from "../model/hardcoded";
-import { VotingParticipantKey, VotingVoteWeightAmplifier } from "../types";
+import { VoterKey, VotingVoteWeightAmplifier } from "../types";
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
@@ -16,54 +16,54 @@ import { VotingParticipantKey, VotingVoteWeightAmplifier } from "../types";
  *
  * Calculates vote weight amplifiers for a given participant in a given voting round.
  */
-export const useVotingParticipantVoteWeightAmplifiers = ({
+export const useVoterVoteWeightAmplifiers = ({
   accountId,
   potId: _,
-}: VotingParticipantKey): { voteWeightAmplifiers: VotingVoteWeightAmplifier[] } => {
+}: VoterKey): VotingVoteWeightAmplifier[] => {
   const { stakingContractAccountId, voteWeightAmplificationRules } =
     // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
     VOTING_MECHANISM_CONFIG_MPDAO;
 
-  const participantStats = useVotingParticipantStats({
-    accountId,
-    stakingContractAccountId,
-  });
+  const voterProfile = useVoterProfile({ accountId, stakingContractAccountId });
 
   return useMemo(
-    () => ({
-      voteWeightAmplifiers: voteWeightAmplificationRules.map(
-        ({ name, description, participantStatsPropertyKey, amplificationPercent, ...rule }) => {
-          const staticAmplifierProps = { name, description, amplificationPercent };
-          const participantStatsValue = participantStats[participantStatsPropertyKey];
+    () =>
+      voteWeightAmplificationRules.map((rule) => {
+        const profileParameter = voterProfile[rule.voterProfileParameter];
 
-          switch (rule.comparator) {
-            case "isTruthy": {
+        const staticAmplifierProps = pick(rule, [
+          "name",
+          "description",
+          "criteria",
+          "amplificationPercent",
+        ]);
+
+        switch (rule.comparator) {
+          case "isTruthy": {
+            return {
+              ...staticAmplifierProps,
+
+              isApplicable:
+                typeof profileParameter === "boolean" &&
+                isTruthy(profileParameter) === rule.expectation,
+            };
+          }
+
+          default: {
+            if (VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS.includes(rule.comparator)) {
               return {
                 ...staticAmplifierProps,
 
                 isApplicable:
-                  typeof participantStatsValue === "boolean" &&
-                  isTruthy(participantStatsValue) === rule.expectation,
+                  isBigSource(profileParameter) &&
+                  Big(profileParameter as BigSource)[rule.comparator](rule.threshold),
               };
-            }
-
-            default: {
-              if (VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS.includes(rule.comparator)) {
-                return {
-                  ...staticAmplifierProps,
-
-                  isApplicable:
-                    isBigSource(participantStatsValue) &&
-                    Big(participantStatsValue as BigSource)[rule.comparator](rule.threshold),
-                };
-              } else return { ...staticAmplifierProps, isApplicable: false };
-            }
+            } else return { ...staticAmplifierProps, isApplicable: false };
           }
-        },
-      ),
-    }),
+        }
+      }),
 
-    [participantStats, voteWeightAmplificationRules],
+    [voterProfile, voteWeightAmplificationRules],
   );
 };
 
@@ -73,12 +73,12 @@ export const useVotingParticipantVoteWeightAmplifiers = ({
  *
  * Calculates the vote weight of a given participant in a given voting round.
  */
-export const useVotingParticipantVoteWeight = ({ accountId, potId }: VotingParticipantKey) => {
+export const useVoterVoteWeight = ({ accountId, potId }: VoterKey) => {
   const { initialWeight, basicWeight } =
     // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
     VOTING_MECHANISM_CONFIG_MPDAO;
 
-  const { voteWeightAmplifiers } = useVotingParticipantVoteWeightAmplifiers({ accountId, potId });
+  const voteWeightAmplifiers = useVoterVoteWeightAmplifiers({ accountId, potId });
 
   return useMemo(() => {
     if (accountId === undefined) {

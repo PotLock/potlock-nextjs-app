@@ -2,21 +2,30 @@ import { ByPotId } from "@/common/api/indexer";
 import type { ByElectionId, Election } from "@/common/contracts/core/voting";
 import { ByAccountId, TokenId } from "@/common/types";
 
-export type VotingParticipantKey = Partial<ByAccountId> & ByPotId;
+export type VoterKey = Partial<ByAccountId> & ByPotId;
 
-export type VotingParticipantStats = {
+export type VoterProfile = {
   isHumanVerified: boolean;
   stakingTokenBalance?: Big.Big;
   stakingTokenBalanceUsd?: Big.Big;
   votingPower: Big.Big;
 };
 
+export enum VotingWeightAmplificationCriteriaEnum {
+  KYC = "KYC",
+  VotingPower = "Voting Power",
+  Staking = "Staking",
+}
+
+export type VotingWeightAmplificationCriteria = keyof typeof VotingWeightAmplificationCriteriaEnum;
+
 export type VotingSupportedNumericComparatorKey = keyof Big.Big & ("lt" | "lte" | "gt" | "gte");
 
 export type VotingWeightAmplificationRule = {
   name: string;
   description: string;
-  participantStatsPropertyKey: keyof VotingParticipantStats;
+  criteria: VotingWeightAmplificationCriteria;
+  voterProfileParameter: keyof VoterProfile;
   amplificationPercent: number;
 } & (
   | { comparator: VotingSupportedNumericComparatorKey; threshold: number }
@@ -25,7 +34,7 @@ export type VotingWeightAmplificationRule = {
 
 export type VotingVoteWeightAmplifier = Pick<
   VotingWeightAmplificationRule,
-  "name" | "description" | "amplificationPercent"
+  "name" | "description" | "criteria" | "amplificationPercent"
 > & {
   isApplicable: boolean;
 };

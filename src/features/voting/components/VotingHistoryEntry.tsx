@@ -3,16 +3,21 @@ import { useMemo } from "react";
 import { MdOutlineTimer } from "react-icons/md";
 import { Temporal } from "temporal-polyfill";
 
+import type { ByPotId } from "@/common/api/indexer";
 import type { Vote } from "@/common/contracts/core/voting";
+import { cn } from "@/common/ui/utils";
 import { AccountHandle, AccountProfileLink, AccountProfilePicture } from "@/entities/account";
 
 import { VotingWeightBoostBadge } from "./badges";
+import { useVoterVoteWeightAmplifiers } from "../hooks/vote-weight";
 
-export type VotingHistoryEntryProps = {
+export type VotingHistoryEntryProps = ByPotId & {
   data: Vote;
 };
 
 export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
+  potId,
+
   data: {
     candidate_id: candidateAccountId,
     voter: voterAccountId,
@@ -24,6 +29,11 @@ export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
     () => Temporal.Instant.fromEpochMilliseconds(timestamp).toLocaleString(),
     [timestamp],
   );
+
+  const voteWeightAmplifiers = useVoterVoteWeightAmplifiers({
+    potId,
+    accountId: voterAccountId,
+  });
 
   return (
     <div className="flex w-full flex-wrap items-center justify-between gap-6 rounded-2xl border p-5">
@@ -40,12 +50,18 @@ export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="inline-flex flex-col flex-wrap items-start justify-start gap-3 md:flex-row md:items-center">
-          {/* {weightBoost.items.map((item, index) => (
-            <VotingWeightBoostBadge key={index} data={item} />
-          ))} */}
-        </div>
+      <div
+        className={cn(
+          "inline-flex flex-col flex-wrap items-start justify-start gap-3",
+          "md:flex-row md:items-center",
+        )}
+      >
+        {voteWeightAmplifiers.map((amplifier) => (
+          <VotingWeightBoostBadge
+            key={amplifier.name + amplifier.amplificationPercent}
+            data={amplifier}
+          />
+        ))}
       </div>
 
       <div className="inline-flex">

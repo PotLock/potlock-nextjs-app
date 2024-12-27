@@ -15,8 +15,8 @@ import {
   VotingCandidateList,
   VotingRules,
   VotingWeightBoostBreakdown,
+  useVoterVoteWeight,
   useVotingCandidateLookup,
-  useVotingParticipantVoteWeight,
 } from "@/features/voting";
 import { useActiveVotingRound } from "@/features/voting/hooks/rounds";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
@@ -36,7 +36,7 @@ export default function PotVotesTab() {
   const isSidebarVisible = isDesktop && (isVotingRuleListVisible || isWeightBoostBreakdownVisible);
   const [candidateFilter, setFilter] = useState<VotingCandidateFilter>("all");
 
-  const authenticatedVoter = useVotingParticipantVoteWeight({
+  const authenticatedVoter = useVoterVoteWeight({
     accountId: authenticatedUser.accountId,
     potId,
   });

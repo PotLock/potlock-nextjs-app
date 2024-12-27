@@ -13,7 +13,8 @@ export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
     {
       name: "Human Verification",
       description: "Human-verified Users: Votes are weighted at 10% for verified users [KYC].",
-      participantStatsPropertyKey: "isHumanVerified",
+      criteria: "KYC",
+      voterProfileParameter: "isHumanVerified",
       comparator: "isTruthy",
       expectation: true,
       amplificationPercent: 10,
@@ -25,7 +26,8 @@ export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
       description:
         "Users with at least 10,000 votes in mpDAO governance receive an additional 25% vote weight.",
 
-      participantStatsPropertyKey: "votingPower",
+      criteria: "VotingPower",
+      voterProfileParameter: "votingPower",
       comparator: "gte",
       threshold: 10000,
       amplificationPercent: 25,
@@ -37,7 +39,8 @@ export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
       description:
         "Users with at least 25,000 votes in mpDAO governance receive an additional 25% vote weight.",
 
-      participantStatsPropertyKey: "votingPower",
+      criteria: "VotingPower",
+      voterProfileParameter: "votingPower",
       comparator: "gte",
       threshold: 25000,
       amplificationPercent: 25,
@@ -46,7 +49,8 @@ export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
     {
       name: "Stake at least 2 stNEAR",
       description: "Users with at least 2 stNEAR staked in Meta Pool receive a 10% boost.",
-      participantStatsPropertyKey: "stakingTokenBalance",
+      criteria: "Staking",
+      voterProfileParameter: "stakingTokenBalance",
       comparator: "gte",
       threshold: 2,
       amplificationPercent: 10,
@@ -58,7 +62,8 @@ export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
       description:
         "Users with at least 10 stNEAR staked in Meta Pool receive a 30% boost in addition to the 10% boost from staking at least 2 stNEAR.",
 
-      participantStatsPropertyKey: "stakingTokenBalance",
+      criteria: "Staking",
+      voterProfileParameter: "stakingTokenBalance",
       comparator: "gte",
       threshold: 10,
       amplificationPercent: 30,

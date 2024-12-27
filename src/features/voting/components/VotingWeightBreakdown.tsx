@@ -14,10 +14,7 @@ import {
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
-import {
-  useVotingParticipantVoteWeight,
-  useVotingParticipantVoteWeightAmplifiers,
-} from "../hooks/vote-weight";
+import { useVoterVoteWeight, useVoterVoteWeightAmplifiers } from "../hooks/vote-weight";
 
 export type VotingWeightBoostBreakdownProps = ByPotId & {
   mode: "modal" | "panel";
@@ -35,8 +32,8 @@ export const VotingWeightBoostBreakdown: React.FC<VotingWeightBoostBreakdownProp
 }) => {
   const isDialogOpen = useMemo(() => open && mode === "modal", [mode, open]);
   const { accountId } = authHooks.useUserSession();
-  const { voteWeight } = useVotingParticipantVoteWeight({ accountId, potId });
-  const { voteWeightAmplifiers } = useVotingParticipantVoteWeightAmplifiers({ accountId, potId });
+  const { voteWeight } = useVoterVoteWeight({ accountId, potId });
+  const voteWeightAmplifiers = useVoterVoteWeightAmplifiers({ accountId, potId });
 
   const checklist = useMemo(
     () => (

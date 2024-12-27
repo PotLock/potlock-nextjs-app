@@ -1,18 +1,17 @@
 import { useMemo } from "react";
 
 import { Big } from "big.js";
-import useSWR from "swr";
 
 import { indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
-import { isAccountId, stringifiedU128ToBigNum } from "@/common/lib";
+import { stringifiedU128ToBigNum } from "@/common/lib";
 import { tokenHooks } from "@/common/services/token";
 import { ByAccountId, TokenId } from "@/common/types";
 import { useIsHuman } from "@/entities/core";
 
-import { VotingParticipantStats } from "../types";
+import { VoterProfile } from "../types";
 
-export type VotingParticipantStatsInputs = Partial<ByAccountId> & {
+export type VoterProfileInputs = Partial<ByAccountId> & {
   stakingContractAccountId?: TokenId;
 };
 
@@ -22,10 +21,10 @@ export type VotingParticipantStatsInputs = Partial<ByAccountId> & {
  *
  * Though it is in the process of being refactored, the job is not entirely done yet.
  */
-export const useVotingParticipantStats = ({
+export const useVoterProfile = ({
   accountId,
   stakingContractAccountId,
-}: VotingParticipantStatsInputs): VotingParticipantStats => {
+}: VoterProfileInputs): VoterProfile => {
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: mpDaoVoterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
