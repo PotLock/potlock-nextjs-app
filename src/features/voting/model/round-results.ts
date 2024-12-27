@@ -2,49 +2,91 @@ import { Big } from "big.js";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { indexerClient } from "@/common/api/indexer";
+import { getIsHuman } from "@/common/contracts/core/sybil";
+import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
+
 import { VOTING_MECHANISM_CONFIG_MPDAO } from "./hardcoded";
-import { AccountId, Vote } from "../../../common/contracts/core/voting/interfaces";
 
 interface RoundResultsState {
-  // Cache structure: electionId -> candidate -> results
+  // Cache structure: electionId -> results
   resultsCache: Record<
-    number,
-    Record<
-      AccountId,
-      {
-        accumulatedWeight: number;
-        estimatedPayoutAmount: number;
-        lastVoteCount: number;
-      }
-    >
+    ElectionId,
+    {
+      totalVoteCount: number;
+      candidates: Record<AccountId, { accumulatedWeight: number; estimatedPayoutAmount: number }>;
+    }
   >;
+
   updateResults: (params: {
     electionId: number;
     votes: Vote[];
     matchingPoolBalance: number;
-    voterProfiles?: Record<
-      AccountId,
-      {
-        isHumanVerified: boolean;
-        stakingTokenBalance?: Big;
-        stakingTokenBalanceUsd?: Big;
-        votingPower: Big;
-      }
-    >;
-  }) => void;
+  }) => Promise<void>;
 }
 
 const useRoundResultsStore = create<RoundResultsState>()(
   persist(
     (set) => ({
       resultsCache: {},
-      updateResults: ({ electionId, votes, matchingPoolBalance, voterProfiles = {} }) => {
+      updateResults: async ({ electionId, votes, matchingPoolBalance }) => {
+        // Get unique voters
+        const uniqueVoters = [...new Set(votes.map((vote) => vote.voter))];
+
+        // Fetch voter profiles
+        const voterProfiles: Record<
+          AccountId,
+          {
+            isHumanVerified: boolean;
+            stakingTokenBalance: Big;
+            votingPower: Big;
+          }
+        > = {};
+
+        await Promise.all(
+          uniqueVoters.map(async (voterId) => {
+            try {
+              // Fetch voter info using the generated client
+              const { data: voterInfo } = await indexerClient.v1MpdaoVoterInfoRetrieve({
+                voter_id: voterId,
+              });
+
+              // Calculate voting power from positions
+              const votingPower = voterInfo.locking_positions.reduce(
+                (sum: Big, { voting_power }: { voting_power: string }) =>
+                  sum.add(Big(voting_power)),
+                Big(0),
+              );
+
+              // Get human verification status from sybil contract
+              const isHumanVerified = await getIsHuman({ account_id: voterId });
+
+              voterProfiles[voterId] = {
+                isHumanVerified,
+                votingPower,
+                stakingTokenBalance: Big(voterInfo.balance_in_contract || 0),
+              };
+            } catch (error) {
+              console.error(`Failed to fetch voter info for ${voterId}:`, error);
+
+              // Use default values if fetch fails
+              voterProfiles[voterId] = {
+                isHumanVerified: false,
+                votingPower: Big(0),
+                stakingTokenBalance: Big(0),
+              };
+            }
+          }),
+        );
+
         const { initialWeight, basicWeight, voteWeightAmplificationRules } =
           VOTING_MECHANISM_CONFIG_MPDAO;
 
         // Helper function to calculate voter's weight based on their profile
         const calculateVoterWeight = (voterId: AccountId) => {
-          const profile = voterProfiles[voterId] ?? {};
+          const profile = voterProfiles[voterId];
+          if (!profile) return Big(1); // Default to 1 if no profile
+
           let weight = Big(initialWeight);
 
           // Apply amplification rules
@@ -94,7 +136,6 @@ const useRoundResultsStore = create<RoundResultsState>()(
             {
               accumulatedWeight: number;
               estimatedPayoutAmount: number;
-              lastVoteCount: number;
             }
           >
         >((acc, [candidateId, candidateVotes]) => {
@@ -110,7 +151,6 @@ const useRoundResultsStore = create<RoundResultsState>()(
             // Calculate estimated payout based on relative weight
             estimatedPayoutAmount:
               matchingPoolBalance * (accumulatedWeight.toNumber() / votes.length),
-            lastVoteCount: candidateVotes.length,
           };
 
           return acc;
@@ -119,24 +159,21 @@ const useRoundResultsStore = create<RoundResultsState>()(
         set((state) => ({
           resultsCache: {
             ...state.resultsCache,
-            [electionId]: candidateResults,
+            [electionId]: {
+              totalVoteCount: votes.length,
+              candidates: candidateResults,
+            },
           },
         }));
       },
     }),
+
     {
-      name: "potlock-round-results",
+      name: "potlock-voting-round-results",
     },
   ),
 );
 
-/**
- * Hook to get computed round results for a specific election
- * @param electionId - ID of the election
- * @param matchingPoolBalance - Current matching pool balance
- * @param votes - Array of votes for the election
- * @returns Computed results including accumulated weights and estimated payouts
- */
 /**
  * Hook to get computed round results for a specific election
  */
@@ -144,42 +181,23 @@ export const useRoundResults = ({
   electionId,
   matchingPoolBalance,
   votes,
-  voterProfiles,
 }: {
   electionId: number;
   matchingPoolBalance: number;
   votes?: Vote[];
-  voterProfiles?: Record<
-    AccountId,
-    {
-      isHumanVerified: boolean;
-      stakingTokenBalance?: Big;
-      stakingTokenBalanceUsd?: Big;
-      votingPower: Big;
-    }
-  >;
 }) => {
   const store = useRoundResultsStore();
 
   // Update results if votes have changed
   if (votes) {
     const cachedResults = store.resultsCache[electionId];
+    const totalVotes = votes.length;
 
-    const voteCountsByCandidate = votes.reduce<Record<AccountId, number>>((acc, vote) => {
-      if (!acc[vote.candidate_id]) acc[vote.candidate_id] = 0;
-      acc[vote.candidate_id]++;
-      return acc;
-    }, {});
-
-    const needsUpdate = Object.entries(voteCountsByCandidate).some(([candidateId, voteCount]) => {
-      const cached = cachedResults?.[candidateId];
-      return !cached || cached.lastVoteCount !== voteCount;
-    });
-
-    if (needsUpdate) {
-      store.updateResults({ electionId, votes, matchingPoolBalance, voterProfiles });
+    // Check if total vote count has changed
+    if (!cachedResults || cachedResults.totalVoteCount !== totalVotes) {
+      store.updateResults({ electionId, votes, matchingPoolBalance });
     }
   }
 
-  return store.resultsCache[electionId];
+  return store.resultsCache[electionId]?.candidates;
 };
