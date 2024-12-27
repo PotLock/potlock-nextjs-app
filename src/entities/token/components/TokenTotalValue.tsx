@@ -31,7 +31,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
 
   return (
     <div className={cn("flex items-center gap-2", classNames?.root)}>
-      {!textOnly && <TokenIcon size="medium" {...{ tokenId }} />}
+      {!textOnly && <TokenIcon size="md" {...{ tokenId }} />}
 
       {token ? (
         <span

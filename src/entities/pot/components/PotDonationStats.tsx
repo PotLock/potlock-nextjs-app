@@ -102,7 +102,7 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
   );
 };
 
-export const PotStats = ({ potDetail }: { potDetail: Pot }) => {
+export const PotDonationStats = ({ potDetail }: { potDetail: Pot }) => {
   const {
     orderedPayouts,
     totalAmountNearPayouts,

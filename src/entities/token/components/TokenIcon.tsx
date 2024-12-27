@@ -6,14 +6,15 @@ import { tokenHooks } from "@/common/services/token";
 import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 
-type TokenIconSize = "small" | "medium";
+type TokenIconSize = "xs" | "sm" | "md";
 
 const variants: Record<
   TokenIconSize,
   { sizePx: number; rootClass: string; placeholderClass: string }
 > = {
-  small: { sizePx: 16, rootClass: "p-0.5", placeholderClass: "text-4" },
-  medium: { sizePx: 22, rootClass: "p-1", placeholderClass: "text-5" },
+  xs: { sizePx: 16, rootClass: "p-0.5", placeholderClass: "text-4" },
+  sm: { sizePx: 18, rootClass: "p-0.5", placeholderClass: "text-4" },
+  md: { sizePx: 22, rootClass: "p-1", placeholderClass: "text-5" },
 };
 
 export type TokenIconProps = {
@@ -26,14 +27,16 @@ export type TokenIconProps = {
   size?: TokenIconSize;
 };
 
-export const TokenIcon = ({ tokenId, className, size = "medium" }: TokenIconProps) => {
+export const TokenIcon = ({ tokenId, className, size = "md" }: TokenIconProps) => {
   const { data: token } = tokenHooks.useToken({ tokenId });
   const { sizePx, rootClass, placeholderClass } = variants[size];
 
   return (
-    <span className={cn("flex items-center justify-center", rootClass, className)}>
+    <span
+      className={cn("color-neutral-950 flex items-center justify-center", rootClass, className)}
+    >
       {tokenId === NATIVE_TOKEN_ID ? (
-        <NearIcon width={sizePx + 3} height={sizePx + 3} className="color-neutral-950 m--0.5" />
+        <NearIcon width={sizePx} height={sizePx} className="color-inherit m--0.5" />
       ) : (
         <>
           {token?.metadata.icon ? (

@@ -116,7 +116,7 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
                 </span>
 
                 <LabeledIcon caption={amount} classNames={{ caption: "font-600" }}>
-                  <TokenIcon {...{ tokenId }} size="small" />
+                  <TokenIcon {...{ tokenId }} size="xs" />
                 </LabeledIcon>
               </div>
             ),

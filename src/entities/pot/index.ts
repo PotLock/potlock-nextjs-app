@@ -8,7 +8,7 @@ export * from "./components/PotPayoutChallenges";
 export * from "./components/PotSponsorsBoard";
 export * from "./components/PotSponsorsTable";
 export * from "./components/PotTimeline";
-export * from "./components/PotStats";
+export * from "./components/PotDonationStats";
 export * from "./constants";
 export { type PotInputs, potSchema } from "./models/schemas";
 export * from "./hooks/elections";

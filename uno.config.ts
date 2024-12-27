@@ -56,9 +56,11 @@ export default defineConfig({
 
       peach: {
         50: "#fef6ee",
+        100: "#FCE9D5",
         300: "#f4b37d",
         400: "#EE8949",
         500: "#EA6A25",
+        600: "#DB521B",
         700: "#B63D18",
       },
 
