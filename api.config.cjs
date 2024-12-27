@@ -7,7 +7,7 @@ const clientPath = "internal/client.generated.ts";
 
 const targetPaths = {
   indexer: resolve(apiPath, "indexer", clientPath),
-  prices: resolve(apiPath, "prices", clientPath),
+  "intear-prices": resolve(apiPath, "intear-prices", clientPath),
 };
 
 module.exports = {
@@ -27,16 +27,16 @@ module.exports = {
     },
   },
 
-  prices: {
+  "intear-prices": {
     input: "https://prices.intear.tech/openapi",
 
     output: {
-      target: targetPaths.prices,
+      target: targetPaths["intear-prices"],
       client: "swr",
     },
 
     hooks: {
-      afterAllFilesWrite: `eslint --fix ${targetPaths.prices}`,
+      afterAllFilesWrite: `eslint --fix ${targetPaths["intear-prices"]}`,
     },
   },
 };

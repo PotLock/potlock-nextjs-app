@@ -12,7 +12,7 @@ export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potI
   const votingRoundResults = useVotingRoundResults({ potId });
 
   return votingRoundResults === undefined ? null : (
-    <div className="md:max-w-126.5 flex w-full flex-col rounded-3xl bg-neutral-50 p-3">
+    <div className="md:max-w-126.5 flex w-full flex-col gap-3 rounded-3xl bg-neutral-50 p-3">
       {votingRoundResults.leadingPositionAccountIds.map((accountId, index) => {
         const { accumulatedWeight, estimatedPayoutAmount } =
           votingRoundResults.candidates[accountId];

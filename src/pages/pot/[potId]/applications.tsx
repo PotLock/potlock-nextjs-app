@@ -7,6 +7,7 @@ import { styled } from "styled-components";
 import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
 import { toChronologicalOrder } from "@/common/lib";
+import type { AccountId } from "@/common/types";
 import { FilterChip, SearchBar } from "@/common/ui/components";
 import { ProjectListingStatusVariant } from "@/entities/project";
 import {
@@ -34,14 +35,7 @@ const Container = styled.div`
   }
 `;
 
-// TODO: Refactor using TailwindCSS classes
-const ApplicationsWrapper = styled.div`
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
+// TODO: Apply optimizations
 const ApplicationLookupPlaceholder = () =>
   Array.from({ length: 6 }, (_, i) => <PotApplicationCardSkeleton key={i} />);
 
@@ -68,7 +62,8 @@ const ApplicationsTab = () => {
   const {
     isLoading: areApplicationsLoading,
     error,
-    data: apps,
+    data: applications,
+    mutate: refetchApplications,
   } = indexer.usePotApplications({
     potId,
     status: statusFilter === "All" ? undefined : statusFilter,
@@ -76,56 +71,55 @@ const ApplicationsTab = () => {
   });
 
   const sortedResults = useMemo(() => {
-    const oldToRecent = toChronologicalOrder("submitted_at", apps?.results ?? []);
+    const oldToRecent = toChronologicalOrder("submitted_at", applications?.results ?? []);
     return oldToRecent.toReversed();
-  }, [apps?.results]);
+  }, [applications?.results]);
 
   // Admin - Edit Project
-  const [projectId, setProjectId] = useState("");
-  const [projectStatus, setProjectStatus] = useState<"Approved" | "Rejected" | "">("");
-
-  const approverAccountId = useMemo(
-    () =>
-      potDetail ? (potDetail.chef?.id ?? potDetail.admins.at(0)?.id ?? potDetail.owner.id) : "noop",
-    [potDetail],
+  const [selectedApplicantAccountId, setSelectedApplicantAccountId] = useState<AccountId | null>(
+    null,
   );
 
-  const handleApproveApplication = (projectId: string) => {
-    setProjectId(projectId);
+  const [projectStatus, setProjectStatus] = useState<"Approved" | "Rejected" | "">("");
+
+  const handleApproveApplication = (accountId: AccountId) => {
+    setSelectedApplicantAccountId(accountId);
     setStatusFilter("Approved");
   };
 
-  const handleRejectApplication = (projectId: string) => {
-    setProjectId(projectId);
+  const handleRejectApplication = (accountId: AccountId) => {
+    setSelectedApplicantAccountId(accountId);
     setProjectStatus("Rejected");
   };
 
   const handleCloseModal = () => {
-    setProjectId("");
+    setSelectedApplicantAccountId(null);
     setProjectStatus("");
   };
 
   const getApplicationCount = (status: string) => {
-    return apps?.results.filter((app) => app.status === status).length;
+    return applications?.results.filter((app) => app.status === status).length;
   };
 
   const applicationsFilters: Record<string, { label: string; val: string; count?: number }> = {
     All: {
       label: "All",
       val: "all",
-      count: apps?.count,
+      count: applications?.count,
     },
+
     Approved: {
       label: "Approved",
       val: "approved",
       count: getApplicationCount("Approved")!,
     },
+
     Pending: {
       label: "Pending",
       val: "pending",
-
       count: getApplicationCount("Pending")!,
     },
+
     Rejected: {
       label: "Rejected",
       val: "rejected",
@@ -149,13 +143,14 @@ const ApplicationsTab = () => {
       {/* Modal */}
       {potDetail && (
         <PotApplicationReviewModal
-          open={!!projectId}
+          open={selectedApplicantAccountId !== null}
           potDetail={potDetail}
-          projectId={projectId}
+          projectId={selectedApplicantAccountId ?? "noop"}
           projectStatus={projectStatus}
           onCloseClick={handleCloseModal}
         />
       )}
+
       <div className="flex gap-3">
         {Object.keys(applicationsFilters).map((key) => (
           <FilterChip
@@ -170,12 +165,14 @@ const ApplicationsTab = () => {
           />
         ))}
       </div>
-      <ApplicationsWrapper className="gap-6">
+
+      <section className="flex w-full flex-col gap-6 rounded-[6px]">
         <SearchBar
           placeholder="Search Applications"
           onChange={({ target }) => setSearchTerm(target.value.toLowerCase())}
           defaultValue={searchTerm}
         />
+
         {potDetail && (
           <div className="flex w-full flex-col flex-wrap justify-between gap-5 md:flex-row">
             {!areApplicationsLoading ? (
@@ -186,12 +183,12 @@ const ApplicationsTab = () => {
                   isChefOrGreater={isChefOrGreater}
                   handleApproveApplication={handleApproveApplication}
                   handleRejectApplication={handleRejectApplication}
-                  {...{ approverAccountId }}
                 />
               ))
             ) : (
               <ApplicationLookupPlaceholder />
             )}
+
             {!sortedResults && (
               <div className="min-h-140 flex w-full flex-col items-center justify-center">
                 <Image
@@ -209,7 +206,7 @@ const ApplicationsTab = () => {
             )}
           </div>
         )}
-      </ApplicationsWrapper>
+      </section>
     </Container>
   );
 };
