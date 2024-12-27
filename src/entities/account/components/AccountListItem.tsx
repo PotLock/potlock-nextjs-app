@@ -85,7 +85,7 @@ export const AccountListItem = ({
             })}
           >
             <AccountSummaryPopup {...{ accountId }}>
-              <span className="w-fit">{truncate(profile?.name ?? accountId, 40)}</span>
+              <span className="w-fit">{truncate(profile?.name ?? accountId, 38)}</span>
             </AccountSummaryPopup>
 
             {statusElement && (

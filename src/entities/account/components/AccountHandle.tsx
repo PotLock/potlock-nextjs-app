@@ -43,7 +43,7 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
           className,
         )}
       >
-        {`@${truncate(accountId, 40)}`}
+        {`@${truncate(accountId, 32)}`}
       </Link>
     </AccountSummaryPopup>
   );

@@ -80,7 +80,7 @@ export const UserDropdown = () => {
               )}
 
               <p className="prose color-[#656565] text-xs">
-                {truncate(authenticatedUser.accountId ?? "?", 40)}
+                {truncate(authenticatedUser.accountId ?? "?", 38)}
               </p>
             </div>
           </DropdownMenuLabel>

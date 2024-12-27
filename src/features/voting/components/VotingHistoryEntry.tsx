@@ -18,29 +18,26 @@ export type VotingHistoryEntryProps = ByPotId & {
 export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
   potId,
 
-  data: {
-    candidate_id: candidateAccountId,
-    voter: voterAccountId,
-    weight: voterBasicVoteWeight,
-    timestamp,
-  },
+  data: { candidate_id: candidateAccountId, voter: voterAccountId, timestamp },
 }) => {
   const humanReadableTimestamp = useMemo(
     () => Temporal.Instant.fromEpochMilliseconds(timestamp).toLocaleString(),
     [timestamp],
   );
 
-  const voteWeightAmplifiers = useVoterVoteWeightAmplifiers({
-    potId,
-    accountId: voterAccountId,
-  });
+  const voteWeightAmplifiers = useVoterVoteWeightAmplifiers({ potId, accountId: voterAccountId });
 
   return (
-    <div className="flex w-full flex-wrap items-center justify-between gap-6 rounded-2xl border p-5">
-      <div className="flex w-full max-w-[320px] items-center gap-4">
+    <div
+      className={cn(
+        "flex w-full flex-col justify-between gap-6 lg:items-center lg:gap-3",
+        "rounded-2xl border p-5 lg:flex-row",
+      )}
+    >
+      <div className="flex w-full max-w-[360px] items-center gap-4">
         <AccountProfilePicture accountId={voterAccountId} className="h-12 min-h-12 w-12 min-w-12" />
 
-        <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col gap-3">
           <AccountHandle accountId={voterAccountId} />
 
           <div className="flex w-full items-center gap-1">
@@ -53,7 +50,7 @@ export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
       <div
         className={cn(
           "inline-flex flex-col flex-wrap items-start justify-start gap-3",
-          "md:flex-row md:items-center",
+          "w-full lg:w-fit lg:flex-row lg:items-center lg:justify-center",
         )}
       >
         {voteWeightAmplifiers.map((amplifier) => (
@@ -64,10 +61,10 @@ export const VotingHistoryEntry: React.FC<VotingHistoryEntryProps> = ({
         ))}
       </div>
 
-      <div className="inline-flex">
+      <div className="inline-flex flex-nowrap">
         <MdOutlineTimer className="h-6 w-6 px-[3px] text-[#7a7a7a]" />
 
-        <span className="text-center text-[17px] font-normal text-[#7a7a7a]">
+        <span className="text-nowrap text-center text-[17px] font-normal text-[#7a7a7a]">
           {humanReadableTimestamp}
         </span>
       </div>

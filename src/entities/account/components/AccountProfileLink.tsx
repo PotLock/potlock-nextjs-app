@@ -30,7 +30,7 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
           <AccountProfilePicture {...{ accountId }} className={cn("h-4 w-4", classNames?.avatar)} />
 
           <span className={cn("font-500 w-fit text-nowrap", classNames?.name)}>
-            {truncate(profile?.name ?? accountId, 40)}
+            {truncate(profile?.name ?? accountId, 32)}
           </span>
         </Badge>
       </Link>
