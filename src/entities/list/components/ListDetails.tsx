@@ -191,7 +191,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                       className="group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white transition-all duration-500 ease-in-out"
                     >
                       {admins.length - 4}+
-                      <div className="absolute top-5 z-10 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md bg-white py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+                      <div className="bg-background absolute top-5 z-10 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
                         {admins.slice(4).map((admin) => (
                           <Link
                             href={`/profile/${admin}`}
@@ -241,7 +241,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                         <DotsIcons />
                       </div>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="rounded border bg-white shadow-md">
+                    <DropdownMenuContent className="bg-background rounded border shadow-md">
                       <DropdownMenuItem
                         onClick={onEditList}
                         className="cursor-pointer p-2 hover:bg-gray-200"

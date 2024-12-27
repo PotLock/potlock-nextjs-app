@@ -57,7 +57,7 @@ export const AccountGroup: React.FC<AccountGroupProps> = ({
               )}
             >
               <span className="text-[11px] font-bold">{accountIds.length - 4}+</span>
-              <div className="z-9999 absolute top-4 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md bg-white py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+              <div className="z-9999 bg-background absolute top-4 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
                 {accountIds.slice(4).map((account) => (
                   <Link
                     href={`/profile/${account.accountId}`}

@@ -57,7 +57,7 @@ export const ApplyToListModal: React.FC<ApplyToListModalProps> = ({
             </div>
           ) : (
             <div>
-              <div className=" max-w-full rounded-md bg-white">
+              <div className=" bg-background max-w-full rounded-md">
                 <div className="p-4">
                   <label className="block text-sm text-gray-700">Leave a note (optional)</label>
                   <Textarea

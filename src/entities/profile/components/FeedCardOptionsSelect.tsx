@@ -36,7 +36,7 @@ const FeedCardOptionsSelect: React.FC<FeedCardOptionsSelectProps> = ({ post }) =
           <DotsIcons />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="rounded border bg-white shadow-md">
+      <DropdownMenuContent className="bg-background rounded border shadow-md">
         <DropdownMenuItem
           onClick={(e) => e.stopPropagation()}
           className="cursor-pointer space-x-2 p-2 hover:bg-gray-200"

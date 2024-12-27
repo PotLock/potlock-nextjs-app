@@ -183,7 +183,7 @@ const AccountStackItem = ({ accountId, style }: { accountId: string; style?: CSS
       {profileInfo.isReady && (
         <img
           alt="profile image"
-          className="h-[28px] w-[28px] rounded-[50%] bg-white"
+          className="bg-background h-[28px] w-[28px] rounded-[50%]"
           style={style}
           src={profileInfo.avatarSrc}
         />

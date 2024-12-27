@@ -2,7 +2,7 @@ import { Skeleton } from "@/common/ui/components";
 
 export const PotApplicationCardSkeleton = () => {
   return (
-    <div className="mx-auto flex min-w-[234px] max-w-[715px] flex-1  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white p-5 shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300 hover:translate-y-[-1rem] md:min-w-[445px]">
+    <div className="bg-background mx-auto flex min-w-[234px] max-w-[715px]  flex-1 flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] p-5 shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300 hover:translate-y-[-1rem] md:min-w-[445px]">
       {/* Background */}
       <div className="relative h-[145px] w-full">
         <Skeleton className="h-full w-full" />

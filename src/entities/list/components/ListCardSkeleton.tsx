@@ -4,7 +4,7 @@ import { Skeleton } from "@/common/ui/components";
 
 export const ListCardSkeleton = () => {
   return (
-    <div className="overflow-hidden rounded-md bg-white shadow-md transition-all duration-300 hover:translate-y-[-1rem]">
+    <div className="bg-background overflow-hidden rounded-md shadow-md transition-all duration-300 hover:translate-y-[-1rem]">
       <div className="relative">
         {/* Skeleton for the cover image */}
         <Skeleton className="h-[150px] w-full" />

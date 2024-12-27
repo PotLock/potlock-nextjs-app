@@ -122,7 +122,7 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
       <div
         className={cn(
           "rounded-4 fixed bottom-4 left-1/2 flex -translate-x-1/2 border md:bottom-8",
-          "flex items-center gap-4 bg-white p-4 shadow-lg",
+          "bg-background flex items-center gap-4 p-4 shadow-lg",
           { hidden: selectedEntries.size === 0 },
         )}
       >

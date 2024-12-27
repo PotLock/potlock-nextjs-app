@@ -106,7 +106,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               <button
                 type="button"
                 onClick={() => document.getElementById("uploadCoverImage")?.click()}
-                className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
+                className="bg-background absolute bottom-4 right-4 rounded-md border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span>{" "}
                 {loadingImageUpload

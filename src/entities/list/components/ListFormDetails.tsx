@@ -234,7 +234,7 @@ export const ListFormDetails: React.FC = () => {
               className="group relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white transition-all duration-500 ease-in-out md:h-10 md:w-10"
             >
               {admins.length - 4}+
-              <div className="z-999 absolute top-7 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md bg-white px-1 py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+              <div className="z-999 bg-background absolute top-7 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md px-1 py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
                 {admins.slice(4).map((admin) => (
                   <Link
                     href={`/profile/${admin}`}
@@ -300,7 +300,7 @@ export const ListFormDetails: React.FC = () => {
                   className="peer sr-only"
                   {...register("allowApplications")}
                 />
-                <div className="peer relative h-6 w-11 rounded-md bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-md after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#474647] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#a4a2a4] rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-[#474647]"></div>
+                <div className="after:bg-background peer relative h-6 w-11 rounded-md bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-md after:border after:border-gray-300 after:transition-all after:content-[''] peer-checked:bg-[#474647] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#a4a2a4] rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-[#474647]"></div>
               </label>
             </div>
             {watch("allowApplications") && (
@@ -470,7 +470,7 @@ export const ListFormDetails: React.FC = () => {
               <button
                 type="button"
                 onClick={() => document.getElementById("uploadCoverImage")?.click()}
-                className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
+                className="bg-background absolute bottom-4 right-4 rounded-md border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span>{" "}
                 {loadingImageUpload ? "Uploading..." : "Add cover photo"}

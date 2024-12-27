@@ -90,7 +90,7 @@ export const ListCard = ({
         className={`h-max w-full ${backdrop.endsWith("list_bg_image.png") ? "px-4" : ""} object-cover`}
       />
       <div
-        className=" overflow-hidden rounded-[12px] border  border-gray-300 bg-white "
+        className=" bg-background overflow-hidden rounded-[12px]  border border-gray-300 "
         data-testid="list-card"
       >
         <div className="relative">
@@ -103,7 +103,7 @@ export const ListCard = ({
           />
           <div
             style={{ boxShadow: "0px 3px 5px 0px rgba(5, 5, 5, 0.08)" }}
-            className="absolute bottom-4 right-4 flex items-center gap-1 rounded-[4px] bg-white px-4 py-2"
+            className="bg-background absolute bottom-4 right-4 flex items-center gap-1 rounded-[4px] px-4 py-2"
           >
             <LayersIcon />
             <p className="text-[12px] font-[600]">{dataForList?.registrations_count} Accounts</p>

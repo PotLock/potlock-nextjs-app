@@ -125,7 +125,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
       key={projectId}
       className={cn(
         "mx-auto flex min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4",
-        "rounded-2xl border border-[#eaeaea] bg-white p-5 md:min-w-[445px]",
+        "bg-background rounded-2xl border border-[#eaeaea] p-5 md:min-w-[445px]",
       )}
     >
       <div className="header">
@@ -204,7 +204,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
               <div
                 className={cn(
                   "mx-auto inline-flex w-full items-center justify-center gap-3 rounded-lg",
-                  "bg-white p-2 text-[17px] font-medium text-[#7a7a7a]",
+                  "bg-background p-2 text-[17px] font-medium text-[#7a7a7a]",
                 )}
               >
                 <MdCommentsDisabled className="h-6 w-6 text-[#7B7B7B]" />

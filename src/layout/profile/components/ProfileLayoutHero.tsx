@@ -46,7 +46,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
       <div className="relative z-[6] flex -translate-y-2/4 items-end pl-2 md:pl-16">
         <div
           className={cn(
-            "p-1.25 relative h-[120px] w-[120px] rounded-full bg-white",
+            "p-1.25 bg-background relative h-[120px] w-[120px] rounded-full",
             "max-[400px]:h-[90px] max-[400px]:w-[90px]",
           )}
         >
@@ -69,7 +69,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
           {registration.id ? (
             <div
               className={cn(
-                "flex items-center gap-1 overflow-hidden rounded-[20px] bg-white",
+                "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
                 "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
               )}
             >
@@ -85,7 +85,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
           ) : isHumanVerified ? (
             <div
               className={cn(
-                "flex items-center gap-1 overflow-hidden rounded-[20px] bg-white",
+                "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
                 "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
               )}
             >

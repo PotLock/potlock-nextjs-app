@@ -140,7 +140,7 @@ const FeedsTab = () => {
             onClick={() => handleSwitchTab(selectedTab.value)}
             className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
               "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === selectedTab.value,
-              "border-[#DBDBDB] bg-white text-black": tab !== selectedTab.value,
+              "bg-background border-[#DBDBDB] text-black": tab !== selectedTab.value,
             })}
           >
             {selectedTab.name}

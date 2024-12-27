@@ -51,7 +51,7 @@ export const PotCard: React.FC<PotCardProps> = ({ potId }) => {
 
   return !pot ? (
     // Card
-    <div className="flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col items-center justify-center rounded-[8px] bg-white pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer">
+    <div className="bg-background flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col items-center justify-center rounded-[8px] pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer">
       {pot === undefined && !isPotLoading ? (
         <div>{`Pot ${potId} not found.`}</div>
       ) : (
@@ -62,7 +62,7 @@ export const PotCard: React.FC<PotCardProps> = ({ potId }) => {
     // Card
     <Link
       href={`${routesPath.pot}/${pot.account}`}
-      className="flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col rounded-[8px] bg-white pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline"
+      className="bg-background flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col rounded-[8px] pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline"
     >
       {/* Card Section */}
       <div className="flex h-full w-full flex-col items-start justify-start gap-4 p-8">

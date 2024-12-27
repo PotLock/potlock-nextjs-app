@@ -2,7 +2,7 @@ import { Skeleton } from "@/common/ui/components";
 
 export const ProjectCardSkeleton = () => {
   return (
-    <div className="mx-auto flex h-full w-full max-w-[420px]  flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] bg-white shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300 hover:translate-y-[-1rem]">
+    <div className="bg-background mx-auto flex h-full w-full  max-w-[420px] flex-col overflow-hidden rounded-xl border border-solid border-[#dbdbdb] shadow-[0px_-2px_0px_#dbdbdb_inset] transition-all duration-300 hover:translate-y-[-1rem]">
       {/* Background */}
       <div className="relative h-[145px] w-full">
         <Skeleton className="h-full w-full" />

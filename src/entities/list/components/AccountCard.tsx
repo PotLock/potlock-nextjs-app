@@ -108,13 +108,13 @@ export const AccountCard = ({
       <Link href={`/profile/${dataForList.registrant.id}`}>
         <div className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]">
           <div
-            className="font-lora overflow-hidden rounded-md bg-white shadow-md"
+            className="font-lora bg-background overflow-hidden rounded-md shadow-md"
             data-testid="list-card"
           >
             <AccountProfileCover
               accountId={dataForList.registrant.id}
               className={cn(
-                "relative -mt-9 h-10 w-10 bg-white object-cover",
+                "bg-background relative -mt-9 h-10 w-10 object-cover",
                 "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgb(199,199,199)_inset]",
               )}
               height={150}
@@ -125,7 +125,7 @@ export const AccountCard = ({
               <AccountProfilePicture
                 accountId={dataForList.registrant.id}
                 className={cn(
-                  "relative -mt-9 h-10 w-10 rounded-full bg-white object-cover",
+                  "bg-background relative -mt-9 h-10 w-10 rounded-full object-cover",
                   "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
                 )}
               />
@@ -194,7 +194,7 @@ export const AccountCard = ({
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem className="max-h-[150px] max-w-[250px] items-start bg-white p-2 text-start">
+                    <DropdownMenuItem className="bg-background max-h-[150px] max-w-[250px] items-start p-2 text-start">
                       <div className=" text-black">
                         {dataForList?.registrant_notes ?? "No Note"}
                       </div>

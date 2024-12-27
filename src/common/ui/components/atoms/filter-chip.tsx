@@ -29,7 +29,7 @@ const filterChipVariants = cva(
         ),
 
         "brand-outline": cn(
-          "bg-white hover:bg-[var(--neutral-50) outline-none",
+          "bg-background hover:bg-[var(--neutral-50) outline-none",
           "disabled:text-[#c7c7c7] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset]",
         ),
       },

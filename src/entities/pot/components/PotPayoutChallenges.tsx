@@ -81,7 +81,7 @@ export const PotPayoutChallenges = ({
             onClick={() => handleSwitchTab("UNRESOLVED")}
             className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
               "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === "UNRESOLVED",
-              "border-[#DBDBDB] bg-white text-black": tab !== "UNRESOLVED",
+              "bg-background border-[#DBDBDB] text-black": tab !== "UNRESOLVED",
             })}
           >
             Unresolved
@@ -90,7 +90,7 @@ export const PotPayoutChallenges = ({
             onClick={() => handleSwitchTab("RESOLVED")}
             className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
               "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === "RESOLVED",
-              "border-[#DBDBDB] bg-white text-black": tab !== "RESOLVED",
+              "bg-background border-[#DBDBDB] text-black": tab !== "RESOLVED",
             })}
           >
             Resolved

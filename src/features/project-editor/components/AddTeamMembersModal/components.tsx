@@ -49,7 +49,7 @@ const Item = ({
           {profileInfo.isReady && (
             <img
               alt="profile image"
-              className="h-[40px] w-[40px] rounded-[50%] bg-white"
+              className="bg-background h-[40px] w-[40px] rounded-[50%]"
               src={profileInfo.avatarSrc}
             />
           )}

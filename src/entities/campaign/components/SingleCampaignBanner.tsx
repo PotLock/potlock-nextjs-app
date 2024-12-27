@@ -74,7 +74,7 @@ export const SingleCampaignBanner = () => {
                 </Link>
               </div>
               <div className="hidden flex-col items-center bg-gray-800 md:flex">
-                <span className="h-[18px] w-[2px] bg-white text-white" />{" "}
+                <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
               </div>
               <div className="flex gap-1">
                 <p className="font-semibold">ORGANIZED BY</p>
