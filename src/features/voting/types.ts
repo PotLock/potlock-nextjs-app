@@ -29,7 +29,7 @@ export type VotingWeightAmplificationRule = {
   amplificationPercent: number;
 } & (
   | { comparator: VotingSupportedNumericComparatorKey; threshold: number }
-  | { comparator: "isTruthy"; expectation: boolean }
+  | { comparator: "boolean"; expectation: boolean }
 );
 
 export type VotingVoteWeightAmplifier = Pick<

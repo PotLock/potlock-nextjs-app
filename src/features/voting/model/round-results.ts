@@ -15,7 +15,13 @@ type VotingRoundCandidateResultRegistry = {
 };
 
 interface VotingRoundResultsState {
-  resultsCache: Record<ElectionId, VotingRoundCandidateResultRegistry & { totalVoteCount: number }>;
+  resultsCache: Record<
+    ElectionId,
+    VotingRoundCandidateResultRegistry & {
+      totalVoteCount: number;
+      leadingPositionAccountIds: AccountId[];
+    }
+  >;
 
   updateResults: (params: {
     electionId: number;
@@ -37,30 +43,30 @@ const useRoundResultsStore = create<VotingRoundResultsState>()(
           voteWeightAmplificationRules,
         } = VOTING_MECHANISM_CONFIG_MPDAO;
 
-        // Get unique voters
-        const uniqueVoters = [...new Set(votes.map((vote) => vote.voter))];
+        const uniqueVoterAccountIds = [
+          ...new Set(votes.map(({ voter: voterAccountId }) => voterAccountId)),
+        ];
 
-        // Fetch voter profiles
-        const voterProfiles: Record<AccountId, Omit<VoterProfile, "stakingTokenBalanceUsd">> = {};
+        const voterProfiles: Record<AccountId, VoterProfile> = {};
 
         await Promise.all(
-          uniqueVoters.map(async (voterAccountId) => {
-            // Fetch voter info using the generated client
+          uniqueVoterAccountIds.map(async (voterAccountId) => {
             const { data: voterInfo } = await indexerClient
               .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId })
               .catch(() => ({ data: undefined }));
 
-            // Calculate voting power from positions
             const votingPower = voterInfo
               ? voterInfo?.locking_positions.reduce(
                   (sum: Big, { voting_power }: { voting_power: string }) =>
                     sum.add(Big(voting_power)),
+
                   Big(0),
                 )
               : Big(0);
 
-            // Get human verification status from sybil contract
-            const isHumanVerified = await getIsHuman({ account_id: voterAccountId });
+            const isHumanVerified = await getIsHuman({ account_id: voterAccountId }).catch(
+              () => false,
+            );
 
             const stakingTokenMetadata = stakingContractAccountId
               ? await ftClient.ft_metadata({
@@ -68,7 +74,6 @@ const useRoundResultsStore = create<VotingRoundResultsState>()(
                 })
               : null;
 
-            // Get staking token balance
             const stakingTokenBalance =
               stakingContractAccountId && stakingTokenMetadata
                 ? await ftClient
@@ -81,6 +86,7 @@ const useRoundResultsStore = create<VotingRoundResultsState>()(
               isHumanVerified,
               votingPower,
               stakingTokenBalance,
+              // TODO: Add stakingTokenBalanceUsd
             };
           }),
         );
@@ -94,19 +100,23 @@ const useRoundResultsStore = create<VotingRoundResultsState>()(
 
           // Apply amplification rules
           voteWeightAmplificationRules.forEach((rule) => {
+            const profileParameter = profile[rule.voterProfileParameter];
+
             let isApplicable = false;
 
-            if (rule.comparator === "isTruthy") {
-              // Handle boolean comparisons
-              const boolValue = profile[rule.voterProfileParameter as "isHumanVerified"];
-              isApplicable = Boolean(boolValue) === rule.expectation;
-            } else {
-              // Handle numeric comparisons
-              const numValue =
-                profile[rule.voterProfileParameter as "stakingTokenBalance" | "votingPower"];
+            switch (rule.comparator) {
+              case "boolean": {
+                if (typeof profileParameter === "boolean") {
+                  isApplicable = profileParameter === rule.expectation;
+                }
 
-              if (numValue instanceof Big) {
-                isApplicable = numValue[rule.comparator](rule.threshold);
+                break;
+              }
+
+              default: {
+                if (profileParameter instanceof Big) {
+                  isApplicable = profileParameter[rule.comparator](rule.threshold);
+                }
               }
             }
 
@@ -160,7 +170,16 @@ const useRoundResultsStore = create<VotingRoundResultsState>()(
         set((state) => ({
           resultsCache: {
             ...state.resultsCache,
-            [electionId]: { totalVoteCount: votes.length, candidates: candidateResults },
+
+            [electionId]: {
+              totalVoteCount: votes.length,
+              candidates: candidateResults,
+
+              leadingPositionAccountIds: Object.values(candidateResults)
+                .sort((a, b) => b.accumulatedWeight - a.accumulatedWeight)
+                .slice(0, 3)
+                .map(({ accountId }) => accountId),
+            },
           },
         }));
       },

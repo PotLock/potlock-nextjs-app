@@ -39,13 +39,12 @@ export const useVoterVoteWeightAmplifiers = ({
         ]);
 
         switch (rule.comparator) {
-          case "isTruthy": {
+          case "boolean": {
             return {
               ...staticAmplifierProps,
 
               isApplicable:
-                typeof profileParameter === "boolean" &&
-                isTruthy(profileParameter) === rule.expectation,
+                typeof profileParameter === "boolean" && profileParameter === rule.expectation,
             };
           }
 
@@ -55,8 +54,8 @@ export const useVoterVoteWeightAmplifiers = ({
                 ...staticAmplifierProps,
 
                 isApplicable:
-                  isBigSource(profileParameter) &&
-                  Big(profileParameter as BigSource)[rule.comparator](rule.threshold),
+                  profileParameter instanceof Big &&
+                  profileParameter[rule.comparator](rule.threshold),
               };
             } else return { ...staticAmplifierProps, isApplicable: false };
           }

@@ -15,7 +15,7 @@ export const VOTING_MECHANISM_CONFIG_MPDAO: VotingMechanismConfig = {
       description: "Human-verified Users: Votes are weighted at 10% for verified users [KYC].",
       criteria: "KYC",
       voterProfileParameter: "isHumanVerified",
-      comparator: "isTruthy",
+      comparator: "boolean",
       expectation: true,
       amplificationPercent: 10,
     },
