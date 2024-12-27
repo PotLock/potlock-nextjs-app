@@ -30,7 +30,7 @@ interface VotingRoundResultsState {
   }) => Promise<void>;
 }
 
-const useRoundResultsStore = create<VotingRoundResultsState>()(
+export const useRoundResultsStore = create<VotingRoundResultsState>()(
   persist(
     (set) => ({
       resultsCache: {},
@@ -190,29 +190,3 @@ const useRoundResultsStore = create<VotingRoundResultsState>()(
     },
   ),
 );
-
-/**
- * Hook to get computed round results for a specific election
- */
-export const useRoundResults = ({
-  electionId,
-  matchingPoolBalance,
-  votes,
-}: {
-  electionId: number;
-  matchingPoolBalance: number;
-  votes?: Vote[];
-}) => {
-  const store = useRoundResultsStore();
-
-  // Update results if votes have changed
-  if (votes) {
-    const cachedResults = store.resultsCache[electionId];
-
-    if (!cachedResults || cachedResults.totalVoteCount !== votes.length) {
-      store.updateResults({ electionId, votes, matchingPoolBalance });
-    }
-  }
-
-  return store.resultsCache[electionId]?.candidates;
-};
