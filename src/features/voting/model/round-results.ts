@@ -5,18 +5,17 @@ import { persist } from "zustand/middleware";
 import { indexerClient } from "@/common/api/indexer";
 import { getIsHuman } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
+import { ftClient } from "@/common/contracts/tokens/ft";
 
 import { VOTING_MECHANISM_CONFIG_MPDAO } from "./hardcoded";
+import type { VoterProfile, VotingRoundCandidateResult } from "../types";
 
-interface RoundResultsState {
-  // Cache structure: electionId -> results
-  resultsCache: Record<
-    ElectionId,
-    {
-      totalVoteCount: number;
-      candidates: Record<AccountId, { accumulatedWeight: number; estimatedPayoutAmount: number }>;
-    }
-  >;
+type VotingRoundCandidateResultRegistry = {
+  candidates: Record<AccountId, VotingRoundCandidateResult>;
+};
+
+interface VotingRoundResultsState {
+  resultsCache: Record<ElectionId, VotingRoundCandidateResultRegistry & { totalVoteCount: number }>;
 
   updateResults: (params: {
     electionId: number;
@@ -25,67 +24,71 @@ interface RoundResultsState {
   }) => Promise<void>;
 }
 
-const useRoundResultsStore = create<RoundResultsState>()(
+const useRoundResultsStore = create<VotingRoundResultsState>()(
   persist(
     (set) => ({
       resultsCache: {},
+
       updateResults: async ({ electionId, votes, matchingPoolBalance }) => {
+        const {
+          stakingContractAccountId,
+          initialWeight,
+          basicWeight,
+          voteWeightAmplificationRules,
+        } = VOTING_MECHANISM_CONFIG_MPDAO;
+
         // Get unique voters
         const uniqueVoters = [...new Set(votes.map((vote) => vote.voter))];
 
         // Fetch voter profiles
-        const voterProfiles: Record<
-          AccountId,
-          {
-            isHumanVerified: boolean;
-            stakingTokenBalance: Big;
-            votingPower: Big;
-          }
-        > = {};
+        const voterProfiles: Record<AccountId, Omit<VoterProfile, "stakingTokenBalanceUsd">> = {};
 
         await Promise.all(
-          uniqueVoters.map(async (voterId) => {
-            try {
-              // Fetch voter info using the generated client
-              const { data: voterInfo } = await indexerClient.v1MpdaoVoterInfoRetrieve({
-                voter_id: voterId,
-              });
+          uniqueVoters.map(async (voterAccountId) => {
+            // Fetch voter info using the generated client
+            const { data: voterInfo } = await indexerClient
+              .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId })
+              .catch(() => ({ data: undefined }));
 
-              // Calculate voting power from positions
-              const votingPower = voterInfo.locking_positions.reduce(
-                (sum: Big, { voting_power }: { voting_power: string }) =>
-                  sum.add(Big(voting_power)),
-                Big(0),
-              );
+            // Calculate voting power from positions
+            const votingPower = voterInfo
+              ? voterInfo?.locking_positions.reduce(
+                  (sum: Big, { voting_power }: { voting_power: string }) =>
+                    sum.add(Big(voting_power)),
+                  Big(0),
+                )
+              : Big(0);
 
-              // Get human verification status from sybil contract
-              const isHumanVerified = await getIsHuman({ account_id: voterId });
+            // Get human verification status from sybil contract
+            const isHumanVerified = await getIsHuman({ account_id: voterAccountId });
 
-              voterProfiles[voterId] = {
-                isHumanVerified,
-                votingPower,
-                stakingTokenBalance: Big(voterInfo.balance_in_contract || 0),
-              };
-            } catch (error) {
-              console.error(`Failed to fetch voter info for ${voterId}:`, error);
+            const stakingTokenMetadata = stakingContractAccountId
+              ? await ftClient.ft_metadata({
+                  tokenId: stakingContractAccountId,
+                })
+              : null;
 
-              // Use default values if fetch fails
-              voterProfiles[voterId] = {
-                isHumanVerified: false,
-                votingPower: Big(0),
-                stakingTokenBalance: Big(0),
-              };
-            }
+            // Get staking token balance
+            const stakingTokenBalance =
+              stakingContractAccountId && stakingTokenMetadata
+                ? await ftClient
+                    .ft_balance_of({ accountId: voterAccountId, tokenId: stakingContractAccountId })
+                    .then((balance) => Big(balance || 0))
+                    .catch(() => undefined)
+                : undefined;
+
+            voterProfiles[voterAccountId] = {
+              isHumanVerified,
+              votingPower,
+              stakingTokenBalance,
+            };
           }),
         );
 
-        const { initialWeight, basicWeight, voteWeightAmplificationRules } =
-          VOTING_MECHANISM_CONFIG_MPDAO;
-
         // Helper function to calculate voter's weight based on their profile
-        const calculateVoterWeight = (voterId: AccountId) => {
-          const profile = voterProfiles[voterId];
-          if (!profile) return Big(1); // Default to 1 if no profile
+        const calculateVoterWeight = (voterAccountId: AccountId) => {
+          const profile = voterProfiles[voterAccountId];
+          if (!profile) return Big(initialWeight);
 
           let weight = Big(initialWeight);
 
@@ -116,7 +119,7 @@ const useRoundResultsStore = create<RoundResultsState>()(
             }
           });
 
-          return weight.eq(0) ? Big(1) : weight; // Default to 1 if no weight calculated
+          return weight;
         };
 
         // Group votes by candidate
@@ -131,14 +134,8 @@ const useRoundResultsStore = create<RoundResultsState>()(
 
         // Calculate accumulated weights and store results
         const candidateResults = Object.entries(votesByCandidate).reduce<
-          Record<
-            AccountId,
-            {
-              accumulatedWeight: number;
-              estimatedPayoutAmount: number;
-            }
-          >
-        >((acc, [candidateId, candidateVotes]) => {
+          VotingRoundCandidateResultRegistry["candidates"]
+        >((acc, [candidateAccountId, candidateVotes]) => {
           // Calculate total weight for this candidate
           const accumulatedWeight = candidateVotes.reduce((sum, vote) => {
             const voterWeight = calculateVoterWeight(vote.voter);
@@ -146,11 +143,15 @@ const useRoundResultsStore = create<RoundResultsState>()(
           }, Big(0));
 
           // Store results
-          acc[candidateId] = {
+          acc[candidateAccountId as AccountId] = {
+            accountId: candidateAccountId,
             accumulatedWeight: accumulatedWeight.toNumber(),
+
+            // TODO: Requires further consideration
             // Calculate estimated payout based on relative weight
-            estimatedPayoutAmount:
-              matchingPoolBalance * (accumulatedWeight.toNumber() / votes.length),
+            estimatedPayoutAmount: Big(matchingPoolBalance)
+              .mul(accumulatedWeight.div(votes.length))
+              .toNumber(),
           };
 
           return acc;
@@ -159,10 +160,7 @@ const useRoundResultsStore = create<RoundResultsState>()(
         set((state) => ({
           resultsCache: {
             ...state.resultsCache,
-            [electionId]: {
-              totalVoteCount: votes.length,
-              candidates: candidateResults,
-            },
+            [electionId]: { totalVoteCount: votes.length, candidates: candidateResults },
           },
         }));
       },
@@ -191,10 +189,8 @@ export const useRoundResults = ({
   // Update results if votes have changed
   if (votes) {
     const cachedResults = store.resultsCache[electionId];
-    const totalVotes = votes.length;
 
-    // Check if total vote count has changed
-    if (!cachedResults || cachedResults.totalVoteCount !== totalVotes) {
+    if (!cachedResults || cachedResults.totalVoteCount !== votes.length) {
       store.updateResults({ electionId, votes, matchingPoolBalance });
     }
   }

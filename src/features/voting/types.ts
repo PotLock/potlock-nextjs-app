@@ -52,3 +52,8 @@ export type VotingCandidateFilter = "all" | "voted" | "pending";
 export type VotingRound = ByElectionId & { election: Election };
 
 export type VotingRoundKey = ByPotId;
+
+export type VotingRoundCandidateResult = ByAccountId & {
+  accumulatedWeight: number;
+  estimatedPayoutAmount: number;
+};

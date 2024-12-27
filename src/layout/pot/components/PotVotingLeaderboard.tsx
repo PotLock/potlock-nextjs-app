@@ -3,12 +3,11 @@ import { useMemo } from "react";
 import { type ByPotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { votingHooks } from "@/common/contracts/core/voting";
-import type { ByAccountId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountHandle, AccountProfilePicture } from "@/entities/account";
 import { TokenIcon } from "@/entities/token";
-import { useActiveVotingRound } from "@/features/voting/hooks/rounds";
+import { type VotingRoundCandidateResult, useActiveVotingRound } from "@/features/voting";
 
 const DUMMY_LEADING_POSITIONS = [
   {
@@ -17,11 +16,6 @@ const DUMMY_LEADING_POSITIONS = [
     estimatedPayoutAmount: 1337,
   },
 ];
-
-type PotVotingLeaderboardEntry = ByAccountId & {
-  accumulatedWeight: number;
-  estimatedPayoutAmount: number;
-};
 
 export type PotVotingLeaderboardProps = ByPotId & {};
 
@@ -34,7 +28,7 @@ export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potI
     electionId: votingRound?.electionId ?? 0,
   });
 
-  const leadingPositions: PotVotingLeaderboardEntry[] = useMemo(() => {
+  const leadingPositions: VotingRoundCandidateResult[] = useMemo(() => {
     if (pot && votes) {
       return DUMMY_LEADING_POSITIONS;
     } else return [];
