@@ -4,6 +4,8 @@ import { SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
 import { AccountId } from "@/common/types";
 
+export * from "./types";
+
 /**
  * NEAR Social DB Contract API
  */

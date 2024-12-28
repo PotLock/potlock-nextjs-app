@@ -2,12 +2,12 @@ import { useMemo } from "react";
 
 import { Big } from "big.js";
 
+import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { stringifiedU128ToBigNum } from "@/common/lib";
-import { tokenHooks } from "@/common/services/token";
 import { ByAccountId, TokenId } from "@/common/types";
-import { useIsHuman } from "@/entities/core";
+import { useToken } from "@/entities/_shared/token";
 
 import { VoterProfile } from "../types";
 
@@ -28,7 +28,7 @@ export const useVoterProfile = ({
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: mpDaoVoterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const { data: stakingToken } = tokenHooks.useToken({
+  const { data: stakingToken } = useToken({
     tokenId: stakingContractAccountId ?? "noop",
     balanceCheckAccountId: accountId,
   });

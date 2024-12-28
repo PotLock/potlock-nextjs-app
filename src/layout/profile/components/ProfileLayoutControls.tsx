@@ -2,14 +2,21 @@ import { useState } from "react";
 
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { styled } from "styled-components";
 
-import CheckIcon from "@/common/assets/svgs/CheckIcon";
-import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
+import { useDonationsForProject } from "@/common/_deprecated/useDonationsForProject";
 import { truncate } from "@/common/lib";
-import { authHooks } from "@/common/services/auth";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
-import { useAccountSocialProfile } from "@/entities/account";
-import { DonationsInfo, FollowButton, Linktree, ProfileTags } from "@/entities/profile";
+import CheckIcon from "@/common/ui/svg/CheckIcon";
+import ReferrerIcon from "@/common/ui/svg/ReferrerIcon";
+import {
+  AccountFollowButton,
+  AccountProfileLinktree,
+  AccountProfileTags,
+  useAccountSocialProfile,
+} from "@/entities/_shared/account";
+import { useSession, useWallet } from "@/entities/_shared/session";
+import { useDonation } from "@/features/donation";
 import routesPath, { rootPathnames } from "@/pathnames";
 
 type Props = {
@@ -18,18 +25,18 @@ type Props = {
 };
 
 const LinksWrapper = ({ accountId }: { accountId: string }) => {
-  const userSession = authHooks.useUserSession();
-  const { wallet } = authHooks.useWallet();
+  const authenticatedUser = useSession();
   const [copied, setCopied] = useState(false);
 
   return (
     <div className="mt-4 flex flex-wrap gap-8">
-      <Linktree accountId={accountId} />
-      {userSession.isSignedIn && (
+      <AccountProfileLinktree {...{ accountId }} />
+
+      {authenticatedUser.isSignedIn && (
         <CopyToClipboard
           text={
             window.location.origin +
-            `${rootPathnames.PROFILE}/${accountId}?referrerId=${wallet?.accountId}`
+            `${rootPathnames.PROFILE}/${accountId}?referrerId=${authenticatedUser.accountId}`
           }
           onCopy={() => {
             setCopied(true);
@@ -59,12 +66,87 @@ const LinksWrapper = ({ accountId }: { accountId: string }) => {
   );
 };
 
-export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
-  const { wallet } = authHooks.useWallet();
-  const { profile } = useAccountSocialProfile(accountId);
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 24px;
+  border-radius: 10px;
+  border: 1px solid #f4b37d;
+  border-bottom-width: 3px;
+  background: #fef6ee;
+  margin-left: auto;
+  height: fit-content;
+  .donations-info {
+    display: flex;
+    gap: 4px;
+    flex-direction: column;
+    .amount {
+      font-weight: 500;
+      font-size: 2.5rem;
+      line-height: 1;
+      font-family: "Lora";
+    }
+    .donors {
+      font-size: 14px;
+      span {
+        font-weight: 600;
+      }
+    }
+  }
+  .btn-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: space-between;
+    button {
+      padding: 10px 0;
+      width: 160px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  @media only screen and (max-width: 480px) {
+    width: 100%;
+    .donations-info .amount {
+      font-size: 2rem;
+    }
+    .btn-wrapper {
+      > div,
+      button {
+        width: 100%;
+      }
+    }
+  }
+`;
 
-  const name = profile?.name || "";
-  const isOwner = wallet?.accountId === accountId;
+const DonationsInfo = ({ accountId }: { accountId: string }) => {
+  const donationsInfo = useDonationsForProject(accountId);
+  const { openDonationModal } = useDonation({ accountId });
+
+  return (
+    <Container>
+      <div className="donations-info">
+        <div className="amount">{donationsInfo.usd}</div>
+        <div className="donors">
+          Raised from <span> {donationsInfo.uniqueDonors}</span>{" "}
+          {donationsInfo.uniqueDonors === 1 ? "donor" : "donors"}
+        </div>
+      </div>
+
+      <div className="btn-wrapper">
+        <Button onClick={openDonationModal}>Donate</Button>
+        <AccountFollowButton {...{ accountId }} />
+      </div>
+    </Container>
+  );
+};
+
+export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
+  const authenticatedUser = useSession();
+  const isOwner = authenticatedUser?.accountId === accountId;
+  const { profile } = useAccountSocialProfile({ accountId });
 
   return (
     <div
@@ -78,7 +160,7 @@ export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
           <div className="flex w-full flex-wrap gap-4">
             {/* Title */}
             <h2 className="font-500 line-height-none font-lora mb-1 text-[40px] text-[#2e2e2e]">
-              {truncate(name, 25)}
+              {truncate(profile?.name ?? accountId, 28)}
             </h2>
             {/* Account */}
             <div className="flex flex-row content-start items-center gap-2">
@@ -97,16 +179,17 @@ export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
               </div>
             )}
           </div>
-          <ProfileTags accountId={accountId} />
-          <LinksWrapper accountId={accountId} />
+
+          <AccountProfileTags {...{ accountId }} />
+          <LinksWrapper {...{ accountId }} />
         </div>
 
         {/* Right */}
         {isProject ? (
-          <DonationsInfo accountId={accountId} />
+          <DonationsInfo {...{ accountId }} />
         ) : (
           <div>
-            <FollowButton accountId={accountId} className="w-[160px] py-[10px]" />
+            <AccountFollowButton {...{ accountId }} className="w-[160px] py-[10px]" />
           </div>
         )}
       </div>

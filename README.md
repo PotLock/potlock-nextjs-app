@@ -60,6 +60,10 @@ Versatile abstraction for modals
 [Documentation](https://github.com/eBay/nice-modal-react?tab=readme-ov-file#nice-modal)
 [Examples](https://opensource.ebay.com/nice-modal-react/)
 
+## Naming conventions
+
+- Anything explicitly marked as deprecated is subject to either complete replacement or refactoring as soon as there's opportunity
+
 ## Project Structure
 
 The architectural doctrine of the project is heavily based on [Feature-Sliced Design](https://feature-sliced.design/docs/reference/layers).

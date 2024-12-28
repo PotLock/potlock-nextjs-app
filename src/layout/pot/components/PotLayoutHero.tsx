@@ -6,22 +6,24 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { authHooks } from "@/common/services/auth";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
+import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
+import { useSession } from "@/entities/_shared/session";
+import { TokenTotalValue } from "@/entities/_shared/token";
 import {
+  PotDonationStats,
   PotLifecycleStageTagEnum,
-  PotStats,
   PotTimeline,
   usePotBasicUserPermissions,
   usePotExtensionFlags,
   usePotLifecycle,
 } from "@/entities/pot";
-import { TokenTotalValue } from "@/entities/token";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
+
+import { PotVotingLeaderboard } from "./PotVotingLeaderboard";
 
 export type PotLayoutHeroProps = ByPotId & {
   onApplyClick?: () => void;
@@ -37,9 +39,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 }) => {
   const { data: pot } = indexer.usePot({ potId });
   const { hasVoting } = usePotExtensionFlags({ potId });
-  const { isSignedIn, accountId } = authHooks.useUserSession();
+  const { isSignedIn, accountId } = useSession();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
-  // const votingClearance = useVotingUserClearance({ potId });
   const lifecycle = usePotLifecycle({ potId, hasVoting });
 
   const isApplicationPeriodOngoing = useMemo(
@@ -67,6 +68,23 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
     } else return [pot?.description ?? null, null];
   }, [pot?.description]);
 
+  const statsElement = useMemo(() => {
+    const donationStats = pot && <PotDonationStats potDetail={pot} />;
+
+    if (isApplicationPeriodOngoing) {
+      return applicationClearance?.requirements && applicationClearance.requirements.length > 0 ? (
+        <Checklist
+          title="Application Requirements"
+          requirements={applicationClearance.requirements}
+        />
+      ) : (
+        donationStats
+      );
+    } else {
+      return hasVoting ? <PotVotingLeaderboard {...{ potId }} /> : donationStats;
+    }
+  }, [applicationClearance.requirements, hasVoting, isApplicationPeriodOngoing, pot, potId]);
+
   return (
     <div
       className={cn(
@@ -80,7 +98,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           {...{ hasVoting, potId }}
         />
       ) : (
-        <Skeleton className="h-96 w-full" />
+        <Skeleton className="h-14 w-full rounded-lg" />
       )}
 
       <div
@@ -136,14 +154,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           </div>
 
           <div className="flex w-full flex-col gap-6 lg:w-fit">
-            {isApplicationPeriodOngoing ? (
-              <Checklist
-                title="Application Requirements"
-                requirements={applicationClearance.requirements ?? []}
-              />
-            ) : (
-              pot && <PotStats potDetail={pot} />
-            )}
+            {statsElement}
 
             {isSignedIn && (
               <div className="flex items-center gap-2 text-sm lg:justify-end">

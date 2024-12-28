@@ -43,6 +43,7 @@ export const APP_METADATA: Metadata & {
   },
 };
 
+export const TOTAL_FEE_BASIS_POINTS = 10_000;
 export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
 export const NATIVE_TOKEN_ID = "near";
 export const NATIVE_TOKEN_DECIMALS = NEAR_NOMINATION_EXP;
@@ -89,7 +90,7 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
 ];
 
 /**
- * @deprecated use `tokenHooks` hooks instead
+ * @deprecated Use `useTokenAllowlist` hooks instead
  */
 export const SUPPORTED_FTS: Record<
   string,

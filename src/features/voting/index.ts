@@ -8,5 +8,6 @@ export * from "./components/VotingRules";
 export * from "./components/VotingWeightBreakdown";
 export * from "./hooks/candidates";
 export * from "./hooks/clearance";
+export * from "./hooks/rounds";
 export * from "./hooks/voter-profile";
 export * from "./hooks/vote-weight";

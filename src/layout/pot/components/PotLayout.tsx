@@ -8,10 +8,10 @@ import { PageWithBanner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ChallengeModal, usePotBasicUserPermissions } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
-import { MatchingPoolFundingModal } from "@/features/matching-pool-funding";
 import { PotApplicationModal } from "@/features/pot-application";
 import { ErrorModal } from "@/features/project-editor/components/ErrorModal";
 import { SuccessModal } from "@/features/project-editor/components/SuccessModal";
+import { MatchingPoolContributionModal } from "@/features/quadratic-funding";
 
 import { PotLayoutHero } from "./PotLayoutHero";
 import { usePotLayoutTabNavigation } from "../hooks/tab-navigation";
@@ -31,7 +31,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
   const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
   const [fundModalOpen, setFundModalOpen] = useState(false);
-  const openMatchingPoolFundingModal = useCallback(() => setFundModalOpen(true), []);
+  const openMatchingPoolContributionModal = useCallback(() => setFundModalOpen(true), []);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
   const openApplicationModal = useCallback(() => setApplyModalOpen(true), []);
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
@@ -41,7 +41,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
     <PageWithBanner>
       {/**
        * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
-       * //! AND MUST BE REPLACED WITH AN IMPLEMENTATION SPECIFIC TO THE POT ENTITY
+       * //! AND MUST BE REPLACED WITH A SIMPLE TOAST CALL
        * //! THIS IS THE EXACT ROOT CAUSE OF THE POT TRANSACTION CONFIRMATION BUGS
        */}
       <SuccessModal
@@ -52,7 +52,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
       {/**
        * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
-       * //! AND MUST BE REPLACED WITH AN IMPLEMENTATION SPECIFIC TO THE POT ENTITY
+       * //! AND MUST BE REPLACED WITH A SIMPLE TOAST CALL
        * //! THIS IS THE EXACT ROOT CAUSE OF THE POT TRANSACTION CONFIRMATION BUGS
        */}
       <ErrorModal
@@ -63,7 +63,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
       {pot && (
         <>
-          <MatchingPoolFundingModal
+          <MatchingPoolContributionModal
             potDetail={pot}
             open={fundModalOpen}
             onCloseClick={() => setFundModalOpen(false)}
@@ -89,7 +89,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       <PotLayoutHero
         onApplyClick={openApplicationModal}
         onChallengePayoutsClick={openChallengeModal}
-        onFundMatchingPoolClick={openMatchingPoolFundingModal}
+        onFundMatchingPoolClick={openMatchingPoolContributionModal}
         {...{ potId }}
       />
 

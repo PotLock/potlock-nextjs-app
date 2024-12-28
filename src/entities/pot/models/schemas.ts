@@ -1,7 +1,7 @@
 import { infer as FromSchema, array, boolean, object, string, z } from "zod";
 
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
-import { validAccountIdOrNothing } from "@/entities/account";
+import { validAccountIdOrNothing } from "@/entities/_shared/account";
 import { donationAmount, donationFee, donationFeeBasisPointsToPercents } from "@/features/donation";
 
 import {

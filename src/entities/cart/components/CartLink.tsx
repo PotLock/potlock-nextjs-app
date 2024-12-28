@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { values } from "remeda";
 
-import { CartIcon } from "@/common/assets/svgs";
 import { Button, ButtonProps } from "@/common/ui/components";
+import { CartIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
 import { rootPathnames } from "@/pathnames";
 

@@ -6,10 +6,10 @@ import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
 import { nearClient } from "@/common/api/near";
 import { votingHooks } from "@/common/contracts/core/voting";
-import { authHooks } from "@/common/services/auth";
 import { Button, FilterChip, SearchBar } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
+import { useSession } from "@/entities/_shared/session";
 import {
   VotingCandidateFilter,
   VotingCandidateList,
@@ -22,7 +22,7 @@ import { useActiveVotingRound } from "@/features/voting/hooks/rounds";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotVotesTab() {
-  const authenticatedUser = authHooks.useUserSession();
+  const authenticatedUser = useSession();
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");

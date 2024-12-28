@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 import { NETWORK } from "@/common/_config";
+import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { indexer } from "@/common/api/indexer";
-import { useSessionReduxStore, useWallet } from "@/common/services/auth";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useRegistration } from "@/entities/core";
+import { useSessionReduxStore, useWallet } from "@/entities/_shared/session";
 import { ProjectCard, ProjectDiscovery } from "@/entities/project";
 import { DonateRandomly } from "@/features/donation";
 import routesPath from "@/pathnames";

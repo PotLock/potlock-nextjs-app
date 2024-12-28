@@ -1,9 +1,10 @@
+import { useIsHuman } from "@/common/_deprecated/useIsHuman";
+import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useAccountSocialProfile } from "@/entities/account";
-import { useIsHuman, useRegistration } from "@/entities/core";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
+import { listRegistrationStatusIcons } from "@/entities/list";
 import { FollowStats } from "@/entities/profile";
-import { projectStatusIcons } from "@/entities/project/components/ProjectStatusIcons";
 
 export type ProfileLayoutHeroProps = {
   accountId: string; // near address (donor | project)
@@ -14,7 +15,7 @@ export type ProfileLayoutHeroProps = {
 };
 
 export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject, accountId }) => {
-  const { avatarSrc, backgroundSrc } = useAccountSocialProfile(accountId);
+  const { avatarSrc, backgroundSrc } = useAccountSocialProfile({ accountId });
 
   // get nadabot status on the donor page
   let isHumanVerified = false;
@@ -73,11 +74,11 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
                 "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
               )}
             >
-              {projectStatusIcons[registration.status].icon}
+              {listRegistrationStatusIcons[registration.status].icon}
 
               <div
                 className="hidden md:block"
-                style={{ color: projectStatusIcons[registration.status].color }}
+                style={{ color: listRegistrationStatusIcons[registration.status].color }}
               >
                 {registration.status}
               </div>
@@ -89,9 +90,9 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
                 "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
               )}
             >
-              {projectStatusIcons.Approved.icon}
+              {listRegistrationStatusIcons.Approved.icon}
 
-              <div style={{ color: projectStatusIcons.Approved.color }}>Verified</div>
+              <div style={{ color: listRegistrationStatusIcons.Approved.color }}>Verified</div>
             </div>
           ) : (
             <div style={{ width: "10px" }} />

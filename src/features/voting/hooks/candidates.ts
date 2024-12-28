@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
-import { authHooks } from "@/common/services/auth";
 import { ByAccountId } from "@/common/types";
 import { useToast } from "@/common/ui/hooks";
+import { useSession } from "@/entities/_shared/session";
 
 export interface VotingCandidateLookup extends ByElectionId {}
 
 export const useVotingCandidateLookup = ({ electionId }: VotingCandidateLookup) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const userSession = authHooks.useUserSession();
+  const authenticatedUser = useSession();
 
   const { data, ...candidatesQueryResult } = votingHooks.useElectionCandidates({
     enabled: electionId !== 0,
@@ -17,9 +17,9 @@ export const useVotingCandidateLookup = ({ electionId }: VotingCandidateLookup) 
   });
 
   const { data: userVotes } = votingHooks.useVoterVotes({
-    enabled: electionId !== 0 && userSession.accountId !== undefined,
+    enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
     electionId,
-    accountId: userSession.accountId ?? "noop",
+    accountId: authenticatedUser.accountId ?? "noop",
   });
 
   return useMemo(() => {
@@ -58,7 +58,7 @@ export const useVotingCandidateLookup = ({ electionId }: VotingCandidateLookup) 
 
 export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId & ByAccountId) => {
   const { toast } = useToast();
-  const userSession = authHooks.useUserSession();
+  const authenticatedUser = useSession();
 
   const { data: isVotingPeriodOngoing = false } = votingHooks.useIsVotingPeriod({
     enabled: electionId !== 0,
@@ -67,9 +67,9 @@ export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId 
 
   const { data: remainingUserVotingCapacity, isLoading: isRemainingUserVotingCapacityLoading } =
     votingHooks.useVoterRemainingCapacity({
-      enabled: electionId !== 0 && userSession.accountId !== undefined,
+      enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
       electionId,
-      accountId: userSession.accountId ?? "noop",
+      accountId: authenticatedUser.accountId ?? "noop",
     });
 
   const {
@@ -92,23 +92,23 @@ export const useVotingCandidateEntry = ({ electionId, accountId }: ByElectionId 
 
   const hasUserVotes = useMemo(
     () =>
-      votes?.find(({ voter: voterAccountId }) => voterAccountId === userSession.accountId) !==
+      votes?.find(({ voter: voterAccountId }) => voterAccountId === authenticatedUser.accountId) !==
       undefined,
 
-    [votes, userSession.accountId],
+    [votes, authenticatedUser.accountId],
   );
 
   const canReceiveVotes = useMemo(
     () =>
       electionId !== 0 &&
-      userSession.isSignedIn &&
+      authenticatedUser.isSignedIn &&
       (votes === undefined
         ? false
         : isVotingPeriodOngoing && !hasUserVotes && remainingUserVotingCapacity !== 0),
 
     [
       electionId,
-      userSession.isSignedIn,
+      authenticatedUser.isSignedIn,
       votes,
       isVotingPeriodOngoing,
       hasUserVotes,

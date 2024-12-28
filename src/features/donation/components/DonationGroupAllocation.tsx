@@ -4,7 +4,6 @@ import { values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
 import { yoctoNearToFloat } from "@/common/lib";
-import { tokenHooks } from "@/common/services/token";
 import {
   DialogDescription,
   DialogHeader,
@@ -20,7 +19,7 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
-import { TokenSelector, TokenTotalValue } from "@/entities/token";
+import { TokenSelector, TokenTotalValue, useToken } from "@/entities/_shared/token";
 
 import { DonationRecipientShares } from "./DonationRecipientShares";
 import { DonationSybilWarning } from "./DonationSybilWarning";
@@ -54,7 +53,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
   ]);
 
   const isListDonation = listId !== undefined;
-  const { data: token } = tokenHooks.useToken({ tokenId });
+  const { data: token } = useToken({ tokenId });
   const { isLoading: isPotLoading, data: pot, error: potError } = indexer.usePot({ potId });
   const { data: list, isLoading: isListLoading, error: listError } = indexer.useList({ listId });
 

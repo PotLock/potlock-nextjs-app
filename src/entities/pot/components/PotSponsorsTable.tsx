@@ -11,7 +11,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/common/ui/components";
-import { AccountProfilePicture } from "@/entities/account";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 import routesPath from "@/pathnames";
 
 import { CustomDonationType } from "../models/types";

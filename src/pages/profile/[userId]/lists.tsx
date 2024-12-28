@@ -1,13 +1,25 @@
 import { ReactElement } from "react";
 
+import { useRouter } from "next/router";
+
 import { indexer } from "@/common/api/indexer";
-import { useRouteQuery } from "@/common/lib";
+import { cn } from "@/common/ui/utils";
 import { ListCard, getRandomBackgroundImage } from "@/entities/list";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 export const NoResults = ({ text }: { text: string }) => (
-  <div className="flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px] md:flex-col md:px-[105px] md:py-[68px]">
-    <p className="font-italic font-500 font-lora mb-4 max-w-[290px] text-center text-[16px] text-[#292929] md:text-[22px]">
+  <div
+    className={cn(
+      "flex flex-col-reverse items-center justify-between",
+      "rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px] md:flex-col md:px-[105px] md:py-[68px]",
+    )}
+  >
+    <p
+      className={cn(
+        "font-italic font-500 font-lora mb-4 max-w-[290px]",
+        "text-nowrap text-center text-[16px] text-[#292929] md:text-[22px]",
+      )}
+    >
       {text}
     </p>
 
@@ -20,13 +32,9 @@ export const NoResults = ({ text }: { text: string }) => (
 );
 
 const ProfileLists = () => {
-  const {
-    query: { userId },
-  } = useRouteQuery();
-
-  const { data } = indexer.useLists({
-    account: userId as string,
-  });
+  const router = useRouter();
+  const { userId: accountId } = router.query as { userId: string };
+  const { data } = indexer.useLists({ account: accountId });
 
   return (
     <div className="w-full">
@@ -51,7 +59,7 @@ const ProfileLists = () => {
           })}
         </div>
       ) : (
-        <NoResults text="This Project has no List yet." />
+        <NoResults text="No lists owned by this project." />
       )}
     </div>
   );

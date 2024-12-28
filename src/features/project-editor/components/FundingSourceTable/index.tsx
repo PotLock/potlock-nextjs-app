@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
-import Delete from "@/common/assets/svgs/Delete";
-import Edit from "@/common/assets/svgs/Edit";
+import Delete from "@/common/ui/svg/Delete";
+import Edit from "@/common/ui/svg/Edit";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { Table } from "./styles";

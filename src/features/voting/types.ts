@@ -29,7 +29,7 @@ export type VotingWeightAmplificationRule = {
   amplificationPercent: number;
 } & (
   | { comparator: VotingSupportedNumericComparatorKey; threshold: number }
-  | { comparator: "isTruthy"; expectation: boolean }
+  | { comparator: "boolean"; expectation: boolean }
 );
 
 export type VotingVoteWeightAmplifier = Pick<
@@ -52,3 +52,8 @@ export type VotingCandidateFilter = "all" | "voted" | "pending";
 export type VotingRound = ByElectionId & { election: Election };
 
 export type VotingRoundKey = ByPotId;
+
+export type VotingRoundCandidateResult = ByAccountId & {
+  accumulatedWeight: number;
+  estimatedPayoutAmount: number;
+};

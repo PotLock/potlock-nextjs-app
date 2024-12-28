@@ -1,9 +1,11 @@
-import Link from "next/link";
 import { styled } from "styled-components";
 
 import { truncate } from "@/common/lib";
-import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/account";
-import routesPath from "@/pathnames";
+import {
+  AccountHandle,
+  AccountProfilePicture,
+  useAccountSocialProfile,
+} from "@/entities/_shared/account";
 
 import { CustomDonationType } from "../models/types";
 
@@ -65,9 +67,6 @@ export const Container = styled.div`
       }
     }
     .name {
-      white-space: nowrap;
-      font-weight: 600;
-      color: #292929;
       transition: all 300ms;
       font-size: 1rem;
       :hover {
@@ -110,16 +109,15 @@ const Sponsor = ({ donation, colIdx }: { donation: CustomDonationType; colIdx: n
   const amount = donation.amount;
   const donorId = donation.donor.id;
   const percentageShare = donation.percentage_share;
-  const { profile } = useAccountSocialProfile(donorId);
+  const { profile } = useAccountSocialProfile({ accountId: donorId });
   const avatarSize = colIdx === 2 ? "h-[64px] w-[64px]" : "h-[40px] w-[40px]";
 
   return (
     <div className={`item ${colIdx === 2 && "first"}`}>
       <AccountProfilePicture accountId={donorId} className={avatarSize} />
-      <Link href={`${routesPath.PROFILE}/${donorId}`} target="_blank" className="name">
-        {truncate(profile?.name || donorId, 20)}
-      </Link>
+      <AccountHandle asName accountId={donorId} maxLength={20} className="name" />
       <p>{truncate(profile?.description || "", colIdx === 2 ? 120 : 35)}</p>
+
       <div className="footer">
         <p className={`amount ${colIdx === 2 ? "font-lora" : ""}`}>{amount.toFixed(2)} NEAR</p>
         <p className="percentage">{percentageShare}%</p>

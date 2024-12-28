@@ -3,9 +3,9 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { walletApi } from "@/common/api/near/client";
-import { NearIcon } from "@/common/assets/svgs";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
-import { AccountProfilePicture } from "@/entities/account";
+import { NearIcon } from "@/common/ui/svg";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
 import { useCampaignDeploymentRedirect } from "../hooks/redirects";

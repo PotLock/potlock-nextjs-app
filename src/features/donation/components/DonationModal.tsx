@@ -4,9 +4,9 @@ import { create, useModal } from "@ebay/nice-modal-react";
 
 import { walletApi } from "@/common/api/near/client";
 import { useRouteQuery } from "@/common/lib";
-import { useSessionReduxStore } from "@/common/services/auth";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useSessionReduxStore } from "@/entities/_shared/session";
 import { dispatch } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";

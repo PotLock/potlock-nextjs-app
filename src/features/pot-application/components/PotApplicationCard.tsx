@@ -1,56 +1,17 @@
-import { useMemo } from "react";
-
 import { Dot } from "lucide-react";
 import { MdCommentsDisabled } from "react-icons/md";
 import { styled } from "styled-components";
 
 import { PotApplication } from "@/common/api/indexer";
-import { daysAgo, truncate } from "@/common/lib";
-import type { AccountId } from "@/common/types";
+import { daysAgo } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import {
-  AccountListItem,
-  AccountProfilePicture,
-  useAccountSocialProfile,
-} from "@/entities/account";
+import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 
 import { potApplicationFiltersTags } from "./tags";
 
 // TODO: Refactor using TailwindCSS classes
 const PotApplicationCardContainer = styled.div`
-  .header {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    position: relative;
-    align-items: flex-start;
-  }
-  .header-info {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    cursor: auto;
-  }
-  .profile-image {
-    margin-right: 8px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-  }
-  .name {
-    color: #292929;
-    font-weight: 600;
-  }
-  .address {
-    color: #7b7b7b;
-    font-weight: 600;
-    cursor: pointer;
-    &:hover {
-      color: #292929;
-    }
-  }
   .main {
     display: flex;
     flex-direction: column;
@@ -91,73 +52,62 @@ export type PotApplicationCardProps = {
   isChefOrGreater: boolean;
   handleApproveApplication: (projectId: string) => void;
   handleRejectApplication: (projectId: string) => void;
-  approverAccountId: AccountId;
 };
 
-// TODO: Apply performance optimizations ( original owner: @Jikugodwill )
 export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
   applicationData,
   isChefOrGreater,
   handleApproveApplication,
   handleRejectApplication,
-  approverAccountId,
 }) => {
-  const { applicant, status, message, submitted_at } = applicationData;
-  const { id: projectId } = applicant;
-  const review_notes = null;
-
+  const { applicant, status, message, submitted_at, reviews } = applicationData;
   const { icon, label } = potApplicationFiltersTags[status];
-  const { profile: applicantProfile } = useAccountSocialProfile(projectId);
-  const { profile: approverProfile } = useAccountSocialProfile(approverAccountId);
-
-  const daysAgoElement = useMemo(
-    () => (
-      <div className="whitespace-nowrap text-[17px] font-normal text-[#7a7a7a]">
-        {daysAgo(new Date(submitted_at).getTime())}
-      </div>
-    ),
-
-    [submitted_at],
-  );
 
   return (
     <PotApplicationCardContainer
-      key={projectId}
       className={cn(
         "mx-auto flex min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4",
         "bg-background rounded-2xl border border-[#eaeaea] p-5 md:min-w-[445px]",
       )}
     >
-      <div className="header">
-        <div className="header-info w-full">
-          <AccountListItem
-            isRounded
-            highlightOnHover
-            accountId={projectId}
-            statusElement={daysAgoElement}
-          />
-        </div>
+      <div className="inline-flex h-12 w-full items-start justify-start gap-3">
+        <AccountProfilePicture className="h-10 w-10" accountId={applicant.id} />
 
-        <div
-          className={cn(
-            "inline-flex items-center justify-center gap-2 rounded-md border py-1.5 pl-2 pr-3",
-            {
-              "border-[#f4b37d] bg-[#fdfce9]": status === "Pending",
-              "border-[#58f0db] bg-[#effefa]": status === "Approved",
-              "border-[#faa7a8] bg-[#fef3f2]": status === "Rejected",
-            },
-          )}
-        >
-          {icon}
+        <div className="flex grow basis-0 items-center justify-start gap-3 self-stretch">
+          <div className="inline-flex grow basis-0 flex-col items-start justify-center gap-1">
+            <AccountHandle asName accountId={applicant.id} className="text-xl" />
+
+            <div className="inline-flex items-center self-stretch">
+              <AccountHandle accountId={applicant.id} />
+
+              <div className="inline-flex flex-nowrap items-center text-sm text-neutral-500">
+                <Dot />
+                <span className="text-nowrap">{daysAgo(new Date(submitted_at).getTime())}</span>
+              </div>
+            </div>
+          </div>
 
           <div
-            className={cn("text-sm font-medium leading-tight", {
-              "text-[#b63d18]": status === "Pending",
-              "text-[#0b7a74]": status === "Approved",
-              "text-[#b8182d]": status === "Rejected",
-            })}
+            className={cn(
+              "inline-flex items-center justify-center gap-2 rounded-md border py-1.5 pl-2 pr-3",
+              {
+                "border-[#f4b37d] bg-[#fdfce9]": status === "Pending",
+                "border-[#58f0db] bg-[#effefa]": status === "Approved",
+                "border-[#faa7a8] bg-[#fef3f2]": status === "Rejected",
+              },
+            )}
           >
-            {label}
+            {icon}
+
+            <div
+              className={cn("text-sm font-medium leading-tight", {
+                "text-[#b63d18]": status === "Pending",
+                "text-[#0b7a74]": status === "Approved",
+                "text-[#b8182d]": status === "Rejected",
+              })}
+            >
+              {label}
+            </div>
           </div>
         </div>
       </div>
@@ -168,8 +118,8 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
         </div>
       </div>
 
-      {status !== "Pending" && (
-        <div className="ml-0 self-stretch md:ml-12">
+      {reviews.map(({ reviewed_at, reviewer: reviewerAccountId, notes }) => (
+        <div key={reviewed_at + reviewerAccountId} className="ml-0 self-stretch md:ml-12">
           <div
             className={cn(
               "inline-flex w-full flex-col items-start justify-start gap-3 rounded-xl p-5",
@@ -179,55 +129,50 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
             <div className="title flex items-center">
               <div className="flex items-center gap-1">
                 <AccountProfilePicture
-                  accountId={approverAccountId}
+                  accountId={reviewerAccountId}
                   className="h-6 w-6 rounded-full shadow-inner"
                 />
 
-                {approverProfile?.name ? (
-                  <div className="name text-[17px] font-semibold leading-normal text-[#292929]">
-                    {truncate(approverProfile?.name, 15)}
-                  </div>
-                ) : (
-                  <div>{truncate(approverAccountId, 15)}</div>
-                )}
+                <AccountHandle asName accountId={reviewerAccountId} className="text-[17px]" />
               </div>
 
-              <Dot className="text-[#010101]/50" />
-              <div className="text-[17px] font-semibold text-[#010101]/50">Admin</div>
+              <Dot className="color-neutral-500" />
+              <div className="text-[17px] font-semibold text-neutral-500">Admin</div>
             </div>
 
-            {review_notes ? (
-              <div className="text-[17px] font-normal leading-tight text-[#010101]/70">
-                {review_notes}
-              </div>
+            {notes ? (
+              <div className="text-[17px] font-normal leading-tight text-neutral-700">{notes}</div>
             ) : (
               <div
                 className={cn(
                   "mx-auto inline-flex w-full items-center justify-center gap-3 rounded-lg",
-                  "bg-background p-2 text-[17px] font-medium text-[#7a7a7a]",
+                  "bg-background p-2 text-[17px] font-medium text-neutral-500",
                 )}
               >
-                <MdCommentsDisabled className="h-6 w-6 text-[#7B7B7B]" />
-                <p>No comment</p>
+                <MdCommentsDisabled className="color-neutral-500 h-6 w-6" />
+                <span className="prose">{"No comment"}</span>
               </div>
             )}
           </div>
         </div>
-      )}
+      ))}
 
       {isChefOrGreater && (
         <div className="flex gap-4 self-end">
           {status !== "Approved" && (
             <Button
               variant={"standard-outline"}
-              onClick={() => handleApproveApplication(projectId)}
+              onClick={() => handleApproveApplication(applicant.id)}
             >
               Accept
             </Button>
           )}
 
           {status !== "Rejected" && (
-            <Button variant={"standard-outline"} onClick={() => handleRejectApplication(projectId)}>
+            <Button
+              variant={"standard-outline"}
+              onClick={() => handleRejectApplication(applicant.id)}
+            >
               Reject
             </Button>
           )}

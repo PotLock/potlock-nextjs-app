@@ -5,7 +5,6 @@ import Link from "next/link";
 
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import TwitterSvg from "@/common/assets/svgs/twitter";
 import {
   DEFAULT_SHARE_HASHTAGS,
   NATIVE_TOKEN_DECIMALS,
@@ -14,7 +13,6 @@ import {
 } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
 import { stringifiedU128ToFloat, truncate } from "@/common/lib";
-import { tokenHooks } from "@/common/services/token";
 import {
   Button,
   ClipboardCopyButton,
@@ -23,8 +21,9 @@ import {
   ModalErrorBody,
   Skeleton,
 } from "@/common/ui/components";
-import { AccountProfileLink } from "@/entities/account";
-import { TokenTotalValue } from "@/entities/token";
+import TwitterSvg from "@/common/ui/svg/twitter";
+import { AccountProfileLink } from "@/entities/_shared/account";
+import { TokenTotalValue, useToken } from "@/entities/_shared/token";
 import routesPath from "@/pathnames";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
@@ -62,7 +61,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   const tokenId =
     "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID;
 
-  const { data: token } = tokenHooks.useToken({ tokenId });
+  const { data: token } = useToken({ tokenId });
 
   const isLoading = isResultLoading || recipient === undefined || token === undefined;
 

@@ -4,7 +4,7 @@ import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
 import { listsClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
-import { useWallet } from "@/common/services/auth";
+import { useWallet } from "@/entities/_shared/session";
 import routesPath from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 

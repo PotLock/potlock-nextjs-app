@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { CampaignDonation } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 
 export const CampaignDonationItem = ({
   donation,
@@ -13,7 +13,7 @@ export const CampaignDonationItem = ({
   campaignId: string;
 }) => {
   const { recipient_id, donor_id, total_amount, donated_at_ms } = donation;
-  const { avatarSrc: src } = useAccountSocialProfile(recipient_id);
+  const { avatarSrc: src } = useAccountSocialProfile({ accountId: recipient_id });
 
   return (
     <div className="flex flex-wrap justify-between gap-8 p-2 text-sm md:gap-4">
@@ -24,6 +24,7 @@ export const CampaignDonationItem = ({
             className="h-full w-full rounded-full object-cover align-middle"
           />
         </div>
+
         <div>{donor_id === recipient_id ? "You" : donor_id}</div>
       </div>
       <div className="tab">{yoctoNearToFloat(total_amount)}</div>

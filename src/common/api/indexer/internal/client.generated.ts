@@ -237,6 +237,25 @@ export type V1AccountsUpvotedListsRetrieveParams = {
   page_size?: number;
 };
 
+export type V1AccountsRoundsRetrieveParams = {
+  /**
+   * Filter projects by chain
+   */
+  chain?: string;
+  /**
+   * Page number for pagination
+   */
+  page?: number;
+  /**
+   * Number of results per page
+   */
+  page_size?: number;
+  /**
+   * Sort by field, e.g., deployed_at, vault_total_deposits
+   */
+  sort?: string;
+};
+
 export type V1AccountsPotApplicationsRetrieveParams = {
   /**
    * Page number for pagination
@@ -464,6 +483,7 @@ export interface Round {
    * @nullable
    */
   base_currency?: string | null;
+  readonly chain: string;
   /**
    * Compliance end date.
    * @nullable
@@ -884,6 +904,7 @@ export interface PotApplication {
    */
   message?: string | null;
   pot: Pot;
+  reviews: ApplicationReview[];
   /** Application status.
 
 * `Pending` - Pending
@@ -1014,25 +1035,6 @@ export interface PaginatedAccountsResponse {
   results: Account[];
 }
 
-export interface NearSocialProfileData {
-  backgroundImage?: Image;
-  description?: string;
-  image?: Image;
-  linktree?: Linktree;
-  name?: string;
-  /** JSON-stringified array of category strings */
-  plCategories?: string;
-  /** JSON-stringified array of funding source objects */
-  plFundingSources?: string;
-  /** JSON-stringified array of URLs */
-  plGithubRepos?: string;
-  plPublicGoodReason?: string;
-  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
-  plSmartContracts?: string;
-  /** JSON-stringified array of team member account ID strings */
-  plTeam?: string;
-}
-
 export interface Nft {
   baseUri?: string;
   contractId?: string;
@@ -1069,76 +1071,6 @@ export interface ListUpvote {
   readonly id: number;
   /** List upvoted. */
   list: number;
-}
-
-export interface Linktree {
-  github?: string;
-  telegram?: string;
-  twitter?: string;
-  website?: string;
-}
-
-export interface Image {
-  ipfs_cid?: string;
-  nft?: Nft;
-  url?: string;
-}
-
-export interface DonationContractConfig {
-  owner: string;
-  protocol_fee_basis_points: number;
-  protocol_fee_recipient_account: string;
-  referral_fee_basis_points: number;
-}
-
-/**
- * * `Pending` - Pending
- * `Approved` - Approved
- * `Rejected` - Rejected
- * `Graylisted` - Graylisted
- * `Blacklisted` - Blacklisted
- */
-export type DefaultRegistrationStatusEnum =
-  (typeof DefaultRegistrationStatusEnum)[keyof typeof DefaultRegistrationStatusEnum];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const DefaultRegistrationStatusEnum = {
-  Pending: "Pending",
-  Approved: "Approved",
-  Rejected: "Rejected",
-  Graylisted: "Graylisted",
-  Blacklisted: "Blacklisted",
-} as const;
-
-export interface Account {
-  donors_count: number;
-  /**
-   * On-chain account address.
-   * @maxLength 64
-   */
-  id: string;
-  near_social_profile_data?: NearSocialProfileData;
-  /**
-   * @minimum -1000000000000000000
-   * @maximum 1000000000000000000
-   * @exclusiveMinimum
-   * @exclusiveMaximum
-   */
-  total_donations_in_usd: number;
-  /**
-   * @minimum -1000000000000000000
-   * @maximum 1000000000000000000
-   * @exclusiveMinimum
-   * @exclusiveMaximum
-   */
-  total_donations_out_usd: number;
-  /**
-   * @minimum -1000000000000000000
-   * @maximum 1000000000000000000
-   * @exclusiveMinimum
-   * @exclusiveMaximum
-   */
-  total_matching_pool_allocations_usd: number;
 }
 
 export interface List {
@@ -1223,6 +1155,45 @@ export interface ListRegistration {
   tx_hash?: string | null;
   /** Registration last update date. */
   updated_at: string;
+}
+
+export interface Linktree {
+  github?: string;
+  telegram?: string;
+  twitter?: string;
+  website?: string;
+}
+
+export interface Image {
+  ipfs_cid?: string;
+  nft?: Nft;
+  url?: string;
+}
+
+export interface NearSocialProfileData {
+  backgroundImage?: Image;
+  description?: string;
+  image?: Image;
+  linktree?: Linktree;
+  name?: string;
+  /** JSON-stringified array of category strings */
+  plCategories?: string;
+  /** JSON-stringified array of funding source objects */
+  plFundingSources?: string;
+  /** JSON-stringified array of URLs */
+  plGithubRepos?: string;
+  plPublicGoodReason?: string;
+  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
+  plSmartContracts?: string;
+  /** JSON-stringified array of team member account ID strings */
+  plTeam?: string;
+}
+
+export interface DonationContractConfig {
+  owner: string;
+  protocol_fee_basis_points: number;
+  protocol_fee_recipient_account: string;
+  referral_fee_basis_points: number;
 }
 
 export interface Donation {
@@ -1315,6 +1286,25 @@ export interface Donation {
   tx_hash?: string | null;
 }
 
+/**
+ * * `Pending` - Pending
+ * `Approved` - Approved
+ * `Rejected` - Rejected
+ * `Graylisted` - Graylisted
+ * `Blacklisted` - Blacklisted
+ */
+export type DefaultRegistrationStatusEnum =
+  (typeof DefaultRegistrationStatusEnum)[keyof typeof DefaultRegistrationStatusEnum];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DefaultRegistrationStatusEnum = {
+  Pending: "Pending",
+  Approved: "Approved",
+  Rejected: "Rejected",
+  Graylisted: "Graylisted",
+  Blacklisted: "Blacklisted",
+} as const;
+
 export interface ApplicationReview {
   /**
    * Review notes.
@@ -1324,7 +1314,7 @@ export interface ApplicationReview {
   notes?: string | null;
   /** Review date. */
   reviewed_at: string;
-  reviewer: Account;
+  readonly reviewer: string;
   /** Application status for this review.
 
 * `Pending` - Pending
@@ -1340,13 +1330,43 @@ export interface ApplicationReview {
   tx_hash?: string | null;
 }
 
+export interface Account {
+  donors_count: number;
+  /**
+   * On-chain account address.
+   * @maxLength 64
+   */
+  id: string;
+  near_social_profile_data?: NearSocialProfileData;
+  /**
+   * @minimum -1000000000000000000
+   * @maximum 1000000000000000000
+   * @exclusiveMinimum
+   * @exclusiveMaximum
+   */
+  total_donations_in_usd: number;
+  /**
+   * @minimum -1000000000000000000
+   * @maximum 1000000000000000000
+   * @exclusiveMinimum
+   * @exclusiveMaximum
+   */
+  total_donations_out_usd: number;
+  /**
+   * @minimum -1000000000000000000
+   * @maximum 1000000000000000000
+   * @exclusiveMinimum
+   * @exclusiveMaximum
+   */
+  total_matching_pool_allocations_usd: number;
+}
+
 export const v1ProjectStatsRetrieve = (
   accountId: string,
-  projectId: string,
   params?: V1ProjectStatsRetrieveParams,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<void>> => {
-  return axios.get(`/api/v1/${accountId}/${projectId}/project-stats`, {
+  return axios.get(`/api/v1/${accountId}/project-stats`, {
     ...options,
     params: { ...params, ...options?.params },
   });
@@ -1354,9 +1374,8 @@ export const v1ProjectStatsRetrieve = (
 
 export const getV1ProjectStatsRetrieveKey = (
   accountId: string,
-  projectId: string,
   params?: V1ProjectStatsRetrieveParams,
-) => [`/api/v1/${accountId}/${projectId}/project-stats`, ...(params ? [params] : [])] as const;
+) => [`/api/v1/${accountId}/project-stats`, ...(params ? [params] : [])] as const;
 
 export type V1ProjectStatsRetrieveQueryResult = NonNullable<
   Awaited<ReturnType<typeof v1ProjectStatsRetrieve>>
@@ -1366,7 +1385,6 @@ export type V1ProjectStatsRetrieveQueryError = AxiosError<void>;
 
 export const useV1ProjectStatsRetrieve = <TError = AxiosError<void>>(
   accountId: string,
-  projectId: string,
   params?: V1ProjectStatsRetrieveParams,
   options?: {
     swr?: SWRConfiguration<Awaited<ReturnType<typeof v1ProjectStatsRetrieve>>, TError> & {
@@ -1378,13 +1396,13 @@ export const useV1ProjectStatsRetrieve = <TError = AxiosError<void>>(
 ) => {
   const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-  const isEnabled = swrOptions?.enabled !== false && !!(accountId && projectId);
+  const isEnabled = swrOptions?.enabled !== false && !!accountId;
 
   const swrKey =
     swrOptions?.swrKey ??
-    (() => (isEnabled ? getV1ProjectStatsRetrieveKey(accountId, projectId, params) : null));
+    (() => (isEnabled ? getV1ProjectStatsRetrieveKey(accountId, params) : null));
 
-  const swrFn = () => v1ProjectStatsRetrieve(accountId, projectId, params, axiosOptions);
+  const swrFn = () => v1ProjectStatsRetrieve(accountId, params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 
@@ -1828,6 +1846,57 @@ export const useV1AccountsPotApplicationsRetrieve = <TError = AxiosError<void>>(
     (() => (isEnabled ? getV1AccountsPotApplicationsRetrieveKey(accountId, params) : null));
 
   const swrFn = () => v1AccountsPotApplicationsRetrieve(accountId, params, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export const v1AccountsRoundsRetrieve = (
+  accountId: string,
+  params?: V1AccountsRoundsRetrieveParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PaginatedRoundsResponse>> => {
+  return axios.get(`/api/v1/accounts/${accountId}/rounds`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getV1AccountsRoundsRetrieveKey = (
+  accountId: string,
+  params?: V1AccountsRoundsRetrieveParams,
+) => [`/api/v1/accounts/${accountId}/rounds`, ...(params ? [params] : [])] as const;
+
+export type V1AccountsRoundsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1AccountsRoundsRetrieve>>
+>;
+
+export type V1AccountsRoundsRetrieveQueryError = AxiosError<void>;
+
+export const useV1AccountsRoundsRetrieve = <TError = AxiosError<void>>(
+  accountId: string,
+  params?: V1AccountsRoundsRetrieveParams,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1AccountsRoundsRetrieve>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!accountId;
+
+  const swrKey =
+    swrOptions?.swrKey ??
+    (() => (isEnabled ? getV1AccountsRoundsRetrieveKey(accountId, params) : null));
+
+  const swrFn = () => v1AccountsRoundsRetrieve(accountId, params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 

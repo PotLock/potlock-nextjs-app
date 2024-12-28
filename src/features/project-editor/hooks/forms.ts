@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { useWallet } from "@/common/services/auth";
+import { useWallet } from "@/entities/_shared/session";
 import { dispatch } from "@/store";
 
 import { saveProject } from "../models/effects";

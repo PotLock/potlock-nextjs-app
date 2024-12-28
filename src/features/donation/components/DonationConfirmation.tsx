@@ -20,8 +20,8 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { AccountProfileLink } from "@/entities/account";
-import { TokenTotalValue } from "@/entities/token";
+import { AccountProfileLink } from "@/entities/_shared/account";
+import { TokenTotalValue } from "@/entities/_shared/token";
 
 import { DonationGroupAllocationBreakdown, DonationSummaryBreakdown } from "./breakdowns";
 import { useDonationAllocationBreakdown } from "../hooks";

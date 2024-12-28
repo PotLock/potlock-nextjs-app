@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
-import { AccountListItem } from "@/entities/account";
-import { TokenIcon } from "@/entities/token";
+import { AccountListItem } from "@/entities/_shared/account";
+import { TokenIcon } from "@/entities/_shared/token";
 
 import { WithDonationFormAPI } from "../models";
 import { DonationBreakdown } from "../types";
@@ -116,7 +116,7 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
                 </span>
 
                 <LabeledIcon caption={amount} classNames={{ caption: "font-600" }}>
-                  <TokenIcon {...{ tokenId }} size="small" />
+                  <TokenIcon {...{ tokenId }} size="xs" />
                 </LabeledIcon>
               </div>
             ),

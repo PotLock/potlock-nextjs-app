@@ -4,10 +4,10 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { Dot } from "lucide-react";
 
 import { ByElectionId, Candidate } from "@/common/contracts/core/voting";
-import { authHooks } from "@/common/services/auth";
 import { Button, Checkbox, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountListItem } from "@/entities/account";
+import { AccountListItem } from "@/entities/_shared/account";
+import { useSession } from "@/entities/_shared/session";
 
 import { useVotingCandidateEntry } from "../hooks/candidates";
 
@@ -23,7 +23,7 @@ export const VotingCandidateOption: React.FC<VotingCandidateOptionProps> = ({
   isSelected = false,
   onSelect,
 }) => {
-  const user = authHooks.useUserSession();
+  const user = useSession();
 
   const { isLoading, canReceiveVotes, hasUserVotes, handleVoteCast } = useVotingCandidateEntry({
     electionId,

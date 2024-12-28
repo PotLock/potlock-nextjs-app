@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-
 import { CSSProperties, useEffect, useState } from "react";
 
 import {
@@ -13,7 +11,7 @@ import {
   MultiSelectorTrigger,
   Textarea,
 } from "@/common/ui/components";
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { ProjectCategoryVariant } from "@/entities/project";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -176,7 +174,7 @@ export const CustomTextForm = ({
 };
 
 const AccountStackItem = ({ accountId, style }: { accountId: string; style?: CSSProperties }) => {
-  const profileInfo = useAccountSocialProfile(accountId);
+  const profileInfo = useAccountSocialProfile({ accountId });
 
   return (
     <>

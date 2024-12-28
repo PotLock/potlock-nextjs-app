@@ -1,7 +1,12 @@
 import { useMemo } from "react";
 
+import { indexer } from "@/common/api/indexer";
+import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
+import { votingHooks } from "@/common/contracts/core/voting";
+import { stringifiedU128ToBigNum } from "@/common/lib";
 import { usePotActiveElections, usePotElections } from "@/entities/pot";
 
+import { useRoundResultsStore } from "../model/round-results";
 import type { VotingRound, VotingRoundKey } from "../types";
 
 // TODO: Figure out a way to know exactly which ONE election to pick ( Pots V2 milestone )
@@ -24,4 +29,37 @@ export const useActiveVotingRound = ({ potId }: VotingRoundKey): VotingRound | u
 
     return election ? { electionId: election.id, election } : undefined;
   }, [activeElections]);
+};
+
+export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
+  const { data: pot } = indexer.usePot({ potId });
+  const votingRound = useVotingRound({ potId });
+
+  const { data: votes } = votingHooks.useElectionVotes({
+    enabled: votingRound !== undefined,
+    electionId: votingRound?.electionId ?? 0,
+  });
+
+  const store = useRoundResultsStore();
+
+  if (pot && votingRound && votes) {
+    const cachedResults = store.resultsCache[votingRound.electionId];
+
+    // Update results if votes have changed
+    if (!cachedResults || cachedResults.totalVoteCount !== votes.length) {
+      store.updateResults({
+        electionId: votingRound.electionId,
+        votes,
+
+        matchingPoolBalance: stringifiedU128ToBigNum(
+          pot.matching_pool_balance,
+          NATIVE_TOKEN_DECIMALS,
+        ),
+      });
+    }
+  }
+
+  if (votingRound) {
+    return store.resultsCache[votingRound.electionId];
+  } else return undefined;
 };

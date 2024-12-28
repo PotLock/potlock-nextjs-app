@@ -6,7 +6,11 @@ import { Temporal } from "temporal-polyfill";
 import type { ByPotId } from "@/common/api/indexer";
 import type { Vote } from "@/common/contracts/core/voting";
 import { cn } from "@/common/ui/utils";
-import { AccountHandle, AccountProfileLink, AccountProfilePicture } from "@/entities/account";
+import {
+  AccountHandle,
+  AccountProfileLink,
+  AccountProfilePicture,
+} from "@/entities/_shared/account";
 
 import { VotingWeightBoostBadge } from "./badges";
 import { useVoterVoteWeightAmplifiers } from "../hooks/vote-weight";

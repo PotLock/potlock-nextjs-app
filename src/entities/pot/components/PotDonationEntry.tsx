@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Donation } from "@/common/api/indexer";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import routesPath from "@/pathnames";
 
 import NearIcon from "./NearIcon";
@@ -46,8 +46,8 @@ export const PotDonationEntry = ({
   const name = truncate(donorId, 15);
   const recipientName = truncate(recipientId, 15);
 
-  const donorProfile = useAccountSocialProfile(donorId);
-  const recipientProfile = useAccountSocialProfile(recipientId);
+  const donorProfile = useAccountSocialProfile({ accountId: donorId });
+  const recipientProfile = useAccountSocialProfile({ accountId: recipientId });
 
   return (
     <div

@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 
-import { Big, BigSource } from "big.js";
-import { isTruthy, pick } from "remeda";
-
-import { isBigSource } from "@/common/lib";
+import { Big } from "big.js";
+import { pick } from "remeda";
 
 import { useVoterProfile } from "./voter-profile";
 import { VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS } from "../constants";
@@ -39,13 +37,12 @@ export const useVoterVoteWeightAmplifiers = ({
         ]);
 
         switch (rule.comparator) {
-          case "isTruthy": {
+          case "boolean": {
             return {
               ...staticAmplifierProps,
 
               isApplicable:
-                typeof profileParameter === "boolean" &&
-                isTruthy(profileParameter) === rule.expectation,
+                typeof profileParameter === "boolean" && profileParameter === rule.expectation,
             };
           }
 
@@ -55,8 +52,8 @@ export const useVoterVoteWeightAmplifiers = ({
                 ...staticAmplifierProps,
 
                 isApplicable:
-                  isBigSource(profileParameter) &&
-                  Big(profileParameter as BigSource)[rule.comparator](rule.threshold),
+                  profileParameter instanceof Big &&
+                  profileParameter[rule.comparator](rule.threshold),
               };
             } else return { ...staticAmplifierProps, isApplicable: false };
           }

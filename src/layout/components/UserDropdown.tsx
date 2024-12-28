@@ -6,7 +6,6 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { nearClient } from "@/common/api/near";
 import { truncate } from "@/common/lib";
-import { authHooks } from "@/common/services/auth";
 import {
   Button,
   DropdownMenu,
@@ -16,7 +15,8 @@ import {
   DropdownMenuTrigger,
   Skeleton,
 } from "@/common/ui/components";
-import { AccountProfilePicture } from "@/entities/account";
+import { AccountProfilePicture } from "@/entities/_shared/account";
+import { useSession } from "@/entities/_shared/session";
 import { listRegistrationStatuses } from "@/entities/list";
 import { rootPathnames } from "@/pathnames";
 
@@ -24,7 +24,7 @@ import ActAsDao from "./ActAsDao";
 
 // TODO: Finish refactoring
 export const UserDropdown = () => {
-  const authenticatedUser = authHooks.useUserSession();
+  const authenticatedUser = useSession();
 
   const logoutHandler = useCallback(() => {
     nearClient.walletApi.wallet?.signOut();

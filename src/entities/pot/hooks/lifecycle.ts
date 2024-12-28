@@ -1,9 +1,16 @@
 import { useMemo } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Temporal } from "temporal-polyfill";
+
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { getDateTime } from "@/entities/core";
 
 import { PotLifecycleStageTagEnum } from "../types";
+
+/**
+ * @deprecated Use {@link Temporal} API instead
+ */
+const getDateTime = (date: string) => new Date(date).getTime();
 
 export type PotLifecycleCalculationInputs = ByPotId & { hasVoting?: boolean };
 

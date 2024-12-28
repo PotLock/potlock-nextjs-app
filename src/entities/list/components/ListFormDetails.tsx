@@ -14,7 +14,7 @@ import { fetchSocialImages } from "@/common/services/social";
 import { AccountId } from "@/common/types";
 import { Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/account";
+import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 import {
