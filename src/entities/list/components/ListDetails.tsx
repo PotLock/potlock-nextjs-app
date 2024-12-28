@@ -20,7 +20,11 @@ import {
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/molecules/social-share";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/svg";
-import { AccountGroupEditModal, AccountListItem, AccountProfilePicture } from "@/entities/account";
+import {
+  AccountGroupEditModal,
+  AccountListItem,
+  AccountProfilePicture,
+} from "@/entities/_shared/account";
 import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";
 

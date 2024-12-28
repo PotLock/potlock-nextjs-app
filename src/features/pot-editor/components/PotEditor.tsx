@@ -22,7 +22,7 @@ import {
 } from "@/common/ui/form-fields";
 import InfoIcon from "@/common/ui/svg/InfoIcon";
 import { cn } from "@/common/ui/utils";
-import { AccountGroup } from "@/entities/account";
+import { AccountGroup } from "@/entities/_shared/account";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/features/donation";
 

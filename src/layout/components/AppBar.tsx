@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
 import useIsClient from "@/common/lib/useIsClient";
-import { AuthSignInButton, useSessionReduxStore } from "@/common/services/auth";
 import { cn } from "@/common/ui/utils";
+import { AuthSignInButton, useSessionReduxStore } from "@/entities/_shared/session";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 

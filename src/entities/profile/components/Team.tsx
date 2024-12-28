@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import type { AccountId } from "@/common/types";
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import routesPath from "@/pathnames";
 
 import getProfileTeamMembersData from "../utils/getProfileTeamMembersData";

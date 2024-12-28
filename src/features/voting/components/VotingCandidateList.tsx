@@ -4,11 +4,11 @@ import { useSet, useWindowSize } from "@uidotdev/usehooks";
 import { MdIndeterminateCheckBox } from "react-icons/md";
 
 import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
-import { authHooks } from "@/common/services/auth";
 import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
+import { useSession } from "@/entities/_shared/session";
 
 import { VotingCandidateOption } from "./VotingCandidateOption";
 
@@ -25,14 +25,14 @@ export const VotingCandidateList: React.FC<VotingCandidateListProps> = ({
 }) => {
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
-  const userSession = authHooks.useUserSession();
+  const authenticatedUser = useSession();
   const selectedEntries = useSet<AccountId>();
 
   const { isLoading: _isRemainingUserVotingCapacityLoading, data: remainingUserVotingCapacity } =
     votingHooks.useVoterRemainingCapacity({
-      enabled: electionId !== 0 && userSession.accountId !== undefined,
+      enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
       electionId,
-      accountId: userSession.accountId ?? "noop",
+      accountId: authenticatedUser.accountId ?? "noop",
     });
 
   const handleEntrySelect = useCallback(

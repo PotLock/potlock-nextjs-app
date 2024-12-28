@@ -4,7 +4,6 @@ import { X } from "lucide-react";
 import { MdCheckCircleOutline, MdStar } from "react-icons/md";
 
 import { ByPotId } from "@/common/api/indexer";
-import { authHooks } from "@/common/services/auth";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +12,7 @@ import {
   Separator,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useSession } from "@/entities/_shared/session";
 
 import { useVoterVoteWeight, useVoterVoteWeightAmplifiers } from "../hooks/vote-weight";
 
@@ -31,7 +31,7 @@ export const VotingWeightBoostBreakdown: React.FC<VotingWeightBoostBreakdownProp
   className,
 }) => {
   const isDialogOpen = useMemo(() => open && mode === "modal", [mode, open]);
-  const { accountId } = authHooks.useUserSession();
+  const { accountId } = useSession();
   const { voteWeight } = useVoterVoteWeight({ accountId, potId });
   const voteWeightAmplifiers = useVoterVoteWeightAmplifiers({ accountId, potId });
 

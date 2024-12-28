@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { TabOption } from "@/common/ui/types";
-import { useRegistration } from "@/entities/core";
 import { ProjectBanner } from "@/entities/project";
 
 import { ProfileLayoutControls } from "./ProfileLayoutControls";

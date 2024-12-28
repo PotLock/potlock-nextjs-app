@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import { Button } from "@/common/ui/components";
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 export const GroupIcon = () => (

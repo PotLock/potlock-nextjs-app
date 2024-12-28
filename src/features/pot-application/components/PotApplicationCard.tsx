@@ -14,7 +14,7 @@ import {
   AccountListItem,
   AccountProfilePicture,
   useAccountSocialProfile,
-} from "@/entities/account";
+} from "@/entities/_shared/account";
 
 import { potApplicationFiltersTags } from "./tags";
 

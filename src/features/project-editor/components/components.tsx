@@ -11,7 +11,7 @@ import {
   MultiSelectorTrigger,
   Textarea,
 } from "@/common/ui/components";
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { ProjectCategoryVariant } from "@/entities/project";
 import { useGlobalStoreSelector } from "@/store";
 

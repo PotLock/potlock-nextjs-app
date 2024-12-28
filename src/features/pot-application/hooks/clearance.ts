@@ -6,9 +6,9 @@ import { PLATFORM_NAME } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { stringifiedU128ToBigNum } from "@/common/lib";
-import { authHooks } from "@/common/services/auth";
-import { tokenHooks } from "@/common/services/token";
 import { ClearanceCheckResult } from "@/common/types";
+import { useSession } from "@/entities/_shared/session";
+import { useToken } from "@/entities/_shared/token";
 
 import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
 
@@ -24,12 +24,11 @@ export const usePotApplicationUserClearance = ({
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
   const { data: pot } = indexer.usePot({ potId });
 
-  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } =
-    authHooks.useUserSession();
+  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useSession();
 
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const { data: stakingToken } = tokenHooks.useToken({
+  const { data: stakingToken } = useToken({
     balanceCheckAccountId: accountId,
     tokenId: staking.tokenId,
   });

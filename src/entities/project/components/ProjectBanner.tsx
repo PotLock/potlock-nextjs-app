@@ -1,8 +1,8 @@
 import { useState } from "react";
 
+import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { RegistrationStatus } from "@/common/contracts/core";
-import { ACCOUNT_REGISTRATION_STATUSES } from "@/entities/account";
-import { useRegistration } from "@/entities/core";
+import { ACCOUNT_REGISTRATION_STATUSES } from "@/entities/_shared/account";
 
 export const ProjectBanner = ({ projectId }: { projectId: string }) => {
   const [toggle, setToggle] = useState(false);

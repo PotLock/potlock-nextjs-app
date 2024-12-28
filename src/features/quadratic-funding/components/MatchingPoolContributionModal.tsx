@@ -15,7 +15,7 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { AccountProfileLink } from "@/entities/account";
+import { AccountProfileLink } from "@/entities/_shared/account";
 import { useGlobalStoreSelector } from "@/store";
 
 import { useMatchingPoolFundingForm } from "../hooks/forms";

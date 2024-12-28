@@ -7,7 +7,7 @@ import Markdown from "react-markdown";
 import { PotApplicationStatus } from "@/common/api/indexer";
 import { fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { AccountHandle, AccountProfilePicture } from "@/entities/account";
+import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { potApplicationFiltersTags } from "@/features/pot-application";
 
 import FeedCardOptionsSelect from "./FeedCardOptionsSelect";

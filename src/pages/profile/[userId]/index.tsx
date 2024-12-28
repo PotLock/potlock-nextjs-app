@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import AboutItem from "@/entities/profile/components/AboutItem";
 import Github from "@/entities/profile/components/Github";
 import SmartContract from "@/entities/profile/components/SmartContract";

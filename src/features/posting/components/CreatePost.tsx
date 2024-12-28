@@ -3,13 +3,13 @@ import { useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { createPost } from "@/common/contracts/social";
-import { authHooks } from "@/common/services/auth";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
+import { useSession } from "@/entities/_shared/session";
 
 export const CreatePost = ({ accountId }: { accountId: AccountId }) => {
-  const authenticatedUser = authHooks.useUserSession();
+  const authenticatedUser = useSession();
 
   const { avatarSrc } = useAccountSocialProfile({
     enabled: authenticatedUser.isSignedIn,

@@ -5,7 +5,7 @@ import { Temporal } from "temporal-polyfill";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
-import { authHooks } from "@/common/services/auth";
+import { useSession } from "@/entities/_shared/session";
 
 /**
  * @deprecated Use {@link Temporal} API instead
@@ -13,7 +13,7 @@ import { authHooks } from "@/common/services/auth";
 const getDateTime = (date: string) => new Date(date).getTime();
 
 export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
-  const { isSignedIn, accountId } = authHooks.useUserSession();
+  const { isSignedIn, accountId } = useSession();
   const { data: pot } = indexer.usePot({ potId });
   const now = Date.now();
 

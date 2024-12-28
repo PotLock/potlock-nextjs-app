@@ -26,7 +26,7 @@ import {
 import DownArrow from "@/common/ui/svg/DownArrow";
 import { ListNoteIcon } from "@/common/ui/svg/list-note";
 import { cn } from "@/common/ui/utils";
-import { AccountProfileCover, AccountProfilePicture } from "@/entities/account";
+import { AccountProfileCover, AccountProfilePicture } from "@/entities/_shared/account";
 import { statuses } from "@/entities/project/constants";
 import { dispatch } from "@/store";
 

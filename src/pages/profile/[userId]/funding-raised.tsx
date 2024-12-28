@@ -3,9 +3,9 @@ import { ReactElement, useState } from "react";
 import { useRouter } from "next/router";
 import { styled } from "styled-components";
 
+import { useDonationsForProject } from "@/common/_deprecated/useDonationsForProject";
 import { ExternalFundingSource } from "@/common/contracts/social";
-import { useAccountSocialProfile } from "@/entities/account";
-import useDonationsForProject from "@/entities/core/hooks/useDonationsForProject";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { FundingTable } from "@/layout/profile/_deprecated/FundingTable";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 

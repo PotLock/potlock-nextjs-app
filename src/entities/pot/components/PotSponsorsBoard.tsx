@@ -1,7 +1,11 @@
 import { styled } from "styled-components";
 
 import { truncate } from "@/common/lib";
-import { AccountHandle, AccountProfilePicture, useAccountSocialProfile } from "@/entities/account";
+import {
+  AccountHandle,
+  AccountProfilePicture,
+  useAccountSocialProfile,
+} from "@/entities/_shared/account";
 
 import { CustomDonationType } from "../models/types";
 

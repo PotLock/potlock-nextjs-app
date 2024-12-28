@@ -5,7 +5,6 @@ import { values } from "remeda";
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { tokenHooks } from "@/common/services/token";
 import { ByAccountId, ByCampaignId } from "@/common/types";
 import {
   DialogDescription,
@@ -21,7 +20,7 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import { SelectField, SelectFieldOption, TextField } from "@/common/ui/form-fields";
-import { TokenSelector } from "@/entities/token";
+import { TokenSelector, useToken } from "@/entities/_shared/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import { DONATION_INSUFFICIENT_BALANCE_ERROR, DONATION_MIN_NEAR_AMOUNT } from "../constants";
@@ -49,7 +48,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     "potAccountId",
   ]);
 
-  const { data: token } = tokenHooks.useToken({ tokenId });
+  const { data: token } = useToken({ tokenId });
 
   const {
     isLoading: isRecipientDataLoading,

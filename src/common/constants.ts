@@ -90,7 +90,7 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
 ];
 
 /**
- * @deprecated use `tokenHooks` hooks instead
+ * @deprecated Use `useTokenAllowlist` hooks instead
  */
 export const SUPPORTED_FTS: Record<
   string,

@@ -7,10 +7,11 @@ import remarkGfm from "remark-gfm";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { authHooks } from "@/common/services/auth";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
+import { useSession } from "@/entities/_shared/session";
+import { TokenTotalValue } from "@/entities/_shared/token";
 import {
   PotDonationStats,
   PotLifecycleStageTagEnum,
@@ -19,7 +20,6 @@ import {
   usePotExtensionFlags,
   usePotLifecycle,
 } from "@/entities/pot";
-import { TokenTotalValue } from "@/entities/token";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
 
@@ -39,7 +39,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 }) => {
   const { data: pot } = indexer.usePot({ potId });
   const { hasVoting } = usePotExtensionFlags({ potId });
-  const { isSignedIn, accountId } = authHooks.useUserSession();
+  const { isSignedIn, accountId } = useSession();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
   const lifecycle = usePotLifecycle({ potId, hasVoting });
 

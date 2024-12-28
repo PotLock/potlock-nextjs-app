@@ -2,8 +2,8 @@ import { type ByPotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { LabeledIcon } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountHandle, AccountProfilePicture } from "@/entities/account";
-import { TokenIcon } from "@/entities/token";
+import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
+import { TokenIcon } from "@/entities/_shared/token";
 import { useVotingRoundResults } from "@/features/voting";
 
 export type PotVotingLeaderboardProps = ByPotId & {};

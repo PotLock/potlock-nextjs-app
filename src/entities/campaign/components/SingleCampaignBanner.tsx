@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
+import { useNearToUsdWithFallback } from "@/common/_deprecated/useNearToUsdWithFallback";
 import { Campaign, campaignsClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { SocialsShare } from "@/common/ui/components/molecules/social-share";
-import { AccountProfilePicture } from "@/entities/account";
-import { useNearToUsdWithFallback } from "@/entities/core/hooks/useNearToUsdWithFallback";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";

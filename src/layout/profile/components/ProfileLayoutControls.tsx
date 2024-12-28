@@ -4,8 +4,8 @@ import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { styled } from "styled-components";
 
+import { useDonationsForProject } from "@/common/_deprecated/useDonationsForProject";
 import { truncate } from "@/common/lib";
-import { authHooks } from "@/common/services/auth";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import CheckIcon from "@/common/ui/svg/CheckIcon";
 import ReferrerIcon from "@/common/ui/svg/ReferrerIcon";
@@ -14,8 +14,8 @@ import {
   AccountProfileLinktree,
   AccountProfileTags,
   useAccountSocialProfile,
-} from "@/entities/account";
-import useDonationsForProject from "@/entities/core/hooks/useDonationsForProject";
+} from "@/entities/_shared/account";
+import { useSession, useWallet } from "@/entities/_shared/session";
 import { useDonation } from "@/features/donation";
 import routesPath, { rootPathnames } from "@/pathnames";
 
@@ -25,19 +25,18 @@ type Props = {
 };
 
 const LinksWrapper = ({ accountId }: { accountId: string }) => {
-  const userSession = authHooks.useUserSession();
-  const { wallet } = authHooks.useWallet();
+  const authenticatedUser = useSession();
   const [copied, setCopied] = useState(false);
 
   return (
     <div className="mt-4 flex flex-wrap gap-8">
       <AccountProfileLinktree {...{ accountId }} />
 
-      {userSession.isSignedIn && (
+      {authenticatedUser.isSignedIn && (
         <CopyToClipboard
           text={
             window.location.origin +
-            `${rootPathnames.PROFILE}/${accountId}?referrerId=${wallet?.accountId}`
+            `${rootPathnames.PROFILE}/${accountId}?referrerId=${authenticatedUser.accountId}`
           }
           onCopy={() => {
             setCopied(true);
@@ -145,11 +144,9 @@ const DonationsInfo = ({ accountId }: { accountId: string }) => {
 };
 
 export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
-  const { wallet } = authHooks.useWallet();
+  const authenticatedUser = useSession();
+  const isOwner = authenticatedUser?.accountId === accountId;
   const { profile } = useAccountSocialProfile({ accountId });
-
-  const name = profile?.name || "";
-  const isOwner = wallet?.accountId === accountId;
 
   return (
     <div
@@ -163,7 +160,7 @@ export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
           <div className="flex w-full flex-wrap gap-4">
             {/* Title */}
             <h2 className="font-500 line-height-none font-lora mb-1 text-[40px] text-[#2e2e2e]">
-              {truncate(name, 25)}
+              {truncate(profile?.name ?? accountId, 28)}
             </h2>
             {/* Account */}
             <div className="flex flex-row content-start items-center gap-2">

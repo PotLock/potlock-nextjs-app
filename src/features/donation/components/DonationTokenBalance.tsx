@@ -1,8 +1,8 @@
-import { authHooks } from "@/common/services/auth";
-import { tokenHooks } from "@/common/services/token";
 import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useSession } from "@/entities/_shared/session";
+import { useToken } from "@/entities/_shared/token";
 
 export type DonationTokenBalanceProps = ByTokenId & {
   classNames?: { root?: string; amount?: string };
@@ -12,10 +12,10 @@ export const DonationTokenBalance: React.FC<DonationTokenBalanceProps> = ({
   tokenId,
   classNames,
 }) => {
-  const userSession = authHooks.useUserSession();
+  const authenticatedUser = useSession();
 
-  const { data: token, error: tokenError } = tokenHooks.useToken({
-    balanceCheckAccountId: userSession?.accountId,
+  const { data: token, error: tokenError } = useToken({
+    balanceCheckAccountId: authenticatedUser?.accountId,
     tokenId,
   });
 

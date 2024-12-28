@@ -17,7 +17,7 @@ import {
 } from "@/common/ui/components";
 import ArrowDown from "@/common/ui/svg/ArrowDown";
 import { cn } from "@/common/ui/utils";
-import { AccountProfilePicture } from "@/entities/account";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 import { PotPayoutChallenges, usePotPayoutLookup } from "@/entities/pot";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 import rootPathnames from "@/pathnames";

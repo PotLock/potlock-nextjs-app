@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { potFactoryClient } from "@/common/contracts/core";
-import { useWallet } from "@/common/services/auth";
 import { Button, PageWithBanner } from "@/common/ui/components";
+import { useWallet } from "@/entities/_shared/session";
 import { ActivePots } from "@/entities/pot";
 import { rootPathnames } from "@/pathnames";
 

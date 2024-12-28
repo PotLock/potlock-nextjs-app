@@ -12,7 +12,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/common/ui/components/molecules/carousel";
-import { useAccountSocialProfile } from "@/entities/account";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";

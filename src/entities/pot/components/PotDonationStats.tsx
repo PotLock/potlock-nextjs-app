@@ -4,10 +4,9 @@ import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { truncate } from "@/common/lib";
-import { tokenHooks } from "@/common/services/token";
 import { Toggle } from "@/common/ui/svg";
-import { AccountHandle, AccountProfilePicture, useAccountSocialProfile } from "@/entities/account";
+import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
+import { useToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";
 
 import { Container, Row } from "./styled";
@@ -25,7 +24,7 @@ const Table = ({
   title: string;
 }) => {
   const [usdToggle, setUsdToggle] = useState(false);
-  const { data: nativeToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: nativeToken } = useToken({ tokenId: NATIVE_TOKEN_ID });
 
   return (
     <Container className="md:min-w-100 xl:w-126.5">
@@ -79,7 +78,7 @@ type DonationProps = {
 };
 
 const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
-  const { data: nativeToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: nativeToken } = useToken({ tokenId: NATIVE_TOKEN_ID });
 
   const matchedAmount = usdToggle
     ? (nativeToken?.usdPrice?.mul(nearAmount).toFixed(2) ?? 0)

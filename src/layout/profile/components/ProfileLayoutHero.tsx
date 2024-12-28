@@ -1,7 +1,8 @@
+import { useIsHuman } from "@/common/_deprecated/useIsHuman";
+import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useAccountSocialProfile } from "@/entities/account";
-import { useIsHuman, useRegistration } from "@/entities/core";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { listRegistrationStatusIcons } from "@/entities/list";
 import { FollowStats } from "@/entities/profile";
 

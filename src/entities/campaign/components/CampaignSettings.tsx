@@ -5,7 +5,7 @@ import Link from "next/link";
 import { walletApi } from "@/common/api/near/client";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import { NearIcon } from "@/common/ui/svg";
-import { AccountProfilePicture } from "@/entities/account";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
 import { useCampaignDeploymentRedirect } from "../hooks/redirects";

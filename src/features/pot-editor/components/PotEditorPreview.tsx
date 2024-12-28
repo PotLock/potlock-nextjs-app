@@ -8,7 +8,7 @@ import { walletApi } from "@/common/api/near/client";
 import { isAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountGroup, AccountListItem, AccountProfileLink } from "@/entities/account";
+import { AccountGroup, AccountListItem, AccountProfileLink } from "@/entities/_shared/account";
 
 import { POT_EDITOR_FIELDS } from "../constants";
 import { potIndexedFieldToString } from "../utils/normalization";

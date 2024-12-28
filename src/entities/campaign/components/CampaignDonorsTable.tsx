@@ -8,7 +8,7 @@ import { toChronologicalOrder, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { DataTable } from "@/common/ui/components";
 import { NearIcon } from "@/common/ui/svg";
-import { AccountProfilePicture } from "@/entities/account";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { useCampaign } from "../hooks/useCampaign";
 
