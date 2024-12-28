@@ -35,10 +35,10 @@ const Container = styled.div`
   }
 `;
 
-// TODO: Apply optimizations
 const ApplicationLookupPlaceholder = () =>
   Array.from({ length: 6 }, (_, i) => <PotApplicationCardSkeleton key={i} />);
 
+// TODO: Apply optimizations
 const ApplicationsTab = () => {
   const router = useRouter();
 
