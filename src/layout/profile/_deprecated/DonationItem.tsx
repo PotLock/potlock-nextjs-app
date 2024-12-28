@@ -2,7 +2,7 @@ import Big from "big.js";
 import Link from "next/link";
 import { styled } from "styled-components";
 
-import { DonationInfo } from "@/common/_deprecated/accounts.deprecated";
+import { DonationInfo } from "@/common/_deprecated/accounts.";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";

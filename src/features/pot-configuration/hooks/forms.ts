@@ -16,22 +16,23 @@ import { rootPathnames } from "@/pathnames";
 import { dispatch, useCoreState } from "@/store";
 
 import {
-  PotEditorDeploymentInputs,
-  PotEditorDeploymentSchema,
-  PotEditorSettings,
-  PotEditorSettingsSchema,
-  potEditorDeploymentCrossFieldValidationTargets,
-  potEditorSettingsCrossFieldValidationTargets,
+  PotDeploymentInputs,
+  PotDeploymentSchema,
+  PotSettings,
+  PotSettingsSchema,
+  potDeploymentCrossFieldValidationTargets,
+  potSettingsCrossFieldValidationTargets,
 } from "../model";
 import { potConfigToSettings, potIndexedDataToPotInputs } from "../utils/normalization";
 
-export type PotEditorFormArgs =
-  | (ByPotId & {
-      schema: PotEditorDeploymentSchema;
-    })
-  | { schema: PotEditorSettingsSchema };
+export type PotConfigurationEditorFormArgs =
+  | (ByPotId & { schema: PotDeploymentSchema })
+  | { schema: PotSettingsSchema };
 
-export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
+export const usePotConfigurationEditorForm = ({
+  schema,
+  ...props
+}: PotConfigurationEditorFormArgs) => {
   const router = useRouter();
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = "potId" in props && typeof potId !== "string";
@@ -61,11 +62,8 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
       owner: walletApi.accountId,
       max_projects: 25,
       min_matching_pool_donation_amount: 0.1,
-
       referral_fee_matching_pool_basis_points: donationFeeBasisPointsToPercents(100),
-
       referral_fee_public_round_basis_points: donationFeeBasisPointsToPercents(100),
-
       chef_fee_basis_points: donationFeeBasisPointsToPercents(100),
       isPgRegistrationRequired: true,
       isSybilResistanceEnabled: true,
@@ -102,8 +100,8 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
               const fieldPath = path.at(0);
 
               return (isNewPot
-                ? potEditorDeploymentCrossFieldValidationTargets
-                : potEditorSettingsCrossFieldValidationTargets
+                ? potDeploymentCrossFieldValidationTargets
+                : potSettingsCrossFieldValidationTargets
               ).includes(fieldPath as keyof PotInputs) &&
                 typeof fieldPath === "string" &&
                 code === "custom"
@@ -133,14 +131,12 @@ export const usePotEditorForm = ({ schema, ...props }: PotEditorFormArgs) => {
 
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) =>
-      dispatch.potEditor.save({
+      dispatch.potConfiguration.save({
         onDeploymentSuccess: ({ potId }: ByPotId) => router.push(`${rootPathnames.pot}/${potId}`),
 
         onUpdate: (config: PotConfig) => self.reset(potConfigToSettings(config)),
 
-        ...(isNewPot
-          ? (values as PotEditorDeploymentInputs)
-          : { potId, ...(values as PotEditorSettings) }),
+        ...(isNewPot ? (values as PotDeploymentInputs) : { potId, ...(values as PotSettings) }),
       }),
 
     [isNewPot, potId, router, self],

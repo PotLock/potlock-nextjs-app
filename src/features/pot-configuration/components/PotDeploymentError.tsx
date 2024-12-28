@@ -2,9 +2,9 @@ import { useRouter } from "next/router";
 
 import { Button, ModalErrorBody } from "@/common/ui/components";
 
-export type PotEditorDeploymentErrorProps = { message?: string };
+export type PotDeploymentErrorProps = { message?: string };
 
-export const PotEditorDeploymentError: React.FC<PotEditorDeploymentErrorProps> = ({ message }) => {
+export const PotDeploymentError: React.FC<PotDeploymentErrorProps> = ({ message }) => {
   const router = useRouter();
 
   return (

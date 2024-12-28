@@ -8,7 +8,7 @@ import { Button, Textarea } from "@/common/ui/components";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { useSession } from "@/entities/_shared/session";
 
-export const CreatePost = ({ accountId }: { accountId: AccountId }) => {
+export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
   const authenticatedUser = useSession();
 
   const { avatarSrc } = useAccountSocialProfile({
@@ -18,17 +18,15 @@ export const CreatePost = ({ accountId }: { accountId: AccountId }) => {
 
   const [postText, setPostText] = useState("");
 
-  const handleCreatePost = async (e: { preventDefault: () => void }) => {
+  const handleCreatePost = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    try {
-      await createPost({
-        accountId,
-        content: { text: postText, type: "md" },
-      });
-    } catch (error) {
+    void createPost({
+      accountId,
+      content: { text: postText, type: "md" },
+    }).catch((error) => {
       console.log(error);
-    }
+    });
   };
 
   return (

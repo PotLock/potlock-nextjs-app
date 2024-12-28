@@ -6,13 +6,24 @@ import InfiniteScrollWrapper from "react-infinite-scroll-component";
 import { walletApi } from "@/common/api/near/client";
 import { fetchAccountFeedPosts } from "@/common/api/near-social";
 import { IndexPostResultItem } from "@/common/contracts/social";
-import { CreatePost, FeedCard } from "@/features/posting";
+import { cn } from "@/common/ui/utils";
+import { PostCard, PostEditor } from "@/entities/post";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 const NoResults = () => (
-  <div className="flex flex-col-reverse items-center justify-between rounded-[12px] bg-[#f6f5f3] px-[24px] py-[16px] md:flex-col md:px-[105px] md:py-[68px]">
-    <p className="font-italic font-500 font-lora mb-4 max-w-[290px] text-center text-[16px] text-[#292929] md:text-[22px]">
-      This project has no Feeds yet.
+  <div
+    className={cn(
+      "flex flex-col-reverse items-center justify-between rounded-[12px]",
+      "bg-[#f6f5f3] px-[24px] py-[16px] md:flex-col md:px-[105px] md:py-[68px]",
+    )}
+  >
+    <p
+      className={cn(
+        "font-italic font-500 font-lora mb-4 max-w-[290px]",
+        "text-nowrap text-center text-[16px] text-[#292929] md:text-[22px]",
+      )}
+    >
+      This project has no posts yet.
     </p>
 
     <img
@@ -57,7 +68,7 @@ export default function ProfileFeedTab() {
 
   return (
     <div className="my-8 h-full max-h-80 w-full">
-      {accountId === walletApi?.accountId && <CreatePost accountId={accountId} />}
+      {accountId === walletApi?.accountId && <PostEditor accountId={accountId} />}
 
       <InfiniteScrollWrapper
         className="space-y-4"
@@ -73,7 +84,7 @@ export default function ProfileFeedTab() {
           )
         }
       >
-        {posts?.map((post) => <FeedCard key={post?.blockHeight} post={post} />)}
+        {posts?.map((post) => <PostCard key={post?.blockHeight} post={post} />)}
       </InfiniteScrollWrapper>
 
       {posts.length === 0 && !isLoading && <NoResults />}

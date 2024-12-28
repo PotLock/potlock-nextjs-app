@@ -10,7 +10,7 @@ export type PotDeploymentSuccessProps = {
   potData: PotData;
 };
 
-export const PotEditorDeploymentSuccess: React.FC<PotDeploymentSuccessProps> = ({
+export const PotDeploymentSuccess: React.FC<PotDeploymentSuccessProps> = ({
   onViewPotClick,
   potData,
 }) => (

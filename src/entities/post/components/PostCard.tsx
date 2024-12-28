@@ -10,20 +10,21 @@ import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { potApplicationFiltersTags } from "@/features/pot-application";
 
-import FeedCardOptionsSelect from "./FeedCardOptionsSelect";
+import { PostActions } from "./PostActions";
 
-interface PostType {
+export type PostCardProps = {
   isPot?: boolean;
   status?: PotApplicationStatus;
+
   post: {
     accountId: string;
     content: string;
     blockHeight: bigint;
     imageIPFSHash?: string;
   };
-}
+};
 
-export const FeedCard = ({ post, isPot, status }: PostType) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
   const router = useRouter();
   const [time, setTime] = useState("");
 
@@ -89,7 +90,7 @@ export const FeedCard = ({ post, isPot, status }: PostType) => {
               {status}
             </div>
           )}
-          <FeedCardOptionsSelect post={post} />
+          <PostActions post={post} />
         </div>
       </div>
 

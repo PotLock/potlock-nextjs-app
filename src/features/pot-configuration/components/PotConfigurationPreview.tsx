@@ -13,14 +13,14 @@ import { AccountGroup, AccountListItem, AccountProfileLink } from "@/entities/_s
 import { POT_EDITOR_FIELDS } from "../constants";
 import { potIndexedFieldToString } from "../utils/normalization";
 
-type PotEditorPreviewSectionProps = {
+type PotConfigurationPreviewSectionProps = {
   isLoading: boolean;
   heading: string;
   subheading?: string;
   children?: React.ReactNode;
 };
 
-const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
+const PotConfigurationPreviewSection: React.FC<PotConfigurationPreviewSectionProps> = ({
   isLoading,
   heading,
   subheading,
@@ -49,12 +49,12 @@ const PotEditorPreviewSection: React.FC<PotEditorPreviewSectionProps> = ({
     </>
   );
 
-export type PotEditorPreviewProps = Partial<ByPotId> & {
+export type PotConfigurationPreviewProps = Partial<ByPotId> & {
   onEditClick: () => void;
   className?: string;
 };
 
-export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
+export const PotConfigurationPreview: React.FC<PotConfigurationPreviewProps> = ({
   potId,
   onEditClick,
   className,
@@ -73,9 +73,9 @@ export const PotEditorPreview: React.FC<PotEditorPreviewProps> = ({
       isDataAvailable
         ? entries(omit(POT_EDITOR_FIELDS, ["owner", "admins"])).map(
             ([key, { index = "none", ...attrs }]) => (
-              <PotEditorPreviewSection key={key} heading={attrs.title} {...{ isLoading }}>
+              <PotConfigurationPreviewSection key={key} heading={attrs.title} {...{ isLoading }}>
                 {potIndexedFieldToString(key, pot[index as keyof typeof pot], attrs)}
-              </PotEditorPreviewSection>
+              </PotConfigurationPreviewSection>
             ),
           )
         : null,

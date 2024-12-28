@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getPotDonations, getPotPayouts } from "@/common/_deprecated/pots.deprecated";
+import { getPotDonations, getPotPayouts } from "@/common/_deprecated/pots";
 import { Donation, PotPayout } from "@/common/api/indexer";
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";

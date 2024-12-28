@@ -4,13 +4,13 @@ import { create, useModal } from "@ebay/nice-modal-react";
 
 import { DataLoadingPlaceholder, Dialog, DialogContent } from "@/common/ui/components";
 
-import { PotEditorDeploymentError } from "./PotEditorDeploymentError";
-import { PotEditorDeploymentSuccess } from "./PotEditorDeploymentSuccess";
-import { usePotEditorState } from "../model";
+import { PotDeploymentError } from "./PotDeploymentError";
+import { PotDeploymentSuccess } from "./PotDeploymentSuccess";
+import { usePotConfigurationState } from "../model";
 
-export type PotEditorDeploymentModalProps = {};
+export type PotDeploymentModalProps = {};
 
-export const PotEditorDeploymentModal = create((_: PotEditorDeploymentModalProps) => {
+export const PotDeploymentModal = create((_: PotDeploymentModalProps) => {
   const self = useModal();
 
   const close = useCallback(() => {
@@ -20,14 +20,14 @@ export const PotEditorDeploymentModal = create((_: PotEditorDeploymentModalProps
 
   const {
     finalOutcome: { data, error },
-  } = usePotEditorState();
+  } = usePotConfigurationState();
 
   const content = useMemo(
     () =>
       error !== null || !data ? (
-        <PotEditorDeploymentError message={error?.message} />
+        <PotDeploymentError message={error?.message} />
       ) : (
-        <PotEditorDeploymentSuccess onViewPotClick={close} potData={data} />
+        <PotDeploymentSuccess onViewPotClick={close} potData={data} />
       ),
 
     [close, data, error],

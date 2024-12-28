@@ -1,10 +1,13 @@
 import { PageWithBanner } from "@/common/ui/components";
 import InfoIcon from "@/common/ui/svg/InfoIcon";
 import { cn } from "@/common/ui/utils";
-import { PotEditor, useDeploymentSuccessWalletRedirect } from "@/features/pot-editor";
+import {
+  PotConfigurationEditor,
+  usePotDeploymentSuccessMiddleware,
+} from "@/features/pot-configuration";
 
 export default function PotDeployPage() {
-  useDeploymentSuccessWalletRedirect();
+  usePotDeploymentSuccessMiddleware();
 
   return (
     <PageWithBanner>
@@ -30,7 +33,7 @@ export default function PotDeployPage() {
         </span>
       </section>
 
-      <PotEditor />
+      <PotConfigurationEditor />
     </PageWithBanner>
   );
 }

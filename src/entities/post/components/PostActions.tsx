@@ -15,11 +15,11 @@ interface Post {
   blockHeight: bigint;
 }
 
-interface FeedCardOptionsSelectProps {
+export interface PostActionsProps {
   post: Post;
 }
 
-const FeedCardOptionsSelect: React.FC<FeedCardOptionsSelectProps> = ({ post }) => {
+export const PostActions: React.FC<PostActionsProps> = ({ post }) => {
   const feedRoute = `${window.location.href}/${post.accountId}/${post.blockHeight}`;
   const [copyLinkText] = useState("Copy Link ");
 
@@ -54,5 +54,3 @@ const FeedCardOptionsSelect: React.FC<FeedCardOptionsSelectProps> = ({ post }) =
     </DropdownMenu>
   );
 };
-
-export default FeedCardOptionsSelect;

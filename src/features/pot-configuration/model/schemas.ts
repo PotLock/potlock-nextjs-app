@@ -10,12 +10,12 @@ import {
   potSchema,
 } from "@/entities/pot";
 
-export const getPotEditorDeploymentSchema = () =>
+export const getPotDeploymentSchema = () =>
   potSchema
     /**
      *! Heads up!
      *!  Make sure that any fields targeted here are listed in
-     *!  `potEditorDeploymentCrossFieldValidationTargets`
+     *!  `potDeploymentCrossFieldValidationTargets`
      *!  and have their corresponding error paths specified correctly.
      */
     .refine(isPotApplicationStartBeforeEnd, {
@@ -31,17 +31,17 @@ export const getPotEditorDeploymentSchema = () =>
       path: ["public_round_end_ms"],
     });
 
-export type PotEditorDeploymentSchema = ReturnType<typeof getPotEditorDeploymentSchema>;
+export type PotDeploymentSchema = ReturnType<typeof getPotDeploymentSchema>;
 
-export type PotEditorDeploymentInputs = FromSchema<PotEditorDeploymentSchema>;
+export type PotDeploymentInputs = FromSchema<PotDeploymentSchema>;
 
-export const potEditorDeploymentCrossFieldValidationTargets: (keyof PotEditorDeploymentInputs)[] = [
+export const potDeploymentCrossFieldValidationTargets: (keyof PotDeploymentInputs)[] = [
   "application_end_ms",
   "public_round_end_ms",
   "public_round_start_ms",
 ];
 
-export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
+export const getPotSettingsSchema = (potIndexedData?: Pot) => {
   const schema =
     potIndexedData === undefined
       ? potSchema
@@ -86,7 +86,7 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
   /**
    *! Heads up!
    *!  Make sure that any fields targeted here are listed in
-   *!  `potEditorSettingsCrossFieldValidationTargets`
+   *!  `potSettingsCrossFieldValidationTargets`
    *!  and have their corresponding error paths specified correctly.
    */
   return schema
@@ -104,11 +104,11 @@ export const getPotEditorSettingsSchema = (potIndexedData?: Pot) => {
     });
 };
 
-export type PotEditorSettingsSchema = ReturnType<typeof getPotEditorSettingsSchema>;
+export type PotSettingsSchema = ReturnType<typeof getPotSettingsSchema>;
 
-export type PotEditorSettings = FromSchema<PotEditorSettingsSchema>;
+export type PotSettings = FromSchema<PotSettingsSchema>;
 
-export const potEditorSettingsCrossFieldValidationTargets: (keyof PotEditorSettings)[] = [
+export const potSettingsCrossFieldValidationTargets: (keyof PotSettings)[] = [
   "application_end_ms",
   "public_round_end_ms",
   "public_round_start_ms",

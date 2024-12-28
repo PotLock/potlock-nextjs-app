@@ -5,10 +5,10 @@ import { useModal } from "@ebay/nice-modal-react";
 import { useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
-import { PotEditorDeploymentModal } from "../components/PotEditorDeploymentModal";
+import { PotDeploymentModal } from "../components/PotDeploymentModal";
 
-export const useDeploymentSuccessWalletRedirect = () => {
-  const resultModal = useModal(PotEditorDeploymentModal);
+export const usePotDeploymentSuccessMiddleware = () => {
+  const resultModal = useModal(PotDeploymentModal);
 
   const {
     query: { transactionHashes },
@@ -23,9 +23,9 @@ export const useDeploymentSuccessWalletRedirect = () => {
 
   useEffect(() => {
     if (isTransactionOutcomeDetected && !resultModal.visible) {
-      dispatch.potEditor.reset();
+      dispatch.potConfiguration.reset();
 
-      dispatch.potEditor.handleDeploymentOutcome(transactionHash).finally(() => {
+      dispatch.potConfiguration.handleDeploymentOutcome(transactionHash).finally(() => {
         resultModal.show();
         setSearchParams({ transactionHashes: null });
       });
@@ -34,6 +34,6 @@ export const useDeploymentSuccessWalletRedirect = () => {
 };
 
 // TODO: https://github.com/PotLock/potlock-nextjs-app/issues/86
-// export const useDeploymentFailureWalletRedirect = () => {
+// export const useDeploymentFailureMiddleware = () => {
 //   ...
 // }

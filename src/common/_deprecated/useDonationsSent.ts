@@ -6,7 +6,7 @@ import { Donation } from "@/common/api/indexer";
 import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
 import { SUPPORTED_FTS } from "@/common/constants";
 
-import { DonationInfo } from "./accounts.deprecated";
+import { DonationInfo } from "./accounts.";
 import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";
 
 const sortByDate = (donationA: DonationInfo | Donation, donationB: DonationInfo | Donation) =>

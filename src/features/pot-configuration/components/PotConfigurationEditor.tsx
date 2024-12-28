@@ -26,28 +26,31 @@ import { AccountGroup } from "@/entities/_shared/account";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/features/donation";
 
-import { PotEditorPreview } from "./PotEditorPreview";
+import { PotConfigurationPreview } from "./PotConfigurationPreview";
 import { POT_EDITOR_FIELDS } from "../constants";
-import { usePotEditorForm } from "../hooks/forms";
-import { getPotEditorDeploymentSchema, getPotEditorSettingsSchema } from "../model";
+import { usePotConfigurationEditorForm } from "../hooks/forms";
+import { getPotDeploymentSchema, getPotSettingsSchema } from "../model";
 
-export type PotEditorProps = Partial<ByPotId> & {
+export type PotConfigurationEditorProps = Partial<ByPotId> & {
   className?: string;
 };
 
-export const PotEditor: React.FC<PotEditorProps> = ({ potId, className }) => {
+export const PotConfigurationEditor: React.FC<PotConfigurationEditorProps> = ({
+  potId,
+  className,
+}) => {
   const isNewPot = typeof potId !== "string";
   const router = useRouter();
 
   const { data: pot } = indexer.usePot({ potId });
 
   const schema = useMemo(
-    () => (isNewPot ? getPotEditorDeploymentSchema() : getPotEditorSettingsSchema(pot)),
+    () => (isNewPot ? getPotDeploymentSchema() : getPotSettingsSchema(pot)),
 
     [isNewPot, pot],
   );
 
-  const { form, values, handleAdminsUpdate, isDisabled, onSubmit } = usePotEditorForm(
+  const { form, values, handleAdminsUpdate, isDisabled, onSubmit } = usePotConfigurationEditorForm(
     isNewPot ? { schema } : { potId, schema },
   );
 
@@ -64,7 +67,7 @@ export const PotEditor: React.FC<PotEditorProps> = ({ potId, className }) => {
   }, [exitEditMode, form, isNewPot, router]);
 
   return isInPreviewMode ? (
-    <PotEditorPreview onEditClick={enterEditMode} {...{ className, potId }} />
+    <PotConfigurationPreview onEditClick={enterEditMode} {...{ className, potId }} />
   ) : (
     <Form {...form}>
       <form un-flex="~ col" un-items="center" {...{ onSubmit }}>

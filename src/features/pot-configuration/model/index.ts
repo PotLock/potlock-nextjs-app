@@ -6,31 +6,32 @@ import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { effects } from "./effects";
-import { PotEditorState, PotEditorStep } from "../types";
+import { PotConfigurationState, PotConfigurationStep } from "../types";
 
 export * from "./schemas";
 
-export const potEditorModelKey = "potEditor";
+export const potConfigurationModelKey = "potConfiguration";
 
-export const usePotEditorState = () => useGlobalStoreSelector(prop(potEditorModelKey));
+export const usePotConfigurationState = () =>
+  useGlobalStoreSelector(prop(potConfigurationModelKey));
 
-const potEditorStateDefaults: PotEditorState = {
+const potConfigurationStateDefaults: PotConfigurationState = {
   currentStep: "configuration",
   finalOutcome: { error: null },
 };
 
 const handleStep = (
-  state: PotEditorState,
-  step: PotEditorStep,
-  stateUpdate?: Partial<PotEditorState>,
+  state: PotConfigurationState,
+  step: PotConfigurationStep,
+  stateUpdate?: Partial<PotConfigurationState>,
 ) => mergeAll([state, stateUpdate ?? {}, { currentStep: step }]);
 
-export const potEditorModel = createModel<AppModel>()({
-  state: potEditorStateDefaults,
+export const potConfigurationModel = createModel<AppModel>()({
+  state: potConfigurationStateDefaults,
   effects,
 
   reducers: {
-    reset: () => potEditorStateDefaults,
+    reset: () => potConfigurationStateDefaults,
 
     deploymentSuccess: (state, data: PotData) =>
       handleStep(state, "result", {

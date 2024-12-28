@@ -11,12 +11,12 @@ import {
 } from "@/common/contracts/core";
 import { AppDispatcher } from "@/store";
 
-import { PotEditorDeploymentInputs, PotEditorSettings } from "./schemas";
+import { PotDeploymentInputs, PotSettings } from "./schemas";
 import { potInputsToPotArgs } from "../utils/normalization";
 
 const UnknownDeploymentStatusError = new Error("Unable to get pot deployment status.");
 
-type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
+type PotConfigurationSaveInputs = (PotDeploymentInputs | PotSettings) &
   Partial<ByPotId> & {
     onDeploymentSuccess: (params: ByPotId) => void;
     onUpdate: (config: PotConfig) => void;
@@ -25,7 +25,7 @@ type PotEditorSaveInputs = (PotEditorDeploymentInputs | PotEditorSettings) &
 export const effects = (dispatch: AppDispatcher) => ({
   handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
     void potClient.getConfig({ potId: id }).then((potConfig) => {
-      dispatch.potEditor.deploymentSuccess({ id, ...potConfig });
+      dispatch.potConfiguration.deploymentSuccess({ id, ...potConfig });
     }),
 
   save: async ({
@@ -35,11 +35,11 @@ export const effects = (dispatch: AppDispatcher) => ({
     pot_handle,
     source_metadata: { commit_hash, ...sourceMetadata },
     ...potInputs
-  }: PotEditorSaveInputs): Promise<void> => {
+  }: PotConfigurationSaveInputs): Promise<void> => {
     const isNewPot = typeof potId !== "string";
 
     if (commit_hash === null) {
-      dispatch.potEditor.deploymentFailure(
+      dispatch.potConfiguration.deploymentFailure(
         new Error(
           "Unable to retrieve pot contract source code commit hash. " +
             "Please check your internet connection and reload the page.",
@@ -58,17 +58,17 @@ export const effects = (dispatch: AppDispatcher) => ({
             pot_handle: (pot_handle?.length ?? 0) > 0 ? pot_handle : undefined,
           })
           .then((result) => {
-            dispatch.potEditor.handleDeploymentSuccess(result);
+            dispatch.potConfiguration.handleDeploymentSuccess(result);
             onDeploymentSuccess({ potId: result.id });
           })
-          .catch(dispatch.potEditor.deploymentFailure);
+          .catch(dispatch.potConfiguration.deploymentFailure);
       } else {
         potClient
           .admin_dangerously_set_pot_config(potId, {
             update_args: omit(pot_args, ["custom_sybil_checks"]),
           })
           .then(onUpdate)
-          .catch(dispatch.potEditor.updateFailure);
+          .catch(dispatch.potConfiguration.updateFailure);
       }
     }
   },
@@ -93,16 +93,16 @@ export const effects = (dispatch: AppDispatcher) => ({
               }
             }
           } else if (typeof status?.SuccessValue === "string") {
-            dispatch.potEditor.handleDeploymentSuccess(
+            dispatch.potConfiguration.handleDeploymentSuccess(
               JSON.parse(atob(status.SuccessValue)) as PotDeploymentResult,
             );
           } else {
             throw UnknownDeploymentStatusError;
           }
         })
-        .catch(dispatch.potEditor.deploymentFailure);
+        .catch(dispatch.potConfiguration.deploymentFailure);
     } else {
-      dispatch.potEditor.deploymentFailure(
+      dispatch.potConfiguration.deploymentFailure(
         new Error(
           "Unable to get pot deployment status without user authentication. " +
             "Please login and try again.",

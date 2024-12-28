@@ -7,7 +7,7 @@ import { PotApplicationStatus as ApplicationStatus, indexer } from "@/common/api
 import { walletApi } from "@/common/api/near/client";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { cn } from "@/common/ui/utils";
-import { CreatePost, FeedCard } from "@/features/posting";
+import { PostCard, PostEditor } from "@/entities/post";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const tabs = [
@@ -124,7 +124,7 @@ export default function PotFeedTab() {
   return (
     <div className="w-full">
       {walletApi?.accountId && potApplicants?.ids?.includes(walletApi?.accountId) && (
-        <CreatePost accountId={walletApi?.accountId} />
+        <PostEditor accountId={walletApi?.accountId} />
       )}
       <div className="my-6 flex items-center gap-3 md:gap-1">
         {tabs.map((selectedTab) => (
@@ -166,7 +166,7 @@ export default function PotFeedTab() {
 
                 const status = applicant ? applicant.status : undefined;
 
-                return <FeedCard isPot status={status} key={post?.blockHeight} post={post} />;
+                return <PostCard isPot status={status} key={post?.blockHeight} post={post} />;
               })}
           </InfiniteScrollWrapper>
         )}

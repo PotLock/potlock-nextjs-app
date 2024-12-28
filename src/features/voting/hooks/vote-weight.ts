@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 
-import { Big, BigSource } from "big.js";
-import { isTruthy, pick } from "remeda";
-
-import { isBigSource } from "@/common/lib";
+import { Big } from "big.js";
+import { pick } from "remeda";
 
 import { useVoterProfile } from "./voter-profile";
 import { VOTING_SUPPORTED_NUMERIC_COMPARATOR_KEYS } from "../constants";

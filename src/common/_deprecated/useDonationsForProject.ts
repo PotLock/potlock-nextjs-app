@@ -2,10 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Big } from "big.js";
 
-import {
-  DonationInfo,
-  getAccountDonationsReceived,
-} from "@/common/_deprecated/accounts.deprecated";
+import { DonationInfo, getAccountDonationsReceived } from "@/common/_deprecated/accounts.";
 import { SUPPORTED_FTS } from "@/common/constants";
 
 import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";

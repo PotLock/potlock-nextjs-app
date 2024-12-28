@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { styled } from "styled-components";
 
-import { DonationInfo } from "@/common/_deprecated/accounts.deprecated";
+import { DonationInfo } from "@/common/_deprecated/accounts.";
 import { useDonationsForProject } from "@/common/_deprecated/useDonationsForProject";
 import useDonationsSent from "@/common/_deprecated/useDonationsSent";
 import { DeprecatedPagination } from "@/common/ui/components";

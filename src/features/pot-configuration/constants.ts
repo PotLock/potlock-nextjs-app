@@ -1,6 +1,6 @@
 import { Temporal } from "temporal-polyfill";
 
-import { PotEditorFieldRegistry } from "./types";
+import { PotConfigurationParameters } from "./types";
 
 export const POT_DEFAULT_MIN_DATE = Temporal.Now.instant().toString();
 
@@ -25,7 +25,7 @@ export const POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES = [
   "total_public_donations_usd" as const,
 ];
 
-export const POT_EDITOR_FIELDS: PotEditorFieldRegistry = {
+export const POT_EDITOR_FIELDS: PotConfigurationParameters = {
   owner: { index: "owner", title: "Owner" },
   admins: { index: "admins", title: "Admins" },
   pot_name: { index: "name", title: "Name" },

@@ -14,15 +14,15 @@ import {
 } from "@/features/donation";
 
 import { POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES } from "../constants";
-import { PotEditorSettings } from "../model";
-import { PotEditorField, PotEditorFieldKey } from "../types";
+import { PotSettings } from "../model";
+import { PotConfigurationParameter, PotConfigurationParameterKey } from "../types";
 
 export const potConfigToSettings = ({
   chef,
   registry_provider,
   sybil_wrapper_provider,
   ...config
-}: PotConfig): Partial<PotEditorSettings> =>
+}: PotConfig): Partial<PotSettings> =>
   evolve(
     {
       chef: chef ?? undefined,
@@ -145,9 +145,9 @@ export const potInputsToPotArgs = ({
   );
 
 export const potIndexedFieldToString = (
-  key: PotEditorFieldKey,
+  key: PotConfigurationParameterKey,
   value: Pot[keyof Pot],
-  { subtitle }: PotEditorField,
+  { subtitle }: PotConfigurationParameter,
 ): null | string => {
   switch (typeof value) {
     case "boolean": {
