@@ -1,5 +1,5 @@
-import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { PageWithBanner } from "@/common/ui/components";
+import InfoIcon from "@/common/ui/svg/InfoIcon";
 import { cn } from "@/common/ui/utils";
 import { PotEditor, useDeploymentSuccessWalletRedirect } from "@/features/pot-editor";
 

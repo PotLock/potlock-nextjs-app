@@ -4,11 +4,11 @@ import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { styled } from "styled-components";
 
-import CheckIcon from "@/common/assets/svgs/CheckIcon";
-import ReferrerIcon from "@/common/assets/svgs/ReferrerIcon";
 import { truncate } from "@/common/lib";
 import { authHooks } from "@/common/services/auth";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
+import CheckIcon from "@/common/ui/svg/CheckIcon";
+import ReferrerIcon from "@/common/ui/svg/ReferrerIcon";
 import {
   AccountFollowButton,
   AccountProfileLinktree,

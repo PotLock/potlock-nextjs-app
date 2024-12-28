@@ -5,7 +5,6 @@ import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
-import ArrowDown from "@/common/assets/svgs/ArrowDown";
 import {
   Pagination,
   PaginationContent,
@@ -16,6 +15,7 @@ import {
   PaginationPrevious,
   Skeleton,
 } from "@/common/ui/components";
+import ArrowDown from "@/common/ui/svg/ArrowDown";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import { PotPayoutChallenges, usePotPayoutLookup } from "@/entities/pot";

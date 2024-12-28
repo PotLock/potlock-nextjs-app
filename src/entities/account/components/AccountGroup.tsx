@@ -3,8 +3,8 @@ import { useCallback, useId, useMemo } from "react";
 import { show } from "@ebay/nice-modal-react";
 import Link from "next/link";
 
-import { GroupIcon } from "@/common/assets/svgs";
 import { Button } from "@/common/ui/components";
+import { GroupIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
 import { AccountListItem, AccountListItemProps, AccountProfilePicture } from "@/entities/account";
 

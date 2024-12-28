@@ -6,10 +6,10 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { authHooks } from "@/common/services/auth";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
+import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
 import {
   PotDonationStats,

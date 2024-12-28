@@ -1,13 +1,21 @@
-/* eslint-disable @next/next/no-img-element */
+import { useState } from "react";
 
-// https://www.npmjs.com/package/react-files
 import Files from "react-files";
 
-import CameraIcon from "@/common/assets/svgs/CameraIcon";
-import { Button } from "@/common/ui/components";
-import Spinner from "@/common/ui/components/atoms/spinner";
-import useStatus from "@/entities/core/hooks/usStatus";
+import { Button, Spinner } from "@/common/ui/components";
+import CameraIcon from "@/common/ui/svg/CameraIcon";
 import { dispatch, useGlobalStoreSelector } from "@/store";
+
+type Status = "ready" | "loading";
+
+const useStatus = (initialStatus: Status = "ready") => {
+  const [status, setStatus] = useState(initialStatus);
+
+  return {
+    status,
+    setStatus,
+  };
+};
 
 const Profile = () => {
   const { accountId, backgroundImage, profileImage } = useGlobalStoreSelector(

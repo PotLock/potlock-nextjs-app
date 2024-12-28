@@ -3,10 +3,10 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
-import { Toggle } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import { tokenHooks } from "@/common/services/token";
+import { Toggle } from "@/common/ui/svg";
 import { AccountHandle, AccountProfilePicture, useAccountSocialProfile } from "@/entities/account";
 import { rootPathnames } from "@/pathnames";
 

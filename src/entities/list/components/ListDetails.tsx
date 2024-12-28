@@ -9,7 +9,6 @@ import { prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
-import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
 import { listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/social";
@@ -20,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/molecules/social-share";
+import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/svg";
 import { AccountGroupEditModal, AccountListItem, AccountProfilePicture } from "@/entities/account";
 import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";

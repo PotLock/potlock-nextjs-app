@@ -1,10 +1,10 @@
 import { styled } from "styled-components";
 
-import { NearIcon } from "@/common/assets/svgs";
-import GithubSvg from "@/common/assets/svgs/github";
-import TwitterSvg from "@/common/assets/svgs/twitter";
-import WebsiteSvg from "@/common/assets/svgs/website";
 import type { ByAccountId } from "@/common/types";
+import { NearIcon } from "@/common/ui/svg";
+import GithubSvg from "@/common/ui/svg/github";
+import TwitterSvg from "@/common/ui/svg/twitter";
+import WebsiteSvg from "@/common/ui/svg/website";
 
 import { useAccountSocialProfile } from "../hooks/social-profile";
 

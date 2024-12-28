@@ -3,8 +3,6 @@ import { useCallback, useState } from "react";
 import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
 
-import Delete from "@/common/assets/svgs/Delete";
-import Edit from "@/common/assets/svgs/Edit";
 import {
   Button,
   Select,
@@ -13,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/common/ui/components";
+import Delete from "@/common/ui/svg/Delete";
+import Edit from "@/common/ui/svg/Edit";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput, Label } from "./components";

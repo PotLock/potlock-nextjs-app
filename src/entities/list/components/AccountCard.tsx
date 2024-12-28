@@ -6,8 +6,6 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ListRegistration } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
-import DownArrow from "@/common/assets/svgs/DownArrow";
-import { ListNoteIcon } from "@/common/assets/svgs/list-note";
 import { RegistrationStatus, listsClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import {
@@ -25,6 +23,8 @@ import {
   SelectItem,
   Textarea,
 } from "@/common/ui/components";
+import DownArrow from "@/common/ui/svg/DownArrow";
+import { ListNoteIcon } from "@/common/ui/svg/list-note";
 import { cn } from "@/common/ui/utils";
 import { AccountProfileCover, AccountProfilePicture } from "@/entities/account";
 import { statuses } from "@/entities/project/constants";

@@ -5,7 +5,6 @@ import Link from "next/link";
 
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import TwitterSvg from "@/common/assets/svgs/twitter";
 import {
   DEFAULT_SHARE_HASHTAGS,
   NATIVE_TOKEN_DECIMALS,
@@ -23,6 +22,7 @@ import {
   ModalErrorBody,
   Skeleton,
 } from "@/common/ui/components";
+import TwitterSvg from "@/common/ui/svg/twitter";
 import { AccountProfileLink } from "@/entities/account";
 import { TokenTotalValue } from "@/entities/token";
 import routesPath from "@/pathnames";

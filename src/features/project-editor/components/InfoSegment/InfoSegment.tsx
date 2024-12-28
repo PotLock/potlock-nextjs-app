@@ -1,4 +1,4 @@
-import InfoIcon from "@/common/assets/svgs/InfoIcon";
+import InfoIcon from "@/common/ui/svg/InfoIcon";
 
 import { Container, Description, Heading, Text } from "./styles";
 

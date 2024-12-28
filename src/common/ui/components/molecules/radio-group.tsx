@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 
-import { RadioActiveIcon, RadioInactiveIcon } from "@/common/assets/svgs";
+import { RadioActiveIcon, RadioInactiveIcon } from "@/common/ui/svg";
 
 import { cn } from "../../utils";
 import { Label } from "../atoms/label";

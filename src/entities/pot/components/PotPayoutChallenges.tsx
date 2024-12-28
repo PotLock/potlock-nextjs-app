@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
-import AdminIcon from "@/common/assets/svgs/AdminIcon";
-import { CheckedIcon } from "@/common/assets/svgs/CheckedIcon";
 import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
+import AdminIcon from "@/common/ui/svg/AdminIcon";
+import { CheckedIcon } from "@/common/ui/svg/CheckedIcon";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/account";
 import routesPath from "@/pathnames";

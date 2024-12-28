@@ -1,9 +1,9 @@
 import Image from "next/image";
 
-import { NearIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { tokenHooks } from "@/common/services/token";
 import { AccountId } from "@/common/types";
+import { NearIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
 
 type TokenIconSize = "xs" | "sm" | "md";

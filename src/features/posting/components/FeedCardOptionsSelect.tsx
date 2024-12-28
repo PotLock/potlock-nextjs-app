@@ -2,13 +2,13 @@ import React, { useState } from "react";
 
 import { DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
 
-import { DotsIcons } from "@/common/assets/svgs";
 import {
   ClipboardCopyButton,
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
+import { DotsIcons } from "@/common/ui/svg";
 
 interface Post {
   accountId: string;

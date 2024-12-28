@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { styled } from "styled-components";
 
 import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
-import { Arrow } from "@/common/assets/svgs";
 import { DeprecatedPagination } from "@/common/ui/components";
+import { Arrow } from "@/common/ui/svg";
 import useDonationsForProject from "@/entities/core/hooks/useDonationsForProject";
 import useDonationsSent from "@/entities/core/hooks/useDonationsSent";
 

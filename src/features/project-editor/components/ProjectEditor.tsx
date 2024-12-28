@@ -4,10 +4,10 @@ import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 import { prop } from "remeda";
 
-import PlusIcon from "@/common/assets/svgs/PlusIcon";
 import { useWallet } from "@/common/services/auth";
 import { useSessionReduxStore } from "@/common/services/auth/hooks/redux-store";
 import { Button, FormField } from "@/common/ui/components";
+import PlusIcon from "@/common/ui/svg/PlusIcon";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 

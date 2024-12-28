@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { ChefHatIcon } from "@/common/assets/svgs";
 import { Button, DialogDescription } from "@/common/ui/components";
+import { ChefHatIcon } from "@/common/ui/svg";
 import { PotData } from "@/entities/pot";
 import routesPath from "@/pathnames";
 

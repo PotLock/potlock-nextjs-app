@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
-import InfoIcon from "@/common/assets/svgs/InfoIcon";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   Alert,
@@ -21,6 +20,7 @@ import {
   TextAreaField,
   TextField,
 } from "@/common/ui/form-fields";
+import InfoIcon from "@/common/ui/svg/InfoIcon";
 import { cn } from "@/common/ui/utils";
 import { AccountGroup } from "@/entities/account";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
