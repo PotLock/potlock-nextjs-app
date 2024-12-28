@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 
 import { indexer } from "@/common/api/indexer";
+import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { votingHooks } from "@/common/contracts/core/voting";
-import { yoctoNearToFloat } from "@/common/lib";
+import { stringifiedU128ToBigNum } from "@/common/lib";
 import { usePotActiveElections, usePotElections } from "@/entities/pot";
 
 import { useRoundResultsStore } from "../model/round-results";
@@ -49,8 +50,11 @@ export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
       store.updateResults({
         electionId: votingRound.electionId,
         votes,
-        // TODO: Reduce precision loss
-        matchingPoolBalance: yoctoNearToFloat(pot.matching_pool_balance),
+
+        matchingPoolBalance: stringifiedU128ToBigNum(
+          pot.matching_pool_balance,
+          NATIVE_TOKEN_DECIMALS,
+        ),
       });
     }
   }

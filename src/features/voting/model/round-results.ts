@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { indexerClient } from "@/common/api/indexer";
+import { PRICES_REQUEST_CONFIG, intearPricesClient } from "@/common/api/intear-prices";
 import { getIsHuman } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
 import { ftClient } from "@/common/contracts/tokens/ft";
@@ -26,7 +27,7 @@ interface VotingRoundResultsState {
   updateResults: (params: {
     electionId: number;
     votes: Vote[];
-    matchingPoolBalance: number;
+    matchingPoolBalance: Big;
   }) => Promise<void>;
 }
 
@@ -46,6 +47,8 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
         const uniqueVoterAccountIds = [
           ...new Set(votes.map(({ voter: voterAccountId }) => voterAccountId)),
         ];
+
+        console.log(uniqueVoterAccountIds);
 
         const voterProfiles: Record<AccountId, VoterProfile> = {};
 
@@ -82,11 +85,22 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
                     .catch(() => undefined)
                 : undefined;
 
+            const stakingTokenBalanceUsd =
+              stakingContractAccountId && stakingTokenBalance
+                ? await intearPricesClient
+                    .getSuperPrecisePrice(
+                      { token_id: stakingContractAccountId },
+                      PRICES_REQUEST_CONFIG.axios,
+                    )
+                    .then(({ data: price }) => Big(price).mul(stakingTokenBalance))
+                    .catch(() => undefined)
+                : undefined;
+
             voterProfiles[voterAccountId] = {
               isHumanVerified,
               votingPower,
               stakingTokenBalance,
-              // TODO: Add stakingTokenBalanceUsd
+              stakingTokenBalanceUsd,
             };
           }),
         );
@@ -159,8 +173,13 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
 
             // TODO: Requires further consideration
             // Calculate estimated payout based on relative weight
-            estimatedPayoutAmount: Big(matchingPoolBalance)
-              .mul(accumulatedWeight.div(votes.length))
+            estimatedPayoutAmount: matchingPoolBalance
+              .mul(
+                accumulatedWeight.div(
+                  // TODO: Calculate total accumulated weight ( of all candidates )
+                  1,
+                ),
+              )
               .toNumber(),
           };
 
