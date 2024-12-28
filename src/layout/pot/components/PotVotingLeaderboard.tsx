@@ -11,6 +11,8 @@ export type PotVotingLeaderboardProps = ByPotId & {};
 export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potId }) => {
   const votingRoundResults = useVotingRoundResults({ potId });
 
+  console.log(votingRoundResults?.candidates);
+
   return votingRoundResults === undefined ? null : (
     <div className="md:max-w-126.5 flex w-full flex-col gap-3 rounded-3xl bg-neutral-50 p-3">
       {votingRoundResults.leadingPositionAccountIds.map((accountId, index) => {
@@ -23,7 +25,7 @@ export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potI
             className={cn(
               "elevation-low inline-flex h-16 items-center justify-start gap-2 md:gap-6",
               "bg-background overflow-hidden rounded-2xl p-3",
-              "hidden", // TODO: Temporarily disabled
+              //"hidden", // TODO: Temporarily disabled
             )}
           >
             <div
@@ -44,7 +46,7 @@ export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potI
                 }
               >
                 <AccountHandle
-                  maxLength={26}
+                  maxLength={22}
                   className="font-600 text-neutral-950"
                   {...{ accountId }}
                 />
@@ -63,9 +65,9 @@ export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potI
             >
               <LabeledIcon
                 positioning="icon-text"
-                caption={estimatedPayoutAmount}
+                caption={`~ ${estimatedPayoutAmount.toFixed(2)}`}
                 classNames={{
-                  caption: "font-600 text-sm gap-1.5",
+                  caption: "font-600 text-sm gap-1.5 text-nowrap",
                 }}
               >
                 <TokenIcon tokenId={NATIVE_TOKEN_ID} className="color-peach-600" />
