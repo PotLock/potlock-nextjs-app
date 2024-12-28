@@ -2,15 +2,21 @@ import { useState } from "react";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { walletApi } from "@/common/api/near/client";
 import { createPost } from "@/common/contracts/social";
+import { authHooks } from "@/common/services/auth";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";
 import { useAccountSocialProfile } from "@/entities/account";
 
 export const CreatePost = ({ accountId }: { accountId: AccountId }) => {
+  const authenticatedUser = authHooks.useUserSession();
+
+  const { avatarSrc } = useAccountSocialProfile({
+    enabled: authenticatedUser.isSignedIn,
+    accountId: authenticatedUser.accountId ?? "noop",
+  });
+
   const [postText, setPostText] = useState("");
-  const { avatarSrc } = useAccountSocialProfile(walletApi?.accountId);
 
   const handleCreatePost = async (e: { preventDefault: () => void }) => {
     e.preventDefault();

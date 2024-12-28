@@ -1,19 +1,19 @@
 import { useState } from "react";
 
 import { RegistrationStatus } from "@/common/contracts/core";
+import { ACCOUNT_REGISTRATION_STATUSES } from "@/entities/account";
 import { useRegistration } from "@/entities/core";
-import { statuses } from "@/entities/core/constants";
 
 export const ProjectBanner = ({ projectId }: { projectId: string }) => {
   const [toggle, setToggle] = useState(false);
 
   const { registration, loading } = useRegistration(projectId);
 
-  const registrationStatus = registration ? statuses[registration.status] : statuses.Unregistered;
+  const registrationStatus = registration
+    ? ACCOUNT_REGISTRATION_STATUSES[registration.status]
+    : ACCOUNT_REGISTRATION_STATUSES.Unregistered;
 
-  return loading || registration.status === RegistrationStatus.Approved ? (
-    ""
-  ) : (
+  return loading || registration.status === RegistrationStatus.Approved ? null : (
     <div
       className="flex w-full flex-col items-center justify-center p-3 backdrop-blur-[150px]"
       style={{

@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 
 import { getSocialData, setSocialData } from "@/common/contracts/social";
-import useWallet from "@/common/services/auth/hooks/wallet";
+import { authHooks } from "@/common/services/auth";
+import type { ByAccountId } from "@/common/types";
 import { Button } from "@/common/ui/components";
 
-type Props = {
-  accountId: string;
+export type AccountFollowButtonProps = ByAccountId & {
   className?: string;
 };
 
-export const FollowButton = ({ accountId, className }: Props) => {
-  const { wallet } = useWallet();
+export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
+  accountId,
+  className,
+}) => {
+  const { wallet } = authHooks.useWallet();
 
   const [followEdge, setFollowEdge] = useState<Record<string, any>>();
   const [inverseEdge, setInverseEdge] = useState<Record<string, any>>();
@@ -112,5 +115,3 @@ export const FollowButton = ({ accountId, className }: Props) => {
     </Button>
   );
 };
-
-export default FollowButton;

@@ -17,7 +17,7 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
   accountId,
   classNames,
 }) => {
-  const { profile } = useAccountSocialProfile(accountId);
+  const { profile } = useAccountSocialProfile({ accountId });
 
   return (
     <AccountSummaryPopup {...{ accountId }}>

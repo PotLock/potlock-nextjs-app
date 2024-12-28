@@ -8,12 +8,10 @@ import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 export default function ProfilePotsTab() {
   const router = useRouter();
-  const { userId: userIdPathParam } = router.query;
-
-  const userId = typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0);
+  const { userId: accountId } = router.query as { userId: string };
 
   const { data: paginatedPotApplications, isLoading } = indexer.useAccountPotApplications({
-    accountId: userId,
+    accountId,
   });
 
   const potApplications = paginatedPotApplications?.results ?? [];

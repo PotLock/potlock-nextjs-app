@@ -9,13 +9,10 @@ import SmartContract from "@/entities/profile/components/SmartContract";
 import Team from "@/entities/profile/components/Team";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
-const HomeTab = () => {
+export default function ProfileHomeTab() {
   const router = useRouter();
-  const { userId: userIdPathParam } = router.query;
-
-  const userId = typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0);
-
-  const { profile, profileType } = useAccountSocialProfile(userId);
+  const { userId: accountId } = router.query as { userId: string };
+  const { profile, profileType } = useAccountSocialProfile({ accountId });
 
   return (
     <div className="mb-18 flex w-full flex-col">
@@ -40,10 +37,8 @@ const HomeTab = () => {
       )}
     </div>
   );
-};
+}
 
-HomeTab.getLayout = function getLayout(page: ReactElement) {
+ProfileHomeTab.getLayout = function getLayout(page: ReactElement) {
   return <ProfileLayout>{page}</ProfileLayout>;
 };
-
-export default HomeTab;

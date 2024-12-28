@@ -68,8 +68,8 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 };
 
 const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
-  const { avatarSrc: recipientImage } = useAccountSocialProfile(data?.recipient);
-  const { avatarSrc: ownerImage } = useAccountSocialProfile(data?.owner);
+  const { avatarSrc: recipientImage } = useAccountSocialProfile({ accountId: data.recipient });
+  const { avatarSrc: ownerImage } = useAccountSocialProfile({ accountId: data.owner });
 
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
 

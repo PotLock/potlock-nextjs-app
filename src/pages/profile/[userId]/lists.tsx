@@ -1,7 +1,8 @@
 import { ReactElement } from "react";
 
+import { useRouter } from "next/router";
+
 import { indexer } from "@/common/api/indexer";
-import { useRouteQuery } from "@/common/lib";
 import { ListCard, getRandomBackgroundImage } from "@/entities/list";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
@@ -20,13 +21,10 @@ export const NoResults = ({ text }: { text: string }) => (
 );
 
 const ProfileLists = () => {
-  const {
-    query: { userId },
-  } = useRouteQuery();
+  const router = useRouter();
+  const { userId: accountId } = router.query as { userId: string };
 
-  const { data } = indexer.useLists({
-    account: userId as string,
-  });
+  const { data } = indexer.useLists({ account: accountId });
 
   return (
     <div className="w-full">

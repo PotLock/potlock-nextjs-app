@@ -13,6 +13,7 @@ import { useAccountSocialProfile } from "../hooks/social-profile";
 
 export type AccountHandleProps = ByAccountId & {
   href?: string;
+  maxLength?: number;
   asName?: boolean;
   disabledSummaryPopup?: boolean;
   className?: string;
@@ -20,6 +21,7 @@ export type AccountHandleProps = ByAccountId & {
 
 export const AccountHandle: React.FC<AccountHandleProps> = ({
   accountId,
+  maxLength = 32,
   href,
   asName = false,
   disabledSummaryPopup = false,
@@ -34,8 +36,7 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
     [accountId, href],
   );
 
-  // TODO: enable only if `asName`
-  const { profile } = useAccountSocialProfile(accountId);
+  const { profile } = useAccountSocialProfile({ enabled: asName, accountId });
 
   return (
     <AccountSummaryPopup disabled={disabledSummaryPopup} {...{ accountId }}>
@@ -54,7 +55,9 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
           className,
         )}
       >
-        {asName && profile?.name ? truncate(profile?.name, 32) : `@${truncate(accountId, 32)}`}
+        {asName && profile?.name
+          ? truncate(profile?.name, maxLength)
+          : `@${truncate(accountId, maxLength)}`}
       </Link>
     </AccountSummaryPopup>
   );

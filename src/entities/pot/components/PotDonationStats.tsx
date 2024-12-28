@@ -7,7 +7,7 @@ import { Toggle } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import { tokenHooks } from "@/common/services/token";
-import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/account";
+import { AccountHandle, AccountProfilePicture, useAccountSocialProfile } from "@/entities/account";
 import { rootPathnames } from "@/pathnames";
 
 import { Container, Row } from "./styled";
@@ -80,7 +80,6 @@ type DonationProps = {
 
 const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
   const { data: nativeToken } = tokenHooks.useToken({ tokenId: NATIVE_TOKEN_ID });
-  const profile = useAccountSocialProfile(donorId);
 
   const matchedAmount = usdToggle
     ? (nativeToken?.usdPrice?.mul(nearAmount).toFixed(2) ?? 0)
@@ -93,8 +92,9 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
       <div>#{index + 1}</div>
       <Link className="address" href={url}>
         <AccountProfilePicture accountId={donorId} className="h-[18px] w-[18px]" />
-        {truncate(profile.profile?.name || donorId, 22)}
+        <AccountHandle asName accountId={donorId} />
       </Link>
+
       <div>
         {matchedAmount} {usdToggle ? "$" : "N"}
       </div>

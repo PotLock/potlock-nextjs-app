@@ -1,11 +1,9 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
 import { useProtocolConfig, yoctoNearToFloat } from "@/common/lib";
 import {
-  Badge,
   Button,
   Checkbox,
   Dialog,
@@ -17,19 +15,18 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { AccountProfileLink, AccountProfilePicture } from "@/entities/account";
-import { rootPathnames } from "@/pathnames";
+import { AccountProfileLink } from "@/entities/account";
 import { useGlobalStoreSelector } from "@/store";
 
 import { useMatchingPoolFundingForm } from "../hooks/forms";
 
-export type MatchingPoolFundingModalProps = {
+export type MatchingPoolContributionModalProps = {
   potDetail: Pot;
   open?: boolean;
   onCloseClick?: () => void;
 };
 
-export const MatchingPoolFundingModal: React.FC<MatchingPoolFundingModalProps> = ({
+export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionModalProps> = ({
   open,
   onCloseClick,
   potDetail,

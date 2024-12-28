@@ -1,15 +1,9 @@
-import { ReactNode } from "react";
-
 import { RegistrationStatus } from "@/common/contracts/core";
 
-type ProjectStatusIcons = {
-  [key in RegistrationStatus]: {
-    icon: ReactNode;
-    color: string;
-  };
-};
-
-export const projectStatusIcons: ProjectStatusIcons = {
+export const listRegistrationStatusIcons: Record<
+  RegistrationStatus,
+  { icon: React.ReactNode; color: string }
+> = {
   Approved: {
     icon: (
       <svg

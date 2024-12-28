@@ -46,8 +46,8 @@ export const PotDonationEntry = ({
   const name = truncate(donorId, 15);
   const recipientName = truncate(recipientId, 15);
 
-  const donorProfile = useAccountSocialProfile(donorId);
-  const recipientProfile = useAccountSocialProfile(recipientId);
+  const donorProfile = useAccountSocialProfile({ accountId: donorId });
+  const recipientProfile = useAccountSocialProfile({ accountId: recipientId });
 
   return (
     <div

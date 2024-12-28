@@ -17,7 +17,7 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
   accountId,
   className,
 }) => {
-  const { avatarSrc, isReady } = useAccountSocialProfile(accountId);
+  const { avatarSrc, isReady } = useAccountSocialProfile({ accountId });
 
   return isReady ? (
     <Avatar className={cn("h-3 w-3", className)}>
@@ -38,7 +38,7 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
   height = 146,
   className,
 }) => {
-  const { backgroundSrc: src } = useAccountSocialProfile(accountId);
+  const { backgroundSrc: src } = useAccountSocialProfile({ accountId });
 
   const contentClassName = useMemo(
     () =>

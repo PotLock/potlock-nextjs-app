@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 
-import { extractFromUrl, urlPatters } from "@/entities/core/utils";
+import { extractFromUrl } from "@/common/lib";
+import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/account";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput } from "./components";
@@ -39,7 +40,9 @@ const SocialLinks = () => {
           value: twitterValue.replace("https://x.com/", ""),
           placeholder: "",
           onChange: (e) =>
-            setTwitterValue(extractFromUrl(e.target.value, urlPatters.twitter) || ""),
+            setTwitterValue(
+              extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.twitter) || "",
+            ),
           onBlur: (_) => {
             onChangeHandler("twitter", twitterValue ? `https://x.com/${twitterValue}` : "");
           },
@@ -54,7 +57,9 @@ const SocialLinks = () => {
           value: telegramValue.replace("https://t.me/", ""),
           placeholder: "",
           onChange: (e) =>
-            setTelegramValue(extractFromUrl(e.target.value, urlPatters.telegram) || ""),
+            setTelegramValue(
+              extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.telegram) || "",
+            ),
           onBlur: (_) => {
             onChangeHandler("telegram", telegramValue ? `https://t.me/${telegramValue}` : "");
           },
@@ -68,7 +73,10 @@ const SocialLinks = () => {
         inputProps={{
           value: githubValue.replace("https://github.com/", ""),
           placeholder: "",
-          onChange: (e) => setGithubValue(extractFromUrl(e.target.value, urlPatters.github) || ""),
+          onChange: (e) =>
+            setGithubValue(
+              extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.github) || "",
+            ),
           onBlur: (_) => {
             onChangeHandler("github", githubValue ? `https://github.com/${githubValue}` : "");
           },
@@ -83,7 +91,9 @@ const SocialLinks = () => {
           value: websiteValue.replace("https://", ""),
           placeholder: "",
           onChange: (e) =>
-            setWebsiteValue(extractFromUrl(e.target.value, urlPatters.website) || ""),
+            setWebsiteValue(
+              extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.website) || "",
+            ),
           onBlur: (_) => {
             onChangeHandler("website", websiteValue ? `https://${websiteValue}` : "");
           },

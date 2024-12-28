@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Temporal } from "temporal-polyfill";
+
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Application, Challenge, potClient } from "@/common/contracts/core";
 import { authHooks } from "@/common/services/auth";
-import { getDateTime } from "@/entities/core";
+
+/**
+ * @deprecated Use {@link Temporal} API instead
+ */
+const getDateTime = (date: string) => new Date(date).getTime();
 
 export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
   const { isSignedIn, accountId } = authHooks.useUserSession();

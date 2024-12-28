@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-
 import { CSSProperties, useEffect, useState } from "react";
 
 import {
@@ -176,7 +174,7 @@ export const CustomTextForm = ({
 };
 
 const AccountStackItem = ({ accountId, style }: { accountId: string; style?: CSSProperties }) => {
-  const profileInfo = useAccountSocialProfile(accountId);
+  const profileInfo = useAccountSocialProfile({ accountId });
 
   return (
     <>

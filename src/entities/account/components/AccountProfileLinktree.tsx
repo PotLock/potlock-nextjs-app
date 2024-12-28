@@ -4,7 +4,9 @@ import { NearIcon } from "@/common/assets/svgs";
 import GithubSvg from "@/common/assets/svgs/github";
 import TwitterSvg from "@/common/assets/svgs/twitter";
 import WebsiteSvg from "@/common/assets/svgs/website";
-import { useAccountSocialProfile } from "@/entities/account";
+import type { ByAccountId } from "@/common/types";
+
+import { useAccountSocialProfile } from "../hooks/social-profile";
 
 const LinktreeItemContainer = styled.a`
   display: flex;
@@ -25,16 +27,10 @@ const LinktreeItemContainer = styled.a`
   }
 `;
 
-type Props = {
-  accountId: string;
-};
+export type AccountProfileLinktreeProps = ByAccountId & {};
 
-export const Linktree = ({ accountId }: Props) => {
-  const { profile } = useAccountSocialProfile(accountId);
-
-  const linktree = profile?.linktree;
-
-  if (!linktree) return "";
+export const AccountProfileLinktree: React.FC<AccountProfileLinktreeProps> = ({ accountId }) => {
+  const { profile } = useAccountSocialProfile({ accountId });
 
   const itemIconUrls: any = {
     github: <GithubSvg />,
@@ -49,10 +45,10 @@ export const Linktree = ({ accountId }: Props) => {
     website: (url: string) => (url.includes("http") ? url : `https://${url.trim()}`),
   };
 
-  return (
+  return profile?.linktree === undefined ? null : (
     // LinktreeContainer
     <div className="flex flex-wrap justify-start gap-4">
-      {Object.entries(linktree).map(([k, v]) => {
+      {Object.entries(profile.linktree).map(([k, v]) => {
         return k in itemIconUrls && v ? (
           <LinktreeItemContainer
             key={k}

@@ -1,14 +1,148 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { styled } from "styled-components";
+
 import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
 import { Arrow } from "@/common/assets/svgs";
 import { DeprecatedPagination } from "@/common/ui/components";
 import useDonationsForProject from "@/entities/core/hooks/useDonationsForProject";
 import useDonationsSent from "@/entities/core/hooks/useDonationsSent";
 
-import { Option, Stat, Stats } from "../Stats";
-import DonationItem from "./DonationItem";
-import { FundingListContainer, SearchBar, Sort } from "./styled";
+import { DonationItem } from "./DonationItem";
+import { FundingStats, Option, Stat } from "./FundingStats";
+
+// TODO: refactor by breaking into TailwindCSS classes
+const FundingListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #7b7b7b;
+  background: #fff;
+  overflow: hidden;
+  .header {
+    border-bottom: 0.5px solid #7b7b7b;
+    padding: 0.5rem 1rem;
+    h3 {
+      font-weight: 600;
+    }
+    @media screen and (max-width: 768px) {
+      .tab {
+        display: none;
+      }
+      .funding {
+        display: block;
+      }
+    }
+  }
+  .funding-row {
+    padding: 1rem;
+  }
+  .header,
+  .funding-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    font-size: 14px;
+    flex-wrap: wrap;
+    @media screen and (max-width: 768px) {
+      gap: 4px;
+    }
+  }
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 156px;
+    justify-content: left;
+    &.sort {
+      cursor: pointer;
+      svg {
+        transition: rotate 300ms;
+      }
+    }
+    @media screen and (max-width: 768px) {
+      white-space: nowrap;
+      width: 60px;
+    }
+  }
+  .funding {
+    flex: 1;
+  }
+  .price {
+    gap: 1rem;
+    font-weight: 600;
+    justify-content: left;
+    svg {
+      width: 1.5em;
+    }
+  }
+  .date {
+    justify-content: right;
+  }
+  @media screen and (max-width: 768px) {
+    .price {
+      gap: 0.5rem;
+    }
+    .date {
+      width: 100%;
+      justify-content: left;
+      color: #7b7b7b;
+      margin-left: 2.5rem;
+    }
+  }
+`;
+
+// TODO: refactor by breaking into TailwindCSS classes
+const Sort = styled.div`
+  display: none;
+  justify-content: space-between;
+  width: 100%;
+  div {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    cursor: pointer;
+    gap: 8px;
+    color: #7b7b7b;
+    svg {
+      transition: rotate 300ms;
+    }
+    &.active {
+      color: #292929;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+// TODO: refactor by breaking into TailwindCSS classes
+const SearchBar = styled.div`
+  display: flex;
+  align-items: center;
+  background: #f6f5f3;
+  position: relative;
+  svg {
+    width: 18px;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+    pointer-events: none;
+  }
+  input {
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    padding-left: 50px;
+    border: none;
+    background: transparent;
+    :focus {
+      outline: none;
+    }
+  }
+`;
 
 type Props = {
   accountId: string;
@@ -19,7 +153,7 @@ const getDate = (donation: DonationInfo) => new Date(donation.donated_at).getTim
 
 const PER_PAGE = 30; // need to be less than 50
 
-const PotlockFunding = ({ accountId, type = "received" }: Props) => {
+export const FundingTable = ({ accountId, type = "received" }: Props) => {
   const projectId = accountId;
   const receivedDonations = useDonationsForProject(type === "received" ? projectId : ""); // avoid fetch data if type is not "received"
   const sentDonations = useDonationsSent(type === "donated" ? accountId : ""); // avoid fetch data if type is not "donated"
@@ -202,7 +336,7 @@ const PotlockFunding = ({ accountId, type = "received" }: Props) => {
     // Container
     <div className="flex flex-col gap-[1.5rem]">
       {type === "received" && <h3 className="text-size-2xl font-600">Potlock Funding</h3>}
-      <Stats
+      <FundingStats
         stats={type === "donated" ? [stats[0]] : stats}
         sortOptions={sortDropdownItems}
         selectedSortOption={selectedSortOption}
@@ -269,5 +403,3 @@ const PotlockFunding = ({ accountId, type = "received" }: Props) => {
     </div>
   );
 };
-
-export default PotlockFunding;

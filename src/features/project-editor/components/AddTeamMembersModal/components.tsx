@@ -1,5 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import { Button } from "@/common/ui/components";
 import { useAccountSocialProfile } from "@/entities/account";
@@ -40,7 +39,7 @@ const Item = ({
   accountId: string;
   onRemove: (accountId: string) => void;
 }) => {
-  const profileInfo = useAccountSocialProfile(accountId);
+  const profileInfo = useAccountSocialProfile({ accountId });
 
   return (
     <div className="flex flex-row items-center justify-between border-[1px_#f0f0f0_solid] p-[16px_0px]">

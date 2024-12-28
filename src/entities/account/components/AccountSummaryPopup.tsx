@@ -22,7 +22,7 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
   children,
 }) => {
   const { data: fundingAccount } = indexer.useAccount({ accountId });
-  const { profile } = useAccountSocialProfile(accountId);
+  const { profile } = useAccountSocialProfile({ accountId });
 
   return disabled ? (
     children

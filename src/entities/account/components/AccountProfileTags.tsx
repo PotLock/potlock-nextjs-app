@@ -2,15 +2,9 @@ import { useEffect, useState } from "react";
 
 import { styled } from "styled-components";
 
+import type { ByAccountId } from "@/common/types";
 import { useAccountSocialProfile } from "@/entities/account";
 import { getTagsFromSocialProfileData } from "@/entities/project/utils";
-
-const TagsContainer = styled.div`
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  max-width: 600px;
-`;
 
 const Tag = styled.span`
   color: #292929;
@@ -24,12 +18,10 @@ const Tag = styled.span`
     0px 0px 0px 0.5px #dbdbdb;
 `;
 
-type Props = {
-  accountId: string;
-};
+export type AccountProfileTagsProps = ByAccountId & {};
 
-export const ProfileTags = ({ accountId }: Props) => {
-  const { profile: projectProfile } = useAccountSocialProfile(accountId);
+export const AccountProfileTags: React.FC<AccountProfileTagsProps> = ({ accountId }) => {
+  const { profile: projectProfile } = useAccountSocialProfile({ accountId });
 
   const [tags, setTags] = useState<string[]>();
 
@@ -44,13 +36,11 @@ export const ProfileTags = ({ accountId }: Props) => {
   if (!tags || !tags.length) return "No tags";
 
   return (
-    <TagsContainer>
+    <div className="flex max-w-[600px] flex-wrap gap-3">
       {accountId && accountId.endsWith(".sputnik-dao.near") && <Tag>DAO</Tag>}
       {tags.map((tag, tagIndex) => (
         <Tag key={tagIndex}>{tag}</Tag>
       ))}
-    </TagsContainer>
+    </div>
   );
 };
-
-export default ProfileTags;

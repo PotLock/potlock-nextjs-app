@@ -3,18 +3,11 @@ import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 
 import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
-import {
-  Account,
-  PotApplicationStatus as ApplicationStatus,
-  PotApplication,
-  indexer,
-} from "@/common/api/indexer";
+import { PotApplicationStatus as ApplicationStatus, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
-import { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
-import { FeedCard } from "@/entities/profile";
-import { CreatePost } from "@/entities/profile/components/CreatePost";
+import { CreatePost, FeedCard } from "@/features/posting";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 const tabs = [
@@ -23,7 +16,7 @@ const tabs = [
   { name: "Rejected Applicants", value: ApplicationStatus.Rejected },
 ];
 
-const FeedsTab = () => {
+export default function PotFeedTab() {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isPotApplicantsReady, setIsPotApplicantsReady] = useState<boolean>(false);
@@ -180,10 +173,8 @@ const FeedsTab = () => {
       </div>
     </div>
   );
-};
+}
 
-FeedsTab.getLayout = function getLayout(page: ReactElement) {
+PotFeedTab.getLayout = function getLayout(page: ReactElement) {
   return <PotLayout>{page}</PotLayout>;
 };
-
-export default FeedsTab;

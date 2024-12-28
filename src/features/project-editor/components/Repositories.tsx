@@ -1,6 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
-import { extractFromUrl, urlPatters } from "@/entities/core";
+import { extractFromUrl } from "@/common/lib";
+import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/account";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput } from "./components";
@@ -17,7 +18,7 @@ const Repo = ({
   const [fieldValue, setValue] = useState<string>(repo?.replace("https://github.com/", "") || "");
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(extractFromUrl(e.target.value, urlPatters.github) || "");
+    setValue(extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.github) || "");
   };
 
   return (

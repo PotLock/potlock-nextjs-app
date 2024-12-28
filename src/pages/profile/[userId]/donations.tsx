@@ -4,21 +4,14 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
-import PotlockFunding from "@/entities/profile/components/PotlockFunding";
+import { indexer } from "@/common/api/indexer";
+import { FundingTable } from "@/layout/profile/_deprecated/FundingTable";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 const DonationsTab = () => {
   const router = useRouter();
-  const { userId: userIdPathParam } = router.query;
-
-  const userId =
-    (typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0)) ?? "noop";
-
-  const { data: donationsData } = useAccountDonationsSent({
-    accountId: userId,
-  });
-
+  const { userId: accountId } = router.query as { userId: string };
+  const { data: donationsData } = indexer.useAccountDonationsSent({ accountId });
   const hasDonations = donationsData?.results && donationsData.results.length > 0;
 
   return !hasDonations ? (
@@ -36,7 +29,7 @@ const DonationsTab = () => {
   ) : (
     // Container
     <div className="mb-18 flex w-full flex-col">
-      <PotlockFunding accountId={userId} type="donated" />
+      <FundingTable type="donated" {...{ accountId }} />
     </div>
   );
 };

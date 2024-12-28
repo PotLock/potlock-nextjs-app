@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 
-import { Registration, listsClient } from "@/common/contracts/core";
+import { Registration, RegistrationStatus, listsClient } from "@/common/contracts/core";
 
-import { UNREGISTERED_PROJECT } from "../constants";
+const UNREGISTERED_PROJECT = {
+  id: "",
+  registrant_id: "",
+  list_id: 1,
+  status: RegistrationStatus.Unregistered,
+  submitted_ms: 0,
+  updated_ms: 0,
+  admin_notes: null,
+  registrant_notes: null,
+  registered_by: "",
+};
 
 /**
  *! @deprecated This is a HORRIBLE piece of code, please ask the backend team to add an endpoint

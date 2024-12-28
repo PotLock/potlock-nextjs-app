@@ -44,7 +44,7 @@ export const AccountListItem = ({
   classNames,
 }: AccountListItemProps) => {
   const handleClick = useCallback((): void => void onClick?.(accountId), [accountId, onClick]);
-  const { profile } = useAccountSocialProfile(accountId);
+  const { profile } = useAccountSocialProfile({ accountId });
 
   const avatarElement = useMemo(
     () => (

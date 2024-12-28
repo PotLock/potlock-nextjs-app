@@ -1,30 +1,28 @@
 import { ReactElement, useEffect, useState } from "react";
 
+import { useRouter } from "next/router";
+
 import { Campaign, campaignsClient } from "@/common/contracts/core";
-import { useRouteQuery } from "@/common/lib";
-import { AccountId } from "@/common/types";
 import { CampaignCard } from "@/entities/campaign/components";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 import { NoResults } from "./lists";
 
 const ProfileCampaigns = () => {
+  const router = useRouter();
+  const { userId: accountId } = router.query as { userId: string };
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-
-  const {
-    query: { userId },
-  } = useRouteQuery();
 
   useEffect(() => {
     campaignsClient
-      .get_campaigns_by_owner({ owner_id: userId as AccountId })
+      .get_campaigns_by_owner({ owner_id: accountId })
       .then((fetchedCampaigns) => {
         setCampaigns(fetchedCampaigns);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [userId]);
+  }, [accountId]);
 
   return (
     <div className="w-full">

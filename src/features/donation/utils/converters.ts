@@ -1,4 +1,4 @@
-import { TOTAL_FEE_BASIS_POINTS } from "@/entities/core/constants";
+import { TOTAL_FEE_BASIS_POINTS } from "@/common/constants";
 
 export const donationFeeBasisPointsToPercents = (basisPoints: number) =>
   basisPoints / (TOTAL_FEE_BASIS_POINTS / 100);

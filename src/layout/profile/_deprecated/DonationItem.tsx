@@ -1,21 +1,65 @@
 import Big from "big.js";
 import Link from "next/link";
+import { styled } from "styled-components";
 
 import { DonationInfo } from "@/common/api/indexer/deprecated/accounts.deprecated";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { useAccountSocialProfile } from "@/entities/account";
+import { TokenIcon } from "@/entities/token";
 import routesPath from "@/pathnames";
 
-import NearIcon from "./NearIcon";
-import { FundingSrc } from "./styled";
+// TODO: refactor by breaking into TailwindCSS classes
+const FundingSrc = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  max-width: 100%;
+  gap: 1rem;
+  .profile-image {
+    width: 24px;
+    height: 24px;
+    display: flex !important;
+  }
+  .funding-src {
+    display: flex;
+    flex-direction: column;
+    .pot-name {
+      color: inherit;
+      font-weight: inherit;
+      display: none;
+    }
+    a {
+      color: #292929;
+      transition: 300ms;
+      font-weight: 600;
+      :hover {
+        text-decoration: none;
+        color: #dd3345;
+      }
+    }
+    .type {
+      color: #7b7b7b;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .funding-src .type {
+      display: none;
+    }
+    .funding-src .pot-name {
+      display: inline-block;
+    }
+  }
+`;
 
 const addTrailingZeros = (number: number) => {
   if (number < 100 && number >= 0.1) return number.toFixed(1);
   return number;
 };
 
-const DonationItem = ({
+export const DonationItem = ({
   donation,
   projectId,
   type = "received",
@@ -59,7 +103,9 @@ const DonationItem = ({
   // const name = truncate(isPot ? pot.id : donor.id, 15);
   const name = truncate(type === "received" ? donor.id : recipient.id, 15);
 
-  const { avatarSrc } = useAccountSocialProfile(type === "received" ? donor.id : recipient.id);
+  const { avatarSrc } = useAccountSocialProfile({
+    accountId: type === "received" ? donor.id : recipient.id,
+  });
 
   return (
     <div className="funding-row">
@@ -83,8 +129,8 @@ const DonationItem = ({
       </FundingSrc>
       <div className="price tab">
         <div className="near-icon">
-          {ftId === "near" ? (
-            <NearIcon />
+          {ftId === NATIVE_TOKEN_ID ? (
+            <TokenIcon tokenId={NATIVE_TOKEN_ID} />
           ) : (
             <img className="h-[21px] w-[21px]" src={token.icon} alt="Token icon" />
           )}
@@ -95,5 +141,3 @@ const DonationItem = ({
     </div>
   );
 };
-
-export default DonationItem;

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
+import type { ByAccountId, ConditionalExecution } from "@/common/types";
 import { useRegistration } from "@/entities/core";
 
 import {
@@ -10,22 +11,25 @@ import {
 
 // TODO!: Refactor to retrieve the account information from the indexer
 //!  with a fallback SocialDB lookup ONLY if the account is not indexed.
-export const useAccountSocialProfile = (accountId?: string) => {
+export const useAccountSocialProfile = ({
+  accountId,
+  enabled = true,
+}: ByAccountId & ConditionalExecution) => {
   const [profile, setProfile] = useState<NEARSocialUserProfile | undefined>(undefined);
   const [isReady, setProfileReady] = useState(false);
 
   // Registration
-  const registration = useRegistration(accountId || "");
+  const registration = useRegistration(accountId);
   const profileType = registration.registration.id ? "project" : "user";
 
   // Fetch profile data
   useEffect(() => {
-    if (accountId) {
+    if (enabled) {
       getSocialProfile({ accountId, useCache: true })
         .then((data) => setProfile(data ?? undefined))
         .finally(() => setProfileReady(true));
     }
-  }, [accountId]);
+  }, [accountId, enabled]);
 
   const avatarSrc = useMemo(
     () =>

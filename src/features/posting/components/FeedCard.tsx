@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Markdown from "react-markdown";
@@ -8,12 +7,10 @@ import Markdown from "react-markdown";
 import { PotApplicationStatus } from "@/common/api/indexer";
 import { fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/social";
+import { AccountHandle, AccountProfilePicture } from "@/entities/account";
 import { potApplicationFiltersTags } from "@/features/pot-application";
 
 import FeedCardOptionsSelect from "./FeedCardOptionsSelect";
-import { PROFILE_DEFAULTS } from "../constants";
 
 interface PostType {
   isPot?: boolean;
@@ -27,19 +24,13 @@ interface PostType {
 }
 
 export const FeedCard = ({ post, isPot, status }: PostType) => {
-  const [profileImg, setProfileImg] = useState<string>("");
-  const [time, setTime] = useState("");
   const router = useRouter();
+  const [time, setTime] = useState("");
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-      const { image } = await fetchSocialImages({
-        accountId: post.accountId,
-      });
-
       const time = await fetchTimeByBlockHeight(Number(post.blockHeight));
       setTime(time);
-      setProfileImg(image);
     };
 
     if (post.accountId) fetchProfileImage();
@@ -60,7 +51,9 @@ export const FeedCard = ({ post, isPot, status }: PostType) => {
   return (
     <div
       onClick={handleCardClick}
-      className="md:w-100 bg-background mb-4 cursor-pointer rounded-lg p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg md:w-full"
+      className={
+        "md:w-100 bg-background mb-4 cursor-pointer rounded-lg p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg md:w-full"
+      }
     >
       <div className="mb-4 flex items-center justify-between">
         <div className="flex">
@@ -69,18 +62,10 @@ export const FeedCard = ({ post, isPot, status }: PostType) => {
             onClick={handleProfileClick}
             className="flex items-center space-x-2 hover:underline"
           >
-            <Image
-              src={profileImg}
-              width={32}
-              height={32}
-              onError={() => {
-                setProfileImg(PROFILE_DEFAULTS.socialImages.image);
-              }}
-              className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-              alt="profile-image"
-            />
-            <p className="font-bold text-black ">{truncate(post.accountId, 10)}</p>
+            <AccountProfilePicture accountId={post.accountId} className="h-4 w-4" />
+            <AccountHandle accountId={post.accountId} maxLength={16} className="text-neutral-950" />
           </div>
+
           <div className="flex items-center">
             {time && (
               <>
