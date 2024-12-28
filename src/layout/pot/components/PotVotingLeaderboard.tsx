@@ -23,6 +23,7 @@ export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potI
             className={cn(
               "elevation-low inline-flex h-16 items-center justify-start gap-2 md:gap-6",
               "bg-background overflow-hidden rounded-2xl p-3",
+              "hidden", // TODO: Temporarily disabled
             )}
           >
             <div
@@ -42,7 +43,11 @@ export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potI
                   "inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1"
                 }
               >
-                <AccountHandle {...{ accountId }} className="font-600 text-neutral-950" />
+                <AccountHandle
+                  maxLength={26}
+                  className="font-600 text-neutral-950"
+                  {...{ accountId }}
+                />
 
                 <div className="self-stretch text-sm font-medium leading-tight text-neutral-500">
                   {`${accumulatedWeight} votes`}

@@ -32,7 +32,7 @@ export const useActiveVotingRound = ({ potId }: VotingRoundKey): VotingRound | u
 
 export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
   const { data: pot } = indexer.usePot({ potId });
-  const votingRound = useActiveVotingRound({ potId });
+  const votingRound = useVotingRound({ potId });
 
   const { data: votes } = votingHooks.useElectionVotes({
     enabled: votingRound !== undefined,
