@@ -19,11 +19,11 @@ export const DonationTokenBalance: React.FC<DonationTokenBalanceProps> = ({
     tokenId,
   });
 
-  return !token ? (
+  return token?.balanceFloat === undefined ? (
     <>
       {tokenError ? (
         <span className={cn("prose text-destructive text-sm", classNames?.amount)}>
-          {tokenError.message}
+          {tokenError.message ?? "Unable to fetch token balance."}
         </span>
       ) : (
         <Skeleton className="w-34 h-5" />

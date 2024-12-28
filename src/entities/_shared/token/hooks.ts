@@ -49,6 +49,7 @@ export const useTokenAllowlist = () => {
  */
 export const useToken = ({ tokenId, balanceCheckAccountId }: TokenQuery): TokenQueryResult => {
   const isValidFtContractAccountId = isAccountId(tokenId);
+  const isValidTokenId = tokenId === NATIVE_TOKEN_ID || isValidFtContractAccountId;
 
   const {
     isLoading: isNtMetadataLoading,
@@ -97,12 +98,17 @@ export const useToken = ({ tokenId, balanceCheckAccountId }: TokenQuery): TokenQ
   });
 
   return useMemo(() => {
-    const status = {
-      isLoading: isNtMetadataLoading || isFtMetadataLoading,
-      isUsdPriceLoading: isFtUsdPriceLoading || isNtUsdPriceLoading,
-      isBalanceLoading: isAccountSummaryLoading || isFtBalanceLoading,
+    const isMetadataLoading = isNtMetadataLoading || isFtMetadataLoading;
+    const isUsdPriceLoading = isFtUsdPriceLoading || isNtUsdPriceLoading;
+    const isBalanceLoading = isAccountSummaryLoading || isFtBalanceLoading;
 
-      error: !isValidFtContractAccountId
+    const status = {
+      isMetadataLoading,
+      isUsdPriceLoading,
+      isBalanceLoading,
+      isLoading: isMetadataLoading || isUsdPriceLoading || isBalanceLoading,
+
+      error: !isValidTokenId
         ? new Error(`Token ID ${tokenId} is invalid.`)
         : (ntMetadataError ??
           ftUsdPriceError ??
@@ -179,7 +185,7 @@ export const useToken = ({ tokenId, balanceCheckAccountId }: TokenQuery): TokenQ
     isFtUsdPriceLoading,
     isNtMetadataLoading,
     isNtUsdPriceLoading,
-    isValidFtContractAccountId,
+    isValidTokenId,
     ntMetadata,
     ntMetadataError,
     oneFtUsdPrice,

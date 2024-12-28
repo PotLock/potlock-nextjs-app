@@ -15,9 +15,10 @@ export interface TokenQuery extends ByTokenId {
 }
 
 export type TokenQueryResult = {
-  isLoading: boolean;
+  isMetadataLoading: boolean;
   isUsdPriceLoading: boolean;
   isBalanceLoading: boolean;
+  isLoading: boolean;
   data?: TokenData;
   error?: Error;
 };
