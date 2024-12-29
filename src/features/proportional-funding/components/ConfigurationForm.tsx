@@ -17,7 +17,7 @@ export type ProportionalFundingConfigurationFormProps = ByPotId & {
 export const ProportionalFundingConfigurationForm: React.FC<
   ProportionalFundingConfigurationFormProps
 > = ({ potId, footerContent, className }) => {
-  const { hasVoting } = usePotFeatureFlags({ potId });
+  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
 
   const form = useForm({ resolver: zodResolver(votingConfigurationSchema) });
 
@@ -34,7 +34,7 @@ export const ProportionalFundingConfigurationForm: React.FC<
       </CardHeader> */}
 
       <CardContent>
-        {hasVoting ? null : (
+        {hasProportionalFundingMechanism ? null : (
           <Form {...form}>
             <TextField type="text" />
           </Form>

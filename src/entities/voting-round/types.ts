@@ -53,7 +53,7 @@ export type VotingRound = ByElectionId & { election: Election };
 
 export type VotingRoundKey = ByPotId;
 
-export type VotingRoundCandidateResult = ByAccountId & {
+export type VotingRoundWinner = ByAccountId & {
   accumulatedWeight: number;
   estimatedPayoutAmount: number;
 };

@@ -11,7 +11,10 @@ export const usePotFeatureFlags = ({ potId }: ByPotId) => {
   );
 
   return useMemo(
-    () => ({ isPotExtensionConfigLoading, hasVoting: (elections?.length ?? 0) > 0 }),
+    () => ({
+      isPotExtensionConfigLoading,
+      hasProportionalFundingMechanism: (elections?.length ?? 0) > 0,
+    }),
     [isPotExtensionConfigLoading, elections?.length],
   );
 };

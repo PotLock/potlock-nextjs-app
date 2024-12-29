@@ -10,11 +10,11 @@ import { PotLayout } from "@/layout/pot/components/PotLayout";
 export default function PotSettingsTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
-  const { hasVoting } = usePotFeatureFlags({ potId });
+  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
 
   return (
     <div className="flex w-full flex-col items-center gap-8">
-      {hasVoting ? (
+      {hasProportionalFundingMechanism ? (
         <ProportionalFundingConfigurationForm
           className="max-w-206"
           footerContent={<PotConfigurationEditor {...{ potId }} />}

@@ -8,30 +8,30 @@ import { LabeledIcon } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { TokenIcon } from "@/entities/_shared/token";
-import { useVotingRoundResults } from "@/entities/voting-round";
 
-export type PotVotingLeaderboardProps = ByPotId & {};
+import { useVotingRoundResults } from "../hooks/results";
 
-export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potId }) => {
+export type VotingRoundLeaderboardProps = ByPotId & {};
+
+export const VotingRoundLeaderboard: React.FC<VotingRoundLeaderboardProps> = ({ potId }) => {
   const votingRoundResults = useVotingRoundResults({ potId });
 
   const leadingPositionAccountIds = useMemo(
     () =>
-      values(votingRoundResults?.candidates ?? {})
+      values(votingRoundResults?.winners ?? {})
         .sort(
           (candidateA, candidateB) => candidateB.accumulatedWeight - candidateA.accumulatedWeight,
         )
         .slice(0, 3)
         .map(({ accountId }) => accountId),
 
-    [votingRoundResults?.candidates],
+    [votingRoundResults?.winners],
   );
 
   return votingRoundResults === undefined ? null : (
     <div className="md:max-w-126.5 flex w-full flex-col gap-3 rounded-3xl bg-neutral-50 p-3">
       {leadingPositionAccountIds.map((accountId, index) => {
-        const { accumulatedWeight, estimatedPayoutAmount } =
-          votingRoundResults.candidates[accountId];
+        const { accumulatedWeight, estimatedPayoutAmount } = votingRoundResults.winners[accountId];
 
         return (
           <div

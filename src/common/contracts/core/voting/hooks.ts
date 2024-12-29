@@ -1,7 +1,7 @@
 import useSWR from "swr";
 
 import type { ByPotId } from "@/common/api/indexer";
-import { ByAccountId, type ConditionalExecution } from "@/common/types";
+import { ByAccountId, type ConditionalActivation } from "@/common/types";
 
 import { AccountId, ElectionId } from "./interfaces";
 import { votingContractClient } from "./singleton.client";
@@ -10,10 +10,10 @@ export interface ByElectionId {
   electionId: ElectionId;
 }
 
-type BasicElectionQueryKey = ByElectionId & ConditionalExecution;
+type BasicElectionQueryKey = ByElectionId & ConditionalActivation;
 
-export const useElections = () =>
-  useSWR(["get_elections"], () => votingContractClient.get_elections({}));
+export const useElections = ({ enabled = true }: ConditionalActivation | undefined = {}) =>
+  useSWR(["get_elections"], () => (!enabled ? undefined : votingContractClient.get_elections({})));
 
 export const useActiveElections = () =>
   useSWR(["get_active_elections"], () => votingContractClient.get_active_elections());
@@ -100,7 +100,7 @@ export const useUniqueVoters = ({ electionId, enabled = true }: BasicElectionQue
     !enabled ? undefined : votingContractClient.get_unique_voters({ election_id }),
   );
 
-export const usePotElections = ({ potId }: ByPotId) => {
+export const usePotElections = ({ potId, enabled = true }: ByPotId & ConditionalActivation) => {
   const { data: elections, isLoading } = useElections();
 
   return {

@@ -7,21 +7,21 @@ import { PRICES_REQUEST_CONFIG, intearPricesClient } from "@/common/api/intear-p
 import { is_human } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
 import { ftClient } from "@/common/contracts/tokens/ft";
+import type { ByAccountId } from "@/common/types";
 
 import { VOTING_ROUND_CONFIG_MPDAO } from "./hardcoded";
-import type { VoterProfile, VotingRoundCandidateResult } from "../types";
+import type { VoterProfile, VotingRoundWinner } from "../types";
 
-type VotingRoundCandidateIntermediateResult = {
-  accountId: string;
+type VotingRoundWinnerIntermediateData = ByAccountId & {
   accumulatedWeight: Big;
 };
 
-type VotingRoundCandidateResultRegistry = {
-  candidates: Record<AccountId, VotingRoundCandidateResult>;
+type VotingRoundWinnerRegistry = {
+  winners: Record<AccountId, VotingRoundWinner>;
 };
 
 interface VotingRoundResultsState {
-  resultsCache: Record<ElectionId, VotingRoundCandidateResultRegistry & { totalVoteCount: number }>;
+  resultsCache: Record<ElectionId, VotingRoundWinnerRegistry & { totalVoteCount: number }>;
 
   updateResults: (params: {
     electionId: number;
@@ -155,7 +155,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
 
         // First pass: Calculate accumulated weights for each candidate
         const intermediateResults = Object.entries(votesByCandidate).reduce<
-          Record<AccountId, VotingRoundCandidateIntermediateResult>
+          Record<AccountId, VotingRoundWinnerIntermediateData>
         >((acc, [candidateAccountId, candidateVotes]) => {
           // Calculate total weight for this candidate
           const accumulatedWeight = candidateVotes.reduce((sum, vote) => {
@@ -172,7 +172,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           return acc;
         }, {});
 
-        // Calculate total accumulated weight across all candidates
+        // Calculate total accumulated weight across all winners
         const totalAccumulatedWeight = Object.values(intermediateResults).reduce(
           (sum, result) => sum.add(result.accumulatedWeight),
           Big(0),
@@ -180,7 +180,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
 
         // Second pass: Calculate estimated payouts using total accumulated weight
         const candidateResults = Object.entries(intermediateResults).reduce<
-          VotingRoundCandidateResultRegistry["candidates"]
+          VotingRoundWinnerRegistry["winners"]
         >((acc, [candidateAccountId, result]) => {
           acc[candidateAccountId as AccountId] = {
             ...result,
@@ -200,7 +200,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
 
             [electionId]: {
               totalVoteCount: votes.length,
-              candidates: candidateResults,
+              winners: candidateResults,
             },
           },
         }));

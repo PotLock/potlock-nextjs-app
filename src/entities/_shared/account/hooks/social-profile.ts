@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
-import type { ByAccountId, ConditionalExecution } from "@/common/types";
+import type { ByAccountId, ConditionalActivation } from "@/common/types";
 
 import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
@@ -14,7 +14,7 @@ import {
 export const useAccountSocialProfile = ({
   accountId,
   enabled = true,
-}: ByAccountId & ConditionalExecution) => {
+}: ByAccountId & ConditionalActivation) => {
   const [profile, setProfile] = useState<NEARSocialUserProfile | undefined>(undefined);
   const [isReady, setProfileReady] = useState(false);
 

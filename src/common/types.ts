@@ -73,7 +73,7 @@ export type U128String = string;
 
 export type ClientConfig = { swr?: SWRConfiguration };
 
-export interface ConditionalExecution {
+export interface ConditionalActivation {
   enabled?: boolean;
 }
 

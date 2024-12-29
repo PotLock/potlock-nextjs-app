@@ -10,8 +10,8 @@ import { useVotingRound } from "./rounds";
 
 export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
   const { data: pot } = indexer.usePot({ potId });
-  const { hasVoting } = usePotFeatureFlags({ potId });
-  const votingRound = useVotingRound({ potId });
+  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+  const votingRound = useVotingRound({ enabled: hasProportionalFundingMechanism, potId });
 
   const { data: votes } = votingContractHooks.useElectionVotes({
     enabled: votingRound !== undefined,

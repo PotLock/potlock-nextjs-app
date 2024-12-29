@@ -20,6 +20,7 @@ import ArrowDown from "@/common/ui/svg/ArrowDown";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 import { PotPayoutChallenges, usePotPayoutLookup } from "@/entities/pot";
+import { useVotingRoundResults } from "@/entities/voting-round";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 import { rootPathnames } from "@/pathnames";
 
@@ -29,6 +30,9 @@ export default function PayoutsTab() {
   const router = useRouter();
   const { potId } = router.query as { potId: string };
   const { data: potDetail } = indexer.usePot({ potId });
+  const votingRoundResults = useVotingRoundResults({ potId });
+
+  console.log(votingRoundResults?.winners);
 
   const {
     payouts,
