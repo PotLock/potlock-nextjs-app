@@ -1,7 +1,7 @@
 import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
-import { ProjectEditor, useInitProjectState } from "@/features/project-editor";
+import { ProjectEditor, useInitProjectState } from "@/features/profile-setup";
 import { useGlobalStoreSelector } from "@/store";
 
 export default function EditProjectPage() {

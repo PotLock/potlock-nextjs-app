@@ -17,7 +17,7 @@ import {
   PotLifecycleStageTagEnum,
   PotTimeline,
   usePotBasicUserPermissions,
-  usePotExtensionFlags,
+  usePotFeatureFlags,
   usePotLifecycle,
 } from "@/entities/pot";
 import { DonateToPotProjects } from "@/features/donation";
@@ -38,7 +38,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onFundMatchingPoolClick,
 }) => {
   const { data: pot } = indexer.usePot({ potId });
-  const { hasVoting } = usePotExtensionFlags({ potId });
+  const { hasVoting } = usePotFeatureFlags({ potId });
   const { isSignedIn, accountId } = useSession();
   const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
   const lifecycle = usePotLifecycle({ potId, hasVoting });

@@ -3,11 +3,11 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import AboutItem from "@/entities/profile/components/AboutItem";
-import Github from "@/entities/profile/components/Github";
-import SmartContract from "@/entities/profile/components/SmartContract";
-import Team from "@/entities/profile/components/Team";
+import Team from "@/entities/project/components/Team";
+import AboutItem from "@/layout/profile/components/AboutItem";
+import Github from "@/layout/profile/components/Github";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
+import SmartContract from "@/layout/profile/components/SmartContract";
 
 export default function ProfileHomeTab() {
   const router = useRouter();

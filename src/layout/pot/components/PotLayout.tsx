@@ -8,10 +8,10 @@ import { PageWithBanner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ChallengeModal, usePotBasicUserPermissions } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
+import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
 import { PotApplicationModal } from "@/features/pot-application";
-import { ErrorModal } from "@/features/project-editor/components/ErrorModal";
-import { SuccessModal } from "@/features/project-editor/components/SuccessModal";
-import { MatchingPoolContributionModal } from "@/features/quadratic-funding";
+import { ErrorModal } from "@/features/profile-setup/components/ErrorModal";
+import { SuccessModal } from "@/features/profile-setup/components/SuccessModal";
 
 import { PotLayoutHero } from "./PotLayoutHero";
 import { usePotLayoutTabNavigation } from "../hooks/tab-navigation";

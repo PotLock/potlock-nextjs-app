@@ -7,11 +7,11 @@ import { Temporal } from "temporal-polyfill";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import daysUntil from "@/common/lib/daysUntil";
 
-import { usePotExtensionFlags } from "./extensions";
+import { usePotFeatureFlags } from "./feature-flags";
 
 export const usePotTags = ({ potId }: ByPotId) => {
   const { data: pot } = indexer.usePot({ potId });
-  const { hasVoting } = usePotExtensionFlags({ potId });
+  const { hasVoting } = usePotFeatureFlags({ potId });
 
   return useMemo(() => {
     if (pot) {

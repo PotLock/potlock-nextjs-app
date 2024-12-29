@@ -1,6 +1,10 @@
 import { Big, BigSource } from "big.js";
 import { number, preprocess } from "zod";
 
+export type NumericComparatorKey = keyof Big.Big & ("lt" | "lte" | "gt" | "gte");
+
+export const NUMERIC_COMPARATOR_KEYS: NumericComparatorKey[] = ["lt", "lte", "gt", "gte"];
+
 export const isBigSource = (value: unknown | BigSource) => {
   try {
     /** Attempt to create a new Big instance */

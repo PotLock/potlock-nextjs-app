@@ -1,6 +1,6 @@
 import useSWR from "swr";
 
-import { UNKNOWN_ACCOUNT_ID_PLACEHOLDER } from "@/common/constants";
+import type { ByPotId } from "@/common/api/indexer";
 import { ByAccountId, type ConditionalExecution } from "@/common/types";
 
 import { AccountId, ElectionId } from "./interfaces";
@@ -66,7 +66,7 @@ export const useElectionVoteCount = ({ electionId, enabled = true }: BasicElecti
       !enabled ? undefined : votingClient.get_election_vote_count({ election_id }),
   );
 
-export const useVoterVotes = ({
+export const useVotingRoundVoterVotes = ({
   electionId,
   accountId,
   enabled = true,
@@ -94,3 +94,27 @@ export const useUniqueVoters = ({ electionId, enabled = true }: BasicElectionQue
   useSWR(["get_unique_voters", electionId], ([_queryKey, election_id]: [string, ElectionId]) =>
     !enabled ? undefined : votingClient.get_unique_voters({ election_id }),
   );
+
+export const usePotElections = ({ potId }: ByPotId) => {
+  const { data: elections, isLoading } = useElections();
+
+  return {
+    isLoading,
+
+    elections: elections?.filter(
+      ({ election_type }) =>
+        typeof election_type === "object" && "Pot" in election_type && election_type.Pot === potId,
+    ),
+  };
+};
+
+export const useActivePotElections = ({ potId }: ByPotId) => {
+  const { data: activeElections } = useActiveElections();
+
+  return {
+    activeElections: activeElections?.filter(
+      ([_electionId, { election_type }]) =>
+        typeof election_type === "object" && "Pot" in election_type && election_type.Pot === potId,
+    ),
+  };
+};

@@ -8,7 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import { ByPotId } from "@/common/api/indexer";
 import { LayoutTabOption } from "@/common/ui/types";
-import { usePotExtensionFlags } from "@/entities/pot";
+import { usePotFeatureFlags } from "@/entities/pot";
 import { rootPathnames } from "@/pathnames";
 
 export enum PotLayoutTabTag {
@@ -154,7 +154,7 @@ const emptyList: PotLayoutTabOption[] = [];
 
 export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavigation => {
   const { asPath: currentPath, push: navigateToHref } = useRouter();
-  const { isPotExtensionConfigLoading, hasVoting } = usePotExtensionFlags({ potId });
+  const { isPotExtensionConfigLoading, hasVoting } = usePotFeatureFlags({ potId });
 
   const { setPotConfig, potConfigs, tabRegistries, orderedTabLists } = usePotTabStore(
     useShallow(pick(["setPotConfig", "potConfigs", "tabRegistries", "orderedTabLists"])),

@@ -2,20 +2,20 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { usePotExtensionFlags } from "@/entities/pot";
+import { usePotFeatureFlags } from "@/entities/pot";
 import { PotConfigurationEditor } from "@/features/pot-configuration";
-import { VotingConfiguration } from "@/features/voting";
+import { ProportionalFundingConfigurationForm } from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotSettingsTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
-  const { hasVoting } = usePotExtensionFlags({ potId });
+  const { hasVoting } = usePotFeatureFlags({ potId });
 
   return (
     <div className="flex w-full flex-col items-center gap-8">
       {hasVoting ? (
-        <VotingConfiguration
+        <ProportionalFundingConfigurationForm
           className="max-w-206"
           footerContent={<PotConfigurationEditor {...{ potId }} />}
           {...{ potId }}
