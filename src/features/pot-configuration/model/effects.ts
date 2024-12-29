@@ -6,8 +6,8 @@ import { nearRpc, walletApi } from "@/common/api/near/client";
 import {
   PotConfig,
   PotDeploymentResult,
-  potClient,
-  potFactoryClient,
+  potContractClient,
+  potFactoryContractClient,
 } from "@/common/contracts/core";
 import { AppDispatcher } from "@/store";
 
@@ -24,7 +24,7 @@ type PotConfigurationSaveInputs = (PotDeploymentInputs | PotSettings) &
 
 export const effects = (dispatch: AppDispatcher) => ({
   handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
-    void potClient.getConfig({ potId: id }).then((potConfig) => {
+    void potContractClient.getConfig({ potId: id }).then((potConfig) => {
       dispatch.potConfiguration.deploymentSuccess({ id, ...potConfig });
     }),
 
@@ -52,7 +52,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       });
 
       if (isNewPot) {
-        potFactoryClient
+        potFactoryContractClient
           .deploy_pot({
             pot_args,
             pot_handle: (pot_handle?.length ?? 0) > 0 ? pot_handle : undefined,
@@ -63,7 +63,7 @@ export const effects = (dispatch: AppDispatcher) => ({
           })
           .catch(dispatch.potConfiguration.deploymentFailure);
       } else {
-        potClient
+        potContractClient
           .admin_dangerously_set_pot_config(potId, {
             update_args: omit(pot_args, ["custom_sybil_checks"]),
           })

@@ -4,7 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/common/ui/compo
 import { cn } from "@/common/ui/utils";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { listRegistrationStatusIcons } from "@/entities/list";
-import { FollowStats } from "@/entities/profile";
+
+import { FollowStats } from "./FollowStats";
 
 export type ProfileLayoutHeroProps = {
   accountId: string; // near address (donor | project)

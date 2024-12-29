@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getIsHuman } from "@/common/contracts/core/sybil";
+import { is_human } from "@/common/contracts/core/sybil";
 
 export const useIsHuman = (accountId?: string) => {
   const [isHumanVerified, setNadaBotVerified] = useState(false);
@@ -10,7 +10,7 @@ export const useIsHuman = (accountId?: string) => {
   useEffect(() => {
     const fetchHumanStatus = async () => {
       try {
-        const isHuman = await getIsHuman({ account_id: accountId || "" });
+        const isHuman = await is_human({ account_id: accountId || "" });
         setNadaBotVerified(isHuman);
         setLoading(false);
       } catch (error) {

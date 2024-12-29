@@ -8,7 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import { ByPotId } from "@/common/api/indexer";
 import { LayoutTabOption } from "@/common/ui/types";
-import { usePotExtensionFlags } from "@/entities/pot";
+import { usePotFeatureFlags } from "@/entities/pot";
 import { rootPathnames } from "@/pathnames";
 
 export enum PotLayoutTabTag {
@@ -30,10 +30,13 @@ export type PotLayoutTabOption = LayoutTabOption & {
 type PotLayoutTabRegistry = Record<PotLayoutTabTag, PotLayoutTabOption>;
 
 interface TabState {
-  potConfigs: Record<string, { hasVoting: boolean; defaultTabTag: PotLayoutTabTag }>;
+  potConfigs: Record<
+    string,
+    { hasProportionalFundingMechanism: boolean; defaultTabTag: PotLayoutTabTag }
+  >;
   tabRegistries: Record<string, PotLayoutTabRegistry>;
   orderedTabLists: Record<string, PotLayoutTabOption[]>;
-  setPotConfig: (potId: string, hasVoting: boolean) => void;
+  setPotConfig: (potId: string, hasProportionalFundingMechanism: boolean) => void;
   computeTabRegistry: (potId: string) => void;
 }
 
@@ -44,14 +47,16 @@ const usePotTabStore = create<TabState>()(
       tabRegistries: {},
       orderedTabLists: {},
 
-      setPotConfig: (potId: string, hasVoting: boolean) => {
-        const defaultTabTag = hasVoting ? PotLayoutTabTag.Votes : PotLayoutTabTag.Projects;
+      setPotConfig: (potId: string, hasProportionalFundingMechanism: boolean) => {
+        const defaultTabTag = hasProportionalFundingMechanism
+          ? PotLayoutTabTag.Votes
+          : PotLayoutTabTag.Projects;
 
         set((state) => ({
           potConfigs: {
             ...state.potConfigs,
             [potId]: {
-              hasVoting,
+              hasProportionalFundingMechanism,
               defaultTabTag,
             },
           },
@@ -64,14 +69,14 @@ const usePotTabStore = create<TabState>()(
         const config = get().potConfigs[potId];
         if (!config) return;
 
-        const { hasVoting, defaultTabTag } = config;
+        const { hasProportionalFundingMechanism, defaultTabTag } = config;
         const rootHref = `${rootPathnames.pot}/${potId}`;
 
         const registry: PotLayoutTabRegistry = {
           [PotLayoutTabTag.Projects]: {
             tag: PotLayoutTabTag.Projects,
             href: `${rootHref}/projects`,
-            isHidden: hasVoting,
+            isHidden: hasProportionalFundingMechanism,
           },
           [PotLayoutTabTag.Applications]: {
             tag: PotLayoutTabTag.Applications,
@@ -80,12 +85,12 @@ const usePotTabStore = create<TabState>()(
           [PotLayoutTabTag.Votes]: {
             tag: PotLayoutTabTag.Votes,
             href: `${rootHref}/votes`,
-            isHidden: !hasVoting,
+            isHidden: !hasProportionalFundingMechanism,
           },
           [PotLayoutTabTag.Donations]: {
             tag: PotLayoutTabTag.Donations,
             href: `${rootHref}/donations`,
-            isHidden: hasVoting,
+            isHidden: hasProportionalFundingMechanism,
           },
           [PotLayoutTabTag.Sponsors]: {
             tag: PotLayoutTabTag.Sponsors,
@@ -94,7 +99,7 @@ const usePotTabStore = create<TabState>()(
           [PotLayoutTabTag.History]: {
             tag: PotLayoutTabTag.History,
             href: `${rootHref}/history`,
-            isHidden: !hasVoting,
+            isHidden: !hasProportionalFundingMechanism,
           },
           [PotLayoutTabTag.Payouts]: {
             tag: PotLayoutTabTag.Payouts,
@@ -154,7 +159,10 @@ const emptyList: PotLayoutTabOption[] = [];
 
 export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavigation => {
   const { asPath: currentPath, push: navigateToHref } = useRouter();
-  const { isPotExtensionConfigLoading, hasVoting } = usePotExtensionFlags({ potId });
+
+  const { isPotExtensionConfigLoading, hasProportionalFundingMechanism } = usePotFeatureFlags({
+    potId,
+  });
 
   const { setPotConfig, potConfigs, tabRegistries, orderedTabLists } = usePotTabStore(
     useShallow(pick(["setPotConfig", "potConfigs", "tabRegistries", "orderedTabLists"])),
@@ -163,9 +171,9 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
   // Ensure pot config is set/updated
   useEffect(() => {
     if (!isPotExtensionConfigLoading) {
-      setPotConfig(potId, hasVoting);
+      setPotConfig(potId, hasProportionalFundingMechanism);
     }
-  }, [potId, hasVoting, setPotConfig, isPotExtensionConfigLoading]);
+  }, [potId, hasProportionalFundingMechanism, setPotConfig, isPotExtensionConfigLoading]);
 
   const defaultTabTag = potConfigs[potId]?.defaultTabTag ?? PotLayoutTabTag.Projects;
   const tabRegistry = potId ? (tabRegistries[potId] ?? emptyRegistry) : emptyRegistry;

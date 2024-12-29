@@ -17,9 +17,24 @@ import {
   Switch,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { validateUserInDao } from "@/entities/profile";
-import { addOrRemoveDaoAddress, markDaoAsDefault, toggleDao } from "@/entities/profile/utils";
-import { useGlobalStoreSelector } from "@/store";
+import { validateUserInDao } from "@/entities/dao";
+import { dispatch, useGlobalStoreSelector } from "@/store";
+
+// Act as DAO handlers
+export const toggleDao = (toggle: boolean) =>
+  dispatch.nav.updateActAsDao({
+    toggle,
+  });
+
+export const markDaoAsDefault = (daoAddress: string) =>
+  dispatch.nav.updateActAsDao({
+    defaultAddress: daoAddress,
+  });
+
+export const addOrRemoveDaoAddress = (addresses: string[]) =>
+  dispatch.nav.updateActAsDao({
+    addresses,
+  });
 
 const ActAsDao = () => {
   const [inputActive, setInputActive] = useState(false);

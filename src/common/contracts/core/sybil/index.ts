@@ -82,7 +82,7 @@ export const getHumanScore = (args: GetHumanScoreInput) =>
  * Get if address is human
  * @returns
  */
-export const getIsHuman = (args: GetHumanScoreInput): Promise<boolean> =>
+export const is_human = (args: GetHumanScoreInput): Promise<boolean> =>
   contractApi.view<typeof args, boolean>("is_human", {
     args,
   });

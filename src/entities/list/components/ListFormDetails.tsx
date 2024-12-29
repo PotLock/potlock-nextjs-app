@@ -8,7 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { walletApi } from "@/common/api/near/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { RegistrationStatus, listsClient } from "@/common/contracts/core";
+import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
 import uploadFileToIPFS from "@/common/services/ipfs";
 import { fetchSocialImages } from "@/common/services/social";
 import { AccountId } from "@/common/types";
@@ -93,7 +93,7 @@ export const ListFormDetails: React.FC = () => {
   useEffect(() => {
     const fetchListDetails = async () => {
       try {
-        const response: any = await listsClient.getList({
+        const response: any = await listsContractClient.getList({
           list_id: parseInt(id as string) as any,
         });
 
@@ -136,7 +136,7 @@ export const ListFormDetails: React.FC = () => {
     ) { return; }
 
     if (onEditPage) {
-      listsClient.update_list({
+      listsContractClient.update_list({
         ...data,
         admins,
         list_id: parseInt(id as any),
@@ -155,7 +155,7 @@ export const ListFormDetails: React.FC = () => {
 
       dispatch.listEditor.reset()
     } else {
-      listsClient.create_list({
+      listsContractClient.create_list({
         ...data,
         admins,
         accounts: accounts.map((account) => ({

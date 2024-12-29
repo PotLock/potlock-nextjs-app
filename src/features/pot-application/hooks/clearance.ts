@@ -19,8 +19,8 @@ import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
  */
 export const usePotApplicationUserClearance = ({
   potId,
-  hasVoting,
-}: ByPotId & { hasVoting?: boolean }): ClearanceCheckResult => {
+  hasProportionalFundingMechanism,
+}: ByPotId & { hasProportionalFundingMechanism?: boolean }): ClearanceCheckResult => {
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
   const { data: pot } = indexer.usePot({ potId });
 
@@ -45,7 +45,7 @@ export const usePotApplicationUserClearance = ({
           ]
         : []),
 
-      ...(hasVoting
+      ...(hasProportionalFundingMechanism
         ? [
             {
               title: `An equivalent of ${staking.minAmountUsd} USD staked in NEAR on ${staking.platformName}`,
@@ -73,7 +73,7 @@ export const usePotApplicationUserClearance = ({
       error: null,
     };
   }, [
-    hasVoting,
+    hasProportionalFundingMechanism,
     isAccountInfoLoading,
     isVerifiedPublicGoodsProvider,
     pot?.sybil_wrapper_provider,

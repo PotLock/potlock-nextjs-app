@@ -17,13 +17,12 @@ import {
   PotLifecycleStageTagEnum,
   PotTimeline,
   usePotBasicUserPermissions,
-  usePotExtensionFlags,
+  usePotFeatureFlags,
   usePotLifecycle,
 } from "@/entities/pot";
+import { VotingRoundLeaderboard } from "@/entities/voting-round";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
-
-import { PotVotingLeaderboard } from "./PotVotingLeaderboard";
 
 export type PotLayoutHeroProps = ByPotId & {
   onApplyClick?: () => void;
@@ -38,10 +37,15 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onFundMatchingPoolClick,
 }) => {
   const { data: pot } = indexer.usePot({ potId });
-  const { hasVoting } = usePotExtensionFlags({ potId });
+  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
   const { isSignedIn, accountId } = useSession();
-  const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
-  const lifecycle = usePotLifecycle({ potId, hasVoting });
+
+  const applicationClearance = usePotApplicationUserClearance({
+    potId,
+    hasProportionalFundingMechanism,
+  });
+
+  const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
 
   const isApplicationPeriodOngoing = useMemo(
     () => lifecycle.currentStage?.tag === PotLifecycleStageTagEnum.Application,
@@ -81,9 +85,19 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
         donationStats
       );
     } else {
-      return hasVoting ? <PotVotingLeaderboard {...{ potId }} /> : donationStats;
+      return hasProportionalFundingMechanism ? (
+        <VotingRoundLeaderboard {...{ potId }} />
+      ) : (
+        donationStats
+      );
     }
-  }, [applicationClearance.requirements, hasVoting, isApplicationPeriodOngoing, pot, potId]);
+  }, [
+    applicationClearance.requirements,
+    hasProportionalFundingMechanism,
+    isApplicationPeriodOngoing,
+    pot,
+    potId,
+  ]);
 
   return (
     <div
@@ -95,7 +109,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
       {pot ? (
         <PotTimeline
           classNames={{ root: "bg-neutral-50 md:transparent" }}
-          {...{ hasVoting, potId }}
+          {...{ hasProportionalFundingMechanism, potId }}
         />
       ) : (
         <Skeleton className="h-14 w-full rounded-lg" />
@@ -189,10 +203,14 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
           <div className="flex items-center justify-start gap-4">
             {canApply && applicationClearance.isEveryRequirementSatisfied && (
-              <Button onClick={onApplyClick}>{`Apply to ${hasVoting ? "Round" : "Pot"}`}</Button>
+              <Button
+                onClick={onApplyClick}
+              >{`Apply to ${hasProportionalFundingMechanism ? "Round" : "Pot"}`}</Button>
             )}
 
-            {hasVoting ? null : <>{canDonate && <DonateToPotProjects {...{ potId }} />}</>}
+            {hasProportionalFundingMechanism ? null : (
+              <>{canDonate && <DonateToPotProjects {...{ potId }} />}</>
+            )}
 
             {canFund && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>

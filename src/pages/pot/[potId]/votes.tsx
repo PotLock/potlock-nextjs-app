@@ -5,20 +5,20 @@ import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
 import { nearClient } from "@/common/api/near";
-import { votingHooks } from "@/common/contracts/core/voting";
+import { votingContractHooks } from "@/common/contracts/core/voting";
 import { Button, FilterChip, SearchBar } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useSession } from "@/entities/_shared/session";
 import {
-  VotingCandidateFilter,
-  VotingCandidateList,
-  VotingRules,
-  VotingWeightBoostBreakdown,
-  useVoterVoteWeight,
-  useVotingCandidateLookup,
-} from "@/features/voting";
-import { useActiveVotingRound } from "@/features/voting/hooks/rounds";
+  VotingRoundCandidateFilter,
+  VotingRoundCandidateList,
+  VotingRoundRuleList,
+  VotingRoundVoteWeightBreakdown,
+  useVotingRoundCandidateLookup,
+  useVotingRoundVoterVoteWeight,
+} from "@/entities/voting-round";
+import { useActiveVotingRound } from "@/entities/voting-round/hooks/rounds";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotVotesTab() {
@@ -34,27 +34,29 @@ export default function PotVotesTab() {
   const [isVotingRuleListVisible, setIsVotingRuleListVisible] = useState(false);
   const [isWeightBoostBreakdownVisible, setIsWeightBoostBreakdownVisible] = useState(false);
   const isSidebarVisible = isDesktop && (isVotingRuleListVisible || isWeightBoostBreakdownVisible);
-  const [candidateFilter, setFilter] = useState<VotingCandidateFilter>("all");
+  const [candidateFilter, setFilter] = useState<VotingRoundCandidateFilter>("all");
 
-  const authenticatedVoter = useVoterVoteWeight({
+  const authenticatedVoter = useVotingRoundVoterVoteWeight({
     accountId: authenticatedUser.accountId,
     potId,
   });
 
   const activeVotingRound = useActiveVotingRound({ potId });
 
-  const { data: authenticatedVoterVotes } = votingHooks.useVoterVotes({
-    enabled: activeVotingRound !== undefined && authenticatedUser.accountId !== undefined,
-    electionId: activeVotingRound?.electionId ?? 0,
-    accountId: authenticatedUser.accountId ?? "noop",
-  });
+  const { data: authenticatedVotingRoundVoterVotes } = votingContractHooks.useVotingRoundVoterVotes(
+    {
+      enabled: activeVotingRound !== undefined && authenticatedUser.accountId !== undefined,
+      electionId: activeVotingRound?.electionId ?? 0,
+      accountId: authenticatedUser.accountId ?? "noop",
+    },
+  );
 
-  const { data: activeElectionVoteCount } = votingHooks.useElectionVoteCount({
+  const { data: activeElectionVoteCount } = votingContractHooks.useElectionVoteCount({
     enabled: activeVotingRound !== undefined,
     electionId: activeVotingRound?.electionId ?? 0,
   });
 
-  const { data: activeElectionVoterAccountIds } = votingHooks.useUniqueVoters({
+  const { data: activeElectionVoterAccountIds } = votingContractHooks.useUniqueVoters({
     enabled: activeVotingRound !== undefined,
     electionId: activeVotingRound?.electionId ?? 0,
   });
@@ -65,7 +67,7 @@ export default function PotVotesTab() {
     votedCandidates,
     votableCandidates,
     mutate: revalidateCandidates,
-  } = useVotingCandidateLookup({ electionId: activeVotingRound?.electionId ?? 0 });
+  } = useVotingRoundCandidateLookup({ electionId: activeVotingRound?.electionId ?? 0 });
 
   const onSearchTermChange = useCallback(
     ({ target }: ChangeEvent<HTMLInputElement>) => setCandidateSearchTerm(target.value),
@@ -168,7 +170,7 @@ export default function PotVotesTab() {
               {authenticatedUser.isSignedIn ? (
                 <span className="inline-flex flex-nowrap items-center font-semibold">
                   <span className="font-600 text-xl leading-loose">
-                    {authenticatedVoterVotes?.length ?? 0}
+                    {authenticatedVotingRoundVoterVotes?.length ?? 0}
                   </span>
 
                   <span className="font-500 text-4.25 leading-normal">
@@ -245,7 +247,7 @@ export default function PotVotesTab() {
             </div>
           </div>
 
-          <VotingCandidateList
+          <VotingRoundCandidateList
             electionId={activeVotingRound.electionId}
             data={candidateList}
             onBulkVoteSuccess={revalidateCandidates}
@@ -253,14 +255,14 @@ export default function PotVotesTab() {
         </div>
 
         <div className={cn("flex flex-col gap-6", { hidden: !isSidebarVisible })}>
-          <VotingRules
+          <VotingRoundRuleList
             open={isVotingRuleListVisible}
             onOpenChange={setIsVotingRuleListVisible}
             mode={isDesktop ? "panel" : "modal"}
             {...{ potId }}
           />
 
-          <VotingWeightBoostBreakdown
+          <VotingRoundVoteWeightBreakdown
             open={isWeightBoostBreakdownVisible}
             onOpenChange={setIsWeightBoostBreakdownVisible}
             mode={isDesktop ? "panel" : "modal"}

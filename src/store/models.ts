@@ -4,10 +4,11 @@ import { ContractMetadata } from "@/common/types";
 import { sessionModel } from "@/entities/_shared/session/model";
 import { campaignEditorModel } from "@/entities/campaign/models";
 import { listEditorModel } from "@/entities/list";
-import { navModel } from "@/entities/profile";
 import { donationModel, donationModelKey } from "@/features/donation";
 import { potConfigurationModel, potConfigurationModelKey } from "@/features/pot-configuration";
-import { projectEditorModel, projectEditorModelKey } from "@/features/project-editor";
+import { projectEditorModel, projectEditorModelKey } from "@/features/profile-setup";
+
+import { navModel } from "./nav-model";
 
 interface CoreState {
   contractMetadata: ContractMetadata;

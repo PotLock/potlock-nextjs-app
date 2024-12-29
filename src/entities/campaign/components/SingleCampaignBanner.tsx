@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { useNearToUsdWithFallback } from "@/common/_deprecated/useNearToUsdWithFallback";
-import { Campaign, campaignsClient } from "@/common/contracts/core";
+import { Campaign, campaignsContractClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { SocialsShare } from "@/common/ui/components/molecules/social-share";
@@ -30,7 +30,7 @@ export const SingleCampaignBanner = () => {
     if (!campaignId) return;
     setLoading(true);
 
-    campaignsClient
+    campaignsContractClient
       .get_campaign({ campaign_id: parseInt(campaignId as string) as any })
       .then((response) => {
         setCampaign(response);
