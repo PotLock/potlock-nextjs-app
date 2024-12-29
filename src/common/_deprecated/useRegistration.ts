@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Registration, RegistrationStatus, listsClient } from "@/common/contracts/core";
+import { Registration, RegistrationStatus, listsContractClient } from "@/common/contracts/core";
 
 const UNREGISTERED_PROJECT = {
   id: "",
@@ -29,7 +29,7 @@ export const useRegistration = (projectId: string) => {
       try {
         if (projectId) {
           const registration =
-            (await listsClient.getRegistration({
+            (await listsContractClient.getRegistration({
               registrant_id: projectId,
             })) || UNREGISTERED_PROJECT;
 

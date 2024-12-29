@@ -3,7 +3,7 @@ import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useRouter } from "next/router";
 
-import { votingHooks } from "@/common/contracts/core/voting";
+import { votingContractHooks } from "@/common/contracts/core/voting";
 import { ScrollArea, SearchBar } from "@/common/ui/components";
 import { VotingRoundHistoryEntry } from "@/entities/voting-round";
 import { useVotingRound } from "@/entities/voting-round/hooks/rounds";
@@ -22,7 +22,7 @@ export default function PotHistoryTab() {
 
   const votingRound = useVotingRound({ potId });
 
-  const { isLoading: isListOfVotesLoading, data: votes } = votingHooks.useElectionVotes({
+  const { isLoading: isListOfVotesLoading, data: votes } = votingContractHooks.useElectionVotes({
     enabled: votingRound !== undefined,
     electionId: votingRound?.electionId ?? 0,
   });

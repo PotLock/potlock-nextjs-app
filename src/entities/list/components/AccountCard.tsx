@@ -6,7 +6,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ListRegistration } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
-import { RegistrationStatus, listsClient } from "@/common/contracts/core";
+import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import {
   Button,
@@ -88,7 +88,7 @@ export const AccountCard = ({
   );
 
   const handleUpdateStatus = () => {
-    listsClient
+    listsContractClient
       .update_registered_project({
         registration_id: dataForList.id,
         ...(note && { notes: note }),

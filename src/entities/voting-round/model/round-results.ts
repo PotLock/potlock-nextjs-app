@@ -16,22 +16,12 @@ type VotingRoundCandidateIntermediateResult = {
   accumulatedWeight: Big;
 };
 
-type VotingRoundCandidateIntermediateRegistry = {
-  candidates: Record<AccountId, VotingRoundCandidateIntermediateResult>;
-};
-
 type VotingRoundCandidateResultRegistry = {
   candidates: Record<AccountId, VotingRoundCandidateResult>;
 };
 
 interface VotingRoundResultsState {
-  resultsCache: Record<
-    ElectionId,
-    VotingRoundCandidateResultRegistry & {
-      totalVoteCount: number;
-      leadingPositionAccountIds: AccountId[];
-    }
-  >;
+  resultsCache: Record<ElectionId, VotingRoundCandidateResultRegistry & { totalVoteCount: number }>;
 
   updateResults: (params: {
     electionId: number;
@@ -165,7 +155,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
 
         // First pass: Calculate accumulated weights for each candidate
         const intermediateResults = Object.entries(votesByCandidate).reduce<
-          VotingRoundCandidateIntermediateRegistry["candidates"]
+          Record<AccountId, VotingRoundCandidateIntermediateResult>
         >((acc, [candidateAccountId, candidateVotes]) => {
           // Calculate total weight for this candidate
           const accumulatedWeight = candidateVotes.reduce((sum, vote) => {
@@ -195,6 +185,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           acc[candidateAccountId as AccountId] = {
             ...result,
             accumulatedWeight: result.accumulatedWeight.toNumber(),
+
             estimatedPayoutAmount: matchingPoolBalance
               .mul(result.accumulatedWeight.div(totalAccumulatedWeight))
               .toNumber(),
@@ -210,11 +201,6 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
             [electionId]: {
               totalVoteCount: votes.length,
               candidates: candidateResults,
-
-              leadingPositionAccountIds: Object.values(candidateResults)
-                .sort((a, b) => b.accumulatedWeight - a.accumulatedWeight)
-                .slice(0, 3)
-                .map(({ accountId }) => accountId),
             },
           },
         }));

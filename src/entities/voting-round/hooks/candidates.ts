@@ -1,6 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
+import {
+  ByElectionId,
+  Candidate,
+  votingContractClient,
+  votingContractHooks,
+} from "@/common/contracts/core/voting";
 import { ByAccountId } from "@/common/types";
 import { useToast } from "@/common/ui/hooks";
 import { useSession } from "@/entities/_shared/session";
@@ -11,12 +16,12 @@ export const useVotingRoundCandidateLookup = ({ electionId }: VotingRoundCandida
   const [searchTerm, setSearchTerm] = useState<string>("");
   const authenticatedUser = useSession();
 
-  const { data, ...candidatesQueryResult } = votingHooks.useElectionCandidates({
+  const { data, ...candidatesQueryResult } = votingContractHooks.useElectionCandidates({
     enabled: electionId !== 0,
     electionId,
   });
 
-  const { data: userVotes } = votingHooks.useVotingRoundVoterVotes({
+  const { data: userVotes } = votingContractHooks.useVotingRoundVoterVotes({
     enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
     electionId,
     accountId: authenticatedUser.accountId ?? "noop",
@@ -63,13 +68,13 @@ export const useVotingRoundCandidateEntry = ({
   const { toast } = useToast();
   const authenticatedUser = useSession();
 
-  const { data: isVotingPeriodOngoing = false } = votingHooks.useIsVotingPeriod({
+  const { data: isVotingPeriodOngoing = false } = votingContractHooks.useIsVotingPeriod({
     enabled: electionId !== 0,
     electionId,
   });
 
   const { data: remainingUserVotingCapacity, isLoading: isRemainingUserVotingCapacityLoading } =
-    votingHooks.useVoterRemainingCapacity({
+    votingContractHooks.useVoterRemainingCapacity({
       enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
       electionId,
       accountId: authenticatedUser.accountId ?? "noop",
@@ -79,7 +84,7 @@ export const useVotingRoundCandidateEntry = ({
     data: votes,
     mutate: revalidateVotes,
     isLoading: isVoteListLoading,
-  } = votingHooks.useElectionCandidateVotes({
+  } = votingContractHooks.useElectionCandidateVotes({
     enabled: electionId !== 0,
     electionId,
     accountId,
@@ -121,7 +126,7 @@ export const useVotingRoundCandidateEntry = ({
 
   const handleVoteCast = useCallback(
     () =>
-      votingClient
+      votingContractClient
         .vote({ election_id: electionId, vote: [accountId, 1] })
         .then((success) => {
           if (success) {

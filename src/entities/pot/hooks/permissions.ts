@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Temporal } from "temporal-polyfill";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { Application, Challenge, potClient } from "@/common/contracts/core";
+import { Application, Challenge, potContractClient } from "@/common/contracts/core";
 import { useSession } from "@/entities/_shared/session";
 
 /**
@@ -24,13 +24,16 @@ export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
   // TODO: Request and cover the required endpoints and throw this away
   useEffect(() => {
     if (isSignedIn) {
-      potClient
+      potContractClient
         // Check if current account has a existing application
         .getApplicationByProjectId({ potId, project_id: accountId })
         .then(setExistingApplication)
         .catch(() => setExistingApplication(undefined));
 
-      potClient.getPayoutsChallenges({ potId }).then(setPayoutsChallenges).catch(console.error);
+      potContractClient
+        .getPayoutsChallenges({ potId })
+        .then(setPayoutsChallenges)
+        .catch(console.error);
     }
   }, [accountId, isSignedIn, pot, potId]);
 

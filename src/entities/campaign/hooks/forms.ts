@@ -6,7 +6,7 @@ import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema, ZodError } from "zod";
 
 import { walletApi } from "@/common/api/near/client";
-import { campaignsClient } from "@/common/contracts/core";
+import { campaignsContractClient } from "@/common/contracts/core";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
@@ -34,7 +34,7 @@ export const useCampaignForm = () => {
 
   const handleDeleteCampaign = () => {
     if (!campaignId) return;
-    campaignsClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
+    campaignsContractClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
 
     dispatch.campaignEditor.updateCampaignModalState({
       header: `Campaign Deleted Successfully`,
@@ -71,23 +71,23 @@ export const useCampaignForm = () => {
       };
 
       if (campaignId) {
-        campaignsClient.update_campaign({
+        campaignsContractClient.update_campaign({
           args: { campaign_id: Number(campaignId), ...args },
         });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaignsClient for ${values.name}.`,
+          header: `You’ve successfully created a campaignsContractClient for ${values.name}.`,
           description:
-            "If you are not a member of the project, the campaignsClient will be considered unofficial until it has been approved by the project.",
+            "If you are not a member of the project, the campaignsContractClient will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.UPDATE_CAMPAIGN,
         });
       } else {
-        campaignsClient.create_campaign({ args });
+        campaignsContractClient.create_campaign({ args });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaignsClient for ${values.name}.`,
+          header: `You’ve successfully created a campaignsContractClient for ${values.name}.`,
           description:
-            "If you are not a member of the project, the campaignsClient will be considered unofficial until it has been approved by the project.",
+            "If you are not a member of the project, the campaignsContractClient will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.CREATE_CAMPAIGN,
         });
       }

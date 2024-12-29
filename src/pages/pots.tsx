@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { potFactoryClient } from "@/common/contracts/core";
+import { potFactoryContractClient } from "@/common/contracts/core";
 import { Button, PageWithBanner } from "@/common/ui/components";
 import { useWallet } from "@/entities/_shared/session";
 import { ActivePots } from "@/entities/pot";
@@ -15,7 +15,7 @@ const Banner = () => {
 
   useEffect(() => {
     if (wallet?.accountId) {
-      potFactoryClient
+      potFactoryContractClient
         .isDeploymentAvailable({
           accountId: wallet.accountId,
         })

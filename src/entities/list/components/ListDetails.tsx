@@ -9,7 +9,7 @@ import { prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
-import { listsClient } from "@/common/contracts/core";
+import { listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/social";
 import {
@@ -84,7 +84,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   } = useListForm();
 
   const applyToListModal = (note: string) => {
-    listsClient
+    listsContractClient
       .register_batch({
         list_id: parseInt(listDetails?.on_chain_id as any) as any,
         notes: note,
@@ -125,7 +125,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
 
   const handleUpvote = () => {
     if (isUpvoted) {
-      listsClient
+      listsContractClient
         .remove_upvote({ list_id: Number(listDetails.on_chain_id) })
         .catch((error) => console.error("Error upvoting:", error));
 
@@ -134,7 +134,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      listsClient
+      listsContractClient
         .upvote({ list_id: Number(listDetails.on_chain_id) })
         .catch((error) => console.error("Error upvoting:", error));
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
-import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
+import { Challenge as ChallengeType, potContractClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
 import AdminIcon from "@/common/ui/svg/AdminIcon";
 import { CheckedIcon } from "@/common/ui/svg/CheckedIcon";
@@ -41,7 +41,7 @@ export const PotPayoutChallenges = ({
       // Get Payouts Challenges for pot
       if (potDetail?.account) {
         try {
-          const _payoutsChallenges = await potClient.getPayoutsChallenges({
+          const _payoutsChallenges = await potContractClient.getPayoutsChallenges({
             potId: potDetail?.account,
           });
 

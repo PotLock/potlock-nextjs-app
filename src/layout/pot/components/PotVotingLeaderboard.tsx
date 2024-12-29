@@ -1,3 +1,7 @@
+import { useMemo } from "react";
+
+import { values } from "remeda";
+
 import { type ByPotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { LabeledIcon } from "@/common/ui/components";
@@ -11,9 +15,21 @@ export type PotVotingLeaderboardProps = ByPotId & {};
 export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potId }) => {
   const votingRoundResults = useVotingRoundResults({ potId });
 
+  const leadingPositionAccountIds = useMemo(
+    () =>
+      values(votingRoundResults?.candidates ?? {})
+        .sort(
+          (candidateA, candidateB) => candidateB.accumulatedWeight - candidateA.accumulatedWeight,
+        )
+        .slice(0, 3)
+        .map(({ accountId }) => accountId),
+
+    [votingRoundResults?.candidates],
+  );
+
   return votingRoundResults === undefined ? null : (
     <div className="md:max-w-126.5 flex w-full flex-col gap-3 rounded-3xl bg-neutral-50 p-3">
-      {votingRoundResults.leadingPositionAccountIds.map((accountId, index) => {
+      {leadingPositionAccountIds.map((accountId, index) => {
         const { accumulatedWeight, estimatedPayoutAmount } =
           votingRoundResults.candidates[accountId];
 
@@ -23,7 +39,6 @@ export const PotVotingLeaderboard: React.FC<PotVotingLeaderboardProps> = ({ potI
             className={cn(
               "elevation-low inline-flex h-16 items-center justify-start gap-2 md:gap-6",
               "bg-background overflow-hidden rounded-2xl p-3",
-              //"hidden", // TODO: Temporarily disabled
             )}
           >
             <div

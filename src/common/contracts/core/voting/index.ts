@@ -1,7 +1,7 @@
-import * as votingHooks from "./hooks";
+import * as votingContractHooks from "./hooks";
 
 export type * from "./hooks";
 export * from "./interfaces";
-export { votingClient } from "./singleton.client";
+export { votingContractClient } from "./singleton.client";
 
-export { votingHooks };
+export { votingContractHooks };

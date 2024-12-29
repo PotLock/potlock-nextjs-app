@@ -6,7 +6,7 @@ import { FaHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { walletApi } from "@/common/api/near/client";
-import { listsClient } from "@/common/contracts/core";
+import { listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import { fetchSocialImages } from "@/common/services/social";
 import { LayersIcon } from "@/common/ui/svg";
@@ -50,14 +50,14 @@ export const ListCard = ({
     e.stopPropagation();
 
     if (isUpvoted) {
-      listsClient.remove_upvote({ list_id: dataForList?.on_chain_id });
+      listsContractClient.remove_upvote({ list_id: dataForList?.on_chain_id });
 
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name, 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      listsClient.upvote({ list_id: dataForList?.on_chain_id });
+      listsContractClient.upvote({ list_id: dataForList?.on_chain_id });
 
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name, 15),

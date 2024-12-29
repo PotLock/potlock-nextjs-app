@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-import { Campaign, CampaignDonation, campaignsClient } from "@/common/contracts/core";
+import { Campaign, CampaignDonation, campaignsContractClient } from "@/common/contracts/core";
 
 export const useCampaign = ({ campaignId }: { campaignId: string }) => {
   const [campaign, setCampaign] = useState<Campaign>();
   const [donations, setDonations] = useState<CampaignDonation[]>([]);
 
   useEffect(() => {
-    campaignsClient
+    campaignsContractClient
       .get_campaign({ campaign_id: parseInt(campaignId as string) as any })
       .then((response) => {
         setCampaign(response);
@@ -16,7 +16,7 @@ export const useCampaign = ({ campaignId }: { campaignId: string }) => {
   }, [campaignId]);
 
   useEffect(() => {
-    campaignsClient
+    campaignsContractClient
       .get_donations_for_campaign({
         campaign_id: parseInt(campaignId as string) as any,
         limit: 999,

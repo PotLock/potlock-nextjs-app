@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Campaign, campaignsClient } from "@/common/contracts/core";
+import { Campaign, campaignsContractClient } from "@/common/contracts/core";
 import { PageWithBanner } from "@/common/ui/components";
 import { CampaignBanner } from "@/entities/campaign/components/CampaignBanner";
 import { CampaignsList } from "@/entities/campaign/components/CampaignsList";
@@ -10,7 +10,7 @@ export default function Campaigns() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
   useEffect(() => {
-    campaignsClient
+    campaignsContractClient
       .get_campaigns()
       .then((fetchedCampaigns) => {
         setCampaigns(fetchedCampaigns);

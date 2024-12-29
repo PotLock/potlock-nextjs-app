@@ -3,7 +3,12 @@ import { useCallback, useMemo } from "react";
 import { useSet, useWindowSize } from "@uidotdev/usehooks";
 import { MdIndeterminateCheckBox } from "react-icons/md";
 
-import { ByElectionId, Candidate, votingClient, votingHooks } from "@/common/contracts/core/voting";
+import {
+  ByElectionId,
+  Candidate,
+  votingContractClient,
+  votingContractHooks,
+} from "@/common/contracts/core/voting";
 import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
@@ -17,7 +22,7 @@ export type VotingRoundCandidateListProps = ByElectionId & {
   onBulkVoteSuccess: () => void;
 };
 
-//? TODO: Use VirtualScroll for better performance
+// TODO: Use VirtualScroll for better performance
 export const VotingRoundCandidateList: React.FC<VotingRoundCandidateListProps> = ({
   electionId,
   data,
@@ -29,7 +34,7 @@ export const VotingRoundCandidateList: React.FC<VotingRoundCandidateListProps> =
   const selectedEntries = useSet<AccountId>();
 
   const { isLoading: _isRemainingUserVotingCapacityLoading, data: remainingUserVotingCapacity } =
-    votingHooks.useVoterRemainingCapacity({
+    votingContractHooks.useVoterRemainingCapacity({
       enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
       electionId,
       accountId: authenticatedUser.accountId ?? "noop",
@@ -49,7 +54,7 @@ export const VotingRoundCandidateList: React.FC<VotingRoundCandidateListProps> =
 
   const handleBulkVote = useCallback(
     () =>
-      votingClient
+      votingContractClient
         .voteBatch({
           election_id: electionId,
           votes: Array.from(selectedEntries.values()).map((accountId) => [accountId, 1]),

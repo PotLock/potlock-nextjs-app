@@ -1,5 +1,5 @@
-import * as listsClient from "./client";
+import * as listsContractClient from "./client";
 
 export * from "./interfaces";
 
-export { listsClient };
+export { listsContractClient };

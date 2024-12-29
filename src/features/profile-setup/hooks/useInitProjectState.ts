@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
-import { listsClient } from "@/common/contracts/core";
+import { listsContractClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
 import { useWallet } from "@/entities/_shared/session";
 import routesPath from "@/pathnames";
@@ -82,7 +82,7 @@ export const useInitProjectState = () => {
 
       (async () => {
         try {
-          const register = await listsClient.getRegistration({
+          const register = await listsContractClient.getRegistration({
             registrant_id: accountId,
           });
 

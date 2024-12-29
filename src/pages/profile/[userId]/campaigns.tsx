@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { Campaign, campaignsClient } from "@/common/contracts/core";
+import { Campaign, campaignsContractClient } from "@/common/contracts/core";
 import { CampaignCard } from "@/entities/campaign/components";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
@@ -14,7 +14,7 @@ const ProfileCampaigns = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
   useEffect(() => {
-    campaignsClient
+    campaignsContractClient
       .get_campaigns_by_owner({ owner_id: accountId })
       .then((fetchedCampaigns) => {
         setCampaigns(fetchedCampaigns);

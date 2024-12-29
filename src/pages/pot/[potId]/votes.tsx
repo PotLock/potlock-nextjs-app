@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
 
 import { nearClient } from "@/common/api/near";
-import { votingHooks } from "@/common/contracts/core/voting";
+import { votingContractHooks } from "@/common/contracts/core/voting";
 import { Button, FilterChip, SearchBar } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
@@ -43,18 +43,20 @@ export default function PotVotesTab() {
 
   const activeVotingRound = useActiveVotingRound({ potId });
 
-  const { data: authenticatedVotingRoundVoterVotes } = votingHooks.useVotingRoundVoterVotes({
-    enabled: activeVotingRound !== undefined && authenticatedUser.accountId !== undefined,
-    electionId: activeVotingRound?.electionId ?? 0,
-    accountId: authenticatedUser.accountId ?? "noop",
-  });
+  const { data: authenticatedVotingRoundVoterVotes } = votingContractHooks.useVotingRoundVoterVotes(
+    {
+      enabled: activeVotingRound !== undefined && authenticatedUser.accountId !== undefined,
+      electionId: activeVotingRound?.electionId ?? 0,
+      accountId: authenticatedUser.accountId ?? "noop",
+    },
+  );
 
-  const { data: activeElectionVoteCount } = votingHooks.useElectionVoteCount({
+  const { data: activeElectionVoteCount } = votingContractHooks.useElectionVoteCount({
     enabled: activeVotingRound !== undefined,
     electionId: activeVotingRound?.electionId ?? 0,
   });
 
-  const { data: activeElectionVoterAccountIds } = votingHooks.useUniqueVoters({
+  const { data: activeElectionVoterAccountIds } = votingContractHooks.useUniqueVoters({
     enabled: activeVotingRound !== undefined,
     electionId: activeVotingRound?.electionId ?? 0,
   });
