@@ -171,8 +171,8 @@ export const AccountGroupEditModal = create(
               </Button>
             </div>
 
-            <ScrollArea className="w-full whitespace-nowrap rounded-b-lg">
-              <div className="flex w-full flex-col">
+            <ScrollArea className="w-full whitespace-nowrap rounded-b-lg px-5 py-3">
+              <div className="max-h-100 flex w-full flex-col overflow-auto">
                 {accountIds.map((accountId) => (
                   <AccountListItem
                     key={accountId}

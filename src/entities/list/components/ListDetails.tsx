@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 
 import { show } from "@ebay/nice-modal-react";
+import { Copy } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
@@ -11,7 +12,6 @@ import { List } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
 import { listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/social";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,7 +48,6 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   } = useRouter();
 
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
-  const [listOwnerImage, setListOwnerImage] = useState<string>("");
   const [isApplicationSuccessful, setIsApplicationSuccessful] = useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] = useState({ open: false });
 
@@ -58,18 +57,6 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   const isUpvoted = listDetails?.upvotes?.some(
     (data: any) => data?.account === walletApi.accountId,
   );
-
-  useEffect(() => {
-    const fetchProfileImage = async () => {
-      const { image } = await fetchSocialImages({
-        accountId: listDetails?.owner?.id || "",
-      });
-
-      setListOwnerImage(image);
-    };
-
-    if (id) fetchProfileImage();
-  }, [id, listDetails?.owner?.id]);
 
   const openRegistrantsModal = useCallback(() => show(registrantsModalId), [registrantsModalId]);
 
@@ -114,7 +101,15 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
     });
   };
 
-  const onEditList = () => push(`/list/edit/${listDetails?.on_chain_id}`);
+  const onEditList = useCallback(
+    () => push(`/list/edit/${listDetails?.on_chain_id}`),
+    [listDetails?.on_chain_id, push],
+  );
+
+  const onDuplicateList = useCallback(
+    () => push(`/list/duplicate/${listDetails?.on_chain_id}`),
+    [listDetails?.on_chain_id, push],
+  );
 
   if (!listDetails) {
     return <p>No list details available.</p>;
@@ -145,19 +140,11 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
     }
   };
 
-  const NO_IMAGE =
-    "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
-
   const nameContent = (
     <>
       <p className="font-lora mb-2 text-2xl font-semibold">{listDetails.name}</p>
       <div className="mb-2 flex items-center space-x-2 text-[12px] text-[#656565]">
-        BY{" "}
-        <img
-          className="ml-2 h-4 w-4 rounded-full object-cover"
-          src={listOwnerImage || NO_IMAGE}
-          alt="Owner"
-        />
+        BY <AccountProfilePicture accountId={listDetails?.owner?.id} className="ml-4 h-4 w-4" />
         <Link target="_blank" href={`/profile/${listDetails.owner?.id}`}>
           {listDetails.owner?.id}
         </Link>
@@ -238,38 +225,47 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                     </button>
                   )}
                 </div>
-                {isAdmin && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <div className="cursor-pointer rounded p-2  opacity-50 hover:bg-red-100">
-                        <DotsIcons />
-                      </div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-background rounded border shadow-md">
-                      <DropdownMenuItem
-                        onClick={onEditList}
-                        className="cursor-pointer p-2 hover:bg-gray-200"
-                      >
-                        <PenIcon className="mr-1 max-w-[22px]" />
-                        <span>Edit list details</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={openRegistrantsModal}
-                        className="cursor-pointer p-2 hover:bg-gray-200"
-                      >
-                        <AdminUserIcon className="mr-1 max-w-[22px]" />
-                        Add/Remove accounts
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setIsListConfirmationModalOpen({ open: true })}
-                        className="cursor-pointer p-2 hover:bg-gray-200"
-                      >
-                        <DeleteListIcon className="mr-1 max-w-[22px]" />
-                        <span className="text-red-500">Delete List</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="cursor-pointer rounded p-2  opacity-50 hover:bg-red-100">
+                      <DotsIcons />
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-background rounded border shadow-md">
+                    <DropdownMenuItem
+                      onClick={onDuplicateList}
+                      className="cursor-pointer p-2 hover:bg-gray-200"
+                    >
+                      <Copy className="mr-1 max-w-[22px]" />
+                      <span>Duplicate List</span>
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuItem
+                          onClick={onEditList}
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          <PenIcon className="mr-1 max-w-[22px]" />
+                          <span>Edit list details</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={openRegistrantsModal}
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          <AdminUserIcon className="mr-1 max-w-[22px]" />
+                          Add/Remove accounts
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setIsListConfirmationModalOpen({ open: true })}
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          <DeleteListIcon className="mr-1 max-w-[22px]" />
+                          <span className="text-red-500">Delete List</span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
           </div>
