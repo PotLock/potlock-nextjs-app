@@ -8,9 +8,9 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { walletApi } from "@/common/api/near/client";
 import { listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/social";
 import { LayersIcon } from "@/common/ui/svg";
 import { LikeIcon } from "@/common/ui/svg/like";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 import { ListFormModalType } from "../types";
@@ -25,21 +25,11 @@ export const ListCard = ({
   backdrop: string;
 }) => {
   const [isUpvoted, setIsUpvoted] = useState(false);
-  const [profileImage, setProfileImage] = useState("");
   const { push } = useRouter();
 
   useEffect(() => {
-    const fetchProfileImage = async () => {
-      const { image } = await fetchSocialImages({
-        accountId: dataForList.owner,
-      });
-
-      setProfileImage(image);
-    };
-
-    if (dataForList.owner) fetchProfileImage();
     setIsUpvoted(dataForList.upvotes?.some((data: any) => data?.account === walletApi.accountId));
-  }, [dataForList.owner]);
+  }, [dataForList]);
 
   const handleRoute = useCallback(
     () => push(`/list/${dataForList?.on_chain_id}`),
@@ -121,11 +111,7 @@ export const ListCard = ({
                 className="flex items-center gap-1 hover:opacity-50"
                 onClick={handleRouteUser}
               >
-                <img
-                  src={profileImage || NO_IMAGE}
-                  alt="person"
-                  className="h-4 w-4 rounded-full object-cover"
-                />
+                <AccountProfilePicture accountId={dataForList?.owner?.id} className="h-4 w-4" />
 
                 <p className="">{truncate(dataForList.owner?.id, 25)}</p>
               </div>
