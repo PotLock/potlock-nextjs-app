@@ -33,12 +33,16 @@ export const VotingRoundCandidateList: React.FC<VotingRoundCandidateListProps> =
   const authenticatedUser = useSession();
   const selectedEntries = useSet<AccountId>();
 
-  const { isLoading: _isRemainingUserVotingCapacityLoading, data: remainingUserVotingCapacity } =
-    votingContractHooks.useVoterRemainingCapacity({
-      enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
-      electionId,
-      accountId: authenticatedUser.accountId ?? "noop",
-    });
+  const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
+    enabled: electionId !== 0,
+    electionId,
+  });
+
+  const { data: remainingUserVotingCapacity } = votingContractHooks.useVoterRemainingCapacity({
+    enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
+    electionId,
+    accountId: authenticatedUser.accountId ?? "noop",
+  });
 
   const handleEntrySelect = useCallback(
     (accountId: AccountId, isSelected: boolean): void =>
@@ -101,11 +105,13 @@ export const VotingRoundCandidateList: React.FC<VotingRoundCandidateListProps> =
             </span>
           </div>
 
-          <div className="flex h-10 w-24 items-center px-4 py-2">
-            <span className="font-600 shrink grow basis-0 text-center uppercase leading-none">
-              {"Actions"}
-            </span>
-          </div>
+          {isVotingPeriodOngoing && (
+            <div className="flex h-10 w-24 items-center px-4 py-2">
+              <span className="font-600 shrink grow basis-0 text-center uppercase leading-none">
+                {"Actions"}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -116,6 +122,7 @@ export const VotingRoundCandidateList: React.FC<VotingRoundCandidateListProps> =
               key={candidate.account_id}
               data={candidate}
               isSelected={selectedEntries.has(candidate.account_id)}
+              isVotable={isVotingPeriodOngoing}
               onSelect={handleEntrySelect}
               {...{ electionId }}
             />

@@ -2,11 +2,18 @@ import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/router";
-import { MdHowToVote, MdOutlineDescription, MdStar } from "react-icons/md";
+import { MdHowToVote, MdOutlineDescription, MdOutlineInfo, MdStar } from "react-icons/md";
 
 import { nearClient } from "@/common/api/near";
 import { votingContractHooks } from "@/common/contracts/core/voting";
-import { Button, FilterChip, SearchBar } from "@/common/ui/components";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  FilterChip,
+  SearchBar,
+} from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useSession } from "@/entities/_shared/session";
@@ -15,10 +22,10 @@ import {
   VotingRoundCandidateList,
   VotingRoundRuleList,
   VotingRoundVoteWeightBreakdown,
+  useVotingRound,
   useVotingRoundCandidateLookup,
   useVotingRoundVoterVoteWeight,
 } from "@/entities/voting-round";
-import { useActiveVotingRound } from "@/entities/voting-round/hooks/rounds";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotVotesTab() {
@@ -41,24 +48,29 @@ export default function PotVotesTab() {
     potId,
   });
 
-  const activeVotingRound = useActiveVotingRound({ potId });
+  const votingRound = useVotingRound({ potId });
+
+  const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
+    enabled: votingRound !== undefined,
+    electionId: votingRound?.electionId ?? 0,
+  });
 
   const { data: authenticatedVotingRoundVoterVotes } = votingContractHooks.useVotingRoundVoterVotes(
     {
-      enabled: activeVotingRound !== undefined && authenticatedUser.accountId !== undefined,
-      electionId: activeVotingRound?.electionId ?? 0,
+      enabled: votingRound !== undefined && authenticatedUser.accountId !== undefined,
+      electionId: votingRound?.electionId ?? 0,
       accountId: authenticatedUser.accountId ?? "noop",
     },
   );
 
   const { data: activeElectionVoteCount } = votingContractHooks.useElectionVoteCount({
-    enabled: activeVotingRound !== undefined,
-    electionId: activeVotingRound?.electionId ?? 0,
+    enabled: votingRound !== undefined,
+    electionId: votingRound?.electionId ?? 0,
   });
 
   const { data: activeElectionVoterAccountIds } = votingContractHooks.useUniqueVoters({
-    enabled: activeVotingRound !== undefined,
-    electionId: activeVotingRound?.electionId ?? 0,
+    enabled: votingRound !== undefined,
+    electionId: votingRound?.electionId ?? 0,
   });
 
   const {
@@ -67,7 +79,7 @@ export default function PotVotesTab() {
     votedCandidates,
     votableCandidates,
     mutate: revalidateCandidates,
-  } = useVotingRoundCandidateLookup({ electionId: activeVotingRound?.electionId ?? 0 });
+  } = useVotingRoundCandidateLookup({ electionId: votingRound?.electionId ?? 0 });
 
   const onSearchTermChange = useCallback(
     ({ target }: ChangeEvent<HTMLInputElement>) => setCandidateSearchTerm(target.value),
@@ -89,7 +101,7 @@ export default function PotVotesTab() {
           variant={candidateFilter === "voted" ? "brand-filled" : "brand-outline"}
           onClick={() => setFilter("voted")}
           className="font-medium"
-          label="Voted By Me"
+          label="Voted by You"
           count={votedCandidates.length}
         />
 
@@ -97,7 +109,7 @@ export default function PotVotesTab() {
           variant={candidateFilter === "pending" ? "brand-filled" : "brand-outline"}
           onClick={() => setFilter("pending")}
           className="font-medium"
-          label="Not Voted By Me"
+          label="Not Voted by You"
           count={votableCandidates.length}
         />
       </div>
@@ -122,12 +134,24 @@ export default function PotVotesTab() {
     }
   }, [candidateFilter, votedCandidates, votableCandidates, candidates]);
 
-  return activeVotingRound === undefined ? (
+  return votingRound === undefined ? (
     <div className="h-100 flex w-full flex-col items-center justify-center">
       <p className="prose text-2xl">{"Voting round is finished."}</p>
     </div>
   ) : (
     <div className="flex w-full flex-col gap-6">
+      <Alert variant={isVotingPeriodOngoing ? "neutral" : "warning"}>
+        <MdOutlineInfo className="color-neutral-400 h-4 w-4" />
+
+        <AlertTitle>
+          {`Voting is ${isVotingPeriodOngoing ? "open" : "closed"} for this round`}
+        </AlertTitle>
+
+        {isVotingPeriodOngoing && (
+          <AlertDescription>{"You can cast your votes now."}</AlertDescription>
+        )}
+      </Alert>
+
       <SearchBar placeholder="Search Projects" onChange={onSearchTermChange} />
 
       <div className="flex w-full justify-between">
@@ -174,28 +198,36 @@ export default function PotVotesTab() {
                   </span>
 
                   <span className="font-500 text-4.25 leading-normal">
-                    {`/${activeVotingRound.election.votes_per_voter ?? 0} Votes Casted by You`}
+                    {`/${votingRound.election.votes_per_voter ?? 0} Votes Casted by You`}
                   </span>
                 </span>
               ) : (
-                <div className="font-500 text-4.25 flex items-center justify-center gap-1">
-                  <span className="prose">{"Please"}</span>
+                <>
+                  {isVotingPeriodOngoing ? (
+                    <div className="font-500 text-4.25 flex items-center justify-center gap-1">
+                      <span className="prose">{"Please"}</span>
 
-                  <Button
-                    font="semibold"
-                    variant="standard-plain"
-                    onClick={onSignInClick}
-                    className={cn(
-                      "underline-dotted underline-offset-3 underline-neutral-950",
-                      "underline-opacity-30 hover:underline-solid important:text-lg",
-                      "border-none p-0 underline",
-                    )}
-                  >
-                    {"Sign In"}
-                  </Button>
+                      <Button
+                        font="semibold"
+                        variant="standard-plain"
+                        onClick={onSignInClick}
+                        className={cn(
+                          "underline-dotted underline-offset-3 underline-neutral-950",
+                          "underline-opacity-30 hover:underline-solid important:text-lg",
+                          "border-none p-0 underline",
+                        )}
+                      >
+                        {"Sign In"}
+                      </Button>
 
-                  <span className="prose">{"to vote."}</span>
-                </div>
+                      <span className="prose">{"to vote."}</span>
+                    </div>
+                  ) : (
+                    <span className="inline-flex flex-nowrap items-center font-semibold">
+                      <span className="font-500 text-4.25 leading-normal">{"Final Results"}</span>
+                    </span>
+                  )}
+                </>
               )}
             </div>
 
@@ -248,7 +280,7 @@ export default function PotVotesTab() {
           </div>
 
           <VotingRoundCandidateList
-            electionId={activeVotingRound.electionId}
+            electionId={votingRound.electionId}
             data={candidateList}
             onBulkVoteSuccess={revalidateCandidates}
           />

@@ -14,12 +14,14 @@ import { useVotingRoundCandidateEntry } from "../hooks/candidates";
 export type VotingRoundCandidateListItemProps = ByElectionId & {
   data: Candidate;
   isSelected?: boolean;
+  isVotable?: boolean;
   onSelect?: (accountId: string, isSelected: boolean) => void;
 };
 
 export const VotingRoundCandidateListItem: React.FC<VotingRoundCandidateListItemProps> = ({
   electionId,
   data: { account_id: accountId, votes_received: votesCount },
+  isVotable = true,
   isSelected = false,
   onSelect,
 }) => {
@@ -88,21 +90,23 @@ export const VotingRoundCandidateListItem: React.FC<VotingRoundCandidateListItem
             )}
           </div>
 
-          <div className="inline-flex h-16 items-center justify-end p-4 pr-0">
-            {isLoading ? (
-              <Skeleton className="w-15.5 h-10" />
-            ) : (
-              <Button
-                variant="standard-outline"
-                disabled={!canReceiveVotes}
-                title={canReceiveVotes ? undefined : unableToVoteError}
-                onClick={handleVoteCast}
-                className="ml-auto h-fit"
-              >
-                {"Vote"}
-              </Button>
-            )}
-          </div>
+          {isVotable && (
+            <div className="inline-flex h-16 items-center justify-end p-4 pr-0">
+              {isLoading ? (
+                <Skeleton className="w-15.5 h-10" />
+              ) : (
+                <Button
+                  variant="standard-outline"
+                  disabled={!canReceiveVotes}
+                  title={canReceiveVotes ? undefined : unableToVoteError}
+                  onClick={handleVoteCast}
+                  className="ml-auto h-fit"
+                >
+                  {"Vote"}
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       }
       {...{ accountId }}

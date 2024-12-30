@@ -68,7 +68,7 @@ const AlertDescription = forwardRef<HTMLParagraphElement, AlertDescriptionProps>
     <div
       ref={ref}
       className={cn(
-        "prose font-500 text-sm text-neutral-600 [&_p]:leading-relaxed",
+        "prose font-500 text-sm text-neutral-700 [&_p]:leading-relaxed",
         { "important:pl-0": inline, "important:pl-8": !inline },
         className,
       )}
