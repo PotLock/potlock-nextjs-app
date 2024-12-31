@@ -19,7 +19,7 @@ import { cn } from "@/common/ui/utils";
 import { useSession } from "@/entities/_shared/session";
 import {
   VotingRoundCandidateFilter,
-  VotingRoundCandidateList,
+  VotingRoundCandidateTable,
   VotingRoundRuleList,
   VotingRoundVoteWeightBreakdown,
   useVotingRound,
@@ -277,7 +277,7 @@ export default function PotVotesTab() {
             </div>
           </div>
 
-          <VotingRoundCandidateList
+          <VotingRoundCandidateTable
             electionId={votingRound.electionId}
             data={candidateList}
             onBulkVoteSuccess={revalidateCandidates}

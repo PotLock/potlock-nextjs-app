@@ -4,12 +4,12 @@ import { ScrollArea } from "@/common/ui/components";
 
 import type { VotingRoundWinner } from "../types";
 
-export type VotingRoundWinnerListProps = {
+export type VotingRoundResultsTableProps = {
   data: VotingRoundWinner[];
 };
 
 // TODO: Use VirtualScroll for better performance
-export const VotingRoundWinnerList: React.FC<VotingRoundWinnerListProps> = ({ data }) => {
+export const VotingRoundResultsTable: React.FC<VotingRoundResultsTableProps> = ({ data }) => {
   const { height: windowHeight } = useWindowSize();
 
   return (
@@ -41,7 +41,7 @@ export const VotingRoundWinnerList: React.FC<VotingRoundWinnerListProps> = ({ da
       <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
         <div className="flex flex-col gap-2 pb-8 pt-2">
           {/* {data.map((winner) => (
-            <VotingRoundWinnerListItem key={winner.accountId} data={winner} />
+            <VotingRoundResultsTableItem key={winner.accountId} data={winner} />
           ))} */}
         </div>
       </ScrollArea>

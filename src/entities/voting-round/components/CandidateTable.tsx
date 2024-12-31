@@ -15,15 +15,15 @@ import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useSession } from "@/entities/_shared/session";
 
-import { VotingRoundCandidateListItem } from "./CandidateListItem";
+import { VotingRoundCandidateRow } from "./CandidateRow";
 
-export type VotingRoundCandidateListProps = ByElectionId & {
+export type VotingRoundCandidateTableProps = ByElectionId & {
   data: Candidate[];
   onBulkVoteSuccess: () => void;
 };
 
 // TODO: Use VirtualScroll for better performance
-export const VotingRoundCandidateList: React.FC<VotingRoundCandidateListProps> = ({
+export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps> = ({
   electionId,
   data,
   onBulkVoteSuccess,
@@ -118,7 +118,7 @@ export const VotingRoundCandidateList: React.FC<VotingRoundCandidateListProps> =
       <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
         <div className="flex flex-col gap-2 pb-8 pt-2">
           {data.map((candidate) => (
-            <VotingRoundCandidateListItem
+            <VotingRoundCandidateRow
               key={candidate.account_id}
               data={candidate}
               isSelected={selectedEntries.has(candidate.account_id)}

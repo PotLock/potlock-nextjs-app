@@ -3,7 +3,7 @@ export * from "./types";
 // export * from "./constants";
 
 export * from "./components/badges";
-export * from "./components/CandidateList";
+export * from "./components/CandidateTable";
 export * from "./components/HistoryEntry";
 export * from "./components/Leaderboard";
 export * from "./components/RuleList";

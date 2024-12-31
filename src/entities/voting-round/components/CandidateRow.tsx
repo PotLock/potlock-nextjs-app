@@ -11,14 +11,14 @@ import { useSession } from "@/entities/_shared/session";
 
 import { useVotingRoundCandidateEntry } from "../hooks/candidates";
 
-export type VotingRoundCandidateListItemProps = ByElectionId & {
+export type VotingRoundCandidateRowProps = ByElectionId & {
   data: Candidate;
   isSelected?: boolean;
   isVotable?: boolean;
   onSelect?: (accountId: string, isSelected: boolean) => void;
 };
 
-export const VotingRoundCandidateListItem: React.FC<VotingRoundCandidateListItemProps> = ({
+export const VotingRoundCandidateRow: React.FC<VotingRoundCandidateRowProps> = ({
   electionId,
   data: { account_id: accountId, votes_received: votesCount },
   isVotable = true,
@@ -28,10 +28,7 @@ export const VotingRoundCandidateListItem: React.FC<VotingRoundCandidateListItem
   const user = useSession();
 
   const { isLoading, canReceiveVotes, hasUserVotes, handleVoteCast } = useVotingRoundCandidateEntry(
-    {
-      electionId,
-      accountId,
-    },
+    { electionId, accountId },
   );
 
   const unableToVoteError = useMemo(() => {
