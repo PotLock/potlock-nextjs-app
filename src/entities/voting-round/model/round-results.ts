@@ -1,4 +1,5 @@
 import { Big } from "big.js";
+import { fromEntries } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -7,12 +8,11 @@ import { PRICES_REQUEST_CONFIG, intearPricesClient } from "@/common/api/intear-p
 import { is_human } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
 import { ftClient } from "@/common/contracts/tokens/ft";
-import type { ByAccountId } from "@/common/types";
 
 import { VOTING_ROUND_CONFIG_MPDAO } from "./hardcoded";
 import type { VoterProfile, VotingRoundWinner } from "../types";
 
-type VotingRoundWinnerIntermediateData = ByAccountId & {
+type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "voteCount"> & {
   accumulatedWeight: Big;
 };
 
@@ -47,9 +47,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           ...new Set(votes.map(({ voter: voterAccountId }) => voterAccountId)),
         ];
 
-        const voterProfiles: Record<AccountId, VoterProfile> = {};
-
-        await Promise.all(
+        const voterProfiles: Record<AccountId, VoterProfile> = await Promise.all(
           uniqueVoterAccountIds.map(async (voterAccountId) => {
             const { data: voterInfo } = await indexerClient
               .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId })
@@ -93,14 +91,14 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
                     .catch(() => undefined)
                 : undefined;
 
-            voterProfiles[voterAccountId] = {
-              isHumanVerified,
-              votingPower,
-              stakingTokenBalance,
-              stakingTokenBalanceUsd,
-            };
+            return [
+              voterAccountId,
+              { isHumanVerified, votingPower, stakingTokenBalance, stakingTokenBalanceUsd },
+            ] as [AccountId, VoterProfile];
           }),
-        );
+        )
+          .then((entries) => fromEntries(entries))
+          .catch(() => ({}));
 
         // Helper function to calculate voter's weight based on their profile
         const calculateVoterWeight = (voterAccountId: AccountId) => {
@@ -166,6 +164,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           // Store intermediate results with Big.js precision
           acc[candidateAccountId as AccountId] = {
             accountId: candidateAccountId,
+            voteCount: candidateVotes.length,
             accumulatedWeight: accumulatedWeight,
           };
 

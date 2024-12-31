@@ -1,11 +1,15 @@
-import { ReactElement, useMemo, useState } from "react";
+import { ReactElement, useCallback, useMemo, useState } from "react";
 
-import { Info } from "lucide-react";
 import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { useRouter } from "next/router";
+import { MdFileDownload, MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -31,6 +35,10 @@ export default function PayoutsTab() {
   const { potId } = router.query as { potId: string };
   const { data: potDetail } = indexer.usePot({ potId });
   const votingRoundResults = useVotingRoundResults({ potId });
+
+  const handleCsvExport = useCallback(() => {
+    // Form CSV file from votingRoundResults and initiate download
+  }, []);
 
   console.log(votingRoundResults?.winners);
 
@@ -118,7 +126,18 @@ export default function PayoutsTab() {
         )}
       >
         <div className="mb-8 flex w-full flex-row justify-between">
-          <h2 className="text-xl font-semibold">Estimated Payout</h2>
+          <div className="flex w-full flex-wrap items-center justify-between">
+            <h2 className="text-xl font-semibold">{"Estimated Payout"}</h2>
+
+            {votingRoundResults === undefined ? (
+              <Skeleton className="w-45 h-10" />
+            ) : (
+              <Button variant="brand-outline" onClick={handleCsvExport} disabled>
+                <MdFileDownload className="h-5 w-5" />
+                <span>{"Export results in CSV"}</span>
+              </Button>
+            )}
+          </div>
 
           {!!totalChallenges && (
             <div
@@ -160,21 +179,18 @@ export default function PayoutsTab() {
         </div>
 
         <div className="mb-16 flex w-full flex-col items-start gap-6 md:flex-row">
-          <div className=" w-full">
+          <div className="w-full">
             {!potDetail?.all_paid_out ? (
-              <div className="mb-4 flex items-start gap-4 bg-[#f6f6f7] p-4">
-                <Info />
+              <Alert variant="neutral">
+                <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+                <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
 
-                <div className="text-start">
-                  <h2 className="text-[17px] font-semibold">Justification For Payout Changes</h2>
-
-                  <p className="text-sm text-[#525252] ">
-                    {potDetail?.cooldown_end
-                      ? "These payouts have been set on the contract but have not been paid out yet."
-                      : "These payouts are estimated amounts only and have not been set on the contract yet."}
-                  </p>
-                </div>
-              </div>
+                <AlertDescription>
+                  {potDetail?.cooldown_end
+                    ? "These payouts have been set on the contract but have not been paid out yet."
+                    : "These payouts are estimated amounts only and have not been set on the contract yet."}
+                </AlertDescription>
+              </Alert>
             ) : (
               <>
                 <SearchBar

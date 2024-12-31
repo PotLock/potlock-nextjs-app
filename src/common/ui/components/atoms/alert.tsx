@@ -51,7 +51,7 @@ const AlertTitle = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHea
   ({ className, ...props }, ref) => (
     <h5
       ref={ref}
-      className={cn("font-500 important:pl-8 leading-5 tracking-normal", className)}
+      className={cn("font-600 important:pl-8 text-[17px] leading-5 tracking-normal", className)}
       {...props}
     />
   ),

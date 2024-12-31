@@ -141,7 +141,7 @@ export default function PotVotesTab() {
   ) : (
     <div className="flex w-full flex-col gap-6">
       <Alert variant={isVotingPeriodOngoing ? "neutral" : "warning"}>
-        <MdOutlineInfo className="color-neutral-400 h-4 w-4" />
+        <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
 
         <AlertTitle>
           {`Voting is ${isVotingPeriodOngoing ? "open" : "closed"} for this round`}
