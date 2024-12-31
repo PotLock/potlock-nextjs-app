@@ -48,13 +48,15 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           ...new Set(votes.map(({ voter: voterAccountId }) => voterAccountId)),
         ];
 
+        const stakingTokenMetadata = stakingContractAccountId
+          ? await ftClient.ft_metadata({ tokenId: stakingContractAccountId })
+          : null;
+
         const voterProfiles: Record<AccountId, VoterProfile> = await Promise.all(
           uniqueVoterAccountIds.map(async (voterAccountId) => {
             const { data: voterInfo } = await indexerClient
               .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId })
               .catch(() => ({ data: undefined }));
-
-            const stakingTokenId = voterInfo?.staking_token_id || stakingContractAccountId;
 
             const votingPower = voterInfo
               ? voterInfo?.locking_positions?.reduce(
@@ -68,10 +70,6 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
             const isHumanVerified = await is_human({ account_id: voterAccountId }).catch(
               () => false,
             );
-
-            const stakingTokenMetadata = stakingTokenId
-              ? await ftClient.ft_metadata({ tokenId: stakingTokenId })
-              : null;
 
             const stakingTokenBalance = voterInfo?.staking_token_balance
               ? stringifiedU128ToBigNum(

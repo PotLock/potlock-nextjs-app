@@ -28,14 +28,9 @@ export const useVoterProfile = ({
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
-  const stakingTokenId = useMemo(
-    () => voterInfo?.staking_token_id || stakingContractAccountId,
-    [stakingContractAccountId, voterInfo?.staking_token_id],
-  );
-
   const { data: stakingToken } = useToken({
-    enabled: stakingTokenId !== undefined,
-    tokenId: stakingTokenId as TokenId,
+    enabled: stakingContractAccountId !== undefined,
+    tokenId: stakingContractAccountId as TokenId,
   });
 
   return useMemo(
