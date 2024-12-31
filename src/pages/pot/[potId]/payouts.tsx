@@ -1,6 +1,7 @@
-import { ReactElement, useCallback, useMemo, useState } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
 import { formatNearAmount } from "near-api-js/lib/utils/format";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { MdFileDownload, MdOutlineInfo } from "react-icons/md";
 
@@ -33,14 +34,11 @@ const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 export default function PayoutsTab() {
   const router = useRouter();
   const { potId } = router.query as { potId: string };
-  const { data: potDetail } = indexer.usePot({ potId });
-  const votingRoundResults = useVotingRoundResults({ potId });
+  const { data: pot } = indexer.usePot({ potId });
 
-  const handleCsvExport = useCallback(() => {
-    // Form CSV file from votingRoundResults and initiate download
-  }, []);
-
-  console.log(votingRoundResults?.winners);
+  const { votingRoundResults, handleVotingRoundResultsCsvDownload } = useVotingRoundResults({
+    potId,
+  });
 
   const {
     payouts,
@@ -129,12 +127,16 @@ export default function PayoutsTab() {
           <div className="flex w-full flex-wrap items-center justify-between">
             <h2 className="text-xl font-semibold">{"Estimated Payout"}</h2>
 
-            {votingRoundResults === undefined ? (
+            {handleVotingRoundResultsCsvDownload === undefined ? (
               <Skeleton className="w-45 h-10" />
             ) : (
-              <Button variant="brand-outline" onClick={handleCsvExport} disabled>
+              <Button
+                variant="brand-outline"
+                onClick={handleVotingRoundResultsCsvDownload}
+                disabled // TODO: remove once accumulated weight is calculated correctly
+              >
                 <MdFileDownload className="h-5 w-5" />
-                <span>{"Export results in CSV"}</span>
+                <span className="prose">{"Download CSV"}</span>
               </Button>
             )}
           </div>
@@ -175,18 +177,18 @@ export default function PayoutsTab() {
             { hidden: !showChallenges },
           )}
         >
-          <PotPayoutChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />
+          <PotPayoutChallenges potDetail={pot} setTotalChallenges={setTotalChallenges} />
         </div>
 
         <div className="mb-16 flex w-full flex-col items-start gap-6 md:flex-row">
           <div className="w-full">
-            {!potDetail?.all_paid_out ? (
+            {!pot?.all_paid_out ? (
               <Alert variant="neutral">
                 <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
                 <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
 
                 <AlertDescription>
-                  {potDetail?.cooldown_end
+                  {pot?.cooldown_end
                     ? "These payouts have been set on the contract but have not been paid out yet."
                     : "These payouts are estimated amounts only and have not been set on the contract yet."}
                 </AlertDescription>
@@ -318,7 +320,7 @@ export default function PayoutsTab() {
           "hidden w-full transition-all duration-500 ease-in-out md:w-[33%]",
         )}
       >
-        <PotPayoutChallenges potDetail={potDetail} setTotalChallenges={setTotalChallenges} />
+        <PotPayoutChallenges potDetail={pot} setTotalChallenges={setTotalChallenges} />
       </div>
     </div>
   );

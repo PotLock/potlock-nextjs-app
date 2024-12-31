@@ -72,6 +72,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
                 })
               : null;
 
+            // TODO: Take from the voter info response instead ( when it's ready )
             const stakingTokenBalance =
               stakingContractAccountId && stakingTokenMetadata
                 ? await ftClient
