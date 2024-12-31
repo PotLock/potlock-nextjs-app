@@ -73,6 +73,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
               : null;
 
             // TODO: Take from the voter info response instead ( when it's ready )
+            //! Bottleneck: RPC rate limit hit
             const stakingTokenBalance =
               stakingContractAccountId && stakingTokenMetadata
                 ? await ftClient
@@ -81,21 +82,10 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
                     .catch(() => undefined)
                 : undefined;
 
-            const stakingTokenBalanceUsd =
-              stakingContractAccountId && stakingTokenBalance
-                ? await intearPricesClient
-                    .getSuperPrecisePrice(
-                      { token_id: stakingContractAccountId },
-                      PRICES_REQUEST_CONFIG.axios,
-                    )
-                    .then(({ data: price }) => Big(price).mul(stakingTokenBalance))
-                    .catch(() => undefined)
-                : undefined;
-
-            return [
-              voterAccountId,
-              { isHumanVerified, votingPower, stakingTokenBalance, stakingTokenBalanceUsd },
-            ] as [AccountId, VoterProfile];
+            return [voterAccountId, { isHumanVerified, votingPower, stakingTokenBalance }] as [
+              AccountId,
+              VoterProfile,
+            ];
           }),
         )
           .then((entries) => fromEntries(entries))

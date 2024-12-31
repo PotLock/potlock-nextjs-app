@@ -133,7 +133,7 @@ export default function PayoutsTab() {
               <Button
                 variant="brand-outline"
                 onClick={handleVotingRoundResultsCsvDownload}
-                disabled // TODO: remove once accumulated weight is calculated correctly
+                // disabled // TODO: remove once accumulated weight is calculated correctly
               >
                 <MdFileDownload className="h-5 w-5" />
                 <span className="prose">{"Download CSV"}</span>

@@ -140,9 +140,11 @@ export default function PotVotesTab() {
     </div>
   ) : (
     <div className="flex w-full flex-col gap-6">
-      <Alert variant={isVotingPeriodOngoing ? "neutral" : "warning"}>
+      <Alert
+        variant={isVotingPeriodOngoing ? "neutral" : "warning"}
+        className={cn({ "inline-with-icon": !isVotingPeriodOngoing })}
+      >
         <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-
         <AlertTitle>{`Voting round is ${isVotingPeriodOngoing ? "open" : "closed"}`}</AlertTitle>
 
         {isVotingPeriodOngoing && (
