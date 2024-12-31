@@ -8,6 +8,7 @@ import { PRICES_REQUEST_CONFIG, intearPricesClient } from "@/common/api/intear-p
 import { is_human } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
 import { ftClient } from "@/common/contracts/tokens/ft";
+import { stringifiedU128ToBigNum } from "@/common/lib";
 
 import { VOTING_ROUND_CONFIG_MPDAO } from "./hardcoded";
 import type { VoterProfile, VotingRoundWinner } from "../types";
@@ -53,8 +54,10 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
               .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId })
               .catch(() => ({ data: undefined }));
 
+            const stakingTokenId = voterInfo?.staking_token_id || stakingContractAccountId;
+
             const votingPower = voterInfo
-              ? voterInfo?.locking_positions.reduce(
+              ? voterInfo?.locking_positions?.reduce(
                   (sum: Big, { voting_power }: { voting_power: string }) =>
                     sum.add(Big(voting_power)),
 
@@ -66,21 +69,16 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
               () => false,
             );
 
-            const stakingTokenMetadata = stakingContractAccountId
-              ? await ftClient.ft_metadata({
-                  tokenId: stakingContractAccountId,
-                })
+            const stakingTokenMetadata = stakingTokenId
+              ? await ftClient.ft_metadata({ tokenId: stakingTokenId })
               : null;
 
-            // TODO: Take from the voter info response instead ( when it's ready )
-            //! Bottleneck: RPC rate limit hit
-            const stakingTokenBalance =
-              stakingContractAccountId && stakingTokenMetadata
-                ? await ftClient
-                    .ft_balance_of({ accountId: voterAccountId, tokenId: stakingContractAccountId })
-                    .then((balance) => Big(balance || 0))
-                    .catch(() => undefined)
-                : undefined;
+            const stakingTokenBalance = voterInfo?.staking_token_balance
+              ? stringifiedU128ToBigNum(
+                  voterInfo.staking_token_balance,
+                  stakingTokenMetadata?.decimals ?? 0,
+                )
+              : undefined;
 
             return [voterAccountId, { isHumanVerified, votingPower, stakingTokenBalance }] as [
               AccountId,
