@@ -4,6 +4,7 @@ import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { votingContractHooks } from "@/common/contracts/core/voting";
 import { stringifiedU128ToBigNum } from "@/common/lib";
+import type { ConditionalActivation } from "@/common/types";
 import { usePotFeatureFlags } from "@/entities/pot";
 
 import { useRoundResultsStore } from "../model/round-results";
@@ -11,19 +12,26 @@ import type { VotingRoundKey } from "../types";
 import { useVotingRound } from "./rounds";
 
 // TODO: Apply performance optimizations
-export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
-  const { data: pot } = indexer.usePot({ potId });
+export const useVotingRoundResults = ({
+  potId,
+  enabled = true,
+}: VotingRoundKey & ConditionalActivation) => {
+  const { data: pot } = indexer.usePot({ enabled, potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
-  const votingRound = useVotingRound({ enabled: hasProportionalFundingMechanism, potId });
+
+  const votingRound = useVotingRound({
+    enabled: enabled && hasProportionalFundingMechanism,
+    potId,
+  });
 
   const { data: votes } = votingContractHooks.useElectionVotes({
-    enabled: votingRound !== undefined,
+    enabled: enabled && votingRound !== undefined,
     electionId: votingRound?.electionId ?? 0,
   });
 
   const store = useRoundResultsStore();
 
-  if (pot && votingRound && votes) {
+  if (enabled && pot && votingRound && votes) {
     const cachedResults = store.resultsCache[votingRound.electionId];
 
     // Update results if votes have changed
@@ -48,7 +56,7 @@ export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
   const handleCsvDownload = useCallback(() => {
     if (results?.winners) {
       const headers = [
-        "Project ID",
+        "Project Account ID",
         "Vote Count",
         "Accumulated Weight",
         "Estimated NEAR Payout Amount",
@@ -78,12 +86,12 @@ export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
   if (results) {
     return {
       votingRoundResults: results,
-      handleVotingRoundResultsCsvDownload: handleCsvDownload,
+      handleVotingRoundWinnersCsvDownload: handleCsvDownload,
     };
   } else {
     return {
       votingRoundResults: undefined,
-      handleVotingRoundResultsCsvDownload: undefined,
+      handleVotingRoundWinnersCsvDownload: undefined,
     };
   }
 };

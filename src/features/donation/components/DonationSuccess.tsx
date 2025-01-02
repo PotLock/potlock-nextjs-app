@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 import Link from "next/link";
 
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
-import { indexer } from "@/common/api/indexer";
+import { type PotId, indexer } from "@/common/api/indexer";
 import {
   DEFAULT_SHARE_HASHTAGS,
   NATIVE_TOKEN_DECIMALS,
@@ -42,7 +42,11 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
   const [potId] = form.watch(["potAccountId"]);
-  const { data: pot } = indexer.usePot({ potId });
+
+  const { data: pot } = indexer.usePot({
+    enabled: potId !== undefined,
+    potId: potId as PotId,
+  });
 
   const recipientAccountId = useMemo(
     () =>

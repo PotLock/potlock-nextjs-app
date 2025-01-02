@@ -179,10 +179,10 @@ export const useAccountDonationsSent = ({
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve_2
  */
-export const usePot = ({ potId }: Partial<ByPotId>) => {
+export const usePot = ({ potId, enabled = true }: ByPotId & ConditionalActivation) => {
   const queryResult = generatedClient.useV1PotsRetrieve2(potId ?? "noop", {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled: Boolean(potId), refreshInterval: 3000 },
+    swr: { enabled, refreshInterval: 3000 },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

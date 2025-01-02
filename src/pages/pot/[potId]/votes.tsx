@@ -2,7 +2,13 @@ import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/router";
-import { MdHowToVote, MdOutlineDescription, MdOutlineInfo, MdStar } from "react-icons/md";
+import {
+  MdFileDownload,
+  MdHowToVote,
+  MdOutlineDescription,
+  MdOutlineInfo,
+  MdStar,
+} from "react-icons/md";
 
 import { nearClient } from "@/common/api/near";
 import { votingContractHooks } from "@/common/contracts/core/voting";
@@ -13,6 +19,7 @@ import {
   Button,
   FilterChip,
   SearchBar,
+  Skeleton,
 } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
@@ -24,6 +31,7 @@ import {
   VotingRoundVoteWeightBreakdown,
   useVotingRound,
   useVotingRoundCandidateLookup,
+  useVotingRoundResults,
   useVotingRoundVoterVoteWeight,
 } from "@/entities/voting-round";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
@@ -53,6 +61,11 @@ export default function PotVotesTab() {
   const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
     enabled: votingRound !== undefined,
     electionId: votingRound?.electionId ?? 0,
+  });
+
+  const { handleVotingRoundWinnersCsvDownload } = useVotingRoundResults({
+    enabled: !isVotingPeriodOngoing,
+    potId,
   });
 
   const { data: authenticatedVotingRoundVoterVotes } = votingContractHooks.useVotingRoundVoterVotes(
@@ -136,21 +149,17 @@ export default function PotVotesTab() {
 
   return votingRound === undefined ? (
     <div className="h-100 flex w-full flex-col items-center justify-center">
-      <p className="prose text-2xl">{"Voting round is finished."}</p>
+      <p className="prose text-2xl">{"Voting round hasn't started yet."}</p>
     </div>
   ) : (
     <div className="flex w-full flex-col gap-6">
-      <Alert
-        variant={isVotingPeriodOngoing ? "neutral" : "warning"}
-        className={cn({ "inline-with-icon": !isVotingPeriodOngoing })}
-      >
-        <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-        <AlertTitle>{`Voting round is ${isVotingPeriodOngoing ? "open" : "closed"}`}</AlertTitle>
-
-        {isVotingPeriodOngoing && (
+      {isVotingPeriodOngoing && (
+        <Alert variant="neutral">
+          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Voting round is open"}</AlertTitle>
           <AlertDescription>{"You can cast your votes now."}</AlertDescription>
-        )}
-      </Alert>
+        </Alert>
+      )}
 
       <SearchBar placeholder="Search Projects" onChange={onSearchTermChange} />
 
@@ -193,13 +202,19 @@ export default function PotVotesTab() {
 
               {authenticatedUser.isSignedIn ? (
                 <span className="inline-flex flex-nowrap items-center font-semibold">
-                  <span className="font-600 text-xl leading-loose">
-                    {authenticatedVotingRoundVoterVotes?.length ?? 0}
-                  </span>
+                  {isVotingPeriodOngoing ? (
+                    <>
+                      <span className="font-600 text-xl leading-loose">
+                        {authenticatedVotingRoundVoterVotes?.length ?? 0}
+                      </span>
 
-                  <span className="font-500 text-4.25 leading-normal">
-                    {`/${votingRound.election.votes_per_voter ?? 0} Votes Casted by You`}
-                  </span>
+                      <span className="font-500 text-4.25 leading-normal">
+                        {`/${votingRound.election.votes_per_voter ?? 0} Votes Casted by You`}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="font-600 text-lg">{"Round is finished"}</span>
+                  )}
                 </span>
               ) : (
                 <>
@@ -232,6 +247,25 @@ export default function PotVotesTab() {
             </div>
 
             <div className="flex gap-2">
+              {isVotingPeriodOngoing ? null : (
+                <>
+                  {handleVotingRoundWinnersCsvDownload === undefined ? (
+                    <Skeleton className="w-45 h-10" />
+                  ) : (
+                    <Button
+                      variant="standard-outline"
+                      onClick={handleVotingRoundWinnersCsvDownload}
+                    >
+                      <MdFileDownload className="h-4.5 w-4.5" />
+
+                      <span className="font-500 hidden whitespace-nowrap text-sm md:inline-flex">
+                        {"Download results in CSV"}
+                      </span>
+                    </Button>
+                  )}
+                </>
+              )}
+
               <div
                 className={cn(
                   "inline-flex h-10 cursor-pointer items-center justify-start gap-2",

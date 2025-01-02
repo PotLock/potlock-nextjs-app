@@ -28,9 +28,14 @@ export const useVoterProfile = ({
   const { isHumanVerified } = useIsHuman(accountId);
   const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
 
+  const tokenId = useMemo(
+    () => stakingContractAccountId ?? voterInfo?.voter_data.staking_token_id,
+    [stakingContractAccountId, voterInfo?.voter_data.staking_token_id],
+  );
+
   const { data: stakingToken } = useToken({
-    enabled: stakingContractAccountId !== undefined,
-    tokenId: stakingContractAccountId as TokenId,
+    enabled: tokenId !== undefined,
+    tokenId: tokenId as TokenId,
   });
 
   return useMemo(
@@ -38,15 +43,15 @@ export const useVoterProfile = ({
       isHumanVerified,
 
       stakingTokenBalance:
-        voterInfo?.staking_token_balance && stakingToken
+        voterInfo?.voter_data.staking_token_balance && stakingToken
           ? stringifiedU128ToBigNum(
-              voterInfo?.staking_token_balance,
+              voterInfo?.voter_data.staking_token_balance,
               stakingToken.metadata.decimals,
             )
           : undefined,
 
       votingPower:
-        voterInfo?.locking_positions?.reduce(
+        voterInfo?.voter_data.locking_positions?.reduce(
           (sum, { voting_power }) =>
             sum.add(stringifiedU128ToBigNum(voting_power, METAPOOL_MPDAO_VOTING_POWER_DECIMALS)),
 
@@ -54,6 +59,11 @@ export const useVoterProfile = ({
         ) ?? Big(0),
     }),
 
-    [isHumanVerified, stakingToken, voterInfo?.locking_positions, voterInfo?.staking_token_balance],
+    [
+      isHumanVerified,
+      stakingToken,
+      voterInfo?.voter_data.locking_positions,
+      voterInfo?.voter_data.staking_token_balance,
+    ],
   );
 };

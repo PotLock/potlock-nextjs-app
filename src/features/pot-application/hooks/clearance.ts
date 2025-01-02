@@ -56,7 +56,7 @@ export const usePotApplicationUserClearance = ({
               title: "Voting power 5000 or more",
 
               isSatisfied: stringifiedU128ToBigNum(
-                voterInfo?.voting_power ?? "0",
+                voterInfo?.voter_data.voting_power ?? "0",
                 METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
               ).gte(5000),
             },
@@ -80,6 +80,6 @@ export const usePotApplicationUserClearance = ({
     staking.minAmountUsd,
     staking.platformName,
     stakingToken?.balanceUsd,
-    voterInfo?.voting_power,
+    voterInfo?.voter_data.voting_power,
   ]);
 };

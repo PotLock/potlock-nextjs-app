@@ -1055,17 +1055,19 @@ export interface LockingPosition {
 }
 
 export interface MpdaoVoter {
-  /** @nullable */
-  balance_in_contract: string | null;
-  /** @nullable */
-  locking_positions: LockingPosition[] | null;
-  readonly staking_token_balance: string;
-  readonly staking_token_id: string;
-  /** @nullable */
-  vote_positions: VotePosition[] | null;
-  voter_id: string;
-  /** @nullable */
-  voting_power: string | null;
+  voter_data: {
+    /** @nullable */
+    balance_in_contract: string | null;
+    /** @nullable */
+    locking_positions: LockingPosition[] | null;
+    readonly staking_token_balance: string;
+    readonly staking_token_id: string;
+    /** @nullable */
+    vote_positions: VotePosition[] | null;
+    voter_id: string;
+    /** @nullable */
+    voting_power: string | null;
+  };
 }
 
 export interface ListUpvote {

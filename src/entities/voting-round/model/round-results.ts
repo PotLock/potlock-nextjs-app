@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { indexerClient } from "@/common/api/indexer";
-import { PRICES_REQUEST_CONFIG, intearPricesClient } from "@/common/api/intear-prices";
+import { INDEXER_CLIENT_CONFIG } from "@/common/api/indexer/internal/config";
 import { is_human } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
 import { ftClient } from "@/common/contracts/tokens/ft";
@@ -19,6 +19,7 @@ type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "
 
 type VotingRoundWinnerRegistry = {
   winners: Record<AccountId, VotingRoundWinner>;
+  voters: Record<AccountId, VoterProfile>;
 };
 
 interface VotingRoundResultsState {
@@ -52,14 +53,16 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           ? await ftClient.ft_metadata({ tokenId: stakingContractAccountId })
           : null;
 
-        const voterProfiles: Record<AccountId, VoterProfile> = await Promise.all(
+        const voters: Record<AccountId, VoterProfile> = await Promise.all(
           uniqueVoterAccountIds.map(async (voterAccountId) => {
             const { data: voterInfo } = await indexerClient
-              .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId })
+              .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId }, INDEXER_CLIENT_CONFIG.axios)
               .catch(() => ({ data: undefined }));
 
+            const voterData = voterInfo?.voter_data;
+
             const votingPower = voterInfo
-              ? voterInfo?.locking_positions?.reduce(
+              ? voterData?.locking_positions?.reduce(
                   (sum: Big, { voting_power }: { voting_power: string }) =>
                     sum.add(Big(voting_power)),
 
@@ -71,9 +74,9 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
               () => false,
             );
 
-            const stakingTokenBalance = voterInfo?.staking_token_balance
+            const stakingTokenBalance = voterData?.staking_token_balance
               ? stringifiedU128ToBigNum(
-                  voterInfo.staking_token_balance,
+                  voterData.staking_token_balance,
                   stakingTokenMetadata?.decimals ?? 0,
                 )
               : undefined;
@@ -89,7 +92,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
 
         // Helper function to calculate voter's weight based on their profile
         const calculateVoterWeight = (voterAccountId: AccountId) => {
-          const profile = voterProfiles[voterAccountId];
+          const profile = voters[voterAccountId];
           if (!profile) return Big(initialWeight);
 
           let weight = Big(initialWeight);
@@ -120,7 +123,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
               weight = weight.add(
                 Big(rule.amplificationPercent)
                   .div(100)
-                  .mul(basicWeight ?? (weight.gt(0) ? weight : 1)),
+                  .mul(basicWeight ?? 1),
               );
             }
           });
@@ -173,7 +176,12 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
             accumulatedWeight: result.accumulatedWeight.toNumber(),
 
             estimatedPayoutAmount: matchingPoolBalance
-              .mul(result.accumulatedWeight.div(totalAccumulatedWeight))
+              .mul(
+                result.accumulatedWeight.div(
+                  totalAccumulatedWeight.gt(0) ? totalAccumulatedWeight : 1,
+                ),
+              )
+
               .toNumber(),
           };
 
@@ -187,6 +195,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
             [electionId]: {
               totalVoteCount: votes.length,
               winners: candidateResults,
+              voters,
             },
           },
         }));

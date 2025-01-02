@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Pencil } from "lucide-react";
 import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 
-import { ByPotId, indexer } from "@/common/api/indexer";
+import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
 import { isAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
@@ -59,7 +59,11 @@ export const PotConfigurationPreview: React.FC<PotConfigurationPreviewProps> = (
   onEditClick,
   className,
 }) => {
-  const { isLoading, data: pot } = indexer.usePot({ potId });
+  const { isLoading, data: pot } = indexer.usePot({
+    enabled: potId !== undefined,
+    potId: potId as PotId,
+  });
+
   const adminAccountIds = pot?.admins.map(prop("id"));
   const isDataAvailable = pot !== undefined && adminAccountIds !== undefined;
 

@@ -6,7 +6,7 @@ import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema, ZodError } from "zod";
 
 import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/common/_config";
-import { ByPotId, indexer } from "@/common/api/indexer";
+import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
 import { PotConfig } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
@@ -37,7 +37,10 @@ export const usePotConfigurationEditorForm = ({
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = "potId" in props && typeof potId !== "string";
 
-  const { data: potIndexedData } = indexer.usePot({ potId });
+  const { data: potIndexedData } = indexer.usePot({
+    enabled: potId !== undefined,
+    potId: potId as PotId,
+  });
 
   type Values = FromSchema<typeof schema>;
 
