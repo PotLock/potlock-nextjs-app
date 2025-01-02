@@ -17,8 +17,8 @@ export type AccountListItemProps = ByAccountId & {
   hideStatusOnDesktop?: boolean;
   hideStatusOnMobile?: boolean;
   disableHandleSummaryPopup?: boolean;
-  primaryAction?: React.ReactNode;
-  secondaryAction?: React.ReactNode;
+  primarySlot?: React.ReactNode;
+  secondarySlot?: React.ReactNode;
   href?: string;
   onClick?: (accountId: AccountId) => void;
 
@@ -37,8 +37,8 @@ export const AccountListItem = ({
   hideStatusOnDesktop = false,
   hideStatusOnMobile = false,
   disableHandleSummaryPopup = false,
-  primaryAction,
-  secondaryAction,
+  primarySlot,
+  secondarySlot,
   href,
   onClick,
   classNames,
@@ -72,7 +72,7 @@ export const AccountListItem = ({
         classNames?.root,
       )}
     >
-      {primaryAction}
+      {primarySlot}
 
       <div className="mr-a flex w-full items-center gap-4">
         {avatarElement}
@@ -111,7 +111,7 @@ export const AccountListItem = ({
         </div>
       </div>
 
-      {secondaryAction && <div className="">{secondaryAction}</div>}
+      {secondarySlot && <div className="">{secondarySlot}</div>}
     </div>
   );
 };

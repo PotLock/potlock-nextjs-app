@@ -22,7 +22,7 @@ export const DonationGroupAllocationBreakdown: React.FC<DonationGroupAllocationB
         <AccountListItem
           key={account_id + amount}
           accountId={account_id}
-          secondaryAction={
+          secondarySlot={
             <LabeledIcon caption={amount ?? 0} classNames={{ caption: "font-600 text-4" }}>
               <TokenIcon {...{ tokenId }} />
             </LabeledIcon>

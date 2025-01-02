@@ -4,8 +4,10 @@ import { formatNearAmount } from "near-api-js/lib/utils/format";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { MdFileDownload, MdOutlineInfo } from "react-icons/md";
+import { values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
+import { votingContractHooks } from "@/common/contracts/core/voting";
 import {
   Alert,
   AlertDescription,
@@ -24,20 +26,24 @@ import {
 import ArrowDown from "@/common/ui/svg/ArrowDown";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import { PotPayoutChallenges, usePotPayoutLookup } from "@/entities/pot";
-import { useVotingRoundResults } from "@/entities/voting-round";
+import { PotPayoutChallenges, usePotFeatureFlags, usePotPayoutLookup } from "@/entities/pot";
+import { useVotingRound } from "@/entities/voting-round";
+import { ProportionalFundingPayoutManager } from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 import { rootPathnames } from "@/pathnames";
 
 const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
 
-export default function PayoutsTab() {
+export default function PotPayoutsTab() {
   const router = useRouter();
   const { potId } = router.query as { potId: string };
   const { data: pot } = indexer.usePot({ potId });
+  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+  const votingRound = useVotingRound({ enabled: hasProportionalFundingMechanism, potId });
 
-  const { votingRoundResults, handleVotingRoundResultsCsvDownload } = useVotingRoundResults({
-    potId,
+  const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
+    enabled: votingRound !== undefined,
+    electionId: votingRound?.electionId ?? 0,
   });
 
   const {
@@ -48,6 +54,9 @@ export default function PayoutsTab() {
     setPayoutPageNumber,
     totalPayoutCount,
   } = usePotPayoutLookup({ potId });
+
+  const showPayoutManager =
+    (payouts?.length ?? 0) === 0 && hasProportionalFundingMechanism && !isVotingPeriodOngoing;
 
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
   const [showChallenges, setShowChallenges] = useState<boolean>(false);
@@ -126,19 +135,6 @@ export default function PayoutsTab() {
         <div className="mb-8 flex w-full flex-row justify-between">
           <div className="flex w-full flex-wrap items-center justify-between">
             <h2 className="text-xl font-semibold">{"Estimated Payout"}</h2>
-
-            {handleVotingRoundResultsCsvDownload === undefined ? (
-              <Skeleton className="w-45 h-10" />
-            ) : (
-              <Button
-                variant="brand-outline"
-                onClick={handleVotingRoundResultsCsvDownload}
-                disabled // TODO: remove once accumulated weight is calculated correctly
-              >
-                <MdFileDownload className="h-5 w-5" />
-                <span className="prose">{"Download CSV"}</span>
-              </Button>
-            )}
           </div>
 
           {!!totalChallenges && (
@@ -180,9 +176,9 @@ export default function PayoutsTab() {
           <PotPayoutChallenges potDetail={pot} setTotalChallenges={setTotalChallenges} />
         </div>
 
-        <div className="mb-16 flex w-full flex-col items-start gap-6 md:flex-row">
-          <div className="w-full">
-            {!pot?.all_paid_out ? (
+        <div className="mb-16 flex w-full flex-col items-start gap-6">
+          {!pot?.all_paid_out ? (
+            <>
               <Alert variant="neutral">
                 <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
                 <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
@@ -193,13 +189,17 @@ export default function PayoutsTab() {
                     : "These payouts are estimated amounts only and have not been set on the contract yet."}
                 </AlertDescription>
               </Alert>
-            ) : (
-              <>
-                <SearchBar
-                  placeholder="Search Projects"
-                  onChange={({ target: { value } }) => setPayoutSearchTerm(value)}
-                />
 
+              {showPayoutManager && <ProportionalFundingPayoutManager {...{ potId }} />}
+            </>
+          ) : (
+            <>
+              <SearchBar
+                placeholder="Search Projects"
+                onChange={({ target: { value } }) => setPayoutSearchTerm(value)}
+              />
+
+              {
                 <div className="flex w-full flex-col flex-nowrap items-center overflow-x-auto ">
                   <div
                     className={
@@ -284,33 +284,33 @@ export default function PayoutsTab() {
                     </>
                   )}
                 </div>
+              }
 
-                {numberOfPages > 1 && (
-                  <Pagination className="mt-[24px]">
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          onClick={() => setPayoutPageNumber((prev) => Math.max(prev - 1, 1))}
-                        />
-                      </PaginationItem>
+              {numberOfPages > 1 && (
+                <Pagination className="mt-[24px]">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() => setPayoutPageNumber((prev) => Math.max(prev - 1, 1))}
+                      />
+                    </PaginationItem>
 
-                      {pageNumberButtons}
+                    {pageNumberButtons}
 
-                      <PaginationItem>
-                        <PaginationNext
-                          onClick={() =>
-                            setPayoutPageNumber((prev) =>
-                              Math.min(prev + 1, Math.ceil(totalPayoutCount / 10)),
-                            )
-                          }
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                )}
-              </>
-            )}
-          </div>
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={() =>
+                          setPayoutPageNumber((prev) =>
+                            Math.min(prev + 1, Math.ceil(totalPayoutCount / 10)),
+                          )
+                        }
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
+            </>
+          )}
         </div>
       </div>
 
@@ -326,6 +326,6 @@ export default function PayoutsTab() {
   );
 }
 
-PayoutsTab.getLayout = function getLayout(page: ReactElement) {
+PotPayoutsTab.getLayout = function getLayout(page: React.ReactNode) {
   return <PotLayout>{page}</PotLayout>;
 };

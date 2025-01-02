@@ -171,6 +171,8 @@ export default defineConfig({
     "focus-shadow": "shadow-[var(--focus-shadow)]",
     "button-primary": "shadow-[var(--button-primary)]",
     "button-tonal": "shadow-[var(--button-tonal)]",
+
+    "inline-with-icon": "important:[&>svg]:top-a justify-center",
   },
 
   preflights: [

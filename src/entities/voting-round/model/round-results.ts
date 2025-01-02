@@ -4,10 +4,11 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { indexerClient } from "@/common/api/indexer";
-import { PRICES_REQUEST_CONFIG, intearPricesClient } from "@/common/api/intear-prices";
+import { INDEXER_CLIENT_CONFIG } from "@/common/api/indexer/internal/config";
 import { is_human } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
 import { ftClient } from "@/common/contracts/tokens/ft";
+import { stringifiedU128ToBigNum } from "@/common/lib";
 
 import { VOTING_ROUND_CONFIG_MPDAO } from "./hardcoded";
 import type { VoterProfile, VotingRoundWinner } from "../types";
@@ -18,6 +19,7 @@ type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "
 
 type VotingRoundWinnerRegistry = {
   winners: Record<AccountId, VotingRoundWinner>;
+  voters: Record<AccountId, VoterProfile>;
 };
 
 interface VotingRoundResultsState {
@@ -47,14 +49,20 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           ...new Set(votes.map(({ voter: voterAccountId }) => voterAccountId)),
         ];
 
-        const voterProfiles: Record<AccountId, VoterProfile> = await Promise.all(
+        const stakingTokenMetadata = stakingContractAccountId
+          ? await ftClient.ft_metadata({ tokenId: stakingContractAccountId })
+          : null;
+
+        const voters: Record<AccountId, VoterProfile> = await Promise.all(
           uniqueVoterAccountIds.map(async (voterAccountId) => {
             const { data: voterInfo } = await indexerClient
-              .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId })
+              .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId }, INDEXER_CLIENT_CONFIG.axios)
               .catch(() => ({ data: undefined }));
 
+            const voterData = voterInfo?.voter_data;
+
             const votingPower = voterInfo
-              ? voterInfo?.locking_positions.reduce(
+              ? voterData?.locking_positions?.reduce(
                   (sum: Big, { voting_power }: { voting_power: string }) =>
                     sum.add(Big(voting_power)),
 
@@ -66,36 +74,17 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
               () => false,
             );
 
-            const stakingTokenMetadata = stakingContractAccountId
-              ? await ftClient.ft_metadata({
-                  tokenId: stakingContractAccountId,
-                })
-              : null;
+            const stakingTokenBalance = voterData?.staking_token_balance
+              ? stringifiedU128ToBigNum(
+                  voterData.staking_token_balance,
+                  stakingTokenMetadata?.decimals ?? 0,
+                )
+              : undefined;
 
-            // TODO: Take from the voter info response instead ( when it's ready )
-            const stakingTokenBalance =
-              stakingContractAccountId && stakingTokenMetadata
-                ? await ftClient
-                    .ft_balance_of({ accountId: voterAccountId, tokenId: stakingContractAccountId })
-                    .then((balance) => Big(balance || 0))
-                    .catch(() => undefined)
-                : undefined;
-
-            const stakingTokenBalanceUsd =
-              stakingContractAccountId && stakingTokenBalance
-                ? await intearPricesClient
-                    .getSuperPrecisePrice(
-                      { token_id: stakingContractAccountId },
-                      PRICES_REQUEST_CONFIG.axios,
-                    )
-                    .then(({ data: price }) => Big(price).mul(stakingTokenBalance))
-                    .catch(() => undefined)
-                : undefined;
-
-            return [
-              voterAccountId,
-              { isHumanVerified, votingPower, stakingTokenBalance, stakingTokenBalanceUsd },
-            ] as [AccountId, VoterProfile];
+            return [voterAccountId, { isHumanVerified, votingPower, stakingTokenBalance }] as [
+              AccountId,
+              VoterProfile,
+            ];
           }),
         )
           .then((entries) => fromEntries(entries))
@@ -103,7 +92,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
 
         // Helper function to calculate voter's weight based on their profile
         const calculateVoterWeight = (voterAccountId: AccountId) => {
-          const profile = voterProfiles[voterAccountId];
+          const profile = voters[voterAccountId];
           if (!profile) return Big(initialWeight);
 
           let weight = Big(initialWeight);
@@ -134,7 +123,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
               weight = weight.add(
                 Big(rule.amplificationPercent)
                   .div(100)
-                  .mul(basicWeight ?? (weight.gt(0) ? weight : 1)),
+                  .mul(basicWeight ?? 1),
               );
             }
           });
@@ -187,7 +176,12 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
             accumulatedWeight: result.accumulatedWeight.toNumber(),
 
             estimatedPayoutAmount: matchingPoolBalance
-              .mul(result.accumulatedWeight.div(totalAccumulatedWeight))
+              .mul(
+                result.accumulatedWeight.div(
+                  totalAccumulatedWeight.gt(0) ? totalAccumulatedWeight : 1,
+                ),
+              )
+
               .toNumber(),
           };
 
@@ -201,6 +195,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
             [electionId]: {
               totalVoteCount: votes.length,
               winners: candidateResults,
+              voters,
             },
           },
         }));

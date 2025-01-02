@@ -176,14 +176,14 @@ export const AccountGroupEditModal = create(
                 {accountIds.map((accountId) => (
                   <AccountListItem
                     key={accountId}
-                    primaryAction={
+                    primarySlot={
                       <Checkbox
                         checked={selectedAccounts.includes(accountId)}
                         onCheckedChange={handleAccountSelect(accountId)}
                         className="px-0.75"
                       />
                     }
-                    secondaryAction={
+                    secondarySlot={
                       <Button
                         onClick={handleAccountRemove(accountId)}
                         variant="standard-plain"
