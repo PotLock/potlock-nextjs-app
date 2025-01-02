@@ -1,15 +1,13 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Dot } from "lucide-react";
 
-import { ByElectionId } from "@/common/contracts/core/voting";
-import { Button, Checkbox, Skeleton } from "@/common/ui/components";
+import { Checkbox } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountListItem } from "@/entities/_shared/account";
 import { useSession } from "@/entities/_shared/session";
 
-import { useVotingRoundCandidateEntry } from "../hooks/candidates";
 import type { VotingRoundWinner } from "../types";
 
 export type VotingRoundResultRowProps = {
@@ -69,15 +67,20 @@ export const VotingRoundResultRow: React.FC<VotingRoundResultRowProps> = ({
       }
       secondarySlot={
         <div className="hidden items-center md:flex">
-          <div className="inline-flex h-16 w-24 items-center justify-end p-4">
+          <div className="inline-flex h-16 w-24 max-w-24 items-center justify-end p-4">
             <div className="prose text-right text-sm font-medium leading-tight">{voteCount}</div>
           </div>
 
-          <div className="w-30.5 inline-flex h-16 items-center justify-end px-4 py-2">
+          <div className="max-w-30.5 w-30.5 inline-flex h-16 items-center justify-end px-4 py-2">
             <span className="font-600 text-right uppercase leading-none">{accumulatedWeight}</span>
           </div>
 
-          <div className="w-32.5 inline-flex h-16 items-center justify-end overflow-hidden px-4 py-2 pr-0">
+          <div
+            className={cn(
+              "max-w-32.5 w-32.5 inline-flex h-16 items-center justify-end",
+              "overflow-hidden px-4 py-2 pr-0",
+            )}
+          >
             <span className="font-600 w-full overflow-x-hidden text-center uppercase leading-none">
               {estimatedPayoutAmount}
             </span>

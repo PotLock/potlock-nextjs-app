@@ -27,15 +27,15 @@ export const VotingRoundResultsTable: React.FC<VotingRoundResultsTableProps> = (
         </div>
 
         <div className="hidden md:flex">
-          <div className="flex h-10 w-24 items-center justify-end px-4 py-2">
+          <div className="flex h-10 w-24 max-w-24 items-center justify-end px-4 py-2">
             <span className="font-600 text-right uppercase leading-none">{"Votes"}</span>
           </div>
 
-          <div className="w-30.5 flex h-10 items-center justify-end px-4 py-2">
+          <div className="max-w-30.5 w-30.5 flex h-10 items-center justify-end px-4 py-2">
             <span className="font-600 text-right uppercase leading-none">{"Total Weight"}</span>
           </div>
 
-          <span className="w-36.5 flex h-10 h-full items-center px-4 py-2">
+          <span className="max-w-36.5 w-36.5 flex h-10 h-full items-center px-4 py-2">
             <span className="font-600 text-center uppercase leading-none">{"Pool Allocation"}</span>
           </span>
         </div>
