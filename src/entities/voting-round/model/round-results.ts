@@ -3,7 +3,7 @@ import { fromEntries } from "remeda";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { indexerClient } from "@/common/api/indexer";
+import { type MpdaoVoterItem, indexerClient } from "@/common/api/indexer";
 import { INDEXER_CLIENT_CONFIG } from "@/common/api/indexer/internal/config";
 import { is_human } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
@@ -18,8 +18,8 @@ type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "
 };
 
 type VotingRoundParticipants = {
-  winners: Record<AccountId, VotingRoundWinner>;
-  voters: Record<AccountId, VoterProfile>;
+  voterRegistry: Record<AccountId, VoterProfile>;
+  winnerRegistry: Record<AccountId, VotingRoundWinner>;
 };
 
 interface VotingRoundResultsState {
@@ -28,6 +28,7 @@ interface VotingRoundResultsState {
   updateResults: (params: {
     electionId: number;
     votes: Vote[];
+    voters: MpdaoVoterItem[];
     matchingPoolBalance: Big;
     mechanismConfig: VotingMechanismConfig;
   }) => Promise<void>;
@@ -43,38 +44,41 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           ? await ftClient.ft_metadata({ tokenId: mechanismConfig.stakingContractAccountId })
           : null;
 
-        const voters: VotingRoundParticipants["voters"] | undefined = await indexerClient
-          .v1MpdaoVotersRetrieve({ page_size: 80 }, INDEXER_CLIENT_CONFIG.axios)
-          .then(async ({ data }) => {
-            console.log(data);
+        const voterRegistry: VotingRoundParticipants["voterRegistry"] | undefined =
+          await indexerClient
+            .v1MpdaoVotersRetrieve({ page_size: 90 }, INDEXER_CLIENT_CONFIG.axios)
+            .then(async ({ data }) => {
+              console.log(data);
 
-            const voterEntries = await Promise.all(
-              data.results.map(async ({ voter_id, voter_data }) => {
-                const votingPower =
-                  voter_data.locking_positions?.reduce(
-                    (sum: Big, { voting_power }: { voting_power: string }) =>
-                      sum.add(Big(voting_power)),
-                    Big(0),
-                  ) ?? Big(0);
+              const voterEntries = await Promise.all(
+                data.results.map(async ({ voter_id, voter_data }) => {
+                  const votingPower =
+                    voter_data.locking_positions?.reduce(
+                      (sum: Big, { voting_power }: { voting_power: string }) =>
+                        sum.add(Big(voting_power)),
+                      Big(0),
+                    ) ?? Big(0);
 
-                const isHumanVerified = await is_human({ account_id: voter_id }).catch(() => false);
+                  const isHumanVerified = await is_human({ account_id: voter_id }).catch(
+                    () => false,
+                  );
 
-                const stakingTokenBalance = voter_data.staking_token_balance
-                  ? stringifiedU128ToBigNum(
-                      voter_data.staking_token_balance,
-                      stakingTokenMetadata?.decimals ?? 0,
-                    )
-                  : undefined;
+                  const stakingTokenBalance = voter_data.staking_token_balance
+                    ? stringifiedU128ToBigNum(
+                        voter_data.staking_token_balance,
+                        stakingTokenMetadata?.decimals ?? 0,
+                      )
+                    : undefined;
 
-                return [voter_id, { isHumanVerified, stakingTokenBalance, votingPower }] as const;
-              }),
-            );
+                  return [voter_id, { isHumanVerified, stakingTokenBalance, votingPower }] as const;
+                }),
+              );
 
-            return fromEntries(voterEntries);
-          })
-          .catch(() => undefined);
+              return fromEntries(voterEntries);
+            })
+            .catch(() => undefined);
 
-        if (voters !== undefined) {
+        if (voterRegistry !== undefined) {
           // Group votes by candidate
           const votesByCandidate = votes.reduce<Record<AccountId, Vote[]>>((acc, vote) => {
             if (!acc[vote.candidate_id]) {
@@ -91,7 +95,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           >((acc, [candidateAccountId, candidateVotes]) => {
             // Calculate total weight for this candidate
             const accumulatedWeight = candidateVotes.reduce((sum, vote) => {
-              const voterWeight = getVoteWeight(voters[vote.voter], mechanismConfig);
+              const voterWeight = getVoteWeight(voterRegistry[vote.voter], mechanismConfig);
               return sum.plus(Big(vote.weight).mul(voterWeight));
             }, Big(0));
 
@@ -112,8 +116,8 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           );
 
           // Second pass: Calculate estimated payouts using total accumulated weight
-          const winners = Object.entries(intermediateResults).reduce<
-            VotingRoundParticipants["winners"]
+          const winnerRegistry = Object.entries(intermediateResults).reduce<
+            VotingRoundParticipants["winnerRegistry"]
           >((acc, [candidateAccountId, result]) => {
             acc[candidateAccountId as AccountId] = {
               ...result,
@@ -135,7 +139,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           set((state) => ({
             resultsCache: {
               ...state.resultsCache,
-              [electionId]: { totalVoteCount: votes.length, winners, voters },
+              [electionId]: { totalVoteCount: votes.length, voterRegistry, winnerRegistry },
             },
           }));
         }

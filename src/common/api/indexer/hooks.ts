@@ -280,7 +280,25 @@ export const useAccountUpvotedLists = ({
   };
 };
 
-export const useMpdaoVoterInfo = ({
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_mpdao_voters_retrieve
+ */
+export const useMpdaoVoters = ({
+  enabled = true,
+  ...params
+}: generatedClient.V1MpdaoVotersRetrieveParams & ConditionalActivation = {}) => {
+  const queryResult = generatedClient.useV1MpdaoVotersRetrieve(params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_mpdao_voters_retrieve_2
+ */
+export const useMpdaoVoter = ({
   accountId,
   enabled = true,
 }: Partial<ByAccountId> & ConditionalActivation) => {

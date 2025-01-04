@@ -26,15 +26,24 @@ export const useVotingRoundResults = ({
     potId,
   });
 
-  const { data: votes } = votingContractHooks.useElectionVotes({
+  const { isLoading: isVoteListLoading, data: votes } = votingContractHooks.useElectionVotes({
     enabled: enabled && votingRound !== undefined,
     electionId: votingRound?.electionId ?? 0,
   });
 
+  const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
+    enabled: enabled && votingRound !== undefined,
+  });
+
+  const isLoading = useMemo(
+    () => isVoteListLoading || isVoterListLoading,
+    [isVoteListLoading, isVoterListLoading],
+  );
+
   // TODO: Apply performance optimizations
   const store = useRoundResultsStore();
 
-  if (enabled && hasProportionalFundingMechanism && pot && votingRound && votes) {
+  if (enabled && hasProportionalFundingMechanism && pot && votingRound && votes && voters) {
     const cachedResults = store.resultsCache[votingRound.electionId];
 
     // Update results if votes have changed
@@ -43,6 +52,7 @@ export const useVotingRoundResults = ({
         electionId: votingRound.electionId,
         mechanismConfig,
         votes,
+        voters: voters.results,
 
         matchingPoolBalance: stringifiedU128ToBigNum(
           pot.matching_pool_balance,
@@ -57,8 +67,8 @@ export const useVotingRoundResults = ({
     [store.resultsCache, votingRound],
   );
 
-  const handleCsvDownload = useCallback(() => {
-    if (results?.winners) {
+  const handleWinnersCsvDownload = useCallback(() => {
+    if (results?.winnerRegistry) {
       const headers = [
         "Project Account ID",
         "Vote Count",
@@ -66,7 +76,7 @@ export const useVotingRoundResults = ({
         "Estimated NEAR Payout Amount",
       ];
 
-      const rows = Object.values(results.winners).map((winner) => [
+      const rows = Object.values(results.winnerRegistry).map((winner) => [
         winner.accountId,
         winner.voteCount,
         winner.accumulatedWeight,
@@ -89,13 +99,15 @@ export const useVotingRoundResults = ({
 
   if (results) {
     return {
-      votingRoundResults: results,
-      handleVotingRoundWinnersCsvDownload: handleCsvDownload,
+      isLoading,
+      data: results,
+      handleWinnersCsvDownload,
     };
   } else {
     return {
-      votingRoundResults: undefined,
-      handleVotingRoundWinnersCsvDownload: undefined,
+      isLoading,
+      data: undefined,
+      handleWinnersCsvDownload: undefined,
     };
   }
 };

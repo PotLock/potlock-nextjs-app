@@ -26,7 +26,7 @@ export const usePotApplicationUserClearance = ({
 
   const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useSession();
 
-  const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
+  const { data: voterInfo } = indexer.useMpdaoVoter({ accountId });
 
   const { data: stakingToken } = useToken({
     balanceCheckAccountId: accountId,

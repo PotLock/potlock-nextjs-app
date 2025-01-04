@@ -63,10 +63,7 @@ export default function PotVotesTab() {
     electionId: votingRound?.electionId ?? 0,
   });
 
-  const { handleVotingRoundWinnersCsvDownload } = useVotingRoundResults({
-    enabled: !isVotingPeriodOngoing,
-    potId,
-  });
+  const votingRoundResults = useVotingRoundResults({ enabled: !isVotingPeriodOngoing, potId });
 
   const { data: authenticatedVotingRoundVoterVotes } = votingContractHooks.useVotingRoundVoterVotes(
     {
@@ -249,12 +246,12 @@ export default function PotVotesTab() {
             <div className="flex gap-2">
               {isVotingPeriodOngoing ? null : (
                 <>
-                  {handleVotingRoundWinnersCsvDownload === undefined ? (
+                  {votingRoundResults.isLoading ? (
                     <Skeleton className="w-45 h-10" />
                   ) : (
                     <Button
                       variant="standard-outline"
-                      onClick={handleVotingRoundWinnersCsvDownload}
+                      onClick={votingRoundResults.handleWinnersCsvDownload}
                     >
                       <MdFileDownload className="h-4.5 w-4.5" />
 

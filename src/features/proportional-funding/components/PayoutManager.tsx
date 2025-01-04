@@ -1,4 +1,4 @@
-import { MdFileDownload, MdHowToVote, MdList } from "react-icons/md";
+import { MdFileDownload, MdList } from "react-icons/md";
 import { values } from "remeda";
 
 import type { ByPotId } from "@/common/api/indexer";
@@ -11,11 +11,9 @@ export type ProportionalFundingPayoutManagerProps = ByPotId & {};
 export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayoutManagerProps> = ({
   potId,
 }) => {
-  const { votingRoundResults, handleVotingRoundWinnersCsvDownload } = useVotingRoundResults({
-    potId,
-  });
+  const votingRoundResults = useVotingRoundResults({ potId });
 
-  return !votingRoundResults ? null : (
+  return (
     <div className="flex w-full flex-col">
       <div
         className={cn(
@@ -28,10 +26,13 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
         </div>
 
         <div className="flex gap-2">
-          {handleVotingRoundWinnersCsvDownload === undefined ? (
+          {votingRoundResults.handleWinnersCsvDownload === undefined ? (
             <Skeleton className="w-45 h-10" />
           ) : (
-            <Button variant="standard-outline" onClick={handleVotingRoundWinnersCsvDownload}>
+            <Button
+              variant="standard-outline"
+              onClick={votingRoundResults.handleWinnersCsvDownload}
+            >
               <MdFileDownload className="h-4.5 w-4.5" />
 
               <span className="font-500 hidden whitespace-nowrap text-sm md:inline-flex">
@@ -42,7 +43,11 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
         </div>
       </div>
 
-      <VotingRoundResultsTable data={values(votingRoundResults.winners)} />
+      {votingRoundResults.data === undefined ? (
+        <Skeleton className="h-10 w-full" />
+      ) : (
+        <VotingRoundResultsTable data={values(votingRoundResults.data.winnerRegistry)} />
+      )}
     </div>
   );
 };

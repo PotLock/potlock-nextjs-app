@@ -26,7 +26,7 @@ export const useVoterProfile = ({
   stakingContractAccountId,
 }: VoterProfileInputs): VoterProfile => {
   const { isHumanVerified } = useIsHuman(accountId);
-  const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
+  const { data: voterInfo } = indexer.useMpdaoVoter({ accountId });
 
   const tokenId = useMemo(
     () => stakingContractAccountId ?? voterInfo?.voter_data.staking_token_id,
