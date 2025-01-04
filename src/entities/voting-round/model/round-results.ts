@@ -112,7 +112,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           );
 
           // Second pass: Calculate estimated payouts using total accumulated weight
-          const candidateResults = Object.entries(intermediateResults).reduce<
+          const winners = Object.entries(intermediateResults).reduce<
             VotingRoundParticipants["winners"]
           >((acc, [candidateAccountId, result]) => {
             acc[candidateAccountId as AccountId] = {
@@ -135,20 +135,13 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           set((state) => ({
             resultsCache: {
               ...state.resultsCache,
-
-              [electionId]: {
-                totalVoteCount: votes.length,
-                winners: candidateResults,
-                voters,
-              },
+              [electionId]: { totalVoteCount: votes.length, winners, voters },
             },
           }));
         }
       },
     }),
 
-    {
-      name: "potlock-voting-round-results",
-    },
+    { name: "potlock-voting-round-results" },
   ),
 );

@@ -62,7 +62,7 @@ export const useVotingRoundResults = ({
       const headers = [
         "Project Account ID",
         "Vote Count",
-        "Accumulated Weight",
+        "Total Weight",
         "Estimated NEAR Payout Amount",
       ];
 
