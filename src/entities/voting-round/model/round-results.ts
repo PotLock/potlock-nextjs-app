@@ -10,25 +10,26 @@ import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting
 import { ftClient } from "@/common/contracts/tokens/ft";
 import { stringifiedU128ToBigNum } from "@/common/lib";
 
-import { VOTING_ROUND_CONFIG_MPDAO } from "./hardcoded";
-import type { VoterProfile, VotingRoundWinner } from "../types";
+import type { VoterProfile, VotingMechanismConfig, VotingRoundWinner } from "../types";
+import { getVoteWeight } from "../utils/vote-weight";
 
 type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "voteCount"> & {
   accumulatedWeight: Big;
 };
 
-type VotingRoundWinnerRegistry = {
+type VotingRoundParticipants = {
   winners: Record<AccountId, VotingRoundWinner>;
   voters: Record<AccountId, VoterProfile>;
 };
 
 interface VotingRoundResultsState {
-  resultsCache: Record<ElectionId, VotingRoundWinnerRegistry & { totalVoteCount: number }>;
+  resultsCache: Record<ElectionId, VotingRoundParticipants & { totalVoteCount: number }>;
 
   updateResults: (params: {
     electionId: number;
     votes: Vote[];
     matchingPoolBalance: Big;
+    mechanismConfig: VotingMechanismConfig;
   }) => Promise<void>;
 }
 
@@ -37,168 +38,112 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
     (set) => ({
       resultsCache: {},
 
-      updateResults: async ({ electionId, votes, matchingPoolBalance }) => {
-        const {
-          stakingContractAccountId,
-          initialWeight,
-          basicWeight,
-          voteWeightAmplificationRules,
-        } = VOTING_ROUND_CONFIG_MPDAO;
-
-        const uniqueVoterAccountIds = [
-          ...new Set(votes.map(({ voter: voterAccountId }) => voterAccountId)),
-        ];
-
-        const stakingTokenMetadata = stakingContractAccountId
-          ? await ftClient.ft_metadata({ tokenId: stakingContractAccountId })
+      updateResults: async ({ electionId, votes, matchingPoolBalance, mechanismConfig }) => {
+        const stakingTokenMetadata = mechanismConfig.stakingContractAccountId
+          ? await ftClient.ft_metadata({ tokenId: mechanismConfig.stakingContractAccountId })
           : null;
 
-        const voters: Record<AccountId, VoterProfile> = await Promise.all(
-          uniqueVoterAccountIds.map(async (voterAccountId) => {
-            const { data: voterInfo } = await indexerClient
-              .v1MpdaoVoterInfoRetrieve({ voter_id: voterAccountId }, INDEXER_CLIENT_CONFIG.axios)
-              .catch(() => ({ data: undefined }));
+        const voters: VotingRoundParticipants["voters"] | undefined = await indexerClient
+          .v1MpdaoVotersRetrieve({ page_size: 40 }, INDEXER_CLIENT_CONFIG.axios)
+          .then(async ({ data }) => {
+            console.log(data);
 
-            const voterData = voterInfo?.voter_data;
+            const voterEntries = await Promise.all(
+              data.results.map(async ({ voter_id, voter_data }) => {
+                const votingPower =
+                  voter_data.locking_positions?.reduce(
+                    (sum: Big, { voting_power }: { voting_power: string }) =>
+                      sum.add(Big(voting_power)),
+                    Big(0),
+                  ) ?? Big(0);
 
-            const votingPower = voterInfo
-              ? voterData?.locking_positions?.reduce(
-                  (sum: Big, { voting_power }: { voting_power: string }) =>
-                    sum.add(Big(voting_power)),
+                const isHumanVerified = await is_human({ account_id: voter_id }).catch(() => false);
 
-                  Big(0),
-                )
-              : Big(0);
+                const stakingTokenBalance = voter_data.staking_token_balance
+                  ? stringifiedU128ToBigNum(
+                      voter_data.staking_token_balance,
+                      stakingTokenMetadata?.decimals ?? 0,
+                    )
+                  : undefined;
 
-            const isHumanVerified = await is_human({ account_id: voterAccountId }).catch(
-              () => false,
+                return [voter_id, { isHumanVerified, stakingTokenBalance, votingPower }] as const;
+              }),
             );
 
-            const stakingTokenBalance = voterData?.staking_token_balance
-              ? stringifiedU128ToBigNum(
-                  voterData.staking_token_balance,
-                  stakingTokenMetadata?.decimals ?? 0,
+            return fromEntries(voterEntries);
+          })
+          .catch(() => undefined);
+
+        if (voters !== undefined) {
+          // Group votes by candidate
+          const votesByCandidate = votes.reduce<Record<AccountId, Vote[]>>((acc, vote) => {
+            if (!acc[vote.candidate_id]) {
+              acc[vote.candidate_id] = [];
+            }
+
+            acc[vote.candidate_id].push(vote);
+            return acc;
+          }, {});
+
+          // First pass: Calculate accumulated weights for each candidate
+          const intermediateResults = Object.entries(votesByCandidate).reduce<
+            Record<AccountId, VotingRoundWinnerIntermediateData>
+          >((acc, [candidateAccountId, candidateVotes]) => {
+            // Calculate total weight for this candidate
+            const accumulatedWeight = candidateVotes.reduce((sum, vote) => {
+              const voterWeight = getVoteWeight(voters[vote.voter], mechanismConfig);
+              return sum.plus(Big(vote.weight).mul(voterWeight));
+            }, Big(0));
+
+            // Store intermediate results with Big.js precision
+            acc[candidateAccountId as AccountId] = {
+              accountId: candidateAccountId,
+              voteCount: candidateVotes.length,
+              accumulatedWeight: accumulatedWeight,
+            };
+
+            return acc;
+          }, {});
+
+          // Calculate total accumulated weight across all winners
+          const totalAccumulatedWeight = Object.values(intermediateResults).reduce(
+            (sum, result) => sum.add(result.accumulatedWeight),
+            Big(0),
+          );
+
+          // Second pass: Calculate estimated payouts using total accumulated weight
+          const candidateResults = Object.entries(intermediateResults).reduce<
+            VotingRoundParticipants["winners"]
+          >((acc, [candidateAccountId, result]) => {
+            acc[candidateAccountId as AccountId] = {
+              ...result,
+              accumulatedWeight: result.accumulatedWeight.toNumber(),
+
+              estimatedPayoutAmount: matchingPoolBalance
+                .mul(
+                  result.accumulatedWeight.div(
+                    totalAccumulatedWeight.gt(0) ? totalAccumulatedWeight : 1,
+                  ),
                 )
-              : undefined;
 
-            return [voterAccountId, { isHumanVerified, votingPower, stakingTokenBalance }] as [
-              AccountId,
-              VoterProfile,
-            ];
-          }),
-        )
-          .then((entries) => fromEntries(entries))
-          .catch(() => ({}));
+                .toNumber(),
+            };
 
-        // Helper function to calculate voter's weight based on their profile
-        const calculateVoterWeight = (voterAccountId: AccountId) => {
-          const profile = voters[voterAccountId];
-          if (!profile) return Big(initialWeight);
+            return acc;
+          }, {});
 
-          let weight = Big(initialWeight);
+          set((state) => ({
+            resultsCache: {
+              ...state.resultsCache,
 
-          // Apply amplification rules
-          voteWeightAmplificationRules.forEach((rule) => {
-            const profileParameter = profile[rule.voterProfileParameter];
-
-            let isApplicable = false;
-
-            switch (rule.comparator) {
-              case "boolean": {
-                if (typeof profileParameter === "boolean") {
-                  isApplicable = profileParameter === rule.expectation;
-                }
-
-                break;
-              }
-
-              default: {
-                if (profileParameter instanceof Big) {
-                  isApplicable = profileParameter[rule.comparator](rule.threshold);
-                }
-              }
-            }
-
-            if (isApplicable) {
-              weight = weight.add(
-                Big(rule.amplificationPercent)
-                  .div(100)
-                  .mul(basicWeight ?? 1),
-              );
-            }
-          });
-
-          return weight;
-        };
-
-        // Group votes by candidate
-        const votesByCandidate = votes.reduce<Record<AccountId, Vote[]>>((acc, vote) => {
-          if (!acc[vote.candidate_id]) {
-            acc[vote.candidate_id] = [];
-          }
-
-          acc[vote.candidate_id].push(vote);
-          return acc;
-        }, {});
-
-        // First pass: Calculate accumulated weights for each candidate
-        const intermediateResults = Object.entries(votesByCandidate).reduce<
-          Record<AccountId, VotingRoundWinnerIntermediateData>
-        >((acc, [candidateAccountId, candidateVotes]) => {
-          // Calculate total weight for this candidate
-          const accumulatedWeight = candidateVotes.reduce((sum, vote) => {
-            const voterWeight = calculateVoterWeight(vote.voter);
-            return sum.plus(Big(vote.weight).mul(voterWeight));
-          }, Big(0));
-
-          // Store intermediate results with Big.js precision
-          acc[candidateAccountId as AccountId] = {
-            accountId: candidateAccountId,
-            voteCount: candidateVotes.length,
-            accumulatedWeight: accumulatedWeight,
-          };
-
-          return acc;
-        }, {});
-
-        // Calculate total accumulated weight across all winners
-        const totalAccumulatedWeight = Object.values(intermediateResults).reduce(
-          (sum, result) => sum.add(result.accumulatedWeight),
-          Big(0),
-        );
-
-        // Second pass: Calculate estimated payouts using total accumulated weight
-        const candidateResults = Object.entries(intermediateResults).reduce<
-          VotingRoundWinnerRegistry["winners"]
-        >((acc, [candidateAccountId, result]) => {
-          acc[candidateAccountId as AccountId] = {
-            ...result,
-            accumulatedWeight: result.accumulatedWeight.toNumber(),
-
-            estimatedPayoutAmount: matchingPoolBalance
-              .mul(
-                result.accumulatedWeight.div(
-                  totalAccumulatedWeight.gt(0) ? totalAccumulatedWeight : 1,
-                ),
-              )
-
-              .toNumber(),
-          };
-
-          return acc;
-        }, {});
-
-        set((state) => ({
-          resultsCache: {
-            ...state.resultsCache,
-
-            [electionId]: {
-              totalVoteCount: votes.length,
-              winners: candidateResults,
-              voters,
+              [electionId]: {
+                totalVoteCount: votes.length,
+                winners: candidateResults,
+                voters,
+              },
             },
-          },
-        }));
+          }));
+        }
       },
     }),
 

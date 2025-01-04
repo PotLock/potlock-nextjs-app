@@ -10,14 +10,16 @@ import { usePotFeatureFlags } from "@/entities/pot";
 import { useRoundResultsStore } from "../model/round-results";
 import type { VotingRoundKey } from "../types";
 import { useVotingRound } from "./rounds";
+import { VOTING_ROUND_CONFIG_MPDAO } from "../model/hardcoded";
 
-// TODO: Apply performance optimizations
 export const useVotingRoundResults = ({
   potId,
   enabled = true,
 }: VotingRoundKey & ConditionalActivation) => {
   const { data: pot } = indexer.usePot({ enabled, potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+  // TODO: Implement mechanism config storage ( Pots V2 milestone )
+  const mechanismConfig = VOTING_ROUND_CONFIG_MPDAO;
 
   const votingRound = useVotingRound({
     enabled: enabled && hasProportionalFundingMechanism,
@@ -29,15 +31,17 @@ export const useVotingRoundResults = ({
     electionId: votingRound?.electionId ?? 0,
   });
 
+  // TODO: Apply performance optimizations
   const store = useRoundResultsStore();
 
-  if (enabled && pot && votingRound && votes) {
+  if (enabled && hasProportionalFundingMechanism && pot && votingRound && votes) {
     const cachedResults = store.resultsCache[votingRound.electionId];
 
     // Update results if votes have changed
     if (!cachedResults || cachedResults.totalVoteCount !== votes.length) {
       store.updateResults({
         electionId: votingRound.electionId,
+        mechanismConfig,
         votes,
 
         matchingPoolBalance: stringifiedU128ToBigNum(

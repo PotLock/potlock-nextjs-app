@@ -282,12 +282,12 @@ export const useAccountUpvotedLists = ({
 
 export const useMpdaoVoterInfo = ({
   accountId,
-  ...params
-}: Partial<ByAccountId> & Omit<generatedClient.V1MpdaoVoterInfoRetrieveParams, "voter_id">) => {
-  const queryResult = generatedClient.useV1MpdaoVoterInfoRetrieve(
-    { voter_id: accountId ?? "noop", ...params },
-    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
-  );
+  enabled = true,
+}: Partial<ByAccountId> & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1MpdaoVotersRetrieve2(accountId ?? "noop", {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled: enabled && Boolean(accountId) },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };

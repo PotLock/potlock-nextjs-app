@@ -67,21 +67,20 @@ export const VotingRoundResultRow: React.FC<VotingRoundResultRowProps> = ({
       }
       secondarySlot={
         <div className="hidden items-center md:flex">
-          <div className="inline-flex h-16 w-24 max-w-24 items-center justify-end p-4">
-            <div className="prose text-right text-sm font-medium leading-tight">{voteCount}</div>
+          <div className="inline-flex h-16 items-center justify-end overflow-hidden px-4 py-2">
+            <div className="w-24 max-w-24  text-end text-sm font-medium leading-tight">
+              {voteCount}
+            </div>
           </div>
 
-          <div className="max-w-30.5 w-30.5 inline-flex h-16 items-center justify-end px-4 py-2">
-            <span className="font-600 text-right uppercase leading-none">{accumulatedWeight}</span>
+          <div className="inline-flex h-16 items-center overflow-hidden px-4 py-2">
+            <span className="max-w-30.5 w-30.5 font-600 text-end uppercase leading-none">
+              {accumulatedWeight}
+            </span>
           </div>
 
-          <div
-            className={cn(
-              "max-w-32.5 w-32.5 inline-flex h-16 items-center justify-end",
-              "overflow-hidden px-4 py-2 pr-0",
-            )}
-          >
-            <span className="font-600 w-full overflow-x-hidden text-center uppercase leading-none">
+          <div className={cn("inline-flex h-16 items-center overflow-hidden px-4 py-2 pr-0")}>
+            <span className="w-50 max-w-50 font-600 text-end uppercase leading-none">
               {estimatedPayoutAmount}
             </span>
           </div>
