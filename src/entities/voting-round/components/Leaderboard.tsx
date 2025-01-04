@@ -11,6 +11,11 @@ import { TokenIcon } from "@/entities/_shared/token";
 
 import { useVotingRoundResults } from "../hooks/results";
 
+const VotingRoundLeaderboardItemsPlaceholder = () =>
+  Array.from({ length: 3 }).map((_, index) => (
+    <Skeleton key={index} className="h-16 w-full rounded-2xl" />
+  ));
+
 export type VotingRoundLeaderboardProps = ByPotId & {};
 
 export const VotingRoundLeaderboard: React.FC<VotingRoundLeaderboardProps> = ({ potId }) => {
@@ -32,7 +37,7 @@ export const VotingRoundLeaderboard: React.FC<VotingRoundLeaderboardProps> = ({ 
 
   return (
     <div className="md:max-w-126.5 flex w-full flex-col gap-3 rounded-3xl bg-neutral-50 p-3">
-      {votingRoundResults.data !== undefined && <Skeleton className="h-16 w-full" />}
+      {votingRoundResults.data === undefined && <VotingRoundLeaderboardItemsPlaceholder />}
 
       {votingRoundResults.data !== undefined &&
         leadingPositions.map(

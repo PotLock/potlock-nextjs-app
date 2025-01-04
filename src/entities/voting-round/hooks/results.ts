@@ -33,6 +33,7 @@ export const useVotingRoundResults = ({
 
   const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
     enabled: enabled && votingRound !== undefined,
+    page_size: 80,
   });
 
   const isLoading = useMemo(
@@ -44,11 +45,11 @@ export const useVotingRoundResults = ({
   const store = useRoundResultsStore();
 
   if (enabled && hasProportionalFundingMechanism && pot && votingRound && votes && voters) {
-    const cachedResults = store.resultsCache[votingRound.electionId];
+    const cachedResults = store.cache[votingRound.electionId];
 
     // Update results if votes have changed
     if (!cachedResults || cachedResults.totalVoteCount !== votes.length) {
-      store.updateResults({
+      store.revalidate({
         electionId: votingRound.electionId,
         mechanismConfig,
         votes,
@@ -63,8 +64,8 @@ export const useVotingRoundResults = ({
   }
 
   const results = useMemo(
-    () => (votingRound ? store.resultsCache[votingRound.electionId] : undefined),
-    [store.resultsCache, votingRound],
+    () => (votingRound ? store.cache[votingRound.electionId] : undefined),
+    [store.cache, votingRound],
   );
 
   const handleWinnersCsvDownload = useCallback(() => {
