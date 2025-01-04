@@ -46,7 +46,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
       {votingRoundResults.data === undefined ? (
         <Skeleton className="h-10 w-full" />
       ) : (
-        <VotingRoundResultsTable data={values(votingRoundResults.data.winnerRegistry)} />
+        <VotingRoundResultsTable data={values(votingRoundResults.data.winners)} />
       )}
     </div>
   );

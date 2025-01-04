@@ -17,8 +17,8 @@ type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "
 };
 
 type VotingRoundParticipants = {
-  voterRegistry: Record<AccountId, VoterProfile>;
-  winnerRegistry: Record<AccountId, VotingRoundWinner>;
+  voters: Record<AccountId, VoterProfile>;
+  winners: Record<AccountId, VotingRoundWinner>;
 };
 
 interface VotingRoundResultsState {
@@ -33,19 +33,25 @@ interface VotingRoundResultsState {
   }) => Promise<void>;
 }
 
-export const useRoundResultsStore = create<VotingRoundResultsState>()(
+export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
   persist(
     (set) => ({
       cache: {},
 
-      revalidate: async ({ electionId, mechanismConfig, votes, voters, matchingPoolBalance }) => {
+      revalidate: async ({
+        electionId,
+        mechanismConfig,
+        votes,
+        voters: voterList,
+        matchingPoolBalance,
+      }) => {
         const stakingTokenMetadata = mechanismConfig.stakingContractAccountId
           ? await ftClient.ft_metadata({ tokenId: mechanismConfig.stakingContractAccountId })
           : null;
 
-        const voterRegistry: VotingRoundParticipants["voterRegistry"] | undefined = fromEntries(
+        const voters: VotingRoundParticipants["voters"] | undefined = fromEntries(
           await Promise.all(
-            voters.map(async ({ voter_id, voter_data }) => {
+            voterList.map(async ({ voter_id, voter_data }) => {
               const votingPower =
                 voter_data.locking_positions?.reduce(
                   (sum: Big, { voting_power }: { voting_power: string }) =>
@@ -67,7 +73,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           ),
         );
 
-        if (voterRegistry !== undefined) {
+        if (voters !== undefined) {
           const votesByCandidate = votes.reduce<Record<AccountId, Vote[]>>(
             (registry, vote) => ({
               ...registry,
@@ -81,58 +87,59 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
             {},
           );
 
-          // First pass: Calculate accumulated weights for each candidate
+          // First pass: Calculate accumulated weights for each candidate with Big.js precision
           const intermediateWinners = entries(votesByCandidate).reduce<
             Record<AccountId, VotingRoundWinnerIntermediateData>
-          >((acc, [candidateAccountId, candidateVotes]) => {
-            // Store intermediate results with Big.js precision
-            acc[candidateAccountId as AccountId] = {
-              accountId: candidateAccountId,
+          >((registry, [accountId, candidateVotes]) => {
+            registry[accountId] = {
+              accountId,
               voteCount: candidateVotes.length,
 
               accumulatedWeight: candidateVotes.reduce((sum, vote) => {
-                const voterWeight = getVoteWeight(voterRegistry[vote.voter], mechanismConfig);
+                const voterWeight = getVoteWeight(voters[vote.voter], mechanismConfig);
                 return sum.plus(Big(vote.weight).mul(voterWeight));
               }, Big(0)),
             };
 
-            return acc;
+            return registry;
           }, {});
 
           // Calculate total accumulated weight across all winners
           const totalAccumulatedWeight = values(intermediateWinners).reduce(
-            (sum, result) => sum.add(result.accumulatedWeight),
+            (sum, winner) => sum.add(winner.accumulatedWeight),
             Big(0),
           );
 
           // Second pass: Calculate estimated payouts using total accumulated weight
-          const winnerRegistry = entries(intermediateWinners).reduce<
-            VotingRoundParticipants["winnerRegistry"]
-          >((acc, [candidateAccountId, result]) => {
-            acc[candidateAccountId as AccountId] = {
-              ...result,
-              accumulatedWeight: result.accumulatedWeight.toNumber(),
+          const winners = entries(intermediateWinners).reduce<VotingRoundParticipants["winners"]>(
+            (registry, [accountId, result]) => {
+              registry[accountId] = {
+                ...result,
+                accumulatedWeight: result.accumulatedWeight.toNumber(),
 
-              estimatedPayoutAmount: totalAccumulatedWeight.gt(0)
-                ? matchingPoolBalance
-                    .mul(result.accumulatedWeight.div(totalAccumulatedWeight))
-                    .toNumber()
-                : 0,
-            };
+                estimatedPayoutAmount: totalAccumulatedWeight.gt(0)
+                  ? matchingPoolBalance
+                      .mul(result.accumulatedWeight.div(totalAccumulatedWeight))
+                      .toNumber()
+                  : 0,
+              };
 
-            return acc;
-          }, {});
+              return registry;
+            },
+
+            {},
+          );
 
           set((state) => ({
             cache: {
               ...state.cache,
-              [electionId]: { totalVoteCount: votes.length, voterRegistry, winnerRegistry },
+              [electionId]: { totalVoteCount: votes.length, voters, winners },
             },
           }));
         }
       },
     }),
 
-    { name: "potlock-voting-round-results" },
+    { name: "@potlock/next/entities/voting-round/results" },
   ),
 );

@@ -25,7 +25,7 @@ export const VotingRoundLeaderboard: React.FC<VotingRoundLeaderboardProps> = ({ 
     () =>
       votingRoundResults.data === undefined
         ? []
-        : values(votingRoundResults.data.winnerRegistry)
+        : values(votingRoundResults.data.winners)
             .sort(
               (candidateA, candidateB) =>
                 candidateB.accumulatedWeight - candidateA.accumulatedWeight,

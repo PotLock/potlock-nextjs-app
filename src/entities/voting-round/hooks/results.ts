@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from "react";
 
+import { values } from "remeda";
+
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { votingContractHooks } from "@/common/contracts/core/voting";
@@ -7,7 +9,7 @@ import { stringifiedU128ToBigNum } from "@/common/lib";
 import type { ConditionalActivation } from "@/common/types";
 import { usePotFeatureFlags } from "@/entities/pot";
 
-import { useRoundResultsStore } from "../model/round-results";
+import { useVotingRoundResultsStore } from "../model/results";
 import type { VotingRoundKey } from "../types";
 import { useVotingRound } from "./rounds";
 import { VOTING_ROUND_CONFIG_MPDAO } from "../model/hardcoded";
@@ -33,7 +35,8 @@ export const useVotingRoundResults = ({
 
   const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
     enabled: enabled && votingRound !== undefined,
-    page_size: 80,
+    // TODO: Set to 9999
+    page_size: 90,
   });
 
   const isLoading = useMemo(
@@ -42,12 +45,15 @@ export const useVotingRoundResults = ({
   );
 
   // TODO: Apply performance optimizations
-  const store = useRoundResultsStore();
+  const store = useVotingRoundResultsStore();
+
+  const cachedResults = useMemo(
+    () => (votingRound ? store.cache[votingRound.electionId] : undefined),
+    [store.cache, votingRound],
+  );
 
   if (enabled && hasProportionalFundingMechanism && pot && votingRound && votes && voters) {
-    const cachedResults = store.cache[votingRound.electionId];
-
-    // Update results if votes have changed
+    // Recalculate results if votes have changed
     if (!cachedResults || cachedResults.totalVoteCount !== votes.length) {
       store.revalidate({
         electionId: votingRound.electionId,
@@ -63,13 +69,8 @@ export const useVotingRoundResults = ({
     }
   }
 
-  const results = useMemo(
-    () => (votingRound ? store.cache[votingRound.electionId] : undefined),
-    [store.cache, votingRound],
-  );
-
   const handleWinnersCsvDownload = useCallback(() => {
-    if (results?.winnerRegistry) {
+    if (cachedResults?.winners) {
       const headers = [
         "Project Account ID",
         "Vote Count",
@@ -77,7 +78,7 @@ export const useVotingRoundResults = ({
         "Estimated NEAR Payout Amount",
       ];
 
-      const rows = Object.values(results.winnerRegistry).map((winner) => [
+      const rows = values(cachedResults.winners).map((winner) => [
         winner.accountId,
         winner.voteCount,
         winner.accumulatedWeight,
@@ -96,12 +97,12 @@ export const useVotingRoundResults = ({
       link.click();
       document.body.removeChild(link);
     }
-  }, [potId, results]);
+  }, [potId, cachedResults]);
 
-  if (results) {
+  if (cachedResults) {
     return {
       isLoading,
-      data: results,
+      data: cachedResults,
       handleWinnersCsvDownload,
     };
   } else {
