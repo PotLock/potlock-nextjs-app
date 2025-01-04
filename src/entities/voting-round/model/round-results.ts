@@ -44,7 +44,7 @@ export const useRoundResultsStore = create<VotingRoundResultsState>()(
           : null;
 
         const voters: VotingRoundParticipants["voters"] | undefined = await indexerClient
-          .v1MpdaoVotersRetrieve({ page_size: 40 }, INDEXER_CLIENT_CONFIG.axios)
+          .v1MpdaoVotersRetrieve({ page_size: 80 }, INDEXER_CLIENT_CONFIG.axios)
           .then(async ({ data }) => {
             console.log(data);
 
