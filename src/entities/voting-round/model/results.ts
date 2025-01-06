@@ -7,7 +7,7 @@ import { type MpdaoVoterItem } from "@/common/api/indexer";
 import { is_human } from "@/common/contracts/core/sybil";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
 import { ftClient } from "@/common/contracts/tokens/ft";
-import { stringifiedU128ToBigNum } from "@/common/lib";
+import { stringifiedU128ToBigNum, toChronologicalOrder } from "@/common/lib";
 
 import type { VoterProfile, VotingMechanismConfig, VotingRoundWinner } from "../types";
 import { getVoteWeight } from "../utils/vote-weight";

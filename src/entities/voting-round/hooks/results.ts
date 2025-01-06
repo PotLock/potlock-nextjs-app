@@ -35,8 +35,7 @@ export const useVotingRoundResults = ({
 
   const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
     enabled: enabled && votingRound !== undefined,
-    // TODO: Set to 9999
-    page_size: 90,
+    page_size: 9999,
   });
 
   const isLoading = useMemo(
