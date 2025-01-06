@@ -179,10 +179,10 @@ export const useAccountDonationsSent = ({
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve_2
  */
-export const usePot = ({ potId }: Partial<ByPotId>) => {
+export const usePot = ({ potId, enabled = true }: ByPotId & ConditionalActivation) => {
   const queryResult = generatedClient.useV1PotsRetrieve2(potId ?? "noop", {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled: Boolean(potId), refreshInterval: 3000 },
+    swr: { enabled, refreshInterval: 3000 },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
@@ -280,14 +280,32 @@ export const useAccountUpvotedLists = ({
   };
 };
 
-export const useMpdaoVoterInfo = ({
-  accountId,
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_mpdao_voters_retrieve
+ */
+export const useMpdaoVoters = ({
+  enabled = true,
   ...params
-}: Partial<ByAccountId> & Omit<generatedClient.V1MpdaoVoterInfoRetrieveParams, "voter_id">) => {
-  const queryResult = generatedClient.useV1MpdaoVoterInfoRetrieve(
-    { voter_id: accountId ?? "noop", ...params },
-    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
-  );
+}: generatedClient.V1MpdaoVotersRetrieveParams & ConditionalActivation = {}) => {
+  const queryResult = generatedClient.useV1MpdaoVotersRetrieve(params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_mpdao_voters_retrieve_2
+ */
+export const useMpdaoVoter = ({
+  accountId,
+  enabled = true,
+}: Partial<ByAccountId> & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1MpdaoVotersRetrieve2(accountId ?? "noop", {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled: enabled && Boolean(accountId) },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };

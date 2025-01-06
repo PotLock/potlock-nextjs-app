@@ -86,7 +86,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
         highlightOnHover
         key={accountId}
         {...{ accountId }}
-        secondaryAction={
+        secondarySlot={
           <FormField
             name="groupAllocationPlan"
             control={form.control}

@@ -20,7 +20,7 @@ export type VotingRoundCandidateRowProps = ByElectionId & {
 
 export const VotingRoundCandidateRow: React.FC<VotingRoundCandidateRowProps> = ({
   electionId,
-  data: { account_id: accountId, votes_received: votesCount },
+  data: { account_id: accountId, votes_received: voteCount },
   isVotable = true,
   isSelected = false,
   onSelect,
@@ -58,11 +58,11 @@ export const VotingRoundCandidateRow: React.FC<VotingRoundCandidateRowProps> = (
         ) : (
           <div className="color-neutral-500 flex flex-nowrap items-center">
             <Dot className="hidden md:block" />
-            <span className="prose text-sm font-medium leading-tight">{`${votesCount} Votes`}</span>
+            <span className="prose text-sm font-medium leading-tight">{`${voteCount} Votes`}</span>
           </div>
         )
       }
-      primaryAction={
+      primarySlot={
         typeof onSelect === "function" ? (
           <div
             className={cn("pr-3.75 inline-flex h-16 items-center justify-start gap-4 py-4", {
@@ -77,13 +77,13 @@ export const VotingRoundCandidateRow: React.FC<VotingRoundCandidateRowProps> = (
           </div>
         ) : null
       }
-      secondaryAction={
+      secondarySlot={
         <div className="flex items-center">
           <div className="hidden h-16 w-24 items-center justify-end p-4 md:inline-flex">
             {isLoading ? (
               <Skeleton className="h-5 w-11" />
             ) : (
-              <div className="prose text-right text-sm font-medium leading-tight">{votesCount}</div>
+              <div className="prose text-right text-sm font-medium leading-tight">{voteCount}</div>
             )}
           </div>
 

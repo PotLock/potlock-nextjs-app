@@ -1,36 +1,64 @@
 import { useCallback, useMemo } from "react";
 
+import { values } from "remeda";
+
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { votingContractHooks } from "@/common/contracts/core/voting";
 import { stringifiedU128ToBigNum } from "@/common/lib";
+import type { ConditionalActivation } from "@/common/types";
 import { usePotFeatureFlags } from "@/entities/pot";
 
-import { useRoundResultsStore } from "../model/round-results";
+import { useVotingRoundResultsStore } from "../model/results";
 import type { VotingRoundKey } from "../types";
 import { useVotingRound } from "./rounds";
+import { VOTING_ROUND_CONFIG_MPDAO } from "../model/hardcoded";
 
-// TODO: Apply performance optimizations
-export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
-  const { data: pot } = indexer.usePot({ potId });
+export const useVotingRoundResults = ({
+  potId,
+  enabled = true,
+}: VotingRoundKey & ConditionalActivation) => {
+  const { data: pot } = indexer.usePot({ enabled, potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
-  const votingRound = useVotingRound({ enabled: hasProportionalFundingMechanism, potId });
+  // TODO: Implement mechanism config storage ( Pots V2 milestone )
+  const mechanismConfig = VOTING_ROUND_CONFIG_MPDAO;
 
-  const { data: votes } = votingContractHooks.useElectionVotes({
-    enabled: votingRound !== undefined,
+  const votingRound = useVotingRound({
+    enabled: enabled && hasProportionalFundingMechanism,
+    potId,
+  });
+
+  const { isLoading: isVoteListLoading, data: votes } = votingContractHooks.useElectionVotes({
+    enabled: enabled && votingRound !== undefined,
     electionId: votingRound?.electionId ?? 0,
   });
 
-  const store = useRoundResultsStore();
+  const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
+    enabled: enabled && votingRound !== undefined,
+    page_size: 9999,
+  });
 
-  if (pot && votingRound && votes) {
-    const cachedResults = store.resultsCache[votingRound.electionId];
+  const isLoading = useMemo(
+    () => isVoteListLoading || isVoterListLoading,
+    [isVoteListLoading, isVoterListLoading],
+  );
 
-    // Update results if votes have changed
+  // TODO: Apply performance optimizations
+  const store = useVotingRoundResultsStore();
+
+  const cachedResults = useMemo(
+    () => (votingRound ? store.cache[votingRound.electionId] : undefined),
+    [store.cache, votingRound],
+  );
+
+  if (enabled && hasProportionalFundingMechanism && pot && votingRound && votes && voters) {
+    // Recalculate results if votes have changed
     if (!cachedResults || cachedResults.totalVoteCount !== votes.length) {
-      store.updateResults({
+      store.revalidate({
         electionId: votingRound.electionId,
+        mechanismConfig,
         votes,
+        voters: voters.results,
 
         matchingPoolBalance: stringifiedU128ToBigNum(
           pot.matching_pool_balance,
@@ -40,21 +68,16 @@ export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
     }
   }
 
-  const results = useMemo(
-    () => (votingRound ? store.resultsCache[votingRound.electionId] : undefined),
-    [store.resultsCache, votingRound],
-  );
-
-  const handleCsvDownload = useCallback(() => {
-    if (results?.winners) {
+  const handleWinnersCsvDownload = useCallback(() => {
+    if (cachedResults?.winners) {
       const headers = [
-        "Project ID",
+        "Project Account ID",
         "Vote Count",
-        "Accumulated Weight",
+        "Total Weight",
         "Estimated NEAR Payout Amount",
       ];
 
-      const rows = Object.values(results.winners).map((winner) => [
+      const rows = values(cachedResults.winners).map((winner) => [
         winner.accountId,
         winner.voteCount,
         winner.accumulatedWeight,
@@ -73,17 +96,19 @@ export const useVotingRoundResults = ({ potId }: VotingRoundKey) => {
       link.click();
       document.body.removeChild(link);
     }
-  }, [potId, results]);
+  }, [potId, cachedResults]);
 
-  if (results) {
+  if (cachedResults) {
     return {
-      votingRoundResults: results,
-      handleVotingRoundResultsCsvDownload: handleCsvDownload,
+      isLoading,
+      data: cachedResults,
+      handleWinnersCsvDownload,
     };
   } else {
     return {
-      votingRoundResults: undefined,
-      handleVotingRoundResultsCsvDownload: undefined,
+      isLoading,
+      data: undefined,
+      handleWinnersCsvDownload: undefined,
     };
   }
 };

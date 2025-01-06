@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { ByPotId, indexer } from "@/common/api/indexer";
+import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   Alert,
@@ -39,10 +39,13 @@ export const PotConfigurationEditor: React.FC<PotConfigurationEditorProps> = ({
   potId,
   className,
 }) => {
-  const isNewPot = typeof potId !== "string";
   const router = useRouter();
+  const isNewPot = typeof potId !== "string";
 
-  const { data: pot } = indexer.usePot({ potId });
+  const { data: pot } = indexer.usePot({
+    enabled: !isNewPot,
+    potId: potId as PotId,
+  });
 
   const schema = useMemo(
     () => (isNewPot ? getPotDeploymentSchema() : getPotSettingsSchema(pot)),

@@ -10,7 +10,7 @@ import { refExchangeHooks } from "@/common/contracts/ref-finance";
 import { ftHooks } from "@/common/contracts/tokens";
 import { isAccountId, stringifiedU128ToBigNum, stringifiedU128ToFloat } from "@/common/lib";
 import { formatWithCommas } from "@/common/lib/formatWithCommas";
-import type { ByTokenId } from "@/common/types";
+import type { AccountId, ByTokenId, ConditionalActivation } from "@/common/types";
 
 import { type TokenQuery, type TokenQueryResult } from "./types";
 
@@ -47,7 +47,11 @@ export const useTokenAllowlist = () => {
  *
  * When `balanceCheckAccountId` is provided, the balance of the token is also retrieved.
  */
-export const useToken = ({ tokenId, balanceCheckAccountId }: TokenQuery): TokenQueryResult => {
+export const useToken = ({
+  tokenId,
+  balanceCheckAccountId,
+  enabled = true,
+}: TokenQuery & ConditionalActivation): TokenQueryResult => {
   const isValidFtContractAccountId = isAccountId(tokenId);
   const isValidTokenId = tokenId === NATIVE_TOKEN_ID || isValidFtContractAccountId;
 
@@ -55,36 +59,43 @@ export const useToken = ({ tokenId, balanceCheckAccountId }: TokenQuery): TokenQ
     isLoading: isNtMetadataLoading,
     data: ntMetadata,
     error: ntMetadataError,
-  } = nearHooks.useNativeTokenMetadata({ disabled: tokenId !== NATIVE_TOKEN_ID });
+  } = nearHooks.useNativeTokenMetadata({
+    disabled: !enabled || tokenId !== NATIVE_TOKEN_ID,
+  });
 
   const {
     isLoading: isNtUsdPriceLoading,
     data: oneTokenUsdPrice,
     error: usdPriceError,
-  } = coingeckoHooks.useNativeTokenUsdPrice({ disabled: tokenId !== NATIVE_TOKEN_ID });
+  } = coingeckoHooks.useNativeTokenUsdPrice({
+    disabled: !enabled || tokenId !== NATIVE_TOKEN_ID,
+  });
 
   const {
     isLoading: isAccountSummaryLoading,
     data: accountSummary,
     error: accountSummaryError,
   } = nearHooks.useViewAccount({
-    accountId: balanceCheckAccountId ?? "noop",
-    disabled: balanceCheckAccountId === undefined || tokenId !== NATIVE_TOKEN_ID,
+    disabled: !enabled || balanceCheckAccountId === undefined || tokenId !== NATIVE_TOKEN_ID,
+    accountId: balanceCheckAccountId as AccountId,
   });
 
   const {
     isLoading: isFtMetadataLoading,
     data: ftMetadata,
     error: ftMetadataError,
-  } = ftHooks.useFtMetadata({ disabled: !isValidFtContractAccountId, tokenId });
+  } = ftHooks.useFtMetadata({
+    disabled: !enabled || !isValidFtContractAccountId,
+    tokenId,
+  });
 
   const {
     isLoading: isFtUsdPriceLoading,
     data: oneFtUsdPrice,
     error: ftUsdPriceError,
   } = intearPricesHooks.useTokenUsdPrice({
+    disabled: !enabled || !isValidFtContractAccountId,
     tokenId,
-    disabled: !isValidFtContractAccountId,
   });
 
   const {
@@ -92,8 +103,8 @@ export const useToken = ({ tokenId, balanceCheckAccountId }: TokenQuery): TokenQ
     data: ftBalance,
     error: ftBalanceError,
   } = ftHooks.useFtBalanceOf({
-    accountId: balanceCheckAccountId ?? "noop",
     disabled: balanceCheckAccountId === undefined || !isValidFtContractAccountId,
+    accountId: balanceCheckAccountId as AccountId,
     tokenId,
   });
 

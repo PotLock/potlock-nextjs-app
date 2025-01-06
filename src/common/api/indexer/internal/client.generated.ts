@@ -148,11 +148,15 @@ export type V1PotfactoriesRetrieveParams = {
   page_size?: number;
 };
 
-export type V1MpdaoVoterInfoRetrieveParams = {
+export type V1MpdaoVotersRetrieveParams = {
   /**
-   * NEAR account ID of the voter
+   * Page number (starts from 1)
    */
-  voter_id?: string;
+  page?: number;
+  /**
+   * Number of items per page (default: 30)
+   */
+  page_size?: number;
 };
 
 export type V1ListsRegistrationsRetrieveParams = {
@@ -715,32 +719,6 @@ export interface Project {
   video_url: string;
 }
 
-export interface PotPayout {
-  /** Payout amount. */
-  amount: string;
-  /**
-   * Payout amount in USD.
-   * @nullable
-   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
-   */
-  amount_paid_usd?: string | null;
-  /** Payout id. */
-  readonly id: number;
-  /**
-   * Payout date.
-   * @nullable
-   */
-  paid_at?: string | null;
-  pot: Pot;
-  recipient: Account;
-  token: Token;
-  /**
-   * Transaction hash.
-   * @nullable
-   */
-  tx_hash?: string | null;
-}
-
 /**
  * Pot factory source metadata.
  * @nullable
@@ -893,6 +871,32 @@ export interface Pot {
   total_public_donations_usd: string;
 }
 
+export interface PotPayout {
+  /** Payout amount. */
+  amount: string;
+  /**
+   * Payout amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  amount_paid_usd?: string | null;
+  /** Payout id. */
+  readonly id: number;
+  /**
+   * Payout date.
+   * @nullable
+   */
+  paid_at?: string | null;
+  pot: Pot;
+  recipient: Account;
+  token: Token;
+  /**
+   * Transaction hash.
+   * @nullable
+   */
+  tx_hash?: string | null;
+}
+
 export interface PotApplication {
   applicant: Account;
   /** Application id. */
@@ -999,6 +1003,15 @@ export interface PaginatedPotApplicationsResponse {
   results: PotApplication[];
 }
 
+export interface PaginatedMpdaoUsers {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: MpdaoVoterItem[];
+}
+
 export interface PaginatedListsResponse {
   count: number;
   /** @nullable */
@@ -1035,11 +1048,42 @@ export interface PaginatedAccountsResponse {
   results: Account[];
 }
 
+export interface NearSocialProfileData {
+  backgroundImage?: Image;
+  description?: string;
+  image?: Image;
+  linktree?: Linktree;
+  name?: string;
+  /** JSON-stringified array of category strings */
+  plCategories?: string;
+  /** JSON-stringified array of funding source objects */
+  plFundingSources?: string;
+  /** JSON-stringified array of URLs */
+  plGithubRepos?: string;
+  plPublicGoodReason?: string;
+  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
+  plSmartContracts?: string;
+  /** JSON-stringified array of team member account ID strings */
+  plTeam?: string;
+}
+
 export interface Nft {
   baseUri?: string;
   contractId?: string;
   media?: string;
   tokenId?: string;
+}
+
+/**
+ * @nullable
+ */
+export type MpdaoVoterItemAccountData = Account | null;
+
+export interface MpdaoVoterItem {
+  /** @nullable */
+  account_data: MpdaoVoterItemAccountData;
+  voter_data: MpdaoSnapshot;
+  voter_id: string;
 }
 
 export interface LockingPosition {
@@ -1054,12 +1098,18 @@ export interface LockingPosition {
   voting_power: string;
 }
 
-export interface MpdaoVoter {
-  balance_in_contract: string;
-  locking_positions: LockingPosition[];
-  vote_positions: VotePosition[];
+export interface MpdaoSnapshot {
+  /** @nullable */
+  balance_in_contract: string | null;
+  /** @nullable */
+  locking_positions: LockingPosition[] | null;
+  readonly staking_token_balance: string;
+  readonly staking_token_id: string;
+  /** @nullable */
+  vote_positions: VotePosition[] | null;
   voter_id: string;
-  voting_power: string;
+  /** @nullable */
+  voting_power: string | null;
 }
 
 export interface ListUpvote {
@@ -1168,25 +1218,6 @@ export interface Image {
   ipfs_cid?: string;
   nft?: Nft;
   url?: string;
-}
-
-export interface NearSocialProfileData {
-  backgroundImage?: Image;
-  description?: string;
-  image?: Image;
-  linktree?: Linktree;
-  name?: string;
-  /** JSON-stringified array of category strings */
-  plCategories?: string;
-  /** JSON-stringified array of funding source objects */
-  plFundingSources?: string;
-  /** JSON-stringified array of URLs */
-  plGithubRepos?: string;
-  plPublicGoodReason?: string;
-  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
-  plSmartContracts?: string;
-  /** JSON-stringified array of team member account ID strings */
-  plTeam?: string;
 }
 
 export interface DonationContractConfig {
@@ -2222,29 +2253,29 @@ export const useV1ListsRegistrationsRetrieve = <TError = AxiosError<void>>(
   };
 };
 
-export const v1MpdaoVoterInfoRetrieve = (
-  params?: V1MpdaoVoterInfoRetrieveParams,
+export const v1MpdaoVotersRetrieve = (
+  params?: V1MpdaoVotersRetrieveParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<MpdaoVoter>> => {
-  return axios.get(`/api/v1/mpdao/voter-info`, {
+): Promise<AxiosResponse<PaginatedMpdaoUsers>> => {
+  return axios.get(`/api/v1/mpdao/voters`, {
     ...options,
     params: { ...params, ...options?.params },
   });
 };
 
-export const getV1MpdaoVoterInfoRetrieveKey = (params?: V1MpdaoVoterInfoRetrieveParams) =>
-  [`/api/v1/mpdao/voter-info`, ...(params ? [params] : [])] as const;
+export const getV1MpdaoVotersRetrieveKey = (params?: V1MpdaoVotersRetrieveParams) =>
+  [`/api/v1/mpdao/voters`, ...(params ? [params] : [])] as const;
 
-export type V1MpdaoVoterInfoRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof v1MpdaoVoterInfoRetrieve>>
+export type V1MpdaoVotersRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1MpdaoVotersRetrieve>>
 >;
 
-export type V1MpdaoVoterInfoRetrieveQueryError = AxiosError<void>;
+export type V1MpdaoVotersRetrieveQueryError = AxiosError<void>;
 
-export const useV1MpdaoVoterInfoRetrieve = <TError = AxiosError<void>>(
-  params?: V1MpdaoVoterInfoRetrieveParams,
+export const useV1MpdaoVotersRetrieve = <TError = AxiosError<void>>(
+  params?: V1MpdaoVotersRetrieveParams,
   options?: {
-    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1MpdaoVoterInfoRetrieve>>, TError> & {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1MpdaoVotersRetrieve>>, TError> & {
       swrKey?: Key;
       enabled?: boolean;
     };
@@ -2256,9 +2287,52 @@ export const useV1MpdaoVoterInfoRetrieve = <TError = AxiosError<void>>(
   const isEnabled = swrOptions?.enabled !== false;
 
   const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getV1MpdaoVoterInfoRetrieveKey(params) : null));
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1MpdaoVotersRetrieveKey(params) : null));
 
-  const swrFn = () => v1MpdaoVoterInfoRetrieve(params, axiosOptions);
+  const swrFn = () => v1MpdaoVotersRetrieve(params, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export const v1MpdaoVotersRetrieve2 = (
+  voterId: string,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<MpdaoVoterItem>> => {
+  return axios.get(`/api/v1/mpdao/voters/${voterId}`, options);
+};
+
+export const getV1MpdaoVotersRetrieve2Key = (voterId: string) =>
+  [`/api/v1/mpdao/voters/${voterId}`] as const;
+
+export type V1MpdaoVotersRetrieve2QueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1MpdaoVotersRetrieve2>>
+>;
+
+export type V1MpdaoVotersRetrieve2QueryError = AxiosError<void>;
+
+export const useV1MpdaoVotersRetrieve2 = <TError = AxiosError<void>>(
+  voterId: string,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1MpdaoVotersRetrieve2>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!voterId;
+
+  const swrKey =
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1MpdaoVotersRetrieve2Key(voterId) : null));
+
+  const swrFn = () => v1MpdaoVotersRetrieve2(voterId, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 

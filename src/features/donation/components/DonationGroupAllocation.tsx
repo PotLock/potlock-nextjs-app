@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
-import { indexer } from "@/common/api/indexer";
+import { type PotId, indexer } from "@/common/api/indexer";
 import { yoctoNearToFloat } from "@/common/lib";
 import {
   DialogDescription,
@@ -54,7 +54,16 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
 
   const isListDonation = listId !== undefined;
   const { data: token } = useToken({ tokenId });
-  const { isLoading: isPotLoading, data: pot, error: potError } = indexer.usePot({ potId });
+
+  const {
+    isLoading: isPotLoading,
+    data: pot,
+    error: potError,
+  } = indexer.usePot({
+    enabled: potId !== undefined,
+    potId: potId as PotId,
+  });
+
   const { data: list, isLoading: isListLoading, error: listError } = indexer.useList({ listId });
 
   const totalAmountUsdValue = token?.usdPrice
