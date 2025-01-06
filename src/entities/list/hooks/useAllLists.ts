@@ -17,6 +17,7 @@ export const useAllLists = (
 
   const { data: myLists } = indexer.useLists({
     account: wallet?.accountId,
+    page_size: 999,
   });
 
   const { data: myFavourites } = indexer.useAccountUpvotedLists({
