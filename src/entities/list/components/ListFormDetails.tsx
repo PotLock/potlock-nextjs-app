@@ -11,8 +11,6 @@ import { walletApi } from "@/common/api/near/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
 import uploadFileToIPFS from "@/common/services/ipfs";
-import { fetchSocialImages } from "@/common/services/social";
-import { AccountId } from "@/common/types";
 import { Button, Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
@@ -107,6 +105,9 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
           list_id: parseInt(id as string) as any,
         });
 
+        console.log(response.owner);
+        console.log(walletApi?.accountId !== response.owner);
+
         setValue("name", response.name);
         setValue("owner", isDuplicate ? walletApi?.accountId : response.owner);
         setValue("description", response.description);
@@ -115,7 +116,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
 
         setAdmins(
           isDuplicate && walletApi?.accountId !== response.owner
-            ? [walletApi?.accountId, ...response.admins]
+            ? [response?.owner, ...response.admins]
             : response.admins,
         );
 
