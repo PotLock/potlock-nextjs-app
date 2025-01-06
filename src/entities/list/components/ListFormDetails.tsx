@@ -398,7 +398,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
                       isEditable={true}
                       title="Admins"
                       showAccountList={false}
-                      handleRemoveAccounts={id ? handleRemoveAdmin : undefined}
+                      handleRemoveAccounts={id && !isDuplicate ? handleRemoveAdmin : undefined}
                       value={admins.map((admin) => ({ accountId: admin }))}
                       classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={
