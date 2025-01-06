@@ -138,40 +138,43 @@ export const ListsOverview = ({
       </div>
       {loading ? (
         Array.from({ length: 6 }, (_, index) => <ListCardSkeleton key={index} />)
-      ) : filteredRegistrations.length ? (
-        <div className="mt-8 grid w-full grid-cols-1 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRegistrations.map((item, index) => {
-            // Check if cover_image is present, otherwise use a random background image
-            let background = "";
-            let backdrop = "";
-
-            if (!item.cover_image) {
-              ({ background, backdrop } = getRandomBackgroundImage());
-            }
-
-            return (
-              <ListCard
-                dataForList={item}
-                key={index}
-                background={background}
-                backdrop={backdrop}
-              />
-            );
-          })}
-        </div>
       ) : (
-        !loading &&
-        filteredRegistrations.length === 0 && (
-          <NoListItem
-            type={noData}
-            showButton={true && !search}
-            route={
-              currentListType !== "My Favorites"
-                ? createRoute
-                : () => setCurrentListType("All Lists")
-            }
-          />
-        )
+        <>
+          {filteredRegistrations.length > 0 ? (
+            <div className="mt-8 grid w-full grid-cols-1 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3">
+              {filteredRegistrations.map((item, index) => {
+                // Check if cover_image is present, otherwise use a random background image
+                let background = "";
+                let backdrop = "";
+
+                if (!item.cover_image) {
+                  ({ background, backdrop } = getRandomBackgroundImage());
+                }
+
+                return (
+                  <ListCard
+                    dataForList={item}
+                    key={index}
+                    background={background}
+                    backdrop={backdrop}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            !loading && (
+              <NoListItem
+                type={noData}
+                showButton={true && !search}
+                route={
+                  currentListType !== "My Favorites"
+                    ? createRoute
+                    : () => setCurrentListType("All Lists")
+                }
+              />
+            )
+          )}
+        </>
       )}
     </div>
   );
