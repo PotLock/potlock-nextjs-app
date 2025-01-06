@@ -77,12 +77,14 @@ export const useVotingRoundResults = ({
         "Estimated NEAR Payout Amount",
       ];
 
-      const rows = values(cachedResults.winners).map((winner) => [
-        winner.accountId,
-        winner.voteCount,
-        winner.accumulatedWeight,
-        winner.estimatedPayoutAmount,
-      ]);
+      const rows = values(cachedResults.winners)
+        .sort((profileA, profileB) => profileB.accumulatedWeight - profileA.accumulatedWeight)
+        .map((winner) => [
+          winner.accountId,
+          winner.voteCount,
+          winner.accumulatedWeight,
+          winner.estimatedPayoutAmount,
+        ]);
 
       const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
