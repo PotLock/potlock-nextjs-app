@@ -106,7 +106,6 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
         });
 
         console.log(response.owner);
-        console.log(walletApi?.accountId !== response.owner);
 
         setValue("name", response.name);
         setValue("owner", isDuplicate ? walletApi?.accountId : response.owner);
