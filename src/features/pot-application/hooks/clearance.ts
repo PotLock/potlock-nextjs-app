@@ -6,7 +6,7 @@ import { PLATFORM_NAME } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { stringifiedU128ToBigNum } from "@/common/lib";
-import { ClearanceCheckResult } from "@/common/types";
+import { type AccountId, ClearanceCheckResult } from "@/common/types";
 import { useSession } from "@/entities/_shared/session";
 import { useToken } from "@/entities/_shared/token";
 
@@ -24,12 +24,15 @@ export const usePotApplicationUserClearance = ({
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
   const { data: pot } = indexer.usePot({ potId });
 
-  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useSession();
+  const authenticatedUser = useSession();
 
-  const { data: voterInfo } = indexer.useMpdaoVoter({ accountId });
+  const { data: voterInfo } = indexer.useMpdaoVoter({
+    enabled: authenticatedUser.isSignedIn,
+    accountId: authenticatedUser.accountId as AccountId,
+  });
 
   const { data: stakingToken } = useToken({
-    balanceCheckAccountId: accountId,
+    balanceCheckAccountId: authenticatedUser.accountId,
     tokenId: staking.tokenId,
   });
 
@@ -39,8 +42,8 @@ export const usePotApplicationUserClearance = ({
         ? [
             {
               title: `Verified Project on ${PLATFORM_NAME}`,
-              isFulfillmentAssessmentPending: isAccountInfoLoading,
-              isSatisfied: isVerifiedPublicGoodsProvider,
+              isFulfillmentAssessmentPending: authenticatedUser.isAccountInfoLoading,
+              isSatisfied: authenticatedUser.isVerifiedPublicGoodsProvider,
             },
           ]
         : []),
@@ -73,9 +76,9 @@ export const usePotApplicationUserClearance = ({
       error: null,
     };
   }, [
+    authenticatedUser.isAccountInfoLoading,
+    authenticatedUser.isVerifiedPublicGoodsProvider,
     hasProportionalFundingMechanism,
-    isAccountInfoLoading,
-    isVerifiedPublicGoodsProvider,
     pot?.sybil_wrapper_provider,
     staking.minAmountUsd,
     staking.platformName,

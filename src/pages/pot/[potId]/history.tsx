@@ -5,8 +5,11 @@ import { useRouter } from "next/router";
 
 import { votingContractHooks } from "@/common/contracts/core/voting";
 import { ScrollArea, SearchBar } from "@/common/ui/components";
-import { VotingRoundHistoryEntry } from "@/entities/voting-round";
-import { useVotingRound } from "@/entities/voting-round/hooks/rounds";
+import {
+  VotingRoundHistoryEntry,
+  useVotingRound,
+  useVotingRoundResults,
+} from "@/entities/voting-round";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotHistoryTab() {
@@ -21,6 +24,7 @@ export default function PotHistoryTab() {
   );
 
   const votingRound = useVotingRound({ potId });
+  const votingRoundResults = useVotingRoundResults({ potId });
 
   const { isLoading: isListOfVotesLoading, data: votes } = votingContractHooks.useElectionVotes({
     enabled: votingRound !== undefined,
@@ -39,6 +43,7 @@ export default function PotHistoryTab() {
         );
   }, [searchTerm, votes]);
 
+  // TODO: Place CSV download button here
   return votingRound === undefined ? (
     <div className="h-100 flex w-full flex-col items-center justify-center">
       <p className="prose text-2xl">{"No voting history."}</p>

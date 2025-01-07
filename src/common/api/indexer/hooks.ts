@@ -301,10 +301,10 @@ export const useMpdaoVoters = ({
 export const useMpdaoVoter = ({
   accountId,
   enabled = true,
-}: Partial<ByAccountId> & ConditionalActivation) => {
-  const queryResult = generatedClient.useV1MpdaoVotersRetrieve2(accountId ?? "noop", {
+}: ByAccountId & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1MpdaoVotersRetrieve2(accountId, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled: enabled && Boolean(accountId) },
+    swr: { enabled },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

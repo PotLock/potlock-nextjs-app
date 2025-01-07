@@ -2,6 +2,8 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
+import { indexer } from "@/common/api/indexer";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import Team from "@/entities/project/components/Team";
 import AboutItem from "@/layout/profile/components/AboutItem";
@@ -12,7 +14,8 @@ import SmartContract from "@/layout/profile/components/SmartContract";
 export default function ProfileHomeTab() {
   const router = useRouter();
   const { userId: accountId } = router.query as { userId: string };
-  const { profile, profileType } = useAccountSocialProfile({ accountId });
+  const { profile } = useAccountSocialProfile({ accountId });
+  const { data: accountListRegistrations } = indexer.useAccountListRegistrations({ accountId });
 
   return (
     <div className="mb-18 flex w-full flex-col">
@@ -22,9 +25,12 @@ export default function ProfileHomeTab() {
           About {profile?.name}
         </h2>
       </div>
+
       <AboutItem title="Overview" text={profile?.description} />
-      {/* INFO: It's needed to have home for regular users as well as pages redirection sends user to /home page (check middleware.ts file) */}
-      {profileType === "project" && (
+
+      {accountListRegistrations?.results.find(
+        ({ list }) => list.id === PUBLIC_GOODS_REGISTRY_LIST_ID,
+      ) && (
         <>
           <AboutItem
             title="Why we are a public good"

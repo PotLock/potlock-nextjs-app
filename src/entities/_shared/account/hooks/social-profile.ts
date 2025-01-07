@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
 import type { ByAccountId, ConditionalActivation } from "@/common/types";
 
@@ -17,10 +16,6 @@ export const useAccountSocialProfile = ({
 }: ByAccountId & ConditionalActivation) => {
   const [profile, setProfile] = useState<NEARSocialUserProfile | undefined>(undefined);
   const [isReady, setProfileReady] = useState(false);
-
-  // Registration
-  const registration = useRegistration(accountId);
-  const profileType = registration.registration.id ? "project" : "user";
 
   // Fetch profile data
   useEffect(() => {
@@ -55,12 +50,5 @@ export const useAccountSocialProfile = ({
     [profile?.backgroundImage],
   );
 
-  return {
-    avatarSrc,
-    backgroundSrc,
-    profile,
-    isReady,
-    profileType,
-    registration,
-  };
+  return { avatarSrc, backgroundSrc, profile, isReady };
 };

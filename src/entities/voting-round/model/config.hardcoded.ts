@@ -1,8 +1,12 @@
+// TODO: Convert into publicly available configurable JSON ( Pots V2 milestone ) and validate with Zod
+
 import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 
 import { VotingMechanismConfig } from "../types";
 
-// TODO: Convert into publicly available configurable JSON ( Pots V2 milestone ) and validate with Zod
+/**
+ * TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
+ */
 export const VOTING_ROUND_CONFIG_MPDAO: VotingMechanismConfig = {
   initialWeight: 0,
   basicWeight: 1,

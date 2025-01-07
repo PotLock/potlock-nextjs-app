@@ -1,7 +1,51 @@
 import { Big } from "big.js";
+import { pick } from "remeda";
 
-import type { VoterProfile, VotingMechanismConfig } from "../types";
+import type { VoterProfile, VotingMechanismConfig, VotingRoundVoteWeightAmplifier } from "../types";
 
+export const getVoteWeightAmplifiers = (
+  voterProfile: VoterProfile,
+  { voteWeightAmplificationRules }: VotingMechanismConfig,
+): VotingRoundVoteWeightAmplifier[] => {
+  return voteWeightAmplificationRules.map((rule) => {
+    const profileParameter = voterProfile[rule.voterProfileParameter];
+
+    const staticAmplifierProps = pick(rule, [
+      "name",
+      "description",
+      "criteria",
+      "amplificationPercent",
+    ]);
+
+    if (profileParameter === undefined) {
+      return { ...staticAmplifierProps, isApplicable: false };
+    } else {
+      switch (rule.comparator) {
+        case "boolean": {
+          return {
+            ...staticAmplifierProps,
+
+            isApplicable:
+              typeof profileParameter === "boolean" && profileParameter === rule.expectation,
+          };
+        }
+
+        default: {
+          if (profileParameter instanceof Big) {
+            return {
+              ...staticAmplifierProps,
+              isApplicable: profileParameter[rule.comparator](rule.threshold),
+            };
+          } else {
+            return { ...staticAmplifierProps, isApplicable: false };
+          }
+        }
+      }
+    }
+  });
+};
+
+// TODO: Refactor by replacing forEach with reduce
 export const getVoteWeight = (
   voterProfile: VoterProfile,
   { basicWeight, initialWeight, voteWeightAmplificationRules }: VotingMechanismConfig,

@@ -10,9 +10,9 @@ import type { ConditionalActivation } from "@/common/types";
 import { usePotFeatureFlags } from "@/entities/pot";
 
 import { useVotingRoundResultsStore } from "../model/results";
-import type { VotingRoundKey } from "../types";
+import { type VotingRoundKey, VotingRoundVoteWeightAmplificationCriteriaEnum } from "../types";
 import { useVotingRound } from "./rounds";
-import { VOTING_ROUND_CONFIG_MPDAO } from "../model/hardcoded";
+import { VOTING_ROUND_CONFIG_MPDAO } from "../model/config.hardcoded";
 
 export const useVotingRoundResults = ({
   potId,
@@ -89,11 +89,42 @@ export const useVotingRoundResults = ({
       const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const blobUrl = URL.createObjectURL(blob);
-
       const link = document.createElement("a");
+
       link.href = blobUrl;
       // Setting filename received in response
       link.setAttribute("download", `${potId}-results.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }, [potId, cachedResults]);
+
+  const handleVotersCsvDownload = useCallback(() => {
+    if (cachedResults?.voters) {
+      const headers = ["Voter Account ID", "Human Verified", "Total Weight"];
+
+      const rows = values(cachedResults.voters)
+        .sort((voterA, voterB) => voterB.vote.weight - voterA.vote.weight)
+        .map((voter) => [
+          voter.accountId,
+
+          voter.vote.amplifiers.find(
+            ({ criteria }) => criteria === VotingRoundVoteWeightAmplificationCriteriaEnum.KYC,
+          )?.isApplicable
+            ? "yes"
+            : "no",
+
+          voter.vote.weight,
+        ]);
+
+      const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", `${potId}-voters.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -105,12 +136,14 @@ export const useVotingRoundResults = ({
       isLoading,
       data: cachedResults,
       handleWinnersCsvDownload,
+      handleVotersCsvDownload,
     };
   } else {
     return {
       isLoading,
       data: undefined,
       handleWinnersCsvDownload: undefined,
+      handleVotersCsvDownload: undefined,
     };
   }
 };

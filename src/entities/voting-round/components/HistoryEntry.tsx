@@ -1,19 +1,15 @@
 import { useMemo } from "react";
 
-import { MdOutlineTimer } from "react-icons/md";
+import { MdHowToVote, MdOutlineTimer } from "react-icons/md";
 import { Temporal } from "temporal-polyfill";
 
 import type { ByPotId } from "@/common/api/indexer";
 import type { Vote } from "@/common/contracts/core/voting";
 import { cn } from "@/common/ui/utils";
-import {
-  AccountHandle,
-  AccountProfileLink,
-  AccountProfilePicture,
-} from "@/entities/_shared/account";
+import { AccountHandle, AccountProfileLink } from "@/entities/_shared/account";
 
 import { VotingRoundVoteWeightBoostBadge } from "./badges";
-import { useVotingRoundVoterVoteWeightAmplifiers } from "../hooks/vote-weight";
+import { useVotingRoundResults } from "../hooks/results";
 
 export type VotingRoundHistoryEntryProps = ByPotId & {
   data: Vote;
@@ -29,10 +25,12 @@ export const VotingRoundHistoryEntry: React.FC<VotingRoundHistoryEntryProps> = (
     [timestamp],
   );
 
-  const voteWeightAmplifiers = useVotingRoundVoterVoteWeightAmplifiers({
-    potId,
-    accountId: voterAccountId,
-  });
+  const votingRoundResults = useVotingRoundResults({ potId });
+
+  const voterSummary = useMemo(
+    () => votingRoundResults.data?.voters[voterAccountId],
+    [voterAccountId, votingRoundResults.data?.voters],
+  );
 
   return (
     <div
@@ -42,7 +40,14 @@ export const VotingRoundHistoryEntry: React.FC<VotingRoundHistoryEntryProps> = (
       )}
     >
       <div className="flex w-full max-w-[360px] items-center gap-4">
-        <AccountProfilePicture accountId={voterAccountId} className="h-12 min-h-12 w-12 min-w-12" />
+        <div
+          className={cn(
+            "inline-flex min-h-12 min-w-12 flex-col items-center justify-center",
+            "overflow-hidden rounded-full bg-orange-100 p-3",
+          )}
+        >
+          <MdHowToVote className="color-peach-600 h-6 w-6" />
+        </div>
 
         <div className="flex w-full flex-col gap-3">
           <AccountHandle accountId={voterAccountId} />
@@ -60,7 +65,7 @@ export const VotingRoundHistoryEntry: React.FC<VotingRoundHistoryEntryProps> = (
           "w-full lg:w-fit lg:flex-row lg:items-center lg:justify-center",
         )}
       >
-        {voteWeightAmplifiers.map((amplifier) => (
+        {voterSummary?.vote.amplifiers.map((amplifier) => (
           <VotingRoundVoteWeightBoostBadge
             key={amplifier.name + amplifier.amplificationPercent}
             data={amplifier}

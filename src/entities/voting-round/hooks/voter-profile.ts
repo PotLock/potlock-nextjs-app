@@ -6,12 +6,12 @@ import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { stringifiedU128ToBigNum } from "@/common/lib";
-import { ByAccountId, TokenId } from "@/common/types";
+import { ByAccountId, type ConditionalActivation, TokenId } from "@/common/types";
 import { useToken } from "@/entities/_shared/token";
 
 import { VoterProfile } from "../types";
 
-export type VoterProfileInputs = Partial<ByAccountId> & {
+export type VoterProfileInputs = ByAccountId & {
   stakingContractAccountId?: TokenId;
 };
 
@@ -24,9 +24,10 @@ export type VoterProfileInputs = Partial<ByAccountId> & {
 export const useVoterProfile = ({
   accountId,
   stakingContractAccountId,
-}: VoterProfileInputs): VoterProfile => {
+  enabled = true,
+}: VoterProfileInputs & ConditionalActivation): VoterProfile => {
   const { isHumanVerified } = useIsHuman(accountId);
-  const { data: voterInfo } = indexer.useMpdaoVoter({ accountId });
+  const { data: voterInfo } = indexer.useMpdaoVoter({ enabled, accountId });
 
   const tokenId = useMemo(
     () => stakingContractAccountId ?? voterInfo?.voter_data.staking_token_id,
@@ -40,6 +41,7 @@ export const useVoterProfile = ({
 
   return useMemo(
     () => ({
+      accountId,
       isHumanVerified,
 
       stakingTokenBalance:
@@ -60,6 +62,7 @@ export const useVoterProfile = ({
     }),
 
     [
+      accountId,
       isHumanVerified,
       stakingToken,
       voterInfo?.voter_data.locking_positions,

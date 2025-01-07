@@ -1,13 +1,15 @@
 import { useMemo } from "react";
 
 import { Big } from "big.js";
-import { pick } from "remeda";
 
-import { NUMERIC_COMPARATOR_KEYS } from "@/common/lib";
+import type { AccountId } from "@/common/types";
 
 import { useVoterProfile } from "./voter-profile";
-import { VOTING_ROUND_CONFIG_MPDAO } from "../model/hardcoded";
+import { VOTING_ROUND_CONFIG_MPDAO } from "../model/config.hardcoded";
 import { VotingRoundVoteWeightAmplifier, VotingRoundVoterKey } from "../types";
+import { getVoteWeightAmplifiers } from "../utils/vote-weight";
+
+// TODO: Consider merging the two hooks into one
 
 /**
  * Heads up! At the moment, this hook only covers one specific use case,
@@ -19,49 +21,16 @@ export const useVotingRoundVoterVoteWeightAmplifiers = ({
   accountId,
   potId: _,
 }: VotingRoundVoterKey): VotingRoundVoteWeightAmplifier[] => {
-  const { stakingContractAccountId, voteWeightAmplificationRules } =
-    // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
-    VOTING_ROUND_CONFIG_MPDAO;
+  const votingRoundConfig = VOTING_ROUND_CONFIG_MPDAO;
 
-  const voterProfile = useVoterProfile({ accountId, stakingContractAccountId });
+  const voterProfile = useVoterProfile({
+    enabled: accountId !== undefined,
+    accountId: accountId as AccountId,
+  });
 
   return useMemo(
-    () =>
-      voteWeightAmplificationRules.map((rule) => {
-        const profileParameter = voterProfile[rule.voterProfileParameter];
-
-        const staticAmplifierProps = pick(rule, [
-          "name",
-          "description",
-          "criteria",
-          "amplificationPercent",
-        ]);
-
-        switch (rule.comparator) {
-          case "boolean": {
-            return {
-              ...staticAmplifierProps,
-
-              isApplicable:
-                typeof profileParameter === "boolean" && profileParameter === rule.expectation,
-            };
-          }
-
-          default: {
-            if (NUMERIC_COMPARATOR_KEYS.includes(rule.comparator)) {
-              return {
-                ...staticAmplifierProps,
-
-                isApplicable:
-                  profileParameter instanceof Big &&
-                  profileParameter[rule.comparator](rule.threshold),
-              };
-            } else return { ...staticAmplifierProps, isApplicable: false };
-          }
-        }
-      }),
-
-    [voterProfile, voteWeightAmplificationRules],
+    () => getVoteWeightAmplifiers(voterProfile, votingRoundConfig),
+    [voterProfile, votingRoundConfig],
   );
 };
 
@@ -72,10 +41,7 @@ export const useVotingRoundVoterVoteWeightAmplifiers = ({
  * Calculates the vote weight of a given participant in a given voting round.
  */
 export const useVotingRoundVoterVoteWeight = ({ accountId, potId }: VotingRoundVoterKey) => {
-  const { initialWeight, basicWeight } =
-    // TODO: must be stored in a registry indexed by potId in the future ( Pots V2 milestone )
-    VOTING_ROUND_CONFIG_MPDAO;
-
+  const votingRoundConfig = VOTING_ROUND_CONFIG_MPDAO;
   const voteWeightAmplifiers = useVotingRoundVoterVoteWeightAmplifiers({ accountId, potId });
 
   return useMemo(() => {
@@ -89,13 +55,18 @@ export const useVotingRoundVoterVoteWeight = ({ accountId, potId }: VotingRoundV
               ? accumulatedWeight.add(
                   Big(rule.amplificationPercent)
                     .div(100)
-                    .mul(basicWeight ?? 1),
+                    .mul(votingRoundConfig.basicWeight ?? 1),
                 )
               : accumulatedWeight,
 
-          Big(initialWeight),
+          Big(votingRoundConfig.initialWeight),
         ),
       };
     }
-  }, [accountId, voteWeightAmplifiers, initialWeight, basicWeight]);
+  }, [
+    accountId,
+    voteWeightAmplifiers,
+    votingRoundConfig.initialWeight,
+    votingRoundConfig.basicWeight,
+  ]);
 };

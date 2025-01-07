@@ -15,9 +15,7 @@ const UNREGISTERED_PROJECT = {
 };
 
 /**
- *! @deprecated This is a HORRIBLE piece of code, please ask the backend team to add an endpoint
- *!  for `/api/v1/lists/{list_id}/registration` by project accountId,
- *!  then create an indexer query hook and use it instead of this one
+ * @deprecated Use indexer hooks instead!
  */
 export const useRegistration = (projectId: string) => {
   const [registration, setRegistration] = useState<Registration>(UNREGISTERED_PROJECT);

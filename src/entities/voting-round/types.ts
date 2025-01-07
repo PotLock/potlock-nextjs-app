@@ -5,7 +5,7 @@ import { ByAccountId, TokenId } from "@/common/types";
 
 export type VotingRoundVoterKey = Partial<ByAccountId> & ByPotId;
 
-export type VoterProfile = {
+export type VoterProfile = ByAccountId & {
   isHumanVerified: boolean;
   stakingTokenBalance?: Big.Big;
   stakingTokenBalanceUsd?: Big.Big;
@@ -52,6 +52,10 @@ export type VotingRoundCandidateFilter = "all" | "voted" | "pending";
 export type VotingRound = ByElectionId & { election: Election };
 
 export type VotingRoundKey = ByPotId;
+
+export type VotingRoundVoterSummary = ByAccountId & {
+  vote: { weight: number; amplifiers: VotingRoundVoteWeightAmplifier[] };
+};
 
 export type VotingRoundWinner = ByAccountId & {
   voteCount: number;
