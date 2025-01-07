@@ -105,7 +105,6 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
           list_id: parseInt(id as string) as any,
         });
 
-
         setValue("name", response.name);
         setValue("owner", isDuplicate ? walletApi?.accountId : response.owner);
         setValue("description", response.description);
