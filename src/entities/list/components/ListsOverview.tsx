@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -101,6 +101,20 @@ export const ListsOverview = ({
 
   const createRoute = useCallback(() => push(`/list/create`), []);
 
+  // Create memoized background images for items without cover images
+  const backgroundImages = useMemo(() => {
+    return filteredRegistrations.reduce(
+      (acc, item) => {
+        if (!item.cover_image) {
+          acc[item.id] = getRandomBackgroundImage();
+        }
+
+        return acc;
+      },
+      {} as Record<string, { background: string; backdrop: string }>,
+    );
+  }, [filteredRegistrations]); // Only regenerate when filteredRegistrations changes
+
   return (
     <div className="flex w-full flex-col px-2 pt-10 md:px-10 md:pb-0 md:pt-12">
       <div className="flex w-full flex-col gap-5">
@@ -138,40 +152,41 @@ export const ListsOverview = ({
       </div>
       {loading ? (
         Array.from({ length: 6 }, (_, index) => <ListCardSkeleton key={index} />)
-      ) : filteredRegistrations.length ? (
-        <div className="mt-8 grid w-full grid-cols-1 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRegistrations.map((item, index) => {
-            // Check if cover_image is present, otherwise use a random background image
-            let background = "";
-            let backdrop = "";
-
-            if (!item.cover_image) {
-              ({ background, backdrop } = getRandomBackgroundImage());
-            }
-
-            return (
-              <ListCard
-                dataForList={item}
-                key={index}
-                background={background}
-                backdrop={backdrop}
-              />
-            );
-          })}
-        </div>
       ) : (
-        !loading &&
-        filteredRegistrations.length === 0 && (
-          <NoListItem
-            type={noData}
-            showButton={true && !search}
-            route={
-              currentListType !== "My Favorites"
-                ? createRoute
-                : () => setCurrentListType("All Lists")
-            }
-          />
-        )
+        <>
+          {filteredRegistrations.length > 0 ? (
+            <div className="mt-8 grid w-full grid-cols-1 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3">
+              {filteredRegistrations.map((item, index) => {
+                const background = item.cover_image
+                  ? ""
+                  : backgroundImages[item.id]?.background || "";
+
+                const backdrop = item.cover_image ? "" : backgroundImages[item.id]?.backdrop || "";
+
+                return (
+                  <ListCard
+                    dataForList={item}
+                    key={index}
+                    background={background}
+                    backdrop={backdrop}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            !loading && (
+              <NoListItem
+                type={noData}
+                showButton={true && !search}
+                route={
+                  currentListType !== "My Favorites"
+                    ? createRoute
+                    : () => setCurrentListType("All Lists")
+                }
+              />
+            )
+          )}
+        </>
       )}
     </div>
   );

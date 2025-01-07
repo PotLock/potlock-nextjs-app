@@ -11,10 +11,13 @@ export const useAllLists = (
   const [loading, setLoading] = useState<boolean>(false);
   const wallet = walletApi;
 
-  const { data, isLoading } = indexer.useLists();
+  const { data, isLoading } = indexer.useLists({
+    page_size: 999,
+  });
 
   const { data: myLists } = indexer.useLists({
     account: wallet?.accountId,
+    page_size: 999,
   });
 
   const { data: myFavourites } = indexer.useAccountUpvotedLists({
