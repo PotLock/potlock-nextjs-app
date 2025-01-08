@@ -8,7 +8,7 @@ import { cn } from "../../utils";
 // TODO: add correct hover effects
 const filterChipVariants = cva(
   cn(
-    "flex text-sm leading-tight items-center justify-center text-[#292929] gap-2 font-medium",
+    "flex text-sm leading-[1.25rem] items-center justify-center text-[#292929] gap-2 font-medium",
     "whitespace-nowrap no-underline cursor-pointer transition-all duration-200 ease-in-out w-fit",
     "rounded-md border-none disabled:cursor-not-allowed",
   ),
@@ -83,7 +83,7 @@ const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
           {label ?? children}
           {count !== undefined ? (
             <span
-              className={cn("rounded-2xl px-1.5 py-0.5 text-xs font-semibold leading-none", {
+              className={cn("rounded-2xl px-1.5 py-0.5 text-xs font-semibold leading-[1rem]", {
                 "bg-[#f8d3b0]": variant === "brand-filled",
                 "bg-[#f7f7f7] text-[#7a7a7a]": variant !== "brand-filled",
               })}
