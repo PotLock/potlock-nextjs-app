@@ -30,10 +30,17 @@ export type AccountGroupEditModalProps = {
   value: AccountKey[];
   onSubmit: (accountIds: AccountId[]) => void;
   handleRemoveAccounts?: (accounts: AccountKey[]) => void;
+  maxAccounts?: number;
 };
 
 export const AccountGroupEditModal = create(
-  ({ title, value: entries, onSubmit, handleRemoveAccounts }: AccountGroupEditModalProps) => {
+  ({
+    title,
+    value: entries,
+    onSubmit,
+    handleRemoveAccounts,
+    maxAccounts,
+  }: AccountGroupEditModalProps) => {
     const self = useModal();
 
     const accountIds = entries.map(prop("accountId"));
@@ -83,8 +90,15 @@ export const AccountGroupEditModal = create(
     const isAccountFormDisabled = form.formState.isSubmitting || !form.formState.isValid;
 
     const onAccountSubmit = form.handleSubmit(({ accountId }) => {
-      onSubmit([...accountIds, accountId]);
-      form.reset((currentValues) => ({ ...currentValues, accountId: "" }));
+      if (maxAccounts && accountIds.length >= maxAccounts) {
+        form.setError("accountId", {
+          type: "manual",
+          message: `Maximum number of accounts (${maxAccounts}) has been reached for ${title}.`,
+        });
+      } else {
+        onSubmit([...accountIds, accountId]);
+        form.reset((currentValues) => ({ ...currentValues, accountId: "" }));
+      }
     });
 
     const handleAccountRemove = useCallback(
@@ -134,8 +148,10 @@ export const AccountGroupEditModal = create(
 
                 <Button
                   onClick={onAccountSubmit}
+                  disabled={
+                    (maxAccounts && accountIds.length > maxAccounts) || isAccountFormDisabled
+                  }
                   variant="standard-filled"
-                  disabled={isAccountFormDisabled}
                 >
                   {"Add"}
                 </Button>

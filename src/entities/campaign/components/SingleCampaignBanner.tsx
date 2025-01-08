@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
@@ -9,7 +8,7 @@ import { Campaign, campaignsContractClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { SocialsShare } from "@/common/ui/components/molecules/social-share";
-import { AccountProfilePicture } from "@/entities/_shared/account";
+import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
@@ -62,31 +61,18 @@ export const SingleCampaignBanner = () => {
             <h1 className="text-[24px] font-bold text-white">{campaign?.name}</h1>
             <div className="m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
               <div className="flex gap-1">
-                <p className="font-semibold">FOR</p>
-                <Link href={`/profile/${campaign?.recipient}`} target="_blank">
-                  <div onClick={(e) => e.stopPropagation()} className="flex">
-                    <AccountProfilePicture
-                      accountId={campaign?.recipient as string}
-                      className="h-5 w-5"
-                    />
-                    <p className="font-semibold">{campaign?.recipient}</p>
-                  </div>
-                </Link>
+                <p className="pr-1 font-semibold">FOR</p>
+                <AccountProfileLink
+                  classNames={{ root: "bg-transparent" }}
+                  accountId={campaign?.recipient as string}
+                />
               </div>
               <div className="hidden flex-col items-center bg-gray-800 md:flex">
                 <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
               </div>
               <div className="flex gap-1">
                 <p className="font-semibold">ORGANIZED BY</p>
-                <Link href={`/profile/${campaign?.owner}`} target="_blank">
-                  <div onClick={(e) => e.stopPropagation()} className="flex">
-                    <AccountProfilePicture
-                      accountId={campaign?.owner as string}
-                      className="h-5 w-5"
-                    />
-                    <p className="font-semibold">{campaign?.owner}</p>
-                  </div>
-                </Link>
+                <AccountProfileLink accountId={campaign?.owner as string} />
               </div>
             </div>
           </div>
@@ -102,7 +88,7 @@ export const SingleCampaignBanner = () => {
             <h1 className="text-xl font-semibold">
               {yoctoNearToFloat(campaign?.total_raised_amount || "0")} NEAR
             </h1>
-            <h2 className="text-base">{usdInfo}</h2>
+            {campaign?.total_raised_amount && <h2 className="text-base">{usdInfo}</h2>}
           </div>
         </div>
         <CampaignProgressBar

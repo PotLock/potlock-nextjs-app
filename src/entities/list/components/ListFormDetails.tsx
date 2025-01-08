@@ -256,9 +256,9 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
     [admins],
   );
 
-  const handleViewList = useCallback(() => push(`/list/${id}`), [id]);
+  const handleViewList = useCallback(() => push(`/list/${id}`), [id, push]);
 
-  const handleViewLists = useCallback(() => push(`/lists`), []);
+  const handleViewLists = useCallback(() => push(`/lists`), [push]);
 
   return (
     <>
@@ -440,6 +440,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
                         showAccountList={false}
                         classNames={{ avatar: "w-[40px] h-[40px]" }}
                         onSubmit={(accounts: string[]) => setAccounts(accounts)}
+                        maxAccounts={25}
                       />
                     </div>
                   </div>
