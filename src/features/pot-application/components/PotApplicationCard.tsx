@@ -12,38 +12,19 @@ import { potApplicationFiltersTags } from "./tags";
 
 // TODO: Refactor using TailwindCSS classes
 const PotApplicationCardContainer = styled.div`
-  .main {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    flex: 1;
-    .content {
-      display: flex;
-      flex-direction: column;
-      font-size: 17px;
-      .message {
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        word-break: break-word;
-        max-width: 100%;
-        a {
-          word-break: break-word;
-          display: inline-block;
-          max-width: 100%;
-        }
-      }
-      .notes {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        .title {
-          color: #7b7b7b;
-        }
-      }
-      button {
-        width: fit-content;
-      }
+  .message {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    a {
+      word-break: break-word;
+      display: inline-block;
+      max-width: 100%;
     }
+  }
+  button {
+    width: fit-content;
   }
 `;
 
@@ -121,8 +102,8 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
         </div>
       </div>
 
-      <div className="main ml-0 md:ml-12">
-        <div className="content text-neutral-600">
+      <div className="main ml-0 flex flex-1 flex-col gap-4 md:ml-12">
+        <div className="flex flex-col text-[17px] text-neutral-600">
           <div className="message">{message}</div>
         </div>
       </div>
@@ -135,7 +116,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
               { "bg-[#fef3f2]": status === "Rejected", "bg-[#f7f7f7]": status !== "Rejected" },
             )}
           >
-            <div className="title flex items-center">
+            <div className="flex items-center text-[#7b7b7b]">
               <div className="flex items-center gap-2">
                 <AccountProfilePicture
                   accountId={reviewerAccountId}
