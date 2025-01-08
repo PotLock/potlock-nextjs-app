@@ -26,7 +26,11 @@ import {
 import DownArrow from "@/common/ui/svg/DownArrow";
 import { ListNoteIcon } from "@/common/ui/svg/list-note";
 import { cn } from "@/common/ui/utils";
-import { AccountProfileCover, AccountProfilePicture } from "@/entities/_shared/account";
+import {
+  AccountHandle,
+  AccountProfileCover,
+  AccountProfilePicture,
+} from "@/entities/_shared/account";
 import { statuses } from "@/entities/project/constants";
 import { dispatch } from "@/store";
 
@@ -130,9 +134,12 @@ export const AccountCard = ({
                 )}
               />
 
-              <p className="font-lora text-lg font-semibold leading-tight">
-                {profile?.name ?? dataForList.registrant?.id}
-              </p>
+              <AccountHandle
+                asName
+                accountId={profile?.name ?? dataForList.registrant?.id}
+                className="decoration-none text-lg font-semibold text-[#292929]"
+                maxLength={22}
+              />
 
               <p className="mt-2 h-14 overflow-hidden text-sm text-gray-600">
                 {truncate(profile?.description as string, 150) ?? "N/A"}
