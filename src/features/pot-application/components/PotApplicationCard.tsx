@@ -66,7 +66,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
   return (
     <PotApplicationCardContainer
       className={cn(
-        "mx-auto flex min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4",
+        "mx-auto flex w-full min-w-[234px] max-w-[715px] flex-1 flex-col items-start justify-start gap-4 md:last:mx-0",
         "bg-background rounded-2xl border border-[#eaeaea] p-5 md:min-w-[445px]",
       )}
     >
@@ -75,10 +75,19 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
 
         <div className="flex grow basis-0 items-center justify-start gap-3 self-stretch">
           <div className="inline-flex grow basis-0 flex-col items-start justify-center gap-1">
-            <AccountHandle asName accountId={applicant.id} className="text-xl" />
+            <AccountHandle
+              asName
+              accountId={applicant.id}
+              className="decoration-none text-xl font-semibold text-[#292929]"
+              maxLength={22}
+            />
 
             <div className="inline-flex items-center self-stretch">
-              <AccountHandle accountId={applicant.id} />
+              <AccountHandle
+                accountId={applicant.id}
+                maxLength={16}
+                className="decoration-none leading-[1.25rem]"
+              />
 
               <div className="inline-flex flex-nowrap items-center text-sm text-neutral-500">
                 <Dot />
@@ -127,10 +136,10 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
             )}
           >
             <div className="title flex items-center">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <AccountProfilePicture
                   accountId={reviewerAccountId}
-                  className="h-6 w-6 rounded-full shadow-inner"
+                  className="h-6 w-6 rounded-full shadow-[inset_0px_0px_1px_0px_rgba(166,166,166,1.00)]"
                 />
 
                 <AccountHandle asName accountId={reviewerAccountId} className="text-[17px]" />
