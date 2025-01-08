@@ -33,8 +33,8 @@ export const VotingRoundWinnersTable: React.FC<VotingRoundWinnersTableProps> = (
               <AccordionContent className="gap-3">
                 {winner.votes.map((vote) => (
                   <VotingRoundVoteRow
-                    //compact
                     key={vote.timestamp + vote.voter}
+                    compact
                     data={vote}
                     {...{ potId }}
                   />

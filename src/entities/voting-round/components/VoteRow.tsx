@@ -27,9 +27,7 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
         <MdOutlineTimer className="h-6 w-6 text-[#7a7a7a]" />
 
         <span
-          className={
-            "text-nowrap text-center text-[17px] font-normal leading-normal text-[#7a7a7a]"
-          }
+          className={"text-nowrap text-center text-[17px] font-normal leading-6 text-[#7a7a7a]"}
         >
           {Temporal.Instant.fromEpochMilliseconds(timestamp).toLocaleString()}
         </span>
@@ -46,29 +44,23 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
     [voterAccountId, votingRoundResults.data?.voters],
   );
 
-  if (compact) {
-    return (
-      <div
-        className={cn(
-          "flex w-full flex-col justify-between gap-6 lg:items-center lg:gap-3",
-          "rounded-2xl border p-5 lg:flex-row",
-        )}
-      >
-        <div className="flex w-full items-center gap-1">
-          <AccountProfileLink accountId={voterAccountId} />
-          <span className="text-nowrap text-[17px] font-normal">{"Voted"}</span>
+  return (
+    <div
+      className={cn("flex w-full flex-nowrap items-center gap-6 rounded-2xl border p-5 lg:gap-3", {
+        "flex-col": !compact,
+        "justify-between": compact,
+      })}
+    >
+      {compact ? (
+        <div className="lg:max-w-40% flex w-full items-center gap-2">
           {timeStatus}
+          <AccountProfileLink accountId={voterAccountId} />
+
+          {/* <span className="inline-flex flex-nowrap gap-1">
+            <span className="text-[17px] font-normal">{"Voted"}</span>
+          </span> */}
         </div>
-      </div>
-    );
-  } else {
-    return (
-      <div
-        className={cn(
-          "flex w-full flex-col justify-between gap-6 lg:items-center lg:gap-3",
-          "rounded-2xl border p-5 lg:flex-row",
-        )}
-      >
+      ) : (
         <div className="flex w-full max-w-[360px] items-center gap-4">
           <div
             className={cn(
@@ -88,23 +80,23 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
             </div>
           </div>
         </div>
+      )}
 
-        <div
-          className={cn(
-            "inline-flex flex-col flex-wrap items-start justify-start gap-3",
-            "w-full lg:w-fit lg:flex-row lg:items-center lg:justify-center",
-          )}
-        >
-          {voterSummary?.vote.amplifiers.map((amplifier) => (
-            <VotingRoundVoteWeightBoostBadge
-              key={amplifier.name + amplifier.amplificationPercent}
-              data={amplifier}
-            />
-          ))}
-        </div>
-
-        {timeStatus}
+      <div
+        className={cn(
+          "flex flex-wrap items-center justify-center gap-3",
+          "w-full lg:w-fit lg:items-center lg:justify-center",
+        )}
+      >
+        {voterSummary?.vote.amplifiers.map((amplifier) => (
+          <VotingRoundVoteWeightBoostBadge
+            key={amplifier.name + amplifier.amplificationPercent}
+            data={amplifier}
+          />
+        ))}
       </div>
-    );
-  }
+
+      <div className={cn("ml-a", { hidden: compact })}>{timeStatus}</div>
+    </div>
+  );
 };
