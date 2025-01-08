@@ -10,6 +10,7 @@ import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account
 import { TokenIcon } from "@/entities/_shared/token";
 
 import { useVotingRoundResults } from "../hooks/results";
+import { sortByAccumulatedWeight } from "../utils/weight";
 
 const VotingRoundLeaderboardItemsPlaceholder = () =>
   Array.from({ length: 3 }).map((_, index) => (
@@ -25,9 +26,7 @@ export const VotingRoundLeaderboard: React.FC<VotingRoundLeaderboardProps> = ({ 
     () =>
       votingRoundResults.data === undefined
         ? []
-        : values(votingRoundResults.data.winners)
-            .sort((profileA, profileB) => profileB.accumulatedWeight - profileA.accumulatedWeight)
-            .slice(0, 3),
+        : sortByAccumulatedWeight(values(votingRoundResults.data.winners), "desc").slice(0, 3),
 
     [votingRoundResults.data],
   );
@@ -38,7 +37,7 @@ export const VotingRoundLeaderboard: React.FC<VotingRoundLeaderboardProps> = ({ 
 
       {votingRoundResults.data !== undefined &&
         leadingPositions.map(
-          ({ accountId, voteCount, accumulatedWeight, estimatedPayoutAmount }, index) => {
+          ({ accountId, votes, accumulatedWeight, estimatedPayoutAmount }, index) => {
             return (
               <div
                 key={accountId}
@@ -71,7 +70,7 @@ export const VotingRoundLeaderboard: React.FC<VotingRoundLeaderboardProps> = ({ 
                     />
 
                     <div className="self-stretch text-sm font-medium leading-tight text-neutral-500">
-                      {`${voteCount} votes / total weight ${accumulatedWeight}`}
+                      {`${votes.length} votes / total weight ${accumulatedWeight}`}
                     </div>
                   </div>
                 </div>

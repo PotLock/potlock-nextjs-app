@@ -1,10 +1,9 @@
 import { MdFileDownload, MdList } from "react-icons/md";
-import { values } from "remeda";
 
 import type { ByPotId } from "@/common/api/indexer";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/voting-round";
+import { VotingRoundWinnersTable, useVotingRoundResults } from "@/entities/voting-round";
 
 export type ProportionalFundingPayoutManagerProps = ByPotId & {};
 
@@ -43,14 +42,10 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
         </div>
       </div>
 
-      {votingRoundResults.data === undefined ? (
+      {votingRoundResults.data === undefined && votingRoundResults.isLoading ? (
         <Skeleton className="h-10 w-full" />
       ) : (
-        <VotingRoundResultsTable
-          data={values(votingRoundResults.data.winners).sort(
-            (profileA, profileB) => profileB.accumulatedWeight - profileA.accumulatedWeight,
-          )}
-        />
+        <VotingRoundWinnersTable {...{ potId }} />
       )}
     </div>
   );

@@ -5,11 +5,7 @@ import { useRouter } from "next/router";
 
 import { votingContractHooks } from "@/common/contracts/core/voting";
 import { ScrollArea, SearchBar } from "@/common/ui/components";
-import {
-  VotingRoundHistoryEntry,
-  useVotingRound,
-  useVotingRoundResults,
-} from "@/entities/voting-round";
+import { VotingRoundVoteRow, useVotingRound, useVotingRoundResults } from "@/entities/voting-round";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotHistoryTab() {
@@ -60,7 +56,7 @@ export default function PotHistoryTab() {
         <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
           <div className="flex flex-col gap-6 pb-8">
             {searchResults.map((entry) => (
-              <VotingRoundHistoryEntry
+              <VotingRoundVoteRow
                 key={entry.candidate_id + entry.voter + entry.timestamp}
                 data={entry}
                 {...{ potId }}

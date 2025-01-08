@@ -10,21 +10,19 @@ import { useSession } from "@/entities/_shared/session";
 
 import type { VotingRoundWinner } from "../types";
 
-export type VotingRoundResultRowProps = {
+export type VotingRoundWinnerRowProps = {
   data: VotingRoundWinner;
   rank: number;
   isSelected?: boolean;
   onSelect?: (accountId: string, isSelected: boolean) => void;
 };
 
-export const VotingRoundResultRow: React.FC<VotingRoundResultRowProps> = ({
-  data: { accountId, voteCount, accumulatedWeight, estimatedPayoutAmount },
+export const VotingRoundWinnerRow: React.FC<VotingRoundWinnerRowProps> = ({
+  data: { accountId, votes, accumulatedWeight, estimatedPayoutAmount },
   rank,
   isSelected = false,
   onSelect,
 }) => {
-  const user = useSession();
-
   const onCheckTriggered = useCallback(
     (checked: CheckedState) => onSelect?.(accountId, Boolean(checked)),
     [accountId, onSelect],
@@ -32,17 +30,16 @@ export const VotingRoundResultRow: React.FC<VotingRoundResultRowProps> = ({
 
   return (
     <AccountListItem
-      highlightOnHover
       hideStatusOnDesktop
       classNames={{
-        root: cn("px-4 rounded-lg", {
+        root: cn("px-4 rounded-none", {
           "bg-neutral-50": isSelected,
         }),
       }}
       statusElement={
         <div className="color-neutral-500 flex flex-nowrap items-center">
           <Dot className="hidden md:block" />
-          <span className="prose text-sm font-medium leading-tight">{`${voteCount} Votes`}</span>
+          <span className="prose text-sm font-medium leading-tight">{`${votes.length} Votes`}</span>
         </div>
       }
       primarySlot={
@@ -69,7 +66,7 @@ export const VotingRoundResultRow: React.FC<VotingRoundResultRowProps> = ({
         <div className="hidden items-center md:flex">
           <div className="inline-flex h-16 items-center justify-end overflow-hidden px-4 py-2">
             <div className="w-24 max-w-24  text-end text-sm font-medium leading-tight">
-              {voteCount}
+              {votes.length}
             </div>
           </div>
 

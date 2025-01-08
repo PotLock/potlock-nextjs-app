@@ -12,6 +12,8 @@ import {
 
 import { nearClient } from "@/common/api/near";
 import { votingContractHooks } from "@/common/contracts/core/voting";
+import { isAccountId } from "@/common/lib";
+import type { AccountId } from "@/common/types";
 import {
   Alert,
   AlertDescription,
@@ -67,9 +69,9 @@ export default function PotVotesTab() {
 
   const { data: authenticatedVotingRoundVoterVotes } = votingContractHooks.useVotingRoundVoterVotes(
     {
-      enabled: votingRound !== undefined && authenticatedUser.accountId !== undefined,
+      enabled: votingRound !== undefined && isAccountId(authenticatedUser.accountId),
       electionId: votingRound?.electionId ?? 0,
-      accountId: authenticatedUser.accountId ?? "noop",
+      accountId: authenticatedUser.accountId as AccountId,
     },
   );
 

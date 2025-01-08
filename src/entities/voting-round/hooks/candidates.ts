@@ -6,7 +6,8 @@ import {
   votingContractClient,
   votingContractHooks,
 } from "@/common/contracts/core/voting";
-import { ByAccountId } from "@/common/types";
+import { isAccountId } from "@/common/lib";
+import { type AccountId, ByAccountId } from "@/common/types";
 import { useToast } from "@/common/ui/hooks";
 import { useSession } from "@/entities/_shared/session";
 
@@ -22,9 +23,9 @@ export const useVotingRoundCandidateLookup = ({ electionId }: VotingRoundCandida
   });
 
   const { data: userVotes } = votingContractHooks.useVotingRoundVoterVotes({
-    enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
+    enabled: electionId !== 0 && isAccountId(authenticatedUser.accountId),
     electionId,
-    accountId: authenticatedUser.accountId ?? "noop",
+    accountId: authenticatedUser.accountId as AccountId,
   });
 
   return useMemo(() => {
@@ -75,9 +76,9 @@ export const useVotingRoundCandidateEntry = ({
 
   const { data: remainingUserVotingCapacity, isLoading: isRemainingUserVotingCapacityLoading } =
     votingContractHooks.useVoterRemainingCapacity({
-      enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
+      enabled: electionId !== 0 && isAccountId(authenticatedUser.accountId),
       electionId,
-      accountId: authenticatedUser.accountId ?? "noop",
+      accountId: authenticatedUser.accountId as AccountId,
     });
 
   const {

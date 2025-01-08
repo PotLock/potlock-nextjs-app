@@ -13,7 +13,7 @@ export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
 
   const { avatarSrc } = useAccountSocialProfile({
     enabled: authenticatedUser.isSignedIn,
-    accountId: authenticatedUser.accountId ?? "noop",
+    accountId: authenticatedUser.accountId as AccountId,
   });
 
   const [postText, setPostText] = useState("");
