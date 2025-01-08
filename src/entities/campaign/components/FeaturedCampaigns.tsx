@@ -12,7 +12,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/common/ui/components/molecules/carousel";
-import { useAccountSocialProfile } from "@/entities/_shared/account";
+import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
@@ -68,9 +68,6 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 };
 
 const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
-  const { avatarSrc: recipientImage } = useAccountSocialProfile({ accountId: data.recipient });
-  const { avatarSrc: ownerImage } = useAccountSocialProfile({ accountId: data.owner });
-
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
 
   const isEnded = data?.end_ms
@@ -98,36 +95,14 @@ const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
             <div className="m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
               <div className="flex gap-1">
                 <p className="font-semibold">FOR</p>
-                <Link href={`/profile/${data.recipient}`} target="_blank">
-                  <div onClick={(e) => e.stopPropagation()} className="flex">
-                    <LazyLoadImage
-                      alt=""
-                      src={recipientImage}
-                      width={20}
-                      height={20}
-                      className=" mx-1 h-5 w-5 rounded-[50%]"
-                    />
-                    <p className="font-semibold">{data.recipient}</p>
-                  </div>
-                </Link>
+                <AccountProfileLink accountId={data.recipient as string} />
               </div>
               <div className="hidden flex-col items-center bg-gray-800 md:flex">
                 <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
               </div>
               <div className="flex gap-1">
                 <p className="font-semibold">ORGANIZED BY</p>
-                <Link href={`/profile/${data.owner}`} target="_blank">
-                  <div onClick={(e) => e.stopPropagation()} className="flex">
-                    <LazyLoadImage
-                      alt=""
-                      src={ownerImage}
-                      width={20}
-                      height={10}
-                      className="mx-1 h-5 w-5 rounded-[100%]"
-                    />
-                    <p className="font-semibold">{data.owner}</p>
-                  </div>
-                </Link>
+                <AccountProfileLink accountId={data.owner as string} />
               </div>
             </div>
           </div>

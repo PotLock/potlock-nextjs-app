@@ -95,12 +95,10 @@ export const AccountGroupEditModal = create(
           type: "manual",
           message: `Maximum number of accounts (${maxAccounts}) has been reached for ${title}.`,
         });
-
-        return;
+      } else {
+        onSubmit([...accountIds, accountId]);
+        form.reset((currentValues) => ({ ...currentValues, accountId: "" }));
       }
-
-      onSubmit([...accountIds, accountId]);
-      form.reset((currentValues) => ({ ...currentValues, accountId: "" }));
     });
 
     const handleAccountRemove = useCallback(
