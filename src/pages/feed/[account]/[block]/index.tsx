@@ -8,8 +8,31 @@ import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import type { NEARSocialUserProfile } from "@/common/contracts/social";
 import { fetchSocialImages } from "@/common/services/social";
-import { PROFILE_DEFAULTS } from "@/entities/profile/constants";
+
+// TODO: A piece of legacy code. Skeletons should be used instead.
+const PROFILE_DEFAULTS: {
+  socialData: NEARSocialUserProfile;
+  tags: string[];
+  team: string[];
+  totalAmountNear: string;
+
+  socialImages: {
+    image: string;
+    backgroundImage: string;
+  };
+} = {
+  socialData: {},
+  tags: [],
+  team: [],
+  totalAmountNear: "",
+
+  socialImages: {
+    image: "/assets/images/profile-image.png",
+    backgroundImage: "/assets/images/profile-banner.png",
+  },
+};
 
 const SinglePost = () => {
   const [profileImg, setProfileImg] = useState<string>("");

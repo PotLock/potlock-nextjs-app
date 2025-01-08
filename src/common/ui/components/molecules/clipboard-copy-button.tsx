@@ -2,7 +2,7 @@ import React, { ReactElement, useCallback, useState } from "react";
 
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import { CopyPasteIcon } from "@/common/assets/svgs";
+import { CopyPasteIcon } from "@/common/ui/svg";
 
 export type ClipboardCopyButtonProps = {
   customIcon?: ReactElement;

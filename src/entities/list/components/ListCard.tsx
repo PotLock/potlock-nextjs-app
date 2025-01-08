@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 import { FaHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { walletApi } from "@/common/api/near";
-import { LayersIcon } from "@/common/assets/svgs";
-import { LikeIcon } from "@/common/assets/svgs/like";
-import { listsClient } from "@/common/contracts/core";
+import { walletApi } from "@/common/api/near/client";
+import { listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/social";
+import { LayersIcon } from "@/common/ui/svg";
+import { LikeIcon } from "@/common/ui/svg/like";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 import { ListFormModalType } from "../types";
@@ -25,21 +25,11 @@ export const ListCard = ({
   backdrop: string;
 }) => {
   const [isUpvoted, setIsUpvoted] = useState(false);
-  const [profileImage, setProfileImage] = useState("");
   const { push } = useRouter();
 
   useEffect(() => {
-    const fetchProfileImage = async () => {
-      const { image } = await fetchSocialImages({
-        accountId: dataForList.owner,
-      });
-
-      setProfileImage(image);
-    };
-
-    if (dataForList.owner) fetchProfileImage();
     setIsUpvoted(dataForList.upvotes?.some((data: any) => data?.account === walletApi.accountId));
-  }, [dataForList.owner]);
+  }, [dataForList]);
 
   const handleRoute = useCallback(
     () => push(`/list/${dataForList?.on_chain_id}`),
@@ -50,14 +40,14 @@ export const ListCard = ({
     e.stopPropagation();
 
     if (isUpvoted) {
-      listsClient.remove_upvote({ list_id: dataForList?.on_chain_id });
+      listsContractClient.remove_upvote({ list_id: dataForList?.on_chain_id });
 
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name, 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      listsClient.upvote({ list_id: dataForList?.on_chain_id });
+      listsContractClient.upvote({ list_id: dataForList?.on_chain_id });
 
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name, 15),
@@ -90,7 +80,7 @@ export const ListCard = ({
         className={`h-max w-full ${backdrop.endsWith("list_bg_image.png") ? "px-4" : ""} object-cover`}
       />
       <div
-        className=" overflow-hidden rounded-[12px] border  border-gray-300 bg-white "
+        className=" bg-background overflow-hidden rounded-[12px]  border border-gray-300 "
         data-testid="list-card"
       >
         <div className="relative">
@@ -103,7 +93,7 @@ export const ListCard = ({
           />
           <div
             style={{ boxShadow: "0px 3px 5px 0px rgba(5, 5, 5, 0.08)" }}
-            className="absolute bottom-4 right-4 flex items-center gap-1 rounded-[4px] bg-white px-4 py-2"
+            className="bg-background absolute bottom-4 right-4 flex items-center gap-1 rounded-[4px] px-4 py-2"
           >
             <LayersIcon />
             <p className="text-[12px] font-[600]">{dataForList?.registrations_count} Accounts</p>
@@ -121,11 +111,7 @@ export const ListCard = ({
                 className="flex items-center gap-1 hover:opacity-50"
                 onClick={handleRouteUser}
               >
-                <img
-                  src={profileImage || NO_IMAGE}
-                  alt="person"
-                  className="h-4 w-4 rounded-full object-cover"
-                />
+                <AccountProfilePicture accountId={dataForList?.owner?.id} className="h-4 w-4" />
 
                 <p className="">{truncate(dataForList.owner?.id, 25)}</p>
               </div>

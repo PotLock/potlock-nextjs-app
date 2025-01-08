@@ -4,6 +4,7 @@ import loadingPlugin, { ExtraModelsFromLoading } from "@rematch/loading";
 import persistPlugin from "@rematch/persist";
 import { TypedUseSelectorHook, useDispatch as useReduxDispatch, useSelector } from "react-redux";
 import storage from "redux-persist/lib/storage";
+import { prop } from "remeda";
 
 import { AppModel, models } from "./models";
 
@@ -46,3 +47,5 @@ export const resetStore = () => {
   dispatch.projectEditor.RESET();
   dispatch.nav.RESET();
 };
+
+export const useCoreState = () => useGlobalStoreSelector(prop("core"));

@@ -1,23 +1,57 @@
+import { useMemo } from "react";
+
+import { Big } from "big.js";
 import Link from "next/link";
 
-import { ByPotId, indexer } from "@/common/api/indexer";
+import { ByPotId, Pot, indexer } from "@/common/api/indexer";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { formatWithCommas } from "@/common/lib";
+import { useToken } from "@/entities/_shared/token";
 import routesPath from "@/pathnames";
 
 import { Indicator } from "./Indicator";
 import { PotTag } from "./PotTag";
 import { usePotTags } from "../hooks/tags";
-import { useNearAndUsdByPot } from "../hooks/useNearAndUsdByPot";
+
+/**
+ * @deprecated Use `yoctoNearToFloat`
+ */
+const yoctoNearToNear = (amountYoctoNear: string, abbreviate?: boolean) => {
+  return formatWithCommas(Big(amountYoctoNear).div(1e24).toFixed(2)) + (abbreviate ? "N" : " NEAR");
+};
+
+/**
+ * @deprecated Use {@link useToken} capabilities.
+ */
+export const useMatchingPoolBalance = ({ pot }: { pot?: Pot }) => {
+  const { data: nearToken } = useToken({ tokenId: NATIVE_TOKEN_ID });
+
+  return useMemo(() => {
+    if (pot) {
+      return {
+        amountUsd: nearToken?.usdPrice
+          ? "~$" +
+            formatWithCommas(
+              nearToken?.usdPrice?.mul(pot.matching_pool_balance).div(1e24).toFixed(2),
+            )
+          : "-",
+
+        amountNear: yoctoNearToNear(pot.matching_pool_balance, true),
+      };
+    } else return { amountUsd: "...", amountNear: "..." };
+  }, [nearToken?.usdPrice, pot]);
+};
 
 export type PotCardProps = ByPotId & {};
 
 export const PotCard: React.FC<PotCardProps> = ({ potId }) => {
   const { data: pot, isLoading: isPotLoading } = indexer.usePot({ potId });
-  const { amountNear, amountUsd } = useNearAndUsdByPot({ pot });
+  const { amountNear, amountUsd } = useMatchingPoolBalance({ pot });
   const tags = usePotTags({ potId });
 
   return !pot ? (
     // Card
-    <div className="flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col items-center justify-center rounded-[8px] bg-white pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer">
+    <div className="bg-background flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col items-center justify-center rounded-[8px] pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer">
       {pot === undefined && !isPotLoading ? (
         <div>{`Pot ${potId} not found.`}</div>
       ) : (
@@ -28,7 +62,7 @@ export const PotCard: React.FC<PotCardProps> = ({ potId }) => {
     // Card
     <Link
       href={`${routesPath.pot}/${pot.account}`}
-      className="flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col rounded-[8px] bg-white pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline"
+      className="bg-background flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col rounded-[8px] pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline"
     >
       {/* Card Section */}
       <div className="flex h-full w-full flex-col items-start justify-start gap-4 p-8">

@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
@@ -55,7 +55,7 @@ export const create_list = ({
       admins,
       cover_image_url: image_cover_url ?? null,
       ...(accounts?.length && { registrations: accounts }),
-      admin_only_registrations: allowApplications,
+      admin_only_registrations: !allowApplications,
       default_registration_status: "Approved",
     },
     deposit: floatToYoctoNear(0.021 * length),
@@ -87,7 +87,7 @@ export const update_list = ({
       description,
       cover_image_url: image_cover_url ?? null,
       admins,
-      admin_only_registrations: allowApplications,
+      admin_only_registrations: !allowApplications,
       default_registration_status: approveApplications ? "Approved" : "Pending",
     },
     deposit: floatToYoctoNear(0.015),

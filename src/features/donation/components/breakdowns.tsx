@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/components";
-import { AccountOption } from "@/entities/account";
-import { TokenIcon } from "@/entities/token";
+import { AccountListItem } from "@/entities/_shared/account";
+import { TokenIcon } from "@/entities/_shared/token";
 
 import { WithDonationFormAPI } from "../models";
 import { DonationBreakdown } from "../types";
@@ -19,10 +19,10 @@ export const DonationGroupAllocationBreakdown: React.FC<DonationGroupAllocationB
   return (
     <div className="flex flex-col gap-4 rounded-lg bg-neutral-50 p-4">
       {groupAllocationPlan?.map(({ account_id, amount }) => (
-        <AccountOption
+        <AccountListItem
           key={account_id + amount}
           accountId={account_id}
-          secondaryAction={
+          secondarySlot={
             <LabeledIcon caption={amount ?? 0} classNames={{ caption: "font-600 text-4" }}>
               <TokenIcon {...{ tokenId }} />
             </LabeledIcon>
@@ -116,7 +116,7 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
                 </span>
 
                 <LabeledIcon caption={amount} classNames={{ caption: "font-600" }}>
-                  <TokenIcon {...{ tokenId }} size="small" />
+                  <TokenIcon {...{ tokenId }} size="xs" />
                 </LabeledIcon>
               </div>
             ),

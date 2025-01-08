@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
-import AdminIcon from "@/common/assets/svgs/AdminIcon";
-import { CheckedIcon } from "@/common/assets/svgs/CheckedIcon";
-import { Challenge as ChallengeType, potClient } from "@/common/contracts/core";
+import { Challenge as ChallengeType, potContractClient } from "@/common/contracts/core";
 import getTimePassed from "@/common/lib/getTimePassed";
+import AdminIcon from "@/common/ui/svg/AdminIcon";
+import { CheckedIcon } from "@/common/ui/svg/CheckedIcon";
 import { cn } from "@/common/ui/utils";
-import { AccountProfilePicture } from "@/entities/account";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 import routesPath from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -41,7 +41,7 @@ export const PotPayoutChallenges = ({
       // Get Payouts Challenges for pot
       if (potDetail?.account) {
         try {
-          const _payoutsChallenges = await potClient.getPayoutsChallenges({
+          const _payoutsChallenges = await potContractClient.getPayoutsChallenges({
             potId: potDetail?.account,
           });
 
@@ -81,7 +81,7 @@ export const PotPayoutChallenges = ({
             onClick={() => handleSwitchTab("UNRESOLVED")}
             className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
               "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === "UNRESOLVED",
-              "border-[#DBDBDB] bg-white text-black": tab !== "UNRESOLVED",
+              "bg-background border-[#DBDBDB] text-black": tab !== "UNRESOLVED",
             })}
           >
             Unresolved
@@ -90,7 +90,7 @@ export const PotPayoutChallenges = ({
             onClick={() => handleSwitchTab("RESOLVED")}
             className={cn("border px-3 py-1 text-sm transition-all duration-200 ease-in-out", {
               "rounded-sm border-[#F4B37D] bg-[#FCE9D5] text-[#91321B]": tab === "RESOLVED",
-              "border-[#DBDBDB] bg-white text-black": tab !== "RESOLVED",
+              "bg-background border-[#DBDBDB] text-black": tab !== "RESOLVED",
             })}
           >
             Resolved

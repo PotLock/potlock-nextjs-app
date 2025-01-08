@@ -1,5 +1,5 @@
-import * as campaignsClient from "./client";
+import * as campaignsContractClient from "./client";
 
 export * from "./interfaces";
 
-export { campaignsClient };
+export { campaignsContractClient };

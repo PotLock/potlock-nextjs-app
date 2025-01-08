@@ -1,12 +1,12 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
-import { infer as FromSchema } from "zod";
+import { infer as FromSchema, ZodError } from "zod";
 
-import { walletApi } from "@/common/api/near";
-import { campaignsClient } from "@/common/contracts/core";
+import { walletApi } from "@/common/api/near/client";
+import { campaignsContractClient } from "@/common/contracts/core";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
@@ -22,7 +22,7 @@ export const useCampaignForm = () => {
 
   const self = useForm<Values>({
     resolver: zodResolver(campaignFormSchema),
-    mode: "all",
+    mode: "onChange",
     resetOptions: { keepDirtyValues: false },
   });
 
@@ -34,7 +34,7 @@ export const useCampaignForm = () => {
 
   const handleDeleteCampaign = () => {
     if (!campaignId) return;
-    campaignsClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
+    campaignsContractClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
 
     dispatch.campaignEditor.updateCampaignModalState({
       header: `Campaign Deleted Successfully`,
@@ -71,23 +71,23 @@ export const useCampaignForm = () => {
       };
 
       if (campaignId) {
-        campaignsClient.update_campaign({
+        campaignsContractClient.update_campaign({
           args: { campaign_id: Number(campaignId), ...args },
         });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaignsClient for ${values.name}.`,
+          header: `You’ve successfully created a campaignsContractClient for ${values.name}.`,
           description:
-            "If you are not a member of the project, the campaignsClient will be considered unofficial until it has been approved by the project.",
+            "If you are not a member of the project, the campaignsContractClient will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.UPDATE_CAMPAIGN,
         });
       } else {
-        campaignsClient.create_campaign({ args });
+        campaignsContractClient.create_campaign({ args });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaignsClient for ${values.name}.`,
+          header: `You’ve successfully created a campaignsContractClient for ${values.name}.`,
           description:
-            "If you are not a member of the project, the campaignsClient will be considered unofficial until it has been approved by the project.",
+            "If you are not a member of the project, the campaignsContractClient will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.CREATE_CAMPAIGN,
         });
       }
@@ -95,8 +95,9 @@ export const useCampaignForm = () => {
     [campaignId],
   );
 
-  const onChange = (field: keyof Values, value: string) => {
-    self.setValue(field, value);
+  const onChange = async (field: keyof Values, value: string) => {
+    self.setValue(field, value); // Update field value
+    await self.trigger(); // Trigger validation
   };
 
   return {
@@ -109,6 +110,7 @@ export const useCampaignForm = () => {
     },
     onSubmit,
     values,
+    watch: self.watch,
     onChange,
     handleDeleteCampaign,
   };

@@ -25,7 +25,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, handleDeleteCampaign } = useCampaignForm();
+  const { form, onChange, onSubmit, handleDeleteCampaign, watch } = useCampaignForm();
 
   useEffect(() => {
     if (isUpdate && existingData) {
@@ -33,7 +33,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
       form.setValue("cover_image_url", existingData?.cover_image_url);
       form.setValue("recipient", existingData?.recipient);
       form.setValue("name", existingData?.name);
-      form.setValue("description", existingData?.description);
+      form.setValue("description", existingData.description);
       form.setValue("target_amount", yoctoNearToFloat(existingData?.target_amount));
 
       if (existingData.min_amount != undefined) {
@@ -106,7 +106,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               <button
                 type="button"
                 onClick={() => document.getElementById("uploadCoverImage")?.click()}
-                className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
+                className="bg-background absolute bottom-4 right-4 rounded-md border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span>{" "}
                 {loadingImageUpload
@@ -165,10 +165,10 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
             name="target_amount"
             render={({ field }) => (
               <NearInputField
+                {...field}
                 className="appearance-none md:w-[42%]"
                 label="Target Amount"
                 required
-                {...field}
                 onChange={(e) => field.onChange(Number(e.target.value))}
               />
             )}
@@ -179,9 +179,9 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               name="min_amount"
               render={({ field }) => (
                 <NearInputField
+                  {...field}
                   className="lg:w-90"
                   label="Minimum Target Amount"
-                  {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               )}
@@ -191,9 +191,9 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               name="max_amount"
               render={({ field }) => (
                 <NearInputField
+                  {...field}
                   className="lg:w-90"
                   label="Maximum Target Amount"
-                  {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               )}
@@ -218,6 +218,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
               name="end_ms"
               render={({ field }) => (
                 <TextField
+                  required={!!watch("min_amount")}
                   label="End Date"
                   {...field}
                   classNames={{ root: "lg:w-90" }}

@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import { prop } from "remeda";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near";
-import { listsClient } from "@/common/contracts/core";
+import { naxiosInstance } from "@/common/api/near/client";
+import { listsContractClient } from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
-import { AccountKey, validateAccountId } from "@/entities/account";
+import { AccountKey, validateAccountId } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 import { ListFormModalType } from "../types";
@@ -33,7 +33,7 @@ export const useListForm = () => {
   const handleDeleteList = (id: number) => {
     if (!id) return;
 
-    listsClient
+    listsContractClient
       .delete_list({ list_id: id })
       .then(() => {
         push("/lists");
@@ -50,7 +50,7 @@ export const useListForm = () => {
   };
 
   const handleRegisterBatch = (registrants: string[]) => {
-    listsClient
+    listsContractClient
       .register_batch({
         list_id: parseInt(id as any) as any,
         registrations: registrants.map((data: string) => ({
@@ -111,7 +111,7 @@ export const useListForm = () => {
   const handleRemoveAdmin = (accounts: AccountKey[]) => {
     const accountIds = accounts.map(prop("accountId"));
 
-    listsClient
+    listsContractClient
       .remove_admins_from_list({
         list_id: Number(id),
         admins: accountIds,
@@ -133,7 +133,7 @@ export const useListForm = () => {
   const handleSaveAdminsSettings = (admins: AccountId[]) => {
     if (!id) return;
 
-    listsClient
+    listsContractClient
       .add_admins_to_list({
         list_id: Number(id),
         admins,
@@ -163,7 +163,7 @@ export const useListForm = () => {
     if (transferAccountError && !transferAccountField) return;
     if (!id) return; // Ensure id is available
 
-    listsClient
+    listsContractClient
       .transfer_list_ownership({
         list_id: parseInt(id as string),
         new_owner_id: transferAccountField,

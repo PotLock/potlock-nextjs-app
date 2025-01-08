@@ -1,5 +1,6 @@
 import * as refExchangeClient from "./client";
+import * as refExchangeHooks from "./hooks";
 
-export * from "./interface.d";
+export * from "./interfaces";
 
-export { refExchangeClient };
+export { refExchangeClient, refExchangeHooks };

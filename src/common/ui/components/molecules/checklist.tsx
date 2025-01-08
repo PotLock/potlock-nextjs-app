@@ -41,7 +41,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ title, requirements, error
           <ul
             className={cn(
               "flex h-fit flex-col items-start justify-start gap-4 self-stretch",
-              "rounded-lg bg-white p-4 shadow",
+              "bg-background rounded-lg p-4 shadow",
             )}
           >
             {requirements.map(

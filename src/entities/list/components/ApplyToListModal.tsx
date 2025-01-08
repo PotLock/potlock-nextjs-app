@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import { DialogDescription } from "@radix-ui/react-dialog";
 
-import SuccessRedIcon from "@/common/assets/svgs/success-red-icon";
 import {
   Button,
   Dialog,
@@ -11,6 +10,7 @@ import {
   DialogTitle,
   Textarea,
 } from "@/common/ui/components";
+import SuccessRedIcon from "@/common/ui/svg/success-red-icon";
 
 interface ApplyToListModalProps {
   isOpen: boolean;
@@ -57,7 +57,7 @@ export const ApplyToListModal: React.FC<ApplyToListModalProps> = ({
             </div>
           ) : (
             <div>
-              <div className=" max-w-full rounded-md bg-white">
+              <div className=" bg-background max-w-full rounded-md">
                 <div className="p-4">
                   <label className="block text-sm text-gray-700">Leave a note (optional)</label>
                   <Textarea

@@ -15,7 +15,7 @@ export const RuntimeErrorAlert: React.FC<RuntimeErrorAlertProps> = ({
   message,
   callToAction,
 }) => (
-  <Alert variant="destructive" className="flex flex-col gap-4 bg-white">
+  <Alert variant="destructive" className="bg-background flex flex-col gap-4">
     <AlertCircle className="h-4 w-4" />
     <AlertTitle>{title}</AlertTitle>
 

@@ -48,7 +48,7 @@ const buttonVariants = cva(
         ),
 
         "standard-outline": cn(
-          "bg-white hover:bg-[var(--neutral-50)",
+          "bg-background hover:bg-[var(--neutral-50)",
           "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.22)_inset,0px_-1px_0px_0px_rgba(15,15,15,0.15)_inset,0px_1px_2px_-0.5px_rgba(5,5,5,0.08)]",
           "disabled:text-[#c7c7c7] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset]",
         ),

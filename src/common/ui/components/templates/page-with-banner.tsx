@@ -3,5 +3,5 @@ export type PageWithBannerProps = {
 };
 
 export const PageWithBanner: React.FC<PageWithBannerProps> = ({ children }) => (
-  <main className="2xl-container flex w-full flex-col px-5 pb-12 md:px-10">{children}</main>
+  <main className="2xl-container flex w-full flex-col px-5 md:px-10">{children}</main>
 );

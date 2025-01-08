@@ -1,2 +1,5 @@
+import * as coingeckoHooks from "./hooks";
+
 export { client as coingeckoClient } from "./client";
-export * as coingecko from "./hooks";
+
+export { coingeckoHooks };

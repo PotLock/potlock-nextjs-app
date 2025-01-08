@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
 import { ListRegistrationStatus, PotApplicationStatus, indexer } from "@/common/api/indexer";
-import { NearIcon } from "@/common/assets/svgs";
 import { FormField, RuntimeErrorAlert } from "@/common/ui/components";
 import { CheckboxField, TextField } from "@/common/ui/form-fields";
-import { AccountOption } from "@/entities/account";
+import { NearIcon } from "@/common/ui/svg";
+import { AccountListItem } from "@/entities/_shared/account";
 
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import {
@@ -82,11 +82,11 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
     </div>
   ) : (
     recipientCandidateIds.map((accountId) => (
-      <AccountOption
+      <AccountListItem
         highlightOnHover
         key={accountId}
         {...{ accountId }}
-        secondaryAction={
+        secondarySlot={
           <FormField
             name="groupAllocationPlan"
             control={form.control}
@@ -124,6 +124,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
             }
           />
         }
+        classNames={{ root: "px-4" }}
       />
     ))
   );

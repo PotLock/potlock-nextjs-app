@@ -6,9 +6,9 @@ import { PLATFORM_NAME } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { stringifiedU128ToBigNum } from "@/common/lib";
-import { ftService } from "@/common/services";
-import { ClearanceCheckResult } from "@/common/types";
-import { useSessionAuth } from "@/entities/session";
+import { type AccountId, ClearanceCheckResult } from "@/common/types";
+import { useSession } from "@/entities/_shared/session";
+import { useToken } from "@/entities/_shared/token";
 
 import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
 
@@ -19,13 +19,22 @@ import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
  */
 export const usePotApplicationUserClearance = ({
   potId,
-  hasVoting,
-}: ByPotId & { hasVoting?: boolean }): ClearanceCheckResult => {
+  hasProportionalFundingMechanism,
+}: ByPotId & { hasProportionalFundingMechanism?: boolean }): ClearanceCheckResult => {
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
-  const { accountId, isAccountInfoLoading, isVerifiedPublicGoodsProvider } = useSessionAuth();
   const { data: pot } = indexer.usePot({ potId });
-  const { data: stakingToken } = ftService.useRegisteredToken({ tokenId: staking.tokenId });
-  const { data: voterInfo } = indexer.useMpdaoVoterInfo({ accountId });
+
+  const authenticatedUser = useSession();
+
+  const { data: voterInfo } = indexer.useMpdaoVoter({
+    enabled: authenticatedUser.isSignedIn,
+    accountId: authenticatedUser.accountId as AccountId,
+  });
+
+  const { data: stakingToken } = useToken({
+    balanceCheckAccountId: authenticatedUser.accountId,
+    tokenId: staking.tokenId,
+  });
 
   return useMemo(() => {
     const requirements = [
@@ -33,13 +42,13 @@ export const usePotApplicationUserClearance = ({
         ? [
             {
               title: `Verified Project on ${PLATFORM_NAME}`,
-              isFulfillmentAssessmentPending: isAccountInfoLoading,
-              isSatisfied: isVerifiedPublicGoodsProvider,
+              isFulfillmentAssessmentPending: authenticatedUser.isAccountInfoLoading,
+              isSatisfied: authenticatedUser.isVerifiedPublicGoodsProvider,
             },
           ]
         : []),
 
-      ...(hasVoting
+      ...(hasProportionalFundingMechanism
         ? [
             {
               title: `An equivalent of ${staking.minAmountUsd} USD staked in NEAR on ${staking.platformName}`,
@@ -50,7 +59,7 @@ export const usePotApplicationUserClearance = ({
               title: "Voting power 5000 or more",
 
               isSatisfied: stringifiedU128ToBigNum(
-                voterInfo?.voting_power ?? "0",
+                voterInfo?.voter_data.voting_power ?? "0",
                 METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
               ).gte(5000),
             },
@@ -67,13 +76,13 @@ export const usePotApplicationUserClearance = ({
       error: null,
     };
   }, [
-    hasVoting,
-    isAccountInfoLoading,
-    isVerifiedPublicGoodsProvider,
+    authenticatedUser.isAccountInfoLoading,
+    authenticatedUser.isVerifiedPublicGoodsProvider,
+    hasProportionalFundingMechanism,
     pot?.sybil_wrapper_provider,
     staking.minAmountUsd,
     staking.platformName,
     stakingToken?.balanceUsd,
-    voterInfo?.voting_power,
+    voterInfo?.voter_data.voting_power,
   ]);
 };

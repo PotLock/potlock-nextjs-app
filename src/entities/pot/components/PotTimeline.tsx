@@ -68,17 +68,21 @@ const Loader = styled.div`
 `;
 
 export type PotTimelineProps = ByPotId & {
-  hasVoting?: boolean;
+  hasProportionalFundingMechanism?: boolean;
 
   classNames?: {
     root?: string;
   };
 };
 
-export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, hasVoting }) => {
+export const PotTimeline: React.FC<PotTimelineProps> = ({
+  potId,
+  classNames,
+  hasProportionalFundingMechanism,
+}) => {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
   const toggleMobileMenu = useCallback(() => setIsMobileMenuActive((isActive) => !isActive), []);
-  const lifecycle = usePotLifecycle({ potId, hasVoting });
+  const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
 
   const showActiveState =
     (lifecycle.currentStage === undefined ? 0 : lifecycle.stages.indexOf(lifecycle.currentStage)) *
@@ -102,50 +106,47 @@ export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, has
             isMobileMenuActive: "transform-translate-y-0",
           })}
         >
-          {lifecycle.stages.map(
-            // TODO: Improve this code (built by mohamed)
-            ({ label, daysLeft, progress, started, completed }, idx) => {
-              return (
-                <div
-                  key={label}
-                  className={cn("relative flex items-center gap-4 whitespace-nowrap", {
-                    "color-neutral-500": !(completed || started),
-                  })}
-                >
-                  <PotLifecycleStageCircularProgressIndicator
-                    started={started ?? false}
-                    {...{ progress, completed }}
-                  />
+          {lifecycle.stages.map(({ label, daysLeft, progress, started, completed }, idx) => {
+            return (
+              <div
+                key={label}
+                className={cn("relative flex items-center gap-4 whitespace-nowrap", {
+                  "color-neutral-500": !(completed || started),
+                })}
+              >
+                <PotLifecycleStageCircularProgressIndicator
+                  started={started ?? false}
+                  {...{ progress, completed }}
+                />
 
-                  <div className="flex">
-                    {label}
-                    {!daysLeft && started && <span>{"pending "}</span>}
+                <div className="flex gap-1">
+                  {label}
+                  {!daysLeft && started && <span>{"pending"}</span>}
 
-                    {started && !completed && daysLeft && (
-                      <>
-                        <span className="mx-1">ends in</span>
+                  {started && !completed && daysLeft && (
+                    <>
+                      <span>{"ends in"}</span>
 
-                        <span className="prose text-primary-600 font-600 min-w-31">
-                          <TimeLeft daysLeft={daysLeft} />
-                        </span>
-                      </>
-                    )}
-
-                    {idx === 0 && !started && " hasn’t started"}
-                  </div>
-
-                  {idx !== 3 && (
-                    <Loader
-                      className={cn("relative flex h-1 rounded-[1px]", {
-                        "bg-neutral-200": !completed,
-                        "bg-[#629D13]": completed,
-                      })}
-                    />
+                      <span className="prose text-primary-600 font-600 min-w-31">
+                        <TimeLeft daysLeft={daysLeft} />
+                      </span>
+                    </>
                   )}
+
+                  {idx === 0 && !started && "hasn’t started"}
                 </div>
-              );
-            },
-          )}
+
+                {idx !== 3 && (
+                  <Loader
+                    className={cn("relative flex h-1 rounded-[1px]", {
+                      "bg-neutral-200": !completed,
+                      "bg-[#629D13]": completed,
+                    })}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       </Container>
 

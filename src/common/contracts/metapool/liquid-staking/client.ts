@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { METAPOOL_LIQUID_STAKING_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 import { U128String } from "@/common/types";
 
 export const contractApi = naxiosInstance.contractApi({

@@ -2,20 +2,18 @@ import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "r
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { walletApi } from "@/common/api/near";
+import { indexer } from "@/common/api/indexer";
+import { walletApi } from "@/common/api/near/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { RegistrationStatus, listsClient } from "@/common/contracts/core";
+import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
 import uploadFileToIPFS from "@/common/services/ipfs";
-import { fetchSocialImages } from "@/common/services/social";
-import { AccountId } from "@/common/types";
-import { Input } from "@/common/ui/components";
+import { Button, Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountOption } from "@/entities/account";
-import { useWallet } from "@/entities/session";
-import { AccessControlList } from "@/features/access-control";
+import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 import {
@@ -42,7 +40,7 @@ interface CreateSuccess {
   data?: any;
 }
 
-export const ListFormDetails: React.FC = () => {
+export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
   const {
     register,
     handleSubmit,
@@ -56,7 +54,6 @@ export const ListFormDetails: React.FC = () => {
   useListDeploymentSuccessRedirect();
   const descriptionLength = watch("description")?.length || 0;
   const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const [listConfirmModal, setOpenListConfirmModal] = useState<ListConfirmationModalProps>({
     open: false,
@@ -67,7 +64,6 @@ export const ListFormDetails: React.FC = () => {
   });
 
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
-  const [savedAdmins, setSavedAdmins] = useState<{ account: AccountId }[]>([{ account: "" }]);
 
   const {
     admins,
@@ -89,23 +85,38 @@ export const ListFormDetails: React.FC = () => {
     query: { id },
   } = useRouter();
 
+  const { data, isLoading } = indexer.useListRegistrations({
+    ...(isDuplicate && { listId: parseInt(id as string) }),
+    page_size: 999,
+  });
+
   const onEditPage = !!id;
-  const { wallet } = useWallet();
+
+  useEffect(() => {
+    if (isDuplicate) {
+      setAccounts(data?.results?.map((registrations) => registrations?.registrant?.id) || []);
+    }
+  }, [isDuplicate, isLoading]);
 
   useEffect(() => {
     const fetchListDetails = async () => {
       try {
-        const response: any = await listsClient.getList({
+        const response: any = await listsContractClient.getList({
           list_id: parseInt(id as string) as any,
         });
 
         setValue("name", response.name);
-        setValue("owner", response.owner);
+        setValue("owner", isDuplicate ? walletApi?.accountId : response.owner);
         setValue("description", response.description);
-        setValue("allowApplications", response.admin_only_registrations);
+        setValue("allowApplications", !response.admin_only_registrations);
         setValue("approveApplications", response?.default_registration_status === "Approved");
-        setAdmins(response.admins);
-        setSavedAdmins(response.admins?.map((admin: AccountId) => ({ account: admin })));
+
+        setAdmins(
+          isDuplicate && walletApi?.accountId !== response.owner
+            ? [response?.owner, ...response.admins]
+            : response.admins,
+        );
+
         setCoverImage(response.cover_image_url);
       } catch (error) {
         console.error("Error fetching list details:", error);
@@ -113,19 +124,7 @@ export const ListFormDetails: React.FC = () => {
     };
 
     if (onEditPage) fetchListDetails();
-  }, [id, setValue]);
-
-  useEffect(() => {
-    const fetchProfileImage = async () => {
-      const { image } = await fetchSocialImages({
-        accountId: walletApi.accountId || "",
-      });
-
-      setProfileImage(image);
-    };
-
-    if (walletApi?.accountId) fetchProfileImage();
-  }, [wallet]);
+  }, [id, setValue, onEditPage, isDuplicate]);
 
   // prettier-ignore
   const onSubmit: SubmitHandler<any> = async (data, event) => {
@@ -137,8 +136,8 @@ export const ListFormDetails: React.FC = () => {
       "list-submit-button"
     ) { return; }
 
-    if (onEditPage) {
-      listsClient.update_list({
+    if (onEditPage && !isDuplicate) {
+      listsContractClient.update_list({
         ...data,
         admins,
         list_id: parseInt(id as any),
@@ -157,7 +156,7 @@ export const ListFormDetails: React.FC = () => {
 
       dispatch.listEditor.reset()
     } else {
-      listsClient.create_list({
+      listsContractClient.create_list({
         ...data,
         admins,
         accounts: accounts.map((account) => ({
@@ -203,10 +202,9 @@ export const ListFormDetails: React.FC = () => {
       accounts.length > 0 ? (
         <div className="flex flex-wrap items-center gap-2">
           {[...accounts].map((accountId) => (
-            <AccountOption
+            <AccountListItem
               isThumbnail
               key={accountId}
-              title={accountId}
               classNames={{ avatar: "md:w-[40px] md:h-[40px] w-7 h-7" }}
               {...{ accountId }}
             />
@@ -220,25 +218,47 @@ export const ListFormDetails: React.FC = () => {
   const adminsList = useMemo(
     () =>
       admins.length > 0 ? (
-        <div className="flex flex-wrap items-center gap-2">
-          {[...admins].map((accountId) => (
-            <AccountOption
+        <div className="flex items-center gap-2">
+          {admins.slice(0, 4).map((accountId) => (
+            <AccountListItem
               isThumbnail
               key={accountId}
-              title={accountId}
-              classNames={{ avatar: "md:w-[40px] md:h-[40px] w-7 h-7" }}
+              classNames={{ avatar: "md:w-10 md:h-10 w-7 h-7" }}
               {...{ accountId }}
             />
           ))}
+          {admins.length > 4 && (
+            <div
+              style={{
+                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+              }}
+              className="group relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white transition-all duration-500 ease-in-out md:h-10 md:w-10"
+            >
+              {admins.length - 4}+
+              <div className="z-999 bg-background absolute top-7 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md px-1 py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+                {admins.slice(4).map((admin) => (
+                  <Link
+                    href={`/profile/${admin}`}
+                    target="_blank"
+                    key={admin}
+                    className="mb-2 flex cursor-pointer items-center gap-2 p-2 text-[#292929] hover:bg-gray-100"
+                  >
+                    <AccountProfilePicture accountId={admin} className="h-5 w-5" />
+                    {admin}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : null,
 
     [admins],
   );
 
-  const handleViewList = useCallback(() => push(`/list/${id}`), [id]);
+  const handleViewList = useCallback(() => push(`/list/${id}`), [id, push]);
 
-  const handleViewLists = useCallback(() => push(`/lists`), []);
+  const handleViewLists = useCallback(() => push(`/lists`), [push]);
 
   return (
     <>
@@ -274,14 +294,14 @@ export const ListFormDetails: React.FC = () => {
             className="flex min-h-[70px] flex-col justify-between rounded p-[12px]"
           >
             <div className="flex w-full items-start justify-between space-x-2">
-              <label className="font-semibold text-gray-700">Admin only applications</label>
+              <label className="font-semibold text-gray-700">Allow Applications</label>
               <label className="inline-flex cursor-pointer items-center">
                 <input
                   type="checkbox"
                   className="peer sr-only"
                   {...register("allowApplications")}
                 />
-                <div className="peer relative h-6 w-11 rounded-md bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-md after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#474647] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#a4a2a4] rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-[#474647]"></div>
+                <div className="after:bg-background peer relative h-6 w-11 rounded-md bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-md after:border after:border-gray-300 after:transition-all after:content-[''] peer-checked:bg-[#474647] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#a4a2a4] rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-[#474647]"></div>
               </label>
             </div>
             {watch("allowApplications") && (
@@ -313,7 +333,7 @@ export const ListFormDetails: React.FC = () => {
             )}
           </div>
           <h3 className="mb-4 mt-8 text-xl font-semibold">Permissions</h3>
-          {onEditPage && watch("owner") === walletApi?.accountId && (
+          {onEditPage && watch("owner") === walletApi?.accountId && !isDuplicate && (
             <div
               style={{
                 boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
@@ -323,10 +343,9 @@ export const ListFormDetails: React.FC = () => {
               <div className="flex w-full flex-row items-start justify-between gap-3 p-2  px-4 md:mr-5">
                 <span className="mr-4 mt-2 font-semibold text-gray-700">Owner</span>
                 <div className="flex items-center gap-2 p-2">
-                  <img
-                    src={profileImage || "https://via.placeholder.com/40"}
-                    alt="Owner"
-                    className="h-7 w-7 rounded-full md:h-[24px] md:w-[24px]  "
+                  <AccountProfilePicture
+                    accountId={walletApi?.accountId || ""}
+                    className="h4 w-4"
                   />
                   <span className="text-[14px] text-[#292929]">
                     {onEditPage ? watch("owner") : walletApi?.accountId}
@@ -338,6 +357,7 @@ export const ListFormDetails: React.FC = () => {
                 <div className="flex gap-2">
                   <Input
                     onChange={handleChangeTransferOwnerField}
+                    className="border-1 border border-black"
                     error={transferAccountError}
                     value={transferAccountField}
                   />
@@ -372,15 +392,15 @@ export const ListFormDetails: React.FC = () => {
                     <p className="font-semibold text-gray-700">Admins</p>
                   </div>
                   <div className="flex h-[35px]  flex-wrap">
-                    <AccessControlList
+                    <AccountGroup
                       isEditable={true}
                       title="Admins"
                       showAccountList={false}
-                      handleRemoveAccounts={id ? handleRemoveAdmin : undefined}
+                      handleRemoveAccounts={id && !isDuplicate ? handleRemoveAdmin : undefined}
                       value={admins.map((admin) => ({ accountId: admin }))}
                       classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={
-                        id
+                        id && !isDuplicate
                           ? (accounts: string[]) => {
                               const newAdmins =
                                 accounts?.filter((admin) => !admins?.includes(admin)) ?? [];
@@ -397,7 +417,7 @@ export const ListFormDetails: React.FC = () => {
             </div>
           </div>
 
-          {!onEditPage && (
+          {(!onEditPage || isDuplicate) && (
             <div
               style={{
                 boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
@@ -411,7 +431,7 @@ export const ListFormDetails: React.FC = () => {
                       <p className="pt-[2px] font-semibold text-gray-700">Accounts</p>
                     </div>
                     <div className="flex h-[35px]  flex-wrap">
-                      <AccessControlList
+                      <AccountGroup
                         isEditable
                         title="Accounts"
                         value={accounts?.map((account) => ({
@@ -420,6 +440,7 @@ export const ListFormDetails: React.FC = () => {
                         showAccountList={false}
                         classNames={{ avatar: "w-[40px] h-[40px]" }}
                         onSubmit={(accounts: string[]) => setAccounts(accounts)}
+                        maxAccounts={25}
                       />
                     </div>
                   </div>
@@ -451,41 +472,52 @@ export const ListFormDetails: React.FC = () => {
               <button
                 type="button"
                 onClick={() => document.getElementById("uploadCoverImage")?.click()}
-                className="absolute bottom-4 right-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition hover:bg-gray-50"
+                className="bg-background absolute bottom-4 right-4 rounded-md border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
               >
                 <span className="mr-2">📷</span>{" "}
                 {loadingImageUpload ? "Uploading..." : "Add cover photo"}
               </button>
             </div>
           </div>
-          <div
-            className={`flex w-full flex-col-reverse justify-between md:flex-row md:flex-row  ${onEditPage ? "" : "md:justify-end"} `}
-          >
-            {onEditPage && watch("owner") === walletApi?.accountId && (
-              <button
-                onClick={() => setOpenListConfirmModal({ open: true, type: "DELETE" })}
-                className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9]`}
-              >
-                Delete List
-              </button>
-            )}
-            <div className="flex flex-col-reverse justify-center md:flex-row md:justify-end md:space-x-4 md:space-y-0">
-              <button
-                type="button"
-                className="mb-4 rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition hover:bg-gray-200"
-                onClick={back}
-              >
-                {onEditPage ? "Discard" : "Cancel"}
-              </button>
-              <button
-                type="submit"
-                id="list-submit-button"
-                className="mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 md:mb-0"
-              >
-                {onEditPage ? "Save Settings" : "Save List"}
-              </button>
+          {isDuplicate ? (
+            <div className="flex w-full flex-row-reverse justify-end gap-4">
+              <Button id="list-submit-button" type="submit">
+                Duplicate List
+              </Button>
+              <Button onClick={back} variant="tonal-filled">
+                Cancel
+              </Button>
             </div>
-          </div>
+          ) : (
+            <div
+              className={`flex w-full flex-col-reverse justify-between md:flex-row md:flex-row  ${onEditPage ? "" : "md:justify-end"} `}
+            >
+              {onEditPage && watch("owner") === walletApi?.accountId && (
+                <button
+                  onClick={() => setOpenListConfirmModal({ open: true, type: "DELETE" })}
+                  className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9]`}
+                >
+                  Delete List
+                </button>
+              )}
+              <div className="flex flex-col-reverse justify-center md:flex-row md:justify-end md:space-x-4 md:space-y-0">
+                <button
+                  type="button"
+                  className="mb-4 rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition hover:bg-gray-200"
+                  onClick={back}
+                >
+                  {onEditPage ? "Discard" : "Cancel"}
+                </button>
+                <button
+                  type="submit"
+                  id="list-submit-button"
+                  className="mb-4 h-max rounded-md bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-800 md:mb-0"
+                >
+                  {onEditPage ? "Save Settings" : "Save List"}
+                </button>
+              </div>
+            </div>
+          )}
         </form>
       </div>
       <ListConfirmationModal

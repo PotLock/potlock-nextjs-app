@@ -5,10 +5,8 @@ import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ListRegistration } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
-import DownArrow from "@/common/assets/svgs/DownArrow";
-import { ListNoteIcon } from "@/common/assets/svgs/list-note";
-import { RegistrationStatus, listsClient } from "@/common/contracts/core";
+import { walletApi } from "@/common/api/near/client";
+import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import {
   Button,
@@ -25,8 +23,10 @@ import {
   SelectItem,
   Textarea,
 } from "@/common/ui/components";
+import DownArrow from "@/common/ui/svg/DownArrow";
+import { ListNoteIcon } from "@/common/ui/svg/list-note";
 import { cn } from "@/common/ui/utils";
-import { AccountProfileCover, AccountProfilePicture } from "@/entities/account";
+import { AccountProfileCover, AccountProfilePicture } from "@/entities/_shared/account";
 import { statuses } from "@/entities/project/constants";
 import { dispatch } from "@/store";
 
@@ -88,7 +88,7 @@ export const AccountCard = ({
   );
 
   const handleUpdateStatus = () => {
-    listsClient
+    listsContractClient
       .update_registered_project({
         registration_id: dataForList.id,
         ...(note && { notes: note }),
@@ -108,13 +108,13 @@ export const AccountCard = ({
       <Link href={`/profile/${dataForList.registrant.id}`}>
         <div className="cursor-pointer transition-all duration-300  hover:translate-y-[-1rem]">
           <div
-            className="font-lora overflow-hidden rounded-md bg-white shadow-md"
+            className="font-lora bg-background overflow-hidden rounded-md shadow-md"
             data-testid="list-card"
           >
             <AccountProfileCover
               accountId={dataForList.registrant.id}
               className={cn(
-                "relative -mt-9 h-10 w-10 rounded-full bg-white object-cover",
+                "bg-background relative -mt-9 h-10 w-10 object-cover",
                 "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgb(199,199,199)_inset]",
               )}
               height={150}
@@ -125,7 +125,7 @@ export const AccountCard = ({
               <AccountProfilePicture
                 accountId={dataForList.registrant.id}
                 className={cn(
-                  "relative -mt-9 h-10 w-10 rounded-full bg-white object-cover",
+                  "bg-background relative -mt-9 h-10 w-10 rounded-full object-cover",
                   "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]",
                 )}
               />
@@ -176,7 +176,7 @@ export const AccountCard = ({
                     </Trigger>
                     <SelectContent>
                       {statuses
-                        .filter((item) => item.val !== "all")
+                        .filter((item) => item.val !== "All")
                         .map((item) => (
                           <SelectItem value={item.val} key={item.val}>
                             {item.val}
@@ -194,7 +194,7 @@ export const AccountCard = ({
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem className="max-h-[150px] max-w-[250px] items-start bg-white p-2 text-start">
+                    <DropdownMenuItem className="bg-background max-h-[150px] max-w-[250px] items-start p-2 text-start">
                       <div className=" text-black">
                         {dataForList?.registrant_notes ?? "No Note"}
                       </div>

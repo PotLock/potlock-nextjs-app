@@ -2,9 +2,8 @@ import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
-import { indexer } from "@/common/api/indexer";
+import { type PotId, indexer } from "@/common/api/indexer";
 import { yoctoNearToFloat } from "@/common/lib";
-import { ftService } from "@/common/services";
 import {
   DialogDescription,
   DialogHeader,
@@ -20,7 +19,7 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
-import { TokenBalance, TokenSelector, TokenTotalValue } from "@/entities/token";
+import { TokenSelector, TokenTotalValue, useToken } from "@/entities/_shared/token";
 
 import { DonationRecipientShares } from "./DonationRecipientShares";
 import { DonationSybilWarning } from "./DonationSybilWarning";
@@ -31,6 +30,7 @@ import {
   DonationGroupAllocationStrategyEnum,
   WithTotalAmount,
 } from "../types";
+import { DonationTokenBalance } from "./DonationTokenBalance";
 
 export type DonationGroupAllocationProps = WithTotalAmount &
   DonationGroupAllocationKey &
@@ -53,8 +53,17 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
   ]);
 
   const isListDonation = listId !== undefined;
-  const { data: token } = ftService.useRegisteredToken({ tokenId });
-  const { isLoading: isPotLoading, data: pot, error: potError } = indexer.usePot({ potId });
+  const { data: token } = useToken({ tokenId });
+
+  const {
+    isLoading: isPotLoading,
+    data: pot,
+    error: potError,
+  } = indexer.usePot({
+    enabled: potId !== undefined,
+    potId: potId as PotId,
+  });
+
   const { data: list, isLoading: isListLoading, error: listError } = indexer.useList({ listId });
 
   const totalAmountUsdValue = token?.usdPrice
@@ -144,7 +153,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
               <TextField
                 label="Amount"
                 {...field}
-                labelExtension={<TokenBalance {...{ tokenId }} />}
+                labelExtension={<DonationTokenBalance {...{ tokenId }} />}
                 inputExtension={
                   <FormField
                     control={form.control}
@@ -182,13 +191,13 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
               <TokenTotalValue textOnly amountFloat={totalAmountFloat} {...{ tokenId }} />
             </div>
 
-            <TokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />
+            <DonationTokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />
           </div>
         )}
       </DialogDescription>
 
       <ScrollArea className="h-49 w-full">
-        <div className="flex flex-col items-center gap-0.5">
+        <div className="flex w-full flex-col items-center gap-0.5">
           {isPotDonation && (
             <DonationRecipientShares
               {...{ balanceFloat, isBalanceSufficient, form }}

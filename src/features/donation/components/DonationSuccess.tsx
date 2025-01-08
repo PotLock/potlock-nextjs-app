@@ -4,17 +4,15 @@ import { Check } from "lucide-react";
 import Link from "next/link";
 
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
-import { indexer } from "@/common/api/indexer";
-import TwitterSvg from "@/common/assets/svgs/twitter";
+import { type PotId, indexer } from "@/common/api/indexer";
 import {
   DEFAULT_SHARE_HASHTAGS,
   NATIVE_TOKEN_DECIMALS,
   NATIVE_TOKEN_ID,
-  POTLOCK_TWITTER_ACCOUNT_ID,
+  PLATFORM_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
 import { stringifiedU128ToFloat, truncate } from "@/common/lib";
-import { ftService } from "@/common/services";
 import {
   Button,
   ClipboardCopyButton,
@@ -23,8 +21,9 @@ import {
   ModalErrorBody,
   Skeleton,
 } from "@/common/ui/components";
-import { AccountProfileLink } from "@/entities/account";
-import { TokenTotalValue } from "@/entities/token";
+import TwitterSvg from "@/common/ui/svg/twitter";
+import { AccountProfileLink } from "@/entities/_shared/account";
+import { TokenTotalValue, useToken } from "@/entities/_shared/token";
 import routesPath from "@/pathnames";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
@@ -43,19 +42,30 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
   const [potId] = form.watch(["potAccountId"]);
-  const { data: pot } = indexer.usePot({ potId });
 
-  const { data: recipient, error: recipientDataError } = indexer.useAccount({
-    accountId:
+  const { data: pot } = indexer.usePot({
+    enabled: potId !== undefined,
+    potId: potId as PotId,
+  });
+
+  const recipientAccountId = useMemo(
+    () =>
       "recipient_id" in (finalOutcome ?? {})
         ? (finalOutcome as DirectDonation).recipient_id
         : ((finalOutcome as PotDonation).project_id ?? undefined),
+
+    [finalOutcome],
+  );
+
+  const { data: recipient, error: recipientDataError } = indexer.useAccount({
+    enabled: recipientAccountId !== undefined,
+    accountId: recipientAccountId ?? "noop",
   });
 
   const tokenId =
     "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID;
 
-  const { data: token } = ftService.useRegisteredToken({ tokenId });
+  const { data: token } = useToken({ tokenId });
 
   const isLoading = isResultLoading || recipient === undefined || token === undefined;
 
@@ -97,7 +107,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     const tag = `${singlePorject}`;
 
     let url = `https://alpha.potlock.io${routesPath.PROFILE}/${recipient.id}/funding-raised`;
-    let text = `I just donated to ${tag} on @${POTLOCK_TWITTER_ACCOUNT_ID}! Support public goods at `;
+    let text = `I just donated to ${tag} on @${PLATFORM_TWITTER_ACCOUNT_ID}! Support public goods at `;
     text = encodeURIComponent(text);
     url = encodeURIComponent(url);
     return (

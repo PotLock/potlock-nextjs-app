@@ -1,7 +1,7 @@
-export const CreateListHero = ({ onEditPage }: { onEditPage: boolean }) => {
+export const CreateListHero = ({ onEditPage, text }: { onEditPage: boolean; text?: string }) => {
   return onEditPage ? (
     <div className="mb-8 flex w-full items-center  justify-center border-b-[1px] border-[#DBDBDB] p-4">
-      <h1 className="text-[20px] font-bold ">Edit List Settings</h1>
+      <h1 className="text-[20px] font-bold ">{text ?? "Edit List Settings"}</h1>
     </div>
   ) : (
     <div className="bg-hero relative flex w-full flex-col justify-center overflow-hidden">

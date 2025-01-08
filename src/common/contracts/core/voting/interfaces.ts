@@ -148,6 +148,8 @@ export interface IVotingContract {
 
   get_time_remaining(args: { election_id: ElectionId }): Promise<number | null | undefined>;
 
+  get_unique_voters(args: { election_id: ElectionId }): Promise<AccountId[]>;
+
   get_voter_remaining_capacity(args: {
     election_id: ElectionId;
     voter: AccountId;

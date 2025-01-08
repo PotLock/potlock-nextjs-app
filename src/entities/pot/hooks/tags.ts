@@ -7,11 +7,11 @@ import { Temporal } from "temporal-polyfill";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import daysUntil from "@/common/lib/daysUntil";
 
-import { usePotExtensionFlags } from "./extensions";
+import { usePotFeatureFlags } from "./feature-flags";
 
 export const usePotTags = ({ potId }: ByPotId) => {
   const { data: pot } = indexer.usePot({ potId });
-  const { hasVoting } = usePotExtensionFlags({ potId });
+  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
 
   return useMemo(() => {
     if (pot) {
@@ -54,7 +54,7 @@ export const usePotTags = ({ potId }: ByPotId) => {
           backgroundColor: "#F7FDE8",
           borderColor: "#9ADD33",
           textColor: "#192C07",
-          text: `${daysUntil(publicRoundEndMs)} left to ${hasVoting ? "vote" : "donate"}`,
+          text: `${daysUntil(publicRoundEndMs)} left to ${hasProportionalFundingMechanism ? "vote" : "donate"}`,
           preElementsProps: { colorOuter: "#D7F5A1", colorInner: "#9ADD33", animate: true },
           visibility: publicRoundOpen,
         },
@@ -96,5 +96,5 @@ export const usePotTags = ({ potId }: ByPotId) => {
         },
       ];
     } else return [];
-  }, [hasVoting, pot]);
+  }, [hasProportionalFundingMechanism, pot]);
 };

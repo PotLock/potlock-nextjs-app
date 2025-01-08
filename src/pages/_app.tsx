@@ -17,9 +17,10 @@ import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
+import { TooltipProvider } from "@/common/ui/components";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
-import { SessionProvider } from "@/entities/session";
+import { SessionProvider } from "@/entities/_shared/session";
 import { AppBar } from "@/layout/components/AppBar";
 import { dispatch, store } from "@/store";
 
@@ -52,12 +53,17 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
       <ReduxProvider {...{ store }}>
         <NiceModalProvider>
           <SessionProvider>
-            <div
-              className={`${cn("font-lora flex h-full flex-col items-center antialiased", lora.variable)}`}
-            >
-              <AppBar />
-              {getLayout(<Component {...pageProps} />)}
-            </div>
+            <TooltipProvider>
+              <div
+                className={cn(
+                  "font-lora flex h-full flex-col items-center antialiased",
+                  lora.variable,
+                )}
+              >
+                <AppBar />
+                {getLayout(<Component {...pageProps} />)}
+              </div>
+            </TooltipProvider>
           </SessionProvider>
         </NiceModalProvider>
         <Toaster />

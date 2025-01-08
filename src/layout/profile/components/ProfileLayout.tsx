@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useRegistration } from "@/common/_deprecated/useRegistration";
+import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
-import { useRegistration } from "@/entities/core";
 import { ProjectBanner } from "@/entities/project";
 
 import { ProfileLayoutControls } from "./ProfileLayoutControls";
@@ -150,7 +151,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
   const isProject = isRegisteredProject;
 
   return (
-    <main className="container flex flex-col">
+    <PageWithBanner>
       {isProject && <ProjectBanner projectId={params.userId} />}
       <ProfileLayoutHero isProject={isProject} accountId={params.userId} />
       <ProfileLayoutControls accountId={params.userId} isProject={isProject} />
@@ -168,6 +169,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
       <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
         {children}
       </div>
-    </main>
+    </PageWithBanner>
   );
 };

@@ -6,11 +6,11 @@ import { entries } from "remeda";
 import { Temporal } from "temporal-polyfill";
 import { ZodError } from "zod";
 
+import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { toChronologicalOrder } from "@/common/lib";
-import { useIsHuman } from "@/entities/core";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
@@ -142,7 +142,7 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
 
   const isDisabled = !hasChanges || !self.formState.isValid || self.formState.isSubmitting;
 
-  const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "unknown");
+  const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "noop");
 
   const minAmountError =
     !isDonationAmountSufficient({ amount, tokenId }) && hasChanges

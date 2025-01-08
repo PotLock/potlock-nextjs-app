@@ -6,20 +6,21 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { VolunteerIcon } from "@/common/assets/svgs";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
+import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
+import { useSession } from "@/entities/_shared/session";
+import { TokenTotalValue } from "@/entities/_shared/token";
 import {
+  PotDonationStats,
   PotLifecycleStageTagEnum,
-  PotStats,
   PotTimeline,
   usePotBasicUserPermissions,
-  usePotExtensionFlags,
+  usePotFeatureFlags,
   usePotLifecycle,
 } from "@/entities/pot";
-import { useSessionAuth } from "@/entities/session";
-import { TokenTotalValue } from "@/entities/token";
+import { VotingRoundLeaderboard } from "@/entities/voting-round";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
 
@@ -36,11 +37,15 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onFundMatchingPoolClick,
 }) => {
   const { data: pot } = indexer.usePot({ potId });
-  const { hasVoting } = usePotExtensionFlags({ potId });
-  const { isSignedIn, accountId } = useSessionAuth();
-  const applicationClearance = usePotApplicationUserClearance({ potId, hasVoting });
-  // const votingClearance = useVotingUserClearance({ potId });
-  const lifecycle = usePotLifecycle({ potId, hasVoting });
+  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+  const { isSignedIn, accountId } = useSession();
+
+  const applicationClearance = usePotApplicationUserClearance({
+    potId,
+    hasProportionalFundingMechanism,
+  });
+
+  const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
 
   const isApplicationPeriodOngoing = useMemo(
     () => lifecycle.currentStage?.tag === PotLifecycleStageTagEnum.Application,
@@ -67,6 +72,33 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
     } else return [pot?.description ?? null, null];
   }, [pot?.description]);
 
+  const statsElement = useMemo(() => {
+    const donationStats = pot && <PotDonationStats potDetail={pot} />;
+
+    if (isApplicationPeriodOngoing) {
+      return applicationClearance?.requirements && applicationClearance.requirements.length > 0 ? (
+        <Checklist
+          title="Application Requirements"
+          requirements={applicationClearance.requirements}
+        />
+      ) : (
+        donationStats
+      );
+    } else {
+      return hasProportionalFundingMechanism ? (
+        <VotingRoundLeaderboard {...{ potId }} />
+      ) : (
+        donationStats
+      );
+    }
+  }, [
+    applicationClearance.requirements,
+    hasProportionalFundingMechanism,
+    isApplicationPeriodOngoing,
+    pot,
+    potId,
+  ]);
+
   return (
     <div
       className={cn(
@@ -77,10 +109,10 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
       {pot ? (
         <PotTimeline
           classNames={{ root: "bg-neutral-50 md:transparent" }}
-          {...{ hasVoting, potId }}
+          {...{ hasProportionalFundingMechanism, potId }}
         />
       ) : (
-        <Skeleton className="h-96 w-full" />
+        <Skeleton className="h-14 w-full rounded-lg" />
       )}
 
       <div
@@ -136,14 +168,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           </div>
 
           <div className="flex w-full flex-col gap-6 lg:w-fit">
-            {isApplicationPeriodOngoing ? (
-              <Checklist
-                title="Application Requirements"
-                requirements={applicationClearance.requirements ?? []}
-              />
-            ) : (
-              pot && <PotStats potDetail={pot} />
-            )}
+            {statsElement}
 
             {isSignedIn && (
               <div className="flex items-center gap-2 text-sm lg:justify-end">
@@ -178,10 +203,14 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
           <div className="flex items-center justify-start gap-4">
             {canApply && applicationClearance.isEveryRequirementSatisfied && (
-              <Button onClick={onApplyClick}>{`Apply to ${hasVoting ? "Round" : "Pot"}`}</Button>
+              <Button
+                onClick={onApplyClick}
+              >{`Apply to ${hasProportionalFundingMechanism ? "Round" : "Pot"}`}</Button>
             )}
 
-            {hasVoting ? null : <>{canDonate && <DonateToPotProjects {...{ potId }} />}</>}
+            {hasProportionalFundingMechanism ? null : (
+              <>{canDonate && <DonateToPotProjects {...{ potId }} />}</>
+            )}
 
             {canFund && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>

@@ -1,9 +1,8 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { REF_EXCHANGE_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near";
-
-import { WhitelistedTokens } from "./interface";
+import { naxiosInstance } from "@/common/api/near/client";
+import type { AccountId } from "@/common/types";
 
 const contractApi = naxiosInstance.contractApi({
   contractId: REF_EXCHANGE_CONTRACT_ACCOUNT_ID,
@@ -11,4 +10,4 @@ const contractApi = naxiosInstance.contractApi({
 });
 
 export const get_whitelisted_tokens = () =>
-  contractApi.view<{}, WhitelistedTokens>("get_whitelisted_tokens");
+  contractApi.view<{}, AccountId[]>("get_whitelisted_tokens");

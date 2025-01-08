@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 
 import { show } from "@ebay/nice-modal-react";
+import { Copy } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
@@ -8,21 +9,22 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near";
-import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/assets/svgs";
-import { listsClient } from "@/common/contracts/core";
+import { walletApi } from "@/common/api/near/client";
+import { listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
-import { fetchSocialImages } from "@/common/services/social";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/components";
-import { SocialsShare } from "@/common/ui/components/SocialShare";
-import { AccountOption } from "@/entities/account";
-import { useWallet } from "@/entities/session";
-import { AccessControlListModal } from "@/features/access-control";
+import { SocialsShare } from "@/common/ui/components/molecules/social-share";
+import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/svg";
+import {
+  AccountGroupEditModal,
+  AccountListItem,
+  AccountProfilePicture,
+} from "@/entities/_shared/account";
 import { DonateToListProjects } from "@/features/donation";
 import { dispatch } from "@/store";
 
@@ -46,29 +48,15 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   } = useRouter();
 
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
-  const [listOwnerImage, setListOwnerImage] = useState<string>("");
   const [isApplicationSuccessful, setIsApplicationSuccessful] = useState<boolean>(false);
   const [isListConfirmationModalOpen, setIsListConfirmationModalOpen] = useState({ open: false });
 
-  const { wallet } = useWallet();
   const adminsModalId = useId();
   const registrantsModalId = useId();
 
   const isUpvoted = listDetails?.upvotes?.some(
     (data: any) => data?.account === walletApi.accountId,
   );
-
-  useEffect(() => {
-    const fetchProfileImage = async () => {
-      const { image } = await fetchSocialImages({
-        accountId: listDetails?.owner?.id || "",
-      });
-
-      setListOwnerImage(image);
-    };
-
-    if (id) fetchProfileImage();
-  }, [id, listDetails?.owner?.id]);
 
   const openRegistrantsModal = useCallback(() => show(registrantsModalId), [registrantsModalId]);
 
@@ -83,13 +71,13 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   } = useListForm();
 
   const applyToListModal = (note: string) => {
-    listsClient
+    listsContractClient
       .register_batch({
         list_id: parseInt(listDetails?.on_chain_id as any) as any,
         notes: note,
         registrations: [
           {
-            registrant_id: wallet?.accountId ?? "",
+            registrant_id: walletApi?.accountId ?? "",
             status:
               listDetails?.owner?.id === walletApi.accountId
                 ? "Approved"
@@ -113,7 +101,15 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
     });
   };
 
-  const onEditList = () => push(`/list/edit/${listDetails?.on_chain_id}`);
+  const onEditList = useCallback(
+    () => push(`/list/edit/${listDetails?.on_chain_id}`),
+    [listDetails?.on_chain_id, push],
+  );
+
+  const onDuplicateList = useCallback(
+    () => push(`/list/duplicate/${listDetails?.on_chain_id}`),
+    [listDetails?.on_chain_id, push],
+  );
 
   if (!listDetails) {
     return <p>No list details available.</p>;
@@ -124,7 +120,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
 
   const handleUpvote = () => {
     if (isUpvoted) {
-      listsClient
+      listsContractClient
         .remove_upvote({ list_id: Number(listDetails.on_chain_id) })
         .catch((error) => console.error("Error upvoting:", error));
 
@@ -133,7 +129,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      listsClient
+      listsContractClient
         .upvote({ list_id: Number(listDetails.on_chain_id) })
         .catch((error) => console.error("Error upvoting:", error));
 
@@ -144,20 +140,14 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
     }
   };
 
-  const NO_IMAGE =
-    "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
-
   const nameContent = (
     <>
       <p className="font-lora mb-2 text-2xl font-semibold">{listDetails.name}</p>
       <div className="mb-2 flex items-center space-x-2 text-[12px] text-[#656565]">
-        BY{" "}
-        <img
-          className="ml-2 h-4 w-4 rounded-full object-cover"
-          src={listOwnerImage || NO_IMAGE}
-          alt="Owner"
-        />
-        <Link href={`/profile/${listDetails.owner?.id}`}>{listDetails.owner?.id}</Link>
+        BY <AccountProfilePicture accountId={listDetails?.owner?.id} className="ml-4 h-4 w-4" />
+        <Link target="_blank" href={`/profile/${listDetails.owner?.id}`}>
+          {listDetails.owner?.id}
+        </Link>
         <span className="text-gray-500">
           Created {new Date(listDetails.created_at).toLocaleDateString()}
         </span>
@@ -177,8 +167,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                 <span className="mr-4 font-semibold text-gray-700">Admins</span>
                 <div className="flex items-center gap-2">
                   {admins.slice(0, 4).map((admin) => (
-                    <AccountOption
-                      title={admin}
+                    <AccountListItem
                       key={admin}
                       isThumbnail
                       classNames={{ avatar: "w-7 h-7" }}
@@ -186,8 +175,26 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                     />
                   ))}
                   {admins.length > 4 && (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white">
+                    <div
+                      style={{
+                        boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                      }}
+                      className="group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 py-2 text-sm font-semibold text-white transition-all duration-500 ease-in-out"
+                    >
                       {admins.length - 4}+
+                      <div className="bg-background absolute top-5 z-10 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+                        {admins.slice(4).map((admin) => (
+                          <Link
+                            href={`/profile/${admin}`}
+                            target="_blank"
+                            key={admin}
+                            className="mb-2 flex cursor-pointer items-center gap-2 p-2 text-[#292929] hover:bg-gray-100"
+                          >
+                            <AccountProfilePicture accountId={admin} className="h-5 w-5" />
+                            {admin}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -218,38 +225,47 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                     </button>
                   )}
                 </div>
-                {isAdmin && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <div className="cursor-pointer rounded p-2  opacity-50 hover:bg-red-100">
-                        <DotsIcons />
-                      </div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="rounded border bg-white shadow-md">
-                      <DropdownMenuItem
-                        onClick={onEditList}
-                        className="cursor-pointer p-2 hover:bg-gray-200"
-                      >
-                        <PenIcon className="mr-1 max-w-[22px]" />
-                        <span>Edit list details</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={openRegistrantsModal}
-                        className="cursor-pointer p-2 hover:bg-gray-200"
-                      >
-                        <AdminUserIcon className="mr-1 max-w-[22px]" />
-                        Add/Remove accounts
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setIsListConfirmationModalOpen({ open: true })}
-                        className="cursor-pointer p-2 hover:bg-gray-200"
-                      >
-                        <DeleteListIcon className="mr-1 max-w-[22px]" />
-                        <span className="text-red-500">Delete List</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="cursor-pointer rounded p-2  opacity-50 hover:bg-red-100">
+                      <DotsIcons />
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-background rounded border shadow-md">
+                    <DropdownMenuItem
+                      onClick={onDuplicateList}
+                      className="cursor-pointer p-2 hover:bg-gray-200"
+                    >
+                      <Copy className="mr-1 max-w-[22px]" />
+                      <span>Duplicate List</span>
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuItem
+                          onClick={onEditList}
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          <PenIcon className="mr-1 max-w-[22px]" />
+                          <span>Edit list details</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={openRegistrantsModal}
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          <AdminUserIcon className="mr-1 max-w-[22px]" />
+                          Add/Remove accounts
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setIsListConfirmationModalOpen({ open: true })}
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          <DeleteListIcon className="mr-1 max-w-[22px]" />
+                          <span className="text-red-500">Delete List</span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
           </div>
@@ -310,7 +326,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         onSubmitButton={() => handleDeleteList(listDetails.on_chain_id)}
       />
 
-      <AccessControlListModal
+      <AccountGroupEditModal
         id={adminsModalId}
         title="Edit Admin list"
         handleRemoveAccounts={handleRemoveAdmin}
@@ -324,7 +340,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
           handleSaveAdminsSettings(newAdmins);
         }}
       />
-      <AccessControlListModal
+      <AccountGroupEditModal
         id={registrantsModalId}
         title="Edit Accounts"
         value={savedUsers?.accounts ?? []}

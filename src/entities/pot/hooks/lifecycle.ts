@@ -1,13 +1,23 @@
 import { useMemo } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Temporal } from "temporal-polyfill";
+
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { getDateTime } from "@/entities/core";
 
 import { PotLifecycleStageTagEnum } from "../types";
 
-export type PotLifecycleCalculationInputs = ByPotId & { hasVoting?: boolean };
+/**
+ * @deprecated Use {@link Temporal} API instead
+ */
+const getDateTime = (date: string) => new Date(date).getTime();
 
-export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInputs) => {
+export type PotLifecycleCalculationInputs = ByPotId & { hasProportionalFundingMechanism?: boolean };
+
+export const usePotLifecycle = ({
+  potId,
+  hasProportionalFundingMechanism,
+}: PotLifecycleCalculationInputs) => {
   const { data: pot } = indexer.usePot({ potId });
 
   const date = new Date();
@@ -37,7 +47,7 @@ export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInp
 
         {
           tag: PotLifecycleStageTagEnum.Matching,
-          label: `${hasVoting ? "Voting" : "Matching"} round`,
+          label: `${hasProportionalFundingMechanism ? "Voting" : "Matching"} round`,
           daysLeft: public_round_end_ms,
           started: now >= public_round_start_ms,
           completed: now > public_round_end_ms,
@@ -72,7 +82,7 @@ export const usePotLifecycle = ({ potId, hasVoting }: PotLifecycleCalculationInp
         },
       ];
     } else return [];
-  }, [hasVoting, now, pot]);
+  }, [hasProportionalFundingMechanism, now, pot]);
 
   const currentStage = useMemo(
     () => stages.find((stage) => stage.started && !stage.completed),

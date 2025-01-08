@@ -26,7 +26,7 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
-      <div className="w-96 max-w-full rounded-md bg-white shadow-lg">
+      <div className="bg-background w-96 max-w-full rounded-md shadow-lg">
         <div className="flex justify-end p-4">
           <button onClick={onClose} className="font-bold text-gray-500 hover:text-gray-700">
             X
@@ -106,7 +106,7 @@ export const ListConfirmationModal: React.FC<ListConfirmationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
-      <div className="w-96 max-w-full rounded-md bg-white shadow-lg">
+      <div className="bg-background w-96 max-w-full rounded-md shadow-lg">
         <div className="flex justify-end p-4 pb-0">
           <button onClick={onClose} className="font-bold text-gray-500 hover:text-gray-700">
             X

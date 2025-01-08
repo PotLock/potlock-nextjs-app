@@ -1,5 +1,5 @@
-import * as potClient from "./client";
+import * as potContractClient from "./client";
 
 export * from "./interfaces";
 
-export { potClient };
+export { potContractClient };

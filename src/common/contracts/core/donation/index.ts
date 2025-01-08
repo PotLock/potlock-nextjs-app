@@ -1,5 +1,5 @@
-import * as donationClient from "./client";
+import * as donationContractClient from "./client";
 
 export * from "./interfaces";
 
-export { donationClient };
+export { donationContractClient };

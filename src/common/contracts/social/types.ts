@@ -17,7 +17,3 @@ export interface FeedsResult {
     };
   };
 }
-
-export interface ProfileFeedsProps {
-  accountId: string | string[];
-}

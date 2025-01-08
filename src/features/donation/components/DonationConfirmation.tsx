@@ -2,7 +2,7 @@ import { useCallback, useId, useMemo, useState } from "react";
 
 import { Pencil } from "lucide-react";
 
-import { indexer } from "@/common/api/indexer";
+import { type PotId, indexer } from "@/common/api/indexer";
 import {
   Accordion,
   AccordionContent,
@@ -20,8 +20,8 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { AccountProfileLink } from "@/entities/account";
-import { TokenTotalValue } from "@/entities/token";
+import { AccountProfileLink } from "@/entities/_shared/account";
+import { TokenTotalValue } from "@/entities/_shared/token";
 
 import { DonationGroupAllocationBreakdown, DonationSummaryBreakdown } from "./breakdowns";
 import { useDonationAllocationBreakdown } from "../hooks";
@@ -54,7 +54,11 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   ]);
 
   const isSingleProjectDonation = typeof recipientAccountId === "string";
-  const { data: pot } = indexer.usePot({ potId: potAccountId });
+
+  const { data: pot } = indexer.usePot({
+    enabled: potAccountId !== undefined,
+    potId: potAccountId as PotId,
+  });
 
   const breakdown = useDonationAllocationBreakdown({
     pot,

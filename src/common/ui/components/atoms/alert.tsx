@@ -51,7 +51,7 @@ const AlertTitle = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHea
   ({ className, ...props }, ref) => (
     <h5
       ref={ref}
-      className={cn("font-500 important:pl-8 leading-5 tracking-normal", className)}
+      className={cn("font-600 important:pl-10 text-[17px] leading-5 tracking-normal", className)}
       {...props}
     />
   ),
@@ -68,8 +68,8 @@ const AlertDescription = forwardRef<HTMLParagraphElement, AlertDescriptionProps>
     <div
       ref={ref}
       className={cn(
-        "prose font-500 text-sm text-neutral-600 [&_p]:leading-relaxed",
-        { "important:pl-0": inline, "important:pl-8": !inline },
+        "font-500 text-sm text-neutral-700 [&_p]:leading-relaxed",
+        { "important:pl-0": inline, "important:pl-10": !inline },
         className,
       )}
       {...props}

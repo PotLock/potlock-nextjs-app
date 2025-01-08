@@ -5,7 +5,6 @@
  */
 export * from "./_deprecated/InfiniteScroll";
 export * from "./_deprecated/DeprecatedPagination";
-export * from "./SearchBar";
 
 /**
  * Atoms
@@ -21,6 +20,7 @@ export * from "./atoms/calendar";
 export * from "./atoms/card";
 export * from "./atoms/checkbox";
 export * from "./atoms/dropdown-menu";
+export * from "./atoms/hover-card";
 export * from "./atoms/infinite-scroll-trigger";
 export * from "./atoms/input";
 export * from "./atoms/label";
@@ -35,6 +35,7 @@ export * from "./atoms/splash-screen";
 export * from "./atoms/switch";
 export * from "./atoms/table";
 export * from "./atoms/tabs";
+export * from "./atoms/tag";
 export * from "./atoms/textarea";
 export * from "./atoms/toggle";
 export * from "./atoms/tooltip";
@@ -57,6 +58,8 @@ export * from "./molecules/error";
 export * from "./molecules/multi-select";
 export * from "./molecules/pagination";
 export * from "./molecules/radio-group";
+export * from "./molecules/search-bar";
+export * from "./molecules/social-share";
 export * from "./molecules/sort-select";
 export * from "./molecules/spinner-overlay";
 export * from "./molecules/toggle-group";

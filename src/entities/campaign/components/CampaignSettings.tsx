@@ -2,10 +2,10 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { walletApi } from "@/common/api/near";
-import { NearIcon } from "@/common/assets/svgs";
+import { walletApi } from "@/common/api/near/client";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
-import { AccountProfilePicture } from "@/entities/account";
+import { NearIcon } from "@/common/ui/svg";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
 import { useCampaignDeploymentRedirect } from "../hooks/redirects";
@@ -47,10 +47,10 @@ export const CampaignSettings = () => {
             </Link>
           </div>
           <div className="flex flex-col gap-2">
-            <p className="text-[#7B7B7B]">Project</p>
+            <p className="text-[#7B7B7B]">Recipient</p>
             <Link
               target="_blank"
-              href={`/profile/${campaign?.owner}`}
+              href={`/profile/${campaign?.recipient}`}
               className="flex items-center gap-2"
             >
               <AccountProfilePicture

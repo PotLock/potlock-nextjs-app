@@ -4,9 +4,9 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { isNot, isStrictEqual, piped, prop } from "remeda";
 
 import { Pot, indexer } from "@/common/api/indexer";
+import { TOTAL_FEE_BASIS_POINTS } from "@/common/constants";
 import { intoShareValue } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
-import { TOTAL_FEE_BASIS_POINTS } from "@/entities/core/constants";
 
 import { DonationInputs, WithDonationFormAPI } from "../models";
 import { DonationBreakdown, DonationGroupAllocationStrategyEnum, WithTotalAmount } from "../types";

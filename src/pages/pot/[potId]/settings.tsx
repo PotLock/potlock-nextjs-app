@@ -2,31 +2,31 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { usePotExtensionFlags } from "@/entities/pot";
-import { PotEditor } from "@/features/pot-editor";
-import { VotingConfiguration } from "@/features/voting";
+import { usePotFeatureFlags } from "@/entities/pot";
+import { PotConfigurationEditor } from "@/features/pot-configuration";
+import { ProportionalFundingConfigurationForm } from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
-export default function PotEditorSettingsTab() {
+export default function PotSettingsTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
-  const { hasVoting } = usePotExtensionFlags({ potId });
+  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
 
   return (
     <div className="flex w-full flex-col items-center gap-8">
-      {hasVoting ? (
-        <VotingConfiguration
+      {hasProportionalFundingMechanism ? (
+        <ProportionalFundingConfigurationForm
           className="max-w-206"
-          footerContent={<PotEditor {...{ potId }} />}
+          footerContent={<PotConfigurationEditor {...{ potId }} />}
           {...{ potId }}
         />
       ) : (
-        <PotEditor className="max-w-206" {...{ potId }} />
+        <PotConfigurationEditor className="max-w-206" {...{ potId }} />
       )}
     </div>
   );
 }
 
-PotEditorSettingsTab.getLayout = function getLayout(page: ReactElement) {
+PotSettingsTab.getLayout = function getLayout(page: ReactElement) {
   return <PotLayout>{page}</PotLayout>;
 };

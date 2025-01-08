@@ -3,7 +3,7 @@ import axios from "axios";
 import { Big } from "big.js";
 
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near";
+import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near/client";
 import { FULL_TGAS, NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import {
   CampaignDonation,
@@ -12,12 +12,13 @@ import {
   DirectDonationArgs,
   PotDonation,
   PotDonationArgs,
-  campaignsClient,
-  donationClient,
-  potClient,
+  campaignsContractClient,
+  donationContractClient,
+  potContractClient,
 } from "@/common/contracts/core";
+import type { FungibleTokenMetadata } from "@/common/contracts/tokens/ft";
 import { floatToYoctoNear } from "@/common/lib";
-import { AccountId, FungibleTokenMetadata, TxExecutionStatus } from "@/common/types";
+import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
 import { DonationInputs } from "./schemas";
@@ -72,7 +73,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     if (isSingleProjectDonation) {
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
-          const { protocol_fee_recipient_account } = await donationClient.getConfig();
+          const { protocol_fee_recipient_account } = await donationContractClient.getConfig();
 
           if (tokenId !== NATIVE_TOKEN_ID) {
             console.log("FT direct donation mode ON");
@@ -237,7 +238,7 @@ export const effects = (dispatch: AppDispatcher) => ({
 
             console.log(transactions);
 
-            return void donationClient
+            return void donationContractClient
               .storage_deposit(requiredDepositNear.mul(Big(10).pow(24)).toString())
               .then((updatedStorageBalance) =>
                 // @ts-expect-error WIP
@@ -252,7 +253,7 @@ export const effects = (dispatch: AppDispatcher) => ({
               bypass_protocol_fee: bypassProtocolFee,
             };
 
-            return void donationClient
+            return void donationContractClient
               .donate(args, floatToYoctoNear(amount))
               .then((result) => dispatch.donation.success(result))
               .catch((error) => dispatch.donation.failure(error));
@@ -272,7 +273,7 @@ export const effects = (dispatch: AppDispatcher) => ({
             custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
           };
 
-          return void potClient
+          return void potContractClient
             .donate(params.potAccountId, args, floatToYoctoNear(amount))
             .then(dispatch.donation.success)
             .catch((error) => dispatch.donation.failure(error));
@@ -286,14 +287,14 @@ export const effects = (dispatch: AppDispatcher) => ({
         bypass_protocol_fee: bypassProtocolFee,
       };
 
-      return void campaignsClient
+      return void campaignsContractClient
         .donate(args, floatToYoctoNear(amount))
         .then((result) => dispatch.donation.success(result as CampaignDonation))
         .catch((error) => dispatch.donation.failure(error));
     } else if (isPotDonation && groupAllocationPlan !== undefined) {
       const batchTxDraft = donationInputsToBatchDonationDraft(inputs) as DonationPotBatchCallDraft;
 
-      return void potClient
+      return void potContractClient
         .donateBatch(batchTxDraft.potAccountId, batchTxDraft.entries)
         // TODO: Handle batch tx outcome
         .then(/* dispatch.donation.success */ console.log)
@@ -303,7 +304,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         inputs,
       ) as DonationDirectBatchCallDraft;
 
-      return void donationClient.donateBatch(batchTxDraft.entries);
+      return void donationContractClient.donateBatch(batchTxDraft.entries);
     } else {
       return void dispatch.donation.failure(new Error("Unable to determine donation type."));
     }

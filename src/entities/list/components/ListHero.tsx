@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { walletApi } from "@/common/api/near";
+import { walletApi } from "@/common/api/near/client";
 import { Button } from "@/common/ui/components";
 import { useAllLists } from "@/entities/list/hooks/useAllLists";
 

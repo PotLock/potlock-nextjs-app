@@ -1,10 +1,14 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/router";
+import { pick } from "remeda";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 
 import { ByPotId } from "@/common/api/indexer";
 import { LayoutTabOption } from "@/common/ui/types";
-import { usePotExtensionFlags } from "@/entities/pot";
+import { usePotFeatureFlags } from "@/entities/pot";
 import { rootPathnames } from "@/pathnames";
 
 export enum PotLayoutTabTag {
@@ -13,16 +17,131 @@ export enum PotLayoutTabTag {
   Votes = "Votes",
   Donations = "Donations",
   Sponsors = "Sponsors",
+  History = "History",
   Payouts = "Payouts",
-  Feeds = "Feeds",
+  Feed = "Feed",
   Settings = "Settings",
 }
 
-type PotLayoutTabOption = LayoutTabOption & {
+export type PotLayoutTabOption = LayoutTabOption & {
   tag: PotLayoutTabTag;
 };
 
 type PotLayoutTabRegistry = Record<PotLayoutTabTag, PotLayoutTabOption>;
+
+interface TabState {
+  potConfigs: Record<
+    string,
+    { hasProportionalFundingMechanism: boolean; defaultTabTag: PotLayoutTabTag }
+  >;
+  tabRegistries: Record<string, PotLayoutTabRegistry>;
+  orderedTabLists: Record<string, PotLayoutTabOption[]>;
+  setPotConfig: (potId: string, hasProportionalFundingMechanism: boolean) => void;
+  computeTabRegistry: (potId: string) => void;
+}
+
+const usePotTabStore = create<TabState>()(
+  persist(
+    (set, get) => ({
+      potConfigs: {},
+      tabRegistries: {},
+      orderedTabLists: {},
+
+      setPotConfig: (potId: string, hasProportionalFundingMechanism: boolean) => {
+        const defaultTabTag = hasProportionalFundingMechanism
+          ? PotLayoutTabTag.Votes
+          : PotLayoutTabTag.Projects;
+
+        set((state) => ({
+          potConfigs: {
+            ...state.potConfigs,
+            [potId]: {
+              hasProportionalFundingMechanism,
+              defaultTabTag,
+            },
+          },
+        }));
+
+        get().computeTabRegistry(potId);
+      },
+
+      computeTabRegistry: (potId: string) => {
+        const config = get().potConfigs[potId];
+        if (!config) return;
+
+        const { hasProportionalFundingMechanism, defaultTabTag } = config;
+        const rootHref = `${rootPathnames.pot}/${potId}`;
+
+        const registry: PotLayoutTabRegistry = {
+          [PotLayoutTabTag.Projects]: {
+            tag: PotLayoutTabTag.Projects,
+            href: `${rootHref}/projects`,
+            isHidden: hasProportionalFundingMechanism,
+          },
+          [PotLayoutTabTag.Applications]: {
+            tag: PotLayoutTabTag.Applications,
+            href: `${rootHref}/applications`,
+          },
+          [PotLayoutTabTag.Votes]: {
+            tag: PotLayoutTabTag.Votes,
+            href: `${rootHref}/votes`,
+            isHidden: !hasProportionalFundingMechanism,
+          },
+          [PotLayoutTabTag.Donations]: {
+            tag: PotLayoutTabTag.Donations,
+            href: `${rootHref}/donations`,
+            isHidden: hasProportionalFundingMechanism,
+          },
+          [PotLayoutTabTag.Sponsors]: {
+            tag: PotLayoutTabTag.Sponsors,
+            href: `${rootHref}/sponsors`,
+          },
+          [PotLayoutTabTag.History]: {
+            tag: PotLayoutTabTag.History,
+            href: `${rootHref}/history`,
+            isHidden: !hasProportionalFundingMechanism,
+          },
+          [PotLayoutTabTag.Payouts]: {
+            tag: PotLayoutTabTag.Payouts,
+            href: `${rootHref}/payouts`,
+          },
+          [PotLayoutTabTag.Feed]: {
+            tag: PotLayoutTabTag.Feed,
+            href: `${rootHref}/feed`,
+          },
+          [PotLayoutTabTag.Settings]: {
+            tag: PotLayoutTabTag.Settings,
+            href: `${rootHref}/settings`,
+          },
+        };
+
+        const orderedList = [
+          registry[defaultTabTag],
+          ...Object.values(registry).filter(({ tag }) => tag !== defaultTabTag),
+        ];
+
+        set((state) => ({
+          tabRegistries: {
+            ...state.tabRegistries,
+            [potId]: registry,
+          },
+          orderedTabLists: {
+            ...state.orderedTabLists,
+            [potId]: orderedList,
+          },
+        }));
+      },
+    }),
+    {
+      name: "pot-tab-navigation",
+      partialize: (state) => ({
+        potConfigs: state.potConfigs,
+        tabRegistries: state.tabRegistries,
+        orderedTabLists: state.orderedTabLists,
+      }),
+    },
+  ),
+);
 
 interface PotLayoutTabNavigation {
   defaultTabTag: PotLayoutTabTag;
@@ -31,98 +150,66 @@ interface PotLayoutTabNavigation {
   orderedTabList: PotLayoutTabOption[];
 }
 
-// TODO: Consider extracting this to a reusable abstract hook and applying performance optimizations
+const emptyRegistry: Record<PotLayoutTabTag, PotLayoutTabOption> = {} as Record<
+  PotLayoutTabTag,
+  PotLayoutTabOption
+>;
+
+const emptyList: PotLayoutTabOption[] = [];
+
 export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavigation => {
   const { asPath: currentPath, push: navigateToHref } = useRouter();
-  const rootHref = useMemo(() => `${rootPathnames.pot}/${potId}`, [potId]);
-  const { hasVoting } = usePotExtensionFlags({ potId });
 
-  const defaultTabTag = useMemo(() => {
-    if (hasVoting) {
-      return PotLayoutTabTag.Votes;
-    } else {
-      return PotLayoutTabTag.Projects;
+  const { isPotExtensionConfigLoading, hasProportionalFundingMechanism } = usePotFeatureFlags({
+    potId,
+  });
+
+  const { setPotConfig, potConfigs, tabRegistries, orderedTabLists } = usePotTabStore(
+    useShallow(pick(["setPotConfig", "potConfigs", "tabRegistries", "orderedTabLists"])),
+  );
+
+  // Ensure pot config is set/updated
+  useEffect(() => {
+    if (!isPotExtensionConfigLoading) {
+      setPotConfig(potId, hasProportionalFundingMechanism);
     }
-  }, [hasVoting]);
+  }, [potId, hasProportionalFundingMechanism, setPotConfig, isPotExtensionConfigLoading]);
 
-  const tabRegistry: PotLayoutTabRegistry = useMemo(
-    () => ({
-      [PotLayoutTabTag.Projects]: {
-        tag: PotLayoutTabTag.Projects,
-        href: `${rootHref}/projects`,
-        isHidden: hasVoting,
-      },
+  const defaultTabTag = potConfigs[potId]?.defaultTabTag ?? PotLayoutTabTag.Projects;
+  const tabRegistry = potId ? (tabRegistries[potId] ?? emptyRegistry) : emptyRegistry;
+  const orderedTabList = potId ? (orderedTabLists[potId] ?? emptyList) : emptyList;
 
-      [PotLayoutTabTag.Applications]: {
-        tag: PotLayoutTabTag.Applications,
-        href: `${rootHref}/applications`,
-      },
-
-      [PotLayoutTabTag.Votes]: {
-        tag: PotLayoutTabTag.Votes,
-        href: `${rootHref}/votes`,
-        isHidden: !hasVoting,
-      },
-
-      [PotLayoutTabTag.Donations]: {
-        tag: PotLayoutTabTag.Donations,
-        href: `${rootHref}/donations`,
-        isHidden: hasVoting,
-      },
-
-      [PotLayoutTabTag.Sponsors]: {
-        tag: PotLayoutTabTag.Sponsors,
-        href: `${rootHref}/sponsors`,
-      },
-
-      [PotLayoutTabTag.Payouts]: {
-        tag: PotLayoutTabTag.Payouts,
-        href: `${rootHref}/payouts`,
-      },
-
-      [PotLayoutTabTag.Feeds]: {
-        tag: PotLayoutTabTag.Feeds,
-        href: `${rootHref}/feeds`,
-      },
-
-      [PotLayoutTabTag.Settings]: {
-        tag: PotLayoutTabTag.Settings,
-        href: `${rootHref}/settings`,
-      },
-    }),
-
-    [hasVoting, rootHref],
-  );
-
-  const activeTab: PotLayoutTabOption | null = useMemo(
-    () => Object.values(tabRegistry).find(({ href }) => href === currentPath) ?? null,
-    [currentPath, tabRegistry],
-  );
-
-  const orderedTabList = useMemo(
-    () => [
-      tabRegistry[defaultTabTag],
-      ...Object.values(tabRegistry).filter(({ tag }) => tag !== defaultTabTag),
-    ],
-
-    [defaultTabTag, tabRegistry],
-  );
+  // Get active tab with proper type safety
+  const activeTab =
+    Object.values(tabRegistry).find(
+      (tab): tab is PotLayoutTabOption => tab?.href === currentPath && !tab.isHidden,
+    ) ?? null;
 
   const navigateToTab = useCallback(
     (tag: PotLayoutTabTag) => {
-      navigateToHref(tabRegistry[tag].href);
+      const targetTab = tabRegistry[tag];
+
+      if (targetTab && !targetTab.isHidden) {
+        navigateToHref(targetTab.href);
+      }
     },
 
     [navigateToHref, tabRegistry],
   );
 
+  // Handle navigation to default tab
   useEffect(() => {
-    if (
-      potId !== undefined &&
-      (activeTab === null || activeTab.isHidden || currentPath === rootHref)
-    )
-      navigateToTab(defaultTabTag);
-  }, [activeTab, currentPath, defaultTabTag, navigateToTab, potId, rootHref]);
+    const rootPath = `${rootPathnames.pot}/${potId}`;
 
-  return { defaultTabTag, activeTab, orderedTabList, navigateToTab };
+    if (potId !== undefined && (activeTab === null || currentPath === rootPath)) {
+      navigateToTab(defaultTabTag);
+    }
+  }, [activeTab, currentPath, defaultTabTag, navigateToTab, potId]);
+
+  return {
+    defaultTabTag,
+    activeTab,
+    orderedTabList,
+    navigateToTab,
+  };
 };

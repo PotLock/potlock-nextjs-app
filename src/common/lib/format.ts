@@ -15,14 +15,8 @@ export const stringifiedU128ToFloat = (amount: U128String, decimals: number) =>
 export const floatToBigNum = (amount: number, decimals: number) =>
   Big(amount).mul(Big(10).pow(decimals));
 
-/**
- * @deprecated use {@link formatNearAmount}
- */
 export const yoctoNearToFloat = (amountYoctoNear: U128String) =>
   stringifiedU128ToFloat(amountYoctoNear, NATIVE_TOKEN_DECIMALS);
 
-/**
- * @deprecated use {@link parseNearAmount}
- */
 export const floatToYoctoNear = (amountFloat: number): U128String =>
   floatToBigNum(amountFloat, NATIVE_TOKEN_DECIMALS).toFixed().toString();

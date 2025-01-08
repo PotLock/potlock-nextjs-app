@@ -1,8 +1,11 @@
+import { useIsHuman } from "@/common/_deprecated/useIsHuman";
+import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useIsHuman, useRegistration } from "@/entities/core";
-import { FollowStats, useProfileData } from "@/entities/profile";
-import { projectStatusIcons } from "@/entities/project/components/ProjectStatusIcons";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
+import { listRegistrationStatusIcons } from "@/entities/list";
+
+import { FollowStats } from "./FollowStats";
 
 export type ProfileLayoutHeroProps = {
   accountId: string; // near address (donor | project)
@@ -13,7 +16,7 @@ export type ProfileLayoutHeroProps = {
 };
 
 export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject, accountId }) => {
-  const { avatarSrc, backgroundSrc } = useProfileData(accountId);
+  const { avatarSrc, backgroundSrc } = useAccountSocialProfile({ accountId });
 
   // get nadabot status on the donor page
   let isHumanVerified = false;
@@ -45,7 +48,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
       <div className="relative z-[6] flex -translate-y-2/4 items-end pl-2 md:pl-16">
         <div
           className={cn(
-            "p-1.25 relative h-[120px] w-[120px] rounded-full bg-white",
+            "p-1.25 bg-background relative h-[120px] w-[120px] rounded-full",
             "max-[400px]:h-[90px] max-[400px]:w-[90px]",
           )}
         >
@@ -68,15 +71,15 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
           {registration.id ? (
             <div
               className={cn(
-                "flex items-center gap-1 overflow-hidden rounded-[20px] bg-white",
+                "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
                 "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
               )}
             >
-              {projectStatusIcons[registration.status].icon}
+              {listRegistrationStatusIcons[registration.status].icon}
 
               <div
                 className="hidden md:block"
-                style={{ color: projectStatusIcons[registration.status].color }}
+                style={{ color: listRegistrationStatusIcons[registration.status].color }}
               >
                 {registration.status}
               </div>
@@ -84,13 +87,13 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
           ) : isHumanVerified ? (
             <div
               className={cn(
-                "flex items-center gap-1 overflow-hidden rounded-[20px] bg-white",
+                "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
                 "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
               )}
             >
-              {projectStatusIcons.Approved.icon}
+              {listRegistrationStatusIcons.Approved.icon}
 
-              <div style={{ color: projectStatusIcons.Approved.color }}>Verified</div>
+              <div style={{ color: listRegistrationStatusIcons.Approved.color }}>Verified</div>
             </div>
           ) : (
             <div style={{ width: "10px" }} />

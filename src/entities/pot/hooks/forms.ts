@@ -6,9 +6,9 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/api/near";
+import { naxiosInstance } from "@/common/api/near/client";
 import { FULL_TGAS } from "@/common/constants";
-import { potClient } from "@/common/contracts/core";
+import { potContractClient } from "@/common/contracts/core";
 
 import { challengeResolveSchema, challengeSchema } from "../models/schemas";
 import { ChallengeInputs, ChallengeResolveInputs } from "../models/types";
@@ -32,7 +32,7 @@ export const useChallengeForm = ({
       setInProgress(true);
 
       try {
-        await potClient.challengePayouts({
+        await potContractClient.challengePayouts({
           potId: potDetail.account,
           reason: formData.data.message,
         });
