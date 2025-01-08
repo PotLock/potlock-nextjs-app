@@ -2,7 +2,6 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { APP_METADATA } from "@/common/constants";
-import { PageWithBanner } from "@/common/ui/components";
 
 type PageLayoutProps = {
   title: string;
@@ -20,6 +19,8 @@ export const PageLayout = ({ title, description, image, children }: PageLayoutPr
     "https://alpha.potlock.org",
     "https://alpha.potlock.com",
     "https://alpha.potlock.io",
+    "https://potlock-next-app.vercel.app",
+    "https://alpha.potlock.xyz",
   ];
 
   const paths = domains.map((domain) => `${domain}${asPath}`);
@@ -61,7 +62,7 @@ export const PageLayout = ({ title, description, image, children }: PageLayoutPr
 
         <meta name="apple-mobile-web-app-title" content={APP_METADATA.title} />
       </Head>
-      <PageWithBanner>{children}</PageWithBanner>
+      {children}
     </>
   );
 };

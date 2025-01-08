@@ -70,20 +70,22 @@ export default function SingleList() {
       description={listDetails?.description ?? ""}
       image={listDetails?.image ?? ""}
     >
-      <ListDetails
-        admins={admins}
-        listDetails={listDetails}
-        savedUsers={savedUsers}
-        setAdmins={setAdmins}
-      />
-      <ListAccounts
-        listData={listData}
-        isLoading={isLoading}
-        loadingListData={loadingListData}
-        filteredRegistrations={filteredRegistrations}
-        setStatus={setStatus}
-        setFilteredRegistrations={setFilteredRegistrations}
-      />
+      <PageWithBanner>
+        <ListDetails
+          admins={admins}
+          listDetails={listDetails}
+          savedUsers={savedUsers}
+          setAdmins={setAdmins}
+        />
+        <ListAccounts
+          listData={listData}
+          isLoading={isLoading}
+          loadingListData={loadingListData}
+          filteredRegistrations={filteredRegistrations}
+          setStatus={setStatus}
+          setFilteredRegistrations={setFilteredRegistrations}
+        />
+      </PageWithBanner>
     </PageLayout>
   );
 }
