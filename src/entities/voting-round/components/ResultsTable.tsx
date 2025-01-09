@@ -22,8 +22,6 @@ export const VotingRoundResultsTable: React.FC<VotingRoundResultsTableProps> = (
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const roundResults = useVotingRoundResults({ potId });
 
-  console.log(expandedRows);
-
   const rows = useMemo(
     () =>
       roundResults.data === undefined
@@ -46,7 +44,9 @@ export const VotingRoundResultsTable: React.FC<VotingRoundResultsTableProps> = (
                       "bg-neutral-50 text-xs text-neutral-500",
                     )}
                   >
-                    <div className="mr-a inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
+                    <div
+                      className={"mr-a inline-flex h-10 items-center justify-start gap-2 px-4 py-2"}
+                    >
                       <span className="font-600 uppercase leading-none">{"Voters"}</span>
                     </div>
 
