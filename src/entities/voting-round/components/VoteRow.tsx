@@ -1,10 +1,12 @@
 import { useMemo } from "react";
 
+import { LuEqual } from "react-icons/lu";
 import { MdHowToVote, MdOutlineTimer } from "react-icons/md";
 import { Temporal } from "temporal-polyfill";
 
 import type { ByPotId } from "@/common/api/indexer";
 import type { Vote } from "@/common/contracts/core/voting";
+import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import {
   AccountHandle,
@@ -18,22 +20,31 @@ import { useVotingRoundResults } from "../hooks/results";
 export type VotingRoundVoteRowProps = ByPotId & {
   data: Vote;
   compact?: boolean;
+  className?: string;
 };
 
 export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
   potId,
   data: { candidate_id: candidateAccountId, voter: voterAccountId, timestamp },
   compact = false,
+  className,
 }) => {
   const timeStatus = useMemo(
     () => (
       <div className="inline-flex flex-nowrap items-center gap-1.5">
-        <MdOutlineTimer className="h-6 w-6 text-[#7a7a7a]" />
+        <MdOutlineTimer className="h-5 w-5 text-[#7a7a7a]" />
 
         <span
           className={"text-nowrap text-center text-[17px] font-normal leading-6 text-[#7a7a7a]"}
         >
-          {Temporal.Instant.fromEpochMilliseconds(timestamp).toLocaleString()}
+          {Temporal.Instant.fromEpochMilliseconds(timestamp).toLocaleString(undefined, {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hourCycle: "h24",
+          })}
         </span>
       </div>
     ),
@@ -51,20 +62,19 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
   return (
     <div
       className={cn(
-        "lg:fex-row flex w-full flex-col flex-nowrap items-center gap-6 rounded-2xl border p-5 lg:gap-3",
+        "flex w-full flex-col flex-nowrap items-center justify-between gap-6",
+        "bg-background rounded-2xl border px-5 py-5 lg:flex-row lg:gap-0",
+
         {
-          "justify-between": compact,
+          "px-4 py-3": compact,
         },
+
+        className,
       )}
     >
       {compact ? (
-        <div className="lg:max-w-40% flex w-full items-center gap-2">
-          {timeStatus}
+        <div className="flex w-[252px] items-center gap-2">
           <AccountProfileLink accountId={voterAccountId} />
-
-          {/* <span className="inline-flex flex-nowrap gap-1">
-            <span className="text-[17px] font-normal">{"Voted"}</span>
-          </span> */}
         </div>
       ) : (
         <div className="flex w-full max-w-[360px] items-center gap-4">
@@ -101,21 +111,40 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
         </div>
       )}
 
-      <div
-        className={cn(
-          "flex flex-wrap items-center justify-center gap-3",
-          "w-full lg:w-fit lg:items-center lg:justify-center",
-        )}
-      >
-        {voterSummary?.vote.amplifiers.map((amplifier) => (
-          <VotingRoundVoteWeightBoostBadge
-            key={amplifier.name + amplifier.amplificationPercent}
-            data={amplifier}
-          />
-        ))}
-      </div>
+      <div className="flex flex-row items-center">
+        {voterSummary && voterSummary.vote.weight > 0 && (
+          <>
+            <div className={cn("flex w-fit items-center justify-center gap-3")}>
+              {voterSummary?.vote.amplifiers.map((amplifier) =>
+                amplifier.isApplicable ? (
+                  <VotingRoundVoteWeightBoostBadge
+                    key={amplifier.name + amplifier.amplificationPercent}
+                    data={amplifier}
+                  />
+                ) : null,
+              )}
+            </div>
 
-      <div className={cn("ml-a", { hidden: compact })}>{timeStatus}</div>
+            <LuEqual className="ml-4 h-4 w-4" />
+          </>
+        )}
+
+        <div className="inline-flex h-16 items-center overflow-hidden px-4 py-2">
+          {voterSummary ? (
+            <span className="font-600 w-10 max-w-10 text-end uppercase leading-none">
+              {voterSummary?.vote.weight}
+            </span>
+          ) : (
+            <Skeleton className="h-5 w-10" />
+          )}
+        </div>
+
+        <div className="inline-flex h-16 items-center overflow-hidden px-4 py-2 pr-0">
+          <span className="w-50 max-w-50 font-600 text-end uppercase leading-none">
+            {timeStatus}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

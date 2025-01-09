@@ -1,11 +1,14 @@
+import { useMemo } from "react";
+
 import Link from "next/link";
 
-import { truncate } from "@/common/lib";
+import { ETHEREUM_EXPLORER_ADDRESS_ENDPOINT_URL } from "@/common/constants";
+import { isEthereumAddress, truncate } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 import { Badge } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 import { AccountSummaryPopup } from "./AccountSummaryPopup";
 
@@ -17,15 +20,20 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
   accountId,
   classNames,
 }) => {
+  const href = useMemo(
+    () =>
+      isEthereumAddress(accountId)
+        ? `${ETHEREUM_EXPLORER_ADDRESS_ENDPOINT_URL}/${accountId}`
+        : `${rootPathnames.PROFILE}/${accountId}`,
+
+    [accountId],
+  );
+
   const { profile } = useAccountSocialProfile({ accountId });
 
   return (
     <AccountSummaryPopup {...{ accountId }}>
-      <Link
-        href={`${routesPath.PROFILE}/${accountId}`}
-        target="_blank"
-        className={cn("decoration-none", classNames?.root)}
-      >
+      <Link target="_blank" className={cn("decoration-none", classNames?.root)} {...{ href }}>
         <Badge variant="secondary" className="flex w-fit max-w-80 items-center gap-2">
           <AccountProfilePicture {...{ accountId }} className={cn("h-4 w-4", classNames?.avatar)} />
 

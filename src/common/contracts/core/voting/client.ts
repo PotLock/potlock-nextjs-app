@@ -10,9 +10,9 @@ import type {
   ElectionPhase,
   ElectionType,
   EligibilityType,
-  IVotingContract,
   Vote,
   VoteInputs,
+  VotingContract,
   VotingType,
 } from "./interfaces";
 
@@ -20,7 +20,7 @@ import type {
  * Client implementation for interacting with the Voting smart contract
  * Provides methods to create and manage elections, cast votes, and query election data
  */
-class VotingClient implements Omit<IVotingContract, "new"> {
+class VotingClient implements Omit<VotingContract, "new"> {
   private contract: ReturnType<typeof naxios.prototype.contractApi>;
 
   /**
@@ -125,8 +125,8 @@ class VotingClient implements Omit<IVotingContract, "new"> {
    *
    * Returns array of [candidate_id, vote_count] pairs
    */
-  async get_election_results(args: { election_id: ElectionId }): Promise<[AccountId, number][]> {
-    return this.contract.view("get_election_results", { args });
+  async get_election_results(args: { election_id: ElectionId }) {
+    return this.contract.view<typeof args, [AccountId, number][]>("get_election_results", { args });
   }
 
   /**
@@ -136,35 +136,21 @@ class VotingClient implements Omit<IVotingContract, "new"> {
     return this.contract.view<typeof args, number>("get_election_vote_count", { args });
   }
 
-  /**
-   * Returns all votes cast in an election
-   */
-  async get_election_votes(args: { election_id: ElectionId }) {
+  async get_election_votes(args: Parameters<VotingContract["get_election_votes"]>[0]) {
     return this.contract.view<typeof args, Vote[]>("get_election_votes", { args });
   }
 
-  /**
-   * Returns a paginated list of all elections
-   * @param from_index Optional starting index for pagination
-   * @param limit Optional maximum number of elections to return
-   */
-  async get_elections(args: { from_index?: number; limit?: number }) {
+  async get_elections(args: Parameters<VotingContract["get_elections"]>[0]) {
     return this.contract.view<typeof args, Election[]>("get_elections", { args });
   }
 
-  /**
-   * Returns all elections created by a specific account
-   */
-  async get_elections_by_creator(args: { creator: AccountId }): Promise<[number, Election][]> {
-    return this.contract.view("get_elections_by_creator", { args });
+  async get_elections_by_creator(args: Parameters<VotingContract["get_elections_by_creator"]>[0]) {
+    return this.contract.view<typeof args, [number, Election][]>("get_elections_by_creator", {
+      args,
+    });
   }
 
-  /**
-   * Returns the time remaining until an election ends
-   *
-   * Returns null or undefined if the election has ended or doesn't exist
-   */
-  async get_time_remaining(args: { election_id: ElectionId }) {
+  async get_time_remaining(args: Parameters<VotingContract["get_time_remaining"]>[0]) {
     return this.contract.view<typeof args, number | null | undefined>("get_time_remaining", {
       args,
     });

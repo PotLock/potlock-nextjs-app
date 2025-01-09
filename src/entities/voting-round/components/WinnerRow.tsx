@@ -3,10 +3,11 @@ import { useCallback } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Dot } from "lucide-react";
 
-import { Checkbox } from "@/common/ui/components";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { Checkbox, LabeledIcon } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountListItem } from "@/entities/_shared/account";
-import { useSession } from "@/entities/_shared/session";
+import { TokenIcon } from "@/entities/_shared/token";
 
 import type { VotingRoundWinner } from "../types";
 
@@ -76,10 +77,14 @@ export const VotingRoundWinnerRow: React.FC<VotingRoundWinnerRowProps> = ({
             </span>
           </div>
 
-          <div className={cn("inline-flex h-16 items-center overflow-hidden px-4 py-2 pr-0")}>
-            <span className="w-50 max-w-50 font-600 text-end uppercase leading-none">
-              {estimatedPayoutAmount}
-            </span>
+          <div className="inline-flex h-16 items-center overflow-hidden px-4 py-2 pr-0">
+            <LabeledIcon
+              positioning="icon-text"
+              caption={`~ ${estimatedPayoutAmount.toFixed(2)}`}
+              classNames={{ root: "w-50 justify-end", caption: "font-600" }}
+            >
+              <TokenIcon size="xs" tokenId={NATIVE_TOKEN_ID} />
+            </LabeledIcon>
           </div>
         </div>
       }

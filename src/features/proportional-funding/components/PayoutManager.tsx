@@ -3,7 +3,7 @@ import { MdFileDownload, MdList } from "react-icons/md";
 import type { ByPotId } from "@/common/api/indexer";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { VotingRoundWinnersTable, useVotingRoundResults } from "@/entities/voting-round";
+import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/voting-round";
 
 export type ProportionalFundingPayoutManagerProps = ByPotId & {};
 
@@ -45,7 +45,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
       {votingRoundResults.data === undefined && votingRoundResults.isLoading ? (
         <Skeleton className="h-10 w-full" />
       ) : (
-        <VotingRoundWinnersTable {...{ potId }} />
+        <VotingRoundResultsTable {...{ potId }} />
       )}
     </div>
   );
