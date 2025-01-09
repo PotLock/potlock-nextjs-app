@@ -64,11 +64,12 @@ export default function SingleList() {
     });
   }, [loadingListData, isLoading, setAdmins, listData, data]);
 
+
   return (
     <PageLayout
       title={listDetails?.name ?? ""}
       description={listDetails?.description ?? ""}
-      image={listDetails?.image ?? ""}
+      image={listDetails?.cover_image_url ?? ""}
     >
       <PageWithBanner>
         <ListDetails
