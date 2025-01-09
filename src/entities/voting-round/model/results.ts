@@ -15,9 +15,11 @@ import type {
   VotingRoundVoterSummary,
   VotingRoundWinner,
 } from "../types";
-import { getVoteWeight, getVoteWeightAmplifiers } from "../utils/vote-weight";
+import { getVoteWeight, getVoteWeightAmplifiers } from "../utils/weight";
 
-type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "voteCount"> & {
+const VOTING_ROUND_RESULTS_SCHEMA_VERSION = 1;
+
+type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "votes"> & {
   accumulatedWeight: Big;
 };
 
@@ -104,7 +106,7 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
           >((registry, [accountId, candidateVotes]) => {
             registry[accountId] = {
               accountId,
-              voteCount: candidateVotes.length,
+              votes: candidateVotes,
 
               accumulatedWeight: candidateVotes.reduce((sum, vote) => {
                 const voterWeight = getVoteWeight(voterProfiles[vote.voter], mechanismConfig);
@@ -168,6 +170,8 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
       },
     }),
 
-    { name: "@potlock/next/entities/voting-round/results" },
+    {
+      name: `@potlock/next/entities/voting-round/results/v${VOTING_ROUND_RESULTS_SCHEMA_VERSION}`,
+    },
   ),
 );

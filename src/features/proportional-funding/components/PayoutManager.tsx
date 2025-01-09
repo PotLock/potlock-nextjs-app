@@ -1,5 +1,4 @@
 import { MdFileDownload, MdList } from "react-icons/md";
-import { values } from "remeda";
 
 import type { ByPotId } from "@/common/api/indexer";
 import { Button, Skeleton } from "@/common/ui/components";
@@ -36,21 +35,17 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
               <MdFileDownload className="h-4.5 w-4.5" />
 
               <span className="font-500 hidden whitespace-nowrap text-sm md:inline-flex">
-                {"Download in CSV"}
+                {"Download CSV"}
               </span>
             </Button>
           )}
         </div>
       </div>
 
-      {votingRoundResults.data === undefined ? (
+      {votingRoundResults.data === undefined && votingRoundResults.isLoading ? (
         <Skeleton className="h-10 w-full" />
       ) : (
-        <VotingRoundResultsTable
-          data={values(votingRoundResults.data.winners).sort(
-            (profileA, profileB) => profileB.accumulatedWeight - profileA.accumulatedWeight,
-          )}
-        />
+        <VotingRoundResultsTable {...{ potId }} />
       )}
     </div>
   );

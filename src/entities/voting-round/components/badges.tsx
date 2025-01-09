@@ -13,7 +13,7 @@ export const VotingRoundVoteWeightBoostBadge: React.FC<VotingRoundVoteWeightBoos
     <TooltipTrigger asChild>
       <div
         className={cn(
-          "inline-flex items-center gap-2 rounded-md border px-2 py-1 shadow-inner",
+          "group inline-flex items-center gap-2 rounded-md border px-2 py-1 shadow-inner",
 
           {
             "border-[#f8d3b0] bg-[#fef6ee] text-[#b63d18]": isApplicable,
@@ -23,8 +23,19 @@ export const VotingRoundVoteWeightBoostBadge: React.FC<VotingRoundVoteWeightBoos
       >
         {voteWeightAmplificationCriteriaIcons[criteria]}
 
-        {isApplicable && <span className="pr-1 text-sm font-normal text-inherit">{name}</span>}
-        <span className="text-sm font-normal text-inherit">{`+${amplificationPercent}%`}</span>
+        {isApplicable ? (
+          <span className="inline-flex gap-2">
+            <span className="text-sm font-normal text-inherit">{`+${amplificationPercent}%`}</span>
+
+            {
+              <span className="hidden text-sm font-normal text-inherit group-hover:block">
+                {name}
+              </span>
+            }
+          </span>
+        ) : (
+          <span className="text-sm font-normal text-inherit">{`+${amplificationPercent}%`}</span>
+        )}
       </div>
     </TooltipTrigger>
 

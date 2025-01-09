@@ -121,7 +121,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           "bg-background gap-10 self-stretch rounded-lg lg:gap-8",
         )}
       >
-        <div className="flex w-full flex-col items-start justify-between gap-10 lg:flex-row">
+        <div className="flex w-full flex-col items-center justify-between gap-10 lg:flex-row lg:items-start">
           <div className="max-w-126.5 min-w-87.5 flex flex-col items-start justify-start gap-10">
             {pot ? (
               <h1
@@ -167,11 +167,11 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             </div>
           </div>
 
-          <div className="flex w-full flex-col gap-6 lg:w-fit">
+          <div className="flex w-full flex-col items-center gap-6 lg:w-fit lg:items-end">
             {statsElement}
 
             {isSignedIn && (
-              <div className="flex items-center gap-2 text-sm lg:justify-end">
+              <div className="flex items-center justify-end gap-2 text-sm">
                 <ClipboardCopyButton text={referrerPotLink} customIcon={<VolunteerIcon />} />
                 <span className="text-neutral-950">{"Earn referral fees"}</span>
               </div>

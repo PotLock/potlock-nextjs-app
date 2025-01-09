@@ -88,38 +88,36 @@ export const CartWidget: React.FC<CartWidgetProps> = () => {
               <AccordionItem value="breakdown">
                 <AccordionTrigger>Show breakdown</AccordionTrigger>
 
-                <AccordionContent>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Project allocation (92.5%)</span>
-                      <div className="flex items-center gap-1">
-                        <span>{(directAmount * 0.925).toFixed(2)}</span>
-                        <span className="text-xs">Ⓝ</span>
-                      </div>
+                <AccordionContent className="gap-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Project allocation (92.5%)</span>
+                    <div className="flex items-center gap-1">
+                      <span>{(directAmount * 0.925).toFixed(2)}</span>
+                      <span className="text-xs">Ⓝ</span>
                     </div>
+                  </div>
 
-                    <div className="flex justify-between text-sm">
-                      <span>Protocol fees (5%)</span>
-                      <div className="flex items-center gap-1">
-                        <span>{(directAmount * 0.05).toFixed(2)}</span>
-                        <span className="text-xs">Ⓝ</span>
-                      </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Protocol fees (5%)</span>
+                    <div className="flex items-center gap-1">
+                      <span>{(directAmount * 0.05).toFixed(2)}</span>
+                      <span className="text-xs">Ⓝ</span>
                     </div>
+                  </div>
 
-                    <div className="flex justify-between text-sm">
-                      <span>Referral fees (2.5%)</span>
-                      <div className="flex items-center gap-1">
-                        <span>{(directAmount * 0.025).toFixed(2)}</span>
-                        <span className="text-xs">Ⓝ</span>
-                      </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Referral fees (2.5%)</span>
+                    <div className="flex items-center gap-1">
+                      <span>{(directAmount * 0.025).toFixed(2)}</span>
+                      <span className="text-xs">Ⓝ</span>
                     </div>
+                  </div>
 
-                    <div className="flex justify-between text-sm">
-                      <span>Chef fees (5%)</span>
-                      <div className="flex items-center gap-1">
-                        <span>{(directAmount * 0.05).toFixed(2)}</span>
-                        <span className="text-xs">Ⓝ</span>
-                      </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Chef fees (5%)</span>
+                    <div className="flex items-center gap-1">
+                      <span>{(directAmount * 0.05).toFixed(2)}</span>
+                      <span className="text-xs">Ⓝ</span>
                     </div>
                   </div>
                 </AccordionContent>

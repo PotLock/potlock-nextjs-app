@@ -120,7 +120,7 @@ const ActAsDao = () => {
                     />
                     {truncate(address, 22)}
                   </AccordionTrigger>
-                  <AccordionContent className="flex items-center gap-2 px-3 py-[10px]">
+                  <AccordionContent className="flex flex-row items-center gap-2 px-3 py-[10px]">
                     <Checkbox
                       onCheckedChange={(checked) => handleDefaultCheck(!!checked, address)}
                       checked={isActive}

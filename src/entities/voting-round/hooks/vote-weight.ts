@@ -7,7 +7,7 @@ import type { AccountId } from "@/common/types";
 import { useVoterProfile } from "./voter-profile";
 import { VOTING_ROUND_CONFIG_MPDAO } from "../model/config.hardcoded";
 import { VotingRoundVoteWeightAmplifier, VotingRoundVoterKey } from "../types";
-import { getVoteWeightAmplifiers } from "../utils/vote-weight";
+import { getVoteWeightAmplifiers } from "../utils/weight";
 
 // TODO: Consider merging the two hooks into one
 

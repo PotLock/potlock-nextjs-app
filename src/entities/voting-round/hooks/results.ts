@@ -81,7 +81,7 @@ export const useVotingRoundResults = ({
         .sort((profileA, profileB) => profileB.accumulatedWeight - profileA.accumulatedWeight)
         .map((winner) => [
           winner.accountId,
-          winner.voteCount,
+          winner.votes.length,
           winner.accumulatedWeight,
           winner.estimatedPayoutAmount,
         ]);

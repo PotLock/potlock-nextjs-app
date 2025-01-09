@@ -101,7 +101,7 @@ export interface Election {
 /**
  * Contract interface for the voting system
  */
-export interface IVotingContract {
+export interface VotingContract {
   contract_source_metadata(): Promise<string>;
 
   create_election(args: {
@@ -140,12 +140,35 @@ export interface IVotingContract {
 
   get_election_vote_count(args: { election_id: ElectionId }): Promise<number>;
 
-  get_election_votes(args: { election_id: ElectionId }): Promise<Vote[]>;
+  /**
+   * Returns a paginated list of all election votes
+   * @param args.election_id The ID of the election
+   * @param args.from_index Optional starting index for pagination
+   * @param args.limit Optional maximum number of elections to return
+   */
+  get_election_votes(args: {
+    election_id: ElectionId;
+    from_index?: number;
+    limit?: number;
+  }): Promise<Vote[]>;
 
+  /**
+   * Returns a paginated list of all elections
+   * @param args.from_index Optional starting index for pagination
+   * @param args.limit Optional maximum number of elections to return
+   */
   get_elections(args: { from_index?: number; limit?: number }): Promise<Election[]>;
 
+  /**
+   * Returns all elections created by a specific account
+   */
   get_elections_by_creator(args: { creator: AccountId }): Promise<[number, Election][]>;
 
+  /**
+   * Returns the time remaining until an election ends
+   *
+   * Returns null or undefined if the election has ended or doesn't exist
+   */
   get_time_remaining(args: { election_id: ElectionId }): Promise<number | null | undefined>;
 
   get_unique_voters(args: { election_id: ElectionId }): Promise<AccountId[]>;

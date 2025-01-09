@@ -41,7 +41,7 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
   const { data: remainingUserVotingCapacity } = votingContractHooks.useVoterRemainingCapacity({
     enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
     electionId,
-    accountId: authenticatedUser.accountId ?? "noop",
+    accountId: authenticatedUser.accountId as AccountId,
   });
 
   const handleEntrySelect = useCallback(

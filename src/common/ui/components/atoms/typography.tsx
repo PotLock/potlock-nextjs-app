@@ -28,7 +28,7 @@ export const LabeledIcon = ({
   children,
   classNames,
 }: LabeledIconProps) => {
-  const labelClassName = cn("mt-0.8 font-400", classNames?.caption);
+  const labelClassName = cn("mt-0.8 font-400 leading-none", classNames?.caption);
 
   const labelElement = useMemo(
     () =>
