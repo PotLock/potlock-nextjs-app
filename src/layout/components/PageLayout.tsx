@@ -27,7 +27,6 @@ export const PageLayout = ({ title, description, image, children }: PageLayoutPr
 
   const canonicalUrl = `${preferredDomain}${asPath}`;
 
-
   return (
     <>
       <Head key={pathname}>

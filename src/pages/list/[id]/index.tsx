@@ -64,7 +64,6 @@ export default function SingleList() {
     });
   }, [loadingListData, isLoading, setAdmins, listData, data]);
 
-
   return (
     <PageLayout
       title={listDetails?.name ?? ""}
