@@ -258,7 +258,7 @@ export default function PotVotesTab() {
                       <MdFileDownload className="h-4.5 w-4.5" />
 
                       <span className="font-500 hidden whitespace-nowrap text-sm md:inline-flex">
-                        {"Download results in CSV"}
+                        {"Download CSV"}
                       </span>
                     </Button>
                   )}

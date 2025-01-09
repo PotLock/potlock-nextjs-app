@@ -66,7 +66,7 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
         "bg-background rounded-2xl border px-5 py-5 lg:flex-row lg:gap-0",
 
         {
-          "px-4 py-3": compact,
+          "px-4 py-2": compact,
         },
 
         className,
@@ -112,20 +112,28 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
       )}
 
       <div className="flex flex-row items-center">
-        {voterSummary && voterSummary.vote.weight > 0 && (
+        {voterSummary && (
           <>
-            <div className={cn("flex w-fit items-center justify-center gap-3")}>
-              {voterSummary?.vote.amplifiers.map((amplifier) =>
-                amplifier.isApplicable ? (
-                  <VotingRoundVoteWeightBoostBadge
-                    key={amplifier.name + amplifier.amplificationPercent}
-                    data={amplifier}
-                  />
-                ) : null,
-              )}
-            </div>
+            {voterSummary.vote.weight > 0 ? (
+              <>
+                {!compact && <span className="font-500 mr-3">Weight:</span>}
 
-            <LuEqual className="ml-4 h-4 w-4" />
+                <div className={cn("flex w-fit items-center justify-center gap-3")}>
+                  {voterSummary?.vote.amplifiers.map((amplifier) =>
+                    amplifier.isApplicable ? (
+                      <VotingRoundVoteWeightBoostBadge
+                        key={amplifier.name + amplifier.amplificationPercent}
+                        data={amplifier}
+                      />
+                    ) : null,
+                  )}
+                </div>
+
+                <LuEqual className="ml-3 h-4 w-4" />
+              </>
+            ) : (
+              !compact && <span className="font-500">Weight:</span>
+            )}
           </>
         )}
 

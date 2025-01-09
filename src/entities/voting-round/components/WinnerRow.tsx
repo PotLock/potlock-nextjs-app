@@ -4,10 +4,16 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { Dot } from "lucide-react";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Checkbox, LabeledIcon } from "@/common/ui/components";
+import {
+  Checkbox,
+  LabeledIcon,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountListItem } from "@/entities/_shared/account";
-import { TokenIcon } from "@/entities/_shared/token";
+import { TokenIcon, useToken } from "@/entities/_shared/token";
 
 import type { VotingRoundWinner } from "../types";
 
@@ -24,6 +30,8 @@ export const VotingRoundWinnerRow: React.FC<VotingRoundWinnerRowProps> = ({
   isSelected = false,
   onSelect,
 }) => {
+  const { data: token } = useToken({ tokenId: NATIVE_TOKEN_ID });
+
   const onCheckTriggered = useCallback(
     (checked: CheckedState) => onSelect?.(accountId, Boolean(checked)),
     [accountId, onSelect],
@@ -78,13 +86,21 @@ export const VotingRoundWinnerRow: React.FC<VotingRoundWinnerRowProps> = ({
           </div>
 
           <div className="inline-flex h-16 items-center overflow-hidden px-4 py-2 pr-0">
-            <LabeledIcon
-              positioning="icon-text"
-              caption={`~ ${estimatedPayoutAmount.toFixed(2)}`}
-              classNames={{ root: "w-50 justify-end", caption: "font-600" }}
-            >
-              <TokenIcon size="xs" tokenId={NATIVE_TOKEN_ID} />
-            </LabeledIcon>
+            <Tooltip>
+              <TooltipTrigger>
+                <LabeledIcon
+                  positioning="icon-text"
+                  caption={`~ ${estimatedPayoutAmount.toFixed(2)}`}
+                  classNames={{ root: "w-50 justify-end", caption: "font-600" }}
+                >
+                  {token && <TokenIcon size="xs" tokenId={token.tokenId} />}
+                </LabeledIcon>
+              </TooltipTrigger>
+
+              <TooltipContent>
+                <span className="font-600">{`${estimatedPayoutAmount} ${token?.metadata.symbol}`}</span>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       }
