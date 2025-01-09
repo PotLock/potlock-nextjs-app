@@ -6,7 +6,11 @@ import { Temporal } from "temporal-polyfill";
 import type { ByPotId } from "@/common/api/indexer";
 import type { Vote } from "@/common/contracts/core/voting";
 import { cn } from "@/common/ui/utils";
-import { AccountHandle, AccountProfileLink } from "@/entities/_shared/account";
+import {
+  AccountHandle,
+  AccountProfileLink,
+  AccountProfilePicture,
+} from "@/entities/_shared/account";
 
 import { VotingRoundVoteWeightBoostBadge } from "./badges";
 import { useVotingRoundResults } from "../hooks/results";
@@ -72,11 +76,24 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
           </div>
 
           <div className="flex w-full flex-col gap-3">
-            <AccountHandle accountId={voterAccountId} />
+            <AccountHandle
+              accountId={voterAccountId}
+              maxLength={16}
+              className="decoration-none text-[17px] font-semibold text-[#292929]"
+            />
 
-            <div className="flex w-full items-center gap-1">
+            <div className="flex w-full items-center gap-2">
               <span className="text-nowrap text-[17px] font-normal">{"Voted"}</span>
-              <AccountProfileLink accountId={candidateAccountId} />
+
+              <div className="flex items-center gap-1.5">
+                <AccountProfilePicture accountId={candidateAccountId} className="h-6 w-6" />
+
+                <AccountHandle
+                  accountId={candidateAccountId}
+                  className="decoration-none text-[17px] font-semibold text-[#292929]"
+                  maxLength={16}
+                />
+              </div>
             </div>
           </div>
         </div>

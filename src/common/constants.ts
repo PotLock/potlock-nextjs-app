@@ -22,6 +22,11 @@ export const APP_METADATA: Metadata & {
     type: "website";
     images: { url: string };
   };
+  twitter: {
+    card: string;
+    creator: string;
+    site: string;
+  };
 } = {
   title: PLATFORM_NAME,
   description: "Bringing public goods funding to the table, built on NEAR",
@@ -40,6 +45,12 @@ export const APP_METADATA: Metadata & {
     images: {
       url: "https://bos.potlock.org/preview.png",
     },
+  },
+
+  twitter: {
+    site: "@PotLock_",
+    creator: "@PotLock_",
+    card: "summary_large_image",
   },
 };
 

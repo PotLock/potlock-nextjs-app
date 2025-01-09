@@ -1,17 +1,15 @@
 import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 
-import { useWindowSize } from "@uidotdev/usehooks";
 import { useRouter } from "next/router";
 
 import { votingContractHooks } from "@/common/contracts/core/voting";
-import { ScrollArea, SearchBar } from "@/common/ui/components";
+import { SearchBar } from "@/common/ui/components";
 import { VotingRoundVoteRow, useVotingRound, useVotingRoundResults } from "@/entities/voting-round";
 import { PotLayout } from "@/layout/pot/components/PotLayout";
 
 export default function PotHistoryTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
-  const { height: windowHeight } = useWindowSize();
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
   const onSearchTermChange = useCallback(
@@ -49,21 +47,19 @@ export default function PotHistoryTab() {
       <SearchBar placeholder="Search History" onChange={onSearchTermChange} />
 
       {searchResults.length === 0 ? (
-        <div className="h-100 flex w-full flex-col items-center justify-center">
+        <div className="flex w-full flex-col items-center justify-center">
           <p className="prose text-2xl">{"No results found."}</p>
         </div>
       ) : (
-        <ScrollArea style={{ height: (windowHeight ?? 820) - 320 }}>
-          <div className="flex flex-col gap-6 pb-8">
-            {searchResults.map((entry) => (
-              <VotingRoundVoteRow
-                key={entry.candidate_id + entry.voter + entry.timestamp}
-                data={entry}
-                {...{ potId }}
-              />
-            ))}
-          </div>
-        </ScrollArea>
+        <div className="flex flex-col gap-6 pb-8">
+          {searchResults.map((entry) => (
+            <VotingRoundVoteRow
+              key={entry.candidate_id + entry.voter + entry.timestamp}
+              data={entry}
+              {...{ potId }}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

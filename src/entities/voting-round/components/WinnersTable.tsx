@@ -30,7 +30,7 @@ export const VotingRoundWinnersTable: React.FC<VotingRoundWinnersTableProps> = (
                 <VotingRoundWinnerRow key={winner.accountId} data={winner} rank={index + 1} />
               </AccordionTrigger>
 
-              <AccordionContent className="gap-3">
+              <AccordionContent className="gap-3 pt-3">
                 {winner.votes.map((vote) => (
                   <VotingRoundVoteRow
                     key={vote.timestamp + vote.voter}
