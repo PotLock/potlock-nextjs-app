@@ -12,6 +12,7 @@ import {
   useListDeploymentSuccessRedirect,
 } from "@/entities/list";
 import { useListForm } from "@/entities/list/hooks/useListForm";
+import { PageLayout } from "@/layout/components/PageLayout";
 
 export default function SingleList() {
   useListDeploymentSuccessRedirect();
@@ -64,21 +65,27 @@ export default function SingleList() {
   }, [loadingListData, isLoading, setAdmins, listData, data]);
 
   return (
-    <PageWithBanner>
-      <ListDetails
-        admins={admins}
-        listDetails={listDetails}
-        savedUsers={savedUsers}
-        setAdmins={setAdmins}
-      />
-      <ListAccounts
-        listData={listData}
-        isLoading={isLoading}
-        loadingListData={loadingListData}
-        filteredRegistrations={filteredRegistrations}
-        setStatus={setStatus}
-        setFilteredRegistrations={setFilteredRegistrations}
-      />
-    </PageWithBanner>
+    <PageLayout
+      title={listDetails?.name ?? ""}
+      description={listDetails?.description ?? ""}
+      image={listDetails?.image ?? ""}
+    >
+      <PageWithBanner>
+        <ListDetails
+          admins={admins}
+          listDetails={listDetails}
+          savedUsers={savedUsers}
+          setAdmins={setAdmins}
+        />
+        <ListAccounts
+          listData={listData}
+          isLoading={isLoading}
+          loadingListData={loadingListData}
+          filteredRegistrations={filteredRegistrations}
+          setStatus={setStatus}
+          setFilteredRegistrations={setFilteredRegistrations}
+        />
+      </PageWithBanner>
+    </PageLayout>
   );
 }
