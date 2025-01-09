@@ -50,10 +50,12 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
 
   return (
     <div
-      className={cn("flex w-full flex-nowrap items-center gap-6 rounded-2xl border p-5 lg:gap-3", {
-        "flex-col": !compact,
-        "justify-between": compact,
-      })}
+      className={cn(
+        "lg:fex-row flex w-full flex-col flex-nowrap items-center gap-6 rounded-2xl border p-5 lg:gap-3",
+        {
+          "justify-between": compact,
+        },
+      )}
     >
       {compact ? (
         <div className="lg:max-w-40% flex w-full items-center gap-2">
@@ -91,7 +93,7 @@ export const VotingRoundVoteRow: React.FC<VotingRoundVoteRowProps> = ({
                 <AccountHandle
                   accountId={candidateAccountId}
                   className="decoration-none text-[17px] font-semibold text-[#292929]"
-                  maxLength={16}
+                  maxLength={20}
                 />
               </div>
             </div>
