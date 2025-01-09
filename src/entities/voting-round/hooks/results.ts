@@ -4,7 +4,7 @@ import { values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
-import { votingContractHooks } from "@/common/contracts/core/voting";
+import { type ElectionId, votingContractHooks } from "@/common/contracts/core/voting";
 import { stringifiedU128ToBigNum } from "@/common/lib";
 import type { ConditionalActivation } from "@/common/types";
 import { usePotFeatureFlags } from "@/entities/pot";
@@ -30,7 +30,7 @@ export const useVotingRoundResults = ({
 
   const { isLoading: isVoteListLoading, data: votes } = votingContractHooks.useElectionVotes({
     enabled: enabled && votingRound !== undefined,
-    electionId: votingRound?.electionId ?? 0,
+    electionId: votingRound!.electionId,
   });
 
   const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
