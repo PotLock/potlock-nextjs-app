@@ -208,7 +208,7 @@ export const AccountGroupEditModal = create(
                           onClick={handleAccountRemove(accountId)}
                           variant="standard-plain"
                           className={cn("ml-auto pe-0", {
-                            invisible: typeof handleRemoveAccounts === "function" && !entry?.new,
+                            invisible: typeof handleRemoveAccounts === "function" && !entry?.isNew,
                           })}
                         >
                           <MdDeleteOutline width={18} height={18} />

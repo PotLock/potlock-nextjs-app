@@ -350,7 +350,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         id={registrantsModalId}
         title="Edit Accounts"
         value={[
-          ...(accounts?.map((accountId) => ({ accountId, new: true })) || []),
+          ...(accounts?.map((accountId) => ({ accountId, isNew: true })) || []),
           ...(savedUsers?.accounts || []),
         ]}
         handleRemoveAccounts={handleUnRegisterAccount}
