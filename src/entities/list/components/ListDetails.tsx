@@ -13,6 +13,7 @@ import { walletApi } from "@/common/api/near/client";
 import { listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -353,7 +354,13 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
           ...(savedUsers?.accounts || []),
         ]}
         handleRemoveAccounts={handleUnRegisterAccount}
-        handleCustomSubmit={!!accounts.length && (() => handleRegisterBatch(accounts))}
+        footer={
+          !!accounts.length && (
+            <div className="my-4 flex items-center justify-center">
+              <Button onClick={() => handleRegisterBatch(accounts)}>Save Changes</Button>
+            </div>
+          )
+        }
         onSubmit={(accounts) => {
           const newAccounts =
             accounts?.filter(

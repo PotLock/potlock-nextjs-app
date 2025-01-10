@@ -30,7 +30,7 @@ export type AccountGroupEditModalProps = {
   value: AccountKey[];
   onSubmit: (accountIds: AccountId[]) => void;
   handleRemoveAccounts?: (accounts: AccountKey[]) => void;
-  handleCustomSubmit?: boolean | (() => void);
+  footer?: React.ReactNode;
   maxAccounts?: number;
 };
 
@@ -40,7 +40,7 @@ export const AccountGroupEditModal = create(
     value: entries,
     onSubmit,
     handleRemoveAccounts,
-    handleCustomSubmit,
+    footer,
     maxAccounts,
   }: AccountGroupEditModalProps) => {
     const self = useModal();
@@ -225,11 +225,7 @@ export const AccountGroupEditModal = create(
               <ScrollBar orientation="vertical" />
             </ScrollArea>
           </div>
-          {typeof handleCustomSubmit === "function" && (
-            <div className="my-4 flex items-center justify-center">
-              <Button onClick={handleCustomSubmit}>Save Changes</Button>
-            </div>
-          )}
+          {footer}
         </DialogContent>
       </Dialog>
     );
