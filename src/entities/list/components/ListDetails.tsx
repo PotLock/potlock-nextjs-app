@@ -58,7 +58,10 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
     (data: any) => data?.account === walletApi.accountId,
   );
 
-  const openRegistrantsModal = useCallback(() => show(registrantsModalId), [registrantsModalId]);
+  const openExistingAccountModal = useCallback(
+    () => show(registrantsModalId),
+    [registrantsModalId],
+  );
 
   const openAccountsModal = useCallback(() => show(adminsModalId), [adminsModalId]);
 
@@ -67,7 +70,9 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
     handleSaveAdminsSettings,
     handleRegisterBatch,
     handleRemoveAdmin,
+    accounts,
     handleUnRegisterAccount,
+    setAccounts,
   } = useListForm();
 
   const applyToListModal = (note: string) => {
@@ -249,11 +254,11 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                           <span>Edit list details</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={openRegistrantsModal}
+                          onClick={openExistingAccountModal}
                           className="cursor-pointer p-2 hover:bg-gray-200"
                         >
                           <AdminUserIcon className="mr-1 max-w-[22px]" />
-                          Add/Remove accounts
+                          Edit Accounts
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => setIsListConfirmationModalOpen({ open: true })}
@@ -343,15 +348,19 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
       <AccountGroupEditModal
         id={registrantsModalId}
         title="Edit Accounts"
-        value={savedUsers?.accounts ?? []}
+        value={[
+          ...(accounts?.map((accountId) => ({ accountId, new: true })) || []),
+          ...(savedUsers?.accounts || []),
+        ]}
         handleRemoveAccounts={handleUnRegisterAccount}
+        handleCustomSubmit={!!accounts.length && (() => handleRegisterBatch(accounts))}
         onSubmit={(accounts) => {
           const newAccounts =
             accounts?.filter(
               (admin) => !savedUsers.accounts?.map(prop("accountId"))?.includes(admin),
             ) ?? [];
 
-          handleRegisterBatch(newAccounts);
+          setAccounts(newAccounts);
         }}
       />
     </>
