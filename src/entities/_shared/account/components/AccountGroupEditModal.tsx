@@ -30,6 +30,7 @@ export type AccountGroupEditModalProps = {
   value: AccountKey[];
   onSubmit: (accountIds: AccountId[]) => void;
   handleRemoveAccounts?: (accounts: AccountKey[]) => void;
+  footer?: React.ReactNode;
   maxAccounts?: number;
 };
 
@@ -39,6 +40,7 @@ export const AccountGroupEditModal = create(
     value: entries,
     onSubmit,
     handleRemoveAccounts,
+    footer,
     maxAccounts,
   }: AccountGroupEditModalProps) => {
     const self = useModal();
@@ -189,37 +191,41 @@ export const AccountGroupEditModal = create(
 
             <ScrollArea className="w-full whitespace-nowrap rounded-b-lg px-5 py-3">
               <div className="max-h-100 flex w-full flex-col overflow-auto">
-                {accountIds.map((accountId) => (
-                  <AccountListItem
-                    key={accountId}
-                    primarySlot={
-                      <Checkbox
-                        checked={selectedAccounts.includes(accountId)}
-                        onCheckedChange={handleAccountSelect(accountId)}
-                        className="px-0.75"
-                      />
-                    }
-                    secondarySlot={
-                      <Button
-                        onClick={handleAccountRemove(accountId)}
-                        variant="standard-plain"
-                        className={cn("ml-auto pe-0", {
-                          invisible: typeof handleRemoveAccounts === "function",
-                        })}
-                      >
-                        <MdDeleteOutline width={18} height={18} />
+                {accountIds.map((accountId) => {
+                  const entry = entries?.find((e) => e?.accountId === accountId);
+                  return (
+                    <AccountListItem
+                      key={accountId}
+                      primarySlot={
+                        <Checkbox
+                          checked={selectedAccounts.includes(accountId)}
+                          onCheckedChange={handleAccountSelect(accountId)}
+                          className="px-0.75"
+                        />
+                      }
+                      secondarySlot={
+                        <Button
+                          onClick={handleAccountRemove(accountId)}
+                          variant="standard-plain"
+                          className={cn("ml-auto pe-0", {
+                            invisible: typeof handleRemoveAccounts === "function" && !entry?.isNew,
+                          })}
+                        >
+                          <MdDeleteOutline width={18} height={18} />
 
-                        <span className="prose font-500 line-height-none">{"Remove"}</span>
-                      </Button>
-                    }
-                    {...{ accountId }}
-                  />
-                ))}
+                          <span className="prose font-500 line-height-none">{"Remove"}</span>
+                        </Button>
+                      }
+                      {...{ accountId }}
+                    />
+                  );
+                })}
               </div>
 
               <ScrollBar orientation="vertical" />
             </ScrollArea>
           </div>
+          {footer}
         </DialogContent>
       </Dialog>
     );
