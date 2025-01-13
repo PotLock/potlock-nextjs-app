@@ -121,8 +121,8 @@ export const useVotingRoundResults = ({
       const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const blobUrl = URL.createObjectURL(blob);
-
       const link = document.createElement("a");
+
       link.href = blobUrl;
       link.setAttribute("download", `${potId}-voters.csv`);
       document.body.appendChild(link);
