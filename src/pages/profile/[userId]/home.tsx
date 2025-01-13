@@ -1,6 +1,8 @@
 import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
@@ -26,7 +28,16 @@ export default function ProfileHomeTab() {
         </h2>
       </div>
 
-      <AboutItem title="Overview" text={profile?.description} />
+      <AboutItem
+        title="Overview"
+        element={
+          profile ? (
+            <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose w-full">
+              {profile.description}
+            </ReactMarkdown>
+          ) : null
+        }
+      />
 
       {accountListRegistrations?.results.find(
         ({ list }) => list.id === PUBLIC_GOODS_REGISTRY_LIST_ID,
