@@ -156,6 +156,7 @@ const MultiSelectorTrigger = forwardRef<HTMLDivElement, React.HTMLAttributes<HTM
         ref={ref}
         className={cn(
           "border-muted bg-background flex flex-wrap gap-1 rounded-lg border p-1 py-2",
+          "shadow-[0px_0px_0px_1px_#00000038_inset,0px_-1px_1px_0px_#00000038_inset]",
           className,
         )}
         {...props}

@@ -195,6 +195,10 @@ export type V1ListsRetrieveParams = {
    */
   account?: string;
   /**
+   * Filter lists by admin
+   */
+  admin?: string;
+  /**
    * Page number for pagination
    */
   page?: number;
@@ -1101,6 +1105,7 @@ export interface LockingPosition {
 export interface MpdaoSnapshot {
   /** @nullable */
   balance_in_contract: string | null;
+  readonly is_human: string;
   /** @nullable */
   locking_positions: LockingPosition[] | null;
   readonly staking_token_balance: string;

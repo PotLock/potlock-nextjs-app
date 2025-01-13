@@ -1,4 +1,4 @@
-import { Category, NEARSocialUserProfile } from "@/common/contracts/social";
+import { Category, NEARSocialUserProfile } from "@/common/contracts/social/client";
 
 const isEmptyObject = (obj: object): boolean => obj && Object.keys(obj).length === 0;
 

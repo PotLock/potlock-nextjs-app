@@ -1,4 +1,4 @@
-import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
+import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social/client";
 import { getImage } from "@/common/services/images";
 import { ByAccountId } from "@/common/types";
 

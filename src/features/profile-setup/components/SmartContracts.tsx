@@ -15,7 +15,7 @@ import Delete from "@/common/ui/svg/Delete";
 import Edit from "@/common/ui/svg/Edit";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { CustomInput, Label } from "./components";
+import { CustomInput, Label } from "./form-elements";
 import validateEVMAddress from "../utils/validateEVMAddress";
 
 type AddChainSelectorProps = {

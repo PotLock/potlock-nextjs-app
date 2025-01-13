@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
-import { NEARSocialUserProfile, getSocialProfile } from "@/common/contracts/social";
+import { socialDbContractHooks } from "@/common/contracts/social";
 import type { ByAccountId, ConditionalActivation } from "@/common/types";
 
 import {
@@ -8,47 +8,41 @@ import {
   ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
 } from "../constants";
 
-// TODO!: Refactor to retrieve the account information from the indexer
-//!  with a fallback SocialDB lookup ONLY if the account is not indexed.
 export const useAccountSocialProfile = ({
   accountId,
   enabled = true,
 }: ByAccountId & ConditionalActivation) => {
-  const [profile, setProfile] = useState<NEARSocialUserProfile | undefined>(undefined);
-  const [isReady, setProfileReady] = useState(false);
-
-  // Fetch profile data
-  useEffect(() => {
-    if (enabled) {
-      getSocialProfile({ accountId, useCache: true })
-        .then((data) => setProfile(data ?? undefined))
-        .finally(() => setProfileReady(true));
-    }
-  }, [accountId, enabled]);
+  const { isLoading, data, error } = socialDbContractHooks.useSocialProfile({ enabled, accountId });
 
   const avatarSrc = useMemo(
     () =>
-      (typeof profile?.image === "string"
-        ? profile?.image
-        : (profile?.image?.url ??
-          (profile?.image?.ipfs_cid
-            ? `https://ipfs.near.social/ipfs/${profile?.image?.ipfs_cid}`
+      (typeof data?.image === "string"
+        ? data?.image
+        : (data?.image?.url ??
+          (data?.image?.ipfs_cid
+            ? `https://ipfs.near.social/ipfs/${data?.image?.ipfs_cid}`
             : null))) ?? ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
 
-    [profile?.image],
+    [data?.image],
   );
 
   const backgroundSrc = useMemo(
     () =>
-      (typeof profile?.backgroundImage === "string"
-        ? profile?.backgroundImage
-        : (profile?.backgroundImage?.url ??
-          (profile?.backgroundImage?.ipfs_cid
-            ? `https://ipfs.near.social/ipfs/${profile?.backgroundImage?.ipfs_cid}`
+      (typeof data?.backgroundImage === "string"
+        ? data?.backgroundImage
+        : (data?.backgroundImage?.url ??
+          (data?.backgroundImage?.ipfs_cid
+            ? `https://ipfs.near.social/ipfs/${data?.backgroundImage?.ipfs_cid}`
             : null))) ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
 
-    [profile?.backgroundImage],
+    [data?.backgroundImage],
   );
 
-  return { avatarSrc, backgroundSrc, profile, isReady };
+  return {
+    isLoading,
+    profile: data,
+    avatarSrc,
+    backgroundSrc,
+    error,
+  };
 };

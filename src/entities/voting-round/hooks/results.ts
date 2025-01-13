@@ -30,12 +30,12 @@ export const useVotingRoundResults = ({
 
   const { isLoading: isVoteListLoading, data: votes } = votingContractHooks.useElectionVotes({
     enabled: enabled && votingRound !== undefined,
-    electionId: votingRound!.electionId,
+    electionId: votingRound?.electionId as ElectionId,
   });
 
   const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
     enabled: enabled && votingRound !== undefined,
-    page_size: 9999,
+    page_size: 200,
   });
 
   const isLoading = useMemo(

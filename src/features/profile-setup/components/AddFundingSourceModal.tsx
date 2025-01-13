@@ -11,7 +11,7 @@ import {
 } from "@/common/ui/components";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { CustomInput, CustomTextForm } from "./components";
+import { CustomInput, CustomTextForm } from "./form-elements";
 import { useAddFundingSourceForm } from "../hooks/forms";
 import { AddFundingSourceInputs } from "../models/types";
 

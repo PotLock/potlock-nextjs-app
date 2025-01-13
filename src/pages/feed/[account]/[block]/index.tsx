@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import type { NEARSocialUserProfile } from "@/common/contracts/social";
+import type { NEARSocialUserProfile } from "@/common/contracts/social/client";
 import { fetchSocialImages } from "@/common/services/social";
 
 // TODO: A piece of legacy code. Skeletons should be used instead.

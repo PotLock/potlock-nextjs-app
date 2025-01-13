@@ -17,16 +17,14 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
   accountId,
   className,
 }) => {
-  const { avatarSrc, isReady } = useAccountSocialProfile({ accountId });
+  const { isLoading, avatarSrc } = useAccountSocialProfile({ accountId });
 
-  return isReady ? (
-    <Avatar
-      className={cn("h-3 w-3 shadow-[inset_0px_0px_1px_0px_rgba(166,166,166,1.00)]", className)}
-    >
+  return isLoading ? (
+    <Skeleton className={cn("h-3 w-3 rounded-full", className)} />
+  ) : (
+    <Avatar className={cn("h-3 w-3", className)}>
       <AvatarImage alt={`Profile picture of ${accountId}`} src={avatarSrc} width={40} height={40} />
     </Avatar>
-  ) : (
-    <Skeleton className={cn("h-3 w-3 rounded-full", className)} />
   );
 };
 

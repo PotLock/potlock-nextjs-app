@@ -11,7 +11,8 @@ import {
   MultiSelectorTrigger,
   Textarea,
 } from "@/common/ui/components";
-import { useAccountSocialProfile } from "@/entities/_shared/account";
+import { cn } from "@/common/ui/utils";
+import { AccountProfilePicture } from "@/entities/_shared/account";
 import { ProjectCategoryVariant } from "@/entities/project";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -30,12 +31,12 @@ export const Label = ({
   className,
   style,
 }: {
-  children: any;
+  children: React.ReactNode;
   className?: string;
   style?: CSSProperties;
 }) => (
   <p
-    className={`${className} font-500 line-height-[16px] color-neutral-900 break-words text-[14px]`}
+    className={cn(className, "font-500 line-height-[16px] color-neutral-900 break-words")}
     style={{ marginTop: 0, marginBottom: 0, ...style }}
   >
     {children}
@@ -64,10 +65,14 @@ export const CustomInput = ({
       {label}
       {optional && <span className="font-400 ml-1 text-[14px] text-[#292929]">(optional)</span>}
     </Label>
+
     {prefix ? (
       <div className="flex w-full items-center">
         <p
-          className="color-neutral-600 flex h-[38px] items-center rounded-[0.5rem_0_0_0.5rem] bg-neutral-50 px-4 text-center text-[14px]"
+          className={cn(
+            "color-neutral-600 flex h-[38px] items-center",
+            "rounded-[0.5rem_0_0_0.5rem] bg-neutral-50 px-4 text-center",
+          )}
           style={{
             boxShadow: "rgba(0, 0, 0, 0.22) 0px 0px 0px 1px inset",
             ...(prefixMinWidth ? { minWidth: prefixMinWidth } : {}),
@@ -75,9 +80,13 @@ export const CustomInput = ({
         >
           {prefix}
         </p>
+
         <Input
           {...inputProps}
-          className="b-l-none rounded-l-[0] focus-visible:outline-none focus-visible:ring-transparent focus-visible:ring-offset-1"
+          className={cn(
+            "b-l-none rounded-l-0",
+            "focus-visible:outline-none focus-visible:ring-transparent focus-visible:ring-offset-1",
+          )}
         />
       </div>
     ) : (
@@ -115,12 +124,11 @@ export const ProjectCategoryPicker = ({
   return (
     <MultiSelector values={value} onValuesChange={setValue} loop={false} className="w-full">
       <Label>Select categories *</Label>
-      <MultiSelectorTrigger
-        className="py-[.53rem] text-[.875rem] shadow-[0px_0px_0px_1px_#00000038_inset,0px_-1px_1px_0px_#00000038_inset]"
-        style={{ marginTop: ".4rem" }}
-      >
+
+      <MultiSelectorTrigger className="mt-[0.4rem] py-[.53rem]">
         <MultiSelectorInput placeholder="Choose category" />
       </MultiSelectorTrigger>
+
       <MultiSelectorContent>
         <MultiSelectorList>
           {options.map((option, i) => (
@@ -160,6 +168,7 @@ export const CustomTextForm = ({
       <Label style={{ marginBottom: 6 }} className={className}>
         {label}
       </Label>
+
       <Textarea
         className="resize-none"
         placeholder={placeholder}
@@ -173,44 +182,34 @@ export const CustomTextForm = ({
   );
 };
 
-const AccountStackItem = ({ accountId, style }: { accountId: string; style?: CSSProperties }) => {
-  const profileInfo = useAccountSocialProfile({ accountId });
-
-  return (
-    <>
-      {profileInfo.isReady && (
-        <img
-          alt="profile image"
-          className="bg-background h-[28px] w-[28px] rounded-[50%]"
-          style={style}
-          src={profileInfo.avatarSrc}
-        />
-      )}
-    </>
-  );
-};
-
-const MAX_DISPLAY_MEMBERS = 5;
+const MAX_DISPLAYED_MEMBERS = 5;
 
 export const AccountStack = () => {
   const members = useGlobalStoreSelector((state) => state.projectEditor.teamMembers);
-  const shown = members.slice(0, MAX_DISPLAY_MEMBERS);
-  const hidden = Math.max(members.length - MAX_DISPLAY_MEMBERS, 0);
+  const displayedMembers = members.slice(0, MAX_DISPLAYED_MEMBERS);
+  const hiddenItemsCount = Math.max(members.length - MAX_DISPLAYED_MEMBERS, 0);
 
   return (
     <div className="flex">
-      {hidden > 0 && (
-        <div className="z-10 flex h-[28px] w-[28px] items-center justify-center rounded-[50%] bg-[#dd3345]">
-          <p className="font-600 text-align-center text-[12px] text-white">{hidden}+</p>
+      {hiddenItemsCount > 0 && (
+        <div
+          className={
+            "z-10 flex h-[28px] w-[28px] items-center justify-center rounded-[50%] bg-[#dd3345]"
+          }
+        >
+          <span className="font-600 text-align-center text-foreground text-[12px]">
+            {`+${hiddenItemsCount}`}
+          </span>
         </div>
       )}
-      {shown.map((memberAccountId, index) => (
-        <AccountStackItem
+
+      {displayedMembers.map((memberAccountId, index) => (
+        <AccountProfilePicture
           key={memberAccountId}
           accountId={memberAccountId}
-          style={
-            index > 0 || (index === 0 && hidden > 0) ? { marginLeft: -8, zIndex: index * -1 } : {}
-          }
+          className={cn("h-7 w-7", {
+            "ml-[-8px]": index > 0 || (index === 0 && hiddenItemsCount > 0),
+          })}
         />
       ))}
     </div>

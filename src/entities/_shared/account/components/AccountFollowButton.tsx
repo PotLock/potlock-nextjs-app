@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getSocialData, setSocialData } from "@/common/contracts/social";
+import { getSocialData, setSocialData } from "@/common/contracts/social/client";
 import type { ByAccountId } from "@/common/types";
 import { Button } from "@/common/ui/components";
 import { useWallet } from "@/entities/_shared/session";

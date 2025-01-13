@@ -1,4 +1,8 @@
-import { FeedsResult, IndexPostResultItem, PostContent } from "@/common/contracts/social/types";
+import {
+  FeedsResult,
+  IndexPostResultItem,
+  PostContent,
+} from "@/common/contracts/social/interfaces";
 
 import { nearSocialClient } from "./client";
 

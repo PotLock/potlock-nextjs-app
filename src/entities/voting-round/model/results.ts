@@ -16,7 +16,7 @@ import type {
 } from "../types";
 import { getVoteWeight, getVoteWeightAmplifiers } from "../utils/weight";
 
-const VOTING_ROUND_RESULTS_SCHEMA_VERSION = 1;
+const VOTING_ROUND_RESULTS_SCHEMA_VERSION = 2;
 
 type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "votes"> & {
   accumulatedWeight: Big;
@@ -77,8 +77,14 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
 
               return [
                 accountId,
-                // TODO: take is_human from the voter data
-                { accountId, isHumanVerified: false, stakingTokenBalance, votingPower },
+
+                {
+                  accountId,
+                  // TODO: Remove `as unknown as boolean` once is_human type is fixed in the schema
+                  isHumanVerified: voter_data.is_human as unknown as boolean,
+                  stakingTokenBalance,
+                  votingPower,
+                },
               ] as const;
             }),
           ),
@@ -127,6 +133,7 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
 
               [accountId]: {
                 ...voter,
+                votingPower: voter.votingPower.toNumber(),
 
                 vote: {
                   amplifiers: getVoteWeightAmplifiers(voter, mechanismConfig),

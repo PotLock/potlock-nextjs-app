@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { createPost } from "@/common/contracts/social";
+import { createPost } from "@/common/contracts/social/client";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";
 import { useAccountSocialProfile } from "@/entities/_shared/account";

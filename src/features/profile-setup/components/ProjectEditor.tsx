@@ -13,18 +13,18 @@ import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import AddFundingSourceModal from "./AddFundingSourceModal";
 import AddTeamMembersModal from "./AddTeamMembersModal";
+import DAOInProgress from "./DAOInProgress";
+import EditSmartContractModal from "./EditSmartContractModal";
+import { ErrorModal } from "./ErrorModal";
 import {
   AccountStack,
   CustomInput,
   CustomTextForm,
   ProjectCategoryPicker,
   Row,
-} from "./components";
-import DAOInProgress from "./DAOInProgress";
-import EditSmartContractModal from "./EditSmartContractModal";
-import { ErrorModal } from "./ErrorModal";
+} from "./form-elements";
 import FundingSourceTable from "./FundingSourceTable";
-import InfoSegment from "./InfoSegment/InfoSegment";
+import InfoSegment from "./InfoSegment";
 import Profile from "./Profile";
 import Repositories from "./Repositories";
 import { SmartContracts } from "./SmartContracts";
