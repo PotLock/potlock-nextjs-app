@@ -4,7 +4,7 @@ import { extractFromUrl } from "@/common/lib";
 import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { CustomInput } from "./components";
+import { CustomInput } from "./form-elements";
 
 const SocialLinks = () => {
   const twitter = useGlobalStoreSelector((state) => state.projectEditor.twitter);

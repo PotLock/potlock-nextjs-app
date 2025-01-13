@@ -1,4 +1,4 @@
-import { Category, NEARSocialUserProfile } from "@/common/contracts/social";
+import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social";
 
 const isEmptyObject = (obj: object): boolean => obj && Object.keys(obj).length === 0;
 
@@ -22,7 +22,7 @@ export const getTagsFromSocialProfileData = (profileData: NEARSocialUserProfile)
   // Handle deprecated category field
   if (profileData.category) {
     if (typeof profileData.category === "string") {
-      tags.push(Category[profileData.category] || profileData.category);
+      tags.push(socialDbContractClient.Category[profileData.category] || profileData.category);
     } else if (typeof profileData.category === "object" && "text" in profileData.category) {
       tags.push(profileData.category.text);
     }

@@ -1,3 +1,4 @@
+import { MdInfo } from "react-icons/md";
 import { styled } from "styled-components";
 
 export const Container = styled.div`
@@ -42,3 +43,17 @@ export const Description = styled.p`
   white-space: wrap;
   margin: 0px;
 `;
+
+const InfoSegment = ({ title, description }: { title: string; description: string }) => {
+  return (
+    <Container>
+      <MdInfo className="h-4 w-4" />
+      <Text>
+        <Heading>{title}</Heading>
+        <Description>{description}</Description>
+      </Text>
+    </Container>
+  );
+};
+
+export default InfoSegment;

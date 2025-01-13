@@ -1,5 +1,5 @@
 import { naxiosInstance } from "@/common/api/near/client";
-import { Image, getSocialProfile } from "@/common/contracts/social";
+import { Image, socialDbContractClient } from "@/common/contracts/social";
 
 type Props = {
   accountId?: string;
@@ -23,9 +23,6 @@ type MetadateRes = {
   base_uri: string;
 };
 
-// const rex =
-//   /^(?:https?:\/\/)(?:[^\/]+\/ipfs\/)?(Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,})(?:\.[^\/]+)?(\/.*)?$/g;
-
 /**
  * Check account profile and get its avatar|background image provided by URL | IPFS | NFT
  * @param
@@ -36,7 +33,7 @@ export const getImage = async ({ accountId, image, type, fallbackurl }: Props) =
 
   try {
     if (!socialImage && accountId) {
-      const profile = await getSocialProfile({ accountId });
+      const profile = await socialDbContractClient.getSocialProfile({ accountId });
       if (!profile) return console.log("error fetching social profile");
 
       socialImage = profile[type || "image"];

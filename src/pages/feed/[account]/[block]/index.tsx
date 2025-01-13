@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactMarkdown from "react-markdown";
@@ -8,34 +7,9 @@ import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import type { NEARSocialUserProfile } from "@/common/contracts/social";
-import { fetchSocialImages } from "@/common/services/social";
-
-// TODO: A piece of legacy code. Skeletons should be used instead.
-const PROFILE_DEFAULTS: {
-  socialData: NEARSocialUserProfile;
-  tags: string[];
-  team: string[];
-  totalAmountNear: string;
-
-  socialImages: {
-    image: string;
-    backgroundImage: string;
-  };
-} = {
-  socialData: {},
-  tags: [],
-  team: [],
-  totalAmountNear: "",
-
-  socialImages: {
-    image: "/assets/images/profile-image.png",
-    backgroundImage: "/assets/images/profile-banner.png",
-  },
-};
+import { AccountProfilePicture } from "@/entities/_shared/account";
 
 const SinglePost = () => {
-  const [profileImg, setProfileImg] = useState<string>("");
   const router = useRouter();
   const { account, block } = useRouter().query;
 
@@ -57,27 +31,14 @@ const SinglePost = () => {
         accountId: account as string,
         blockHeight: Number(block),
       })
-        .then((fetchedPost) => {
-          setPost(fetchedPost);
-          // Fetch the profile image
-          return fetchSocialImages({
-            accountId: account as string,
-          });
+        .then((postData) => {
+          setPost(postData);
+
+          return fetchTimeByBlockHeight(Number(block));
         })
-        .then(({ image }) => {
-          const timePromise = fetchTimeByBlockHeight(Number(block));
-          return Promise.all([timePromise, image]);
-        })
-        .then(([time, image]) => {
-          setTime(time);
-          setProfileImg(image);
-        })
-        .catch((err) => {
-          console.error(err);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+        .then(setTime)
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
     }
   }, [account, block]);
 
@@ -98,15 +59,9 @@ const SinglePost = () => {
         onClick={() => router.push(`/user/${post.accountId}`)}
         className="mb-4 flex items-center space-x-2"
       >
-        <Image
-          src={profileImg || PROFILE_DEFAULTS.socialImages.image}
-          width={32}
-          height={32}
-          className="rounded-full shadow-[0px_0px_0px_1px_rgba(199,199,199,0.22)_inset]"
-          alt="profile-image"
-          onError={() => setProfileImg(PROFILE_DEFAULTS.socialImages.image)} // Handle image error
-        />
+        <AccountProfilePicture accountId={post.accountId} className="h-8 w-8" />
         <h1 className="font-bold text-black">{post.accountId}</h1>
+
         <div className="flex items-center">
           {time && (
             <>

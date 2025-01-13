@@ -6,7 +6,7 @@ import { CircleAlert } from "lucide-react";
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { CustomInput } from "./components";
+import { CustomInput } from "./form-elements";
 import { AddChainSelector, CHAIN_OPTIONS } from "./SmartContracts";
 import validateEVMAddress from "../utils/validateEVMAddress";
 

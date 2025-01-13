@@ -39,14 +39,6 @@ export const useMatchingPoolContributionForm = ({
         custom_chef_fee_basis_points: formData.data.bypassChefFee ? 0 : undefined,
       };
 
-      // INFO: broken logic
-      // const baseCurrency = potDetail.base_currency!.toUpperCase();
-      // const amountIndivisible = SUPPORTED_FTS[baseCurrency].toIndivisible(
-      //   formData.data.amountNEAR,
-      // );
-
-      // const deposit = calculateDepositByDataSize(args);
-
       // if it is a DAO, we need to convert transactions to DAO function call proposals
       const daoAction = {
         method_name: "donate",

@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
+
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { indexer } from "@/common/api/indexer";
+import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/common/ui/components";
 
@@ -21,8 +24,16 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
   disabled = false,
   children,
 }) => {
-  const { data: fundingAccount } = indexer.useAccount({ accountId });
+  const [noData, setNoData] = useState(false);
+  const { data: fundingAccount, error } = indexer.useAccount({ enabled: !noData, accountId });
   const { profile } = useAccountSocialProfile({ accountId });
+
+  //? Stop polling account data once it's clear that the account doesn't exist
+  useEffect(() => {
+    if (error && !noData) {
+      setNoData(true);
+    }
+  }, [error, noData]);
 
   return disabled ? (
     children
@@ -32,11 +43,13 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
         {children}
       </HoverCardTrigger>
 
-      <HoverCardContent side="top" className="w-84.5 h-fit overflow-hidden">
+      <HoverCardContent side="top" className="w-92 h-fit overflow-hidden">
         <AccountProfilePicture className="h-10 w-10" {...{ accountId }} />
 
         <div className="flex flex-col items-start justify-start gap-3">
-          <span className="text-sm font-semibold leading-tight">{profile?.name ?? accountId}</span>
+          <span className="text-sm font-semibold leading-tight">
+            {truncate(profile?.name ?? accountId, 40)}
+          </span>
 
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}

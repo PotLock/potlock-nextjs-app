@@ -1,7 +1,5 @@
 import { ProjectCategoryOption, ProjectListingStatusOption } from "./types";
 
-export const MAX_PROJECT_DESCRIPTION_LENGTH = 80;
-
 export const categories: ProjectCategoryOption[] = [
   { label: "DeSci", val: "DeSci" },
   { label: "Open Source", val: "Open Source" },

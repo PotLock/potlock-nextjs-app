@@ -253,12 +253,12 @@ export default function PotVotesTab() {
                   ) : (
                     <Button
                       variant="standard-outline"
-                      onClick={votingRoundResults.handleWinnersCsvDownload}
+                      onClick={votingRoundResults.handleVotersCsvDownload}
                     >
                       <MdFileDownload className="h-4.5 w-4.5" />
 
-                      <span className="font-500 hidden whitespace-nowrap text-sm md:inline-flex">
-                        {"Download CSV"}
+                      <span className="font-500 whitespace-nowrap text-sm">
+                        {"Download voter data CSV"}
                       </span>
                     </Button>
                   )}
@@ -274,8 +274,8 @@ export default function PotVotesTab() {
               >
                 <MdStar className="color-corn-500 h-4.5 w-4.5" />
 
-                <span className="flex items-center gap-2 text-sm">
-                  <span className="font-500 hidden whitespace-nowrap md:inline-flex">
+                <span className="flex items-center items-baseline gap-2 text-sm">
+                  <span className="font-500 hidden whitespace-nowrap lg:inline-flex">
                     {`${isWeightBoostBreakdownVisible ? "Hide" : "View"} Weight Boost`}
                   </span>
 
@@ -285,7 +285,7 @@ export default function PotVotesTab() {
                 </span>
 
                 <ChevronRight
-                  className={cn("relative hidden h-[18px] w-[18px] text-[#EA6A25] md:block")}
+                  className={cn("relative hidden h-[18px] w-[18px] text-[#EA6A25] lg:block")}
                 />
               </div>
 
@@ -300,14 +300,14 @@ export default function PotVotesTab() {
 
                 <span
                   className={cn(
-                    "hidden items-center gap-2 whitespace-nowrap md:inline-flex",
+                    "hidden items-center gap-2 whitespace-nowrap lg:inline-flex",
                     "font-500 text-sm",
                   )}
                 >
                   {`${isVotingRuleListVisible ? "Hide" : "View"} Voting Rules`}
                 </span>
 
-                <ChevronRight className={cn("hidden h-[18px] w-[18px] text-[#EA6A25] md:block")} />
+                <ChevronRight className={cn("hidden h-[18px] w-[18px] text-[#EA6A25] lg:block")} />
               </div>
             </div>
           </div>

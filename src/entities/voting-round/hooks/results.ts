@@ -30,12 +30,12 @@ export const useVotingRoundResults = ({
 
   const { isLoading: isVoteListLoading, data: votes } = votingContractHooks.useElectionVotes({
     enabled: enabled && votingRound !== undefined,
-    electionId: votingRound!.electionId,
+    electionId: votingRound?.electionId as ElectionId,
   });
 
   const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
     enabled: enabled && votingRound !== undefined,
-    page_size: 9999,
+    page_size: 200,
   });
 
   const isLoading = useMemo(
@@ -121,8 +121,8 @@ export const useVotingRoundResults = ({
       const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const blobUrl = URL.createObjectURL(blob);
-
       const link = document.createElement("a");
+
       link.href = blobUrl;
       link.setAttribute("download", `${potId}-voters.csv`);
       document.body.appendChild(link);

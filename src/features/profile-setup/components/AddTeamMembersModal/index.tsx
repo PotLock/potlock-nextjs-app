@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { validateNearAddress } from "@wpdas/naxios";
+import { MdGroup } from "react-icons/md";
 
 import { Button, Dialog, DialogContent, Input } from "@/common/ui/components";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
-import { AccountItems, GroupIcon } from "./components";
+import { AccountItems } from "./components";
 
 type Props = {
   open?: boolean;
@@ -39,7 +40,7 @@ const AddTeamMembersModal = ({ open, onCloseClick, onMembersChange }: Props) => 
       <DialogContent className="max-w-130 p-4" contrastActions onCloseClick={onCloseClick}>
         <div className="flex flex-row items-center justify-start">
           <div className="mr-4 flex h-[40px] w-[40px] items-center justify-center rounded-[50%] bg-[#f0f0f0]">
-            <GroupIcon />
+            <MdGroup className="h-5 w-5" />
           </div>
           <h4 className="color-[#2e2e2e] font-600 text-[16px]">Add team members</h4>
         </div>

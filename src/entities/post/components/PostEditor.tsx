@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { createPost } from "@/common/contracts/social";
+import { socialDbContractClient } from "@/common/contracts/social";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
@@ -21,12 +21,14 @@ export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
   const handleCreatePost = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    void createPost({
-      accountId,
-      content: { text: postText, type: "md" },
-    }).catch((error) => {
-      console.log(error);
-    });
+    void socialDbContractClient
+      .createPost({
+        accountId,
+        content: { text: postText, type: "md" },
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (

@@ -1,4 +1,7 @@
+import truncateMarkdown from "markdown-truncate";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
@@ -12,7 +15,6 @@ import { useDonation } from "@/features/donation";
 import routesPath from "@/pathnames";
 
 import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
-import { MAX_PROJECT_DESCRIPTION_LENGTH } from "../constants";
 
 const rootBoxShadow = `
   0px 0px 0px 1px rgba(5, 5, 5, 0.08),
@@ -73,16 +75,17 @@ export const ProjectCard = ({ projectId, allowDonate = true, payoutDetails }: Pr
               className="w-full text-base font-semibold text-[#2e2e2e]"
               data-testid="project-card-title"
             >
-              {truncate(name ?? "", 30) || truncate(projectId, 30)}
+              {truncate(name ?? projectId, 40)}
             </div>
 
-            {/* Description */}
-            <div
-              className="text-base font-normal text-[#2e2e2e]"
-              data-testid="project-card-description"
-            >
-              {truncate(description ?? "", MAX_PROJECT_DESCRIPTION_LENGTH)}
-            </div>
+            {description ? (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                className="max-h-[72px] overflow-hidden text-base text-neutral-900"
+              >
+                {truncateMarkdown(description, { limit: 78, ellipsis: true })}
+              </ReactMarkdown>
+            ) : null}
 
             {/* Categories */}
             <div className="flex flex-wrap gap-2 text-base">

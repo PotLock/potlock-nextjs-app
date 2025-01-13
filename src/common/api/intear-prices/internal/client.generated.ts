@@ -36,6 +36,10 @@ export type GetTokenSearchParams = {
    * The account ID of the user. If the user owns or owned a token, it will be slightly boosted in search
    */
   acc?: string;
+  /**
+   * The platform (parent account id) to filter tokens by. If the platform is specified, only tokens from that platform will be returned
+   */
+  platform?: string;
 };
 
 export type GetToken404 = {

@@ -167,6 +167,14 @@
     },
     {
       "files": [
+        "./**/global.d.ts"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": [
         "src/pages/**/*"
       ],
       "rules": {
