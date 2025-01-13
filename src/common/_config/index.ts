@@ -40,7 +40,7 @@ export const {
 
   social: {
     app: { url: SOCIAL_APP_LINK_URL },
-    contract: { accountId: SOCIAL_CONTRACT_ACCOUNT_ID },
+    contract: { accountId: SOCIAL_DB_CONTRACT_ACCOUNT_ID },
   },
 
   deFi: {

@@ -80,8 +80,7 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
 
                 {
                   accountId,
-                  // TODO: Remove `as unknown as boolean` once is_human type is fixed in the schema
-                  isHumanVerified: voter_data.is_human as unknown as boolean,
+                  isHumanVerified: voter_data.is_human,
                   stakingTokenBalance,
                   votingPower,
                 },

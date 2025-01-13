@@ -2,13 +2,42 @@ import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social";
+import { getImage } from "@/common/services/images";
 import uploadFileToIPFS from "@/common/services/ipfs";
-import { fetchSocialImages } from "@/common/services/social";
+import { ByAccountId } from "@/common/types";
 import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { AddFundingSourceInputs, ProjectEditorInputs } from "./types";
+
+export type SocialImagesInputs = ByAccountId & {
+  socialData?: NEARSocialUserProfile | null;
+};
+
+const fetchSocialImages = async ({ socialData, accountId }: SocialImagesInputs) => {
+  let currentProfile: NEARSocialUserProfile | null | undefined = socialData;
+
+  if (!currentProfile) {
+    currentProfile = await socialDbContractClient.getSocialProfile({ accountId, useCache: false });
+  }
+
+  const image = getImage({ image: currentProfile?.image, type: "image" });
+
+  const backgroundImage = getImage({
+    image: currentProfile?.backgroundImage,
+    type: "backgroundImage",
+  });
+
+  const images = await Promise.all([image, backgroundImage]);
+
+  return {
+    image: images[0],
+    backgroundImage: images[1],
+    profile: currentProfile,
+  };
+};
 
 export const projectEditorModelKey = "projectEditor";
 

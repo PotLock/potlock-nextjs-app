@@ -7,10 +7,10 @@ import {
 import { Big } from "big.js";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
-import { LISTS_CONTRACT_ACCOUNT_ID, SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { LISTS_CONTRACT_ACCOUNT_ID, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK } from "@/common/constants";
-import * as socialDb from "@/common/contracts/social/client";
+import { socialDbContractClient } from "@/common/contracts/social";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
 import { store } from "@/store";
@@ -19,7 +19,7 @@ import getSocialDataFormat from "../utils/getSocialDataFormat";
 
 const getSocialData = async (accountId: string) => {
   try {
-    const socialData = await socialDb.getSocialProfile({ accountId });
+    const socialData = await socialDbContractClient.getSocialProfile({ accountId });
     return socialData;
   } catch (e) {
     console.error(e);
@@ -66,7 +66,7 @@ export const saveProject = async () => {
 
   // First, we have to check the account from social.near to see if it exists. If it doesn't, we need to add 0.1N to the deposit
   try {
-    const account = await socialDb.getAccount({ accountId });
+    const account = await socialDbContractClient.getAccount({ accountId });
 
     let depositFloat = calculateDepositByDataSize(socialArgs);
 
@@ -76,7 +76,7 @@ export const saveProject = async () => {
 
     // social.near
     const socialTransaction = buildTransaction("set", {
-      receiverId: SOCIAL_CONTRACT_ACCOUNT_ID,
+      receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
       args: socialArgs,
       deposit: parseNearAmount(depositFloat)!,
     });

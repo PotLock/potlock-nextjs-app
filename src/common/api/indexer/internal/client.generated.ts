@@ -1105,7 +1105,7 @@ export interface LockingPosition {
 export interface MpdaoSnapshot {
   /** @nullable */
   balance_in_contract: string | null;
-  readonly is_human: string;
+  readonly is_human: boolean;
   /** @nullable */
   locking_positions: LockingPosition[] | null;
   readonly staking_token_balance: string;

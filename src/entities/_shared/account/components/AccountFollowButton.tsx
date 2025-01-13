@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getSocialData, setSocialData } from "@/common/contracts/social/client";
+import { socialDbContractClient } from "@/common/contracts/social";
 import type { ByAccountId } from "@/common/types";
 import { Button } from "@/common/ui/components";
 import { useWallet } from "@/entities/_shared/session";
@@ -21,13 +21,13 @@ export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
   useEffect(() => {
     (async () => {
       if (wallet?.accountId) {
-        const _followEdge = await getSocialData<Record<string, any>>({
+        const _followEdge = await socialDbContractClient.getSocialData<Record<string, any>>({
           path: `${wallet.accountId}/graph/follow/${accountId}`,
         });
 
         setFollowEdge(_followEdge);
 
-        const _inverseEdge = await getSocialData<Record<string, any>>({
+        const _inverseEdge = await socialDbContractClient.getSocialData<Record<string, any>>({
           path: `${accountId}/graph/follow/${wallet.accountId}`,
         });
 
@@ -91,7 +91,7 @@ export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
     if (wallet.accountId && buttonText !== "Following") {
       setUpdating(true);
 
-      await setSocialData({
+      await socialDbContractClient.setSocialData({
         data: {
           [wallet.accountId]: data,
         },

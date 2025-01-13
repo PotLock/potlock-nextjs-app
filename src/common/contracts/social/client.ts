@@ -1,6 +1,6 @@
 import { StorageCache, buildTransaction } from "@wpdas/naxios";
 
-import { SOCIAL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
 import { AccountId } from "@/common/types";
 
@@ -8,7 +8,7 @@ import { AccountId } from "@/common/types";
  * NEAR Social DB Contract API
  */
 const nearSocialDbContractApi = naxiosInstance.contractApi({
-  contractId: SOCIAL_CONTRACT_ACCOUNT_ID,
+  contractId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
   cache: new StorageCache({ expirationTime: 5 * 60 }), // 5 minutes
 });
 
@@ -200,7 +200,7 @@ export const createPost = async ({
 }) => {
   try {
     const buildContract = buildTransaction("set", {
-      receiverId: SOCIAL_CONTRACT_ACCOUNT_ID,
+      receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
       args: {
         data: {
           [accountId]: {
