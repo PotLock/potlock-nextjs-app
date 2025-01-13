@@ -274,7 +274,7 @@ export default function PotVotesTab() {
               >
                 <MdStar className="color-corn-500 h-4.5 w-4.5" />
 
-                <span className="flex items-center gap-2 text-sm">
+                <span className="flex items-center items-baseline gap-2 text-sm">
                   <span className="font-500 hidden whitespace-nowrap lg:inline-flex">
                     {`${isWeightBoostBreakdownVisible ? "Hide" : "View"} Weight Boost`}
                   </span>
