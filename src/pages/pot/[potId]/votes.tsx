@@ -253,12 +253,12 @@ export default function PotVotesTab() {
                   ) : (
                     <Button
                       variant="standard-outline"
-                      onClick={votingRoundResults.handleWinnersCsvDownload}
+                      onClick={votingRoundResults.handleVotersCsvDownload}
                     >
                       <MdFileDownload className="h-4.5 w-4.5" />
 
-                      <span className="font-500 hidden whitespace-nowrap text-sm md:inline-flex">
-                        {"Download CSV"}
+                      <span className="font-500 whitespace-nowrap text-sm">
+                        {"Download voter data CSV"}
                       </span>
                     </Button>
                   )}
