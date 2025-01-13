@@ -10,16 +10,31 @@ declare module "react-files" {
     clickable?: boolean;
     style?: {};
   }): JSX.Element;
+
   export default Files;
 }
 
 declare module "*.svg" {
   import { FC, SVGProps } from "react";
+
   const content: FC<SVGProps<SVGElement>>;
+
   export default content;
 }
 
 declare module "*.svg?url" {
   const content: any;
+
   export default content;
+}
+
+declare module "markdown-truncate" {
+  interface TruncateOptions {
+    limit: number;
+    ellipsis?: boolean;
+  }
+
+  function truncateMarkdown(inputText: string, options: TruncateOptions): string;
+
+  export default truncateMarkdown;
 }
