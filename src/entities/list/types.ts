@@ -63,3 +63,5 @@ export enum NoListItemType {
   FAVORITE_LISTS = "FAVORITE_LISTS",
   NO_RESULTS = "NO_RESULTS",
 }
+
+export type ListOverviewType = "ALL_LISTS" | "MY_LISTS" | "MY_FAVORITES";

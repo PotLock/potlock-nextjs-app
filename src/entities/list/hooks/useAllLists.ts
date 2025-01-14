@@ -1,14 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { List, indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
 
+import { ListOverviewType } from "../types";
+
+type SetListTypeFn = (type: ListOverviewType) => void;
+type SetRegistrationsFn = (lists: List[]) => void;
+
 export const useAllLists = (
-  setCurrentListType: (type: string) => void,
-  setFilteredRegistrations: (type: any) => void,
+  setCurrentListType: SetListTypeFn,
+  setFilteredRegistrations: SetRegistrationsFn,
+  currentListType?: ListOverviewType,
 ) => {
   const [registrations, setRegistrations] = useState<List[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [administratedListsOnly, setAdministratedListsOnly] = useState(false);
   const wallet = walletApi;
 
   const { data, isLoading } = indexer.useLists({
@@ -17,6 +23,7 @@ export const useAllLists = (
 
   const { data: myLists } = indexer.useLists({
     account: wallet?.accountId,
+    ...(administratedListsOnly && { admin: wallet?.accountId }),
     page_size: 999,
   });
 
@@ -24,55 +31,58 @@ export const useAllLists = (
     accountId: wallet?.accountId as string,
   });
 
-  const fetchAllLists = useCallback(async () => {
-    setLoading(true);
+  const fetchAllLists = useCallback(() => {
+    if (!data) return;
 
-    try {
-      if (data) {
-        setRegistrations(data.results);
-        setFilteredRegistrations(data.results);
-        setCurrentListType("All Lists");
-      }
-    } catch (error) {
-      console.error("Error fetching all lists:", error);
-    } finally {
-      setLoading(false);
-    }
+    setRegistrations(data.results);
+    setFilteredRegistrations(data.results);
+    setCurrentListType("ALL_LISTS");
   }, [data, setCurrentListType, setFilteredRegistrations]);
 
-  const fetchMyLists = useCallback(async () => {
-    if (!wallet?.accountId) return;
-    setLoading(true);
-    setCurrentListType("My Lists");
+  const fetchMyLists = useCallback(() => {
+    if (!wallet?.accountId || !myLists) return;
 
-    try {
-      if (myLists) {
-        setRegistrations(myLists.results);
-        setFilteredRegistrations(myLists.results);
-      }
-    } catch (error) {
-      console.error("Error fetching my lists:", error);
-    } finally {
-      setLoading(false);
+    setCurrentListType("MY_LISTS");
+    setRegistrations(myLists.results);
+    setFilteredRegistrations(myLists.results);
+  }, [wallet?.accountId, myLists, setCurrentListType, setFilteredRegistrations]);
+
+  const fetchFavourites = useCallback(() => {
+    if (!wallet?.accountId || !myFavourites) return;
+
+    setRegistrations(myFavourites);
+    setFilteredRegistrations(myFavourites);
+    setCurrentListType("MY_FAVORITES");
+  }, [wallet?.accountId, myFavourites, setCurrentListType, setFilteredRegistrations]);
+
+  const actions = useMemo(
+    () => [
+      {
+        label: "All Lists",
+        fetchFunction: fetchAllLists,
+        type: "ALL_LISTS",
+      },
+      {
+        label: "My Lists",
+        fetchFunction: fetchMyLists,
+        type: "MY_LISTS",
+        condition: Boolean(wallet?.accountId),
+      },
+      {
+        label: "My Favorites",
+        fetchFunction: fetchFavourites,
+        type: "MY_FAVORITES",
+        condition: Boolean(wallet?.accountId),
+      },
+    ],
+    [fetchAllLists, fetchMyLists, fetchFavourites, wallet?.accountId],
+  );
+
+  useEffect(() => {
+    if (currentListType === "MY_LISTS") {
+      fetchMyLists();
     }
-  }, [wallet, myLists, setCurrentListType, setFilteredRegistrations]);
-
-  const fetchFavourites = useCallback(async () => {
-    if (!wallet?.accountId) return;
-    setLoading(true);
-
-    try {
-      if (myFavourites) {
-        setRegistrations(myFavourites);
-        setFilteredRegistrations(myFavourites);
-        setCurrentListType("My Favorites");
-      }
-    } catch (error) {
-      console.error("Error fetching favorites:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [wallet, myFavourites, setCurrentListType, setFilteredRegistrations]);
+  }, [administratedListsOnly, fetchMyLists, currentListType]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -80,30 +90,12 @@ export const useAllLists = (
     }
   }, [isLoading, fetchAllLists]);
 
-  const buttons = [
-    {
-      label: "All Lists",
-      fetchFunction: fetchAllLists,
-      type: "All Lists",
-    },
-    {
-      label: "My Lists",
-      fetchFunction: fetchMyLists,
-      type: "My Lists",
-      condition: Boolean(walletApi?.accountId),
-    },
-    {
-      label: "My Favorites",
-      fetchFunction: fetchFavourites,
-      type: "My Favorites",
-      condition: Boolean(walletApi?.accountId),
-    },
-  ];
-
   return {
     registrations,
-    buttons,
-    loading,
+    buttons: actions,
+    loading: isLoading,
+    administratedListsOnly,
+    setAdministratedListsOnly,
     fetchAllLists,
     fetchMyLists,
     fetchFavourites,

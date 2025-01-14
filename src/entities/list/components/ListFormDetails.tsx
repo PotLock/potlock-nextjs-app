@@ -161,7 +161,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
         admins,
         accounts: accounts.map((account) => ({
           registrant_id: account,
-          status: RegistrationStatus.Approved,
+          status: watch("approveApplications") ? RegistrationStatus.Approved : RegistrationStatus.Pending,
         })),
         image_cover_url: coverImage,
       })
