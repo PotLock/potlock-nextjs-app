@@ -34,15 +34,23 @@ export const NoResults = ({ text }: { text: string }) => (
 
 const ProfileLists = () => {
   const router = useRouter();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [administratedListsOnly, setAdministratedListsOnly] = useState(false);
   const { userId: accountId } = router.query as { userId: string };
-  const { data } = indexer.useLists({ account: accountId, ...(isAdmin && { admin: accountId }) });
+
+  const { data } = indexer.useLists({
+    account: accountId,
+    ...(administratedListsOnly && { admin: accountId }),
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center gap-4">
         <Label htmlFor="admin">Show Lists Where User is an Admin</Label>
-        <Switch id="admin" checked={isAdmin} onClick={() => setIsAdmin(!isAdmin)} />
+        <Switch
+          id="admin"
+          checked={administratedListsOnly}
+          onClick={() => setAdministratedListsOnly(!administratedListsOnly)}
+        />
       </div>
       <div className="w-full">
         {data?.results?.length ? (

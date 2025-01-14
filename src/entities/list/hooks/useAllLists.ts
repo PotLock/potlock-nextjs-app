@@ -14,7 +14,7 @@ export const useAllLists = (
   currentListType?: ListOverviewType,
 ) => {
   const [registrations, setRegistrations] = useState<List[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [administratedListsOnly, setAdministratedListsOnly] = useState(false);
   const wallet = walletApi;
 
   const { data, isLoading } = indexer.useLists({
@@ -23,7 +23,7 @@ export const useAllLists = (
 
   const { data: myLists } = indexer.useLists({
     account: wallet?.accountId,
-    ...(isAdmin && { admin: wallet?.accountId }),
+    ...(administratedListsOnly && { admin: wallet?.accountId }),
     page_size: 999,
   });
 
@@ -55,7 +55,7 @@ export const useAllLists = (
     setCurrentListType("MY_FAVORITES");
   }, [wallet?.accountId, myFavourites, setCurrentListType, setFilteredRegistrations]);
 
-  const buttons = useMemo(
+  const actions = useMemo(
     () => [
       {
         label: "All Lists",
@@ -82,7 +82,7 @@ export const useAllLists = (
     if (currentListType === "MY_LISTS") {
       fetchMyLists();
     }
-  }, [isAdmin, fetchMyLists, currentListType]);
+  }, [administratedListsOnly, fetchMyLists, currentListType]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -92,10 +92,10 @@ export const useAllLists = (
 
   return {
     registrations,
-    buttons,
+    buttons: actions,
     loading: isLoading,
-    isAdmin,
-    setIsAdmin,
+    administratedListsOnly,
+    setAdministratedListsOnly,
     fetchAllLists,
     fetchMyLists,
     fetchFavourites,

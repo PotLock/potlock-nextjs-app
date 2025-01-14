@@ -121,7 +121,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
     return <p>No list details available.</p>;
   }
 
-  const isAdmin =
+  const administratedListsOnly =
     admins.includes(walletApi?.accountId ?? "") || listDetails.owner?.id === walletApi?.accountId;
 
   const handleUpvote = () => {
@@ -245,7 +245,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                       <Copy className="mr-1 max-w-[22px]" />
                       <span>Duplicate List</span>
                     </DropdownMenuItem>
-                    {isAdmin && (
+                    {administratedListsOnly && (
                       <>
                         <DropdownMenuItem
                           onClick={onEditList}

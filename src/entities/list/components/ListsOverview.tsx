@@ -49,11 +49,8 @@ export const ListsOverview = ({
 
   const { push } = useRouter();
 
-  const { registrations, isAdmin, setIsAdmin, loading, buttons } = useAllLists(
-    setCurrentListType,
-    setFilteredRegistrations,
-    currentListType,
-  );
+  const { registrations, administratedListsOnly, setAdministratedListsOnly, loading, buttons } =
+    useAllLists(setCurrentListType, setFilteredRegistrations, currentListType);
 
   const SORT_LIST_PROJECTS = [
     { label: "Most recent", value: "recent" },
@@ -167,7 +164,11 @@ export const ListsOverview = ({
         {currentListType === "MY_LISTS" && (
           <div className="flex items-center justify-end gap-4">
             <Label htmlFor="admin">Show Lists Where I Am Admin</Label>
-            <Switch id="admin" checked={isAdmin} onClick={() => setIsAdmin(!isAdmin)} />
+            <Switch
+              id="admin"
+              checked={administratedListsOnly}
+              onClick={() => setAdministratedListsOnly(!administratedListsOnly)}
+            />
           </div>
         )}
       </div>
