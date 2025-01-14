@@ -6,7 +6,7 @@ export const projectEditorSchema = object({
     .max(100, "Must be less than 100 characters long"),
 
   isDao: boolean().default(false),
-  daoAddress: string().min(3, "Invalid NEAR account ID").optional(),
+  daoAddress: string().optional(),
   backgroundImage: string().min(3),
   profileImage: string().min(3),
   teamMembers: array(string()),
