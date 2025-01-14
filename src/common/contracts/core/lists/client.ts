@@ -39,11 +39,13 @@ export const create_list = ({
   image_cover_url,
   accounts,
   allowApplications,
+  approveApplications,
 }: {
   name: string;
   description: string;
   admins: AccountId[];
   allowApplications?: boolean;
+  approveApplications?: boolean;
   accounts: { registrant_id: AccountId; status: RegistrationStatus }[];
   image_cover_url?: string | null;
 }) => {
@@ -56,7 +58,7 @@ export const create_list = ({
       cover_image_url: image_cover_url ?? null,
       ...(accounts?.length && { registrations: accounts }),
       admin_only_registrations: !allowApplications,
-      default_registration_status: "Approved",
+      default_registration_status: approveApplications ? "Approved" : "Pending",
     },
     deposit: floatToYoctoNear(0.02 + accountsDeposit),
     gas: "300000000000000",
