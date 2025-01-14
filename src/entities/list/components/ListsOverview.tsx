@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { SearchBar, SortSelect } from "@/common/ui/components";
+import { Label, SearchBar, SortSelect, Switch } from "@/common/ui/components";
 import { ListCard } from "@/entities/list/components/ListCard";
 import { useAllLists } from "@/entities/list/hooks/useAllLists";
 
 import { ListCardSkeleton } from "./ListCardSkeleton";
 import { NoListItem } from "./NoListItem";
-import { NoListItemType } from "../types";
+import { ListOverviewType, NoListItemType } from "../types";
 
 const defaultBgImages = [
   {
@@ -40,17 +40,19 @@ export const ListsOverview = ({
   filteredRegistrations,
   setFilteredRegistrations,
 }: {
-  currentListType: string;
-  setCurrentListType: (type: string) => void;
+  currentListType: ListOverviewType;
+  setCurrentListType: (type: ListOverviewType) => void;
   filteredRegistrations: any[];
   setFilteredRegistrations: (type: any) => void;
 }) => {
   const [search, setSearch] = useState("");
+
   const { push } = useRouter();
 
-  const { registrations, loading, buttons } = useAllLists(
+  const { registrations, isAdmin, setIsAdmin, loading, buttons } = useAllLists(
     setCurrentListType,
     setFilteredRegistrations,
+    currentListType,
   );
 
   const SORT_LIST_PROJECTS = [
@@ -90,14 +92,23 @@ export const ListsOverview = ({
     setFilteredRegistrations(filtered);
   }, [search, registrations, setFilteredRegistrations]);
 
-  const noData =
-    search !== "" && filteredRegistrations.length === 0
-      ? NoListItemType.NO_RESULTS
-      : currentListType === "All Lists"
-        ? NoListItemType.ALL_LISTS
-        : currentListType === "My Lists"
-          ? NoListItemType.MY_LISTS
-          : NoListItemType.FAVORITE_LISTS;
+  const getNoDataType = () => {
+    if (search !== "" && filteredRegistrations.length === 0) {
+      return NoListItemType.NO_RESULTS;
+    }
+
+    if (currentListType === "ALL_LISTS") {
+      return NoListItemType.ALL_LISTS;
+    }
+
+    if (currentListType === "MY_LISTS") {
+      return NoListItemType.MY_LISTS;
+    }
+
+    return NoListItemType.FAVORITE_LISTS;
+  };
+
+  const noData = getNoDataType();
 
   const createRoute = useCallback(() => push(`/list/create`), []);
 
@@ -113,14 +124,18 @@ export const ListsOverview = ({
       },
       {} as Record<string, { background: string; backdrop: string }>,
     );
-  }, [filteredRegistrations]); // Only regenerate when filteredRegistrations changes
+  }, [filteredRegistrations]);
+
+  const getAllListsButton = useMemo(() => {
+    return buttons.find((button) => button.type === "ALL_LISTS");
+  }, [buttons]);
 
   return (
     <div className="flex w-full flex-col px-2 pt-10 md:px-10 md:pb-0 md:pt-12">
       <div className="flex w-full flex-col gap-5">
         <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-0">
           <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
-            {currentListType}
+            {currentListType?.replace("_", " ")}
             <span style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}>
               {filteredRegistrations?.length}
             </span>
@@ -149,9 +164,22 @@ export const ListsOverview = ({
               ),
           )}
         </div>
+        {currentListType === "MY_LISTS" && (
+          <div className="flex items-center justify-end gap-4">
+            <Label htmlFor="admin">Show Lists Where I Am Admin</Label>
+            <Switch id="admin" checked={isAdmin} onClick={() => setIsAdmin(!isAdmin)} />
+          </div>
+        )}
       </div>
       {loading ? (
-        Array.from({ length: 6 }, (_, index) => <ListCardSkeleton key={index} />)
+        Array.from({ length: 6 }, (_, index) => (
+          <div
+            key={index}
+            className="mt-8 grid w-full grid-cols-1 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3"
+          >
+            <ListCardSkeleton key={index} />
+          </div>
+        ))
       ) : (
         <>
           {filteredRegistrations.length > 0 ? (
@@ -179,9 +207,9 @@ export const ListsOverview = ({
                 type={noData}
                 showButton={true && !search}
                 route={
-                  currentListType !== "My Favorites"
+                  currentListType !== "MY_FAVORITES"
                     ? createRoute
-                    : () => setCurrentListType("All Lists")
+                    : getAllListsButton?.fetchFunction
                 }
               />
             )

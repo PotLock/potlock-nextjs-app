@@ -6,15 +6,24 @@ import { walletApi } from "@/common/api/near/client";
 import { Button } from "@/common/ui/components";
 import { useAllLists } from "@/entities/list/hooks/useAllLists";
 
+import { ListOverviewType } from "../types";
+
 export const ListHero = ({
+  currentListType,
   setCurrentListType,
   setFilteredRegistrations,
 }: {
-  setCurrentListType: (type: string) => void;
+  setCurrentListType: (type: ListOverviewType) => void;
   setFilteredRegistrations: (type: any) => void;
+  currentListType?: ListOverviewType;
 }) => {
   const { push } = useRouter();
-  const { fetchMyLists } = useAllLists(setCurrentListType, setFilteredRegistrations);
+
+  const { fetchMyLists } = useAllLists(
+    setCurrentListType,
+    setFilteredRegistrations,
+    currentListType,
+  );
 
   const handleCreateList = useCallback(() => {
     push("/list/create");

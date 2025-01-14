@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
 import { PageWithBanner } from "@/common/ui/components";
-import { ListHero, ListsOverview } from "@/entities/list";
+import { ListHero, ListOverviewType, ListsOverview } from "@/entities/list";
 import { useListDeploymentSuccessRedirect } from "@/entities/list/hooks/redirects";
 
 export default function Page() {
   useListDeploymentSuccessRedirect();
-  const [currentListType, setCurrentListType] = useState<string>("All Lists");
+  const [currentListType, setCurrentListType] = useState<ListOverviewType>("ALL_LISTS");
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
 
   return (
