@@ -17,7 +17,7 @@ export const useVotingRoundSessionClearance = (): ClearanceCheckResult => {
 
   return useMemo(() => {
     const requirements = [
-      { title: "Must have an account on Potlock.", isSatisfied: isVerifiedPublicGoodsProvider },
+      { title: "Must have an account on POTLOCK.", isSatisfied: isVerifiedPublicGoodsProvider },
       { title: "Must have human verification.", isSatisfied: isHuman },
     ];
 

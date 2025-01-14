@@ -1,10 +1,10 @@
-# PotLock Next
+# POTLOCK Next
 
-PotLock frontend application built on NextJS featuring project exploration, pages, donations, and Pots (quadratic funding for now) on the NEAR Blockchain
+POTLOCK frontend application built on NextJS featuring project exploration, pages, donations, and Pots (quadratic funding for now) on the NEAR Blockchain
 
 The backlog to the NextJS App can be found at <https://potlock.org/next-backlog>
 
-You can access BOS PotLock version using one of the environments below:
+You can access BOS POTLOCK version using one of the environments below:
 
 - [Production](https://bos.potlock.org/)
 - [Staging](https://bos.potlock.org/staging.potlock.near/widget/IndexLoader)

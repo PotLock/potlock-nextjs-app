@@ -58,7 +58,7 @@ export const SocialsShare = ({
               className="flex h-[48px] w-[48px] items-center justify-center rounded border border-[#DBDBDB] bg-[#F7F7F7]"
               onClick={() =>
                 window.open(
-                  `https://twitter.com/intent/tweet?url=${share}&text=Check this out on Potlock @potlock_`,
+                  `https://twitter.com/intent/tweet?url=${share}&text=Check this out on POTLOCK @potlock_`,
                   "_blank",
                 )
               }
