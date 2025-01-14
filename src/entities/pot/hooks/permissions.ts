@@ -69,7 +69,11 @@ export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
     [authenticatedUser.isSignedIn, authenticatedUser.accountId, pot],
   );
 
-  const isAdminOrGreater = useMemo(() => administratedListsOnly || isOwner, [administratedListsOnly, isOwner]);
+  const isAdminOrGreater = useMemo(
+    () => administratedListsOnly || isOwner,
+    [administratedListsOnly, isOwner],
+  );
+
   const isChefOrGreater = useMemo(() => isChef || isAdminOrGreater, [isChef, isAdminOrGreater]);
 
   const isApplicationPeriodOngoing = useMemo(
