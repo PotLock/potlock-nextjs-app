@@ -13,6 +13,7 @@ import type { ByAccountId } from "@/common/types";
  */
 const getDateTime = (date: string) => new Date(date).getTime();
 
+// TODO: Apply performance optimizations
 /**
  * Pot authorization for a specific user.
  */
@@ -22,12 +23,11 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   const { data: pot } = indexer.usePot({ potId });
   const { data: potApplications } = indexer.usePotApplications({ potId, page_size: 999 });
 
-  // TODO: cover the required endpoints and throw this away
   const [payoutsChallenges, setPayoutsChallenges] = useState<Challenge[] | null | undefined>(
     undefined,
   );
 
-  // TODO: cover the required endpoints and throw this away
+  // TODO: create and use a wrapper hook instead
   useEffect(() => {
     if (payoutsChallenges === undefined) {
       potContractClient
