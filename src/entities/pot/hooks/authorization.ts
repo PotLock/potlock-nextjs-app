@@ -12,7 +12,7 @@ import { useSession } from "@/entities/_shared/session";
  */
 const getDateTime = (date: string) => new Date(date).getTime();
 
-export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
+export const usePotUserAuthorization = ({ potId }: ByPotId) => {
   const now = Date.now();
   const authenticatedUser = useSession();
   const { data: pot } = indexer.usePot({ potId });
@@ -55,7 +55,7 @@ export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
     [authenticatedUser.isSignedIn, authenticatedUser.accountId, pot],
   );
 
-  const administratedListsOnly = useMemo(
+  const isAdmin = useMemo(
     () =>
       authenticatedUser.isSignedIn &&
       pot &&
@@ -69,11 +69,7 @@ export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
     [authenticatedUser.isSignedIn, authenticatedUser.accountId, pot],
   );
 
-  const isAdminOrGreater = useMemo(
-    () => administratedListsOnly || isOwner,
-    [administratedListsOnly, isOwner],
-  );
-
+  const isAdminOrGreater = useMemo(() => isAdmin || isOwner, [isAdmin, isOwner]);
   const isChefOrGreater = useMemo(() => isChef || isAdminOrGreater, [isChef, isAdminOrGreater]);
 
   const isApplicationPeriodOngoing = useMemo(
@@ -111,7 +107,7 @@ export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
     [authenticatedUser.isSignedIn, pot, now],
   );
 
-  const existingChallengeForUser = useMemo(
+  const activeChallenge = useMemo(
     () =>
       payoutsChallenges.find(
         (challenge) => challenge.challenger_id === authenticatedUser.accountId,
@@ -121,14 +117,15 @@ export const usePotBasicUserPermissions = ({ potId }: ByPotId) => {
   );
 
   return {
-    publicRoundOpen,
+    isAdmin,
+    isAdminOrGreater,
+    isChef,
+    isChefOrGreater,
+    isOwner,
     canDonate,
     canFund,
     canApply,
     canChallengePayouts,
-    /**
-     * Is there a existing challenge created by this user/dao?
-     */
-    existingChallengeForUser,
+    activeChallenge,
   };
 };

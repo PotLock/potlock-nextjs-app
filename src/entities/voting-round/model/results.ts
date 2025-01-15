@@ -8,23 +8,14 @@ import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting
 import { ftClient } from "@/common/contracts/tokens/ft";
 import { stringifiedU128ToBigNum } from "@/common/lib";
 
-import type {
-  VoterProfile,
-  VotingMechanismConfig,
-  VotingRoundVoterSummary,
-  VotingRoundWinner,
-} from "../types";
+import type { VoterProfile, VotingMechanismConfig, VotingRoundWinner } from "../types";
+import type { VotingRoundParticipants } from "./types";
 import { getVoteWeight, getVoteWeightAmplifiers } from "../utils/weight";
 
 const VOTING_ROUND_RESULTS_SCHEMA_VERSION = 2;
 
 type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "votes"> & {
   accumulatedWeight: Big;
-};
-
-type VotingRoundParticipants = {
-  voters: Record<AccountId, VotingRoundVoterSummary>;
-  winners: Record<AccountId, VotingRoundWinner>;
 };
 
 interface VotingRoundResultsState {

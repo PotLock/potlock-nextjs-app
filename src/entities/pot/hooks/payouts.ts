@@ -30,7 +30,7 @@ export const usePotPayoutLookup = ({ potId }: PotPayoutLookupParams) => {
   return {
     payoutsError: error,
     payouts: results,
-    isPayoutsPending: isLoading,
+    isPayoutListLoading: isLoading,
     setPayoutSearchTerm: setSearchTerm,
     setPayoutPageNumber: setPageNumber,
     payoutPageNumber: pageNumber,

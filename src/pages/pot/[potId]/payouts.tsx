@@ -44,14 +44,27 @@ export default function PotPayoutsTab() {
   const potLifecycle = usePotLifecycle({ potId });
   const { data: pot } = indexer.usePot({ potId });
 
+  const isFunctionalityAvailable = useMemo(
+    () =>
+      potLifecycle.currentStage?.tag !== PotLifecycleStageTagEnum.Application &&
+      potLifecycle.currentStage?.tag !== PotLifecycleStageTagEnum.Matching,
+
+    [potLifecycle.currentStage?.tag],
+  );
+
   const {
     payouts,
-    isPayoutsPending,
+    isPayoutListLoading,
     setPayoutSearchTerm,
     payoutPageNumber,
     setPayoutPageNumber,
     totalPayoutCount,
   } = usePotPayoutLookup({ potId });
+
+  const isFunctionalityBlocked = useMemo(
+    () => !isPayoutListLoading && !isFunctionalityAvailable,
+    [isFunctionalityAvailable, isPayoutListLoading],
+  );
 
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
   const [showChallenges, setShowChallenges] = useState<boolean>(false);
@@ -113,8 +126,7 @@ export default function PotPayoutsTab() {
 
   const numberOfPages = useMemo(() => Math.ceil(totalPayoutCount / 10), [totalPayoutCount]);
 
-  return potLifecycle.currentStage?.tag === PotLifecycleStageTagEnum.Application ||
-    potLifecycle.currentStage?.tag === PotLifecycleStageTagEnum.Matching ? (
+  return isFunctionalityBlocked ? (
     <div className="h-100 flex w-full flex-col">
       <Alert variant="neutral">
         <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
@@ -227,7 +239,7 @@ export default function PotPayoutsTab() {
                   </div>
                 </div>
 
-                {isPayoutsPending ? (
+                {isPayoutListLoading ? (
                   <PayoutEntriesSkeleton />
                 ) : (
                   <>

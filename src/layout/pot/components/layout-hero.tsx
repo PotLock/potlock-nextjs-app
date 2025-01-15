@@ -16,9 +16,9 @@ import {
   PotDonationStats,
   PotLifecycleStageTagEnum,
   PotTimeline,
-  usePotBasicUserPermissions,
   usePotFeatureFlags,
   usePotLifecycle,
+  usePotUserAuthorization,
 } from "@/entities/pot";
 import { VotingRoundLeaderboard } from "@/entities/voting-round";
 import { DonateToPotProjects } from "@/features/donation";
@@ -52,8 +52,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
     [lifecycle.currentStage?.tag],
   );
 
-  const { canApply, canDonate, canFund, canChallengePayouts, existingChallengeForUser } =
-    usePotBasicUserPermissions({ potId });
+  const { canApply, canDonate, canFund, canChallengePayouts, activeChallenge } =
+    usePotUserAuthorization({ potId });
 
   const referrerPotLink =
     window.location.origin + window.location.pathname + `&referrerId=${accountId}`;
@@ -220,7 +220,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
             {canChallengePayouts && (
               <Button onClick={onChallengePayoutsClick}>
-                {existingChallengeForUser ? "Update challenge" : "Challenge payouts"}
+                {activeChallenge ? "Update challenge" : "Challenge payouts"}
               </Button>
             )}
           </div>
