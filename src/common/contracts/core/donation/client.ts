@@ -38,7 +38,7 @@ export const getDonationsForRecipient = (args: { recipient_id: string }) =>
 /**
  * Get donations for donor id
  */
-export const getDonationsForDonor = (args: { donor_id: string }) =>
+export const get_donations_for_donor = (args: { donor_id: string }) =>
   contractApi.view<typeof args, DirectDonation[]>("get_donations_for_donor", {
     args,
   });

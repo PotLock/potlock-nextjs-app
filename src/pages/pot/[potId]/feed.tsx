@@ -8,7 +8,7 @@ import { walletApi } from "@/common/api/near/client";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { cn } from "@/common/ui/utils";
 import { PostCard, PostEditor } from "@/entities/post";
-import { PotLayout } from "@/layout/pot/components/PotLayout";
+import { PotLayout } from "@/layout/pot/components/layout";
 
 const tabs = [
   { name: "Approved Applicants", value: ApplicationStatus.Approved },

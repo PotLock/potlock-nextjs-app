@@ -39,7 +39,7 @@ const ProfileLists = () => {
 
   const { data } = indexer.useLists({
     account: accountId,
-    ...(administratedListsOnly && { admin: accountId }),
+    ...(administratedListsOnly ? { admin: accountId } : {}),
   });
 
   return (

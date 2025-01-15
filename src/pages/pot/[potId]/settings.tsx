@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 
 import { usePotFeatureFlags } from "@/entities/pot";
 import { PotConfigurationEditor } from "@/features/pot-configuration";
-import { ProportionalFundingConfigurationForm } from "@/features/proportional-funding";
-import { PotLayout } from "@/layout/pot/components/PotLayout";
+import { ProportionalFundingConfigurator } from "@/features/proportional-funding";
+import { PotLayout } from "@/layout/pot/components/layout";
 
 export default function PotSettingsTab() {
   const { query: routeQuery } = useRouter();
@@ -15,7 +15,7 @@ export default function PotSettingsTab() {
   return (
     <div className="flex w-full flex-col items-center gap-8">
       {hasProportionalFundingMechanism ? (
-        <ProportionalFundingConfigurationForm
+        <ProportionalFundingConfigurator
           className="max-w-206"
           footerContent={<PotConfigurationEditor {...{ potId }} />}
           {...{ potId }}

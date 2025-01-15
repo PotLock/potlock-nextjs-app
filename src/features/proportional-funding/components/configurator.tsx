@@ -7,19 +7,21 @@ import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
 import { usePotFeatureFlags } from "@/entities/pot";
 
-import { votingConfigurationSchema } from "../model/schemas";
+import { proportionalFundingConfigurationSchema } from "../model/schemas";
 
-export type ProportionalFundingConfigurationFormProps = ByPotId & {
+export type ProportionalFundingConfiguratorProps = ByPotId & {
   className?: string;
   footerContent?: React.ReactNode;
 };
 
-export const ProportionalFundingConfigurationForm: React.FC<
-  ProportionalFundingConfigurationFormProps
-> = ({ potId, footerContent, className }) => {
+export const ProportionalFundingConfigurator: React.FC<ProportionalFundingConfiguratorProps> = ({
+  potId,
+  footerContent,
+  className,
+}) => {
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
 
-  const form = useForm({ resolver: zodResolver(votingConfigurationSchema) });
+  const form = useForm({ resolver: zodResolver(proportionalFundingConfigurationSchema) });
 
   return (
     <Card className={cn("w-full", className)}>

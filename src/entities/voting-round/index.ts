@@ -16,3 +16,5 @@ export * from "./hooks/results";
 export * from "./hooks/rounds";
 export * from "./hooks/voter-profile";
 export * from "./hooks/vote-weight";
+
+export * from "./model/types";

@@ -11,7 +11,7 @@ import { AuthSignInButton, useSessionReduxStore } from "@/entities/_shared/sessi
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 
-import { UserDropdown } from "./UserDropdown";
+import { UserDropdown } from "./user-dropdown";
 
 const links = [
   { label: "Projects", url: rootPathnames.PROJECTS_LIST, disabled: false },

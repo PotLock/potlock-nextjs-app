@@ -41,7 +41,7 @@ export const PotPayoutChallenges = ({
       // Get Payouts Challenges for pot
       if (potDetail?.account) {
         try {
-          const _payoutsChallenges = await potContractClient.getPayoutsChallenges({
+          const _payoutsChallenges = await potContractClient.get_payouts_challenges({
             potId: potDetail?.account,
           });
 

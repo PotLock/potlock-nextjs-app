@@ -21,7 +21,7 @@ import { TooltipProvider } from "@/common/ui/components";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
 import { SessionProvider } from "@/entities/_shared/session";
-import { AppBar } from "@/layout/components/AppBar";
+import { AppBar } from "@/layout/components/app-bar";
 import { dispatch, store } from "@/store";
 
 const lora = Lora({

@@ -21,22 +21,15 @@ import { validateUserInDao } from "@/entities/dao";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 // Act as DAO handlers
-export const toggleDao = (toggle: boolean) =>
-  dispatch.nav.updateActAsDao({
-    toggle,
-  });
+export const toggleDao = (toggle: boolean) => dispatch.nav.updateDaoAuth({ toggle });
 
 export const markDaoAsDefault = (daoAddress: string) =>
-  dispatch.nav.updateActAsDao({
-    defaultAddress: daoAddress,
-  });
+  dispatch.nav.updateDaoAuth({ defaultAddress: daoAddress });
 
 export const addOrRemoveDaoAddress = (addresses: string[]) =>
-  dispatch.nav.updateActAsDao({
-    addresses,
-  });
+  dispatch.nav.updateDaoAuth({ addresses });
 
-const ActAsDao = () => {
+export const DaoAuth = () => {
   const [inputActive, setInputActive] = useState(false);
   const [daoAddress, setDaoAddress] = useState("");
   const [daoError, setDaoError] = useState("");
@@ -170,5 +163,3 @@ const ActAsDao = () => {
     </DropdownMenuLabel>
   );
 };
-
-export default ActAsDao;
