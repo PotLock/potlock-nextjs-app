@@ -13,7 +13,7 @@ import { PotApplicationModal } from "@/features/pot-application";
 import { ErrorModal } from "@/features/profile-setup/components/ErrorModal";
 import { SuccessModal } from "@/features/profile-setup/components/SuccessModal";
 
-import { PotLayoutHero } from "./PotLayoutHero";
+import { PotLayoutHero } from "./layout-hero";
 import { usePotLayoutTabNavigation } from "../hooks/tab-navigation";
 
 export type PotLayoutProps = {

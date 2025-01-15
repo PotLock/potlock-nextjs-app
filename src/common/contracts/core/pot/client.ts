@@ -140,7 +140,7 @@ export const adminUpdatePayoutsChallenge = (args: {
 /**
  * Admin update round payout Challenge
  */
-export const chefSetPayouts = (args: { potId: string; payouts: Payout[] }) =>
+export const chef_set_payouts = (args: { potId: string; payouts: Payout[] }) =>
   contractApi(args.potId).call<typeof args, Payout[]>("chef_set_payouts", {
     args,
     deposit: "1",
@@ -150,7 +150,7 @@ export const chefSetPayouts = (args: { potId: string; payouts: Payout[] }) =>
 /**
  * Admin process payout
  */
-export const adminProcessPayouts = (args: { potId: string }) =>
+export const admin_process_payouts = (args: { potId: string }) =>
   contractApi(args.potId).call<typeof args, Payout[]>("admin_process_payouts", {
     args,
     deposit: "1",
