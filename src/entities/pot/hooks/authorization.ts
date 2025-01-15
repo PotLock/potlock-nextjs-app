@@ -5,40 +5,45 @@ import { Temporal } from "temporal-polyfill";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Challenge, potContractClient } from "@/common/contracts/core";
-import { useSession } from "@/entities/_shared/session";
+import { isAccountId } from "@/common/lib";
+import type { ByAccountId } from "@/common/types";
 
 /**
  * @deprecated Use {@link Temporal} API instead
  */
 const getDateTime = (date: string) => new Date(date).getTime();
 
-export const usePotUserAuthorization = ({ potId }: ByPotId) => {
+/**
+ * Pot authorization for a specific user.
+ */
+export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAccountId>) => {
   const now = Date.now();
-  const authenticatedUser = useSession();
+  const isValidAccountId = isAccountId(accountId);
   const { data: pot } = indexer.usePot({ potId });
   const { data: potApplications } = indexer.usePotApplications({ potId, page_size: 999 });
 
   // TODO: cover the required endpoints and throw this away
-  const [payoutsChallenges, setPayoutsChallenges] = useState<Challenge[]>([]);
+  const [payoutsChallenges, setPayoutsChallenges] = useState<Challenge[] | null | undefined>(
+    undefined,
+  );
 
   // TODO: cover the required endpoints and throw this away
   useEffect(() => {
-    if (authenticatedUser.isSignedIn) {
+    if (payoutsChallenges === undefined) {
       potContractClient
-        .getPayoutsChallenges({ potId })
+        .get_payouts_challenges({ potId })
         .then(setPayoutsChallenges)
-        .catch(console.error);
+        .catch((error) => {
+          setPayoutsChallenges(null);
+          console.error(error);
+        });
     }
-  }, [authenticatedUser.isSignedIn, pot, potId]);
+  }, [payoutsChallenges, pot, potId]);
 
   const isApplicant = useMemo(
-    () =>
-      authenticatedUser.accountId &&
-      potApplications?.results.find(
-        ({ applicant }) => applicant.id === authenticatedUser.accountId,
-      ),
+    () => accountId && potApplications?.results.find(({ applicant }) => applicant.id === accountId),
 
-    [authenticatedUser.accountId, potApplications],
+    [accountId, potApplications],
   );
 
   const publicRoundOpen = useMemo(
@@ -51,22 +56,22 @@ export const usePotUserAuthorization = ({ potId }: ByPotId) => {
   );
 
   const isOwner = useMemo(
-    () => authenticatedUser.isSignedIn && pot && pot.owner.id === authenticatedUser.accountId,
-    [authenticatedUser.isSignedIn, authenticatedUser.accountId, pot],
+    () => isValidAccountId && pot && pot.owner.id === accountId,
+    [accountId, isValidAccountId, pot],
   );
 
   const isAdmin = useMemo(
     () =>
-      authenticatedUser.isSignedIn &&
+      isValidAccountId &&
       pot &&
-      pot.admins.find(({ id: adminAccountId }) => adminAccountId === authenticatedUser.accountId),
+      pot.admins.find(({ id: adminAccountId }) => adminAccountId === accountId),
 
-    [authenticatedUser.isSignedIn, authenticatedUser.accountId, pot],
+    [accountId, isValidAccountId, pot],
   );
 
   const isChef = useMemo(
-    () => authenticatedUser.isSignedIn && pot && pot.chef.id === authenticatedUser.accountId,
-    [authenticatedUser.isSignedIn, authenticatedUser.accountId, pot],
+    () => isValidAccountId && pot && pot.chef.id === accountId,
+    [accountId, isValidAccountId, pot],
   );
 
   const isAdminOrGreater = useMemo(() => isAdmin || isOwner, [isAdmin, isOwner]);
@@ -79,41 +84,35 @@ export const usePotUserAuthorization = ({ potId }: ByPotId) => {
     [pot, now],
   );
 
-  const canFund = useMemo(() => pot && now < getDateTime(pot.matching_round_end), [pot, now]);
+  const canFund = useMemo(
+    () => isValidAccountId && pot && now < getDateTime(pot.matching_round_end),
+    [isValidAccountId, pot, now],
+  );
 
   const canDonate = useMemo(
-    () => authenticatedUser.isSignedIn && publicRoundOpen,
-    [publicRoundOpen, authenticatedUser.isSignedIn],
+    () => isValidAccountId && publicRoundOpen,
+    [isValidAccountId, publicRoundOpen],
   );
 
   const canApply = useMemo(
-    () =>
-      authenticatedUser.isSignedIn &&
-      isApplicationPeriodOngoing &&
-      !isApplicant &&
-      !isChefOrGreater,
-
-    [isApplicationPeriodOngoing, authenticatedUser.isSignedIn, isApplicant, isChefOrGreater],
+    () => isValidAccountId && isApplicationPeriodOngoing && !isApplicant && !isChefOrGreater,
+    [isValidAccountId, isApplicationPeriodOngoing, isApplicant, isChefOrGreater],
   );
 
   const canChallengePayouts = useMemo(
     () =>
-      authenticatedUser.isSignedIn &&
+      isValidAccountId &&
       pot &&
       (pot.cooldown_end
         ? now > getDateTime(pot.matching_round_end) && now < getDateTime(pot.cooldown_end)
         : false),
 
-    [authenticatedUser.isSignedIn, pot, now],
+    [isValidAccountId, pot, now],
   );
 
   const activeChallenge = useMemo(
-    () =>
-      payoutsChallenges.find(
-        (challenge) => challenge.challenger_id === authenticatedUser.accountId,
-      ),
-
-    [payoutsChallenges, authenticatedUser.accountId],
+    () => payoutsChallenges?.find((challenge) => challenge.challenger_id === accountId),
+    [payoutsChallenges, accountId],
   );
 
   return {

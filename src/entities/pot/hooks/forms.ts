@@ -32,7 +32,7 @@ export const useChallengeForm = ({
       setInProgress(true);
 
       try {
-        await potContractClient.challengePayouts({
+        await potContractClient.challenge_payouts({
           potId: potDetail.account,
           reason: formData.data.message,
         });

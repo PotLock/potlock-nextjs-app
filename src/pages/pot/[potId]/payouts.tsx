@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
 
-import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { useRouter } from "next/router";
 import { MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import { stringifiedU128ToBigNum } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
+  LabeledIcon,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -18,10 +20,14 @@ import {
   PaginationPrevious,
   SearchBar,
   Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@/common/ui/components";
 import ArrowDown from "@/common/ui/svg/ArrowDown";
 import { cn } from "@/common/ui/utils";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
+import { TokenIcon, useToken } from "@/entities/_shared/token";
 import {
   PotLifecycleStageTagEnum,
   PotPayoutChallenges,
@@ -43,6 +49,7 @@ export default function PotPayoutsTab() {
   const { potId } = router.query as { potId: string };
   const potLifecycle = usePotLifecycle({ potId });
   const { data: pot } = indexer.usePot({ potId });
+  const { data: token } = useToken({ tokenId: NATIVE_TOKEN_ID });
 
   const isFunctionalityAvailable = useMemo(
     () =>
@@ -220,23 +227,21 @@ export default function PotPayoutsTab() {
                 onChange={({ target: { value } }) => setPayoutSearchTerm(value)}
               />
 
-              <div className="flex w-full flex-col flex-nowrap items-center overflow-x-auto ">
+              <div className="flex w-full flex-col flex-nowrap items-center overflow-x-auto">
                 <div
                   className={
                     "flex w-full items-center justify-between gap-8 bg-neutral-500 p-2.5 px-4"
                   }
                 >
-                  <div className="justify-left flex w-28 flex-1 flex-row items-center">
-                    <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
-                      PROJECTS
-                    </div>
+                  <div className="inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
+                    <span className="font-600 uppercase leading-none">{"Projects"}</span>
                   </div>
 
-                  <div className="flex flex-row items-center justify-start">
-                    <div className="break-words text-sm font-semibold leading-6 text-[#7B7B7B]">
-                      POOL ALLOCATION
-                    </div>
-                  </div>
+                  <span className="flex h-10 items-center px-4 py-2">
+                    <span className="w-50 font-600 text-end uppercase leading-none">
+                      {"Pool Allocation"}
+                    </span>
+                  </span>
                 </div>
 
                 {isPayoutListLoading ? (
@@ -255,6 +260,11 @@ export default function PotPayoutsTab() {
                       </div>
                     ) : (
                       payouts?.map(({ id, project_id, amount }) => {
+                        const amountBig = stringifiedU128ToBigNum(
+                          amount,
+                          token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+                        );
+
                         return (
                           <div
                             key={id}
@@ -276,17 +286,28 @@ export default function PotPayoutsTab() {
 
                               <AccountHandle
                                 accountId={project_id}
-                                className={cn(
-                                  "font-semibold text-gray-800 no-underline",
-                                  "transition duration-200 hover:text-red-600",
-                                )}
+                                className="font-semibold text-gray-800 hover:text-red-600"
                               />
                             </div>
 
-                            <div className="">
-                              <div className="break-words text-sm font-semibold text-gray-800">
-                                {formatNearAmount(amount, 3)}N
-                              </div>
+                            <div className="inline-flex h-16 items-center overflow-hidden px-4 py-2 pr-0">
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <LabeledIcon
+                                    positioning="icon-text"
+                                    caption={`~ ${amountBig.toFixed(2)}`}
+                                    classNames={{ root: "w-50 justify-end", caption: "font-600" }}
+                                  >
+                                    {token && <TokenIcon size="xs" tokenId={token.tokenId} />}
+                                  </LabeledIcon>
+                                </TooltipTrigger>
+
+                                <TooltipContent>
+                                  <span className="font-600">
+                                    {`${amountBig.toNumber()} ${token?.metadata.symbol}`}
+                                  </span>
+                                </TooltipContent>
+                              </Tooltip>
                             </div>
                           </div>
                         );

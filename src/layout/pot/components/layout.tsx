@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { ChallengeModal, usePotUserAuthorization } from "@/entities/pot";
+import { useSession } from "@/entities/_shared/session";
+import { ChallengeModal, usePotAuthorization } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
 import { PotApplicationModal } from "@/features/pot-application";
@@ -24,8 +25,9 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { query: routeQuery } = useRouter();
   const { potId, ...query } = routeQuery as { potId: string; done?: string; errorMessage?: string };
   const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
+  const authenticatedUser = useSession();
+  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
   const { data: pot } = indexer.usePot({ potId });
-  const { activeChallenge } = usePotUserAuthorization({ potId });
 
   // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
@@ -78,7 +80,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           <ChallengeModal
             potDetail={pot}
             open={challengeModalOpen}
-            previousChallenge={activeChallenge}
+            previousChallenge={authorizedUser.activeChallenge}
             onCloseClick={() => setChallengeModalOpen(false)}
           />
         </>

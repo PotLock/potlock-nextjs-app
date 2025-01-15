@@ -5,7 +5,8 @@ import { MdCheck, MdFileDownload } from "react-icons/md";
 import type { ByPotId } from "@/common/api/indexer";
 import { Button, Skeleton } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
-import { usePotUserAuthorization } from "@/entities/pot";
+import { useSession } from "@/entities/_shared/session";
+import { usePotAuthorization } from "@/entities/pot";
 import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/voting-round";
 
 import { submitPayouts } from "../model/effects";
@@ -16,7 +17,8 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
   potId,
 }) => {
   const { toast } = useToast();
-  const authorizedUser = usePotUserAuthorization({ potId });
+  const authenticatedUser = useSession();
+  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
   const votingRoundResults = useVotingRoundResults({ potId });
 
   const handlePayoutsSubmit = useCallback(() => {

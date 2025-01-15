@@ -18,22 +18,19 @@ import {
 } from "./interfaces";
 
 const contractApi = (potId: string) =>
-  naxiosInstance.contractApi({
-    contractId: potId,
-    cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
-  });
+  naxiosInstance.contractApi({ contractId: potId, cache: new MemoryCache({ expirationTime: 10 }) });
 
 // READ METHODS
 /**
  * Get pot detail(config)
  */
-export const getConfig = (args: { potId: string }) =>
+export const get_config = (args: { potId: string }) =>
   contractApi(args.potId).view<{}, PotConfig>("get_config", { args });
 
 /**
  * Check if round is active
  */
-export const getList = (args: { potId: string }) =>
+export const is_round_active = (args: { potId: string }) =>
   contractApi(args.potId).view<typeof args, boolean>("is_round_active", {
     args,
   });
@@ -41,7 +38,7 @@ export const getList = (args: { potId: string }) =>
 /**
  * Get round funding donations
  */
-export const getMatchingPoolDonations = async (args: {
+export const get_matching_pool_donations = async (args: {
   potId: string;
   from_index?: number;
   limit?: number;
@@ -53,7 +50,7 @@ export const getMatchingPoolDonations = async (args: {
 /**
  * Get round funding donations
  */
-export const getDonationsForDonor = async (args: { potId: string; donor_id: string }) =>
+export const get_donations_for_donor = async (args: { potId: string; donor_id: string }) =>
   contractApi(args.potId).view<typeof args, PotDonation[]>("get_donations_for_donor", {
     args,
   });
@@ -61,7 +58,7 @@ export const getDonationsForDonor = async (args: { potId: string; donor_id: stri
 /**
  * Get round donations for a project id
  */
-export const getDonationsForProject = async (args: { potId: string; project_id: string }) =>
+export const get_donations_for_project = async (args: { potId: string; project_id: string }) =>
   contractApi(args.potId).view<typeof args, PotDonation[]>("get_donations_for_project", {
     args,
   });
@@ -69,7 +66,7 @@ export const getDonationsForProject = async (args: { potId: string; project_id: 
 /**
  * Get application by project id
  */
-export const getApplicationByProjectId = async (args: { potId: string; project_id: string }) =>
+export const get_application_by_project_id = async (args: { potId: string; project_id: string }) =>
   contractApi(args.potId).view<typeof args, Application>("get_application_by_project_id", {
     args,
   });
@@ -77,7 +74,7 @@ export const getApplicationByProjectId = async (args: { potId: string; project_i
 /**
  * Get round approved applications
  */
-export const getApprovedApplications = async (args: { potId: string }) =>
+export const get_approved_applications = async (args: { potId: string }) =>
   contractApi(args.potId).view<typeof args, ApprovedApplication[]>("get_approved_applications", {
     args,
   });
@@ -85,21 +82,21 @@ export const getApprovedApplications = async (args: { potId: string }) =>
 /**
  * Get round applications
  */
-export const getApplications = async (args: { potId: string }) =>
+export const get_applications = async (args: { potId: string }) =>
   contractApi(args.potId).view<typeof args, Application[]>("get_applications", {
     args,
   });
 
 /**
- * Get round payout challanges
+ * Get round payout challenges
  */
-export const getPayoutsChallenges = async (args: { potId: string }) =>
+export const get_payouts_challenges = async (args: { potId: string }) =>
   contractApi(args.potId).view<typeof args, Challenge[]>("get_payouts_challenges");
 
 /**
  * Get round payouts
  */
-export const getPayouts = async (args: { potId: string }) =>
+export const get_payouts = async (args: { potId: string }) =>
   contractApi(args.potId).view<typeof args, Payout[]>("get_payouts", {
     args,
   });
@@ -108,7 +105,7 @@ export const getPayouts = async (args: { potId: string }) =>
 /**
  * Challenge round payout
  */
-export const challengePayouts = ({ potId, reason }: { potId: string; reason: string }) => {
+export const challenge_payouts = ({ potId, reason }: { potId: string; reason: string }) => {
   const args = { reason };
   const deposit = parseNearAmount(calculateDepositByDataSize(args))!;
 
@@ -122,7 +119,7 @@ export const challengePayouts = ({ potId, reason }: { potId: string; reason: str
 /**
  * Admin update round payout Challenge
  */
-export const adminUpdatePayoutsChallenge = (args: {
+export const admin_update_payouts_challenge = (args: {
   potId: string;
   challengerId: string;
   notes: string;
