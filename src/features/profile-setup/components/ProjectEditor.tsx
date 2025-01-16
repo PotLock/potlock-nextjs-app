@@ -7,7 +7,7 @@ import { prop } from "remeda";
 import { Button, FormField } from "@/common/ui/components";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import { useWallet } from "@/entities/_shared/session";
-import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
+// import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
@@ -37,114 +37,126 @@ import { useProjectEditorForm } from "../hooks/forms";
 export const ProjectEditor = () => {
   const router = useRouter();
   const { projectId: projectIdPathParam } = router.query;
+  const { wallet, isWalletReady } = useWallet();
+  // const [editContractIndex, setEditContractIndex] = useState<number>();
+  const [initialNameSet, setInitialNameSet] = useState(false);
+
+  // Local state for modals
+  const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
+  const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
+  const [editFundingIndex, setEditFundingIndex] = useState<number>();
+  const [editContractIndex, setEditContractIndex] = useState<number>();
 
   const projectId =
     typeof projectIdPathParam === "string" ? projectIdPathParam : projectIdPathParam?.at(0);
 
-  const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
-  const { wallet, isWalletReady } = useWallet();
-  const { isAuthenticated } = useSessionReduxStore();
-  const { form, errors, onSubmit } = useProjectEditorForm();
-  const values = form.watch();
+  const {
+    form,
+    values,
+    isSubmitting,
+    onSubmit,
+    updateTeamMembers,
+    updateCategories,
+    updateRepositories,
+    addRepository,
+    resetForm,
+    errors,
+  } = useProjectEditorForm({
+    onSuccess: () => router.push(rootPathnames.PROJECTS_LIST),
+  });
 
-  const isOwner = projectTemplate.isDao
-    ? projectId === projectTemplate.daoAddress
-    : projectId === wallet?.accountId;
-
-  useEffect(() => {
-    // Set initial focus to name input.
-    form.setFocus("name");
-  }, [form]);
-
-  // Set default values by profile
-  useEffect(() => form.reset(projectTemplate), [form, projectTemplate]);
-
-  // Set initial name
-  const [initialNameSet, setInitialNameSet] = useState(false);
-
-  useEffect(() => {
-    if (!initialNameSet && projectTemplate.name) {
-      form.setValue("name", projectTemplate.name);
-      form.trigger(); // re-validate
-      setInitialNameSet(true);
-    }
-  }, [initialNameSet, projectTemplate.name, form]);
-
-  // Store description, public good reason and daoAddress
-  useEffect(() => {
-    if (values.name) {
-      dispatch.projectEditor.setProjectName(values.name);
-    }
-
-    if (values.description) {
-      dispatch.projectEditor.updateDescription(values.description);
-    }
-
-    if (values.publicGoodReason) {
-      dispatch.projectEditor.updatePublicGoodReason(values.publicGoodReason);
-    }
-  }, [values.description, values.publicGoodReason, values.name]);
+  const isOwner = values.isDao ? projectId === values.daoAddress : projectId === wallet?.accountId;
 
   const categoryChangeHandler = useCallback(
-    (categories: string[]) => {
-      dispatch.projectEditor.setCategories(categories);
-      form.setValue("categories", categories);
-      form.trigger(); // re-validate
-    },
-    [form],
+    (categories: string[]) => updateCategories(categories),
+    [updateCategories],
   );
 
   const onMembersChangeHandler = useCallback(
-    (members: string[]) => {
-      form.setValue("teamMembers", members);
-    },
-    [form],
+    (members: string[]) => updateTeamMembers(members),
+    [updateTeamMembers],
   );
 
   const onChangeRepositories = useCallback(
-    (repositories: string[]) => {
-      form.setValue("githubRepositories", repositories);
-      form.trigger(); // re-validate
-    },
-    [form],
+    (repositories: string[]) => updateRepositories(repositories),
+    [updateRepositories],
   );
 
   const resetUrl = useCallback(() => {
     router.push(rootPathnames.CREATE_PROJECT);
-  }, [router]);
+    resetForm();
+  }, [router, resetForm]);
 
-  const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
-  const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
-  const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
-  const [editContractIndex, setEditContractIndex] = useState<number>();
+  const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
+  // const { isAuthenticated } = useSessionReduxStore();
+  // const values = form.watch();
 
-  const projectEditorText = projectTemplate.isEdit
-    ? projectTemplate.isDao
-      ? "Add proposal to update project"
-      : "Update your project"
-    : projectTemplate.isDao
-      ? "Add proposal to create project"
-      : "Create new project";
+  // useEffect(() => {
+  //   // Set initial focus to name input.
+  //   form.setFocus("name");
+  // }, [form]);
 
-  const isRepositoriesValid = projectTemplate.isRepositoryRequired
-    ? projectTemplate.githubRepositories
-      ? projectTemplate.githubRepositories?.length > 0
-      : true
-    : true;
+  // Set default values by profile
+  // useEffect(() => form.reset(projectTemplate), [form, projectTemplate]);
+
+  // Set initial name
+  // const [initialNameSet, setInitialNameSet] = useState(false);
+
+  // useEffect(() => {
+  //   if (!initialNameSet && projectTemplate.name) {
+  //     form.setValue("name", projectTemplate.name);
+  //     form.trigger(); // re-validate
+  //     setInitialNameSet(true);
+  //   }
+  // }, [initialNameSet, projectTemplate.name, form]);
+
+  // // Store description, public good reason and daoAddress
+  // useEffect(() => {
+  //   if (values.name) {
+  //     dispatch.projectEditor.setProjectName(values.name);
+  //   }
+
+  //   if (values.description) {
+  //     dispatch.projectEditor.updateDescription(values.description);
+  //   }
+
+  //   if (values.publicGoodReason) {
+  //     dispatch.projectEditor.updatePublicGoodReason(values.publicGoodReason);
+  //   }
+  // }, [values.description, values.publicGoodReason, values.name]);
+
+  // const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
+  // const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
+  // const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
+  // const [editContractIndex, setEditContractIndex] = useState<number>();
+
+  const getProjectEditorText = () => {
+    if (projectTemplate.isEdit) {
+      return projectTemplate.isDao ? "Add proposal to update project" : "Update your project";
+    }
+
+    return projectTemplate.isDao ? "Add proposal to create project" : "Create new project";
+  };
+
+  const projectEditorText = getProjectEditorText();
+
+  const isRepositoriesValid =
+    !projectTemplate.isRepositoryRequired ||
+    (projectTemplate.githubRepositories && projectTemplate.githubRepositories.length > 0);
 
   // Wait for wallet
-  if (!isWalletReady) {
+  if (!isWalletReady || !wallet) {
     return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
-  if (isAuthenticated && projectTemplate.checkPreviousProjectDataStatus !== "ready") {
-    return <InfoSegment title="Checking account." description="Please, wait..." />;
-  }
+  // if (isAuthenticated && projectTemplate.checkPreviousProjectDataStatus !== "ready") {
+  //   return <InfoSegment title="Checking account." description="Please, wait..." />;
+  // }
 
-  // must be signed in
-  if (!isAuthenticated) {
-    return <InfoSegment title="Not logged in!" description="You must log in first!" />;
-  }
+  // // must be signed in
+  // if (!isAuthenticated) {
+  //   return <InfoSegment title="Not logged in!" description="You must log in first!" />;
+  // }
 
   // If it is Edit & not the owner
   if (!isOwner && projectTemplate.isEdit) {
@@ -189,6 +201,8 @@ export const ProjectEditor = () => {
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SubHeader title="Upload banner and profile Image" required />
         <Profile />
+
+        {/* Team Member Section */}
         <LowerBannerContainer>
           <LowerBannerContainerLeft>
             <Button
@@ -196,7 +210,7 @@ export const ProjectEditor = () => {
               className="font-600"
               onClick={() => setAddTeamModalOpen(true)}
             >
-              {projectTemplate.teamMembers.length > 0
+              {(values?.teamMembers?.length ?? 0 > 0)
                 ? "Add or remove team members"
                 : "Add team members"}
             </Button>
@@ -204,11 +218,10 @@ export const ProjectEditor = () => {
           <AccountStack />
         </LowerBannerContainer>
 
+        {/* MOdals */}
         <AddTeamMembersModal
           open={addTeamModalOpen}
-          onCloseClick={() => {
-            setAddTeamModalOpen(false);
-          }}
+          onCloseClick={() => setAddTeamModalOpen(false)}
           onMembersChange={onMembersChangeHandler}
         />
 
