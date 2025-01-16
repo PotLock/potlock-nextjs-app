@@ -11,7 +11,7 @@ import { useToken } from "@/entities/_shared/token";
 import { usePotAuthorization } from "@/entities/pot";
 import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/voting-round";
 
-import { submitPayouts } from "../model/effects";
+import { initiatePayoutProcessing, submitPayouts } from "../model/effects";
 
 export type ProportionalFundingPayoutManagerProps = ByPotId & {
   onSubmitSuccess: VoidFunction;
@@ -45,20 +45,41 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
           onSubmitSuccess();
         })
         .catch((error) => {
+          console.error(error);
+
           toast({
             variant: "destructive",
             title: "Failed to submit payouts",
             description: error.message,
           });
-
-          console.error(error);
         });
     }
   }, [onSubmitSuccess, potId, toast, token, votingRoundResults.data]);
 
+  const onInitiatePayoutProcessingClick = useCallback(() => {
+    initiatePayoutProcessing({ potId })
+      .then((_payouts) => {
+        toast({
+          title: "Payout processing has been successfully initiated",
+        });
+
+        // TODO: ( non-critical ) Use a separate callback prop for onPayoutsInitiated
+        onSubmitSuccess();
+      })
+      .catch((error) => {
+        console.log(error);
+
+        toast({
+          variant: "destructive",
+          title: "Failed to initiate payout processing",
+          description: error.message,
+        });
+      });
+  }, [onSubmitSuccess, potId, toast]);
+
   return (
     <div className="flex w-full flex-col gap-8">
-      <div className="flex w-full justify-end gap-6">
+      <div className="flex w-full flex-wrap justify-end gap-6">
         {votingRoundResults.handleWinnersCsvDownload === undefined ? (
           <Skeleton className="w-45 h-10" />
         ) : (
@@ -78,24 +99,17 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
             ) : (
               <Button variant="brand-filled" onClick={handlePayoutsSubmit}>
                 <MdCheck className="h-4.5 w-4.5" />
-
-                <span className="font-500 hidden whitespace-nowrap text-sm md:inline-flex">
-                  {"Submit Payouts"}
-                </span>
+                <span className="font-500 whitespace-nowrap text-sm">{"Submit Payouts"}</span>
               </Button>
             )}
           </>
         )}
 
         {authorizedUser.canInitiatePayoutProcessing && (
-          <>
-            {votingRoundResults.isLoading ? (
-              <Skeleton className="w-45 h-10" />
-            ) : (
-              // TODO: WIP
-              <Button>{"Initiate Payout Processing"}</Button>
-            )}
-          </>
+          <Button onClick={onInitiatePayoutProcessingClick}>
+            <MdCheck className="h-4.5 w-4.5" />
+            <span className="font-500 whitespace-nowrap text-sm">{"Initiate Payouts"}</span>
+          </Button>
         )}
       </div>
 
