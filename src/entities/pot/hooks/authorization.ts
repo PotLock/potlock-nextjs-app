@@ -47,7 +47,7 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   );
 
   const isOwner = useMemo(
-    () => IS_UNDER_INSPECTION || (isValidAccountId && potConfig && accountId && potConfig.owner),
+    () => IS_UNDER_INSPECTION || (isValidAccountId && potConfig && accountId === potConfig.owner),
     [accountId, isValidAccountId, potConfig],
   );
 
