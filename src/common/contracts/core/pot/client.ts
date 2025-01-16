@@ -10,6 +10,7 @@ import {
   ApprovedApplication,
   Challenge,
   Payout,
+  type PayoutInput,
   PotBatchDonationItem,
   PotConfig,
   PotDonation,
@@ -137,7 +138,7 @@ export const admin_update_payouts_challenge = (args: {
 /**
  * Admin update round payout Challenge
  */
-export const chef_set_payouts = (args: { potId: string; payouts: Payout[] }) =>
+export const chef_set_payouts = (args: { potId: string; payouts: PayoutInput[] }) =>
   contractApi(args.potId).call<typeof args, Payout[]>("chef_set_payouts", {
     args,
     deposit: "1",

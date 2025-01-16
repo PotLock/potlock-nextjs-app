@@ -1,118 +1,111 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Temporal } from "temporal-polyfill";
-
-import { ByPotId, indexer } from "@/common/api/indexer";
-import { Challenge, potContractClient } from "@/common/contracts/core";
+import { ByPotId } from "@/common/api/indexer";
+import { potContractHooks } from "@/common/contracts/core";
 import { isAccountId } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 
-/**
- * @deprecated Use {@link Temporal} API instead
- */
-const getDateTime = (date: string) => new Date(date).getTime();
-
-// TODO: Apply performance optimizations
 /**
  * Pot authorization for a specific user.
  */
 export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAccountId>) => {
   const now = Date.now();
-  const isValidAccountId = isAccountId(accountId);
-  const { data: pot } = indexer.usePot({ potId });
-  const { data: potApplications } = indexer.usePotApplications({ potId, page_size: 999 });
+  const isValidAccountId = useMemo(() => isAccountId(accountId), [accountId]);
+  const { data: potConfig } = potContractHooks.useConfig({ potId });
+  const { data: potPayouts } = potContractHooks.usePayouts({ potId });
+  const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
+  const { data: potApplications } = potContractHooks.useApplications({ potId });
 
-  const [payoutsChallenges, setPayoutsChallenges] = useState<Challenge[] | null | undefined>(
-    undefined,
+  const isApplicationPeriodOngoing = useMemo(
+    () => potConfig && now >= potConfig.application_start_ms && now < potConfig.application_end_ms,
+    [potConfig, now],
   );
 
-  // TODO: create and use a wrapper hook instead
-  useEffect(() => {
-    if (payoutsChallenges === undefined) {
-      potContractClient
-        .get_payouts_challenges({ potId })
-        .then(setPayoutsChallenges)
-        .catch((error) => {
-          setPayoutsChallenges(null);
-          console.error(error);
-        });
-    }
-  }, [payoutsChallenges, pot, potId]);
+  const isPublicRoundOngoing = useMemo(
+    () =>
+      potConfig && now >= potConfig.public_round_start_ms && now < potConfig.public_round_end_ms,
+
+    [potConfig, now],
+  );
+
+  // TODO: Clarify how to handle the case with absent `cooldown_end_ms`
+  const isCooldownPeriodOngoing = useMemo(
+    () =>
+      potConfig &&
+      (potConfig.cooldown_end_ms
+        ? now > potConfig.public_round_end_ms && now < potConfig.cooldown_end_ms
+        : now > potConfig.public_round_end_ms && !potConfig.all_paid_out),
+
+    [now, potConfig],
+  );
+
+  const isSubmittedPayoutListEmpty = potPayouts?.length === 0;
 
   const isApplicant = useMemo(
-    () => accountId && potApplications?.results.find(({ applicant }) => applicant.id === accountId),
-
-    [accountId, potApplications],
-  );
-
-  const publicRoundOpen = useMemo(
-    () =>
-      pot &&
-      now >= getDateTime(pot.matching_round_start) &&
-      now < getDateTime(pot.matching_round_end),
-
-    [pot, now],
+    () => isValidAccountId && potApplications?.find(({ project_id }) => project_id === accountId),
+    [accountId, isValidAccountId, potApplications],
   );
 
   const isOwner = useMemo(
-    () => isValidAccountId && pot && pot.owner.id === accountId,
-    [accountId, isValidAccountId, pot],
+    () => isValidAccountId && potConfig && accountId && potConfig.owner,
+    [accountId, isValidAccountId, potConfig],
   );
 
   const isAdmin = useMemo(
     () =>
       isValidAccountId &&
-      pot &&
-      pot.admins.find(({ id: adminAccountId }) => adminAccountId === accountId),
+      potConfig &&
+      potConfig.admins.find((adminAccountId) => accountId === adminAccountId),
 
-    [accountId, isValidAccountId, pot],
+    [accountId, isValidAccountId, potConfig],
   );
 
   const isChef = useMemo(
-    () => isValidAccountId && pot && pot.chef.id === accountId,
-    [accountId, isValidAccountId, pot],
+    () => isValidAccountId && potConfig && accountId === potConfig.chef,
+    [accountId, isValidAccountId, potConfig],
   );
 
   const isAdminOrGreater = useMemo(() => isAdmin || isOwner, [isAdmin, isOwner]);
-  const isChefOrGreater = useMemo(() => isChef || isAdminOrGreater, [isChef, isAdminOrGreater]);
+  // TODO!: UNCOMMENT BEFORE FINAL RELEASE!
+  // const isChefOrGreater = useMemo(() => isChef || isAdminOrGreater, [isChef, isAdminOrGreater]);
 
-  const isApplicationPeriodOngoing = useMemo(
-    () =>
-      pot && now >= getDateTime(pot.application_start) && now < getDateTime(pot.application_end),
+  // TODO!: REMOVE BEFORE FINAL RELEASE!
+  const isChefOrGreater = true;
 
-    [pot, now],
-  );
-
-  const canFund = useMemo(
-    () => isValidAccountId && pot && now < getDateTime(pot.matching_round_end),
-    [isValidAccountId, pot, now],
+  const canFundMatchingPool = useMemo(
+    () => isValidAccountId && potConfig && now < potConfig.public_round_end_ms,
+    [isValidAccountId, potConfig, now],
   );
 
   const canDonate = useMemo(
-    () => isValidAccountId && publicRoundOpen,
-    [isValidAccountId, publicRoundOpen],
+    () => isValidAccountId && isPublicRoundOngoing,
+    [isValidAccountId, isPublicRoundOngoing],
   );
 
   const canApply = useMemo(
-    () => isValidAccountId && isApplicationPeriodOngoing && !isApplicant && !isChefOrGreater,
+    () => isApplicationPeriodOngoing && isValidAccountId && !isApplicant && !isChefOrGreater,
     [isValidAccountId, isApplicationPeriodOngoing, isApplicant, isChefOrGreater],
   );
 
-  const canChallengePayouts = useMemo(
-    () =>
-      isValidAccountId &&
-      pot &&
-      (pot.cooldown_end
-        ? now > getDateTime(pot.matching_round_end) && now < getDateTime(pot.cooldown_end)
-        : false),
+  const canSubmitPayouts = useMemo(
+    () => isChefOrGreater && isCooldownPeriodOngoing && isSubmittedPayoutListEmpty,
+    [isChefOrGreater, isSubmittedPayoutListEmpty, isCooldownPeriodOngoing],
+  );
 
-    [isValidAccountId, pot, now],
+  // TODO: Include consideration of payout challenges
+  const canInitiatePayoutProcessing = useMemo(
+    () => isAdminOrGreater && isCooldownPeriodOngoing && potConfig?.all_paid_out,
+    [isAdminOrGreater, isCooldownPeriodOngoing, potConfig],
+  );
+
+  const canChallengePayouts = useMemo(
+    () => isValidAccountId && potConfig && isCooldownPeriodOngoing && !isSubmittedPayoutListEmpty,
+    [isValidAccountId, potConfig, isCooldownPeriodOngoing, isSubmittedPayoutListEmpty],
   );
 
   const activeChallenge = useMemo(
-    () => payoutsChallenges?.find((challenge) => challenge.challenger_id === accountId),
-    [payoutsChallenges, accountId],
+    () => potPayoutChallenges?.find((challenge) => challenge.challenger_id === accountId),
+    [potPayoutChallenges, accountId],
   );
 
   return {
@@ -121,10 +114,13 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
     isChef,
     isChefOrGreater,
     isOwner,
-    canDonate,
-    canFund,
     canApply,
     canChallengePayouts,
+    canDonate,
+    canFundMatchingPool,
+    canInitiatePayoutProcessing,
+    canSubmitPayouts,
+    // TODO: Move elsewhere as it's out of the scope of this hook
     activeChallenge,
   };
 };

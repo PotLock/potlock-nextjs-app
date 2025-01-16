@@ -212,7 +212,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
               <>{authorizedUser.canDonate && <DonateToPotProjects {...{ potId }} />}</>
             )}
 
-            {authorizedUser.canFund && (
+            {authorizedUser.canFundMatchingPool && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>
                 {"Fund matching pool"}
               </Button>

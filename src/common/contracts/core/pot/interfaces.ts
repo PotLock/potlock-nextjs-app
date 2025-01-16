@@ -1,4 +1,4 @@
-import { AccountId, ProviderId, TokenId } from "@/common/types";
+import { AccountId, ProviderId, TokenId, type U128String } from "@/common/types";
 
 export enum ApplicationStatus {
   Pending = "Pending",
@@ -25,12 +25,17 @@ export type ApprovedApplication = Omit<Application, "status"> & {
   status: ApplicationStatus.Approved;
 };
 
-export interface Payout {
+export type PayoutInput = {
+  amount: U128String;
+  project_id: AccountId;
+};
+
+export type Payout = {
   id: string;
   project_id: string;
   amount: string;
   paid_at: number;
-}
+};
 
 export interface PayoutDetailed extends Payout {
   totalAmount: string;

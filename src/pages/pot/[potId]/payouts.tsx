@@ -60,11 +60,12 @@ export default function PotPayoutsTab() {
   );
 
   const {
-    payouts,
     isPayoutListLoading,
     setPayoutSearchTerm,
-    payoutPageNumber,
     setPayoutPageNumber,
+    payouts,
+    refetchPayouts,
+    payoutPageNumber,
     totalPayoutCount,
   } = usePotPayoutLookup({ potId });
 
@@ -219,7 +220,7 @@ export default function PotPayoutsTab() {
           )}
 
           {(payouts?.length ?? 0) === 0 ? (
-            <PotPayoutManager {...{ potId }} />
+            <PotPayoutManager onSubmitSuccess={refetchPayouts} {...{ potId }} />
           ) : (
             <>
               <SearchBar
@@ -259,7 +260,7 @@ export default function PotPayoutsTab() {
                         {"No payouts to display"}
                       </div>
                     ) : (
-                      payouts?.map(({ id, project_id, amount }) => {
+                      payouts?.map(({ id, recipient: { id: project_id }, amount }) => {
                         const amountBig = stringifiedU128ToBigNum(
                           amount,
                           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
