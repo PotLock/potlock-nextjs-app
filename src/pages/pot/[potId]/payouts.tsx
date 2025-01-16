@@ -5,7 +5,7 @@ import { MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
-import { stringifiedU128ToBigNum } from "@/common/lib";
+import { indivisibleUnitsToBigNum } from "@/common/lib";
 import {
   Alert,
   AlertDescription,
@@ -261,7 +261,7 @@ export default function PotPayoutsTab() {
                       </div>
                     ) : (
                       payouts?.map(({ id, recipient: { id: project_id }, amount }) => {
-                        const amountBig = stringifiedU128ToBigNum(
+                        const amountBig = indivisibleUnitsToBigNum(
                           amount,
                           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
                         );

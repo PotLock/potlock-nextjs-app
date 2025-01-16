@@ -2,24 +2,24 @@ import { Big } from "big.js";
 import { formatNearAmount, parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { NATIVE_TOKEN_DECIMALS } from "../constants";
-import { U128String } from "../types";
+import { IndivisibleUnits } from "../types";
 
 export { formatNearAmount, parseNearAmount };
 
-export const stringifiedU128ToBigNum = (amount: U128String, decimals: number) =>
+export const indivisibleUnitsToBigNum = (amount: IndivisibleUnits, decimals: number) =>
   Big(amount).div(Big(10).pow(decimals));
 
-export const stringifiedU128ToFloat = (amount: U128String, decimals: number) =>
-  parseFloat(stringifiedU128ToBigNum(amount, decimals).toFixed(2));
+export const indivisibleUnitsToFloat = (amount: IndivisibleUnits, decimals: number) =>
+  parseFloat(indivisibleUnitsToBigNum(amount, decimals).toFixed(2));
 
-export const floatToBigNum = (amount: number, decimals: number) =>
-  Big(amount).mul(Big(10).pow(decimals));
+export const floatToIndivisible = (amountFloat: number, decimals: number) =>
+  Big(amountFloat).mul(Big(10).pow(decimals)).toFixed().toString();
 
-export const floatToStringifiedU128 = (amount: number, decimals: number) =>
-  floatToBigNum(amount, decimals).toString();
+export const yoctoNearToFloat = (amountYoctoNear: IndivisibleUnits) =>
+  indivisibleUnitsToFloat(amountYoctoNear, NATIVE_TOKEN_DECIMALS);
 
-export const yoctoNearToFloat = (amountYoctoNear: U128String) =>
-  stringifiedU128ToFloat(amountYoctoNear, NATIVE_TOKEN_DECIMALS);
+const floatToBigNum = (amountFloat: number, decimals: number) =>
+  Big(amountFloat).mul(Big(10).pow(decimals));
 
-export const floatToYoctoNear = (amountFloat: number): U128String =>
+export const floatToYoctoNear = (amountFloat: number): IndivisibleUnits =>
   floatToBigNum(amountFloat, NATIVE_TOKEN_DECIMALS).toFixed().toString();

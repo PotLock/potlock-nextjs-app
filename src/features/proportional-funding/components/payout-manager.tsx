@@ -3,7 +3,6 @@ import { useCallback } from "react";
 import { MdCheck, MdFileDownload } from "react-icons/md";
 
 import type { ByPotId } from "@/common/api/indexer";
-import { usePot } from "@/common/api/indexer/hooks";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Skeleton } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
@@ -25,7 +24,6 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
   const { toast } = useToast();
   const authenticatedUser = useSession();
   const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
-  const { isLoading: isPotLoading, data: pot } = usePot({ potId });
   const votingRoundResults = useVotingRoundResults({ potId });
 
   const { isMetadataLoading: isTokenMetadataLoading, data: token } = useToken({

@@ -5,7 +5,7 @@ import { values } from "remeda";
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { type ElectionId, votingContractHooks } from "@/common/contracts/core/voting";
-import { stringifiedU128ToBigNum } from "@/common/lib";
+import { indivisibleUnitsToBigNum } from "@/common/lib";
 import type { ConditionalActivation } from "@/common/types";
 import { usePotFeatureFlags } from "@/entities/pot";
 
@@ -60,7 +60,7 @@ export const useVotingRoundResults = ({
         votes,
         voters: voters.results,
 
-        matchingPoolBalance: stringifiedU128ToBigNum(
+        matchingPoolBalance: indivisibleUnitsToBigNum(
           pot.matching_pool_balance,
           NATIVE_TOKEN_DECIMALS,
         ),

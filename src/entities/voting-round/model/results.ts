@@ -6,7 +6,7 @@ import { persist } from "zustand/middleware";
 import { type MpdaoVoterItem } from "@/common/api/indexer";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
 import { ftClient } from "@/common/contracts/tokens/ft";
-import { stringifiedU128ToBigNum } from "@/common/lib";
+import { indivisibleUnitsToBigNum } from "@/common/lib";
 
 import type { VoterProfile, VotingMechanismConfig, VotingRoundWinner } from "../types";
 import type { VotingRoundParticipants } from "./types";
@@ -60,7 +60,7 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
                 ) ?? Big(0);
 
               const stakingTokenBalance = voter_data.staking_token_balance
-                ? stringifiedU128ToBigNum(
+                ? indivisibleUnitsToBigNum(
                     voter_data.staking_token_balance,
                     stakingTokenMetadata?.decimals ?? 0,
                   )

@@ -1,5 +1,5 @@
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
-import { stringifiedU128ToFloat } from "@/common/lib";
+import { indivisibleUnitsToFloat } from "@/common/lib";
 import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -24,7 +24,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
   const amount =
     "amountFloat" in props
       ? props.amountFloat
-      : stringifiedU128ToFloat(
+      : indivisibleUnitsToFloat(
           props.amountBigString,
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         );

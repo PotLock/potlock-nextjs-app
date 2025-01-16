@@ -1,4 +1,4 @@
-import { AccountId, ProviderId, TokenId, type U128String } from "@/common/types";
+import { AccountId, type IndivisibleUnits, ProviderId, TokenId } from "@/common/types";
 
 export enum ApplicationStatus {
   Pending = "Pending",
@@ -26,7 +26,7 @@ export type ApprovedApplication = Omit<Application, "status"> & {
 };
 
 export type PayoutInput = {
-  amount: U128String;
+  amount: IndivisibleUnits;
   project_id: AccountId;
 };
 
