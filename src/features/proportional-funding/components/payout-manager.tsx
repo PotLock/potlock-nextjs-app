@@ -86,6 +86,17 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
             )}
           </>
         )}
+
+        {authorizedUser.canInitiatePayoutProcessing && (
+          <>
+            {votingRoundResults.isLoading ? (
+              <Skeleton className="w-45 h-10" />
+            ) : (
+              // TODO: WIP
+              <Button>{"Initiate Payout Processing"}</Button>
+            )}
+          </>
+        )}
       </div>
 
       {votingRoundResults.isLoading ? (
