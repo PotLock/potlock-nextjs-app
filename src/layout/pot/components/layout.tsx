@@ -25,8 +25,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { query: routeQuery } = useRouter();
   const { potId, ...query } = routeQuery as { potId: string; done?: string; errorMessage?: string };
   const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
-  const authenticatedUser = useSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
   const { data: pot } = indexer.usePot({ potId });
 
   // Modals
@@ -80,8 +78,8 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           <ChallengeModal
             potDetail={pot}
             open={challengeModalOpen}
-            previousChallenge={authorizedUser.activeChallenge}
             onCloseClick={() => setChallengeModalOpen(false)}
+            {...{ potId }}
           />
         </>
       )}

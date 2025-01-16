@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { potContractHooks } from "@/common/contracts/core";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
@@ -39,8 +40,20 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   const authenticatedUser = useSession();
   const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
   const { data: pot } = indexer.usePot({ potId });
+  const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
   const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
+
+  const activeChallenge = useMemo(
+    () =>
+      authenticatedUser.isSignedIn
+        ? (potPayoutChallenges ?? []).find(
+            ({ challenger_id }) => authenticatedUser.accountId === challenger_id,
+          )
+        : undefined,
+
+    [authenticatedUser.isSignedIn, authenticatedUser.accountId, potPayoutChallenges],
+  );
 
   const applicationClearance = usePotApplicationUserClearance({
     potId,
@@ -220,7 +233,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
             {authorizedUser.canChallengePayouts && (
               <Button onClick={onChallengePayoutsClick}>
-                {authorizedUser.activeChallenge ? "Update challenge" : "Challenge payouts"}
+                {activeChallenge === undefined ? "Challenge payouts" : "Update challenge"}
               </Button>
             )}
           </div>

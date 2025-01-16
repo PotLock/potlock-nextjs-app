@@ -29,13 +29,12 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
     [potConfig, now],
   );
 
-  // TODO: Needs to be reconsidered
   const isCooldownPeriodOngoing = useMemo(
     () =>
       potConfig &&
       (potConfig.cooldown_end_ms
         ? now > potConfig.public_round_end_ms && now < potConfig.cooldown_end_ms
-        : now > potConfig.public_round_end_ms && !potConfig.all_paid_out),
+        : false),
 
     [now, potConfig],
   );
@@ -86,24 +85,35 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   );
 
   const canSubmitPayouts = useMemo(
-    () => isChefOrGreater && isCooldownPeriodOngoing && isSubmittedPayoutListEmpty,
-    [isChefOrGreater, isSubmittedPayoutListEmpty, isCooldownPeriodOngoing],
+    () =>
+      isChefOrGreater &&
+      isSubmittedPayoutListEmpty &&
+      potConfig &&
+      potConfig.public_round_end_ms < now,
+
+    [isChefOrGreater, isSubmittedPayoutListEmpty, now, potConfig],
   );
 
-  // TODO: Include consideration of payout challenges
+  // TODO: Make sure all payout challenges are resolved
   const canInitiatePayoutProcessing = useMemo(
-    () => isAdminOrGreater && isCooldownPeriodOngoing && potConfig?.all_paid_out,
-    [isAdminOrGreater, isCooldownPeriodOngoing, potConfig],
+    () =>
+      isAdminOrGreater &&
+      !isSubmittedPayoutListEmpty &&
+      (potConfig?.cooldown_end_ms === undefined ? true : !isCooldownPeriodOngoing) &&
+      !potConfig?.all_paid_out,
+
+    [
+      isAdminOrGreater,
+      isCooldownPeriodOngoing,
+      isSubmittedPayoutListEmpty,
+      potConfig?.all_paid_out,
+      potConfig?.cooldown_end_ms,
+    ],
   );
 
   const canChallengePayouts = useMemo(
-    () => isValidAccountId && potConfig && isCooldownPeriodOngoing && !isSubmittedPayoutListEmpty,
-    [isValidAccountId, potConfig, isCooldownPeriodOngoing, isSubmittedPayoutListEmpty],
-  );
-
-  const activeChallenge = useMemo(
-    () => potPayoutChallenges?.find((challenge) => challenge.challenger_id === accountId),
-    [potPayoutChallenges, accountId],
+    () => isValidAccountId && isCooldownPeriodOngoing && !isSubmittedPayoutListEmpty,
+    [isValidAccountId, isCooldownPeriodOngoing, isSubmittedPayoutListEmpty],
   );
 
   return {
@@ -118,7 +128,5 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
     canFundMatchingPool,
     canInitiatePayoutProcessing,
     canSubmitPayouts,
-    // TODO: Move elsewhere as it's out of the scope of this hook
-    activeChallenge,
   };
 };
