@@ -6,14 +6,15 @@ import { useRouter } from "next/router";
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { ChallengeModal, usePotBasicUserPermissions } from "@/entities/pot";
+import { useSession } from "@/entities/_shared/session";
+import { ChallengeModal, usePotAuthorization } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
 import { PotApplicationModal } from "@/features/pot-application";
 import { ErrorModal } from "@/features/profile-setup/components/ErrorModal";
 import { SuccessModal } from "@/features/profile-setup/components/SuccessModal";
 
-import { PotLayoutHero } from "./PotLayoutHero";
+import { PotLayoutHero } from "./layout-hero";
 import { usePotLayoutTabNavigation } from "../hooks/tab-navigation";
 
 export type PotLayoutProps = {
@@ -25,7 +26,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const { potId, ...query } = routeQuery as { potId: string; done?: string; errorMessage?: string };
   const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
   const { data: pot } = indexer.usePot({ potId });
-  const { existingChallengeForUser } = usePotBasicUserPermissions({ potId });
 
   // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
@@ -78,8 +78,8 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           <ChallengeModal
             potDetail={pot}
             open={challengeModalOpen}
-            previousChallenge={existingChallengeForUser}
             onCloseClick={() => setChallengeModalOpen(false)}
+            {...{ potId }}
           />
         </>
       )}

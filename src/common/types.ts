@@ -69,7 +69,7 @@ export type { infer as FromSchema } from "zod";
 
 export type UnionFromStringList<ListOfMembers extends string[]> = ListOfMembers[number];
 
-export type U128String = string;
+export type IndivisibleUnits = string;
 
 export type ClientConfig = { swr?: SWRConfiguration };
 

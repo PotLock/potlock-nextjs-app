@@ -12,7 +12,7 @@ import {
   PLATFORM_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
-import { stringifiedU128ToFloat, truncate } from "@/common/lib";
+import { indivisibleUnitsToFloat, truncate } from "@/common/lib";
 import {
   Button,
   ClipboardCopyButton,
@@ -69,17 +69,17 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
 
   const isLoading = isResultLoading || recipient === undefined || token === undefined;
 
-  const totalAmountFloat = stringifiedU128ToFloat(
+  const totalAmountFloat = indivisibleUnitsToFloat(
     finalOutcome?.total_amount ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const protocolFeeAmountFloat = stringifiedU128ToFloat(
+  const protocolFeeAmountFloat = indivisibleUnitsToFloat(
     finalOutcome?.protocol_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const referralFeeFinalAmountFloat = stringifiedU128ToFloat(
+  const referralFeeFinalAmountFloat = indivisibleUnitsToFloat(
     finalOutcome?.referrer_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );

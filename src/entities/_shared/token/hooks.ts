@@ -8,7 +8,7 @@ import { nearHooks } from "@/common/api/near";
 import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_IDS } from "@/common/constants";
 import { refExchangeHooks } from "@/common/contracts/ref-finance";
 import { ftHooks } from "@/common/contracts/tokens";
-import { isAccountId, stringifiedU128ToBigNum, stringifiedU128ToFloat } from "@/common/lib";
+import { indivisibleUnitsToBigNum, indivisibleUnitsToFloat, isAccountId } from "@/common/lib";
 import { formatWithCommas } from "@/common/lib/formatWithCommas";
 import type { AccountId, ByTokenId, ConditionalActivation } from "@/common/types";
 
@@ -141,11 +141,11 @@ export const useToken = ({
               usdPrice: oneTokenUsdPrice ? Big(oneTokenUsdPrice) : undefined,
 
               balance: accountSummary?.amount
-                ? stringifiedU128ToBigNum(accountSummary.amount, ntMetadata.decimals)
+                ? indivisibleUnitsToBigNum(accountSummary.amount, ntMetadata.decimals)
                 : undefined,
 
               balanceFloat: accountSummary?.amount
-                ? stringifiedU128ToFloat(accountSummary.amount, ntMetadata.decimals)
+                ? indivisibleUnitsToFloat(accountSummary.amount, ntMetadata.decimals)
                 : undefined,
 
               balanceUsd:
@@ -168,11 +168,11 @@ export const useToken = ({
               usdPrice: oneFtUsdPrice ? Big(oneFtUsdPrice) : undefined,
 
               balance: ftBalance
-                ? stringifiedU128ToBigNum(ftBalance, ftMetadata.decimals)
+                ? indivisibleUnitsToBigNum(ftBalance, ftMetadata.decimals)
                 : undefined,
 
               balanceFloat: ftBalance
-                ? stringifiedU128ToFloat(ftBalance, ftMetadata.decimals)
+                ? indivisibleUnitsToFloat(ftBalance, ftMetadata.decimals)
                 : undefined,
 
               balanceUsd:

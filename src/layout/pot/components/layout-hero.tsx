@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { potContractHooks } from "@/common/contracts/core";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
@@ -16,7 +17,7 @@ import {
   PotDonationStats,
   PotLifecycleStageTagEnum,
   PotTimeline,
-  usePotBasicUserPermissions,
+  usePotAuthorization,
   usePotFeatureFlags,
   usePotLifecycle,
 } from "@/entities/pot";
@@ -36,27 +37,39 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onChallengePayoutsClick,
   onFundMatchingPoolClick,
 }) => {
+  const authenticatedUser = useSession();
+  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
   const { data: pot } = indexer.usePot({ potId });
+  const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
-  const { isSignedIn, accountId } = useSession();
+  const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
+
+  const activeChallenge = useMemo(
+    () =>
+      authenticatedUser.isSignedIn
+        ? (potPayoutChallenges ?? []).find(
+            ({ challenger_id }) => authenticatedUser.accountId === challenger_id,
+          )
+        : undefined,
+
+    [authenticatedUser.isSignedIn, authenticatedUser.accountId, potPayoutChallenges],
+  );
 
   const applicationClearance = usePotApplicationUserClearance({
     potId,
     hasProportionalFundingMechanism,
   });
 
-  const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
-
   const isApplicationPeriodOngoing = useMemo(
     () => lifecycle.currentStage?.tag === PotLifecycleStageTagEnum.Application,
     [lifecycle.currentStage?.tag],
   );
 
-  const { canApply, canDonate, canFund, canChallengePayouts, existingChallengeForUser } =
-    usePotBasicUserPermissions({ potId });
-
-  const referrerPotLink =
-    window.location.origin + window.location.pathname + `&referrerId=${accountId}`;
+  const referrerPotLink = authenticatedUser.isSignedIn
+    ? window.location.origin +
+      window.location.pathname +
+      `&referrerId=${authenticatedUser.accountId}`
+    : null;
 
   const [description, linkedDocumentUrl] = useMemo(() => {
     const linkPattern = /(More info )?(?:https?:\/\/)?([^\s]+\.[^\s]+)/i;
@@ -170,7 +183,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           <div className="flex w-full flex-col items-center gap-6 lg:w-fit lg:items-end">
             {statsElement}
 
-            {isSignedIn && (
+            {referrerPotLink && (
               <div className="flex items-center justify-end gap-2 text-sm">
                 <ClipboardCopyButton text={referrerPotLink} customIcon={<VolunteerIcon />} />
                 <span className="text-neutral-950">{"Earn referral fees"}</span>
@@ -202,25 +215,25 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           </div>
 
           <div className="flex items-center justify-start gap-4">
-            {canApply && applicationClearance.isEveryRequirementSatisfied && (
+            {authorizedUser.canApply && applicationClearance.isEveryRequirementSatisfied && (
               <Button
                 onClick={onApplyClick}
               >{`Apply to ${hasProportionalFundingMechanism ? "Round" : "Pot"}`}</Button>
             )}
 
             {hasProportionalFundingMechanism ? null : (
-              <>{canDonate && <DonateToPotProjects {...{ potId }} />}</>
+              <>{authorizedUser.canDonate && <DonateToPotProjects {...{ potId }} />}</>
             )}
 
-            {canFund && (
+            {authorizedUser.canFundMatchingPool && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>
                 {"Fund matching pool"}
               </Button>
             )}
 
-            {canChallengePayouts && (
+            {authorizedUser.canChallengePayouts && (
               <Button onClick={onChallengePayoutsClick}>
-                {existingChallengeForUser ? "Update challenge" : "Challenge payouts"}
+                {activeChallenge === undefined ? "Challenge payouts" : "Update challenge"}
               </Button>
             )}
           </div>

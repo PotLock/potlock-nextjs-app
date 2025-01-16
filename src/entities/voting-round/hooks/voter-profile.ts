@@ -5,7 +5,7 @@ import { Big } from "big.js";
 import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
-import { stringifiedU128ToBigNum } from "@/common/lib";
+import { indivisibleUnitsToBigNum } from "@/common/lib";
 import { ByAccountId, type ConditionalActivation, TokenId } from "@/common/types";
 import { useToken } from "@/entities/_shared/token";
 
@@ -46,7 +46,7 @@ export const useVoterProfile = ({
 
       stakingTokenBalance:
         voterInfo?.voter_data.staking_token_balance && stakingToken
-          ? stringifiedU128ToBigNum(
+          ? indivisibleUnitsToBigNum(
               voterInfo?.voter_data.staking_token_balance,
               stakingToken.metadata.decimals,
             )
@@ -55,7 +55,7 @@ export const useVoterProfile = ({
       votingPower:
         voterInfo?.voter_data.locking_positions?.reduce(
           (sum, { voting_power }) =>
-            sum.add(stringifiedU128ToBigNum(voting_power, METAPOOL_MPDAO_VOTING_POWER_DECIMALS)),
+            sum.add(indivisibleUnitsToBigNum(voting_power, METAPOOL_MPDAO_VOTING_POWER_DECIMALS)),
 
           Big(0),
         ) ?? Big(0),

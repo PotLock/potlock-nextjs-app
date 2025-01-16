@@ -1,13 +1,13 @@
-import { AccountId, U128String } from "@/common/types";
+import { AccountId, IndivisibleUnits } from "@/common/types";
 
 /**
  * u128 with 24 decimals (NEAR standard)
  */
-export type VotingPower = U128String;
+export type VotingPower = IndivisibleUnits;
 
 export type Voter = {
   voter_id: AccountId;
-  balance_in_contract: U128String;
+  balance_in_contract: IndivisibleUnits;
 
   locking_positions: {
     index: number;

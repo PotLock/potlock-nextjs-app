@@ -20,7 +20,7 @@ import { useSession } from "@/entities/_shared/session";
 import { listRegistrationStatuses } from "@/entities/list";
 import { rootPathnames } from "@/pathnames";
 
-import ActAsDao from "./ActAsDao";
+import { DaoAuth } from "./dao-auth";
 
 // TODO: Finish refactoring
 export const UserDropdown = () => {
@@ -85,7 +85,7 @@ export const UserDropdown = () => {
             </div>
           </DropdownMenuLabel>
 
-          <ActAsDao />
+          <DaoAuth />
 
           <div className="rounded-md border border-[#DBDBDB]">
             {authenticatedUser.accountId && (

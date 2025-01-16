@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 
 import { APP_METADATA } from "@/common/constants";
 
-type PageLayoutProps = {
+type RootLayoutProps = {
   title: string;
   description: string;
   image?: string;
   children: React.ReactNode;
 };
 
-export const PageLayout = ({ title, description, image, children }: PageLayoutProps) => {
+export const RootLayout: React.FC<RootLayoutProps> = ({ title, description, image, children }) => {
   const router = useRouter();
   const { pathname, asPath } = router;
   const preferredDomain = "https://alpha.potlock.org";

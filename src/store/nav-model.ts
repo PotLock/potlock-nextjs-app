@@ -2,7 +2,7 @@ import { createModel } from "@rematch/core";
 
 import { AppModel } from "@/store/models";
 
-export type ActAsDao = {
+export type DaoAuth = {
   toggle: boolean;
   defaultAddress: string;
   addresses: string[];
@@ -11,7 +11,7 @@ export type ActAsDao = {
 export type NavState = {
   accountId: string;
   isNadabotVerified: boolean;
-  actAsDao: ActAsDao;
+  actAsDao: DaoAuth;
 };
 
 const initialState: NavState = {
@@ -33,7 +33,7 @@ export const navModel = createModel<AppModel>()({
       return initialState;
     },
 
-    updateActAsDao(state, payload) {
+    updateDaoAuth(state, payload) {
       return {
         ...state,
         actAsDao: {

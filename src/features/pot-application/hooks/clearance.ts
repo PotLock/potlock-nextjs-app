@@ -5,7 +5,7 @@ import { prop } from "remeda";
 import { PLATFORM_NAME } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
-import { stringifiedU128ToBigNum } from "@/common/lib";
+import { indivisibleUnitsToBigNum } from "@/common/lib";
 import { type AccountId, ClearanceCheckResult } from "@/common/types";
 import { useSession } from "@/entities/_shared/session";
 import { useToken } from "@/entities/_shared/token";
@@ -58,7 +58,7 @@ export const usePotApplicationUserClearance = ({
             {
               title: "Voting power 5000 or more",
 
-              isSatisfied: stringifiedU128ToBigNum(
+              isSatisfied: indivisibleUnitsToBigNum(
                 voterInfo?.voter_data.voting_power ?? "0",
                 METAPOOL_MPDAO_VOTING_POWER_DECIMALS,
               ).gte(5000),

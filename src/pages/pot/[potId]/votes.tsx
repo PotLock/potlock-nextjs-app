@@ -36,7 +36,7 @@ import {
   useVotingRoundResults,
   useVotingRoundVoterVoteWeight,
 } from "@/entities/voting-round";
-import { PotLayout } from "@/layout/pot/components/PotLayout";
+import { PotLayout } from "@/layout/pot/components/layout";
 
 export default function PotVotesTab() {
   const authenticatedUser = useSession();
