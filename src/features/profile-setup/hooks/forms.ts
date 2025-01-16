@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { ZodError } from "zod";
 
+import { socialDbContractHooks } from "@/common/contracts/social";
 import { useWallet } from "@/entities/_shared/session";
 
 import { saveProject } from "../models/effects";
@@ -25,15 +26,7 @@ export const useProjectEditorForm = (options: {
   const form = useForm<ProjectEditorInputs>({
     resolver: zodResolver(projectEditorSchema),
     mode: "onChange",
-    defaultValues: {
-      name: "",
-      description: "",
-      publicGoodReason: "",
-      isDao: false,
-      categories: [],
-      teamMembers: [],
-      githubRepositories: [],
-    },
+    defaultValues: {},
   });
 
   const values = useWatch({ control: form.control });

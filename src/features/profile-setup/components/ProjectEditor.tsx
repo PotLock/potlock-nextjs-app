@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 import { prop } from "remeda";
 
+import { socialDbContractHooks } from "@/common/contracts/social";
 import { Button, FormField } from "@/common/ui/components";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import { useWallet } from "@/entities/_shared/session";
@@ -33,6 +34,7 @@ import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
 import SuccessfulRegister from "./SuccessfulRegister";
 import { useProjectEditorForm } from "../hooks/forms";
+import { useProjectEditorState } from "../models";
 
 export const ProjectEditor = () => {
   const router = useRouter();
@@ -50,6 +52,15 @@ export const ProjectEditor = () => {
   const projectId =
     typeof projectIdPathParam === "string" ? projectIdPathParam : projectIdPathParam?.at(0);
 
+  const { data: _currentProjectData } = socialDbContractHooks.useSocialProfile({
+    accountId: wallet?.accountId || "",
+    enabled: !!wallet?.accountId,
+  });
+
+  console.log({ _currentProjectData });
+
+  const stateData = useProjectEditorState();
+
   const {
     form,
     values,
@@ -62,6 +73,19 @@ export const ProjectEditor = () => {
     resetForm,
     errors,
   } = useProjectEditorForm({
+    defaultValues: _currentProjectData
+      ? {
+          ...stateData,
+          name: _currentProjectData.name || "",
+          description: _currentProjectData.description || "",
+          publicGoodReason: _currentProjectData.plPublicGoodReason || "",
+          teamMembers: JSON.parse(_currentProjectData.plTeam || "[]"),
+          categories: JSON.parse(_currentProjectData.plCategories || "[]"),
+          github: JSON.parse(_currentProjectData.plGithubRepos || "[]"),
+          backgroundImage: String(_currentProjectData.backgroundImage || ""),
+          profileImage: String(_currentProjectData.image || ""),
+        }
+      : {},
     onSuccess: () => router.push(rootPathnames.PROJECTS_LIST),
   });
 
@@ -87,8 +111,45 @@ export const ProjectEditor = () => {
     resetForm();
   }, [router, resetForm]);
 
-  const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
+  // const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
   const { isAuthenticated } = useSessionReduxStore();
+
+  // Add loading state
+  const [isDataLoading, setIsDataLoading] = useState(true);
+
+  // Watch for data changes and update form
+  useEffect(() => {
+    if (_currentProjectData) {
+      const formattedData = {
+        ...stateData,
+        name: _currentProjectData.name || "",
+        description: _currentProjectData.description || "",
+        publicGoodReason: _currentProjectData.plPublicGoodReason || "",
+        teamMembers: JSON.parse(_currentProjectData.plTeam || "[]"),
+        categories: JSON.parse(_currentProjectData.plCategories || "[]"),
+        github: JSON.parse(_currentProjectData.plGithubRepos || "[]"),
+        backgroundImage: String(_currentProjectData.backgroundImage || ""),
+        profileImage: String(_currentProjectData.image || ""),
+      };
+
+      form.reset(formattedData, {
+        keepDefaultValues: true,
+        keepDirty: false,
+        keepErrors: false,
+        keepIsSubmitted: false,
+        keepTouched: false,
+        keepIsValid: false,
+      });
+
+      setIsDataLoading(false);
+    }
+  }, [_currentProjectData, form, stateData]);
+
+  // Prevent form render while loading
+  if (isDataLoading) {
+    return <InfoSegment title="Loading project data..." description="Please wait..." />;
+  }
+
   // const values = form.watch();
 
   // useEffect(() => {
@@ -97,18 +158,18 @@ export const ProjectEditor = () => {
   // }, [form]);
 
   // Set default values by profile
-  // useEffect(() => form.reset(projectTemplate), [form, projectTemplate]);
+  // useEffect(() => form.reset(values), [form, values]);
 
   // Set initial name
   // const [initialNameSet, setInitialNameSet] = useState(false);
 
   // useEffect(() => {
-  //   if (!initialNameSet && projectTemplate.name) {
-  //     form.setValue("name", projectTemplate.name);
+  //   if (!initialNameSet && values.name) {
+  //     form.setValue("name", values.name);
   //     form.trigger(); // re-validate
   //     setInitialNameSet(true);
   //   }
-  // }, [initialNameSet, projectTemplate.name, form]);
+  // }, [initialNameSet, values.name, form]);
 
   // // Store description, public good reason and daoAddress
   // useEffect(() => {
@@ -131,25 +192,25 @@ export const ProjectEditor = () => {
   // const [editContractIndex, setEditContractIndex] = useState<number>();
 
   const getProjectEditorText = () => {
-    if (projectTemplate.isEdit) {
-      return projectTemplate.isDao ? "Add proposal to update project" : "Update your project";
+    if (values.isEdit) {
+      return values.isDao ? "Add proposal to update project" : "Update your project";
     }
 
-    return projectTemplate.isDao ? "Add proposal to create project" : "Create new project";
+    return values.isDao ? "Add proposal to create project" : "Create new project";
   };
 
   const projectEditorText = getProjectEditorText();
 
   const isRepositoriesValid =
-    !projectTemplate.isRepositoryRequired ||
-    (projectTemplate.githubRepositories && projectTemplate.githubRepositories.length > 0);
+    !values.isRepositoryRequired ||
+    (values.githubRepositories && values.githubRepositories.length > 0);
 
   // Wait for wallet
   if (!isWalletReady || !wallet) {
     return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
-  if (isAuthenticated && projectTemplate.checkPreviousProjectDataStatus !== "ready") {
+  if (isAuthenticated && values.checkPreviousProjectDataStatus !== "ready") {
     return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
@@ -159,7 +220,7 @@ export const ProjectEditor = () => {
   }
 
   // If it is Edit & not the owner
-  if (!isOwner && projectTemplate.isEdit) {
+  if (!isOwner && values.isEdit) {
     return (
       <InfoSegment
         title="You're not the owner of this project!"
@@ -170,28 +231,25 @@ export const ProjectEditor = () => {
 
   // DAO Status - In Progress
   if (
-    projectTemplate.isDao &&
-    projectTemplate.daoProjectProposal &&
-    projectTemplate.daoProjectProposal?.status === "InProgress"
+    values.isDao &&
+    values.daoProjectProposal &&
+    values.daoProjectProposal?.status === "InProgress"
   ) {
     return <DAOInProgress />;
   }
 
-  if (
-    projectTemplate.submissionStatus === "done" &&
-    location.pathname === rootPathnames.CREATE_PROJECT
-  ) {
+  if (values.submissionStatus === "done" && location.pathname === rootPathnames.CREATE_PROJECT) {
     return (
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SuccessfulRegister
-          registeredProject={
-            projectTemplate.isDao ? projectTemplate.daoAddress || "" : wallet?.accountId || ""
-          }
-          isEdit={projectTemplate.isEdit}
+          registeredProject={values.isDao ? values.daoAddress || "" : wallet?.accountId || ""}
+          isEdit={values.isEdit}
         />
       </div>
     );
   }
+
+  console.log("Form values:", values);
 
   console.log(form.formState.errors, form.formState.isValid);
 
@@ -243,13 +301,13 @@ export const ProjectEditor = () => {
         />
 
         <ErrorModal
-          open={!!projectTemplate.submissionError}
-          errorMessage={projectTemplate.submissionError}
+          open={!!values.submissionError}
+          errorMessage={values.submissionError}
           onCloseClick={resetUrl}
         />
 
         <SubHeader
-          title={projectTemplate.isDao ? "Project details (DAO)" : "Project details"}
+          title={values.isDao ? "Project details (DAO)" : "Project details"}
           required
           className="mt-16"
         />
@@ -258,7 +316,7 @@ export const ProjectEditor = () => {
           <FormField
             control={form.control}
             name="name"
-            // defaultValue={projectTemplate.name}
+            defaultValue={values.name}
             render={({ field }) => (
               <CustomInput
                 label="Project name *"
@@ -273,7 +331,7 @@ export const ProjectEditor = () => {
 
           <ProjectCategoryPicker
             onValuesChange={categoryChangeHandler}
-            defaultValues={projectTemplate.categories}
+            defaultValues={values.categories}
           />
         </Row>
 
@@ -288,7 +346,7 @@ export const ProjectEditor = () => {
                 placeholder="Type description"
                 error={errors.description?.message}
                 field={field}
-                currentText={projectTemplate.description}
+                currentText={values.description}
               />
             )}
           />
@@ -303,7 +361,7 @@ export const ProjectEditor = () => {
                 placeholder="Type the reason"
                 error={errors.publicGoodReason?.message}
                 field={field}
-                currentText={projectTemplate.publicGoodReason}
+                currentText={values.publicGoodReason}
               />
             )}
           />
@@ -332,11 +390,7 @@ export const ProjectEditor = () => {
           </button>
         </div>
 
-        <SubHeader
-          title="Repositories"
-          required={projectTemplate.isRepositoryRequired}
-          className="mt-16"
-        />
+        <SubHeader title="Repositories" required={values.isRepositoryRequired} className="mt-16" />
 
         <Row>
           <Repositories onChange={onChangeRepositories} />
@@ -346,7 +400,7 @@ export const ProjectEditor = () => {
           <button
             className="font-500 flex items-center gap-2 text-[14px] text-[#dd3345] transition-all hover:opacity-[0.7]"
             onClick={() => {
-              dispatch.projectEditor.addRepository();
+              addRepository();
             }}
           >
             <PlusIcon width={12} height={12} /> Add more repos

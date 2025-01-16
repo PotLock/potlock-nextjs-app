@@ -23,6 +23,13 @@ type Props = {
 
 const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) => {
   const { form, errors } = useAddFundingSourceForm({
+    defaultValues: {
+      description: "",
+      investorName: "",
+      amountReceived: "",
+      denomination: "",
+      date: "",
+    },
     onSuccess: () => {
       if (onCloseClick) {
         onCloseClick();
