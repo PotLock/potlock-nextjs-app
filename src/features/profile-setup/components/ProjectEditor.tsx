@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
@@ -7,7 +7,7 @@ import { prop } from "remeda";
 import { Button, FormField } from "@/common/ui/components";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import { useWallet } from "@/entities/_shared/session";
-// import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
+import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
@@ -88,7 +88,7 @@ export const ProjectEditor = () => {
   }, [router, resetForm]);
 
   const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
-  // const { isAuthenticated } = useSessionReduxStore();
+  const { isAuthenticated } = useSessionReduxStore();
   // const values = form.watch();
 
   // useEffect(() => {
@@ -149,14 +149,14 @@ export const ProjectEditor = () => {
     return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
-  // if (isAuthenticated && projectTemplate.checkPreviousProjectDataStatus !== "ready") {
-  //   return <InfoSegment title="Checking account." description="Please, wait..." />;
-  // }
+  if (isAuthenticated && projectTemplate.checkPreviousProjectDataStatus !== "ready") {
+    return <InfoSegment title="Checking account." description="Please, wait..." />;
+  }
 
-  // // must be signed in
-  // if (!isAuthenticated) {
-  //   return <InfoSegment title="Not logged in!" description="You must log in first!" />;
-  // }
+  // must be signed in
+  if (!isAuthenticated) {
+    return <InfoSegment title="Not logged in!" description="You must log in first!" />;
+  }
 
   // If it is Edit & not the owner
   if (!isOwner && projectTemplate.isEdit) {
@@ -258,7 +258,7 @@ export const ProjectEditor = () => {
           <FormField
             control={form.control}
             name="name"
-            defaultValue={projectTemplate.name}
+            // defaultValue={projectTemplate.name}
             render={({ field }) => (
               <CustomInput
                 label="Project name *"
@@ -370,7 +370,7 @@ export const ProjectEditor = () => {
           </Button>
           <Button
             variant="standard-filled"
-            disabled={!form.formState.isValid || !isRepositoriesValid}
+            disabled={!form.formState.isValid || isSubmitting}
             onClick={onSubmit}
           >
             {projectEditorText}
