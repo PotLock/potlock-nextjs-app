@@ -1,132 +1,111 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { validateNearAddress } from "@wpdas/naxios";
+import { useRouter } from "next/router";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { ZodError } from "zod";
 
 import { useWallet } from "@/entities/_shared/session";
-import { dispatch, store } from "@/store";
 
 import { saveProject } from "../models/effects";
 import { addFundingSourceSchema, projectEditorSchema } from "../models/schemas";
 import { AddFundingSourceInputs, ProjectEditorInputs } from "../models/types";
 
-export const useProjectEditorForm = () => {
+// Project Editor Form Hook
+export const useProjectEditorForm = (options: {
+  defaultValues?: Partial<ProjectEditorInputs>;
+  onSuccess?: () => void;
+}) => {
+  const router = useRouter();
+  const { wallet } = useWallet();
+  const [submitting, setSubmitting] = useState(false);
+
+  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<ProjectEditorInputs>>({});
+
   const form = useForm<ProjectEditorInputs>({
     resolver: zodResolver(projectEditorSchema),
     mode: "onChange",
-    resetOptions: { keepDirtyValues: false },
     defaultValues: {
       name: "",
-      isDao: false,
-      daoAddress: "",
-      backgroundImage: "",
-      profileImage: "",
-      teamMembers: [],
-      categories: [],
       description: "",
       publicGoodReason: "",
-      smartContracts: [],
-      fundingSources: [],
+      isDao: false,
+      categories: [],
+      teamMembers: [],
       githubRepositories: [],
-      website: "",
-      twitter: "",
-      telegram: "",
-      github: "",
     },
   });
 
-  // Watch form values for cross-field validation
-  const values = useWatch(form);
+  const values = useWatch({ control: form.control });
 
-  // Track cross-field validation errors
-  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<ProjectEditorInputs>>({});
-
-  // Handle cross-field validation
+  // Cross-field validation
   useEffect(() => {
     void projectEditorSchema
       .parseAsync(values)
       .then(() => setCrossFieldErrors({}))
       .catch((error: ZodError) =>
         setCrossFieldErrors(
-          error?.issues.reduce((schemaErrors, { code, message, path }) => {
+          error?.issues.reduce((errors, { code, message, path }) => {
             const fieldPath = path.at(0);
             return typeof fieldPath === "string" && code === "custom"
-              ? { ...schemaErrors, [fieldPath]: { message, type: code } }
-              : schemaErrors;
+              ? { ...errors, [fieldPath]: { message, type: code } }
+              : errors;
           }, {}),
         ),
       );
   }, [values]);
 
-  const { wallet } = useWallet();
-  const [submitting, setSubmitting] = useState(false);
+  // Form update handlers
+  const updateTeamMembers = useCallback(
+    (members: string[]) => {
+      form.setValue("teamMembers", members, { shouldValidate: true });
+    },
+    [form],
+  );
+
+  const updateCategories = useCallback(
+    (categories: string[]) => {
+      form.setValue("categories", categories, { shouldValidate: true });
+    },
+    [form],
+  );
+
+  const updateRepositories = useCallback(
+    (repos: string[]) => {
+      form.setValue("githubRepositories", repos, { shouldValidate: true });
+    },
+    [form],
+  );
+
+  const addRepository = useCallback(() => {
+    const currentRepos = form.getValues("githubRepositories") || [];
+    form.setValue("githubRepositories", [...currentRepos, ""], { shouldValidate: true });
+  }, [form]);
 
   const onSubmit: SubmitHandler<ProjectEditorInputs> = useCallback(
     async (formData) => {
       if (!wallet) return;
 
-      const data = store.getState().projectEditor;
-
-      const accountId = data.isDao ? data.daoAddress : data.accountId;
-
-      if (!accountId) {
-        return { success: false, error: "No accountId provided" };
-      }
-
-      // Validate DAO Address
-      const isDaoAddressValid = data.isDao ? validateNearAddress(data.daoAddress || "") : true;
-
-      if (!isDaoAddressValid) {
-        return { success: false, error: "DAO: Invalid NEAR account Id" };
-      }
-
       setSubmitting(true);
 
       try {
-        const result = await saveProject(formData, accountId);
+        // Project saving logic here
+        const result = await saveProject(formData, wallet?.accountId?.toString() || "");
+
+        options.onSuccess?.();
 
         if (result.success) {
           console.log("Opening wallet for approval...");
-        } else {
-          dispatch.projectEditor.submissionStatus("pending");
         }
+
+        router.push("/profile");
       } catch (error) {
         console.error(error);
       } finally {
         setSubmitting(false);
       }
-
-      // // not using form data, using store data provided by form
-      // if (wallet) {
-      //   dispatch.projectEditor.submissionStatus("sending");
-
-      //   const data = store.getState().projectEditor;
-
-      //   const accountId = data.isDao ? data.daoAddress : data.accountId;
-
-      //   if (!accountId) {
-      //     return { success: false, error: "No accountId provided" };
-      //   }
-
-      //   // Validate DAO Address
-      //   const isDaoAddressValid = data.isDao ? validateNearAddress(data.daoAddress || "") : true;
-
-      //   if (!isDaoAddressValid) {
-      //     return { success: false, error: "DAO: Invalid NEAR account Id" };
-      //   }
-
-      //   saveProject(data, accountId).then(async (result) => {
-      //     if (result.success) {
-      //       console.log("Opening wallet for approval...");
-      //     } else {
-      //       dispatch.projectEditor.submissionStatus("pending");
-      //     }
-      //   });
-      // }
     },
-    [wallet],
+    [wallet, options, router],
   );
 
   return {
@@ -137,20 +116,65 @@ export const useProjectEditorForm = () => {
         errors: { ...form.formState.errors, ...crossFieldErrors },
       },
     },
-    isSubmitting: submitting,
     errors: form.formState.errors,
-    onSubmit: form.handleSubmit(onSubmit),
     values,
+    isSubmitting: submitting,
+    updateTeamMembers,
+    updateCategories,
+    updateRepositories,
+    addRepository,
+    onSubmit: form.handleSubmit(onSubmit),
+    resetForm: form.reset,
   };
 };
 
-export const useAddFundingSourceForm = () => {
+// Funding Source Form Hook
+export const useAddFundingSourceForm = (options: {
+  defaultValues?: Partial<AddFundingSourceInputs>;
+  onSuccess?: () => void;
+}) => {
   const form = useForm<AddFundingSourceInputs>({
     resolver: zodResolver(addFundingSourceSchema),
+    mode: "onChange",
+    defaultValues: {
+      description: "",
+      investorName: "",
+      amountReceived: "",
+      denomination: "",
+      date: undefined,
+    },
   });
 
+  const values = useWatch({ control: form.control });
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit: SubmitHandler<AddFundingSourceInputs> = useCallback(
+    async (_) => {
+      setSubmitting(true);
+
+      try {
+        // Funding source saving logic here
+        options.onSuccess?.();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [options],
+  );
+
   return {
-    form,
+    form: {
+      ...form,
+      formState: {
+        ...form.formState,
+        errors: form.formState.errors,
+      },
+    },
     errors: form.formState.errors,
+    values,
+    isSubmitting: submitting,
+    onSubmit: form.handleSubmit(onSubmit),
   };
 };
