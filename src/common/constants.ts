@@ -6,7 +6,14 @@ import { Metadata } from "next";
 import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
 
-export const DEBUG = Boolean(process.env.NEXT_PUBLIC_DEBUG);
+export const DEBUG = process.env.NEXT_PUBLIC_DEBUG === "true" ? true : false;
+
+/**
+ * Unlocks authorization, useful for validation and permission control testing
+ */
+export const IS_UNDER_INSPECTION =
+  process.env.NEXT_PUBLIC_IS_UNDER_INSPECTION === "true" ? true : false;
+
 export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
 export const PLATFORM_TWITTER_ACCOUNT_ID = "PotLock_";

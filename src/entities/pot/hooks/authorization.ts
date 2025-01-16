@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { ByPotId } from "@/common/api/indexer";
+import { IS_UNDER_INSPECTION } from "@/common/constants";
 import { potContractHooks } from "@/common/contracts/core";
 import { isAccountId } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
@@ -28,7 +29,7 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
     [potConfig, now],
   );
 
-  // TODO: Clarify how to handle the case with absent `cooldown_end_ms`
+  // TODO: Needs to be reconsidered
   const isCooldownPeriodOngoing = useMemo(
     () =>
       potConfig &&
@@ -47,30 +48,27 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   );
 
   const isOwner = useMemo(
-    () => isValidAccountId && potConfig && accountId && potConfig.owner,
+    () => IS_UNDER_INSPECTION || (isValidAccountId && potConfig && accountId && potConfig.owner),
     [accountId, isValidAccountId, potConfig],
   );
 
   const isAdmin = useMemo(
     () =>
-      isValidAccountId &&
-      potConfig &&
-      potConfig.admins.find((adminAccountId) => accountId === adminAccountId),
+      IS_UNDER_INSPECTION ||
+      (isValidAccountId &&
+        potConfig &&
+        potConfig.admins.find((adminAccountId) => accountId === adminAccountId)),
 
     [accountId, isValidAccountId, potConfig],
   );
 
   const isChef = useMemo(
-    () => isValidAccountId && potConfig && accountId === potConfig.chef,
+    () => IS_UNDER_INSPECTION || (isValidAccountId && potConfig && accountId === potConfig.chef),
     [accountId, isValidAccountId, potConfig],
   );
 
   const isAdminOrGreater = useMemo(() => isAdmin || isOwner, [isAdmin, isOwner]);
-  // TODO!: UNCOMMENT BEFORE FINAL RELEASE!
-  // const isChefOrGreater = useMemo(() => isChef || isAdminOrGreater, [isChef, isAdminOrGreater]);
-
-  // TODO!: REMOVE BEFORE FINAL RELEASE!
-  const isChefOrGreater = true;
+  const isChefOrGreater = useMemo(() => isChef || isAdminOrGreater, [isChef, isAdminOrGreater]);
 
   const canFundMatchingPool = useMemo(
     () => isValidAccountId && potConfig && now < potConfig.public_round_end_ms,
