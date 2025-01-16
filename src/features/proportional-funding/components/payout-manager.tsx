@@ -30,6 +30,11 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
     tokenId: NATIVE_TOKEN_ID,
   });
 
+  // TODO: Upload to IPFS
+  const _payoutBreakdownJson = votingRoundResults.data
+    ? JSON.stringify(votingRoundResults.data.winners)
+    : undefined;
+
   const handlePayoutsSubmit = useCallback(() => {
     if (votingRoundResults.data !== undefined && token !== undefined) {
       submitPayouts({

@@ -12,11 +12,6 @@ export type PayoutSubmitInputs = ByPotId & {
 };
 
 export const submitPayouts = ({ potId, tokenDecimals, recipients }: PayoutSubmitInputs) => {
-  // TODO: Handle IPFS upload
-  const payoutBreakdownJson = JSON.stringify(recipients);
-
-  console.log(payoutBreakdownJson);
-
   return potContractClient.chef_set_payouts({
     potId,
 
