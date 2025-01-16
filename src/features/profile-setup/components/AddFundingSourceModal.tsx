@@ -22,7 +22,13 @@ type Props = {
 };
 
 const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) => {
-  const { form, errors } = useAddFundingSourceForm();
+  const { form, errors } = useAddFundingSourceForm({
+    onSuccess: () => {
+      if (onCloseClick) {
+        onCloseClick();
+      }
+    },
+  });
 
   const fundingSources = useGlobalStoreSelector(
     (state) => state.projectEditor.fundingSources || [],
