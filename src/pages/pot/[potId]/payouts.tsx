@@ -249,7 +249,7 @@ export default function PotPayoutsTab() {
                   <PayoutEntriesSkeleton />
                 ) : (
                   <>
-                    {(payouts?.length ?? 0) === 0 ? (
+                    {!isPayoutListLoading && (payouts?.length ?? 0) === 0 ? (
                       <div
                         className={cn(
                           "relative flex w-full flex-row items-center justify-between gap-8",
