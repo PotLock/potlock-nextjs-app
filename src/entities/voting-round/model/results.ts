@@ -25,7 +25,8 @@ interface VotingRoundResultsState {
     electionId: number;
     mechanismConfig: VotingMechanismConfig;
     votes: Vote[];
-    voters: MpdaoVoterItem[];
+    voterAccountIds: AccountId[];
+    voterStatsSnapshot: MpdaoVoterItem[];
     matchingPoolBalance: Big;
   }) => Promise<void>;
 }
@@ -39,7 +40,8 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
         electionId,
         mechanismConfig,
         votes,
-        voters: voterList,
+        voterAccountIds,
+        voterStatsSnapshot,
         matchingPoolBalance,
       }) => {
         const stakingTokenMetadata = mechanismConfig.stakingContractAccountId
@@ -50,34 +52,34 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
          * Voter profiles with Big.js precision
          */
         const voterProfiles: Record<AccountId, VoterProfile> | undefined = fromEntries(
-          await Promise.all(
-            voterList.map(async ({ voter_id: accountId, voter_data }) => {
-              const votingPower =
-                voter_data.locking_positions?.reduce(
-                  (sum: Big, { voting_power }: { voting_power: string }) =>
-                    sum.add(Big(voting_power)),
-                  Big(0),
-                ) ?? Big(0);
+          voterAccountIds.map((voterAccountId) => {
+            const voter = voterStatsSnapshot.find(({ voter_id }) => voter_id === voterAccountId);
 
-              const stakingTokenBalance = voter_data.staking_token_balance
-                ? indivisibleUnitsToBigNum(
-                    voter_data.staking_token_balance,
-                    stakingTokenMetadata?.decimals ?? 0,
-                  )
-                : undefined;
+            const votingPower =
+              voter?.voter_data.locking_positions?.reduce(
+                (sum: Big, { voting_power }: { voting_power: string }) =>
+                  sum.add(Big(voting_power)),
+                Big(0),
+              ) ?? Big(0);
 
-              return [
-                accountId,
+            const stakingTokenBalance = voter?.voter_data.staking_token_balance
+              ? indivisibleUnitsToBigNum(
+                  voter.voter_data.staking_token_balance,
+                  stakingTokenMetadata?.decimals ?? 0,
+                )
+              : Big(0);
 
-                {
-                  accountId,
-                  isHumanVerified: voter_data.is_human,
-                  stakingTokenBalance,
-                  votingPower,
-                },
-              ] as const;
-            }),
-          ),
+            return [
+              voterAccountId,
+
+              {
+                accountId: voterAccountId,
+                isHumanVerified: voter?.voter_data.is_human ?? false,
+                stakingTokenBalance,
+                votingPower,
+              },
+            ] as const;
+          }),
         );
 
         if (voterProfiles !== undefined) {
@@ -166,7 +168,7 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
     }),
 
     {
-      name: `@potlock/entities/voting-round/results/v${VOTING_ROUND_RESULTS_SCHEMA_VERSION}`,
+      name: `@potlock/entities/voting-round/v${VOTING_ROUND_RESULTS_SCHEMA_VERSION}`,
     },
   ),
 );

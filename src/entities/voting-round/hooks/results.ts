@@ -33,14 +33,21 @@ export const useVotingRoundResults = ({
     electionId: votingRound?.electionId as ElectionId,
   });
 
-  const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
-    enabled: enabled && votingRound !== undefined,
-    page_size: 200,
-  });
+  const { isLoading: isVoterAccountListLoading, data: voterAccountList } =
+    votingContractHooks.useUniqueVoters({
+      enabled: enabled && votingRound !== undefined,
+      electionId: votingRound?.electionId as ElectionId,
+    });
+
+  const { isLoading: isVoterStatsSnapshotListLoading, data: voterStatsSnapshot } =
+    indexer.useMpdaoVoters({
+      enabled: enabled && votingRound !== undefined,
+      page_size: 200,
+    });
 
   const isLoading = useMemo(
-    () => isVoteListLoading || isVoterListLoading,
-    [isVoteListLoading, isVoterListLoading],
+    () => isVoteListLoading || isVoterAccountListLoading || isVoterStatsSnapshotListLoading,
+    [isVoteListLoading, isVoterAccountListLoading, isVoterStatsSnapshotListLoading],
   );
 
   // TODO: Apply performance optimizations
@@ -51,14 +58,23 @@ export const useVotingRoundResults = ({
     [store.cache, votingRound],
   );
 
-  if (enabled && hasProportionalFundingMechanism && pot && votingRound && votes && voters) {
+  if (
+    enabled &&
+    hasProportionalFundingMechanism &&
+    pot &&
+    votingRound &&
+    votes &&
+    voterAccountList &&
+    voterStatsSnapshot
+  ) {
     // Recalculate results if votes have changed
     if (!resultsCache || resultsCache.totalVoteCount !== votes.length) {
       store.revalidate({
         electionId: votingRound.electionId,
         mechanismConfig,
         votes,
-        voters: voters.results,
+        voterAccountIds: voterAccountList,
+        voterStatsSnapshot: voterStatsSnapshot.results,
 
         matchingPoolBalance: indivisibleUnitsToBigNum(
           pot.matching_pool_balance,
