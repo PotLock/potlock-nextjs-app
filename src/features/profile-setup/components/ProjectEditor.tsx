@@ -191,63 +191,63 @@ export const ProjectEditor = () => {
   // const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
   // const [editContractIndex, setEditContractIndex] = useState<number>();
 
-  const getProjectEditorText = () => {
-    if (values.isEdit) {
-      return values.isDao ? "Add proposal to update project" : "Update your project";
-    }
+  // const getProjectEditorText = () => {
+  //   if (values.isEdit) {
+  //     return values.isDao ? "Add proposal to update project" : "Update your project";
+  //   }
 
-    return values.isDao ? "Add proposal to create project" : "Create new project";
-  };
+  //   return values.isDao ? "Add proposal to create project" : "Create new project";
+  // };
 
-  const projectEditorText = getProjectEditorText();
+  // const projectEditorText = getProjectEditorText();
 
-  const isRepositoriesValid =
-    !values.isRepositoryRequired ||
-    (values.githubRepositories && values.githubRepositories.length > 0);
+  // const isRepositoriesValid =
+  //   !values.isRepositoryRequired ||
+  //   (values.githubRepositories && values.githubRepositories.length > 0);
 
-  // Wait for wallet
-  if (!isWalletReady || !wallet) {
-    return <InfoSegment title="Checking account." description="Please, wait..." />;
-  }
+  // // Wait for wallet
+  // if (!isWalletReady || !wallet) {
+  //   return <InfoSegment title="Checking account." description="Please, wait..." />;
+  // }
 
-  if (isAuthenticated && values.checkPreviousProjectDataStatus !== "ready") {
-    return <InfoSegment title="Checking account." description="Please, wait..." />;
-  }
+  // if (isAuthenticated && values.checkPreviousProjectDataStatus !== "ready") {
+  //   return <InfoSegment title="Checking account." description="Please, wait..." />;
+  // }
 
-  // must be signed in
-  if (!isAuthenticated) {
-    return <InfoSegment title="Not logged in!" description="You must log in first!" />;
-  }
+  // // must be signed in
+  // if (!isAuthenticated) {
+  //   return <InfoSegment title="Not logged in!" description="You must log in first!" />;
+  // }
 
-  // If it is Edit & not the owner
-  if (!isOwner && values.isEdit) {
-    return (
-      <InfoSegment
-        title="You're not the owner of this project!"
-        description="You can't edit this project."
-      />
-    );
-  }
+  // // If it is Edit & not the owner
+  // if (!isOwner && values.isEdit) {
+  //   return (
+  //     <InfoSegment
+  //       title="You're not the owner of this project!"
+  //       description="You can't edit this project."
+  //     />
+  //   );
+  // }
 
-  // DAO Status - In Progress
-  if (
-    values.isDao &&
-    values.daoProjectProposal &&
-    values.daoProjectProposal?.status === "InProgress"
-  ) {
-    return <DAOInProgress />;
-  }
+  // // DAO Status - In Progress
+  // if (
+  //   values.isDao &&
+  //   values.daoProjectProposal &&
+  //   values.daoProjectProposal?.status === "InProgress"
+  // ) {
+  //   return <DAOInProgress />;
+  // }
 
-  if (values.submissionStatus === "done" && location.pathname === rootPathnames.CREATE_PROJECT) {
-    return (
-      <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
-        <SuccessfulRegister
-          registeredProject={values.isDao ? values.daoAddress || "" : wallet?.accountId || ""}
-          isEdit={values.isEdit}
-        />
-      </div>
-    );
-  }
+  // if (values.submissionStatus === "done" && location.pathname === rootPathnames.CREATE_PROJECT) {
+  //   return (
+  //     <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
+  //       <SuccessfulRegister
+  //         registeredProject={values.isDao ? values.daoAddress || "" : wallet?.accountId || ""}
+  //         isEdit={values.isEdit}
+  //       />
+  //     </div>
+  //   );
+  // }
 
   console.log("Form values:", values);
 
@@ -300,11 +300,11 @@ export const ProjectEditor = () => {
           }}
         />
 
-        <ErrorModal
-          open={!!values.submissionError}
+        {/* <ErrorModal
+          open={!!errors}
           errorMessage={values.submissionError}
           onCloseClick={resetUrl}
-        />
+        /> */}
 
         <SubHeader
           title={values.isDao ? "Project details (DAO)" : "Project details"}
@@ -390,7 +390,7 @@ export const ProjectEditor = () => {
           </button>
         </div>
 
-        <SubHeader title="Repositories" required={values.isRepositoryRequired} className="mt-16" />
+        {/* <SubHeader title="Repositories" required={values.isRepositoryRequired} className="mt-16" /> */}
 
         <Row>
           <Repositories onChange={onChangeRepositories} />
@@ -427,7 +427,7 @@ export const ProjectEditor = () => {
             disabled={!form.formState.isValid || isSubmitting}
             onClick={onSubmit}
           >
-            {projectEditorText}
+            {/* {projectEditorText} */}
           </Button>
         </div>
       </div>
