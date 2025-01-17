@@ -27,6 +27,7 @@ export const useSession = (): UserSession => {
    */
   const isAccountIdValid = useMemo(() => isAccountId(accountId), [accountId]);
 
+  // TODO: Create and use list contract hook instead
   const { isLoading: isAccountListRegistryLoading, data: accountListRegistrations } =
     indexer.useAccountListRegistrations({
       accountId: isAccountIdValid ? accountId : undefined,
@@ -49,7 +50,7 @@ export const useSession = (): UserSession => {
       registrationStatus,
       isSignedIn: true,
       isAccountInfoLoading: isAccountListRegistryLoading,
-      isVerifiedPublicGoodsProvider: registrationStatus === ListRegistrationStatus.Approved,
+      hasRegistrationApproved: registrationStatus === ListRegistrationStatus.Approved,
     };
   } else {
     return {
@@ -58,7 +59,7 @@ export const useSession = (): UserSession => {
       registrationStatus: undefined,
       isSignedIn: false,
       isAccountInfoLoading: false,
-      isVerifiedPublicGoodsProvider: false,
+      hasRegistrationApproved: false,
     };
   }
 };

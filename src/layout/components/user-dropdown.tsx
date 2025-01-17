@@ -91,7 +91,7 @@ export const UserDropdown = () => {
             {authenticatedUser.accountId && (
               <Link href={`${rootPathnames.PROFILE}/${authenticatedUser.accountId}`}>
                 <DropdownMenuItem className="px-3 py-2.5 font-medium">
-                  {authenticatedUser.isVerifiedPublicGoodsProvider ? "My Project" : "My Profile"}
+                  {authenticatedUser.hasRegistrationApproved ? "My Project" : "My Profile"}
                 </DropdownMenuItem>
               </Link>
             )}
