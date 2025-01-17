@@ -8,9 +8,13 @@ export type PotPayoutManagerProps = ByPotId & {
 };
 
 export const PotPayoutManager: React.FC<PotPayoutManagerProps> = ({ potId, onSubmitSuccess }) => {
-  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+  const { isPotExtensionConfigLoading, hasProportionalFundingMechanism } = usePotFeatureFlags({
+    potId,
+  });
 
-  if (hasProportionalFundingMechanism) {
+  if (isPotExtensionConfigLoading) {
+    return null;
+  } else if (hasProportionalFundingMechanism) {
     return <ProportionalFundingPayoutManager {...{ potId, onSubmitSuccess }} />;
   } else {
     return <QuadraticFundingPayoutManager {...{ potId }} />;
