@@ -23,7 +23,7 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
     if (wallet) {
       // Starts the wallet manager
       if (!isReady) {
-        await wallet.initNear();
+        wallet.initNear().then(() => setReady(true));
       }
 
       const isSignedIn = walletApi.walletSelector.isSignedIn();
@@ -36,8 +36,6 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
           resetStore();
         }
       }
-
-      setReady(true);
     }
   }, [isAuthenticated, isReady, wallet]);
 
