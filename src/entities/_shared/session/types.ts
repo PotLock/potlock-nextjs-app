@@ -12,7 +12,7 @@ export type UserSession =
       registrationStatus?: ListRegistrationStatus;
       isSignedIn: true;
       isAccountInfoLoading: boolean;
-      isVerifiedPublicGoodsProvider: boolean;
+      hasRegistrationApproved: boolean;
     }
   | {
       accountId: undefined;
@@ -20,5 +20,5 @@ export type UserSession =
       registrationStatus: undefined;
       isSignedIn: false;
       isAccountInfoLoading: false;
-      isVerifiedPublicGoodsProvider: false;
+      hasRegistrationApproved: false;
     };

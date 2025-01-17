@@ -5,7 +5,7 @@ import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { indexer } from "@/common/api/indexer";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSessionReduxStore, useWallet } from "@/entities/_shared/session";
+import { useSession, useSessionReduxStore, useWallet } from "@/entities/_shared/session";
 import { ProjectCard, ProjectDiscovery } from "@/entities/project";
 import { DonateRandomly } from "@/features/donation";
 import routesPath from "@/pathnames";
@@ -46,6 +46,7 @@ export const GeneralStats = () => {
 };
 
 const WelcomeBanner = () => {
+  const authenticatedUser = useSession();
   const { defaultAddress, toggle } = useGlobalStoreSelector((state) => state.nav.actAsDao);
 
   const daoAddress = toggle && defaultAddress ? defaultAddress : "";

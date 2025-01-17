@@ -43,7 +43,7 @@ export const usePotApplicationUserClearance = ({
             {
               title: `Verified Project on ${PLATFORM_NAME}`,
               isFulfillmentAssessmentPending: authenticatedUser.isAccountInfoLoading,
-              isSatisfied: authenticatedUser.isVerifiedPublicGoodsProvider,
+              isSatisfied: authenticatedUser.hasRegistrationApproved,
             },
           ]
         : []),
@@ -77,7 +77,7 @@ export const usePotApplicationUserClearance = ({
     };
   }, [
     authenticatedUser.isAccountInfoLoading,
-    authenticatedUser.isVerifiedPublicGoodsProvider,
+    authenticatedUser.hasRegistrationApproved,
     hasProportionalFundingMechanism,
     pot?.sybil_wrapper_provider,
     staking.minAmountUsd,
