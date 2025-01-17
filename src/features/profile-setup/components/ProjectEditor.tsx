@@ -279,21 +279,24 @@ export const ProjectEditor = () => {
               />
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="publicGoodReason"
-            render={({ field }) => (
-              <CustomTextForm
-                showHint
-                label="Why do you consider yourself a public good? *"
-                placeholder="Type the reason"
-                error={errors.publicGoodReason?.message}
-                field={field}
-                currentText={projectTemplate.publicGoodReason}
+          <>
+            {projectTemplate.categories?.includes("Public Good") ? (
+              <FormField
+                control={form.control}
+                name="publicGoodReason"
+                render={({ field }) => (
+                  <CustomTextForm
+                    showHint
+                    label="Why do you consider yourself a public good?"
+                    placeholder="Type the reason"
+                    error={errors.publicGoodReason?.message}
+                    field={field}
+                    currentText={projectTemplate.publicGoodReason}
+                  />
+                )}
               />
-            )}
-          />
+            ) : null}
+          </>
         </Row>
 
         <SubHeader title="Smart contracts" className="mt-16" />
