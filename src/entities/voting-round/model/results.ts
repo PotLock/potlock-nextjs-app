@@ -168,7 +168,7 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
     }),
 
     {
-      name: `@potlock/entities/voting-round/v${VOTING_ROUND_RESULTS_SCHEMA_VERSION}`,
+      name: `@potlock/voting-rounds/v${VOTING_ROUND_RESULTS_SCHEMA_VERSION}`,
     },
   ),
 );
