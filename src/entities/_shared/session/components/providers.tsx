@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
-//import { isClient } from "@wpdas/naxios";
+import { isClient } from "@wpdas/naxios";
 
 import { walletApi } from "@/common/api/near/client";
-import useIsClient from "@/common/lib/useIsClient";
 import { SplashScreen } from "@/common/ui/components";
 import { dispatch, resetStore } from "@/store";
 
@@ -15,16 +14,17 @@ type SessionProviderProps = {
 };
 
 export const SessionProvider = ({ children }: SessionProviderProps) => {
-  const [ready, setReady] = useState(false);
+  const [isReady, setReady] = useState(false);
   const { isAuthenticated } = useSessionReduxStore();
-  const isClient = useIsClient();
   const { wallet } = useWallet();
 
   // Check wallet
   const checkWallet = useCallback(async () => {
     if (wallet) {
       // Starts the wallet manager
-      await wallet.initNear();
+      if (!isReady) {
+        await wallet.initNear();
+      }
 
       const isSignedIn = walletApi.walletSelector.isSignedIn();
 
@@ -39,7 +39,7 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
 
       setReady(true);
     }
-  }, [isAuthenticated, wallet]);
+  }, [isAuthenticated, isReady, wallet]);
 
   // Re-init when user is signed in
   useEffect(() => {
@@ -62,9 +62,9 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
     };
   }, [checkWallet, wallet]);
 
-  return isClient &&
-    //? Unfortunately, MyNearWallet refuses to work upon relogin without this hack
-    ready ? (
+  return isClient() &&
+    //! MyNearWallet refuses to work upon relogin without this hack
+    isReady ? (
     <>{children}</>
   ) : (
     <SplashScreen className="h-screen" />
