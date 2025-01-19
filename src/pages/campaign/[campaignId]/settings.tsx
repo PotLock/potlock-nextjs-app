@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 
-import { CampaignLayout, CampaignSettings } from "@/entities/campaign/components";
+import { CampaignSettings } from "@/entities/campaign";
+import { CampaignLayout } from "@/layout/campaign/components/layout";
 
 const Settings = () => {
   return <CampaignSettings />;

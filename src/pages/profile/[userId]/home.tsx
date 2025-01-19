@@ -11,7 +11,7 @@ import { useAccountSocialProfile } from "@/entities/_shared/account";
 import Team from "@/entities/project/components/Team";
 import AboutItem from "@/layout/profile/components/AboutItem";
 import Github from "@/layout/profile/components/Github";
-import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
+import { ProfileLayout } from "@/layout/profile/components/layout";
 import SmartContract from "@/layout/profile/components/SmartContract";
 
 export default function ProfileHomeTab() {

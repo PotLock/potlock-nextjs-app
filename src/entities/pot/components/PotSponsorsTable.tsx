@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/common/ui/components";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 import { CustomDonationType } from "../models/types";
 
@@ -159,7 +159,11 @@ export const PotSponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] 
             <TrRow key={donation.id}>
               <div className="rank">#{idx + 1 + (currentPage - 1) * perPage}</div>
 
-              <Link href={`${routesPath.PROFILE}/${donorId}`} className="address" target="_blank">
+              <Link
+                href={`${rootPathnames.PROFILE}/${donorId}`}
+                className="address"
+                target="_blank"
+              >
                 <AccountProfilePicture accountId={donorId} className="mr-4 h-[24px] w-[24px]" />
 
                 {/* Tooltip */}
@@ -168,7 +172,7 @@ export const PotSponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] 
                     <TooltipTrigger>
                       <Link
                         className="address"
-                        href={`${routesPath.PROFILE}/${donorId}`}
+                        href={`${rootPathnames.PROFILE}/${donorId}`}
                         target="_blank"
                       >
                         {truncate(donorId, 25)}

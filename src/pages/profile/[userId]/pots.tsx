@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { PotCard } from "@/entities/pot";
-import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
+import { ProfileLayout } from "@/layout/profile/components/layout";
 
 export default function ProfilePotsTab() {
   const router = useRouter();

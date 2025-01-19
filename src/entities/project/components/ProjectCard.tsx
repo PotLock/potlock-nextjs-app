@@ -12,7 +12,7 @@ import { cn } from "@/common/ui/utils";
 import { AccountProfileCover, AccountProfilePicture } from "@/entities/_shared/account";
 import { useTokenUsdDisplayValue } from "@/entities/_shared/token";
 import { useDonation } from "@/features/donation";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 import { ProjectCardSkeleton } from "./ProjectCardSkeleton";
 
@@ -46,7 +46,7 @@ export const ProjectCard = ({ projectId, allowDonate = true, payoutDetails }: Pr
   const categories = plCategories ? JSON.parse(plCategories) : [];
 
   return (
-    <Link href={`${routesPath.PROFILE}/${projectId}`}>
+    <Link href={`${rootPathnames.PROFILE}/${projectId}`}>
       {isAccountLoading ? (
         <ProjectCardSkeleton />
       ) : (

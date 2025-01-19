@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 
+import { isClient } from "@wpdas/naxios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useRegistration } from "@/common/_deprecated/useRegistration";
-import { PageWithBanner } from "@/common/ui/components";
+import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { ProjectBanner } from "@/entities/project";
 
@@ -150,25 +152,29 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
 
   const isProject = isRegisteredProject;
 
-  return (
-    <PageWithBanner>
-      {isProject && <ProjectBanner projectId={params.userId} />}
-      <ProfileLayoutHero isProject={isProject} accountId={params.userId} />
-      <ProfileLayoutControls accountId={params.userId} isProject={isProject} />
+  return !isClient() ? (
+    <SplashScreen className="h-screen" />
+  ) : (
+    <WalletManagerProvider>
+      <PageWithBanner>
+        {isProject && <ProjectBanner projectId={params.userId} />}
+        <ProfileLayoutHero isProject={isProject} accountId={params.userId} />
+        <ProfileLayoutControls accountId={params.userId} isProject={isProject} />
 
-      <Tabs
-        asLink
-        options={tabs}
-        selectedTab={selectedTab.id}
-        onSelect={(tabId: string) => {
-          setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);
-        }}
-      />
+        <Tabs
+          asLink
+          options={tabs}
+          selectedTab={selectedTab.id}
+          onSelect={(tabId: string) => {
+            setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);
+          }}
+        />
 
-      {/* Tab Content */}
-      <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
-        {children}
-      </div>
-    </PageWithBanner>
+        {/* Tab Content */}
+        <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
+          {children}
+        </div>
+      </PageWithBanner>
+    </WalletManagerProvider>
   );
 };

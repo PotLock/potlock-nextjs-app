@@ -9,7 +9,7 @@ import AdminIcon from "@/common/ui/svg/AdminIcon";
 import { CheckedIcon } from "@/common/ui/svg/CheckedIcon";
 import { cn } from "@/common/ui/utils";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 import ChallengeResolveModal from "./ChallengeResolveModal";
@@ -113,7 +113,7 @@ export const PotPayoutChallenges = ({
                         className="h-8 w-8 rounded-full"
                       />
                       <Link
-                        href={`${routesPath.PROFILE}/${challenger_id}`}
+                        href={`${rootPathnames.PROFILE}/${challenger_id}`}
                         className="text-sm font-semibold text-gray-800 hover:text-red-500 md:text-base"
                       >
                         {challenger_id}

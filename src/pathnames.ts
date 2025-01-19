@@ -15,8 +15,3 @@ export const rootPathnames = {
   CAMPAIGNS: "/campaigns",
   EDIT_PROFILE: "/editprofile",
 };
-
-// ?INFO: This default export is for temporary backwards compatibility
-// !INFO: default exports are evil.
-// TODO: Remove in the future
-export default rootPathnames;

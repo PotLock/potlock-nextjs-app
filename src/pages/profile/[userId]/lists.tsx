@@ -6,7 +6,7 @@ import { indexer } from "@/common/api/indexer";
 import { Label, Switch } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ListCard, getRandomBackgroundImage } from "@/entities/list";
-import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
+import { ProfileLayout } from "@/layout/profile/components/layout";
 
 export const NoResults = ({ text }: { text: string }) => (
   <div

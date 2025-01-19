@@ -22,7 +22,6 @@ import { rootPathnames } from "@/pathnames";
 
 import { DaoAuth } from "./dao-auth";
 
-// TODO: Finish refactoring
 export const UserDropdown = () => {
   const viewer = useSession();
 

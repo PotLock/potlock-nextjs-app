@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { WalletManager } from "@wpdas/naxios/dist/types/managers/wallet-manager";
 
-import { nearClient } from "../api/near";
+import { nearClient } from "@/common/api/near";
 
 type WalletManagerContextState =
   | { isReady: false }

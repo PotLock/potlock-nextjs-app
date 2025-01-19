@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 import { dispatch } from "@/store";
 
 const SuccessfulRegister = ({
@@ -26,10 +26,10 @@ const SuccessfulRegister = ({
         <h1 style={{ textAlign: "center" }}>You&apos;ve successfully registered!</h1>
       )}
       <div className="mt-8 flex items-center justify-center gap-8">
-        <Link href={`${routesPath.PROFILE}/${registeredProject}/home`}>
+        <Link href={`${rootPathnames.PROFILE}/${registeredProject}/home`}>
           <Button onClick={refreshStatus}>View your project</Button>
         </Link>
-        <Link href={routesPath.PROJECTS_LIST}>
+        <Link href={rootPathnames.PROJECTS_LIST}>
           <Button onClick={refreshStatus} variant="brand-tonal">
             View all projects
           </Button>

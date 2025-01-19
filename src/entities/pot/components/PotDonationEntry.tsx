@@ -5,7 +5,7 @@ import { Donation } from "@/common/api/indexer";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 import NearIcon from "./NearIcon";
 import { FundingSrc } from "./styled";
@@ -38,10 +38,10 @@ export const PotDonationEntry = ({
   );
 
   const url = projectId
-    ? `${routesPath.PROFILE}/${donorId}`
-    : `${routesPath.PROFILE}/${projectId || recipientId}`;
+    ? `${rootPathnames.PROFILE}/${donorId}`
+    : `${rootPathnames.PROFILE}/${projectId || recipientId}`;
 
-  const recipientUrl = `${routesPath.PROJECT}/${recipientId}`;
+  const recipientUrl = `${rootPathnames.PROJECT}/${recipientId}`;
 
   const name = truncate(donorId, 15);
   const recipientName = truncate(recipientId, 15);

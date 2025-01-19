@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { FundingTable } from "@/layout/profile/_deprecated/FundingTable";
-import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
+import { ProfileLayout } from "@/layout/profile/components/layout";
 
 const DonationsTab = () => {
   const router = useRouter();

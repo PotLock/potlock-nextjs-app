@@ -5,7 +5,7 @@ import { naxiosInstance } from "@/common/api/near/client";
 import { listsContractClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
 import { useWallet } from "@/entities/_shared/session";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 // TODO: Ditch Redux for this use case entirely!
@@ -90,7 +90,7 @@ export const useInitProjectState = () => {
           dispatch.projectEditor.isRegistered(!!register);
 
           // Auto set the project to DONE status if it's already registered & this is create project page
-          if (register && location.pathname.includes(routesPath.CREATE_PROJECT)) {
+          if (register && location.pathname.includes(rootPathnames.CREATE_PROJECT)) {
             dispatch.projectEditor.submissionStatus("done");
             dispatch.projectEditor.setSubmissionError("");
           }

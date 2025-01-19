@@ -3,8 +3,8 @@ import { ReactElement, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Campaign, campaignsContractClient } from "@/common/contracts/core";
-import { CampaignCard } from "@/entities/campaign/components";
-import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
+import { CampaignCard } from "@/entities/campaign";
+import { ProfileLayout } from "@/layout/profile/components/layout";
 
 import { NoResults } from "./lists";
 

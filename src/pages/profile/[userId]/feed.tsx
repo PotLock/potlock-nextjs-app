@@ -8,7 +8,7 @@ import { fetchAccountFeedPosts } from "@/common/api/near-social";
 import { IndexPostResultItem } from "@/common/contracts/social";
 import { cn } from "@/common/ui/utils";
 import { PostCard, PostEditor } from "@/entities/post";
-import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
+import { ProfileLayout } from "@/layout/profile/components/layout";
 
 const NoResults = () => (
   <div

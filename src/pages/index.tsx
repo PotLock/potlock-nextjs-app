@@ -7,7 +7,7 @@ import { cn } from "@/common/ui/utils";
 import { useSession } from "@/entities/_shared/session";
 import { ProjectCard, ProjectDiscovery } from "@/entities/project";
 import { DonateRandomly } from "@/features/donation";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 export const FEATURED_PROJECT_ACCOUNT_IDS =
   NETWORK === "mainnet"
@@ -71,8 +71,8 @@ const WelcomeBanner = () => {
               <Link
                 href={
                   viewer.hasRegistrationSubmitted
-                    ? `${routesPath.PROFILE}/${viewer.accountId}`
-                    : routesPath.CREATE_PROJECT
+                    ? `${rootPathnames.PROFILE}/${viewer.accountId}`
+                    : rootPathnames.CREATE_PROJECT
                 }
                 prefetch={true}
               >

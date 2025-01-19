@@ -15,9 +15,9 @@ import {
   AccountProfileTags,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { useSession, useWallet } from "@/entities/_shared/session";
+import { useSession } from "@/entities/_shared/session";
 import { useDonation } from "@/features/donation";
-import routesPath, { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 type Props = {
   accountId: string;
@@ -171,7 +171,7 @@ export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
             </div>
             {isOwner && (
               <div className="ml-[auto] self-center" style={{}}>
-                <Link href={`${routesPath.EDIT_PROJECT}/${accountId}`}>
+                <Link href={`${rootPathnames.EDIT_PROJECT}/${accountId}`}>
                   <Button variant="brand-tonal" className="ml-[auto]">
                     Edit project
                   </Button>

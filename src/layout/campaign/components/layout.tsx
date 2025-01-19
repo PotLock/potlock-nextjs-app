@@ -1,8 +1,26 @@
+import { useCallback, useState } from "react";
+
+import { isClient } from "@wpdas/naxios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { cn } from "@/common/ui/utils";
+import { SingleCampaignBanner } from "@/entities/campaign";
+
+const CAMPAIGN_TAB_ROUTES: TabOption[] = [
+  {
+    label: "Leaderboard",
+    id: "leaderboard",
+    href: "/leaderboard",
+  },
+
+  // { label: "History", id: "history", href: "/history" },
+
+  { label: "Settings", id: "settings", href: "/settings" },
+];
 
 type Props = {
   options: TabOption[];
@@ -68,4 +86,41 @@ const Tabs = ({ options, selectedTab, onSelect, asLink }: Props) => {
   );
 };
 
-export default Tabs;
+type ReactLayoutProps = {
+  children: React.ReactNode;
+};
+
+export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
+  const router = useRouter();
+  const pathname = router.pathname;
+
+  const tabs = CAMPAIGN_TAB_ROUTES;
+
+  const [selectedTab, setSelectedTab] = useState(
+    tabs.find((tab) => pathname.includes(tab.href)) || tabs[0],
+  );
+
+  const handleSelectedTab = useCallback(
+    (tabId: string) => setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!),
+    [tabs],
+  );
+
+  return !isClient() ? (
+    <SplashScreen className="h-screen" />
+  ) : (
+    <WalletManagerProvider>
+      <PageWithBanner>
+        <div className="md:p-8">
+          <SingleCampaignBanner />
+        </div>
+        <Tabs
+          asLink
+          options={tabs}
+          selectedTab={selectedTab.id}
+          onSelect={(tabId: string) => handleSelectedTab(tabId)}
+        />
+        <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
+      </PageWithBanner>
+    </WalletManagerProvider>
+  );
+};

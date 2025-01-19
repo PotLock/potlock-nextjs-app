@@ -18,6 +18,7 @@
     "next:dev": "yarn && next dev",
     "build": "yarn generate:css && next build",
     "start": "next start",
+    "preview": "next build && next start",
     "test:unit": "vitest run",
     "prepare": "husky"
   },

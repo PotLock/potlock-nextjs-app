@@ -1,11 +1,12 @@
 import { useState } from "react";
 
+import { isClient } from "@wpdas/naxios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
-import useIsClient from "@/common/lib/useIsClient";
+import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
 import { cn } from "@/common/ui/utils";
 import { SessionAuthButton, useSession } from "@/entities/_shared/session";
 import { CartLink } from "@/entities/cart";
@@ -35,10 +36,6 @@ const links = [
 const AuthButton = () => {
   const viewer = useSession();
 
-  // TODO: Investigate if it's really necessary
-  const isClient = useIsClient();
-  if (!isClient) return;
-
   return viewer.isSignedIn ? <UserDropdown /> : <SessionAuthButton />;
 };
 
@@ -63,13 +60,12 @@ const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {
 };
 
 const MobileNav = () => {
-  const isClient = useIsClient();
   const router = useRouter();
 
   return (
     <nav className="flex flex-col gap-4 p-6">
       {links.map(({ url, label, disabled }) => {
-        const isActive = isClient ? url === router.pathname : false;
+        const isActive = url === router.pathname;
 
         return (
           <Link
@@ -95,7 +91,6 @@ const MobileNav = () => {
 
 export const AppBar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const isClient = useIsClient();
   const router = useRouter();
 
   return (
@@ -129,7 +124,7 @@ export const AppBar = () => {
           <div className="flex flex-row items-center justify-center">
             <div className="flex flex-row items-center justify-center max-md:hidden">
               {links.map(({ url, label, disabled }) => {
-                const isActive = isClient ? url === router.pathname : false;
+                const isActive = url === router.pathname;
                 return (
                   <Link
                     key={url + label}
@@ -155,7 +150,12 @@ export const AppBar = () => {
         {/* Right */}
         <div className="flex items-center gap-8">
           <CartLink disabled />
-          <AuthButton />
+
+          {isClient() && (
+            <WalletManagerProvider>
+              <AuthButton />
+            </WalletManagerProvider>
+          )}
 
           <MobileMenuButton onClick={() => setShowMobileMenu(!showMobileMenu)} />
         </div>

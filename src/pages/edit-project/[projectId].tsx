@@ -1,4 +1,7 @@
-import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
+import { isClient } from "@wpdas/naxios";
+
+import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { PageWithBanner, SpinnerOverlay, SplashScreen } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useSession } from "@/entities/_shared/session";
 import { ProjectEditor, useInitProjectState } from "@/features/profile-setup";
@@ -40,3 +43,11 @@ export default function EditProjectPage() {
     </PageWithBanner>
   );
 }
+
+EditProjectPage.getLayout = function getLayout(page: React.ReactNode) {
+  return isClient() ? (
+    <WalletManagerProvider>{page}</WalletManagerProvider>
+  ) : (
+    <SplashScreen className="h-200" />
+  );
+};

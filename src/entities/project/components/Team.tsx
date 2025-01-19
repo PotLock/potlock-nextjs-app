@@ -6,7 +6,7 @@ import Link from "next/link";
 import { NEARSocialUserProfile } from "@/common/contracts/social";
 import type { AccountId } from "@/common/types";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 const getProfileTeamMembersData = (profileData?: NEARSocialUserProfile) => {
   if (!profileData) return [];
@@ -50,7 +50,7 @@ const Members = ({ team }: { team?: string[] }) => {
         <Link
           key={teamMember}
           className="hover:decoration-none flex cursor-pointer flex-col justify-start gap-2"
-          href={`${routesPath.PROFILE}/${teamMember}`}
+          href={`${rootPathnames.PROFILE}/${teamMember}`}
           target="_blank"
         >
           <TeamAvatar teamMemberId={teamMember} />

@@ -7,7 +7,7 @@ import { useDonationsForProject } from "@/common/_deprecated/useDonationsForProj
 import { ExternalFundingSource } from "@/common/contracts/social";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { FundingTable } from "@/layout/profile/_deprecated/FundingTable";
-import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
+import { ProfileLayout } from "@/layout/profile/components/layout";
 
 const Line = () => <div className="my-[3rem] h-[1px] w-full bg-[#c7c7c7]" />;
 

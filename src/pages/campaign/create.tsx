@@ -1,9 +1,12 @@
-import { PageWithBanner } from "@/common/ui/components";
-import { CampaignForm } from "@/entities/campaign/components/CampaignForm";
-import { useCampaignDeploymentRedirect } from "@/entities/campaign/hooks/redirects";
+import { isClient } from "@wpdas/naxios";
+
+import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { PageWithBanner, SplashScreen } from "@/common/ui/components";
+import { CampaignForm, useCampaignDeploymentRedirect } from "@/entities/campaign";
 
 export default function CreateCampaign() {
   useCampaignDeploymentRedirect();
+
   return (
     <PageWithBanner>
       <div className="bg-hero relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden">
@@ -17,7 +20,14 @@ export default function CreateCampaign() {
           </h1>
         </div>
       </div>
-      <CampaignForm />
+
+      {!isClient() ? (
+        <SplashScreen className="h-100" />
+      ) : (
+        <WalletManagerProvider>
+          <CampaignForm />
+        </WalletManagerProvider>
+      )}
     </PageWithBanner>
   );
 }
