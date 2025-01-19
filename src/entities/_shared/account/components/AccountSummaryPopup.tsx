@@ -4,6 +4,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { indexer } from "@/common/api/indexer";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { listsContractHooks } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/common/ui/components";
@@ -24,16 +26,13 @@ export const AccountSummaryPopup: React.FC<AccountSummaryPopupProps> = ({
   disabled = false,
   children,
 }) => {
-  const [noData, setNoData] = useState(false);
-  const { data: fundingAccount, error } = indexer.useAccount({ enabled: !noData, accountId });
-  const { profile } = useAccountSocialProfile({ accountId });
+  const { data: isRegistered = false } = listsContractHooks.useIsRegistered({
+    accountId,
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
+  });
 
-  //? Stop polling account data once it's clear that the account doesn't exist
-  useEffect(() => {
-    if (error && !noData) {
-      setNoData(true);
-    }
-  }, [error, noData]);
+  const { data: fundingAccount } = indexer.useAccount({ enabled: isRegistered, accountId });
+  const { profile } = useAccountSocialProfile({ accountId });
 
   return disabled ? (
     children

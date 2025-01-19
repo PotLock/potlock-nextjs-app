@@ -9,6 +9,38 @@ import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import useSwr from "swr";
 import type { Key, SWRConfiguration } from "swr";
+export type GetTokensAdvanced200 = { [key: string]: TokenDetail };
+
+export type GetTokensAdvancedMinReputation =
+  (typeof GetTokensAdvancedMinReputation)[keyof typeof GetTokensAdvancedMinReputation];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetTokensAdvancedMinReputation = {
+  Spam: "Spam",
+  Unknown: "Unknown",
+  NotFake: "NotFake",
+  Reputable: "Reputable",
+} as const;
+
+export type GetTokensAdvancedParams = {
+  /**
+   * Maximum number of tokens to return
+   */
+  take?: number;
+  /**
+   * Filter tokens by minimum reputation level
+   */
+  min_reputation?: GetTokensAdvancedMinReputation;
+  /**
+   * Comma-separated list of account IDs to filter by
+   */
+  account_ids?: string;
+  /**
+   * Filter tokens by platform (parent account id)
+   */
+  platform?: string;
+};
+
 export type GetTokenSearchRep = (typeof GetTokenSearchRep)[keyof typeof GetTokenSearchRep];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -125,6 +157,8 @@ export interface TokenDetail {
   circulating_supply: string;
   circulating_supply_excluding_team: string;
   deleted: boolean;
+  /** Total liquidity in USD across all pools */
+  liquidity_usd: number;
   main_pool: string;
   metadata: TokenDetailMetadata;
   price_usd: string;
@@ -134,6 +168,12 @@ export interface TokenDetail {
   slug: string[];
   socials: TokenDetailSocials;
   total_supply: string;
+  /** Trading volume in USD over the last hour */
+  volume_usd_1h: number;
+  /** Trading volume in USD over the last 24 hours */
+  volume_usd_24h: number;
+  /** Trading volume in USD over the last 7 days */
+  volume_usd_7d: number;
 }
 
 export interface TokenInfo {
@@ -1117,6 +1157,56 @@ export const useGetTokensReputable = <TError = AxiosError<unknown>>(options?: {
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokensReputableKey() : null));
   const swrFn = () => getTokensReputable(axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * Retrieves detailed information for all tokens, including prices, metadata, supply information, liquidity, and volume data
+ * @summary Get advanced token information with market data
+ */
+export const getTokensAdvanced = (
+  params?: GetTokensAdvancedParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<GetTokensAdvanced200>> => {
+  return axios.get(`/tokens-advanced`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getGetTokensAdvancedKey = (params?: GetTokensAdvancedParams) =>
+  [`/tokens-advanced`, ...(params ? [params] : [])] as const;
+
+export type GetTokensAdvancedQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTokensAdvanced>>
+>;
+
+export type GetTokensAdvancedQueryError = AxiosError<unknown>;
+
+/**
+ * @summary Get advanced token information with market data
+ */
+export const useGetTokensAdvanced = <TError = AxiosError<unknown>>(
+  params?: GetTokensAdvancedParams,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getTokensAdvanced>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+  const swrKey = swrOptions?.swrKey ?? (() => (isEnabled ? getGetTokensAdvancedKey(params) : null));
+  const swrFn = () => getTokensAdvanced(params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 

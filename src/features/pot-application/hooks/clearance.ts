@@ -42,7 +42,7 @@ export const usePotApplicationUserClearance = ({
         ? [
             {
               title: `Verified Project on ${PLATFORM_NAME}`,
-              isFulfillmentAssessmentPending: authenticatedUser.isAccountInfoLoading,
+              isFulfillmentAssessmentPending: authenticatedUser.isMetadataLoading,
               isSatisfied: authenticatedUser.hasRegistrationApproved,
             },
           ]
@@ -76,7 +76,7 @@ export const usePotApplicationUserClearance = ({
       error: null,
     };
   }, [
-    authenticatedUser.isAccountInfoLoading,
+    authenticatedUser.isMetadataLoading,
     authenticatedUser.hasRegistrationApproved,
     hasProportionalFundingMechanism,
     pot?.sybil_wrapper_provider,

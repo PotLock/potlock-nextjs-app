@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import { prop } from "remeda";
 
-import { ListRegistrationStatus, indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import { isAccountId } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useGlobalStoreSelector } from "@/store";
@@ -27,38 +27,34 @@ export const useSession = (): UserSession => {
    */
   const isAccountIdValid = useMemo(() => isAccountId(accountId), [accountId]);
 
-  // TODO: Create and use list contract hook instead
-  const { isLoading: isAccountListRegistryLoading, data: accountListRegistrations } =
-    indexer.useAccountListRegistrations({
-      accountId: isAccountIdValid ? accountId : undefined,
-      page_size: 9999,
+  const { isLoading: isRegistrationFlagLoading, data: isRegistered = false } =
+    listsContractHooks.useIsRegistered({
+      enabled: isAccountIdValid,
+      accountId: accountId ?? "noop",
+      listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     });
 
-  const { registrant: publicGoodsRegistryAccount, status: registrationStatus } = useMemo(
-    () =>
-      accountListRegistrations?.results?.find(
-        ({ list }) => list.id === PUBLIC_GOODS_REGISTRY_LIST_ID,
-      ) ?? { registrant: undefined, status: undefined },
-
-    [accountListRegistrations?.results],
-  );
+  const { isLoading: isRegistrationLoading, data: registration } =
+    listsContractHooks.useRegistration({
+      enabled: isRegistered,
+      accountId: accountId ?? "noop",
+      listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
+    });
 
   if (isSignedIn && accountId && isAccountIdValid) {
     return {
       accountId,
-      account: publicGoodsRegistryAccount,
-      registrationStatus,
       isSignedIn: true,
-      isAccountInfoLoading: isAccountListRegistryLoading,
-      hasRegistrationApproved: registrationStatus === ListRegistrationStatus.Approved,
+      isMetadataLoading: isRegistrationFlagLoading || isRegistrationLoading,
+      hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
+      registrationStatus: registration?.status,
     };
   } else {
     return {
       accountId: undefined,
-      account: undefined,
       registrationStatus: undefined,
       isSignedIn: false,
-      isAccountInfoLoading: false,
+      isMetadataLoading: false,
       hasRegistrationApproved: false,
     };
   }
