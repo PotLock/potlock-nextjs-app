@@ -10,6 +10,7 @@ import "@/common/ui/styles/uno.generated.css";
 import { useEffect } from "react";
 
 import { Provider as NiceModalProvider } from "@ebay/nice-modal-react";
+import { isClient } from "@wpdas/naxios";
 import { NextPage } from "next";
 import { AppProps } from "next/app";
 import { Lora } from "next/font/google";
@@ -18,7 +19,7 @@ import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
 import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
-import { TooltipProvider } from "@/common/ui/components";
+import { SplashScreen, TooltipProvider } from "@/common/ui/components";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
 import { AppBar } from "@/layout/components/app-bar";
@@ -44,7 +45,7 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <WalletManagerProvider>
+    <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{APP_METADATA.title}</title>
@@ -59,13 +60,19 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
                 lora.variable,
               )}
             >
-              <AppBar />
-              {getLayout(<Component {...pageProps} />)}
+              {isClient() ? (
+                <WalletManagerProvider>
+                  <AppBar />
+                  {getLayout(<Component {...pageProps} />)}
+                </WalletManagerProvider>
+              ) : (
+                <SplashScreen className="h-screen" />
+              )}
             </div>
           </TooltipProvider>
         </NiceModalProvider>
         <Toaster />
       </ReduxProvider>
-    </WalletManagerProvider>
+    </>
   );
 }
