@@ -1,7 +1,7 @@
 import { Models, createModel } from "@rematch/core";
 
 import { ContractMetadata } from "@/common/types";
-import { sessionModel } from "@/entities/_shared/session/model";
+import { sessionModel } from "@/entities/_shared/session";
 import { campaignEditorModel } from "@/entities/campaign/models";
 import { listEditorModel } from "@/entities/list";
 import { donationModel, donationModelKey } from "@/features/donation";

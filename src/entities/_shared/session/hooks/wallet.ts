@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 
+import { WalletManager } from "@wpdas/naxios/dist/types/managers/wallet-manager";
+
 import { walletApi } from "@/common/api/near/client";
 
-import { Wallet } from "../types";
+export type Wallet = Omit<WalletManager, "changeWalletStatus" | "status">;
 
 export const useWallet = () => {
   const [isWalletReady, setReady] = useState(false);
@@ -28,4 +30,4 @@ export const useWallet = () => {
   };
 };
 
-export default useWallet;
+export type WalletContext = {};

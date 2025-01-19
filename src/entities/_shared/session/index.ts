@@ -9,3 +9,5 @@ export * from "./hooks/redux-store";
 
 export * from "./hooks/session";
 export * from "./hooks/wallet";
+
+export { sessionModel } from "./model";

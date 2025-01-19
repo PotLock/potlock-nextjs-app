@@ -1,11 +1,7 @@
-import { WalletManager } from "@wpdas/naxios/dist/types/managers/wallet-manager";
-
 import type { RegistrationStatus } from "@/common/contracts/core/lists";
 import { AccountId } from "@/common/types";
 
-export type Wallet = Omit<WalletManager, "changeWalletStatus" | "status">;
-
-export type UserSession =
+export type Session =
   | {
       accountId: AccountId;
       registrationStatus?: RegistrationStatus;
