@@ -22,8 +22,8 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
   onSubmitSuccess,
 }) => {
   const { toast } = useToast();
-  const authenticatedUser = useSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
+  const viewer = useSession();
+  const authorizedUser = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRoundResults = useVotingRoundResults({ potId });
 
   const { isMetadataLoading: isTokenMetadataLoading, data: token } = useToken({

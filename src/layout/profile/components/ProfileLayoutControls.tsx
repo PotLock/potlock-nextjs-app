@@ -25,18 +25,18 @@ type Props = {
 };
 
 const LinksWrapper = ({ accountId }: { accountId: string }) => {
-  const authenticatedUser = useSession();
+  const viewer = useSession();
   const [copied, setCopied] = useState(false);
 
   return (
     <div className="mt-4 flex flex-wrap gap-8">
       <AccountProfileLinktree {...{ accountId }} />
 
-      {authenticatedUser.isSignedIn && (
+      {viewer.isSignedIn && (
         <CopyToClipboard
           text={
             window.location.origin +
-            `${rootPathnames.PROFILE}/${accountId}?referrerId=${authenticatedUser.accountId}`
+            `${rootPathnames.PROFILE}/${accountId}?referrerId=${viewer.accountId}`
           }
           onCopy={() => {
             setCopied(true);
@@ -144,8 +144,8 @@ const DonationsInfo = ({ accountId }: { accountId: string }) => {
 };
 
 export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
-  const authenticatedUser = useSession();
-  const isOwner = authenticatedUser?.accountId === accountId;
+  const viewer = useSession();
+  const isOwner = viewer?.accountId === accountId;
   const { profile } = useAccountSocialProfile({ accountId });
 
   return (

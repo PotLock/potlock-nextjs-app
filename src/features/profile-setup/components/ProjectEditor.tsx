@@ -6,8 +6,7 @@ import { prop } from "remeda";
 
 import { Button, FormField } from "@/common/ui/components";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
-import { useWallet } from "@/entities/_shared/session";
-import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
+import { useSession, useWallet } from "@/entities/_shared/session";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
@@ -42,14 +41,11 @@ export const ProjectEditor = () => {
     typeof projectIdPathParam === "string" ? projectIdPathParam : projectIdPathParam?.at(0);
 
   const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
-  const { wallet, isWalletReady } = useWallet();
-  const { isAuthenticated } = useSessionReduxStore();
+  const viewer = useSession();
   const { form, errors, onSubmit } = useProjectEditorForm();
   const values = form.watch();
 
-  const isOwner = projectTemplate.isDao
-    ? projectId === projectTemplate.daoAddress
-    : projectId === wallet?.accountId;
+  const isOwner = projectId === viewer.accountId;
 
   useEffect(() => {
     // Set initial focus to name input.
@@ -132,17 +128,12 @@ export const ProjectEditor = () => {
       : true
     : true;
 
-  // Wait for wallet
-  if (!isWalletReady) {
-    return <InfoSegment title="Checking account." description="Please, wait..." />;
-  }
-
-  if (isAuthenticated && projectTemplate.checkPreviousProjectDataStatus !== "ready") {
+  if (viewer.isSignedIn && projectTemplate.checkPreviousProjectDataStatus !== "ready") {
     return <InfoSegment title="Checking account." description="Please, wait..." />;
   }
 
   // must be signed in
-  if (!isAuthenticated) {
+  if (!viewer.isSignedIn) {
     return <InfoSegment title="Not logged in!" description="You must log in first!" />;
   }
 
@@ -173,7 +164,7 @@ export const ProjectEditor = () => {
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SuccessfulRegister
           registeredProject={
-            projectTemplate.isDao ? projectTemplate.daoAddress || "" : wallet?.accountId || ""
+            projectTemplate.isDao ? projectTemplate.daoAddress || "" : viewer.accountId || ""
           }
           isEdit={projectTemplate.isEdit}
         />

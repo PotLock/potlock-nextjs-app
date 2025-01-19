@@ -39,7 +39,7 @@ import {
 import { PotLayout } from "@/layout/pot/components/layout";
 
 export default function PotVotesTab() {
-  const authenticatedUser = useSession();
+  const viewer = useSession();
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -54,7 +54,7 @@ export default function PotVotesTab() {
   const [candidateFilter, setFilter] = useState<VotingRoundCandidateFilter>("all");
 
   const authenticatedVoter = useVotingRoundVoterVoteWeight({
-    accountId: authenticatedUser.accountId,
+    accountId: viewer.accountId,
     potId,
   });
 
@@ -69,9 +69,9 @@ export default function PotVotesTab() {
 
   const { data: authenticatedVotingRoundVoterVotes } = votingContractHooks.useVotingRoundVoterVotes(
     {
-      enabled: votingRound !== undefined && isAccountId(authenticatedUser.accountId),
+      enabled: votingRound !== undefined && isAccountId(viewer.accountId),
       electionId: votingRound?.electionId ?? 0,
-      accountId: authenticatedUser.accountId as AccountId,
+      accountId: viewer.accountId as AccountId,
     },
   );
 
@@ -199,7 +199,7 @@ export default function PotVotesTab() {
             <div className="flex items-center gap-2">
               <MdHowToVote className="color-peach-400 h-6 w-6" />
 
-              {authenticatedUser.isSignedIn ? (
+              {viewer.isSignedIn ? (
                 <span className="inline-flex flex-nowrap items-center font-semibold">
                   {isVotingPeriodOngoing ? (
                     <>

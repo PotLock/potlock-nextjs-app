@@ -25,7 +25,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   closeModal,
   ...props
 }) => {
-  const authenticatedUser = useSession();
+  const viewer = useSession();
   const { currentStep, finalOutcome } = useDonationState();
 
   const {
@@ -46,7 +46,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
   const { data: token } = useToken({
     tokenId,
-    balanceCheckAccountId: authenticatedUser?.accountId,
+    balanceCheckAccountId: viewer?.accountId,
   });
 
   const isBalanceSufficient = isBigSource(totalAmountFloat)

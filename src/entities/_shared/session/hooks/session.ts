@@ -3,22 +3,34 @@ import { useMemo } from "react";
 import { prop } from "remeda";
 
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { useWalletManagerContext } from "@/common/contexts/wallet-manager";
 import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import { isAccountId } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useGlobalStoreSelector } from "@/store";
 
-import { useWallet } from "./wallet";
 import { Session } from "../types";
 
+// TODO: Subscribe to wallet events to keep isSignedIn synced
 export const useSession = (): Session => {
-  const { isSignedIn, wallet } = useWallet();
+  const walletManagerContext = useWalletManagerContext();
+
+  const isSignedIn = useMemo(
+    () => (walletManagerContext.isReady ? walletManagerContext.walletSelector.isSignedIn() : false),
+    [walletManagerContext],
+  );
+
+  const walletAccountId = useMemo(
+    () => (walletManagerContext.isReady ? walletManagerContext.accountId : null),
+    [walletManagerContext],
+  );
+
   const { actAsDao, accountId: lastActiveAccountId } = useGlobalStoreSelector(prop("nav"));
   const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
 
   const accountId: AccountId | undefined = useMemo(
-    () => (asDao ? actAsDao.defaultAddress : (wallet?.accountId ?? lastActiveAccountId)),
-    [actAsDao.defaultAddress, asDao, lastActiveAccountId, wallet?.accountId],
+    () => (asDao ? actAsDao.defaultAddress : (walletAccountId ?? lastActiveAccountId)),
+    [actAsDao.defaultAddress, asDao, lastActiveAccountId, walletAccountId],
   );
 
   /**
@@ -27,16 +39,9 @@ export const useSession = (): Session => {
    */
   const isAccountIdValid = useMemo(() => isAccountId(accountId), [accountId]);
 
-  const { isLoading: isRegistrationFlagLoading, data: isRegistered = false } =
-    listsContractHooks.useIsRegistered({
-      enabled: isAccountIdValid,
-      accountId: accountId ?? "noop",
-      listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
-    });
-
   const { isLoading: isRegistrationLoading, data: registration } =
     listsContractHooks.useRegistration({
-      enabled: isRegistered,
+      enabled: isAccountIdValid,
       accountId: accountId ?? "noop",
       listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     });
@@ -45,17 +50,19 @@ export const useSession = (): Session => {
     return {
       accountId,
       isSignedIn: true,
-      isMetadataLoading: isRegistrationFlagLoading || isRegistrationLoading,
+      isMetadataLoading: isRegistrationLoading,
+      hasRegistrationSubmitted: registration !== undefined,
       hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
       registrationStatus: registration?.status,
     };
   } else {
     return {
       accountId: undefined,
-      registrationStatus: undefined,
       isSignedIn: false,
       isMetadataLoading: false,
+      hasRegistrationSubmitted: false,
       hasRegistrationApproved: false,
+      registrationStatus: undefined,
     };
   }
 };

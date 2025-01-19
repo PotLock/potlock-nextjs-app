@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { NETWORK } from "@/common/_config";
 import useIsClient from "@/common/lib/useIsClient";
 import { cn } from "@/common/ui/utils";
-import { AuthSignInButton, useSessionReduxStore } from "@/entities/_shared/session";
+import { SessionAuthButton, useSession } from "@/entities/_shared/session";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 
@@ -33,12 +33,13 @@ const links = [
 ];
 
 const AuthButton = () => {
-  const { isAuthenticated } = useSessionReduxStore();
-  const isClient = useIsClient();
+  const viewer = useSession();
 
+  // TODO: Investigate if it's really necessary
+  const isClient = useIsClient();
   if (!isClient) return;
 
-  return isAuthenticated ? <UserDropdown /> : <AuthSignInButton />;
+  return viewer.isSignedIn ? <UserDropdown /> : <SessionAuthButton />;
 };
 
 const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {

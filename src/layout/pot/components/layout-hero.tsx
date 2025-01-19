@@ -37,8 +37,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onChallengePayoutsClick,
   onFundMatchingPoolClick,
 }) => {
-  const authenticatedUser = useSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
+  const viewer = useSession();
+  const authorizedUser = usePotAuthorization({ potId, accountId: viewer.accountId });
   const { data: pot } = indexer.usePot({ potId });
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
@@ -46,13 +46,13 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
   const activeChallenge = useMemo(
     () =>
-      authenticatedUser.isSignedIn
+      viewer.isSignedIn
         ? (potPayoutChallenges ?? []).find(
-            ({ challenger_id }) => authenticatedUser.accountId === challenger_id,
+            ({ challenger_id }) => viewer.accountId === challenger_id,
           )
         : undefined,
 
-    [authenticatedUser.isSignedIn, authenticatedUser.accountId, potPayoutChallenges],
+    [viewer.isSignedIn, viewer.accountId, potPayoutChallenges],
   );
 
   const applicationClearance = usePotApplicationUserClearance({
@@ -65,10 +65,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
     [lifecycle.currentStage?.tag],
   );
 
-  const referrerPotLink = authenticatedUser.isSignedIn
-    ? window.location.origin +
-      window.location.pathname +
-      `&referrerId=${authenticatedUser.accountId}`
+  const referrerPotLink = viewer.isSignedIn
+    ? window.location.origin + window.location.pathname + `&referrerId=${viewer.accountId}`
     : null;
 
   const [description, linkedDocumentUrl] = useMemo(() => {

@@ -6,7 +6,7 @@ import { walletApi } from "@/common/api/near/client";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSessionReduxStore } from "@/entities/_shared/session";
+import { useSession } from "@/entities/_shared/session";
 import { dispatch } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
@@ -23,7 +23,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   const isListDonation = "listId" in props;
   const isCampaignDonation = "campaignId" in props;
   const { currentStep } = useDonationState();
-  const { isAuthenticated } = useSessionReduxStore();
+  const viewer = useSession();
   const { setSearchParams } = useRouteQuery();
 
   const close = useCallback(() => {
@@ -63,7 +63,7 @@ export const DonationModal = create((props: DonationModalProps) => {
         }
         onCloseClick={close}
       >
-        {!isAuthenticated ? (
+        {!viewer.isSignedIn ? (
           <ModalErrorBody
             heading="Donation"
             title="Authentication required"

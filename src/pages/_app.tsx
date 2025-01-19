@@ -17,10 +17,10 @@ import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
+import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
 import { TooltipProvider } from "@/common/ui/components";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
-import { SessionProvider } from "@/entities/_shared/session";
 import { AppBar } from "@/layout/components/app-bar";
 import { dispatch, store } from "@/store";
 
@@ -44,7 +44,7 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <>
+    <WalletManagerProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{APP_METADATA.title}</title>
@@ -52,22 +52,20 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
 
       <ReduxProvider {...{ store }}>
         <NiceModalProvider>
-          <SessionProvider>
-            <TooltipProvider>
-              <div
-                className={cn(
-                  "font-lora flex h-full flex-col items-center antialiased",
-                  lora.variable,
-                )}
-              >
-                <AppBar />
-                {getLayout(<Component {...pageProps} />)}
-              </div>
-            </TooltipProvider>
-          </SessionProvider>
+          <TooltipProvider>
+            <div
+              className={cn(
+                "font-lora flex h-full flex-col items-center antialiased",
+                lora.variable,
+              )}
+            >
+              <AppBar />
+              {getLayout(<Component {...pageProps} />)}
+            </div>
+          </TooltipProvider>
         </NiceModalProvider>
         <Toaster />
       </ReduxProvider>
-    </>
+    </WalletManagerProvider>
   );
 }

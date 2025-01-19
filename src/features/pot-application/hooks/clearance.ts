@@ -24,15 +24,15 @@ export const usePotApplicationUserClearance = ({
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
   const { data: pot } = indexer.usePot({ potId });
 
-  const authenticatedUser = useSession();
+  const viewer = useSession();
 
   const { data: voterInfo } = indexer.useMpdaoVoter({
-    enabled: authenticatedUser.isSignedIn,
-    accountId: authenticatedUser.accountId as AccountId,
+    enabled: viewer.isSignedIn,
+    accountId: viewer.accountId as AccountId,
   });
 
   const { data: stakingToken } = useToken({
-    balanceCheckAccountId: authenticatedUser.accountId,
+    balanceCheckAccountId: viewer.accountId,
     tokenId: staking.tokenId,
   });
 
@@ -42,8 +42,8 @@ export const usePotApplicationUserClearance = ({
         ? [
             {
               title: `Verified Project on ${PLATFORM_NAME}`,
-              isFulfillmentAssessmentPending: authenticatedUser.isMetadataLoading,
-              isSatisfied: authenticatedUser.hasRegistrationApproved,
+              isFulfillmentAssessmentPending: viewer.isMetadataLoading,
+              isSatisfied: viewer.hasRegistrationApproved,
             },
           ]
         : []),
@@ -76,8 +76,8 @@ export const usePotApplicationUserClearance = ({
       error: null,
     };
   }, [
-    authenticatedUser.isMetadataLoading,
-    authenticatedUser.hasRegistrationApproved,
+    viewer.isMetadataLoading,
+    viewer.hasRegistrationApproved,
     hasProportionalFundingMechanism,
     pot?.sybil_wrapper_provider,
     staking.minAmountUsd,

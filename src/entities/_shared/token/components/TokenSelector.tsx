@@ -6,11 +6,11 @@ import { useSession } from "@/entities/_shared/session";
 import { useToken, useTokenAllowlist } from "../hooks";
 
 const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
-  const authenticatedUser = useSession();
+  const viewer = useSession();
 
   const { data: token } = useToken({
     tokenId,
-    balanceCheckAccountId: authenticatedUser?.accountId,
+    balanceCheckAccountId: viewer?.accountId,
   });
 
   switch (tokenId) {

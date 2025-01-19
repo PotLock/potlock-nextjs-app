@@ -1,16 +1,13 @@
 import Link from "next/link";
 
 import { NETWORK } from "@/common/_config";
-import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { indexer } from "@/common/api/indexer";
-import { nearClient } from "@/common/api/near";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSessionReduxStore } from "@/entities/_shared/session";
+import { useSession } from "@/entities/_shared/session";
 import { ProjectCard, ProjectDiscovery } from "@/entities/project";
 import { DonateRandomly } from "@/features/donation";
 import routesPath from "@/pathnames";
-import { useGlobalStoreSelector } from "@/store";
 
 export const FEATURED_PROJECT_ACCOUNT_IDS =
   NETWORK === "mainnet"
@@ -47,11 +44,7 @@ export const GeneralStats = () => {
 };
 
 const WelcomeBanner = () => {
-  const { defaultAddress, toggle } = useGlobalStoreSelector((state) => state.nav.actAsDao);
-  const daoAddress = toggle && defaultAddress ? defaultAddress : "";
-  const accountId = daoAddress || nearClient.walletApi?.accountId || "";
-  const { isAuthenticated } = useSessionReduxStore();
-  const { loading, isRegisteredProject } = useRegistration(accountId);
+  const viewer = useSession();
 
   return (
     <div
@@ -73,17 +66,17 @@ const WelcomeBanner = () => {
         <div className="mt-6 flex items-center gap-4 text-sm max-md:flex-col md:mt-10 md:gap-8">
           <DonateRandomly />
 
-          {isAuthenticated && !loading && (
+          {!viewer.isMetadataLoading && viewer.isSignedIn && (
             <Button className="w-full md:w-[180px]" variant={"brand-tonal"} asChild>
               <Link
                 href={
-                  isRegisteredProject
-                    ? `${routesPath.PROFILE}/${accountId}`
+                  viewer.hasRegistrationSubmitted
+                    ? `${routesPath.PROFILE}/${viewer.accountId}`
                     : routesPath.CREATE_PROJECT
                 }
                 prefetch={true}
               >
-                {isRegisteredProject ? "View Your Project" : "Register Your Project"}
+                {viewer.hasRegistrationSubmitted ? "View Your Project" : "Register Your Project"}
               </Link>
             </Button>
           )}

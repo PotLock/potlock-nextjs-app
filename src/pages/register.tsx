@@ -1,18 +1,18 @@
 import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
+import { useSession } from "@/entities/_shared/session";
 import { ProjectEditor, useInitProjectState } from "@/features/profile-setup";
 import { useGlobalStoreSelector } from "@/store";
 
 export default function RegisterPage() {
-  const { isAuthenticated } = useSessionReduxStore();
+  const viewer = useSession();
   useInitProjectState();
 
   // state used to show spinner during the data post
   const { submissionStatus, checkRegistrationStatus, checkPreviousProjectDataStatus } =
     useGlobalStoreSelector((state) => state.projectEditor);
 
-  const showSpinner = isAuthenticated
+  const showSpinner = viewer.isSignedIn
     ? submissionStatus === "sending" ||
       checkRegistrationStatus !== "ready" ||
       checkPreviousProjectDataStatus !== "ready"

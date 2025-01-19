@@ -4,9 +4,7 @@ import { isClient } from "@wpdas/naxios";
 
 import { walletApi } from "@/common/api/near/client";
 import { SplashScreen } from "@/common/ui/components";
-import { dispatch, resetStore } from "@/store";
 
-import { useSessionReduxStore } from "../hooks/redux-store";
 import { useWallet } from "../hooks/wallet";
 
 type SessionProviderProps = {
@@ -15,7 +13,7 @@ type SessionProviderProps = {
 
 export const SessionProvider = ({ children }: SessionProviderProps) => {
   const [isReady, setReady] = useState(false);
-  const { isAuthenticated } = useSessionReduxStore();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { wallet } = useWallet();
 
   // Check wallet
@@ -29,12 +27,7 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
       const isSignedIn = walletApi.walletSelector.isSignedIn();
 
       if (isSignedIn !== isAuthenticated) {
-        dispatch.session.setAuthData({ isAuthenticated: isSignedIn });
-
-        if (!isSignedIn) {
-          // Clean up states
-          resetStore();
-        }
+        setIsAuthenticated(isSignedIn);
       }
     }
   }, [isAuthenticated, isReady, wallet]);

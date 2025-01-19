@@ -12,10 +12,10 @@ export const DonationTokenBalance: React.FC<DonationTokenBalanceProps> = ({
   tokenId,
   classNames,
 }) => {
-  const authenticatedUser = useSession();
+  const viewer = useSession();
 
   const { data: token, error: tokenError } = useToken({
-    balanceCheckAccountId: authenticatedUser?.accountId,
+    balanceCheckAccountId: viewer?.accountId,
     tokenId,
   });
 

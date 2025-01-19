@@ -1,7 +1,6 @@
 import { Models, createModel } from "@rematch/core";
 
 import { ContractMetadata } from "@/common/types";
-import { sessionModel } from "@/entities/_shared/session";
 import { campaignEditorModel } from "@/entities/campaign/models";
 import { listEditorModel } from "@/entities/list";
 import { donationModel, donationModelKey } from "@/features/donation";
@@ -53,7 +52,6 @@ export const coreModel = createModel<AppModel>()({
 
 export interface AppModel extends Models<AppModel> {
   core: typeof coreModel;
-  session: typeof sessionModel;
   [donationModelKey]: typeof donationModel;
   nav: typeof navModel;
   [potConfigurationModelKey]: typeof potConfigurationModel;
@@ -64,7 +62,6 @@ export interface AppModel extends Models<AppModel> {
 
 export const models: AppModel = {
   core: coreModel,
-  session: sessionModel,
   [donationModelKey]: donationModel,
   nav: navModel,
   listEditor: listEditorModel,

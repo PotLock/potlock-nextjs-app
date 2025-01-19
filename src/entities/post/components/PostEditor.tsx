@@ -9,11 +9,11 @@ import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { useSession } from "@/entities/_shared/session";
 
 export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
-  const authenticatedUser = useSession();
+  const viewer = useSession();
 
   const { avatarSrc } = useAccountSocialProfile({
-    enabled: authenticatedUser.isSignedIn,
-    accountId: authenticatedUser.accountId as AccountId,
+    enabled: viewer.isSignedIn,
+    accountId: viewer.accountId as AccountId,
   });
 
   const [postText, setPostText] = useState("");

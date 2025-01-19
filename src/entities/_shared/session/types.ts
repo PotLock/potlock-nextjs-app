@@ -7,6 +7,7 @@ export type Session =
       registrationStatus?: RegistrationStatus;
       isSignedIn: true;
       isMetadataLoading: boolean;
+      hasRegistrationSubmitted: boolean;
       hasRegistrationApproved: boolean;
     }
   | {
@@ -14,5 +15,6 @@ export type Session =
       registrationStatus: undefined;
       isSignedIn: false;
       isMetadataLoading: false;
+      hasRegistrationSubmitted: false;
       hasRegistrationApproved: false;
     };

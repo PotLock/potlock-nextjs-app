@@ -30,7 +30,7 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
 }) => {
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
-  const authenticatedUser = useSession();
+  const viewer = useSession();
   const selectedEntries = useSet<AccountId>();
 
   const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
@@ -39,9 +39,9 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
   });
 
   const { data: remainingUserVotingCapacity } = votingContractHooks.useVoterRemainingCapacity({
-    enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
+    enabled: electionId !== 0 && viewer.accountId !== undefined,
     electionId,
-    accountId: authenticatedUser.accountId as AccountId,
+    accountId: viewer.accountId as AccountId,
   });
 
   const handleEntrySelect = useCallback(

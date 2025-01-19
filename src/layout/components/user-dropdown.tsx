@@ -24,11 +24,11 @@ import { DaoAuth } from "./dao-auth";
 
 // TODO: Finish refactoring
 export const UserDropdown = () => {
-  const authenticatedUser = useSession();
+  const viewer = useSession();
 
   const { profile } = useAccountSocialProfile({
-    enabled: authenticatedUser.isSignedIn,
-    accountId: authenticatedUser.accountId ?? "noop",
+    enabled: viewer.isSignedIn,
+    accountId: viewer.accountId ?? "noop",
   });
 
   const logoutHandler = useCallback(() => {
@@ -38,30 +38,27 @@ export const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="h-8 w-8 rounded-full">
-        {authenticatedUser.isSignedIn ? (
-          <AccountProfilePicture
-            accountId={authenticatedUser.accountId}
-            className="h-full w-full"
-          />
+        {viewer.isSignedIn ? (
+          <AccountProfilePicture accountId={viewer.accountId} className="h-full w-full" />
         ) : (
           <Skeleton className="h-full w-full rounded-full" />
         )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-72 p-0">
-        {authenticatedUser.registrationStatus && (
+        {viewer.registrationStatus && (
           <DropdownMenuLabel
             className="flex items-center justify-between px-4 py-2"
             style={{
-              color: listRegistrationStatuses[authenticatedUser.registrationStatus].color,
-              background: listRegistrationStatuses[authenticatedUser.registrationStatus].background,
+              color: listRegistrationStatuses[viewer.registrationStatus].color,
+              background: listRegistrationStatuses[viewer.registrationStatus].background,
             }}
           >
-            {authenticatedUser.registrationStatus}
+            {viewer.registrationStatus}
 
             <LazyLoadImage
               alt="Registration status icon"
-              src={listRegistrationStatuses[authenticatedUser.registrationStatus].icon}
+              src={listRegistrationStatuses[viewer.registrationStatus].icon}
               width={18}
               height={18}
             />
@@ -70,20 +67,15 @@ export const UserDropdown = () => {
 
         <div className="flex flex-col gap-6 p-4">
           <DropdownMenuLabel className="flex gap-2 p-0">
-            {authenticatedUser.accountId && (
-              <AccountProfilePicture
-                accountId={authenticatedUser.accountId}
-                className="h-10 w-10"
-              />
+            {viewer.accountId && (
+              <AccountProfilePicture accountId={viewer.accountId} className="h-10 w-10" />
             )}
 
             <div className="flex flex-col">
               {profile?.name && <p className="font-semibold">{truncate(profile.name, 30)}</p>}
 
-              {authenticatedUser.accountId && (
-                <p className="prose color-[#656565] text-xs">
-                  {truncate(authenticatedUser.accountId, 30)}
-                </p>
+              {viewer.accountId && (
+                <p className="prose color-[#656565] text-xs">{truncate(viewer.accountId, 30)}</p>
               )}
             </div>
           </DropdownMenuLabel>
@@ -91,10 +83,10 @@ export const UserDropdown = () => {
           <DaoAuth />
 
           <div className="rounded-md border border-[#DBDBDB]">
-            {authenticatedUser.accountId && (
-              <Link href={`${rootPathnames.PROFILE}/${authenticatedUser.accountId}`}>
+            {viewer.accountId && (
+              <Link href={`${rootPathnames.PROFILE}/${viewer.accountId}`}>
                 <DropdownMenuItem className="px-3 py-2.5 font-medium">
-                  {authenticatedUser.hasRegistrationApproved ? "My Project" : "My Profile"}
+                  {viewer.hasRegistrationApproved ? "My Project" : "My Profile"}
                 </DropdownMenuItem>
               </Link>
             )}
