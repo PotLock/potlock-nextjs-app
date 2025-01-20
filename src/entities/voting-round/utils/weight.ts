@@ -76,10 +76,6 @@ export const getVoteWeight = (
       default: {
         if (profileParameter instanceof Big) {
           isApplicable = profileParameter[rule.comparator](rule.threshold);
-
-          // TODO: Remove after backend fix
-          //! TEMPORARILY mitigate the issue where the backend kept track of the staked amount even after the voting round
-          isApplicable = voterProfile.accountId === "satoukibijusu.near" ? true : isApplicable;
         }
       }
     }
