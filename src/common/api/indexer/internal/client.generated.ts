@@ -1025,15 +1025,6 @@ export interface PaginatedListsResponse {
   results: List[];
 }
 
-export interface PaginatedListRegistrationsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: ListRegistration[];
-}
-
 export interface PaginatedDonationsResponse {
   count: number;
   /** @nullable */
@@ -1128,6 +1119,52 @@ export interface ListUpvote {
   list: number;
 }
 
+export interface ListRegistration {
+  /**
+   * Admin notes.
+   * @maxLength 1024
+   * @nullable
+   */
+  admin_notes?: string | null;
+  /** Registration id. */
+  readonly id: number;
+  registered_by: Account;
+  registrant: Account;
+  /**
+   * Registrant notes.
+   * @maxLength 1024
+   * @nullable
+   */
+  registrant_notes?: string | null;
+  /** Registration status.
+
+* `Pending` - Pending
+* `Approved` - Approved
+* `Rejected` - Rejected
+* `Graylisted` - Graylisted
+* `Blacklisted` - Blacklisted */
+  status: StatusF24Enum;
+  /** Registration submission date. */
+  submitted_at: string;
+  /**
+   * Transaction hash.
+   * @maxLength 64
+   * @nullable
+   */
+  tx_hash?: string | null;
+  /** Registration last update date. */
+  updated_at: string;
+}
+
+export interface PaginatedListRegistrationsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: ListRegistration[];
+}
+
 export interface List {
   /** Admin only registrations. */
   admin_only_registrations: boolean;
@@ -1168,48 +1205,10 @@ export interface List {
    */
   on_chain_id: number;
   owner: Account;
-  readonly registrations_count: string;
+  registrations_count?: number;
   /** List last update date. */
   updated_at: string;
   upvotes: ListUpvote[];
-}
-
-export interface ListRegistration {
-  /**
-   * Admin notes.
-   * @maxLength 1024
-   * @nullable
-   */
-  admin_notes?: string | null;
-  /** Registration id. */
-  readonly id: number;
-  list: List;
-  registered_by: Account;
-  registrant: Account;
-  /**
-   * Registrant notes.
-   * @maxLength 1024
-   * @nullable
-   */
-  registrant_notes?: string | null;
-  /** Registration status.
-
-* `Pending` - Pending
-* `Approved` - Approved
-* `Rejected` - Rejected
-* `Graylisted` - Graylisted
-* `Blacklisted` - Blacklisted */
-  status: StatusF24Enum;
-  /** Registration submission date. */
-  submitted_at: string;
-  /**
-   * Transaction hash.
-   * @maxLength 64
-   * @nullable
-   */
-  tx_hash?: string | null;
-  /** Registration last update date. */
-  updated_at: string;
 }
 
 export interface Linktree {

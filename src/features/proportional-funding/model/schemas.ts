@@ -1,3 +1,3 @@
 import { object } from "zod";
 
-export const votingConfigurationSchema = object({});
+export const proportionalFundingConfigurationSchema = object({});

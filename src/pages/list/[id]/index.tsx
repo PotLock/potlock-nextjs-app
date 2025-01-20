@@ -12,7 +12,7 @@ import {
   useListDeploymentSuccessRedirect,
 } from "@/entities/list";
 import { useListForm } from "@/entities/list/hooks/useListForm";
-import { PageLayout } from "@/layout/components/PageLayout";
+import { RootLayout } from "@/layout/components/root-layout";
 
 export default function SingleList() {
   useListDeploymentSuccessRedirect();
@@ -65,7 +65,7 @@ export default function SingleList() {
   }, [loadingListData, isLoading, setAdmins, listData, data]);
 
   return (
-    <PageLayout
+    <RootLayout
       title={listDetails?.name ?? ""}
       description={listDetails?.description ?? ""}
       image={listDetails?.cover_image_url ?? ""}
@@ -86,6 +86,6 @@ export default function SingleList() {
           setFilteredRegistrations={setFilteredRegistrations}
         />
       </PageWithBanner>
-    </PageLayout>
+    </RootLayout>
   );
 }

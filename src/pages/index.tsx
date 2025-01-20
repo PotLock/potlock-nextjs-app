@@ -3,9 +3,10 @@ import Link from "next/link";
 import { NETWORK } from "@/common/_config";
 import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { indexer } from "@/common/api/indexer";
+import { nearClient } from "@/common/api/near";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSessionReduxStore, useWallet } from "@/entities/_shared/session";
+import { useSessionReduxStore } from "@/entities/_shared/session";
 import { ProjectCard, ProjectDiscovery } from "@/entities/project";
 import { DonateRandomly } from "@/features/donation";
 import routesPath from "@/pathnames";
@@ -47,12 +48,9 @@ export const GeneralStats = () => {
 
 const WelcomeBanner = () => {
   const { defaultAddress, toggle } = useGlobalStoreSelector((state) => state.nav.actAsDao);
-
   const daoAddress = toggle && defaultAddress ? defaultAddress : "";
-  const wallet = useWallet();
-  const accountId = daoAddress || wallet?.wallet?.accountId || "";
+  const accountId = daoAddress || nearClient.walletApi?.accountId || "";
   const { isAuthenticated } = useSessionReduxStore();
-
   const { loading, isRegisteredProject } = useRegistration(accountId);
 
   return (

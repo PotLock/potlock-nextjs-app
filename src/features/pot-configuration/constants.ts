@@ -84,12 +84,12 @@ export const POT_EDITOR_FIELDS: PotConfigurationParameters = {
   registry_provider: {
     index: "registry_provider",
     title: "Project Registration",
-    subtitle: "Requires approval on PotLock registry",
+    subtitle: "Requires approval on Public Goods Registry",
   },
 
   isPgRegistrationRequired: {
     title: "Project Registration.",
-    subtitle: "Require approval on PotLock registry",
+    subtitle: "Require approval on Public Goods Registry",
   },
 
   sybil_wrapper_provider: {

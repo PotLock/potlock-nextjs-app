@@ -1,11 +1,12 @@
-import { ReactElement } from "react";
+import { ReactElement, useMemo } from "react";
 
 import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { listsContractHooks } from "@/common/contracts/core";
+import { isAccountId } from "@/common/lib";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import Team from "@/entities/project/components/Team";
 import AboutItem from "@/layout/profile/components/AboutItem";
@@ -16,8 +17,14 @@ import SmartContract from "@/layout/profile/components/SmartContract";
 export default function ProfileHomeTab() {
   const router = useRouter();
   const { userId: accountId } = router.query as { userId: string };
-  const { profile } = useAccountSocialProfile({ accountId });
-  const { data: accountListRegistrations } = indexer.useAccountListRegistrations({ accountId });
+  const isAccountIdValid = useMemo(() => isAccountId(accountId), [accountId]);
+  const { profile } = useAccountSocialProfile({ enabled: isAccountIdValid, accountId });
+
+  const { data: isRegistered = false } = listsContractHooks.useIsRegistered({
+    enabled: isAccountIdValid,
+    accountId: accountId ?? "noop",
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
+  });
 
   return (
     <div className="mb-18 flex w-full flex-col">
@@ -39,9 +46,7 @@ export default function ProfileHomeTab() {
         }
       />
 
-      {accountListRegistrations?.results.find(
-        ({ list }) => list.id === PUBLIC_GOODS_REGISTRY_LIST_ID,
-      ) && (
+      {isRegistered && (
         <>
           <AboutItem
             title="Why we are a public good"

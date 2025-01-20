@@ -97,8 +97,8 @@ export const saveProject = async (data: any, accountId: string) => {
           args: {
             proposal: {
               description: data.isEdit
-                ? "Update project on Potlock (via NEAR Social)"
-                : "Create project on Potlock (2 steps: Register information on NEAR Social and register on Potlock)",
+                ? "Update project on POTLOCK (via NEAR Social)"
+                : "Create project on POTLOCK (2 steps: Register information on NEAR Social and register on POTLOCK)",
               kind: {
                 FunctionCall: {
                   receiver_id: tx.receiverId,

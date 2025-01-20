@@ -335,7 +335,7 @@ export const FundingTable = ({ accountId, type = "received" }: Props) => {
   return (
     // Container
     <div className="flex flex-col gap-[1.5rem]">
-      {type === "received" && <h3 className="text-size-2xl font-600">Potlock Funding</h3>}
+      {type === "received" && <h3 className="text-size-2xl font-600">POTLOCK Funding</h3>}
       <FundingStats
         stats={type === "donated" ? [stats[0]] : stats}
         sortOptions={sortDropdownItems}

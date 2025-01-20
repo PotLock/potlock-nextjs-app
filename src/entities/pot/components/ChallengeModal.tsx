@@ -1,7 +1,9 @@
+import { useMemo } from "react";
+
 import { Form } from "react-hook-form";
 
-import { Pot } from "@/common/api/indexer";
-import { Challenge } from "@/common/contracts/core";
+import { type ByPotId, Pot } from "@/common/api/indexer";
+import { potContractHooks } from "@/common/contracts/core";
 import {
   Button,
   Dialog,
@@ -12,29 +14,35 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { useGlobalStoreSelector } from "@/store";
+import { useSession } from "@/entities/_shared/session";
 
 import { useChallengeForm } from "../hooks/forms";
 
-type Props = {
+export type ChallengeModalProps = ByPotId & {
   potDetail: Pot;
   open?: boolean;
   onCloseClick?: () => void;
-  previousChallenge?: Challenge;
 };
 
-export const ChallengeModal = ({ open, onCloseClick, potDetail, previousChallenge }: Props) => {
-  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
+export const ChallengeModal: React.FC<ChallengeModalProps> = ({
+  open,
+  onCloseClick,
+  potId,
+  potDetail,
+}) => {
+  const authenticatedUser = useSession();
+  const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
 
-  // AccountID (Address)
-  const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
+  const activeChallenge = useMemo(() => {
+    if (authenticatedUser.isSignedIn) {
+      return (potPayoutChallenges ?? []).find(
+        ({ challenger_id }) => authenticatedUser.accountId === challenger_id,
+      );
+    } else return undefined;
+  }, [authenticatedUser.isSignedIn, authenticatedUser.accountId, potPayoutChallenges]);
 
   // Form settings
-  const { form, errors, onSubmit, inProgress } = useChallengeForm({
-    accountId: asDao ? actAsDao.defaultAddress : accountId,
-    asDao,
-    potDetail,
-  });
+  const { form, errors, onSubmit, inProgress } = useChallengeForm({ potDetail });
 
   return (
     <Dialog open={open}>
@@ -60,7 +68,7 @@ export const ChallengeModal = ({ open, onCloseClick, potDetail, previousChalleng
                   rows={5}
                   className="mt-2"
                   {...field}
-                  defaultValue={previousChallenge ? previousChallenge.reason : ""}
+                  defaultValue={activeChallenge ? activeChallenge.reason : undefined}
                   error={errors.message?.message}
                 />
               )}
@@ -71,7 +79,7 @@ export const ChallengeModal = ({ open, onCloseClick, potDetail, previousChalleng
               className="mt-6 min-w-[200px] self-end"
               type="submit"
             >
-              {inProgress ? <Spinner /> : <>Submit Challenge</>}
+              {inProgress ? <Spinner /> : <span>{"Submit Challenge"}</span>}
             </Button>
           </div>
         </Form>

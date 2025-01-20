@@ -99,10 +99,8 @@ export const update_list = ({
 /**
  * Get single list
  */
-export const getList = (args: GetListInput) =>
-  contractApi.view<typeof args, List>("get_list", {
-    args,
-  });
+export const get_list = (args: GetListInput) =>
+  contractApi.view<typeof args, List>("get_list", { args });
 
 export const register_batch = (args: ApplyToList) =>
   contractApi.call<typeof args, ApplyToList>("register_batch", {
@@ -112,13 +110,7 @@ export const register_batch = (args: ApplyToList) =>
   });
 
 export const unregister_from_list = (args: { list_id: number; registration_id: number }) =>
-  contractApi.call<
-    typeof args,
-    {
-      list_id: number;
-      registration_id: number;
-    }
-  >("unregister", {
+  contractApi.call<typeof args, { list_id: number; registration_id: number }>("unregister", {
     deposit: floatToYoctoNear(0.015),
     gas: "300000000000000",
     args,
@@ -174,60 +166,38 @@ export const remove_upvote = (args: { list_id: number }) =>
   });
 
 export const get_list_for_owner = (args: { owner_id: string }) =>
-  contractApi.view<typeof args, List>("get_lists_for_owner", {
-    args,
-  });
+  contractApi.view<typeof args, List>("get_lists_for_owner", { args });
 
 export const get_upvoted_lists_for_account = (args: { account_id: string }) =>
-  contractApi.view<typeof args, List>("get_upvoted_lists_for_account", {
-    args,
-  });
+  contractApi.view<typeof args, List>("get_upvoted_lists_for_account", { args });
 
 /**
  * Get Registrations for a list
  */
-export const getRegistrations = (
+export const get_registrations_for_list = (
   args: { list_id: number } = { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
-) => {
-  return contractApi.view<typeof args, Registration[]>(
-    "get_registrations_for_list",
-    {
-      args,
-    },
-    { useCache: true },
-  );
-};
+) => contractApi.view<typeof args, Registration[]>("get_registrations_for_list", { args });
 
 /**
  * Get Registrations for registrant
  */
-export const getRegistration = async (args: { list_id?: number; registrant_id: string }) => {
-  const registrations = await contractApi.view<typeof args, Registration[]>(
-    "get_registrations_for_registrant",
-    {
-      args,
-    },
+export const get_registrations_for_registrant = (args: {
+  list_id?: number;
+  registrant_id: string;
+}) => contractApi.view<typeof args, Registration[]>("get_registrations_for_registrant", { args });
+
+export const getRegistration = async (args: { list_id?: number; registrant_id: string }) =>
+  await get_registrations_for_registrant(args).then((registrations) =>
+    registrations.find(
+      (registration) => registration.list_id === (args.list_id || PUBLIC_GOODS_REGISTRY_LIST_ID),
+    ),
   );
 
-  const registration = registrations.find(
-    (registration) => registration.list_id === args.list_id || PUBLIC_GOODS_REGISTRY_LIST_ID,
-  );
-
-  return registration;
-};
-
-/**
- * Check if a registration is approved
- */
-export const isRegistrationApproved = (args: {
+export type IsRegisteredArgs = {
   account_id: string;
   list_id?: number;
   required_status?: RegistrationStatus;
-}) =>
-  contractApi.view<typeof args, boolean>(
-    "is_registered",
-    {
-      args,
-    },
-    { useCache: true },
-  );
+};
+
+export const is_registered = (args: IsRegisteredArgs) =>
+  contractApi.view<typeof args, boolean>("is_registered", { args });

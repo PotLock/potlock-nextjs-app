@@ -101,7 +101,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
   useEffect(() => {
     const fetchListDetails = async () => {
       try {
-        const response: any = await listsContractClient.getList({
+        const response: any = await listsContractClient.get_list({
           list_id: parseInt(id as string) as any,
         });
 

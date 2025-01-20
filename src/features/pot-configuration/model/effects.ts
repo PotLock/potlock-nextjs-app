@@ -24,7 +24,7 @@ type PotConfigurationSaveInputs = (PotDeploymentInputs | PotSettings) &
 
 export const effects = (dispatch: AppDispatcher) => ({
   handleDeploymentSuccess: ({ id }: PotDeploymentResult): void =>
-    void potContractClient.getConfig({ potId: id }).then((potConfig) => {
+    void potContractClient.get_config({ potId: id }).then((potConfig) => {
       dispatch.potConfiguration.deploymentSuccess({ id, ...potConfig });
     }),
 

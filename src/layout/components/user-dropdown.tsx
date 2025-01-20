@@ -15,16 +15,21 @@ import {
   DropdownMenuTrigger,
   Skeleton,
 } from "@/common/ui/components";
-import { AccountProfilePicture } from "@/entities/_shared/account";
+import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
 import { useSession } from "@/entities/_shared/session";
 import { listRegistrationStatuses } from "@/entities/list";
 import { rootPathnames } from "@/pathnames";
 
-import ActAsDao from "./ActAsDao";
+import { DaoAuth } from "./dao-auth";
 
 // TODO: Finish refactoring
 export const UserDropdown = () => {
   const authenticatedUser = useSession();
+
+  const { profile } = useAccountSocialProfile({
+    enabled: authenticatedUser.isSignedIn,
+    accountId: authenticatedUser.accountId ?? "noop",
+  });
 
   const logoutHandler = useCallback(() => {
     nearClient.walletApi.wallet?.signOut();
@@ -73,25 +78,23 @@ export const UserDropdown = () => {
             )}
 
             <div className="flex flex-col">
-              {authenticatedUser.account?.near_social_profile_data?.name && (
-                <p className="font-semibold">
-                  {truncate(authenticatedUser.account?.near_social_profile_data?.name, 30)}
+              {profile?.name && <p className="font-semibold">{truncate(profile.name, 30)}</p>}
+
+              {authenticatedUser.accountId && (
+                <p className="prose color-[#656565] text-xs">
+                  {truncate(authenticatedUser.accountId, 30)}
                 </p>
               )}
-
-              <p className="prose color-[#656565] text-xs">
-                {truncate(authenticatedUser.accountId ?? "?", 38)}
-              </p>
             </div>
           </DropdownMenuLabel>
 
-          <ActAsDao />
+          <DaoAuth />
 
           <div className="rounded-md border border-[#DBDBDB]">
             {authenticatedUser.accountId && (
               <Link href={`${rootPathnames.PROFILE}/${authenticatedUser.accountId}`}>
                 <DropdownMenuItem className="px-3 py-2.5 font-medium">
-                  {authenticatedUser.isVerifiedPublicGoodsProvider ? "My Project" : "My Profile"}
+                  {authenticatedUser.hasRegistrationApproved ? "My Project" : "My Profile"}
                 </DropdownMenuItem>
               </Link>
             )}

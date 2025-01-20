@@ -15,7 +15,7 @@ import {
   PotApplicationCardSkeleton,
   PotApplicationReviewModal,
 } from "@/features/pot-application";
-import { PotLayout } from "@/layout/pot/components/PotLayout";
+import { PotLayout } from "@/layout/pot/components/layout";
 import { useGlobalStoreSelector } from "@/store";
 
 // TODO: Refactor using TailwindCSS classes

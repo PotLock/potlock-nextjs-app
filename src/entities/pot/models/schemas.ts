@@ -80,7 +80,7 @@ export const potSchema = object({
 
   isPgRegistrationRequired: boolean()
     .optional()
-    .describe("Whether the projects must be included in PotLock PG registry with approval."),
+    .describe("Whether the projects must be included in POTLOCK PG registry with approval."),
 
   sybil_wrapper_provider: string().optional().describe("Sybil wrapper provider's account id."),
 

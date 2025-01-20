@@ -5,12 +5,12 @@ import { values } from "remeda";
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { type ElectionId, votingContractHooks } from "@/common/contracts/core/voting";
-import { stringifiedU128ToBigNum } from "@/common/lib";
+import { indivisibleUnitsToBigNum } from "@/common/lib";
 import type { ConditionalActivation } from "@/common/types";
 import { usePotFeatureFlags } from "@/entities/pot";
 
 import { useVotingRoundResultsStore } from "../model/results";
-import { type VotingRoundKey, VotingRoundVoteWeightAmplificationCriteriaEnum } from "../types";
+import { type VotingRoundKey } from "../types";
 import { useVotingRound } from "./rounds";
 import { VOTING_ROUND_CONFIG_MPDAO } from "../model/config.hardcoded";
 
@@ -33,34 +33,50 @@ export const useVotingRoundResults = ({
     electionId: votingRound?.electionId as ElectionId,
   });
 
-  const { isLoading: isVoterListLoading, data: voters } = indexer.useMpdaoVoters({
-    enabled: enabled && votingRound !== undefined,
-    page_size: 200,
-  });
+  const { isLoading: isVoterAccountListLoading, data: voterAccountList } =
+    votingContractHooks.useUniqueVoters({
+      enabled: enabled && votingRound !== undefined,
+      electionId: votingRound?.electionId as ElectionId,
+    });
+
+  const { isLoading: isVoterStatsSnapshotListLoading, data: voterStatsSnapshot } =
+    indexer.useMpdaoVoters({
+      enabled: enabled && votingRound !== undefined,
+      page_size: 200,
+    });
 
   const isLoading = useMemo(
-    () => isVoteListLoading || isVoterListLoading,
-    [isVoteListLoading, isVoterListLoading],
+    () => isVoteListLoading || isVoterAccountListLoading || isVoterStatsSnapshotListLoading,
+    [isVoteListLoading, isVoterAccountListLoading, isVoterStatsSnapshotListLoading],
   );
 
   // TODO: Apply performance optimizations
   const store = useVotingRoundResultsStore();
 
-  const cachedResults = useMemo(
+  const resultsCache = useMemo(
     () => (votingRound ? store.cache[votingRound.electionId] : undefined),
     [store.cache, votingRound],
   );
 
-  if (enabled && hasProportionalFundingMechanism && pot && votingRound && votes && voters) {
+  if (
+    enabled &&
+    hasProportionalFundingMechanism &&
+    pot &&
+    votingRound &&
+    votes &&
+    voterAccountList &&
+    voterStatsSnapshot
+  ) {
     // Recalculate results if votes have changed
-    if (!cachedResults || cachedResults.totalVoteCount !== votes.length) {
+    if (!resultsCache || resultsCache.totalVoteCount !== votes.length) {
       store.revalidate({
         electionId: votingRound.electionId,
         mechanismConfig,
         votes,
-        voters: voters.results,
+        voterAccountIds: voterAccountList,
+        voterStatsSnapshot: voterStatsSnapshot.results,
 
-        matchingPoolBalance: stringifiedU128ToBigNum(
+        matchingPoolBalance: indivisibleUnitsToBigNum(
           pot.matching_pool_balance,
           NATIVE_TOKEN_DECIMALS,
         ),
@@ -69,7 +85,7 @@ export const useVotingRoundResults = ({
   }
 
   const handleWinnersCsvDownload = useCallback(() => {
-    if (cachedResults?.winners) {
+    if (resultsCache?.winners) {
       const headers = [
         "Project Account ID",
         "Vote Count",
@@ -77,7 +93,7 @@ export const useVotingRoundResults = ({
         "Estimated NEAR Payout Amount",
       ];
 
-      const rows = values(cachedResults.winners)
+      const rows = values(resultsCache.winners)
         .sort((profileA, profileB) => profileB.accumulatedWeight - profileA.accumulatedWeight)
         .map((winner) => [
           winner.accountId,
@@ -98,24 +114,27 @@ export const useVotingRoundResults = ({
       link.click();
       document.body.removeChild(link);
     }
-  }, [potId, cachedResults]);
+  }, [potId, resultsCache]);
 
   const handleVotersCsvDownload = useCallback(() => {
-    if (cachedResults?.voters) {
-      const headers = ["Voter Account ID", "Human Verified", "Total Weight"];
+    if (resultsCache?.voters) {
+      const headers = [
+        "Voter Account ID",
+        "Total Weight",
+        mechanismConfig.voteWeightAmplificationRules.map(({ name }) => name.replace(",", "_")),
+      ];
 
-      const rows = values(cachedResults.voters)
+      const rows = values(resultsCache.voters)
         .sort((voterA, voterB) => voterB.vote.weight - voterA.vote.weight)
         .map((voter) => [
           voter.accountId,
-
-          voter.vote.amplifiers.find(
-            ({ criteria }) => criteria === VotingRoundVoteWeightAmplificationCriteriaEnum.KYC,
-          )?.isApplicable
-            ? "yes"
-            : "no",
-
           voter.vote.weight,
+
+          mechanismConfig.voteWeightAmplificationRules.map(({ criteria: ruleCriteria }) =>
+            voter.vote.amplifiers.find(({ criteria }) => criteria === ruleCriteria)?.isApplicable
+              ? "yes"
+              : "no",
+          ),
         ]);
 
       const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
@@ -129,12 +148,12 @@ export const useVotingRoundResults = ({
       link.click();
       document.body.removeChild(link);
     }
-  }, [potId, cachedResults]);
+  }, [resultsCache?.voters, mechanismConfig.voteWeightAmplificationRules, potId]);
 
-  if (cachedResults) {
+  if (resultsCache) {
     return {
       isLoading,
-      data: cachedResults,
+      data: resultsCache,
       handleWinnersCsvDownload,
       handleVotersCsvDownload,
     };

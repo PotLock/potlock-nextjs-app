@@ -13,14 +13,7 @@ import { potContractClient } from "@/common/contracts/core";
 import { challengeResolveSchema, challengeSchema } from "../models/schemas";
 import { ChallengeInputs, ChallengeResolveInputs } from "../models/types";
 
-export const useChallengeForm = ({
-  potDetail,
-}: {
-  accountId: string;
-  potDetail: Pot;
-  referrerId?: string;
-  asDao: boolean;
-}) => {
+export const useChallengeForm = ({ potDetail }: { potDetail: Pot; referrerId?: string }) => {
   const form = useForm<ChallengeInputs>({
     resolver: zodResolver(challengeSchema),
   });
@@ -32,7 +25,7 @@ export const useChallengeForm = ({
       setInProgress(true);
 
       try {
-        await potContractClient.challengePayouts({
+        await potContractClient.challenge_payouts({
           potId: potDetail.account,
           reason: formData.data.message,
         });

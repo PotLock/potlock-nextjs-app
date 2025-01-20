@@ -18,7 +18,8 @@ export const projectEditorSchema = object({
 
   publicGoodReason: string()
     .min(20, "Must contain at least 20 characters")
-    .max(500, "Must be less 500 characters long"),
+    .max(500, "Must be less 500 characters long")
+    .optional(),
 
   smartContracts: array(array(string())).optional(),
 

@@ -1,5 +1,5 @@
 import { SplashScreen } from "@/common/ui/components";
-import { PotLayout } from "@/layout/pot/components/PotLayout";
+import { PotLayout } from "@/layout/pot/components/layout";
 
 /**
  * Facilitates tab redirects, as Nextjs's middleware doesn't cover

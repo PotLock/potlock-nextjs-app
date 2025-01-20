@@ -7,7 +7,7 @@ import { Donation, indexer } from "@/common/api/indexer";
 import { DeprecatedPagination, Spinner } from "@/common/ui/components";
 import { Arrow } from "@/common/ui/svg";
 import { PotDonationEntry } from "@/entities/pot";
-import { PotLayout } from "@/layout/pot/components/PotLayout";
+import { PotLayout } from "@/layout/pot/components/layout";
 
 const SearchBar = styled.div`
   display: flex;

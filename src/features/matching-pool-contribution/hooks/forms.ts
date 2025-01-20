@@ -50,7 +50,7 @@ export const useMatchingPoolContributionForm = ({
       const daoTransactionArgs = {
         proposal: {
           proposal: {
-            description: `Contribute to matching pool for ${potDetail.name} pot (${potDetail.account}) on Potlock`,
+            description: `Contribute to matching pool for ${potDetail.name} pot (${potDetail.account}) on POTLOCK`,
             kind: {
               FunctionCall: {
                 receiver_id: potDetail.account,

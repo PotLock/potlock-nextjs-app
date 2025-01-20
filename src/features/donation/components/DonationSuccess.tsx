@@ -12,7 +12,7 @@ import {
   PLATFORM_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
 import { DirectDonation, PotDonation } from "@/common/contracts/core";
-import { stringifiedU128ToFloat, truncate } from "@/common/lib";
+import { indivisibleUnitsToFloat, truncate } from "@/common/lib";
 import {
   Button,
   ClipboardCopyButton,
@@ -69,17 +69,17 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
 
   const isLoading = isResultLoading || recipient === undefined || token === undefined;
 
-  const totalAmountFloat = stringifiedU128ToFloat(
+  const totalAmountFloat = indivisibleUnitsToFloat(
     finalOutcome?.total_amount ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const protocolFeeAmountFloat = stringifiedU128ToFloat(
+  const protocolFeeAmountFloat = indivisibleUnitsToFloat(
     finalOutcome?.protocol_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const referralFeeFinalAmountFloat = stringifiedU128ToFloat(
+  const referralFeeFinalAmountFloat = indivisibleUnitsToFloat(
     finalOutcome?.referrer_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
@@ -98,20 +98,34 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
 
     const profile: any = recipient?.near_social_profile_data;
 
-    const singlePorject = profile
-      ? profile.linktree?.twitter
+    let PROJECT_TWITTER_ACCOUNT = recipient.id;
+
+    if (profile) {
+      PROJECT_TWITTER_ACCOUNT = profile.linktree?.twitter
         ? `@${profile.linktree.twitter}`
-        : profile.name
-      : recipient.id;
+        : profile.name;
+    }
 
-    const tag = `${singlePorject}`;
+    const tag = `${PROJECT_TWITTER_ACCOUNT}`;
 
-    let url = `https://alpha.potlock.io${routesPath.PROFILE}/${recipient.id}/funding-raised`;
-    let text = `I just donated to ${tag} on @${PLATFORM_TWITTER_ACCOUNT_ID}! Support public goods at `;
+    let potlockUrl = `https://alpha.potlock.org${routesPath.PROFILE}/${recipient.id}/donations`;
+    let potlockHomeUrl = "https://alpha.potlock.org";
+
+    let text = `🎉 Just supported ${tag} (${PROJECT_TWITTER_ACCOUNT}) through @${PLATFORM_TWITTER_ACCOUNT_ID}! 
+    
+    💝 Making an impact by funding public goods that shape our future.
+    
+    🤝 Join me in supporting amazing projects:\n`;
+
     text = encodeURIComponent(text);
-    url = encodeURIComponent(url);
+    potlockUrl = encodeURIComponent(potlockUrl);
+    potlockHomeUrl = encodeURIComponent(potlockHomeUrl);
     return (
-      twitterIntentBase + text + `&url=${url}` + `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
+      twitterIntentBase +
+      text +
+      `&url=${potlockUrl}` +
+      `&related=${potlockHomeUrl}` +
+      `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
     );
   }, [recipient?.id, recipient?.near_social_profile_data]);
 

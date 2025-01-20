@@ -21,7 +21,7 @@ const DAOInProgress = () => {
       </h5>
       <p className="sans-serif text-center italic" style={{ wordWrap: "break-word" }}>
         <strong>NB:</strong> This proposal consists of 2 steps (individual proposals): Register
-        information on NEAR Social and register on Potlock.
+        information on NEAR Social and register on POTLOCK.
       </p>
       <Link
         className="mt-4"

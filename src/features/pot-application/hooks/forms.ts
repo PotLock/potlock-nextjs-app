@@ -57,7 +57,7 @@ export const usePotApplicationForm = ({
       const daoTransactionArgs = {
         proposal: {
           proposal: {
-            description: `Application to PotLock pot: ${potDetail.name} (${potDetail.account})`,
+            description: `Application to POTLOCK pot: ${potDetail.name} (${potDetail.account})`,
             kind: {
               FunctionCall: {
                 receiver_id: potDetail.account,
