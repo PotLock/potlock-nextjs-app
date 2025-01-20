@@ -4,10 +4,10 @@ import { Pencil } from "lucide-react";
 import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 
 import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
 import { isAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useViewerSession } from "@/common/viewer";
 import { AccountGroup, AccountListItem, AccountProfileLink } from "@/entities/_shared/account";
 
 import { POT_EDITOR_FIELDS } from "../constants";
@@ -59,6 +59,8 @@ export const PotConfigurationPreview: React.FC<PotConfigurationPreviewProps> = (
   onEditClick,
   className,
 }) => {
+  const viewer = useViewerSession();
+
   const { isLoading, data: pot } = indexer.usePot({
     enabled: potId !== undefined,
     potId: potId as PotId,
@@ -68,9 +70,9 @@ export const PotConfigurationPreview: React.FC<PotConfigurationPreviewProps> = (
   const isDataAvailable = pot !== undefined && adminAccountIds !== undefined;
 
   const isEditingAllowed =
-    walletApi.accountId !== undefined &&
+    viewer.isSignedIn &&
     isDataAvailable &&
-    [...pot.admins, pot.owner].some(piped(prop("id"), isStrictEqual(walletApi.accountId)));
+    [...pot.admins, pot.owner].some(piped(prop("id"), isStrictEqual(viewer.accountId)));
 
   const tableContent = useMemo(
     () =>

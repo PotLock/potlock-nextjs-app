@@ -1,16 +1,14 @@
 import { useCallback, useState } from "react";
 
-import { isClient } from "@wpdas/naxios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
 import { nearClient } from "@/common/api/near";
-import { Button } from "@/common/ui/components";
+import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
-import { WalletProvider } from "@/common/viewer/internal/wallet-provider";
+import { ViewerSessionProvider, useViewerSession } from "@/common/viewer";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 
@@ -42,17 +40,23 @@ const AuthButton = () => {
     nearClient.walletApi.signInModal();
   }, []);
 
-  return viewer.isSignedIn ? (
-    <UserDropdown />
+  return viewer.hasWalletReady ? (
+    <>
+      {viewer.isSignedIn ? (
+        <UserDropdown />
+      ) : (
+        <Button
+          font="semibold"
+          variant="standard-filled"
+          onClick={onSignInClick}
+          className="border-none bg-[#342823] shadow-none"
+        >
+          Sign In
+        </Button>
+      )}
+    </>
   ) : (
-    <Button
-      font="semibold"
-      variant="standard-filled"
-      onClick={onSignInClick}
-      className="border-none bg-[#342823] shadow-none"
-    >
-      Sign In
-    </Button>
+    <Skeleton className="h-8 w-8 rounded-full" />
   );
 };
 
@@ -168,11 +172,9 @@ export const AppBar = () => {
         <div className="flex items-center gap-8">
           <CartLink disabled />
 
-          {isClient() && (
-            <WalletProvider>
-              <AuthButton />
-            </WalletProvider>
-          )}
+          <ViewerSessionProvider>
+            <AuthButton />
+          </ViewerSessionProvider>
 
           <MobileMenuButton onClick={() => setShowMobileMenu(!showMobileMenu)} />
         </div>

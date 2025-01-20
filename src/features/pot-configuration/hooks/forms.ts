@@ -7,9 +7,9 @@ import { infer as FromSchema, ZodError } from "zod";
 
 import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/common/_config";
 import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
 import { PotConfig } from "@/common/contracts/core";
 import { AccountId } from "@/common/types";
+import { useViewerSession } from "@/common/viewer";
 import { PotInputs } from "@/entities/pot";
 import { donationFeeBasisPointsToPercents } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
@@ -33,6 +33,7 @@ export const usePotConfigurationEditorForm = ({
   schema,
   ...props
 }: PotConfigurationEditorFormArgs) => {
+  const viewer = useViewerSession();
   const router = useRouter();
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = "potId" in props && typeof potId !== "string";
@@ -62,7 +63,7 @@ export const usePotConfigurationEditorForm = ({
         link: CONTRACT_SOURCECODE_REPO_URL,
       },
 
-      owner: walletApi.accountId,
+      owner: viewer.accountId,
       max_projects: 25,
       min_matching_pool_donation_amount: 0.1,
       referral_fee_matching_pool_basis_points: donationFeeBasisPointsToPercents(100),
@@ -73,7 +74,7 @@ export const usePotConfigurationEditorForm = ({
       ...existingValues,
     }),
 
-    [existingValues, latestSourceCodeCommitHash],
+    [existingValues, latestSourceCodeCommitHash, viewer.accountId],
   );
 
   const self = useForm<Values>({

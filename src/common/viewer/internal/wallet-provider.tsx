@@ -1,40 +1,38 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { nearClient } from "@/common/api/near";
-import type { AccountId } from "@/common/types";
 
-import { WalletContext, initialWalletContextState } from "./wallet-context";
+import { WalletContext, useWalletContextStore } from "./wallet-context";
 
 export type WalletProviderProps = {
   children: React.ReactNode;
 };
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
-  const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [accountId, setAccountId] = useState<AccountId | undefined>(undefined);
+  const { initialize, setIsSignedIn, setAccountId, ...contextState } = useWalletContextStore();
 
   const syncWalletState = useCallback(() => {
     setIsSignedIn(nearClient.walletApi.walletSelector.isSignedIn());
     setAccountId(nearClient.walletApi.accountId);
-  }, []);
+  }, [setAccountId, setIsSignedIn]);
 
   useEffect(() => {
-    if (!isReady && error !== null) {
+    if (!contextState.isReady && error === null) {
       nearClient.walletApi
         .initNear()
-        .then(() => setIsReady(true))
+        .then(() => initialize(true))
         .catch((error) => {
           console.log(error);
           setError(error);
-          setIsReady(false);
         });
     }
-  }, [error, isReady]);
+  }, [error, initialize, contextState.isReady]);
 
   useEffect(() => {
-    if (isReady) {
+    if (contextState.isReady) {
+      syncWalletState();
+
       nearClient.walletApi.walletSelector.on("signedIn", syncWalletState);
       nearClient.walletApi.walletSelector.on("signedOut", syncWalletState);
       nearClient.walletApi.walletSelector.on("accountsChanged", syncWalletState);
@@ -43,7 +41,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     }
 
     return () => {
-      if (isReady) {
+      if (contextState.isReady) {
         nearClient.walletApi.walletSelector.off("signedIn", syncWalletState);
         nearClient.walletApi.walletSelector.off("signedOut", syncWalletState);
         nearClient.walletApi.walletSelector.off("accountsChanged", syncWalletState);
@@ -51,13 +49,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         nearClient.walletApi.walletSelector.off("uriChanged", syncWalletState);
       }
     };
-  }, [syncWalletState, isReady]);
+  }, [syncWalletState, contextState.isReady]);
 
-  return (
-    <WalletContext.Provider
-      value={isReady ? { isReady, isSignedIn, accountId } : initialWalletContextState}
-    >
-      {children}
-    </WalletContext.Provider>
-  );
+  return <WalletContext.Provider value={contextState}>{children}</WalletContext.Provider>;
 };

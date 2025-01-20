@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
-import { walletApi } from "@/common/api/near/client";
+import { nearClient } from "@/common/api/near";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -17,13 +17,13 @@ export type DonationModalProps = DonationAllocationKey &
   Pick<DonationFlowProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
+  const viewer = useViewerSession();
   const self = useModal();
   const isSingleProjectDonation = "accountId" in props;
   const isPotDonation = "potId" in props;
   const isListDonation = "listId" in props;
   const isCampaignDonation = "campaignId" in props;
   const { currentStep } = useDonationState();
-  const viewer = useViewerSession();
   const { setSearchParams } = useRouteQuery();
 
   const close = useCallback(() => {
@@ -41,7 +41,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   }, [self, setSearchParams]);
 
   const onSignInClick = useCallback(() => {
-    walletApi.signInModal();
+    nearClient.walletApi.signInModal();
     close();
   }, [close]);
 

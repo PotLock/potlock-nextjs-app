@@ -5,7 +5,6 @@ import { prop } from "remeda";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import { isAccountId } from "@/common/lib";
-import { AccountId } from "@/common/types";
 import { useGlobalStoreSelector } from "@/store";
 
 import { WalletContext } from "./internal/wallet-context";
@@ -20,11 +19,11 @@ export const useViewerSession = (): ViewerSession => {
   const { actAsDao } = useGlobalStoreSelector(prop("nav"));
   const isDaoRepresentative = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
 
-  const accountId: AccountId | undefined = useMemo(() => {
-    if (wallet.isReady) {
+  const accountId = useMemo(() => {
+    if (wallet.isSignedIn) {
       return isDaoRepresentative ? actAsDao.defaultAddress : wallet.accountId;
     } else return undefined;
-  }, [actAsDao.defaultAddress, isDaoRepresentative, wallet.accountId, wallet.isReady]);
+  }, [actAsDao.defaultAddress, isDaoRepresentative, wallet.accountId, wallet.isSignedIn]);
 
   /**
    * Account for edge cases in which the wallet is connected to a mismatching network
@@ -39,23 +38,37 @@ export const useViewerSession = (): ViewerSession => {
       listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     });
 
-  if (wallet.isSignedIn && accountId && isAccountIdValid) {
-    return {
-      accountId,
-      isSignedIn: true,
-      isMetadataLoading: isRegistrationLoading,
-      hasRegistrationSubmitted: registration !== undefined,
-      hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
-      registrationStatus: registration?.status,
-    };
-  } else {
-    return {
-      accountId: undefined,
-      isSignedIn: false,
-      isMetadataLoading: false,
-      hasRegistrationSubmitted: false,
-      hasRegistrationApproved: false,
-      registrationStatus: undefined,
-    };
-  }
+  return useMemo(() => {
+    if (wallet.isReady && wallet.isSignedIn && accountId) {
+      return {
+        hasWalletReady: true,
+        accountId,
+        isSignedIn: true,
+        isMetadataLoading: isRegistrationLoading,
+        hasRegistrationSubmitted: registration !== undefined,
+        hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
+        registrationStatus: registration?.status,
+      };
+    } else if (wallet.isReady && !wallet.isSignedIn) {
+      return {
+        hasWalletReady: true,
+        accountId: undefined,
+        isSignedIn: false,
+        isMetadataLoading: false,
+        hasRegistrationSubmitted: false,
+        hasRegistrationApproved: false,
+        registrationStatus: undefined,
+      };
+    } else {
+      return {
+        hasWalletReady: false,
+        accountId: undefined,
+        isSignedIn: false,
+        isMetadataLoading: false,
+        hasRegistrationSubmitted: false,
+        hasRegistrationApproved: false,
+        registrationStatus: undefined,
+      };
+    }
+  }, [accountId, isRegistrationLoading, registration, wallet.isReady, wallet.isSignedIn]);
 };

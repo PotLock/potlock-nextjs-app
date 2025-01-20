@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import { SYBIL_APP_LINK_URL } from "@/common/_config";
 import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/components";
 import { WarningIcon } from "@/common/ui/svg";
+import { useViewerSession } from "@/common/viewer";
 
 export type DonationSybilWarningProps = ByPotId & {
   classNames?: {
@@ -17,7 +17,8 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
   potId,
   classNames,
 }) => {
-  const { isHumanVerified: isDonorNadabotVerified } = useIsHuman(walletApi.accountId);
+  const viewer = useViewerSession();
+  const { isHumanVerified: isDonorNadabotVerified } = useIsHuman(viewer.accountId);
   const { data: pot } = indexer.usePot({ potId });
 
   const isVisible = useMemo(

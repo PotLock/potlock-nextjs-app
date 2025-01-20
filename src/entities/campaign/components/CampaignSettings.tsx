@@ -5,6 +5,7 @@ import Link from "next/link";
 import { walletApi } from "@/common/api/near/client";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import { NearIcon } from "@/common/ui/svg";
+import { useViewerSession } from "@/common/viewer";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
@@ -12,13 +13,15 @@ import { useCampaignDeploymentRedirect } from "../hooks/redirects";
 import { useCampaign } from "../hooks/useCampaign";
 
 export const CampaignSettings = () => {
+  // TODO: Move this call to the corresponding page!
   useCampaignDeploymentRedirect();
-  const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
 
   const {
     query: { campaignId },
   } = useRouteQuery();
 
+  const viewer = useViewerSession();
+  const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
   const { campaign } = useCampaign({ campaignId: campaignId as string });
 
   if (!campaign) return <></>;
@@ -61,7 +64,8 @@ export const CampaignSettings = () => {
             </Link>
           </div>
         </div>
-        {walletApi.accountId === campaign?.owner && (
+
+        {viewer.isSignedIn && viewer.accountId === campaign?.owner && (
           <div>
             <p
               onClick={() => setOpenEditCampaign(!openEditCampaign)}
@@ -73,6 +77,7 @@ export const CampaignSettings = () => {
           </div>
         )}
       </div>
+
       {!openEditCampaign ? (
         <div className="mt-8 w-full rounded-[12px] border border-solid border-[#DBDBDB] p-6">
           <div>

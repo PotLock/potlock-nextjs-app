@@ -9,7 +9,6 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
 import { listsContractClient } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
 import {
@@ -21,6 +20,7 @@ import {
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/molecules/social-share";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/svg";
+import { useViewerSession } from "@/common/viewer";
 import {
   AccountGroupEditModal,
   AccountListItem,
@@ -43,8 +43,11 @@ interface ListDetailsType {
 }
 
 export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType) => {
+  const viewer = useViewerSession();
+
   const {
     push,
+    // TODO: Pass this values down from the page level!
     query: { id },
   } = useRouter();
 
@@ -55,9 +58,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   const adminsModalId = useId();
   const registrantsModalId = useId();
 
-  const isUpvoted = listDetails?.upvotes?.some(
-    (data: any) => data?.account === walletApi.accountId,
-  );
+  const isUpvoted = listDetails?.upvotes?.some((data: any) => data?.account === viewer.accountId);
 
   const openExistingAccountModal = useCallback(
     () => show(registrantsModalId),
@@ -83,9 +84,9 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
         notes: note,
         registrations: [
           {
-            registrant_id: walletApi?.accountId ?? "",
+            registrant_id: viewer.accountId ?? "",
             status:
-              listDetails?.owner?.id === walletApi.accountId
+              listDetails?.owner?.id === viewer.accountId
                 ? "Approved"
                 : listDetails?.default_registration_status,
 
@@ -122,7 +123,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
   }
 
   const isAdminOrGreater =
-    admins.includes(walletApi?.accountId ?? "") || listDetails.owner?.id === walletApi?.accountId;
+    admins.includes(viewer.accountId ?? "") || listDetails.owner?.id === viewer.accountId;
 
   const handleUpvote = () => {
     if (isUpvoted) {
@@ -205,7 +206,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
                   )}
                 </div>
               </div>
-              {listDetails.owner?.id === walletApi?.accountId && (
+              {listDetails.owner?.id === viewer.accountId && (
                 <div
                   onClick={openAccountsModal}
                   className="cursor-pointer rounded   hover:opacity-50"
@@ -215,7 +216,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
               )}
             </div>
 
-            {Boolean(walletApi?.accountId) && (
+            {viewer.isSignedIn && (
               <div className="relative flex items-start gap-4">
                 <div className="flex space-x-4">
                   <DonateToListProjects listId={parseInt(id as string)} />
