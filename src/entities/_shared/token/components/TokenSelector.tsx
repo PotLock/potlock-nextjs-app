@@ -1,12 +1,12 @@
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import type { ByTokenId } from "@/common/types";
 import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form-fields";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 
 import { useToken, useTokenAllowlist } from "../hooks";
 
 const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
 
   const { data: token } = useToken({
     tokenId,

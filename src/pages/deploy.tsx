@@ -1,6 +1,6 @@
 import { isClient } from "@wpdas/naxios";
 
-import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import InfoIcon from "@/common/ui/svg/InfoIcon";
 import { cn } from "@/common/ui/utils";
@@ -15,7 +15,7 @@ export default function PotDeployPage() {
   return !isClient() ? (
     <SplashScreen className="h-screen" />
   ) : (
-    <WalletManagerProvider>
+    <WalletProvider>
       <PageWithBanner>
         <section
           className={cn(
@@ -41,6 +41,6 @@ export default function PotDeployPage() {
 
         <PotConfigurationEditor />
       </PageWithBanner>
-    </WalletManagerProvider>
+    </WalletProvider>
   );
 }

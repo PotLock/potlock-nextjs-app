@@ -6,8 +6,8 @@ import { Dot } from "lucide-react";
 import { ByElectionId, Candidate } from "@/common/contracts/core/voting";
 import { Button, Checkbox, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useViewerSession } from "@/common/viewer";
 import { AccountListItem } from "@/entities/_shared/account";
-import { useSession } from "@/entities/_shared/session";
 
 import { useVotingRoundCandidateEntry } from "../hooks/candidates";
 
@@ -25,7 +25,7 @@ export const VotingRoundCandidateRow: React.FC<VotingRoundCandidateRowProps> = (
   isSelected = false,
   onSelect,
 }) => {
-  const user = useSession();
+  const user = useViewerSession();
 
   const { isLoading, canReceiveVotes, hasUserVotes, handleVoteCast } = useVotingRoundCandidateEntry(
     { electionId, accountId },

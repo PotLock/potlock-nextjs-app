@@ -6,7 +6,7 @@ import { prop } from "remeda";
 
 import { Button, FormField } from "@/common/ui/components";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
-import { useSession, useWallet } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
@@ -41,7 +41,7 @@ export const ProjectEditor = () => {
     typeof projectIdPathParam === "string" ? projectIdPathParam : projectIdPathParam?.at(0);
 
   const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
-  const viewer = useSession();
+  const viewer = useViewerSession();
   const { form, errors, onSubmit } = useProjectEditorForm();
   const values = form.watch();
 

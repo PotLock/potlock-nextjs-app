@@ -6,7 +6,7 @@ import { walletApi } from "@/common/api/near/client";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { dispatch } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
@@ -23,7 +23,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   const isListDonation = "listId" in props;
   const isCampaignDonation = "campaignId" in props;
   const { currentStep } = useDonationState();
-  const viewer = useSession();
+  const viewer = useViewerSession();
   const { setSearchParams } = useRouteQuery();
 
   const close = useCallback(() => {

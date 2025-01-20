@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { isClient } from "@wpdas/naxios";
 import Image from "next/image";
@@ -6,9 +6,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
-import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { nearClient } from "@/common/api/near";
+import { WalletProvider } from "@/common/contexts/wallet";
+import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { SessionAuthButton, useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 
@@ -34,9 +36,24 @@ const links = [
 ];
 
 const AuthButton = () => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
 
-  return viewer.isSignedIn ? <UserDropdown /> : <SessionAuthButton />;
+  const onSignInClick = useCallback(() => {
+    nearClient.walletApi.signInModal();
+  }, []);
+
+  return viewer.isSignedIn ? (
+    <UserDropdown />
+  ) : (
+    <Button
+      font="semibold"
+      variant="standard-filled"
+      onClick={onSignInClick}
+      className="border-none bg-[#342823] shadow-none"
+    >
+      Sign In
+    </Button>
+  );
 };
 
 const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {
@@ -152,9 +169,9 @@ export const AppBar = () => {
           <CartLink disabled />
 
           {isClient() && (
-            <WalletManagerProvider>
+            <WalletProvider>
               <AuthButton />
-            </WalletManagerProvider>
+            </WalletProvider>
           )}
 
           <MobileMenuButton onClick={() => setShowMobileMenu(!showMobileMenu)} />

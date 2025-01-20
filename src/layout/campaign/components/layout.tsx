@@ -4,10 +4,11 @@ import { isClient } from "@wpdas/naxios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { cn } from "@/common/ui/utils";
+import { ViewerSessionProvider } from "@/common/viewer";
 import { SingleCampaignBanner } from "@/entities/campaign";
 
 const CAMPAIGN_TAB_ROUTES: TabOption[] = [
@@ -105,10 +106,8 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
     [tabs],
   );
 
-  return !isClient() ? (
-    <SplashScreen className="h-screen" />
-  ) : (
-    <WalletManagerProvider>
+  return (
+    <ViewerSessionProvider fallback={<SplashScreen className="h-screen" />}>
       <PageWithBanner>
         <div className="md:p-8">
           <SingleCampaignBanner />
@@ -121,6 +120,6 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
         />
         <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
       </PageWithBanner>
-    </WalletManagerProvider>
+    </ViewerSessionProvider>
   );
 };

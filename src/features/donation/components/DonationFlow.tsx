@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { isBigSource, useRouteQuery } from "@/common/lib";
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { useToken } from "@/entities/_shared/token";
 import { dispatch } from "@/store";
 
@@ -25,7 +25,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   closeModal,
   ...props
 }) => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
   const { currentStep, finalOutcome } = useDonationState();
 
   const {

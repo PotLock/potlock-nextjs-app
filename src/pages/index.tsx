@@ -4,7 +4,7 @@ import { NETWORK } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { ProjectCard, ProjectDiscovery } from "@/entities/project";
 import { DonateRandomly } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
@@ -44,7 +44,7 @@ export const GeneralStats = () => {
 };
 
 const WelcomeBanner = () => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
 
   return (
     <div

@@ -4,7 +4,7 @@ import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
 import { listsContractClient } from "@/common/contracts/core";
 import { useRouteQuery } from "@/common/lib";
-import { useWallet } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
@@ -25,7 +25,7 @@ export const useInitProjectState = () => {
     actAsDao: { defaultAddress: daoAddress, toggle: isDao },
   } = useGlobalStoreSelector((state) => state.nav);
 
-  const { wallet, isWalletReady } = useWallet();
+  const viewer = useViewerSession();
 
   // Reset statuses
   useEffect(() => {
@@ -39,16 +39,16 @@ export const useInitProjectState = () => {
   // Set current accountId to the state
   useEffect(() => {
     // Project's id
-    if (isWalletReady) {
+    if (viewer.isSignedIn) {
       if (isDao && daoAddress) {
         dispatch.projectEditor.setAccountId(daoAddress);
         dispatch.projectEditor.setIsDao(isDao);
         dispatch.projectEditor.setDaoAddress(daoAddress);
-      } else if (wallet?.accountId) {
-        dispatch.projectEditor.setAccountId(projectId || wallet.accountId);
+      } else {
+        dispatch.projectEditor.setAccountId(projectId || viewer.accountId);
       }
     }
-  }, [accountId, isDao, daoAddress, wallet?.accountId, isWalletReady, projectId]);
+  }, [accountId, isDao, daoAddress, projectId, viewer.isSignedIn, viewer.accountId]);
 
   // Set initial loaded project data
   // const [initialDataLoaded, setInitialDataLoaded] = useState(false);

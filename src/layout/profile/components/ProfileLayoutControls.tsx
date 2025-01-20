@@ -9,13 +9,13 @@ import { truncate } from "@/common/lib";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import CheckIcon from "@/common/ui/svg/CheckIcon";
 import ReferrerIcon from "@/common/ui/svg/ReferrerIcon";
+import { useViewerSession } from "@/common/viewer";
 import {
   AccountFollowButton,
   AccountProfileLinktree,
   AccountProfileTags,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { useSession } from "@/entities/_shared/session";
 import { useDonation } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
 
@@ -25,7 +25,7 @@ type Props = {
 };
 
 const LinksWrapper = ({ accountId }: { accountId: string }) => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
   const [copied, setCopied] = useState(false);
 
   return (
@@ -144,7 +144,7 @@ const DonationsInfo = ({ accountId }: { accountId: string }) => {
 };
 
 export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
   const isOwner = viewer?.accountId === accountId;
   const { profile } = useAccountSocialProfile({ accountId });
 

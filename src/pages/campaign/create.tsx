@@ -1,6 +1,6 @@
 import { isClient } from "@wpdas/naxios";
 
-import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { CampaignForm, useCampaignDeploymentRedirect } from "@/entities/campaign";
 
@@ -24,9 +24,9 @@ export default function CreateCampaign() {
       {!isClient() ? (
         <SplashScreen className="h-100" />
       ) : (
-        <WalletManagerProvider>
+        <WalletProvider>
           <CampaignForm />
-        </WalletManagerProvider>
+        </WalletProvider>
       )}
     </PageWithBanner>
   );

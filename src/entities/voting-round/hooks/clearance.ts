@@ -4,7 +4,7 @@ import { prop } from "remeda";
 
 import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { ClearanceCheckResult } from "@/common/types";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**
@@ -12,7 +12,7 @@ import { useSession } from "@/entities/_shared/session";
  *  as it's built for the mpDAO milestone.
  */
 export const useVotingRoundSessionClearance = (): ClearanceCheckResult => {
-  const { accountId, hasRegistrationApproved } = useSession();
+  const { accountId, hasRegistrationApproved } = useViewerSession();
   const { isHumanVerified: isHuman } = useIsHuman(accountId);
 
   return useMemo(() => {

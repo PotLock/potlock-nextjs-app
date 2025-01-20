@@ -3,35 +3,24 @@ import { useMemo } from "react";
 import { prop } from "remeda";
 
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { useWalletManagerContext } from "@/common/contexts/wallet-manager";
+import { useWalletContext } from "@/common/contexts/wallet";
 import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import { isAccountId } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useGlobalStoreSelector } from "@/store";
 
-import { Session } from "../types";
+import { ViewerSession } from "./types";
 
-// TODO: Subscribe to wallet events to keep isSignedIn synced
-export const useSession = (): Session => {
-  const walletManagerContext = useWalletManagerContext();
+export const useViewerSession = (): ViewerSession => {
+  const wallet = useWalletContext();
+  const { actAsDao } = useGlobalStoreSelector(prop("nav"));
+  const isDaoRepresentative = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
 
-  const isSignedIn = useMemo(
-    () => (walletManagerContext.isReady ? walletManagerContext.walletSelector.isSignedIn() : false),
-    [walletManagerContext],
-  );
-
-  const walletAccountId = useMemo(
-    () => (walletManagerContext.isReady ? walletManagerContext.accountId : null),
-    [walletManagerContext],
-  );
-
-  const { actAsDao, accountId: lastActiveAccountId } = useGlobalStoreSelector(prop("nav"));
-  const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
-
-  const accountId: AccountId | undefined = useMemo(
-    () => (asDao ? actAsDao.defaultAddress : (walletAccountId ?? lastActiveAccountId)),
-    [actAsDao.defaultAddress, asDao, lastActiveAccountId, walletAccountId],
-  );
+  const accountId: AccountId | undefined = useMemo(() => {
+    if (wallet.isReady) {
+      return isDaoRepresentative ? actAsDao.defaultAddress : wallet.accountId;
+    } else return undefined;
+  }, [actAsDao.defaultAddress, isDaoRepresentative, wallet.accountId, wallet.isReady]);
 
   /**
    * Account for edge cases in which the wallet is connected to a mismatching network
@@ -46,7 +35,7 @@ export const useSession = (): Session => {
       listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     });
 
-  if (isSignedIn && accountId && isAccountIdValid) {
+  if (wallet.isSignedIn && accountId && isAccountIdValid) {
     return {
       accountId,
       isSignedIn: true,

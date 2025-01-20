@@ -12,7 +12,7 @@ import {
   Separator,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 
 import {
   useVotingRoundVoterVoteWeight,
@@ -34,7 +34,7 @@ export const VotingRoundVoteWeightBreakdown: React.FC<VotingRoundVoteWeightBreak
   className,
 }) => {
   const isDialogOpen = useMemo(() => open && mode === "modal", [mode, open]);
-  const { accountId } = useSession();
+  const { accountId } = useViewerSession();
   const { voteWeight } = useVotingRoundVoterVoteWeight({ accountId, potId });
   const voteWeightAmplifiers = useVotingRoundVoterVoteWeightAmplifiers({ accountId, potId });
 

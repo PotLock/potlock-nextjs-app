@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
-import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ChallengeModal } from "@/entities/pot";
@@ -41,7 +41,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   return !isClient() ? (
     <SplashScreen className="h-screen" />
   ) : (
-    <WalletManagerProvider>
+    <WalletProvider>
       <PageWithBanner>
         {/**
          * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
@@ -129,6 +129,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         {/* Tab Content */}
         <div className="min-h-100 flex w-full flex-row flex-wrap gap-2">{children}</div>
       </PageWithBanner>
-    </WalletManagerProvider>
+    </WalletProvider>
   );
 };

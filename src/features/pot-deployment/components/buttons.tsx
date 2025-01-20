@@ -4,11 +4,11 @@ import Link from "next/link";
 
 import { potFactoryContractClient } from "@/common/contracts/core";
 import { Button } from "@/common/ui/components";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { rootPathnames } from "@/pathnames";
 
 export const PotDeploymentButton: React.FC = () => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
 
   const [isPotDeploymentAvailable, updatePotDeploymentAvailability] = useState(false);
 

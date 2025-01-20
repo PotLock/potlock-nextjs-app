@@ -1,11 +1,14 @@
-import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
+import { isClient } from "@wpdas/naxios";
+
+import { WalletProvider } from "@/common/contexts/wallet";
+import { PageWithBanner, SpinnerOverlay, SplashScreen } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { ProjectEditor, useInitProjectState } from "@/features/profile-setup";
 import { useGlobalStoreSelector } from "@/store";
 
 export default function RegisterPage() {
-  const viewer = useSession();
+  const viewer = useViewerSession();
   useInitProjectState();
 
   // state used to show spinner during the data post
@@ -40,3 +43,7 @@ export default function RegisterPage() {
     </PageWithBanner>
   );
 }
+
+RegisterPage.getLayout = function getLayout(page: React.ReactNode) {
+  return isClient() ? <WalletProvider>{page}</WalletProvider> : <SplashScreen className="h-200" />;
+};

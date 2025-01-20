@@ -15,15 +15,15 @@ import {
   DropdownMenuTrigger,
   Skeleton,
 } from "@/common/ui/components";
+import { useViewerSession } from "@/common/viewer";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
-import { useSession } from "@/entities/_shared/session";
 import { listRegistrationStatuses } from "@/entities/list";
 import { rootPathnames } from "@/pathnames";
 
 import { DaoAuth } from "./dao-auth";
 
 export const UserDropdown = () => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
 
   const { profile } = useAccountSocialProfile({
     enabled: viewer.isSignedIn,

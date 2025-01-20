@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { WalletProvider } from "@/common/contexts/wallet";
 import { SplashScreen } from "@/common/ui/components";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
@@ -113,9 +113,5 @@ export default function FeedAccountBlockPostPage() {
 }
 
 FeedAccountBlockPostPage.getLayout = function getLayout(page: React.ReactNode) {
-  return isClient() ? (
-    <WalletManagerProvider>{page}</WalletManagerProvider>
-  ) : (
-    <SplashScreen className="h-200" />
-  );
+  return isClient() ? <WalletProvider>{page}</WalletProvider> : <SplashScreen className="h-200" />;
 };

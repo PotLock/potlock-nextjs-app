@@ -1,7 +1,7 @@
 import type { RegistrationStatus } from "@/common/contracts/core/lists";
 import { AccountId } from "@/common/types";
 
-export type Session =
+export type ViewerSession =
   | {
       accountId: AccountId;
       registrationStatus?: RegistrationStatus;

@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { useWallet } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 import { dispatch } from "@/store";
 
 import { saveProject } from "../models/effects";
@@ -11,17 +11,17 @@ import { addFundingSourceSchema, projectEditorSchema } from "../models/schemas";
 import { AddFundingSourceInputs, ProjectEditorInputs } from "../models/types";
 
 export const useProjectEditorForm = () => {
+  const viewer = useViewerSession();
+
   const form = useForm<ProjectEditorInputs>({
     resolver: zodResolver(projectEditorSchema),
     mode: "onChange",
   });
 
-  const { wallet } = useWallet();
-
   const onSubmit: SubmitHandler<ProjectEditorInputs> = useCallback(
     async (_) => {
       // not using form data, using store data provided by form
-      if (wallet) {
+      if (viewer.isSignedIn) {
         dispatch.projectEditor.submissionStatus("sending");
 
         saveProject().then(async (result) => {
@@ -33,7 +33,7 @@ export const useProjectEditorForm = () => {
         });
       }
     },
-    [wallet],
+    [viewer],
   );
 
   return {

@@ -1,6 +1,6 @@
 import { isClient } from "@wpdas/naxios";
 
-import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { CreateListHero, ListFormDetails } from "@/entities/list";
 
@@ -12,9 +12,9 @@ export default function DuplicateList() {
       {!isClient() ? (
         <SplashScreen className="h-100" />
       ) : (
-        <WalletManagerProvider>
+        <WalletProvider>
           <ListFormDetails isDuplicate />
-        </WalletManagerProvider>
+        </WalletProvider>
       )}
     </PageWithBanner>
   );

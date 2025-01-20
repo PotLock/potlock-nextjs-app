@@ -14,7 +14,7 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { useSession } from "@/entities/_shared/session";
+import { useViewerSession } from "@/common/viewer";
 
 import { useChallengeForm } from "../hooks/forms";
 
@@ -30,7 +30,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   potId,
   potDetail,
 }) => {
-  const viewer = useSession();
+  const viewer = useViewerSession();
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
 
   const activeChallenge = useMemo(() => {

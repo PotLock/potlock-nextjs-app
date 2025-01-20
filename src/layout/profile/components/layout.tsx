@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useRegistration } from "@/common/_deprecated/useRegistration";
-import { WalletManagerProvider } from "@/common/contexts/wallet-manager";
+import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { ProjectBanner } from "@/entities/project";
@@ -155,7 +155,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
   return !isClient() ? (
     <SplashScreen className="h-screen" />
   ) : (
-    <WalletManagerProvider>
+    <WalletProvider>
       <PageWithBanner>
         {isProject && <ProjectBanner projectId={params.userId} />}
         <ProfileLayoutHero isProject={isProject} accountId={params.userId} />
@@ -175,6 +175,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
           {children}
         </div>
       </PageWithBanner>
-    </WalletManagerProvider>
+    </WalletProvider>
   );
 };
