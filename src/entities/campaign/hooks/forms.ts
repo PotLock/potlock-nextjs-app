@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
-import { infer as FromSchema, ZodError } from "zod";
+import { infer as FromSchema } from "zod";
 
 import { walletApi } from "@/common/api/near/client";
 import { campaignsContractClient } from "@/common/contracts/core";
