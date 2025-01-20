@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { isClient } from "@wpdas/naxios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useRegistration } from "@/common/_deprecated/useRegistration";
-import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
+import { ViewerSessionProvider } from "@/common/viewer";
 import { ProjectBanner } from "@/entities/project";
 
 import { ProfileLayoutControls } from "./ProfileLayoutControls";
@@ -152,10 +151,8 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
 
   const isProject = isRegisteredProject;
 
-  return !isClient() ? (
-    <SplashScreen className="h-screen" />
-  ) : (
-    <WalletProvider>
+  return (
+    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
       <PageWithBanner>
         {isProject && <ProjectBanner projectId={params.userId} />}
         <ProfileLayoutHero isProject={isProject} accountId={params.userId} />
@@ -175,6 +172,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
           {children}
         </div>
       </PageWithBanner>
-    </WalletProvider>
+    </ViewerSessionProvider>
   );
 };

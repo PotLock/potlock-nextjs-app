@@ -1,20 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { nearClient } from "@/common/api/near";
+import type { AccountId } from "@/common/types";
 
-import type { AccountId } from "../types";
-
-type WalletContextState =
-  | { isReady: false; isSignedIn: false; accountId: undefined }
-  | { isReady: true; isSignedIn: boolean; accountId?: AccountId };
-
-const initialWalletContextState: WalletContextState = {
-  isReady: false,
-  isSignedIn: false,
-  accountId: undefined,
-};
-
-const WalletContext = createContext<WalletContextState>(initialWalletContextState);
+import { WalletContext, initialWalletContextState } from "./wallet-context";
 
 export type WalletProviderProps = {
   children: React.ReactNode;
@@ -72,8 +61,3 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     </WalletContext.Provider>
   );
 };
-
-/**
- * To be used ONLY for session management!
- */
-export const useWalletContext = () => useContext(WalletContext);

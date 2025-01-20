@@ -1,7 +1,5 @@
-import { isClient } from "@wpdas/naxios";
-
-import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
+import { ViewerSessionProvider } from "@/common/viewer";
 import { CampaignForm, useCampaignDeploymentRedirect } from "@/entities/campaign";
 
 export default function CreateCampaign() {
@@ -21,13 +19,9 @@ export default function CreateCampaign() {
         </div>
       </div>
 
-      {!isClient() ? (
-        <SplashScreen className="h-100" />
-      ) : (
-        <WalletProvider>
-          <CampaignForm />
-        </WalletProvider>
-      )}
+      <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+        <CampaignForm />
+      </ViewerSessionProvider>
     </PageWithBanner>
   );
 }

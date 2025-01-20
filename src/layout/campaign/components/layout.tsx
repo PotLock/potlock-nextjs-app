@@ -1,10 +1,8 @@
 import { useCallback, useState } from "react";
 
-import { isClient } from "@wpdas/naxios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { cn } from "@/common/ui/utils";
@@ -107,7 +105,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   );
 
   return (
-    <ViewerSessionProvider fallback={<SplashScreen className="h-screen" />}>
+    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
       <PageWithBanner>
         <div className="md:p-8">
           <SingleCampaignBanner />

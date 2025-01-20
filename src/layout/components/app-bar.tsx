@@ -7,10 +7,10 @@ import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
 import { nearClient } from "@/common/api/near";
-import { WalletProvider } from "@/common/contexts/wallet";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useViewerSession } from "@/common/viewer";
+import { WalletProvider } from "@/common/viewer/internal/wallet-provider";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 

@@ -1,7 +1,5 @@
-import { isClient } from "@wpdas/naxios";
-
-import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
+import { ViewerSessionProvider } from "@/common/viewer";
 import { CreateListHero, ListFormDetails } from "@/entities/list";
 
 export default function DuplicateList() {
@@ -9,13 +7,9 @@ export default function DuplicateList() {
     <PageWithBanner>
       <CreateListHero onEditPage text="Duplicate List" />
 
-      {!isClient() ? (
-        <SplashScreen className="h-100" />
-      ) : (
-        <WalletProvider>
-          <ListFormDetails isDuplicate />
-        </WalletProvider>
-      )}
+      <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+        <ListFormDetails isDuplicate />
+      </ViewerSessionProvider>
     </PageWithBanner>
   );
 }

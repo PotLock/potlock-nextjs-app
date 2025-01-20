@@ -2,18 +2,22 @@ import { useMemo } from "react";
 
 import { isClient } from "@wpdas/naxios";
 
-import { WalletProvider } from "../contexts/wallet";
+import { WalletProvider } from "./internal/wallet-provider";
 
 export type ViewerSessionProviderProps = {
   children: React.ReactNode;
-  fallback: React.ReactNode;
+  ssrFallback: React.ReactNode;
 };
 
+/**
+ * Required for session bindings to be available on the client.
+ * On the server, the ssrFallback is rendered instead.
+ */
 export const ViewerSessionProvider: React.FC<ViewerSessionProviderProps> = ({
   children,
-  fallback,
+  ssrFallback,
 }) => {
-  const isClientRender = useMemo(isClient, []);
+  const isCsr = useMemo(isClient, []);
 
-  return isClientRender ? <WalletProvider>{children}</WalletProvider> : fallback;
+  return isCsr ? <WalletProvider>{children}</WalletProvider> : ssrFallback;
 };

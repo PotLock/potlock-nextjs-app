@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { isClient } from "@wpdas/naxios";
-
-import { WalletProvider } from "@/common/contexts/wallet";
 import { Campaign, campaignsContractClient } from "@/common/contracts/core";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
+import { ViewerSessionProvider } from "@/common/viewer";
 import { CampaignBanner } from "@/entities/campaign/components/CampaignBanner";
 import { CampaignsList } from "@/entities/campaign/components/CampaignsList";
 import { FeaturedCampaigns } from "@/entities/campaign/components/FeaturedCampaigns";
@@ -33,5 +31,9 @@ export default function CampaignsPage() {
 }
 
 CampaignsPage.getLayout = function getLayout(page: React.ReactNode) {
-  return isClient() ? <WalletProvider>{page}</WalletProvider> : <SplashScreen className="h-200" />;
+  return (
+    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+      {page}
+    </ViewerSessionProvider>
+  );
 };

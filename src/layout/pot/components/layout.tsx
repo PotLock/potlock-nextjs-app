@@ -1,13 +1,12 @@
 import { useCallback, useState } from "react";
 
-import { isClient } from "@wpdas/naxios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
-import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { ViewerSessionProvider } from "@/common/viewer";
 import { ChallengeModal } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
@@ -38,10 +37,8 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
   const openChallengeModal = useCallback(() => setChallengeModalOpen(true), []);
 
-  return !isClient() ? (
-    <SplashScreen className="h-screen" />
-  ) : (
-    <WalletProvider>
+  return (
+    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
       <PageWithBanner>
         {/**
          * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
@@ -129,6 +126,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         {/* Tab Content */}
         <div className="min-h-100 flex w-full flex-row flex-wrap gap-2">{children}</div>
       </PageWithBanner>
-    </WalletProvider>
+    </ViewerSessionProvider>
   );
 };

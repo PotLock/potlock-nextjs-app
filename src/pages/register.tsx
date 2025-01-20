@@ -1,9 +1,6 @@
-import { isClient } from "@wpdas/naxios";
-
-import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SpinnerOverlay, SplashScreen } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { ViewerSessionProvider, useViewerSession } from "@/common/viewer";
 import { ProjectEditor, useInitProjectState } from "@/features/profile-setup";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -45,5 +42,9 @@ export default function RegisterPage() {
 }
 
 RegisterPage.getLayout = function getLayout(page: React.ReactNode) {
-  return isClient() ? <WalletProvider>{page}</WalletProvider> : <SplashScreen className="h-200" />;
+  return (
+    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+      {page}
+    </ViewerSessionProvider>
+  );
 };

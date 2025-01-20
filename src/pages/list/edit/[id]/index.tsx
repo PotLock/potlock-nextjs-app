@@ -1,9 +1,7 @@
 import React from "react";
 
-import { isClient } from "@wpdas/naxios";
-
-import { WalletProvider } from "@/common/contexts/wallet";
 import { PageWithBanner, SplashScreen } from "@/common/ui/components";
+import { ViewerSessionProvider } from "@/common/viewer";
 import { CreateListHero, ListFormDetails } from "@/entities/list";
 
 export default function Page() {
@@ -11,13 +9,9 @@ export default function Page() {
     <PageWithBanner>
       <CreateListHero onEditPage />
 
-      {!isClient() ? (
-        <SplashScreen className="h-100" />
-      ) : (
-        <WalletProvider>
-          <ListFormDetails />
-        </WalletProvider>
-      )}
+      <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+        <ListFormDetails />
+      </ViewerSessionProvider>
     </PageWithBanner>
   );
 }

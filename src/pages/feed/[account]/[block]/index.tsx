@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { isClient } from "@wpdas/naxios";
 import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactMarkdown from "react-markdown";
@@ -8,8 +7,8 @@ import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { WalletProvider } from "@/common/contexts/wallet";
 import { SplashScreen } from "@/common/ui/components";
+import { ViewerSessionProvider } from "@/common/viewer";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 export default function FeedAccountBlockPostPage() {
@@ -113,5 +112,9 @@ export default function FeedAccountBlockPostPage() {
 }
 
 FeedAccountBlockPostPage.getLayout = function getLayout(page: React.ReactNode) {
-  return isClient() ? <WalletProvider>{page}</WalletProvider> : <SplashScreen className="h-200" />;
+  return (
+    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+      {page}
+    </ViewerSessionProvider>
+  );
 };
