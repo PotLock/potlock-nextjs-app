@@ -19,7 +19,7 @@ export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
   ({ disabled, className, label, labelExtension, ...props }) => {
     const usdAmountFloat = useTokenUsdDisplayValue({
       tokenId: NATIVE_TOKEN_ID,
-      amountFloat: typeof props.value === "number" ? props.value : 0.0,
+      amountFloat: props.value ? parseFloat(props.value.toString()) : 0.0,
     });
 
     return (
@@ -39,11 +39,13 @@ export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
 
         <FormControl>
           <TextField
+            {...props}
             appendix={usdAmountFloat || "$0.00"}
             disabled={disabled}
+            step={0.01}
             classNames={{ root: className }}
+            placeholder="0.00"
             inputExtension="NEAR"
-            {...props}
             type="number"
           />
         </FormControl>

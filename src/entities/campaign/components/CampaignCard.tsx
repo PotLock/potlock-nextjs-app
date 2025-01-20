@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Campaign } from "@/common/contracts/core";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { AccountProfilePicture } from "@/entities/_shared/account";
+import { AccountProfileLink, AccountProfilePicture } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
@@ -35,15 +35,12 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
         <div className="flex flex-col gap-4 px-6 py-6">
           <div className="flex gap-0 font-semibold">
             <p className="mr-2 font-semibold text-[#656565]">FOR</p>
-            <Link target="_blank" href={`/profile/${data.recipient}`}>
-              <div
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 transition-all  duration-300 hover:opacity-50"
-              >
-                <AccountProfilePicture className="h-4 w-4" accountId={data.recipient} />
-                <p className="m-0 font-semibold text-[#656565]">{data.recipient}</p>
-              </div>
-            </Link>
+            <div onClick={(e) => e.stopPropagation()}>
+              <AccountProfileLink
+                classNames={{ root: "bg-transparent", avatar: "h-5 w-5", name: "text-sm" }}
+                accountId={data.recipient}
+              />
+            </div>
           </div>
           <div className="h-[120px]">
             <p className="text-[16px]">{data.description ? truncate(data.description, 200) : ""}</p>

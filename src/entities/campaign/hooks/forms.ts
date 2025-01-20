@@ -28,6 +28,56 @@ export const useCampaignForm = () => {
 
   const values = useWatch(self);
 
+  useEffect(() => {
+    const { min_amount, max_amount, target_amount } = values;
+    const errors: Record<string, { message: string }> = {};
+
+    // Validate min_amount vs max_amount
+    if (min_amount && max_amount && min_amount > max_amount) {
+      errors.min_amount = {
+        message: "Minimum amount cannot be greater than maximum amount",
+      };
+
+      errors.max_amount = {
+        message: "Maximum amount cannot be less than minimum amount",
+      };
+    }
+
+    // Validate target_amount vs max_amount
+    if (target_amount && max_amount && target_amount > max_amount) {
+      errors.target_amount = {
+        message: "Target amount cannot be greater than maximum amount",
+      };
+
+      errors.max_amount = {
+        message: "Maximum amount cannot be less than target amount",
+      };
+    }
+
+    // Validate min_amount vs target_amount
+    if (min_amount && target_amount && min_amount > target_amount) {
+      errors.min_amount = {
+        message: "Minimum amount cannot be greater than target amount",
+      };
+
+      errors.target_amount = {
+        message: "Target amount cannot be less than minimum amount",
+      };
+    }
+
+    // Clear errors only for fields that are now valid
+    ["min_amount", "max_amount", "target_amount"].forEach((field) => {
+      if (!errors[field]) {
+        self.clearErrors(field as keyof Values);
+      }
+    });
+
+    // Set all collected errors
+    Object.entries(errors).forEach(([field, error]) => {
+      self.setError(field as any, error);
+    });
+  }, [values, self]);
+
   const timeToMiliSeconds = (time: string) => {
     return Temporal.Instant.from(time + "Z");
   };
@@ -76,7 +126,7 @@ export const useCampaignForm = () => {
         });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaignsContractClient for ${values.name}.`,
+          header: `You've successfully created a campaignsContractClient for ${values.name}.`,
           description:
             "If you are not a member of the project, the campaignsContractClient will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.UPDATE_CAMPAIGN,
@@ -85,7 +135,7 @@ export const useCampaignForm = () => {
         campaignsContractClient.create_campaign({ args });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaignsContractClient for ${values.name}.`,
+          header: `You've successfully created a campaignsContractClient for ${values.name}.`,
           description:
             "If you are not a member of the project, the campaignsContractClient will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.CREATE_CAMPAIGN,
@@ -112,6 +162,7 @@ export const useCampaignForm = () => {
     values,
     watch: self.watch,
     onChange,
+    isValid: Object.keys(self.formState.errors).length === 0,
     handleDeleteCampaign,
   };
 };
