@@ -27,6 +27,7 @@ export type DonationFormParams = DonationAllocationKey & {
 };
 
 export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormParams) => {
+  const now = Temporal.Now.instant();
   const viewer = useViewerSession();
   const isSingleProjectDonation = "accountId" in params;
   const isPotDonation = "potId" in params;
@@ -44,10 +45,9 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
   });
 
   const matchingPots = recipientActivePots.filter(
-    ({ matching_round_start }) =>
-      Temporal.Now.instant()
-        .since(Temporal.Instant.from(matching_round_start))
-        .total("milliseconds") > 0,
+    ({ matching_round_start, matching_round_end }) =>
+      now.since(Temporal.Instant.from(matching_round_start)).total("milliseconds") > 0 &&
+      now.until(Temporal.Instant.from(matching_round_end)).total("milliseconds") > 0,
   );
 
   const defaultPotAccountId = useMemo(

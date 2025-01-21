@@ -1,30 +1,33 @@
-import { createContext } from "react";
-
 import { create } from "zustand";
 
 import type { AccountId } from "@/common/types";
 
-type WalletContextState =
+type WalletAccountState = {
+  accountId: AccountId | undefined;
+  isSignedIn: boolean;
+};
+
+type WalletContextState = { error: null | unknown } & (
   | { isReady: false; isSignedIn: false; accountId: undefined }
-  | { isReady: true; isSignedIn: boolean; accountId?: AccountId };
+  | ({ isReady: true } & WalletAccountState)
+);
 
 const initialWalletContextState: WalletContextState = {
   isReady: false,
   isSignedIn: false,
   accountId: undefined,
+  error: null,
 };
 
-export const WalletContext = createContext<WalletContextState>(initialWalletContextState);
-
 type WalletContextStore = WalletContextState & {
-  initialize: (isReady: boolean) => void;
-  setIsSignedIn: (isSignedIn: boolean) => void;
-  setAccountId: (accountId: AccountId | undefined) => void;
+  registerInit: (isReady: boolean) => void;
+  setAccountState: (state: WalletAccountState) => void;
+  setError: (error: unknown) => void;
 };
 
 export const useWalletContextStore = create<WalletContextStore>((set) => ({
   ...initialWalletContextState,
-  initialize: (isReady: boolean) => set(isReady ? { isReady } : initialWalletContextState),
-  setIsSignedIn: (isSignedIn: boolean) => set({ isSignedIn }),
-  setAccountId: (accountId: AccountId | undefined) => set({ accountId }),
+  registerInit: (isReady: boolean) => set(isReady ? { isReady } : initialWalletContextState),
+  setAccountState: (newAccountState: WalletAccountState) => set(newAccountState),
+  setError: (error: unknown) => set({ error }),
 }));

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useRegistration } from "@/common/_deprecated/useRegistration";
-import { PageWithBanner, SplashScreen } from "@/common/ui/components";
+import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { ViewerSessionProvider } from "@/common/viewer";
 import { ProjectBanner } from "@/entities/project";
@@ -152,7 +152,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
   const isProject = isRegisteredProject;
 
   return (
-    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+    <ViewerSessionProvider>
       <PageWithBanner>
         {isProject && <ProjectBanner projectId={params.userId} />}
         <ProfileLayoutHero isProject={isProject} accountId={params.userId} />

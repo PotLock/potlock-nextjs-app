@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
-import { PageWithBanner, SplashScreen } from "@/common/ui/components";
+import { PageWithBanner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ViewerSessionProvider } from "@/common/viewer";
 import { ChallengeModal } from "@/entities/pot";
@@ -38,7 +38,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const openChallengeModal = useCallback(() => setChallengeModalOpen(true), []);
 
   return (
-    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+    <ViewerSessionProvider>
       <PageWithBanner>
         {/**
          * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE

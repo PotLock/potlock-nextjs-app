@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 
 import { prop } from "remeda";
 
@@ -7,7 +7,7 @@ import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/
 import { isAccountId } from "@/common/lib";
 import { useGlobalStoreSelector } from "@/store";
 
-import { WalletContext } from "./internal/wallet-context";
+import { useWalletContextStore } from "./internal/wallet-context";
 import { ViewerSession } from "./types";
 
 /**
@@ -15,7 +15,7 @@ import { ViewerSession } from "./types";
  * Ensure the consuming layout is wrapped in `ViewerSessionProvider` on the topmost level.
  */
 export const useViewerSession = (): ViewerSession => {
-  const wallet = useContext(WalletContext);
+  const wallet = useWalletContextStore();
   const { actAsDao } = useGlobalStoreSelector(prop("nav"));
   const isDaoRepresentative = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
 
@@ -37,6 +37,8 @@ export const useViewerSession = (): ViewerSession => {
       accountId: accountId ?? "noop",
       listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     });
+
+  console.log("WALLET", wallet);
 
   return useMemo(() => {
     if (wallet.isReady && wallet.isSignedIn && accountId) {

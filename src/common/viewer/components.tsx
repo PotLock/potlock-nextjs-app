@@ -19,5 +19,5 @@ export const ViewerSessionProvider: React.FC<ViewerSessionProviderProps> = ({
 }) => {
   const isCsr = useMemo(isClient, []);
 
-  return isCsr ? <WalletProvider>{children}</WalletProvider> : children;
+  return isCsr ? <WalletProvider>{children}</WalletProvider> : <>{ssrFallback ?? children}</>;
 };
