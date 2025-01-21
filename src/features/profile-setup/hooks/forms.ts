@@ -80,13 +80,18 @@ export const useProjectEditorForm = (options: {
       if (isSignedIn) {
         setSubmitting(true);
 
-        saveProject({ isEdit: options.isEdit }).then(async (result) => {
-          if (result.success) {
-            console.log("Opening wallet for approval...");
-          } else {
-            dispatch.projectEditor.submissionStatus("pending");
-          }
-        });
+        saveProject({ isEdit: options.isEdit })
+          .then(async (result) => {
+            if (result.success) {
+              console.log("Opening wallet for approval...");
+            } else {
+              dispatch.projectEditor.submissionStatus("pending");
+              console.log("error while saving");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     },
     [isSignedIn, options.isEdit],
