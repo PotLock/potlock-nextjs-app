@@ -13,6 +13,7 @@ import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK } from "@/common/c
 import { socialDbContractClient } from "@/common/contracts/social";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
+import { store } from "@/store";
 
 import getSocialDataFormat from "../utils/getSocialDataFormat";
 
@@ -26,9 +27,24 @@ const getSocialData = async (accountId: string) => {
   }
 };
 
-export const saveProject = async (data: any, accountId: string) => {
+export const saveProject = async ({ isEdit }: { isEdit: boolean }) => {
+  const data = store.getState().projectEditor;
+
+  const accountId = data.isDao ? data.daoAddress : data.accountId;
+
+  if (!accountId) {
+    return { success: false, error: "No accountId provided" };
+  }
+
   // If Dao, get dao policy
   const daoPolicy = data.isDao ? await getDaoPolicy(accountId) : null;
+
+  // Validate DAO Address
+  const isDaoAddressValid = data.isDao ? validateNearAddress(data.daoAddress || "") : true;
+
+  if (!isDaoAddressValid) {
+    return { success: false, error: "DAO: Invalid NEAR account Id" };
+  }
 
   // Social Data Format
   const socialData = getSocialDataFormat(data);
@@ -69,7 +85,7 @@ export const saveProject = async (data: any, accountId: string) => {
     let daoTransactions: Transaction<any>[] = [];
 
     // if this is a creation action, we need to add the registry
-    if (!data.isEdit) {
+    if (!isEdit) {
       transactions.push(
         // lists.potlock.near
         buildTransaction("register_batch", {
