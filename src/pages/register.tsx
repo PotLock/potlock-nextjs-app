@@ -42,9 +42,5 @@ export default function RegisterPage() {
 }
 
 RegisterPage.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
-      {page}
-    </ViewerSessionProvider>
-  );
+  return <ViewerSessionProvider>{page}</ViewerSessionProvider>;
 };

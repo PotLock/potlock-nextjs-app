@@ -5,7 +5,6 @@ import InfiniteScrollWrapper from "react-infinite-scroll-component";
 import { indexer } from "@/common/api/indexer";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { SplashScreen } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ViewerSessionProvider } from "@/common/viewer";
 import { PostCard } from "@/entities/post";
@@ -112,9 +111,5 @@ export default function FeedPage() {
 }
 
 FeedPage.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-screen" />}>
-      {page}
-    </ViewerSessionProvider>
-  );
+  return <ViewerSessionProvider>{page}</ViewerSessionProvider>;
 };

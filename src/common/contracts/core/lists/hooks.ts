@@ -1,5 +1,6 @@
 import useSWR from "swr";
 
+import { IS_CLIENT } from "@/common/constants";
 import type { ByAccountId, ByListId, ConditionalActivation } from "@/common/types";
 
 import * as contractClient from "./client";
@@ -16,7 +17,7 @@ export const useIsRegistered = ({
   useSWR(
     ["useIsRegistered", accountId, listId, params],
     ([_queryKey, accountIdKey, listIdKey, paramsKey]) =>
-      !enabled
+      !enabled || !IS_CLIENT
         ? undefined
         : contractClient.is_registered({
             account_id: accountIdKey,
@@ -31,7 +32,7 @@ export const useRegistration = ({
   listId,
 }: ByAccountId & ByListId & ConditionalActivation) =>
   useSWR(["useRegistration", accountId, listId], ([_queryKey, accountIdKey, listIdKey]) =>
-    !enabled
+    !enabled || !IS_CLIENT
       ? undefined
       : contractClient.getRegistration({ registrant_id: accountIdKey, list_id: listIdKey }),
   );

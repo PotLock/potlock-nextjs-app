@@ -1,5 +1,6 @@
 import useSWR from "swr";
 
+import { IS_CLIENT } from "@/common/constants";
 import type { ByAccountId, ConditionalActivation } from "@/common/types";
 
 import * as contractClient from "./client";
@@ -9,7 +10,7 @@ export const useSocialProfile = ({
   accountId,
 }: ByAccountId & ConditionalActivation) =>
   useSWR(["useSocialProfile", accountId], ([_queryKey, account_id]) =>
-    !enabled
+    !enabled || !IS_CLIENT
       ? undefined
       : contractClient
           .getSocialProfile({ accountId: account_id })

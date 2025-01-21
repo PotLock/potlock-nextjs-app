@@ -19,7 +19,7 @@ export default function CreateCampaign() {
         </div>
       </div>
 
-      <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+      <ViewerSessionProvider>
         <CampaignForm />
       </ViewerSessionProvider>
     </PageWithBanner>

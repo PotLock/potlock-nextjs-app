@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { PageWithBanner, SplashScreen } from "@/common/ui/components";
+import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { cn } from "@/common/ui/utils";
 import { ViewerSessionProvider } from "@/common/viewer";
@@ -92,7 +92,6 @@ type ReactLayoutProps = {
 export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   const router = useRouter();
   const pathname = router.pathname;
-
   const tabs = CAMPAIGN_TAB_ROUTES;
 
   const [selectedTab, setSelectedTab] = useState(
@@ -105,7 +104,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   );
 
   return (
-    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+    <ViewerSessionProvider>
       <PageWithBanner>
         <div className="md:p-8">
           <SingleCampaignBanner />

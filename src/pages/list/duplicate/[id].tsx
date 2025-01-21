@@ -7,7 +7,7 @@ export default function DuplicateList() {
     <PageWithBanner>
       <CreateListHero onEditPage text="Duplicate List" />
 
-      <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+      <ViewerSessionProvider>
         <ListFormDetails isDuplicate />
       </ViewerSessionProvider>
     </PageWithBanner>

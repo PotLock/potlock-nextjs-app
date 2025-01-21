@@ -7,7 +7,7 @@ export default function Page() {
     <PageWithBanner>
       <CreateListHero onEditPage={false} />
 
-      <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+      <ViewerSessionProvider>
         <ListFormDetails />
       </ViewerSessionProvider>
     </PageWithBanner>

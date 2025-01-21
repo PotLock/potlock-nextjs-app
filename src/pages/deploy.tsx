@@ -11,7 +11,7 @@ export default function PotDeployPage() {
   usePotDeploymentSuccessMiddleware();
 
   return (
-    <ViewerSessionProvider ssrFallback={<SplashScreen className="h-200" />}>
+    <ViewerSessionProvider>
       <PageWithBanner>
         <section
           className={cn(
