@@ -3,6 +3,8 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 
+import { indexer } from "@/common/api/indexer";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Button, FormField } from "@/common/ui/components";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import {
@@ -43,7 +45,7 @@ interface ProjectEditorProps {
 export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
   const router = useRouter();
   const isNewAccount = accountId === undefined;
-  // // const [editContractIndex, setEditContractIndex] = useState<number>();
+  // const [editContractIndex, setEditContractIndex] = useState<number>();
   // const [initialNameSet, setInitialNameSet] = useState(false);
 
   // Local state for modals
@@ -84,6 +86,16 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
     [avatarSrc, backgroundSrc, socialDbSnapshot],
   );
 
+  const { data: listRegistrations } = indexer.useListRegistrations({ listId: 1 });
+
+  const hasRegistrationSubmitted = useMemo(
+    () =>
+      listRegistrations?.results.find(
+        (registration) => registration.registrant.id === PUBLIC_GOODS_REGISTRY_LIST_ID.toString(),
+      ) !== undefined,
+    [listRegistrations?.results],
+  );
+
   const {
     form,
     values,
@@ -97,7 +109,7 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
   } = useProjectEditorForm({
     defaultValues,
     onSuccess: () => router.push(rootPathnames.PROJECTS_LIST),
-    isEdit: !!socialDbSnapshot,
+    isEdit: hasRegistrationSubmitted,
   });
 
   useEffect(() => {
