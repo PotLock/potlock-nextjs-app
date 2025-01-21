@@ -2,19 +2,15 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
-import { prop } from "remeda";
 
-import { socialDbContractHooks } from "@/common/contracts/social";
 import { Button, FormField } from "@/common/ui/components";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { useWallet } from "@/entities/_shared/session";
-import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
+import { useSession } from "@/entities/_shared/session";
 import { rootPathnames } from "@/pathnames";
-import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import AddFundingSourceModal from "./AddFundingSourceModal";
 import AddTeamMembersModal from "./AddTeamMembersModal";
@@ -38,7 +34,6 @@ import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
 import SuccessfulRegister from "./SuccessfulRegister";
 import { useProjectEditorForm } from "../hooks/forms";
-import { useProjectEditorState } from "../models";
 import { ProjectEditorInputs } from "../models/types";
 
 interface ProjectEditorProps {
@@ -48,7 +43,6 @@ interface ProjectEditorProps {
 export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
   const router = useRouter();
   const isNewAccount = accountId === undefined;
-  // const { wallet, isWalletReady } = useWallet();
   // // const [editContractIndex, setEditContractIndex] = useState<number>();
   // const [initialNameSet, setInitialNameSet] = useState(false);
 
@@ -58,6 +52,8 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
+  const sessionData = useSession();
+
   const {
     profile: socialDbSnapshot,
     avatarSrc,
@@ -66,8 +62,6 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
     accountId: accountId ?? "noop",
     enabled: !isNewAccount,
   });
-
-  // const stateData = useProjectEditorState();
 
   const defaultValues = useMemo<Partial<ProjectEditorInputs>>(
     () =>
@@ -99,7 +93,6 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
     updateCategories,
     updateRepositories,
     addRepository,
-    resetForm,
     errors,
   } = useProjectEditorForm({
     defaultValues,
@@ -113,6 +106,11 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
       keepDirty: false,
     });
   }, [defaultValues]);
+
+  useEffect(() => {
+    // Set initial focus to name input.
+    form.setFocus("name");
+  }, []);
 
   const stringifiedDefaultValues = JSON.stringify(defaultValues);
   const stringifiedValues = JSON.stringify(values);
@@ -145,9 +143,6 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
   //   resetForm();
   // }, [router, resetForm]);
 
-  const projectTemplate = useGlobalStoreSelector(prop("projectEditor"));
-  const { isAuthenticated } = useSessionReduxStore();
-
   // Add loading state
   const [isDataLoading, setIsDataLoading] = useState(true);
 
@@ -155,47 +150,6 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
   if (form.formState.isLoading) {
     return <InfoSegment title="Loading project data..." description="Please wait..." />;
   }
-
-  // const values = form.watch();
-
-  // useEffect(() => {
-  //   // Set initial focus to name input.
-  //   form.setFocus("name");
-  // }, [form]);
-
-  // Set default values by profile
-  // useEffect(() => form.reset(values), [form, values]);
-
-  // Set initial name
-  // const [initialNameSet, setInitialNameSet] = useState(false);
-
-  // useEffect(() => {
-  //   if (!initialNameSet && values.name) {
-  //     form.setValue("name", values.name);
-  //     form.trigger(); // re-validate
-  //     setInitialNameSet(true);
-  //   }
-  // }, [initialNameSet, values.name, form]);
-
-  // // Store description, public good reason and daoAddress
-  // useEffect(() => {
-  //   if (values.name) {
-  //     dispatch.projectEditor.setProjectName(values.name);
-  //   }
-
-  //   if (values.description) {
-  //     dispatch.projectEditor.updateDescription(values.description);
-  //   }
-
-  //   if (values.publicGoodReason) {
-  //     dispatch.projectEditor.updatePublicGoodReason(values.publicGoodReason);
-  //   }
-  // }, [values.description, values.publicGoodReason, values.name]);
-
-  // const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
-  // const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
-  // const [editFundingIndex, setEditFundingIndex] = useState<number>(); // controls if a funding is being edited
-  // const [editContractIndex, setEditContractIndex] = useState<number>();
 
   const getProjectEditorText = () => {
     if (socialDbSnapshot) {
@@ -209,10 +163,10 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
 
   const isRepositoriesValid = values.githubRepositories && values.githubRepositories.length > 0;
 
-  // // Wait for wallet
-  // if (!isWalletReady || !wallet) {
-  //   return <InfoSegment title="Checking account." description="Please, wait..." />;
-  // }
+  // Wait for wallet
+  if (sessionData.isMetadataLoading) {
+    return <InfoSegment title="Checking account." description="Please, wait..." />;
+  }
 
   // if (isAuthenticated && values.checkPreviousProjectDataStatus !== "ready") {
   //   return <InfoSegment title="Checking account." description="Please, wait..." />;
