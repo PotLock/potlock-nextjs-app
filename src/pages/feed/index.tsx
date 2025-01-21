@@ -6,7 +6,6 @@ import { indexer } from "@/common/api/indexer";
 import { fetchGlobalFeeds } from "@/common/api/near-social";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
-import { ViewerSessionProvider } from "@/common/viewer";
 import { PostCard } from "@/entities/post";
 
 export default function FeedPage() {
@@ -109,7 +108,3 @@ export default function FeedPage() {
     </div>
   );
 }
-
-FeedPage.getLayout = function getLayout(page: React.ReactNode) {
-  return <ViewerSessionProvider>{page}</ViewerSessionProvider>;
-};

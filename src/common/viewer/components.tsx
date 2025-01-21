@@ -1,7 +1,4 @@
-import { useMemo } from "react";
-
-import { isClient } from "@wpdas/naxios";
-
+import { IS_CLIENT } from "../constants";
 import { WalletProvider } from "./internal/wallet-provider";
 
 export type ViewerSessionProviderProps = {
@@ -9,11 +6,7 @@ export type ViewerSessionProviderProps = {
 };
 
 /**
- * Required for session bindings to be available on the client.
- * On the server, the ssrFallback is rendered instead.
+ * Required for wallet and session bindings to be available on the client.
  */
-export const ViewerSessionProvider: React.FC<ViewerSessionProviderProps> = ({ children }) => {
-  const isCsr = useMemo(isClient, []);
-
-  return isCsr ? <WalletProvider>{children}</WalletProvider> : children;
-};
+export const ViewerSessionProvider: React.FC<ViewerSessionProviderProps> = ({ children }) =>
+  IS_CLIENT ? <WalletProvider>{children}</WalletProvider> : children;
