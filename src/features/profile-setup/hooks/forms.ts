@@ -70,9 +70,9 @@ export const useProjectEditorForm = (options: {
   );
 
   const addRepository = useCallback(() => {
-    const currentRepos = form.getValues("githubRepositories") || [];
+    const currentRepos = values.githubRepositories || [];
     form.setValue("githubRepositories", [...currentRepos, ""], { shouldValidate: true });
-  }, [form]);
+  }, [form, values.githubRepositories]);
 
   const onSubmit: SubmitHandler<ProjectEditorInputs> = useCallback(
     async (_) => {
