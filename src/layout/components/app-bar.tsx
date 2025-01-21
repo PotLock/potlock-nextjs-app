@@ -8,7 +8,7 @@ import { NETWORK } from "@/common/_config";
 import { nearClient } from "@/common/api/near";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { ViewerSessionProvider, useViewerSession } from "@/common/viewer";
+import { useViewerSession } from "@/common/viewer";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 
@@ -171,11 +171,7 @@ export const AppBar = () => {
         {/* Right */}
         <div className="flex items-center gap-8">
           <CartLink disabled />
-
-          <ViewerSessionProvider>
-            <AuthButton />
-          </ViewerSessionProvider>
-
+          <AuthButton />
           <MobileMenuButton onClick={() => setShowMobileMenu(!showMobileMenu)} />
         </div>
       </nav>

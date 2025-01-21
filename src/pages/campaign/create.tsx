@@ -1,5 +1,4 @@
-import { PageWithBanner, SplashScreen } from "@/common/ui/components";
-import { ViewerSessionProvider } from "@/common/viewer";
+import { PageWithBanner } from "@/common/ui/components";
 import { CampaignForm, useCampaignDeploymentRedirect } from "@/entities/campaign";
 
 export default function CreateCampaign() {
@@ -19,9 +18,7 @@ export default function CreateCampaign() {
         </div>
       </div>
 
-      <ViewerSessionProvider>
-        <CampaignForm />
-      </ViewerSessionProvider>
+      <CampaignForm />
     </PageWithBanner>
   );
 }

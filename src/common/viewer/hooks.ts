@@ -10,10 +10,6 @@ import { useGlobalStoreSelector } from "@/store";
 import { useWalletContextStore } from "./internal/wallet-context";
 import { ViewerSession } from "./types";
 
-/**
- * Heads Up!
- * Ensure the consuming layout is wrapped in `ViewerSessionProvider` on the topmost level.
- */
 export const useViewerSession = (): ViewerSession => {
   const wallet = useWalletContextStore();
   const { actAsDao } = useGlobalStoreSelector(prop("nav"));

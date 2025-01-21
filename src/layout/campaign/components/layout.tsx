@@ -6,8 +6,7 @@ import { useRouter } from "next/router";
 import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { cn } from "@/common/ui/utils";
-import { ViewerSessionProvider } from "@/common/viewer";
-import { SingleCampaignBanner } from "@/entities/campaign";
+import { CampaignBanner } from "@/entities/campaign";
 
 const CAMPAIGN_TAB_ROUTES: TabOption[] = [
   {
@@ -104,19 +103,17 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   );
 
   return (
-    <ViewerSessionProvider>
-      <PageWithBanner>
-        <div className="md:p-8">
-          <SingleCampaignBanner />
-        </div>
-        <Tabs
-          asLink
-          options={tabs}
-          selectedTab={selectedTab.id}
-          onSelect={(tabId: string) => handleSelectedTab(tabId)}
-        />
-        <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
-      </PageWithBanner>
-    </ViewerSessionProvider>
+    <PageWithBanner>
+      <div className="md:p-8">
+        <CampaignBanner />
+      </div>
+      <Tabs
+        asLink
+        options={tabs}
+        selectedTab={selectedTab.id}
+        onSelect={(tabId: string) => handleSelectedTab(tabId)}
+      />
+      <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
+    </PageWithBanner>
   );
 };

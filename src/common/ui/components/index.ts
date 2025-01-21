@@ -47,6 +47,7 @@ export * from "./atoms/filter-chip";
  *
  * See https://atomicdesign.bradfrost.com/chapter-2/#molecules
  */
+export * from "./molecules/carousel";
 export * from "./molecules/checklist";
 export * from "./molecules/clipboard-copy-button";
 export * from "./molecules/data-loading-placeholder";

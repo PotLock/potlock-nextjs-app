@@ -7,8 +7,6 @@ import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { SplashScreen } from "@/common/ui/components";
-import { ViewerSessionProvider } from "@/common/viewer";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 export default function FeedAccountBlockPostPage() {
@@ -110,7 +108,3 @@ export default function FeedAccountBlockPostPage() {
     </div>
   );
 }
-
-FeedAccountBlockPostPage.getLayout = function getLayout(page: React.ReactNode) {
-  return <ViewerSessionProvider>{page}</ViewerSessionProvider>;
-};

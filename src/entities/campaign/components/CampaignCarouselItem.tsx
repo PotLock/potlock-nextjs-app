@@ -1,73 +1,16 @@
-import { useEffect, useState } from "react";
-
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { Campaign } from "@/common/contracts/core";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-} from "@/common/ui/components/molecules/carousel";
+import { CarouselItem } from "@/common/ui/components/molecules/carousel";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
-export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    if (!api) return;
-
-    setCurrent(api.selectedScrollSnap());
-
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap());
-    });
-  }, [api]);
-
-  if (!data?.length) {
-    return <></>;
-  }
-
-  return (
-    <div className="mt-8 w-full p-0 ">
-      <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
-        <div className=" flex items-center gap-4 ">
-          <h1 className=" text-[18px] font-semibold ">Featured Campaigns</h1>
-          <p className="text-[18px]">{current + 1}/3</p>
-        </div>
-        <div className="flex gap-4">
-          <img
-            src="/assets/icons/left-arrow.svg"
-            alt=""
-            onClick={() => api?.scrollTo(current - 1)}
-            className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
-          />
-          <img
-            src="/assets/icons/right-arrow.svg"
-            alt=""
-            onClick={() => api?.scrollTo(current + 1)}
-            className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
-          />
-        </div>
-      </div>
-      <Carousel opts={{ loop: true }} setApi={setApi}>
-        <CarouselContent>
-          {data?.length &&
-            data?.slice(0, 3)?.map((data) => <FeaturedCampaignCard key={data.id} data={data} />)}
-        </CarouselContent>
-      </Carousel>
-    </div>
-  );
-};
-
-const FeaturedCampaignCard = ({ data }: { data: Campaign }) => {
+export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
   const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
 
   const isEnded = data?.end_ms

@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useRegistration } from "@/common/_deprecated/useRegistration";
 import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
-import { ViewerSessionProvider } from "@/common/viewer";
 import { ProjectBanner } from "@/entities/project";
 
 import { ProfileLayoutControls } from "./ProfileLayoutControls";
@@ -152,26 +151,24 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
   const isProject = isRegisteredProject;
 
   return (
-    <ViewerSessionProvider>
-      <PageWithBanner>
-        {isProject && <ProjectBanner projectId={params.userId} />}
-        <ProfileLayoutHero isProject={isProject} accountId={params.userId} />
-        <ProfileLayoutControls accountId={params.userId} isProject={isProject} />
+    <PageWithBanner>
+      {isProject && <ProjectBanner projectId={params.userId} />}
+      <ProfileLayoutHero isProject={isProject} accountId={params.userId} />
+      <ProfileLayoutControls accountId={params.userId} isProject={isProject} />
 
-        <Tabs
-          asLink
-          options={tabs}
-          selectedTab={selectedTab.id}
-          onSelect={(tabId: string) => {
-            setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);
-          }}
-        />
+      <Tabs
+        asLink
+        options={tabs}
+        selectedTab={selectedTab.id}
+        onSelect={(tabId: string) => {
+          setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!);
+        }}
+      />
 
-        {/* Tab Content */}
-        <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
-          {children}
-        </div>
-      </PageWithBanner>
-    </ViewerSessionProvider>
+      {/* Tab Content */}
+      <div className="flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]">
+        {children}
+      </div>
+    </PageWithBanner>
   );
 };

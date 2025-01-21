@@ -1,6 +1,6 @@
-import { PageWithBanner, SpinnerOverlay, SplashScreen } from "@/common/ui/components";
+import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { ViewerSessionProvider, useViewerSession } from "@/common/viewer";
+import { useViewerSession } from "@/common/viewer";
 import { ProjectEditor, useInitProjectState } from "@/features/profile-setup";
 import { useGlobalStoreSelector } from "@/store";
 
@@ -40,7 +40,3 @@ export default function EditProjectPage() {
     </PageWithBanner>
   );
 }
-
-EditProjectPage.getLayout = function getLayout(page: React.ReactNode) {
-  return <ViewerSessionProvider>{page}</ViewerSessionProvider>;
-};
