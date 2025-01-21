@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { ZodError } from "zod";
 
-import { socialDbContractHooks } from "@/common/contracts/social";
-import { useWallet } from "@/entities/_shared/session";
+import { useSession } from "@/entities/_shared/session";
+import { dispatch } from "@/store";
 
 import { saveProject } from "../models/effects";
 import { addFundingSourceSchema, projectEditorSchema } from "../models/schemas";
@@ -16,12 +15,12 @@ import { AddFundingSourceInputs, ProjectEditorInputs } from "../models/types";
 export const useProjectEditorForm = (options: {
   defaultValues?: Partial<ProjectEditorInputs>;
   onSuccess?: () => void;
+  isEdit: boolean;
 }) => {
-  const router = useRouter();
-  const { wallet } = useWallet();
   const [submitting, setSubmitting] = useState(false);
 
   const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<ProjectEditorInputs>>({});
+  const { isSignedIn } = useSession();
 
   const form = useForm<ProjectEditorInputs>({
     resolver: zodResolver(projectEditorSchema),
@@ -76,29 +75,21 @@ export const useProjectEditorForm = (options: {
   }, [form]);
 
   const onSubmit: SubmitHandler<ProjectEditorInputs> = useCallback(
-    async (formData) => {
-      if (!wallet) return;
+    async (_) => {
+      // not using form data, using store data provided by form
+      if (isSignedIn) {
+        setSubmitting(true);
 
-      setSubmitting(true);
-
-      try {
-        // Project saving logic here
-        const result = await saveProject(formData, wallet?.accountId?.toString() || "");
-
-        options.onSuccess?.();
-
-        if (result.success) {
-          console.log("Opening wallet for approval...");
-        }
-
-        router.push("/profile");
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setSubmitting(false);
+        saveProject({ isEdit: options.isEdit }).then(async (result) => {
+          if (result.success) {
+            console.log("Opening wallet for approval...");
+          } else {
+            dispatch.projectEditor.submissionStatus("pending");
+          }
+        });
       }
     },
-    [wallet, options, router],
+    [isSignedIn, options.isEdit],
   );
 
   return {
