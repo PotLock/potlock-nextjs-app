@@ -84,7 +84,7 @@ const Donation = ({ donorId, nearAmount, index, usdToggle }: DonationProps) => {
     ? (nativeToken?.usdPrice?.mul(nearAmount).toFixed(2) ?? 0)
     : nearAmount.toFixed(2);
 
-  const url = `${rootPathnames.PROJECT}/${donorId}`;
+  const url = `${rootPathnames.PROFILE}/${donorId}`;
 
   return (
     <Row>

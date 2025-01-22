@@ -70,14 +70,16 @@ export const useAccountActivePots = ({
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_list_registrations_retrieve
  */
 export const useAccountListRegistrations = ({
+  enabled = true,
   accountId,
   ...params
-}: Partial<ByAccountId> & generatedClient.V1AccountsListRegistrationsRetrieveParams) => {
-  const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(
-    accountId ?? "noop",
-    params,
-    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
-  );
+}: ByAccountId &
+  generatedClient.V1AccountsListRegistrationsRetrieveParams &
+  ConditionalActivation) => {
+  const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(accountId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };

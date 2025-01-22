@@ -1,9 +1,9 @@
 export const rootPathnames = {
   CURRENT: "",
-  CREATE_PROJECT: "/register",
-  EDIT_PROJECT: "/edit-project",
   PROJECTS_LIST: "/",
-  PROJECT: "/profile",
+  REGISTER: "/register",
+  PROFILE: "/profile",
+  EDIT_PROFILE: "/profile/edit",
   CART: "/cart",
   FEED: "/feed",
   POTS: "/pots",
@@ -11,9 +11,7 @@ export const rootPathnames = {
   DEPLOY_POT: "/deploy",
   DONORS: "/donors",
   LIST: "/lists",
-  PROFILE: "/profile",
   CAMPAIGNS: "/campaigns",
-  EDIT_PROFILE: "/editprofile",
 };
 
 // ?INFO: This default export is for temporary backwards compatibility

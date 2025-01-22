@@ -9,7 +9,7 @@ import { cn } from "@/common/ui/utils";
 import { useSessionReduxStore } from "@/entities/_shared/session";
 import { ProjectCard, ProjectDiscovery } from "@/entities/project";
 import { DonateRandomly } from "@/features/donation";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 
 export const FEATURED_PROJECT_ACCOUNT_IDS =
@@ -78,8 +78,8 @@ const WelcomeBanner = () => {
               <Link
                 href={
                   isRegisteredProject
-                    ? `${routesPath.PROFILE}/${accountId}`
-                    : routesPath.CREATE_PROJECT
+                    ? `${rootPathnames.PROFILE}/${accountId}`
+                    : rootPathnames.REGISTER
                 }
                 prefetch={true}
               >

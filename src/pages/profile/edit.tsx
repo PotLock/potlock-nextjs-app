@@ -11,7 +11,7 @@ import { useSession } from "@/entities/_shared/session";
 import { ProfileSetupForm } from "@/features/profile-setup";
 import { rootPathnames } from "@/pathnames";
 
-export default function RegisterPage() {
+export default function EditProjectPage() {
   const router = useRouter();
   const viewer = useSession();
 
@@ -31,7 +31,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (hasRegistrationSubmitted) {
-      router.push(rootPathnames.EDIT_PROFILE);
+      router.push(rootPathnames.REGISTER);
     }
   }, [hasRegistrationSubmitted, router]);
 
@@ -44,7 +44,7 @@ export default function RegisterPage() {
         )}
       >
         <h1 className="prose font-500 font-lora text-[32px] leading-[120%] md:text-[40px]">
-          {"Register New Project"}
+          {"Edit Project"}
         </h1>
 
         <h2 className="prose max-w-[600px] text-center md:text-lg">
@@ -57,7 +57,7 @@ export default function RegisterPage() {
       ) : (
         <>
           {viewer.isSignedIn ? (
-            <ProfileSetupForm mode="register" accountId={viewer.accountId} />
+            <ProfileSetupForm mode="update" accountId={viewer.accountId} />
           ) : (
             <InfoSegment title="Not logged in!" description="You must log in first!" />
           )}

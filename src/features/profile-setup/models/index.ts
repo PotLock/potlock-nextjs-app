@@ -10,7 +10,7 @@ import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
-import { AddFundingSourceInputs, ProjectEditorInputs } from "./types";
+import { AddFundingSourceInputs, ProfileSetupInputs } from "./types";
 
 export type SocialImagesInputs = ByAccountId & {
   socialData?: NEARSocialUserProfile | null;
@@ -63,7 +63,7 @@ type ExtraTypes = {
   daoProjectProposal: Proposal | null;
   isRepositoryRequired: boolean;
 };
-export type ProjectEditorState = ProjectEditorInputs & ExtraTypes;
+export type ProjectEditorState = ProfileSetupInputs & ExtraTypes;
 
 /**
  * Create Project State
@@ -307,7 +307,7 @@ export const projectEditorModel = createModel<AppModel>()({
       const data: Partial<ProjectEditorState> = {};
 
       // Set the isEdit status
-      data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROJECT);
+      data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROFILE);
 
       // Get profile data & profile images
       const projectProfileData = await fetchSocialImages({

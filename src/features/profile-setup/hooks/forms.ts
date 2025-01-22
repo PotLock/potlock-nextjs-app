@@ -4,35 +4,47 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { ZodError } from "zod";
 
+import type { ByAccountId } from "@/common/types";
 import { useSession } from "@/entities/_shared/session";
 import { dispatch } from "@/store";
 
-import { saveProject } from "../models/effects";
-import { addFundingSourceSchema, projectEditorSchema } from "../models/schemas";
-import { AddFundingSourceInputs, ProjectEditorInputs } from "../models/types";
+import { type ProfileSaveInputs, save } from "../models/effects";
+import { addFundingSourceSchema, profileSetupSchema } from "../models/schemas";
+import { AddFundingSourceInputs, ProfileSetupInputs } from "../models/types";
 
-// Project Editor Form Hook
-export const useProjectEditorForm = (options: {
-  defaultValues?: Partial<ProjectEditorInputs>;
-  onSuccess?: () => void;
-  isEdit: boolean;
-}) => {
+export type ProfileSetupFormParams = ByAccountId &
+  Pick<ProfileSaveInputs, "mode"> & {
+    onSuccess?: () => void;
+    defaultValues?: Partial<ProfileSetupInputs>;
+  };
+
+export const useProfileSetupForm = ({
+  accountId,
+  mode,
+  onSuccess,
+  defaultValues,
+}: ProfileSetupFormParams) => {
   const [submitting, setSubmitting] = useState(false);
 
-  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<ProjectEditorInputs>>({});
+  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<ProfileSetupInputs>>({});
   const { isSignedIn } = useSession();
 
-  const form = useForm<ProjectEditorInputs>({
-    resolver: zodResolver(projectEditorSchema),
+  const form = useForm<ProfileSetupInputs>({
+    resolver: zodResolver(profileSetupSchema),
     mode: "onChange",
-    defaultValues: {},
+    defaultValues,
+
+    resetOptions: {
+      keepDefaultValues: true,
+      keepDirty: false,
+    },
   });
 
   const values = useWatch({ control: form.control });
 
   // Cross-field validation
   useEffect(() => {
-    void projectEditorSchema
+    void profileSetupSchema
       .parseAsync(values)
       .then(() => setCrossFieldErrors({}))
       .catch((error: ZodError) =>
@@ -74,28 +86,24 @@ export const useProjectEditorForm = (options: {
     form.setValue("githubRepositories", [...currentRepos, ""], { shouldValidate: true });
   }, [form, values.githubRepositories]);
 
-  const onSubmit: SubmitHandler<ProjectEditorInputs> = useCallback(
-    async (_) => {
-      // not using form data, using store data provided by form
-      if (isSignedIn) {
-        setSubmitting(true);
+  const onSubmit: SubmitHandler<ProfileSetupInputs> = useCallback(async () => {
+    if (isSignedIn) {
+      setSubmitting(true);
 
-        saveProject({ isEdit: options.isEdit })
-          .then(async (result) => {
-            if (result.success) {
-              console.log("Opening wallet for approval...");
-            } else {
-              dispatch.projectEditor.submissionStatus("pending");
-              console.log("error while saving");
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
-    },
-    [isSignedIn, options.isEdit],
-  );
+      save({ mode })
+        .then(async (result) => {
+          if (result.success) {
+            console.log("Opening wallet for approval...");
+          } else {
+            dispatch.projectEditor.submissionStatus("pending");
+            console.log("error while saving");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [isSignedIn, mode]);
 
   return {
     form: {
@@ -105,6 +113,7 @@ export const useProjectEditorForm = (options: {
         errors: { ...form.formState.errors, ...crossFieldErrors },
       },
     },
+
     errors: form.formState.errors,
     values,
     isSubmitting: submitting,

@@ -90,7 +90,7 @@ export const useInitProjectState = () => {
           dispatch.projectEditor.isRegistered(!!register);
 
           // Auto set the project to DONE status if it's already registered & this is create project page
-          if (register && location.pathname.includes(routesPath.CREATE_PROJECT)) {
+          if (register && location.pathname.includes(routesPath.REGISTER)) {
             dispatch.projectEditor.submissionStatus("done");
             dispatch.projectEditor.setSubmissionError("");
           }

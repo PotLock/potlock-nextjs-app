@@ -24,7 +24,7 @@ export const addFundingSourceSchema = object({
     .max(50, "Must be less than 50 characters"),
 });
 
-export const projectEditorSchema = object({
+export const profileSetupSchema = object({
   name: string()
     .min(3, "Must be at least 3 characters long")
     .max(100, "Must be less than 100 characters long"),

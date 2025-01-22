@@ -1,24 +1,22 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 
-import { indexer } from "@/common/api/indexer";
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import type { ByAccountId } from "@/common/types";
 import { Button, FormField } from "@/common/ui/components";
+import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
+import { useToast } from "@/common/ui/hooks";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { useSession } from "@/entities/_shared/session";
 import { rootPathnames } from "@/pathnames";
 
 import AddFundingSourceModal from "./AddFundingSourceModal";
 import AddTeamMembersModal from "./AddTeamMembersModal";
-import DAOInProgress from "./DAOInProgress";
 import EditSmartContractModal from "./EditSmartContractModal";
-import { ErrorModal } from "./ErrorModal";
 import {
   AccountStack,
   CustomInput,
@@ -27,7 +25,6 @@ import {
   Row,
 } from "./form-elements";
 import FundingSourceTable from "./FundingSourceTable";
-import InfoSegment from "./InfoSegment";
 import Profile from "./Profile";
 import Repositories from "./Repositories";
 import { SmartContracts } from "./SmartContracts";
@@ -35,37 +32,27 @@ import SocialLinks from "./SocialLinks";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
 import SuccessfulRegister from "./SuccessfulRegister";
-import { useProjectEditorForm } from "../hooks/forms";
-import { ProjectEditorInputs } from "../models/types";
+import { type ProfileSetupFormParams, useProfileSetupForm } from "../hooks/forms";
+import { ProfileSetupInputs } from "../models/types";
 
-interface ProjectEditorProps {
-  accountId: string;
-}
+export type ProfileSetupFormProps = Pick<ProfileSetupFormParams, "accountId" | "mode"> & {};
 
-export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
+export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, mode }) => {
   const router = useRouter();
-  const isNewAccount = accountId === undefined;
-  // const [editContractIndex, setEditContractIndex] = useState<number>();
-  // const [initialNameSet, setInitialNameSet] = useState(false);
+  const { toast } = useToast();
 
-  // Local state for modals
   const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
-  const sessionData = useSession();
-
   const {
     profile: socialDbSnapshot,
     avatarSrc,
     backgroundSrc,
-  } = useAccountSocialProfile({
-    accountId: accountId ?? "noop",
-    enabled: !isNewAccount,
-  });
+  } = useAccountSocialProfile({ accountId });
 
-  const defaultValues = useMemo<Partial<ProjectEditorInputs>>(
+  const defaultValues = useMemo<Partial<ProfileSetupInputs>>(
     () =>
       socialDbSnapshot === undefined
         ? { profileImage: ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC }
@@ -74,26 +61,20 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
             description: socialDbSnapshot.description,
             publicGoodReason: socialDbSnapshot.plPublicGoodReason,
             teamMembers: socialDbSnapshot.plTeam ? JSON.parse(socialDbSnapshot.plTeam) : undefined,
+
             categories: socialDbSnapshot.plCategories
               ? JSON.parse(socialDbSnapshot.plCategories)
               : undefined,
+
             github: socialDbSnapshot.plGithubRepos
               ? JSON.parse(socialDbSnapshot.plGithubRepos)
               : undefined,
+
             backgroundImage: backgroundSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
             profileImage: avatarSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
           },
+
     [avatarSrc, backgroundSrc, socialDbSnapshot],
-  );
-
-  const { data: listRegistrations } = indexer.useListRegistrations({ listId: 1 });
-
-  const hasRegistrationSubmitted = useMemo(
-    () =>
-      listRegistrations?.results.find(
-        (registration) => registration.registrant.id === PUBLIC_GOODS_REGISTRY_LIST_ID.toString(),
-      ) !== undefined,
-    [listRegistrations?.results],
   );
 
   const {
@@ -106,28 +87,20 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
     updateRepositories,
     addRepository,
     errors,
-  } = useProjectEditorForm({
+  } = useProfileSetupForm({
+    accountId,
     defaultValues,
     onSuccess: () => router.push(rootPathnames.PROJECTS_LIST),
-    isEdit: hasRegistrationSubmitted,
+    mode,
   });
-
-  useEffect(() => {
-    form.reset(defaultValues, {
-      keepDefaultValues: true,
-      keepDirty: false,
-    });
-  }, [defaultValues]);
 
   useEffect(() => {
     // Set initial focus to name input.
     form.setFocus("name");
-  }, []);
+  }, [form]);
 
   const stringifiedDefaultValues = JSON.stringify(defaultValues);
   const stringifiedValues = JSON.stringify(values);
-
-  const isOwner = values.isDao ? accountId === values.daoAddress : accountId === accountId;
 
   const categoryChangeHandler = useCallback(
     (categories: string[]) => updateCategories(categories),
@@ -151,12 +124,9 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
   }, [stringifiedValues, stringifiedDefaultValues]);
 
   // const resetUrl = useCallback(() => {
-  //   router.push(rootPathnames.CREATE_PROJECT);
+  //   router.push(rootPathnames.REGISTER);
   //   resetForm();
   // }, [router, resetForm]);
-
-  // Add loading state
-  const [isDataLoading, setIsDataLoading] = useState(true);
 
   // Prevent form render while loading
   if (form.formState.isLoading) {
@@ -173,34 +143,6 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
 
   const projectEditorText = getProjectEditorText();
 
-  const isRepositoriesValid = values.githubRepositories && values.githubRepositories.length > 0;
-
-  // Wait for wallet
-  if (sessionData.isMetadataLoading) {
-    return <InfoSegment title="Checking account." description="Please, wait..." />;
-  }
-
-  // if (isAuthenticated && values.checkPreviousProjectDataStatus !== "ready") {
-  //   return <InfoSegment title="Checking account." description="Please, wait..." />;
-  // }
-
-  // must be signed in
-  if (!accountId) {
-    return <InfoSegment title="Not logged in!" description="You must log in first!" />;
-  }
-
-  // If it is Edit & not the owner
-  if (!isOwner && socialDbSnapshot) {
-    return (
-      <InfoSegment
-        title="You're not the owner of this project!"
-        description="You can't edit this project."
-      />
-    );
-  }
-
-  const isEdit = !!socialDbSnapshot;
-
   // // DAO Status - In Progress
   // if (
   //   values.isDao &&
@@ -210,12 +152,12 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
   //   return <DAOInProgress />;
   // }
 
-  if (form.formState.isSubmitted && location.pathname === rootPathnames.CREATE_PROJECT) {
+  if (form.formState.isSubmitted && location.pathname === rootPathnames.REGISTER) {
     return (
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SuccessfulRegister
           registeredProject={values.isDao ? values.daoAddress || "" : accountId || ""}
-          isEdit={isEdit}
+          isEdit={mode === "update"}
         />
       </div>
     );
@@ -277,12 +219,6 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ accountId }) => {
             setEditContractIndex(undefined);
           }}
         />
-
-        {/* <ErrorModal
-          open={!!errors}
-          errorMessage={values.submissionError}
-          onCloseClick={resetUrl}
-        /> */}
 
         <SubHeader
           title={values.isDao ? "Project details (DAO)" : "Project details"}

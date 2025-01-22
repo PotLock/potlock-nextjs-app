@@ -27,7 +27,11 @@ const getSocialData = async (accountId: string) => {
   }
 };
 
-export const saveProject = async ({ isEdit }: { isEdit: boolean }) => {
+export type ProfileSaveInputs = {
+  mode: "register" | "update";
+};
+
+export const save = async ({ mode }: ProfileSaveInputs) => {
   const data = store.getState().projectEditor;
 
   const accountId = data.isDao ? data.daoAddress : data.accountId;
@@ -85,7 +89,7 @@ export const saveProject = async ({ isEdit }: { isEdit: boolean }) => {
     let daoTransactions: Transaction<any>[] = [];
 
     // if this is a creation action, we need to add the registry
-    if (!isEdit) {
+    if (mode === "register") {
       transactions.push(
         // lists.potlock.near
         buildTransaction("register_batch", {
@@ -110,11 +114,14 @@ export const saveProject = async ({ isEdit }: { isEdit: boolean }) => {
         return {
           receiverId: data.daoAddress,
           method: "add_proposal",
+
           args: {
             proposal: {
-              description: data.isEdit
-                ? "Update project on POTLOCK (via NEAR Social)"
-                : "Create project on POTLOCK (2 steps: Register information on NEAR Social and register on POTLOCK)",
+              description:
+                mode === "register"
+                  ? "Create project on POTLOCK (2 steps: Register information on NEAR Social and register on POTLOCK)"
+                  : "Update project on POTLOCK (via NEAR Social)",
+
               kind: {
                 FunctionCall: {
                   receiver_id: tx.receiverId,
@@ -123,6 +130,7 @@ export const saveProject = async ({ isEdit }: { isEdit: boolean }) => {
               },
             },
           },
+
           deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
           gas: FULL_TGAS,
         } as Transaction<any>;
