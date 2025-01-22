@@ -1,6 +1,6 @@
-import { ProjectEditorState } from "../models";
+import type { ProfileSetupInputs } from "../models/types";
 
-const getSocialDataFormat = (data: ProjectEditorState) => {
+export const formInputsToSocialDbUpdateParams = (data: ProfileSetupInputs) => {
   const body = {
     // Basic Profile details
     profile: {
@@ -64,5 +64,3 @@ const getSocialDataFormat = (data: ProjectEditorState) => {
 
   return body;
 };
-
-export default getSocialDataFormat;

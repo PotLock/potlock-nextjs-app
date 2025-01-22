@@ -13,10 +13,11 @@ import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK } from "@/common/c
 import { socialDbContractClient } from "@/common/contracts/social";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
-import { store } from "@/store";
+import type { ByAccountId } from "@/common/types";
 
 import type { ProfileSetupMode } from "../types";
-import getSocialDataFormat from "../utils/getSocialDataFormat";
+import type { ProfileSetupInputs } from "./types";
+import { formInputsToSocialDbUpdateParams } from "../utils/normalization";
 
 const getSocialData = async (accountId: string) => {
   try {
@@ -28,36 +29,28 @@ const getSocialData = async (accountId: string) => {
   }
 };
 
-export type ProfileSaveInputs = {
+export type ProfileSaveInputs = ByAccountId & {
+  isDaoRepresentative: boolean;
   mode: ProfileSetupMode;
+  data: ProfileSetupInputs;
 };
 
-export const save = async ({ mode }: ProfileSaveInputs) => {
-  const data = store.getState().projectEditor;
-
-  const accountId = data.isDao ? data.daoAddress : data.accountId;
-
-  if (!accountId) {
-    return { success: false, error: "No accountId provided" };
-  }
-
-  // If Dao, get dao policy
-  const daoPolicy = data.isDao ? await getDaoPolicy(accountId) : null;
+export const save = async ({ isDaoRepresentative, accountId, mode, data }: ProfileSaveInputs) => {
+  const daoPolicy = isDaoRepresentative ? await getDaoPolicy(accountId) : null;
 
   // Validate DAO Address
-  const isDaoAddressValid = data.isDao ? validateNearAddress(data.daoAddress || "") : true;
-
-  if (!isDaoAddressValid) {
+  if (isDaoRepresentative && !validateNearAddress(data.daoAddress || "")) {
     return { success: false, error: "DAO: Invalid NEAR account Id" };
   }
 
-  // Social Data Format
-  const socialData = getSocialDataFormat(data);
+  const socialDbUpdateParams = formInputsToSocialDbUpdateParams(data);
 
   // If there is an existing social data, make the diff between then
   const existingSocialData = await getSocialData(accountId);
 
-  const diff = existingSocialData ? deepObjectDiff(existingSocialData, socialData) : socialData;
+  const diff = existingSocialData
+    ? deepObjectDiff(existingSocialData, socialDbUpdateParams)
+    : socialDbUpdateParams;
 
   const socialArgs = {
     data: {

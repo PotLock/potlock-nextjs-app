@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
@@ -6,7 +6,6 @@ import { ZodError } from "zod";
 
 import type { ByAccountId } from "@/common/types";
 import { useSession } from "@/entities/_shared/session";
-import { dispatch } from "@/store";
 
 import { type ProfileSaveInputs, save } from "../models/effects";
 import { addFundingSourceSchema, profileSetupSchema } from "../models/schemas";
@@ -14,7 +13,8 @@ import { AddFundingSourceInputs, ProfileSetupInputs } from "../models/types";
 
 export type ProfileSetupFormParams = ByAccountId &
   Pick<ProfileSaveInputs, "mode"> & {
-    onSuccess?: () => void;
+    onSuccess: () => void;
+    onFailure: (errorMessage: string) => void;
     defaultValues?: Partial<ProfileSetupInputs>;
   };
 
@@ -22,6 +22,7 @@ export const useProfileSetupForm = ({
   accountId,
   mode,
   onSuccess,
+  onFailure,
   defaultValues,
 }: ProfileSetupFormParams) => {
   const [submitting, setSubmitting] = useState(false);
@@ -29,7 +30,7 @@ export const useProfileSetupForm = ({
   const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<ProfileSetupInputs>>({});
   const { isSignedIn } = useSession();
 
-  const form = useForm<ProfileSetupInputs>({
+  const self = useForm<ProfileSetupInputs>({
     resolver: zodResolver(profileSetupSchema),
     mode: "onChange",
     defaultValues,
@@ -40,7 +41,12 @@ export const useProfileSetupForm = ({
     },
   });
 
-  const values = useWatch({ control: form.control });
+  const values = useWatch({ control: self.control });
+
+  const isDisabled = useMemo(
+    () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
+    [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
+  );
 
   // Cross-field validation
   useEffect(() => {
@@ -48,6 +54,7 @@ export const useProfileSetupForm = ({
       .parseAsync(values)
       .then(() => setCrossFieldErrors({}))
       .catch((error: ZodError) =>
+        // TODO: Consider using `setErrors`
         setCrossFieldErrors(
           error?.issues.reduce((errors, { code, message, path }) => {
             const fieldPath = path.at(0);
@@ -61,77 +68,82 @@ export const useProfileSetupForm = ({
 
   const updateBackgroundImage = useCallback(
     (url: string) => {
-      form.setValue("backgroundImage", url, { shouldValidate: true });
+      self.setValue("backgroundImage", url, { shouldValidate: true });
     },
 
-    [form],
+    [self],
   );
 
   const updateProfileImage = useCallback(
     (url: string) => {
-      form.setValue("profileImage", url, { shouldValidate: true });
+      self.setValue("profileImage", url, { shouldValidate: true });
     },
 
-    [form],
+    [self],
   );
 
   // Form update handlers
   const updateTeamMembers = useCallback(
     (members: string[]) => {
-      form.setValue("teamMembers", members, { shouldValidate: true });
+      self.setValue("teamMembers", members, { shouldValidate: true });
     },
-    [form],
+    [self],
   );
 
   const updateCategories = useCallback(
     (categories: string[]) => {
-      form.setValue("categories", categories, { shouldValidate: true });
+      self.setValue("categories", categories, { shouldValidate: true });
     },
-    [form],
+    [self],
   );
 
   const updateRepositories = useCallback(
     (repos: string[]) => {
-      form.setValue("githubRepositories", repos, { shouldValidate: true });
+      self.setValue("githubRepositories", repos, { shouldValidate: true });
     },
-    [form],
+    [self],
   );
 
   const addRepository = useCallback(() => {
     const currentRepos = values.githubRepositories || [];
-    form.setValue("githubRepositories", [...currentRepos, ""], { shouldValidate: true });
-  }, [form, values.githubRepositories]);
+    self.setValue("githubRepositories", [...currentRepos, ""], { shouldValidate: true });
+  }, [self, values.githubRepositories]);
 
-  const onSubmit: SubmitHandler<ProfileSetupInputs> = useCallback(async () => {
-    if (isSignedIn) {
-      setSubmitting(true);
+  const onSubmit: SubmitHandler<ProfileSetupInputs> = useCallback(
+    (inputs) => {
+      if (isSignedIn) {
+        setSubmitting(true);
 
-      save({ mode })
-        .then(async (result) => {
-          if (result.success) {
-            console.log("Opening wallet for approval...");
-          } else {
-            dispatch.projectEditor.submissionStatus("pending");
-            console.log("error while saving");
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }, [isSignedIn, mode]);
+        // TODO: pass `isDaoRepresentative` to this effect instead of storing `isDao` as a form field
+        save({ accountId, isDaoRepresentative: false, mode, data: inputs })
+          .then((result) => {
+            if (result.success) {
+              onSuccess();
+            } else {
+              onFailure(result.error);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    },
+
+    [accountId, isSignedIn, mode, onFailure, onSuccess],
+  );
 
   return {
     form: {
-      ...form,
+      ...self,
       formState: {
-        ...form.formState,
-        errors: { ...form.formState.errors, ...crossFieldErrors },
+        ...self.formState,
+        errors: { ...self.formState.errors, ...crossFieldErrors },
       },
     },
 
-    errors: form.formState.errors,
+    errors: self.formState.errors,
     values,
+    isDisabled,
     isSubmitting: submitting,
     updateBackgroundImage,
     updateCategories,
@@ -139,8 +151,8 @@ export const useProfileSetupForm = ({
     updateRepositories,
     updateTeamMembers,
     addRepository,
-    onSubmit: form.handleSubmit(onSubmit),
-    resetForm: form.reset,
+    onSubmit: self.handleSubmit(onSubmit),
+    resetForm: self.reset,
   };
 };
 

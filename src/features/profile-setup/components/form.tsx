@@ -75,9 +75,19 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
     [avatarSrc, backgroundSrc, socialDbSnapshot],
   );
 
+  const onSuccess = useCallback(() => {
+    toast({ title: "Success!", description: "Project updated successfully" });
+  }, [toast]);
+
+  const onFailure = useCallback(
+    (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
+    [toast],
+  );
+
   const {
     form,
     values,
+    isDisabled,
     isSubmitting,
     onSubmit,
     updateCategories,
@@ -90,7 +100,8 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
   } = useProfileSetupForm({
     accountId,
     defaultValues,
-    onSuccess: () => router.push(rootPathnames.PROJECTS_LIST),
+    onSuccess,
+    onFailure,
     mode,
   });
 
@@ -98,9 +109,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
     // Set initial focus to name input.
     form.setFocus("name");
   }, [form]);
-
-  const stringifiedDefaultValues = JSON.stringify(defaultValues);
-  const stringifiedValues = JSON.stringify(values);
 
   const onCategoriesChange = useCallback(
     (categories: string[]) => updateCategories(categories),
@@ -118,10 +126,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
   );
 
   console.log({ defaultValues });
-
-  const isThereDiff = useMemo(() => {
-    return stringifiedDefaultValues !== stringifiedValues;
-  }, [stringifiedValues, stringifiedDefaultValues]);
 
   const getProjectEditorText = () => {
     if (socialDbSnapshot) {
@@ -145,14 +149,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
   console.log("Form values:", values);
 
   console.log(form.formState.errors, form.formState.isValid);
-
-  // console.log({ stringifiedDefaultValues, stringifiedValues });
-
-  console.log("isThereAChange?", isThereDiff, { isSubmitting });
-
-  if (form.formState.isLoading) {
-    return <InfoSegment title="Loading project data..." description="Please wait..." />;
-  }
 
   return (
     <Form {...form}>
@@ -320,14 +316,10 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
               router.push(rootPathnames.PROJECTS_LIST);
             }}
           >
-            Cancel
+            {"Cancel"}
           </Button>
-          <Button
-            variant="standard-filled"
-            type="submit"
-            disabled={isSubmitting || !isThereDiff}
-            onClick={onSubmit}
-          >
+
+          <Button variant="standard-filled" type="submit" disabled={isDisabled} onClick={onSubmit}>
             {projectEditorText}
           </Button>
         </div>
