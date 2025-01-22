@@ -15,25 +15,34 @@ export default function RegisterPage() {
   const router = useRouter();
   const viewer = useSession();
 
-  const { data: listRegistrations } = indexer.useAccountListRegistrations({
-    enabled: viewer.isSignedIn,
-    accountId: viewer.accountId ?? "noop",
-  });
+  const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
+    indexer.useAccountListRegistrations({
+      enabled: viewer.isSignedIn,
+      accountId: viewer.accountId ?? "noop",
+    });
 
   const hasRegistrationSubmitted = useMemo(
     () =>
-      listRegistrations?.results.find(
-        ({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID,
-      ) !== undefined,
+      !isAccountListRegistrationDataLoading &&
+      listRegistrations !== undefined &&
+      listRegistrations.results.find(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID) !==
+        undefined,
 
-    [listRegistrations?.results],
+    [isAccountListRegistrationDataLoading, listRegistrations],
   );
 
   useEffect(() => {
-    if (hasRegistrationSubmitted) {
-      router.push(rootPathnames.EDIT_PROFILE);
+    if (viewer.isSignedIn && !isAccountListRegistrationDataLoading && hasRegistrationSubmitted) {
+      router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`);
     }
-  }, [hasRegistrationSubmitted, router]);
+  }, [
+    hasRegistrationSubmitted,
+    isAccountListRegistrationDataLoading,
+    listRegistrations,
+    router,
+    viewer.accountId,
+    viewer.isSignedIn,
+  ]);
 
   return (
     <PageWithBanner>
@@ -52,8 +61,8 @@ export default function RegisterPage() {
         </h2>
       </section>
 
-      {viewer.isMetadataLoading ? (
-        <InfoSegment title="Checking account." description="Please, wait..." />
+      {listRegistrations === undefined ? (
+        <InfoSegment title="Checking account" description="Please, wait..." />
       ) : (
         <>
           {viewer.isSignedIn ? (

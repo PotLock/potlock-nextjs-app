@@ -15,6 +15,7 @@ import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
 import { store } from "@/store";
 
+import type { ProfileSetupMode } from "../types";
 import getSocialDataFormat from "../utils/getSocialDataFormat";
 
 const getSocialData = async (accountId: string) => {
@@ -28,7 +29,7 @@ const getSocialData = async (accountId: string) => {
 };
 
 export type ProfileSaveInputs = {
-  mode: "register" | "update";
+  mode: ProfileSetupMode;
 };
 
 export const save = async ({ mode }: ProfileSaveInputs) => {

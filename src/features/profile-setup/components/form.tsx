@@ -31,7 +31,6 @@ import { SmartContracts } from "./SmartContracts";
 import SocialLinks from "./SocialLinks";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import SubHeader from "./SubHeader";
-import SuccessfulRegister from "./SuccessfulRegister";
 import { type ProfileSetupFormParams, useProfileSetupForm } from "../hooks/forms";
 import { ProfileSetupInputs } from "../models/types";
 
@@ -152,17 +151,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
   //   return <DAOInProgress />;
   // }
 
-  if (form.formState.isSubmitted && location.pathname === rootPathnames.REGISTER) {
-    return (
-      <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
-        <SuccessfulRegister
-          registeredProject={values.isDao ? values.daoAddress || "" : accountId || ""}
-          isEdit={mode === "update"}
-        />
-      </div>
-    );
-  }
-
   console.log("Form values:", values);
 
   console.log(form.formState.errors, form.formState.isValid);
@@ -176,7 +164,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
   }
 
   return (
-    // Container
     <Form {...form}>
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SubHeader title="Upload banner and profile Image" required />

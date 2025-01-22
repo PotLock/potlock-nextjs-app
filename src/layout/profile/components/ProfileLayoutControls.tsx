@@ -171,9 +171,9 @@ export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
             </div>
             {isOwner && (
               <div className="ml-[auto] self-center" style={{}}>
-                <Link href={`${rootPathnames.EDIT_PROFILE}/${accountId}`}>
+                <Link href={rootPathnames.EDIT_PROFILE}>
                   <Button variant="brand-tonal" className="ml-[auto]">
-                    Edit project
+                    {"Edit profile"}
                   </Button>
                 </Link>
               </div>
