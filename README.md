@@ -25,11 +25,11 @@ First, make sure to install **every extension** from the "recommended" section o
 
 ```bash
 # using the right node version
-nvm use;
+nvm use
 # enable Yarn support
-corepack enable;
+corepack enable && corepack install
 # create config for environment variables
-cp .env.example .env.local;
+cp .env.example .env.local
 # if required, edit .env.local
 # then run the development server ( dependencies will be installed automatically )
 yarn dev
