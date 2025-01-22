@@ -74,7 +74,7 @@ export const useCampaignForm = () => {
 
     // Set all collected errors
     Object.entries(errors).forEach(([field, error]) => {
-      self.setError(field as any, error);
+      self.setError(field as keyof Values, error);
     });
   }, [values, self]);
 
