@@ -9,7 +9,12 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { LISTS_CONTRACT_ACCOUNT_ID, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
-import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK } from "@/common/constants";
+import {
+  FIFTY_TGAS,
+  FULL_TGAS,
+  MIN_PROPOSAL_DEPOSIT_FALLBACK,
+  PUBLIC_GOODS_REGISTRY_LIST_ID,
+} from "@/common/constants";
 import { socialDbContractClient } from "@/common/contracts/social";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import deepObjectDiff from "@/common/lib/deepObjectDiff";
@@ -58,10 +63,6 @@ export const save = async ({ isDaoRepresentative, accountId, mode, data }: Profi
     },
   };
 
-  const potlockRegistryArgs = {
-    list_id: 1, // hardcoding to potlock registry list for now
-  };
-
   // First, we have to check the account from social.near to see if it exists. If it doesn't, we need to add 0.1N to the deposit
   try {
     const account = await socialDbContractClient.getAccount({ accountId });
@@ -88,7 +89,11 @@ export const save = async ({ isDaoRepresentative, accountId, mode, data }: Profi
         // lists.potlock.near
         buildTransaction("register_batch", {
           receiverId: LISTS_CONTRACT_ACCOUNT_ID,
-          args: potlockRegistryArgs,
+
+          args: {
+            list_id: PUBLIC_GOODS_REGISTRY_LIST_ID,
+          },
+
           deposit: parseNearAmount("0.05")!,
           gas: FULL_TGAS,
         }),
