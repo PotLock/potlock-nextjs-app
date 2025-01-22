@@ -2,9 +2,11 @@ import { useState } from "react";
 
 import Files from "react-files";
 
+import { nearSocialIpfsImageUpload } from "@/common/services/ipfs";
 import { Button, Spinner } from "@/common/ui/components";
 import CameraIcon from "@/common/ui/svg/CameraIcon";
-import { dispatch, useGlobalStoreSelector } from "@/store";
+
+import type { ProfileSetupInputs } from "../models/types";
 
 type Status = "ready" | "loading";
 
@@ -17,31 +19,40 @@ const useStatus = (initialStatus: Status = "ready") => {
   };
 };
 
-const Profile = () => {
-  const { accountId, backgroundImage, profileImage } = useGlobalStoreSelector(
-    (state) => state.projectEditor,
-  );
+export type ProfileSetupImageUploadProps = Pick<
+  ProfileSetupInputs,
+  "backgroundImage" | "profileImage"
+> & {
+  onBackgroundImageUploaded: (url: string) => void;
+  onProfileImageUploaded: (url: string) => void;
+};
 
+export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = ({
+  backgroundImage,
+  profileImage,
+  onBackgroundImageUploaded,
+  onProfileImageUploaded,
+}) => {
   const bgImageStatus = useStatus();
   const profileImageStatus = useStatus();
 
-  if (!accountId) {
-    return "";
-  }
-
-  const onBgImageChange = async (files: File[]) => {
+  const onBgImageChange = async (files?: File[]) => {
     if (files) {
-      bgImageStatus.setStatus("loading");
-      await dispatch.projectEditor.uploadBackgroundImage(files);
-      bgImageStatus.setStatus("ready");
+      nearSocialIpfsImageUpload(files).then((url) => {
+        if (url !== undefined) {
+          onBackgroundImageUploaded(url);
+        }
+      });
     }
   };
 
-  const onAvatarImageChange = async (files: File[]) => {
+  const onAvatarImageChange = async (files?: File[]) => {
     if (files) {
-      profileImageStatus.setStatus("loading");
-      await dispatch.projectEditor.uploadProfileImage(files);
-      profileImageStatus.setStatus("ready");
+      nearSocialIpfsImageUpload(files).then((url) => {
+        if (url !== undefined) {
+          onProfileImageUploaded(url);
+        }
+      });
     }
   };
 
@@ -121,5 +132,3 @@ const Profile = () => {
     </div>
   );
 };
-
-export default Profile;

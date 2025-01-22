@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
-import uploadFileToIPFS from "@/common/services/ipfs";
+import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import { Button, Form, FormField } from "@/common/ui/components";
 import { NearInputField, TextAreaField, TextField } from "@/common/ui/form-fields";
 
@@ -62,7 +62,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
     if (target.files && target.files[0]) {
       const reader = new FileReader();
       setLoadingImageUpload(true);
-      const res = await uploadFileToIPFS(target.files[0]);
+      const res = await nearSocialIpfsUpload(target.files[0]);
 
       if (res.ok) {
         const data = await res.json();

@@ -31,7 +31,7 @@ export const profileSetupSchema = object({
 
   isDao: boolean().default(false),
   daoAddress: string().optional(),
-  backgroundImage: string().min(3),
+  backgroundImage: string().min(3).optional(),
   profileImage: string().min(3),
   teamMembers: array(string()),
   categories: array(string()).min(1),

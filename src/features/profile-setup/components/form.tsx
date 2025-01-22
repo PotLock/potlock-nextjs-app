@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 
-import type { ByAccountId } from "@/common/types";
 import { Button, FormField } from "@/common/ui/components";
 import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
 import { useToast } from "@/common/ui/hooks";
@@ -25,7 +24,7 @@ import {
   Row,
 } from "./form-elements";
 import FundingSourceTable from "./FundingSourceTable";
-import Profile from "./Profile";
+import { ProfileSetupImageUpload } from "./image-upload";
 import Repositories from "./Repositories";
 import { SmartContracts } from "./SmartContracts";
 import SocialLinks from "./SocialLinks";
@@ -81,9 +80,11 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
     values,
     isSubmitting,
     onSubmit,
-    updateTeamMembers,
     updateCategories,
+    updateBackgroundImage,
+    updateProfileImage,
     updateRepositories,
+    updateTeamMembers,
     addRepository,
     errors,
   } = useProfileSetupForm({
@@ -101,12 +102,12 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
   const stringifiedDefaultValues = JSON.stringify(defaultValues);
   const stringifiedValues = JSON.stringify(values);
 
-  const categoryChangeHandler = useCallback(
+  const onCategoriesChange = useCallback(
     (categories: string[]) => updateCategories(categories),
     [updateCategories],
   );
 
-  const onMembersChangeHandler = useCallback(
+  const onTeamMembersChange = useCallback(
     (members: string[]) => updateTeamMembers(members),
     [updateTeamMembers],
   );
@@ -121,16 +122,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
   const isThereDiff = useMemo(() => {
     return stringifiedDefaultValues !== stringifiedValues;
   }, [stringifiedValues, stringifiedDefaultValues]);
-
-  // const resetUrl = useCallback(() => {
-  //   router.push(rootPathnames.REGISTER);
-  //   resetForm();
-  // }, [router, resetForm]);
-
-  // Prevent form render while loading
-  if (form.formState.isLoading) {
-    return <InfoSegment title="Loading project data..." description="Please wait..." />;
-  }
 
   const getProjectEditorText = () => {
     if (socialDbSnapshot) {
@@ -167,7 +158,12 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
     <Form {...form}>
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SubHeader title="Upload banner and profile Image" required />
-        <Profile />
+        <ProfileSetupImageUpload
+          backgroundImage={values.backgroundImage}
+          profileImage={values.profileImage ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
+          onBackgroundImageUploaded={updateBackgroundImage}
+          onProfileImageUploaded={updateProfileImage}
+        />
 
         <LowerBannerContainer>
           <LowerBannerContainerLeft>
@@ -187,7 +183,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
         <AddTeamMembersModal
           open={addTeamModalOpen}
           onCloseClick={() => setAddTeamModalOpen(false)}
-          onMembersChange={onMembersChangeHandler}
+          onMembersChange={onTeamMembersChange}
         />
 
         <AddFundingSourceModal
@@ -231,7 +227,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
           />
 
           <ProjectCategoryPicker
-            onValuesChange={categoryChangeHandler}
+            onValuesChange={onCategoriesChange}
             defaultValues={defaultValues.categories}
           />
         </Row>

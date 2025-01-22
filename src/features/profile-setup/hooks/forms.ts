@@ -59,6 +59,22 @@ export const useProfileSetupForm = ({
       );
   }, [values]);
 
+  const updateBackgroundImage = useCallback(
+    (url: string) => {
+      form.setValue("backgroundImage", url, { shouldValidate: true });
+    },
+
+    [form],
+  );
+
+  const updateProfileImage = useCallback(
+    (url: string) => {
+      form.setValue("profileImage", url, { shouldValidate: true });
+    },
+
+    [form],
+  );
+
   // Form update handlers
   const updateTeamMembers = useCallback(
     (members: string[]) => {
@@ -117,9 +133,11 @@ export const useProfileSetupForm = ({
     errors: form.formState.errors,
     values,
     isSubmitting: submitting,
-    updateTeamMembers,
+    updateBackgroundImage,
     updateCategories,
+    updateProfileImage,
     updateRepositories,
+    updateTeamMembers,
     addRepository,
     onSubmit: form.handleSubmit(onSubmit),
     resetForm: form.reset,

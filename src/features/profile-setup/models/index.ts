@@ -1,10 +1,8 @@
 import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
-import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social";
 import { getImage } from "@/common/services/images";
-import uploadFileToIPFS from "@/common/services/ipfs";
 import { ByAccountId } from "@/common/types";
 import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
@@ -275,28 +273,8 @@ export const projectEditorModel = createModel<AppModel>()({
   },
 
   effects: (dispatch) => ({
-    async uploadBackgroundImage(files: File[]) {
-      const res = await uploadFileToIPFS(files[0]);
-
-      if (res.ok) {
-        const data = await res.json();
-        dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
-        return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
-      }
-    },
-
     setBackgroundImage(backgroundUrl: string) {
       dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(backgroundUrl);
-    },
-
-    async uploadProfileImage(files: File[]) {
-      const res = await uploadFileToIPFS(files[0]);
-
-      if (res.ok) {
-        const data = await res.json();
-        dispatch.projectEditor.UPDATE_PROFILE_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
-        return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
-      }
     },
 
     setProfileImage(profileImageUrl: string) {
