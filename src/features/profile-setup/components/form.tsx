@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
-import { Form } from "react-hook-form";
 import { pick } from "remeda";
 
-import { Button, FormField } from "@/common/ui/components";
+import { Button, Form, FormField } from "@/common/ui/components";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
@@ -56,13 +55,16 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
     backgroundSrc,
   } = useAccountSocialProfile({ accountId });
 
-  const defaultValues = useMemo<Partial<ProfileSetupInputs>>(
+  const defaultValues: Partial<ProfileSetupInputs> = useMemo(
     () =>
       socialProfileSnapshot === null
         ? { profileImage: ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC }
         : {
             name: socialProfileSnapshot.name,
             description: socialProfileSnapshot.description,
+            backgroundImage: backgroundSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+            profileImage: avatarSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+
             publicGoodReason: socialProfileSnapshot.plPublicGoodReason,
 
             teamMembers: socialProfileSnapshot.plTeam
@@ -73,12 +75,9 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
               ? JSON.parse(socialProfileSnapshot.plCategories)
               : undefined,
 
-            github: socialProfileSnapshot.plGithubRepos
+            githubRepositories: socialProfileSnapshot.plGithubRepos
               ? JSON.parse(socialProfileSnapshot.plGithubRepos)
               : undefined,
-
-            backgroundImage: backgroundSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
-            profileImage: avatarSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
           },
 
     [avatarSrc, backgroundSrc, socialProfileSnapshot],
@@ -99,6 +98,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
   const {
     form,
     isDisabled,
+    //values,
     teamMembersAccountGroup,
     onSubmit,
     updateCategories,
@@ -175,155 +175,152 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
       />
 
       <Form {...form}>
-        <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
-          <SubHeader title="Upload banner and profile Image" required />
+        <form {...{ onSubmit }}>
+          <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
+            <SubHeader title="Upload banner and profile Image" required />
 
-          <ProfileSetupImageUpload
-            backgroundImage={values.backgroundImage}
-            profileImage={values.profileImage ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
-            onBackgroundImageUploaded={updateBackgroundImage}
-            onProfileImageUploaded={updateProfileImage}
-          />
+            <ProfileSetupImageUpload
+              backgroundImage={values.backgroundImage}
+              profileImage={values.profileImage ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
+              onBackgroundImageUploaded={updateBackgroundImage}
+              onProfileImageUploaded={updateProfileImage}
+            />
 
-          <LowerBannerContainer>
-            <LowerBannerContainerLeft>
-              <AccountGroup
-                title="Team Members"
-                isEditable
-                value={teamMembersAccountGroup}
-                onSubmit={onTeamMembersChange}
-              />
-            </LowerBannerContainerLeft>
-          </LowerBannerContainer>
-
-          <SubHeader
-            title={isDaoRepresentative ? "Project details (DAO)" : "Project details"}
-            required
-            className="mt-16"
-          />
-
-          <Row>
-            <FormField
-              control={form.control}
-              name="name"
-              defaultValue={values.name}
-              render={({ field }) => (
-                <CustomInput
-                  label="Project name *"
-                  inputProps={{
-                    placeholder: "Enter project name",
-                    ...field,
-                  }}
+            <LowerBannerContainer>
+              <LowerBannerContainerLeft>
+                <AccountGroup
+                  title="Team Members"
+                  isEditable
+                  value={teamMembersAccountGroup}
+                  onSubmit={onTeamMembersChange}
                 />
-              )}
+              </LowerBannerContainerLeft>
+            </LowerBannerContainer>
+
+            <SubHeader
+              title={isDaoRepresentative ? "Project details (DAO)" : "Project details"}
+              required
+              className="mt-16"
             />
 
-            <ProjectCategoryPicker
-              onValuesChange={onCategoriesChange}
-              defaultValues={values.categories}
-            />
-          </Row>
-
-          <Row>
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <CustomTextForm
-                  showHint
-                  label="Describe your project *"
-                  placeholder="Type description"
-                  field={field}
-                  currentText={values.description}
-                />
-              )}
-            />
-
-            {values.categories?.includes("Public Good") ? (
+            <Row>
               <FormField
                 control={form.control}
-                name="publicGoodReason"
+                name="name"
+                defaultValue={values.name}
                 render={({ field }) => (
-                  <CustomTextForm
-                    showHint
-                    label="Why do you consider yourself a public good?"
-                    placeholder="Type the reason"
-                    field={field}
-                    currentText={values.publicGoodReason}
+                  <CustomInput
+                    label="Project name *"
+                    inputProps={{
+                      placeholder: "Enter project name",
+                      ...field,
+                    }}
                   />
                 )}
               />
-            ) : null}
-          </Row>
 
-          <SubHeader title="Smart contracts" className="mt-16" />
+              <ProjectCategoryPicker
+                onValuesChange={onCategoriesChange}
+                defaultValues={values.categories}
+              />
+            </Row>
 
-          <Row>
-            <ProfileSetupSmartContractsSection
-              values={values.smartContracts}
-              onEditClickHandler={setEditContractIndex}
-            />
-          </Row>
+            <Row>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <CustomTextForm
+                    showHint
+                    label="Describe your project *"
+                    placeholder="Type description"
+                    field={field}
+                    currentText={values.description}
+                  />
+                )}
+              />
 
-          <SubHeader title="Funding sources" className="mt-16" />
+              {values.categories?.includes("Public Good") ? (
+                <FormField
+                  control={form.control}
+                  name="publicGoodReason"
+                  render={({ field }) => (
+                    <CustomTextForm
+                      showHint
+                      label="Why do you consider yourself a public good?"
+                      placeholder="Type the reason"
+                      field={field}
+                      currentText={values.publicGoodReason}
+                    />
+                  )}
+                />
+              ) : null}
+            </Row>
 
-          <ProfileSetupFundingSourcesTable
-            values={values.fundingSources}
-            onEditClick={(fundingIndex: number) => {
-              setEditFundingIndex(fundingIndex);
-              setAddFundingModalOpen(true);
-            }}
-          />
+            <SubHeader title="Smart contracts" className="mt-16" />
 
-          <div className="mt-6">
-            <Button onClick={() => setAddFundingModalOpen(true)}>
-              <PlusIcon width={12} height={12} />
-              <span>{"Add Funding Source"}</span>
-            </Button>
-          </div>
+            <Row>
+              <ProfileSetupSmartContractsSection
+                values={values.smartContracts}
+                onEditClickHandler={setEditContractIndex}
+              />
+            </Row>
 
-          {/* <SubHeader title="Repositories" required={values.isRepositoryRequired} className="mt-16" /> */}
+            <SubHeader title="Funding sources" className="mt-16" />
 
-          <Row>
-            <ProfileSetupRepositoriesSection
-              values={values.githubRepositories}
-              onChange={onChangeRepositories}
-            />
-          </Row>
-
-          <div className="mt-6">
-            <Button onClick={() => addRepository()}>
-              <PlusIcon width={12} height={12} />
-              <span>{"Add Repository"}</span>
-            </Button>
-          </div>
-
-          <SubHeader title="Social links" className="mt-16" />
-
-          <Row>
-            <ProfileSetupLinktreeSection values={pick(values, ACCOUNT_PROFILE_LINKTREE_KEYS)} />
-          </Row>
-
-          <div className="mt-16 flex gap-4 self-end">
-            <Button
-              variant="standard-outline"
-              onClick={() => {
-                router.push(rootPathnames.PROJECTS_LIST);
+            <ProfileSetupFundingSourcesTable
+              values={values.fundingSources}
+              onEditClick={(fundingIndex: number) => {
+                setEditFundingIndex(fundingIndex);
+                setAddFundingModalOpen(true);
               }}
-            >
-              {"Cancel"}
-            </Button>
+            />
 
-            <Button
-              variant="standard-filled"
-              type="submit"
-              disabled={isDisabled}
-              onClick={onSubmit}
-            >
-              {submitButtonLabel}
-            </Button>
+            <div className="mt-6">
+              <Button variant="standard-outline" onClick={() => setAddFundingModalOpen(true)}>
+                <PlusIcon width={12} height={12} />
+                <span>{"Add Funding Source"}</span>
+              </Button>
+            </div>
+
+            {/* <SubHeader title="Repositories" required={values.isRepositoryRequired} className="mt-16" /> */}
+
+            <Row>
+              <ProfileSetupRepositoriesSection
+                values={values.githubRepositories}
+                onChange={onChangeRepositories}
+              />
+            </Row>
+
+            <div className="mt-6">
+              <Button onClick={() => addRepository()}>
+                <PlusIcon width={12} height={12} />
+                <span>{"Add Repository"}</span>
+              </Button>
+            </div>
+
+            <SubHeader title="Social links" className="mt-16" />
+
+            <Row>
+              <ProfileSetupLinktreeSection values={pick(values, ACCOUNT_PROFILE_LINKTREE_KEYS)} />
+            </Row>
+
+            <div className="mt-16 flex gap-4 self-end">
+              <Button
+                variant="standard-outline"
+                onClick={() => {
+                  router.push(rootPathnames.PROJECTS_LIST);
+                }}
+              >
+                {"Cancel"}
+              </Button>
+
+              <Button variant="standard-filled" type="submit" disabled={isDisabled}>
+                {submitButtonLabel}
+              </Button>
+            </div>
           </div>
-        </div>
+        </form>
       </Form>
     </>
   );

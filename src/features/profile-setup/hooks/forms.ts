@@ -14,7 +14,7 @@ import { AddFundingSourceInputs, ProfileSetupInputs } from "../models/types";
 
 export type ProfileSetupFormParams = ByAccountId &
   Pick<ProfileSaveInputs, "mode" | "isDaoRepresentative" | "socialProfileSnapshot"> & {
-    defaultValues?: Partial<ProfileSetupInputs>;
+    defaultValues: Partial<ProfileSetupInputs>;
     onSuccess: () => void;
     onFailure: (errorMessage: string) => void;
   };
@@ -71,6 +71,12 @@ export const useProfileSetupForm = ({
     () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
     [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
   );
+
+  console.log({
+    isDirty: self.formState.isDirty,
+    isValid: self.formState.isValid,
+    isSubmitting: self.formState.isSubmitting,
+  });
 
   const updateBackgroundImage = useCallback(
     (url: string) => self.setValue("backgroundImage", url, { shouldValidate: true }),
@@ -143,6 +149,7 @@ export const useProfileSetupForm = ({
     updateTeamMembers,
     onSubmit: self.handleSubmit(onSubmit),
     resetForm: self.reset,
+    values,
   };
 };
 
