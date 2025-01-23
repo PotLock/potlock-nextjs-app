@@ -169,9 +169,10 @@ export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
               {/* Copy Icon */}
               <ClipboardCopyButton text={accountId} />
             </div>
+
             {isOwner && (
               <div className="ml-[auto] self-center" style={{}}>
-                <Link href={rootPathnames.EDIT_PROFILE}>
+                <Link href={rootPathnames.EDIT_PROFILE(accountId)}>
                   <Button variant="brand-tonal" className="ml-[auto]">
                     {"Edit profile"}
                   </Button>

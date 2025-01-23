@@ -289,7 +289,7 @@ export const projectEditorModel = createModel<AppModel>()({
       const data: Partial<ProjectEditorState> = {};
 
       // Set the isEdit status
-      data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROFILE);
+      //data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROFILE);
 
       // Get profile data & profile images
       const projectProfileData = await fetchSocialImages({
