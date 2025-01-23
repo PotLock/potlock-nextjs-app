@@ -1,22 +1,22 @@
 import { useState } from "react";
 
 import Files from "react-files";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { nearSocialIpfsImageUpload } from "@/common/services/ipfs";
 import { Button, Spinner } from "@/common/ui/components";
+import { useToast } from "@/common/ui/hooks";
 import CameraIcon from "@/common/ui/svg/CameraIcon";
+import { cn } from "@/common/ui/utils";
 
 import type { ProfileSetupInputs } from "../models/types";
 
 type Status = "ready" | "loading";
 
 const useStatus = (initialStatus: Status = "ready") => {
-  const [status, setStatus] = useState(initialStatus);
+  const [current, set] = useState(initialStatus);
 
-  return {
-    status,
-    setStatus,
-  };
+  return { current, set };
 };
 
 export type ProfileSetupImageUploadProps = Pick<
@@ -33,26 +33,43 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
   onBackgroundImageUploaded,
   onProfileImageUploaded,
 }) => {
+  const { toast } = useToast();
   const bgImageStatus = useStatus();
   const profileImageStatus = useStatus();
 
   const onBgImageChange = async (files?: File[]) => {
     if (files) {
-      nearSocialIpfsImageUpload(files).then((url) => {
-        if (url !== undefined) {
-          onBackgroundImageUploaded(url);
-        }
-      });
+      bgImageStatus.set("loading");
+
+      nearSocialIpfsImageUpload(files)
+        .then((url) => {
+          if (url !== undefined) {
+            onBackgroundImageUploaded(url);
+            toast({ title: "Background image successfully uploaded" });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast({ title: "Image upload error", description: error });
+        })
+        .finally(() => bgImageStatus.set("ready"));
     }
   };
 
   const onAvatarImageChange = async (files?: File[]) => {
     if (files) {
-      nearSocialIpfsImageUpload(files).then((url) => {
-        if (url !== undefined) {
-          onProfileImageUploaded(url);
-        }
-      });
+      nearSocialIpfsImageUpload(files)
+        .then((url) => {
+          if (url !== undefined) {
+            onProfileImageUploaded(url);
+            toast({ title: "Profile image successfully uploaded" });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast({ title: "Image upload error", description: error });
+        })
+        .finally(() => profileImageStatus.set("ready"));
     }
   };
 
@@ -61,19 +78,23 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
       {/* BackgroundImage */}
       <div className="relative flex h-[280px] w-full rounded-[6px] bg-neutral-200">
         {backgroundImage && (
-          <img
-            className="h-full w-full object-cover"
-            src={backgroundImage}
+          <LazyLoadImage
             alt="Profile Background"
+            src={backgroundImage}
+            className="h-full w-full object-cover"
           />
         )}
         <Button
-          className="absolute bottom-[1.5rem] right-[1.5rem] max-md:h-[40px] max-md:w-[40px] max-md:rounded-[50%] max-md:p-0"
+          type="button"
           variant="standard-outline"
-          disabled={bgImageStatus.status === "loading"}
+          disabled={bgImageStatus.current === "loading"}
+          className={cn(
+            "absolute bottom-[1.5rem] right-[1.5rem]",
+            "max-md:h-[40px] max-md:w-[40px] max-md:rounded-[50%] max-md:p-0",
+          )}
         >
           <CameraIcon width={18} />
-          {bgImageStatus.status === "ready" ? (
+          {bgImageStatus.current === "ready" ? (
             <p className="font-500 text-[14px] max-md:hidden">Add cover photo</p>
           ) : (
             <Spinner width={18} height={18} />
@@ -98,22 +119,25 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
         }}
       >
         {profileImage && (
-          <img
-            className="h-full w-full rounded-[50%] object-cover"
-            src={profileImage}
+          <LazyLoadImage
             alt="Profile Image"
+            src={profileImage}
+            className="h-full w-full rounded-[50%] object-cover"
           />
         )}
         <Button
-          className="b-none absolute bottom-0 right-0 flex h-[40px] w-[40px] items-center rounded-[50%] p-0"
+          type="button"
           variant="standard-outline"
-          disabled={profileImageStatus.status === "loading"}
+          disabled={profileImageStatus.current === "loading"}
+          className={
+            "b-none absolute bottom-0 right-0 flex h-[40px] w-[40px] items-center rounded-[50%] p-0"
+          }
           style={{
             boxShadow:
               "0px 0px 0px 1px rgba(0, 0, 0, 0.22) inset, 0px -1px 0px 0px rgba(15, 15, 15, 0.15) inset, 0px 1px 2px -0.5px rgba(5, 5, 5, 0.08)",
           }}
         >
-          {profileImageStatus.status === "ready" ? (
+          {profileImageStatus.current === "ready" ? (
             <CameraIcon width={18} />
           ) : (
             <Spinner width={18} height={18} />

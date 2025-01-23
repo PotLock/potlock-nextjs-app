@@ -2,19 +2,18 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { objOf } from "remeda";
+import { isDeepEqual, keys, objOf, pick } from "remeda";
 import { ZodError } from "zod";
 
 import type { ByAccountId } from "@/common/types";
-import type { AccountGroupItem } from "@/entities/_shared/account";
+import { type AccountGroupItem, useAccountSocialProfile } from "@/entities/_shared/account";
 
 import { type ProfileSaveInputs, save } from "../models/effects";
 import { addFundingSourceSchema, profileSetupSchema } from "../models/schemas";
 import { AddFundingSourceInputs, ProfileSetupInputs } from "../models/types";
 
 export type ProfileSetupFormParams = ByAccountId &
-  Pick<ProfileSaveInputs, "mode" | "isDaoRepresentative" | "socialProfileSnapshot"> & {
-    defaultValues: Partial<ProfileSetupInputs>;
+  Pick<ProfileSaveInputs, "mode" | "isDaoRepresentative"> & {
     onSuccess: () => void;
     onFailure: (errorMessage: string) => void;
   };
@@ -23,25 +22,71 @@ export const useProfileSetupForm = ({
   mode,
   accountId,
   isDaoRepresentative,
-  socialProfileSnapshot,
-  defaultValues,
   onSuccess,
   onFailure,
 }: ProfileSetupFormParams) => {
   const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<ProfileSetupInputs>>({});
 
+  const {
+    isLoading: isSocialProfileSnapshotLoading,
+    isValidating: isSocialProfileSnapshotRevalidating,
+    profile: socialProfileSnapshot,
+    avatarSrc,
+    backgroundSrc,
+    refetch: refetchSocialProfile,
+  } = useAccountSocialProfile({ accountId });
+
+  const defaultValues: Partial<ProfileSetupInputs> = useMemo(
+    () => ({
+      name: socialProfileSnapshot?.name,
+      description: socialProfileSnapshot?.description,
+      backgroundImage: backgroundSrc,
+      profileImage: avatarSrc,
+
+      publicGoodReason: socialProfileSnapshot?.plPublicGoodReason,
+
+      teamMembers: socialProfileSnapshot?.plTeam
+        ? JSON.parse(socialProfileSnapshot.plTeam)
+        : undefined,
+
+      categories: socialProfileSnapshot?.plCategories
+        ? JSON.parse(socialProfileSnapshot.plCategories)
+        : undefined,
+
+      githubRepositories: socialProfileSnapshot?.plGithubRepos
+        ? JSON.parse(socialProfileSnapshot.plGithubRepos)
+        : undefined,
+    }),
+
+    [avatarSrc, backgroundSrc, socialProfileSnapshot],
+  );
+
   const self = useForm<ProfileSetupInputs>({
     resolver: zodResolver(profileSetupSchema),
     mode: "all",
     defaultValues,
-
-    resetOptions: {
-      keepDirty: true,
-    },
+    resetOptions: { keepDirty: false, keepTouched: false },
   });
 
   //? For internal use only!
-  const values = useWatch({ control: self.control });
+  const values = useWatch(self);
+
+  const isUnpopulated =
+    !isDeepEqual(defaultValues, pick(self.formState.defaultValues ?? {}, keys(defaultValues))) &&
+    !self.formState.isDirty;
+
+  useEffect(() => {
+    if (socialProfileSnapshot !== undefined && !isSocialProfileSnapshotLoading && isUnpopulated) {
+      self.reset(defaultValues);
+    }
+  }, [
+    defaultValues,
+    isSocialProfileSnapshotLoading,
+    isUnpopulated,
+    self,
+    socialProfileSnapshot,
+    values,
+  ]);
 
   const teamMembersAccountGroup: AccountGroupItem[] = useMemo(
     () => values.teamMembers?.map(objOf("accountId")) ?? [],
@@ -71,12 +116,6 @@ export const useProfileSetupForm = ({
     () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
     [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
   );
-
-  console.log({
-    isDirty: self.formState.isDirty,
-    isValid: self.formState.isValid,
-    isSubmitting: self.formState.isSubmitting,
-  });
 
   const updateBackgroundImage = useCallback(
     (url: string) => self.setValue("backgroundImage", url, { shouldValidate: true }),
@@ -117,6 +156,7 @@ export const useProfileSetupForm = ({
       save({ accountId, isDaoRepresentative, mode, inputs, socialProfileSnapshot })
         .then((result) => {
           if (result.success) {
+            refetchSocialProfile().then(() => self.reset(defaultValues));
             onSuccess();
           } else {
             onFailure(result.error);
@@ -127,7 +167,17 @@ export const useProfileSetupForm = ({
         });
     },
 
-    [accountId, isDaoRepresentative, mode, onFailure, onSuccess, socialProfileSnapshot],
+    [
+      accountId,
+      defaultValues,
+      isDaoRepresentative,
+      mode,
+      onFailure,
+      onSuccess,
+      refetchSocialProfile,
+      self,
+      socialProfileSnapshot,
+    ],
   );
 
   return {

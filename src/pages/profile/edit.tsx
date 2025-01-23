@@ -35,7 +35,7 @@ export default function EditProjectPage() {
   );
 
   const onSuccess = useCallback(() => {
-    setTimeout(() => router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`), 3000);
+    // setTimeout(() => router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`), 3000);
     toast({ title: "Success!", description: "You have successfully updated your profile." });
   }, [router, toast, viewer.accountId]);
 

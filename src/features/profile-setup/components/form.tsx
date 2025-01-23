@@ -9,7 +9,6 @@ import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
   ACCOUNT_PROFILE_LINKTREE_KEYS,
   AccountGroup,
-  useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
@@ -29,7 +28,6 @@ import { ProfileSetupLinktreeSection } from "./linktree-section";
 import { ProfileSetupRepositoriesSection } from "./repositories-section";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import { type ProfileSetupFormParams, useProfileSetupForm } from "../hooks/forms";
-import { ProfileSetupInputs } from "../models/types";
 
 export type ProfileSetupFormProps = Pick<
   ProfileSetupFormParams,
@@ -49,41 +47,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
-  const {
-    // isLoading: isSocialProfileSnapshotLoading,
-    profile: socialProfileSnapshot = null,
-    avatarSrc,
-    backgroundSrc,
-  } = useAccountSocialProfile({ accountId });
-
-  const defaultValues: Partial<ProfileSetupInputs> = useMemo(
-    () =>
-      socialProfileSnapshot === null
-        ? { profileImage: ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC }
-        : {
-            name: socialProfileSnapshot.name,
-            description: socialProfileSnapshot.description,
-            backgroundImage: backgroundSrc,
-            profileImage: avatarSrc,
-
-            publicGoodReason: socialProfileSnapshot.plPublicGoodReason,
-
-            teamMembers: socialProfileSnapshot.plTeam
-              ? JSON.parse(socialProfileSnapshot.plTeam)
-              : undefined,
-
-            categories: socialProfileSnapshot.plCategories
-              ? JSON.parse(socialProfileSnapshot.plCategories)
-              : undefined,
-
-            githubRepositories: socialProfileSnapshot.plGithubRepos
-              ? JSON.parse(socialProfileSnapshot.plGithubRepos)
-              : undefined,
-          },
-
-    [avatarSrc, backgroundSrc, socialProfileSnapshot],
-  );
-
   const submitButtonLabel = useMemo(() => {
     switch (mode) {
       case "register": {
@@ -99,7 +62,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
   const {
     form,
     isDisabled,
-    //values,
     teamMembersAccountGroup,
     onSubmit,
     updateCategories,
@@ -112,22 +74,14 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
     mode,
     accountId,
     isDaoRepresentative,
-    socialProfileSnapshot,
-    defaultValues,
     onSuccess,
     onFailure,
   });
 
   const values = form.watch();
 
-  console.log({ defaultValues });
   console.log("Form values:", values);
   console.log("Errors:", form.formState.errors, "isValid", form.formState.isValid);
-
-  useEffect(() => {
-    // Set initial focus to name input.
-    form.setFocus("name");
-  }, [form]);
 
   const onCategoriesChange = useCallback(
     (categories: string[]) => updateCategories(categories),

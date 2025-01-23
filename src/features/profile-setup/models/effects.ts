@@ -23,7 +23,7 @@ export type ProfileSaveInputs = ByAccountId & {
   isDaoRepresentative: boolean;
   mode: ProfileSetupMode;
   inputs: ProfileSetupInputs;
-  socialProfileSnapshot: NEARSocialUserProfile | null;
+  socialProfileSnapshot: NEARSocialUserProfile | undefined;
 };
 
 export const save = async ({
