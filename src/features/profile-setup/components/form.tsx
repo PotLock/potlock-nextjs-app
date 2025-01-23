@@ -13,7 +13,7 @@ import {
 import { rootPathnames } from "@/pathnames";
 
 import { ProfileSetupFundingSourceModal } from "./AddFundingSourceModal";
-import { ProfileSetupSmartContractModal } from "./contracts-modal";
+import { ProfileSetupSmartContractModal } from "./contract-modal";
 import { ProfileSetupSmartContractsSection } from "./contracts-section";
 import {
   CustomInput,
