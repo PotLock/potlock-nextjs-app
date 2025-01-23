@@ -99,7 +99,7 @@ export interface RegistrationSocialProfile {
 }
 
 type NEARSocialGetResponse = {
-  [key: string]: {
+  [key: AccountId]: {
     profile?: NEARSocialUserProfile;
   };
 };

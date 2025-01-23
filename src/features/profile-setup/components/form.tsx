@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 
 import { Button, FormField } from "@/common/ui/components";
-import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
 import { useToast } from "@/common/ui/hooks";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import {

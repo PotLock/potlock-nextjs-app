@@ -1,66 +1,29 @@
+import { pick } from "remeda";
+
+import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "@/entities/_shared/account";
+
 import type { ProfileSetupInputs } from "../models/types";
 
-export const formInputsToSocialDbUpdateParams = (data: ProfileSetupInputs) => {
-  const body = {
-    // Basic Profile details
-    profile: {
-      // Background Image
-      ...(data.backgroundImage
-        ? { backgroundImage: data.backgroundImage }
-        : { backgroundImage: null }),
-      // Profile Image
-      ...(data.profileImage ? { image: data.profileImage } : { image: null }),
-      // Data
-      name: data.name,
-      plCategories: JSON.stringify(data.categories),
-      description: data.description,
-      plPublicGoodReason: data.publicGoodReason,
-      plSmartContracts: data.smartContracts ? JSON.stringify(data.smartContracts) : null,
-      plGithubRepos: JSON.stringify(data.githubRepositories),
-      plFundingSources: JSON.stringify(data.fundingSources),
-      linktree: {
-        website: data.website,
-        twitter: data.twitter,
-        telegram: data.telegram,
-        github: data.github,
-      },
-      plTeam: JSON.stringify(data.teamMembers),
-    },
-    // Auto Follow and Star Potlock
-    index: {
-      star: {
-        key: {
-          type: "social",
-          path: `potlock.near/widget/Index`,
-        },
-        value: {
-          type: "star",
-        },
-      },
-      notify: {
-        key: "potlock.near",
-        value: {
-          type: "star",
-          item: {
-            type: "social",
-            path: `potlock.near/widget/Index`,
-          },
-        },
-      },
-    },
-    graph: {
-      star: {
-        ["potlock.near"]: {
-          widget: {
-            Index: "",
-          },
-        },
-      },
-      follow: {
-        ["potlock.near"]: "",
-      },
-    },
-  };
+export const profileSetupFormInputsToSocialDbProfileUpdate = (inputs: ProfileSetupInputs) => ({
+  /**
+   *? Standard NEAR Social profile details
+   */
 
-  return body;
-};
+  ...pick(inputs, ["name", "description"]),
+  image: inputs.profileImage ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+  ...(inputs.backgroundImage ? { backgroundImage: inputs.backgroundImage } : {}),
+  linktree: pick(inputs, ["website", "twitter", "telegram", "github"]),
+
+  /**
+   *? POTLOCK-specific profile inputs
+   */
+
+  plCategories: JSON.stringify(inputs.categories),
+  plFundingSources: inputs.fundingSources ? JSON.stringify(inputs.fundingSources) : undefined,
+
+  plGithubRepos: inputs.githubRepositories ? JSON.stringify(inputs.githubRepositories) : undefined,
+
+  plPublicGoodReason: inputs.publicGoodReason,
+  plSmartContracts: inputs.smartContracts ? JSON.stringify(inputs.smartContracts) : undefined,
+  plTeam: JSON.stringify(inputs.teamMembers),
+});
