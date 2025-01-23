@@ -6,6 +6,7 @@ import { MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import type { AccountId } from "@/common/types";
 import {
   Alert,
   AlertDescription,
@@ -21,8 +22,9 @@ import { ProfileSetupForm } from "@/features/profile-setup";
 import { rootPathnames } from "@/pathnames";
 
 export default function EditProjectPage() {
-  const viewer = useSession();
   const router = useRouter();
+  // const { accountId } = router.query as { accountId: AccountId };
+  const viewer = useSession();
   const { toast } = useToast();
 
   const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
