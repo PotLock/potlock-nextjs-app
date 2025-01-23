@@ -91,7 +91,7 @@ export default function RegisterPage() {
           )}
         </>
       ) : (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="mt-10">
           <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
           <AlertTitle>{"Not logged in"}</AlertTitle>
           <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
