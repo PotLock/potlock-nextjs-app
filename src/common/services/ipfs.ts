@@ -9,8 +9,11 @@ export const nearSocialIpfsUpload = async (body: BodyInit) =>
 
 export const nearSocialIpfsImageUpload = async (files: File[]) =>
   nearSocialIpfsUpload(files[0]).then((response) => {
+    console.log(response);
+
     if (response.ok) {
-      const data = response.json();
-      return "cid" in data ? `${IPFS_NEAR_SOCIAL_URL}${data.cid}` : undefined;
+      return response
+        .json()
+        .then((data) => ("cid" in data ? `${IPFS_NEAR_SOCIAL_URL}${data.cid}` : undefined));
     }
   });

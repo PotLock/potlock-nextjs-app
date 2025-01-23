@@ -7,8 +7,9 @@ import remarkGfm from "remark-gfm";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core";
 import { isAccountId } from "@/common/lib";
+import type { AccountId } from "@/common/types";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import Team from "@/entities/project/components/Team";
+import { Team } from "@/entities/project";
 import AboutItem from "@/layout/profile/components/AboutItem";
 import Github from "@/layout/profile/components/Github";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
@@ -16,7 +17,7 @@ import SmartContract from "@/layout/profile/components/SmartContract";
 
 export default function ProfileHomeTab() {
   const router = useRouter();
-  const { userId: accountId } = router.query as { userId: string };
+  const { accountId } = router.query as { accountId: AccountId };
   const isAccountIdValid = useMemo(() => isAccountId(accountId), [accountId]);
   const { profile } = useAccountSocialProfile({ enabled: isAccountIdValid, accountId });
 

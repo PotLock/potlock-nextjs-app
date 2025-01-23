@@ -5,6 +5,7 @@ import { styled } from "styled-components";
 
 import { useDonationsForProject } from "@/common/_deprecated/useDonationsForProject";
 import { ExternalFundingSource } from "@/common/contracts/social";
+import type { AccountId } from "@/common/types";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { FundingTable } from "@/layout/profile/_deprecated/FundingTable";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
@@ -232,7 +233,7 @@ const ExternalFunding = ({ externalFunding }: { externalFunding: ExternalFunding
 
 export default function FundingRaisedTab() {
   const router = useRouter();
-  const { userId: accountId } = router.query as { userId: string };
+  const { accountId } = router.query as { accountId: AccountId };
   const { donations } = useDonationsForProject(accountId);
   const { profile } = useAccountSocialProfile({ accountId });
 

@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/components";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  PageWithBanner,
+} from "@/common/ui/components";
 import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
@@ -35,8 +42,18 @@ export default function EditProjectPage() {
   );
 
   const onSuccess = useCallback(() => {
-    // setTimeout(() => router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`), 3000);
-    toast({ title: "Success!", description: "You have successfully updated your profile." });
+    setTimeout(() => router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`), 3000);
+
+    toast({
+      title: "Success!",
+      description: "You have successfully updated your profile.",
+
+      action: (
+        <Button asChild>
+          <Link href={`${rootPathnames.PROFILE}/${viewer.accountId}`}>{"Open Profile"}</Link>
+        </Button>
+      ),
+    });
   }, [router, toast, viewer.accountId]);
 
   const onFailure = useCallback(

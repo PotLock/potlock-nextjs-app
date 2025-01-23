@@ -10,7 +10,7 @@ import { NoResults } from "./lists";
 
 const ProfileCampaigns = () => {
   const router = useRouter();
-  const { userId: accountId } = router.query as { userId: string };
+  const { accountId } = router.query as { accountId: string };
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
   useEffect(() => {

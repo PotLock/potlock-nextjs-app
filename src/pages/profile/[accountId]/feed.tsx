@@ -3,10 +3,11 @@ import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
-import { walletApi } from "@/common/api/near/client";
 import { fetchAccountFeedPosts } from "@/common/api/near-social";
 import { IndexPostResultItem } from "@/common/contracts/social";
+import type { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
+import { useSession } from "@/entities/_shared/session";
 import { PostCard, PostEditor } from "@/entities/post";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
@@ -36,7 +37,8 @@ const NoResults = () => (
 
 export default function ProfileFeedTab() {
   const router = useRouter();
-  const { userId: accountId } = router.query as { userId: string };
+  const { accountId } = router.query as { accountId: AccountId };
+  const viewer = useSession();
   const [posts, setPosts] = useState<IndexPostResultItem[]>([]);
   const [offset, setOffset] = useState(40);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +47,7 @@ export default function ProfileFeedTab() {
   useEffect(() => {
     setIsLoading(true);
 
-    fetchAccountFeedPosts({ accountId }).then((res: any) => {
+    fetchAccountFeedPosts({ accountId }).then((res) => {
       setIsLoading(false);
       setPosts(res);
     });
@@ -68,7 +70,7 @@ export default function ProfileFeedTab() {
 
   return (
     <div className="my-8 h-full max-h-80 w-full">
-      {accountId === walletApi?.accountId && <PostEditor accountId={accountId} />}
+      {accountId === viewer.accountId && <PostEditor accountId={accountId} />}
 
       <InfiniteScrollWrapper
         className="space-y-4"

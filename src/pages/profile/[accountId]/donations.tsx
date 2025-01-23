@@ -5,12 +5,13 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
+import type { AccountId } from "@/common/types";
 import { FundingTable } from "@/layout/profile/_deprecated/FundingTable";
 import { ProfileLayout } from "@/layout/profile/components/ProfileLayout";
 
 const DonationsTab = () => {
   const router = useRouter();
-  const { userId: accountId } = router.query as { userId: string };
+  const { accountId } = router.query as { accountId: AccountId };
   const { data: donationsData } = indexer.useAccountDonationsSent({ accountId });
   const hasDonations = donationsData?.results && donationsData.results.length > 0;
 

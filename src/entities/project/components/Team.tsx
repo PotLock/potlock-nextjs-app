@@ -67,7 +67,7 @@ type Props = {
   profile?: NEARSocialUserProfile;
 };
 
-const Team = ({ profile }: Props) => {
+export const Team = ({ profile }: Props) => {
   const [team, setTeam] = useState(getProfileTeamMembersData(profile));
 
   useEffect(() => {
@@ -92,5 +92,3 @@ const Team = ({ profile }: Props) => {
     </div>
   );
 };
-
-export default Team;

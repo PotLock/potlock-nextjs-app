@@ -29,7 +29,6 @@ export const useProfileSetupForm = ({
 
   const {
     isLoading: isSocialProfileSnapshotLoading,
-    isValidating: isSocialProfileSnapshotRevalidating,
     profile: socialProfileSnapshot,
     avatarSrc,
     backgroundSrc,
