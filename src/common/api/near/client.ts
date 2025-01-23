@@ -10,7 +10,6 @@ import { setupLedger } from "@near-wallet-selector/ledger";
 import { setupMathWallet } from "@near-wallet-selector/math-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
-import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupNarwallets } from "@near-wallet-selector/narwallets";
 import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
 // import { setupNearSnap } from "@near-wallet-selector/near-snap";
@@ -38,7 +37,6 @@ export const naxiosInstance = new naxios({
   contractId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
   network: NETWORK,
   walletSelectorModules: [
-    setupMyNearWallet(),
     setupSender(),
     setupHereWallet(),
     setupMeteorWallet(),
