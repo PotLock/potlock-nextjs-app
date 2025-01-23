@@ -50,6 +50,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
   const {
+    isLoading: isSocialProfileSnapshotLoading,
     profile: socialProfileSnapshot = null,
     avatarSrc,
     backgroundSrc,
@@ -62,8 +63,8 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
         : {
             name: socialProfileSnapshot.name,
             description: socialProfileSnapshot.description,
-            backgroundImage: backgroundSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
-            profileImage: avatarSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+            backgroundImage: backgroundSrc,
+            profileImage: avatarSrc,
 
             publicGoodReason: socialProfileSnapshot.plPublicGoodReason,
 

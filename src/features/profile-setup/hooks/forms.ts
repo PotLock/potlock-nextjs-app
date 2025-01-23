@@ -32,12 +32,11 @@ export const useProfileSetupForm = ({
 
   const self = useForm<ProfileSetupInputs>({
     resolver: zodResolver(profileSetupSchema),
-    mode: "onChange",
+    mode: "all",
     defaultValues,
 
     resetOptions: {
-      keepDefaultValues: true,
-      keepDirty: false,
+      keepDirty: true,
     },
   });
 
@@ -57,11 +56,12 @@ export const useProfileSetupForm = ({
       .catch((error: ZodError) =>
         // TODO: Consider using `setError` in forEach if there are any troubles with error display
         setCrossFieldErrors(
-          error?.issues.reduce((errors, { code, message, path }) => {
+          error?.issues.reduce((schemaErrors, { code, message, path }) => {
             const fieldPath = path.at(0);
+
             return typeof fieldPath === "string" && code === "custom"
-              ? { ...errors, [fieldPath]: { message, type: code } }
-              : errors;
+              ? { ...schemaErrors, [fieldPath]: { message, type: code } }
+              : schemaErrors;
           }, {}),
         ),
       );
@@ -133,6 +133,7 @@ export const useProfileSetupForm = ({
   return {
     form: {
       ...self,
+
       formState: {
         ...self.formState,
         errors: { ...self.formState.errors, ...crossFieldErrors },
@@ -149,7 +150,6 @@ export const useProfileSetupForm = ({
     updateTeamMembers,
     onSubmit: self.handleSubmit(onSubmit),
     resetForm: self.reset,
-    values,
   };
 };
 
@@ -192,6 +192,7 @@ export const useAddFundingSourceForm = (options: {
   return {
     form: {
       ...form,
+
       formState: {
         ...form.formState,
         errors: form.formState.errors,

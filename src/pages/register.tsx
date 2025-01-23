@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter } from "next/router";
+import { MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { PageWithBanner } from "@/common/ui/components";
+import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/components";
 import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
@@ -76,21 +77,25 @@ export default function RegisterPage() {
         </h2>
       </section>
 
-      {listRegistrations === undefined ? (
-        <InfoSegment title="Checking account" description="Please, wait..." />
-      ) : (
+      {viewer.isSignedIn ? (
         <>
-          {viewer.isSignedIn ? (
+          {listRegistrations === undefined ? (
+            <InfoSegment title="Checking account" description="Please, wait..." />
+          ) : (
             <ProfileSetupForm
               mode="register"
               accountId={viewer.accountId}
               isDaoRepresentative={viewer.isDaoRepresentative}
               {...{ onSuccess, onFailure }}
             />
-          ) : (
-            <InfoSegment title="Not logged in!" description="You must log in first!" />
           )}
         </>
+      ) : (
+        <Alert variant="destructive">
+          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Not logged in"}</AlertTitle>
+          <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
+        </Alert>
       )}
     </PageWithBanner>
   );
