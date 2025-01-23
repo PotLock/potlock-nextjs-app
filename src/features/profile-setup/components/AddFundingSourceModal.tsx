@@ -9,19 +9,24 @@ import {
   Form,
   FormField,
 } from "@/common/ui/components";
-import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput, CustomTextForm } from "./form-elements";
 import { useAddFundingSourceForm } from "../hooks/forms";
-import { AddFundingSourceInputs } from "../models/types";
+import { AddFundingSourceInputs, type ProfileSetupInputs } from "../models/types";
 
-type Props = {
+export type ProfileSetupFundingSourceModalProps = {
+  data: ProfileSetupInputs["fundingSources"];
   open?: boolean;
   onCloseClick?: () => void;
   editFundingIndex?: number;
 };
 
-const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) => {
+export const ProfileSetupFundingSourceModal: React.FC<ProfileSetupFundingSourceModalProps> = ({
+  data: fundingSources = [],
+  open,
+  onCloseClick,
+  editFundingIndex,
+}) => {
   const { form, errors } = useAddFundingSourceForm({
     defaultValues: {
       description: "",
@@ -37,10 +42,6 @@ const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) 
     },
   });
 
-  const fundingSources = useGlobalStoreSelector(
-    (state) => state.projectEditor.fundingSources || [],
-  );
-
   const isEdit = editFundingIndex !== undefined;
 
   const resetForm = useCallback(() => {
@@ -49,7 +50,7 @@ const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) 
 
   const onSubmitFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
-      dispatch.projectEditor.addFundingSource(data);
+      // dispatch.projectEditor.addFundingSource(data);
 
       if (onCloseClick) {
         onCloseClick();
@@ -63,10 +64,10 @@ const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) 
   const onSubmitEditedFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
       if (isEdit && editFundingIndex !== undefined) {
-        dispatch.projectEditor.updateFundingSource({
-          fundingSourceData: data,
-          index: editFundingIndex,
-        });
+        // dispatch.projectEditor.updateFundingSource({
+        //   fundingSourceData: data,
+        //   index: editFundingIndex,
+        // });
 
         resetForm();
       }
@@ -196,5 +197,3 @@ const AddFundingSourceModal = ({ open, onCloseClick, editFundingIndex }: Props) 
     </Dialog>
   );
 };
-
-export default AddFundingSourceModal;
