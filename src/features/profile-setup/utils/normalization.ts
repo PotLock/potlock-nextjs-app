@@ -4,7 +4,7 @@ import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "@/entities/_shared/
 
 import type { ProfileSetupInputs } from "../models/types";
 
-export const profileSetupFormInputsToSocialDbProfileUpdate = (inputs: ProfileSetupInputs) => ({
+export const profileSetupInputsToSocialDbFormat = (inputs: ProfileSetupInputs) => ({
   /**
    *? Standard NEAR Social profile details
    */
@@ -25,5 +25,5 @@ export const profileSetupFormInputsToSocialDbProfileUpdate = (inputs: ProfileSet
 
   plPublicGoodReason: inputs.publicGoodReason,
   plSmartContracts: inputs.smartContracts ? JSON.stringify(inputs.smartContracts) : undefined,
-  plTeam: JSON.stringify(inputs.teamMembers),
+  plTeam: (inputs?.teamMembers ?? []).length > 0 ? JSON.stringify(inputs.teamMembers) : undefined,
 });

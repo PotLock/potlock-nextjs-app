@@ -6,15 +6,14 @@ import { useRouter } from "next/router";
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
-import { ChallengeModal, usePotAuthorization } from "@/entities/pot";
+import { ChallengeModal } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
 import { PotApplicationModal } from "@/features/pot-application";
-import { ErrorModal } from "@/features/profile-setup/components/ErrorModal";
-import { SuccessModal } from "@/features/profile-setup/components/SuccessModal";
+import { SuccessModal } from "@/layout/pot/_deprecated/SuccessModal";
 
 import { PotLayoutHero } from "./layout-hero";
+import { ErrorModal } from "../_deprecated/ErrorModal";
 import { usePotLayoutTabNavigation } from "../hooks/tab-navigation";
 
 export type PotLayoutProps = {

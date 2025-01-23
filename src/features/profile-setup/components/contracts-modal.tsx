@@ -3,43 +3,42 @@ import { useCallback, useEffect, useState } from "react";
 import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
 
+import { CHAIN_OPTIONS } from "@/common/constants";
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
-import { dispatch, useGlobalStoreSelector } from "@/store";
 
+import { AddChainSelector } from "./contracts-section";
 import { CustomInput } from "./form-elements";
-import { AddChainSelector, CHAIN_OPTIONS } from "./SmartContracts";
+import type { ProfileSetupInputs } from "../models/types";
 import validateEVMAddress from "../utils/validateEVMAddress";
 
-type Props = {
+export type ProfileSetupSmartContractModalProps = {
+  data: ProfileSetupInputs["smartContracts"];
   open?: boolean;
   onCloseClick?: () => void;
   contractIndex: number;
 };
 
-const EditSmartContractModal = ({ open, onCloseClick, contractIndex }: Props) => {
-  const contracts = useGlobalStoreSelector(
-    (state) => state.projectEditor.smartContracts || [["", ""]],
-  );
-
+export const ProfileSetupSmartContractModal: React.FC<ProfileSetupSmartContractModalProps> = ({
+  data = [],
+  open,
+  onCloseClick,
+  contractIndex,
+}) => {
   const [chain, setChain] = useState(
-    contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][0] : "",
+    data[contractIndex] && data[contractIndex][0] ? data[contractIndex][0] : "",
   );
 
   const [address, setAddress] = useState(
-    contracts[contractIndex] && contracts[contractIndex][1] ? contracts[contractIndex][1] : "",
+    data[contractIndex] && data[contractIndex][1] ? data[contractIndex][1] : "",
   );
 
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setChain(
-      contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][0] : "",
-    );
+    setChain(data[contractIndex] && data[contractIndex][0] ? data[contractIndex][0] : "");
 
-    setAddress(
-      contracts[contractIndex] && contracts[contractIndex][0] ? contracts[contractIndex][1] : "",
-    );
-  }, [contractIndex, contracts]);
+    setAddress(data[contractIndex] && data[contractIndex][0] ? data[contractIndex][1] : "");
+  }, [contractIndex, data]);
 
   const saveHandler = useCallback(() => {
     const isEVM = CHAIN_OPTIONS[chain].isEVM;
@@ -56,16 +55,17 @@ const EditSmartContractModal = ({ open, onCloseClick, contractIndex }: Props) =>
       return;
     }
 
+    // TODO: Don't forget to rewrite
     // Update contract info in the store
-    dispatch.projectEditor.editSmartContract({
-      data: [chain, address],
-      contractIndex,
-    });
+    // dispatch.projectEditor.editSmartContract({
+    //   data: [chain, address],
+    //   contractIndex,
+    // });
 
     if (onCloseClick) {
       onCloseClick();
     }
-  }, [chain, address, contractIndex, onCloseClick]);
+  }, [chain, address, onCloseClick]);
 
   return (
     <Dialog open={open}>
@@ -119,5 +119,3 @@ const EditSmartContractModal = ({ open, onCloseClick, contractIndex }: Props) =>
     </Dialog>
   );
 };
-
-export default EditSmartContractModal;

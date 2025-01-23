@@ -10,6 +10,7 @@ export type UserSession =
       accountId: AccountId;
       registrationStatus?: RegistrationStatus;
       isSignedIn: true;
+      isDaoRepresentative: boolean;
       isMetadataLoading: boolean;
       hasRegistrationApproved: boolean;
     }
@@ -17,6 +18,7 @@ export type UserSession =
       accountId: undefined;
       registrationStatus: undefined;
       isSignedIn: false;
+      isDaoRepresentative: false;
       isMetadataLoading: false;
       hasRegistrationApproved: false;
     };

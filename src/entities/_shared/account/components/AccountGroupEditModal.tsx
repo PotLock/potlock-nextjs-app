@@ -23,13 +23,13 @@ import {
 } from "@/common/ui/components";
 import { TextField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
-import { AccountKey, AccountListItem, validAccountId } from "@/entities/_shared/account";
+import { AccountGroupItem, AccountListItem, validAccountId } from "@/entities/_shared/account";
 
 export type AccountGroupEditModalProps = {
   title: string;
-  value: AccountKey[];
+  value: AccountGroupItem[];
   onSubmit: (accountIds: AccountId[]) => void;
-  handleRemoveAccounts?: (accounts: AccountKey[]) => void;
+  handleRemoveAccounts?: (accounts: AccountGroupItem[]) => void;
   footer?: React.ReactNode;
   maxAccounts?: number;
 };

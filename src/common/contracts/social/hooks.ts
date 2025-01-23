@@ -9,10 +9,5 @@ export const useSocialProfile = ({
   accountId,
 }: ByAccountId & ConditionalActivation) =>
   useSWR(["useSocialProfile", accountId], ([_queryKey, account_id]) =>
-    !enabled
-      ? undefined
-      : contractClient
-          .getSocialProfile({ accountId: account_id })
-          //? Handling `null` response
-          .then((response) => response ?? undefined),
+    !enabled ? undefined : contractClient.getSocialProfile({ accountId: account_id }),
   );

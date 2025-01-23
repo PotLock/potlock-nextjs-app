@@ -14,11 +14,13 @@ import { UserSession } from "../types";
 export const useSession = (): UserSession => {
   const { isSignedIn, wallet } = useWallet();
   const { actAsDao, accountId: lastActiveAccountId } = useGlobalStoreSelector(prop("nav"));
-  const asDao = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
+  const isDaoRepresentative = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
 
   const accountId: AccountId | undefined = useMemo(
-    () => (asDao ? actAsDao.defaultAddress : (wallet?.accountId ?? lastActiveAccountId)),
-    [actAsDao.defaultAddress, asDao, lastActiveAccountId, wallet?.accountId],
+    () =>
+      isDaoRepresentative ? actAsDao.defaultAddress : (wallet?.accountId ?? lastActiveAccountId),
+
+    [actAsDao.defaultAddress, isDaoRepresentative, lastActiveAccountId, wallet?.accountId],
   );
 
   /**
@@ -45,6 +47,7 @@ export const useSession = (): UserSession => {
     return {
       accountId,
       isSignedIn: true,
+      isDaoRepresentative,
       isMetadataLoading: isRegistrationFlagLoading || isRegistrationLoading,
       hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
       registrationStatus: registration?.status,
@@ -54,6 +57,7 @@ export const useSession = (): UserSession => {
       accountId: undefined,
       registrationStatus: undefined,
       isSignedIn: false,
+      isDaoRepresentative: false,
       isMetadataLoading: false,
       hasRegistrationApproved: false,
     };

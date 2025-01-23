@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
 
+import { CHAIN_OPTIONS } from "@/common/constants";
 import {
   Button,
   Select,
@@ -13,9 +14,9 @@ import {
 } from "@/common/ui/components";
 import Delete from "@/common/ui/svg/Delete";
 import Edit from "@/common/ui/svg/Edit";
-import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput, Label } from "./form-elements";
+import type { ProfileSetupInputs } from "../models/types";
 import validateEVMAddress from "../utils/validateEVMAddress";
 
 type AddChainSelectorProps = {
@@ -24,35 +25,6 @@ type AddChainSelectorProps = {
   items?: string;
   disabled?: boolean;
   chainLabel?: string;
-};
-
-export const CHAIN_OPTIONS: Record<string, { isEVM: boolean }> = {
-  NEAR: { isEVM: false },
-  Solana: { isEVM: false },
-  Ethereum: { isEVM: true },
-  Polygon: { isEVM: true },
-  Avalanche: { isEVM: true },
-  Optimism: { isEVM: true },
-  Arbitrum: { isEVM: true },
-  BNB: { isEVM: true },
-  Sui: { isEVM: false },
-  Aptos: { isEVM: false },
-  Polkadot: { isEVM: false },
-  Stellar: { isEVM: false },
-  ZkSync: { isEVM: false }, // Note: ZkSync aims for EVM compatibility but might not fully be considered as traditional EVM at the time of writing.
-  Celo: { isEVM: true },
-  Aurora: { isEVM: true },
-  Injective: { isEVM: true },
-  Base: { isEVM: false },
-  Manta: { isEVM: false }, // Listed twice in the original list; included once here.
-  Fantom: { isEVM: true },
-  ZkEVM: { isEVM: true }, // Considering the name, assuming it aims for EVM compatibility.
-  Flow: { isEVM: false },
-  Tron: { isEVM: true },
-  MultiverseX: { isEVM: false }, // Formerly known as Elrond, not traditionally EVM but has some level of compatibility.
-  Scroll: { isEVM: true }, // Assuming EVM compatibility based on the context of ZkEVM.
-  Linea: { isEVM: true }, // Assuming non-EVM due to lack of information.
-  Metis: { isEVM: true },
 };
 
 export const AddChainSelector = ({
@@ -127,14 +99,14 @@ const SmartContract = ({
         return;
       }
 
-      dispatch.projectEditor.addSmartContract([chain, address], index);
+      // dispatch.projectEditor.addSmartContract([chain, address], index);
       setChain("");
       setAddress("");
     }
   }, [chain, address, index]);
 
   const onRemoveHandler = useCallback(() => {
-    dispatch.projectEditor.removeSmartContract(index);
+    // dispatch.projectEditor.removeSmartContract(index);
   }, [index]);
 
   return (
@@ -207,17 +179,19 @@ const SmartContract = ({
   );
 };
 
-type SmartContractsProps = {
+export type ProfileSetupSmartContractsSectionProps = {
+  values: ProfileSetupInputs["smartContracts"];
   onEditClickHandler: (contractIndex: number) => void;
 };
 
-export const SmartContracts = ({ onEditClickHandler }: SmartContractsProps) => {
-  const smartContracts = useGlobalStoreSelector((state) => state.projectEditor.smartContracts);
-
-  if (smartContracts && smartContracts.length > 0) {
+export const ProfileSetupSmartContractsSection = ({
+  values,
+  onEditClickHandler,
+}: ProfileSetupSmartContractsSectionProps) => {
+  if (values && values.length > 0) {
     return (
       <>
-        {smartContracts.map((contractInfo, index) => (
+        {values.map((contractInfo, index) => (
           <SmartContract
             key={`${contractInfo[0]}_${contractInfo[1]}`}
             onEditClickHandler={onEditClickHandler}
@@ -226,10 +200,9 @@ export const SmartContracts = ({ onEditClickHandler }: SmartContractsProps) => {
             isPreview
           />
         ))}
-        <SmartContract contractInfo={["", ""]} index={smartContracts.length} />
+
+        <SmartContract contractInfo={["", ""]} index={values.length} />
       </>
     );
-  }
-
-  return <SmartContract contractInfo={["", ""]} index={0} />;
+  } else return <SmartContract contractInfo={["", ""]} index={0} />;
 };

@@ -1,9 +1,4 @@
-import {
-  Transaction,
-  buildTransaction,
-  calculateDepositByDataSize,
-  validateNearAddress,
-} from "@wpdas/naxios";
+import { Transaction, buildTransaction, calculateDepositByDataSize } from "@wpdas/naxios";
 import { Big } from "big.js";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
@@ -22,25 +17,25 @@ import type { ByAccountId } from "@/common/types";
 
 import type { ProfileSetupMode } from "../types";
 import type { ProfileSetupInputs } from "./types";
-import { profileSetupFormInputsToSocialDbProfileUpdate } from "../utils/normalization";
-
-const getSocialData = async (accountId: string) => {
-  try {
-    const socialData = await socialDbContractClient.getSocialProfile({ accountId });
-    return socialData;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-};
+import { profileSetupInputsToSocialDbFormat } from "../utils/normalization";
 
 export type ProfileSaveInputs = ByAccountId & {
   isDaoRepresentative: boolean;
   mode: ProfileSetupMode;
-  data: ProfileSetupInputs;
+  inputs: ProfileSetupInputs;
+  socialProfileSnapshot: NEARSocialUserProfile | null;
 };
 
-export const save = async ({ isDaoRepresentative, accountId, mode, data }: ProfileSaveInputs) => {
+export const save = async ({
+  isDaoRepresentative,
+  accountId,
+  mode,
+  inputs,
+  socialProfileSnapshot,
+}: ProfileSaveInputs) => {
+  // TODO: Should be passed as a separate parameter
+  //! ( DAO Registration ticket, only AFTER wallet integration revamp! )
+  const daoAccountId = accountId;
   const daoPolicy = isDaoRepresentative ? await getDaoPolicy(accountId) : null;
 
   const daoProposalDescription =
@@ -48,24 +43,17 @@ export const save = async ({ isDaoRepresentative, accountId, mode, data }: Profi
       ? "Create project on POTLOCK (2 steps: Register information on NEAR Social and register on POTLOCK)"
       : "Update project on POTLOCK (via NEAR Social)";
 
-  // Validate DAO Address
-  if (isDaoRepresentative && !validateNearAddress(data.daoAddress || "")) {
-    return { success: false, error: "DAO: Invalid NEAR account Id" };
-  }
+  const formattedInputs = profileSetupInputsToSocialDbFormat(inputs);
 
-  const socialDbUpdateParams = profileSetupFormInputsToSocialDbProfileUpdate(data);
-
-  // If there is an existing social data, make the diff between then
-  const existingSocialData = await getSocialData(accountId);
-
-  const nearSocialProfileDiff: NEARSocialUserProfile = existingSocialData
-    ? deepObjectDiff<NEARSocialUserProfile>(existingSocialData, socialDbUpdateParams)
-    : socialDbUpdateParams;
+  //? Derive diff from the preexisting social profile
+  const socialDbProfileUpdate: NEARSocialUserProfile = socialProfileSnapshot
+    ? deepObjectDiff<NEARSocialUserProfile>(socialProfileSnapshot, formattedInputs)
+    : formattedInputs;
 
   const socialArgs = {
     data: {
       [accountId]: {
-        profile: nearSocialProfileDiff,
+        profile: socialDbProfileUpdate,
 
         /**
          *? Auto Follow and Star Potlock
@@ -139,7 +127,7 @@ export const save = async ({ isDaoRepresentative, accountId, mode, data }: Profi
             };
 
             return {
-              receiverId: data.daoAddress,
+              receiverId: daoAccountId,
               method: "add_proposal",
 
               args: {

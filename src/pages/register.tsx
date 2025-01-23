@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter } from "next/router";
 
@@ -6,20 +6,25 @@ import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { PageWithBanner } from "@/common/ui/components";
 import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
+import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useSession } from "@/entities/_shared/session";
 import { ProfileSetupForm } from "@/features/profile-setup";
 import { rootPathnames } from "@/pathnames";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const viewer = useSession();
+  const router = useRouter();
+  const { toast } = useToast();
 
-  const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
-    indexer.useAccountListRegistrations({
-      enabled: viewer.isSignedIn,
-      accountId: viewer.accountId ?? "noop",
-    });
+  const {
+    isLoading: isAccountListRegistrationDataLoading,
+    data: listRegistrations,
+    mutate: refetchListRegistrations,
+  } = indexer.useAccountListRegistrations({
+    enabled: viewer.isSignedIn,
+    accountId: viewer.accountId ?? "noop",
+  });
 
   const hasRegistrationSubmitted = useMemo(
     () =>
@@ -29,6 +34,16 @@ export default function RegisterPage() {
         undefined,
 
     [isAccountListRegistrationDataLoading, listRegistrations],
+  );
+
+  const onSuccess = useCallback(() => {
+    toast({ title: "Success!", description: "You have successfully submitted your registration." });
+    setTimeout(refetchListRegistrations, 3000);
+  }, [refetchListRegistrations, toast]);
+
+  const onFailure = useCallback(
+    (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
+    [toast],
   );
 
   useEffect(() => {
@@ -66,7 +81,12 @@ export default function RegisterPage() {
       ) : (
         <>
           {viewer.isSignedIn ? (
-            <ProfileSetupForm mode="register" accountId={viewer.accountId} />
+            <ProfileSetupForm
+              mode="register"
+              accountId={viewer.accountId}
+              isDaoRepresentative={viewer.isDaoRepresentative}
+              {...{ onSuccess, onFailure }}
+            />
           ) : (
             <InfoSegment title="Not logged in!" description="You must log in first!" />
           )}

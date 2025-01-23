@@ -2,107 +2,126 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
+import { pick } from "remeda";
 
 import { Button, FormField } from "@/common/ui/components";
-import { useToast } from "@/common/ui/hooks";
 import PlusIcon from "@/common/ui/svg/PlusIcon";
 import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+  ACCOUNT_PROFILE_LINKTREE_KEYS,
+  AccountGroup,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
 import AddFundingSourceModal from "./AddFundingSourceModal";
-import AddTeamMembersModal from "./AddTeamMembersModal";
-import EditSmartContractModal from "./EditSmartContractModal";
+import { ProfileSetupSmartContractModal } from "./contracts-modal";
+import { ProfileSetupSmartContractsSection } from "./contracts-section";
 import {
-  AccountStack,
   CustomInput,
   CustomTextForm,
   ProjectCategoryPicker,
   Row,
+  SubHeader,
 } from "./form-elements";
-import FundingSourceTable from "./FundingSourceTable";
+import { ProfileSetupFundingSourcesTable } from "./funding-sources";
 import { ProfileSetupImageUpload } from "./image-upload";
-import Repositories from "./Repositories";
-import { SmartContracts } from "./SmartContracts";
-import SocialLinks from "./SocialLinks";
+import { ProfileSetupLinktreeSection } from "./linktree-section";
+import { ProfileSetupRepositoriesSection } from "./repositories-section";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
-import SubHeader from "./SubHeader";
 import { type ProfileSetupFormParams, useProfileSetupForm } from "../hooks/forms";
 import { ProfileSetupInputs } from "../models/types";
 
-export type ProfileSetupFormProps = Pick<ProfileSetupFormParams, "accountId" | "mode"> & {};
+export type ProfileSetupFormProps = Pick<
+  ProfileSetupFormParams,
+  "mode" | "accountId" | "isDaoRepresentative" | "onSuccess" | "onFailure"
+> & {};
 
-export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, mode }) => {
+export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
+  mode,
+  accountId,
+  isDaoRepresentative,
+  onSuccess,
+  onFailure,
+}) => {
   const router = useRouter();
-  const { toast } = useToast();
 
-  const [addTeamModalOpen, setAddTeamModalOpen] = useState(false);
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
   const {
-    profile: socialDbSnapshot,
+    profile: socialProfileSnapshot = null,
     avatarSrc,
     backgroundSrc,
   } = useAccountSocialProfile({ accountId });
 
   const defaultValues = useMemo<Partial<ProfileSetupInputs>>(
     () =>
-      socialDbSnapshot === undefined
+      socialProfileSnapshot === null
         ? { profileImage: ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC }
         : {
-            name: socialDbSnapshot.name,
-            description: socialDbSnapshot.description,
-            publicGoodReason: socialDbSnapshot.plPublicGoodReason,
-            teamMembers: socialDbSnapshot.plTeam ? JSON.parse(socialDbSnapshot.plTeam) : undefined,
+            name: socialProfileSnapshot.name,
+            description: socialProfileSnapshot.description,
+            publicGoodReason: socialProfileSnapshot.plPublicGoodReason,
 
-            categories: socialDbSnapshot.plCategories
-              ? JSON.parse(socialDbSnapshot.plCategories)
+            teamMembers: socialProfileSnapshot.plTeam
+              ? JSON.parse(socialProfileSnapshot.plTeam)
               : undefined,
 
-            github: socialDbSnapshot.plGithubRepos
-              ? JSON.parse(socialDbSnapshot.plGithubRepos)
+            categories: socialProfileSnapshot.plCategories
+              ? JSON.parse(socialProfileSnapshot.plCategories)
+              : undefined,
+
+            github: socialProfileSnapshot.plGithubRepos
+              ? JSON.parse(socialProfileSnapshot.plGithubRepos)
               : undefined,
 
             backgroundImage: backgroundSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
             profileImage: avatarSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
           },
 
-    [avatarSrc, backgroundSrc, socialDbSnapshot],
+    [avatarSrc, backgroundSrc, socialProfileSnapshot],
   );
 
-  const onSuccess = useCallback(() => {
-    toast({ title: "Success!", description: "Project updated successfully" });
-  }, [toast]);
+  const submitButtonLabel = useMemo(() => {
+    switch (mode) {
+      case "register": {
+        return isDaoRepresentative ? "Add proposal to create project" : "Create new project";
+      }
 
-  const onFailure = useCallback(
-    (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
-    [toast],
-  );
+      case "update": {
+        return isDaoRepresentative ? "Add proposal to update project" : "Update your project";
+      }
+    }
+  }, [isDaoRepresentative, mode]);
 
   const {
     form,
-    values,
     isDisabled,
-    isSubmitting,
+    teamMembersAccountGroup,
     onSubmit,
     updateCategories,
     updateBackgroundImage,
     updateProfileImage,
+    addRepository,
     updateRepositories,
     updateTeamMembers,
-    addRepository,
-    errors,
   } = useProfileSetupForm({
+    mode,
     accountId,
+    isDaoRepresentative,
+    socialProfileSnapshot,
     defaultValues,
     onSuccess,
     onFailure,
-    mode,
   });
+
+  const values = form.watch();
+
+  console.log({ defaultValues });
+  console.log("Form values:", values);
+  console.log("Errors:", form.formState.errors, "isValid", form.formState.isValid);
 
   useEffect(() => {
     // Set initial focus to name input.
@@ -124,18 +143,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
     [updateRepositories],
   );
 
-  console.log({ defaultValues });
-
-  const getProjectEditorText = () => {
-    if (socialDbSnapshot) {
-      return values.isDao ? "Add proposal to update project" : "Update your project";
-    }
-
-    return values.isDao ? "Add proposal to create project" : "Create new project";
-  };
-
-  const projectEditorText = getProjectEditorText();
-
+  // TODO: Handle DAO representative case in a separate ticket after the initial release
   // // DAO Status - In Progress
   // if (
   //   values.isDao &&
@@ -145,14 +153,11 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
   //   return <DAOInProgress />;
   // }
 
-  console.log("Form values:", values);
-
-  console.log(form.formState.errors, form.formState.isValid);
-
   return (
     <Form {...form}>
       <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
         <SubHeader title="Upload banner and profile Image" required />
+
         <ProfileSetupImageUpload
           backgroundImage={values.backgroundImage}
           profileImage={values.profileImage ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
@@ -162,24 +167,14 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
 
         <LowerBannerContainer>
           <LowerBannerContainerLeft>
-            <Button
-              variant="brand-plain"
-              className="font-600"
-              onClick={() => setAddTeamModalOpen(true)}
-            >
-              {(values?.teamMembers?.length ?? 0 > 0)
-                ? "Add or remove team members"
-                : "Add team members"}
-            </Button>
+            <AccountGroup
+              title="Team Members"
+              isEditable
+              value={teamMembersAccountGroup}
+              onSubmit={onTeamMembersChange}
+            />
           </LowerBannerContainerLeft>
-          <AccountStack />
         </LowerBannerContainer>
-
-        <AddTeamMembersModal
-          open={addTeamModalOpen}
-          onCloseClick={() => setAddTeamModalOpen(false)}
-          onMembersChange={onTeamMembersChange}
-        />
 
         <AddFundingSourceModal
           open={addFundingModalOpen}
@@ -190,7 +185,8 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
           }}
         />
 
-        <EditSmartContractModal
+        <ProfileSetupSmartContractModal
+          data={values.smartContracts}
           contractIndex={editContractIndex || 0}
           open={editContractIndex !== undefined}
           onCloseClick={() => {
@@ -199,7 +195,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
         />
 
         <SubHeader
-          title={values.isDao ? "Project details (DAO)" : "Project details"}
+          title={isDaoRepresentative ? "Project details (DAO)" : "Project details"}
           required
           className="mt-16"
         />
@@ -214,7 +210,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
                 label="Project name *"
                 inputProps={{
                   placeholder: "Enter project name",
-                  error: errors.name?.message,
                   ...field,
                 }}
               />
@@ -223,7 +218,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
 
           <ProjectCategoryPicker
             onValuesChange={onCategoriesChange}
-            defaultValues={defaultValues.categories}
+            defaultValues={values.categories}
           />
         </Row>
 
@@ -236,40 +231,42 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
                 showHint
                 label="Describe your project *"
                 placeholder="Type description"
-                error={errors.description?.message}
                 field={field}
                 currentText={values.description}
               />
             )}
           />
-          <>
-            {values.categories?.includes("Public Good") ? (
-              <FormField
-                control={form.control}
-                name="publicGoodReason"
-                render={({ field }) => (
-                  <CustomTextForm
-                    showHint
-                    label="Why do you consider yourself a public good?"
-                    placeholder="Type the reason"
-                    error={errors.publicGoodReason?.message}
-                    field={field}
-                    currentText={values.publicGoodReason}
-                  />
-                )}
-              />
-            ) : null}
-          </>
+
+          {values.categories?.includes("Public Good") ? (
+            <FormField
+              control={form.control}
+              name="publicGoodReason"
+              render={({ field }) => (
+                <CustomTextForm
+                  showHint
+                  label="Why do you consider yourself a public good?"
+                  placeholder="Type the reason"
+                  field={field}
+                  currentText={values.publicGoodReason}
+                />
+              )}
+            />
+          ) : null}
         </Row>
 
         <SubHeader title="Smart contracts" className="mt-16" />
+
         <Row>
-          <SmartContracts onEditClickHandler={setEditContractIndex} />
+          <ProfileSetupSmartContractsSection
+            values={values.smartContracts}
+            onEditClickHandler={setEditContractIndex}
+          />
         </Row>
 
         <SubHeader title="Funding sources" className="mt-16" />
 
-        <FundingSourceTable
+        <ProfileSetupFundingSourcesTable
+          values={values.fundingSources}
           onEditClick={(fundingIndex: number) => {
             setEditFundingIndex(fundingIndex);
             setAddFundingModalOpen(true);
@@ -277,39 +274,36 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
         />
 
         <div className="mt-6">
-          <button
-            className="font-500 flex items-center gap-2 text-[14px] text-[#dd3345] transition-all hover:opacity-[0.7]"
-            onClick={() => setAddFundingModalOpen(true)}
-          >
-            <PlusIcon width={12} height={12} /> Add funding source
-          </button>
+          <Button onClick={() => setAddFundingModalOpen(true)}>
+            <PlusIcon width={12} height={12} />
+            <span>{"Add Funding Source"}</span>
+          </Button>
         </div>
 
         {/* <SubHeader title="Repositories" required={values.isRepositoryRequired} className="mt-16" /> */}
 
         <Row>
-          <Repositories onChange={onChangeRepositories} />
+          <ProfileSetupRepositoriesSection
+            values={values.githubRepositories}
+            onChange={onChangeRepositories}
+          />
         </Row>
 
         <div className="mt-6">
-          <button
-            className="font-500 flex items-center gap-2 text-[14px] text-[#dd3345] transition-all hover:opacity-[0.7]"
-            onClick={() => {
-              addRepository();
-            }}
-          >
-            <PlusIcon width={12} height={12} /> Add more repos
-          </button>
+          <Button onClick={() => addRepository()}>
+            <PlusIcon width={12} height={12} />
+            <span>{"Add Repository"}</span>
+          </Button>
         </div>
 
         <SubHeader title="Social links" className="mt-16" />
+
         <Row>
-          <SocialLinks />
+          <ProfileSetupLinktreeSection values={pick(values, ACCOUNT_PROFILE_LINKTREE_KEYS)} />
         </Row>
 
-        <div className="mt-16 flex self-end">
+        <div className="mt-16 flex gap-4 self-end">
           <Button
-            className="mr-4"
             variant="standard-outline"
             onClick={() => {
               router.push(rootPathnames.PROJECTS_LIST);
@@ -319,7 +313,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({ accountId, m
           </Button>
 
           <Button variant="standard-filled" type="submit" disabled={isDisabled} onClick={onSubmit}>
-            {projectEditorText}
+            {submitButtonLabel}
           </Button>
         </div>
       </div>

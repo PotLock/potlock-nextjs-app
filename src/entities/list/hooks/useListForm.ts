@@ -9,7 +9,7 @@ import { naxiosInstance } from "@/common/api/near/client";
 import { listsContractClient } from "@/common/contracts/core";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
-import { AccountKey, validateAccountId } from "@/entities/_shared/account";
+import { AccountGroupItem, validateAccountId } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 import { ListFormModalType } from "../types";
@@ -73,11 +73,11 @@ export const useListForm = () => {
     });
   };
 
-  const handleUnRegisterAccount = (registrants: AccountKey[]) => {
+  const handleUnRegisterAccount = (registrants: AccountGroupItem[]) => {
     if (!id) return;
     const allTransactions: any = [];
 
-    registrants.map((registrant: AccountKey) => {
+    registrants.map((registrant: AccountGroupItem) => {
       allTransactions.push(
         buildTransaction("unregister", {
           receiverId: LISTS_CONTRACT_ACCOUNT_ID,
@@ -108,7 +108,7 @@ export const useListForm = () => {
     });
   };
 
-  const handleRemoveAdmin = (accounts: AccountKey[]) => {
+  const handleRemoveAdmin = (accounts: AccountGroupItem[]) => {
     const accountIds = accounts.map(prop("accountId"));
 
     listsContractClient

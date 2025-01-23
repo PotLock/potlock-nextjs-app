@@ -61,6 +61,48 @@ export const APP_METADATA: Metadata & {
   },
 };
 
+export const CHAIN_OPTIONS: Record<string, { isEVM: boolean }> = {
+  NEAR: { isEVM: false },
+  Solana: { isEVM: false },
+  Ethereum: { isEVM: true },
+  Polygon: { isEVM: true },
+  Avalanche: { isEVM: true },
+  Optimism: { isEVM: true },
+  Arbitrum: { isEVM: true },
+  BNB: { isEVM: true },
+  Sui: { isEVM: false },
+  Aptos: { isEVM: false },
+  Polkadot: { isEVM: false },
+  Stellar: { isEVM: false },
+
+  // Note: ZkSync aims for EVM compatibility but might not fully be considered as traditional EVM
+  // at the time of writing.
+  ZkSync: { isEVM: false },
+
+  Celo: { isEVM: true },
+  Aurora: { isEVM: true },
+  Injective: { isEVM: true },
+  Base: { isEVM: false },
+
+  // Listed twice in the original list; included once here.
+  Manta: { isEVM: false },
+
+  Fantom: { isEVM: true },
+  ZkEVM: { isEVM: true },
+  Flow: { isEVM: false },
+  Tron: { isEVM: true },
+
+  // Formerly known as Elrond, not traditionally EVM but has some level of compatibility.
+  MultiverseX: { isEVM: false },
+
+  // Assuming EVM compatibility based on the context of ZkEVM.
+  Scroll: { isEVM: true },
+
+  // Assuming non-EVM due to lack of information.
+  Linea: { isEVM: true },
+  Metis: { isEVM: true },
+};
+
 export const TOTAL_FEE_BASIS_POINTS = 10_000;
 export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
 export const NATIVE_TOKEN_ID = "near";

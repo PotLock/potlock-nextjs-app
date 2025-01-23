@@ -1,4 +1,6 @@
-import { array, boolean, object, string } from "zod";
+import { array, object, string } from "zod";
+
+import { ProjectCategory } from "@/entities/project";
 
 export const addFundingSourceSchema = object({
   investorName: string({
@@ -24,21 +26,26 @@ export const addFundingSourceSchema = object({
     .max(50, "Must be less than 50 characters"),
 });
 
+// TODO: Add cross-field validation to make repositories required
+//! if one of the project categories is `ProjectCategory["Open Source"]`
 export const profileSetupSchema = object({
   name: string()
     .min(3, "Must be at least 3 characters long")
     .max(100, "Must be less than 100 characters long"),
 
-  isDao: boolean().default(false),
-  daoAddress: string().optional(),
-  backgroundImage: string().min(3).optional(),
-  profileImage: string().min(3),
-  teamMembers: array(string()),
-  categories: array(string()).min(1),
-
   description: string()
     .min(20, "Must contain at least 20 characters")
     .max(1500, "Must be less than 1500 characters long"),
+
+  backgroundImage: string().min(3).optional(),
+  profileImage: string().min(3),
+  website: string().optional(),
+  twitter: string().optional(),
+  telegram: string().optional(),
+  github: string().optional(),
+
+  teamMembers: array(string()).optional(),
+  categories: array(string()).min(1),
 
   publicGoodReason: string()
     .min(20, "Must contain at least 20 characters")
@@ -46,12 +53,6 @@ export const profileSetupSchema = object({
     .optional(),
 
   smartContracts: array(array(string())).optional(),
-
   fundingSources: array(addFundingSourceSchema).optional(),
-
   githubRepositories: array(string()).optional(),
-  website: string().optional(),
-  twitter: string().optional(),
-  telegram: string().optional(),
-  github: string().optional(),
 });

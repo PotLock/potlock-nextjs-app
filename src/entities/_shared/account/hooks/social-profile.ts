@@ -40,7 +40,7 @@ export const useAccountSocialProfile = ({
 
   return {
     isLoading,
-    profile: data,
+    profile: data ?? undefined,
     avatarSrc,
     backgroundSrc,
     error,

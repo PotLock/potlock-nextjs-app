@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+// TODO!: ONLY FOR THE REFERENCE, DO NOT IMPORT ANYTHING AND REMOVE THE MODULE BEFORE RELEASE
+
 import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
