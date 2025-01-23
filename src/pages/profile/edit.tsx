@@ -18,14 +18,11 @@ export default function EditProjectPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const {
-    isLoading: isAccountListRegistrationDataLoading,
-    data: listRegistrations,
-    mutate: refetchListRegistrations,
-  } = indexer.useAccountListRegistrations({
-    enabled: viewer.isSignedIn,
-    accountId: viewer.accountId ?? "noop",
-  });
+  const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
+    indexer.useAccountListRegistrations({
+      enabled: viewer.isSignedIn,
+      accountId: viewer.accountId ?? "noop",
+    });
 
   const hasRegistrationSubmitted = useMemo(
     () =>
@@ -38,9 +35,9 @@ export default function EditProjectPage() {
   );
 
   const onSuccess = useCallback(() => {
+    setTimeout(() => router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`), 3000);
     toast({ title: "Success!", description: "You have successfully updated your profile." });
-    setTimeout(refetchListRegistrations, 3000);
-  }, [refetchListRegistrations, toast]);
+  }, [router, toast, viewer.accountId]);
 
   const onFailure = useCallback(
     (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
