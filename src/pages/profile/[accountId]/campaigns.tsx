@@ -3,11 +3,9 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { campaignsContractHooks } from "@/common/contracts/core";
-import { PageError, SplashScreen } from "@/common/ui/components";
+import { NoResultsPlaceholder, PageError, SplashScreen } from "@/common/ui/components";
 import { CampaignCard } from "@/entities/campaign";
 import { ProfileLayout } from "@/layout/profile/components/layout";
-
-import { NoResults } from "./lists";
 
 export default function ProfileCampaignsTab() {
   const router = useRouter();
@@ -42,7 +40,7 @@ export default function ProfileCampaignsTab() {
               ))}
             </div>
           ) : (
-            <NoResults text="This Project has no Campaigns" />
+            <NoResultsPlaceholder text="This Project has no Campaigns" />
           )}
         </>
       )}

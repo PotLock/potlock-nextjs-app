@@ -24,6 +24,7 @@ export * from "./atoms/hover-card";
 export * from "./atoms/infinite-scroll-trigger";
 export * from "./atoms/input";
 export * from "./atoms/label";
+export * from "./atoms/no-results-placeholder";
 export * from "./atoms/popover";
 export * from "./atoms/progress";
 export * from "./atoms/scroll-area";
