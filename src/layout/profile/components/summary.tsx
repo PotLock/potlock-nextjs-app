@@ -149,19 +149,20 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
         {/* Left */}
         <div className="flex flex-col gap-4" style={{ flex: "1 1 0%" }}>
           <div className="flex w-full flex-wrap gap-4">
-            {/* Title */}
-            <h2 className="font-500 line-height-none font-lora mb-1 text-[40px] text-[#2e2e2e]">
-              {isProfileDataLoading
-                ? "Loading account data..."
-                : truncate(profile?.name ?? accountId, 28)}
-            </h2>
+            <div className="flex flex-col gap-4">
+              <h2 className="font-500 line-height-none font-lora mb-1 text-[40px] text-[#2e2e2e]">
+                {isProfileDataLoading
+                  ? "Loading account data..."
+                  : truncate(profile?.name ?? accountId, 36)}
+              </h2>
 
-            <div className="flex flex-row content-start items-center gap-2">
-              <span className="text-size-base font-400 md:text-size-sm">
-                {`@ ${truncate(accountId, 20)}`}
-              </span>
+              <div className="flex flex-row content-start items-center gap-2">
+                <span className="text-size-base font-400 md:text-size-sm">
+                  {`@ ${truncate(accountId, 36)}`}
+                </span>
 
-              <ClipboardCopyButton text={accountId} />
+                <ClipboardCopyButton text={accountId} />
+              </div>
             </div>
 
             {isOwner && (

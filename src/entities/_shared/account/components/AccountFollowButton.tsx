@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { nearSocialIndexerHooks } from "@/common/api/near-social-indexer";
 import { socialDbContractClient } from "@/common/contracts/social";

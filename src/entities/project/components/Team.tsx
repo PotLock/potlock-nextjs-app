@@ -78,12 +78,11 @@ export const Team = ({ profile }: Props) => {
 
   return (
     <div className="mt-8 flex flex-col items-start justify-start md:flex-row">
-      {/* col 1 */}
       <div className="mb-4 flex w-full md:w-[272px]">
         <h2 className="font-600 text-base text-[#2e2e2e]">Team members</h2>
       </div>
-      {/* col 2 */}
-      <div className="flex w-full md:ml-16">
+
+      <div className="flex w-full">
         {/* Team Members Container */}
         <div className="flex flex-wrap items-center justify-start gap-8">
           {team.length > 0 ? <Members team={team} /> : <NoTeam />}

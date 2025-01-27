@@ -20,7 +20,7 @@ const Section: React.FC<{ title: string; text?: string; children?: React.ReactNo
   children,
 }) => (
   <section className="mt-8 flex w-full flex-col items-start justify-start md:flex-row">
-    <div className="mb-4 flex w-full md:w-[358px]">
+    <div className="md:w-54 md:min-w-54 mb-4 flex w-full">
       <p className="text-size-base font-600 text-[#2e2e2e]">{title}</p>
     </div>
 
