@@ -48,12 +48,6 @@ export default function EditProjectPage() {
     toast({
       title: "Success!",
       description: "You have successfully updated your profile.",
-
-      action: (
-        <Button asChild>
-          <Link href={`${rootPathnames.PROFILE}/${viewer.accountId}`}>{"Open Profile"}</Link>
-        </Button>
-      ),
     });
   }, [router, toast, viewer.accountId]);
 

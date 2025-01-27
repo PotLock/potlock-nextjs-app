@@ -9,9 +9,9 @@ import type { AccountId } from "@/common/types";
 import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 
-import { ProfileLayoutControls } from "./controls";
 import { ProfileLayoutHeader } from "./header";
 import { ProfileLayoutHero } from "./hero";
+import { ProfileLayoutSummary } from "./summary";
 
 const tabRoutesProject = [
   {
@@ -149,7 +149,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
     <PageWithBanner>
       <ProfileLayoutHeader {...{ accountId }} />
       <ProfileLayoutHero {...{ accountId }} />
-      <ProfileLayoutControls {...{ accountId }} />
+      <ProfileLayoutSummary {...{ accountId }} />
 
       <Tabs
         asLink

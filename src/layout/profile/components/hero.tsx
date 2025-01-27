@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core";
@@ -29,7 +27,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
   return (
     <section un-position="relative">
       <div className="relative h-[318px] w-full">
-        <Image
+        <img
           alt="Background image"
           src={backgroundSrc}
           className="h-full w-full rounded-xl object-cover"
@@ -76,19 +74,19 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
                 {pgRegistryRegistration.status}
               </div>
             </div>
-          ) : isHumanVerified ? (
-            <div
-              className={cn(
-                "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
-                "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
-              )}
-            >
-              {listRegistrationStatusIcons.Approved.icon}
-
-              <div style={{ color: listRegistrationStatusIcons.Approved.color }}>Verified</div>
-            </div>
           ) : (
-            <div style={{ width: "10px" }} />
+            isHumanVerified && (
+              <div
+                className={cn(
+                  "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
+                  "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
+                )}
+              >
+                {listRegistrationStatusIcons.Approved.icon}
+
+                <div style={{ color: listRegistrationStatusIcons.Approved.color }}>Verified</div>
+              </div>
+            )
           )}
 
           <AccountFollowStats {...{ accountId }} />

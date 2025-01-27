@@ -115,9 +115,9 @@ const Container = styled.div`
   }
 `;
 
-export type ProfileLayoutControlsProps = ByAccountId & {};
+export type ProfileLayoutSummaryProps = ByAccountId & {};
 
-export const ProfileLayoutControls: React.FC<ProfileLayoutControlsProps> = ({ accountId }) => {
+export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ accountId }) => {
   const viewer = useViewerSession();
   const isOwner = viewer?.accountId === accountId;
   const { openDonationModal } = useDonation({ accountId });
