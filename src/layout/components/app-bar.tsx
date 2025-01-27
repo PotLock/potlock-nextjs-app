@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
-import { nearClient } from "@/common/api/near";
+import { nearClient } from "@/common/api/near-protocol";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useViewerSession } from "@/common/viewer";

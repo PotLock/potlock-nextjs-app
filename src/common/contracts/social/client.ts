@@ -1,7 +1,7 @@
 import { buildTransaction } from "@wpdas/naxios";
 
 import { SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near/client";
+import { naxiosInstance } from "@/common/api/near-protocol/client";
 import { AccountId } from "@/common/types";
 
 /**

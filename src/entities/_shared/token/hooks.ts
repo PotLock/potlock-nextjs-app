@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { Big } from "big.js";
 
 import { coingeckoHooks } from "@/common/api/coingecko";
-import { intearPricesHooks } from "@/common/api/intear-prices";
-import { nearHooks } from "@/common/api/near";
+import { intearTokenIndexerHooks } from "@/common/api/intear-token-indexer";
+import { nearHooks } from "@/common/api/near-protocol";
 import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_IDS } from "@/common/constants";
 import { refExchangeHooks } from "@/common/contracts/ref-finance";
 import { ftHooks } from "@/common/contracts/tokens";
@@ -93,7 +93,7 @@ export const useToken = ({
     isLoading: isFtUsdPriceLoading,
     data: oneFtUsdPrice,
     error: ftUsdPriceError,
-  } = intearPricesHooks.useTokenUsdPrice({
+  } = intearTokenIndexerHooks.useTokenUsdPrice({
     disabled: !enabled || !isValidFtContractAccountId,
     tokenId,
   });

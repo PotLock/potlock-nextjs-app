@@ -1,47 +1,39 @@
+import Image from "next/image";
+
 import { useIsHuman } from "@/common/_deprecated/useIsHuman";
-import { useRegistration } from "@/common/_deprecated/useRegistration";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { listsContractHooks } from "@/common/contracts/core";
+import type { ByAccountId } from "@/common/types";
 import { Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useAccountSocialProfile } from "@/entities/_shared/account";
+import { AccountFollowStats, useAccountSocialProfile } from "@/entities/_shared/account";
 import { listRegistrationStatusIcons } from "@/entities/list";
 
-import { FollowStats } from "./FollowStats";
+export type ProfileLayoutHeroProps = ByAccountId & {};
 
-export type ProfileLayoutHeroProps = {
-  accountId: string; // near address (donor | project)
-  isProject: boolean;
-  imageStyle?: any;
-  backgroundStyle?: any;
-  containerStyle?: any;
-};
-
-export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject, accountId }) => {
+export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId }) => {
+  const { isHumanVerified } = useIsHuman(accountId);
   const { avatarSrc, backgroundSrc } = useAccountSocialProfile({ accountId });
 
-  // get nadabot status on the donor page
-  let isHumanVerified = false;
-  const isHuman = useIsHuman(accountId);
-
-  if (!isHuman.loading && !isProject) {
-    isHumanVerified = isHuman.isHumanVerified;
-  }
-
-  // get registration if it is on project page
-  const { registration } = useRegistration(accountId);
+  // TODO: For optimization, request and use an indexer endpoint for list registration by specified accountId and listId
+  // TODO: Also implement error and loading status handling
+  const {
+    isLoading: isPgRegistryRegistrationLoading,
+    data: pgRegistryRegistration,
+    error: pgRegistryRegistrationError,
+  } = listsContractHooks.useRegistration({
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
+    accountId,
+  });
 
   return (
     <section un-position="relative">
-      {/* profile Background  */}
       <div className="relative h-[318px] w-full">
-        {backgroundSrc ? (
-          <img
-            className="h-full w-full rounded-xl object-cover"
-            alt="background-image"
-            src={backgroundSrc}
-          />
-        ) : (
-          <Skeleton className="h-full w-full" />
-        )}
+        <Image
+          alt="Background image"
+          src={backgroundSrc}
+          className="h-full w-full rounded-xl object-cover"
+        />
       </div>
 
       {/* profile image */}
@@ -68,20 +60,20 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
             "relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-2 md:gap-6",
           )}
         >
-          {registration.id ? (
+          {pgRegistryRegistration?.id ? (
             <div
               className={cn(
                 "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
                 "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
               )}
             >
-              {listRegistrationStatusIcons[registration.status].icon}
+              {listRegistrationStatusIcons[pgRegistryRegistration.status].icon}
 
               <div
                 className="hidden md:block"
-                style={{ color: listRegistrationStatusIcons[registration.status].color }}
+                style={{ color: listRegistrationStatusIcons[pgRegistryRegistration.status].color }}
               >
-                {registration.status}
+                {pgRegistryRegistration.status}
               </div>
             </div>
           ) : isHumanVerified ? (
@@ -99,7 +91,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ isProject,
             <div style={{ width: "10px" }} />
           )}
 
-          <FollowStats accountId={accountId} />
+          <AccountFollowStats {...{ accountId }} />
         </div>
       </div>
     </section>

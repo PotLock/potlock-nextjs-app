@@ -3,7 +3,7 @@ import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
-import { fetchAccountFeedPosts } from "@/common/api/near-social";
+import { fetchAccountFeedPosts } from "@/common/api/near-social-indexer";
 import { IndexPostResultItem } from "@/common/contracts/social";
 import type { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";

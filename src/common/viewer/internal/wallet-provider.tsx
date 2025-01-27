@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 
-import { nearClient } from "@/common/api/near";
+import { nearClient } from "@/common/api/near-protocol";
 
 import { useWalletContextStore } from "./wallet-context";
 

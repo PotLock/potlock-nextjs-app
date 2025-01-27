@@ -3,14 +3,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useRegistration } from "@/common/_deprecated/useRegistration";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { listsContractHooks } from "@/common/contracts/core";
 import type { AccountId } from "@/common/types";
 import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
-import { ProjectBanner } from "@/entities/project";
 
-import { ProfileLayoutControls } from "./ProfileLayoutControls";
-import { ProfileLayoutHero } from "./ProfileLayoutHero";
+import { ProfileLayoutControls } from "./controls";
+import { ProfileLayoutHeader } from "./header";
+import { ProfileLayoutHero } from "./hero";
 
 const tabRoutesProject = [
   {
@@ -128,10 +129,13 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
   const { query, pathname } = useRouter();
   const { accountId } = query as { accountId: AccountId };
 
-  // Load profile data
-  const { isRegisteredProject } = useRegistration(accountId || "");
+  // TODO: For optimization, request and use an indexer endpoint that serves as a proxy for the corresponding function call
+  const { data: isRegistered } = listsContractHooks.useIsRegistered({
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
+    accountId,
+  });
 
-  const tabs = isRegisteredProject ? tabRoutesProject : tabRoutesProfile;
+  const tabs = isRegistered ? tabRoutesProject : tabRoutesProfile;
 
   const [selectedTab, setSelectedTab] = useState(
     tabs.find((tab) => pathname.includes(tab.href)) || tabs[0],
@@ -141,13 +145,11 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
     setSelectedTab(tabs.find((tab) => pathname.includes(tab.href)) || tabs[0]);
   }, [pathname, tabs]);
 
-  const isProject = isRegisteredProject;
-
   return (
     <PageWithBanner>
-      {isProject && <ProjectBanner projectId={accountId} />}
-      <ProfileLayoutHero isProject={isProject} {...{ accountId }} />
-      <ProfileLayoutControls isProject={isProject} {...{ accountId }} />
+      <ProfileLayoutHeader {...{ accountId }} />
+      <ProfileLayoutHero {...{ accountId }} />
+      <ProfileLayoutControls {...{ accountId }} />
 
       <Tabs
         asLink

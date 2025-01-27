@@ -5,10 +5,14 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { styled } from "styled-components";
 
 import { useDonationsForProject } from "@/common/_deprecated/useDonationsForProject";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { listsContractHooks } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
+import type { ByAccountId } from "@/common/types";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import CheckIcon from "@/common/ui/svg/CheckIcon";
 import ReferrerIcon from "@/common/ui/svg/ReferrerIcon";
+import { cn } from "@/common/ui/utils";
 import { useViewerSession } from "@/common/viewer";
 import {
   AccountFollowButton,
@@ -19,12 +23,7 @@ import {
 import { useDonation } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
 
-type Props = {
-  accountId: string;
-  isProject: boolean;
-};
-
-const LinksWrapper = ({ accountId }: { accountId: string }) => {
+const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
   const viewer = useViewerSession();
   const [copied, setCopied] = useState(false);
 
@@ -66,6 +65,7 @@ const LinksWrapper = ({ accountId }: { accountId: string }) => {
   );
 };
 
+// TODO: Refactor by breaking down into TailwindCSS classes
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -86,12 +86,6 @@ const Container = styled.div`
       font-size: 2.5rem;
       line-height: 1;
       font-family: "Lora";
-    }
-    .donors {
-      font-size: 14px;
-      span {
-        font-weight: 600;
-      }
     }
   }
   .btn-wrapper {
@@ -121,36 +115,26 @@ const Container = styled.div`
   }
 `;
 
-const DonationsInfo = ({ accountId }: { accountId: string }) => {
-  const donationsInfo = useDonationsForProject(accountId);
-  const { openDonationModal } = useDonation({ accountId });
+export type ProfileLayoutControlsProps = ByAccountId & {};
 
-  return (
-    <Container>
-      <div className="donations-info">
-        <div className="amount">{donationsInfo.usd}</div>
-        <div className="donors">
-          Raised from <span> {donationsInfo.uniqueDonors}</span>{" "}
-          {donationsInfo.uniqueDonors === 1 ? "donor" : "donors"}
-        </div>
-      </div>
-
-      <div className="btn-wrapper">
-        <Button onClick={openDonationModal}>Donate</Button>
-        <AccountFollowButton {...{ accountId }} />
-      </div>
-    </Container>
-  );
-};
-
-export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
+export const ProfileLayoutControls: React.FC<ProfileLayoutControlsProps> = ({ accountId }) => {
   const viewer = useViewerSession();
   const isOwner = viewer?.accountId === accountId;
   const { profile } = useAccountSocialProfile({ accountId });
+  const donationsInfo = useDonationsForProject(accountId);
+  const { openDonationModal } = useDonation({ accountId });
+
+  // TODO: For optimization, request and use an indexer endpoint that serves as a proxy for the corresponding function call
+  const { data: isRegistered } = listsContractHooks.useIsRegistered({
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
+    accountId,
+  });
 
   return (
     <div
-      className={`flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem] ${!isProject ? "mb-12" : ""}`}
+      className={cn("flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]", {
+        "mb-12": !isRegistered,
+      })}
     >
       {/* NameContainer */}
       <div className="flex w-full flex-wrap gap-8">
@@ -171,7 +155,7 @@ export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
             </div>
 
             {isOwner && (
-              <div className="ml-[auto] self-center" style={{}}>
+              <div className="ml-[auto] self-center">
                 <Link href={rootPathnames.EDIT_PROFILE(accountId)}>
                   <Button variant="brand-tonal" className="ml-[auto]">
                     {"Edit profile"}
@@ -182,12 +166,26 @@ export const ProfileLayoutControls = ({ accountId, isProject }: Props) => {
           </div>
 
           <AccountProfileTags {...{ accountId }} />
-          <LinksWrapper {...{ accountId }} />
+          <Linktree {...{ accountId }} />
         </div>
 
         {/* Right */}
-        {isProject ? (
-          <DonationsInfo {...{ accountId }} />
+        {isRegistered ? (
+          <Container>
+            <div className="donations-info">
+              <div className="amount">{donationsInfo.usd}</div>
+              <div className="inline-flex gap-1 text-sm">
+                <span>{"Raised from"}</span>
+                <span className="font-600">{donationsInfo.uniqueDonors}</span>
+                <span>{donationsInfo.uniqueDonors === 1 ? "donor" : "donors"}</span>
+              </div>
+            </div>
+
+            <div className="btn-wrapper">
+              <Button onClick={openDonationModal}>Donate</Button>
+              <AccountFollowButton {...{ accountId }} />
+            </div>
+          </Container>
         ) : (
           <div>
             <AccountFollowButton {...{ accountId }} className="w-[160px] py-[10px]" />

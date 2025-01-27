@@ -2,7 +2,7 @@ import { MemoryCache } from "@wpdas/naxios";
 import { Big } from "big.js";
 
 import { POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near/client";
+import { naxiosInstance } from "@/common/api/near-protocol/client";
 import { FULL_TGAS } from "@/common/constants";
 import { ByAccountId } from "@/common/types";
 

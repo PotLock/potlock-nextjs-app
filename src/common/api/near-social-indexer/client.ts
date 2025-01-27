@@ -4,7 +4,7 @@ import axios from "axios";
 import { NETWORK, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { ClientConfig } from "@/common/types";
 
-export const client = axios.create({
+export const nearSocialIndexerClient = axios.create({
   baseURL: "https://api.near.social",
 });
 

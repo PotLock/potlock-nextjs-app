@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near/client";
+import { naxiosInstance } from "@/common/api/near-protocol/client";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";

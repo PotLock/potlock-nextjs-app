@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { List, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
+import { walletApi } from "@/common/api/near-protocol/client";
 
 import { ListOverviewType } from "../types";
 

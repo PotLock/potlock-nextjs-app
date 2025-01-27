@@ -5,7 +5,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
+import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social-indexer";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 

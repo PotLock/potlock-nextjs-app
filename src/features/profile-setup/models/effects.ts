@@ -3,7 +3,7 @@ import { Big } from "big.js";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { LISTS_CONTRACT_ACCOUNT_ID, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near/client";
+import { naxiosInstance } from "@/common/api/near-protocol/client";
 import {
   FIFTY_TGAS,
   FULL_TGAS,

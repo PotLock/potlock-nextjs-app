@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
+import { walletApi } from "@/common/api/near-protocol/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
