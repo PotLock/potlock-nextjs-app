@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
-import { infer as FromSchema, ZodError } from "zod";
+import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
@@ -30,6 +30,56 @@ export const useCampaignForm = () => {
   });
 
   const values = useWatch(self);
+
+  useEffect(() => {
+    const { min_amount, max_amount, target_amount } = values;
+    const errors: Record<string, { message: string }> = {};
+
+    // Validate min_amount vs max_amount
+    if (min_amount && max_amount && min_amount > max_amount) {
+      errors.min_amount = {
+        message: "Minimum amount cannot be greater than maximum amount",
+      };
+
+      errors.max_amount = {
+        message: "Maximum amount cannot be less than minimum amount",
+      };
+    }
+
+    // Validate target_amount vs max_amount
+    if (target_amount && max_amount && target_amount > max_amount) {
+      errors.target_amount = {
+        message: "Target amount cannot be greater than maximum amount",
+      };
+
+      errors.max_amount = {
+        message: "Maximum amount cannot be less than target amount",
+      };
+    }
+
+    // Validate min_amount vs target_amount
+    if (min_amount && target_amount && min_amount > target_amount) {
+      errors.min_amount = {
+        message: "Minimum amount cannot be greater than target amount",
+      };
+
+      errors.target_amount = {
+        message: "Target amount cannot be less than minimum amount",
+      };
+    }
+
+    // Clear errors only for fields that are now valid
+    ["min_amount", "max_amount", "target_amount"].forEach((field) => {
+      if (!errors[field]) {
+        self.clearErrors(field as keyof Values);
+      }
+    });
+
+    // Set all collected errors
+    Object.entries(errors).forEach(([field, error]) => {
+      self.setError(field as keyof Values, error);
+    });
+  }, [values, self]);
 
   const timeToMiliSeconds = (time: string) => {
     return Temporal.Instant.from(time + "Z");
@@ -115,6 +165,7 @@ export const useCampaignForm = () => {
     values,
     watch: self.watch,
     onChange,
+    isValid: Object.keys(self.formState.errors).length === 0,
     handleDeleteCampaign,
   };
 };
