@@ -5,6 +5,11 @@ import type { ByAccountId, ByListId, ConditionalActivation } from "@/common/type
 
 import * as contractClient from "./client";
 
+export const useList = ({ enabled = true, listId }: ByListId & ConditionalActivation) =>
+  useSWR(["useList", listId], ([_queryKeyHead, listIdKey]) =>
+    !enabled || !IS_CLIENT ? undefined : contractClient.get_list({ list_id: listIdKey }),
+  );
+
 export const useIsRegistered = ({
   enabled = true,
   accountId,

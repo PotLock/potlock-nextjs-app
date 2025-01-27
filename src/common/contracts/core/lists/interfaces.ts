@@ -7,7 +7,7 @@ export enum RegistrationStatus {
   Unregistered = "Unregistered",
 }
 
-export type ListId = string;
+export type ListId = number;
 
 export interface List {
   id: ListId;
