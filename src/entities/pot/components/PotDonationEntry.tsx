@@ -41,7 +41,7 @@ export const PotDonationEntry = ({
     ? `${rootPathnames.PROFILE}/${donorId}`
     : `${rootPathnames.PROFILE}/${projectId || recipientId}`;
 
-  const recipientUrl = `${rootPathnames.PROJECT}/${recipientId}`;
+  const recipientUrl = `${rootPathnames.PROFILE}/${recipientId}`;
 
   const name = truncate(donorId, 15);
   const recipientName = truncate(recipientId, 15);

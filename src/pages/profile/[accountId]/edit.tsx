@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/components";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  PageWithBanner,
+} from "@/common/ui/components";
 import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
@@ -13,19 +20,17 @@ import { useViewerSession } from "@/common/viewer";
 import { ProfileSetupForm } from "@/features/profile-setup";
 import { rootPathnames } from "@/pathnames";
 
-export default function RegisterPage() {
-  const viewer = useViewerSession();
+export default function EditProjectPage() {
   const router = useRouter();
+  // const { accountId } = router.query as { accountId: AccountId };
+  const viewer = useViewerSession();
   const { toast } = useToast();
 
-  const {
-    isLoading: isAccountListRegistrationDataLoading,
-    data: listRegistrations,
-    mutate: refetchListRegistrations,
-  } = indexer.useAccountListRegistrations({
-    enabled: viewer.isSignedIn,
-    accountId: viewer.accountId ?? "noop",
-  });
+  const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
+    indexer.useAccountListRegistrations({
+      enabled: viewer.isSignedIn,
+      accountId: viewer.accountId ?? "noop",
+    });
 
   const hasRegistrationSubmitted = useMemo(
     () =>
@@ -38,9 +43,19 @@ export default function RegisterPage() {
   );
 
   const onSuccess = useCallback(() => {
-    toast({ title: "Success!", description: "You have successfully submitted your registration." });
-    setTimeout(refetchListRegistrations, 3000);
-  }, [refetchListRegistrations, toast]);
+    setTimeout(() => router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`), 3000);
+
+    toast({
+      title: "Success!",
+      description: "You have successfully updated your profile.",
+
+      action: (
+        <Button asChild>
+          <Link href={`${rootPathnames.PROFILE}/${viewer.accountId}`}>{"Open Profile"}</Link>
+        </Button>
+      ),
+    });
+  }, [router, toast, viewer.accountId]);
 
   const onFailure = useCallback(
     (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
@@ -48,15 +63,14 @@ export default function RegisterPage() {
   );
 
   useEffect(() => {
-    if (viewer.isSignedIn && !isAccountListRegistrationDataLoading && hasRegistrationSubmitted) {
-      router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`);
+    if (viewer.isSignedIn && !isAccountListRegistrationDataLoading && !hasRegistrationSubmitted) {
+      router.push(rootPathnames.REGISTER);
     }
   }, [
     hasRegistrationSubmitted,
     isAccountListRegistrationDataLoading,
     listRegistrations,
     router,
-    viewer.accountId,
     viewer.isSignedIn,
   ]);
 
@@ -69,7 +83,7 @@ export default function RegisterPage() {
         )}
       >
         <h1 className="prose font-500 font-lora text-[32px] leading-[120%] md:text-[40px]">
-          {"Register New Project"}
+          {"Edit Project"}
         </h1>
 
         <h2 className="prose max-w-[600px] text-center md:text-lg">
@@ -83,7 +97,7 @@ export default function RegisterPage() {
             <InfoSegment title="Checking account" description="Please, wait..." />
           ) : (
             <ProfileSetupForm
-              mode="register"
+              mode="update"
               accountId={viewer.accountId}
               isDaoRepresentative={viewer.isDaoRepresentative}
               {...{ onSuccess, onFailure }}

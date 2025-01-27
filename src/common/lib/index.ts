@@ -1,9 +1,10 @@
 export * from "./string";
-export { formatWithCommas } from "./formatWithCommas";
+export * from "./formatWithCommas";
 export * from "./format";
 export * from "./id";
 export * from "./navigation";
 export * from "./daysAgo";
+export * from "./object";
 export * from "./numeric";
 export * from "./datetime";
 export * from "./protocol-config";

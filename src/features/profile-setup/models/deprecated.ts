@@ -1,16 +1,18 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+// TODO!: ONLY FOR THE REFERENCE, DO NOT IMPORT ANYTHING AND REMOVE THE MODULE BEFORE RELEASE
+
 import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
-import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social";
 import { getImage } from "@/common/services/images";
-import uploadFileToIPFS from "@/common/services/ipfs";
 import { ByAccountId } from "@/common/types";
 import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
-import { AddFundingSourceInputs, ProjectEditorInputs } from "./types";
+import { AddFundingSourceInputs, ProfileSetupInputs } from "./types";
 
 export type SocialImagesInputs = ByAccountId & {
   socialData?: NEARSocialUserProfile | null;
@@ -63,7 +65,7 @@ type ExtraTypes = {
   daoProjectProposal: Proposal | null;
   isRepositoryRequired: boolean;
 };
-export type ProjectEditorState = ProjectEditorInputs & ExtraTypes;
+export type ProjectEditorState = ProfileSetupInputs & ExtraTypes;
 
 /**
  * Create Project State
@@ -275,28 +277,8 @@ export const projectEditorModel = createModel<AppModel>()({
   },
 
   effects: (dispatch) => ({
-    async uploadBackgroundImage(files: File[]) {
-      const res = await uploadFileToIPFS(files[0]);
-
-      if (res.ok) {
-        const data = await res.json();
-        dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
-        return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
-      }
-    },
-
     setBackgroundImage(backgroundUrl: string) {
       dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(backgroundUrl);
-    },
-
-    async uploadProfileImage(files: File[]) {
-      const res = await uploadFileToIPFS(files[0]);
-
-      if (res.ok) {
-        const data = await res.json();
-        dispatch.projectEditor.UPDATE_PROFILE_IMAGE(`${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
-        return `${IPFS_NEAR_SOCIAL_URL}${data.cid}`;
-      }
     },
 
     setProfileImage(profileImageUrl: string) {
@@ -307,7 +289,7 @@ export const projectEditorModel = createModel<AppModel>()({
       const data: Partial<ProjectEditorState> = {};
 
       // Set the isEdit status
-      data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROJECT);
+      //data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROFILE);
 
       // Get profile data & profile images
       const projectProfileData = await fetchSocialImages({

@@ -2,16 +2,17 @@ import { useCallback, useState } from "react";
 
 import { extractFromUrl } from "@/common/lib";
 import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
-import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { CustomInput } from "./form-elements";
+import type { ProfileSetupInputs } from "../models/types";
 
-const SocialLinks = () => {
-  const twitter = useGlobalStoreSelector((state) => state.projectEditor.twitter);
-  const telegram = useGlobalStoreSelector((state) => state.projectEditor.telegram);
-  const github = useGlobalStoreSelector((state) => state.projectEditor.github);
-  const website = useGlobalStoreSelector((state) => state.projectEditor.website);
+export type ProfileSetupLinktreeSectionProps = {
+  values: Pick<ProfileSetupInputs, "twitter" | "telegram" | "github" | "website">;
+};
 
+export const ProfileSetupLinktreeSection: React.FC<ProfileSetupLinktreeSectionProps> = ({
+  values: { twitter, telegram, github, website },
+}) => {
   const [twitterValue, setTwitterValue] = useState<string>(
     twitter?.replace("https://x.com/", "") || "",
   );
@@ -27,7 +28,7 @@ const SocialLinks = () => {
   const [websiteValue, setWebsiteValue] = useState<string>(website?.replace("https://", "") || "");
 
   const onChangeHandler = useCallback((socialKey: string, value: string) => {
-    dispatch.projectEditor.updateSocialLinks({ [socialKey]: value });
+    // dispatch.projectEditor.updateSocialLinks({ [socialKey]: value });
   }, []);
 
   return (
@@ -102,5 +103,3 @@ const SocialLinks = () => {
     </>
   );
 };
-
-export default SocialLinks;

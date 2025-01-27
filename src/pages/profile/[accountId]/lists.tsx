@@ -3,6 +3,7 @@ import { ReactElement, useState } from "react";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
+import type { AccountId } from "@/common/types";
 import { Label, Switch } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { ListCard, getRandomBackgroundImage } from "@/entities/list";
@@ -35,7 +36,7 @@ export const NoResults = ({ text }: { text: string }) => (
 const ProfileLists = () => {
   const router = useRouter();
   const [administratedListsOnly, setAdministratedListsOnly] = useState(false);
-  const { userId: accountId } = router.query as { userId: string };
+  const { accountId } = router.query as { accountId: AccountId };
 
   const { data } = indexer.useLists({
     account: accountId,
@@ -55,11 +56,11 @@ const ProfileLists = () => {
       <div className="w-full">
         {data?.results?.length ? (
           <div className="mt-8 grid w-full grid-cols-1 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3">
-            {data?.results?.map((item: any) => {
+            {data?.results?.map((item) => {
               let background = "";
               let backdrop = "";
 
-              if (!item.cover_image) {
+              if (!item.cover_image_url) {
                 ({ background, backdrop } = getRandomBackgroundImage());
               }
 

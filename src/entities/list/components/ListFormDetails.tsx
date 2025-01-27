@@ -10,7 +10,7 @@ import { indexer } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
-import uploadFileToIPFS from "@/common/services/ipfs";
+import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import { Button, Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
@@ -184,7 +184,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
     if (target.files && target.files[0]) {
       const reader = new FileReader();
       setLoadingImageUpload(true);
-      const res = await uploadFileToIPFS(target.files[0]); // Use the casted target
+      const res = await nearSocialIpfsUpload(target.files[0]); // Use the casted target
 
       if (res.ok) {
         const data = await res.json();

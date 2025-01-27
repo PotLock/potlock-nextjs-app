@@ -11,7 +11,7 @@ import { AccountProfilePicture } from "@/entities/_shared/account";
 
 export default function FeedAccountBlockPostPage() {
   const router = useRouter();
-  const { account, block } = useRouter().query;
+  const { account, block } = router.query;
 
   const [post, setPost] = useState<{
     accountId: string;

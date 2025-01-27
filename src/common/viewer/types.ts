@@ -5,27 +5,30 @@ export type ViewerSession =
   | {
       hasWalletReady: false;
       accountId: undefined;
-      registrationStatus: undefined;
       isSignedIn: false;
+      isDaoRepresentative: false;
       isMetadataLoading: false;
+      registrationStatus: undefined;
       hasRegistrationSubmitted: false;
       hasRegistrationApproved: false;
     }
   | {
       hasWalletReady: true;
       accountId: undefined;
-      registrationStatus: undefined;
       isSignedIn: false;
+      isDaoRepresentative: false;
       isMetadataLoading: false;
+      registrationStatus: undefined;
       hasRegistrationSubmitted: false;
       hasRegistrationApproved: false;
     }
   | {
       hasWalletReady: true;
       accountId: AccountId;
-      registrationStatus?: RegistrationStatus;
       isSignedIn: true;
+      isDaoRepresentative: boolean;
       isMetadataLoading: boolean;
+      registrationStatus?: RegistrationStatus;
       hasRegistrationSubmitted: boolean;
       hasRegistrationApproved: boolean;
     };

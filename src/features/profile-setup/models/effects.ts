@@ -1,70 +1,86 @@
-import {
-  Transaction,
-  buildTransaction,
-  calculateDepositByDataSize,
-  validateNearAddress,
-} from "@wpdas/naxios";
+import { Transaction, buildTransaction, calculateDepositByDataSize } from "@wpdas/naxios";
 import { Big } from "big.js";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { LISTS_CONTRACT_ACCOUNT_ID, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
-import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK } from "@/common/constants";
-import { socialDbContractClient } from "@/common/contracts/social";
+import {
+  FIFTY_TGAS,
+  FULL_TGAS,
+  MIN_PROPOSAL_DEPOSIT_FALLBACK,
+  PUBLIC_GOODS_REGISTRY_LIST_ID,
+} from "@/common/constants";
+import { type NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
-import deepObjectDiff from "@/common/lib/deepObjectDiff";
-import { store } from "@/store";
+import { deepObjectDiff } from "@/common/lib";
+import type { ByAccountId } from "@/common/types";
 
-import getSocialDataFormat from "../utils/getSocialDataFormat";
+import type { ProfileSetupMode } from "../types";
+import type { ProfileSetupInputs } from "./types";
+import { profileSetupInputsToSocialDbFormat } from "../utils/normalization";
 
-const getSocialData = async (accountId: string) => {
-  try {
-    const socialData = await socialDbContractClient.getSocialProfile({ accountId });
-    return socialData;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
+export type ProfileSaveInputs = ByAccountId & {
+  isDaoRepresentative: boolean;
+  mode: ProfileSetupMode;
+  inputs: ProfileSetupInputs;
+  socialProfileSnapshot: NEARSocialUserProfile | undefined;
 };
 
-export const saveProject = async () => {
-  const data = store.getState().projectEditor;
+export const save = async ({
+  isDaoRepresentative,
+  accountId,
+  mode,
+  inputs,
+  socialProfileSnapshot,
+}: ProfileSaveInputs) => {
+  // TODO: Should be passed as a separate parameter
+  //! ( DAO Registration ticket, only AFTER wallet integration revamp! )
+  const daoAccountId = accountId;
+  const daoPolicy = isDaoRepresentative ? await getDaoPolicy(accountId) : null;
 
-  const accountId = data.isDao ? data.daoAddress : data.accountId;
+  const daoProposalDescription =
+    mode === "register"
+      ? "Create project on POTLOCK (2 steps: Register information on NEAR Social and register on POTLOCK)"
+      : "Update project on POTLOCK (via NEAR Social)";
 
-  if (!accountId) {
-    return { success: false, error: "No accountId provided" };
-  }
+  const formattedInputs = profileSetupInputsToSocialDbFormat(inputs);
 
-  // If Dao, get dao policy
-  const daoPolicy = data.isDao ? await getDaoPolicy(accountId) : null;
-
-  // Validate DAO Address
-  const isDaoAddressValid = data.isDao ? validateNearAddress(data.daoAddress || "") : true;
-
-  if (!isDaoAddressValid) {
-    return { success: false, error: "DAO: Invalid NEAR account Id" };
-  }
-
-  // Social Data Format
-  const socialData = getSocialDataFormat(data);
-
-  // If there is an existing social data, make the diff between then
-  const existingSocialData = await getSocialData(accountId);
-
-  const diff = existingSocialData ? deepObjectDiff(existingSocialData, socialData) : socialData;
+  //? Derive diff from the preexisting social profile
+  const socialDbProfileUpdate: NEARSocialUserProfile = socialProfileSnapshot
+    ? deepObjectDiff<NEARSocialUserProfile>(socialProfileSnapshot, formattedInputs)
+    : formattedInputs;
 
   const socialArgs = {
     data: {
-      [accountId]: diff,
+      [accountId]: {
+        profile: socialDbProfileUpdate,
+
+        /**
+         *? Auto Follow and Star Potlock
+         */
+
+        index: {
+          star: {
+            key: { type: "social", path: `potlock.near/widget/Index` },
+            value: { type: "star" },
+          },
+
+          notify: {
+            key: "potlock.near",
+            value: { type: "star", item: { type: "social", path: `potlock.near/widget/Index` } },
+          },
+        },
+
+        graph: {
+          star: { ["potlock.near"]: { widget: { Index: "" } } },
+          follow: { ["potlock.near"]: "" },
+        },
+      },
     },
   };
 
-  const potlockRegistryArgs = {
-    list_id: 1, // hardcoding to potlock registry list for now
-  };
-
-  // First, we have to check the account from social.near to see if it exists. If it doesn't, we need to add 0.1N to the deposit
+  // First, we have to check the account from social.near to see if it exists.
+  // If it doesn't, we need to add 0.1N to the deposit
   try {
     const account = await socialDbContractClient.getAccount({ accountId });
 
@@ -81,60 +97,53 @@ export const saveProject = async () => {
       deposit: parseNearAmount(depositFloat)!,
     });
 
-    const transactions: Transaction<any>[] = [socialTransaction];
-    let daoTransactions: Transaction<any>[] = [];
+    const transactions: Transaction<object>[] = [socialTransaction];
 
-    // if this is a creation action, we need to add the registry
-    if (!data.isEdit) {
+    // Submit registration to Public Goods Registry
+    if (mode === "register") {
       transactions.push(
         // lists.potlock.near
         buildTransaction("register_batch", {
           receiverId: LISTS_CONTRACT_ACCOUNT_ID,
-          args: potlockRegistryArgs,
+          args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
           deposit: parseNearAmount("0.05")!,
           gas: FULL_TGAS,
         }),
       );
     }
 
-    // if it is a DAO, we need to convert transactions to DAO function call proposals
-    if (data.isDao) {
-      daoTransactions = transactions.map((tx) => {
-        const action = {
-          method_name: tx.method,
-          gas: FIFTY_TGAS,
-          deposit: tx.deposit || "0",
-          args: Buffer.from(JSON.stringify(tx.args), "utf-8").toString("base64"),
-        };
-
-        return {
-          receiverId: data.daoAddress,
-          method: "add_proposal",
-          args: {
-            proposal: {
-              description: data.isEdit
-                ? "Update project on POTLOCK (via NEAR Social)"
-                : "Create project on POTLOCK (2 steps: Register information on NEAR Social and register on POTLOCK)",
-              kind: {
-                FunctionCall: {
-                  receiver_id: tx.receiverId,
-                  actions: [action],
-                },
-              },
-            },
-          },
-          deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
-          gas: FULL_TGAS,
-        } as Transaction<any>;
-      });
-    }
-
-    // Final registration step
-    const callbackUrl = `${location.origin}${location.pathname}?done=true`;
+    const callbackUrl = window.location.href;
 
     try {
-      if (data.isDao) {
-        await naxiosInstance.contractApi().callMultiple(daoTransactions, callbackUrl);
+      // if it is a DAO, we need to convert transactions to DAO function call proposals
+      if (isDaoRepresentative) {
+        await naxiosInstance.contractApi().callMultiple(
+          transactions.map((tx) => {
+            const action = {
+              method_name: tx.method,
+              gas: FIFTY_TGAS,
+              deposit: tx.deposit || "0",
+              args: Buffer.from(JSON.stringify(tx.args), "utf-8").toString("base64"),
+            };
+
+            return {
+              receiverId: daoAccountId,
+              method: "add_proposal",
+
+              args: {
+                proposal: {
+                  description: daoProposalDescription,
+                  kind: { FunctionCall: { receiver_id: tx.receiverId, actions: [action] } },
+                },
+              },
+
+              deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
+              gas: FULL_TGAS,
+            } as Transaction<object>;
+          }),
+
+          callbackUrl,
+        );
       } else {
         await naxiosInstance.contractApi().callMultiple(transactions, callbackUrl);
       }
@@ -145,6 +154,7 @@ export const saveProject = async () => {
       };
     } catch (e) {
       console.error(e);
+
       return {
         success: false,
         error: "Error during the project registration.",

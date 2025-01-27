@@ -72,7 +72,7 @@ const WelcomeBanner = () => {
                 href={
                   viewer.hasRegistrationSubmitted
                     ? `${rootPathnames.PROFILE}/${viewer.accountId}`
-                    : rootPathnames.CREATE_PROJECT
+                    : rootPathnames.REGISTER
                 }
                 prefetch={true}
               >

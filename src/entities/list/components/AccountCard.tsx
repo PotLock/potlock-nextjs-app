@@ -136,7 +136,7 @@ export const AccountCard = ({
 
               <AccountHandle
                 asName
-                accountId={profile?.name ?? dataForList.registrant?.id}
+                accountId={dataForList.registrant.id}
                 className="decoration-none text-lg font-semibold text-[#292929]"
                 maxLength={22}
               />

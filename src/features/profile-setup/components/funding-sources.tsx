@@ -4,7 +4,8 @@ import { styled } from "styled-components";
 
 import Delete from "@/common/ui/svg/Delete";
 import Edit from "@/common/ui/svg/Edit";
-import { dispatch, useGlobalStoreSelector } from "@/store";
+
+import type { ProfileSetupInputs } from "../models/types";
 
 // TODO: refactor by breaking into TailwindCSS classes
 export const Table = styled.div`
@@ -96,22 +97,20 @@ export const Table = styled.div`
   }
 `;
 
-type Props = {
+export type ProfileSetupFundingSourcesTableProps = {
+  values: ProfileSetupInputs["fundingSources"];
   onEditClick: (fundingIndex: number) => void;
 };
 
-const FundingSourceTable = ({ onEditClick }: Props) => {
-  const fundingSources = useGlobalStoreSelector((state) => state.projectEditor.fundingSources);
-
+export const ProfileSetupFundingSourcesTable: React.FC<ProfileSetupFundingSourcesTableProps> = ({
+  values,
+  onEditClick,
+}) => {
   const onDeleteHandler = useCallback((fundingIndex: number) => {
-    dispatch.projectEditor.removeFundingSource(fundingIndex);
+    //dispatch.projectEditor.removeFundingSource(fundingIndex);
   }, []);
 
-  if (!fundingSources || fundingSources.length === 0) {
-    return null;
-  }
-
-  return (
+  return values === undefined || values.length === 0 ? null : (
     <Table>
       <div className="header">
         <div className="item">Funding source</div>
@@ -119,7 +118,8 @@ const FundingSourceTable = ({ onEditClick }: Props) => {
         <div className="item amount">Amount</div>
         <div className="btns" />
       </div>
-      {fundingSources.map((funding, index) => (
+
+      {values.map((funding, index) => (
         <div className="funding-row" key={funding.investorName}>
           <div className="item source">
             <p>{funding.investorName}</p>
@@ -153,5 +153,3 @@ const FundingSourceTable = ({ onEditClick }: Props) => {
     </Table>
   );
 };
-
-export default FundingSourceTable;

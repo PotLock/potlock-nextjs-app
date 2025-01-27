@@ -1,11 +1,20 @@
 import { IMAGES_ASSET_ENDPOINT_URL } from "@/common/constants";
 import { RegistrationStatus } from "@/common/contracts/core";
 
+import type { AccountProfileLinktreeKey } from "./types";
+
 export const ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-image.png`;
 
 export const ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-banner.png`;
 
-export const ACCOUNT_PROFILE_URL_PATTERNS = {
+export const ACCOUNT_PROFILE_LINKTREE_KEYS: AccountProfileLinktreeKey[] = [
+  "github",
+  "telegram",
+  "twitter",
+  "website",
+];
+
+export const ACCOUNT_PROFILE_URL_PATTERNS: Record<AccountProfileLinktreeKey, RegExp> = {
   github: /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
   twitter: /^(?:https?:\/\/)?(?:www\.)?x\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
   telegram: /^(?:https?:\/\/)?(?:www\.)?t\.com\/([^/]+(?:\/[^/]+)?)\/?$/,

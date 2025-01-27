@@ -1,14 +1,21 @@
 import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
-import { useGlobalStoreSelector } from "@/store";
 
-const DAOInProgress = () => {
-  const { daoProjectProposal, daoAddress } = useGlobalStoreSelector((state) => state.projectEditor);
+export const ProfileSetupDaoProgress = () => {
+  const { daoProjectProposal, daoAddress } = {
+    daoProjectProposal: { id: 0 },
+    daoAddress: undefined,
+  }; // useGlobalStoreSelector((state) => state.projectEditor);
 
   if (!daoProjectProposal || !daoAddress) {
     return "";
   }
+
+  const proposalHref =
+    "https://near.org/sking.near/widget/DAO.Page?daoId=" +
+    daoAddress +
+    `&tab=proposal&proposalId=${daoProjectProposal.id}`;
 
   return (
     <div
@@ -23,15 +30,9 @@ const DAOInProgress = () => {
         <strong>NB:</strong> This proposal consists of 2 steps (individual proposals): Register
         information on NEAR Social and register on POTLOCK.
       </p>
-      <Link
-        className="mt-4"
-        target="_blank"
-        href={`https://near.org/sking.near/widget/DAO.Page?daoId=${daoAddress}&tab=proposal&proposalId=${daoProjectProposal.id}`}
-      >
+      <Link className="mt-4" target="_blank" href={proposalHref}>
         <Button variant="standard-filled">View DAO Proposal</Button>
       </Link>
     </div>
   );
 };
-
-export default DAOInProgress;

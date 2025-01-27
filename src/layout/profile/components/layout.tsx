@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useRegistration } from "@/common/_deprecated/useRegistration";
+import type { AccountId } from "@/common/types";
 import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";
 import { ProjectBanner } from "@/entities/project";
@@ -71,12 +72,9 @@ type ProfileLayoutTabPanelProps = {
 };
 
 const Tabs: React.FC<ProfileLayoutTabPanelProps> = ({ options, selectedTab, onSelect, asLink }) => {
-  const _selectedTab = selectedTab || options[0].id;
-
   const router = useRouter();
-  const { userId: userIdPathParam } = router.query;
-
-  const userId = typeof userIdPathParam === "string" ? userIdPathParam : userIdPathParam?.at(0);
+  const { accountId } = router.query as { accountId: AccountId };
+  const _selectedTab = selectedTab || options[0].id;
 
   return (
     <div className="mb-[46px] flex w-full flex-row flex-wrap gap-2">
@@ -88,7 +86,7 @@ const Tabs: React.FC<ProfileLayoutTabPanelProps> = ({ options, selectedTab, onSe
             if (asLink) {
               return (
                 <Link
-                  href={`/profile/${userId}${option.href}`}
+                  href={`/profile/${accountId}${option.href}`}
                   key={option.id}
                   className={`font-500 border-b-solid transition-duration-300 whitespace-nowrap border-b-[2px] px-4 py-[10px] text-sm text-[#7b7b7b] transition-all hover:border-b-[#292929] hover:text-[#292929] ${selected ? "border-b-[#292929] text-[#292929]" : "border-b-[transparent]"}`}
                   onClick={() => {
@@ -127,12 +125,11 @@ export type ProfileLayoutProps = {
 };
 
 export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
-  const router = useRouter();
-  const params = router.query as { userId?: string };
-  const pathname = router.pathname;
+  const { query, pathname } = useRouter();
+  const { accountId } = query as { accountId: AccountId };
 
   // Load profile data
-  const { isRegisteredProject } = useRegistration(params.userId || "");
+  const { isRegisteredProject } = useRegistration(accountId || "");
 
   const tabs = isRegisteredProject ? tabRoutesProject : tabRoutesProfile;
 
@@ -144,17 +141,13 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
     setSelectedTab(tabs.find((tab) => pathname.includes(tab.href)) || tabs[0]);
   }, [pathname, tabs]);
 
-  if (!params.userId) {
-    return "";
-  }
-
   const isProject = isRegisteredProject;
 
   return (
     <PageWithBanner>
-      {isProject && <ProjectBanner projectId={params.userId} />}
-      <ProfileLayoutHero isProject={isProject} accountId={params.userId} />
-      <ProfileLayoutControls accountId={params.userId} isProject={isProject} />
+      {isProject && <ProjectBanner projectId={accountId} />}
+      <ProfileLayoutHero isProject={isProject} {...{ accountId }} />
+      <ProfileLayoutControls isProject={isProject} {...{ accountId }} />
 
       <Tabs
         asLink

@@ -1,5 +1,4 @@
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
-import { dispatch } from "@/store";
 
 type Props = {
   open?: boolean;
@@ -7,11 +6,11 @@ type Props = {
   successMessage?: string;
 };
 
+/**
+ * @deprecated Use toast instead!
+ */
 export const SuccessModal = ({ open, onCloseClick, successMessage }: Props) => {
   const closeHandler = () => {
-    dispatch.projectEditor.submissionStatus("pending");
-    dispatch.projectEditor.setSubmissionError("");
-
     if (onCloseClick) {
       onCloseClick();
     }

@@ -1,4 +1,4 @@
-import { MemoryCache, buildTransaction } from "@wpdas/naxios";
+import { buildTransaction } from "@wpdas/naxios";
 
 import { SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near/client";
@@ -9,7 +9,6 @@ import { AccountId } from "@/common/types";
  */
 const nearSocialDbContractApi = naxiosInstance.contractApi({
   contractId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
-  cache: new MemoryCache({ expirationTime: 5 * 60 }), // 5 minutes
 });
 
 interface NEARSocialUserProfileInput {
@@ -99,7 +98,7 @@ export interface RegistrationSocialProfile {
 }
 
 type NEARSocialGetResponse = {
-  [key: string]: {
+  [key: AccountId]: {
     profile?: NEARSocialUserProfile;
   };
 };

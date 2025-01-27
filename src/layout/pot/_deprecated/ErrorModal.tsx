@@ -1,5 +1,4 @@
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
-import { dispatch } from "@/store";
 
 type Props = {
   open?: boolean;
@@ -7,11 +6,11 @@ type Props = {
   errorMessage?: string;
 };
 
+/**
+ * @deprecated Use toasts instead
+ */
 export const ErrorModal = ({ open, onCloseClick, errorMessage }: Props) => {
   const closeHandler = () => {
-    dispatch.projectEditor.submissionStatus("pending");
-    dispatch.projectEditor.setSubmissionError("");
-
     if (onCloseClick) {
       onCloseClick();
     }
@@ -35,5 +34,3 @@ export const ErrorModal = ({ open, onCloseClick, errorMessage }: Props) => {
     </Dialog>
   );
 };
-
-export default ErrorModal;

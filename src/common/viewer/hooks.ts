@@ -42,6 +42,7 @@ export const useViewerSession = (): ViewerSession => {
         hasWalletReady: true,
         accountId,
         isSignedIn: true,
+        isDaoRepresentative,
         isMetadataLoading: isRegistrationLoading,
         hasRegistrationSubmitted: registration !== undefined,
         hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
@@ -52,6 +53,7 @@ export const useViewerSession = (): ViewerSession => {
         hasWalletReady: true,
         accountId: undefined,
         isSignedIn: false,
+        isDaoRepresentative: false,
         isMetadataLoading: false,
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
@@ -62,11 +64,19 @@ export const useViewerSession = (): ViewerSession => {
         hasWalletReady: false,
         accountId: undefined,
         isSignedIn: false,
+        isDaoRepresentative: false,
         isMetadataLoading: false,
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,
       };
     }
-  }, [accountId, isRegistrationLoading, registration, wallet.isReady, wallet.isSignedIn]);
+  }, [
+    accountId,
+    isDaoRepresentative,
+    isRegistrationLoading,
+    registration,
+    wallet.isReady,
+    wallet.isSignedIn,
+  ]);
 };
