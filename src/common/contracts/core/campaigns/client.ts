@@ -77,7 +77,7 @@ export const get_campaigns_by_owner = ({ owner_id }: { owner_id: AccountId }) =>
   });
 
 export interface GetCampaignInput {
-  campaign_id: string;
+  campaign_id: number;
   limit?: number;
 }
 

@@ -2,15 +2,14 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { walletApi } from "@/common/api/near/client";
 import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
 import { NearIcon } from "@/common/ui/svg";
 import { useViewerSession } from "@/common/viewer";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
+import { useCampaign } from "../hooks/data";
 import { useCampaignDeploymentRedirect } from "../hooks/redirects";
-import { useCampaign } from "../hooks/useCampaign";
 
 export const CampaignSettings = () => {
   // TODO: Move this call to the corresponding page!

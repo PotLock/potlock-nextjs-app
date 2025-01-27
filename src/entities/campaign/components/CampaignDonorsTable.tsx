@@ -10,7 +10,7 @@ import { DataTable } from "@/common/ui/components";
 import { NearIcon } from "@/common/ui/svg";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
-import { useCampaign } from "../hooks/useCampaign";
+import { useCampaign } from "../hooks/data";
 
 export const CampaignDonorsTable = () => {
   const {

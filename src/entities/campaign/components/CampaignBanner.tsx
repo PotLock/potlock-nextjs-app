@@ -7,7 +7,7 @@ import { useNearToUsdWithFallback } from "@/common/_deprecated/useNearToUsdWithF
 import { Campaign, campaignsContractClient } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { SocialsShare } from "@/common/ui/components/molecules/social-share";
+import { SocialsShare } from "@/common/ui/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 

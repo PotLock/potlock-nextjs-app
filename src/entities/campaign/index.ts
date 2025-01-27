@@ -8,4 +8,4 @@ export * from "./components/CampaignSettings";
 export * from "./components/CampaignsList";
 
 export * from "./hooks/redirects";
-export * from "./hooks/useCampaign";
+export * from "./hooks/data";
