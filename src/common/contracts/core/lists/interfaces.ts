@@ -7,8 +7,10 @@ export enum RegistrationStatus {
   Unregistered = "Unregistered",
 }
 
+export type ListId = string;
+
 export interface List {
-  id: number;
+  id: ListId;
   name: string;
   description: string;
   cover_image_url: null | string;
@@ -34,9 +36,9 @@ export interface Registration {
   registered_by: string;
 }
 
-export interface GetListInput {
-  list_id: string;
-}
+export type GetListArgs = {
+  list_id: ListId;
+};
 
 export interface ApplyToList {
   list_id: string;

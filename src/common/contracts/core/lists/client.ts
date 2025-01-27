@@ -8,7 +8,7 @@ import { AccountId } from "@/common/types";
 
 import {
   ApplyToList,
-  GetListInput,
+  GetListArgs,
   List,
   Registration,
   RegistrationStatus,
@@ -20,7 +20,7 @@ const contractApi = naxiosInstance.contractApi({
   cache: new MemoryCache({ expirationTime: 10 }),
 });
 
-export const getLists = () => contractApi.view<{}, List[]>("get_lists");
+export const get_lists = () => contractApi.view<{}, List[]>("get_lists");
 
 export const create_list = ({
   name,
@@ -86,10 +86,7 @@ export const update_list = ({
     gas: "300000000000000",
   });
 
-/**
- * Get single list
- */
-export const get_list = (args: GetListInput) =>
+export const get_list = (args: GetListArgs) =>
   contractApi.view<typeof args, List>("get_list", { args });
 
 export const register_batch = (args: ApplyToList) =>
