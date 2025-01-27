@@ -17,20 +17,10 @@ import {
 
 const contractApi = naxiosInstance.contractApi({
   contractId: LISTS_CONTRACT_ACCOUNT_ID,
-  cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
+  cache: new MemoryCache({ expirationTime: 10 }),
 });
 
-// READ METHODS
-
-/**
- * Get lists
- */
 export const getLists = () => contractApi.view<{}, List[]>("get_lists");
-
-export const get_admin_list = () =>
-  contractApi.view<{}, List[]>("list_admins_by_list_id", {
-    args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID, accountId: "harrydhillon.near" },
-  });
 
 export const create_list = ({
   name,
