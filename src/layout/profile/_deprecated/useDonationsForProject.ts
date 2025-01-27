@@ -2,46 +2,45 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Big } from "big.js";
 
-import { Donation } from "@/common/api/indexer";
-import { useAccountDonationsSent } from "@/common/api/indexer/hooks";
+import { useNearToUsdWithFallback } from "@/common/_deprecated/useNearToUsdWithFallback";
 import { SUPPORTED_FTS } from "@/common/constants";
+import { DonationInfo, getAccountDonationsReceived } from "@/layout/profile/_deprecated/accounts";
 
-import { DonationInfo } from "./accounts.";
-import { useNearToUsdWithFallback } from "./useNearToUsdWithFallback";
-
-const sortByDate = (donationA: DonationInfo | Donation, donationB: DonationInfo | Donation) =>
-  new Date(donationB.donated_at).getTime() - new Date(donationA.donated_at).getTime();
-
-const useDonationsSent = (accountId?: string) => {
+/**
+ * @deprecated Use `indexer.useAccountDonationsReceived`
+ */
+export const useDonationsForProject = (projectId?: string, limit?: number) => {
   const [donations, setDonations] = useState<DonationInfo[]>();
   const [directDonations, setDirectDonations] = useState<DonationInfo[]>();
   const [matchedDonations, setMatchedDonations] = useState<DonationInfo[]>();
 
-  const { data: donationsData } = useAccountDonationsSent({
-    accountId: accountId || "",
-    page_size: 9999,
-  });
-
   useEffect(() => {
-    if (accountId) {
-      const direct: DonationInfo[] = [];
-      const matched: DonationInfo[] = [];
-
-      if (donationsData?.results) {
-        donationsData.results.forEach((donation) => {
-          if (donation.pot) {
-            matched.push(donation as any);
-          } else {
-            direct.push(donation as any);
-          }
+    if (projectId) {
+      (async () => {
+        const _donations = await getAccountDonationsReceived({
+          accountId: projectId,
+          limit,
         });
-      }
 
-      setDonations(donationsData?.results.sort(sortByDate) as any);
-      setDirectDonations(direct.sort(sortByDate));
-      setMatchedDonations(matched.sort(sortByDate));
+        const direct: DonationInfo[] = [];
+        const matched: DonationInfo[] = [];
+
+        if (_donations.results) {
+          _donations.results.forEach((donation) => {
+            if (donation.pot) {
+              matched.push(donation);
+            } else {
+              direct.push(donation);
+            }
+          });
+        }
+
+        setDonations(_donations.results);
+        setDirectDonations(direct);
+        setMatchedDonations(matched);
+      })();
     }
-  }, [donationsData?.results, accountId]);
+  }, [projectId, limit]);
 
   // Get total donations & Unique donors count
   const [totalDonationAmountNear, uniqueDonors, totalMatchedNear] = useMemo(() => {
@@ -49,7 +48,7 @@ const useDonationsSent = (accountId?: string) => {
       let totalNear = Big(0);
       let totalMatched = Big(0);
 
-      const uniqueDonors = [...new Set(donations.map((donation) => donation.donor))];
+      const uniqueDonors = [...new Set(donations.map((donation) => donation.donor.id))];
 
       donations.forEach((donation) => {
         totalNear = totalNear.plus(Big(donation.total_amount || "0"));
@@ -84,5 +83,3 @@ const useDonationsSent = (accountId?: string) => {
     totalMatchedUsd,
   };
 };
-
-export default useDonationsSent;

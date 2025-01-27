@@ -2,12 +2,12 @@ import Big from "big.js";
 import Link from "next/link";
 import { styled } from "styled-components";
 
-import { DonationInfo } from "@/common/_deprecated/accounts.";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { TokenIcon } from "@/entities/_shared/token";
+import { DonationInfo } from "@/layout/profile/_deprecated/accounts";
 import { rootPathnames } from "@/pathnames";
 
 // TODO: refactor by breaking into TailwindCSS classes

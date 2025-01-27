@@ -10,10 +10,24 @@ import { isAccountId } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { Team } from "@/entities/project";
-import AboutItem from "@/layout/profile/components/AboutItem";
-import Github from "@/layout/profile/components/Github";
+import { ProfileLayoutGithubRepos } from "@/layout/profile/components/github-repos";
 import { ProfileLayout } from "@/layout/profile/components/layout";
-import SmartContract from "@/layout/profile/components/SmartContract";
+import SmartContracts from "@/layout/profile/components/SmartContract";
+
+const Section: React.FC<{ title: string; text?: string; children?: React.ReactNode }> = ({
+  title,
+  text,
+  children,
+}) => (
+  <section className="mt-8 flex w-full flex-col items-start justify-start md:flex-row">
+    <div className="mb-4 flex w-full md:w-[358px]">
+      <p className="text-size-base font-600 text-[#2e2e2e]">{title}</p>
+    </div>
+
+    {text && <p className="m-0 flex w-full flex-col">{text}</p>}
+    {children}
+  </section>
+);
 
 export default function ProfileHomeTab() {
   const router = useRouter();
@@ -23,8 +37,8 @@ export default function ProfileHomeTab() {
 
   const { data: isRegistered = false } = listsContractHooks.useIsRegistered({
     enabled: isAccountIdValid,
-    accountId: accountId ?? "noop",
     listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
+    accountId: accountId ?? "noop",
   });
 
   return (
@@ -36,26 +50,29 @@ export default function ProfileHomeTab() {
         </h2>
       </div>
 
-      <AboutItem
-        title="Overview"
-        element={
-          profile ? (
-            <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose w-full">
-              {profile.description}
-            </ReactMarkdown>
-          ) : null
-        }
-      />
+      <Section title="Overview">
+        {profile && (
+          <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose w-full">
+            {profile.description}
+          </ReactMarkdown>
+        )}
+      </Section>
 
       {isRegistered && (
         <>
-          <AboutItem
-            title="Why we are a public good"
-            text={profile?.plPublicGoodReason || "None provided"}
-          />
+          {profile?.plPublicGoodReason && (
+            <Section title="Public Goods listing reasoning" text={profile.plPublicGoodReason} />
+          )}
+
           <Team profile={profile} />
-          <AboutItem title="Github repo(s)" element={<Github profile={profile} />} />
-          <AboutItem title="Smart contracts" element={<SmartContract profile={profile} />} />
+
+          <Section title="Github repo(s)">
+            <ProfileLayoutGithubRepos profile={profile} />
+          </Section>
+
+          <Section title="Smart contracts">
+            <SmartContracts profile={profile} />
+          </Section>
         </>
       )}
     </div>

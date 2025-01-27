@@ -4,7 +4,7 @@ import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { styled } from "styled-components";
 
-import { useDonationsForProject } from "@/common/_deprecated/useDonationsForProject";
+import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core";
 import { truncate } from "@/common/lib";
@@ -120,9 +120,8 @@ export type ProfileLayoutControlsProps = ByAccountId & {};
 export const ProfileLayoutControls: React.FC<ProfileLayoutControlsProps> = ({ accountId }) => {
   const viewer = useViewerSession();
   const isOwner = viewer?.accountId === accountId;
-  const { profile } = useAccountSocialProfile({ accountId });
-  const donationsInfo = useDonationsForProject(accountId);
   const { openDonationModal } = useDonation({ accountId });
+  const { profile } = useAccountSocialProfile({ accountId });
 
   // TODO: For optimization, request and use an indexer endpoint that serves as a proxy for the corresponding function call
   const { data: isRegistered } = listsContractHooks.useIsRegistered({
@@ -130,27 +129,36 @@ export const ProfileLayoutControls: React.FC<ProfileLayoutControlsProps> = ({ ac
     accountId,
   });
 
+  const {
+    isLoading: isFundingAccountDataLoading,
+    data: fundingAccount,
+    error: fundingAccountDataError,
+  } = indexer.useAccount({
+    enabled: isRegistered,
+    accountId,
+  });
+
+  // TODO: Handle errors and loading state
   return (
     <div
       className={cn("flex w-full flex-row flex-wrap gap-2 px-[1rem] md:px-[4.5rem]", {
         "mb-12": !isRegistered,
       })}
     >
-      {/* NameContainer */}
       <div className="flex w-full flex-wrap gap-8">
         {/* Left */}
-        {/* NOTE: "grow-1 shrink-1 basis-none" is not working */}
         <div className="flex flex-col gap-4" style={{ flex: "1 1 0%" }}>
           <div className="flex w-full flex-wrap gap-4">
             {/* Title */}
             <h2 className="font-500 line-height-none font-lora mb-1 text-[40px] text-[#2e2e2e]">
               {truncate(profile?.name ?? accountId, 28)}
             </h2>
-            {/* Account */}
+
             <div className="flex flex-row content-start items-center gap-2">
-              {/* Account Id */}
-              <p className="text-size-base font-400 md:text-size-sm">@ {truncate(accountId, 15)}</p>
-              {/* Copy Icon */}
+              <span className="text-size-base font-400 md:text-size-sm">
+                {`@ ${truncate(accountId, 20)}`}
+              </span>
+
               <ClipboardCopyButton text={accountId} />
             </div>
 
@@ -173,16 +181,19 @@ export const ProfileLayoutControls: React.FC<ProfileLayoutControlsProps> = ({ ac
         {isRegistered ? (
           <Container>
             <div className="donations-info">
-              <div className="amount">{donationsInfo.usd}</div>
-              <div className="inline-flex gap-1 text-sm">
-                <span>{"Raised from"}</span>
-                <span className="font-600">{donationsInfo.uniqueDonors}</span>
-                <span>{donationsInfo.uniqueDonors === 1 ? "donor" : "donors"}</span>
-              </div>
+              <div className="amount">{`~$${fundingAccount?.total_donations_in_usd}`}</div>
+
+              {fundingAccount?.donors_count && (
+                <div className="inline-flex gap-1 text-sm">
+                  <span>{"Raised from"}</span>
+                  <span className="font-600">{fundingAccount.donors_count}</span>
+                  <span>{fundingAccount.donors_count === 1 ? "donor" : "donors"}</span>
+                </div>
+              )}
             </div>
 
             <div className="btn-wrapper">
-              <Button onClick={openDonationModal}>Donate</Button>
+              <Button onClick={openDonationModal}>{"Donate"}</Button>
               <AccountFollowButton {...{ accountId }} />
             </div>
           </Container>

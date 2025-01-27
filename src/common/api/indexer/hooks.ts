@@ -166,14 +166,14 @@ export const usePotDonations = ({
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_sent_retrieve
  */
 export const useAccountDonationsSent = ({
+  enabled = true,
   accountId,
   ...params
-}: ByAccountId & generatedClient.V1AccountsDonationsSentRetrieveParams) => {
-  const queryResult = generatedClient.useV1AccountsDonationsSentRetrieve(
-    accountId,
-    params,
-    INDEXER_CLIENT_CONFIG,
-  );
+}: ByAccountId & generatedClient.V1AccountsDonationsSentRetrieveParams & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1AccountsDonationsSentRetrieve(accountId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };

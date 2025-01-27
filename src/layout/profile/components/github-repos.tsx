@@ -10,7 +10,7 @@ const convertURLtoGithubURL = (path: string) => {
   return path;
 };
 
-const getProfileGithubRepositories = (profile?: NEARSocialUserProfile) => {
+const formatProfileGithubRepositories = (profile?: NEARSocialUserProfile) => {
   const githubRepos = (profile?.plGithubRepos ? JSON.parse(profile.plGithubRepos) : []).map(
     (url: string) => url.replace("github.com/github.com/", "github.com/"),
   );
@@ -18,8 +18,8 @@ const getProfileGithubRepositories = (profile?: NEARSocialUserProfile) => {
   return githubRepos as string[];
 };
 
-const Github = ({ profile }: { profile?: NEARSocialUserProfile }) => {
-  const githubRepositories = getProfileGithubRepositories(profile);
+export const ProfileLayoutGithubRepos = ({ profile }: { profile?: NEARSocialUserProfile }) => {
+  const githubRepositories = formatProfileGithubRepositories(profile);
 
   if (githubRepositories.length > 0) {
     return (
@@ -53,5 +53,3 @@ const Github = ({ profile }: { profile?: NEARSocialUserProfile }) => {
 
   return <p className="m-0 flex w-full flex-col">None provided</p>;
 };
-
-export default Github;
