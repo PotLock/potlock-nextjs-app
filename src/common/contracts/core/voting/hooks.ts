@@ -27,7 +27,7 @@ export const useElection = ({ enabled = true, electionId }: BasicElectionQueryKe
   useSWR(
     ["get_election", electionId],
 
-    ([_queryKey, election_id]: [string, ElectionId]) =>
+    ([_queryKeyHead, election_id]: [string, ElectionId]) =>
       !enabled || !IS_CLIENT ? undefined : votingContractClient.get_election({ election_id }),
   );
 
@@ -35,7 +35,7 @@ export const useIsVotingPeriod = ({ enabled = true, electionId }: BasicElectionQ
   useSWR(
     ["is_voting_period", electionId],
 
-    ([_queryKey, election_id]: [string, ElectionId]) =>
+    ([_queryKeyHead, election_id]: [string, ElectionId]) =>
       !enabled || !IS_CLIENT ? undefined : votingContractClient.is_voting_period({ election_id }),
   );
 
@@ -43,7 +43,7 @@ export const useElectionCandidates = ({ enabled = true, electionId }: BasicElect
   useSWR(
     ["get_election_candidates", electionId],
 
-    ([_queryKey, election_id]: [string, ElectionId]) =>
+    ([_queryKeyHead, election_id]: [string, ElectionId]) =>
       !enabled || !IS_CLIENT
         ? undefined
         : votingContractClient.get_election_candidates({ election_id }),
@@ -57,22 +57,24 @@ export const useElectionCandidateVotes = ({
   useSWR(
     ["get_candidate_votes", electionId, accountId],
 
-    ([_queryKey, election_id, candidate_id]: [string, ElectionId, AccountId]) =>
+    ([_queryKeyHead, election_id, candidate_id]: [string, ElectionId, AccountId]) =>
       !enabled || !IS_CLIENT
         ? undefined
         : votingContractClient.get_candidate_votes({ election_id, candidate_id }),
   );
 
 export const useElectionVotes = ({ enabled = true, electionId }: BasicElectionQueryKey) =>
-  useSWR(["get_election_votes", electionId], ([_queryKey, election_id]: [string, ElectionId]) =>
-    !enabled || !IS_CLIENT ? undefined : votingContractClient.get_election_votes({ election_id }),
+  useSWR(
+    ["get_election_votes", electionId],
+    ([_queryKeyHead, election_id]: [string, ElectionId]) =>
+      !enabled || !IS_CLIENT ? undefined : votingContractClient.get_election_votes({ election_id }),
   );
 
 export const useElectionVoteCount = ({ enabled = true, electionId }: BasicElectionQueryKey) =>
   useSWR(
     ["get_election_vote_count", electionId],
 
-    ([_queryKey, election_id]: [string, ElectionId]) =>
+    ([_queryKeyHead, election_id]: [string, ElectionId]) =>
       !enabled || !IS_CLIENT
         ? undefined
         : votingContractClient.get_election_vote_count({ election_id }),
@@ -86,7 +88,7 @@ export const useVotingRoundVoterVotes = ({
   useSWR(
     ["get_voter_votes", electionId, accountId],
 
-    ([_queryKey, election_id, voter]: [string, ElectionId, AccountId]) =>
+    ([_queryKeyHead, election_id, voter]: [string, ElectionId, AccountId]) =>
       !enabled || !IS_CLIENT
         ? undefined
         : votingContractClient.get_voter_votes({ election_id, voter }),
@@ -100,14 +102,14 @@ export const useVoterRemainingCapacity = ({
   useSWR(
     ["get_voter_remaining_capacity", electionId, accountId],
 
-    ([_queryKey, election_id, voter]: [string, ElectionId, AccountId]) =>
+    ([_queryKeyHead, election_id, voter]: [string, ElectionId, AccountId]) =>
       !enabled || !IS_CLIENT
         ? undefined
         : votingContractClient.get_voter_remaining_capacity({ election_id, voter }),
   );
 
 export const useUniqueVoters = ({ enabled = true, electionId }: BasicElectionQueryKey) =>
-  useSWR(["get_unique_voters", electionId], ([_queryKey, election_id]: [string, ElectionId]) =>
+  useSWR(["get_unique_voters", electionId], ([_queryKeyHead, election_id]: [string, ElectionId]) =>
     !enabled || !IS_CLIENT ? undefined : votingContractClient.get_unique_voters({ election_id }),
   );
 

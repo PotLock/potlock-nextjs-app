@@ -9,7 +9,7 @@ import * as ftClient from "./client";
 export const useFtMetadata = ({ disabled = false, ...params }: ByTokenId & WithDisabled) =>
   useSWR(
     () => (disabled || !IS_CLIENT ? null : ["ft_metadata", params.tokenId]),
-    ([_queryKey, tokenId]) => ftClient.ft_metadata({ tokenId }).catch(() => undefined),
+    ([_queryKeyHead, tokenId]) => ftClient.ft_metadata({ tokenId }).catch(() => undefined),
   );
 
 // TODO: Use conventional `enabled` instead of `disabled`
@@ -20,6 +20,6 @@ export const useFtBalanceOf = ({
   useSWR(
     () => (disabled || !IS_CLIENT ? null : ["ft_balance_of", params.accountId, params.tokenId]),
 
-    ([_queryKey, accountId, tokenId]) =>
+    ([_queryKeyHead, accountId, tokenId]) =>
       ftClient.ft_balance_of({ accountId, tokenId }).catch(() => undefined),
   );

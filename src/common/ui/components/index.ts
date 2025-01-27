@@ -79,4 +79,5 @@ export * from "./organisms/modal-body";
  *
  * See https://atomicdesign.bradfrost.com/chapter-2/#templates
  */
+export * from "./templates/page-error";
 export * from "./templates/page-with-banner";

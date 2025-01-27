@@ -20,8 +20,8 @@ export type Campaign = {
   cover_image_url?: string;
   recipient: AccountId;
   owner: AccountId;
-  start_ms?: string;
-  end_ms?: string;
+  start_ms: number;
+  end_ms?: number | null;
   ftId?: AccountId;
   target_amount: string;
   min_amount?: string;

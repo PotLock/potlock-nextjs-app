@@ -9,7 +9,7 @@ import { NearInputField, TextAreaField, TextField } from "@/common/ui/form-field
 
 import { useCampaignForm } from "../hooks/forms";
 
-const formatTimestampForInput = (timestamp: string) => {
+const formatTimestampForInput = (timestamp: number) => {
   if (!timestamp) return "";
   const date = new Date(timestamp);
   return date.toISOString().slice(0, 16);
@@ -54,7 +54,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
         existingData?.end_ms ? formatTimestampForInput(existingData?.end_ms) : "",
       );
     }
-  }, [isUpdate, existingData]);
+  }, [isUpdate, existingData, form]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;

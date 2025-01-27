@@ -19,21 +19,15 @@ export const CampaignsList = ({ campaigns }: { campaigns: Campaign[] }) => {
 
     switch (sortType) {
       case "recent":
-        projects.sort(
-          (a, b) =>
-            new Date(b.start_ms as string).getTime() - new Date(a.start_ms as string).getTime(),
-        );
-
+        projects.sort((a, b) => new Date(b.start_ms).getTime() - new Date(a.start_ms).getTime());
         setFilteredCampaigns(projects);
         break;
+
       case "older":
-        projects.sort(
-          (a, b) =>
-            new Date(a.start_ms as string).getTime() - new Date(b.start_ms as string).getTime(),
-        );
-
+        projects.sort((a, b) => new Date(a.start_ms).getTime() - new Date(b.start_ms).getTime());
         setFilteredCampaigns(projects);
         break;
+
       default:
         break;
     }

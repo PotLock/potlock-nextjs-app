@@ -11,7 +11,7 @@ export const useNativeTokenUsdPrice = (
   useSWR(
     () => (disabled ? null : ["oneNativeTokenUsdPrice", NATIVE_TOKEN_ID.toLowerCase()]),
 
-    ([_queryKey, tokenId]) =>
+    ([_queryKeyHead, tokenId]) =>
       client
         .get(`/simple/price?ids=${tokenId}&vs_currencies=usd`)
         .then((response: { data: { [key: string]: { usd: number } } }) =>

@@ -9,7 +9,7 @@ export const useSocialProfile = ({
   enabled = true,
   accountId,
 }: ByAccountId & ConditionalActivation) =>
-  useSWR(["useSocialProfile", accountId], ([_queryKey, account_id]) =>
+  useSWR(["useSocialProfile", accountId], ([_queryKeyHead, account_id]) =>
     !enabled || !IS_CLIENT
       ? undefined
       : contractClient

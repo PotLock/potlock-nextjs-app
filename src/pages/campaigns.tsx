@@ -2,17 +2,20 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { Campaign, campaignsContractClient } from "@/common/contracts/core";
+import { Campaign, campaignsContractHooks } from "@/common/contracts/core";
 import {
   Button,
   Carousel,
   CarouselApi,
   CarouselContent,
+  PageError,
   PageWithBanner,
+  SplashScreen,
 } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
 
-export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
+const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -63,23 +66,22 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 };
 
 export default function CampaignsPage() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-
-  useEffect(() => {
-    campaignsContractClient
-      .get_campaigns()
-      .then((fetchedCampaigns) => {
-        setCampaigns(fetchedCampaigns);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  const {
+    isLoading: isCampaignsListLoading,
+    data: campaigns,
+    error: campaignsLoadingError,
+  } = campaignsContractHooks.useCampaigns();
 
   return (
     <PageWithBanner>
-      <div className="md:p-18 min-h-100  bg-hero relative flex w-full flex-col items-start justify-center overflow-hidden">
-        <h1 className="font-500  font-lora text-[48px] tracking-[1.12px]">Fund Your Ideas</h1>
+      <div
+        className={cn(
+          "md:p-18 min-h-100 bg-hero relative w-full",
+          "flex flex-col items-start justify-center overflow-hidden",
+        )}
+      >
+        <h1 className="font-500 font-lora text-[48px] tracking-[1.12px]">{"Fund Your Ideas"}</h1>
+
         <p className="text-[18px] font-extralight leading-[30px] md:w-[50%]">
           {
             "Bring your vision to life with a powerful fundraising campaign to support groundbreaking projects. Reach your goals and make a positive impact on your community"
@@ -99,8 +101,23 @@ export default function CampaignsPage() {
         </Button>
       </div>
 
-      <FeaturedCampaigns data={campaigns} />
-      <CampaignsList campaigns={campaigns} />
+      {campaignsLoadingError !== undefined && (
+        <PageError
+          title="Unable to load campaigns"
+          message={"message" in campaignsLoadingError ? campaignsLoadingError.message : undefined}
+        />
+      )}
+
+      {campaignsLoadingError === undefined && campaigns === undefined && isCampaignsListLoading && (
+        <SplashScreen className="h-100" />
+      )}
+
+      {campaignsLoadingError === undefined && campaigns !== undefined && (
+        <>
+          <FeaturedCampaigns data={campaigns} />
+          <CampaignsList campaigns={campaigns} />
+        </>
+      )}
     </PageWithBanner>
   );
 }

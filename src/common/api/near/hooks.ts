@@ -17,7 +17,7 @@ export const useNativeTokenMetadata = ({ disabled = false }: WithDisabled) =>
   useSWR(
     () => (disabled ? null : ["NativeTokenMetadata", NATIVE_TOKEN_ID]),
 
-    (_queryKey) =>
+    (_queryKeyHead) =>
       new Promise<NativeTokenMetadata>((resolve) =>
         resolve({
           name: NATIVE_TOKEN_ID,
@@ -32,7 +32,7 @@ export const useViewAccount = ({ disabled = false, ...params }: ByAccountId & Wi
   useSWR(
     () => (disabled ? null : ["view_account", params.accountId]),
 
-    ([_queryKey, accountId]) =>
+    ([_queryKeyHead, accountId]) =>
       nearRpc
         .query<AccountView>({
           request_type: "view_account",

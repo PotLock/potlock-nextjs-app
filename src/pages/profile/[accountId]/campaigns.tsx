@@ -1,44 +1,55 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { Campaign, campaignsContractClient } from "@/common/contracts/core";
+import { campaignsContractHooks } from "@/common/contracts/core";
+import { PageError, SplashScreen } from "@/common/ui/components";
 import { CampaignCard } from "@/entities/campaign";
 import { ProfileLayout } from "@/layout/profile/components/layout";
 
 import { NoResults } from "./lists";
 
-const ProfileCampaigns = () => {
+export default function ProfileCampaignsTab() {
   const router = useRouter();
   const { accountId } = router.query as { accountId: string };
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
-  useEffect(() => {
-    campaignsContractClient
-      .get_campaigns_by_owner({ owner_id: accountId })
-      .then((fetchedCampaigns) => {
-        setCampaigns(fetchedCampaigns);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [accountId]);
+  const {
+    isLoading: isCampaignsListLoading,
+    data: campaigns,
+    error: campaignsLoadingError,
+  } = campaignsContractHooks.useOwnedCampaigns({ accountId });
 
+  // TODO: Use skeletons instead of the splash screen
   return (
     <div className="w-full">
-      {campaigns?.length ? (
-        <div className="my-4 flex flex-wrap gap-8">
-          {campaigns?.map((data) => <CampaignCard data={data} key={data.id} />)}
-        </div>
-      ) : (
-        <NoResults text="This Project has no Campaigns" />
+      {campaignsLoadingError !== undefined && (
+        <PageError
+          title="Unable to load campaigns"
+          message={"message" in campaignsLoadingError ? campaignsLoadingError.message : undefined}
+        />
+      )}
+
+      {campaignsLoadingError === undefined && campaigns === undefined && isCampaignsListLoading && (
+        <SplashScreen className="h-100" />
+      )}
+
+      {campaignsLoadingError === undefined && campaigns !== undefined && (
+        <>
+          {campaigns.length > 0 ? (
+            <div className="my-4 flex flex-wrap gap-8">
+              {campaigns.map((campaign) => (
+                <CampaignCard data={campaign} key={campaign.id} />
+              ))}
+            </div>
+          ) : (
+            <NoResults text="This Project has no Campaigns" />
+          )}
+        </>
       )}
     </div>
   );
-};
+}
 
-ProfileCampaigns.getLayout = function getLayout(page: ReactElement) {
+ProfileCampaignsTab.getLayout = function getLayout(page: ReactElement) {
   return <ProfileLayout>{page}</ProfileLayout>;
 };
-
-export default ProfileCampaigns;

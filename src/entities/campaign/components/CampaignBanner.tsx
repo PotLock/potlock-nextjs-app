@@ -1,44 +1,35 @@
-import { useEffect, useState } from "react";
-
-import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { useNearToUsdWithFallback } from "@/common/_deprecated/useNearToUsdWithFallback";
-import { Campaign, campaignsContractClient } from "@/common/contracts/core";
+import { campaignsContractHooks } from "@/common/contracts/core";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
+import type { ByCampaignId } from "@/common/types";
 import { SocialsShare } from "@/common/ui/components";
+import { cn } from "@/common/ui/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
-export const CampaignBanner = () => {
-  const [campaign, setCampaign] = useState<Campaign>();
-  const [loading, setLoading] = useState(false);
+export type CampaignBannerProps = ByCampaignId & {};
+
+export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) => {
+  const {
+    isLoading: isCampaignLoading,
+    data: campaign,
+    error: campaignLoadingError,
+  } = campaignsContractHooks.useCampaign({
+    campaignId,
+  });
 
   const usdInfo = useNearToUsdWithFallback(
     Number(yoctoNearToFloat((campaign?.total_raised_amount as string) || "0")),
   );
 
-  const {
-    query: { campaignId },
-  } = useRouter();
-
-  useEffect(() => {
-    if (!campaignId) return;
-    setLoading(true);
-
-    campaignsContractClient
-      .get_campaign({ campaign_id: parseInt(campaignId as string) as any })
-      .then((response) => {
-        setCampaign(response);
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
-  }, [campaignId]);
-
-  if (loading) {
+  // TODO: Use skeletons to cover the loading state instead!
+  // TODO: Also implement error handling ( when `!isCampaignLoading && campaign === undefined` )
+  if (isCampaignLoading) {
     return <div>Loading...</div>;
   }
 
@@ -58,8 +49,14 @@ export const CampaignBanner = () => {
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
           <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
-            <h1 className="text-[24px] font-bold text-white">{campaign?.name}</h1>
-            <div className="m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
+            <h1 className="text-foreground text-[24px] font-bold">{campaign?.name}</h1>
+
+            <div
+              className={cn(
+                "text-foreground flex flex-col items-start gap-2 p-0 text-[12px]",
+                "md:flex-row md:items-center md:text-[15px]",
+              )}
+            >
               <div className="flex gap-1">
                 <p className="pr-1 font-semibold">FOR</p>
                 <AccountProfileLink
@@ -107,7 +104,7 @@ export const CampaignBanner = () => {
             disabled={
               isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
             }
-            campaignId={parseInt(campaignId as string)}
+            {...{ campaignId }}
           />
           <SocialsShare variant="button" />
         </div>

@@ -16,7 +16,7 @@ export const useIsRegistered = ({
   ConditionalActivation) =>
   useSWR(
     ["useIsRegistered", accountId, listId, params],
-    ([_queryKey, accountIdKey, listIdKey, paramsKey]) =>
+    ([_queryKeyHead, accountIdKey, listIdKey, paramsKey]) =>
       !enabled || !IS_CLIENT
         ? undefined
         : contractClient.is_registered({
@@ -31,7 +31,7 @@ export const useRegistration = ({
   accountId,
   listId,
 }: ByAccountId & ByListId & ConditionalActivation) =>
-  useSWR(["useRegistration", accountId, listId], ([_queryKey, accountIdKey, listIdKey]) =>
+  useSWR(["useRegistration", accountId, listId], ([_queryKeyHead, accountIdKey, listIdKey]) =>
     !enabled || !IS_CLIENT
       ? undefined
       : contractClient.getRegistration({ registrant_id: accountIdKey, list_id: listIdKey }),

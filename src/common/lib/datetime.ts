@@ -53,10 +53,10 @@ export const daysSinceTimestamp = (unixTimestampMs: number) =>
   Temporal.Now.instant().since(Temporal.Instant.fromEpochMilliseconds(unixTimestampMs)).days;
 
 /**
- * Sorts a list of objects containing information about events in chronological order
- *  based on a given datetime property.
+ * Sorts a list of objects containing information about events
+ * in chronological order ( old to recent ) based on a given datetime property.
  */
-export const toChronologicalOrder = <T>(
+export const oldToRecent = <T>(
   propertyKey: keyof T,
   list: Array<T extends Record<string, string | number | unknown> ? T : T>,
 ) =>

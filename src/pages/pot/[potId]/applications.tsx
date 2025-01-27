@@ -6,7 +6,7 @@ import { styled } from "styled-components";
 
 import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
-import { toChronologicalOrder } from "@/common/lib";
+import { oldToRecent } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { FilterChip, SearchBar } from "@/common/ui/components";
 import { ProjectListingStatusVariant } from "@/entities/project";
@@ -60,7 +60,7 @@ const ApplicationsTab = () => {
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
 
   const {
-    isLoading: areApplicationsLoading,
+    isLoading: isApplicationListLoading,
     error,
     data: applications,
     mutate: refetchApplications,
@@ -71,8 +71,8 @@ const ApplicationsTab = () => {
   });
 
   const sortedResults = useMemo(() => {
-    const oldToRecent = toChronologicalOrder("submitted_at", applications?.results ?? []);
-    return oldToRecent.toReversed();
+    const oldToRecentResults = oldToRecent("submitted_at", applications?.results ?? []);
+    return oldToRecentResults.toReversed();
   }, [applications?.results]);
 
   // Admin - Edit Project
@@ -175,7 +175,7 @@ const ApplicationsTab = () => {
 
         {potDetail && (
           <div className="flex w-full flex-col flex-wrap justify-between gap-5 md:flex-row">
-            {!areApplicationsLoading ? (
+            {!isApplicationListLoading ? (
               sortedResults.map((application: PotApplication) => (
                 <PotApplicationCard
                   key={application.id}

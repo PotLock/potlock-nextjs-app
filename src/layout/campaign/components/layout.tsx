@@ -90,11 +90,11 @@ type ReactLayoutProps = {
 
 export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   const router = useRouter();
-  const pathname = router.pathname;
+  const { campaignId } = router.query as { campaignId: string };
   const tabs = CAMPAIGN_TAB_ROUTES;
 
   const [selectedTab, setSelectedTab] = useState(
-    tabs.find((tab) => pathname.includes(tab.href)) || tabs[0],
+    tabs.find((tab) => router.pathname.includes(tab.href)) || tabs[0],
   );
 
   const handleSelectedTab = useCallback(
@@ -105,8 +105,9 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   return (
     <PageWithBanner>
       <div className="md:p-8">
-        <CampaignBanner />
+        <CampaignBanner campaignId={parseInt(campaignId)} />
       </div>
+
       <Tabs
         asLink
         options={tabs}

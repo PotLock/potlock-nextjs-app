@@ -9,7 +9,7 @@ import { ZodError } from "zod";
 import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { toChronologicalOrder } from "@/common/lib";
+import { oldToRecent } from "@/common/lib";
 import { useViewerSession } from "@/common/viewer";
 import { dispatch } from "@/store";
 
@@ -51,7 +51,7 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
   );
 
   const defaultPotAccountId = useMemo(
-    () => toChronologicalOrder("matching_round_end", matchingPots).at(0)?.account,
+    () => oldToRecent("matching_round_end", matchingPots).at(0)?.account,
     [matchingPots],
   );
 

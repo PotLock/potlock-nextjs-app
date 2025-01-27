@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { indexer } from "@/common/api/indexer";
-import { toChronologicalOrder } from "@/common/lib";
+import { oldToRecent } from "@/common/lib";
 import { ByListId, ChronologicalSortOrder, ChronologicalSortOrderVariant } from "@/common/types";
 
 import { ProjectCategory, ProjectListingStatusVariant } from "../types";
@@ -32,9 +32,11 @@ export const useProjectLookup = ({ listId }: ProjectLookupParams) => {
   });
 
   const results = useMemo(() => {
-    const oldToRecent = toChronologicalOrder("submitted_at", listRegistrations?.results ?? []);
+    const oldToRecentResults = oldToRecent("submitted_at", listRegistrations?.results ?? []);
 
-    return sortingOrder === ChronologicalSortOrder.older ? oldToRecent : oldToRecent.toReversed();
+    return sortingOrder === ChronologicalSortOrder.older
+      ? oldToRecentResults
+      : oldToRecentResults.toReversed();
   }, [listRegistrations?.results, sortingOrder]);
 
   return {
