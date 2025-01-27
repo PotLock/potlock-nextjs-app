@@ -58,7 +58,7 @@ export const ProjectCard = ({ projectId, allowDonate = true, payoutDetails }: Pr
           style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"
         >
-          <AccountProfileCover accountId={projectId} />
+          <AccountProfileCover accountId={projectId} height={146} />
 
           {/* Content */}
           <div className="flex flex-1 flex-col gap-5 px-6 pb-6">

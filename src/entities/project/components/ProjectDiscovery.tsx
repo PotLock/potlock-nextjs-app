@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import { ListRegistration } from "@/common/api/indexer";
 import { CHRONOLOGICAL_SORT_OPTIONS } from "@/common/constants";
-import { ChronologicalSortOrderVariant } from "@/common/types";
+import { type ByListId, ChronologicalSortOrderVariant } from "@/common/types";
 import {
   Filter,
   Group,
@@ -29,7 +29,9 @@ import { useProjectLookup } from "../hooks/lookup";
 const ProjectLookupPlaceholder = () =>
   Array.from({ length: 6 }, (_, index) => <ProjectCardSkeleton key={index} />);
 
-export const ProjectDiscovery = () => {
+export type ProjectDiscoveryProps = ByListId & {};
+
+export const ProjectDiscovery: React.FC<ProjectDiscoveryProps> = ({ listId }) => {
   const {
     projectCategoryFilter,
     setProjectCategoryFilter,
@@ -43,7 +45,7 @@ export const ProjectDiscovery = () => {
     isProjectLookupPending,
     projects,
     totalProjectCount,
-  } = useProjectLookup({ listId: 1 });
+  } = useProjectLookup({ listId });
 
   const tagList = useMemo(
     () => [

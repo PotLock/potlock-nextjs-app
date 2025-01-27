@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { NETWORK } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useViewerSession } from "@/common/viewer";
@@ -24,7 +25,7 @@ export const GeneralStats = () => {
   const { data: stats } = indexer.useStats();
 
   return (
-    <div className="flex w-full flex-col ">
+    <div className="flex w-full flex-col gap-4">
       <div className="mt-4 flex flex-row flex-wrap items-center gap-4 px-2 py-0 md:gap-6 md:px-10">
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
           {`$${stats?.total_donations_usd.toString()}`}
@@ -38,7 +39,7 @@ export const GeneralStats = () => {
       </div>
 
       {/* Line */}
-      <div className="mt-4 h-px w-full bg-[#ebebeb]" />
+      <div className="h-px w-full bg-neutral-100" />
     </div>
   );
 };
@@ -50,12 +51,12 @@ const WelcomeBanner = () => {
     <div
       className={cn(
         "bg-hero relative flex w-full flex-col justify-center overflow-hidden",
-        "rounded-xl border border-solid border-[#f8d3b0] bg-cover bg-no-repeat",
+        "border border-solid border-[#f8d3b0] bg-cover bg-no-repeat md:rounded-xl",
       )}
     >
-      <div className="relative z-[1] flex flex-col justify-center px-5  py-12 md:px-10 md:py-16">
+      <div className="relative z-[1] flex flex-col justify-center px-5 py-12 md:px-10 md:py-16">
         <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
-          Transforming Funding for Public Goods
+          {"Transforming Funding for Public Goods"}
         </h3>
 
         <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
@@ -88,9 +89,11 @@ const WelcomeBanner = () => {
 
 export default function Home() {
   return (
-    <main className="container flex flex-col items-center">
-      <WelcomeBanner />
-      <GeneralStats />
+    <main className="2xl-container flex flex-col items-center">
+      <div className="flex w-full flex-col md:px-10">
+        <WelcomeBanner />
+        <GeneralStats />
+      </div>
 
       <div className="flex w-full flex-col gap-10 px-2 pt-10 md:px-10 md:pt-12">
         <div className="flex w-full flex-col gap-5">
@@ -106,7 +109,7 @@ export default function Home() {
         </div>
       </div>
 
-      <ProjectDiscovery />
+      <ProjectDiscovery listId={PUBLIC_GOODS_REGISTRY_LIST_ID} />
     </main>
   );
 }
