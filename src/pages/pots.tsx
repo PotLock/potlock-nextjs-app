@@ -1,4 +1,3 @@
-import { isClient } from "@wpdas/naxios";
 import Link from "next/link";
 
 import { Button, PageWithBanner } from "@/common/ui/components";
@@ -20,7 +19,7 @@ const Banner = () => {
             "max-xs:w-full max-xs:p-[12px_0px] mt-6 mt-[40px] flex items-center gap-8 max-md:flex-col max-md:gap-4"
           }
         >
-          {isClient() && <PotDeploymentButton />}
+          <PotDeploymentButton />
 
           <Button asChild variant="brand-tonal">
             <Link
