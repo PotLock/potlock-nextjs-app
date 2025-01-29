@@ -12,6 +12,7 @@ export type ViewerSession =
       daoAccountId: undefined;
       isSignedIn: false;
       isDaoRepresentative: false;
+      isHuman: false;
       isMetadataLoading: false;
       registrationStatus: undefined;
       hasRegistrationSubmitted: false;
@@ -23,6 +24,7 @@ export type ViewerSession =
       daoAccountId: undefined;
       isSignedIn: false;
       isDaoRepresentative: false;
+      isHuman: false;
       isMetadataLoading: false;
       registrationStatus: undefined;
       hasRegistrationSubmitted: false;
@@ -32,6 +34,7 @@ export type ViewerSession =
       hasWalletReady: true;
       accountId: AccountId;
       isSignedIn: true;
+      isHuman: boolean;
       isMetadataLoading: boolean;
       registrationStatus?: RegistrationStatus;
       hasRegistrationSubmitted: boolean;

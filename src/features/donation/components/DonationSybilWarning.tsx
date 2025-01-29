@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 
 import { SYBIL_APP_LINK_URL } from "@/common/_config";
-import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/components";
 import { WarningIcon } from "@/common/ui/svg";
@@ -18,12 +17,11 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
   classNames,
 }) => {
   const viewer = useViewerSession();
-  const { isHumanVerified: isDonorNadabotVerified } = useIsHuman(viewer.accountId);
   const { data: pot } = indexer.usePot({ potId });
 
   const isVisible = useMemo(
-    () => typeof pot?.sybil_wrapper_provider === "string" && !isDonorNadabotVerified,
-    [isDonorNadabotVerified, pot?.sybil_wrapper_provider],
+    () => typeof pot?.sybil_wrapper_provider === "string" && !viewer.isHuman,
+    [pot?.sybil_wrapper_provider, viewer.isHuman],
   );
 
   return !isVisible ? null : (

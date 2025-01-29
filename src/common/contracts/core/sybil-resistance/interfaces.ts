@@ -1,3 +1,19 @@
+export interface Config {
+  owner: string;
+  admins: string[];
+  default_provider_ids: string[];
+  default_human_threshold: number;
+}
+
+export interface GetHumanScoreInput {
+  account_id: string;
+}
+
+export interface HumanScoreResponse {
+  is_human: boolean;
+  score: number;
+}
+
 export enum ProviderStatus {
   Pending = "Pending",
   Active = "Active",
@@ -107,3 +123,21 @@ export interface DeactivateProviderInput {
 
 export type FlagProviderInput = DeactivateProviderInput;
 export type UnflagProviderInput = DeactivateProviderInput;
+
+export interface StampExternal {
+  user_id: string;
+  provider: ProviderExternal;
+  validated_at_ms: number;
+}
+
+export interface GetStampsForAccountIdInput {
+  account_id: string;
+  from_index?: number;
+  limit?: number;
+}
+
+export type GetUsersForStampInput = {
+  provider_id: string;
+  from_index?: number;
+  limit?: number;
+};

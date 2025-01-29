@@ -6,11 +6,9 @@ import { entries } from "remeda";
 import { Temporal } from "temporal-polyfill";
 import { ZodError } from "zod";
 
-import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
-import { useViewerSession } from "@/common/viewer";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
@@ -28,7 +26,6 @@ export type DonationFormParams = DonationAllocationKey & {
 
 export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormParams) => {
   const now = Temporal.Now.instant();
-  const viewer = useViewerSession();
   const isSingleProjectDonation = "accountId" in params;
   const isPotDonation = "potId" in params;
   const isListDonation = "listId" in params;
@@ -141,8 +138,6 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
 
   const isDisabled = !hasChanges || !self.formState.isValid || self.formState.isSubmitting;
 
-  const isSenderHumanVerified = useIsHuman(viewer.accountId);
-
   const minAmountError =
     !isDonationAmountSufficient({ amount, tokenId }) && hasChanges
       ? DONATION_MIN_NEAR_AMOUNT_ERROR
@@ -197,7 +192,6 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
     defaultValues,
     hasChanges,
     isDisabled,
-    isSenderHumanVerified,
     onSubmit: self.handleSubmit(onSubmit),
     matchingPots,
     minAmountError,

@@ -1,6 +1,6 @@
-import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
+import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
 import type { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import {
@@ -13,7 +13,8 @@ import { listRegistrationStatusIcons } from "@/entities/list";
 export type ProfileLayoutHeroProps = ByAccountId & {};
 
 export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId }) => {
-  const { isHumanVerified } = useIsHuman(accountId);
+  const { isLoading: isHumanVerificationStatusLoading, data: isHuman } =
+    sybilResistanceContractHooks.useIsHuman({ accountId });
 
   // TODO: For optimization, request and use an indexer endpoint for list registration by specified accountId and listId
   // TODO: Also implement error and loading status handling
@@ -46,7 +47,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
             "relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-2 md:gap-6",
           )}
         >
-          {pgRegistryRegistration || isHumanVerified ? (
+          {pgRegistryRegistration || isHuman ? (
             <>
               {pgRegistryRegistration && (
                 <div
@@ -68,7 +69,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
                 </div>
               )}
 
-              {pgRegistryRegistration === undefined && isHumanVerified && (
+              {pgRegistryRegistration === undefined && isHuman && (
                 <div
                   className={cn(
                     "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
