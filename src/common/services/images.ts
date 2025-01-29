@@ -1,5 +1,5 @@
 import { naxiosInstance } from "@/common/api/near-protocol/client";
-import { Image, socialDbContractClient } from "@/common/contracts/social";
+import { Image, socialDbContractClient } from "@/common/contracts/social-db";
 
 type Props = {
   accountId?: string;

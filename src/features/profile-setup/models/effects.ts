@@ -10,7 +10,7 @@ import {
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
   PUBLIC_GOODS_REGISTRY_LIST_ID,
 } from "@/common/constants";
-import { type NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social";
+import { type NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social-db";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import { deepObjectDiff } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";

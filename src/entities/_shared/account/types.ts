@@ -1,4 +1,4 @@
-import type { ProfileLinktree } from "@/common/contracts/social";
+import type { ProfileLinktree } from "@/common/contracts/social-db";
 import { ByAccountId, ByRegistrationId } from "@/common/types";
 
 export type AccountPower = {

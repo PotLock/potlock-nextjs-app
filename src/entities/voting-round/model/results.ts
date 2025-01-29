@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 
 import { type MpdaoVoterItem } from "@/common/api/indexer";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
-import { ftClient } from "@/common/contracts/tokens/ft";
+import { ftContractClient } from "@/common/contracts/tokens/fungible";
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 
 import type { VoterProfile, VotingMechanismConfig, VotingRoundWinner } from "../types";
@@ -45,7 +45,9 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
         matchingPoolBalance,
       }) => {
         const stakingTokenMetadata = mechanismConfig.stakingContractAccountId
-          ? await ftClient.ft_metadata({ tokenId: mechanismConfig.stakingContractAccountId })
+          ? await ftContractClient.ft_metadata({
+              tokenId: mechanismConfig.stakingContractAccountId,
+            })
           : null;
 
         /**

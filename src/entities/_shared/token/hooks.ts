@@ -6,8 +6,8 @@ import { coingeckoHooks } from "@/common/api/coingecko";
 import { intearTokenIndexerHooks } from "@/common/api/intear-token-indexer";
 import { nearHooks } from "@/common/api/near-protocol";
 import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_IDS } from "@/common/constants";
-import { refExchangeHooks } from "@/common/contracts/ref-finance";
-import { ftHooks } from "@/common/contracts/tokens";
+import { refExchangeContractHooks } from "@/common/contracts/ref-finance";
+import { ftContractHooks } from "@/common/contracts/tokens";
 import { indivisibleUnitsToBigNum, indivisibleUnitsToFloat, isAccountId } from "@/common/lib";
 import { formatWithCommas } from "@/common/lib/formatWithCommas";
 import type { AccountId, ByTokenId, ConditionalActivation } from "@/common/types";
@@ -31,7 +31,7 @@ export const useTokenUsdDisplayValue = ({
 };
 
 export const useTokenAllowlist = () => {
-  const { data: refFinanceTokenAllowlist } = refExchangeHooks.useWhitelistedTokens();
+  const { data: refFinanceTokenAllowlist } = refExchangeContractHooks.useWhitelistedTokens();
 
   return useMemo(
     () => ({
@@ -84,7 +84,7 @@ export const useToken = ({
     isLoading: isFtMetadataLoading,
     data: ftMetadata,
     error: ftMetadataError,
-  } = ftHooks.useFtMetadata({
+  } = ftContractHooks.useFtMetadata({
     disabled: !enabled || !isValidFtContractAccountId,
     tokenId,
   });
@@ -102,7 +102,7 @@ export const useToken = ({
     isLoading: isFtBalanceLoading,
     data: ftBalance,
     error: ftBalanceError,
-  } = ftHooks.useFtBalanceOf({
+  } = ftContractHooks.useFtBalanceOf({
     disabled: balanceCheckAccountId === undefined || !isValidFtContractAccountId,
     accountId: balanceCheckAccountId as AccountId,
     tokenId,

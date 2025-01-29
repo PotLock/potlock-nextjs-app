@@ -5,7 +5,7 @@
 import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
-import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social";
+import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social-db";
 import { getImage } from "@/common/services/images";
 import { ByAccountId } from "@/common/types";
 import { rootPathnames } from "@/pathnames";

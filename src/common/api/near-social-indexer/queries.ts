@@ -2,7 +2,7 @@ import {
   FeedsResult,
   IndexPostResultItem,
   PostContent,
-} from "@/common/contracts/social/interfaces";
+} from "@/common/contracts/social-db/interfaces";
 
 import { nearSocialClient } from "./client";
 

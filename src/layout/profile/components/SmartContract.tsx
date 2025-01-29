@@ -1,4 +1,4 @@
-import { NEARSocialUserProfile } from "@/common/contracts/social";
+import { NEARSocialUserProfile } from "@/common/contracts/social-db";
 import { ClipboardCopyButton } from "@/common/ui/components";
 
 const getProfileSmartContracts = (profile?: NEARSocialUserProfile) => {

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { styled } from "styled-components";
 
 import { indexer } from "@/common/api/indexer";
-import { ExternalFundingSource } from "@/common/contracts/social";
+import { ExternalFundingSource } from "@/common/contracts/social-db";
 import type { AccountId } from "@/common/types";
 import { Separator } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";

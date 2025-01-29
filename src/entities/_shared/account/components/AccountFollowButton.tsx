@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { nearSocialIndexerHooks } from "@/common/api/near-social-indexer";
-import { socialDbContractClient } from "@/common/contracts/social";
+import { socialDbContractClient } from "@/common/contracts/social-db";
 import type { ByAccountId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";

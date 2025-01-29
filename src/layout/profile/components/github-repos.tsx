@@ -1,4 +1,4 @@
-import { NEARSocialUserProfile } from "@/common/contracts/social";
+import { NEARSocialUserProfile } from "@/common/contracts/social-db";
 
 const convertURLtoGithubURL = (path: string) => {
   // If the path starts with "github.com/", return it as it is

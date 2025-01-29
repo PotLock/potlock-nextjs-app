@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { fetchAccountFeedPosts } from "@/common/api/near-social-indexer";
-import { IndexPostResultItem } from "@/common/contracts/social";
+import { IndexPostResultItem } from "@/common/contracts/social-db";
 import type { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
 import { useViewerSession } from "@/common/viewer";

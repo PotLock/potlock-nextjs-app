@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { NEARSocialUserProfile } from "@/common/contracts/social";
+import { NEARSocialUserProfile } from "@/common/contracts/social-db";
 import type { AccountId } from "@/common/types";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";

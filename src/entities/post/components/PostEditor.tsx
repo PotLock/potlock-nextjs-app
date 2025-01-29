@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { socialDbContractClient } from "@/common/contracts/social";
+import { socialDbContractClient } from "@/common/contracts/social-db";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";
 import { useViewerSession } from "@/common/viewer";

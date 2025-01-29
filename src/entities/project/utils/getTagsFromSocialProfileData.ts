@@ -1,4 +1,4 @@
-import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social";
+import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social-db";
 
 const isEmptyObject = (obj: object): boolean => obj && Object.keys(obj).length === 0;
 

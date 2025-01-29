@@ -1,3 +1,3 @@
-import * as liquidStakingClient from "./client";
+import * as metapoolLiquidStakingClient from "./client";
 
-export { liquidStakingClient };
+export { metapoolLiquidStakingClient };

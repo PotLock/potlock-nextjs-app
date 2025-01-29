@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { socialDbContractHooks } from "@/common/contracts/social";
+import { socialDbContractHooks } from "@/common/contracts/social-db";
 import type { ByAccountId, ConditionalActivation } from "@/common/types";
 
 import {
