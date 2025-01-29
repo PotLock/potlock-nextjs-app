@@ -13,45 +13,39 @@ import { ViewerSession } from "../types";
 export const useViewerSession = (): ViewerSession => {
   const wallet = useWalletContextStore();
   const { actAsDao } = useGlobalStoreSelector(prop("nav"));
-  const isDaoRepresentative = actAsDao.toggle && Boolean(actAsDao.defaultAddress);
-
-  const accountId = useMemo(() => {
-    if (wallet.isSignedIn) {
-      return isDaoRepresentative ? actAsDao.defaultAddress : wallet.accountId;
-    } else return undefined;
-  }, [actAsDao.defaultAddress, isDaoRepresentative, wallet.accountId, wallet.isSignedIn]);
-
-  /**
-   * Account for edge cases in which the wallet is connected to a mismatching network
-   *  ( e.g. testnet account in mainnet-bound environments )
-   */
-  const isAccountIdValid = useMemo(() => isAccountId(accountId), [accountId]);
+  const daoAccountId = actAsDao.defaultAddress;
+  const isDaoAccountIdValid = useMemo(() => isAccountId(daoAccountId), [daoAccountId]);
+  const isDaoRepresentative = actAsDao.toggle && isDaoAccountIdValid;
 
   const { isLoading: isRegistrationLoading, data: registration } =
     listsContractHooks.useRegistration({
-      enabled: isAccountIdValid,
-      accountId: accountId ?? "noop",
+      enabled: wallet.isSignedIn,
       listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
+      accountId: (isDaoRepresentative ? daoAccountId : wallet.accountId) ?? "noop",
     });
 
-  console.log("WALLET", wallet);
+  console.log("WALLET in SESSION", wallet);
 
   return useMemo(() => {
-    if (wallet.isReady && wallet.isSignedIn && accountId) {
+    if (wallet.isReady && wallet.isSignedIn && wallet.accountId) {
       return {
         hasWalletReady: true,
-        accountId,
+        accountId: wallet.accountId,
         isSignedIn: true,
-        isDaoRepresentative,
         isMetadataLoading: isRegistrationLoading,
         hasRegistrationSubmitted: registration !== undefined,
         hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
         registrationStatus: registration?.status,
+
+        ...(isDaoRepresentative
+          ? { isDaoRepresentative, daoAccountId }
+          : { isDaoRepresentative: false, daoAccountId: undefined }),
       };
     } else if (wallet.isReady && !wallet.isSignedIn) {
       return {
         hasWalletReady: true,
         accountId: undefined,
+        daoAccountId: undefined,
         isSignedIn: false,
         isDaoRepresentative: false,
         isMetadataLoading: false,
@@ -63,6 +57,7 @@ export const useViewerSession = (): ViewerSession => {
       return {
         hasWalletReady: false,
         accountId: undefined,
+        daoAccountId: undefined,
         isSignedIn: false,
         isDaoRepresentative: false,
         isMetadataLoading: false,
@@ -72,10 +67,11 @@ export const useViewerSession = (): ViewerSession => {
       };
     }
   }, [
-    accountId,
+    daoAccountId,
     isDaoRepresentative,
     isRegistrationLoading,
     registration,
+    wallet.accountId,
     wallet.isReady,
     wallet.isSignedIn,
   ]);
