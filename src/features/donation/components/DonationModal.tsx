@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
-import { nearClient } from "@/common/api/near-protocol";
+import { nearProtocolClient } from "@/common/api/near-protocol";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
@@ -41,7 +41,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   }, [self, setSearchParams]);
 
   const onSignInClick = useCallback(() => {
-    nearClient.walletApi.signInModal();
+    nearProtocolClient.walletApi.signInModal();
     close();
   }, [close]);
 

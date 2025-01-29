@@ -2,9 +2,9 @@ import { MemoryCache } from "@wpdas/naxios";
 import { Provider } from "near-api-js/lib/providers";
 
 import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near-protocol/client";
+import { nearProtocolClient } from "@/common/api/near-protocol";
 import { FULL_TGAS, ONE_HUNDREDTH_NEAR, TWO_HUNDREDTHS_NEAR } from "@/common/constants";
-import { AccountId, type ByAccountId } from "@/common/types";
+import { AccountId } from "@/common/types";
 
 import { GetHumanScoreInput, HumanScoreResponse } from "./interfaces/is-human";
 import { Config } from "./interfaces/lib";
@@ -26,7 +26,7 @@ import {
 /**
  * NEAR Contract API
  */
-export const contractApi = naxiosInstance.contractApi({
+const contractApi = nearProtocolClient.naxiosInstance.contractApi({
   contractId: SYBIL_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });

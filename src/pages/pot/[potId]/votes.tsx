@@ -10,7 +10,7 @@ import {
   MdStar,
 } from "react-icons/md";
 
-import { nearClient } from "@/common/api/near-protocol";
+import { nearProtocolClient } from "@/common/api/near-protocol";
 import { votingContractHooks } from "@/common/contracts/core/voting";
 import { isAccountId } from "@/common/lib";
 import type { AccountId } from "@/common/types";
@@ -45,7 +45,7 @@ export default function PotVotesTab() {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const onSignInClick = useCallback(() => {
-    nearClient.walletApi.signInModal();
+    nearProtocolClient.walletApi.signInModal();
   }, []);
 
   const [isVotingRuleListVisible, setIsVotingRuleListVisible] = useState(false);

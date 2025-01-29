@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { nearClient } from "@/common/api/near-protocol";
+import { nearProtocolClient } from "@/common/api/near-protocol";
 import { truncate } from "@/common/lib";
 import {
   Button,
@@ -31,7 +31,7 @@ export const UserDropdown = () => {
   });
 
   const logoutHandler = useCallback(() => {
-    nearClient.walletApi.wallet?.signOut();
+    nearProtocolClient.walletApi.wallet?.signOut();
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import * as nearClient from "./client";
+import * as nearProtocolClient from "./client";
 import * as nearHooks from "./hooks";
 
-export { nearClient, nearHooks };
+export { nearProtocolClient, nearHooks };
