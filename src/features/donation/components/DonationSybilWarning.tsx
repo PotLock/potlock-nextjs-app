@@ -20,8 +20,8 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
   const { data: pot } = indexer.usePot({ potId });
 
   const isVisible = useMemo(
-    () => typeof pot?.sybil_wrapper_provider === "string" && !viewer.isHuman,
-    [pot?.sybil_wrapper_provider, viewer.isHuman],
+    () => viewer.isSignedIn && typeof pot?.sybil_wrapper_provider === "string" && !viewer.isHuman,
+    [pot?.sybil_wrapper_provider, viewer.isHuman, viewer.isSignedIn],
   );
 
   return !isVisible ? null : (
