@@ -28,10 +28,14 @@ export const PotDeploymentButton: React.FC = () => {
           </TooltipTrigger>
 
           <TooltipContent>
-            <span className="flex flex-col gap-2">
-              <span>{"You don't have permission to deploy pots."}</span>
-              <span>{`Contact ${PLATFORM_NAME} team for details.`}</span>
-            </span>
+            {viewer.isSignedIn ? (
+              <span className="flex flex-col gap-2">
+                <span>{"You don't have permission to deploy pots."}</span>
+                <span>{`Contact ${PLATFORM_NAME} team for details.`}</span>
+              </span>
+            ) : (
+              <span>{"Please sign in to deploy pots."}</span>
+            )}
           </TooltipContent>
         </Tooltip>
       )}
