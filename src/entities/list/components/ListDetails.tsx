@@ -9,7 +9,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
-import { listsContractClient } from "@/common/contracts/core";
+import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import {
   Button,

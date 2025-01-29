@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { PayoutDetailed } from "@/common/contracts/core";
+import { PayoutDetailed } from "@/common/contracts/core/pot";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { Campaign, campaignsContractHooks } from "@/common/contracts/core";
+import { Campaign, campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import {
   Button,
   Carousel,

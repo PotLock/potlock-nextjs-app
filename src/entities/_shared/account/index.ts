@@ -12,6 +12,7 @@ export * from "./components/AccountProfileTags";
 export * from "./components/AccountSummaryPopup";
 export * from "./components/profile-images";
 
+export * from "./hooks/power";
 export * from "./hooks/social-profile";
 
 export * from "./model/schemas";

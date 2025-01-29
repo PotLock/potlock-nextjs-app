@@ -7,8 +7,8 @@ import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/
 import { isAccountId } from "@/common/lib";
 import { useGlobalStoreSelector } from "@/store";
 
-import { useWalletContextStore } from "./internal/wallet-context";
-import { ViewerSession } from "./types";
+import { useWalletContextStore } from "../internal/wallet-context";
+import { ViewerSession } from "../types";
 
 export const useViewerSession = (): ViewerSession => {
   const wallet = useWalletContextStore();

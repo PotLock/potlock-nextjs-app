@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { FaHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { listsContractClient } from "@/common/contracts/core";
+import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import { LayersIcon } from "@/common/ui/svg";
 import { LikeIcon } from "@/common/ui/svg/like";
@@ -30,11 +30,11 @@ export const ListCard = ({
 
   useEffect(() => {
     setIsUpvoted(dataForList.upvotes?.some((data: any) => data?.account === viewer.accountId));
-  }, [dataForList]);
+  }, [dataForList, viewer.accountId]);
 
   const handleRoute = useCallback(
     () => push(`/list/${dataForList?.on_chain_id}`),
-    [dataForList?.id],
+    [dataForList?.on_chain_id, push],
   );
 
   const handleUpvote = (e: React.MouseEvent) => {

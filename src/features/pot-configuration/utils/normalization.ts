@@ -4,7 +4,8 @@ import { Temporal } from "temporal-polyfill";
 import { LISTS_CONTRACT_ACCOUNT_ID, SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { Account, Pot } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, PROVIDER_ID_DELIMITER } from "@/common/constants";
-import { ContractSourceMetadata, PotArgs, PotConfig } from "@/common/contracts/core";
+import { PotConfig } from "@/common/contracts/core/pot";
+import { type ContractSourceMetadata, type PotArgs } from "@/common/contracts/core/pot-factory";
 import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
 import { PotInputs } from "@/entities/pot";
 import {

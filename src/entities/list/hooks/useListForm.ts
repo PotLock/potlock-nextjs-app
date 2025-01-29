@@ -6,7 +6,7 @@ import { prop } from "remeda";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/api/near-protocol/client";
-import { listsContractClient } from "@/common/contracts/core";
+import { listsContractClient } from "@/common/contracts/core/lists";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { AccountGroupItem, validateAccountId } from "@/entities/_shared/account";

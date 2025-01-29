@@ -1,11 +1,10 @@
 import { ByPotId, PotId } from "@/common/api/indexer";
-import {
+import type {
   DirectBatchDonationItem,
   DirectDonation,
   DirectFTBatchDonationItem,
-  PotBatchDonationItem,
-  PotDonation,
-} from "@/common/contracts/core";
+} from "@/common/contracts/core/donation";
+import type { PotBatchDonationItem, PotDonation } from "@/common/contracts/core/pot";
 import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
 export type DonationGroupAllocationKey = ByPotId | ByListId | ByCampaignId;

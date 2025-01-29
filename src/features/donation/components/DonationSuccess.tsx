@@ -11,7 +11,8 @@ import {
   NATIVE_TOKEN_ID,
   PLATFORM_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
-import { DirectDonation, PotDonation } from "@/common/contracts/core";
+import type { DirectDonation } from "@/common/contracts/core/donation";
+import type { PotDonation } from "@/common/contracts/core/pot";
 import { indivisibleUnitsToFloat, truncate } from "@/common/lib";
 import {
   Button,

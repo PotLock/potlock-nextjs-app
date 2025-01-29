@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { CampaignDonation, campaignsContractHooks } from "@/common/contracts/core";
+import { CampaignDonation, campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { oldToRecent, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";

@@ -12,7 +12,7 @@ import {
   RegistrationStatus,
   listsContractClient,
   listsContractHooks,
-} from "@/common/contracts/core";
+} from "@/common/contracts/core/lists";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import type { ByListId } from "@/common/types";
 import { Button, Input } from "@/common/ui/components";

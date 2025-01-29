@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { campaignsContractHooks } from "@/common/contracts/core";
+import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { NoResultsPlaceholder, PageError, SplashScreen } from "@/common/ui/components";
 import { CampaignCard } from "@/entities/campaign";
 import { ProfileLayout } from "@/layout/profile/components/layout";

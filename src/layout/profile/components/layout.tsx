@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { listsContractHooks } from "@/common/contracts/core";
+import { listsContractHooks } from "@/common/contracts/core/lists";
 import type { AccountId } from "@/common/types";
 import { PageWithBanner } from "@/common/ui/components";
 import { TabOption } from "@/common/ui/types";

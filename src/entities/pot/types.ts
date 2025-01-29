@@ -1,5 +1,5 @@
 import { PotId } from "@/common/api/indexer";
-import { PotConfig } from "@/common/contracts/core";
+import { PotConfig } from "@/common/contracts/core/pot";
 
 export type PotData = { id: PotId } & PotConfig;
 

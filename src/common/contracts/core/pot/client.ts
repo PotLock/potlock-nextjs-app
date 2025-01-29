@@ -2,7 +2,7 @@ import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { PotId } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/api/near-protocol/client";
+import { nearClient } from "@/common/api/near-protocol";
 import { FULL_TGAS, ONE_HUNDREDTH_NEAR } from "@/common/constants";
 
 import {
@@ -19,7 +19,10 @@ import {
 } from "./interfaces";
 
 const contractApi = (potId: string) =>
-  naxiosInstance.contractApi({ contractId: potId, cache: new MemoryCache({ expirationTime: 10 }) });
+  nearClient.naxiosInstance.contractApi({
+    contractId: potId,
+    cache: new MemoryCache({ expirationTime: 10 }),
+  });
 
 // READ METHODS
 /**

@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { listsContractHooks } from "@/common/contracts/core";
+import { listsContractHooks } from "@/common/contracts/core/lists";
 import { isAccountId } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { useAccountSocialProfile } from "@/entities/_shared/account";

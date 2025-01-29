@@ -6,7 +6,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ListRegistration } from "@/common/api/indexer";
 import { walletApi } from "@/common/api/near-protocol/client";
-import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
+import { RegistrationStatus, listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import {
   Button,

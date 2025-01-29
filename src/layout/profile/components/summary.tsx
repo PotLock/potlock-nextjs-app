@@ -6,7 +6,7 @@ import { styled } from "styled-components";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { listsContractHooks } from "@/common/contracts/core";
+import { listsContractHooks } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 import { Button, ClipboardCopyButton } from "@/common/ui/components";

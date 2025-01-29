@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { campaignsContractHooks } from "@/common/contracts/core";
+import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import type { ByCampaignId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
@@ -11,7 +11,6 @@ import { useViewerSession } from "@/common/viewer";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
-import { useCampaignCreateOrUpdateRedirect } from "../hooks/redirects";
 
 const formatTime = (timestamp: number) =>
   new Date(timestamp).toLocaleString("en-US", {

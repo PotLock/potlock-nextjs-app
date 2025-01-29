@@ -7,7 +7,7 @@ import { infer as FromSchema, ZodError } from "zod";
 
 import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/common/_config";
 import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
-import { PotConfig } from "@/common/contracts/core";
+import { PotConfig } from "@/common/contracts/core/pot";
 import { AccountId } from "@/common/types";
 import { useViewerSession } from "@/common/viewer";
 import { PotInputs } from "@/entities/pot";

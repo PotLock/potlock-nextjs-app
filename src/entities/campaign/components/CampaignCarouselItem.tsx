@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { Campaign } from "@/common/contracts/core";
+import { Campaign } from "@/common/contracts/core/campaigns";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { CarouselItem } from "@/common/ui/components";

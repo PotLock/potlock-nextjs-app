@@ -6,16 +6,16 @@ import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near-protocol/client";
 import { FULL_TGAS, NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import {
-  CampaignDonation,
-  DirectCampaignDonationArgs,
-  DirectDonation,
-  DirectDonationArgs,
-  PotDonation,
-  PotDonationArgs,
+  type CampaignDonation,
+  type DirectCampaignDonationArgs,
   campaignsContractClient,
+} from "@/common/contracts/core/campaigns";
+import {
+  type DirectDonation,
+  type DirectDonationArgs,
   donationContractClient,
-  potContractClient,
-} from "@/common/contracts/core";
+} from "@/common/contracts/core/donation";
+import { PotDonation, PotDonationArgs, potContractClient } from "@/common/contracts/core/pot";
 import type { FungibleTokenMetadata } from "@/common/contracts/tokens/ft";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";

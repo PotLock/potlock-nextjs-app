@@ -1,7 +1,7 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { useNearToUsdWithFallback } from "@/common/_deprecated/useNearToUsdWithFallback";
-import { campaignsContractHooks } from "@/common/contracts/core";
+import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";

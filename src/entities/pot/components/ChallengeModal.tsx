@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Form } from "react-hook-form";
 
 import { type ByPotId, Pot } from "@/common/api/indexer";
-import { potContractHooks } from "@/common/contracts/core";
+import { potContractHooks } from "@/common/contracts/core/pot";
 import {
   Button,
   Dialog,

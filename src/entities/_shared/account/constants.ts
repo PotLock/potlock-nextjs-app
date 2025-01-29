@@ -1,5 +1,5 @@
 import { IMAGES_ASSET_ENDPOINT_URL } from "@/common/constants";
-import { RegistrationStatus } from "@/common/contracts/core";
+import { RegistrationStatus } from "@/common/contracts/core/lists";
 
 import type { AccountProfileLinktreeKey } from "./types";
 

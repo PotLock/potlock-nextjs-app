@@ -5,7 +5,7 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
-import { campaignsContractClient } from "@/common/contracts/core";
+import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
 import { useViewerSession } from "@/common/viewer";
 import { dispatch } from "@/store";
