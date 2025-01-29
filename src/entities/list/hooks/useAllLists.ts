@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { List, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near-protocol/client";
+import { useViewerSession } from "@/common/viewer";
 
 import { ListOverviewType } from "../types";
 
@@ -13,22 +13,23 @@ export const useAllLists = (
   setFilteredRegistrations: SetRegistrationsFn,
   currentListType?: ListOverviewType,
 ) => {
+  const viewer = useViewerSession();
   const [registrations, setRegistrations] = useState<List[]>([]);
   const [administratedListsOnly, setAdministratedListsOnly] = useState(false);
-  const wallet = walletApi;
 
   const { data, isLoading } = indexer.useLists({
     page_size: 999,
   });
 
   const { data: myLists } = indexer.useLists({
-    account: wallet?.accountId,
-    ...(administratedListsOnly && { admin: wallet?.accountId }),
+    account: viewer.accountId,
+    ...(administratedListsOnly && { admin: viewer.accountId }),
     page_size: 999,
   });
 
   const { data: myFavourites } = indexer.useAccountUpvotedLists({
-    accountId: wallet?.accountId as string,
+    enabled: viewer.isSignedIn,
+    accountId: viewer.accountId ?? "noop",
   });
 
   const fetchAllLists = useCallback(() => {
@@ -40,20 +41,20 @@ export const useAllLists = (
   }, [data, setCurrentListType, setFilteredRegistrations]);
 
   const fetchMyLists = useCallback(() => {
-    if (!wallet?.accountId || !myLists) return;
+    if (!viewer.isSignedIn || !myLists) return;
 
     setCurrentListType("MY_LISTS");
     setRegistrations(myLists.results);
     setFilteredRegistrations(myLists.results);
-  }, [wallet?.accountId, myLists, setCurrentListType, setFilteredRegistrations]);
+  }, [viewer.isSignedIn, myLists, setCurrentListType, setFilteredRegistrations]);
 
   const fetchFavourites = useCallback(() => {
-    if (!wallet?.accountId || !myFavourites) return;
+    if (!viewer.isSignedIn || !myFavourites) return;
 
     setRegistrations(myFavourites);
     setFilteredRegistrations(myFavourites);
     setCurrentListType("MY_FAVORITES");
-  }, [wallet?.accountId, myFavourites, setCurrentListType, setFilteredRegistrations]);
+  }, [viewer.isSignedIn, myFavourites, setFilteredRegistrations, setCurrentListType]);
 
   const actions = useMemo(
     () => [
@@ -66,16 +67,16 @@ export const useAllLists = (
         label: "My Lists",
         fetchFunction: fetchMyLists,
         type: "MY_LISTS",
-        condition: Boolean(wallet?.accountId),
+        condition: viewer.isSignedIn,
       },
       {
         label: "My Favorites",
         fetchFunction: fetchFavourites,
         type: "MY_FAVORITES",
-        condition: Boolean(wallet?.accountId),
+        condition: viewer.isSignedIn,
       },
     ],
-    [fetchAllLists, fetchMyLists, fetchFavourites, wallet?.accountId],
+    [fetchAllLists, fetchMyLists, viewer.isSignedIn, fetchFavourites],
   );
 
   useEffect(() => {

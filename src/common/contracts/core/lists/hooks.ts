@@ -31,6 +31,19 @@ export const useIsRegistered = ({
           }),
   );
 
+export const useRegistrations = ({
+  enabled = true,
+  listId,
+  ...params
+}: ByListId &
+  Omit<contractClient.GetRegistrationsForListArgs, "list_id"> &
+  ConditionalActivation) =>
+  useSWR(["useRegistrations", listId, params], ([_queryKeyHead, listIdKey, paramsKey]) =>
+    !enabled || !IS_CLIENT
+      ? undefined
+      : contractClient.get_registrations_for_list({ list_id: listIdKey, ...paramsKey }),
+  );
+
 export const useRegistration = ({
   enabled = true,
   accountId,

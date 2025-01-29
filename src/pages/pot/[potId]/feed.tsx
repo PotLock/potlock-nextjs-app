@@ -4,9 +4,9 @@ import { useRouter } from "next/router";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { PotApplicationStatus as ApplicationStatus, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near-protocol/client";
 import { fetchGlobalFeeds } from "@/common/api/near-social-indexer";
 import { cn } from "@/common/ui/utils";
+import { useViewerSession } from "@/common/viewer";
 import { PostCard, PostEditor } from "@/entities/post";
 import { PotLayout } from "@/layout/pot/components/layout";
 
@@ -17,6 +17,7 @@ const tabs = [
 ];
 
 export default function PotFeedTab() {
+  const viewer = useViewerSession();
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isPotApplicantsReady, setIsPotApplicantsReady] = useState<boolean>(false);
@@ -123,8 +124,8 @@ export default function PotFeedTab() {
 
   return (
     <div className="w-full">
-      {walletApi?.accountId && potApplicants?.ids?.includes(walletApi?.accountId) && (
-        <PostEditor accountId={walletApi?.accountId} />
+      {viewer.isSignedIn && potApplicants?.ids?.includes(viewer.accountId) && (
+        <PostEditor accountId={viewer.accountId} />
       )}
       <div className="my-6 flex items-center gap-3 md:gap-1">
         {tabs.map((selectedTab) => (

@@ -158,16 +158,13 @@ export const get_list_for_owner = (args: { owner_id: string }) =>
 export const get_upvoted_lists_for_account = (args: { account_id: string }) =>
   contractApi.view<typeof args, List>("get_upvoted_lists_for_account", { args });
 
-/**
- * Get Registrations for a list
- */
-export const get_registrations_for_list = (
-  args: { list_id: number } = { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
-) => contractApi.view<typeof args, Registration[]>("get_registrations_for_list", { args });
+export type GetRegistrationsForListArgs = {
+  list_id: number;
+};
 
-/**
- * Get Registrations for registrant
- */
+export const get_registrations_for_list = (args: GetRegistrationsForListArgs) =>
+  contractApi.view<typeof args, Registration[]>("get_registrations_for_list", { args });
+
 export const get_registrations_for_registrant = (args: {
   list_id?: number;
   registrant_id: string;

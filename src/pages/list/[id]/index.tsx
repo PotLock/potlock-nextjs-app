@@ -29,19 +29,20 @@ export default function SingleList() {
   const { admins, setAdmins } = useListForm();
 
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = router.query as { id: string };
+  const listId = parseInt(id);
 
   const { data, isLoading } = indexer.useListRegistrations({
-    listId: parseInt(id as string),
+    listId,
     page_size: 500,
     ...(status !== "all" && { status }),
   });
 
   const { data: listData, isLoading: loadingListData } = indexer.useList({
-    listId: parseInt(id as string),
+    listId,
   });
 
-  // TODO: stop creating additional state wrappers for reactive resources
+  // TODO: use `useMemo` for filtered data instead
   useEffect(() => {
     setFilteredRegistrations(data?.results ?? []);
   }, [data]);
