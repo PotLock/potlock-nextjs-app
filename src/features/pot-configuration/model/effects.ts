@@ -2,13 +2,12 @@ import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 import { omit } from "remeda";
 
 import { ByPotId } from "@/common/api/indexer";
-import { nearRpc, walletApi } from "@/common/api/near/client";
+import { nearRpc, walletApi } from "@/common/blockchains/near-protocol/client";
+import { type PotConfig, potContractClient } from "@/common/contracts/core/pot";
 import {
-  PotConfig,
-  PotDeploymentResult,
-  potContractClient,
+  type PotDeploymentResult,
   potFactoryContractClient,
-} from "@/common/contracts/core";
+} from "@/common/contracts/core/pot-factory";
 import { AppDispatcher } from "@/store";
 
 import { PotDeploymentInputs, PotSettings } from "./schemas";

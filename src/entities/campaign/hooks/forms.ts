@@ -5,16 +5,19 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
-import { walletApi } from "@/common/api/near/client";
-import { campaignsContractClient } from "@/common/contracts/core";
+import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
+import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { campaignFormSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
 
 export const useCampaignForm = () => {
+  const viewer = useWalletUserSession();
+
   const {
+    // TODO: Pass this values down from the page level!
     query: { campaignId },
   } = useRouteQuery();
 
@@ -116,7 +119,7 @@ export const useCampaignForm = () => {
         ...(values.end_ms && {
           end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
         }),
-        ...(campaignId ? {} : { owner: walletApi.accountId as string }),
+        ...(campaignId ? {} : { owner: viewer.accountId as string }),
         ...(campaignId ? {} : { recipient: values.recipient }),
       };
 
@@ -126,23 +129,23 @@ export const useCampaignForm = () => {
         });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You've successfully created a campaignsContractClient for ${values.name}.`,
+          header: `You’ve successfully created a campaign for ${values.name}.`,
           description:
-            "If you are not a member of the project, the campaignsContractClient will be considered unofficial until it has been approved by the project.",
+            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.UPDATE_CAMPAIGN,
         });
       } else {
         campaignsContractClient.create_campaign({ args });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You've successfully created a campaignsContractClient for ${values.name}.`,
+          header: `You’ve successfully created a campaign for ${values.name}.`,
           description:
-            "If you are not a member of the project, the campaignsContractClient will be considered unofficial until it has been approved by the project.",
+            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.CREATE_CAMPAIGN,
         });
       }
     },
-    [campaignId],
+    [campaignId, viewer.accountId],
   );
 
   const onChange = async (field: keyof Values, value: string) => {

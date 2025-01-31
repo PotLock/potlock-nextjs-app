@@ -1,8 +1,5 @@
-import React from "react";
-
 import { PageWithBanner } from "@/common/ui/components";
-import { CreateListHero } from "@/entities/list/components/CreateListHero";
-import { ListFormDetails } from "@/entities/list/components/ListFormDetails";
+import { CreateListHero, ListFormDetails } from "@/entities/list";
 
 export default function Page() {
   return (

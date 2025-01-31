@@ -1128,6 +1128,8 @@ export interface ListRegistration {
   admin_notes?: string | null;
   /** Registration id. */
   readonly id: number;
+  /** List registered. */
+  readonly list_id: number;
   registered_by: Account;
   registrant: Account;
   /**

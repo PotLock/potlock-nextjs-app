@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { socialDbContractHooks } from "@/common/contracts/social";
+import { socialDbContractHooks } from "@/common/contracts/social-db";
 import type { ByAccountId, ConditionalActivation } from "@/common/types";
 
 import {
@@ -12,7 +12,13 @@ export const useAccountSocialProfile = ({
   accountId,
   enabled = true,
 }: ByAccountId & ConditionalActivation) => {
-  const { isLoading, data, error } = socialDbContractHooks.useSocialProfile({ enabled, accountId });
+  const {
+    isLoading,
+    isValidating,
+    data,
+    mutate: refetch,
+    error,
+  } = socialDbContractHooks.useSocialProfile({ enabled, accountId });
 
   const avatarSrc = useMemo(
     () =>
@@ -40,9 +46,11 @@ export const useAccountSocialProfile = ({
 
   return {
     isLoading,
-    profile: data,
+    isValidating,
+    profile: data ?? undefined,
     avatarSrc,
     backgroundSrc,
+    refetch,
     error,
   };
 };

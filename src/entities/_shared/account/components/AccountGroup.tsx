@@ -35,7 +35,6 @@ export const AccountGroup: React.FC<AccountGroupProps> = ({
   const { value: accountIds } = props;
   const isEditingEnabled = isEditable && "title" in props;
   const modalId = useId();
-
   const openAccountsModal = useCallback(() => show(modalId), [modalId]);
 
   const accountList = useMemo(
@@ -50,24 +49,36 @@ export const AccountGroup: React.FC<AccountGroupProps> = ({
               {...{ accountId: account.accountId }}
             />
           ))}
+
           {accountIds.length > 4 && (
             <div
               style={{
                 boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
               }}
               className={cn(
-                "z-999 group relative flex items-center justify-center rounded-full border-2 border-white bg-red-500 px-3 py-3 text-sm font-semibold text-white transition-all duration-500 ease-in-out",
+                "z-999 group relative flex items-center justify-center",
+                "rounded-full border-2 border-white bg-red-500 px-3 py-3",
+                "text-sm font-semibold text-white transition-all duration-500 ease-in-out",
                 classNames?.avatar,
               )}
             >
               <span className="text-[11px] font-bold">{accountIds.length - 4}+</span>
-              <div className="z-9999 bg-background absolute top-4 mt-2 hidden max-h-80 w-48 w-max overflow-y-auto rounded-md py-4 shadow-lg transition-all duration-500 ease-in-out group-hover:block">
+
+              <div
+                className={cn(
+                  "z-9999 bg-background absolute top-4 mt-2 hidden",
+                  "max-h-80 w-48 w-max overflow-y-auto rounded-md py-4",
+                  "shadow-lg transition-all duration-500 ease-in-out group-hover:block",
+                )}
+              >
                 {accountIds.slice(4).map((account) => (
                   <Link
                     href={`/profile/${account.accountId}`}
                     target="_blank"
                     key={account.accountId}
-                    className="mb-2 flex cursor-pointer items-center gap-2 p-2 text-[#292929] hover:bg-gray-100"
+                    className={
+                      "mb-2 flex cursor-pointer items-center gap-2 p-2 text-[#292929] hover:bg-gray-100"
+                    }
                   >
                     <AccountProfilePicture accountId={account.accountId} className="h-5 w-5" />
                     {account.accountId}

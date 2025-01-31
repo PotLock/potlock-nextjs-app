@@ -1,6 +1,6 @@
 import { Form } from "react-hook-form";
 
-import { Challenge } from "@/common/contracts/core";
+import { Challenge } from "@/common/contracts/core/pot";
 import {
   Button,
   Checkbox,

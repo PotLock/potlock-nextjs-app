@@ -1,7 +1,7 @@
 import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 
 export type DonationTokenBalanceProps = ByTokenId & {
@@ -12,10 +12,10 @@ export const DonationTokenBalance: React.FC<DonationTokenBalanceProps> = ({
   tokenId,
   classNames,
 }) => {
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
 
   const { data: token, error: tokenError } = useToken({
-    balanceCheckAccountId: authenticatedUser?.accountId,
+    balanceCheckAccountId: viewer?.accountId,
     tokenId,
   });
 

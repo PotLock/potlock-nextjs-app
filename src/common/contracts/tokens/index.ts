@@ -1,1 +1,1 @@
-export * from "./ft";
+export * from "./fungible";

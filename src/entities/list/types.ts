@@ -1,5 +1,5 @@
 import { List } from "@/common/api/indexer";
-import { RegistrationStatus } from "@/common/contracts/core";
+import { RegistrationStatus } from "@/common/contracts/core/lists";
 import { AccountId } from "@/common/types";
 
 export type ListRegistrationStatus = RegistrationStatus | "Human";

@@ -6,7 +6,7 @@ import type { ByPotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Skeleton } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 import { usePotAuthorization } from "@/entities/pot";
 import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/voting-round";
@@ -22,8 +22,8 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
   onSubmitSuccess,
 }) => {
   const { toast } = useToast();
-  const authenticatedUser = useSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
+  const viewer = useWalletUserSession();
+  const authorizedUser = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRoundResults = useVotingRoundResults({ potId });
 
   const { isMetadataLoading: isTokenMetadataLoading, data: token } = useToken({

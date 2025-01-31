@@ -1,7 +1,7 @@
 import { values } from "remeda";
 
 import type { ByPotId } from "@/common/api/indexer";
-import { potContractClient } from "@/common/contracts/core";
+import { potContractClient } from "@/common/contracts/core/pot";
 import type { FungibleTokenMetadata } from "@/common/contracts/tokens";
 import { floatToIndivisible } from "@/common/lib";
 import type { VotingRoundParticipants } from "@/entities/voting-round";

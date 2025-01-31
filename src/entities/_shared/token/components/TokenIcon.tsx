@@ -5,7 +5,7 @@ import { AccountId } from "@/common/types";
 import { NearIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
 
-import { useToken } from "../hooks";
+import { useToken } from "../hooks/data";
 
 type TokenIconSize = "xs" | "sm" | "md";
 

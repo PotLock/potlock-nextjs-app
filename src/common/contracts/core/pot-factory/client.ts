@@ -2,9 +2,8 @@ import { MemoryCache } from "@wpdas/naxios";
 import { Big } from "big.js";
 
 import { POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near/client";
+import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS } from "@/common/constants";
-import { ByAccountId } from "@/common/types";
 
 import { PotArgs, PotDeploymentResult, PotFactoryConfig } from "./interfaces";
 
@@ -36,13 +35,3 @@ export const deploy_pot = async (args: {
     gas: FULL_TGAS,
     callbackUrl: window.location.href,
   });
-
-export const isDeploymentAvailable = async ({ accountId }: ByAccountId) => {
-  const config = await get_config();
-
-  if (config) {
-    return !config.require_whitelist || config.whitelisted_deployers.includes(accountId);
-  }
-
-  return false;
-};

@@ -12,15 +12,34 @@ import {
   Textarea,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AccountProfilePicture } from "@/entities/_shared/account";
-import { ProjectCategoryVariant } from "@/entities/project";
-import { useGlobalStoreSelector } from "@/store";
+import { ACCOUNT_CATEGORY_VARIANTS } from "@/entities/_shared/account";
 
-export const Row = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
+import { SubTitle } from "./styles";
+
+export const SubHeader = ({
+  title,
+  required,
+  className,
+}: {
+  title: string;
+  required?: boolean;
+  className?: string;
+}) => (
+  <SubTitle className={className}>
+    {title}
+    {required ? (
+      <span className="required">Required</span>
+    ) : (
+      <span className="optional">Optional</span>
+    )}
+  </SubTitle>
+);
+
+export const Row = ({ children }: { children: React.ReactNode }) => (
   <div className="mt-6 grid grid-cols-2 gap-6 max-md:grid-cols-[100%]">{children}</div>
 );
 
-export const InputContainer = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
+export const InputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="flex w-full flex-col items-start justify-start gap-[0.45em] p-0 text-[14px]">
     {children}
   </div>
@@ -95,17 +114,6 @@ export const CustomInput = ({
   </InputContainer>
 );
 
-const options: ProjectCategoryVariant[] = [
-  "Social Impact",
-  "Non Profit",
-  "Climate",
-  "Public Good",
-  "DeSci",
-  "Open Source",
-  "Community",
-  "Education",
-];
-
 export const ProjectCategoryPicker = ({
   onValuesChange,
   defaultValues,
@@ -131,9 +139,9 @@ export const ProjectCategoryPicker = ({
 
       <MultiSelectorContent>
         <MultiSelectorList>
-          {options.map((option, i) => (
-            <MultiSelectorItem key={i} value={option}>
-              {option}
+          {ACCOUNT_CATEGORY_VARIANTS.map((categoryVariant) => (
+            <MultiSelectorItem key={categoryVariant} value={categoryVariant}>
+              {categoryVariant}
             </MultiSelectorItem>
           ))}
         </MultiSelectorList>
@@ -178,40 +186,6 @@ export const CustomTextForm = ({
         showHint={showHint}
         {...field}
       />
-    </div>
-  );
-};
-
-const MAX_DISPLAYED_MEMBERS = 5;
-
-export const AccountStack = () => {
-  const members = useGlobalStoreSelector((state) => state.projectEditor.teamMembers);
-  const displayedMembers = members.slice(0, MAX_DISPLAYED_MEMBERS);
-  const hiddenItemsCount = Math.max(members.length - MAX_DISPLAYED_MEMBERS, 0);
-
-  return (
-    <div className="flex">
-      {hiddenItemsCount > 0 && (
-        <div
-          className={
-            "z-10 flex h-[28px] w-[28px] items-center justify-center rounded-[50%] bg-[#dd3345]"
-          }
-        >
-          <span className="font-600 text-align-center text-foreground text-[12px]">
-            {`+${hiddenItemsCount}`}
-          </span>
-        </div>
-      )}
-
-      {displayedMembers.map((memberAccountId, index) => (
-        <AccountProfilePicture
-          key={memberAccountId}
-          accountId={memberAccountId}
-          className={cn("h-7 w-7", {
-            "ml-[-8px]": index > 0 || (index === 0 && hiddenItemsCount > 0),
-          })}
-        />
-      ))}
     </div>
   );
 };

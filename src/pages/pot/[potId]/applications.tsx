@@ -1,15 +1,19 @@
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { entries } from "remeda";
 import { styled } from "styled-components";
 
 import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
-import { toChronologicalOrder } from "@/common/lib";
+import { oldToRecent } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { FilterChip, SearchBar } from "@/common/ui/components";
-import { ProjectListingStatusVariant } from "@/entities/project";
+import {
+  type AccountPotApplicationStatusOption,
+  type AccountPotApplicationStatusVariant,
+} from "@/entities/_shared";
 import {
   PotApplicationCard,
   PotApplicationCardSkeleton,
@@ -39,7 +43,7 @@ const ApplicationLookupPlaceholder = () =>
   Array.from({ length: 6 }, (_, i) => <PotApplicationCardSkeleton key={i} />);
 
 // TODO: Apply optimizations
-const ApplicationsTab = () => {
+export default function ApplicationsTab() {
   const router = useRouter();
 
   const { potId } = router.query as {
@@ -55,12 +59,12 @@ const ApplicationsTab = () => {
   const owner = potDetail?.owner?.id || "";
   const admins = potDetail?.admins.map((adm) => adm.id) || [];
   const chef = potDetail?.chef?.id || "";
-  const [statusFilter, setStatusFilter] = useState<ProjectListingStatusVariant>("All");
+  const [statusFilter, setStatusFilter] = useState<AccountPotApplicationStatusVariant>("All");
   const [pageNumber, setPageNumber] = useState(1);
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
 
   const {
-    isLoading: areApplicationsLoading,
+    isLoading: isApplicationListLoading,
     error,
     data: applications,
     mutate: refetchApplications,
@@ -71,8 +75,8 @@ const ApplicationsTab = () => {
   });
 
   const sortedResults = useMemo(() => {
-    const oldToRecent = toChronologicalOrder("submitted_at", applications?.results ?? []);
-    return oldToRecent.toReversed();
+    const oldToRecentResults = oldToRecent("submitted_at", applications?.results ?? []);
+    return oldToRecentResults.toReversed();
   }, [applications?.results]);
 
   // Admin - Edit Project
@@ -97,35 +101,45 @@ const ApplicationsTab = () => {
     setProjectStatus("");
   };
 
-  const getApplicationCount = (status: string) => {
-    return applications?.results.filter((app) => app.status === status).length;
-  };
+  const applicationsFilters: Record<
+    AccountPotApplicationStatusVariant,
+    AccountPotApplicationStatusOption & { count?: number }
+  > = useMemo(() => {
+    const getApplicationCount = (status: AccountPotApplicationStatusVariant) =>
+      applications?.results.filter((application) => application.status === status).length ?? 0;
 
-  const applicationsFilters: Record<string, { label: string; val: string; count?: number }> = {
-    All: {
-      label: "All",
-      val: "all",
-      count: applications?.count,
-    },
+    return {
+      All: {
+        label: "All",
+        val: "All",
+        count: applications?.count,
+      },
 
-    Approved: {
-      label: "Approved",
-      val: "approved",
-      count: getApplicationCount("Approved")!,
-    },
+      Approved: {
+        label: "Approved",
+        val: "Approved",
+        count: getApplicationCount("Approved"),
+      },
 
-    Pending: {
-      label: "Pending",
-      val: "pending",
-      count: getApplicationCount("Pending")!,
-    },
+      Pending: {
+        label: "Pending",
+        val: "Pending",
+        count: getApplicationCount("Pending"),
+      },
 
-    Rejected: {
-      label: "Rejected",
-      val: "rejected",
-      count: getApplicationCount("Rejected")!,
-    },
-  };
+      Rejected: {
+        label: "Rejected",
+        val: "Rejected",
+        count: getApplicationCount("Rejected"),
+      },
+
+      InReview: {
+        label: "In Review",
+        val: "InReview",
+        count: getApplicationCount("InReview"),
+      },
+    };
+  }, [applications]);
 
   const isChefOrGreater =
     accountId === chef || admins.includes(accountId || "") || accountId === owner;
@@ -152,15 +166,13 @@ const ApplicationsTab = () => {
       )}
 
       <div className="flex gap-3">
-        {Object.keys(applicationsFilters).map((key) => (
+        {entries(applicationsFilters).map(([key, filter]) => (
           <FilterChip
             variant={statusFilter === key ? "brand-filled" : "brand-outline"}
-            onClick={() =>
-              setStatusFilter(applicationsFilters[key].label as ProjectListingStatusVariant)
-            }
+            onClick={() => setStatusFilter(filter.val)}
             className="font-medium"
-            label={applicationsFilters[key].label}
-            count={applicationsFilters[key].count}
+            label={filter.label}
+            count={filter.count}
             key={key}
           />
         ))}
@@ -175,7 +187,7 @@ const ApplicationsTab = () => {
 
         {potDetail && (
           <div className="flex w-full flex-col flex-wrap justify-between gap-5 md:flex-row">
-            {!areApplicationsLoading ? (
+            {!isApplicationListLoading ? (
               sortedResults.map((application: PotApplication) => (
                 <PotApplicationCard
                   key={application.id}
@@ -209,10 +221,8 @@ const ApplicationsTab = () => {
       </section>
     </Container>
   );
-};
+}
 
-ApplicationsTab.getLayout = function getLayout(page: ReactElement) {
+ApplicationsTab.getLayout = function getLayout(page: React.ReactNode) {
   return <PotLayout>{page}</PotLayout>;
 };
-
-export default ApplicationsTab;

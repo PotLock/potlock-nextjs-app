@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import { List } from "@/common/api/indexer";
 import { Filter, Group, GroupType, SearchBar, SortSelect } from "@/common/ui/components";
-import { statuses } from "@/entities/project/constants";
+import { ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS } from "@/entities/_shared";
 
 import { AccountCard } from "./AccountCard";
 import { ListCardSkeleton } from "./ListCardSkeleton";
@@ -40,7 +40,7 @@ export const ListAccounts = ({
   const tagsList: Group<GroupType.single>[] = [
     {
       label: "Status",
-      options: statuses,
+      options: ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS,
       type: GroupType.single,
       props: {
         value: statusFilter,

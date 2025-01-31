@@ -29,16 +29,18 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
 };
 
 export type AccountProfileCoverProps = ByAccountId &
-  Pick<LazyLoadImageProps, "height"> & {
+  Required<Pick<LazyLoadImageProps, "height">> & {
     className?: string;
   };
 
 export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
   accountId,
-  height = 146,
+  height,
   className,
 }) => {
-  const { backgroundSrc: src } = useAccountSocialProfile({ accountId });
+  const { isLoading: isProfileDataLoading, backgroundSrc: src } = useAccountSocialProfile({
+    accountId,
+  });
 
   const contentClassName = useMemo(
     () =>
@@ -50,11 +52,10 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
     [],
   );
 
-  return (
-    <div
-      className={cn("w-full overflow-hidden", className)}
-      style={{ width: "100%", height, maxHeight: height }}
-    >
+  return isProfileDataLoading ? (
+    <Skeleton className={cn("w-full", className)} style={{ height, maxHeight: height }} />
+  ) : (
+    <div className={cn("w-full overflow-hidden", className)} style={{ height, maxHeight: height }}>
       <LazyLoadImage
         alt="Profile cover"
         placeholderSrc={ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}

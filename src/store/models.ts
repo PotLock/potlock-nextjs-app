@@ -1,12 +1,10 @@
 import { Models, createModel } from "@rematch/core";
 
 import { ContractMetadata } from "@/common/types";
-import { sessionModel } from "@/entities/_shared/session/model";
 import { campaignEditorModel } from "@/entities/campaign/models";
 import { listEditorModel } from "@/entities/list";
 import { donationModel, donationModelKey } from "@/features/donation";
 import { potConfigurationModel, potConfigurationModelKey } from "@/features/pot-configuration";
-import { projectEditorModel, projectEditorModelKey } from "@/features/profile-setup";
 
 import { navModel } from "./nav-model";
 
@@ -53,22 +51,18 @@ export const coreModel = createModel<AppModel>()({
 
 export interface AppModel extends Models<AppModel> {
   core: typeof coreModel;
-  session: typeof sessionModel;
   [donationModelKey]: typeof donationModel;
   nav: typeof navModel;
   [potConfigurationModelKey]: typeof potConfigurationModel;
   listEditor: typeof listEditorModel;
   campaignEditor: typeof campaignEditorModel;
-  [projectEditorModelKey]: typeof projectEditorModel;
 }
 
 export const models: AppModel = {
   core: coreModel,
-  session: sessionModel,
   [donationModelKey]: donationModel,
   nav: navModel,
   listEditor: listEditorModel,
   campaignEditor: campaignEditorModel,
   [potConfigurationModelKey]: potConfigurationModel,
-  [projectEditorModelKey]: projectEditorModel,
 };
