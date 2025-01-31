@@ -19,13 +19,12 @@ import {
 import { cn } from "@/common/ui/utils";
 import {
   ACCOUNT_CATEGORY_OPTIONS,
+  ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS,
   AccountCard,
   AccountCardSkeleton,
 } from "@/entities/_shared/account";
 import { useListRegistrationLookup } from "@/entities/list";
 import { DonateToAccountButton } from "@/features/donation";
-
-import { statuses } from "../../entities/project/constants";
 
 const ListRegistrationLookupPlaceholder = () =>
   Array.from({ length: 6 }, (_, index) => <AccountCardSkeleton key={index} />);
@@ -68,7 +67,7 @@ export const ProjectDiscovery: React.FC<ProjectDiscoveryProps> = ({
 
       {
         label: "Status",
-        options: statuses,
+        options: ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS,
         type: GroupType.single,
 
         props: {

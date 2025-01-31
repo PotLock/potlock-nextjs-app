@@ -1,4 +1,6 @@
 import type { Account } from "@/common/api/indexer";
+import type { RegistrationStatus } from "@/common/contracts/core/lists";
+import type { ApplicationStatus } from "@/common/contracts/core/pot";
 import type { ProfileLinktree } from "@/common/contracts/social-db";
 import { ByAccountId, ByRegistrationId } from "@/common/types";
 
@@ -37,3 +39,26 @@ export type AccountCategoryOption = {
 };
 
 export type AccountSnapshot = Account;
+
+export type AccountListRegistrationStatus = keyof typeof RegistrationStatus;
+
+export type AccountListRegistrationStatusVariant =
+  | AccountListRegistrationStatus
+  /**
+   *? INFO: Only needed for backward compatibility:
+   */
+  | "All";
+
+export type AccountListRegistrationStatusOption = {
+  label: string;
+  val: AccountListRegistrationStatusVariant;
+};
+
+export type AccountPotApplicationStatus = keyof typeof ApplicationStatus;
+
+export type AccountPotApplicationStatusVariant = AccountPotApplicationStatus | "All";
+
+export type AccountPotApplicationStatusOption = {
+  label: string;
+  val: AccountPotApplicationStatusVariant;
+};

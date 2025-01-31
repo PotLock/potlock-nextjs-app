@@ -4,6 +4,7 @@ import { RegistrationStatus } from "@/common/contracts/core/lists";
 import {
   type AccountCategoryOption,
   type AccountCategoryVariant,
+  type AccountListRegistrationStatusOption,
   type AccountProfileLinktreeKey,
 } from "./types";
 
@@ -98,3 +99,12 @@ export const ACCOUNT_REGISTRATION_STATUSES: Record<
     toggleColor: "#C7C7C7",
   },
 };
+
+export const ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS: AccountListRegistrationStatusOption[] = [
+  { label: "All", val: "All" },
+  { label: "Approved", val: "Approved" },
+  { label: "Pending", val: "Pending" },
+  { label: "Rejected", val: "Rejected" },
+  { label: "Graylisted", val: "Graylisted" },
+  { label: "Blacklisted", val: "Blacklisted" },
+];

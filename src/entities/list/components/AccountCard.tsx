@@ -27,11 +27,11 @@ import DownArrow from "@/common/ui/svg/DownArrow";
 import { ListNoteIcon } from "@/common/ui/svg/list-note";
 import { cn } from "@/common/ui/utils";
 import {
+  ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS,
   AccountHandle,
   AccountProfileCover,
   AccountProfilePicture,
-} from "@/entities/_shared/account";
-import { statuses } from "@/entities/project/constants";
+} from "@/entities/_shared";
 import { dispatch } from "@/store";
 
 import { listRegistrationStatuses } from "../constants";
@@ -183,13 +183,13 @@ export const AccountCard = ({
                       </div>
                     </Trigger>
                     <SelectContent>
-                      {statuses
-                        .filter((item) => item.val !== "All")
-                        .map((item) => (
-                          <SelectItem value={item.val} key={item.val}>
-                            {item.val}
-                          </SelectItem>
-                        ))}
+                      {ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS.filter(
+                        (item) => item.val !== "All",
+                      ).map((item) => (
+                        <SelectItem value={item.val} key={item.val}>
+                          {item.val}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 ) : (

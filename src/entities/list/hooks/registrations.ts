@@ -3,9 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { indexer } from "@/common/api/indexer";
 import { oldToRecent } from "@/common/lib";
 import { ByListId, ChronologicalSortOrder, ChronologicalSortOrderVariant } from "@/common/types";
-import type { AccountCategory } from "@/entities/_shared/account";
-
-import { ProjectListingStatusVariant } from "../../project/types";
+import { AccountCategory, type AccountListRegistrationStatusVariant } from "@/entities/_shared";
 
 export type ListRegistrationLookupParams = ByListId & {};
 
@@ -14,7 +12,8 @@ export const useListRegistrationLookup = ({ listId }: ListRegistrationLookupPara
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [categoryFilter, setCategoryFilter] = useState<AccountCategory[]>([]);
 
-  const [statusFilter, setStatusFilter] = useState<ProjectListingStatusVariant>("Approved");
+  const [statusFilter, setStatusFilter] =
+    useState<AccountListRegistrationStatusVariant>("Approved");
 
   const [sortingOrder, setSortingOrder] = useState<ChronologicalSortOrderVariant>(
     ChronologicalSortOrder.recent,
