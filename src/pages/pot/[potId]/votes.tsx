@@ -10,7 +10,7 @@ import {
   MdStar,
 } from "react-icons/md";
 
-import { nearProtocolClient } from "@/common/api/near-protocol";
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { votingContractHooks } from "@/common/contracts/core/voting";
 import { isAccountId } from "@/common/lib";
 import type { AccountId } from "@/common/types";

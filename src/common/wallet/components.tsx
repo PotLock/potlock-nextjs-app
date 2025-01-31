@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from "react";
 
-import { nearProtocolClient } from "@/common/api/near-protocol";
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { IS_CLIENT } from "@/common/constants";
 
-import { useWalletUserAdapterContext } from "./adapters/user";
+import { useWalletUserAdapter } from "./adapters";
 
 type WalletProviderProps = {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ type WalletProviderProps = {
 
 const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const { registerInit, setAccountState, setError, isReady, isSignedIn, accountId, error } =
-    useWalletUserAdapterContext();
+    useWalletUserAdapter();
 
   const syncWalletState = useCallback(() => {
     const isWalletSignedIn = nearProtocolClient.walletApi.walletSelector.isSignedIn();

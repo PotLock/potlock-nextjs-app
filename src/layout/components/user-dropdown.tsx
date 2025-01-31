@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { nearProtocolClient } from "@/common/api/near-protocol";
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { truncate } from "@/common/lib";
 import {
   Button,

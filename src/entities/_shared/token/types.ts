@@ -1,4 +1,4 @@
-import type { NativeTokenMetadata } from "@/common/api/near-protocol/hooks";
+import type { NativeTokenMetadata } from "@/common/blockchains/near-protocol/hooks";
 import type { FungibleTokenMetadata } from "@/common/contracts/tokens";
 import type { AccountId, ByTokenId } from "@/common/types";
 

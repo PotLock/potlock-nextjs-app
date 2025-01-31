@@ -1,4 +1,4 @@
-import { naxiosInstance } from "@/common/api/near-protocol/client";
+import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 
 type Role = {
   name: string;

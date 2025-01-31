@@ -1,7 +1,7 @@
 import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 
 import { List } from "@/common/api/indexer";
-import { nearRpc, walletApi } from "@/common/api/near-protocol/client";
+import { nearRpc, walletApi } from "@/common/blockchains/near-protocol/client";
 import { AppDispatcher } from "@/store";
 
 import { ListFormModalType } from "../types";

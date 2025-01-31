@@ -6,7 +6,7 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/api/near-protocol/client";
+import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
 

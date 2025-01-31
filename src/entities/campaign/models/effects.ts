@@ -1,6 +1,6 @@
 import { ExecutionStatus, ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 
-import { nearRpc, walletApi } from "@/common/api/near-protocol/client";
+import { nearRpc, walletApi } from "@/common/blockchains/near-protocol/client";
 import { AppDispatcher } from "@/store";
 
 import { CampaignEnumType } from "../types";

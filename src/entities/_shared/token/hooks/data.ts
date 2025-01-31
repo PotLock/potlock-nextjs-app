@@ -4,7 +4,7 @@ import { Big } from "big.js";
 
 import { coingeckoHooks } from "@/common/api/coingecko";
 import { intearTokenIndexerHooks } from "@/common/api/intear-token-indexer";
-import { nearHooks } from "@/common/api/near-protocol";
+import { nearProtocolHooks } from "@/common/blockchains/near-protocol";
 import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_IDS } from "@/common/constants";
 import { refExchangeContractHooks } from "@/common/contracts/ref-finance";
 import { ftContractHooks } from "@/common/contracts/tokens";
@@ -59,7 +59,7 @@ export const useToken = ({
     isLoading: isNtMetadataLoading,
     data: ntMetadata,
     error: ntMetadataError,
-  } = nearHooks.useNativeTokenMetadata({
+  } = nearProtocolHooks.useNativeTokenMetadata({
     disabled: !enabled || tokenId !== NATIVE_TOKEN_ID,
   });
 
@@ -75,7 +75,7 @@ export const useToken = ({
     isLoading: isAccountSummaryLoading,
     data: accountSummary,
     error: accountSummaryError,
-  } = nearHooks.useViewAccount({
+  } = nearProtocolHooks.useViewAccount({
     disabled: !enabled || balanceCheckAccountId === undefined || tokenId !== NATIVE_TOKEN_ID,
     accountId: balanceCheckAccountId as AccountId,
   });

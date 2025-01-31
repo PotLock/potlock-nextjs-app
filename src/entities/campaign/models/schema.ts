@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { NETWORK } from "@/common/_config";
-import { near } from "@/common/api/near-protocol/client";
+import { near } from "@/common/blockchains/near-protocol/client";
 
 export const campaignFormSchema = z
   .object({

@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near-protocol/client";
+import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 

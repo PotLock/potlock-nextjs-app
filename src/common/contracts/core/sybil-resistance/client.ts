@@ -1,7 +1,7 @@
 import { Provider } from "near-api-js/lib/providers";
 
 import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { nearProtocolClient } from "@/common/api/near-protocol";
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { FULL_TGAS, ONE_HUNDREDTH_NEAR, TWO_HUNDREDTHS_NEAR } from "@/common/constants";
 import { AccountId } from "@/common/types";
 

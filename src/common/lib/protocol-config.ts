@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/api/near-protocol/client";
+import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 
 export type ProtocolConfig = {
   basis_points: number;
