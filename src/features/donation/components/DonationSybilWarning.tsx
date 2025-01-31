@@ -4,7 +4,7 @@ import { SYBIL_APP_LINK_URL } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/components";
 import { WarningIcon } from "@/common/ui/svg";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 
 export type DonationSybilWarningProps = ByPotId & {
   classNames?: {
@@ -16,7 +16,7 @@ export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
   potId,
   classNames,
 }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const { data: pot } = indexer.usePot({ potId });
 
   const isVisible = useMemo(

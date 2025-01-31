@@ -9,13 +9,13 @@ import {
 import { isAccountId } from "@/common/lib";
 import { type AccountId, ByAccountId } from "@/common/types";
 import { useToast } from "@/common/ui/hooks";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 
 export interface VotingRoundCandidateLookup extends ByElectionId {}
 
 export const useVotingRoundCandidateLookup = ({ electionId }: VotingRoundCandidateLookup) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const { data, ...candidatesQueryResult } = votingContractHooks.useElectionCandidates({
     enabled: electionId !== 0,
@@ -67,7 +67,7 @@ export const useVotingRoundCandidateEntry = ({
   accountId,
 }: ByElectionId & ByAccountId) => {
   const { toast } = useToast();
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const { data: isVotingPeriodOngoing = false } = votingContractHooks.useIsVotingPeriod({
     enabled: electionId !== 0,

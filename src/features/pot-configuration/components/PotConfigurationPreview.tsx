@@ -7,7 +7,7 @@ import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
 import { isAccountId } from "@/common/lib";
 import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroup, AccountListItem, AccountProfileLink } from "@/entities/_shared/account";
 
 import { POT_EDITOR_FIELDS } from "../constants";
@@ -59,7 +59,7 @@ export const PotConfigurationPreview: React.FC<PotConfigurationPreviewProps> = (
   onEditClick,
   className,
 }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const { isLoading, data: pot } = indexer.usePot({
     enabled: potId !== undefined,

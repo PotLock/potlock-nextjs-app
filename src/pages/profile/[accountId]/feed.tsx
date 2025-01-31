@@ -7,7 +7,7 @@ import { fetchAccountFeedPosts } from "@/common/api/near-social-indexer";
 import { IndexPostResultItem } from "@/common/contracts/social-db";
 import type { AccountId } from "@/common/types";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { PostCard, PostEditor } from "@/entities/post";
 import { ProfileLayout } from "@/layout/profile/components/layout";
 
@@ -38,7 +38,7 @@ const NoResults = () => (
 export default function ProfileFeedTab() {
   const router = useRouter();
   const { accountId } = router.query as { accountId: AccountId };
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const [posts, setPosts] = useState<IndexPostResultItem[]>([]);
   const [offset, setOffset] = useState(40);
   const [isLoading, setIsLoading] = useState(false);

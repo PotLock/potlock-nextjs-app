@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Big } from "big.js";
 
-import { useNearToUsdWithFallback } from "@/common/_deprecated/useNearToUsdWithFallback";
 import { Donation, indexer } from "@/common/api/indexer";
 import { SUPPORTED_FTS } from "@/common/constants";
+import { useNearToUsdWithFallback } from "@/entities/_shared/token/hooks/_deprecated";
 
 import { DonationInfo } from "./accounts";
 

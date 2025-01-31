@@ -11,7 +11,7 @@ import { potContractHooks } from "@/common/contracts/core/pot";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { TokenTotalValue } from "@/entities/_shared/token";
 import {
   PotDonationStats,
@@ -37,7 +37,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onChallengePayoutsClick,
   onFundMatchingPoolClick,
 }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const authorizedUser = usePotAuthorization({ potId, accountId: viewer.accountId });
   const { data: pot } = indexer.usePot({ potId });
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });

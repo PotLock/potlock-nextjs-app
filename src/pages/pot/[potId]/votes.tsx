@@ -25,7 +25,7 @@ import {
 } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import {
   VotingRoundCandidateFilter,
   VotingRoundCandidateTable,
@@ -39,7 +39,7 @@ import {
 import { PotLayout } from "@/layout/pot/components/layout";
 
 export default function PotVotesTab() {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");

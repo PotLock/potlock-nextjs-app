@@ -16,14 +16,14 @@ import {
 import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { ProfileSetupForm } from "@/features/profile-setup";
 import { rootPathnames } from "@/pathnames";
 
 export default function EditProjectPage() {
   const router = useRouter();
   // const { accountId } = router.query as { accountId: AccountId };
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const { toast } = useToast();
 
   const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =

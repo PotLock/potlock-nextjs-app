@@ -12,7 +12,7 @@ import { indivisibleUnitsToBigNum, indivisibleUnitsToFloat, isAccountId } from "
 import { formatWithCommas } from "@/common/lib/formatWithCommas";
 import type { AccountId, ByTokenId, ConditionalActivation } from "@/common/types";
 
-import { type TokenQuery, type TokenQueryResult } from "./types";
+import { type TokenQuery, type TokenQueryResult } from "../types";
 
 /**
  * @deprecated Use `usdPrice` Big number from `useToken({ tokenId: ... })`

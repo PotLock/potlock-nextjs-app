@@ -20,7 +20,7 @@ import { APP_METADATA } from "@/common/constants";
 import { TooltipProvider } from "@/common/ui/components";
 import { Toaster } from "@/common/ui/components/molecules/toaster";
 import { cn } from "@/common/ui/utils";
-import { ViewerSessionProvider } from "@/common/viewer";
+import { WalletUserSessionProvider } from "@/common/wallet";
 import { AppBar } from "@/layout/components/app-bar";
 import { dispatch, store } from "@/store";
 
@@ -44,7 +44,7 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <ViewerSessionProvider>
+    <WalletUserSessionProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{APP_METADATA.title}</title>
@@ -66,6 +66,6 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
         </NiceModalProvider>
         <Toaster />
       </ReduxProvider>
-    </ViewerSessionProvider>
+    </WalletUserSessionProvider>
   );
 }

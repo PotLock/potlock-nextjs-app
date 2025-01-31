@@ -5,7 +5,7 @@ import { socialDbContractClient } from "@/common/contracts/social-db";
 import type { ByAccountId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 
 export type AccountFollowButtonProps = ByAccountId & {
   className?: string;
@@ -15,7 +15,7 @@ export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
   accountId,
   className,
 }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const {
     isLoading: isFollowerListLoading,

@@ -9,7 +9,7 @@ import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/com
 import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
 import { PotConfig } from "@/common/contracts/core/pot";
 import { AccountId } from "@/common/types";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { PotInputs } from "@/entities/pot";
 import { donationFeeBasisPointsToPercents } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
@@ -33,7 +33,7 @@ export const usePotConfigurationEditorForm = ({
   schema,
   ...props
 }: PotConfigurationEditorFormArgs) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const router = useRouter();
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = "potId" in props && typeof potId !== "string";

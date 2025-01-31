@@ -7,27 +7,30 @@ type WalletAccountState = {
   isSignedIn: boolean;
 };
 
-type WalletContextState = { error: null | unknown } & (
+type WalletUserAdapterContextState = { error: null | unknown } & (
   | { isReady: false; isSignedIn: false; accountId: undefined }
   | ({ isReady: true } & WalletAccountState)
 );
 
-const initialWalletContextState: WalletContextState = {
+const initialWalletUserAdapterContextState: WalletUserAdapterContextState = {
   isReady: false,
   isSignedIn: false,
   accountId: undefined,
   error: null,
 };
 
-type WalletContextStore = WalletContextState & {
+type WalletUserAdapterContextStore = WalletUserAdapterContextState & {
   registerInit: (isReady: boolean) => void;
   setAccountState: (state: WalletAccountState) => void;
   setError: (error: unknown) => void;
 };
 
-export const useWalletContextStore = create<WalletContextStore>((set) => ({
-  ...initialWalletContextState,
-  registerInit: (isReady: boolean) => set(isReady ? { isReady } : initialWalletContextState),
+export const useWalletUserAdapterContext = create<WalletUserAdapterContextStore>((set) => ({
+  ...initialWalletUserAdapterContextState,
+
+  registerInit: (isReady: boolean) =>
+    set(isReady ? { isReady } : initialWalletUserAdapterContextState),
+
   setAccountState: (newAccountState: WalletAccountState) => set(newAccountState),
   setError: (error: unknown) => set({ error }),
 }));

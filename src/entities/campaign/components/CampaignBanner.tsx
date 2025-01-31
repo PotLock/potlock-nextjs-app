@@ -1,6 +1,5 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { useNearToUsdWithFallback } from "@/common/_deprecated/useNearToUsdWithFallback";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
@@ -8,6 +7,7 @@ import type { ByCampaignId } from "@/common/types";
 import { SocialsShare } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
+import { useNearToUsdWithFallback } from "@/entities/_shared/token/hooks/_deprecated";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";

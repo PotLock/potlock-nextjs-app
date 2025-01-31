@@ -12,7 +12,9 @@ export * from "./components/AccountProfileTags";
 export * from "./components/AccountSummaryPopup";
 export * from "./components/card";
 export * from "./components/card-skeleton";
+export * from "./components/github-repos";
 export * from "./components/profile-images";
+export * from "./components/smart-contracts";
 
 export * from "./hooks/power";
 export * from "./hooks/social-profile";

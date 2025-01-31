@@ -5,7 +5,7 @@ type ViewerDaoRepresentativeParams =
   | { isDaoRepresentative: false; daoAccountId: undefined }
   | { isDaoRepresentative: true; daoAccountId: AccountId };
 
-export type ViewerSession =
+export type WalletUserSession =
   | {
       hasWalletReady: false;
       accountId: undefined;

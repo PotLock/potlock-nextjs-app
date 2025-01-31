@@ -20,7 +20,7 @@ import {
 } from "@/common/ui/components";
 import { SocialsShare } from "@/common/ui/components/molecules/social-share";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/svg";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import {
   AccountGroupEditModal,
   AccountListItem,
@@ -43,7 +43,7 @@ interface ListDetailsType {
 }
 
 export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const {
     push,

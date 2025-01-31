@@ -6,7 +6,7 @@ import { nearProtocolClient } from "@/common/api/near-protocol";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
@@ -17,7 +17,7 @@ export type DonationModalProps = DonationAllocationKey &
   Pick<DonationFlowProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const self = useModal();
   const isSingleProjectDonation = "accountId" in props;
   const isPotDonation = "potId" in props;

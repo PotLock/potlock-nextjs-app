@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { List, indexer } from "@/common/api/indexer";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 
 import { ListOverviewType } from "../types";
 
@@ -13,7 +13,7 @@ export const useAllLists = (
   setFilteredRegistrations: SetRegistrationsFn,
   currentListType?: ListOverviewType,
 ) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const [registrations, setRegistrations] = useState<List[]>([]);
   const [administratedListsOnly, setAdministratedListsOnly] = useState(false);
 

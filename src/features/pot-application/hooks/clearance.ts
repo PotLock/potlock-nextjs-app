@@ -7,7 +7,7 @@ import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 import { type AccountId, ClearanceCheckResult } from "@/common/types";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 
 import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
@@ -24,7 +24,7 @@ export const usePotApplicationUserClearance = ({
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
   const { data: pot } = indexer.usePot({ potId });
 
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const { data: voterInfo } = indexer.useMpdaoVoter({
     enabled: viewer.isSignedIn,

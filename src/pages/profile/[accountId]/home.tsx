@@ -8,10 +8,12 @@ import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { isAccountId } from "@/common/lib";
 import type { AccountId } from "@/common/types";
-import { useAccountSocialProfile } from "@/entities/_shared/account";
-import { ProfileLayoutGithubRepos } from "@/layout/profile/components/github-repos";
+import {
+  AccountGithubReposList,
+  AccountSmartContractsList,
+  useAccountSocialProfile,
+} from "@/entities/_shared";
 import { ProfileLayout } from "@/layout/profile/components/layout";
-import SmartContracts from "@/layout/profile/components/SmartContract";
 import { ProfileLayoutTeam } from "@/layout/profile/components/team";
 
 const Section: React.FC<{ title: string; text?: string; children?: React.ReactNode }> = ({
@@ -67,11 +69,11 @@ export default function ProfileHomeTab() {
           <ProfileLayoutTeam profile={profile} />
 
           <Section title="Github repo(s)">
-            <ProfileLayoutGithubRepos profile={profile} />
+            <AccountGithubReposList profile={profile} />
           </Section>
 
           <Section title="Smart contracts">
-            <SmartContracts profile={profile} />
+            <AccountSmartContractsList profile={profile} />
           </Section>
         </>
       )}

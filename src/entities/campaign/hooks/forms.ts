@@ -7,14 +7,14 @@ import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { campaignFormSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
 
 export const useCampaignForm = () => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const {
     // TODO: Pass this values down from the page level!

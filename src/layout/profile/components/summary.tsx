@@ -13,7 +13,7 @@ import { Button, ClipboardCopyButton } from "@/common/ui/components";
 import CheckIcon from "@/common/ui/svg/CheckIcon";
 import ReferrerIcon from "@/common/ui/svg/ReferrerIcon";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import {
   AccountFollowButton,
   AccountProfileLinktree,
@@ -24,7 +24,7 @@ import { useDonation } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const [copied, setCopied] = useState(false);
 
   return (
@@ -118,7 +118,7 @@ const Container = styled.div`
 export type ProfileLayoutSummaryProps = ByAccountId & {};
 
 export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ accountId }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const isOwner = viewer?.accountId === accountId;
   const { openDonationModal } = useDonation({ accountId });
   const { isLoading: isProfileDataLoading, profile } = useAccountSocialProfile({ accountId });

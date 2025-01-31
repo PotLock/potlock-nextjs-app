@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { prop } from "remeda";
 
 import { ClearanceCheckResult } from "@/common/types";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**
@@ -11,7 +11,7 @@ import { useViewerSession } from "@/common/viewer";
  *  as it's built for the mpDAO milestone.
  */
 export const useVotingRoundSessionClearance = (): ClearanceCheckResult => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   return useMemo(() => {
     const requirements = [

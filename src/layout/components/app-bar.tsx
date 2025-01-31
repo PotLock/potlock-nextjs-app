@@ -8,7 +8,7 @@ import { NETWORK } from "@/common/_config";
 import { nearProtocolClient } from "@/common/api/near-protocol";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 
@@ -34,7 +34,7 @@ const links = [
 ];
 
 const AuthButton = () => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const onSignInClick = useCallback(() => {
     nearProtocolClient.walletApi.signInModal();

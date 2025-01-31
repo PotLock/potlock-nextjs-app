@@ -17,7 +17,7 @@ import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import type { ByListId } from "@/common/types";
 import { Button, Input } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
@@ -50,7 +50,7 @@ export type ListFormProps = Partial<ByListId> & {
 };
 
 export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate = false }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const { back, push } = useRouter();
   const onEditPage = listId === undefined;
 

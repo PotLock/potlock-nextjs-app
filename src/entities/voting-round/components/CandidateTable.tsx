@@ -13,7 +13,7 @@ import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 
 import { VotingRoundCandidateRow } from "./CandidateRow";
 
@@ -30,7 +30,7 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
 }) => {
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const selectedEntries = useSet<AccountId>();
 
   const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({

@@ -8,11 +8,11 @@ import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resi
 import { isAccountId } from "@/common/lib";
 import { useGlobalStoreSelector } from "@/store";
 
-import { useWalletContextStore } from "../internal/wallet-context";
-import { ViewerSession } from "../types";
+import { useWalletUserAdapterContext } from "../adapters/user";
+import { WalletUserSession } from "../types";
 
-export const useViewerSession = (): ViewerSession => {
-  const wallet = useWalletContextStore();
+export const useWalletUserSession = (): WalletUserSession => {
+  const wallet = useWalletUserAdapterContext();
   const { actAsDao } = useGlobalStoreSelector(prop("nav"));
   const daoAccountId = actAsDao.defaultAddress;
   const isDaoAccountIdValid = useMemo(() => isAccountId(daoAccountId), [daoAccountId]);

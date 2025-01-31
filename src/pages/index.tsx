@@ -6,7 +6,7 @@ import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountCard } from "@/entities/_shared/account";
 import { DonateRandomly, DonateToAccountButton } from "@/features/donation";
 import { ProjectDiscovery } from "@/layout/components/project-discovery";
@@ -47,7 +47,7 @@ export const GeneralStats = () => {
 };
 
 const WelcomeBanner = () => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   return (
     <div

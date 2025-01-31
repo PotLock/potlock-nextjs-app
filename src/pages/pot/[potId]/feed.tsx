@@ -6,7 +6,7 @@ import InfiniteScrollWrapper from "react-infinite-scroll-component";
 import { PotApplicationStatus as ApplicationStatus, indexer } from "@/common/api/indexer";
 import { fetchGlobalFeeds } from "@/common/api/near-social-indexer";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { PostCard, PostEditor } from "@/entities/post";
 import { PotLayout } from "@/layout/pot/components/layout";
 
@@ -17,7 +17,7 @@ const tabs = [
 ];
 
 export default function PotFeedTab() {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isPotApplicantsReady, setIsPotApplicantsReady] = useState<boolean>(false);

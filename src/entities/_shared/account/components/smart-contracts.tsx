@@ -19,7 +19,7 @@ const getProfileSmartContracts = (profile?: NEARSocialUserProfile) => {
   return smartContracts as [string, string][];
 };
 
-const SmartContract = ({ profile }: { profile?: NEARSocialUserProfile }) => {
+export const AccountSmartContractsList = ({ profile }: { profile?: NEARSocialUserProfile }) => {
   const smartContracts = getProfileSmartContracts(profile);
 
   return (
@@ -38,5 +38,3 @@ const SmartContract = ({ profile }: { profile?: NEARSocialUserProfile }) => {
     </div>
   );
 };
-
-export default SmartContract;

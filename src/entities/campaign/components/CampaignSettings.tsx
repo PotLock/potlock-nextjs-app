@@ -7,7 +7,7 @@ import { yoctoNearToFloat } from "@/common/lib";
 import type { ByCampaignId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { NearIcon } from "@/common/ui/svg";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
@@ -45,7 +45,7 @@ const CampaignSettingsBarCardSkeleton = () => <Skeleton className="w-50% h-5" />
 export type CampaignSettingsProps = ByCampaignId & {};
 
 export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
 
   const {

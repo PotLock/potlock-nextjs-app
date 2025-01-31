@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
   Skeleton,
 } from "@/common/ui/components";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
 import { listRegistrationStatuses } from "@/entities/list";
 import { rootPathnames } from "@/pathnames";
@@ -23,7 +23,7 @@ import { rootPathnames } from "@/pathnames";
 import { DaoAuth } from "./dao-auth";
 
 export const UserDropdown = () => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const { profile } = useAccountSocialProfile({
     enabled: viewer.isSignedIn,

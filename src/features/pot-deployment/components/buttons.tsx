@@ -2,12 +2,12 @@ import Link from "next/link";
 
 import { PLATFORM_NAME } from "@/common/_config";
 import { Button, Skeleton, Tooltip, TooltipContent, TooltipTrigger } from "@/common/ui/components";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { useAccountPower } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
 export const PotDeploymentButton: React.FC = () => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const { isLoading: isViewerPowerLoading, data: viewerPower } = useAccountPower({
     accountId: viewer.accountId,

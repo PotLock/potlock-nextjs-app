@@ -18,7 +18,7 @@ const formatProfileGithubRepositories = (profile?: NEARSocialUserProfile) => {
   return githubRepos as string[];
 };
 
-export const ProfileLayoutGithubRepos = ({ profile }: { profile?: NEARSocialUserProfile }) => {
+export const AccountGithubReposList = ({ profile }: { profile?: NEARSocialUserProfile }) => {
   const githubRepositories = formatProfileGithubRepositories(profile);
 
   if (githubRepositories.length > 0) {

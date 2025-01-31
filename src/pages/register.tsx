@@ -9,12 +9,12 @@ import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui
 import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { ProfileSetupForm } from "@/features/profile-setup";
 import { rootPathnames } from "@/pathnames";
 
 export default function RegisterPage() {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
   const router = useRouter();
   const { toast } = useToast();
 

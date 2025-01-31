@@ -5,11 +5,11 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { socialDbContractClient } from "@/common/contracts/social-db";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";
-import { useViewerSession } from "@/common/viewer";
+import { useWalletUserSession } from "@/common/wallet";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 
 export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
-  const viewer = useViewerSession();
+  const viewer = useWalletUserSession();
 
   const { avatarSrc } = useAccountSocialProfile({
     enabled: viewer.isSignedIn,
