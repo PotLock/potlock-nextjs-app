@@ -42,6 +42,7 @@ interface StatusModal {
   status?: RegistrationStatus | string;
 }
 
+// TODO: Rename to `ListAccountCard`!
 export const AccountCard = ({
   dataForList,
   accountsWithAccess,

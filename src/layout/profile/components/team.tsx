@@ -63,11 +63,11 @@ const Members = ({ team }: { team?: string[] }) => {
   return members;
 };
 
-type Props = {
+export type ProfileLayoutTeamProps = {
   profile?: NEARSocialUserProfile;
 };
 
-export const Team = ({ profile }: Props) => {
+export const ProfileLayoutTeam: React.FC<ProfileLayoutTeamProps> = ({ profile }) => {
   const [team, setTeam] = useState(getProfileTeamMembersData(profile));
 
   useEffect(() => {

@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 
 import type { ByAccountId } from "@/common/types";
-import { useAccountSocialProfile } from "@/entities/_shared/account";
-import { getTagsFromSocialProfileData } from "@/entities/project/utils";
+
+import { useAccountSocialProfile } from "../hooks/social-profile";
+import { getTagsFromSocialProfileData } from "../utils/getTagsFromSocialProfileData";
 
 const Tag = styled.span`
   color: #292929;

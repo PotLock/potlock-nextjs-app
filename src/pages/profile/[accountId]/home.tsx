@@ -9,10 +9,10 @@ import { listsContractHooks } from "@/common/contracts/core/lists";
 import { isAccountId } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import { Team } from "@/entities/project";
 import { ProfileLayoutGithubRepos } from "@/layout/profile/components/github-repos";
 import { ProfileLayout } from "@/layout/profile/components/layout";
 import SmartContracts from "@/layout/profile/components/SmartContract";
+import { ProfileLayoutTeam } from "@/layout/profile/components/team";
 
 const Section: React.FC<{ title: string; text?: string; children?: React.ReactNode }> = ({
   title,
@@ -64,7 +64,7 @@ export default function ProfileHomeTab() {
             <Section title="Public Goods listing reasoning" text={profile.plPublicGoodReason} />
           )}
 
-          <Team profile={profile} />
+          <ProfileLayoutTeam profile={profile} />
 
           <Section title="Github repo(s)">
             <ProfileLayoutGithubRepos profile={profile} />

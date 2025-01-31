@@ -1,6 +1,6 @@
 import { array, object, string } from "zod";
 
-import { ProjectCategory } from "@/entities/project";
+import { AccountCategory } from "@/entities/_shared/account";
 
 export const addFundingSourceSchema = object({
   investorName: string({
@@ -27,7 +27,7 @@ export const addFundingSourceSchema = object({
 });
 
 // TODO: Add cross-field validation to make repositories required
-//! if one of the project categories is `ProjectCategory["Open Source"]`
+//! if one of the project categories is `AccountCategory["Open Source"]`
 export const profileSetupSchema = object({
   name: string()
     .min(3, "Must be at least 3 characters long")
@@ -44,15 +44,14 @@ export const profileSetupSchema = object({
   telegram: string().optional(),
   github: string().optional(),
 
-  teamMembers: array(string()).optional(),
   categories: array(string()).min(1),
+  githubRepositories: array(string()).optional(),
+  teamMembers: array(string()).optional(),
+  smartContracts: array(array(string())).optional(),
+  fundingSources: array(addFundingSourceSchema).optional(),
 
   publicGoodReason: string()
     .min(20, "Must contain at least 20 characters")
     .max(500, "Must be less 500 characters long")
     .optional(),
-
-  smartContracts: array(array(string())).optional(),
-  fundingSources: array(addFundingSourceSchema).optional(),
-  githubRepositories: array(string()).optional(),
 });

@@ -12,7 +12,7 @@ import {
   Textarea,
 } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { ProjectCategoryVariant } from "@/entities/project";
+import { ACCOUNT_CATEGORY_VARIANTS } from "@/entities/_shared/account";
 
 import { SubTitle } from "./styles";
 
@@ -114,17 +114,6 @@ export const CustomInput = ({
   </InputContainer>
 );
 
-const options: ProjectCategoryVariant[] = [
-  "Social Impact",
-  "Non Profit",
-  "Climate",
-  "Public Good",
-  "DeSci",
-  "Open Source",
-  "Community",
-  "Education",
-];
-
 export const ProjectCategoryPicker = ({
   onValuesChange,
   defaultValues,
@@ -150,9 +139,9 @@ export const ProjectCategoryPicker = ({
 
       <MultiSelectorContent>
         <MultiSelectorList>
-          {options.map((option, i) => (
-            <MultiSelectorItem key={i} value={option}>
-              {option}
+          {ACCOUNT_CATEGORY_VARIANTS.map((categoryVariant) => (
+            <MultiSelectorItem key={categoryVariant} value={categoryVariant}>
+              {categoryVariant}
             </MultiSelectorItem>
           ))}
         </MultiSelectorList>

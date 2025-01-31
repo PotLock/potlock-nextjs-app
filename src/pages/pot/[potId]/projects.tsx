@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 
 import { PotApplication, PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { InfiniteScroll, SearchBar } from "@/common/ui/components";
-import { ProjectCard } from "@/entities/project";
+import { AccountCard } from "@/entities/_shared/account";
+import { DonateToAccountButton } from "@/features/donation";
 import { PotLayout } from "@/layout/pot/components/layout";
 
 const handleSearch = (
@@ -67,8 +68,12 @@ export default function PotProjectsTab() {
           index={index}
           setIndex={setIndex}
           size={9}
-          renderItem={({ applicant }: PotApplication) => (
-            <ProjectCard projectId={applicant.id} key={applicant.id} />
+          renderItem={({ applicant: applicantAccount }: PotApplication) => (
+            <AccountCard
+              accountId={applicantAccount.id}
+              key={applicantAccount.id}
+              actions={<DonateToAccountButton accountId={applicantAccount.id} />}
+            />
           )}
         />
       ) : (

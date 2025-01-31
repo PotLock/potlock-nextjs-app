@@ -11,5 +11,6 @@ export * from "./components/ListsOverview";
 export * from "./components/registration-status";
 
 export * from "./hooks/redirects";
+export * from "./hooks/registrations";
 
 export { listEditorModel, listModelKey } from "./models";

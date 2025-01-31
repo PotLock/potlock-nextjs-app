@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { NETWORK } from "@/common/_config";
@@ -6,8 +7,9 @@ import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useViewerSession } from "@/common/viewer";
-import { ProjectCard, ProjectDiscovery } from "@/entities/project";
-import { DonateRandomly } from "@/features/donation";
+import { AccountCard } from "@/entities/_shared/account";
+import { DonateRandomly, DonateToAccountButton } from "@/features/donation";
+import { ProjectDiscovery } from "@/layout/components/project-discovery";
 import { rootPathnames } from "@/pathnames";
 
 export const FEATURED_PROJECT_ACCOUNT_IDS =
@@ -103,13 +105,34 @@ export default function Home() {
         </div>
 
         <div className="grid w-full grid-cols-1 gap-8 p-0.5 md:grid-cols-2 lg:grid-cols-3">
-          {FEATURED_PROJECT_ACCOUNT_IDS.map((projectId) => (
-            <ProjectCard key={projectId} projectId={projectId} />
+          {FEATURED_PROJECT_ACCOUNT_IDS.map((projectAccountId) => (
+            <AccountCard
+              key={projectAccountId}
+              accountId={projectAccountId}
+              actions={<DonateToAccountButton accountId={projectAccountId} />}
+            />
           ))}
         </div>
       </div>
 
-      <ProjectDiscovery listId={PUBLIC_GOODS_REGISTRY_LIST_ID} />
+      <ProjectDiscovery
+        listId={PUBLIC_GOODS_REGISTRY_LIST_ID}
+        noResultsPlaceholder={
+          <div className="min-h-140 flex w-full flex-col items-center justify-center">
+            <Image
+              src="/assets/icons/no-list.svg"
+              alt="No results found"
+              width={200}
+              height={200}
+              className="h-50 w-50 mb-4"
+            />
+
+            <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
+              <p className="w-100 font-lora text-center italic">{"No results found"}</p>
+            </div>
+          </div>
+        }
+      />
     </main>
   );
 }
