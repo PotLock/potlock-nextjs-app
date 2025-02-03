@@ -148,7 +148,7 @@ export default function PotVotesTab() {
   }, [candidateFilter, votedCandidates, votableCandidates, candidates]);
 
   return votingRound === undefined ? (
-    <div className="h-200 flex w-full flex-col items-center justify-center">
+    <div className="h-100 flex w-full flex-col items-center justify-center">
       {isVotingRoundDataLoading ? (
         <Alert variant="neutral">
           <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
