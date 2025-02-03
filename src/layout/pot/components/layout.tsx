@@ -122,7 +122,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       </div>
 
       {/* Tab Content */}
-      <div className="min-h-100 flex w-full flex-row flex-wrap gap-2">{children}</div>
+      <div className="min-h-100 flex w-full flex-row flex-wrap gap-2 pb-8">{children}</div>
     </PageWithBanner>
   );
 };
