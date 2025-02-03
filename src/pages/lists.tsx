@@ -16,7 +16,6 @@ export default function Page() {
           setCurrentListType={setCurrentListType}
           setFilteredRegistrations={setFilteredRegistrations}
         />
-
         <ListsOverview
           currentListType={currentListType}
           setCurrentListType={setCurrentListType}

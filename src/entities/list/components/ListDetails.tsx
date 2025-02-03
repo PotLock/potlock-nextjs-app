@@ -40,16 +40,12 @@ interface ListDetailsType {
   setAdmins: (value: string[]) => void;
   listDetails: List | any;
   savedUsers: SavedUsersType;
+  listId: number;
 }
 
-export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType) => {
+export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDetailsType) => {
   const viewer = useWalletUserSession();
-
-  const {
-    push,
-    // TODO: Pass this values down from the page level!
-    query: { id },
-  } = useRouter();
+  const { push } = useRouter();
 
   const [isApplyToListModalOpen, setIsApplyToListModalOpen] = useState(false);
   const [isApplicationSuccessful, setIsApplicationSuccessful] = useState<boolean>(false);
@@ -219,7 +215,7 @@ export const ListDetails = ({ admins, listDetails, savedUsers }: ListDetailsType
             {viewer.isSignedIn && (
               <div className="relative flex items-start gap-4">
                 <div className="flex space-x-4">
-                  <DonateToListProjects listId={parseInt(id as string)} />
+                  <DonateToListProjects listId={listId} />
 
                   {!listDetails?.admin_only_registrations && (
                     <button
