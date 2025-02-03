@@ -50,8 +50,8 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
             adjustments in the list settings page.
           </p>
           <Button asChild>
-            <Link 
-              href={href} 
+            <Link
+              href={href}
               onClick={onClose}
               aria-label={showBackToLists ? "Navigate back to lists page" : "View the created list"}
             >
