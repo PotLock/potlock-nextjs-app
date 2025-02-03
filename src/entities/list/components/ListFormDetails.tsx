@@ -274,15 +274,11 @@ export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate =
     [admins],
   );
 
-  if (isListLoading || isRegistrationListLoading) {
-    return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <Spinner className="h-20 w-20" />
-      </div>
-    );
-  }
-
-  return (
+  return isListLoading || isRegistrationListLoading ? (
+    <div className="flex h-[80vh] items-center justify-center">
+      <Spinner className="h-20 w-20" />
+    </div>
+  ) : (
     <>
       <div className=" mx-auto my-8 max-w-[896px] p-6 font-sans md:w-[720px] md:rounded-[16px] md:border md:border-[#DBDBDB] md:p-10">
         <h2 className="mb-6 text-[18px] font-semibold">List Details</h2>

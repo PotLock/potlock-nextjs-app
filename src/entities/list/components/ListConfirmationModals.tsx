@@ -47,7 +47,7 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
           </h2>
           <p className="mb-6 text-center text-gray-700">
             You’ve successfully {isUpdate ? "Updated" : "Deployed"} {listName}, you can always make
-            adjustments in the pot settings page.
+            adjustments in the list settings page.
           </p>
           <Button asChild>
             <Link href={href} onClick={onClose}>

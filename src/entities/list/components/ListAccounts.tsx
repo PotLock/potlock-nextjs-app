@@ -29,7 +29,6 @@ export const ListAccounts = ({
   const [accountsWithAccess, setAccountsWithAccess] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string>("all");
 
-  console.log(listRegistrations)
 
   const SORT_LIST_PROJECTS = [
     { label: "Most recent", value: "recent" },

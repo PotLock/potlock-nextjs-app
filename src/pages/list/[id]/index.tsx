@@ -63,15 +63,11 @@ export default function SingleList() {
     });
   }, [loadingListData, isLoading, setAdmins, listData, data]);
 
-  if (loadingListData) {
-    return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <Spinner className="w-25 h-25" />
-      </div>
-    );
-  }
-
-  return (
+  return loadingListData ? (
+    <div className="flex h-[80vh] items-center justify-center">
+      <Spinner className="w-25 h-25" />
+    </div>
+  ) : (
     <RootLayout
       title={listDetails?.name ?? ""}
       description={listDetails?.description ?? ""}
