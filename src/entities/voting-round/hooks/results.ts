@@ -23,7 +23,7 @@ export const useVotingRoundResults = ({
   // TODO: Implement mechanism config storage ( Pots V2 milestone )
   const mechanismConfig = VOTING_ROUND_CONFIG_MPDAO;
 
-  const votingRound = useVotingRound({
+  const { data: votingRound } = useVotingRound({
     enabled: enabled && hasProportionalFundingMechanism,
     potId,
   });

@@ -9,23 +9,34 @@ import type { VotingRound, VotingRoundKey } from "../types";
 export const useVotingRound = ({
   potId,
   enabled = true,
-}: VotingRoundKey & ConditionalActivation): VotingRound | undefined => {
-  const { elections } = votingContractHooks.usePotElections({ enabled, potId });
+}: VotingRoundKey & ConditionalActivation) => {
+  const { data: elections, ...queryResult } = votingContractHooks.usePotElections({
+    enabled,
+    potId,
+  });
 
   return useMemo(() => {
     const election = elections?.at(0);
 
-    return election ? { electionId: election.id, election } : undefined;
-  }, [elections]);
+    return {
+      ...queryResult,
+      data: election ? { electionId: election.id, election } : undefined,
+    };
+  }, [elections, queryResult]);
 };
 
 // TODO: Figure out a way to know exactly which ONE election to pick ( Pots V2 milestone )
-export const useActiveVotingRound = ({ potId }: VotingRoundKey): VotingRound | undefined => {
-  const { activeElections } = votingContractHooks.useActivePotElections({ potId });
+export const useActiveVotingRound = ({ potId }: VotingRoundKey) => {
+  const { data: activeElections, ...queryResult } = votingContractHooks.useActivePotElections({
+    potId,
+  });
 
   return useMemo(() => {
     const [_electionId, election] = activeElections?.at(0) ?? [];
 
-    return election ? { electionId: election.id, election } : undefined;
-  }, [activeElections]);
+    return {
+      ...queryResult,
+      data: election ? { electionId: election.id, election } : undefined,
+    };
+  }, [activeElections, queryResult]);
 };

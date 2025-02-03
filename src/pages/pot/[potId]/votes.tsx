@@ -6,6 +6,7 @@ import {
   MdFileDownload,
   MdHowToVote,
   MdOutlineDescription,
+  MdOutlineHourglassTop,
   MdOutlineInfo,
   MdStar,
 } from "react-icons/md";
@@ -58,7 +59,7 @@ export default function PotVotesTab() {
     potId,
   });
 
-  const votingRound = useVotingRound({ potId });
+  const { isLoading: isVotingRoundDataLoading, data: votingRound } = useVotingRound({ potId });
 
   const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
     enabled: votingRound !== undefined,
@@ -147,15 +148,26 @@ export default function PotVotesTab() {
   }, [candidateFilter, votedCandidates, votableCandidates, candidates]);
 
   return votingRound === undefined ? (
-    <div className="h-100 flex w-full flex-col items-center justify-center">
-      <p className="prose text-2xl">{"Voting round hasn't started yet."}</p>
+    <div className="h-200 flex w-full flex-col items-center justify-center">
+      {isVotingRoundDataLoading ? (
+        <Alert variant="neutral">
+          <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Loading voting round data..."}</AlertTitle>
+        </Alert>
+      ) : (
+        <Alert variant="neutral">
+          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"No Votes"}</AlertTitle>
+          <AlertDescription>{"Voting round hasn't started yet."}</AlertDescription>
+        </Alert>
+      )}
     </div>
   ) : (
     <div className="flex w-full flex-col gap-6">
       {isVotingPeriodOngoing && (
         <Alert variant="neutral">
           <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-          <AlertTitle>{"Voting round is open"}</AlertTitle>
+          <AlertTitle>{"Voting Round is Open"}</AlertTitle>
           <AlertDescription>{"You can cast your votes now."}</AlertDescription>
         </Alert>
       )}
