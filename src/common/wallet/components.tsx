@@ -1,5 +1,7 @@
 import { useCallback, useEffect } from "react";
 
+import { useRouter } from "next/router";
+
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { IS_CLIENT } from "@/common/constants";
 
@@ -10,6 +12,8 @@ type WalletProviderProps = {
 };
 
 const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
+  const router = useRouter();
+
   const { registerInit, setAccountState, setError, isReady, isSignedIn, accountId, error } =
     useWalletUserAdapter();
 
@@ -21,6 +25,11 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       setAccountState({ accountId: walletAccountId, isSignedIn: isWalletSignedIn });
     }
   }, [accountId, isSignedIn, setAccountState]);
+
+  const handleChange = useCallback(() => {
+    syncWalletState();
+    router.reload();
+  }, [router, syncWalletState]);
 
   useEffect(() => {
     if (!isReady && error === null) {
@@ -38,23 +47,23 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     if (isReady) {
       syncWalletState();
 
-      nearProtocolClient.walletApi.walletSelector.on("signedIn", syncWalletState);
-      nearProtocolClient.walletApi.walletSelector.on("signedOut", syncWalletState);
-      nearProtocolClient.walletApi.walletSelector.on("accountsChanged", syncWalletState);
-      nearProtocolClient.walletApi.walletSelector.on("networkChanged", syncWalletState);
-      nearProtocolClient.walletApi.walletSelector.on("uriChanged", syncWalletState);
+      nearProtocolClient.walletApi.walletSelector.on("signedIn", handleChange);
+      nearProtocolClient.walletApi.walletSelector.on("signedOut", handleChange);
+      nearProtocolClient.walletApi.walletSelector.on("accountsChanged", handleChange);
+      nearProtocolClient.walletApi.walletSelector.on("networkChanged", handleChange);
+      nearProtocolClient.walletApi.walletSelector.on("uriChanged", handleChange);
     }
 
     return () => {
       if (isReady) {
-        nearProtocolClient.walletApi.walletSelector.off("signedIn", syncWalletState);
-        nearProtocolClient.walletApi.walletSelector.off("signedOut", syncWalletState);
-        nearProtocolClient.walletApi.walletSelector.off("accountsChanged", syncWalletState);
-        nearProtocolClient.walletApi.walletSelector.off("networkChanged", syncWalletState);
-        nearProtocolClient.walletApi.walletSelector.off("uriChanged", syncWalletState);
+        nearProtocolClient.walletApi.walletSelector.off("signedIn", handleChange);
+        nearProtocolClient.walletApi.walletSelector.off("signedOut", handleChange);
+        nearProtocolClient.walletApi.walletSelector.off("accountsChanged", handleChange);
+        nearProtocolClient.walletApi.walletSelector.off("networkChanged", handleChange);
+        nearProtocolClient.walletApi.walletSelector.off("uriChanged", handleChange);
       }
     };
-  }, [syncWalletState, isReady]);
+  }, [syncWalletState, isReady, handleChange]);
 
   return children;
 };

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -88,7 +88,7 @@ export default function ApplicationsTab() {
 
   const handleApproveApplication = (accountId: AccountId) => {
     setSelectedApplicantAccountId(accountId);
-    setStatusFilter("Approved");
+    setProjectStatus("Approved");
   };
 
   const handleRejectApplication = (accountId: AccountId) => {
@@ -100,6 +100,11 @@ export default function ApplicationsTab() {
     setSelectedApplicantAccountId(null);
     setProjectStatus("");
   };
+
+  const onReviewSuccess = useCallback(() => {
+    refetchApplications();
+    handleCloseModal();
+  }, [refetchApplications]);
 
   const applicationsFilters: Record<
     AccountPotApplicationStatusVariant,
@@ -141,9 +146,6 @@ export default function ApplicationsTab() {
     };
   }, [applications]);
 
-  const isChefOrGreater =
-    accountId === chef || admins.includes(accountId || "") || accountId === owner;
-
   useEffect(() => {
     if (error) {
       console.log(error);
@@ -153,7 +155,7 @@ export default function ApplicationsTab() {
   }, [statusFilter, error]);
 
   return (
-    <Container className="gap-6">
+    <Container className="w-full gap-6">
       {/* Modal */}
       {potDetail && (
         <PotApplicationReviewModal
@@ -162,6 +164,7 @@ export default function ApplicationsTab() {
           projectId={selectedApplicantAccountId ?? "noop"}
           projectStatus={projectStatus}
           onCloseClick={handleCloseModal}
+          onSuccess={onReviewSuccess}
         />
       )}
 
@@ -192,9 +195,9 @@ export default function ApplicationsTab() {
                 <PotApplicationCard
                   key={application.id}
                   applicationData={application}
-                  isChefOrGreater={isChefOrGreater}
                   handleApproveApplication={handleApproveApplication}
                   handleRejectApplication={handleRejectApplication}
+                  {...{ potId }}
                 />
               ))
             ) : (

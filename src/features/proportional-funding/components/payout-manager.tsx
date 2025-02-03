@@ -23,7 +23,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
 }) => {
   const { toast } = useToast();
   const viewer = useWalletUserSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: viewer.accountId });
+  const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRoundResults = useVotingRoundResults({ potId });
 
   const { isMetadataLoading: isTokenMetadataLoading, data: token } = useToken({
@@ -97,7 +97,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
           </Button>
         )}
 
-        {authorizedUser.canSubmitPayouts && (
+        {viewerAbilities.canSubmitPayouts && (
           <>
             {votingRoundResults.isLoading || isTokenMetadataLoading ? (
               <Skeleton className="w-45 h-10" />
@@ -110,7 +110,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
           </>
         )}
 
-        {authorizedUser.canInitiatePayoutProcessing && (
+        {viewerAbilities.canInitiatePayoutProcessing && (
           <Button onClick={onInitiatePayoutProcessingClick}>
             <MdCheck className="h-4.5 w-4.5" />
             <span className="font-500 whitespace-nowrap text-sm">{"Initiate Payouts"}</span>

@@ -46,7 +46,10 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   const isSubmittedPayoutListEmpty = potPayouts?.length === 0;
 
   const isApplicant = useMemo(
-    () => isValidAccountId && potApplications?.find(({ project_id }) => project_id === accountId),
+    () =>
+      isValidAccountId &&
+      potApplications?.find(({ project_id }) => project_id === accountId) !== undefined,
+
     [accountId, isValidAccountId, potApplications],
   );
 

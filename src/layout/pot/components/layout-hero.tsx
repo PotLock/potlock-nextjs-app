@@ -38,7 +38,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onFundMatchingPoolClick,
 }) => {
   const viewer = useWalletUserSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: viewer.accountId });
+  const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const { data: pot } = indexer.usePot({ potId });
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
@@ -213,23 +213,23 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           </div>
 
           <div className="flex items-center justify-start gap-4">
-            {authorizedUser.canApply && applicationClearance.isEveryRequirementSatisfied && (
+            {viewerAbilities.canApply && applicationClearance.isEveryRequirementSatisfied && (
               <Button
                 onClick={onApplyClick}
               >{`Apply to ${hasProportionalFundingMechanism ? "Round" : "Pot"}`}</Button>
             )}
 
             {hasProportionalFundingMechanism ? null : (
-              <>{authorizedUser.canDonate && <DonateToPotProjects {...{ potId }} />}</>
+              <>{viewerAbilities.canDonate && <DonateToPotProjects {...{ potId }} />}</>
             )}
 
-            {authorizedUser.canFundMatchingPool && (
+            {viewerAbilities.canFundMatchingPool && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>
                 {"Fund matching pool"}
               </Button>
             )}
 
-            {authorizedUser.canChallengePayouts && (
+            {viewerAbilities.canChallengePayouts && (
               <Button onClick={onChallengePayoutsClick}>
                 {activeChallenge === undefined ? "Challenge payouts" : "Update challenge"}
               </Button>
