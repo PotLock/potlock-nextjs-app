@@ -1,19 +1,11 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { MdOutlineInfo } from "react-icons/md";
+import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  Button,
-  PageWithBanner,
-} from "@/common/ui/components";
-import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
+import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useWalletUserSession } from "@/common/wallet";
@@ -22,13 +14,18 @@ import { rootPathnames } from "@/pathnames";
 
 export default function EditProjectPage() {
   const router = useRouter();
-  // const { accountId } = router.query as { accountId: AccountId };
+  const { accountId } = router.query as { accountId: string };
   const viewer = useWalletUserSession();
   const { toast } = useToast();
 
+  const isOwner = useMemo(
+    () => viewer.hasWalletReady && viewer.isSignedIn && accountId === viewer.accountId,
+    [accountId, viewer.accountId, viewer.hasWalletReady, viewer.isSignedIn],
+  );
+
   const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
     indexer.useAccountListRegistrations({
-      enabled: viewer.isSignedIn,
+      enabled: viewer.hasWalletReady && isOwner,
       accountId: viewer.accountId ?? "noop",
     });
 
@@ -60,11 +57,21 @@ export default function EditProjectPage() {
     if (viewer.isSignedIn && !isAccountListRegistrationDataLoading && !hasRegistrationSubmitted) {
       router.push(rootPathnames.REGISTER);
     }
+
+    if (viewer.hasWalletReady && viewer.isSignedIn && !isOwner) {
+      toast({ variant: "destructive", title: `You are not the owner of ${accountId}.` });
+      router.push(`${rootPathnames.PROFILE}/${accountId}`);
+    }
   }, [
+    accountId,
     hasRegistrationSubmitted,
     isAccountListRegistrationDataLoading,
+    isOwner,
     listRegistrations,
     router,
+    toast,
+    viewer.accountId,
+    viewer.hasWalletReady,
     viewer.isSignedIn,
   ]);
 
@@ -85,10 +92,14 @@ export default function EditProjectPage() {
         </h2>
       </section>
 
-      {viewer.isSignedIn ? (
+      {viewer.hasWalletReady && viewer.isSignedIn ? (
         <>
           {listRegistrations === undefined ? (
-            <InfoSegment title="Checking account" description="Please, wait..." />
+            <Alert className="mt-10">
+              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Checking Account"}</AlertTitle>
+              <AlertDescription>{"Please, wait..."}</AlertDescription>
+            </Alert>
           ) : (
             <ProfileSetupForm
               mode="update"
@@ -99,11 +110,21 @@ export default function EditProjectPage() {
           )}
         </>
       ) : (
-        <Alert variant="destructive" className="mt-10">
-          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-          <AlertTitle>{"Not logged in"}</AlertTitle>
-          <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
-        </Alert>
+        <>
+          {viewer.hasWalletReady ? (
+            <Alert variant="destructive" className="mt-10">
+              <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Not Signed In"}</AlertTitle>
+              <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="mt-10">
+              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Checking Account"}</AlertTitle>
+              <AlertDescription>{"Please, wait..."}</AlertDescription>
+            </Alert>
+          )}
+        </>
       )}
     </PageWithBanner>
   );

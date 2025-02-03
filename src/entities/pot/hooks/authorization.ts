@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { ByPotId } from "@/common/api/indexer";
 import { IS_UNDER_INSPECTION } from "@/common/constants";
-import { potContractHooks } from "@/common/contracts/core/pot";
+import { ApplicationStatus, potContractHooks } from "@/common/contracts/core/pot";
 import { isAccountId } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 
@@ -46,7 +46,10 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   const isSubmittedPayoutListEmpty = potPayouts?.length === 0;
 
   const isApplicant = useMemo(
-    () => isValidAccountId && potApplications?.find(({ project_id }) => project_id === accountId),
+    () =>
+      isValidAccountId &&
+      potApplications?.find(({ project_id }) => project_id === accountId) !== undefined,
+
     [accountId, isValidAccountId, potApplications],
   );
 
@@ -79,8 +82,11 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   );
 
   const canDonate = useMemo(
-    () => isValidAccountId && isPublicRoundOngoing,
-    [isValidAccountId, isPublicRoundOngoing],
+    () =>
+      isValidAccountId &&
+      isPublicRoundOngoing &&
+      potApplications?.find(({ status }) => status === ApplicationStatus.Approved) !== undefined,
+    [isValidAccountId, isPublicRoundOngoing, potApplications],
   );
 
   const canApply = useMemo(

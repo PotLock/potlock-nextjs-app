@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter } from "next/router";
-import { MdOutlineInfo } from "react-icons/md";
+import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/components";
-import InfoSegment from "@/common/ui/components/_deprecated/InfoSegment";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
 import { useWalletUserSession } from "@/common/wallet";
@@ -77,10 +76,14 @@ export default function RegisterPage() {
         </h2>
       </section>
 
-      {viewer.isSignedIn ? (
+      {viewer.hasWalletReady && viewer.isSignedIn ? (
         <>
           {listRegistrations === undefined ? (
-            <InfoSegment title="Checking account" description="Please, wait..." />
+            <Alert className="mt-10">
+              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Checking Account"}</AlertTitle>
+              <AlertDescription>{"Please, wait..."}</AlertDescription>
+            </Alert>
           ) : (
             <ProfileSetupForm
               mode="register"
@@ -91,11 +94,21 @@ export default function RegisterPage() {
           )}
         </>
       ) : (
-        <Alert variant="destructive" className="mt-10">
-          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-          <AlertTitle>{"Not logged in"}</AlertTitle>
-          <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
-        </Alert>
+        <>
+          {viewer.hasWalletReady ? (
+            <Alert variant="destructive" className="mt-10">
+              <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Not Signed In"}</AlertTitle>
+              <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="mt-10">
+              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Checking Account"}</AlertTitle>
+              <AlertDescription>{"Please, wait..."}</AlertDescription>
+            </Alert>
+          )}
+        </>
       )}
     </PageWithBanner>
   );

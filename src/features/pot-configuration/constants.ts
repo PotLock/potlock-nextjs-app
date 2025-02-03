@@ -1,29 +1,31 @@
 import { Temporal } from "temporal-polyfill";
 
+import type { Pot } from "@/common/api/indexer";
+
 import { PotConfigurationParameters } from "./types";
 
 export const POT_DEFAULT_MIN_DATE = Temporal.Now.instant().toString();
 
 export const POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES = [
-  "all_paid_out" as const,
-  "base_currency" as const,
-  "cooldown_end" as const,
-  "cooldown_period_ms" as const,
-  "custom_min_threshold_score" as const,
-  "custom_sybil_checks" as const,
-  "deployed_at" as const,
-  "deployer" as const,
-  "matching_pool_balance" as const,
-  "matching_pool_donations_count" as const,
-  "pot_factory" as const,
-  "protocol_config_provider" as const,
-  "public_donations_count" as const,
-  "source_metadata" as const,
-  "total_matching_pool" as const,
-  "total_matching_pool_usd" as const,
-  "total_public_donations" as const,
-  "total_public_donations_usd" as const,
-];
+  "all_paid_out",
+  "base_currency",
+  "cooldown_end",
+  "cooldown_period_ms",
+  "custom_min_threshold_score",
+  "custom_sybil_checks",
+  "deployed_at",
+  "deployer",
+  "matching_pool_balance",
+  "matching_pool_donations_count",
+  "pot_factory",
+  "protocol_config_provider",
+  "public_donations_count",
+  "source_metadata",
+  "total_matching_pool",
+  "total_matching_pool_usd",
+  "total_public_donations",
+  "total_public_donations_usd",
+] as const satisfies readonly (keyof Pot)[];
 
 export const POT_EDITOR_FIELDS: PotConfigurationParameters = {
   owner: { index: "owner", title: "Owner" },

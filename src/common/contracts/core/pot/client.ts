@@ -120,6 +120,18 @@ export const challenge_payouts = ({ potId, reason }: { potId: string; reason: st
   });
 };
 
+export const chef_set_application_status = (args: {
+  potId: string;
+  project_id: string;
+  status: string;
+  notes: string;
+}) =>
+  contractApi(args.potId).call<typeof args, Application>("chef_set_application_status", {
+    args,
+    deposit: parseNearAmount(calculateDepositByDataSize(args))!,
+    gas: FULL_TGAS,
+  });
+
 /**
  * Admin update round payout Challenge
  */
