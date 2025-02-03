@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { NETWORK } from "@/common/_config";
+import { FEATURE_REGISTRY, NETWORK } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useWalletUserSession } from "@/common/wallet";
@@ -70,18 +70,39 @@ const WelcomeBanner = () => {
           <DonateRandomly />
 
           {!viewer.isMetadataLoading && viewer.isSignedIn && (
-            <Button className="w-full md:w-[180px]" variant={"brand-tonal"} asChild>
-              <Link
-                href={
-                  viewer.hasRegistrationSubmitted
-                    ? `${rootPathnames.PROFILE}/${viewer.accountId}`
-                    : rootPathnames.REGISTER
-                }
-                prefetch={true}
-              >
-                {viewer.hasRegistrationSubmitted ? "View Your Project" : "Register Your Project"}
-              </Link>
-            </Button>
+            <>
+              {FEATURE_REGISTRY.ProfileConfiguration.isEnabled ? (
+                <Button asChild className="w-full md:w-[180px]" variant={"brand-tonal"}>
+                  <Link
+                    href={
+                      viewer.hasRegistrationSubmitted
+                        ? `${rootPathnames.PROFILE}/${viewer.accountId}`
+                        : rootPathnames.REGISTER
+                    }
+                    prefetch={true}
+                  >
+                    {viewer.hasRegistrationSubmitted
+                      ? "View Your Project"
+                      : "Register Your Project"}
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild className="w-full md:w-[180px]" variant={"brand-tonal"}>
+                  <Link
+                    href={
+                      viewer.hasRegistrationSubmitted
+                        ? `${rootPathnames.PROFILE}/${viewer.accountId}`
+                        : `${APP_BOS_COUNTERPART_URL}/?tab=createproject`
+                    }
+                    prefetch={true}
+                  >
+                    {viewer.hasRegistrationSubmitted
+                      ? "View Your Project"
+                      : "Register Your Project ( BOS App )"}
+                  </Link>
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>

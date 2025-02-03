@@ -38,8 +38,16 @@ export default function RegisterPage() {
 
   const onSuccess = useCallback(() => {
     toast({ title: "Success!", description: "You have successfully submitted your registration." });
-    setTimeout(refetchListRegistrations, 3000);
-  }, [refetchListRegistrations, toast]);
+
+    setTimeout(
+      () =>
+        refetchListRegistrations().finally(() =>
+          router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`),
+        ),
+
+      3000,
+    );
+  }, [refetchListRegistrations, router, toast, viewer.accountId]);
 
   const onFailure = useCallback(
     (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
