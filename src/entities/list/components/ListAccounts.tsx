@@ -1,21 +1,20 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-import { List } from "@/common/api/indexer";
+import { List, ListRegistration } from "@/common/api/indexer";
 import { Filter, Group, GroupType, SearchBar, SortSelect } from "@/common/ui/components";
 import { ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS } from "@/entities/_shared";
 
-import { AccountCard } from "./AccountCard";
 import { ListCardSkeleton } from "./ListCardSkeleton";
 import { NoListItem } from "./NoListItem";
 import { NoListItemType } from "../types";
+import { ListAccountCard } from "./AccountCard";
 
 interface ListAccountsType {
   loadingListData: boolean;
   listData: List | undefined;
-  filteredRegistrations: any[];
+  listRegistrations: any[];
   isLoading: boolean;
-  setFilteredRegistrations: (value: any) => void;
   setStatus: (value: string) => void;
 }
 
@@ -24,15 +23,15 @@ export const ListAccounts = ({
   loadingListData,
   setStatus,
   isLoading,
-  filteredRegistrations,
-  setFilteredRegistrations,
+  listRegistrations,
 }: ListAccountsType) => {
   const [search, setSearch] = useState("");
   const [accountsWithAccess, setAccountsWithAccess] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string>("all");
-  const [searchedAccounts, setSearchedAccounts] = useState<any[]>([]);
 
-  const SORT_LIST_PROJEECTS = [
+  console.log(listRegistrations)
+
+  const SORT_LIST_PROJECTS = [
     { label: "Most recent", value: "recent" },
     { label: "Least recent", value: "older" },
   ];
@@ -52,7 +51,7 @@ export const ListAccounts = ({
     },
   ];
 
-  const handleFilter = (registration: any) => {
+  const handleFilter = (registration: ListRegistration) => {
     const matchesSearch = search
       ? registration.registrant?.near_social_profile_data?.name
           ?.toLowerCase()
@@ -63,37 +62,23 @@ export const ListAccounts = ({
     return matchesSearch;
   };
 
-  useEffect(() => {
-    const filtered = filteredRegistrations.filter(handleFilter);
-    setSearchedAccounts(filtered ?? []);
-  }, [search]);
 
-  const handleSort = (sortType: string) => {
-    const projects = [...filteredRegistrations];
+  const searchedAccounts = useMemo(() => {
+    return listRegistrations.filter(handleFilter);
+  }, [search, handleFilter])
 
-    switch (sortType) {
-      case "recent":
-        projects.sort(
-          (a, b) =>
-            new Date(b.submitted_at).getTime() -
-            new Date(a.submitted_at).getTime(),
-        );
-
-        setFilteredRegistrations(projects);
-        break;
-      case "older":
-        projects.sort(
-          (a, b) =>
-            new Date(a.submitted_at).getTime() -
-            new Date(b.submitted_at).getTime(),
-        );
-
-        setFilteredRegistrations(projects);
-        break;
-      default:
-        break;
-    }
-  };
+  const handleSort = useCallback((sortType: string) => {
+    return [...listRegistrations].sort((a, b) => {
+      switch (sortType) {
+        case "recent":
+          return new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime();
+        case "older":
+          return new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime();
+        default:
+          return 0; // No sorting
+      }
+    });
+  }, [listRegistrations]);
 
   useEffect(() => {
     if (!loadingListData && listData) {
@@ -106,7 +91,7 @@ export const ListAccounts = ({
     }
   }, [listData]);
 
-  const data = search ? searchedAccounts : filteredRegistrations ?? [];
+  const data = search ? searchedAccounts : listRegistrations ?? [];
 
   return (
     <div className="md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
@@ -117,7 +102,7 @@ export const ListAccounts = ({
             <span
               style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
             >
-              {filteredRegistrations?.length}
+              {listRegistrations?.length}
             </span>
           </div>
         </div>
@@ -128,7 +113,7 @@ export const ListAccounts = ({
           />
           <Filter groups={tagsList} />
           <SortSelect
-            options={SORT_LIST_PROJEECTS}
+            options={SORT_LIST_PROJECTS}
             onValueChange={handleSort}
           />
         </div>
@@ -142,7 +127,7 @@ export const ListAccounts = ({
       ) : data?.length ? (
         <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
           {data?.map((item, index) => (
-            <AccountCard
+            <ListAccountCard
               accountsWithAccess={accountsWithAccess}
               dataForList={item}
               key={index}

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check } from "lucide-react";
@@ -15,7 +15,7 @@ import {
 } from "@/common/contracts/core/lists";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import type { ByListId } from "@/common/types";
-import { Button, Input } from "@/common/ui/components";
+import { Button, Input, Spinner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
@@ -26,7 +26,6 @@ import {
   ListConfirmationModalProps,
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
-import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
 import { useListForm } from "../hooks/useListForm";
 import { createListSchema } from "../models/schema";
 
@@ -51,11 +50,8 @@ export type ListFormProps = Partial<ByListId> & {
 
 export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate = false }) => {
   const viewer = useWalletUserSession();
-  const { back, push } = useRouter();
-  const onEditPage = listId === undefined;
-
-  // TODO: Move to the corresponding page!
-  useListDeploymentSuccessRedirect();
+  const { back } = useRouter();
+  const onEditPage = listId !== undefined;
 
   const { isLoading: isRegistrationListLoading, data: registrations } =
     listsContractHooks.useRegistrations({
@@ -63,7 +59,11 @@ export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate =
       listId: listId ?? 0,
     });
 
-  const { isLoading: isListLoading, data: list } = listsContractHooks.useList({
+  const {
+    isLoading: isListLoading,
+    error,
+    data: list,
+  } = listsContractHooks.useList({
     enabled: listId !== undefined,
     listId: listId ?? 0,
   });
@@ -131,7 +131,16 @@ export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate =
         console.error("Error fetching list details:", error);
       }
     }
-  }, [setValue, onEditPage, isDuplicate, setAdmins, viewer.isSignedIn, viewer.accountId, list]);
+  }, [
+    setValue,
+    onEditPage,
+    isDuplicate,
+    setAdmins,
+    viewer.isSignedIn,
+    viewer.accountId,
+    list,
+    error,
+  ]);
 
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     // Due to conflicting submit buttons (admin and list), this is to make sure only list submit form is submitted.
@@ -265,11 +274,14 @@ export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate =
     [admins],
   );
 
-  // TODO: Use Next's Link component instead of these callbacks!
-  const handleViewList = useCallback(() => push(`/list/${listId}`), [listId, push]);
-  const handleViewLists = useCallback(() => push(`/lists`), [push]);
+  if (isListLoading || isRegistrationListLoading) {
+    return (
+      <div className="flex h-[80vh] items-center justify-center">
+        <Spinner className="h-20 w-20" />
+      </div>
+    );
+  }
 
-  // TODO: Handle loading states for list registrations and list data
   return (
     <>
       <div className=" mx-auto my-8 max-w-[896px] p-6 font-sans md:w-[720px] md:rounded-[16px] md:border md:border-[#DBDBDB] md:p-10">
@@ -458,7 +470,7 @@ export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate =
           )}
 
           <div>
-            <h3 className="mb-2 mt-10 text-xl font-semibold">
+            <h3 className="mb-2 mt-10 text-lg font-semibold md:text-xl">
               Upload list cover image <span className="font-normal text-gray-500">(Optional)</span>
             </h3>
             <div
@@ -546,7 +558,7 @@ export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate =
         isUpdate={listCreateSuccess.type === "UPDATE_LIST"}
         listName={listCreateSuccess.data?.name}
         showBackToLists={!listId}
-        onViewList={listId ? handleViewList : handleViewLists}
+        href={listId ? `/list/${listId}` : `/lists`}
       />
     </>
   );
