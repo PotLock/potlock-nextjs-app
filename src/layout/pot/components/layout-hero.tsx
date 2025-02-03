@@ -7,11 +7,11 @@ import remarkGfm from "remark-gfm";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { potContractHooks } from "@/common/contracts/core";
+import { potContractHooks } from "@/common/contracts/core/pot";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { TokenTotalValue } from "@/entities/_shared/token";
 import {
   PotDonationStats,
@@ -37,8 +37,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onChallengePayoutsClick,
   onFundMatchingPoolClick,
 }) => {
-  const authenticatedUser = useSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
+  const viewer = useWalletUserSession();
+  const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const { data: pot } = indexer.usePot({ potId });
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
@@ -46,13 +46,13 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
   const activeChallenge = useMemo(
     () =>
-      authenticatedUser.isSignedIn
+      viewer.isSignedIn
         ? (potPayoutChallenges ?? []).find(
-            ({ challenger_id }) => authenticatedUser.accountId === challenger_id,
+            ({ challenger_id }) => viewer.accountId === challenger_id,
           )
         : undefined,
 
-    [authenticatedUser.isSignedIn, authenticatedUser.accountId, potPayoutChallenges],
+    [viewer.isSignedIn, viewer.accountId, potPayoutChallenges],
   );
 
   const applicationClearance = usePotApplicationUserClearance({
@@ -65,10 +65,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
     [lifecycle.currentStage?.tag],
   );
 
-  const referrerPotLink = authenticatedUser.isSignedIn
-    ? window.location.origin +
-      window.location.pathname +
-      `&referrerId=${authenticatedUser.accountId}`
+  const referrerPotLink = viewer.isSignedIn
+    ? window.location.origin + window.location.pathname + `&referrerId=${viewer.accountId}`
     : null;
 
   const [description, linkedDocumentUrl] = useMemo(() => {
@@ -215,23 +213,23 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           </div>
 
           <div className="flex items-center justify-start gap-4">
-            {authorizedUser.canApply && applicationClearance.isEveryRequirementSatisfied && (
+            {viewerAbilities.canApply && applicationClearance.isEveryRequirementSatisfied && (
               <Button
                 onClick={onApplyClick}
               >{`Apply to ${hasProportionalFundingMechanism ? "Round" : "Pot"}`}</Button>
             )}
 
             {hasProportionalFundingMechanism ? null : (
-              <>{authorizedUser.canDonate && <DonateToPotProjects {...{ potId }} />}</>
+              <>{viewerAbilities.canDonate && <DonateToPotProjects {...{ potId }} />}</>
             )}
 
-            {authorizedUser.canFundMatchingPool && (
+            {viewerAbilities.canFundMatchingPool && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>
                 {"Fund matching pool"}
               </Button>
             )}
 
-            {authorizedUser.canChallengePayouts && (
+            {viewerAbilities.canChallengePayouts && (
               <Button onClick={onChallengePayoutsClick}>
                 {activeChallenge === undefined ? "Challenge payouts" : "Update challenge"}
               </Button>

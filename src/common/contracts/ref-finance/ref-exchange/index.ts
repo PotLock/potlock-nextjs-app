@@ -1,6 +1,6 @@
-import * as refExchangeClient from "./client";
-import * as refExchangeHooks from "./hooks";
+import * as refExchangeContractClient from "./client";
+import * as refExchangeContractHooks from "./hooks";
 
 export * from "./interfaces";
 
-export { refExchangeClient, refExchangeHooks };
+export { refExchangeContractClient, refExchangeContractHooks };

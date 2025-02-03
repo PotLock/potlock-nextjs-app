@@ -36,11 +36,12 @@ export const donationAmount = safePositiveNumber;
  */
 export const donationFee = preprocess(
   (value) => (typeof value === "string" ? safePositiveNumber.parse(value) : value),
-
   safePositiveNumber,
-).refine((percents) => percents < 100, {
-  message: `Fee must be less than 100%.`,
-});
+)
+  .refine((percents) => percents < 100, { message: "Fee must be less than 100%." })
+  .refine((percents) => Number.isInteger(percents), {
+    message: "Fractional percentage is not supported.",
+  });
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,

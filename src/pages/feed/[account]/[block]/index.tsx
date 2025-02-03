@@ -5,13 +5,13 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social";
+import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social-indexer";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
-const SinglePost = () => {
+export default function FeedAccountBlockPostPage() {
   const router = useRouter();
-  const { account, block } = useRouter().query;
+  const { account, block } = router.query;
 
   const [post, setPost] = useState<{
     accountId: string;
@@ -107,6 +107,4 @@ const SinglePost = () => {
       )}
     </div>
   );
-};
-
-export default SinglePost;
+}

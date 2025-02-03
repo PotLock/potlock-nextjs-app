@@ -6,7 +6,7 @@ import type { ByPotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Skeleton } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 import { usePotAuthorization } from "@/entities/pot";
 import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/voting-round";
@@ -22,8 +22,8 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
   onSubmitSuccess,
 }) => {
   const { toast } = useToast();
-  const authenticatedUser = useSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
+  const viewer = useWalletUserSession();
+  const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRoundResults = useVotingRoundResults({ potId });
 
   const { isMetadataLoading: isTokenMetadataLoading, data: token } = useToken({
@@ -97,7 +97,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
           </Button>
         )}
 
-        {authorizedUser.canSubmitPayouts && (
+        {viewerAbilities.canSubmitPayouts && (
           <>
             {votingRoundResults.isLoading || isTokenMetadataLoading ? (
               <Skeleton className="w-45 h-10" />
@@ -110,7 +110,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
           </>
         )}
 
-        {authorizedUser.canInitiatePayoutProcessing && (
+        {viewerAbilities.canInitiatePayoutProcessing && (
           <Button onClick={onInitiatePayoutProcessingClick}>
             <MdCheck className="h-4.5 w-4.5" />
             <span className="font-500 whitespace-nowrap text-sm">{"Initiate Payouts"}</span>

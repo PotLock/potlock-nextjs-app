@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
-import useIsClient from "@/common/lib/useIsClient";
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
+import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { AuthSignInButton, useSessionReduxStore } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";
 
@@ -33,12 +34,30 @@ const links = [
 ];
 
 const AuthButton = () => {
-  const { isAuthenticated } = useSessionReduxStore();
-  const isClient = useIsClient();
+  const viewer = useWalletUserSession();
 
-  if (!isClient) return;
+  const onSignInClick = useCallback(() => {
+    nearProtocolClient.walletApi.signInModal();
+  }, []);
 
-  return isAuthenticated ? <UserDropdown /> : <AuthSignInButton />;
+  return viewer.hasWalletReady ? (
+    <>
+      {viewer.isSignedIn ? (
+        <UserDropdown />
+      ) : (
+        <Button
+          font="semibold"
+          variant="standard-filled"
+          onClick={onSignInClick}
+          className="border-none bg-[#342823] shadow-none"
+        >
+          Sign In
+        </Button>
+      )}
+    </>
+  ) : (
+    <Skeleton className="h-8 w-8 rounded-full" />
+  );
 };
 
 const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {
@@ -62,13 +81,12 @@ const MobileMenuButton = ({ onClick }: { onClick: () => void }) => {
 };
 
 const MobileNav = () => {
-  const isClient = useIsClient();
   const router = useRouter();
 
   return (
     <nav className="flex flex-col gap-4 p-6">
       {links.map(({ url, label, disabled }) => {
-        const isActive = isClient ? url === router.pathname : false;
+        const isActive = url === router.pathname;
 
         return (
           <Link
@@ -94,7 +112,6 @@ const MobileNav = () => {
 
 export const AppBar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const isClient = useIsClient();
   const router = useRouter();
 
   return (
@@ -128,7 +145,7 @@ export const AppBar = () => {
           <div className="flex flex-row items-center justify-center">
             <div className="flex flex-row items-center justify-center max-md:hidden">
               {links.map(({ url, label, disabled }) => {
-                const isActive = isClient ? url === router.pathname : false;
+                const isActive = url === router.pathname;
                 return (
                   <Link
                     key={url + label}
@@ -155,7 +172,6 @@ export const AppBar = () => {
         <div className="flex items-center gap-8">
           <CartLink disabled />
           <AuthButton />
-
           <MobileMenuButton onClick={() => setShowMobileMenu(!showMobileMenu)} />
         </div>
       </nav>

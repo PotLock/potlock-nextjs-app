@@ -2,7 +2,7 @@ import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { PotId } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/api/near/client";
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { FULL_TGAS, ONE_HUNDREDTH_NEAR } from "@/common/constants";
 
 import {
@@ -19,7 +19,10 @@ import {
 } from "./interfaces";
 
 const contractApi = (potId: string) =>
-  naxiosInstance.contractApi({ contractId: potId, cache: new MemoryCache({ expirationTime: 10 }) });
+  nearProtocolClient.naxiosInstance.contractApi({
+    contractId: potId,
+    cache: new MemoryCache({ expirationTime: 10 }),
+  });
 
 // READ METHODS
 /**
@@ -116,6 +119,18 @@ export const challenge_payouts = ({ potId, reason }: { potId: string; reason: st
     gas: FULL_TGAS,
   });
 };
+
+export const chef_set_application_status = (args: {
+  potId: string;
+  project_id: string;
+  status: string;
+  notes: string;
+}) =>
+  contractApi(args.potId).call<typeof args, Application>("chef_set_application_status", {
+    args,
+    deposit: parseNearAmount(calculateDepositByDataSize(args))!,
+    gas: FULL_TGAS,
+  });
 
 /**
  * Admin update round payout Challenge

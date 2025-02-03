@@ -11,7 +11,8 @@ import {
   NATIVE_TOKEN_ID,
   PLATFORM_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
-import { DirectDonation, PotDonation } from "@/common/contracts/core";
+import type { DirectDonation } from "@/common/contracts/core/donation";
+import type { PotDonation } from "@/common/contracts/core/pot";
 import { indivisibleUnitsToFloat, truncate } from "@/common/lib";
 import {
   Button,
@@ -24,7 +25,7 @@ import {
 import TwitterSvg from "@/common/ui/svg/twitter";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenTotalValue, useToken } from "@/entities/_shared/token";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationSybilWarning } from "./DonationSybilWarning";
@@ -108,7 +109,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
 
     const tag = `${PROJECT_TWITTER_ACCOUNT}`;
 
-    let potlockUrl = `https://alpha.potlock.org${routesPath.PROFILE}/${recipient.id}/donations`;
+    let potlockUrl = `https://alpha.potlock.org${rootPathnames.PROFILE}/${recipient.id}/donations`;
     let potlockHomeUrl = "https://alpha.potlock.org";
 
     let text = `🎉 Just supported ${tag} (${PROJECT_TWITTER_ACCOUNT}) through @${PLATFORM_TWITTER_ACCOUNT_ID}! 
@@ -203,7 +204,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
           <Skeleton className="w-23.5 h-5" />
         ) : (
           <Link
-            href={`${routesPath.PROFILE}/${recipient.id}/funding-raised`}
+            href={`${rootPathnames.PROFILE}/${recipient.id}/funding-raised`}
             onClick={closeModal}
             className="font-500 text-red-600"
           >

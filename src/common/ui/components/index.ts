@@ -24,6 +24,7 @@ export * from "./atoms/hover-card";
 export * from "./atoms/infinite-scroll-trigger";
 export * from "./atoms/input";
 export * from "./atoms/label";
+export * from "./atoms/no-results-placeholder";
 export * from "./atoms/popover";
 export * from "./atoms/progress";
 export * from "./atoms/scroll-area";
@@ -47,6 +48,7 @@ export * from "./atoms/filter-chip";
  *
  * See https://atomicdesign.bradfrost.com/chapter-2/#molecules
  */
+export * from "./molecules/carousel";
 export * from "./molecules/checklist";
 export * from "./molecules/clipboard-copy-button";
 export * from "./molecules/data-loading-placeholder";
@@ -78,4 +80,5 @@ export * from "./organisms/modal-body";
  *
  * See https://atomicdesign.bradfrost.com/chapter-2/#templates
  */
+export * from "./templates/page-error";
 export * from "./templates/page-with-banner";

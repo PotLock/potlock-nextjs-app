@@ -1,7 +1,7 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near/client";
+import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 
@@ -61,28 +61,25 @@ export const donate = (args: DirectCampaignDonationArgs, depositAmountYocto: str
     callbackUrl: window.location.href,
   });
 
-/**
- * GET CAMPAIGNS
- */
-
 export const get_campaigns = () => contractApi.view<{}, Campaign[]>("get_campaigns");
 
-/**
- * GET CAMPAIGN
- */
+export type GetCampaignsByOwnerArgs = {
+  owner_id: AccountId;
+  from_index?: number | null;
+  limit?: number | null;
+};
 
-export const get_campaigns_by_owner = ({ owner_id }: { owner_id: AccountId }) =>
-  contractApi.view<{}, Campaign[]>("get_campaigns_by_owner", {
-    args: { owner_id },
-  });
+export const get_campaigns_by_owner = (args: GetCampaignsByOwnerArgs) =>
+  contractApi.view<typeof args, Campaign[]>("get_campaigns_by_owner", { args });
 
-export interface GetCampaignInput {
-  campaign_id: string;
-  limit?: number;
-}
+export type GetCampaignArgs = {
+  campaign_id: number;
+  from_index?: number | null;
+  limit?: number | null;
+};
 
-export const get_campaign = (args: GetCampaignInput) =>
-  contractApi.view<typeof args, Campaign>(`get_campaign`, { args });
+export const get_campaign = (args: GetCampaignArgs) =>
+  contractApi.view<typeof args, Campaign>("get_campaign", { args });
 
-export const get_donations_for_campaign = (args: GetCampaignInput) =>
+export const get_donations_for_campaign = (args: GetCampaignArgs) =>
   contractApi.view<typeof args, CampaignDonation[]>("get_donations_for_campaign", { args });

@@ -1,28 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { useRouter } from "next/router";
 
-import { CampaignDonation } from "@/common/contracts/core";
-import { toChronologicalOrder, yoctoNearToFloat } from "@/common/lib";
+import { CampaignDonation, campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import { oldToRecent, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
+import type { ByCampaignId } from "@/common/types";
 import { DataTable } from "@/common/ui/components";
 import { NearIcon } from "@/common/ui/svg";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
-import { useCampaign } from "../hooks/useCampaign";
+export type CampaignDonorsTableProps = ByCampaignId & {};
 
-export const CampaignDonorsTable = () => {
-  const {
-    query: { campaignId },
-  } = useRouter();
-
-  const { donations } = useCampaign({ campaignId: campaignId as string });
+export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campaignId }) => {
+  const { data: donations } = campaignsContractHooks.useCampaignDonations({ campaignId });
 
   const sortedDonations = useMemo(() => {
-    return toChronologicalOrder("donated_at_ms", donations).toSorted(
-      (a, b) => b.donated_at_ms - a.donated_at_ms,
-    );
+    if (donations) {
+      return oldToRecent("donated_at_ms", donations).toReversed();
+    } else return [];
   }, [donations]);
 
   const columns: ColumnDef<CampaignDonation>[] = [

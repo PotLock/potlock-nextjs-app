@@ -2,13 +2,13 @@ import Big from "big.js";
 import Link from "next/link";
 import { styled } from "styled-components";
 
-import { DonationInfo } from "@/common/_deprecated/accounts.";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { TokenIcon } from "@/entities/_shared/token";
-import routesPath from "@/pathnames";
+import { DonationInfo } from "@/layout/profile/_deprecated/accounts";
+import { rootPathnames } from "@/pathnames";
 
 // TODO: refactor by breaking into TailwindCSS classes
 const FundingSrc = styled.div`
@@ -95,10 +95,10 @@ export const DonationItem = ({
   );
 
   const url = isPot
-    ? `${routesPath.POTS}/${potId}`
+    ? `${rootPathnames.POTS}/${potId}`
     : projectId
-      ? `${routesPath.PROFILE}/${donorId}`
-      : `${routesPath.PROFILE}/${projectId || recipientId}`;
+      ? `${rootPathnames.PROFILE}/${donorId}`
+      : `${rootPathnames.PROFILE}/${projectId || recipientId}`;
 
   // const name = truncate(isPot ? pot.id : donor.id, 15);
   const name = truncate(type === "received" ? donor.id : recipient.id, 15);

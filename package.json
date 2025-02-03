@@ -1,7 +1,7 @@
 {
   "name": "@potlock/next",
   "description": "Decentralized funding stack for public goods",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "packageManager": "yarn@1.22.22",
   "private": true,
   "type": "module",
@@ -18,6 +18,7 @@
     "next:dev": "yarn && next dev",
     "build": "yarn generate:css && next build",
     "start": "next start",
+    "preview": "next build && next start",
     "test:unit": "vitest run",
     "prepare": "husky"
   },

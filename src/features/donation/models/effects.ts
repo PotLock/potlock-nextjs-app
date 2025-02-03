@@ -3,20 +3,20 @@ import axios from "axios";
 import { Big } from "big.js";
 
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/api/near/client";
+import { RPC_NODE_URL, naxiosInstance, walletApi } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import {
-  CampaignDonation,
-  DirectCampaignDonationArgs,
-  DirectDonation,
-  DirectDonationArgs,
-  PotDonation,
-  PotDonationArgs,
+  type CampaignDonation,
+  type DirectCampaignDonationArgs,
   campaignsContractClient,
+} from "@/common/contracts/core/campaigns";
+import {
+  type DirectDonation,
+  type DirectDonationArgs,
   donationContractClient,
-  potContractClient,
-} from "@/common/contracts/core";
-import type { FungibleTokenMetadata } from "@/common/contracts/tokens/ft";
+} from "@/common/contracts/core/donation";
+import { PotDonation, PotDonationArgs, potContractClient } from "@/common/contracts/core/pot";
+import type { FungibleTokenMetadata } from "@/common/contracts/tokens/fungible";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";

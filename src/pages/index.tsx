@@ -1,16 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 
-import { NETWORK } from "@/common/_config";
-import { useRegistration } from "@/common/_deprecated/useRegistration";
+import { FEATURE_REGISTRY, NETWORK } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import { nearClient } from "@/common/api/near";
+import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSessionReduxStore } from "@/entities/_shared/session";
-import { ProjectCard, ProjectDiscovery } from "@/entities/project";
-import { DonateRandomly } from "@/features/donation";
-import routesPath from "@/pathnames";
-import { useGlobalStoreSelector } from "@/store";
+import { useWalletUserSession } from "@/common/wallet";
+import { AccountCard } from "@/entities/_shared/account";
+import { DonateRandomly, DonateToAccountButton } from "@/features/donation";
+import { ProjectDiscovery } from "@/layout/components/project-discovery";
+import { rootPathnames } from "@/pathnames";
 
 export const FEATURED_PROJECT_ACCOUNT_IDS =
   NETWORK === "mainnet"
@@ -27,7 +27,7 @@ export const GeneralStats = () => {
   const { data: stats } = indexer.useStats();
 
   return (
-    <div className="flex w-full flex-col ">
+    <div className="flex w-full flex-col gap-4">
       <div className="mt-4 flex flex-row flex-wrap items-center gap-4 px-2 py-0 md:gap-6 md:px-10">
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
           {`$${stats?.total_donations_usd.toString()}`}
@@ -41,28 +41,24 @@ export const GeneralStats = () => {
       </div>
 
       {/* Line */}
-      <div className="mt-4 h-px w-full bg-[#ebebeb]" />
+      <div className="h-px w-full bg-neutral-100" />
     </div>
   );
 };
 
 const WelcomeBanner = () => {
-  const { defaultAddress, toggle } = useGlobalStoreSelector((state) => state.nav.actAsDao);
-  const daoAddress = toggle && defaultAddress ? defaultAddress : "";
-  const accountId = daoAddress || nearClient.walletApi?.accountId || "";
-  const { isAuthenticated } = useSessionReduxStore();
-  const { loading, isRegisteredProject } = useRegistration(accountId);
+  const viewer = useWalletUserSession();
 
   return (
     <div
       className={cn(
         "bg-hero relative flex w-full flex-col justify-center overflow-hidden",
-        "rounded-xl border border-solid border-[#f8d3b0] bg-cover bg-no-repeat",
+        "border border-solid border-[#f8d3b0] bg-cover bg-no-repeat md:rounded-xl",
       )}
     >
-      <div className="relative z-[1] flex flex-col justify-center px-5  py-12 md:px-10 md:py-16">
+      <div className="relative z-[1] flex flex-col justify-center px-5 py-12 md:px-10 md:py-16">
         <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
-          Transforming Funding for Public Goods
+          {"Transforming Funding for Public Goods"}
         </h3>
 
         <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
@@ -73,19 +69,40 @@ const WelcomeBanner = () => {
         <div className="mt-6 flex items-center gap-4 text-sm max-md:flex-col md:mt-10 md:gap-8">
           <DonateRandomly />
 
-          {isAuthenticated && !loading && (
-            <Button className="w-full md:w-[180px]" variant={"brand-tonal"} asChild>
-              <Link
-                href={
-                  isRegisteredProject
-                    ? `${routesPath.PROFILE}/${accountId}`
-                    : routesPath.CREATE_PROJECT
-                }
-                prefetch={true}
-              >
-                {isRegisteredProject ? "View Your Project" : "Register Your Project"}
-              </Link>
-            </Button>
+          {!viewer.isMetadataLoading && viewer.isSignedIn && (
+            <>
+              {FEATURE_REGISTRY.ProfileConfiguration.isEnabled ? (
+                <Button asChild className="w-full md:w-[180px]" variant={"brand-tonal"}>
+                  <Link
+                    href={
+                      viewer.hasRegistrationSubmitted
+                        ? `${rootPathnames.PROFILE}/${viewer.accountId}`
+                        : rootPathnames.REGISTER
+                    }
+                    prefetch={true}
+                  >
+                    {viewer.hasRegistrationSubmitted
+                      ? "View Your Project"
+                      : "Register Your Project"}
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild className="w-full md:w-[180px]" variant={"brand-tonal"}>
+                  <Link
+                    href={
+                      viewer.hasRegistrationSubmitted
+                        ? `${rootPathnames.PROFILE}/${viewer.accountId}`
+                        : `${APP_BOS_COUNTERPART_URL}/?tab=createproject`
+                    }
+                    prefetch={true}
+                  >
+                    {viewer.hasRegistrationSubmitted
+                      ? "View Your Project"
+                      : "Register Your Project ( BOS App )"}
+                  </Link>
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -95,9 +112,11 @@ const WelcomeBanner = () => {
 
 export default function Home() {
   return (
-    <main className="container flex flex-col items-center">
-      <WelcomeBanner />
-      <GeneralStats />
+    <main className="2xl-container flex flex-col items-center">
+      <div className="flex w-full flex-col md:px-10">
+        <WelcomeBanner />
+        <GeneralStats />
+      </div>
 
       <div className="flex w-full flex-col gap-10 px-2 pt-10 md:px-10 md:pt-12">
         <div className="flex w-full flex-col gap-5">
@@ -107,13 +126,34 @@ export default function Home() {
         </div>
 
         <div className="grid w-full grid-cols-1 gap-8 p-0.5 md:grid-cols-2 lg:grid-cols-3">
-          {FEATURED_PROJECT_ACCOUNT_IDS.map((projectId) => (
-            <ProjectCard key={projectId} projectId={projectId} />
+          {FEATURED_PROJECT_ACCOUNT_IDS.map((projectAccountId) => (
+            <AccountCard
+              key={projectAccountId}
+              accountId={projectAccountId}
+              actions={<DonateToAccountButton accountId={projectAccountId} />}
+            />
           ))}
         </div>
       </div>
 
-      <ProjectDiscovery />
+      <ProjectDiscovery
+        listId={PUBLIC_GOODS_REGISTRY_LIST_ID}
+        noResultsPlaceholder={
+          <div className="min-h-140 flex w-full flex-col items-center justify-center">
+            <Image
+              src="/assets/icons/no-list.svg"
+              alt="No results found"
+              width={200}
+              height={200}
+              className="h-50 w-50 mb-4"
+            />
+
+            <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
+              <p className="w-100 font-lora text-center italic">{"No results found"}</p>
+            </div>
+          </div>
+        }
+      />
     </main>
   );
 }

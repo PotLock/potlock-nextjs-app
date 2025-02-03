@@ -9,13 +9,13 @@ import {
 import { isAccountId } from "@/common/lib";
 import { type AccountId, ByAccountId } from "@/common/types";
 import { useToast } from "@/common/ui/hooks";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 
 export interface VotingRoundCandidateLookup extends ByElectionId {}
 
 export const useVotingRoundCandidateLookup = ({ electionId }: VotingRoundCandidateLookup) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
 
   const { data, ...candidatesQueryResult } = votingContractHooks.useElectionCandidates({
     enabled: electionId !== 0,
@@ -23,9 +23,9 @@ export const useVotingRoundCandidateLookup = ({ electionId }: VotingRoundCandida
   });
 
   const { data: userVotes } = votingContractHooks.useVotingRoundVoterVotes({
-    enabled: electionId !== 0 && isAccountId(authenticatedUser.accountId),
+    enabled: electionId !== 0 && isAccountId(viewer.accountId),
     electionId,
-    accountId: authenticatedUser.accountId as AccountId,
+    accountId: viewer.accountId as AccountId,
   });
 
   return useMemo(() => {
@@ -67,7 +67,7 @@ export const useVotingRoundCandidateEntry = ({
   accountId,
 }: ByElectionId & ByAccountId) => {
   const { toast } = useToast();
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
 
   const { data: isVotingPeriodOngoing = false } = votingContractHooks.useIsVotingPeriod({
     enabled: electionId !== 0,
@@ -76,9 +76,9 @@ export const useVotingRoundCandidateEntry = ({
 
   const { data: remainingUserVotingCapacity, isLoading: isRemainingUserVotingCapacityLoading } =
     votingContractHooks.useVoterRemainingCapacity({
-      enabled: electionId !== 0 && isAccountId(authenticatedUser.accountId),
+      enabled: electionId !== 0 && isAccountId(viewer.accountId),
       electionId,
-      accountId: authenticatedUser.accountId as AccountId,
+      accountId: viewer.accountId as AccountId,
     });
 
   const {
@@ -101,23 +101,22 @@ export const useVotingRoundCandidateEntry = ({
 
   const hasUserVotes = useMemo(
     () =>
-      votes?.find(({ voter: voterAccountId }) => voterAccountId === authenticatedUser.accountId) !==
-      undefined,
+      votes?.find(({ voter: voterAccountId }) => voterAccountId === viewer.accountId) !== undefined,
 
-    [votes, authenticatedUser.accountId],
+    [votes, viewer.accountId],
   );
 
   const canReceiveVotes = useMemo(
     () =>
       electionId !== 0 &&
-      authenticatedUser.isSignedIn &&
+      viewer.isSignedIn &&
       (votes === undefined
         ? false
         : isVotingPeriodOngoing && !hasUserVotes && remainingUserVotingCapacity !== 0),
 
     [
       electionId,
-      authenticatedUser.isSignedIn,
+      viewer.isSignedIn,
       votes,
       isVotingPeriodOngoing,
       hasUserVotes,

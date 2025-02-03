@@ -1,14 +1,14 @@
 import { MemoryCache } from "@wpdas/naxios";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/api/near/client";
+import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 
 import {
   ApplyToList,
-  GetListInput,
+  GetListArgs,
   List,
   Registration,
   RegistrationStatus,
@@ -17,20 +17,10 @@ import {
 
 const contractApi = naxiosInstance.contractApi({
   contractId: LISTS_CONTRACT_ACCOUNT_ID,
-  cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
+  cache: new MemoryCache({ expirationTime: 10 }),
 });
 
-// READ METHODS
-
-/**
- * Get lists
- */
-export const getLists = () => contractApi.view<{}, List[]>("get_lists");
-
-export const get_admin_list = () =>
-  contractApi.view<{}, List[]>("list_admins_by_list_id", {
-    args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID, accountId: "harrydhillon.near" },
-  });
+export const get_lists = () => contractApi.view<{}, List[]>("get_lists");
 
 export const create_list = ({
   name,
@@ -96,10 +86,7 @@ export const update_list = ({
     gas: "300000000000000",
   });
 
-/**
- * Get single list
- */
-export const get_list = (args: GetListInput) =>
+export const get_list = (args: GetListArgs) =>
   contractApi.view<typeof args, List>("get_list", { args });
 
 export const register_batch = (args: ApplyToList) =>
@@ -171,16 +158,13 @@ export const get_list_for_owner = (args: { owner_id: string }) =>
 export const get_upvoted_lists_for_account = (args: { account_id: string }) =>
   contractApi.view<typeof args, List>("get_upvoted_lists_for_account", { args });
 
-/**
- * Get Registrations for a list
- */
-export const get_registrations_for_list = (
-  args: { list_id: number } = { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
-) => contractApi.view<typeof args, Registration[]>("get_registrations_for_list", { args });
+export type GetRegistrationsForListArgs = {
+  list_id: number;
+};
 
-/**
- * Get Registrations for registrant
- */
+export const get_registrations_for_list = (args: GetRegistrationsForListArgs) =>
+  contractApi.view<typeof args, Registration[]>("get_registrations_for_list", { args });
+
 export const get_registrations_for_registrant = (args: {
   list_id?: number;
   registrant_id: string;

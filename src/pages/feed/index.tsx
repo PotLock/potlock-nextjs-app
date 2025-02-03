@@ -3,12 +3,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { indexer } from "@/common/api/indexer";
-import { fetchGlobalFeeds } from "@/common/api/near-social";
+import { fetchGlobalFeeds } from "@/common/api/near-social-indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { cn } from "@/common/ui/utils";
 import { PostCard } from "@/entities/post";
 
-export default function GlobalFeedsPage() {
+export default function FeedPage() {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);

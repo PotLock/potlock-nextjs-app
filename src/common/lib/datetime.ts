@@ -1,6 +1,11 @@
 import { Temporal } from "temporal-polyfill";
 import { number, preprocess } from "zod";
 
+/**
+ * 86400000 milliseconds make 24 hours that make 24 * 60 minutes that make 24 * 60 * 60 seconds
+ */
+export const DAY_IN_MILLISECONDS: 86400000 = (24 * 60 * 60 * 1000) as 86400000;
+
 export const DATETIME_INCORRECT_FORMAT_ERROR = "Incorrect datetime";
 
 export const dropTimezoneIndicator = (value: string): string => value.slice(0, 16);
@@ -53,10 +58,10 @@ export const daysSinceTimestamp = (unixTimestampMs: number) =>
   Temporal.Now.instant().since(Temporal.Instant.fromEpochMilliseconds(unixTimestampMs)).days;
 
 /**
- * Sorts a list of objects containing information about events in chronological order
- *  based on a given datetime property.
+ * Sorts a list of objects containing information about events
+ * in chronological order ( old to recent ) based on a given datetime property.
  */
-export const toChronologicalOrder = <T>(
+export const oldToRecent = <T>(
   propertyKey: keyof T,
   list: Array<T extends Record<string, string | number | unknown> ? T : T>,
 ) =>
@@ -97,3 +102,5 @@ export const futureTimestamp = timestamp.refine(
   (value) => value > Temporal.Now.instant().epochMilliseconds,
   { message: "Cannot be in the past" },
 );
+
+export const daysFloatToMilliseconds = (daysFloat: number) => daysFloat * DAY_IN_MILLISECONDS;

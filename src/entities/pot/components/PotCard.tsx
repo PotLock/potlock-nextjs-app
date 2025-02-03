@@ -7,7 +7,7 @@ import { ByPotId, Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { formatWithCommas } from "@/common/lib";
 import { useToken } from "@/entities/_shared/token";
-import routesPath from "@/pathnames";
+import { rootPathnames } from "@/pathnames";
 
 import { Indicator } from "./Indicator";
 import { PotTag } from "./PotTag";
@@ -61,7 +61,7 @@ export const PotCard: React.FC<PotCardProps> = ({ potId }) => {
   ) : (
     // Card
     <Link
-      href={`${routesPath.pot}/${pot.account}`}
+      href={`${rootPathnames.pot}/${pot.account}`}
       className="bg-background flex h-full min-h-[300px] min-w-[320px] max-w-[393px] flex-col rounded-[8px] pb-1.5 shadow-[inset_0px_-2px_0px_0px_#464646,0px_0px_0px_1px_#464646] hover:cursor-pointer hover:no-underline"
     >
       {/* Card Section */}

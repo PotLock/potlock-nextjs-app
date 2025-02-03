@@ -1,28 +1,10 @@
-import { useEffect, useState } from "react";
-
 import Link from "next/link";
 
-import { potFactoryContractClient } from "@/common/contracts/core";
 import { Button, PageWithBanner } from "@/common/ui/components";
-import { useWallet } from "@/entities/_shared/session";
 import { ActivePots } from "@/entities/pot";
-import { rootPathnames } from "@/pathnames";
+import { PotDeploymentButton } from "@/features/pot-deployment";
 
 const Banner = () => {
-  const { wallet } = useWallet();
-
-  const [isPotDeploymentAvailable, updatePotDeploymentAvailability] = useState(false);
-
-  useEffect(() => {
-    if (wallet?.accountId) {
-      potFactoryContractClient
-        .isDeploymentAvailable({
-          accountId: wallet.accountId,
-        })
-        .then(updatePotDeploymentAvailability);
-    }
-  }, [wallet?.accountId]);
-
   return (
     <div className="bg-hero relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden">
       <div className="z-1 relative flex flex-col justify-center p-[64px] max-md:p-[64px_20px]">
@@ -31,20 +13,22 @@ const Banner = () => {
           Donate to Matching Rounds <br className="max-md:hidden" /> to Get Your Contributions
           Amplified.
         </h1>
-        <div className="max-xs:w-full max-xs:p-[12px_0px] mt-6 mt-[40px] flex items-center gap-8 max-md:flex-col max-md:gap-4">
-          {isPotDeploymentAvailable && (
-            <Button asChild>
-              <Link href={rootPathnames.DEPLOY_POT}>Deploy Pot</Link>
-            </Button>
-          )}
-          <Link
-            href="https://docs.potlock.io/user-guides/matched-donations-or-donate-through-a-pot"
-            target="_blank"
-          >
-            <Button variant={isPotDeploymentAvailable ? "brand-tonal" : "brand-filled"}>
+
+        <div
+          className={
+            "max-xs:w-full max-xs:p-[12px_0px] mt-6 mt-[40px] flex items-center gap-8 max-md:flex-col max-md:gap-4"
+          }
+        >
+          <PotDeploymentButton />
+
+          <Button asChild variant="brand-tonal">
+            <Link
+              href="https://docs.potlock.io/user-guides/matched-donations-or-donate-through-a-pot"
+              target="_blank"
+            >
               Learn More
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </div>

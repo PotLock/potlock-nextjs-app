@@ -6,15 +6,14 @@ import { useRouter } from "next/router";
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
-import { ChallengeModal, usePotAuthorization } from "@/entities/pot";
+import { ChallengeModal } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
 import { PotApplicationModal } from "@/features/pot-application";
-import { ErrorModal } from "@/features/profile-setup/components/ErrorModal";
-import { SuccessModal } from "@/features/profile-setup/components/SuccessModal";
+import { SuccessModal } from "@/layout/pot/_deprecated/SuccessModal";
 
 import { PotLayoutHero } from "./layout-hero";
+import { ErrorModal } from "../_deprecated/ErrorModal";
 import { usePotLayoutTabNavigation } from "../hooks/tab-navigation";
 
 export type PotLayoutProps = {
@@ -108,7 +107,10 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
                   "font-500 border-b-solid transition-duration-300 whitespace-nowrap",
                   "border-b-[2px] border-b-[transparent] px-4 py-[10px] text-sm text-[#7b7b7b]",
                   "transition-all hover:border-b-[#292929] hover:text-[#292929]",
-                  { hidden: isHidden, "border-b-[#292929] text-[#292929]": tag === activeTab?.tag },
+                  {
+                    hidden: isHidden,
+                    "border-b-[#292929] text-[#292929]": tag === activeTab?.tag,
+                  },
                 )}
                 {...{ href }}
               >
@@ -120,7 +122,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       </div>
 
       {/* Tab Content */}
-      <div className="min-h-100 flex w-full flex-row flex-wrap gap-2">{children}</div>
+      <div className="min-h-100 flex w-full flex-row flex-wrap gap-2 pb-8">{children}</div>
     </PageWithBanner>
   );
 };

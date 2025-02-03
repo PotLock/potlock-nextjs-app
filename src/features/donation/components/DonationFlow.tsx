@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { isBigSource, useRouteQuery } from "@/common/lib";
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 import { dispatch } from "@/store";
 
@@ -25,7 +25,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   closeModal,
   ...props
 }) => {
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
   const { currentStep, finalOutcome } = useDonationState();
 
   const {
@@ -46,7 +46,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
   const { data: token } = useToken({
     tokenId,
-    balanceCheckAccountId: authenticatedUser?.accountId,
+    balanceCheckAccountId: viewer?.accountId,
   });
 
   const isBalanceSufficient = isBigSource(totalAmountFloat)

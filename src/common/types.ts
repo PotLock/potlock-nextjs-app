@@ -16,6 +16,11 @@ export enum FeatureId {
    * Donation to a single account using blockchain's native token.
    */
   DirectNativeTokenDonation = "DirectNativeTokenDonation",
+
+  /**
+   * As a User, I want to be able to register on the platform and update my profile details
+   */
+  ProfileConfiguration = "ProfileConfiguration",
 }
 
 export type FeatureFlags = { isEnabled: boolean };
@@ -144,6 +149,9 @@ export type ClearanceCheckResult =
   | { requirements: BasicRequirement[]; isEveryRequirementSatisfied: boolean; error: null }
   | { requirements: null; isEveryRequirementSatisfied: false; error: Error };
 
+/**
+ * @deprecated Use {@link ConditionalActivation}
+ */
 export interface WithDisabled {
   disabled?: boolean;
 }

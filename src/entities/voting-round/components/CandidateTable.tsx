@@ -13,7 +13,7 @@ import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 
 import { VotingRoundCandidateRow } from "./CandidateRow";
 
@@ -30,7 +30,7 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
 }) => {
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
   const selectedEntries = useSet<AccountId>();
 
   const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
@@ -39,9 +39,9 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
   });
 
   const { data: remainingUserVotingCapacity } = votingContractHooks.useVoterRemainingCapacity({
-    enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
+    enabled: electionId !== 0 && viewer.accountId !== undefined,
     electionId,
-    accountId: authenticatedUser.accountId as AccountId,
+    accountId: viewer.accountId as AccountId,
   });
 
   const handleEntrySelect = useCallback(

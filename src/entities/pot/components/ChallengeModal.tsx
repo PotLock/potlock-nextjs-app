@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Form } from "react-hook-form";
 
 import { type ByPotId, Pot } from "@/common/api/indexer";
-import { potContractHooks } from "@/common/contracts/core";
+import { potContractHooks } from "@/common/contracts/core/pot";
 import {
   Button,
   Dialog,
@@ -14,7 +14,7 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/components";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 
 import { useChallengeForm } from "../hooks/forms";
 
@@ -30,16 +30,16 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   potId,
   potDetail,
 }) => {
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
 
   const activeChallenge = useMemo(() => {
-    if (authenticatedUser.isSignedIn) {
+    if (viewer.isSignedIn) {
       return (potPayoutChallenges ?? []).find(
-        ({ challenger_id }) => authenticatedUser.accountId === challenger_id,
+        ({ challenger_id }) => viewer.accountId === challenger_id,
       );
     } else return undefined;
-  }, [authenticatedUser.isSignedIn, authenticatedUser.accountId, potPayoutChallenges]);
+  }, [viewer.isSignedIn, viewer.accountId, potPayoutChallenges]);
 
   // Form settings
   const { form, errors, onSubmit, inProgress } = useChallengeForm({ potDetail });

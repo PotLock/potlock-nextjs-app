@@ -2,11 +2,11 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
-import { walletApi } from "@/common/api/near/client";
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
-import { useSessionReduxStore } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
@@ -17,13 +17,13 @@ export type DonationModalProps = DonationAllocationKey &
   Pick<DonationFlowProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
+  const viewer = useWalletUserSession();
   const self = useModal();
   const isSingleProjectDonation = "accountId" in props;
   const isPotDonation = "potId" in props;
   const isListDonation = "listId" in props;
   const isCampaignDonation = "campaignId" in props;
   const { currentStep } = useDonationState();
-  const { isAuthenticated } = useSessionReduxStore();
   const { setSearchParams } = useRouteQuery();
 
   const close = useCallback(() => {
@@ -41,7 +41,7 @@ export const DonationModal = create((props: DonationModalProps) => {
   }, [self, setSearchParams]);
 
   const onSignInClick = useCallback(() => {
-    walletApi.signInModal();
+    nearProtocolClient.walletApi.signInModal();
     close();
   }, [close]);
 
@@ -63,7 +63,7 @@ export const DonationModal = create((props: DonationModalProps) => {
         }
         onCloseClick={close}
       >
-        {!isAuthenticated ? (
+        {!viewer.isSignedIn ? (
           <ModalErrorBody
             heading="Donation"
             title="Authentication required"

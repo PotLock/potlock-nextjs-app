@@ -6,11 +6,9 @@ import { entries } from "remeda";
 import { Temporal } from "temporal-polyfill";
 import { ZodError } from "zod";
 
-import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { toChronologicalOrder } from "@/common/lib";
+import { oldToRecent } from "@/common/lib";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
@@ -27,6 +25,7 @@ export type DonationFormParams = DonationAllocationKey & {
 };
 
 export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormParams) => {
+  const now = Temporal.Now.instant();
   const isSingleProjectDonation = "accountId" in params;
   const isPotDonation = "potId" in params;
   const isListDonation = "listId" in params;
@@ -34,7 +33,6 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
   const potAccountId = isPotDonation ? params.potId : undefined;
   const listId = isListDonation ? params.listId : undefined;
   const campaignId = isCampaignDonation ? params.campaignId : undefined;
-
   const recipientAccountId = isSingleProjectDonation ? params.accountId : undefined;
 
   const { data: recipientActivePots = [] } = indexer.useAccountActivePots({
@@ -44,15 +42,13 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
   });
 
   const matchingPots = recipientActivePots.filter(
-    ({ matching_round_start }) =>
-      Temporal.Now.instant()
-        .since(Temporal.Instant.from(matching_round_start))
-        .total("milliseconds") > 0,
+    ({ matching_round_start, matching_round_end }) =>
+      now.since(Temporal.Instant.from(matching_round_start)).total("milliseconds") > 0 &&
+      now.until(Temporal.Instant.from(matching_round_end)).total("milliseconds") > 0,
   );
 
   const defaultPotAccountId = useMemo(
-    () => toChronologicalOrder("matching_round_end", matchingPots).at(0)?.account,
-
+    () => oldToRecent("matching_round_end", matchingPots).at(0)?.account,
     [matchingPots],
   );
 
@@ -142,8 +138,6 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
 
   const isDisabled = !hasChanges || !self.formState.isValid || self.formState.isSubmitting;
 
-  const isSenderHumanVerified = useIsHuman(walletApi.accountId ?? "noop");
-
   const minAmountError =
     !isDonationAmountSufficient({ amount, tokenId }) && hasChanges
       ? DONATION_MIN_NEAR_AMOUNT_ERROR
@@ -156,7 +150,7 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
 
   useEffect(() => {
     /**
-     *? Due to an unknown issue, when `defaultPotAccountId` gets determined,
+     *? Due to yet undetermined issue, when `defaultPotAccountId` gets defined,
      *?  it does not trigger the form state update, so we have to do it manually.
      */
     if (
@@ -173,10 +167,7 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
       (values.allocationStrategy === "full" && values.tokenId === undefined) ||
       (values.allocationStrategy === "share" && values.tokenId !== NATIVE_TOKEN_ID)
     ) {
-      self.setValue("tokenId", NATIVE_TOKEN_ID, {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
+      self.setValue("tokenId", NATIVE_TOKEN_ID, { shouldDirty: true, shouldTouch: true });
     }
   }, [self, values]);
 
@@ -201,7 +192,6 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
     defaultValues,
     hasChanges,
     isDisabled,
-    isSenderHumanVerified,
     onSubmit: self.handleSubmit(onSubmit),
     matchingPots,
     minAmountError,
