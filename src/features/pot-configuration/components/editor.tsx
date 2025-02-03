@@ -13,6 +13,7 @@ import {
   EditorSection,
   Form,
   FormField,
+  SplashScreen,
 } from "@/common/ui/components";
 import {
   CheckboxField,
@@ -75,7 +76,9 @@ export const PotConfigurationEditor: React.FC<PotConfigurationEditorProps> = ({
     <PotConfigurationPreview onEditClick={enterEditMode} {...{ className, potId }} />
   ) : (
     <>
-      {isHydrating ? null : (
+      {isHydrating ? (
+        <SplashScreen className="h-200" />
+      ) : (
         <Form {...form}>
           <form un-flex="~ col" un-items="center" {...{ onSubmit }}>
             <h2 className="prose font-600 mb-12 mr-auto text-xl">

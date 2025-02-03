@@ -4,8 +4,9 @@ import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { styled } from "styled-components";
 
+import { FEATURE_REGISTRY } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
@@ -55,8 +56,9 @@ const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
                 pathClassName="group-hover:fill-[#292929] transition-all ease-in-out"
               />
             )}
+
             <p className="font-500 text-sm" style={{ fontWeight: 500 }}>
-              Earn referral fees
+              {"Earn referral fees"}
             </p>
           </div>
         </CopyToClipboard>
@@ -167,11 +169,20 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
 
             {isOwner && (
               <div className="ml-[auto] self-center">
-                <Link href={rootPathnames.EDIT_PROFILE(accountId)}>
-                  <Button variant="brand-tonal" className="ml-[auto]">
-                    {"Edit profile"}
-                  </Button>
-                </Link>
+                <Button asChild variant="brand-tonal" className="ml-[auto]">
+                  <Link
+                    href={
+                      FEATURE_REGISTRY.ProfileConfiguration.isEnabled
+                        ? rootPathnames.EDIT_PROFILE(accountId)
+                        : `${APP_BOS_COUNTERPART_URL}/?tab=profile&accountId=${accountId}`
+                    }
+                    target={FEATURE_REGISTRY.ProfileConfiguration.isEnabled ? undefined : "_blank"}
+                  >
+                    {FEATURE_REGISTRY.ProfileConfiguration.isEnabled
+                      ? "Edit profile"
+                      : "Edit Profile on BOS"}
+                  </Link>
+                </Button>
               </div>
             )}
           </div>
