@@ -27,7 +27,7 @@ import { AccountGroup } from "@/entities/_shared/account";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/features/donation";
 
-import { PotConfigurationPreview } from "./PotConfigurationPreview";
+import { PotConfigurationPreview } from "./preview";
 import { POT_EDITOR_FIELDS } from "../constants";
 import { usePotConfigurationEditorForm } from "../hooks/forms";
 import { getPotDeploymentSchema, getPotSettingsSchema } from "../model";
