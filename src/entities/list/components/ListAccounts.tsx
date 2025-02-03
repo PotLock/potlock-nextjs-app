@@ -13,7 +13,7 @@ import { ListAccountCard } from "./AccountCard";
 interface ListAccountsType {
   loadingListData: boolean;
   listData: List | undefined;
-  listRegistrations: any[];
+  listRegistrations: ListRegistration[];
   isLoading: boolean;
   setStatus: (value: string) => void;
 }
