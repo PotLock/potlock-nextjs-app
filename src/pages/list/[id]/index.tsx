@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { indexer } from "@/common/api/indexer";
+import { ListRegistration, indexer } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
-import { PageWithBanner } from "@/common/ui/components";
+import { PageWithBanner, Spinner } from "@/common/ui/components";
 import {
   ListAccounts,
   ListDetails,
@@ -16,7 +16,6 @@ import { RootLayout } from "@/layout/components/root-layout";
 
 export default function SingleList() {
   useListDeploymentSuccessRedirect();
-  const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
   const [listDetails, setListDetails] = useState<any>(null);
 
   const [savedUsers, setSavedUsers] = useState<SavedUsersType>({
@@ -42,9 +41,8 @@ export default function SingleList() {
     listId,
   });
 
-  // TODO: use `useMemo` for filtered data instead
-  useEffect(() => {
-    setFilteredRegistrations(data?.results ?? []);
+  const listRegistrations: ListRegistration[] = useMemo(() => {
+    return data?.results ?? [];
   }, [data]);
 
   useEffect(() => {
@@ -65,7 +63,11 @@ export default function SingleList() {
     });
   }, [loadingListData, isLoading, setAdmins, listData, data]);
 
-  return (
+  return loadingListData ? (
+    <div className="flex h-[80vh] items-center justify-center">
+      <Spinner className="w-25 h-25" />
+    </div>
+  ) : (
     <RootLayout
       title={listDetails?.name ?? ""}
       description={listDetails?.description ?? ""}
@@ -75,6 +77,7 @@ export default function SingleList() {
         <ListDetails
           admins={admins}
           listDetails={listDetails}
+          listId={listId}
           savedUsers={savedUsers}
           setAdmins={setAdmins}
         />
@@ -82,9 +85,8 @@ export default function SingleList() {
           listData={listData}
           isLoading={isLoading}
           loadingListData={loadingListData}
-          filteredRegistrations={filteredRegistrations}
+          listRegistrations={listRegistrations}
           setStatus={setStatus}
-          setFilteredRegistrations={setFilteredRegistrations}
         />
       </PageWithBanner>
     </RootLayout>

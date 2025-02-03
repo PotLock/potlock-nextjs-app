@@ -17,7 +17,7 @@ type ListActionsModal = {};
 
 export const ListActionsModal = create((_: ListActionsModal) => {
   const self = useModal();
-  const { push, query } = useRouter();
+  const { push } = useRouter();
 
   const close = useCallback(() => {
     self.hide();
@@ -89,9 +89,7 @@ export const ListActionsModal = create((_: ListActionsModal) => {
       onClose={close}
       listName={data?.name as string}
       isUpdate={type === ListFormModalType.UPDATE_LIST}
-      onViewList={() =>
-        push(`/list/${data?.id ?? (Array.isArray(data) ? data[0]?.id : undefined)}`)
-      }
+      href={`/list/${data?.id ?? (Array.isArray(data) ? data[0]?.id : undefined)}`}
     />
   ) : (
     <Dialog open={self.visible}>
