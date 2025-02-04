@@ -3,7 +3,8 @@ import { useMemo } from "react";
 import { values } from "remeda";
 
 import { type ByPotId } from "@/common/api/indexer";
-import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import { indivisibleUnitsToFloat } from "@/common/lib";
 import { LabeledIcon, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
@@ -83,7 +84,11 @@ export const VotingRoundLeaderboard: React.FC<VotingRoundLeaderboardProps> = ({ 
                 >
                   <LabeledIcon
                     positioning="icon-text"
-                    caption={estimatedPayoutAmount.toFixed(2)}
+                    caption={indivisibleUnitsToFloat(
+                      estimatedPayoutAmount,
+                      NATIVE_TOKEN_DECIMALS,
+                      2,
+                    )}
                     classNames={{
                       caption: "font-600 text-sm gap-1.5 text-nowrap",
                     }}

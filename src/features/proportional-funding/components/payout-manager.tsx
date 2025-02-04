@@ -1,12 +1,9 @@
 import { useCallback } from "react";
 
-import { Big } from "big.js";
 import { MdCheck, MdFileDownload } from "react-icons/md";
 
 import { type ByPotId } from "@/common/api/indexer";
-import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
-import { potContractHooks } from "@/common/contracts/core/pot";
-import { indivisibleUnitsToBigNum } from "@/common/lib";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Skeleton } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { useWalletUserSession } from "@/common/wallet";
@@ -28,7 +25,6 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
   const viewer = useWalletUserSession();
   const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRoundResults = useVotingRoundResults({ potId });
-  const { data: potConfig } = potContractHooks.useConfig({ potId });
 
   const { isMetadataLoading: isTokenMetadataLoading, data: token } = useToken({
     tokenId: NATIVE_TOKEN_ID,
@@ -41,11 +37,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
 
   const handlePayoutsSubmit = useCallback(() => {
     if (votingRoundResults.data !== undefined && token !== undefined) {
-      submitPayouts({
-        potId,
-        tokenDecimals: token.metadata.decimals,
-        recipients: votingRoundResults.data.winners,
-      })
+      submitPayouts({ potId, recipients: votingRoundResults.data.winners })
         .then((_submittedPayouts) => {
           toast({
             title: "Payouts have been successfully submitted",
@@ -85,15 +77,6 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
         });
       });
   }, [onSubmitSuccess, potId, toast]);
-
-  if (potConfig) {
-    console.log(
-      Object.values(votingRoundResults.data?.winners ?? {})
-        .reduce((acc, { estimatedPayoutAmount }) => acc.add(estimatedPayoutAmount), Big(0))
-        .minus(indivisibleUnitsToBigNum(potConfig.matching_pool_balance, NATIVE_TOKEN_DECIMALS))
-        .toFixed(NATIVE_TOKEN_DECIMALS),
-    );
-  }
 
   return (
     <div className="flex w-full flex-col gap-8">
