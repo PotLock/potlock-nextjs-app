@@ -58,6 +58,7 @@ export type VotingRoundVoterSummary = ByAccountId & {
 };
 
 export type VotingRoundWinner = ByAccountId & {
+  rank: number;
   votes: Vote[];
   accumulatedWeight: number;
   estimatedPayoutAmount: IndivisibleUnits;

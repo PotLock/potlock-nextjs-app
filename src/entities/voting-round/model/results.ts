@@ -15,7 +15,7 @@ import { getVoteWeight, getVoteWeightAmplifiers } from "../utils/weight";
 
 const VOTING_ROUND_RESULTS_SCHEMA_VERSION = 3;
 
-type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "votes"> & {
+export type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "votes"> & {
   accumulatedWeight: Big;
 };
 
@@ -151,58 +151,50 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
           );
 
           // Calculate estimated payouts using total accumulated weight
-          const { registry: winners } = entries(candidates).reduce<{
-            registry: VotingRoundParticipants["winners"];
-            unallocatedPoolBalance: Big;
-          }>(
-            (
-              { registry, unallocatedPoolBalance },
-              [accountId, candidate],
-              entryIndex,
-              collection,
-            ) => {
-              const isLastEntry = entryIndex === collection.length - 1;
+          const { registry: winners } = values(candidates)
+            .toSorted((a, b) => b.accumulatedWeight.sub(a.accumulatedWeight).toNumber())
+            .reduce<{
+              registry: VotingRoundParticipants["winners"];
+              unallocatedPoolBalance: Big;
+            }>(
+              ({ registry, unallocatedPoolBalance }, candidate, entryIndex, collection) => {
+                const isLastEntry = entryIndex === collection.length - 1;
 
-              const estimatedPayoutShare = totalAccumulatedWeight.gt(0)
-                ? matchingPoolBalance.div(totalAccumulatedWeight).mul(candidate.accumulatedWeight)
-                : Big(0);
+                const estimatedPayoutShare = totalAccumulatedWeight.gt(0)
+                  ? matchingPoolBalance.div(totalAccumulatedWeight).mul(candidate.accumulatedWeight)
+                  : Big(0);
 
-              const estimatedPayoutBig = isLastEntry
-                ? unallocatedPoolBalance
-                : estimatedPayoutShare;
+                const estimatedPayoutBig = isLastEntry
+                  ? unallocatedPoolBalance
+                  : estimatedPayoutShare;
 
-              return {
-                unallocatedPoolBalance: unallocatedPoolBalance.minus(estimatedPayoutBig),
+                return {
+                  unallocatedPoolBalance: unallocatedPoolBalance.minus(estimatedPayoutBig),
 
-                registry: {
-                  ...registry,
+                  registry: {
+                    ...registry,
 
-                  [accountId]: {
-                    ...candidate,
-                    accumulatedWeight: candidate.accumulatedWeight.toNumber(),
+                    [candidate.accountId]: {
+                      ...candidate,
+                      rank: entryIndex + 1,
+                      accumulatedWeight: candidate.accumulatedWeight.toNumber(),
 
-                    estimatedPayoutAmount: bigNumToIndivisible(
-                      isLastEntry ? unallocatedPoolBalance : estimatedPayoutBig,
-                      payoutTokenMetadata.decimals,
-                    ),
+                      estimatedPayoutAmount: bigNumToIndivisible(
+                        isLastEntry ? unallocatedPoolBalance : estimatedPayoutBig,
+                        payoutTokenMetadata.decimals,
+                      ),
+                    },
                   },
-                },
-              };
-            },
+                };
+              },
 
-            { registry: {}, unallocatedPoolBalance: matchingPoolBalance },
-          );
+              { registry: {}, unallocatedPoolBalance: matchingPoolBalance },
+            );
 
           set((state) => ({
             cache: {
               ...state.cache,
-
-              [electionId]: {
-                totalVoteCount: votes.length,
-                payoutTokenMetadata,
-                voters,
-                winners,
-              },
+              [electionId]: { totalVoteCount: votes.length, payoutTokenMetadata, voters, winners },
             },
           }));
         }
