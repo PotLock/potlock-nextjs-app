@@ -4,6 +4,7 @@ import { values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
+import { potContractHooks } from "@/common/contracts/core/pot";
 import { type ElectionId, votingContractHooks } from "@/common/contracts/core/voting";
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 import type { ConditionalActivation } from "@/common/types";
@@ -18,7 +19,7 @@ export const useVotingRoundResults = ({
   potId,
   enabled = true,
 }: VotingRoundKey & ConditionalActivation) => {
-  const { data: pot } = indexer.usePot({ enabled, potId });
+  const { data: potConfig } = potContractHooks.useConfig({ enabled, potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
   // TODO: Implement mechanism config storage ( Pots V2 milestone )
   const mechanismConfig = VOTING_ROUND_CONFIG_MPDAO;
@@ -61,7 +62,7 @@ export const useVotingRoundResults = ({
   if (
     enabled &&
     hasProportionalFundingMechanism &&
-    pot &&
+    potConfig &&
     votingRound &&
     votes &&
     voterAccountList &&
@@ -77,7 +78,7 @@ export const useVotingRoundResults = ({
         voterStatsSnapshot: voterStatsSnapshot.results,
 
         matchingPoolBalance: indivisibleUnitsToBigNum(
-          pot.matching_pool_balance,
+          potConfig.matching_pool_balance,
           NATIVE_TOKEN_DECIMALS,
         ),
       });
