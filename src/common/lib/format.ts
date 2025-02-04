@@ -9,6 +9,9 @@ export { formatNearAmount, parseNearAmount };
 export const indivisibleUnitsToBigNum = (amount: IndivisibleUnits, decimals: number) =>
   Big(amount).div(Big(10).pow(decimals));
 
+export const bigNumToIndivisible = (amount: Big.Big, decimals: number): IndivisibleUnits =>
+  amount.mul(Big(10).pow(decimals)).toFixed().toString();
+
 // TODO: Adjust all consuming code with custom precision
 export const indivisibleUnitsToFloat = (
   amount: IndivisibleUnits,

@@ -114,12 +114,12 @@ export const useUniqueVoters = ({ enabled = true, electionId }: BasicElectionQue
   );
 
 export const usePotElections = ({ enabled = true, potId }: ByPotId & ConditionalActivation) => {
-  const { data: elections, isLoading } = useElections({ enabled });
+  const { data: elections, ...queryResult } = useElections({ enabled });
 
   return {
-    isLoading,
+    ...queryResult,
 
-    elections: elections?.filter(
+    data: elections?.filter(
       ({ election_type }) =>
         typeof election_type === "object" && "Pot" in election_type && election_type.Pot === potId,
     ),
@@ -130,10 +130,12 @@ export const useActivePotElections = ({
   enabled = true,
   potId,
 }: ByPotId & ConditionalActivation) => {
-  const { data: activeElections } = useActiveElections({ enabled });
+  const { data: activeElections, ...queryResult } = useActiveElections({ enabled });
 
   return {
-    activeElections: activeElections?.filter(
+    ...queryResult,
+
+    data: activeElections?.filter(
       ([_electionId, { election_type }]) =>
         typeof election_type === "object" && "Pot" in election_type && election_type.Pot === potId,
     ),

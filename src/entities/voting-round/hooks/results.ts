@@ -3,10 +3,12 @@ import { useCallback, useMemo } from "react";
 import { values } from "remeda";
 
 import { indexer } from "@/common/api/indexer";
-import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import { potContractHooks } from "@/common/contracts/core/pot";
 import { type ElectionId, votingContractHooks } from "@/common/contracts/core/voting";
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 import type { ConditionalActivation } from "@/common/types";
+import { useToken } from "@/entities/_shared";
 import { usePotFeatureFlags } from "@/entities/pot";
 
 import { useVotingRoundResultsStore } from "../model/results";
@@ -18,12 +20,22 @@ export const useVotingRoundResults = ({
   potId,
   enabled = true,
 }: VotingRoundKey & ConditionalActivation) => {
-  const { data: pot } = indexer.usePot({ enabled, potId });
+  const { data: potConfig } = potContractHooks.useConfig({ enabled, potId });
   const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+
+  const { data: matchingPoolToken } = useToken({
+    enabled: potConfig !== undefined,
+
+    tokenId:
+      potConfig !== undefined && "matching_pool_token_id" in potConfig
+        ? ((potConfig?.matching_pool_token_id as string) ?? NATIVE_TOKEN_ID)
+        : NATIVE_TOKEN_ID,
+  });
+
   // TODO: Implement mechanism config storage ( Pots V2 milestone )
   const mechanismConfig = VOTING_ROUND_CONFIG_MPDAO;
 
-  const votingRound = useVotingRound({
+  const { data: votingRound } = useVotingRound({
     enabled: enabled && hasProportionalFundingMechanism,
     potId,
   });
@@ -61,13 +73,13 @@ export const useVotingRoundResults = ({
   if (
     enabled &&
     hasProportionalFundingMechanism &&
-    pot &&
+    potConfig &&
+    matchingPoolToken &&
     votingRound &&
     votes &&
     voterAccountList &&
     voterStatsSnapshot
   ) {
-    // Recalculate results if votes have changed
     if (!resultsCache || resultsCache.totalVoteCount !== votes.length) {
       store.revalidate({
         electionId: votingRound.electionId,
@@ -77,9 +89,11 @@ export const useVotingRoundResults = ({
         voterStatsSnapshot: voterStatsSnapshot.results,
 
         matchingPoolBalance: indivisibleUnitsToBigNum(
-          pot.matching_pool_balance,
+          potConfig.matching_pool_balance,
           NATIVE_TOKEN_DECIMALS,
         ),
+
+        matchingPoolTokenMetadata: matchingPoolToken.metadata,
       });
     }
   }

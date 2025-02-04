@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { MdCheck, MdFileDownload } from "react-icons/md";
 
-import type { ByPotId } from "@/common/api/indexer";
+import { type ByPotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Skeleton } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
@@ -30,18 +30,14 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
     tokenId: NATIVE_TOKEN_ID,
   });
 
-  // TODO: Upload to IPFS
-  const _payoutBreakdownJson = votingRoundResults.data
+  // TODO: Upload via Pinata
+  const payoutBreakdownJson = votingRoundResults.data
     ? JSON.stringify(votingRoundResults.data.winners)
     : undefined;
 
   const handlePayoutsSubmit = useCallback(() => {
     if (votingRoundResults.data !== undefined && token !== undefined) {
-      submitPayouts({
-        potId,
-        tokenDecimals: token.metadata.decimals,
-        recipients: votingRoundResults.data.winners,
-      })
+      submitPayouts({ potId, recipients: votingRoundResults.data.winners })
         .then((_submittedPayouts) => {
           toast({
             title: "Payouts have been successfully submitted",

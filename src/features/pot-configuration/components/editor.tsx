@@ -77,7 +77,7 @@ export const PotConfigurationEditor: React.FC<PotConfigurationEditorProps> = ({
   ) : (
     <>
       {isHydrating ? (
-        <SplashScreen className="h-200" />
+        <SplashScreen className="h-150" />
       ) : (
         <Form {...form}>
           <form un-flex="~ col" un-items="center" {...{ onSubmit }}>

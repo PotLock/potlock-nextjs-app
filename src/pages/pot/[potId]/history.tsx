@@ -17,8 +17,8 @@ export default function PotHistoryTab() {
     [],
   );
 
-  const votingRound = useVotingRound({ potId });
-  const votingRoundResults = useVotingRoundResults({ potId });
+  const { data: votingRound } = useVotingRound({ potId });
+  const { data: votingRoundResults } = useVotingRoundResults({ potId });
 
   const { isLoading: isListOfVotesLoading, data: votes } = votingContractHooks.useElectionVotes({
     enabled: votingRound !== undefined,
