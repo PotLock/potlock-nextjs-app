@@ -136,7 +136,7 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
     [defaultValues, values],
   );
 
-  const isDisabled = !hasChanges || !self.formState.isValid || self.formState.isSubmitting;
+  const isDisabled = !self.formState.isValid || self.formState.isSubmitting;
 
   const minAmountError =
     !isDonationAmountSufficient({ amount, tokenId }) && hasChanges
