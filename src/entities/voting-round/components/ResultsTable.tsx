@@ -97,7 +97,7 @@ export const VotingRoundResultsTable: React.FC<VotingRoundResultsTableProps> = (
           </div>
 
           <div className="inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
-            <span className="font-600 uppercase leading-none">{"Projects"}</span>
+            <span className="font-600 uppercase leading-none">{"Project"}</span>
           </div>
         </div>
 

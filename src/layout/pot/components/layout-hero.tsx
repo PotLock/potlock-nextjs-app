@@ -231,7 +231,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
             {viewerAbilities.canChallengePayouts && (
               <Button onClick={onChallengePayoutsClick}>
-                {activeChallenge === undefined ? "Challenge payouts" : "Update challenge"}
+                {activeChallenge === undefined ? "Challenge Payouts" : "Update Challenge"}
               </Button>
             )}
           </div>

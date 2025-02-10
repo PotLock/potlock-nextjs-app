@@ -31,8 +31,8 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
   });
 
   // TODO: Upload via Pinata
-  const payoutBreakdownJson = votingRoundResults.data
-    ? JSON.stringify(votingRoundResults.data.winners)
+  const payoutJustificationJson = votingRoundResults.data
+    ? JSON.stringify(votingRoundResults.data)
     : undefined;
 
   const handlePayoutsSubmit = useCallback(() => {
