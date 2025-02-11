@@ -8,11 +8,11 @@ import getTimePassed from "@/common/lib/getTimePassed";
 import AdminIcon from "@/common/ui/svg/AdminIcon";
 import { CheckedIcon } from "@/common/ui/svg/CheckedIcon";
 import { cn } from "@/common/ui/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
-import { useGlobalStoreSelector } from "@/store";
 
-import ChallengeResolveModal from "./ChallengeResolveModal";
+import { ChallengeResolveModal } from "./ChallengeResolveModal";
 
 // TODO: Refactor
 export const PotPayoutChallenges = ({
@@ -22,6 +22,12 @@ export const PotPayoutChallenges = ({
   potDetail?: Pot;
   setTotalChallenges: (amount: number) => void;
 }) => {
+  const walletUser = useWalletUserSession();
+
+  const viewerAccountId = walletUser.isDaoRepresentative
+    ? walletUser.daoAccountId
+    : walletUser.accountId;
+
   const { isLoading: isChallengeListLoading, data: challenges } =
     potContractHooks.usePayoutChallenges({
       enabled: potDetail?.account !== undefined,
@@ -30,16 +36,11 @@ export const PotPayoutChallenges = ({
 
   const [tab, setTab] = useState<string>("UNRESOLVED");
   const [filteredChallenges, setFilteredChallenges] = useState<ChallengeType[]>([]);
-
   const [adminModalChallengerId, setAdminModalChallengerId] = useState("");
 
-  const { actAsDao, accountId: _accId } = useGlobalStoreSelector((state) => state.nav);
-  // AccountID (Address)
-  const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
-  const accountId = asDao ? actAsDao.defaultAddress : _accId;
-
   const userIsAdminOrGreater =
-    !!potDetail?.admins.find((adm) => adm.id === accountId) || potDetail?.owner.id === accountId;
+    potDetail?.admins.find(({ id }) => id === viewerAccountId) !== undefined ||
+    potDetail?.owner.id === viewerAccountId;
 
   // TODO: Use `useMemo` for filtered results derived according to `tab` instead!
   useEffect(() => {
@@ -168,7 +169,7 @@ export const PotPayoutChallenges = ({
           open={adminModalChallengerId !== ""}
           payoutsChallenges={challenges}
           potId={potDetail?.account || ""}
-          adminModalChallengerId={adminModalChallengerId}
+          challenger={{ accountId: adminModalChallengerId }}
           onCloseClick={() => setAdminModalChallengerId("")}
         />
       </div>

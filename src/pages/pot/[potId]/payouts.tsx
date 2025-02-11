@@ -10,6 +10,7 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  Button,
   LabeledIcon,
   Pagination,
   PaginationContent,
@@ -34,6 +35,7 @@ import {
   usePotLifecycle,
   usePotPayoutLookup,
 } from "@/entities/pot";
+import { useProportionalFundingPayoutJustification } from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/layout";
 import { PotPayoutManager } from "@/layout/pot/components/payout-manager";
 
@@ -50,6 +52,7 @@ export default function PotPayoutsTab() {
   const potLifecycle = usePotLifecycle({ potId });
   const { data: pot } = indexer.usePot({ potId });
   const { data: token } = useToken({ tokenId: NATIVE_TOKEN_ID });
+  const pfJustification = useProportionalFundingPayoutJustification({ potId });
 
   const isFunctionalityAvailable = useMemo(
     () =>
@@ -211,10 +214,14 @@ export default function PotPayoutsTab() {
               <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
               <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
 
-              <AlertDescription>
-                {pot?.cooldown_end
-                  ? "These payouts have been set on the contract but have not been paid out yet."
-                  : "These payouts are estimated amounts only and have not been set on the contract yet."}
+              <AlertDescription className="flex flex-col gap-4">
+                <span>
+                  {(payouts?.length ?? 0) > 0
+                    ? "These payouts have been set on the contract but have not been paid out yet."
+                    : "These payouts are estimated amounts only and have not been set on the contract yet."}
+                </span>
+
+                <Button onClick={pfJustification.submit}>{"Submit Justification"}</Button>
               </AlertDescription>
             </Alert>
           )}

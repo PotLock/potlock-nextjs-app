@@ -30,11 +30,6 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
     tokenId: NATIVE_TOKEN_ID,
   });
 
-  // TODO: Upload via Pinata
-  const payoutJustificationJson = votingRoundResults.data
-    ? JSON.stringify(votingRoundResults.data)
-    : undefined;
-
   const handlePayoutsSubmit = useCallback(() => {
     if (votingRoundResults.data !== undefined && token !== undefined) {
       submitPayouts({ potId, recipients: votingRoundResults.data.winners })

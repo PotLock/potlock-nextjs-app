@@ -1,13 +1,9 @@
 import { useCallback, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { calculateDepositByDataSize } from "@wpdas/naxios";
-import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
-import { FULL_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
 
 import { challengeResolveSchema, challengeSchema } from "../models/schemas";
