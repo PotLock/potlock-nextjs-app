@@ -1,7 +1,11 @@
+import { type Transaction, calculateDepositByDataSize } from "@wpdas/naxios";
 import { values } from "remeda";
 
 import type { ByPotId } from "@/common/api/indexer";
+import { FULL_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
+import { parseNearAmount } from "@/common/lib";
+import type { AccountId } from "@/common/types";
 import type { VotingRoundElectionResult, VotingRoundParticipants } from "@/entities/voting-round";
 
 export type PayoutSubmitInputs = ByPotId & {
@@ -22,10 +26,41 @@ export const submitPayouts = ({ potId, recipients }: PayoutSubmitInputs) => {
 export const initiatePayoutProcessing = ({ potId }: ByPotId) =>
   potContractClient.admin_process_payouts({ potId });
 
-export const submitPayoutJustification = ({
+export const attachPayoutJustification = ({
   potId,
   data,
-}: ByPotId & { data: VotingRoundElectionResult }) => {
+  challengerAccountId,
+}: ByPotId & { data: VotingRoundElectionResult; challengerAccountId: AccountId }) => {
   // TODO: Upload via Pinata
   const message = JSON.stringify({ PayoutJustification: data });
+
+  const args = {
+    challenge_payouts: {
+      reason: message,
+    },
+
+    admin_update_payouts_challenge: {
+      challenger_id: challengerAccountId,
+      resolve_challenge: true,
+    },
+  };
+
+  potContractClient.contractApi(potId).callMultiple([
+    {
+      method: "challenge_payouts",
+      args: args.challenge_payouts,
+      gas: FULL_TGAS,
+
+      deposit: parseNearAmount(calculateDepositByDataSize(args.challenge_payouts)) ?? "0",
+    } as Transaction<potContractClient.ChallengePayoutsArgs>,
+
+    {
+      method: "admin_update_payouts_challenge",
+      args: args.admin_update_payouts_challenge,
+      gas: FULL_TGAS,
+
+      deposit:
+        parseNearAmount(calculateDepositByDataSize(args.admin_update_payouts_challenge)) ?? "0",
+    } as Transaction<potContractClient.PayoutChallengeUpdateArgs>,
+  ] as Transaction<object>[]);
 };

@@ -12,12 +12,9 @@ import { PotLifecycleStageTagEnum } from "../types";
  */
 const getDateTime = (date: string) => new Date(date).getTime();
 
-export type PotLifecycleCalculationInputs = ByPotId & { hasProportionalFundingMechanism?: boolean };
+export type PotLifecycleCalculationInputs = ByPotId & { hasPFMechanism?: boolean };
 
-export const usePotLifecycle = ({
-  potId,
-  hasProportionalFundingMechanism,
-}: PotLifecycleCalculationInputs) => {
+export const usePotLifecycle = ({ potId, hasPFMechanism }: PotLifecycleCalculationInputs) => {
   const { data: pot } = indexer.usePot({ potId });
 
   const date = new Date();
@@ -47,7 +44,7 @@ export const usePotLifecycle = ({
 
         {
           tag: PotLifecycleStageTagEnum.Matching,
-          label: `${hasProportionalFundingMechanism ? "Voting" : "Matching"} round`,
+          label: `${hasPFMechanism ? "Voting" : "Matching"} round`,
           daysLeft: public_round_end_ms,
           started: now >= public_round_start_ms,
           completed: now > public_round_end_ms,
@@ -82,7 +79,7 @@ export const usePotLifecycle = ({
         },
       ];
     } else return [];
-  }, [hasProportionalFundingMechanism, now, pot]);
+  }, [hasPFMechanism, now, pot]);
 
   const currentStage = useMemo(
     () => stages.find((stage) => stage.started && !stage.completed),

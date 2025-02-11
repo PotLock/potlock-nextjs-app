@@ -41,8 +41,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const { data: pot } = indexer.usePot({ potId });
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
-  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
-  const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
+  const { hasPFMechanism } = usePotFeatureFlags({ potId });
+  const lifecycle = usePotLifecycle({ potId, hasPFMechanism });
 
   const activeChallenge = useMemo(
     () =>
@@ -57,7 +57,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
   const applicationClearance = usePotApplicationUserClearance({
     potId,
-    hasProportionalFundingMechanism,
+    hasPFMechanism,
   });
 
   const isApplicationPeriodOngoing = useMemo(
@@ -96,19 +96,9 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
         donationStats
       );
     } else {
-      return hasProportionalFundingMechanism ? (
-        <VotingRoundLeaderboard {...{ potId }} />
-      ) : (
-        donationStats
-      );
+      return hasPFMechanism ? <VotingRoundLeaderboard {...{ potId }} /> : donationStats;
     }
-  }, [
-    applicationClearance.requirements,
-    hasProportionalFundingMechanism,
-    isApplicationPeriodOngoing,
-    pot,
-    potId,
-  ]);
+  }, [applicationClearance.requirements, hasPFMechanism, isApplicationPeriodOngoing, pot, potId]);
 
   return (
     <div
@@ -120,7 +110,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
       {pot ? (
         <PotTimeline
           classNames={{ root: "bg-neutral-50 md:transparent" }}
-          {...{ hasProportionalFundingMechanism, potId }}
+          {...{ hasPFMechanism, potId }}
         />
       ) : (
         <Skeleton className="h-14 w-full rounded-lg" />
@@ -216,10 +206,10 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             {viewerAbilities.canApply && applicationClearance.isEveryRequirementSatisfied && (
               <Button
                 onClick={onApplyClick}
-              >{`Apply to ${hasProportionalFundingMechanism ? "Round" : "Pot"}`}</Button>
+              >{`Apply to ${hasPFMechanism ? "Round" : "Pot"}`}</Button>
             )}
 
-            {hasProportionalFundingMechanism ? null : (
+            {hasPFMechanism ? null : (
               <>{viewerAbilities.canDonate && <DonateToPotProjects {...{ potId }} />}</>
             )}
 

@@ -1,20 +1,42 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import type { ByPotId } from "@/common/api/indexer";
+import { potContractHooks } from "@/common/contracts/core/pot";
+import { useWalletUserSession } from "@/common/wallet";
 import { useVotingRoundResults } from "@/entities/voting-round";
 
-import { submitPayoutJustification } from "../model/effects";
+import { attachPayoutJustification } from "../model/effects";
 
-export const useProportionalFundingPayoutJustification = ({ potId }: ByPotId) => {
+export type PFPayoutJustificationLookupParams = ByPotId & {};
+
+export const usePFPayoutJustification = ({ potId }: PFPayoutJustificationLookupParams) => {
+  const viewer = useWalletUserSession();
   const votingRound = useVotingRoundResults({ potId });
+  const { data: potPayoutChallengeList } = potContractHooks.usePayoutChallenges({ potId });
+
+  const isAttached = useMemo(() => {
+    return potPayoutChallengeList?.some((challenge) => {
+      return challenge.challenger_id === viewer.accountId;
+    });
+  }, [potPayoutChallengeList, viewer.accountId]);
 
   const submit = useCallback(() => {
-    if (votingRound.data !== undefined) {
-      submitPayoutJustification({ potId, data: votingRound.data });
+    if (viewer.isSignedIn && votingRound.data !== undefined) {
+      attachPayoutJustification({
+        potId,
+        data: votingRound.data,
+        challengerAccountId: viewer.accountId,
+      });
     }
-  }, [potId, votingRound]);
+  }, [potId, viewer.accountId, viewer.isSignedIn, votingRound.data]);
 
-  return {
-    submit,
-  };
+  return !votingRound.isLoading && votingRound.data === undefined
+    ? {
+        isLoading: false as const,
+        submit: undefined,
+      }
+    : {
+        isLoading: votingRound.isLoading,
+        submit,
+      };
 };

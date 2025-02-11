@@ -23,7 +23,7 @@ export const useChallengeForm = ({ potDetail }: { potDetail: Pot; referrerId?: s
       try {
         await potContractClient.challenge_payouts({
           potId: potDetail.account,
-          reason: formData.data.message,
+          args: { reason: formData.data.message },
         });
       } catch (e) {
         console.error(e);

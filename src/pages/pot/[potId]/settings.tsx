@@ -4,18 +4,18 @@ import { useRouter } from "next/router";
 
 import { usePotFeatureFlags } from "@/entities/pot";
 import { PotConfigurationEditor } from "@/features/pot-configuration";
-import { ProportionalFundingConfigurator } from "@/features/proportional-funding";
+import { PFConfigurator } from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/layout";
 
 export default function PotSettingsTab() {
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
-  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+  const { hasPFMechanism } = usePotFeatureFlags({ potId });
 
   return (
     <div className="flex w-full flex-col items-center gap-8">
-      {hasProportionalFundingMechanism ? (
-        <ProportionalFundingConfigurator
+      {hasPFMechanism ? (
+        <PFConfigurator
           className="max-w-206"
           footerContent={<PotConfigurationEditor {...{ potId }} />}
           {...{ potId }}

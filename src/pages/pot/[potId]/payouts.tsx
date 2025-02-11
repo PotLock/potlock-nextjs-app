@@ -35,7 +35,7 @@ import {
   usePotLifecycle,
   usePotPayoutLookup,
 } from "@/entities/pot";
-import { useProportionalFundingPayoutJustification } from "@/features/proportional-funding";
+import { PFAttachPayoutJustification } from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/layout";
 import { PotPayoutManager } from "@/layout/pot/components/payout-manager";
 
@@ -52,7 +52,6 @@ export default function PotPayoutsTab() {
   const potLifecycle = usePotLifecycle({ potId });
   const { data: pot } = indexer.usePot({ potId });
   const { data: token } = useToken({ tokenId: NATIVE_TOKEN_ID });
-  const pfJustification = useProportionalFundingPayoutJustification({ potId });
 
   const isFunctionalityAvailable = useMemo(
     () =>
@@ -221,7 +220,7 @@ export default function PotPayoutsTab() {
                     : "These payouts are estimated amounts only and have not been set on the contract yet."}
                 </span>
 
-                <Button onClick={pfJustification.submit}>{"Submit Justification"}</Button>
+                <PFAttachPayoutJustification {...{ potId }} />
               </AlertDescription>
             </Alert>
           )}

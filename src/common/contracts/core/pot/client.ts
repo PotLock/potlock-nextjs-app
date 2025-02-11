@@ -19,7 +19,7 @@ import {
   UpdatePotArgs,
 } from "./interfaces";
 
-const contractApi = (potId: string) =>
+export const contractApi = (potId: string) =>
   nearProtocolClient.naxiosInstance.contractApi({
     contractId: potId,
     cache: new MemoryCache({ expirationTime: 10 }),
@@ -107,16 +107,25 @@ export const get_payouts = async (args: { potId: string }) =>
   });
 
 // WRITE METHODS
-/**
- * Challenge round payout
- */
-export const challenge_payouts = ({ potId, reason }: { potId: string; reason: string }) => {
-  const args = { reason };
-  const deposit = parseNearAmount(calculateDepositByDataSize(args))!;
 
+export type ChallengePayoutsArgs = {
+  reason: string;
+};
+
+export const challenge_payouts = ({
+  potId,
+  args,
+}: ByPotId & {
+  args: ChallengePayoutsArgs;
+}) => {
   return contractApi(potId).call<{ reason: string }, Challenge[]>("challenge_payouts", {
     args,
-    deposit,
+
+    deposit:
+      parseNearAmount(calculateDepositByDataSize(args)) ??
+      parseNearAmount(`${(args.reason.length ?? 1) * 0.00003}`) ??
+      "0",
+
     gas: FULL_TGAS,
   });
 };
@@ -129,7 +138,12 @@ export const chef_set_application_status = (args: {
 }) =>
   contractApi(args.potId).call<typeof args, Application>("chef_set_application_status", {
     args,
-    deposit: parseNearAmount(calculateDepositByDataSize(args))!,
+
+    deposit:
+      parseNearAmount(calculateDepositByDataSize(args)) ??
+      parseNearAmount(`${args.notes.length * 0.00003}`) ??
+      "0",
+
     gas: FULL_TGAS,
   });
 
@@ -142,8 +156,8 @@ export type PayoutChallengeUpdateArgs = {
 export const admin_update_payouts_challenge = ({
   potId,
   args,
-}: ByPotId & { args: PayoutChallengeUpdateArgs }) => {
-  return contractApi(potId).call<typeof args, void>("admin_update_payouts_challenge", {
+}: ByPotId & { args: PayoutChallengeUpdateArgs }) =>
+  contractApi(potId).call<typeof args, void>("admin_update_payouts_challenge", {
     args,
 
     deposit:
@@ -153,7 +167,6 @@ export const admin_update_payouts_challenge = ({
 
     gas: FULL_TGAS,
   });
-};
 
 /**
  * Admin update round payout Challenge

@@ -13,14 +13,11 @@ import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/votin
 
 import { initiatePayoutProcessing, submitPayouts } from "../model/effects";
 
-export type ProportionalFundingPayoutManagerProps = ByPotId & {
+export type PFPayoutManagerProps = ByPotId & {
   onSubmitSuccess: VoidFunction;
 };
 
-export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayoutManagerProps> = ({
-  potId,
-  onSubmitSuccess,
-}) => {
+export const PFPayoutManager: React.FC<PFPayoutManagerProps> = ({ potId, onSubmitSuccess }) => {
   const { toast } = useToast();
   const viewer = useWalletUserSession();
   const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
