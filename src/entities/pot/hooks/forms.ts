@@ -68,19 +68,16 @@ export const useChallengeResolveForm = ({
         resolve_challenge: formData.data.resolve,
       };
 
-      try {
-        await naxiosInstance
-          .contractApi({ contractId: potId })
-          .call("admin_update_payouts_challenge", {
-            args,
-            deposit: parseNearAmount(calculateDepositByDataSize(args))!,
-            gas: FULL_TGAS,
-          });
-      } catch (e) {
-        console.error(e);
-        setInProgress(false);
-      }
+      potContractClient
+        .admin_update_payouts_challenge({ potId, args })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setInProgress(false);
+        });
     },
+
     [potId, challengerId],
   );
 

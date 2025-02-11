@@ -1,9 +1,10 @@
 import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
-import { PotId } from "@/common/api/indexer";
+import { type ByPotId, PotId } from "@/common/api/indexer";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { FULL_TGAS, ONE_HUNDREDTH_NEAR } from "@/common/constants";
+import type { AccountId } from "@/common/types";
 
 import {
   Application,
@@ -132,20 +133,24 @@ export const chef_set_application_status = (args: {
     gas: FULL_TGAS,
   });
 
-/**
- * Admin update round payout Challenge
- */
-export const admin_update_payouts_challenge = (args: {
-  potId: string;
-  challengerId: string;
-  notes: string;
-  shouldResolveChallenge: boolean;
-}) => {
-  const depositFloat = args.notes.length * 0.00003;
+export type PayoutChallengeUpdateArgs = {
+  challenger_id: AccountId;
+  notes?: null | string;
+  resolve_challenge: boolean;
+};
 
-  contractApi(args.potId).call<typeof args, Challenge[]>("admin_update_payouts_challenge", {
+export const admin_update_payouts_challenge = ({
+  potId,
+  args,
+}: ByPotId & { args: PayoutChallengeUpdateArgs }) => {
+  return contractApi(potId).call<typeof args, void>("admin_update_payouts_challenge", {
     args,
-    deposit: `${depositFloat}`,
+
+    deposit:
+      parseNearAmount(calculateDepositByDataSize(args)) ??
+      parseNearAmount(`${(args.notes?.length ?? 1) * 0.00003}`) ??
+      "0",
+
     gas: FULL_TGAS,
   });
 };
