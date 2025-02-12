@@ -26,7 +26,7 @@ export const submitPayouts = ({ potId, recipients }: PayoutSubmitInputs) => {
 export const initiatePayoutProcessing = ({ potId }: ByPotId) =>
   potContractClient.admin_process_payouts({ potId });
 
-export const attachPayoutJustification = ({
+export const publishPayoutJustification = ({
   potId,
   data,
   challengerAccountId,
@@ -45,7 +45,7 @@ export const attachPayoutJustification = ({
     },
   };
 
-  potContractClient.contractApi(potId).callMultiple([
+  return potContractClient.contractApi(potId).callMultiple([
     {
       method: "challenge_payouts",
       args: args.challenge_payouts,

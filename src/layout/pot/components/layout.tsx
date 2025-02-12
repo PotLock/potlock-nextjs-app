@@ -10,19 +10,27 @@ import { ChallengeModal } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
 import { PotApplicationModal } from "@/features/pot-application";
+import { PFPayoutJustificationPublicationAction } from "@/features/proportional-funding";
 import { SuccessModal } from "@/layout/pot/_deprecated/SuccessModal";
+import { rootPathnames } from "@/pathnames";
 
 import { PotLayoutHero } from "./layout-hero";
 import { ErrorModal } from "../_deprecated/ErrorModal";
-import { usePotLayoutTabNavigation } from "../hooks/tab-navigation";
+import { PotLayoutTabTag, usePotLayoutTabNavigation } from "../hooks/tab-navigation";
 
 export type PotLayoutProps = {
   children: React.ReactNode;
 };
 
 export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
-  const { query: routeQuery } = useRouter();
-  const { potId, ...query } = routeQuery as { potId: string; done?: string; errorMessage?: string };
+  const router = useRouter();
+
+  const { potId, ...query } = router.query as {
+    potId: string;
+    done?: string;
+    errorMessage?: string;
+  };
+
   const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
   const { data: pot } = indexer.usePot({ potId });
 
@@ -83,7 +91,16 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         </>
       )}
 
-      <DonationSybilWarning classNames={{ root: "w-full mb-4 md:mb-8" }} {...{ potId }} />
+      <div className="flex flex-col gap-4 pb-4">
+        {activeTab?.tag !== PotLayoutTabTag.Payouts && (
+          <PFPayoutJustificationPublicationAction
+            href={`${rootPathnames.pot}/${potId}/payouts`}
+            {...{ potId }}
+          />
+        )}
+
+        <DonationSybilWarning classNames={{ root: "w-full mb-4 md:mb-8" }} {...{ potId }} />
+      </div>
 
       <PotLayoutHero
         onApplyClick={openApplicationModal}

@@ -24,6 +24,7 @@ import {
 import { VotingRoundLeaderboard } from "@/entities/voting-round";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
+import { usePFPayoutJustification } from "@/features/proportional-funding";
 
 export type PotLayoutHeroProps = ByPotId & {
   onApplyClick?: () => void;
@@ -43,6 +44,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
   const { hasPFMechanism } = usePotFeatureFlags({ potId });
   const lifecycle = usePotLifecycle({ potId, hasPFMechanism });
+  const pfPayoutJustification = usePFPayoutJustification({ potId });
 
   const activeChallenge = useMemo(
     () =>
@@ -220,9 +222,13 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             )}
 
             {viewerAbilities.canChallengePayouts && (
-              <Button onClick={onChallengePayoutsClick}>
-                {activeChallenge === undefined ? "Challenge Payouts" : "Update Challenge"}
-              </Button>
+              <>
+                {hasPFMechanism && !pfPayoutJustification.isPublished ? null : (
+                  <Button onClick={onChallengePayoutsClick}>
+                    {activeChallenge === undefined ? "Challenge Payouts" : "Update Challenge"}
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>
