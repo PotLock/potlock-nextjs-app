@@ -1,16 +1,18 @@
 import { useState } from "react";
 
 import Link from "next/link";
+import { Temporal } from "temporal-polyfill";
 
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import type { ByCampaignId } from "@/common/types";
-import { Skeleton } from "@/common/ui/components";
+import { Button, Skeleton, Spinner } from "@/common/ui/components";
 import { NearIcon } from "@/common/ui/svg";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
+import { useCampaignForm } from "../hooks/forms";
 
 const formatTime = (timestamp: number) =>
   new Date(timestamp).toLocaleString("en-US", {
@@ -48,6 +50,8 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
   const viewer = useWalletUserSession();
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
 
+  const { handleProcessEscrowedDonations, handleDonationsRefund } = useCampaignForm({ campaignId });
+
   const {
     isLoading: isCampaignLoading,
     data: campaign,
@@ -56,11 +60,35 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
     campaignId,
   });
 
-  // TODO: Use skeletons to cover the loading state instead!
-  // TODO: Also implement error handling ( when `!isCampaignLoading && campaign === undefined` )
-  if (!campaign) return <></>;
+  const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
+    campaignId,
+    enabled:
+      !!campaign?.min_amount &&
+      Number(campaign?.total_raised_amount) >= Number(campaign?.min_amount),
+  });
 
-  return (
+  const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
+    {
+      campaignId,
+      enabled:
+        !!campaign?.end_ms &&
+        campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+        Number(campaign?.total_raised_amount) < Number(campaign?.min_amount),
+    },
+  );
+
+  if (campaignLoadingError)
+    return (
+      <div className="flex w-full flex-col items-center justify-center">
+        <h1>This Campaign does not Exist</h1>
+      </div>
+    );
+
+  return isCampaignLoading ? (
+    <div className="flex h-[80vh] items-center justify-center">
+      <Spinner className="h-20 w-20" />
+    </div>
+  ) : (
     <div className="w-full md:mx-3 md:w-[70%]">
       <div className="flex w-full flex-col justify-between gap-6 md:flex-row md:items-center md:gap-0">
         <div className="flex flex-wrap items-start justify-between gap-5 md:w-[40%] md:flex-row md:items-center">
@@ -93,6 +121,17 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
             </Link>
           </div>
         </div>
+        {viewer.isSignedIn && hasEscrowedDonations && (
+          <Button onClick={handleProcessEscrowedDonations}>Process Donation</Button>
+        )}
+
+        {viewer.isSignedIn &&
+          isDonationRefundsProcessed &&
+          campaign?.end_ms &&
+          campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+          Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
+            <Button onClick={handleDonationsRefund}>Process Donations Refund</Button>
+          )}
 
         {viewer.isSignedIn && viewer.accountId === campaign?.owner && (
           <div>
@@ -152,7 +191,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
           </div>
         </div>
       ) : (
-        <CampaignForm existingData={campaign} />
+        <CampaignForm existingData={campaign} campaignId={campaignId} />
       )}
     </div>
   );

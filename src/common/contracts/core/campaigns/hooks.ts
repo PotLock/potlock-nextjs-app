@@ -42,3 +42,35 @@ export const useCampaignDonations = ({
         ? undefined
         : contractClient.get_donations_for_campaign({ campaign_id: campaignIdKey, ...paramsKey }),
   );
+
+export const useHasEscrowedDonationsToProcess = ({
+  enabled = true,
+  campaignId,
+  ...params
+}: ByCampaignId & ConditionalActivation) =>
+  useSWR(
+    ["useHasEscrowedDonationsToProcess", campaignId, params],
+    ([_queryKeyHead, campaignIdKey, paramsKey]) =>
+      !enabled || !IS_CLIENT
+        ? undefined
+        : contractClient.has_escrowed_donations_to_process({
+            campaign_id: campaignIdKey,
+            ...paramsKey,
+          }),
+  );
+
+export const useIsDonationRefundsProcessed = ({
+  enabled = true,
+  campaignId,
+  ...params
+}: ByCampaignId & ConditionalActivation) =>
+  useSWR(
+    ["isDonationsRefundsProcessed", campaignId, params],
+    ([_queryKeyHead, campaignIdKey, paramsKey]) =>
+      !enabled || !IS_CLIENT
+        ? undefined
+        : contractClient.can_process_refunds({
+            campaign_id: campaignIdKey,
+            ...paramsKey,
+          }),
+  );
