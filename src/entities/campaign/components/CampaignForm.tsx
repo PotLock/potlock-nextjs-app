@@ -2,8 +2,9 @@ import { ChangeEvent, useEffect, useState } from "react";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
+import { yoctoNearToFloat } from "@/common/lib";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
+import { CampaignId } from "@/common/types";
 import { Button, Form, FormField } from "@/common/ui/components";
 import { TextAreaField, TextField } from "@/common/ui/form-fields";
 import { NearInputField } from "@/entities/_shared";
@@ -16,17 +17,21 @@ const formatTimestampForInput = (timestamp: number) => {
   return date.toISOString().slice(0, 16);
 };
 
-export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
+export const CampaignForm = ({
+  existingData,
+  campaignId,
+}: {
+  existingData?: Campaign;
+  campaignId?: CampaignId;
+}) => {
   const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
 
-  const {
-    query: { campaignId },
-  } = useRouteQuery();
-
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, handleDeleteCampaign, watch, isValid } = useCampaignForm();
+  const { form, onChange, onSubmit, handleDeleteCampaign, watch, isValid } = useCampaignForm({
+    campaignId,
+  });
 
   useEffect(() => {
     if (isUpdate && existingData) {

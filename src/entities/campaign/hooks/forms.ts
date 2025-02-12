@@ -2,24 +2,19 @@ import { useCallback, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
-import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
+import { floatToYoctoNear } from "@/common/lib";
+import { CampaignId } from "@/common/types";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { campaignFormSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
 
-export const useCampaignForm = () => {
+export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => {
   const viewer = useWalletUserSession();
-
-  const {
-    // TODO: Pass this values down from the page level!
-    query: { campaignId },
-  } = useRouteQuery();
 
   type Values = FromSchema<typeof campaignFormSchema>;
 
@@ -81,19 +76,43 @@ export const useCampaignForm = () => {
     });
   }, [values, self]);
 
-  const timeToMiliSeconds = (time: string) => {
-    return Temporal.Instant.from(time + "Z");
+  const timeToMilliseconds = (time: string) => {
+    return new Date(time).getTime();
   };
 
   const handleDeleteCampaign = () => {
     if (!campaignId) return;
-    campaignsContractClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
+    campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
 
     dispatch.campaignEditor.updateCampaignModalState({
       header: `Campaign Deleted Successfully`,
       description: "You can now proceed to close this window",
       type: CampaignEnumType.DELETE_CAMPAIGN,
     });
+  };
+
+  const handleProcessEscrowedDonations = () => {
+    if (!campaignId) return;
+
+    try {
+      campaignsContractClient.process_escrowed_donations_batch({
+        args: { campaign_id: campaignId },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDonationsRefund = () => {
+    if (!campaignId) return;
+
+    try {
+      campaignsContractClient.process_refunds_batch({
+        args: { campaign_id: campaignId },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onSubmit: SubmitHandler<Values> = useCallback(
@@ -103,21 +122,18 @@ export const useCampaignForm = () => {
         name: values.name || "",
         target_amount: floatToYoctoNear(values.target_amount) as any,
         cover_image_url: values.cover_image_url || "",
-        ...(values.min_amount &&
-          !campaignId && {
-            min_amount: floatToYoctoNear(values.min_amount) as any,
-          }),
+        ...(values.min_amount && !campaignId
+          ? { min_amount: floatToYoctoNear(values.min_amount) as any }
+          : {}),
         ...(values.max_amount && {
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-        timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds > Date.now()
-          ? {
-              start_ms: timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds,
-            }
-          : {}),
+          timeToMilliseconds(values.start_ms) > Date.now() && {
+            start_ms: timeToMilliseconds(values.start_ms),
+          }),
         ...(values.end_ms && {
-          end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
+          end_ms: timeToMilliseconds(values.end_ms),
         }),
         ...(campaignId ? {} : { owner: viewer.accountId as string }),
         ...(campaignId ? {} : { recipient: values.recipient }),
@@ -125,7 +141,7 @@ export const useCampaignForm = () => {
 
       if (campaignId) {
         campaignsContractClient.update_campaign({
-          args: { campaign_id: Number(campaignId), ...args },
+          args: { ...args, campaign_id: campaignId },
         });
 
         dispatch.campaignEditor.updateCampaignModalState({
@@ -167,5 +183,7 @@ export const useCampaignForm = () => {
     onChange,
     isValid: Object.keys(self.formState.errors).length === 0,
     handleDeleteCampaign,
+    handleProcessEscrowedDonations,
+    handleDonationsRefund,
   };
 };
