@@ -3,34 +3,33 @@ import { useCallback, useMemo } from "react";
 import { isNonNullish } from "remeda";
 
 import type { ByPotId } from "@/common/api/indexer";
-import { type Challenge, potContractHooks } from "@/common/contracts/core/pot";
+import { potContractHooks } from "@/common/contracts/core/pot";
 import { useWalletUserSession } from "@/common/wallet";
 import { usePotAuthorization } from "@/entities/pot";
 import { useVotingRoundResults } from "@/entities/voting-round";
 
 import { publishPayoutJustification } from "../model/effects";
+import { challengeToJustification } from "../utils/converters";
 
-export type PFPayoutJustificationLookupParams = ByPotId & {};
-
-export const challengeToJustification = (challenge: Challenge) => {
-  try {
-    const data = JSON.parse(challenge.reason) as Record<string, unknown>;
-
-    return "PayoutJustification" in data && typeof data.PayoutJustification === "string"
-      ? data.PayoutJustification
-      : null;
-  } catch {
-    return null;
-  }
+export type PFPayoutJustificationParams = ByPotId & {
+  onPublishSuccess?: () => void;
+  onPublishError?: (message: string) => void;
 };
 
-export const usePFPayoutJustification = ({ potId }: PFPayoutJustificationLookupParams) => {
+export const usePFPayoutJustification = ({
+  potId,
+  onPublishSuccess,
+  onPublishError,
+}: PFPayoutJustificationParams) => {
   const viewer = useWalletUserSession();
   const viewerPower = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRound = useVotingRoundResults({ potId });
 
-  const { isLoading: isPayoutChallengeListLoading, data: potPayoutChallengeList } =
-    potContractHooks.usePayoutChallenges({ potId });
+  const {
+    isLoading: isPayoutChallengeListLoading,
+    data: potPayoutChallengeList,
+    mutate: refetchPayoutChallenges,
+  } = potContractHooks.usePayoutChallenges({ potId });
 
   const currentJustification = useMemo(
     () => potPayoutChallengeList?.map(challengeToJustification).find(isNonNullish),
@@ -45,9 +44,25 @@ export const usePFPayoutJustification = ({ potId }: PFPayoutJustificationLookupP
         potId,
         data: votingRound.data,
         challengerAccountId: viewer.accountId,
-      });
+      })
+        .then(() => {
+          onPublishSuccess?.();
+          refetchPayoutChallenges();
+        })
+        .catch((error) => {
+          console.error(error);
+          onPublishError?.(error.message);
+        });
     }
-  }, [potId, viewer.accountId, viewer.isSignedIn, votingRound.data]);
+  }, [
+    onPublishError,
+    onPublishSuccess,
+    potId,
+    refetchPayoutChallenges,
+    viewer.accountId,
+    viewer.isSignedIn,
+    votingRound.data,
+  ]);
 
   return !viewer.isSignedIn || (!votingRound.isLoading && votingRound.data === undefined)
     ? {

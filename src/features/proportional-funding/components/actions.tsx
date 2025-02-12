@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import Link from "next/link";
 import { MdOutlineWarningAmber } from "react-icons/md";
 
@@ -5,11 +7,11 @@ import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/compone
 import { useToast } from "@/common/ui/hooks";
 
 import {
-  type PFPayoutJustificationLookupParams,
+  type PFPayoutJustificationParams,
   usePFPayoutJustification,
 } from "../hooks/payout-justification";
 
-export type PFPayoutJustificationPublicationActionProps = PFPayoutJustificationLookupParams & {
+export type PFPayoutJustificationPublicationActionProps = PFPayoutJustificationParams & {
   href?: string;
 };
 
@@ -17,7 +19,27 @@ export const PFPayoutJustificationPublicationAction: React.FC<
   PFPayoutJustificationPublicationActionProps
 > = ({ potId, href }) => {
   const { toast } = useToast();
-  const pfJustification = usePFPayoutJustification({ potId });
+
+  const onPublishSuccess = useCallback(() => {
+    toast({
+      title: "Success!",
+      description: "Payout justification has been published successfully.",
+    });
+  }, [toast]);
+
+  const onPublishError = useCallback(
+    (message: string) => {
+      toast({
+        title: "Unable to publish payout justification",
+        description: message,
+        variant: "destructive",
+      });
+    },
+
+    [toast],
+  );
+
+  const pfJustification = usePFPayoutJustification({ potId, onPublishSuccess, onPublishError });
 
   return typeof pfJustification.publish === "function" ? (
     <Alert variant="warning">

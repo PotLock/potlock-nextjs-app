@@ -91,7 +91,14 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         </>
       )}
 
-      <div className="flex flex-col gap-4 pb-4">
+      <PotLayoutHero
+        onApplyClick={openApplicationModal}
+        onChallengePayoutsClick={openChallengeModal}
+        onFundMatchingPoolClick={openMatchingPoolContributionModal}
+        {...{ potId }}
+      />
+
+      <div className="mt-4 flex flex-col gap-4">
         {activeTab?.tag !== PotLayoutTabTag.Payouts && (
           <PFPayoutJustificationPublicationAction
             href={`${rootPathnames.pot}/${potId}/payouts`}
@@ -101,13 +108,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
         <DonationSybilWarning classNames={{ root: "w-full mb-4 md:mb-8" }} {...{ potId }} />
       </div>
-
-      <PotLayoutHero
-        onApplyClick={openApplicationModal}
-        onChallengePayoutsClick={openChallengeModal}
-        onFundMatchingPoolClick={openMatchingPoolContributionModal}
-        {...{ potId }}
-      />
 
       <div className="mb-6 flex w-full flex-row flex-wrap gap-2 md:mb-12">
         <div
