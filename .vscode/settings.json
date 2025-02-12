@@ -44,6 +44,7 @@
   "errorLens.statusBarMessageType": "activeLine",
   "errorLens.warningGutterIconColor": "#ff942f",
   "cSpell.words": [
+    "=createproject",
     "amichaeltest",
     "Aptos",
     "Attributify",
@@ -76,6 +77,7 @@
     "METAPOOL",
     "mpdao",
     "mpdaovoting",
+    "mypinata",
     "NADABOT",
     "narwallets",
     "naxios",
@@ -100,7 +102,6 @@
     "SOURCECODE",
     "stnear",
     "svgr",
-    "=createproject",
     "typecheck",
     "uidotdev",
     "unfollow",
