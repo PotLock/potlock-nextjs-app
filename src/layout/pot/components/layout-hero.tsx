@@ -68,7 +68,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   );
 
   const referrerPotLink = viewer.isSignedIn
-    ? window.location.origin + window.location.pathname + `&referrerId=${viewer.accountId}`
+    ? window.location.origin + window.location.pathname + `?referrerId=${viewer.accountId}`
     : null;
 
   const [description, linkedDocumentUrl] = useMemo(() => {

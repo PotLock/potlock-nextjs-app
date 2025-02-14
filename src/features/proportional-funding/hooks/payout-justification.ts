@@ -9,7 +9,7 @@ import { usePotAuthorization } from "@/entities/pot";
 import { useVotingRoundResults } from "@/entities/voting-round";
 
 import { publishPayoutJustification } from "../model/effects";
-import { challengeToJustification } from "../utils/converters";
+import { pfPayoutChallengeToJustification } from "../utils/converters";
 
 export type PFPayoutJustificationParams = ByPotId & {
   onPublishSuccess?: () => void;
@@ -32,7 +32,7 @@ export const usePFPayoutJustification = ({
   } = potContractHooks.usePayoutChallenges({ potId });
 
   const currentJustification = useMemo(
-    () => potPayoutChallengeList?.map(challengeToJustification).find(isNonNullish),
+    () => potPayoutChallengeList?.map(pfPayoutChallengeToJustification).find(isNonNullish),
     [potPayoutChallengeList],
   );
 
@@ -42,7 +42,7 @@ export const usePFPayoutJustification = ({
     if (viewer.isSignedIn && votingRound.data !== undefined) {
       publishPayoutJustification({
         potId,
-        data: votingRound.data,
+        votingRoundResult: votingRound.data,
         challengerAccountId: viewer.accountId,
       })
         .then(() => {

@@ -26,17 +26,29 @@ export const submitPayouts = ({ potId, recipients }: PayoutSubmitInputs) => {
 export const initiatePayoutProcessing = ({ potId }: ByPotId) =>
   potContractClient.admin_process_payouts({ potId });
 
-export const publishPayoutJustification = ({
+export const publishPayoutJustification = async ({
   potId,
-  data,
+  votingRoundResult,
   challengerAccountId,
-}: ByPotId & { data: VotingRoundElectionResult; challengerAccountId: AccountId }) => {
-  // TODO: Upload via Pinata
-  const message = JSON.stringify({ PayoutJustification: data });
+}: ByPotId & { votingRoundResult: VotingRoundElectionResult; challengerAccountId: AccountId }) => {
+  const uploadRequestBody = new FormData();
+
+  uploadRequestBody.set(
+    "file",
+
+    new File(
+      [new Blob([JSON.stringify(votingRoundResult)], { type: "application/json" })],
+      `${potId}_payout-justification.json`,
+    ),
+  );
+
+  const uploadRequest = await fetch("/api/files", { method: "POST", body: uploadRequestBody });
 
   const args = {
     challenge_payouts: {
-      reason: message,
+      reason: JSON.stringify({
+        PayoutJustification: "", // TODO: Pass URL from the upload request response
+      }),
     },
 
     admin_update_payouts_challenge: {
