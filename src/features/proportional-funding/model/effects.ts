@@ -44,6 +44,8 @@ export const publishPayoutJustification = async ({
 
   const uploadRequest = await fetch("/api/files", { method: "POST", body: uploadRequestBody });
 
+  console.log(uploadRequest);
+
   const args = {
     challenge_payouts: {
       reason: JSON.stringify({
