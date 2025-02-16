@@ -19,7 +19,7 @@ export async function GET() {
 
     return NextResponse.json(keyData, { status: 200 });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({ text: "Error creating API Key:" }, { status: 500 });
+    console.error("Failed to create Pinata API key:", error);
+    return NextResponse.json({ error: "Failed to create API key" }, { status: 500 });
   }
 }
