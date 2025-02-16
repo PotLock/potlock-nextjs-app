@@ -39,26 +39,26 @@ export const PFPayoutJustificationPublicationAction: React.FC<
     [toast],
   );
 
-  const pfJustification = usePFPayoutJustification({ potId, onPublishSuccess, onPublishError });
+  const justification = usePFPayoutJustification({ potId, onPublishSuccess, onPublishError });
 
-  return typeof pfJustification.publish === "function" ? (
+  return typeof justification.publish === "function" ? (
     <Alert variant="warning">
-      {pfJustification.isPublishing ? (
+      {justification.isPublishing ? (
         <Spinner className="h-6 w-6" />
       ) : (
         <MdOutlineWarningAmber className="h-6 w-6" />
       )}
 
-      <AlertTitle>{pfJustification.isPublishing ? "Publishing..." : "Action Required"}</AlertTitle>
+      <AlertTitle>{justification.isPublishing ? "Publishing..." : "Action Required"}</AlertTitle>
 
-      {!pfJustification.isPublishing && (
+      {!justification.isPublishing && (
         <AlertDescription className="flex items-center gap-2 text-lg">
           {typeof href === "string" ? (
             <Button asChild>
               <Link href={href}>{"Publish Payout Justification"}</Link>
             </Button>
           ) : (
-            <Button disabled={pfJustification.isPublishing} onClick={pfJustification.publish}>
+            <Button disabled={justification.isPublishing} onClick={justification.publish}>
               {"Publish Payout Justification"}
             </Button>
           )}
