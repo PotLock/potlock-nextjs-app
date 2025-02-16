@@ -9,17 +9,17 @@ import { usePotFeatureFlags } from "@/entities/pot";
 
 import { proportionalFundingConfigurationSchema } from "../model/schemas";
 
-export type ProportionalFundingConfiguratorProps = ByPotId & {
+export type PFConfiguratorProps = ByPotId & {
   className?: string;
   footerContent?: React.ReactNode;
 };
 
-export const ProportionalFundingConfigurator: React.FC<ProportionalFundingConfiguratorProps> = ({
+export const PFConfigurator: React.FC<PFConfiguratorProps> = ({
   potId,
   footerContent,
   className,
 }) => {
-  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+  const { hasPFMechanism } = usePotFeatureFlags({ potId });
 
   const form = useForm({ resolver: zodResolver(proportionalFundingConfigurationSchema) });
 
@@ -36,7 +36,7 @@ export const ProportionalFundingConfigurator: React.FC<ProportionalFundingConfig
       </CardHeader> */}
 
       <CardContent>
-        {hasProportionalFundingMechanism ? null : (
+        {hasPFMechanism ? null : (
           <Form {...form}>
             <TextField type="text" />
           </Form>
