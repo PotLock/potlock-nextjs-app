@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { isNonNullish } from "remeda";
 import useSWR from "swr";
@@ -26,13 +26,15 @@ export const usePFPayoutJustification = ({
   const viewer = useWalletUserSession();
   const viewerPower = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRound = useVotingRoundResults({ potId });
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const {
     isLoading: isPayoutChallengeListLoading,
     data: potPayoutChallengeList,
     mutate: refetchPayoutChallenges,
-  } = potContractHooks.usePayoutChallenges({ potId });
+  } = potContractHooks.usePayoutChallenges({ enabled: viewer.isSignedIn, potId });
 
+  // TODO: Explicitly consider valid only if submitted by admin or greater
   const documentUrl = useMemo(
     () => potPayoutChallengeList?.map(pfPayoutChallengeToJustificationUrl).find(isNonNullish),
     [potPayoutChallengeList],
@@ -46,13 +48,15 @@ export const usePFPayoutJustification = ({
         ? undefined
         : fetch(urlQueryKey)
             .then((res) => res.json())
-            .then((data: PFPayoutJustificationV1) => data),
+            .then((data) => data as PFPayoutJustificationV1),
   );
 
   const isLoading = votingRound.isLoading || isPayoutChallengeListLoading || isDocumentLoading;
 
   const publish = useCallback(() => {
     if (viewer.isSignedIn && votingRound.data !== undefined) {
+      setIsPublishing(true);
+
       publishPayoutJustification({
         potId,
         votingRoundResult: votingRound.data,
@@ -65,7 +69,8 @@ export const usePFPayoutJustification = ({
         .catch((error) => {
           console.error(error);
           onPublishError?.(error.message);
-        });
+        })
+        .finally(() => setIsPublishing(false));
     }
   }, [
     onPublishError,
@@ -80,11 +85,13 @@ export const usePFPayoutJustification = ({
   return !viewer.isSignedIn || (!votingRound.isLoading && votingRound.data === undefined)
     ? {
         isLoading: false as const,
+        isPublishing: false,
         data: undefined,
         publish: undefined,
       }
     : {
         isLoading,
+        isPublishing,
         data: document,
 
         publish:
