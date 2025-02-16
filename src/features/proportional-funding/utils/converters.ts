@@ -1,16 +1,19 @@
 import type { Challenge } from "@/common/contracts/core/pot";
-import type { VotingRoundElectionResult } from "@/entities/voting-round";
 
-// TODO: Extract and validate URL as URL
-export const pfPayoutChallengeToJustification = (challenge: Challenge) => {
+export const pfPayoutChallengeToJustificationUrl = (challenge: Challenge) => {
   try {
     const data = JSON.parse(challenge.reason) as Record<string, unknown>;
 
-    return "PayoutJustification" in data
-      ? (data.PayoutJustification as VotingRoundElectionResult)
-      : null;
-  } catch {
-    console.error("Failed to parse challenge reason as JSON object");
+    if ("PayoutJustification" in data) {
+      return new URL(data.PayoutJustification as string).toString();
+    } else return null;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      console.error("Failed to parse payout justification as JSON object");
+    } else {
+      console.error("PayoutJustification is not a valid URL");
+    }
+
     return null;
   }
 };

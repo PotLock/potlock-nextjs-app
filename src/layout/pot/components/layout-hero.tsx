@@ -223,7 +223,9 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
             {viewerAbilities.canChallengePayouts && (
               <>
-                {hasPFMechanism && !pfPayoutJustification.isPublished ? null : (
+                {hasPFMechanism &&
+                !pfPayoutJustification.isLoading &&
+                pfPayoutJustification.data === undefined ? null : (
                   <Button onClick={onChallengePayoutsClick}>
                     {activeChallenge === undefined ? "Challenge Payouts" : "Update Challenge"}
                   </Button>

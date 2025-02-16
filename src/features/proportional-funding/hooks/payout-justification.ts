@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import { isNonNullish } from "remeda";
+import useSWR from "swr";
 
 import type { ByPotId } from "@/common/api/indexer";
 import { potContractHooks } from "@/common/contracts/core/pot";
@@ -9,7 +10,8 @@ import { usePotAuthorization } from "@/entities/pot";
 import { useVotingRoundResults } from "@/entities/voting-round";
 
 import { publishPayoutJustification } from "../model/effects";
-import { pfPayoutChallengeToJustification } from "../utils/converters";
+import type { PFPayoutJustificationV1 } from "../model/types";
+import { pfPayoutChallengeToJustificationUrl } from "../utils/converters";
 
 export type PFPayoutJustificationParams = ByPotId & {
   onPublishSuccess?: () => void;
@@ -31,12 +33,23 @@ export const usePFPayoutJustification = ({
     mutate: refetchPayoutChallenges,
   } = potContractHooks.usePayoutChallenges({ potId });
 
-  const currentJustification = useMemo(
-    () => potPayoutChallengeList?.map(pfPayoutChallengeToJustification).find(isNonNullish),
+  const documentUrl = useMemo(
+    () => potPayoutChallengeList?.map(pfPayoutChallengeToJustificationUrl).find(isNonNullish),
     [potPayoutChallengeList],
   );
 
-  const isPublished = useMemo(() => isNonNullish(currentJustification), [currentJustification]);
+  const { isLoading: isDocumentLoading, data: document } = useSWR(
+    ["payout-justification", documentUrl],
+
+    ([_queryKeyHead, urlQueryKey]) =>
+      urlQueryKey === undefined
+        ? undefined
+        : fetch(urlQueryKey)
+            .then((res) => res.json())
+            .then((data: PFPayoutJustificationV1) => data),
+  );
+
+  const isLoading = votingRound.isLoading || isPayoutChallengeListLoading || isDocumentLoading;
 
   const publish = useCallback(() => {
     if (viewer.isSignedIn && votingRound.data !== undefined) {
@@ -67,14 +80,16 @@ export const usePFPayoutJustification = ({
   return !viewer.isSignedIn || (!votingRound.isLoading && votingRound.data === undefined)
     ? {
         isLoading: false as const,
-        isPublished: false,
         data: undefined,
         publish: undefined,
       }
     : {
-        isLoading: votingRound.isLoading || isPayoutChallengeListLoading,
-        isPublished,
-        data: currentJustification,
-        publish: isPublished || !viewerPower.isAdminOrGreater ? undefined : publish,
+        isLoading,
+        data: document,
+
+        publish:
+          !isLoading && document === undefined && viewerPower.isAdminOrGreater
+            ? publish
+            : undefined,
       };
 };

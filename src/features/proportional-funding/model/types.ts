@@ -6,3 +6,5 @@ export type PFPayoutJustificationInputs = ByPotId & {
   votingRoundResult: VotingRoundElectionResult;
   challengerAccountId: AccountId;
 };
+
+export type PFPayoutJustificationV1 = VotingRoundElectionResult;
