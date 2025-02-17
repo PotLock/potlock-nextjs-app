@@ -7,6 +7,7 @@ import { infer as FromSchema } from "zod";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { floatToYoctoNear } from "@/common/lib";
 import { CampaignId } from "@/common/types";
+import { toast } from "@/common/ui/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
@@ -94,25 +95,45 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
   const handleProcessEscrowedDonations = () => {
     if (!campaignId) return;
 
-    try {
-      campaignsContractClient.process_escrowed_donations_batch({
+    campaignsContractClient
+      .process_escrowed_donations_batch({
         args: { campaign_id: campaignId },
+      })
+      .then(() => {
+        toast({
+          description: "Successfully processed escrowed donations",
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to process escrowed donations:", error);
+
+        toast({
+          description: "Failed to process escrowed donations. Please try again later.",
+          variant: "destructive",
+        });
       });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const handleDonationsRefund = () => {
     if (!campaignId) return;
 
-    try {
-      campaignsContractClient.process_refunds_batch({
+    campaignsContractClient
+      .process_refunds_batch({
         args: { campaign_id: campaignId },
+      })
+      .then(() => {
+        toast({
+          description: "Successfully processed donation refunds",
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to process donation refunds:", error);
+
+        toast({
+          description: "Failed to process donation refunds. Please try again later.",
+          variant: "destructive",
+        });
       });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const onSubmit: SubmitHandler<Values> = useCallback(
@@ -140,18 +161,46 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
       };
 
       if (campaignId) {
-        campaignsContractClient.update_campaign({
-          args: { ...args, campaign_id: campaignId },
-        });
+        campaignsContractClient
+          .update_campaign({
+            args: { ...args, campaign_id: campaignId },
+          })
+          .then(() => {
+            toast({
+              description: `You’ve successfully updated this Campaign`,
+            });
+          })
+          .catch((error) => {
+            console.error("Failed to update Campaign:", error);
+
+            toast({
+              description: "Failed to update Campaign.",
+              variant: "destructive",
+            });
+          });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaign for ${values.name}.`,
+          header: `You’ve successfully updated this Campaign`,
           description:
             "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.UPDATE_CAMPAIGN,
         });
       } else {
-        campaignsContractClient.create_campaign({ args });
+        campaignsContractClient
+          .create_campaign({ args })
+          .then(() => {
+            toast({
+              description: `You’ve successfully created a campaign for ${values.name}.`,
+            });
+          })
+          .catch((error) => {
+            console.error("Failed to update Campaign:", error);
+
+            toast({
+              description: "Failed to create Campaign.",
+              variant: "destructive",
+            });
+          });
 
         dispatch.campaignEditor.updateCampaignModalState({
           header: `You’ve successfully created a campaign for ${values.name}.`,
