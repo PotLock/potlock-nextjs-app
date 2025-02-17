@@ -2,24 +2,20 @@ import { useCallback, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
-import { floatToYoctoNear, useRouteQuery } from "@/common/lib";
+import { floatToYoctoNear } from "@/common/lib";
+import { CampaignId } from "@/common/types";
+import { toast } from "@/common/ui/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { campaignFormSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
 
-export const useCampaignForm = () => {
+export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => {
   const viewer = useWalletUserSession();
-
-  const {
-    // TODO: Pass this values down from the page level!
-    query: { campaignId },
-  } = useRouteQuery();
 
   type Values = FromSchema<typeof campaignFormSchema>;
 
@@ -81,19 +77,63 @@ export const useCampaignForm = () => {
     });
   }, [values, self]);
 
-  const timeToMiliSeconds = (time: string) => {
-    return Temporal.Instant.from(time + "Z");
+  const timeToMilliseconds = (time: string) => {
+    return new Date(time).getTime();
   };
 
   const handleDeleteCampaign = () => {
     if (!campaignId) return;
-    campaignsContractClient.delete_campaign({ args: { campaign_id: Number(campaignId) } });
+    campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
 
     dispatch.campaignEditor.updateCampaignModalState({
       header: `Campaign Deleted Successfully`,
       description: "You can now proceed to close this window",
       type: CampaignEnumType.DELETE_CAMPAIGN,
     });
+  };
+
+  const handleProcessEscrowedDonations = () => {
+    if (!campaignId) return;
+
+    campaignsContractClient
+      .process_escrowed_donations_batch({
+        args: { campaign_id: campaignId },
+      })
+      .then(() => {
+        toast({
+          description: "Successfully processed escrowed donations",
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to process escrowed donations:", error);
+
+        toast({
+          description: "Failed to process escrowed donations. Please try again later.",
+          variant: "destructive",
+        });
+      });
+  };
+
+  const handleDonationsRefund = () => {
+    if (!campaignId) return;
+
+    campaignsContractClient
+      .process_refunds_batch({
+        args: { campaign_id: campaignId },
+      })
+      .then(() => {
+        toast({
+          description: "Successfully processed donation refunds",
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to process donation refunds:", error);
+
+        toast({
+          description: "Failed to process donation refunds. Please try again later.",
+          variant: "destructive",
+        });
+      });
   };
 
   const onSubmit: SubmitHandler<Values> = useCallback(
@@ -103,39 +143,64 @@ export const useCampaignForm = () => {
         name: values.name || "",
         target_amount: floatToYoctoNear(values.target_amount) as any,
         cover_image_url: values.cover_image_url || "",
-        ...(values.min_amount &&
-          !campaignId && {
-            min_amount: floatToYoctoNear(values.min_amount) as any,
-          }),
+        ...(values.min_amount && !campaignId
+          ? { min_amount: floatToYoctoNear(values.min_amount) as any }
+          : {}),
         ...(values.max_amount && {
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-        timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds > Date.now()
-          ? {
-              start_ms: timeToMiliSeconds(values.start_ms.toString()).epochMilliseconds,
-            }
-          : {}),
+          timeToMilliseconds(values.start_ms) > Date.now() && {
+            start_ms: timeToMilliseconds(values.start_ms),
+          }),
         ...(values.end_ms && {
-          end_ms: timeToMiliSeconds(values.end_ms.toString()).epochMilliseconds,
+          end_ms: timeToMilliseconds(values.end_ms),
         }),
         ...(campaignId ? {} : { owner: viewer.accountId as string }),
         ...(campaignId ? {} : { recipient: values.recipient }),
       };
 
       if (campaignId) {
-        campaignsContractClient.update_campaign({
-          args: { campaign_id: Number(campaignId), ...args },
-        });
+        campaignsContractClient
+          .update_campaign({
+            args: { ...args, campaign_id: campaignId },
+          })
+          .then(() => {
+            toast({
+              description: `You’ve successfully updated this Campaign`,
+            });
+          })
+          .catch((error) => {
+            console.error("Failed to update Campaign:", error);
+
+            toast({
+              description: "Failed to update Campaign.",
+              variant: "destructive",
+            });
+          });
 
         dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaign for ${values.name}.`,
+          header: `You’ve successfully updated this Campaign`,
           description:
             "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
           type: CampaignEnumType.UPDATE_CAMPAIGN,
         });
       } else {
-        campaignsContractClient.create_campaign({ args });
+        campaignsContractClient
+          .create_campaign({ args })
+          .then(() => {
+            toast({
+              description: `You’ve successfully created a campaign for ${values.name}.`,
+            });
+          })
+          .catch((error) => {
+            console.error("Failed to update Campaign:", error);
+
+            toast({
+              description: "Failed to create Campaign.",
+              variant: "destructive",
+            });
+          });
 
         dispatch.campaignEditor.updateCampaignModalState({
           header: `You’ve successfully created a campaign for ${values.name}.`,
@@ -167,5 +232,7 @@ export const useCampaignForm = () => {
     onChange,
     isValid: Object.keys(self.formState.errors).length === 0,
     handleDeleteCampaign,
+    handleProcessEscrowedDonations,
+    handleDonationsRefund,
   };
 };

@@ -4,7 +4,7 @@ import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
-import { SocialsShare } from "@/common/ui/components";
+import { SocialsShare, Spinner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { useNearToUsdWithFallback } from "@/entities/_shared/token/hooks/_deprecated";
@@ -27,10 +27,8 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     Number(yoctoNearToFloat((campaign?.total_raised_amount as string) || "0")),
   );
 
-  // TODO: Use skeletons to cover the loading state instead!
-  // TODO: Also implement error handling ( when `!isCampaignLoading && campaign === undefined` )
-  if (isCampaignLoading) {
-    return <div>Loading...</div>;
+  if (campaignLoadingError) {
+    return <h1>Error Loading Campaign</h1>;
   }
 
   const isStarted = getTimePassed(Number(campaign?.start_ms), true)?.includes("-");
@@ -39,7 +37,11 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     ? getTimePassed(Number(campaign?.end_ms), false, true)?.includes("-")
     : false;
 
-  return (
+  return isCampaignLoading ? (
+    <div className="flex h-40 items-center justify-center">
+      <Spinner className="h-7 w-7" />
+    </div>
+  ) : (
     <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:gap-0">
       <div className="w-full rounded-xl  border border-gray-300 md:w-[70%]">
         <div className="relative">
@@ -49,11 +51,11 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
           <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
-            <h1 className="text-foreground text-[24px] font-bold">{campaign?.name}</h1>
+            <h1 className="text-[24px] font-bold text-white">{campaign?.name}</h1>
 
             <div
               className={cn(
-                "text-foreground flex flex-col items-start gap-2 p-0 text-[12px]",
+                "text-foreground flex flex-col items-start gap-2 p-0 text-[12px] text-white",
                 "md:flex-row md:items-center md:text-[15px]",
               )}
             >
