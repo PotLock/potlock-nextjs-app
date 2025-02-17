@@ -30,13 +30,10 @@ export type PotLayoutTabOption = LayoutTabOption & {
 type PotLayoutTabRegistry = Record<PotLayoutTabTag, PotLayoutTabOption>;
 
 interface TabState {
-  potConfigs: Record<
-    string,
-    { hasProportionalFundingMechanism: boolean; defaultTabTag: PotLayoutTabTag }
-  >;
+  potConfigs: Record<string, { hasPFMechanism: boolean; defaultTabTag: PotLayoutTabTag }>;
   tabRegistries: Record<string, PotLayoutTabRegistry>;
   orderedTabLists: Record<string, PotLayoutTabOption[]>;
-  setPotConfig: (potId: string, hasProportionalFundingMechanism: boolean) => void;
+  setPotConfig: (potId: string, hasPFMechanism: boolean) => void;
   computeTabRegistry: (potId: string) => void;
 }
 
@@ -47,16 +44,14 @@ const usePotTabStore = create<TabState>()(
       tabRegistries: {},
       orderedTabLists: {},
 
-      setPotConfig: (potId: string, hasProportionalFundingMechanism: boolean) => {
-        const defaultTabTag = hasProportionalFundingMechanism
-          ? PotLayoutTabTag.Votes
-          : PotLayoutTabTag.Projects;
+      setPotConfig: (potId: string, hasPFMechanism: boolean) => {
+        const defaultTabTag = hasPFMechanism ? PotLayoutTabTag.Votes : PotLayoutTabTag.Projects;
 
         set((state) => ({
           potConfigs: {
             ...state.potConfigs,
             [potId]: {
-              hasProportionalFundingMechanism,
+              hasPFMechanism,
               defaultTabTag,
             },
           },
@@ -69,14 +64,14 @@ const usePotTabStore = create<TabState>()(
         const config = get().potConfigs[potId];
         if (!config) return;
 
-        const { hasProportionalFundingMechanism, defaultTabTag } = config;
+        const { hasPFMechanism, defaultTabTag } = config;
         const rootHref = `${rootPathnames.pot}/${potId}`;
 
         const registry: PotLayoutTabRegistry = {
           [PotLayoutTabTag.Projects]: {
             tag: PotLayoutTabTag.Projects,
             href: `${rootHref}/projects`,
-            isHidden: hasProportionalFundingMechanism,
+            isHidden: hasPFMechanism,
           },
           [PotLayoutTabTag.Applications]: {
             tag: PotLayoutTabTag.Applications,
@@ -85,12 +80,12 @@ const usePotTabStore = create<TabState>()(
           [PotLayoutTabTag.Votes]: {
             tag: PotLayoutTabTag.Votes,
             href: `${rootHref}/votes`,
-            isHidden: !hasProportionalFundingMechanism,
+            isHidden: !hasPFMechanism,
           },
           [PotLayoutTabTag.Donations]: {
             tag: PotLayoutTabTag.Donations,
             href: `${rootHref}/donations`,
-            isHidden: hasProportionalFundingMechanism,
+            isHidden: hasPFMechanism,
           },
           [PotLayoutTabTag.Sponsors]: {
             tag: PotLayoutTabTag.Sponsors,
@@ -99,7 +94,7 @@ const usePotTabStore = create<TabState>()(
           [PotLayoutTabTag.History]: {
             tag: PotLayoutTabTag.History,
             href: `${rootHref}/history`,
-            isHidden: !hasProportionalFundingMechanism,
+            isHidden: !hasPFMechanism,
           },
           [PotLayoutTabTag.Payouts]: {
             tag: PotLayoutTabTag.Payouts,
@@ -160,7 +155,7 @@ const emptyList: PotLayoutTabOption[] = [];
 export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavigation => {
   const { asPath: currentPath, push: navigateToHref } = useRouter();
 
-  const { isPotExtensionConfigLoading, hasProportionalFundingMechanism } = usePotFeatureFlags({
+  const { isPotExtensionConfigLoading, hasPFMechanism } = usePotFeatureFlags({
     potId,
   });
 
@@ -171,9 +166,9 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
   // Ensure pot config is set/updated
   useEffect(() => {
     if (!isPotExtensionConfigLoading) {
-      setPotConfig(potId, hasProportionalFundingMechanism);
+      setPotConfig(potId, hasPFMechanism);
     }
-  }, [potId, hasProportionalFundingMechanism, setPotConfig, isPotExtensionConfigLoading]);
+  }, [potId, hasPFMechanism, setPotConfig, isPotExtensionConfigLoading]);
 
   const defaultTabTag = potConfigs[potId]?.defaultTabTag ?? PotLayoutTabTag.Projects;
   const tabRegistry = potId ? (tabRegistries[potId] ?? emptyRegistry) : emptyRegistry;

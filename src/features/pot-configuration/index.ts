@@ -1,3 +1,3 @@
 export * from "./hooks/middlewares";
-export * from "./components/PotConfigurationEditor";
+export * from "./components/editor";
 export { potConfigurationModel, potConfigurationModelKey } from "./model";

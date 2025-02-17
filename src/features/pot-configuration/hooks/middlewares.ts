@@ -5,7 +5,7 @@ import { useModal } from "@ebay/nice-modal-react";
 import { useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
-import { PotDeploymentModal } from "../components/PotDeploymentModal";
+import { PotDeploymentModal } from "../components/success-modal";
 
 export const usePotDeploymentSuccessMiddleware = () => {
   const resultModal = useModal(PotDeploymentModal);

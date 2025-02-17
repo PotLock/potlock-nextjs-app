@@ -62,6 +62,12 @@ export const envConfig: EnvConfig = {
   },
 
   features: {
+    [FeatureId.ProfileConfiguration]: {
+      id: FeatureId.ProfileConfiguration,
+      name: "Profile configuration",
+      isEnabled: false,
+    },
+
     [FeatureId.DirectFtDonation]: {
       id: FeatureId.DirectFtDonation,
       name: "Direct FT donation",

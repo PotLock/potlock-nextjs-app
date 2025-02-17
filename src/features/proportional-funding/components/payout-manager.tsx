@@ -2,46 +2,34 @@ import { useCallback } from "react";
 
 import { MdCheck, MdFileDownload } from "react-icons/md";
 
-import type { ByPotId } from "@/common/api/indexer";
+import { type ByPotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Skeleton } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 import { usePotAuthorization } from "@/entities/pot";
 import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/voting-round";
 
 import { initiatePayoutProcessing, submitPayouts } from "../model/effects";
 
-export type ProportionalFundingPayoutManagerProps = ByPotId & {
+export type PFPayoutManagerProps = ByPotId & {
   onSubmitSuccess: VoidFunction;
 };
 
-export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayoutManagerProps> = ({
-  potId,
-  onSubmitSuccess,
-}) => {
+export const PFPayoutManager: React.FC<PFPayoutManagerProps> = ({ potId, onSubmitSuccess }) => {
   const { toast } = useToast();
-  const authenticatedUser = useSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
+  const viewer = useWalletUserSession();
+  const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRoundResults = useVotingRoundResults({ potId });
 
   const { isMetadataLoading: isTokenMetadataLoading, data: token } = useToken({
     tokenId: NATIVE_TOKEN_ID,
   });
 
-  // TODO: Upload to IPFS
-  const _payoutBreakdownJson = votingRoundResults.data
-    ? JSON.stringify(votingRoundResults.data.winners)
-    : undefined;
-
   const handlePayoutsSubmit = useCallback(() => {
     if (votingRoundResults.data !== undefined && token !== undefined) {
-      submitPayouts({
-        potId,
-        tokenDecimals: token.metadata.decimals,
-        recipients: votingRoundResults.data.winners,
-      })
+      submitPayouts({ potId, recipients: votingRoundResults.data.winners })
         .then((_submittedPayouts) => {
           toast({
             title: "Payouts have been successfully submitted",
@@ -97,7 +85,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
           </Button>
         )}
 
-        {authorizedUser.canSubmitPayouts && (
+        {viewerAbilities.canSubmitPayouts && (
           <>
             {votingRoundResults.isLoading || isTokenMetadataLoading ? (
               <Skeleton className="w-45 h-10" />
@@ -110,7 +98,7 @@ export const ProportionalFundingPayoutManager: React.FC<ProportionalFundingPayou
           </>
         )}
 
-        {authorizedUser.canInitiatePayoutProcessing && (
+        {viewerAbilities.canInitiatePayoutProcessing && (
           <Button onClick={onInitiatePayoutProcessingClick}>
             <MdCheck className="h-4.5 w-4.5" />
             <span className="font-500 whitespace-nowrap text-sm">{"Initiate Payouts"}</span>

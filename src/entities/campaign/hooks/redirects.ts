@@ -7,7 +7,7 @@ import { dispatch } from "@/store";
 
 import { CampaignFinishModal } from "../components/CampaignFinishModal";
 
-export const useCampaignDeploymentRedirect = () => {
+export const useCampaignCreateOrUpdateRedirect = () => {
   const resultModal = useModal(CampaignFinishModal);
 
   const {

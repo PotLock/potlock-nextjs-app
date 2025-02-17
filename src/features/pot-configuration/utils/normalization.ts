@@ -1,10 +1,11 @@
-import { conditional, evolve, isNonNullish, omit, piped, prop } from "remeda";
+import { conditional, evolve, isNonNullish, piped } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { LISTS_CONTRACT_ACCOUNT_ID, SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { Account, Pot } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, PROVIDER_ID_DELIMITER } from "@/common/constants";
-import { ContractSourceMetadata, PotArgs, PotConfig } from "@/common/contracts/core";
+import { PotConfig } from "@/common/contracts/core/pot";
+import { type ContractSourceMetadata, type PotArgs } from "@/common/contracts/core/pot-factory";
 import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
 import { PotInputs } from "@/entities/pot";
 import {
@@ -13,7 +14,6 @@ import {
   donationFeePercentsToBasisPoints,
 } from "@/features/donation";
 
-import { POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES } from "../constants";
 import { PotSettings } from "../model";
 import { PotConfigurationParameter, PotConfigurationParameterKey } from "../types";
 
@@ -38,76 +38,30 @@ export const potConfigToSettings = ({
     },
   );
 
-export const potIndexedDataToPotInputs = ({
-  owner,
-  admins,
-  chef,
-  name,
-  description,
-  max_approved_applicants,
-  application_start,
-  application_end,
-  matching_round_start,
-  matching_round_end,
+export const potConfigToPotConfigInputs = ({
   registry_provider,
   sybil_wrapper_provider,
-  ...indexedPotData
-}: Pot) => {
-  const potData = evolve(indexedPotData, {
-    referral_fee_matching_pool_basis_points: donationFeeBasisPointsToPercents,
-    referral_fee_public_round_basis_points: donationFeeBasisPointsToPercents,
-    chef_fee_basis_points: donationFeeBasisPointsToPercents,
+  owner,
+  ...potConfig
+}: PotConfig): Omit<PotInputs, "source_metadata"> => {
+  return {
+    ...evolve(potConfig, {
+      referral_fee_matching_pool_basis_points: donationFeeBasisPointsToPercents,
+      referral_fee_public_round_basis_points: donationFeeBasisPointsToPercents,
+      chef_fee_basis_points: donationFeeBasisPointsToPercents,
 
-    min_matching_pool_donation_amount: conditional(
-      [isNonNullish, yoctoNearToFloat],
-      conditional.defaultCase(() => undefined),
-    ),
-  });
+      min_matching_pool_donation_amount: conditional(
+        [isNonNullish, yoctoNearToFloat],
+        conditional.defaultCase(() => 0.01),
+      ),
+    }),
 
-  return omit(
-    {
-      ...potData,
-      owner: owner.id,
-      admins: admins.map(prop("id")),
-      chef: chef?.id,
-      pot_name: name,
-      pot_description: description,
-      max_projects: max_approved_applicants,
-
-      application_start_ms: Temporal.Instant.from(application_start)
-        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-        .toPlainDateTime()
-        .toString(),
-
-      application_end_ms: Temporal.Instant.from(application_end)
-        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-        .toPlainDateTime()
-        .toString(),
-
-      public_round_start_ms: Temporal.Instant.from(matching_round_start)
-        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-        .toPlainDateTime()
-        .toString(),
-
-      public_round_end_ms: Temporal.Instant.from(matching_round_end)
-        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-        .toPlainDateTime()
-        .toString(),
-
-      registry_provider: registry_provider ?? undefined,
-      isPgRegistrationRequired: typeof registry_provider === "string",
-      sybil_wrapper_provider: sybil_wrapper_provider ?? undefined,
-      isSybilResistanceEnabled: typeof sybil_wrapper_provider === "string",
-    },
-
-    {
-      ...POT_EDITOR_EXCLUDED_INDEXED_PROPERTIES,
-
-      ...(potData.min_matching_pool_donation_amount === undefined
-        ? ["min_matching_pool_donation_amount"]
-        : []),
-    },
-  );
+    owner: owner ?? undefined,
+    registry_provider: registry_provider ?? undefined,
+    isPgRegistrationRequired: typeof registry_provider === "string",
+    sybil_wrapper_provider: sybil_wrapper_provider ?? undefined,
+    isSybilResistanceEnabled: typeof sybil_wrapper_provider === "string",
+  };
 };
 
 export const potInputsToPotArgs = ({

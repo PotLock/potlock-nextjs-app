@@ -2,11 +2,13 @@ import { Dot } from "lucide-react";
 import { MdCommentsDisabled } from "react-icons/md";
 import { styled } from "styled-components";
 
-import { PotApplication } from "@/common/api/indexer";
+import { type ByPotId, PotApplication } from "@/common/api/indexer";
 import { daysAgo } from "@/common/lib";
 import { Button } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
+import { usePotAuthorization } from "@/entities/pot";
 
 import { potApplicationFiltersTags } from "./tags";
 
@@ -28,19 +30,20 @@ const PotApplicationCardContainer = styled.div`
   }
 `;
 
-export type PotApplicationCardProps = {
+export type PotApplicationCardProps = ByPotId & {
   applicationData: PotApplication;
-  isChefOrGreater: boolean;
   handleApproveApplication: (projectId: string) => void;
   handleRejectApplication: (projectId: string) => void;
 };
 
 export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
+  potId,
   applicationData,
-  isChefOrGreater,
   handleApproveApplication,
   handleRejectApplication,
 }) => {
+  const viewer = useWalletUserSession();
+  const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const { applicant, status, message, submitted_at, reviews } = applicationData;
   const { icon, label } = potApplicationFiltersTags[status];
 
@@ -147,7 +150,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
         </div>
       ))}
 
-      {isChefOrGreater && (
+      {viewerAbilities.isChefOrGreater && (
         <div className="flex gap-4 self-end">
           {status !== "Approved" && (
             <Button
@@ -158,7 +161,7 @@ export const PotApplicationCard: React.FC<PotApplicationCardProps> = ({
             </Button>
           )}
 
-          {status !== "Rejected" && (
+          {status !== "Rejected" && status !== "Approved" && (
             <Button
               variant={"standard-outline"}
               onClick={() => handleRejectApplication(applicant.id)}

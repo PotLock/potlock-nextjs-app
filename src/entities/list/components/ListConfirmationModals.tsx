@@ -1,7 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { Button } from "@/common/ui/components";
 
@@ -9,8 +10,8 @@ interface SuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   listName: string;
-  onViewList: () => void;
   isUpdate: boolean;
+  href: string;
   showBackToLists?: boolean;
 }
 
@@ -20,7 +21,7 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
   listName,
   isUpdate,
   showBackToLists,
-  onViewList,
+  href,
 }) => {
   if (!isOpen) return null;
 
@@ -46,17 +47,17 @@ export const SuccessModalCreateList: React.FC<SuccessModalProps> = ({
           </h2>
           <p className="mb-6 text-center text-gray-700">
             You’ve successfully {isUpdate ? "Updated" : "Deployed"} {listName}, you can always make
-            adjustments in the pot settings page.
+            adjustments in the list settings page.
           </p>
-          <button
-            onClick={() => {
-              onViewList();
-              onClose();
-            }}
-            className="w-full rounded-md bg-red-500 px-4 py-2 font-semibold text-white transition hover:bg-red-600"
-          >
-            {showBackToLists ? "Back to lists" : "View list"}
-          </button>
+          <Button asChild>
+            <Link
+              href={href}
+              onClick={onClose}
+              aria-label={showBackToLists ? "Navigate back to lists page" : "View the created list"}
+            >
+              {showBackToLists ? "Back to lists" : "View list"}
+            </Link>
+          </Button>
         </div>
       </div>
     </div>

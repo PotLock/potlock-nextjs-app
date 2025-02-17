@@ -7,7 +7,7 @@ import { ByPotId, indexer } from "@/common/api/indexer";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 import { type AccountId, ClearanceCheckResult } from "@/common/types";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 
 import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
@@ -19,20 +19,20 @@ import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
  */
 export const usePotApplicationUserClearance = ({
   potId,
-  hasProportionalFundingMechanism,
-}: ByPotId & { hasProportionalFundingMechanism?: boolean }): ClearanceCheckResult => {
+  hasPFMechanism,
+}: ByPotId & { hasPFMechanism?: boolean }): ClearanceCheckResult => {
   const { staking } = POT_APPLICATION_REQUIREMENTS_MPDAO;
   const { data: pot } = indexer.usePot({ potId });
 
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
 
   const { data: voterInfo } = indexer.useMpdaoVoter({
-    enabled: authenticatedUser.isSignedIn,
-    accountId: authenticatedUser.accountId as AccountId,
+    enabled: viewer.isSignedIn,
+    accountId: viewer.accountId as AccountId,
   });
 
   const { data: stakingToken } = useToken({
-    balanceCheckAccountId: authenticatedUser.accountId,
+    balanceCheckAccountId: viewer.accountId,
     tokenId: staking.tokenId,
   });
 
@@ -42,13 +42,13 @@ export const usePotApplicationUserClearance = ({
         ? [
             {
               title: `Verified Project on ${PLATFORM_NAME}`,
-              isFulfillmentAssessmentPending: authenticatedUser.isMetadataLoading,
-              isSatisfied: authenticatedUser.hasRegistrationApproved,
+              isFulfillmentAssessmentPending: viewer.isMetadataLoading,
+              isSatisfied: viewer.hasRegistrationApproved,
             },
           ]
         : []),
 
-      ...(hasProportionalFundingMechanism
+      ...(hasPFMechanism
         ? [
             {
               title: `An equivalent of ${staking.minAmountUsd} USD staked in NEAR on ${staking.platformName}`,
@@ -76,9 +76,9 @@ export const usePotApplicationUserClearance = ({
       error: null,
     };
   }, [
-    authenticatedUser.isMetadataLoading,
-    authenticatedUser.hasRegistrationApproved,
-    hasProportionalFundingMechanism,
+    viewer.isMetadataLoading,
+    viewer.hasRegistrationApproved,
+    hasPFMechanism,
     pot?.sybil_wrapper_provider,
     staking.minAmountUsd,
     staking.platformName,

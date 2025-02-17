@@ -1,9 +1,9 @@
 import { PageWithBanner } from "@/common/ui/components";
-import { CampaignForm } from "@/entities/campaign/components/CampaignForm";
-import { useCampaignDeploymentRedirect } from "@/entities/campaign/hooks/redirects";
+import { CampaignForm, useCampaignCreateOrUpdateRedirect } from "@/entities/campaign";
 
 export default function CreateCampaign() {
-  useCampaignDeploymentRedirect();
+  useCampaignCreateOrUpdateRedirect();
+
   return (
     <PageWithBanner>
       <div className="bg-hero relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden">
@@ -17,6 +17,7 @@ export default function CreateCampaign() {
           </h1>
         </div>
       </div>
+
       <CampaignForm />
     </PageWithBanner>
   );

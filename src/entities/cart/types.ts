@@ -1,6 +1,7 @@
-import { DirectDonation, PotDonation } from "@/common/contracts/core";
-import { ByStringId } from "@/common/types";
-import { DonationBatchCallDraft } from "@/features/donation";
+import type { DirectDonation } from "@/common/contracts/core/donation";
+import type { PotDonation } from "@/common/contracts/core/pot";
+import type { ByStringId } from "@/common/types";
+import type { DonationBatchCallDraft } from "@/features/donation";
 
 export type CartItem = ByStringId & DonationBatchCallDraft;
 

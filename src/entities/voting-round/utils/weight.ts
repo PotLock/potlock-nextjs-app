@@ -1,6 +1,7 @@
 import { Big } from "big.js";
 import { pick, prop, sortBy } from "remeda";
 
+import type { VotingRoundWinnerIntermediateData } from "../model/results";
 import type {
   VoterProfile,
   VotingMechanismConfig,
@@ -93,6 +94,8 @@ export const getVoteWeight = (
 };
 
 export const sortByAccumulatedWeight = (
-  data: VotingRoundWinner[],
+  data: (object extends VotingRoundWinner
+    ? VotingRoundWinner
+    : VotingRoundWinnerIntermediateData)[],
   order: "asc" | "desc" | undefined = "asc",
 ) => sortBy(data, [prop("accumulatedWeight"), order]);

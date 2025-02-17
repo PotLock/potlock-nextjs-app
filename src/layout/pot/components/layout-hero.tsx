@@ -7,11 +7,11 @@ import remarkGfm from "remark-gfm";
 
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { potContractHooks } from "@/common/contracts/core";
+import { potContractHooks } from "@/common/contracts/core/pot";
 import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
 import { VolunteerIcon } from "@/common/ui/svg";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import { TokenTotalValue } from "@/entities/_shared/token";
 import {
   PotDonationStats,
@@ -24,6 +24,7 @@ import {
 import { VotingRoundLeaderboard } from "@/entities/voting-round";
 import { DonateToPotProjects } from "@/features/donation";
 import { usePotApplicationUserClearance } from "@/features/pot-application";
+import { usePFPayoutJustification } from "@/features/proportional-funding";
 
 export type PotLayoutHeroProps = ByPotId & {
   onApplyClick?: () => void;
@@ -37,27 +38,28 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   onChallengePayoutsClick,
   onFundMatchingPoolClick,
 }) => {
-  const authenticatedUser = useSession();
-  const authorizedUser = usePotAuthorization({ potId, accountId: authenticatedUser.accountId });
+  const viewer = useWalletUserSession();
+  const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const { data: pot } = indexer.usePot({ potId });
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
-  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
-  const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
+  const { hasPFMechanism } = usePotFeatureFlags({ potId });
+  const lifecycle = usePotLifecycle({ potId, hasPFMechanism });
+  const pfPayoutJustification = usePFPayoutJustification({ potId });
 
   const activeChallenge = useMemo(
     () =>
-      authenticatedUser.isSignedIn
+      viewer.isSignedIn
         ? (potPayoutChallenges ?? []).find(
-            ({ challenger_id }) => authenticatedUser.accountId === challenger_id,
+            ({ challenger_id }) => viewer.accountId === challenger_id,
           )
         : undefined,
 
-    [authenticatedUser.isSignedIn, authenticatedUser.accountId, potPayoutChallenges],
+    [viewer.isSignedIn, viewer.accountId, potPayoutChallenges],
   );
 
   const applicationClearance = usePotApplicationUserClearance({
     potId,
-    hasProportionalFundingMechanism,
+    hasPFMechanism,
   });
 
   const isApplicationPeriodOngoing = useMemo(
@@ -65,10 +67,8 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
     [lifecycle.currentStage?.tag],
   );
 
-  const referrerPotLink = authenticatedUser.isSignedIn
-    ? window.location.origin +
-      window.location.pathname +
-      `&referrerId=${authenticatedUser.accountId}`
+  const referrerPotLink = viewer.isSignedIn
+    ? window.location.origin + window.location.pathname + `?referrerId=${viewer.accountId}`
     : null;
 
   const [description, linkedDocumentUrl] = useMemo(() => {
@@ -98,19 +98,9 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
         donationStats
       );
     } else {
-      return hasProportionalFundingMechanism ? (
-        <VotingRoundLeaderboard {...{ potId }} />
-      ) : (
-        donationStats
-      );
+      return hasPFMechanism ? <VotingRoundLeaderboard {...{ potId }} /> : donationStats;
     }
-  }, [
-    applicationClearance.requirements,
-    hasProportionalFundingMechanism,
-    isApplicationPeriodOngoing,
-    pot,
-    potId,
-  ]);
+  }, [applicationClearance.requirements, hasPFMechanism, isApplicationPeriodOngoing, pot, potId]);
 
   return (
     <div
@@ -122,7 +112,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
       {pot ? (
         <PotTimeline
           classNames={{ root: "bg-neutral-50 md:transparent" }}
-          {...{ hasProportionalFundingMechanism, potId }}
+          {...{ hasPFMechanism, potId }}
         />
       ) : (
         <Skeleton className="h-14 w-full rounded-lg" />
@@ -215,26 +205,32 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
           </div>
 
           <div className="flex items-center justify-start gap-4">
-            {authorizedUser.canApply && applicationClearance.isEveryRequirementSatisfied && (
+            {viewerAbilities.canApply && applicationClearance.isEveryRequirementSatisfied && (
               <Button
                 onClick={onApplyClick}
-              >{`Apply to ${hasProportionalFundingMechanism ? "Round" : "Pot"}`}</Button>
+              >{`Apply to ${hasPFMechanism ? "Round" : "Pot"}`}</Button>
             )}
 
-            {hasProportionalFundingMechanism ? null : (
-              <>{authorizedUser.canDonate && <DonateToPotProjects {...{ potId }} />}</>
+            {hasPFMechanism ? null : (
+              <>{viewerAbilities.canDonate && <DonateToPotProjects {...{ potId }} />}</>
             )}
 
-            {authorizedUser.canFundMatchingPool && (
+            {viewerAbilities.canFundMatchingPool && (
               <Button variant="tonal-filled" onClick={onFundMatchingPoolClick}>
                 {"Fund matching pool"}
               </Button>
             )}
 
-            {authorizedUser.canChallengePayouts && (
-              <Button onClick={onChallengePayoutsClick}>
-                {activeChallenge === undefined ? "Challenge payouts" : "Update challenge"}
-              </Button>
+            {viewerAbilities.canChallengePayouts && (
+              <>
+                {hasPFMechanism &&
+                !pfPayoutJustification.isLoading &&
+                pfPayoutJustification.data === undefined ? null : (
+                  <Button onClick={onChallengePayoutsClick}>
+                    {activeChallenge === undefined ? "Challenge Payouts" : "Update Challenge"}
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>

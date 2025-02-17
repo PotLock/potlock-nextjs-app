@@ -4,8 +4,8 @@ import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
-import { useToken } from "../hooks";
 import { TokenIcon } from "./TokenIcon";
+import { useToken } from "../hooks/data";
 
 export type TokenTotalValueProps = ByTokenId &
   ({ amountFloat: number } | { amountBigString: string }) & {

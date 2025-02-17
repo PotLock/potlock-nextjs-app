@@ -5,8 +5,8 @@ import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ListRegistration } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
-import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
+import { walletApi } from "@/common/blockchains/near-protocol/client";
+import { RegistrationStatus, listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import {
   Button,
@@ -27,11 +27,11 @@ import DownArrow from "@/common/ui/svg/DownArrow";
 import { ListNoteIcon } from "@/common/ui/svg/list-note";
 import { cn } from "@/common/ui/utils";
 import {
+  ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS,
   AccountHandle,
   AccountProfileCover,
   AccountProfilePicture,
-} from "@/entities/_shared/account";
-import { statuses } from "@/entities/project/constants";
+} from "@/entities/_shared";
 import { dispatch } from "@/store";
 
 import { listRegistrationStatuses } from "../constants";
@@ -42,7 +42,7 @@ interface StatusModal {
   status?: RegistrationStatus | string;
 }
 
-export const AccountCard = ({
+export const ListAccountCard = ({
   dataForList,
   accountsWithAccess,
 }: {
@@ -118,7 +118,7 @@ export const AccountCard = ({
             <AccountProfileCover
               accountId={dataForList.registrant.id}
               className={cn(
-                "bg-background relative -mt-9 h-10 w-10 object-cover",
+                "relative -mt-9",
                 "shadow-[0px_0px_0px_3px_#FFF,0px_0px_0px_1px_rgb(199,199,199)_inset]",
               )}
               height={150}
@@ -136,7 +136,7 @@ export const AccountCard = ({
 
               <AccountHandle
                 asName
-                accountId={profile?.name ?? dataForList.registrant?.id}
+                accountId={dataForList.registrant.id}
                 className="decoration-none text-lg font-semibold text-[#292929]"
                 maxLength={22}
               />
@@ -182,13 +182,13 @@ export const AccountCard = ({
                       </div>
                     </Trigger>
                     <SelectContent>
-                      {statuses
-                        .filter((item) => item.val !== "All")
-                        .map((item) => (
-                          <SelectItem value={item.val} key={item.val}>
-                            {item.val}
-                          </SelectItem>
-                        ))}
+                      {ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS.filter(
+                        (item) => item.val !== "All",
+                      ).map((item) => (
+                        <SelectItem value={item.val} key={item.val}>
+                          {item.val}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 ) : (

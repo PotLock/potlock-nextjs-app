@@ -173,14 +173,11 @@ export const ListsOverview = ({
         )}
       </div>
       {loading ? (
-        Array.from({ length: 6 }, (_, index) => (
-          <div
-            key={index}
-            className="mt-8 grid w-full grid-cols-1 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3"
-          >
+        <div className="mt-8 grid w-full grid-cols-3 gap-8 pb-10 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }, (_, index) => (
             <ListCardSkeleton key={index} />
-          </div>
-        ))
+          ))}
+        </div>
       ) : (
         <>
           {filteredRegistrations.length > 0 ? (

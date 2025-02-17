@@ -17,10 +17,8 @@ export type SpinnerProps = {
 export const Spinner: React.FC<SpinnerProps> = ({ width = 18, height = 18, className }) => {
   return (
     <span
-      className={cn("loader border-[2px]", className)}
+      className={cn("spinner border-[2px]", className)}
       style={className ? undefined : { width: `${width}px`, height: `${height}px` }}
     />
   );
 };
-
-export default Spinner;

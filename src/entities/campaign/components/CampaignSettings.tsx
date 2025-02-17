@@ -1,42 +1,100 @@
 import { useState } from "react";
 
 import Link from "next/link";
+import { Temporal } from "temporal-polyfill";
 
-import { walletApi } from "@/common/api/near/client";
-import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
+import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import { yoctoNearToFloat } from "@/common/lib";
+import type { ByCampaignId } from "@/common/types";
+import { Button, Skeleton, Spinner } from "@/common/ui/components";
 import { NearIcon } from "@/common/ui/svg";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
-import { useCampaignDeploymentRedirect } from "../hooks/redirects";
-import { useCampaign } from "../hooks/useCampaign";
+import { useCampaignForm } from "../hooks/forms";
 
-export const CampaignSettings = () => {
-  useCampaignDeploymentRedirect();
+const formatTime = (timestamp: number) =>
+  new Date(timestamp).toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+
+const CampaignSettingsBarCard = ({
+  title,
+  value,
+  hasLogo,
+}: {
+  title: string;
+  value: string;
+  hasLogo?: boolean;
+}) => {
+  return (
+    <div className="mb-5 flex w-[50%] flex-col items-start gap-1">
+      <p className="text-sm text-[#656565]">{title}</p>
+      <h2 className="flex items-center text-[16px] font-semibold">
+        {hasLogo && <NearIcon className="mr-1 h-5 w-5" />}
+        {value}
+      </h2>
+    </div>
+  );
+};
+
+const CampaignSettingsBarCardSkeleton = () => <Skeleton className="w-50% h-5" />;
+
+export type CampaignSettingsProps = ByCampaignId & {};
+
+export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }) => {
+  const viewer = useWalletUserSession();
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
 
+  const { handleProcessEscrowedDonations, handleDonationsRefund } = useCampaignForm({ campaignId });
+
   const {
-    query: { campaignId },
-  } = useRouteQuery();
+    isLoading: isCampaignLoading,
+    data: campaign,
+    error: campaignLoadingError,
+  } = campaignsContractHooks.useCampaign({
+    campaignId,
+  });
 
-  const { campaign } = useCampaign({ campaignId: campaignId as string });
+  const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
+    campaignId,
+    enabled:
+      !!campaign?.min_amount &&
+      Number(campaign?.total_raised_amount) >= Number(campaign?.min_amount),
+  });
 
-  if (!campaign) return <></>;
+  const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
+    {
+      campaignId,
+      enabled:
+        !!campaign?.end_ms &&
+        campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+        Number(campaign?.total_raised_amount) < Number(campaign?.min_amount),
+    },
+  );
 
-  const getTime = (timestamp: any) =>
-    new Date(timestamp).toLocaleString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      timeZone: "UTC",
-    });
+  if (campaignLoadingError)
+    return (
+      <div className="flex w-full flex-col items-center justify-center">
+        <h1>This Campaign does not Exist</h1>
+      </div>
+    );
 
-  return (
+  return isCampaignLoading ? (
+    <div className="flex h-[80vh] items-center justify-center">
+      <Spinner className="h-20 w-20" />
+    </div>
+  ) : (
     <div className="w-full md:mx-3 md:w-[70%]">
       <div className="flex w-full flex-col justify-between gap-6 md:flex-row md:items-center md:gap-0">
         <div className="flex flex-wrap items-start justify-between gap-5 md:w-[40%] md:flex-row md:items-center">
           <div className="flex flex-col gap-2">
             <p className="text-[#7B7B7B]">Organizer</p>
+
             <Link
               target="_blank"
               href={`/profile/${campaign?.owner}`}
@@ -46,8 +104,10 @@ export const CampaignSettings = () => {
               <p className="font-medium">{campaign?.owner}</p>
             </Link>
           </div>
+
           <div className="flex flex-col gap-2">
             <p className="text-[#7B7B7B]">Recipient</p>
+
             <Link
               target="_blank"
               href={`/profile/${campaign?.recipient}`}
@@ -61,7 +121,19 @@ export const CampaignSettings = () => {
             </Link>
           </div>
         </div>
-        {walletApi.accountId === campaign?.owner && (
+        {viewer.isSignedIn && hasEscrowedDonations && (
+          <Button onClick={handleProcessEscrowedDonations}>Process Donation</Button>
+        )}
+
+        {viewer.isSignedIn &&
+          isDonationRefundsProcessed &&
+          campaign?.end_ms &&
+          campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+          Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
+            <Button onClick={handleDonationsRefund}>Process Donations Refund</Button>
+          )}
+
+        {viewer.isSignedIn && viewer.accountId === campaign?.owner && (
           <div>
             <p
               onClick={() => setOpenEditCampaign(!openEditCampaign)}
@@ -73,23 +145,31 @@ export const CampaignSettings = () => {
           </div>
         )}
       </div>
+
       {!openEditCampaign ? (
         <div className="mt-8 w-full rounded-[12px] border border-solid border-[#DBDBDB] p-6">
           <div>
             <h1 className="mb-4 text-xl font-semibold">{campaign?.name}</h1>
             <p className="text-[#292929]">{campaign?.description}</p>
           </div>
+
           <div className="mt-12 flex w-full flex-wrap items-center justify-between md:w-[80%]">
-            <BarCard
+            <CampaignSettingsBarCard
               title="Funding goal"
               value={`${yoctoNearToFloat(campaign?.target_amount as string)} NEAR`}
               hasLogo
             />
-            <BarCard
-              title="Campaign duration"
-              value={`${getTime(campaign?.start_ms)} - ${campaign?.end_ms ? getTime(campaign?.end_ms) : "Ongoing"}`}
-            />
-            <BarCard
+
+            {campaign ? (
+              <CampaignSettingsBarCard
+                title="Campaign duration"
+                value={`${formatTime(campaign.start_ms)} - ${campaign?.end_ms ? formatTime(campaign.end_ms) : "Ongoing"}`}
+              />
+            ) : (
+              <CampaignSettingsBarCardSkeleton />
+            )}
+
+            <CampaignSettingsBarCard
               title="Minimum target"
               value={
                 campaign?.min_amount
@@ -98,7 +178,8 @@ export const CampaignSettings = () => {
               }
               hasLogo={!!campaign?.min_amount}
             />
-            <BarCard
+
+            <CampaignSettingsBarCard
               title="Maximum target"
               value={
                 campaign?.max_amount
@@ -110,20 +191,8 @@ export const CampaignSettings = () => {
           </div>
         </div>
       ) : (
-        <CampaignForm existingData={campaign} />
+        <CampaignForm existingData={campaign} campaignId={campaignId} />
       )}
-    </div>
-  );
-};
-
-const BarCard = ({ title, value, hasLogo }: { title: string; value: any; hasLogo?: boolean }) => {
-  return (
-    <div className="mb-5 flex w-[50%] flex-col items-start gap-1">
-      <p className="text-sm text-[#656565]">{title}</p>
-      <h2 className="flex items-center text-[16px] font-semibold">
-        {hasLogo && <NearIcon className="mr-1 h-5 w-5" />}
-        {value}
-      </h2>
     </div>
   );
 };

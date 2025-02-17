@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import { FaHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { walletApi } from "@/common/api/near/client";
-import { listsContractClient } from "@/common/contracts/core";
+import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import { LayersIcon } from "@/common/ui/svg";
 import { LikeIcon } from "@/common/ui/svg/like";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
@@ -24,16 +24,17 @@ export const ListCard = ({
   background?: string;
   backdrop: string;
 }) => {
+  const viewer = useWalletUserSession();
   const [isUpvoted, setIsUpvoted] = useState(false);
   const { push } = useRouter();
 
   useEffect(() => {
-    setIsUpvoted(dataForList.upvotes?.some((data: any) => data?.account === walletApi.accountId));
-  }, [dataForList]);
+    setIsUpvoted(dataForList.upvotes?.some((data: any) => data?.account === viewer.accountId));
+  }, [dataForList, viewer.accountId]);
 
   const handleRoute = useCallback(
     () => push(`/list/${dataForList?.on_chain_id}`),
-    [dataForList?.id],
+    [dataForList?.on_chain_id, push],
   );
 
   const handleUpvote = (e: React.MouseEvent) => {

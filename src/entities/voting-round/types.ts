@@ -1,7 +1,7 @@
 import { ByPotId } from "@/common/api/indexer";
 import type { ByElectionId, Election, Vote } from "@/common/contracts/core/voting";
 import type { NumericComparatorKey } from "@/common/lib";
-import { ByAccountId, TokenId } from "@/common/types";
+import { ByAccountId, type IndivisibleUnits, TokenId } from "@/common/types";
 
 export type VotingRoundVoterKey = Partial<ByAccountId> & ByPotId;
 
@@ -58,7 +58,8 @@ export type VotingRoundVoterSummary = ByAccountId & {
 };
 
 export type VotingRoundWinner = ByAccountId & {
+  rank: number;
   votes: Vote[];
   accumulatedWeight: number;
-  estimatedPayoutAmount: number;
+  estimatedPayoutAmount: IndivisibleUnits;
 };

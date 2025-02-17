@@ -5,7 +5,7 @@ export * from "./types";
 export * from "./components/badges";
 export * from "./components/CandidateTable";
 export * from "./components/VoteRow";
-export * from "./components/Leaderboard";
+export * from "./components/leaderboard";
 export * from "./components/ResultsTable";
 export * from "./components/RuleList";
 export * from "./components/VoteWeightBreakdown";

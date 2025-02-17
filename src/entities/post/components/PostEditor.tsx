@@ -2,18 +2,18 @@ import { useState } from "react";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { socialDbContractClient } from "@/common/contracts/social";
+import { socialDbContractClient } from "@/common/contracts/social-db";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/components";
+import { useWalletUserSession } from "@/common/wallet";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import { useSession } from "@/entities/_shared/session";
 
 export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
 
   const { avatarSrc } = useAccountSocialProfile({
-    enabled: authenticatedUser.isSignedIn,
-    accountId: authenticatedUser.accountId as AccountId,
+    enabled: viewer.isSignedIn,
+    accountId: viewer.accountId as AccountId,
   });
 
   const [postText, setPostText] = useState("");

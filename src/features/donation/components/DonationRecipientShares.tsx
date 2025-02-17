@@ -37,7 +37,8 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
   });
 
   const { data: listRegistrations, error: listRegistrationsError } = indexer.useListRegistrations({
-    listId,
+    enabled: listId !== undefined,
+    listId: listId ?? 0,
     page_size: 999,
     status: ListRegistrationStatus.Approved,
   });

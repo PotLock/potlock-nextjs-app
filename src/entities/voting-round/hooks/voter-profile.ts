@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import { Big } from "big.js";
 
-import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { indexer } from "@/common/api/indexer";
+import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 import { ByAccountId, type ConditionalActivation, TokenId } from "@/common/types";
@@ -22,11 +22,11 @@ export type VoterProfileInputs = ByAccountId & {
  * Though it is in the process of being refactored, the job is not entirely done yet.
  */
 export const useVoterProfile = ({
+  enabled = true,
   accountId,
   stakingContractAccountId,
-  enabled = true,
 }: VoterProfileInputs & ConditionalActivation): VoterProfile => {
-  const { isHumanVerified } = useIsHuman(accountId);
+  const { data: isHuman } = sybilResistanceContractHooks.useIsHuman({ accountId });
   const { data: voterInfo } = indexer.useMpdaoVoter({ enabled, accountId });
 
   const tokenId = useMemo(
@@ -42,7 +42,7 @@ export const useVoterProfile = ({
   return useMemo(
     () => ({
       accountId,
-      isHumanVerified,
+      isHumanVerified: isHuman ?? false,
 
       stakingTokenBalance:
         voterInfo?.voter_data.staking_token_balance && stakingToken
@@ -63,7 +63,7 @@ export const useVoterProfile = ({
 
     [
       accountId,
-      isHumanVerified,
+      isHuman,
       stakingToken,
       voterInfo?.voter_data.locking_positions,
       voterInfo?.voter_data.staking_token_balance,

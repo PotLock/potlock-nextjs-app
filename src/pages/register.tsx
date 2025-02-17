@@ -1,22 +1,71 @@
-import { PageWithBanner, SpinnerOverlay } from "@/common/ui/components";
+import { useCallback, useEffect, useMemo } from "react";
+
+import { useRouter } from "next/router";
+import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
+
+import { indexer } from "@/common/api/indexer";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/components";
+import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useSessionReduxStore } from "@/entities/_shared/session/hooks/redux-store";
-import { ProjectEditor, useInitProjectState } from "@/features/profile-setup";
-import { useGlobalStoreSelector } from "@/store";
+import { useWalletUserSession } from "@/common/wallet";
+import { ProfileSetupForm } from "@/features/profile-setup";
+import { rootPathnames } from "@/pathnames";
 
 export default function RegisterPage() {
-  const { isAuthenticated } = useSessionReduxStore();
-  useInitProjectState();
+  const viewer = useWalletUserSession();
+  const router = useRouter();
+  const { toast } = useToast();
 
-  // state used to show spinner during the data post
-  const { submissionStatus, checkRegistrationStatus, checkPreviousProjectDataStatus } =
-    useGlobalStoreSelector((state) => state.projectEditor);
+  const {
+    isLoading: isAccountListRegistrationDataLoading,
+    data: listRegistrations,
+    mutate: refetchListRegistrations,
+  } = indexer.useAccountListRegistrations({
+    enabled: viewer.isSignedIn,
+    accountId: viewer.accountId ?? "noop",
+  });
 
-  const showSpinner = isAuthenticated
-    ? submissionStatus === "sending" ||
-      checkRegistrationStatus !== "ready" ||
-      checkPreviousProjectDataStatus !== "ready"
-    : false;
+  const hasRegistrationSubmitted = useMemo(
+    () =>
+      !isAccountListRegistrationDataLoading &&
+      listRegistrations !== undefined &&
+      listRegistrations.results.find(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID) !==
+        undefined,
+
+    [isAccountListRegistrationDataLoading, listRegistrations],
+  );
+
+  const onSuccess = useCallback(() => {
+    toast({ title: "Success!", description: "You have successfully submitted your registration." });
+
+    setTimeout(
+      () =>
+        refetchListRegistrations().finally(() =>
+          router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`),
+        ),
+
+      3000,
+    );
+  }, [refetchListRegistrations, router, toast, viewer.accountId]);
+
+  const onFailure = useCallback(
+    (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
+    [toast],
+  );
+
+  useEffect(() => {
+    if (viewer.isSignedIn && !isAccountListRegistrationDataLoading && hasRegistrationSubmitted) {
+      router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`);
+    }
+  }, [
+    hasRegistrationSubmitted,
+    isAccountListRegistrationDataLoading,
+    listRegistrations,
+    router,
+    viewer.accountId,
+    viewer.isSignedIn,
+  ]);
 
   return (
     <PageWithBanner>
@@ -35,8 +84,40 @@ export default function RegisterPage() {
         </h2>
       </section>
 
-      {showSpinner && <SpinnerOverlay />}
-      <ProjectEditor />
+      {viewer.hasWalletReady && viewer.isSignedIn ? (
+        <>
+          {listRegistrations === undefined ? (
+            <Alert className="mt-10">
+              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Checking Account"}</AlertTitle>
+              <AlertDescription>{"Please, wait..."}</AlertDescription>
+            </Alert>
+          ) : (
+            <ProfileSetupForm
+              mode="register"
+              accountId={viewer.accountId}
+              isDaoRepresentative={viewer.isDaoRepresentative}
+              {...{ onSuccess, onFailure }}
+            />
+          )}
+        </>
+      ) : (
+        <>
+          {viewer.hasWalletReady ? (
+            <Alert variant="destructive" className="mt-10">
+              <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Not Signed In"}</AlertTitle>
+              <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="mt-10">
+              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+              <AlertTitle>{"Checking Account"}</AlertTitle>
+              <AlertDescription>{"Please, wait..."}</AlertDescription>
+            </Alert>
+          )}
+        </>
+      )}
     </PageWithBanner>
   );
 }

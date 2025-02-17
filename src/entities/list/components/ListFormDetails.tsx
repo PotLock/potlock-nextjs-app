@@ -1,18 +1,23 @@
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { prop } from "remeda";
 
-import { indexer } from "@/common/api/indexer";
-import { walletApi } from "@/common/api/near/client";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { RegistrationStatus, listsContractClient } from "@/common/contracts/core";
-import uploadFileToIPFS from "@/common/services/ipfs";
-import { Button, Input } from "@/common/ui/components";
+import {
+  RegistrationStatus,
+  listsContractClient,
+  listsContractHooks,
+} from "@/common/contracts/core/lists";
+import { nearSocialIpfsUpload } from "@/common/services/ipfs";
+import type { ByListId } from "@/common/types";
+import { Button, Input, Spinner } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
@@ -21,7 +26,6 @@ import {
   ListConfirmationModalProps,
   SuccessModalCreateList,
 } from "./ListConfirmationModals";
-import { useListDeploymentSuccessRedirect } from "../hooks/redirects";
 import { useListForm } from "../hooks/useListForm";
 import { createListSchema } from "../models/schema";
 
@@ -40,7 +44,30 @@ interface CreateSuccess {
   data?: any;
 }
 
-export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
+export type ListFormProps = Partial<ByListId> & {
+  isDuplicate?: boolean;
+};
+
+export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate = false }) => {
+  const viewer = useWalletUserSession();
+  const { back } = useRouter();
+  const onEditPage = listId !== undefined;
+
+  const { isLoading: isRegistrationListLoading, data: registrations } =
+    listsContractHooks.useRegistrations({
+      enabled: listId !== undefined,
+      listId: listId ?? 0,
+    });
+
+  const {
+    isLoading: isListLoading,
+    error,
+    data: list,
+  } = listsContractHooks.useList({
+    enabled: listId !== undefined,
+    listId: listId ?? 0,
+  });
+
   const {
     register,
     handleSubmit,
@@ -51,7 +78,6 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
     resolver: zodResolver(createListSchema),
   });
 
-  useListDeploymentSuccessRedirect();
   const descriptionLength = watch("description")?.length || 0;
   const [coverImage, setCoverImage] = useState<string | null>(null);
 
@@ -79,70 +105,59 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
     accounts,
   } = useListForm();
 
-  const {
-    back,
-    push,
-    query: { id },
-  } = useRouter();
-
-  const { data, isLoading } = indexer.useListRegistrations({
-    ...(isDuplicate && { listId: parseInt(id as string) }),
-    page_size: 999,
-  });
-
-  const onEditPage = !!id;
-
   useEffect(() => {
-    if (isDuplicate) {
-      setAccounts(data?.results?.map((registrations) => registrations?.registrant?.id) || []);
+    if (isDuplicate && registrations !== undefined) {
+      setAccounts(registrations?.map(prop("registrant_id")) ?? []);
     }
-  }, [isDuplicate, isLoading]);
+  }, [isDuplicate, registrations, setAccounts]);
 
   useEffect(() => {
-    const fetchListDetails = async () => {
+    if (onEditPage && viewer.isSignedIn && list !== undefined) {
       try {
-        const response: any = await listsContractClient.get_list({
-          list_id: parseInt(id as string) as any,
-        });
-
-        setValue("name", response.name);
-        setValue("owner", isDuplicate ? walletApi?.accountId : response.owner);
-        setValue("description", response.description);
-        setValue("allowApplications", !response.admin_only_registrations);
-        setValue("approveApplications", response?.default_registration_status === "Approved");
+        setValue("name", list.name);
+        setValue("owner", isDuplicate ? viewer.accountId : list.owner);
+        setValue("description", list.description);
+        setValue("allowApplications", !list.admin_only_registrations);
+        setValue("approveApplications", list.default_registration_status === "Approved");
 
         setAdmins(
-          isDuplicate && walletApi?.accountId !== response.owner
-            ? [response?.owner, ...response.admins]
-            : response.admins,
+          isDuplicate && viewer.accountId !== list.owner
+            ? [list?.owner, ...list.admins]
+            : list.admins,
         );
 
-        setCoverImage(response.cover_image_url);
+        setCoverImage(list.cover_image_url);
       } catch (error) {
         console.error("Error fetching list details:", error);
       }
-    };
+    }
+  }, [
+    setValue,
+    onEditPage,
+    isDuplicate,
+    setAdmins,
+    viewer.isSignedIn,
+    viewer.accountId,
+    list,
+    error,
+  ]);
 
-    if (onEditPage) fetchListDetails();
-  }, [id, setValue, onEditPage, isDuplicate]);
-
-  // prettier-ignore
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     // Due to conflicting submit buttons (admin and list), this is to make sure only list submit form is submitted.
-    dispatch.listEditor.reset()
+    dispatch.listEditor.reset();
 
-    if (
-      (event?.nativeEvent as SubmitEvent)?.submitter?.id !==
-      "list-submit-button"
-    ) { return; }
+    if ((event?.nativeEvent as SubmitEvent)?.submitter?.id !== "list-submit-button") {
+      return;
+    }
 
     if (onEditPage && !isDuplicate) {
-      listsContractClient.update_list({
-        ...data,
-        admins,
-        list_id: parseInt(id as any),
-        image_cover_url: coverImage || undefined,
-      })
+      listsContractClient
+        .update_list({
+          ...data,
+          admins,
+          list_id: listId,
+          image_cover_url: coverImage || undefined,
+        })
         .then((updatedData) => {
           setListCreateSuccess({
             open: true,
@@ -154,17 +169,20 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
           console.error("Error updating list:", error);
         });
 
-      dispatch.listEditor.reset()
+      dispatch.listEditor.reset();
     } else {
-      listsContractClient.create_list({
-        ...data,
-        admins,
-        accounts: accounts.map((account) => ({
-          registrant_id: account,
-          status: watch("approveApplications") ? RegistrationStatus.Approved : RegistrationStatus.Pending,
-        })),
-        image_cover_url: coverImage,
-      })
+      listsContractClient
+        .create_list({
+          ...data,
+          admins,
+          accounts: accounts.map((account) => ({
+            registrant_id: account,
+            status: watch("approveApplications")
+              ? RegistrationStatus.Approved
+              : RegistrationStatus.Pending,
+          })),
+          image_cover_url: coverImage,
+        })
         .then((dataToReturn) => {
           setListCreateSuccess({
             open: true,
@@ -184,7 +202,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
     if (target.files && target.files[0]) {
       const reader = new FileReader();
       setLoadingImageUpload(true);
-      const res = await uploadFileToIPFS(target.files[0]); // Use the casted target
+      const res = await nearSocialIpfsUpload(target.files[0]); // Use the casted target
 
       if (res.ok) {
         const data = await res.json();
@@ -256,11 +274,11 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
     [admins],
   );
 
-  const handleViewList = useCallback(() => push(`/list/${id}`), [id, push]);
-
-  const handleViewLists = useCallback(() => push(`/lists`), [push]);
-
-  return (
+  return isListLoading || isRegistrationListLoading ? (
+    <div className="flex h-[80vh] items-center justify-center">
+      <Spinner className="h-20 w-20" />
+    </div>
+  ) : (
     <>
       <div className=" mx-auto my-8 max-w-[896px] p-6 font-sans md:w-[720px] md:rounded-[16px] md:border md:border-[#DBDBDB] md:p-10">
         <h2 className="mb-6 text-[18px] font-semibold">List Details</h2>
@@ -333,7 +351,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
             )}
           </div>
           <h3 className="mb-4 mt-8 text-xl font-semibold">Permissions</h3>
-          {onEditPage && watch("owner") === walletApi?.accountId && !isDuplicate && (
+          {onEditPage && watch("owner") === viewer.accountId && !isDuplicate && (
             <div
               style={{
                 boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
@@ -343,12 +361,9 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
               <div className="flex w-full flex-row items-start justify-between gap-3 p-2  px-4 md:mr-5">
                 <span className="mr-4 mt-2 font-semibold text-gray-700">Owner</span>
                 <div className="flex items-center gap-2 p-2">
-                  <AccountProfilePicture
-                    accountId={walletApi?.accountId || ""}
-                    className="h4 w-4"
-                  />
+                  <AccountProfilePicture accountId={viewer.accountId || ""} className="h4 w-4" />
                   <span className="text-[14px] text-[#292929]">
-                    {onEditPage ? watch("owner") : walletApi?.accountId}
+                    {onEditPage ? watch("owner") : viewer.accountId}
                   </span>
                 </div>
               </div>
@@ -396,11 +411,11 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
                       isEditable={true}
                       title="Admins"
                       showAccountList={false}
-                      handleRemoveAccounts={id && !isDuplicate ? handleRemoveAdmin : undefined}
+                      handleRemoveAccounts={listId && !isDuplicate ? handleRemoveAdmin : undefined}
                       value={admins.map((admin) => ({ accountId: admin }))}
                       classNames={{ avatar: "w-5 h-5" }}
                       onSubmit={
-                        id && !isDuplicate
+                        listId && !isDuplicate
                           ? (accounts: string[]) => {
                               const newAdmins =
                                 accounts?.filter((admin) => !admins?.includes(admin)) ?? [];
@@ -451,7 +466,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
           )}
 
           <div>
-            <h3 className="mb-2 mt-10 text-xl font-semibold">
+            <h3 className="mb-2 mt-10 text-lg font-semibold md:text-xl">
               Upload list cover image <span className="font-normal text-gray-500">(Optional)</span>
             </h3>
             <div
@@ -492,7 +507,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
             <div
               className={`flex w-full flex-col-reverse justify-between md:flex-row md:flex-row  ${onEditPage ? "" : "md:justify-end"} `}
             >
-              {onEditPage && watch("owner") === walletApi?.accountId && (
+              {onEditPage && watch("owner") === viewer.accountId && (
                 <button
                   onClick={() => setOpenListConfirmModal({ open: true, type: "DELETE" })}
                   className={`mb-4 rounded-md border border-[#DD3345] bg-transparent px-4 py-2 text-[#DD3345] transition hover:bg-[#ede9e9]`}
@@ -527,7 +542,7 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
         onClose={() => setOpenListConfirmModal({ open: false })}
         onSubmitButton={
           listConfirmModal.type === "DELETE"
-            ? () => handleDeleteList(Number(id))
+            ? () => handleDeleteList(Number(listId))
             : handleTransferOwner
         }
       />
@@ -538,8 +553,8 @@ export const ListFormDetails = ({ isDuplicate }: { isDuplicate?: boolean }) => {
         }}
         isUpdate={listCreateSuccess.type === "UPDATE_LIST"}
         listName={listCreateSuccess.data?.name}
-        showBackToLists={!id}
-        onViewList={id ? handleViewList : handleViewLists}
+        showBackToLists={!listId}
+        href={listId ? `/list/${listId}` : `/lists`}
       />
     </>
   );

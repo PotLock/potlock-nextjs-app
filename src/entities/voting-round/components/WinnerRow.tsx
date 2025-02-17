@@ -3,7 +3,8 @@ import { useCallback } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Dot } from "lucide-react";
 
-import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import { indivisibleUnitsToFloat } from "@/common/lib";
 import {
   Checkbox,
   LabeledIcon,
@@ -90,7 +91,11 @@ export const VotingRoundWinnerRow: React.FC<VotingRoundWinnerRowProps> = ({
               <TooltipTrigger>
                 <LabeledIcon
                   positioning="icon-text"
-                  caption={`~ ${estimatedPayoutAmount.toFixed(2)}`}
+                  caption={`~ ${indivisibleUnitsToFloat(
+                    estimatedPayoutAmount,
+                    NATIVE_TOKEN_DECIMALS,
+                    2,
+                  )}`}
                   classNames={{ root: "w-50 justify-end", caption: "font-600" }}
                 >
                   {token && <TokenIcon size="xs" tokenId={token.tokenId} />}
@@ -98,7 +103,15 @@ export const VotingRoundWinnerRow: React.FC<VotingRoundWinnerRowProps> = ({
               </TooltipTrigger>
 
               <TooltipContent>
-                <span className="font-600">{`${estimatedPayoutAmount} ${token?.metadata.symbol}`}</span>
+                <span className="font-600">
+                  {`${indivisibleUnitsToFloat(
+                    estimatedPayoutAmount,
+                    NATIVE_TOKEN_DECIMALS,
+                    NATIVE_TOKEN_DECIMALS,
+                  )}
+
+                  ${token?.metadata.symbol ?? "..."}`}
+                </span>
               </TooltipContent>
             </Tooltip>
           </div>

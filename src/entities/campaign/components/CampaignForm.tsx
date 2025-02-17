@@ -1,31 +1,37 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
-import { Campaign } from "@/common/contracts/core";
-import { useRouteQuery, yoctoNearToFloat } from "@/common/lib";
-import uploadFileToIPFS from "@/common/services/ipfs";
+import { Campaign } from "@/common/contracts/core/campaigns";
+import { yoctoNearToFloat } from "@/common/lib";
+import { nearSocialIpfsUpload } from "@/common/services/ipfs";
+import { CampaignId } from "@/common/types";
 import { Button, Form, FormField } from "@/common/ui/components";
-import { NearInputField, TextAreaField, TextField } from "@/common/ui/form-fields";
+import { TextAreaField, TextField } from "@/common/ui/form-fields";
+import { NearInputField } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";
 
-const formatTimestampForInput = (timestamp: string) => {
+const formatTimestampForInput = (timestamp: number) => {
   if (!timestamp) return "";
   const date = new Date(timestamp);
   return date.toISOString().slice(0, 16);
 };
 
-export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
+export const CampaignForm = ({
+  existingData,
+  campaignId,
+}: {
+  existingData?: Campaign;
+  campaignId?: CampaignId;
+}) => {
   const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
 
-  const {
-    query: { campaignId },
-  } = useRouteQuery();
-
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, handleDeleteCampaign, watch, isValid } = useCampaignForm();
+  const { form, onChange, onSubmit, handleDeleteCampaign, watch, isValid } = useCampaignForm({
+    campaignId,
+  });
 
   useEffect(() => {
     if (isUpdate && existingData) {
@@ -54,7 +60,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
         existingData?.end_ms ? formatTimestampForInput(existingData?.end_ms) : "",
       );
     }
-  }, [isUpdate, existingData]);
+  }, [isUpdate, existingData, form]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
@@ -62,7 +68,7 @@ export const CampaignForm = ({ existingData }: { existingData?: Campaign }) => {
     if (target.files && target.files[0]) {
       const reader = new FileReader();
       setLoadingImageUpload(true);
-      const res = await uploadFileToIPFS(target.files[0]);
+      const res = await nearSocialIpfsUpload(target.files[0]);
 
       if (res.ok) {
         const data = await res.json();

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { ByPotId } from "@/common/api/indexer";
 import { IS_UNDER_INSPECTION } from "@/common/constants";
-import { potContractHooks } from "@/common/contracts/core";
+import { ApplicationStatus, potContractHooks } from "@/common/contracts/core/pot";
 import { isAccountId } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 
@@ -17,11 +17,13 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   const { data: potPayoutChallenges } = potContractHooks.usePayoutChallenges({ potId });
   const { data: potApplications } = potContractHooks.useApplications({ potId });
 
+  // TODO: Relocate to `usePotLifecycle`
   const isApplicationPeriodOngoing = useMemo(
     () => potConfig && now >= potConfig.application_start_ms && now < potConfig.application_end_ms,
     [potConfig, now],
   );
 
+  // TODO: Relocate to `usePotLifecycle`
   const isPublicRoundOngoing = useMemo(
     () =>
       potConfig && now >= potConfig.public_round_start_ms && now < potConfig.public_round_end_ms,
@@ -29,6 +31,7 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
     [potConfig, now],
   );
 
+  // TODO: Relocate to `usePotLifecycle`
   const isCooldownPeriodOngoing = useMemo(
     () =>
       potConfig &&
@@ -39,10 +42,14 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
     [now, potConfig],
   );
 
+  // TODO: Relocate to `usePotLifecycle`
   const isSubmittedPayoutListEmpty = potPayouts?.length === 0;
 
   const isApplicant = useMemo(
-    () => isValidAccountId && potApplications?.find(({ project_id }) => project_id === accountId),
+    () =>
+      isValidAccountId &&
+      potApplications?.find(({ project_id }) => project_id === accountId) !== undefined,
+
     [accountId, isValidAccountId, potApplications],
   );
 
@@ -75,8 +82,11 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   );
 
   const canDonate = useMemo(
-    () => isValidAccountId && isPublicRoundOngoing,
-    [isValidAccountId, isPublicRoundOngoing],
+    () =>
+      isValidAccountId &&
+      isPublicRoundOngoing &&
+      potApplications?.find(({ status }) => status === ApplicationStatus.Approved) !== undefined,
+    [isValidAccountId, isPublicRoundOngoing, potApplications],
   );
 
   const canApply = useMemo(

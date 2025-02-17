@@ -10,6 +10,7 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  Button,
   LabeledIcon,
   Pagination,
   PaginationContent,
@@ -34,6 +35,7 @@ import {
   usePotLifecycle,
   usePotPayoutLookup,
 } from "@/entities/pot";
+import { PFPayoutJustificationPublicationAction } from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/layout";
 import { PotPayoutManager } from "@/layout/pot/components/payout-manager";
 
@@ -207,16 +209,22 @@ export default function PotPayoutsTab() {
 
         <div className="mb-16 flex w-full flex-col items-start gap-6">
           {!pot?.all_paid_out && (
-            <Alert variant="neutral">
-              <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
+            <>
+              <PFPayoutJustificationPublicationAction {...{ potId }} />
 
-              <AlertDescription>
-                {pot?.cooldown_end
-                  ? "These payouts have been set on the contract but have not been paid out yet."
-                  : "These payouts are estimated amounts only and have not been set on the contract yet."}
-              </AlertDescription>
-            </Alert>
+              <Alert variant="neutral">
+                <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+                <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
+
+                <AlertDescription className="flex flex-col gap-4">
+                  <span>
+                    {(payouts?.length ?? 0) > 0
+                      ? "These payouts have been set on the contract but have not been paid out yet."
+                      : "These payouts are estimated amounts only and have not been set on the contract yet."}
+                  </span>
+                </AlertDescription>
+              </Alert>
+            </>
           )}
 
           {(payouts?.length ?? 0) === 0 ? (
@@ -229,13 +237,11 @@ export default function PotPayoutsTab() {
               />
 
               <div className="flex w-full flex-col flex-nowrap items-center overflow-x-auto">
-                <div
-                  className={
-                    "flex w-full items-center justify-between gap-8 bg-neutral-500 p-2.5 px-4"
-                  }
-                >
-                  <div className="inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
-                    <span className="font-600 uppercase leading-none">{"Projects"}</span>
+                <div className="flex w-full justify-between bg-neutral-50 text-xs text-neutral-500">
+                  <div className="mr-a inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
+                    <span className="font-600 shrink grow basis-0 uppercase leading-none">
+                      {"Project"}
+                    </span>
                   </div>
 
                   <span className="flex h-10 items-center px-4 py-2">

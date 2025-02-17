@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
@@ -12,9 +14,9 @@ import {
   Textarea,
 } from "@/common/ui/components";
 
-import { usePotApplicationReviewForm } from "../hooks/forms";
+import { type PotApplicationReviewParams, usePotApplicationReviewForm } from "../hooks/forms";
 
-export type PotApplicationReviewModalProps = {
+export type PotApplicationReviewModalProps = Pick<PotApplicationReviewParams, "onSuccess"> & {
   potDetail: Pot;
   projectId: string;
   projectStatus: "Approved" | "Rejected" | "";
@@ -24,30 +26,32 @@ export type PotApplicationReviewModalProps = {
 
 export const PotApplicationReviewModal: React.FC<PotApplicationReviewModalProps> = ({
   open,
-  onCloseClick,
   potDetail,
   projectId,
   projectStatus,
+  onCloseClick,
+  onSuccess,
 }) => {
-  // Form settings
   const { form, errors, onSubmit, inProgress } = usePotApplicationReviewForm({
     potDetail,
     projectId,
     status: projectStatus,
+    onSuccess,
   });
+
+  const commandKey = useMemo(() => {
+    if (projectStatus === "Approved") {
+      return "Approve";
+    } else if (projectStatus === "Rejected") {
+      return "Reject";
+    } else return undefined;
+  }, [projectStatus]);
 
   return (
     <Dialog open={open}>
       <DialogContent className="max-w-130" onCloseClick={onCloseClick}>
         <DialogHeader>
-          <DialogTitle>
-            {projectStatus === "Approved"
-              ? "Approve "
-              : projectStatus === "Rejected"
-                ? "Reject "
-                : ""}
-            application from {projectId}
-          </DialogTitle>
+          <DialogTitle>{`${commandKey} application from ${projectId}`}</DialogTitle>
         </DialogHeader>
 
         <Form {...form} onSubmit={onSubmit}>
@@ -76,7 +80,7 @@ export const PotApplicationReviewModal: React.FC<PotApplicationReviewModalProps>
               className="mt-6 min-w-[200px] self-end"
               type="submit"
             >
-              {inProgress ? <Spinner /> : <>Submit</>}
+              {inProgress ? <Spinner /> : commandKey}
             </Button>
           </div>
         </Form>

@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
 
+export const IS_CLIENT = typeof window !== "undefined";
+
 export const DEBUG = process.env.NEXT_PUBLIC_DEBUG === "true" ? true : false;
 
 /**
@@ -18,6 +20,7 @@ export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
 export const PLATFORM_TWITTER_ACCOUNT_ID = "PotLock_";
 export const DEFAULT_SHARE_HASHTAGS = ["PublicGoods", "Donations"];
+export const APP_BOS_COUNTERPART_URL = "https://bos.potlock.org";
 
 export const APP_METADATA: Metadata & {
   title: string;
@@ -59,6 +62,48 @@ export const APP_METADATA: Metadata & {
     creator: "@PotLock_",
     card: "summary_large_image",
   },
+};
+
+export const CHAIN_OPTIONS: Record<string, { isEVM: boolean }> = {
+  NEAR: { isEVM: false },
+  Solana: { isEVM: false },
+  Ethereum: { isEVM: true },
+  Polygon: { isEVM: true },
+  Avalanche: { isEVM: true },
+  Optimism: { isEVM: true },
+  Arbitrum: { isEVM: true },
+  BNB: { isEVM: true },
+  Sui: { isEVM: false },
+  Aptos: { isEVM: false },
+  Polkadot: { isEVM: false },
+  Stellar: { isEVM: false },
+
+  // Note: ZkSync aims for EVM compatibility but might not fully be considered as traditional EVM
+  // at the time of writing.
+  ZkSync: { isEVM: false },
+
+  Celo: { isEVM: true },
+  Aurora: { isEVM: true },
+  Injective: { isEVM: true },
+  Base: { isEVM: false },
+
+  // Listed twice in the original list; included once here.
+  Manta: { isEVM: false },
+
+  Fantom: { isEVM: true },
+  ZkEVM: { isEVM: true },
+  Flow: { isEVM: false },
+  Tron: { isEVM: true },
+
+  // Formerly known as Elrond, not traditionally EVM but has some level of compatibility.
+  MultiverseX: { isEVM: false },
+
+  // Assuming EVM compatibility based on the context of ZkEVM.
+  Scroll: { isEVM: true },
+
+  // Assuming non-EVM due to lack of information.
+  Linea: { isEVM: true },
+  Metis: { isEVM: true },
 };
 
 export const TOTAL_FEE_BASIS_POINTS = 10_000;

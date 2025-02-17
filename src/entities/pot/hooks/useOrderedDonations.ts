@@ -1,9 +1,41 @@
 import { useEffect, useState } from "react";
 
-import { getPotDonations, getPotPayouts } from "@/common/_deprecated/pots";
+import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
 import { Donation, PotPayout } from "@/common/api/indexer";
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
+
+type GetPotPayoutsResponse = {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: PotPayout[];
+};
+
+const getPotPayouts = async ({ potId, pageSize }: { potId: string; pageSize?: number }) => {
+  const res = await fetch(
+    `${INDEXER_API_ENDPOINT_URL}/api/v1/pots/${potId}/payouts${pageSize ? `?page_size=${pageSize}` : ""}`,
+  );
+
+  const json = await res.json();
+  return json as GetPotPayoutsResponse;
+};
+
+type GetPotDonationsResponse = {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: Donation[];
+};
+
+const getPotDonations = async ({ potId, pageSize }: { potId: string; pageSize?: number }) => {
+  const res = await fetch(
+    `${INDEXER_API_ENDPOINT_URL}/api/v1/pots/${potId}/donations${pageSize ? `?page_size=${9999}` : ""}`,
+  );
+
+  const json = await res.json();
+  return json as GetPotDonationsResponse;
+};
 
 export type JoinDonation = {
   id: string;

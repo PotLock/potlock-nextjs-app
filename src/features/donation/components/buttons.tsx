@@ -1,6 +1,6 @@
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { ByCampaignId, ByListId } from "@/common/types";
+import { type ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 
@@ -35,6 +35,18 @@ export const DonateRandomly = () => {
         {"Donate Randomly"}
       </Button>
     )
+  );
+};
+
+export type DonateToAccountButtonProps = ByAccountId & {};
+
+export const DonateToAccountButton: React.FC<DonateToAccountButtonProps> = ({ accountId }) => {
+  const { openDonationModal } = useDonation({ accountId });
+
+  return (
+    <Button className="w-full" variant="standard-outline" onClick={openDonationModal}>
+      {"Donate"}
+    </Button>
   );
 };
 

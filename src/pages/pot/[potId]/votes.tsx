@@ -6,11 +6,12 @@ import {
   MdFileDownload,
   MdHowToVote,
   MdOutlineDescription,
+  MdOutlineHourglassTop,
   MdOutlineInfo,
   MdStar,
 } from "react-icons/md";
 
-import { nearClient } from "@/common/api/near";
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { votingContractHooks } from "@/common/contracts/core/voting";
 import { isAccountId } from "@/common/lib";
 import type { AccountId } from "@/common/types";
@@ -25,7 +26,7 @@ import {
 } from "@/common/ui/components";
 import { useMediaQuery } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 import {
   VotingRoundCandidateFilter,
   VotingRoundCandidateTable,
@@ -39,13 +40,13 @@ import {
 import { PotLayout } from "@/layout/pot/components/layout";
 
 export default function PotVotesTab() {
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
   const { query: routeQuery } = useRouter();
   const { potId } = routeQuery as { potId: string };
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const onSignInClick = useCallback(() => {
-    nearClient.walletApi.signInModal();
+    nearProtocolClient.walletApi.signInModal();
   }, []);
 
   const [isVotingRuleListVisible, setIsVotingRuleListVisible] = useState(false);
@@ -54,11 +55,11 @@ export default function PotVotesTab() {
   const [candidateFilter, setFilter] = useState<VotingRoundCandidateFilter>("all");
 
   const authenticatedVoter = useVotingRoundVoterVoteWeight({
-    accountId: authenticatedUser.accountId,
+    accountId: viewer.accountId,
     potId,
   });
 
-  const votingRound = useVotingRound({ potId });
+  const { isLoading: isVotingRoundDataLoading, data: votingRound } = useVotingRound({ potId });
 
   const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
     enabled: votingRound !== undefined,
@@ -69,9 +70,9 @@ export default function PotVotesTab() {
 
   const { data: authenticatedVotingRoundVoterVotes } = votingContractHooks.useVotingRoundVoterVotes(
     {
-      enabled: votingRound !== undefined && isAccountId(authenticatedUser.accountId),
+      enabled: votingRound !== undefined && isAccountId(viewer.accountId),
       electionId: votingRound?.electionId ?? 0,
-      accountId: authenticatedUser.accountId as AccountId,
+      accountId: viewer.accountId as AccountId,
     },
   );
 
@@ -148,14 +149,25 @@ export default function PotVotesTab() {
 
   return votingRound === undefined ? (
     <div className="h-100 flex w-full flex-col items-center justify-center">
-      <p className="prose text-2xl">{"Voting round hasn't started yet."}</p>
+      {isVotingRoundDataLoading ? (
+        <Alert variant="neutral">
+          <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Loading voting round data..."}</AlertTitle>
+        </Alert>
+      ) : (
+        <Alert variant="neutral">
+          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"No Votes"}</AlertTitle>
+          <AlertDescription>{"Voting round hasn't started yet."}</AlertDescription>
+        </Alert>
+      )}
     </div>
   ) : (
     <div className="flex w-full flex-col gap-6">
       {isVotingPeriodOngoing && (
         <Alert variant="neutral">
           <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-          <AlertTitle>{"Voting round is open"}</AlertTitle>
+          <AlertTitle>{"Voting Round is Open"}</AlertTitle>
           <AlertDescription>{"You can cast your votes now."}</AlertDescription>
         </Alert>
       )}
@@ -199,7 +211,7 @@ export default function PotVotesTab() {
             <div className="flex items-center gap-2">
               <MdHowToVote className="color-peach-400 h-6 w-6" />
 
-              {authenticatedUser.isSignedIn ? (
+              {viewer.isSignedIn ? (
                 <span className="inline-flex flex-nowrap items-center font-semibold">
                   {isVotingPeriodOngoing ? (
                     <>

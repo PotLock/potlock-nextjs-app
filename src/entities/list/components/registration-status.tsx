@@ -1,4 +1,4 @@
-import { RegistrationStatus } from "@/common/contracts/core";
+import { RegistrationStatus } from "@/common/contracts/core/lists";
 
 export const listRegistrationStatusIcons: Record<
   RegistrationStatus,

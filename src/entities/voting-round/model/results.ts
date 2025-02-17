@@ -4,22 +4,23 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { type MpdaoVoterItem } from "@/common/api/indexer";
+import type { NativeTokenMetadata } from "@/common/blockchains/near-protocol/hooks";
 import { AccountId, type ElectionId, Vote } from "@/common/contracts/core/voting";
-import { ftClient } from "@/common/contracts/tokens/ft";
-import { indivisibleUnitsToBigNum } from "@/common/lib";
+import { type FungibleTokenMetadata, ftContractClient } from "@/common/contracts/tokens/fungible";
+import { bigNumToIndivisible, indivisibleUnitsToBigNum } from "@/common/lib";
 
 import type { VoterProfile, VotingMechanismConfig, VotingRoundWinner } from "../types";
-import type { VotingRoundParticipants } from "./types";
+import type { VotingRoundElectionResult, VotingRoundParticipants } from "./types";
 import { getVoteWeight, getVoteWeightAmplifiers } from "../utils/weight";
 
-const VOTING_ROUND_RESULTS_SCHEMA_VERSION = 2;
+const VOTING_ROUND_RESULTS_SCHEMA_VERSION = 3;
 
-type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "votes"> & {
+export type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "accountId" | "votes"> & {
   accumulatedWeight: Big;
 };
 
 interface VotingRoundResultsState {
-  cache: Record<ElectionId, VotingRoundParticipants & { totalVoteCount: number }>;
+  cache: Record<ElectionId, VotingRoundElectionResult>;
 
   revalidate: (params: {
     electionId: number;
@@ -28,6 +29,7 @@ interface VotingRoundResultsState {
     voterAccountIds: AccountId[];
     voterStatsSnapshot: MpdaoVoterItem[];
     matchingPoolBalance: Big;
+    matchingPoolTokenMetadata: FungibleTokenMetadata | NativeTokenMetadata;
   }) => Promise<void>;
 }
 
@@ -43,10 +45,15 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
         voterAccountIds,
         voterStatsSnapshot,
         matchingPoolBalance,
+        matchingPoolTokenMetadata,
       }) => {
         const stakingTokenMetadata = mechanismConfig.stakingContractAccountId
-          ? await ftClient.ft_metadata({ tokenId: mechanismConfig.stakingContractAccountId })
+          ? await ftContractClient.ft_metadata({
+              tokenId: mechanismConfig.stakingContractAccountId,
+            })
           : null;
+
+        const payoutTokenMetadata = matchingPoolTokenMetadata;
 
         /**
          * Voter profiles with Big.js precision
@@ -138,29 +145,50 @@ export const useVotingRoundResultsStore = create<VotingRoundResultsState>()(
           );
 
           // Calculate estimated payouts using total accumulated weight
-          const winners = entries(candidates).reduce<VotingRoundParticipants["winners"]>(
-            (registry, [accountId, winner]) => ({
-              ...registry,
+          const { registry: winners } = values(candidates)
+            .toSorted((a, b) => b.accumulatedWeight.sub(a.accumulatedWeight).toNumber())
+            .reduce<{
+              registry: VotingRoundParticipants["winners"];
+              unallocatedPoolBalance: Big;
+            }>(
+              ({ registry, unallocatedPoolBalance }, candidate, entryIndex, collection) => {
+                const isLastEntry = entryIndex === collection.length - 1;
 
-              [accountId]: {
-                ...winner,
-                accumulatedWeight: winner.accumulatedWeight.toNumber(),
+                const estimatedPayoutShare = totalAccumulatedWeight.gt(0)
+                  ? matchingPoolBalance.div(totalAccumulatedWeight).mul(candidate.accumulatedWeight)
+                  : Big(0);
 
-                estimatedPayoutAmount: totalAccumulatedWeight.gt(0)
-                  ? matchingPoolBalance
-                      .mul(winner.accumulatedWeight.div(totalAccumulatedWeight))
-                      .toNumber()
-                  : 0,
+                const estimatedPayoutBig = isLastEntry
+                  ? unallocatedPoolBalance
+                  : estimatedPayoutShare;
+
+                return {
+                  unallocatedPoolBalance: unallocatedPoolBalance.minus(estimatedPayoutBig),
+
+                  registry: {
+                    ...registry,
+
+                    [candidate.accountId]: {
+                      ...candidate,
+                      rank: entryIndex + 1,
+                      accumulatedWeight: candidate.accumulatedWeight.toNumber(),
+
+                      estimatedPayoutAmount: bigNumToIndivisible(
+                        isLastEntry ? unallocatedPoolBalance : estimatedPayoutBig,
+                        payoutTokenMetadata.decimals,
+                      ),
+                    },
+                  },
+                };
               },
-            }),
 
-            {},
-          );
+              { registry: {}, unallocatedPoolBalance: matchingPoolBalance },
+            );
 
           set((state) => ({
             cache: {
               ...state.cache,
-              [electionId]: { totalVoteCount: votes.length, voters, winners },
+              [electionId]: { totalVoteCount: votes.length, payoutTokenMetadata, voters, winners },
             },
           }));
         }

@@ -13,7 +13,7 @@ import { AccountId } from "@/common/types";
 import { Button, ScrollArea } from "@/common/ui/components";
 import { useToast } from "@/common/ui/hooks";
 import { cn } from "@/common/ui/utils";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 
 import { VotingRoundCandidateRow } from "./CandidateRow";
 
@@ -30,7 +30,7 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
 }) => {
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
-  const authenticatedUser = useSession();
+  const viewer = useWalletUserSession();
   const selectedEntries = useSet<AccountId>();
 
   const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({
@@ -39,9 +39,9 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
   });
 
   const { data: remainingUserVotingCapacity } = votingContractHooks.useVoterRemainingCapacity({
-    enabled: electionId !== 0 && authenticatedUser.accountId !== undefined,
+    enabled: electionId !== 0 && viewer.accountId !== undefined,
     electionId,
-    accountId: authenticatedUser.accountId as AccountId,
+    accountId: viewer.accountId as AccountId,
   });
 
   const handleEntrySelect = useCallback(
@@ -95,7 +95,7 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
         <div className="inline-flex h-10 w-12 px-4 py-2" />
 
         <div className="mr-a inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
-          <span className="font-600 shrink grow basis-0 uppercase leading-none">{"Projects"}</span>
+          <span className="font-600 shrink grow basis-0 uppercase leading-none">{"Project"}</span>
         </div>
 
         <div className="hidden md:flex">

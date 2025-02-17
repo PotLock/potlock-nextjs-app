@@ -58,3 +58,5 @@ export const {
 
 export const BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL =
   NETWORK === "mainnet" ? "https://nearblocks.io/txns" : "https://testnet.nearblocks.io/txns";
+
+export const IPFS_GATEWAY_URL = process.env.NEXT_PUBLIC_IPFS_GATEWAY_URL;

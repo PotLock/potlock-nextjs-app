@@ -2,9 +2,8 @@ import { useMemo } from "react";
 
 import { prop } from "remeda";
 
-import { useIsHuman } from "@/common/_deprecated/useIsHuman";
 import { ClearanceCheckResult } from "@/common/types";
-import { useSession } from "@/entities/_shared/session";
+import { useWalletUserSession } from "@/common/wallet";
 
 // TODO: refactor to support multi-mechanism for the V2 milestone
 /**
@@ -12,19 +11,19 @@ import { useSession } from "@/entities/_shared/session";
  *  as it's built for the mpDAO milestone.
  */
 export const useVotingRoundSessionClearance = (): ClearanceCheckResult => {
-  const { accountId, hasRegistrationApproved } = useSession();
-  const { isHumanVerified: isHuman } = useIsHuman(accountId);
+  const viewer = useWalletUserSession();
 
   return useMemo(() => {
     const requirements = [
-      { title: "Must have an account on POTLOCK.", isSatisfied: hasRegistrationApproved },
-      { title: "Must have human verification.", isSatisfied: isHuman },
+      { title: "Must have an account on POTLOCK.", isSatisfied: viewer.hasRegistrationApproved },
+      { title: "Must have human verification.", isSatisfied: viewer.isHuman },
     ];
 
     return {
+      isLoading: viewer.isMetadataLoading,
       requirements,
       isEveryRequirementSatisfied: requirements.every(prop("isSatisfied")),
       error: null,
     };
-  }, [isHuman, hasRegistrationApproved]);
+  }, [viewer.hasRegistrationApproved, viewer.isHuman, viewer.isMetadataLoading]);
 };

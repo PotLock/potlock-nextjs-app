@@ -6,8 +6,9 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/api/near/client";
+import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
+import { potContractClient } from "@/common/contracts/core/pot";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 
 import {
@@ -114,15 +115,19 @@ export const usePotApplicationForm = ({
   };
 };
 
+export type PotApplicationReviewParams = {
+  potDetail: Pot;
+  projectId: string;
+  status: "Approved" | "Rejected" | "";
+  onSuccess: () => void;
+};
+
 export const usePotApplicationReviewForm = ({
   potDetail,
   projectId,
   status,
-}: {
-  potDetail: Pot;
-  projectId: string;
-  status: "Approved" | "Rejected" | "";
-}) => {
+  onSuccess,
+}: PotApplicationReviewParams) => {
   const form = useForm<PotApplicationReviewInputs>({
     resolver: zodResolver(potApplicationReviewSchema),
   });
@@ -130,7 +135,7 @@ export const usePotApplicationReviewForm = ({
   const [inProgress, setInProgress] = useState(false);
 
   const onSubmit: FormSubmitHandler<PotApplicationReviewInputs> = useCallback(
-    async (formData) => {
+    (formData) => {
       setInProgress(true);
 
       const args = {
@@ -139,20 +144,23 @@ export const usePotApplicationReviewForm = ({
         notes: formData.data.message,
       };
 
-      try {
-        await naxiosInstance
-          .contractApi({ contractId: potDetail.account })
-          .call("chef_set_application_status", {
-            args,
-            deposit: parseNearAmount(calculateDepositByDataSize(args))!,
-            gas: FULL_TGAS,
-          });
-      } catch (e) {
-        console.error(e);
-        setInProgress(false);
-      }
+      potContractClient
+        .chef_set_application_status({
+          ...args,
+          potId: potDetail.account,
+        })
+        .then(() => {
+          onSuccess();
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setInProgress(false);
+        });
     },
-    [potDetail.account, projectId, status],
+
+    [onSuccess, potDetail.account, projectId, status],
   );
 
   return {

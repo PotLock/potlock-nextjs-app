@@ -3,17 +3,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
-import { Challenge as ChallengeType, potContractClient } from "@/common/contracts/core";
+import { Challenge as ChallengeType, potContractHooks } from "@/common/contracts/core/pot";
 import getTimePassed from "@/common/lib/getTimePassed";
 import AdminIcon from "@/common/ui/svg/AdminIcon";
 import { CheckedIcon } from "@/common/ui/svg/CheckedIcon";
 import { cn } from "@/common/ui/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import routesPath from "@/pathnames";
-import { useGlobalStoreSelector } from "@/store";
+import { rootPathnames } from "@/pathnames";
 
-import ChallengeResolveModal from "./ChallengeResolveModal";
+import { ChallengeResolveModal } from "./ChallengeResolveModal";
 
+// TODO: Refactor
 export const PotPayoutChallenges = ({
   potDetail,
   setTotalChallenges,
@@ -21,53 +22,47 @@ export const PotPayoutChallenges = ({
   potDetail?: Pot;
   setTotalChallenges: (amount: number) => void;
 }) => {
+  const walletUser = useWalletUserSession();
+
+  const viewerAccountId = walletUser.isDaoRepresentative
+    ? walletUser.daoAccountId
+    : walletUser.accountId;
+
+  const { isLoading: isChallengeListLoading, data: challenges } =
+    potContractHooks.usePayoutChallenges({
+      enabled: potDetail?.account !== undefined,
+      potId: potDetail?.account ?? "noop",
+    });
+
   const [tab, setTab] = useState<string>("UNRESOLVED");
   const [filteredChallenges, setFilteredChallenges] = useState<ChallengeType[]>([]);
-
   const [adminModalChallengerId, setAdminModalChallengerId] = useState("");
 
-  const { actAsDao, accountId: _accId } = useGlobalStoreSelector((state) => state.nav);
-  // AccountID (Address)
-  const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
-  const accountId = asDao ? actAsDao.defaultAddress : _accId;
-  const [payoutsChallenges, setPayoutsChallenges] = useState<ChallengeType[]>([]);
-
   const userIsAdminOrGreater =
-    !!potDetail?.admins.find((adm) => adm.id === accountId) || potDetail?.owner.id === accountId;
+    potDetail?.admins.find(({ id }) => id === viewerAccountId) !== undefined ||
+    potDetail?.owner.id === viewerAccountId;
 
-  // Fetch needed data
+  // TODO: Use `useMemo` for filtered results derived according to `tab` instead!
   useEffect(() => {
-    (async () => {
-      // Get Payouts Challenges for pot
-      if (potDetail?.account) {
-        try {
-          const _payoutsChallenges = await potContractClient.get_payouts_challenges({
-            potId: potDetail?.account,
-          });
-
-          setPayoutsChallenges(_payoutsChallenges);
-          setFilteredChallenges(_payoutsChallenges?.filter((c) => !c.resolved));
-          setTotalChallenges(_payoutsChallenges?.length);
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    })();
-  }, [potDetail?.account, accountId, setTotalChallenges]);
+    if (challenges) {
+      setFilteredChallenges(challenges.filter((c) => !c.resolved));
+      setTotalChallenges(challenges.length);
+    }
+  }, [setTotalChallenges, challenges]);
 
   const handleSwitchTab = (tab: string) => {
     setTab(tab);
 
-    const filteredChallenges = payoutsChallenges.filter((challenges) =>
+    const filteredChallenges = (challenges ?? []).filter((challenges) =>
       tab === "UNRESOLVED" ? !challenges.resolved : challenges.resolved,
     );
 
     setFilteredChallenges(filteredChallenges);
   };
 
-  return !payoutsChallenges ? (
+  return !challenges ? (
     "Loading..."
-  ) : payoutsChallenges.length === 0 ? (
+  ) : challenges.length === 0 ? (
     ""
   ) : (
     <div className="transition-all duration-500 ease-in-out">
@@ -113,7 +108,7 @@ export const PotPayoutChallenges = ({
                         className="h-8 w-8 rounded-full"
                       />
                       <Link
-                        href={`${routesPath.PROFILE}/${challenger_id}`}
+                        href={`${rootPathnames.PROFILE}/${challenger_id}`}
                         className="text-sm font-semibold text-gray-800 hover:text-red-500 md:text-base"
                       >
                         {challenger_id}
@@ -172,9 +167,9 @@ export const PotPayoutChallenges = ({
 
         <ChallengeResolveModal
           open={adminModalChallengerId !== ""}
-          payoutsChallenges={payoutsChallenges}
+          payoutsChallenges={challenges}
           potId={potDetail?.account || ""}
-          adminModalChallengerId={adminModalChallengerId}
+          challenger={{ accountId: adminModalChallengerId }}
           onCloseClick={() => setAdminModalChallengerId("")}
         />
       </div>
