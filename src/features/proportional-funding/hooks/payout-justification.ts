@@ -95,7 +95,10 @@ export const usePFPayoutJustification = ({
         data: document,
 
         publish:
-          !isLoading && document === undefined && viewerPower.isAdminOrGreater
+          !isLoading &&
+          document === undefined &&
+          viewerPower.isAdminOrGreater &&
+          viewerPower.canChallengePayouts
             ? publish
             : undefined,
       };

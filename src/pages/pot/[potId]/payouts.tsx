@@ -10,7 +10,6 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-  Button,
   LabeledIcon,
   Pagination,
   PaginationContent,
@@ -32,10 +31,14 @@ import { TokenIcon, useToken } from "@/entities/_shared/token";
 import {
   PotLifecycleStageTagEnum,
   PotPayoutChallenges,
+  usePotFeatureFlags,
   usePotLifecycle,
   usePotPayoutLookup,
 } from "@/entities/pot";
-import { PFPayoutJustificationPublicationAction } from "@/features/proportional-funding";
+import {
+  PFPayoutJustificationPublicationAction,
+  PfPayoutReleaseAction,
+} from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/layout";
 import { PotPayoutManager } from "@/layout/pot/components/payout-manager";
 
@@ -49,8 +52,9 @@ const PayoutEntriesSkeleton: React.FC = () =>
 export default function PotPayoutsTab() {
   const router = useRouter();
   const { potId } = router.query as { potId: string };
+  const potFeatures = usePotFeatureFlags({ potId });
   const potLifecycle = usePotLifecycle({ potId });
-  const { data: pot } = indexer.usePot({ potId });
+  const { data: potSnapshot, mutate: refetchPotSnapshot } = indexer.usePot({ potId });
   const { data: token } = useToken({ tokenId: NATIVE_TOKEN_ID });
 
   const isFunctionalityAvailable = useMemo(
@@ -204,13 +208,18 @@ export default function PotPayoutsTab() {
             { hidden: !showChallenges },
           )}
         >
-          <PotPayoutChallenges potDetail={pot} setTotalChallenges={setTotalChallenges} />
+          <PotPayoutChallenges potDetail={potSnapshot} setTotalChallenges={setTotalChallenges} />
         </div>
 
         <div className="mb-16 flex w-full flex-col items-start gap-6">
-          {!pot?.all_paid_out && (
+          {!potSnapshot?.all_paid_out && (
             <>
-              <PFPayoutJustificationPublicationAction {...{ potId }} />
+              {potFeatures.hasPFMechanism && (
+                <>
+                  <PFPayoutJustificationPublicationAction {...{ potId }} />
+                  <PfPayoutReleaseAction onSuccess={refetchPotSnapshot} {...{ potId }} />
+                </>
+              )}
 
               <Alert variant="neutral">
                 <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
@@ -259,9 +268,8 @@ export default function PotPayoutsTab() {
                       <div
                         className={cn(
                           "relative flex w-full flex-row items-center justify-between gap-8",
-                          "p-4 md:flex-wrap md:gap-2",
+                          "p-3 md:flex-wrap md:gap-2",
                         )}
-                        style={{ padding: "12px" }}
                       >
                         {"No payouts to display"}
                       </div>
@@ -358,7 +366,7 @@ export default function PotPayoutsTab() {
           "hidden w-full transition-all duration-500 ease-in-out md:w-[33%]",
         )}
       >
-        <PotPayoutChallenges potDetail={pot} setTotalChallenges={setTotalChallenges} />
+        <PotPayoutChallenges potDetail={potSnapshot} setTotalChallenges={setTotalChallenges} />
       </div>
     </div>
   );
