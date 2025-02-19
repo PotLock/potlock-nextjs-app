@@ -16,11 +16,8 @@ export const useDonationSuccessWalletRedirect = () => {
   } = useRouteQuery();
 
   const recipientAccountId = typeof donateTo === "string" ? donateTo : undefined;
-
   const potAccountId = typeof donateToPot === "string" ? donateToPot : undefined;
-
   const listId = typeof donateToList === "string" ? parseInt(donateToList) : undefined;
-
   const campaignId = typeof donateToCampaign === "string" ? parseInt(donateToCampaign) : undefined;
 
   const transactionHash =
@@ -62,8 +59,3 @@ export const useDonationSuccessWalletRedirect = () => {
     transactionHash,
   ]);
 };
-
-// TODO: https://github.com/PotLock/potlock-nextjs-app/issues/86
-// export const useDonationFailureWalletRedirect = () => {
-//   ...
-// }

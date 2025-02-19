@@ -7,8 +7,9 @@ import { Pot, indexer } from "@/common/api/indexer";
 import { TOTAL_FEE_BASIS_POINTS } from "@/common/constants";
 import { intoShareValue } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
+import { useWalletUserSession } from "@/common/wallet";
 
-import { DonationInputs, WithDonationFormAPI } from "../models";
+import { DonationInputs, DonationSubmitParams, WithDonationFormAPI } from "../models";
 import { DonationBreakdown, DonationGroupAllocationStrategyEnum, WithTotalAmount } from "../types";
 import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
@@ -114,23 +115,25 @@ export const useDonationManualShareAllocation = ({ form }: DonationShareAllocati
 };
 
 export type DonationAllocationParams = WithTotalAmount &
-  Pick<DonationInputs, "referrerAccountId"> &
-  Partial<Pick<DonationInputs, "bypassProtocolFee" | "bypassChefFee">> & {
+  Partial<
+    Pick<DonationSubmitParams, "bypassProtocolFee" | "bypassChefFee" | "referrerAccountId">
+  > & {
     pot?: Pot;
     protocolFeeFinalAmount?: number;
     referralFeeFinalAmount?: number;
   };
 
 export const useDonationAllocationBreakdown = ({
+  referrerAccountId,
   totalAmountFloat,
   pot,
-  referrerAccountId,
   protocolFeeFinalAmount,
   referralFeeFinalAmount,
   bypassProtocolFee = false,
   bypassChefFee = false,
 }: DonationAllocationParams): DonationBreakdown => {
-  const { data: potlockDonationConfig } = indexer.useDonationConfig();
+  const viewer = useWalletUserSession();
+  const { data: donationConfig } = indexer.useDonationConfig();
 
   // TODO: (non-critical)
   //? Recalculate basis points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
@@ -139,7 +142,7 @@ export const useDonationAllocationBreakdown = ({
    *? Protocol fee:
    */
 
-  const protocolFeeInitialBasisPoints = potlockDonationConfig?.protocol_fee_basis_points ?? 0;
+  const protocolFeeInitialBasisPoints = donationConfig?.protocol_fee_basis_points ?? 0;
 
   const protocolFeeBasisPoints = bypassProtocolFee ? 0 : protocolFeeInitialBasisPoints;
 
@@ -148,18 +151,18 @@ export const useDonationAllocationBreakdown = ({
 
   const protocolFeePercent = donationFeeBasisPointsToPercents(protocolFeeInitialBasisPoints);
 
-  const protocolFeeRecipientAccountId = potlockDonationConfig?.protocol_fee_recipient_account;
+  const protocolFeeRecipientAccountId = donationConfig?.protocol_fee_recipient_account;
 
   /**
    *? Referral fee:
    */
 
-  const potlockReferralFeeBasisPoints = potlockDonationConfig?.referral_fee_basis_points ?? 0;
+  const initialReferralFeeBasisPoints = donationConfig?.referral_fee_basis_points ?? 0;
 
-  const referralFeeInitialBasisPoints =
-    pot?.referral_fee_public_round_basis_points ?? potlockReferralFeeBasisPoints;
-
-  const referralFeeBasisPoints = referrerAccountId ? referralFeeInitialBasisPoints : 0;
+  const referralFeeBasisPoints =
+    (viewer.referrerAccountId ?? referrerAccountId)
+      ? (pot?.referral_fee_public_round_basis_points ?? initialReferralFeeBasisPoints)
+      : 0;
 
   const referralFeeAmount =
     referralFeeFinalAmount ?? (totalAmountFloat * referralFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;

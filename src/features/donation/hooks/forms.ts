@@ -9,6 +9,7 @@ import { ZodError } from "zod";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
+import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
@@ -24,7 +25,8 @@ export type DonationFormParams = DonationAllocationKey & {
   referrerAccountId?: string;
 };
 
-export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormParams) => {
+export const useDonationForm = ({ ...params }: DonationFormParams) => {
+  const viewer = useWalletUserSession();
   const now = Temporal.Now.instant();
   const isSingleProjectDonation = "accountId" in params;
   const isPotDonation = "potId" in params;
@@ -57,7 +59,6 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
       amount: DONATION_MIN_NEAR_AMOUNT,
       tokenId: NATIVE_TOKEN_ID,
       recipientAccountId,
-      referrerAccountId,
       potAccountId: isPotDonation ? potAccountId : defaultPotAccountId,
       listId,
       campaignId,
@@ -82,7 +83,6 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
       matchingPots.length,
       potAccountId,
       recipientAccountId,
-      referrerAccountId,
     ],
   );
 
@@ -144,8 +144,14 @@ export const useDonationForm = ({ referrerAccountId, ...params }: DonationFormPa
       : null;
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
-    (inputs) => dispatch.donation.submit({ ...inputs, ...params }),
-    [params],
+    (inputs) =>
+      dispatch.donation.submit({
+        ...inputs,
+        ...params,
+        referrerAccountId: viewer?.referrerAccountId,
+      }),
+
+    [params, viewer?.referrerAccountId],
   );
 
   useEffect(() => {
