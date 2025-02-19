@@ -20,6 +20,7 @@ export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
 export const PLATFORM_TWITTER_ACCOUNT_ID = "PotLock_";
 export const DEFAULT_SHARE_HASHTAGS = ["PublicGoods", "Donations"];
+export const APP_DEFAULT_PUBLIC_URL = "https://alpha.potlock.org";
 export const APP_BOS_COUNTERPART_URL = "https://bos.potlock.org";
 
 export const APP_METADATA: Metadata & {

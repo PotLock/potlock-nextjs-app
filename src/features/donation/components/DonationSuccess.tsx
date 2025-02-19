@@ -6,6 +6,7 @@ import Link from "next/link";
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { type PotId, indexer } from "@/common/api/indexer";
 import {
+  APP_DEFAULT_PUBLIC_URL,
   DEFAULT_SHARE_HASHTAGS,
   NATIVE_TOKEN_DECIMALS,
   NATIVE_TOKEN_ID,
@@ -23,6 +24,7 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import TwitterSvg from "@/common/ui/svg/twitter";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenTotalValue, useToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";
@@ -40,6 +42,7 @@ export type DonationSuccessProps = WithDonationFormAPI & {
 const staticResultIndicatorClassName = "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
 
 export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationSuccessProps) => {
+  const viewer = useWalletUserSession();
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
   const [potId] = form.watch(["potAccountId"]);
@@ -97,35 +100,29 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     if (!recipient?.near_social_profile_data) return;
     const twitterIntentBase = "https://twitter.com/intent/tweet?text=";
 
-    const profile: any = recipient?.near_social_profile_data;
+    const profile = recipient.near_social_profile_data;
 
-    let PROJECT_TWITTER_ACCOUNT = recipient.id;
-
-    if (profile) {
-      PROJECT_TWITTER_ACCOUNT = profile.linktree?.twitter
-        ? `@${profile.linktree.twitter}`
-        : profile.name;
-    }
-
-    const tag = `${PROJECT_TWITTER_ACCOUNT}`;
-
-    let potlockUrl = `https://alpha.potlock.org${rootPathnames.PROFILE}/${recipient.id}/donations`;
-    let potlockHomeUrl = "https://alpha.potlock.org";
-
-    let text = `🎉 Just supported ${tag} (${PROJECT_TWITTER_ACCOUNT}) through @${PLATFORM_TWITTER_ACCOUNT_ID}! 
+    const text = encodeURIComponent(`🎉 Just supported ${
+      profile.linktree?.twitter
+        ? `${profile.name} (@${profile.linktree.twitter})`
+        : `${profile.name} (${recipient.id})`
+    } through @${PLATFORM_TWITTER_ACCOUNT_ID}! 
     
     💝 Making an impact by funding public goods that shape our future.
     
-    🤝 Join me in supporting amazing projects:\n`;
+    🤝 Join me in supporting amazing projects:\n`);
 
-    text = encodeURIComponent(text);
-    potlockUrl = encodeURIComponent(potlockUrl);
-    potlockHomeUrl = encodeURIComponent(potlockHomeUrl);
+    const url = encodeURIComponent(
+      `${APP_DEFAULT_PUBLIC_URL}${rootPathnames.PROFILE}/${recipient.id}/donations`,
+    );
+
+    const relation = encodeURIComponent(APP_DEFAULT_PUBLIC_URL);
+
     return (
       twitterIntentBase +
       text +
-      `&url=${potlockUrl}` +
-      `&related=${potlockHomeUrl}` +
+      `&url=${url}` +
+      `&related=${relation}` +
       `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
     );
   }, [recipient?.id, recipient?.near_social_profile_data]);
