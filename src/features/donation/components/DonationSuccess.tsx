@@ -126,24 +126,32 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
           `\n\n🤝 Join me in supporting amazing projects:\n`,
       );
 
-      const url = encodeURIComponent(
-        `${APP_DEFAULT_PUBLIC_URL}${rootPathnames.PROFILE}/${recipientAccountId}/donations`,
-        // + viewer.isSignedIn
-        // ? `?referrerAccountId=${viewer.accountId}`
-        // : "",
-      );
+      const baseUrl = `${
+        APP_DEFAULT_PUBLIC_URL
+      }${rootPathnames.PROFILE}/${recipientAccountId}/donations`;
 
-      const relation = encodeURIComponent(APP_DEFAULT_PUBLIC_URL);
+      const fullUrl = viewer.isSignedIn
+        ? `${baseUrl}?referrerAccountId=${viewer.accountId}`
+        : baseUrl;
+
+      const encodedUrl = encodeURIComponent(fullUrl);
+      const encodedRelation = encodeURIComponent(APP_DEFAULT_PUBLIC_URL);
 
       return (
         twitterIntentBase +
         text +
-        `&url=${url}` +
-        `&related=${relation}` +
+        `&url=${encodedUrl}` +
+        `&related=${encodedRelation}` +
         `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
       );
     } else return undefined;
-  }, [recipientAccountId, recipientSocialProfile]);
+  }, [
+    recipientAccountId,
+    recipientSocialProfile?.linktree?.twitter,
+    recipientSocialProfile?.name,
+    viewer.accountId,
+    viewer.isSignedIn,
+  ]);
 
   return recipientProfileLoadingError !== undefined ||
     (!isResultLoading && recipientAccountId === undefined) ? (
