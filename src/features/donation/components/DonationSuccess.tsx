@@ -126,12 +126,11 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
           `\n\n🤝 Join me in supporting amazing projects:\n`,
       );
 
-      // viewer.isSignedIn
-      // ? `?referrerAccountId=${viewer.accountId}`
-      // : "",
-
       const url = encodeURIComponent(
         `${APP_DEFAULT_PUBLIC_URL}${rootPathnames.PROFILE}/${recipientAccountId}/donations`,
+        // + viewer.isSignedIn
+        // ? `?referrerAccountId=${viewer.accountId}`
+        // : "",
       );
 
       const relation = encodeURIComponent(APP_DEFAULT_PUBLIC_URL);
