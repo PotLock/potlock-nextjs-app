@@ -47,6 +47,7 @@ export const donate = (args: DirectDonationArgs, depositAmountYocto: string) =>
   contractApi.call<typeof args, DirectDonation>("donate", {
     args,
     deposit: depositAmountYocto,
+    gas: FULL_TGAS,
     callbackUrl: window.location.href,
   });
 
@@ -56,6 +57,7 @@ export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
       method: "donate",
       deposit: amountYoctoNear,
       gas: FULL_TGAS,
+
       ...txInput,
     })),
   );

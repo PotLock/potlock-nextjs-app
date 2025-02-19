@@ -2,10 +2,12 @@ import { useMemo } from "react";
 
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { isError } from "remeda";
 
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { type PotId, indexer } from "@/common/api/indexer";
 import {
+  APP_DEFAULT_PUBLIC_URL,
   DEFAULT_SHARE_HASHTAGS,
   NATIVE_TOKEN_DECIMALS,
   NATIVE_TOKEN_ID,
@@ -23,7 +25,8 @@ import {
   Skeleton,
 } from "@/common/ui/components";
 import TwitterSvg from "@/common/ui/svg/twitter";
-import { AccountProfileLink } from "@/entities/_shared/account";
+import { useWalletUserSession } from "@/common/wallet";
+import { AccountProfileLink, useAccountSocialProfile } from "@/entities/_shared/account";
 import { TokenTotalValue, useToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";
 
@@ -40,9 +43,10 @@ export type DonationSuccessProps = WithDonationFormAPI & {
 const staticResultIndicatorClassName = "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
 
 export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationSuccessProps) => {
+  const viewer = useWalletUserSession();
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
-  const [potId] = form.watch(["potAccountId"]);
+  const [potId, recipientAccountIdFormValue] = form.watch(["potAccountId", "recipientAccountId"]);
 
   const { data: pot } = indexer.usePot({
     enabled: potId !== undefined,
@@ -51,24 +55,32 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
 
   const recipientAccountId = useMemo(
     () =>
-      "recipient_id" in (finalOutcome ?? {})
+      ("recipient_id" in (finalOutcome ?? {})
         ? (finalOutcome as DirectDonation).recipient_id
-        : ((finalOutcome as PotDonation).project_id ?? undefined),
+        : (finalOutcome as PotDonation).project_id) ?? recipientAccountIdFormValue,
 
-    [finalOutcome],
+    [finalOutcome, recipientAccountIdFormValue],
   );
 
-  const { data: recipient, error: recipientDataError } = indexer.useAccount({
+  const {
+    isLoading: isRecipientSocialProfileLoading,
+    profile: recipientSocialProfile,
+    error: recipientProfileLoadingError,
+  } = useAccountSocialProfile({
     enabled: recipientAccountId !== undefined,
     accountId: recipientAccountId ?? "noop",
   });
 
-  const tokenId =
-    "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID;
+  const tokenId = useMemo(
+    () =>
+      "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID,
 
-  const { data: token } = useToken({ tokenId });
+    [finalOutcome],
+  );
 
-  const isLoading = isResultLoading || recipient === undefined || token === undefined;
+  const { isLoading: isTokenLoading, data: token } = useToken({ tokenId });
+
+  const isLoading = isResultLoading || isRecipientSocialProfileLoading || isTokenLoading;
 
   const totalAmountFloat = indivisibleUnitsToFloat(
     finalOutcome?.total_amount ?? "0",
@@ -94,47 +106,63 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   });
 
   const twitterIntent = useMemo(() => {
-    if (!recipient?.near_social_profile_data) return;
-    const twitterIntentBase = "https://twitter.com/intent/tweet?text=";
+    if (recipientAccountId !== undefined) {
+      const twitterIntentBase = "https://twitter.com/intent/tweet?text=";
 
-    const profile: any = recipient?.near_social_profile_data;
+      const text = encodeURIComponent(
+        `🎉 Just supported ${
+          recipientSocialProfile?.linktree?.twitter
+            ? `${recipientSocialProfile?.name ?? recipientAccountId} (@${
+                recipientSocialProfile.linktree.twitter
+              })`
+            : `${
+                recipientSocialProfile?.name !== undefined &&
+                recipientSocialProfile?.name?.length > 1
+                  ? `${recipientSocialProfile.name} (${recipientAccountId})`
+                  : recipientAccountId
+              }`
+        } through @${PLATFORM_TWITTER_ACCOUNT_ID}!\n\n` +
+          "💝 Making an impact by funding public goods that shape our future." +
+          `\n\n🤝 Join me in supporting amazing projects:\n`,
+      );
 
-    let PROJECT_TWITTER_ACCOUNT = recipient.id;
+      const baseUrl = `${
+        APP_DEFAULT_PUBLIC_URL
+      }${rootPathnames.PROFILE}/${recipientAccountId}/donations`;
 
-    if (profile) {
-      PROJECT_TWITTER_ACCOUNT = profile.linktree?.twitter
-        ? `@${profile.linktree.twitter}`
-        : profile.name;
-    }
+      const fullUrl = viewer.isSignedIn
+        ? `${baseUrl}?referrerAccountId=${viewer.accountId}`
+        : baseUrl;
 
-    const tag = `${PROJECT_TWITTER_ACCOUNT}`;
+      const encodedUrl = encodeURIComponent(fullUrl);
+      const encodedRelation = encodeURIComponent(APP_DEFAULT_PUBLIC_URL);
 
-    let potlockUrl = `https://alpha.potlock.org${rootPathnames.PROFILE}/${recipient.id}/donations`;
-    let potlockHomeUrl = "https://alpha.potlock.org";
+      return (
+        twitterIntentBase +
+        text +
+        `&url=${encodedUrl}` +
+        `&related=${encodedRelation}` +
+        `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
+      );
+    } else return undefined;
+  }, [
+    recipientAccountId,
+    recipientSocialProfile?.linktree?.twitter,
+    recipientSocialProfile?.name,
+    viewer.accountId,
+    viewer.isSignedIn,
+  ]);
 
-    let text = `🎉 Just supported ${tag} (${PROJECT_TWITTER_ACCOUNT}) through @${PLATFORM_TWITTER_ACCOUNT_ID}! 
-    
-    💝 Making an impact by funding public goods that shape our future.
-    
-    🤝 Join me in supporting amazing projects:\n`;
-
-    text = encodeURIComponent(text);
-    potlockUrl = encodeURIComponent(potlockUrl);
-    potlockHomeUrl = encodeURIComponent(potlockHomeUrl);
-    return (
-      twitterIntentBase +
-      text +
-      `&url=${potlockUrl}` +
-      `&related=${potlockHomeUrl}` +
-      `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
-    );
-  }, [recipient?.id, recipient?.near_social_profile_data]);
-
-  return recipientDataError !== undefined ? (
+  return recipientProfileLoadingError !== undefined ||
+    (!isResultLoading && recipientAccountId === undefined) ? (
     <ModalErrorBody
       heading="Donation"
       title="Unable to load recipient data!"
-      message={recipientDataError?.message}
+      message={
+        isError(recipientProfileLoadingError)
+          ? recipientProfileLoadingError.message
+          : recipientProfileLoadingError
+      }
     />
   ) : (
     <DialogDescription className="items-center gap-8 p-10">
@@ -184,14 +212,17 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
           <TokenTotalValue amountBigString={finalOutcome.total_amount} {...{ tokenId }} />
         )}
 
-        {isLoading ? (
+        {isLoading || recipientAccountId === undefined ? (
           <Skeleton className="w-49 h-5" />
         ) : (
           <p className="m-0 flex flex-col">
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
 
-              <AccountProfileLink accountId={recipient.id} classNames={{ name: "font-600" }} />
+              <AccountProfileLink
+                accountId={recipientAccountId}
+                classNames={{ name: "font-600" }}
+              />
             </div>
 
             {pot?.name && (
@@ -200,11 +231,11 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
           </p>
         )}
 
-        {isLoading ? (
+        {isLoading || recipientAccountId === undefined ? (
           <Skeleton className="w-23.5 h-5" />
         ) : (
           <Link
-            href={`${rootPathnames.PROFILE}/${recipient.id}/funding-raised`}
+            href={`${rootPathnames.PROFILE}/${recipientAccountId}/funding-raised`}
             onClick={closeModal}
             className="font-500 text-red-600"
           >

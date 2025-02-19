@@ -13,6 +13,7 @@ import {
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { safePositiveNumber } from "@/common/lib";
+import type { AccountId } from "@/common/types";
 import { TokenAvailableBalance } from "@/entities/_shared/token";
 
 import { DONATION_MAX_MESSAGE_LENGTH, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
@@ -47,7 +48,6 @@ export const donationSchema = object({
   tokenId: donationTokenSchema,
   amount: donationAmount.describe("Amount of the selected tokens to donate."),
   recipientAccountId: string().optional().describe("Recipient account id."),
-  referrerAccountId: string().optional().describe("Referrer account id."),
   potAccountId: string().optional().describe("Pot account id."),
   listId: number().optional().describe("List id."),
   campaignId: number().optional().describe("Campaign id."),
@@ -84,6 +84,10 @@ export const donationSchema = object({
   });
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
+
+export type DonationSubmitParams = DonationInputs & {
+  referrerAccountId?: AccountId;
+};
 
 export const donationCrossFieldValidationTargets: (keyof DonationInputs)[] = [
   "amount",

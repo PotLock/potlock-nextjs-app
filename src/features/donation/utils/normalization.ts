@@ -1,6 +1,6 @@
 import { floatToYoctoNear } from "@/common/lib";
 
-import { DonationInputs } from "../models";
+import { type DonationSubmitParams } from "../models";
 import { DonationBatchCallDraft, DonationGroupAllocationStrategyEnum } from "../types";
 
 export const donationInputsToBatchDonationDraft = ({
@@ -11,12 +11,12 @@ export const donationInputsToBatchDonationDraft = ({
   referrerAccountId,
   bypassProtocolFee,
   bypassChefFee,
-}: DonationInputs): DonationBatchCallDraft => {
+}: DonationSubmitParams): DonationBatchCallDraft => {
   const isDistributionManual =
     groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manually;
 
   // TODO: better definition for the return type
-  // @ts-expect-error TODO ( runtime issues are not anticipated )
+  // @ts-expect-error runtime issues are not anticipated
   return {
     ...(listId ? {} : { potAccountId }),
 
@@ -28,9 +28,7 @@ export const donationInputsToBatchDonationDraft = ({
               {
                 args: {
                   ...(potAccountId ? { project_id: account_id } : { recipient_id: account_id }),
-
                   ...(potAccountId && bypassChefFee ? { custom_chef_fee_basis_points: 0 } : {}),
-
                   referrer_id: referrerAccountId,
                   bypass_protocol_fee: bypassProtocolFee,
                 },

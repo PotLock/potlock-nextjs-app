@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { isBigSource, useRouteQuery } from "@/common/lib";
+import { isBigSource } from "@/common/lib";
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/components";
 import { cn } from "@/common/ui/utils";
 import { useWalletUserSession } from "@/common/wallet";
@@ -26,21 +26,10 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
   ...props
 }) => {
   const viewer = useWalletUserSession();
-  const { currentStep, finalOutcome } = useDonationState();
-
-  const {
-    query: { referrerId: referrerIdSearchParam },
-  } = useRouteQuery();
+  const { currentStep } = useDonationState();
 
   const { form, matchingPots, minAmountError, isDisabled, onSubmit, totalAmountFloat } =
-    useDonationForm({
-      ...props,
-
-      referrerAccountId:
-        typeof referrerIdSearchParam === "string"
-          ? referrerIdSearchParam
-          : (finalOutcome?.referrer_id ?? undefined),
-    });
+    useDonationForm(props);
 
   const [tokenId] = form.watch(["tokenId"]);
 
