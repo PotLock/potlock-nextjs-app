@@ -78,13 +78,15 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
    */
   useEffect(() => {
     if (
+      isReady &&
+      isSignedIn &&
       isAccountId(trackedQueryParams.referrerAccountId) &&
       trackedQueryParams.referrerAccountId !== referrerAccountId &&
       trackedQueryParams.referrerAccountId !== accountId
     ) {
       setReferrerAccountId(trackedQueryParams.referrerAccountId);
     }
-  }, [accountId, referrerAccountId, setReferrerAccountId, trackedQueryParams]);
+  }, [accountId, isReady, isSignedIn, referrerAccountId, setReferrerAccountId, trackedQueryParams]);
 
   return children;
 };

@@ -34,8 +34,6 @@ export const useWalletUserSession = (): WalletUserSession => {
 
   const isMetadataLoading = isHumanVerificationStatusLoading || isRegistrationLoading;
 
-  console.log(referrerAccountId);
-
   return useMemo(() => {
     if (wallet.isReady && wallet.isSignedIn && wallet.accountId) {
       return {
