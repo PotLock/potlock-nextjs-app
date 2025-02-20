@@ -9,10 +9,11 @@ import { isAccountId } from "@/common/lib";
 import { useGlobalStoreSelector } from "@/store";
 
 import { useWalletUserAdapter } from "./adapters";
-import { WalletUserSession } from "./types";
+import { type WalletUserSession, useWalletUserMetadataStore } from "./model";
 
 export const useWalletUserSession = (): WalletUserSession => {
   const wallet = useWalletUserAdapter();
+  const { referrerAccountId } = useWalletUserMetadataStore();
   const { actAsDao } = useGlobalStoreSelector(prop("nav"));
   const daoAccountId = actAsDao.defaultAddress;
   const isDaoAccountIdValid = useMemo(() => isAccountId(daoAccountId), [daoAccountId]);
@@ -49,6 +50,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationSubmitted: registration !== undefined,
         hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
         registrationStatus: registration?.status,
+        referrerAccountId,
       };
     } else if (wallet.isReady && !wallet.isSignedIn) {
       return {
@@ -62,6 +64,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,
+        referrerAccountId,
       };
     } else {
       return {
@@ -75,6 +78,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,
+        referrerAccountId,
       };
     }
   }, [
@@ -82,6 +86,7 @@ export const useWalletUserSession = (): WalletUserSession => {
     isDaoRepresentative,
     isHuman,
     isMetadataLoading,
+    referrerAccountId,
     registration,
     wallet.accountId,
     wallet.isReady,

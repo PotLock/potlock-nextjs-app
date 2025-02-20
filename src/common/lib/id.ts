@@ -9,7 +9,7 @@ export const isImplicitNearAccountId = (input: string): boolean => /^[a-fA-F0-9]
 export const isTelegramAccountId = (input: string): boolean => input.endsWith(".tg");
 
 export const isAccountId = (input?: string | null): boolean =>
-  typeof input === "string"
+  typeof input === "string" && input.length > 4
     ? isEthereumAddress(input) ||
       isImplicitNearAccountId(input) ||
       isTelegramAccountId(input) ||

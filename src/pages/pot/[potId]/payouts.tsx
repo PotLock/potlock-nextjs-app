@@ -31,9 +31,14 @@ import { TokenIcon, useToken } from "@/entities/_shared/token";
 import {
   PotLifecycleStageTagEnum,
   PotPayoutChallenges,
+  usePotFeatureFlags,
   usePotLifecycle,
   usePotPayoutLookup,
 } from "@/entities/pot";
+import {
+  PFPayoutJustificationPublicationAction,
+  PfPayoutReleaseAction,
+} from "@/features/proportional-funding";
 import { PotLayout } from "@/layout/pot/components/layout";
 import { PotPayoutManager } from "@/layout/pot/components/payout-manager";
 
@@ -47,8 +52,9 @@ const PayoutEntriesSkeleton: React.FC = () =>
 export default function PotPayoutsTab() {
   const router = useRouter();
   const { potId } = router.query as { potId: string };
+  const potFeatures = usePotFeatureFlags({ potId });
   const potLifecycle = usePotLifecycle({ potId });
-  const { data: pot } = indexer.usePot({ potId });
+  const { data: potSnapshot, mutate: refetchPotSnapshot } = indexer.usePot({ potId });
   const { data: token } = useToken({ tokenId: NATIVE_TOKEN_ID });
 
   const isFunctionalityAvailable = useMemo(
@@ -202,21 +208,32 @@ export default function PotPayoutsTab() {
             { hidden: !showChallenges },
           )}
         >
-          <PotPayoutChallenges potDetail={pot} setTotalChallenges={setTotalChallenges} />
+          <PotPayoutChallenges potDetail={potSnapshot} setTotalChallenges={setTotalChallenges} />
         </div>
 
         <div className="mb-16 flex w-full flex-col items-start gap-6">
-          {!pot?.all_paid_out && (
-            <Alert variant="neutral">
-              <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
+          {!potSnapshot?.all_paid_out && (
+            <>
+              {potFeatures.hasPFMechanism && (
+                <>
+                  <PFPayoutJustificationPublicationAction {...{ potId }} />
+                  <PfPayoutReleaseAction onSuccess={refetchPotSnapshot} {...{ potId }} />
+                </>
+              )}
 
-              <AlertDescription>
-                {pot?.cooldown_end
-                  ? "These payouts have been set on the contract but have not been paid out yet."
-                  : "These payouts are estimated amounts only and have not been set on the contract yet."}
-              </AlertDescription>
-            </Alert>
+              <Alert variant="neutral">
+                <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+                <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
+
+                <AlertDescription className="flex flex-col gap-4">
+                  <span>
+                    {(payouts?.length ?? 0) > 0
+                      ? "These payouts have been set on the contract but have not been paid out yet."
+                      : "These payouts are estimated amounts only and have not been set on the contract yet."}
+                  </span>
+                </AlertDescription>
+              </Alert>
+            </>
           )}
 
           {(payouts?.length ?? 0) === 0 ? (
@@ -229,13 +246,11 @@ export default function PotPayoutsTab() {
               />
 
               <div className="flex w-full flex-col flex-nowrap items-center overflow-x-auto">
-                <div
-                  className={
-                    "flex w-full items-center justify-between gap-8 bg-neutral-500 p-2.5 px-4"
-                  }
-                >
-                  <div className="inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
-                    <span className="font-600 uppercase leading-none">{"Projects"}</span>
+                <div className="flex w-full justify-between bg-neutral-50 text-xs text-neutral-500">
+                  <div className="mr-a inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
+                    <span className="font-600 shrink grow basis-0 uppercase leading-none">
+                      {"Project"}
+                    </span>
                   </div>
 
                   <span className="flex h-10 items-center px-4 py-2">
@@ -253,9 +268,8 @@ export default function PotPayoutsTab() {
                       <div
                         className={cn(
                           "relative flex w-full flex-row items-center justify-between gap-8",
-                          "p-4 md:flex-wrap md:gap-2",
+                          "p-3 md:flex-wrap md:gap-2",
                         )}
-                        style={{ padding: "12px" }}
                       >
                         {"No payouts to display"}
                       </div>
@@ -352,7 +366,7 @@ export default function PotPayoutsTab() {
           "hidden w-full transition-all duration-500 ease-in-out md:w-[33%]",
         )}
       >
-        <PotPayoutChallenges potDetail={pot} setTotalChallenges={setTotalChallenges} />
+        <PotPayoutChallenges potDetail={potSnapshot} setTotalChallenges={setTotalChallenges} />
       </div>
     </div>
   );

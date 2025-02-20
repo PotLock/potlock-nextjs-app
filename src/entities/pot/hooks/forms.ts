@@ -1,13 +1,9 @@
 import { useCallback, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { calculateDepositByDataSize } from "@wpdas/naxios";
-import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
-import { FULL_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
 
 import { challengeResolveSchema, challengeSchema } from "../models/schemas";
@@ -27,7 +23,7 @@ export const useChallengeForm = ({ potDetail }: { potDetail: Pot; referrerId?: s
       try {
         await potContractClient.challenge_payouts({
           potId: potDetail.account,
-          reason: formData.data.message,
+          args: { reason: formData.data.message },
         });
       } catch (e) {
         console.error(e);
@@ -68,19 +64,16 @@ export const useChallengeResolveForm = ({
         resolve_challenge: formData.data.resolve,
       };
 
-      try {
-        await naxiosInstance
-          .contractApi({ contractId: potId })
-          .call("admin_update_payouts_challenge", {
-            args,
-            deposit: parseNearAmount(calculateDepositByDataSize(args))!,
-            gas: FULL_TGAS,
-          });
-      } catch (e) {
-        console.error(e);
-        setInProgress(false);
-      }
+      potContractClient
+        .admin_update_payouts_challenge({ potId, args })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setInProgress(false);
+        });
     },
+
     [potId, challengerId],
   );
 

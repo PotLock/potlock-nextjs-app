@@ -1,6 +1,8 @@
 import { Form } from "react-hook-form";
 
+import type { ByPotId } from "@/common/api/indexer";
 import { Challenge } from "@/common/contracts/core/pot";
+import type { ByAccountId } from "@/common/types";
 import {
   Button,
   Checkbox,
@@ -15,37 +17,35 @@ import {
 
 import { useChallengeResolveForm } from "../hooks/forms";
 
-type Props = {
-  adminModalChallengerId: string;
-  potId: string;
+export type ChallengeResolveModalProps = ByPotId & {
+  challenger: ByAccountId;
   open?: boolean;
   onCloseClick?: () => void;
   payoutsChallenges: Challenge[];
 };
 
-const ChallengeResolveModal = ({
-  adminModalChallengerId,
+export const ChallengeResolveModal: React.FC<ChallengeResolveModalProps> = ({
+  challenger,
   open,
   onCloseClick,
   potId,
   payoutsChallenges,
-}: Props) => {
+}) => {
   // Form settings
   const { form, errors, onSubmit, inProgress } = useChallengeResolveForm({
     potId,
-    challengerId: adminModalChallengerId,
+    challengerId: challenger.accountId,
   });
 
-  const reason = adminModalChallengerId
-    ? payoutsChallenges.find((challenge) => challenge.challenger_id === adminModalChallengerId)
-        ?.reason
+  const reason = challenger.accountId
+    ? payoutsChallenges.find(({ challenger_id }) => challenger_id === challenger.accountId)?.reason
     : "";
 
   return (
     <Dialog open={open}>
       <DialogContent className="max-w-130" onCloseClick={onCloseClick}>
         <DialogHeader>
-          <DialogTitle>Update Challenge from {adminModalChallengerId}</DialogTitle>
+          <DialogTitle>Update Challenge from {challenger.accountId}</DialogTitle>
         </DialogHeader>
 
         <Form {...form} onSubmit={onSubmit}>
@@ -102,5 +102,3 @@ const ChallengeResolveModal = ({
     </Dialog>
   );
 };
-
-export default ChallengeResolveModal;

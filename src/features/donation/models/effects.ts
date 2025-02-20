@@ -21,7 +21,7 @@ import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
-import { DonationInputs } from "./schemas";
+import { type DonationSubmitParams } from "./schemas";
 import { DONATION_BASE_STORAGE_DEPOSIT_FLOAT } from "../constants";
 import {
   DonationAllocationKey,
@@ -50,7 +50,7 @@ const getTransactionStatus = ({
   });
 
 export const effects = (dispatch: AppDispatcher) => ({
-  submit: async (inputs: DonationAllocationKey & DonationInputs): Promise<void> => {
+  submit: async (inputs: DonationAllocationKey & DonationSubmitParams): Promise<void> => {
     const {
       amount,
       listId,

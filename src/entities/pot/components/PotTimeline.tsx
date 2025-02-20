@@ -68,21 +68,17 @@ const Loader = styled.div`
 `;
 
 export type PotTimelineProps = ByPotId & {
-  hasProportionalFundingMechanism?: boolean;
+  hasPFMechanism?: boolean;
 
   classNames?: {
     root?: string;
   };
 };
 
-export const PotTimeline: React.FC<PotTimelineProps> = ({
-  potId,
-  classNames,
-  hasProportionalFundingMechanism,
-}) => {
+export const PotTimeline: React.FC<PotTimelineProps> = ({ potId, classNames, hasPFMechanism }) => {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
   const toggleMobileMenu = useCallback(() => setIsMobileMenuActive((isActive) => !isActive), []);
-  const lifecycle = usePotLifecycle({ potId, hasProportionalFundingMechanism });
+  const lifecycle = usePotLifecycle({ potId, hasPFMechanism });
 
   const showActiveState =
     (lifecycle.currentStage === undefined ? 0 : lifecycle.stages.indexOf(lifecycle.currentStage)) *

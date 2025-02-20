@@ -67,9 +67,8 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     !isCampaignDonation &&
     allocationStrategy === DonationAllocationStrategyEnum.full;
 
-  const totalAmountUsdValue = token?.usdPrice
-    ? `~$ ${token.usdPrice.mul(amount).toFixed(2)}`
-    : null;
+  const totalAmountUsdValue =
+    amount && token?.usdPrice ? `~$ ${token.usdPrice.mul(amount).toFixed(2)}` : null;
 
   const strategySelector = useMemo(
     () =>

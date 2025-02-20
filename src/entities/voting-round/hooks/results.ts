@@ -21,7 +21,7 @@ export const useVotingRoundResults = ({
   enabled = true,
 }: VotingRoundKey & ConditionalActivation) => {
   const { data: potConfig } = potContractHooks.useConfig({ enabled, potId });
-  const { hasProportionalFundingMechanism } = usePotFeatureFlags({ potId });
+  const { hasPFMechanism } = usePotFeatureFlags({ potId });
 
   const { data: matchingPoolToken } = useToken({
     enabled: potConfig !== undefined,
@@ -36,7 +36,7 @@ export const useVotingRoundResults = ({
   const mechanismConfig = VOTING_ROUND_CONFIG_MPDAO;
 
   const { data: votingRound } = useVotingRound({
-    enabled: enabled && hasProportionalFundingMechanism,
+    enabled: enabled && hasPFMechanism,
     potId,
   });
 
@@ -72,7 +72,7 @@ export const useVotingRoundResults = ({
 
   if (
     enabled &&
-    hasProportionalFundingMechanism &&
+    hasPFMechanism &&
     potConfig &&
     matchingPoolToken &&
     votingRound &&

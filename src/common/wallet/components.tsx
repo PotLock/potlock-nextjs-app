@@ -6,6 +6,8 @@ import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { IS_CLIENT } from "@/common/constants";
 
 import { useWalletUserAdapter } from "./adapters";
+import { useWalletUserMetadataStore } from "./model";
+import { isAccountId } from "../lib";
 
 type WalletProviderProps = {
   children: React.ReactNode;
@@ -14,8 +16,14 @@ type WalletProviderProps = {
 const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const router = useRouter();
 
+  const trackedQueryParams = router.query as {
+    referrerAccountId?: string;
+  };
+
   const { registerInit, setAccountState, setError, isReady, isSignedIn, accountId, error } =
     useWalletUserAdapter();
+
+  const { referrerAccountId, setReferrerAccountId } = useWalletUserMetadataStore();
 
   const syncWalletState = useCallback(() => {
     const isWalletSignedIn = nearProtocolClient.walletApi.walletSelector.isSignedIn();
@@ -64,6 +72,21 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       }
     };
   }, [syncWalletState, isReady, handleChange]);
+
+  /**
+   * Updating referrer account id, if detected
+   */
+  useEffect(() => {
+    if (
+      isReady &&
+      isSignedIn &&
+      isAccountId(trackedQueryParams.referrerAccountId) &&
+      trackedQueryParams.referrerAccountId !== referrerAccountId &&
+      trackedQueryParams.referrerAccountId !== accountId
+    ) {
+      setReferrerAccountId(trackedQueryParams.referrerAccountId);
+    }
+  }, [accountId, isReady, isSignedIn, referrerAccountId, setReferrerAccountId, trackedQueryParams]);
 
   return children;
 };

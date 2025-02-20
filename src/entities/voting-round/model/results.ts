@@ -10,7 +10,7 @@ import { type FungibleTokenMetadata, ftContractClient } from "@/common/contracts
 import { bigNumToIndivisible, indivisibleUnitsToBigNum } from "@/common/lib";
 
 import type { VoterProfile, VotingMechanismConfig, VotingRoundWinner } from "../types";
-import type { VotingRoundParticipants } from "./types";
+import type { VotingRoundElectionResult, VotingRoundParticipants } from "./types";
 import { getVoteWeight, getVoteWeightAmplifiers } from "../utils/weight";
 
 const VOTING_ROUND_RESULTS_SCHEMA_VERSION = 3;
@@ -20,13 +20,7 @@ export type VotingRoundWinnerIntermediateData = Pick<VotingRoundWinner, "account
 };
 
 interface VotingRoundResultsState {
-  cache: Record<
-    ElectionId,
-    VotingRoundParticipants & {
-      totalVoteCount: number;
-      payoutTokenMetadata: FungibleTokenMetadata | NativeTokenMetadata;
-    }
-  >;
+  cache: Record<ElectionId, VotingRoundElectionResult>;
 
   revalidate: (params: {
     electionId: number;

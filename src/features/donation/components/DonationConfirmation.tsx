@@ -20,6 +20,7 @@ import {
 } from "@/common/ui/components";
 import { CheckboxField } from "@/common/ui/form-fields";
 import { cn } from "@/common/ui/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenTotalValue } from "@/entities/_shared/token";
 
@@ -34,21 +35,14 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
   totalAmountFloat,
 }) => {
+  const viewer = useWalletUserSession();
   const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
 
-  const [
-    tokenId,
-    recipientAccountId,
-    potAccountId,
-    referrerAccountId,
-    bypassProtocolFee,
-    bypassChefFee,
-  ] = form.watch([
+  const [tokenId, recipientAccountId, potAccountId, bypassProtocolFee, bypassChefFee] = form.watch([
     "tokenId",
     "recipientAccountId",
     "potAccountId",
-    "referrerAccountId",
     "bypassProtocolFee",
     "bypassChefFee",
   ]);
@@ -62,7 +56,6 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
 
   const breakdown = useDonationAllocationBreakdown({
     pot,
-    referrerAccountId,
     bypassProtocolFee,
     bypassChefFee,
     totalAmountFloat,
