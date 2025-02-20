@@ -85,7 +85,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
     );
 
   return isCampaignLoading ? (
-    <div className="flex h-[80vh] items-center justify-center">
+    <div className="flex h-[50vh] w-full items-center justify-center">
       <Spinner className="h-20 w-20" />
     </div>
   ) : (
