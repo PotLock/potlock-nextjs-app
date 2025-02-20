@@ -29,7 +29,7 @@ export const CampaignForm = ({
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, handleDeleteCampaign, watch, isValid } = useCampaignForm({
+  const { form, onChange, onSubmit, watch, isValid } = useCampaignForm({
     campaignId,
   });
 
@@ -237,11 +237,6 @@ export const CampaignForm = ({
             <Button variant="standard-filled" disabled={!isValid} type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
-            {isUpdate && (
-              <Button onClick={handleDeleteCampaign} type="button" variant="brand-tonal">
-                Delete Campaign
-              </Button>
-            )}
           </div>
         </form>
       </Form>
