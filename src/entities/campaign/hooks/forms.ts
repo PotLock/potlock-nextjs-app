@@ -144,7 +144,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
         description: values.description || "",
         name: values.name || "",
         target_amount: floatToYoctoNear(values.target_amount) as any,
-        cover_image_url: values.cover_image_url || "",
+        cover_image_url: values.cover_image_url ?? null,
         ...(values.min_amount && !campaignId
           ? { min_amount: floatToYoctoNear(values.min_amount) as any }
           : {}),
