@@ -94,11 +94,15 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
           minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
           targetMet={
-            !!campaign?.total_raised_amount && yoctoNearToFloat(campaign?.total_raised_amount) >= yoctoNearToFloat(campaign?.target_amount)
+            !!campaign?.total_raised_amount &&
+            yoctoNearToFloat(campaign?.total_raised_amount) >=
+              yoctoNearToFloat(campaign?.target_amount)
           }
           isStarted={isStarted}
           isEscrowBalanceEmpty={campaign?.escrow_balance === "0"}
-          amount={campaign?.total_raised_amount ? yoctoNearToFloat(campaign?.total_raised_amount) : 0}
+          amount={
+            campaign?.total_raised_amount ? yoctoNearToFloat(campaign?.total_raised_amount) : 0
+          }
           endDate={Number(campaign?.end_ms)}
         />
         <div className="mt-6">

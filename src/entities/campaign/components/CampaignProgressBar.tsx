@@ -54,7 +54,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
                     : "Donations are yet to be refunded"}
                 </span>
               ) : amount && (targetMet || amount > minAmount) && isTimeUp ? (
-                <span style={{color}} className="text-sm font-semibold">
+                <span style={{ color }} className="text-sm font-semibold">
                   {isEscrowBalanceEmpty
                     ? "Donations have been paid out"
                     : "Donations are yet to be paid out"}
