@@ -3,8 +3,6 @@ import { useEffect } from "react";
 import { type Path, type UseFormReturn, useWatch } from "react-hook-form";
 import type { infer as FromSchema, ZodError, ZodSchema } from "zod";
 
-// TODO: Consider creating an enhanced useForm hook that includes this functionality
-
 export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
   /**
    * The form instance returned by react-hook-form's useForm
@@ -17,7 +15,7 @@ export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
   /**
    * Array of field names that should be validated when other fields change
    */
-  targetFields: Array<keyof FromSchema<TSchema>>;
+  dependentFields: Array<keyof FromSchema<TSchema>>;
 };
 
 /**
@@ -27,7 +25,7 @@ export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
  * The hook watches for changes in form values and triggers Zod schema validation,
  *  setting errors on the specified target fields when validation fails.
  *
- * @param params - The parameters object ( see {@link FormCrossFieldZodValidationParams} )
+ * @param params - The parameters object. {@link FormCrossFieldZodValidationParams}
  *
  * @example
  * ```typescript
@@ -44,7 +42,7 @@ export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
  * useFormCrossFieldValidation({
  *   form,
  *   schema,
- *   targetFields: ["passwordConfirmation"]
+ *   dependentFields: ["passwordConfirmation"]
  * });
  * ```
  *
@@ -53,20 +51,20 @@ export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
 export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
   form,
   schema,
-  targetFields,
+  dependentFields,
 }: FormCrossFieldZodValidationParams<TSchema>) => {
   type Inputs = FromSchema<TSchema>;
 
   const values = useWatch({ control: form.control });
 
   useEffect(() => {
-    if (targetFields.length > 0) {
+    if (dependentFields.length > 0) {
       schema.parseAsync(values).catch((error?: ZodError) =>
         error?.issues.forEach(({ code, message, path }) => {
           const fieldPath = path.at(0);
 
           if (
-            targetFields.includes(fieldPath as keyof Inputs) &&
+            dependentFields.includes(fieldPath as keyof Inputs) &&
             typeof fieldPath === "string" &&
             code === "custom"
           ) {
@@ -75,5 +73,5 @@ export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
         }),
       );
     }
-  }, [schema, form, values, targetFields]);
+  }, [schema, form, values, dependentFields]);
 };

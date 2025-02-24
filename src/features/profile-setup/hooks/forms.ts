@@ -98,7 +98,6 @@ export const useProfileSetupForm = ({
       .parseAsync(values)
       .then(() => setCrossFieldErrors({}))
       .catch((error: ZodError) =>
-        // TODO: Consider using `setError` in forEach if there are any troubles with error display
         setCrossFieldErrors(
           error?.issues.reduce((schemaErrors, { code, message, path }) => {
             const fieldPath = path.at(0);

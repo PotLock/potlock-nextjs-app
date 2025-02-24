@@ -96,7 +96,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   useFormCrossFieldZodValidation({
     form: self,
     schema: donationSchema,
-    targetFields: donationCrossFieldValidationTargets,
+    dependentFields: donationCrossFieldValidationTargets,
   });
 
   //? For internal use only!
