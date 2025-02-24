@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Big } from "big.js";
 import { TimerIcon } from "lucide-react";
@@ -33,70 +33,75 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   const timeLeft = endDate ? getTimePassed(endDate, false, true) : null;
   const isTimeUp = timeLeft?.includes("-");
 
-  let statusText;
+  const statusText = useMemo(() => {
+    if (targetMet || isTimeUp) {
+      return "ENDED";
+    } else if (isStarted) {
+      return "NOT STARTED";
+    } else if (timeLeft) {
+      return `${timeLeft} left`;
+    } else {
+      return "ONGOING";
+    }
+  }, [targetMet, isTimeUp, isStarted, timeLeft]);
 
-  if (targetMet || isTimeUp) {
-    statusText = "ENDED";
-  } else if (isStarted) {
-    statusText = "NOT STARTED";
-  } else if (timeLeft) {
-    statusText = `${timeLeft} left`;
-  } else {
-    statusText = "ONGOING";
-  }
+  const nearDisplay = useMemo(() => (
+    <div className="inline-flex gap-1 text-sm">
+      <NearIcon className="m-0 mt-[2px] h-4 w-4" />
+      {amount}
+      <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
+        / {target} NEAR
+      </span>
+    </div>
+  ), [amount, target]);
 
+  const titleContent = useMemo(() => {
+    if (isTimeUp) {
+      let message;
+      if (amount && !targetMet && amount < minAmount) {
+        message = isEscrowBalanceEmpty
+          ? "Donations have been refunded"
+          : "Donations are yet to be refunded";
+      } else if (amount && (targetMet || amount > minAmount)) {
+        message = isEscrowBalanceEmpty
+          ? "Donations have been paid out"
+          : "Donations are yet to be paid out";
+      } else {
+        message = "Goal was not Achieved";
+      }
+
+      const messageColor = amount < minAmount && !isEscrowBalanceEmpty ? "#DD3345" : (targetMet || amount > minAmount) ? color : "#DD3345";
+
+      return (
+        <div className="flex w-full justify-between items-center">
+          <span className={`text-sm font-semibold text-[${messageColor}]`}>{message}</span>
+          {nearDisplay}
+        </div>
+      );
+    } else if (targetMet) {
+      return (
+        <div className="flex w-full justify-between items-center">
+          <span className="text-sm font-semibold text-[#7FC41E]">Goal Achieved</span>
+          {nearDisplay}
+        </div>
+      );
+    } else {
+      return (
+        <>
+          <NearIcon className="m-0 mr-1 h-4 w-4" />
+          {amount} <span className="m-0 p-0 pl-1 font-medium text-[#7B7B7B]"> / {target} NEAR Raised</span>
+        </>
+      );
+    }
+  }, [isTimeUp, amount, targetMet, minAmount, isEscrowBalanceEmpty, color, nearDisplay]); 
+
+
+  
+  
   return (
     <div className="flex w-full flex-col">
       <p className="mb-2 flex items-center font-semibold">
-        {isTimeUp ? (
-          <div className="flex w-full justify-between">
-            <div>
-              {amount && isTimeUp && !targetMet && amount < minAmount ? (
-                <span className="text-sm font-semibold text-[#DD3345]">
-                  {isEscrowBalanceEmpty
-                    ? "Donations have been refunded"
-                    : "Donations are yet to be refunded"}
-                </span>
-              ) : amount && (targetMet || amount > minAmount) && isTimeUp ? (
-                <span style={{ color }} className="text-sm font-semibold">
-                  {isEscrowBalanceEmpty
-                    ? "Donations have been paid out"
-                    : "Donations are yet to be paid out"}
-                </span>
-              ) : (
-                <span className="text-sm font-semibold text-[#DD3345]">
-                  {"Goal was not Achieved"}
-                </span>
-              )}
-            </div>
-            <div className="inline-flex gap-1 text-sm">
-              <NearIcon className="m-0 mt-[2px] h-4 w-4" />
-              {amount}
-              <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
-                {" "}
-                / {target} NEAR
-              </span>
-            </div>
-          </div>
-        ) : targetMet ? (
-          <div className="flex w-full justify-between">
-            <span className="text-sm font-semibold text-[#7FC41E]">Goal Achieved</span>
-            <div className="inline-flex gap-1 text-sm">
-              <NearIcon className="m-0  mt-[2px] h-4 w-4" />
-              {amount}
-              <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
-                {" "}
-                / {target} NEAR
-              </span>
-            </div>
-          </div>
-        ) : (
-          <>
-            <NearIcon className="m-0 mr-1 h-4 w-4" />
-            {amount}{" "}
-            <span className="m-0 p-0 pl-1 font-medium text-[#7B7B7B]"> / {target} NEAR Raised</span>
-          </>
-        )}
+       {titleContent}
       </p>
       <Progress value={progressPercentage} bgColor={color} />
       <div className="mt-4 flex justify-between">
