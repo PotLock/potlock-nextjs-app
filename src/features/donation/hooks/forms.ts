@@ -93,6 +93,12 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     resetOptions: { keepDirtyValues: false },
   });
 
+  useFormCrossFieldValidation({
+    form: self,
+    schema: donationSchema,
+    targetFields: donationCrossFieldValidationTargets,
+  });
+
   //? For internal use only!
   const values = useWatch({ control: self.control });
 
@@ -145,14 +151,6 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       self.setValue("tokenId", NATIVE_TOKEN_ID, { shouldDirty: true, shouldTouch: true });
     }
   }, [self, values]);
-
-  useFormCrossFieldValidation({
-    form: self,
-    schema: donationSchema,
-    targetFields: donationCrossFieldValidationTargets,
-  });
-
-  console.log(self.formState.errors);
 
   return {
     form: self,
