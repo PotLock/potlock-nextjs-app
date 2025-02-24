@@ -1,4 +1,4 @@
-import { AccountId } from "@/common/types";
+import { AccountId, IndivisibleUnits } from "@/common/types";
 
 export type CampaignFormFields = {
   name: string;
@@ -23,10 +23,10 @@ export type Campaign = {
   start_ms: number;
   end_ms?: number | null;
   ftId?: AccountId;
-  target_amount: string;
-  min_amount?: string;
-  escrow_balance: string;
-  max_amount?: string;
+  target_amount: IndivisibleUnits;
+  min_amount?: IndivisibleUnits;
+  escrow_balance: IndivisibleUnits;
+  max_amount?: IndivisibleUnits;
   referralFeeBasisPoints?: number;
   creatorFeeBasisPoints?: number;
   allowFeeAvoidance?: boolean;

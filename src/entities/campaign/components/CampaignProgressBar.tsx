@@ -5,6 +5,7 @@ import { TimerIcon } from "lucide-react";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { Progress } from "@/common/ui/components/atoms/progress";
 import { NearIcon } from "@/common/ui/svg";
+import {Big} from "big.js";
 
 type CampaignProgressBarProps = {
   target: number;
@@ -25,22 +26,26 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   targetMet,
   isStarted,
 }) => {
-  const progressPercentage = Math.min(100, Math.floor((amount / target) * 100));
+
+  const progressPercentage = Math.min(100, Math.floor(Big(amount).div(target).mul(100).toNumber()));
+
 
   const color = targetMet ? "#7FC41E" : amount < minAmount ? "#DD3345" : "#ECC113";
 
   const timeLeft = endDate ? getTimePassed(endDate, false, true) : null;
   const isTimeUp = timeLeft?.includes("-");
 
-  const statusText =
-    targetMet || isTimeUp
-      ? "ENDED"
-      : isStarted
-        ? "NOT STARTED"
-        : timeLeft
-          ? `${timeLeft} left`
-          : "ONGOING";
+  let statusText;
 
+if (targetMet || isTimeUp) {
+  statusText = "ENDED";
+} else if (isStarted) {
+  statusText = "NOT STARTED";
+} else if (timeLeft) {
+  statusText = `${timeLeft} left`;
+} else {
+  statusText = "ONGOING";
+}
   return (
     <div className="flex w-full flex-col">
       <p className="mb-2 flex items-center font-semibold">
@@ -65,8 +70,8 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
                 </span>
               )}
             </div>
-            <div className="flex text-sm">
-              <NearIcon className="m-0 mr-[3px] mt-[2px] h-4 w-4" />
+            <div className="inline-flex gap-1 text-sm">
+              <NearIcon className="m-0 mt-[2px] h-4 w-4" />
               {amount}
               <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
                 {" "}
@@ -77,8 +82,8 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
         ) : targetMet ? (
           <div className="flex w-full justify-between">
             <span className="text-sm font-semibold text-[#7FC41E]">Goal Achieved</span>
-            <div className="flex text-sm">
-              <NearIcon className="m-0 mr-[3px] mt-[2px] h-4 w-4" />
+            <div className="inline-flex gap-1 text-sm">
+              <NearIcon className="m-0  mt-[2px] h-4 w-4" />
               {amount}
               <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
                 {" "}
