@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { entries, isDeepEqual, keys, pick } from "remeda";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { isDeepEqual, keys, pick } from "remeda";
 import { Temporal } from "temporal-polyfill";
-import { ZodError } from "zod";
 
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
+import { useFormCrossFieldValidation } from "@/common/ui/hooks/form-validation";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
@@ -146,27 +146,11 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }
   }, [self, values]);
 
-  useEffect(
-    () =>
-      void donationSchema
-        .parseAsync(values as DonationInputs)
-        // .then(() => setCrossFieldErrors({}))
-        .catch((error: ZodError) =>
-          error?.issues.forEach(({ code, message, path }) => {
-            const fieldPath = path.at(0);
-
-            if (
-              donationCrossFieldValidationTargets.includes(fieldPath as keyof DonationInputs) &&
-              typeof fieldPath === "string" &&
-              code === "custom"
-            ) {
-              self.setError(fieldPath as keyof DonationInputs, { message, type: code });
-            }
-          }),
-        ),
-
-    [self, values],
-  );
+  useFormCrossFieldValidation({
+    form: self,
+    schema: donationSchema,
+    targetFields: donationCrossFieldValidationTargets,
+  });
 
   console.log(self.formState.errors);
 
