@@ -6,8 +6,17 @@ import type { infer as FromSchema, ZodError, ZodSchema } from "zod";
 // TODO: Consider creating an enhanced useForm hook that includes this functionality
 
 export type FormCrossFieldValidationParams<TSchema extends ZodSchema> = {
+  /**
+   * The form instance returned by react-hook-form's useForm
+   */
   form: UseFormReturn<FromSchema<TSchema>>;
+  /**
+   * A Zod schema that defines the validation rules including cross-field validations
+   */
   schema: TSchema;
+  /**
+   * Array of field names that should be validated when other fields change
+   */
   targetFields: Array<keyof FromSchema<TSchema>>;
 };
 
@@ -18,9 +27,7 @@ export type FormCrossFieldValidationParams<TSchema extends ZodSchema> = {
  * The hook watches for changes in form values and triggers Zod schema validation,
  *  setting errors on the specified target fields when validation fails.
  *
- * @param form - The form instance returned by react-hook-form's useForm
- * @param schema - A Zod schema that defines the validation rules including cross-field validations
- * @param targetFields - Array of field names that should be validated when other fields change
+ * @param params - The parameters object ( see {@link FormCrossFieldValidationParams} )
  *
  * @example
  * ```typescript
