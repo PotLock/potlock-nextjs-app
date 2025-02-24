@@ -3,7 +3,7 @@ import { AccountId } from "@/common/types";
 export type CampaignFormFields = {
   name: string;
   description?: string;
-  cover_image_url?: string;
+  cover_image_url?: string | null;
   start_ms?: number | string;
   end_ms?: number | string;
   target_amount: number;
