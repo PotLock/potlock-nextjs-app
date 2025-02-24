@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { SearchBar, SortSelect } from "@/common/ui/components";
+import { SearchBar, SortSelect } from "@/common/ui/layout/components";
 
 import { CampaignCard } from "./CampaignCard";
 

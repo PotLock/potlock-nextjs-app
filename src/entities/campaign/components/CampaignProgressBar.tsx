@@ -3,7 +3,7 @@ import React from "react";
 import { TimerIcon } from "lucide-react";
 
 import getTimePassed from "@/common/lib/getTimePassed";
-import { Progress } from "@/common/ui/components/atoms/progress";
+import { Progress } from "@/common/ui/layout/components/atoms/progress";
 
 type CampaignProgressBarProps = {
   target: number;

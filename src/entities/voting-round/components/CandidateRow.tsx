@@ -4,8 +4,8 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { Dot } from "lucide-react";
 
 import { ByElectionId, Candidate } from "@/common/contracts/core/voting";
-import { Button, Checkbox, Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button, Checkbox, Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountListItem } from "@/entities/_shared/account";
 

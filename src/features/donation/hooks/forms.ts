@@ -8,7 +8,7 @@ import { Temporal } from "temporal-polyfill";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
-import { useFormCrossFieldValidation } from "@/common/ui/hooks/form-validation";
+import { useFormCrossFieldValidation } from "@/common/ui/form/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 

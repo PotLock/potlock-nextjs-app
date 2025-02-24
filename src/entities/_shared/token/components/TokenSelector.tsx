@@ -1,7 +1,7 @@
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import type { ByTokenId } from "@/common/types";
-import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form-fields";
+import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form/components";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { useToken, useTokenAllowlist } from "../hooks/data";

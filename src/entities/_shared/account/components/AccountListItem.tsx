@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { truncate } from "@/common/lib";
 import { AccountId, ByAccountId } from "@/common/types";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 
 import { AccountHandle } from "./AccountHandle";
 import { AccountSummaryPopup } from "./AccountSummaryPopup";

@@ -13,7 +13,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../components";
+} from "../../layout/components";
 
 export const SelectFieldOption = SelectItem;
 

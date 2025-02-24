@@ -7,8 +7,8 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/common/ui/components";
-import { DotsIcons } from "@/common/ui/svg";
+} from "@/common/ui/layout/components";
+import { DotsIcons } from "@/common/ui/layout/svg";
 
 interface Post {
   accountId: string;

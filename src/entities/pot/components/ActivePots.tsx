@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Big } from "big.js";
 
 import { Pot } from "@/common/api/indexer";
-import { Filter, Group, GroupType, SortSelect } from "@/common/ui/components";
+import { Filter, Group, GroupType, SortSelect } from "@/common/ui/layout/components";
 
 import { PotCard } from "./PotCard";
 import { POT_SORT_OPTIONS, POT_STATUSES } from "../constants";

@@ -23,9 +23,9 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/common/ui/components";
-import ArrowDown from "@/common/ui/svg/ArrowDown";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import ArrowDown from "@/common/ui/layout/svg/ArrowDown";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { TokenIcon, useToken } from "@/entities/_shared/token";
 import {

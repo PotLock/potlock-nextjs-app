@@ -1,4 +1,4 @@
-import { Skeleton } from "@/common/ui/components";
+import { Skeleton } from "@/common/ui/layout/components";
 
 // TODO: This skeleton is outdated
 export const PotApplicationCardSkeleton = () => {

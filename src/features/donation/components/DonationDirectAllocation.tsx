@@ -6,6 +6,7 @@ import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByAccountId, ByCampaignId } from "@/common/types";
+import { SelectField, SelectFieldOption, TextField } from "@/common/ui/form/components";
 import {
   DialogDescription,
   DialogHeader,
@@ -18,8 +19,7 @@ import {
   RadioGroup,
   RadioGroupItem,
   Skeleton,
-} from "@/common/ui/components";
-import { SelectField, SelectFieldOption, TextField } from "@/common/ui/form-fields";
+} from "@/common/ui/layout/components";
 import { TokenSelector, useToken } from "@/entities/_shared/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";

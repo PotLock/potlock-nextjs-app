@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { nearSocialIndexerHooks } from "@/common/api/near-social-indexer";
 import { socialDbContractClient } from "@/common/contracts/social-db";
 import type { ByAccountId } from "@/common/types";
-import { Button, Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button, Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 
 export type AccountFollowButtonProps = ByAccountId & {

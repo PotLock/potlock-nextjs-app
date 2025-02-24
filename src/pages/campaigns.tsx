@@ -11,8 +11,8 @@ import {
   PageError,
   PageWithBanner,
   SplashScreen,
-} from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
 
 const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
