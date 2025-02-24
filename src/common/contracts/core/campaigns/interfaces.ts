@@ -25,6 +25,7 @@ export type Campaign = {
   ftId?: AccountId;
   target_amount: string;
   min_amount?: string;
+  escrow_balance: string;
   max_amount?: string;
   referralFeeBasisPoints?: number;
   creatorFeeBasisPoints?: number;

@@ -4,6 +4,7 @@ import { TimerIcon } from "lucide-react";
 
 import getTimePassed from "@/common/lib/getTimePassed";
 import { Progress } from "@/common/ui/components/atoms/progress";
+import { NearIcon } from "@/common/ui/svg";
 
 type CampaignProgressBarProps = {
   target: number;
@@ -12,6 +13,7 @@ type CampaignProgressBarProps = {
   endDate?: number;
   isStarted: boolean;
   targetMet: boolean;
+  isEscrowBalanceEmpty: boolean;
 };
 
 export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
@@ -19,55 +21,88 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   minAmount,
   amount,
   endDate,
+  isEscrowBalanceEmpty,
   targetMet,
   isStarted,
 }) => {
-  const color =
-    amount >= target
-      ? "#7FC41E"
-      : amount < minAmount
-        ? "#DD3345"
-        : amount === target
-          ? "#7FC41E"
-          : "#ECC113";
+  const progressPercentage = Math.min(100, Math.floor((amount / target) * 100));
 
-  const value = amount >= target ? 100 : Math.floor((amount / target) * 100);
+  const color = targetMet ? "#7FC41E" : amount < minAmount ? "#DD3345" : "#ECC113";
 
-  const getDaysLeft = endDate ? getTimePassed(endDate, false, true) : null;
-  const timeUp = endDate ? getTimePassed(Number(endDate), false, true)?.includes("-") : false;
+  const timeLeft = endDate ? getTimePassed(endDate, false, true) : null;
+  const isTimeUp = timeLeft?.includes("-");
+
+  const statusText =
+    targetMet || isTimeUp
+      ? "ENDED"
+      : isStarted
+        ? "NOT STARTED"
+        : timeLeft
+          ? `${timeLeft} left`
+          : "ONGOING";
 
   return (
     <div className="flex w-full flex-col">
-      {targetMet ? (
-        <p className="mb-2 font-semibold">Goal Met</p>
-      ) : target > amount ? (
-        <p className="mb-2 font-semibold">
-          {(target - amount)?.toFixed(2)} NEAR{" "}
-          <span className="font-semibold text-[#7B7B7B]">Left to meet goal</span>
-        </p>
-      ) : (
-        <p className="mb-2 font-semibold">
-          {(amount - target)?.toFixed(2)} NEAR
-          <span className="font-semibold text-[#7B7B7B]"> Above goal</span>
-        </p>
-      )}
-      <Progress value={value} bgColor={color} />
+      <p className="mb-2 flex items-center font-semibold">
+        {isTimeUp ? (
+          <div className="flex w-full justify-between">
+            <div>
+              {amount && isTimeUp && !targetMet && amount < minAmount ? (
+                <span className="text-sm font-semibold text-[#DD3345]">
+                  {isEscrowBalanceEmpty
+                    ? "Donations have been refunded"
+                    : "Donations are yet to be refunded"}
+                </span>
+              ) : amount && (targetMet || amount > minAmount) && isTimeUp ? (
+                <span style={{color}} className="text-sm font-semibold">
+                  {isEscrowBalanceEmpty
+                    ? "Donations have been paid out"
+                    : "Donations are yet to be paid out"}
+                </span>
+              ) : (
+                <span className="text-sm font-semibold text-[#DD3345]">
+                  {"Goal was not Achieved"}
+                </span>
+              )}
+            </div>
+            <div className="flex text-sm">
+              <NearIcon className="m-0 mr-[3px] mt-[2px] h-4 w-4" />
+              {amount}
+              <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
+                {" "}
+                / {target} NEAR
+              </span>
+            </div>
+          </div>
+        ) : targetMet ? (
+          <div className="flex w-full justify-between">
+            <span className="text-sm font-semibold text-[#7FC41E]">Goal Achieved</span>
+            <div className="flex text-sm">
+              <NearIcon className="m-0 mr-[3px] mt-[2px] h-4 w-4" />
+              {amount}
+              <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
+                {" "}
+                / {target} NEAR
+              </span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <NearIcon className="m-0 mr-1 h-4 w-4" />
+            {amount}{" "}
+            <span className="m-0 p-0 pl-1 font-medium text-[#7B7B7B]"> / {target} NEAR Raised</span>
+          </>
+        )}
+      </p>
+      <Progress value={progressPercentage} bgColor={color} />
       <div className="mt-4 flex justify-between">
         <div className="flex items-center gap-1">
           <TimerIcon size={20} className="text-[#7B7B7B]" />
-          <p className="m-0 p-0 pt-[4px] text-[14px] font-semibold text-[#292929]">
-            {targetMet || timeUp
-              ? "ENDED"
-              : !isStarted
-                ? getDaysLeft
-                  ? `${getDaysLeft ? getDaysLeft : "0"} left`
-                  : "ONGOING"
-                : "NOT STARTED"}
-          </p>
+          <p className="m-0 p-0 pt-[4px] text-[14px] font-semibold text-[#292929]">{statusText}</p>
         </div>
         <div>
           <p className="font-semibold" style={{ color }}>
-            {value}%
+            {progressPercentage}%
           </p>
         </div>
       </div>
