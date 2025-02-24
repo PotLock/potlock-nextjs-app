@@ -1,19 +1,17 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { isDeepEqual, keys, pick } from "remeda";
+import { SubmitHandler, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
 
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
-import { useFormCrossFieldZodValidation } from "@/common/ui/form/hooks";
+import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
-import { DonationInputs, donationCrossFieldValidationTargets, donationSchema } from "../models";
+import { DonationInputs, donationDependentFields, donationSchema } from "../models";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
@@ -86,26 +84,17 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     ],
   );
 
-  const self = useForm<DonationInputs>({
-    resolver: zodResolver(donationSchema),
+  const { form: self } = useEnhancedForm({
+    schema: donationSchema,
+    dependentFields: donationDependentFields,
     mode: "all",
     defaultValues,
+    followDefaultValues: true,
     resetOptions: { keepDirtyValues: false },
-  });
-
-  useFormCrossFieldZodValidation({
-    form: self,
-    schema: donationSchema,
-    dependentFields: donationCrossFieldValidationTargets,
   });
 
   //? For internal use only!
   const values = useWatch({ control: self.control });
-
-  const isUnpopulated =
-    !isDeepEqual(defaultValues, pick(self.formState.defaultValues ?? {}, keys(defaultValues))) &&
-    !self.formState.isDirty;
-
   const amount = values.amount ?? 0;
   const tokenId = values.tokenId ?? NATIVE_TOKEN_ID;
 
@@ -136,12 +125,6 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
 
     [params, viewer?.referrerAccountId],
   );
-
-  useEffect(() => {
-    if (isUnpopulated) {
-      self.reset(defaultValues);
-    }
-  }, [isUnpopulated, self, defaultValues]);
 
   useEffect(() => {
     if (

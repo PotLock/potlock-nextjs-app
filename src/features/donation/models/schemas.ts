@@ -73,6 +73,7 @@ export const donationSchema = object({
     path: ["potAccountId"],
   })
   .refine(isDonationAmountSufficient, {
+    // TODO: Check if this is still the case:
     /**
      *? NOTE: Due to an unknown issue,
      *?  this message doesn't end up in react-hook-form's `formState.errors`.
@@ -84,14 +85,11 @@ export const donationSchema = object({
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
+export const donationDependentFields: (keyof DonationInputs)[] = ["amount", "potAccountId"];
+
 export type DonationSubmitParams = DonationInputs & {
   referrerAccountId?: AccountId;
 };
-
-export const donationCrossFieldValidationTargets: (keyof DonationInputs)[] = [
-  "amount",
-  "potAccountId",
-];
 
 export type DonationFormAPI = UseFormReturn<DonationInputs>;
 

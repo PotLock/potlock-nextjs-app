@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UseFormProps, type UseFormReturn, useForm } from "react-hook-form";
 import { isDeepEqual, keys, pick } from "remeda";
@@ -14,6 +16,12 @@ export type EnhancedFormProps<TSchema extends ZodSchema> = Omit<
 > &
   Pick<FormCrossFieldZodValidationParams<TSchema>, "dependentFields"> & {
     schema: TSchema;
+    /**
+     * Whether to keep track of the `defaultValues` state and re-populate the values automatically.
+     *
+     * @default false
+     */
+    followDefaultValues?: boolean;
   };
 
 export type EnhancedFormBindings = {
@@ -74,6 +82,7 @@ export const useEnhancedForm = <TSchema extends ZodSchema>({
   schema,
   dependentFields,
   defaultValues,
+  followDefaultValues = false,
   ...formProps
 }: EnhancedFormProps<TSchema>): {
   form: UseFormReturn<FromSchema<TSchema>>;
@@ -91,6 +100,12 @@ export const useEnhancedForm = <TSchema extends ZodSchema>({
       defaultValues,
       pick(self.formState.defaultValues ?? {}, keys(defaultValues ?? {})),
     ) && !self.formState.isDirty;
+
+  useEffect(() => {
+    if (followDefaultValues && isUnpopulated) {
+      self.reset(defaultValues);
+    }
+  }, [isUnpopulated, self, defaultValues, followDefaultValues]);
 
   return { form: self, isUnpopulated };
 };
