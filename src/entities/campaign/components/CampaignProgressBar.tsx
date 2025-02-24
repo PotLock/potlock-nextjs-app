@@ -1,11 +1,11 @@
 import React from "react";
 
+import { Big } from "big.js";
 import { TimerIcon } from "lucide-react";
 
 import getTimePassed from "@/common/lib/getTimePassed";
 import { Progress } from "@/common/ui/components/atoms/progress";
 import { NearIcon } from "@/common/ui/svg";
-import {Big} from "big.js";
 
 type CampaignProgressBarProps = {
   target: number;
@@ -26,9 +26,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   targetMet,
   isStarted,
 }) => {
-
   const progressPercentage = Math.min(100, Math.floor(Big(amount).div(target).mul(100).toNumber()));
-
 
   const color = targetMet ? "#7FC41E" : amount < minAmount ? "#DD3345" : "#ECC113";
 
@@ -37,15 +35,16 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
 
   let statusText;
 
-if (targetMet || isTimeUp) {
-  statusText = "ENDED";
-} else if (isStarted) {
-  statusText = "NOT STARTED";
-} else if (timeLeft) {
-  statusText = `${timeLeft} left`;
-} else {
-  statusText = "ONGOING";
-}
+  if (targetMet || isTimeUp) {
+    statusText = "ENDED";
+  } else if (isStarted) {
+    statusText = "NOT STARTED";
+  } else if (timeLeft) {
+    statusText = `${timeLeft} left`;
+  } else {
+    statusText = "ONGOING";
+  }
+
   return (
     <div className="flex w-full flex-col">
       <p className="mb-2 flex items-center font-semibold">
