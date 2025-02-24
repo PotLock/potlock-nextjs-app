@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { type Path, type UseFormReturn, useWatch } from "react-hook-form";
 import type { infer as FromSchema, ZodError, ZodSchema } from "zod";
 
+// TODO: Consider creating an enhanced useForm hook that includes this functionality
+
 export type FormCrossFieldValidationParams<TSchema extends ZodSchema> = {
   form: UseFormReturn<FromSchema<TSchema>>;
   schema: TSchema;
