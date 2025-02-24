@@ -5,7 +5,7 @@ import type { infer as FromSchema, ZodError, ZodSchema } from "zod";
 
 // TODO: Consider creating an enhanced useForm hook that includes this functionality
 
-export type FormCrossFieldValidationParams<TSchema extends ZodSchema> = {
+export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
   /**
    * The form instance returned by react-hook-form's useForm
    */
@@ -27,7 +27,7 @@ export type FormCrossFieldValidationParams<TSchema extends ZodSchema> = {
  * The hook watches for changes in form values and triggers Zod schema validation,
  *  setting errors on the specified target fields when validation fails.
  *
- * @param params - The parameters object ( see {@link FormCrossFieldValidationParams} )
+ * @param params - The parameters object ( see {@link FormCrossFieldZodValidationParams} )
  *
  * @example
  * ```typescript
@@ -50,18 +50,18 @@ export type FormCrossFieldValidationParams<TSchema extends ZodSchema> = {
  *
  * @returns void - This hook only produces side effects (setting form errors)
  */
-export const useFormCrossFieldValidation = <TSchema extends ZodSchema>({
+export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
   form,
   schema,
   targetFields,
-}: FormCrossFieldValidationParams<TSchema>) => {
+}: FormCrossFieldZodValidationParams<TSchema>) => {
   type Inputs = FromSchema<TSchema>;
 
   const values = useWatch({ control: form.control });
 
-  useEffect(
-    () =>
-      void schema.parseAsync(values).catch((error?: ZodError) =>
+  useEffect(() => {
+    if (targetFields.length > 0) {
+      schema.parseAsync(values).catch((error?: ZodError) =>
         error?.issues.forEach(({ code, message, path }) => {
           const fieldPath = path.at(0);
 
@@ -73,8 +73,7 @@ export const useFormCrossFieldValidation = <TSchema extends ZodSchema>({
             form.setError(fieldPath as Path<Inputs>, { message, type: code });
           }
         }),
-      ),
-
-    [schema, form, values, targetFields],
-  );
+      );
+    }
+  }, [schema, form, values, targetFields]);
 };
