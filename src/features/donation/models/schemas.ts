@@ -51,7 +51,6 @@ export const donationSchema = object({
   potAccountId: string().optional().describe("Pot account id."),
   listId: number().optional().describe("List id."),
   campaignId: number().optional().describe("Campaign id."),
-
   message: string().max(DONATION_MAX_MESSAGE_LENGTH).optional().describe("Donation message."),
 
   allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {

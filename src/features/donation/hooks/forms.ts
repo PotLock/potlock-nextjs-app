@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { entries } from "remeda";
+import { entries, isDeepEqual, keys, pick } from "remeda";
 import { Temporal } from "temporal-polyfill";
 import { ZodError } from "zod";
 
@@ -93,7 +93,13 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     resetOptions: { keepDirtyValues: false },
   });
 
+  //? For internal use only!
   const values = useWatch({ control: self.control });
+
+  const isUnpopulated =
+    !isDeepEqual(defaultValues, pick(self.formState.defaultValues ?? {}, keys(defaultValues))) &&
+    !self.formState.isDirty;
+
   const amount = values.amount ?? 0;
   const tokenId = values.tokenId ?? NATIVE_TOKEN_ID;
 
@@ -103,45 +109,16 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       : (values.groupAllocationPlan?.reduce((total, { amount }) => total + (amount ?? 0.0), 0.0) ??
         0.0);
 
-  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<DonationInputs>>({});
-
-  useEffect(
-    () =>
-      void donationSchema
-        .parseAsync(values as DonationInputs)
-        .then(() => setCrossFieldErrors({}))
-        .catch((error: ZodError) =>
-          setCrossFieldErrors(
-            error?.issues.reduce((schemaErrors, { code, message, path }) => {
-              const fieldPath = path.at(0);
-
-              return donationCrossFieldValidationTargets.includes(
-                fieldPath as keyof DonationInputs,
-              ) &&
-                typeof fieldPath === "string" &&
-                code === "custom"
-                ? { ...schemaErrors, [fieldPath]: { message, type: code } }
-                : schemaErrors;
-            }, {}),
-          ),
-        ),
-
-    [values],
-  );
-
-  const hasChanges = useMemo(
-    () =>
-      entries(values).some(([key, value]) => value !== defaultValues[key as keyof DonationInputs]),
-
-    [defaultValues, values],
-  );
-
   const isDisabled = !self.formState.isValid || self.formState.isSubmitting;
 
-  const minAmountError =
-    !isDonationAmountSufficient({ amount, tokenId }) && hasChanges
-      ? DONATION_MIN_NEAR_AMOUNT_ERROR
-      : null;
+  const minAmountError = useMemo(
+    () =>
+      !isDonationAmountSufficient({ amount, tokenId }) && viewer.hasWalletReady
+        ? DONATION_MIN_NEAR_AMOUNT_ERROR
+        : null,
+
+    [amount, tokenId, viewer.hasWalletReady],
+  );
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
     (inputs) =>
@@ -155,18 +132,10 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   );
 
   useEffect(() => {
-    /**
-     *? Due to yet undetermined issue, when `defaultPotAccountId` gets defined,
-     *?  it does not trigger the form state update, so we have to do it manually.
-     */
-    if (
-      isSingleProjectDonation &&
-      values.potAccountId === undefined &&
-      defaultPotAccountId !== undefined
-    ) {
-      self.setValue("potAccountId", defaultPotAccountId);
+    if (isUnpopulated) {
+      self.reset(defaultValues);
     }
-  }, [values, defaultPotAccountId, self, hasChanges, params, isSingleProjectDonation]);
+  }, [isUnpopulated, self, defaultValues]);
 
   useEffect(() => {
     if (
@@ -177,26 +146,33 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }
   }, [self, values]);
 
-  /**
-   * Patched form object with cross-field validation errors included.
-   */
-  const form = useMemo(
-    () => ({
-      ...self,
+  useEffect(
+    () =>
+      void donationSchema
+        .parseAsync(values as DonationInputs)
+        // .then(() => setCrossFieldErrors({}))
+        .catch((error: ZodError) =>
+          error?.issues.forEach(({ code, message, path }) => {
+            const fieldPath = path.at(0);
 
-      formState: {
-        ...self.formState,
-        errors: { ...self.formState.errors, ...crossFieldErrors },
-      },
-    }),
+            if (
+              donationCrossFieldValidationTargets.includes(fieldPath as keyof DonationInputs) &&
+              typeof fieldPath === "string" &&
+              code === "custom"
+            ) {
+              self.setError(fieldPath as keyof DonationInputs, { message, type: code });
+            }
+          }),
+        ),
 
-    [crossFieldErrors, self],
+    [self, values],
   );
 
+  console.log(self.formState.errors);
+
   return {
-    form,
+    form: self,
     defaultValues,
-    hasChanges,
     isDisabled,
     onSubmit: self.handleSubmit(onSubmit),
     matchingPots,
