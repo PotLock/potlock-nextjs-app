@@ -15,8 +15,8 @@ import {
   Input,
   Label,
   Switch,
-} from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { validateUserInDao } from "@/entities/dao";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 

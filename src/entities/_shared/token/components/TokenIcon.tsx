@@ -2,8 +2,8 @@ import Image from "next/image";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { AccountId } from "@/common/types";
-import { NearIcon } from "@/common/ui/svg";
-import { cn } from "@/common/ui/utils";
+import { NearIcon } from "@/common/ui/layout/svg";
+import { cn } from "@/common/ui/layout/utils";
 
 import { useToken } from "../hooks/data";
 

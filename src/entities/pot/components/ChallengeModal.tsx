@@ -13,7 +13,7 @@ import {
   FormField,
   Spinner,
   Textarea,
-} from "@/common/ui/components";
+} from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { useChallengeForm } from "../hooks/forms";

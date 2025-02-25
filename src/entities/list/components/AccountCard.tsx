@@ -22,10 +22,10 @@ import {
   SelectContent,
   SelectItem,
   Textarea,
-} from "@/common/ui/components";
-import DownArrow from "@/common/ui/svg/DownArrow";
-import { ListNoteIcon } from "@/common/ui/svg/list-note";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import DownArrow from "@/common/ui/layout/svg/DownArrow";
+import { ListNoteIcon } from "@/common/ui/layout/svg/list-note";
+import { cn } from "@/common/ui/layout/utils";
 import {
   ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS,
   AccountHandle,

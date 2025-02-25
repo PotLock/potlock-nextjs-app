@@ -1,4 +1,4 @@
-import { SplashScreen } from "@/common/ui/components";
+import { SplashScreen } from "@/common/ui/layout/components";
 import { PotLayout } from "@/layout/pot/components/layout";
 
 /**

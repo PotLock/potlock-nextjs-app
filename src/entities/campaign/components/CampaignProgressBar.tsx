@@ -4,8 +4,8 @@ import { Big } from "big.js";
 import { TimerIcon } from "lucide-react";
 
 import getTimePassed from "@/common/lib/getTimePassed";
-import { Progress } from "@/common/ui/components/atoms/progress";
-import { NearIcon } from "@/common/ui/svg";
+import { Progress } from "@/common/ui/layout/components";
+import { NearIcon } from "@/common/ui/layout/svg";
 
 type CampaignProgressBarProps = {
   target: number;

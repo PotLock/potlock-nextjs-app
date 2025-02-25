@@ -8,7 +8,7 @@ import { infer as FromSchema } from "zod";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { floatToYoctoNear } from "@/common/lib";
 import { CampaignId } from "@/common/types";
-import { toast } from "@/common/ui/hooks";
+import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 

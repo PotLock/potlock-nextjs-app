@@ -17,9 +17,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/common/ui/components";
-import { SocialsShare } from "@/common/ui/components/molecules/social-share";
-import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/svg";
+} from "@/common/ui/layout/components";
+import { SocialsShare } from "@/common/ui/layout/components/molecules/social-share";
+import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
 import {
   AccountGroupEditModal,

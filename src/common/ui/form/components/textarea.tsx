@@ -8,8 +8,8 @@ import {
   FormMessage,
   Textarea,
   TextareaProps,
-} from "../components";
-import { cn } from "../utils";
+} from "../../layout/components";
+import { cn } from "../../layout/utils";
 
 export type TextAreaFieldProps = TextareaProps & {
   label: string;

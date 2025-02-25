@@ -23,8 +23,8 @@ import {
   LabeledIcon,
   ModalErrorBody,
   Skeleton,
-} from "@/common/ui/components";
-import TwitterSvg from "@/common/ui/svg/twitter";
+} from "@/common/ui/layout/components";
+import TwitterSvg from "@/common/ui/layout/svg/twitter";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink, useAccountSocialProfile } from "@/entities/_shared/account";
 import { TokenTotalValue, useToken } from "@/entities/_shared/token";

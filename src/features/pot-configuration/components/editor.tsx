@@ -6,6 +6,13 @@ import { Temporal } from "temporal-polyfill";
 import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import {
+  CheckboxField,
+  SelectField,
+  SelectFieldOption,
+  TextAreaField,
+  TextField,
+} from "@/common/ui/form/components";
+import {
   Alert,
   AlertDescription,
   AlertTitle,
@@ -14,16 +21,9 @@ import {
   Form,
   FormField,
   SplashScreen,
-} from "@/common/ui/components";
-import {
-  CheckboxField,
-  SelectField,
-  SelectFieldOption,
-  TextAreaField,
-  TextField,
-} from "@/common/ui/form-fields";
-import InfoIcon from "@/common/ui/svg/InfoIcon";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import InfoIcon from "@/common/ui/layout/svg/InfoIcon";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountGroup } from "@/entities/_shared/account";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
 import { DONATION_MIN_NEAR_AMOUNT } from "@/features/donation";

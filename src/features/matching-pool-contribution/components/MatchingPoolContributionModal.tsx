@@ -14,7 +14,7 @@ import {
   Input,
   Spinner,
   Textarea,
-} from "@/common/ui/components";
+} from "@/common/ui/layout/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { useGlobalStoreSelector } from "@/store";
 

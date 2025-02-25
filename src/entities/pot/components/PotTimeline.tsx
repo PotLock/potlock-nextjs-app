@@ -3,8 +3,8 @@ import { useCallback, useState } from "react";
 import { styled } from "styled-components";
 
 import { ByPotId } from "@/common/api/indexer";
-import { TimeLeft } from "@/common/ui/components/_deprecated/TimeLeft";
-import { cn } from "@/common/ui/utils";
+import { TimeLeft } from "@/common/ui/layout/components/_deprecated/TimeLeft";
+import { cn } from "@/common/ui/layout/utils";
 
 import { PotLifecycleStageCircularProgressIndicator } from "./progress";
 import { usePotLifecycle } from "../hooks/lifecycle";

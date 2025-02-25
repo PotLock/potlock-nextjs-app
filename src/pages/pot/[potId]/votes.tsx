@@ -23,9 +23,9 @@ import {
   FilterChip,
   SearchBar,
   Skeleton,
-} from "@/common/ui/components";
-import { useMediaQuery } from "@/common/ui/hooks";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { useMediaQuery } from "@/common/ui/layout/hooks";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import {
   VotingRoundCandidateFilter,

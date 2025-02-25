@@ -1,5 +1,5 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 
 import type { VotingRoundVoteWeightAmplifier } from "../types";
 import { voteWeightAmplificationCriteriaIcons } from "./icons";

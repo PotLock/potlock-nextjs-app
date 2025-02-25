@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { LazyLoadImage, LazyLoadImageProps } from "react-lazy-load-image-component";
 
 import { ByAccountId } from "@/common/types";
-import { Avatar, AvatarImage, Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Avatar, AvatarImage, Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 
 import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "../constants";
 import { useAccountSocialProfile } from "../hooks/social-profile";

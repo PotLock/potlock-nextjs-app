@@ -1,5 +1,4 @@
-import { Checkbox } from "../components";
-import { FormControl, FormItem, FormLabel } from "../components/molecules/form";
+import { Checkbox, FormControl, FormItem, FormLabel } from "../../layout/components";
 
 export type CheckboxFieldProps = Pick<
   React.ComponentProps<typeof Checkbox>,

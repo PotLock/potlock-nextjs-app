@@ -7,8 +7,8 @@ import { styled } from "styled-components";
 import { indexer } from "@/common/api/indexer";
 import { ExternalFundingSource } from "@/common/contracts/social-db";
 import type { AccountId } from "@/common/types";
-import { Separator } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Separator } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { FundingTable } from "@/layout/profile/_deprecated/FundingTable";
 import { ProfileLayout } from "@/layout/profile/components/layout";
 

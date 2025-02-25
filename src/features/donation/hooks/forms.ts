@@ -1,19 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { entries } from "remeda";
+import { SubmitHandler, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
-import { ZodError } from "zod";
 
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
+import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
-import { DonationInputs, donationCrossFieldValidationTargets, donationSchema } from "../models";
+import { DonationInputs, donationDependentFields, donationSchema } from "../models";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
@@ -86,13 +84,16 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     ],
   );
 
-  const self = useForm<DonationInputs>({
-    resolver: zodResolver(donationSchema),
+  const { form: self } = useEnhancedForm({
+    schema: donationSchema,
+    dependentFields: donationDependentFields,
     mode: "all",
     defaultValues,
+    followDefaultValues: true,
     resetOptions: { keepDirtyValues: false },
   });
 
+  //? For internal use only!
   const values = useWatch({ control: self.control });
   const amount = values.amount ?? 0;
   const tokenId = values.tokenId ?? NATIVE_TOKEN_ID;
@@ -103,45 +104,16 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       : (values.groupAllocationPlan?.reduce((total, { amount }) => total + (amount ?? 0.0), 0.0) ??
         0.0);
 
-  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<DonationInputs>>({});
-
-  useEffect(
-    () =>
-      void donationSchema
-        .parseAsync(values as DonationInputs)
-        .then(() => setCrossFieldErrors({}))
-        .catch((error: ZodError) =>
-          setCrossFieldErrors(
-            error?.issues.reduce((schemaErrors, { code, message, path }) => {
-              const fieldPath = path.at(0);
-
-              return donationCrossFieldValidationTargets.includes(
-                fieldPath as keyof DonationInputs,
-              ) &&
-                typeof fieldPath === "string" &&
-                code === "custom"
-                ? { ...schemaErrors, [fieldPath]: { message, type: code } }
-                : schemaErrors;
-            }, {}),
-          ),
-        ),
-
-    [values],
-  );
-
-  const hasChanges = useMemo(
-    () =>
-      entries(values).some(([key, value]) => value !== defaultValues[key as keyof DonationInputs]),
-
-    [defaultValues, values],
-  );
-
   const isDisabled = !self.formState.isValid || self.formState.isSubmitting;
 
-  const minAmountError =
-    !isDonationAmountSufficient({ amount, tokenId }) && hasChanges
-      ? DONATION_MIN_NEAR_AMOUNT_ERROR
-      : null;
+  const minAmountError = useMemo(
+    () =>
+      !isDonationAmountSufficient({ amount, tokenId }) && viewer.hasWalletReady
+        ? DONATION_MIN_NEAR_AMOUNT_ERROR
+        : null,
+
+    [amount, tokenId, viewer.hasWalletReady],
+  );
 
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
     (inputs) =>
@@ -155,20 +127,6 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   );
 
   useEffect(() => {
-    /**
-     *? Due to yet undetermined issue, when `defaultPotAccountId` gets defined,
-     *?  it does not trigger the form state update, so we have to do it manually.
-     */
-    if (
-      isSingleProjectDonation &&
-      values.potAccountId === undefined &&
-      defaultPotAccountId !== undefined
-    ) {
-      self.setValue("potAccountId", defaultPotAccountId);
-    }
-  }, [values, defaultPotAccountId, self, hasChanges, params, isSingleProjectDonation]);
-
-  useEffect(() => {
     if (
       (values.allocationStrategy === "full" && values.tokenId === undefined) ||
       (values.allocationStrategy === "share" && values.tokenId !== NATIVE_TOKEN_ID)
@@ -177,26 +135,9 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }
   }, [self, values]);
 
-  /**
-   * Patched form object with cross-field validation errors included.
-   */
-  const form = useMemo(
-    () => ({
-      ...self,
-
-      formState: {
-        ...self.formState,
-        errors: { ...self.formState.errors, ...crossFieldErrors },
-      },
-    }),
-
-    [crossFieldErrors, self],
-  );
-
   return {
-    form,
+    form: self,
     defaultValues,
-    hasChanges,
     isDisabled,
     onSubmit: self.handleSubmit(onSubmit),
     matchingPots,

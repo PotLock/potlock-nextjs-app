@@ -3,9 +3,9 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { PageWithBanner } from "@/common/ui/components";
-import { TabOption } from "@/common/ui/types";
-import { cn } from "@/common/ui/utils";
+import { PageWithBanner } from "@/common/ui/layout/components";
+import { TabOption } from "@/common/ui/layout/types";
+import { cn } from "@/common/ui/layout/utils";
 import { CampaignBanner } from "@/entities/campaign";
 
 const CAMPAIGN_TAB_ROUTES: TabOption[] = [

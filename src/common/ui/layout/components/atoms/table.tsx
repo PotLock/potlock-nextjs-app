@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (

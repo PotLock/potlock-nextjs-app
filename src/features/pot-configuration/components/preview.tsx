@@ -5,8 +5,8 @@ import { entries, isStrictEqual, omit, piped, prop } from "remeda";
 
 import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
 import { isAccountId } from "@/common/lib";
-import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button, DataLoadingPlaceholder, Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroup, AccountListItem, AccountProfileLink } from "@/entities/_shared/account";
 

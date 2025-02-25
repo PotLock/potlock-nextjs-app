@@ -1,5 +1,5 @@
 import { PLATFORM_NAME } from "@/common/_config";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 
 export type SplashScreenProps = {
   className?: string;

@@ -3,8 +3,14 @@ import { useCallback } from "react";
 import Link from "next/link";
 import { MdOutlineWarningAmber } from "react-icons/md";
 
-import { Alert, AlertDescription, AlertTitle, Button, Spinner } from "@/common/ui/components";
-import { useToast } from "@/common/ui/hooks";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Spinner,
+} from "@/common/ui/layout/components";
+import { useToast } from "@/common/ui/layout/hooks";
 
 import {
   type PFPayoutJustificationParams,

@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { pick } from "remeda";
 
-import { Button, Form, FormField } from "@/common/ui/components";
-import PlusIcon from "@/common/ui/svg/PlusIcon";
+import { Button, Form, FormField } from "@/common/ui/layout/components";
+import PlusIcon from "@/common/ui/layout/svg/PlusIcon";
 import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
   ACCOUNT_PROFILE_LINKTREE_KEYS,

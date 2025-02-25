@@ -3,8 +3,8 @@ import { values } from "remeda";
 import { type ByPotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { indivisibleUnitsToFloat } from "@/common/lib";
-import { LabeledIcon, Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { LabeledIcon, Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { TokenIcon } from "@/entities/_shared/token";
 

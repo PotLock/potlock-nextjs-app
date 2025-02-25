@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import type { ByAccountId } from "@/common/types";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 import { ACCOUNT_REGISTRATION_STATUSES } from "@/entities/_shared/account";
 
 export type ProfileLayoutHeaderProps = ByAccountId & {};

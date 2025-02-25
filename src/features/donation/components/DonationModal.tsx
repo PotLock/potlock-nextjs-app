@@ -4,8 +4,8 @@ import { create, useModal } from "@ebay/nice-modal-react";
 
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { useRouteQuery } from "@/common/lib";
-import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 

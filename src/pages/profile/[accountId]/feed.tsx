@@ -6,7 +6,7 @@ import InfiniteScrollWrapper from "react-infinite-scroll-component";
 import { fetchAccountFeedPosts } from "@/common/api/near-social-indexer";
 import { IndexPostResultItem } from "@/common/contracts/social-db";
 import type { AccountId } from "@/common/types";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { PostCard, PostEditor } from "@/entities/post";
 import { ProfileLayout } from "@/layout/profile/components/layout";

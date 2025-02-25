@@ -15,8 +15,8 @@ import {
   PaginationPrevious,
   SearchBar,
   SortSelect,
-} from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import {
   ACCOUNT_CATEGORY_OPTIONS,
   ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS,

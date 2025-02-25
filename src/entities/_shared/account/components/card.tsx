@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import { indexer } from "@/common/api/indexer";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 import {
   AccountProfileCover,
   AccountProfilePicture,
