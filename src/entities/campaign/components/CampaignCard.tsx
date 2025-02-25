@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
@@ -17,7 +18,13 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
     : false;
 
   return (
-    <div className="md:min-w-104 h-144 cursor-pointer rounded-lg shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_2px_2px_-1px_rgba(5,5,5,0.08),0px_3px_5px_0px_rgba(5,5,5,0.08)] transition-all duration-500 ease-in-out hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]">
+    <div
+      className={cn(
+        "h-144 cursor-pointer rounded-lg  ease-in-out ",
+        "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_2px_2px_-1px_rgba(5,5,5,0.08),0px_3px_5px_0px_rgba(5,5,5,0.08)] ",
+        "transition-all duration-500 hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]",
+      )}
+    >
       <Link href={`/campaign/${data.id}/leaderboard`} passHref>
         <div className="relative h-[212px] w-full">
           <Image
@@ -43,13 +50,16 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             </div>
           </div>
           <div className="h-[120px]">
-            <p className="text-[16px]">{data.description ? truncate(data.description, 200) : ""}</p>
+            <p className="text-[16px]">{data.description ? truncate(data.description, 180) : ""}</p>
           </div>
           <CampaignProgressBar
             target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}
             minAmount={data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0}
-            targetMet={data?.total_raised_amount === data?.max_amount}
+            targetMet={
+              yoctoNearToFloat(data?.total_raised_amount) >= yoctoNearToFloat(data?.target_amount)
+            }
             isStarted={isStarted}
+            isEscrowBalanceEmpty={data?.escrow_balance === "0"}
             amount={data?.total_raised_amount ? yoctoNearToFloat(data?.total_raised_amount) : 0}
             endDate={Number(data?.end_ms)}
           />

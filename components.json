@@ -12,7 +12,7 @@
   },
   "aliases": {
     "components": "@/common/ui/layout",
-    "utils": "@/common/ui/utils",
+    "utils": "@/common/ui/layout/utils",
     "ui": "@/common/ui/layout/components"
   }
 }

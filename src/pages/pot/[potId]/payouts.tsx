@@ -10,6 +10,7 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  Button,
   LabeledIcon,
   Pagination,
   PaginationContent,
