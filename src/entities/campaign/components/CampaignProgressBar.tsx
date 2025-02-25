@@ -45,19 +45,21 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
     }
   }, [targetMet, isTimeUp, isStarted, timeLeft]);
 
-  const nearDisplay = useMemo(() => (
-    <div className="inline-flex gap-1 text-sm">
-      <NearIcon className="m-0 mt-[2px] h-4 w-4" />
-      {amount}
-      <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
-        / {target} NEAR
-      </span>
-    </div>
-  ), [amount, target]);
+  const nearDisplay = useMemo(
+    () => (
+      <div className="inline-flex gap-1 text-sm">
+        <NearIcon className="m-0 mt-[2px] h-4 w-4" />
+        {amount}
+        <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">/ {target} NEAR</span>
+      </div>
+    ),
+    [amount, target],
+  );
 
   const titleContent = useMemo(() => {
     if (isTimeUp) {
       let message;
+
       if (amount && !targetMet && amount < minAmount) {
         message = isEscrowBalanceEmpty
           ? "Donations have been refunded"
@@ -70,17 +72,22 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
         message = "Goal was not Achieved";
       }
 
-      const messageColor = amount < minAmount && !isEscrowBalanceEmpty ? "#DD3345" : (targetMet || amount > minAmount) ? color : "#DD3345";
+      const messageColor =
+        amount < minAmount && !isEscrowBalanceEmpty
+          ? "#DD3345"
+          : targetMet || amount > minAmount
+            ? color
+            : "#DD3345";
 
       return (
-        <div className="flex w-full justify-between items-center">
+        <div className="flex w-full items-center justify-between">
           <span className={`text-sm font-semibold text-[${messageColor}]`}>{message}</span>
           {nearDisplay}
         </div>
       );
     } else if (targetMet) {
       return (
-        <div className="flex w-full justify-between items-center">
+        <div className="flex w-full items-center justify-between">
           <span className="text-sm font-semibold text-[#7FC41E]">Goal Achieved</span>
           {nearDisplay}
         </div>
@@ -89,20 +96,16 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
       return (
         <>
           <NearIcon className="m-0 mr-1 h-4 w-4" />
-          {amount} <span className="m-0 p-0 pl-1 font-medium text-[#7B7B7B]"> / {target} NEAR Raised</span>
+          {amount}{" "}
+          <span className="m-0 p-0 pl-1 font-medium text-[#7B7B7B]"> / {target} NEAR Raised</span>
         </>
       );
     }
-  }, [isTimeUp, amount, targetMet, minAmount, isEscrowBalanceEmpty, color, nearDisplay]); 
+  }, [isTimeUp, amount, targetMet, minAmount, isEscrowBalanceEmpty, color, nearDisplay]);
 
-
-  
-  
   return (
     <div className="flex w-full flex-col">
-      <p className="mb-2 flex items-center font-semibold">
-       {titleContent}
-      </p>
+      <p className="mb-2 flex items-center font-semibold">{titleContent}</p>
       <Progress value={progressPercentage} bgColor={color} />
       <div className="mt-4 flex justify-between">
         <div className="flex items-center gap-1">
