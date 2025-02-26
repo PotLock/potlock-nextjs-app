@@ -10,12 +10,8 @@ import { TextAreaField, TextField } from "@/common/ui/form-fields";
 import { NearInputField } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";
+import { Temporal } from "temporal-polyfill";
 
-const formatTimestampForInput = (timestamp: number) => {
-  if (!timestamp) return "";
-  const date = new Date(timestamp);
-  return date.toISOString().slice(0, 16);
-};
 
 export const CampaignForm = ({
   existingData,
@@ -52,13 +48,14 @@ export const CampaignForm = ({
 
       form.setValue(
         "start_ms",
-        existingData?.start_ms ? formatTimestampForInput(existingData?.start_ms) : "",
+        existingData?.start_ms,
       );
-
-      form.setValue(
-        "end_ms",
-        existingData?.end_ms ? formatTimestampForInput(existingData?.end_ms) : "",
-      );
+      if(existingData?.end_ms) {
+        form.setValue(
+          "end_ms",
+          existingData?.end_ms,
+        );
+      }
     }
   }, [isUpdate, existingData]);
 
@@ -209,11 +206,17 @@ export const CampaignForm = ({
             <FormField
               control={form.control}
               name="start_ms"
-              render={({ field }) => (
+              render={({ field: {value, ...field} }) => (
                 <TextField
-                  label="Start Date"
-                  {...field}
-                  required
+                {...field}
+                required={!!watch("min_amount")}
+                  label="End Date"
+                value={  typeof value === "number"
+                                            ? Temporal.Instant.fromEpochMilliseconds(value)
+                                                .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                                                .toPlainDateTime()
+                                                .toString({ smallestUnit: "minute" })
+                                            : undefined }
                   classNames={{ root: "lg:w-90" }}
                   type="datetime-local"
                 />
@@ -222,11 +225,17 @@ export const CampaignForm = ({
             <FormField
               control={form.control}
               name="end_ms"
-              render={({ field }) => (
+              render={({  field: {value, ...field} }) => (
                 <TextField
+                {...field}
                   required={!!watch("min_amount")}
                   label="End Date"
-                  {...field}
+                value={  typeof value === "number"
+                                            ? Temporal.Instant.fromEpochMilliseconds(value)
+                                                .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                                                .toPlainDateTime()
+                                                .toString({ smallestUnit: "minute" })
+                                            : undefined }
                   classNames={{ root: "lg:w-90" }}
                   type="datetime-local"
                 />

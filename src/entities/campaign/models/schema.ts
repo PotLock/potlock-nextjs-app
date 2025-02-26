@@ -15,18 +15,9 @@ export const campaignFormSchema = z
     min_amount: z.number().optional(),
     max_amount: z.number().optional(),
     cover_image_url: z.string().optional(),
-    start_ms: z
-      .string()
-      .describe("Campaign Start Date")
-      .refine(
-        (date) => {
-          return new Date(date).getTime() > Date.now();
-        },
-        {
-          message: "Start date must be in the future",
-        },
-      ),
-    end_ms: z.string()?.optional(),
+    start_ms: 
+      futureTimestamp.describe("Campaign Start Date"),
+    end_ms: futureTimestamp.describe("Campaign End Date"),
     owner: z.string()?.optional(),
     recipient: z.string().refine(near.isAccountValid, {
       message: `Account does not exist on ${NETWORK}`,

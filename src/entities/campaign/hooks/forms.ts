@@ -80,7 +80,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     });
   }, [values, self]);
 
-  const timeToMilliseconds = (time: string) => {
+  const timeToMilliseconds = (time: number) => {
     return new Date(time).getTime();
   };
 
