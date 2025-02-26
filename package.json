@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "generate:api-clients": "orval --config api.config.cjs",
     "generate:clients": "concurrently 'yarn generate:api-clients'",
-    "generate:css": "unocss 'src/**/*.tsx' --out-file=src/common/ui/styles/uno.generated.css --write-transformed",
+    "generate:css": "unocss 'src/**/*.tsx' --out-file=src/common/ui/layout/styles/uno.generated.css --write-transformed",
     "dev:css": "yarn generate:css --watch",
     "dev:test": "yarn && vitest watch",
     "dev": "yarn && yarn generate:css && concurrently 'yarn dev:css' 'next dev'",

@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { List, ListRegistration } from "@/common/api/indexer";
-import { Filter, Group, GroupType, SearchBar, SortSelect } from "@/common/ui/components";
+import { Filter, Group, GroupType, SearchBar, SortSelect } from "@/common/ui/layout/components";
 import { ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS } from "@/entities/_shared";
 
 import { ListCardSkeleton } from "./ListCardSkeleton";

@@ -8,6 +8,7 @@ import { prop } from "remeda";
 import { object } from "zod";
 
 import { AccountId, ByAccountId } from "@/common/types";
+import { TextField } from "@/common/ui/form/components";
 import {
   Button,
   Checkbox,
@@ -20,9 +21,8 @@ import {
   FormField,
   ScrollArea,
   ScrollBar,
-} from "@/common/ui/components";
-import { TextField } from "@/common/ui/form-fields";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountGroupItem, AccountListItem, validAccountId } from "@/entities/_shared/account";
 
 export type AccountGroupEditModalProps = {

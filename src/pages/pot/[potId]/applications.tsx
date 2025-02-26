@@ -9,7 +9,7 @@ import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
 import { oldToRecent } from "@/common/lib";
 import type { AccountId } from "@/common/types";
-import { FilterChip, SearchBar } from "@/common/ui/components";
+import { FilterChip, SearchBar } from "@/common/ui/layout/components";
 import {
   type AccountPotApplicationStatusOption,
   type AccountPotApplicationStatusVariant,

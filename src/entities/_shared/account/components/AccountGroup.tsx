@@ -3,9 +3,9 @@ import { useCallback, useId, useMemo } from "react";
 import { show } from "@ebay/nice-modal-react";
 import Link from "next/link";
 
-import { Button } from "@/common/ui/components";
-import { GroupIcon } from "@/common/ui/svg";
-import { cn } from "@/common/ui/utils";
+import { Button } from "@/common/ui/layout/components";
+import { GroupIcon } from "@/common/ui/layout/svg";
+import { cn } from "@/common/ui/layout/utils";
 import {
   AccountListItem,
   AccountListItemProps,

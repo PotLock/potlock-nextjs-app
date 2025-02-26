@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { FormControl, FormItem, FormLabel } from "@/common/ui/components";
-import { TextField } from "@/common/ui/form-fields";
+import { TextField } from "@/common/ui/form/components";
+import { FormControl, FormItem, FormLabel } from "@/common/ui/layout/components";
 import { useTokenUsdDisplayValue } from "@/entities/_shared/token";
 
 export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {}

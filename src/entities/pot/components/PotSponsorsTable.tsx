@@ -10,7 +10,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/common/ui/components";
+} from "@/common/ui/layout/components";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 

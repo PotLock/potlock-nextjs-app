@@ -114,7 +114,7 @@ export const NATIVE_TOKEN_DECIMALS = NEAR_NOMINATION_EXP;
 export const NATIVE_TOKEN_ICON_URL = `${ICONS_ASSET_ENDPOINT_URL}/near.svg`;
 export const UNKNOWN_ACCOUNT_ID_PLACEHOLDER = "unknown-account-id";
 
-export const PLATFORM_LISTED_TOKEN_IDS: TokenId[] = [NATIVE_TOKEN_ID];
+export const PLATFORM_LISTED_TOKEN_IDS: TokenId[] = [];
 
 // List ID of PotLock Public Goods Registry
 export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1;

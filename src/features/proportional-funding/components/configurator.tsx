@@ -2,9 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { ByPotId } from "@/common/api/indexer";
-import { Card, CardContent, CardFooter, Form } from "@/common/ui/components";
-import { TextField } from "@/common/ui/form-fields";
-import { cn } from "@/common/ui/utils";
+import { TextField } from "@/common/ui/form/components";
+import { Card, CardContent, CardFooter, Form } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { usePotFeatureFlags } from "@/entities/pot";
 
 import { proportionalFundingConfigurationSchema } from "../model/schemas";

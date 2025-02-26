@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 
 import { NETWORK } from "@/common/_config";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
-import { Button, Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button, Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { CartLink } from "@/entities/cart";
 import { rootPathnames } from "@/pathnames";

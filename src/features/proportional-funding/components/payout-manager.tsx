@@ -4,8 +4,8 @@ import { MdCheck, MdFileDownload } from "react-icons/md";
 
 import { type ByPotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Button, Skeleton } from "@/common/ui/components";
-import { useToast } from "@/common/ui/hooks";
+import { Button, Skeleton } from "@/common/ui/layout/components";
+import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 import { usePotAuthorization } from "@/entities/pot";

@@ -6,8 +6,8 @@ import { Temporal } from "temporal-polyfill";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import type { ByCampaignId } from "@/common/types";
-import { Button, Skeleton, Spinner } from "@/common/ui/components";
-import { NearIcon } from "@/common/ui/svg";
+import { Button, Skeleton, Spinner } from "@/common/ui/layout/components";
+import { NearIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 

@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import { SYBIL_APP_LINK_URL } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/components";
-import { WarningIcon } from "@/common/ui/svg";
+import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/layout/components";
+import { WarningIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
 
 export type DonationSybilWarningProps = ByPotId & {

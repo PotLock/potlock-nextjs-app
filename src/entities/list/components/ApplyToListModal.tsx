@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   Textarea,
-} from "@/common/ui/components";
-import SuccessRedIcon from "@/common/ui/svg/success-red-icon";
+} from "@/common/ui/layout/components";
+import SuccessRedIcon from "@/common/ui/layout/svg/success-red-icon";
 
 interface ApplyToListModalProps {
   isOpen: boolean;

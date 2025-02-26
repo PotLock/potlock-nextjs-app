@@ -2,7 +2,7 @@ import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
 import type { ByAccountId } from "@/common/types";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 import {
   AccountFollowStats,
   AccountProfileCover,

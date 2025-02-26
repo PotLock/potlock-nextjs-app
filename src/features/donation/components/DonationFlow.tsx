@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
 import { isBigSource } from "@/common/lib";
-import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 import { dispatch } from "@/store";

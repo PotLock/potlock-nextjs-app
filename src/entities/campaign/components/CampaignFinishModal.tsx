@@ -4,8 +4,8 @@ import { create, useModal } from "@ebay/nice-modal-react";
 import { Dialog } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
 
-import { Button, DialogContent, DialogDescription } from "@/common/ui/components";
-import SuccessRedIcon from "@/common/ui/svg/success-red-icon";
+import { Button, DialogContent, DialogDescription } from "@/common/ui/layout/components";
+import SuccessRedIcon from "@/common/ui/layout/svg/success-red-icon";
 import { dispatch } from "@/store";
 
 import { useCampaignActionState } from "../models";

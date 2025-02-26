@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ETHEREUM_EXPLORER_ADDRESS_ENDPOINT_URL } from "@/common/constants";
 import { isEthereumAddress, truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 import { rootPathnames } from "@/pathnames";
 
 import { AccountSummaryPopup } from "./AccountSummaryPopup";

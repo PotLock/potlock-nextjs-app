@@ -3,13 +3,13 @@ import { useCallback, useState } from "react";
 import { Check } from "lucide-react";
 import CopyToClipboard from "react-copy-to-clipboard";
 
-import { CopyPasteIcon } from "@/common/ui/svg";
+import { CopyPasteIcon } from "@/common/ui/layout/svg";
 import {
   InstagramShareIcon,
   ShareIcon,
   TelegramShareIcon,
   TwitterShareIcon,
-} from "@/common/ui/svg/Share";
+} from "@/common/ui/layout/svg/Share";
 
 import { Button } from "../atoms/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../atoms/popover";

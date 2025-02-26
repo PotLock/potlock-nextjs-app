@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Button, PageWithBanner } from "@/common/ui/components";
+import { Button, PageWithBanner } from "@/common/ui/layout/components";
 import { ActivePots } from "@/entities/pot";
 import { PotDeploymentButton } from "@/features/pot-deployment";
 
