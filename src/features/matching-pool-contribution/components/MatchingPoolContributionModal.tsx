@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
@@ -15,8 +14,8 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/layout/components";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { useGlobalStoreSelector } from "@/store";
 
 import { useMatchingPoolContributionForm } from "../hooks/forms";
 
@@ -31,25 +30,14 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
   onCloseClick,
   potDetail,
 }) => {
-  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
+  const viewer = useWalletUserSession();
 
-  const router = useRouter();
-  const query = router.query as { referrerId?: string };
-  const referrerId = query.referrerId;
-
-  // AccountID (Address)
-  const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
-
-  // Form settings
   const { form, errors, onSubmit, inProgress } = useMatchingPoolContributionForm({
-    accountId: asDao ? actAsDao.defaultAddress : accountId,
-    asDao,
     potDetail,
-    referrerId,
   });
 
   const hasMinimumAmount = ["0", "1"].includes(potDetail.min_matching_pool_donation_amount);
-  const yoctoMinimumAmout = yoctoNearToFloat(potDetail.min_matching_pool_donation_amount);
+  const yoctoMinimumAmount = yoctoNearToFloat(potDetail.min_matching_pool_donation_amount);
 
   // Get Protocol Config
   const protocolConfig = useProtocolConfig(potDetail);
@@ -70,7 +58,7 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
     ? 0
     : (formValues.amountNEAR * potDetail.chef_fee_basis_points) / 10_000 || 0;
 
-  const referrerFeeAmountNear = referrerId
+  const referrerFeeAmountNear = viewer.referrerAccountId
     ? (formValues.amountNEAR * potDetail.referral_fee_matching_pool_basis_points) / 10_000 || 0
     : 0;
 
@@ -89,7 +77,7 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
             {/*NEAR Input */}
             <p className="my-2 break-words text-[16px] font-normal leading-[20px] text-[#525252]">
               Enter matching pool contribution amount in NEAR{" "}
-              {hasMinimumAmount ? "(no minimum)" : `(Min. ${yoctoMinimumAmout})`}
+              {hasMinimumAmount ? "(no minimum)" : `(Min. ${yoctoMinimumAmount})`}
             </p>
 
             {/* Amount NEAR input */}
@@ -183,7 +171,7 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
             )}
 
             {/* Referrer Fee */}
-            {referrerId && (
+            {viewer.referrerAccountId && (
               <p className="mt-3 flex flex-row items-center break-words text-[14px] font-normal leading-[20px] text-[#292929]">
                 Referrer fee: {referrerFeeAmountNear} NEAR
               </p>
@@ -203,11 +191,16 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
               {inProgress ? (
                 <Spinner />
               ) : (
-                <>
-                  {asDao ? "Create proposal to contribute " : "Contribute "}
-                  {!asDao &&
-                    `${formValues.amountNEAR || 0} ${potDetail.base_currency?.toUpperCase()} to matching pool`}
-                </>
+                <span className="inline-flex gap-1">
+                  <span>
+                    {viewer.isDaoRepresentative ? "Create proposal to contribute" : "Contribute"}
+                  </span>
+
+                  <span>
+                    {`${formValues.amountNEAR || 0} ${potDetail.base_currency?.toUpperCase()}` +
+                      " to matching pool"}
+                  </span>
+                </span>
               )}
             </Button>
           </div>

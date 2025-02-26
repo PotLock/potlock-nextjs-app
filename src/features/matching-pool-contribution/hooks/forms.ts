@@ -8,20 +8,13 @@ import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
+import { useWalletUserSession } from "@/common/wallet";
 
 import { MatchingPoolContributionInputs, matchingPoolFundingSchema } from "../model/schemas";
 
-export const useMatchingPoolContributionForm = ({
-  accountId,
-  potDetail,
-  referrerId,
-  asDao,
-}: {
-  accountId: string;
-  potDetail: Pot;
-  referrerId?: string;
-  asDao: boolean;
-}) => {
+export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot }) => {
+  const viewer = useWalletUserSession();
+
   const form = useForm<MatchingPoolContributionInputs>({
     resolver: zodResolver(matchingPoolFundingSchema),
     mode: "all",
@@ -34,7 +27,7 @@ export const useMatchingPoolContributionForm = ({
       const args = {
         message: formData.data.message,
         matching_pool: true,
-        referrer_id: referrerId,
+        referrer_id: viewer.referrerAccountId,
         bypass_protocol_fee: formData.data.bypassProtocolFee,
         custom_chef_fee_basis_points: formData.data.bypassChefFee ? 0 : undefined,
       };
@@ -68,12 +61,11 @@ export const useMatchingPoolContributionForm = ({
       try {
         setInProgress(true);
 
-        if (asDao) {
-          // If Dao, get dao policy
-          const daoPolicy = await getDaoPolicy(accountId);
+        if (viewer.isDaoRepresentative) {
+          const daoPolicy = await getDaoPolicy(viewer.daoAccountId);
 
           await naxiosInstance
-            .contractApi({ contractId: accountId }) // INFO: In this case, the accountId has daoAddress value
+            .contractApi({ contractId: viewer.daoAccountId })
             .call("add_proposal", {
               args: daoTransactionArgs,
               deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
@@ -81,14 +73,12 @@ export const useMatchingPoolContributionForm = ({
               callbackUrl,
             });
         } else {
-          await naxiosInstance
-            .contractApi({ contractId: potDetail.account }) // INFO: In this case, the accountId is a regular pot account
-            .call("donate", {
-              args,
-              deposit: parseNearAmount(formData.data.amountNEAR.toString()) || "0",
-              gas: ONE_TGAS.mul(100).toString(),
-              callbackUrl,
-            });
+          await naxiosInstance.contractApi({ contractId: potDetail.account }).call("donate", {
+            args,
+            deposit: parseNearAmount(formData.data.amountNEAR.toString()) || "0",
+            gas: ONE_TGAS.mul(100).toString(),
+            callbackUrl,
+          });
         }
       } catch (e) {
         console.error(e);
@@ -96,7 +86,14 @@ export const useMatchingPoolContributionForm = ({
         setInProgress(false);
       }
     },
-    [accountId, asDao, potDetail, referrerId],
+
+    [
+      potDetail.account,
+      potDetail.name,
+      viewer.daoAccountId,
+      viewer.isDaoRepresentative,
+      viewer.referrerAccountId,
+    ],
   );
 
   return {

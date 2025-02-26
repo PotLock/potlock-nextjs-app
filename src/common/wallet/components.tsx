@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter } from "next/router";
 
@@ -7,7 +7,7 @@ import { IS_CLIENT } from "@/common/constants";
 
 import { useWalletUserAdapter } from "./adapters";
 import { useWalletUserMetadataStore } from "./model";
-import { isAccountId } from "../lib";
+import { isAccountId, useRouteQuery } from "../lib";
 
 type WalletProviderProps = {
   children: React.ReactNode;
@@ -16,9 +16,22 @@ type WalletProviderProps = {
 const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const router = useRouter();
 
+  const { query, setSearchParams } = useRouteQuery();
+
+  console.log(query);
+
   const trackedQueryParams = router.query as {
+    /**
+     * Backward compatibility for deprecated parameter name
+     */
+    referrerId?: string;
     referrerAccountId?: string;
   };
+
+  const referrerAccountIdUrlParameter = useMemo(
+    () => trackedQueryParams.referrerAccountId || trackedQueryParams.referrerId,
+    [trackedQueryParams.referrerAccountId, trackedQueryParams.referrerId],
+  );
 
   const { registerInit, setAccountState, setError, isReady, isSignedIn, accountId, error } =
     useWalletUserAdapter();
@@ -73,6 +86,8 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     };
   }, [syncWalletState, isReady, handleChange]);
 
+  console.log(referrerAccountIdUrlParameter);
+
   /**
    * Updating referrer account id, if detected
    */
@@ -80,13 +95,21 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     if (
       isReady &&
       isSignedIn &&
-      isAccountId(trackedQueryParams.referrerAccountId) &&
-      trackedQueryParams.referrerAccountId !== referrerAccountId &&
-      trackedQueryParams.referrerAccountId !== accountId
+      isAccountId(referrerAccountIdUrlParameter) &&
+      referrerAccountIdUrlParameter !== referrerAccountId &&
+      referrerAccountIdUrlParameter !== accountId
     ) {
-      setReferrerAccountId(trackedQueryParams.referrerAccountId);
+      setReferrerAccountId(referrerAccountIdUrlParameter);
     }
-  }, [accountId, isReady, isSignedIn, referrerAccountId, setReferrerAccountId, trackedQueryParams]);
+  }, [
+    accountId,
+    isReady,
+    isSignedIn,
+    referrerAccountId,
+    referrerAccountIdUrlParameter,
+    setReferrerAccountId,
+    trackedQueryParams,
+  ]);
 
   return children;
 };
