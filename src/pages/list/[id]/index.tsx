@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { ListRegistration, indexer } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
-import { PageWithBanner, Spinner } from "@/common/ui/components";
+import { PageWithBanner, Spinner } from "@/common/ui/layout/components";
 import {
   ListAccounts,
   ListDetails,

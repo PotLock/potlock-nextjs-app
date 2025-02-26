@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { values } from "remeda";
 
-import { Button, ButtonProps } from "@/common/ui/components";
-import { CartIcon } from "@/common/ui/svg";
-import { cn } from "@/common/ui/utils";
+import { Button, ButtonProps } from "@/common/ui/layout/components";
+import { CartIcon } from "@/common/ui/layout/svg";
+import { cn } from "@/common/ui/layout/utils";
 import { rootPathnames } from "@/pathnames";
 
 import { useCart } from "../hooks";

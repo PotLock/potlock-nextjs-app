@@ -16,7 +16,7 @@ import {
   donationContractClient,
 } from "@/common/contracts/core/donation";
 import { PotDonation, PotDonationArgs, potContractClient } from "@/common/contracts/core/pot";
-import type { FungibleTokenMetadata } from "@/common/contracts/tokens/fungible";
+import type { FungibleTokenMetadata } from "@/common/contracts/tokens";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
@@ -104,28 +104,21 @@ export const effects = (dispatch: AppDispatcher) => ({
               recipientFtStorageBalance = null,
             ] = await Promise.all([
               tokenClient.view<{}, FungibleTokenMetadata>("ft_metadata"),
-
               tokenClient.view<{}, { min: string; max: string }>("storage_balance_bounds"),
 
               tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
                 "storage_balance_of",
-                {
-                  args: { account_id: protocol_fee_recipient_account },
-                },
+                { args: { account_id: protocol_fee_recipient_account } },
               ),
 
               tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
                 "storage_balance_of",
-                {
-                  args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
-                },
+                { args: { account_id: DONATION_CONTRACT_ACCOUNT_ID } },
               ),
 
               tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
                 "storage_balance_of",
-                {
-                  args: { account_id: params.accountId },
-                },
+                { args: { account_id: params.accountId } },
               ),
             ]);
 
@@ -236,11 +229,9 @@ export const effects = (dispatch: AppDispatcher) => ({
               },
             ];
 
-            console.log(transactions);
-
             return void donationContractClient
               .storage_deposit(requiredDepositNear.mul(Big(10).pow(24)).toString())
-              .then((updatedStorageBalance) =>
+              .then((_updatedStorageBalance) =>
                 // @ts-expect-error WIP
                 tokenClient.callMultiple(transactions),
               )

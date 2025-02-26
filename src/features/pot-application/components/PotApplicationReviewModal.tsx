@@ -12,7 +12,7 @@ import {
   FormField,
   Spinner,
   Textarea,
-} from "@/common/ui/components";
+} from "@/common/ui/layout/components";
 
 import { type PotApplicationReviewParams, usePotApplicationReviewForm } from "../hooks/forms";
 

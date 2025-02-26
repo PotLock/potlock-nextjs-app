@@ -15,7 +15,7 @@ export const getPotDeploymentSchema = () =>
     /**
      *! Heads up!
      *!  Make sure that any fields targeted here are listed in
-     *!  `potDeploymentCrossFieldValidationTargets`
+     *!  `potDeploymentDependentFields`
      *!  and have their corresponding error paths specified correctly.
      */
     .refine(isPotApplicationStartBeforeEnd, {
@@ -35,7 +35,7 @@ export type PotDeploymentSchema = ReturnType<typeof getPotDeploymentSchema>;
 
 export type PotDeploymentInputs = FromSchema<PotDeploymentSchema>;
 
-export const potDeploymentCrossFieldValidationTargets: (keyof PotDeploymentInputs)[] = [
+export const potDeploymentDependentFields: (keyof PotDeploymentInputs)[] = [
   "application_end_ms",
   "public_round_end_ms",
   "public_round_start_ms",
@@ -86,7 +86,7 @@ export const getPotSettingsSchema = (potIndexedData?: Pot) => {
   /**
    *! Heads up!
    *!  Make sure that any fields targeted here are listed in
-   *!  `potSettingsCrossFieldValidationTargets`
+   *!  `potSettingsDependentFields`
    *!  and have their corresponding error paths specified correctly.
    */
   return schema
@@ -108,7 +108,7 @@ export type PotSettingsSchema = ReturnType<typeof getPotSettingsSchema>;
 
 export type PotSettings = FromSchema<PotSettingsSchema>;
 
-export const potSettingsCrossFieldValidationTargets: (keyof PotSettings)[] = [
+export const potSettingsDependentFields: (keyof PotSettings)[] = [
   "application_end_ms",
   "public_round_end_ms",
   "public_round_start_ms",

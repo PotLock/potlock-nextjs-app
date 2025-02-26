@@ -4,8 +4,13 @@ import { create, useModal } from "@ebay/nice-modal-react";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useRouter } from "next/router";
 
-import { Button, DataLoadingPlaceholder, Dialog, DialogContent } from "@/common/ui/components";
-import SuccessRedIcon from "@/common/ui/svg/success-red-icon";
+import {
+  Button,
+  DataLoadingPlaceholder,
+  Dialog,
+  DialogContent,
+} from "@/common/ui/layout/components";
+import SuccessRedIcon from "@/common/ui/layout/svg/success-red-icon";
 import { dispatch } from "@/store";
 
 import DonationSuccess from "./DonationSuccess";

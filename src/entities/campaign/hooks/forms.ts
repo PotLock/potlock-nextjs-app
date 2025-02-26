@@ -1,13 +1,14 @@
 import { useCallback, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { floatToYoctoNear } from "@/common/lib";
 import { CampaignId } from "@/common/types";
-import { toast } from "@/common/ui/hooks";
+import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
@@ -16,6 +17,7 @@ import { CampaignEnumType } from "../types";
 
 export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => {
   const viewer = useWalletUserSession();
+  const router = useRouter();
 
   type Values = FromSchema<typeof campaignFormSchema>;
 
@@ -100,15 +102,15 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
         args: { campaign_id: campaignId },
       })
       .then(() => {
-        toast({
-          description: "Successfully processed escrowed donations",
+        return toast({
+          title: "Successfully processed escrowed donations",
         });
       })
       .catch((error) => {
         console.error("Failed to process escrowed donations:", error);
 
         toast({
-          description: "Failed to process escrowed donations. Please try again later.",
+          title: "Failed to process escrowed donations. Please try again later.",
           variant: "destructive",
         });
       });
@@ -122,15 +124,15 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
         args: { campaign_id: campaignId },
       })
       .then(() => {
-        toast({
-          description: "Successfully processed donation refunds",
+        return toast({
+          title: "Successfully processed donation refunds",
         });
       })
       .catch((error) => {
         console.error("Failed to process donation refunds:", error);
 
         toast({
-          description: "Failed to process donation refunds. Please try again later.",
+          title: "Failed to process donation refunds. Please try again later.",
           variant: "destructive",
         });
       });
@@ -142,7 +144,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
         description: values.description || "",
         name: values.name || "",
         target_amount: floatToYoctoNear(values.target_amount) as any,
-        cover_image_url: values.cover_image_url || "",
+        cover_image_url: values.cover_image_url ?? null,
         ...(values.min_amount && !campaignId
           ? { min_amount: floatToYoctoNear(values.min_amount) as any }
           : {}),
@@ -167,7 +169,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           })
           .then(() => {
             toast({
-              description: `You’ve successfully updated this Campaign`,
+              title: `You’ve successfully updated this Campaign`,
             });
           })
           .catch((error) => {
@@ -190,14 +192,16 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           .create_campaign({ args })
           .then(() => {
             toast({
-              description: `You’ve successfully created a campaign for ${values.name}.`,
+              title: `You’ve successfully created a campaign for ${values.name}.`,
             });
+
+            router.push("/campaigns");
           })
           .catch((error) => {
-            console.error("Failed to update Campaign:", error);
+            console.error("Failed to create Campaign:", error);
 
             toast({
-              description: "Failed to create Campaign.",
+              title: "Failed to create Campaign.",
               variant: "destructive",
             });
           });

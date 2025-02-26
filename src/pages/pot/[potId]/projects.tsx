@@ -3,7 +3,7 @@ import { ReactElement, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
 import { PotApplication, PotApplicationStatus, indexer } from "@/common/api/indexer";
-import { InfiniteScroll, SearchBar } from "@/common/ui/components";
+import { InfiniteScroll, SearchBar } from "@/common/ui/layout/components";
 import { AccountCard } from "@/entities/_shared/account";
 import { DonateToAccountButton } from "@/features/donation";
 import { PotLayout } from "@/layout/pot/components/layout";

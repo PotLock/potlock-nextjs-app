@@ -1,6 +1,7 @@
+import { FEATURE_REGISTRY } from "@/common/_config";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import type { ByTokenId } from "@/common/types";
-import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form-fields";
+import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form/components";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { useToken, useTokenAllowlist } from "../hooks/data";
@@ -13,23 +14,10 @@ const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
     balanceCheckAccountId: viewer?.accountId,
   });
 
-  switch (tokenId) {
-    case NATIVE_TOKEN_ID: {
-      return (
-        <SelectFieldOption value={tokenId}>
-          {token?.metadata.symbol ?? NATIVE_TOKEN_ID.toUpperCase()}
-        </SelectFieldOption>
-      );
-    }
-
-    default: {
-      // TODO: render as null if the user has zero balance
-
-      if (token) {
-        return <SelectFieldOption value={tokenId}>{token.metadata.symbol}</SelectFieldOption>;
-      } else return null;
-    }
-  }
+  // TODO: render as null if the user has zero balance
+  if (token) {
+    return <SelectFieldOption value={tokenId}>{token.metadata.symbol}</SelectFieldOption>;
+  } else return null;
 };
 
 export type TokenSelectorProps = Pick<
@@ -38,7 +26,9 @@ export type TokenSelectorProps = Pick<
 > & {};
 
 export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
-  const { data: tokenAllowlist } = useTokenAllowlist();
+  const { data: tokenAllowlist } = useTokenAllowlist({
+    enabled: FEATURE_REGISTRY.DirectFtDonation.isEnabled,
+  });
 
   return (
     // TODO: Move FormField wrapper from target parent layouts to here
@@ -52,6 +42,8 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
       }}
       {...props}
     >
+      <SelectFieldOption value={NATIVE_TOKEN_ID}>{NATIVE_TOKEN_ID.toUpperCase()}</SelectFieldOption>
+
       {tokenAllowlist.map((tokenId) => (
         <TokenSelectorOption key={tokenId} {...{ tokenId }} />
       ))}

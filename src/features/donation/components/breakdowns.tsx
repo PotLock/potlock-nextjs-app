@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
-import { LabeledIcon } from "@/common/ui/components";
+import { LabeledIcon } from "@/common/ui/layout/components";
 import { AccountListItem } from "@/entities/_shared/account";
 import { TokenIcon } from "@/entities/_shared/token";
 

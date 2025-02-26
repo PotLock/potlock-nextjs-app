@@ -4,7 +4,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { CarouselItem } from "@/common/ui/components";
+import { CarouselItem } from "@/common/ui/layout/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
@@ -54,8 +54,11 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
           <CampaignProgressBar
             target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}
             minAmount={data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0}
+            targetMet={
+              yoctoNearToFloat(data?.total_raised_amount) >= yoctoNearToFloat(data?.target_amount)
+            }
             isStarted={isStarted}
-            targetMet={data?.total_raised_amount === data?.max_amount}
+            isEscrowBalanceEmpty={data?.escrow_balance === "0"}
             amount={data?.total_raised_amount ? yoctoNearToFloat(data?.total_raised_amount) : 0}
             endDate={Number(data?.end_ms)}
           />

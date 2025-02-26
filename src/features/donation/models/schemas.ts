@@ -51,7 +51,6 @@ export const donationSchema = object({
   potAccountId: string().optional().describe("Pot account id."),
   listId: number().optional().describe("List id."),
   campaignId: number().optional().describe("Campaign id."),
-
   message: string().max(DONATION_MAX_MESSAGE_LENGTH).optional().describe("Donation message."),
 
   allocationStrategy: nativeEnum(DonationAllocationStrategyEnum, {
@@ -74,6 +73,7 @@ export const donationSchema = object({
     path: ["potAccountId"],
   })
   .refine(isDonationAmountSufficient, {
+    // TODO: Check if this is still the case:
     /**
      *? NOTE: Due to an unknown issue,
      *?  this message doesn't end up in react-hook-form's `formState.errors`.
@@ -85,14 +85,11 @@ export const donationSchema = object({
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
+export const donationDependentFields: (keyof DonationInputs)[] = ["amount", "potAccountId"];
+
 export type DonationSubmitParams = DonationInputs & {
   referrerAccountId?: AccountId;
 };
-
-export const donationCrossFieldValidationTargets: (keyof DonationInputs)[] = [
-  "amount",
-  "potAccountId",
-];
 
 export type DonationFormAPI = UseFormReturn<DonationInputs>;
 

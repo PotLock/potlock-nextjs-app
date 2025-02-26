@@ -5,7 +5,7 @@ import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { PotApplicationStatus as ApplicationStatus, indexer } from "@/common/api/indexer";
 import { fetchGlobalFeeds } from "@/common/api/near-social-indexer";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { PostCard, PostEditor } from "@/entities/post";
 import { PotLayout } from "@/layout/pot/components/layout";

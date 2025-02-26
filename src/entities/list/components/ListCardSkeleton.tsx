@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Skeleton } from "@/common/ui/components";
+import { Skeleton } from "@/common/ui/layout/components";
 
 export const ListCardSkeleton = () => {
   return (

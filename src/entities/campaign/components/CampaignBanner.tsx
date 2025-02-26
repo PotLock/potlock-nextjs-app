@@ -4,8 +4,8 @@ import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
-import { SocialsShare, Spinner } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { SocialsShare, Spinner } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { useNearToUsdWithFallback } from "@/entities/_shared/token/hooks/_deprecated";
 import { DonateToCampaignProjects } from "@/features/donation";
@@ -92,9 +92,14 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         </div>
         <CampaignProgressBar
           target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
-          targetMet={campaign?.total_raised_amount === campaign?.max_amount}
           minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
+          targetMet={
+            !!campaign?.total_raised_amount &&
+            yoctoNearToFloat(campaign?.total_raised_amount) >=
+              yoctoNearToFloat(campaign?.target_amount)
+          }
           isStarted={isStarted}
+          isEscrowBalanceEmpty={campaign?.escrow_balance === "0"}
           amount={
             campaign?.total_raised_amount ? yoctoNearToFloat(campaign?.total_raised_amount) : 0
           }

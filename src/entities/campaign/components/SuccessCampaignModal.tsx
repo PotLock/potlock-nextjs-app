@@ -1,4 +1,4 @@
-import { Button } from "@/common/ui/components";
+import { Button } from "@/common/ui/layout/components";
 
 interface SuccessModalProps {
   isOpen: boolean;

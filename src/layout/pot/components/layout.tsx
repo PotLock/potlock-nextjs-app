@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
-import { PageWithBanner } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { PageWithBanner } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { ChallengeModal } from "@/entities/pot";
 import { DonationSybilWarning } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";

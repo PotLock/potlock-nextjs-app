@@ -50,7 +50,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationSubmitted: registration !== undefined,
         hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
         registrationStatus: registration?.status,
-        referrerAccountId,
+        referrerAccountId: isAccountId(referrerAccountId) ? referrerAccountId : undefined,
       };
     } else if (wallet.isReady && !wallet.isSignedIn) {
       return {
@@ -64,7 +64,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,
-        referrerAccountId,
+        referrerAccountId: undefined,
       };
     } else {
       return {
@@ -78,7 +78,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,
-        referrerAccountId,
+        referrerAccountId: undefined,
       };
     }
   }, [

@@ -10,10 +10,10 @@ import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
-import { Button, ClipboardCopyButton } from "@/common/ui/components";
-import CheckIcon from "@/common/ui/svg/CheckIcon";
-import ReferrerIcon from "@/common/ui/svg/ReferrerIcon";
-import { cn } from "@/common/ui/utils";
+import { Button, ClipboardCopyButton } from "@/common/ui/layout/components";
+import CheckIcon from "@/common/ui/layout/svg/CheckIcon";
+import ReferrerIcon from "@/common/ui/layout/svg/ReferrerIcon";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import {
   AccountFollowButton,

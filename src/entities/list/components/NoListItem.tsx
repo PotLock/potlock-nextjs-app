@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Image from "next/image";
 
-import { Button } from "@/common/ui/components";
+import { Button } from "@/common/ui/layout/components";
 
 import { NoListItemType } from "../types";
 

@@ -5,8 +5,8 @@ import { Campaign } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import { CampaignId } from "@/common/types";
-import { Button, Form, FormField } from "@/common/ui/components";
-import { TextAreaField, TextField } from "@/common/ui/form-fields";
+import { TextAreaField, TextField } from "@/common/ui/form/components";
+import { Button, Form, FormField } from "@/common/ui/layout/components";
 import { NearInputField } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";
@@ -29,7 +29,7 @@ export const CampaignForm = ({
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, handleDeleteCampaign, watch, isValid } = useCampaignForm({
+  const { form, onChange, onSubmit, watch, isValid } = useCampaignForm({
     campaignId,
   });
 
@@ -237,11 +237,6 @@ export const CampaignForm = ({
             <Button variant="standard-filled" disabled={!isValid} type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
-            {isUpdate && (
-              <Button onClick={handleDeleteCampaign} type="button" variant="brand-tonal">
-                Delete Campaign
-              </Button>
-            )}
           </div>
         </form>
       </Form>
