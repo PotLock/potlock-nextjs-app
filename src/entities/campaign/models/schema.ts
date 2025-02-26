@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { NETWORK } from "@/common/_config";
 import { near } from "@/common/blockchains/near-protocol/client";
+import { futureTimestamp } from "@/common/lib";
 
 export const campaignFormSchema = z
   .object({
@@ -14,7 +15,7 @@ export const campaignFormSchema = z
     min_amount: z.number().optional(),
     max_amount: z.number().optional(),
     cover_image_url: z.string().optional(),
-    start_ms: z.string().min(1, "Start Time is Required"),
+    start_ms: futureTimestamp.describe('Campaign Start Date'),
     end_ms: z.string()?.optional(),
     owner: z.string()?.optional(),
     recipient: z.string().refine(near.isAccountValid, {
@@ -22,7 +23,7 @@ export const campaignFormSchema = z
     }),
   })
   .superRefine((data, ctx) => {
-    if (data.end_ms && data.start_ms >= data.end_ms) {
+    if (data.end_ms && data.start_ms.toString() >= data.end_ms) {
       ctx.addIssue({
         path: ["start_ms"],
         message: "Start time must be earlier than end time",
