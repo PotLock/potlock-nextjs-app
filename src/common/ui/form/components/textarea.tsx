@@ -30,7 +30,9 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>
           <div un-flex="~" un-items="center" un-gap="1">
             {label && <FormLabel className="font-500 text-sm">{label}</FormLabel>}
 
-            {props.required && <span className="line-height-none text-destructive text-xl">*</span>}
+            {props.required && (
+              <span className="line-height-none text-destructive text-xl">{"*"}</span>
+            )}
           </div>
 
           {labelExtension ??
@@ -48,15 +50,17 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>
           />
         </FormControl>
 
-        <FormDescription className="">
-          {hint && <span>{hint}</span>}
+        <div className="flex justify-between">
+          <FormMessage>{customErrorMessage}</FormMessage>
 
-          <span className="prose ml-auto">
-            {typeof maxLength === "number" ? `${currentLength}/${maxLength}` : currentLength}
-          </span>
-        </FormDescription>
+          <FormDescription className="">
+            {hint && <span>{hint}</span>}
 
-        <FormMessage>{customErrorMessage}</FormMessage>
+            <span className="prose ml-auto">
+              {typeof maxLength === "number" ? `${currentLength}/${maxLength}` : currentLength}
+            </span>
+          </FormDescription>
+        </div>
       </FormItem>
     );
   },
