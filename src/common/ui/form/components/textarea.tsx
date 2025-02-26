@@ -53,7 +53,7 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>
         <div className="flex justify-between">
           <FormMessage>{customErrorMessage}</FormMessage>
 
-          <FormDescription className="">
+          <FormDescription className="ml-a">
             {hint && <span>{hint}</span>}
 
             <span className="prose ml-auto">
