@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter } from "next/router";
 
@@ -17,8 +17,17 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const router = useRouter();
 
   const trackedQueryParams = router.query as {
+    /**
+     * Backward compatibility for deprecated parameter name
+     */
+    referrerId?: string;
     referrerAccountId?: string;
   };
+
+  const referrerAccountIdUrlParameter = useMemo(
+    () => trackedQueryParams.referrerAccountId || trackedQueryParams.referrerId,
+    [trackedQueryParams.referrerAccountId, trackedQueryParams.referrerId],
+  );
 
   const { registerInit, setAccountState, setError, isReady, isSignedIn, accountId, error } =
     useWalletUserAdapter();
@@ -80,13 +89,22 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     if (
       isReady &&
       isSignedIn &&
-      isAccountId(trackedQueryParams.referrerAccountId) &&
-      trackedQueryParams.referrerAccountId !== referrerAccountId &&
-      trackedQueryParams.referrerAccountId !== accountId
+      isAccountId(referrerAccountIdUrlParameter) &&
+      referrerAccountIdUrlParameter !== referrerAccountId &&
+      referrerAccountIdUrlParameter !== accountId
     ) {
-      setReferrerAccountId(trackedQueryParams.referrerAccountId);
+      setReferrerAccountId(referrerAccountIdUrlParameter);
+      // TODO: Cleanup the query parameter once it's recorded using useRouteQuery instead of useRouter
     }
-  }, [accountId, isReady, isSignedIn, referrerAccountId, setReferrerAccountId, trackedQueryParams]);
+  }, [
+    accountId,
+    isReady,
+    isSignedIn,
+    referrerAccountId,
+    referrerAccountIdUrlParameter,
+    setReferrerAccountId,
+    trackedQueryParams,
+  ]);
 
   return children;
 };
