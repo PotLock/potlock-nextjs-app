@@ -7,7 +7,7 @@ import { IS_CLIENT } from "@/common/constants";
 
 import { useWalletUserAdapter } from "./adapters";
 import { useWalletUserMetadataStore } from "./model";
-import { isAccountId, useRouteQuery } from "../lib";
+import { isAccountId } from "../lib";
 
 type WalletProviderProps = {
   children: React.ReactNode;
@@ -15,10 +15,6 @@ type WalletProviderProps = {
 
 const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const router = useRouter();
-
-  const { query, setSearchParams } = useRouteQuery();
-
-  console.log(query);
 
   const trackedQueryParams = router.query as {
     /**
@@ -86,8 +82,6 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     };
   }, [syncWalletState, isReady, handleChange]);
 
-  console.log(referrerAccountIdUrlParameter);
-
   /**
    * Updating referrer account id, if detected
    */
@@ -100,6 +94,7 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       referrerAccountIdUrlParameter !== accountId
     ) {
       setReferrerAccountId(referrerAccountIdUrlParameter);
+      // TODO: Cleanup the query parameter once it's recorded using useRouteQuery instead of useRouter
     }
   }, [
     accountId,
