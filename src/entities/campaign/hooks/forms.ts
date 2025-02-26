@@ -3,6 +3,7 @@ import { useCallback, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
@@ -14,7 +15,6 @@ import { dispatch } from "@/store";
 
 import { campaignFormSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
-import { Temporal } from "temporal-polyfill";
 
 export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => {
   const viewer = useWalletUserSession();
@@ -153,8 +153,9 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-          {
-            start_ms: timeToMilliseconds(values.start_ms.toString()),
+          !campaignId &&
+          timeToMilliseconds(values.start_ms) >= Date.now() && {
+            start_ms: timeToMilliseconds(values.start_ms),
           }),
         ...(values.end_ms && {
           end_ms: timeToMilliseconds(values.end_ms),

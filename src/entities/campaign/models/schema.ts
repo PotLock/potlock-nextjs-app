@@ -15,7 +15,17 @@ export const campaignFormSchema = z
     min_amount: z.number().optional(),
     max_amount: z.number().optional(),
     cover_image_url: z.string().optional(),
-    start_ms: futureTimestamp.describe('Campaign Start Date'),
+    start_ms: z
+      .string()
+      .describe("Campaign Start Date")
+      .refine(
+        (date) => {
+          return new Date(date).getTime() > Date.now();
+        },
+        {
+          message: "Start date must be in the future",
+        },
+      ),
     end_ms: z.string()?.optional(),
     owner: z.string()?.optional(),
     recipient: z.string().refine(near.isAccountValid, {
@@ -23,7 +33,7 @@ export const campaignFormSchema = z
     }),
   })
   .superRefine((data, ctx) => {
-    if (data.end_ms && data.start_ms.toString() >= data.end_ms) {
+    if (data.end_ms && data.start_ms >= data.end_ms) {
       ctx.addIssue({
         path: ["start_ms"],
         message: "Start time must be earlier than end time",

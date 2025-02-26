@@ -60,7 +60,7 @@ export const CampaignForm = ({
         existingData?.end_ms ? formatTimestampForInput(existingData?.end_ms) : "",
       );
     }
-  }, [isUpdate, existingData, form]);
+  }, [isUpdate, existingData]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
