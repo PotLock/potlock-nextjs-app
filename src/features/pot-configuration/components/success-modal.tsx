@@ -9,8 +9,8 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-} from "@/common/ui/components";
-import { ChefHatIcon } from "@/common/ui/svg";
+} from "@/common/ui/layout/components";
+import { ChefHatIcon } from "@/common/ui/layout/svg";
 import { rootPathnames } from "@/pathnames";
 
 import { PotDeploymentError } from "./error";

@@ -3,6 +3,7 @@ import { useCallback, useId, useMemo, useState } from "react";
 import { Pencil } from "lucide-react";
 
 import { type PotId, indexer } from "@/common/api/indexer";
+import { CheckboxField } from "@/common/ui/form/components";
 import {
   Accordion,
   AccordionContent,
@@ -17,9 +18,8 @@ import {
   FormItem,
   FormLabel,
   Textarea,
-} from "@/common/ui/components";
-import { CheckboxField } from "@/common/ui/form-fields";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenTotalValue } from "@/entities/_shared/token";

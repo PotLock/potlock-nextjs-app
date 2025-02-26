@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import type { AccountId } from "@/common/types";
-import { Label, NoResultsPlaceholder, Switch } from "@/common/ui/components";
+import { Label, NoResultsPlaceholder, Switch } from "@/common/ui/layout/components";
 import { ListCard, getRandomBackgroundImage } from "@/entities/list";
 import { ProfileLayout } from "@/layout/profile/components/layout";
 

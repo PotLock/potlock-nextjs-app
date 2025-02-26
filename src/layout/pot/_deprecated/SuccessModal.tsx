@@ -1,4 +1,10 @@
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/common/ui/layout/components";
 
 type Props = {
   open?: boolean;

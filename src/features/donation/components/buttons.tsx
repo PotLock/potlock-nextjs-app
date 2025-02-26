@@ -1,8 +1,8 @@
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { type ByAccountId, ByCampaignId, ByListId } from "@/common/types";
-import { Button, Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button, Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 
 import { useDonation } from "../hooks";
 

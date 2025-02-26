@@ -1,7 +1,13 @@
 import Link from "next/link";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { Button, Skeleton, Tooltip, TooltipContent, TooltipTrigger } from "@/common/ui/components";
+import {
+  Button,
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
 import { useAccountPower } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";

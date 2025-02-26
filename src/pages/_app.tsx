@@ -3,9 +3,9 @@ import "@unocss/reset/normalize.css";
 import "@unocss/reset/sanitize/assets.css";
 import "@unocss/reset/sanitize/sanitize.css";
 import "@unocss/reset/tailwind.css";
-import "@/common/ui/styles/fonts.css";
-import "@/common/ui/styles/theme.css";
-import "@/common/ui/styles/uno.generated.css";
+import "@/common/ui/layout/styles/fonts.css";
+import "@/common/ui/layout/styles/theme.css";
+import "@/common/ui/layout/styles/uno.generated.css";
 
 import { useEffect } from "react";
 
@@ -17,9 +17,9 @@ import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
-import { TooltipProvider } from "@/common/ui/components";
-import { Toaster } from "@/common/ui/components/molecules/toaster";
-import { cn } from "@/common/ui/utils";
+import { TooltipProvider } from "@/common/ui/layout/components";
+import { Toaster } from "@/common/ui/layout/components/molecules/toaster";
+import { cn } from "@/common/ui/layout/utils";
 import { WalletUserSessionProvider } from "@/common/wallet";
 import { AppBar } from "@/layout/components/app-bar";
 import { dispatch, store } from "@/store";

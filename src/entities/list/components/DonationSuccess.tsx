@@ -1,5 +1,5 @@
-import SuccessRedIcon from "@/common/ui/svg/success-red-icon";
-import TwitterSvg from "@/common/ui/svg/twitter";
+import SuccessRedIcon from "@/common/ui/layout/svg/success-red-icon";
+import TwitterSvg from "@/common/ui/layout/svg/twitter";
 
 const DonationSuccess = ({
   totalAmount,

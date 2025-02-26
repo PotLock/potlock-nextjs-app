@@ -6,7 +6,7 @@ import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/common/ui/components";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/common/ui/layout/components";
 
 import { AccountProfilePicture } from "./profile-images";
 import { useAccountSocialProfile } from "../hooks/social-profile";

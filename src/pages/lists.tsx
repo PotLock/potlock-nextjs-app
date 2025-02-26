@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { PageWithBanner } from "@/common/ui/components";
+import { PageWithBanner } from "@/common/ui/layout/components";
 import { ListHero, ListOverviewType, ListsOverview } from "@/entities/list";
 import { useListDeploymentSuccessRedirect } from "@/entities/list/hooks/redirects";
 

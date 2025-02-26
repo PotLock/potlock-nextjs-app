@@ -5,9 +5,9 @@ import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/components";
-import { useToast } from "@/common/ui/hooks";
-import { cn } from "@/common/ui/utils";
+import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/layout/components";
+import { useToast } from "@/common/ui/layout/hooks";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { ProfileSetupForm } from "@/features/profile-setup";
 import { rootPathnames } from "@/pathnames";
