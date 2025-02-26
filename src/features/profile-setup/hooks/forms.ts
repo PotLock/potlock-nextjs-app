@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { isDeepEqual, keys, objOf, pick } from "remeda";
-import { ZodError } from "zod";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { objOf } from "remeda";
 
 import type { ByAccountId } from "@/common/types";
+import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { type AccountGroupItem, useAccountSocialProfile } from "@/entities/_shared/account";
 
 import { type ProfileSaveInputs, save } from "../models/effects";
@@ -25,8 +25,6 @@ export const useProfileSetupForm = ({
   onSuccess,
   onFailure,
 }: ProfileSetupFormParams) => {
-  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<ProfileSetupInputs>>({});
-
   const {
     isLoading: isSocialProfileSnapshotLoading,
     profile: socialProfileSnapshot,
@@ -41,7 +39,6 @@ export const useProfileSetupForm = ({
       description: socialProfileSnapshot?.description,
       backgroundImage: backgroundSrc,
       profileImage: avatarSrc,
-
       publicGoodReason: socialProfileSnapshot?.plPublicGoodReason,
 
       teamMembers: socialProfileSnapshot?.plTeam
@@ -60,56 +57,21 @@ export const useProfileSetupForm = ({
     [avatarSrc, backgroundSrc, socialProfileSnapshot],
   );
 
-  const self = useForm<ProfileSetupInputs>({
-    resolver: zodResolver(profileSetupSchema),
+  const { form: self } = useEnhancedForm({
+    schema: profileSetupSchema,
     mode: "all",
     defaultValues,
+    followDefaultValues: socialProfileSnapshot !== undefined && !isSocialProfileSnapshotLoading,
     resetOptions: { keepDirty: false, keepTouched: false },
   });
 
   //? For internal use only!
   const values = useWatch(self);
 
-  const isUnpopulated =
-    !isDeepEqual(defaultValues, pick(self.formState.defaultValues ?? {}, keys(defaultValues))) &&
-    !self.formState.isDirty;
-
-  useEffect(() => {
-    if (socialProfileSnapshot !== undefined && !isSocialProfileSnapshotLoading && isUnpopulated) {
-      self.reset(defaultValues);
-    }
-  }, [
-    defaultValues,
-    isSocialProfileSnapshotLoading,
-    isUnpopulated,
-    self,
-    socialProfileSnapshot,
-    values,
-  ]);
-
   const teamMembersAccountGroup: AccountGroupItem[] = useMemo(
     () => values.teamMembers?.map(objOf("accountId")) ?? [],
     [values.teamMembers],
   );
-
-  // Cross-field validation
-  useEffect(() => {
-    void profileSetupSchema
-      .parseAsync(values)
-      .then(() => setCrossFieldErrors({}))
-      .catch((error: ZodError) =>
-        // TODO: Consider using `setError` in forEach if there are any troubles with error display
-        setCrossFieldErrors(
-          error?.issues.reduce((schemaErrors, { code, message, path }) => {
-            const fieldPath = path.at(0);
-
-            return typeof fieldPath === "string" && code === "custom"
-              ? { ...schemaErrors, [fieldPath]: { message, type: code } }
-              : schemaErrors;
-          }, {}),
-        ),
-      );
-  }, [values]);
 
   const isDisabled = useMemo(
     () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
@@ -180,15 +142,7 @@ export const useProfileSetupForm = ({
   );
 
   return {
-    form: {
-      ...self,
-
-      formState: {
-        ...self.formState,
-        errors: { ...self.formState.errors, ...crossFieldErrors },
-      },
-    },
-
+    form: self,
     isDisabled,
     teamMembersAccountGroup,
     updateBackgroundImage,
@@ -202,7 +156,6 @@ export const useProfileSetupForm = ({
   };
 };
 
-// Funding Source Form Hook
 export const useAddFundingSourceForm = (options: {
   defaultValues?: Partial<AddFundingSourceInputs>;
   onSuccess?: () => void;
@@ -239,14 +192,7 @@ export const useAddFundingSourceForm = (options: {
   );
 
   return {
-    form: {
-      ...form,
-
-      formState: {
-        ...form.formState,
-        errors: form.formState.errors,
-      },
-    },
+    form,
     errors: form.formState.errors,
     values,
     isSubmitting: submitting,

@@ -1,6 +1,6 @@
 import { ByTokenId } from "@/common/types";
-import { Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 

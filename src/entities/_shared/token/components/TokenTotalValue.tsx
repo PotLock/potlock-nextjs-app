@@ -1,8 +1,8 @@
 import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { indivisibleUnitsToFloat } from "@/common/lib";
 import { ByTokenId } from "@/common/types";
-import { Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 
 import { TokenIcon } from "./TokenIcon";
 import { useToken } from "../hooks/data";

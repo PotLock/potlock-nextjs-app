@@ -2,8 +2,8 @@ import { useCallback } from "react";
 
 import { styled } from "styled-components";
 
-import Delete from "@/common/ui/svg/Delete";
-import Edit from "@/common/ui/svg/Edit";
+import Delete from "@/common/ui/layout/svg/Delete";
+import Edit from "@/common/ui/layout/svg/Edit";
 
 import type { ProfileSetupInputs } from "../models/types";
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
-import { cn } from "@/common/ui/utils";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 

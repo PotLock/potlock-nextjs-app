@@ -22,7 +22,9 @@ export const useDonationSuccessWalletRedirect = () => {
 
   const transactionHash =
     (Array.isArray(transactionHashes) ? transactionHashes.at(-1) : undefined) ??
-    (typeof transactionHashes === "string" ? transactionHashes : undefined);
+    (typeof transactionHashes === "string" && transactionHashes.length > 0
+      ? transactionHashes
+      : undefined);
 
   const isTransactionOutcomeDetected =
     transactionHash && Boolean(recipientAccountId ?? potAccountId);

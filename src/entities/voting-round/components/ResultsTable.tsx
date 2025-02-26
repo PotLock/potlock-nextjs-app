@@ -8,8 +8,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 
 import { VotingRoundVoteRow } from "./VoteRow";
 import { VotingRoundWinnerRow } from "./WinnerRow";

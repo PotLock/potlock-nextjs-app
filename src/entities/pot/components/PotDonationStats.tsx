@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Toggle } from "@/common/ui/svg";
+import { Toggle } from "@/common/ui/layout/svg";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { useToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";

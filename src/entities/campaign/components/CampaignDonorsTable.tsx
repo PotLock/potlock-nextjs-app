@@ -6,8 +6,8 @@ import { CampaignDonation, campaignsContractHooks } from "@/common/contracts/cor
 import { oldToRecent, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
-import { DataTable } from "@/common/ui/components";
-import { NearIcon } from "@/common/ui/svg";
+import { DataTable } from "@/common/ui/layout/components";
+import { NearIcon } from "@/common/ui/layout/svg";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 export type CampaignDonorsTableProps = ByCampaignId & {};

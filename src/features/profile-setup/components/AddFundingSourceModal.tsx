@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Form,
   FormField,
-} from "@/common/ui/components";
+} from "@/common/ui/layout/components";
 
 import { CustomInput, CustomTextForm } from "./form-elements";
 import { useAddFundingSourceForm } from "../hooks/forms";

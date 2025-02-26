@@ -10,7 +10,7 @@ import {
   FormField,
   Spinner,
   Textarea,
-} from "@/common/ui/components";
+} from "@/common/ui/layout/components";
 import { useGlobalStoreSelector } from "@/store";
 
 import { usePotApplicationForm } from "../hooks/forms";

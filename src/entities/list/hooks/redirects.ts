@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useModal } from "@ebay/nice-modal-react";
 
 import { useRouteQuery } from "@/common/lib";
-import { useToast } from "@/common/ui/hooks/toasts";
+import { useToast } from "@/common/ui/layout/hooks/toasts";
 import { dispatch, useGlobalStoreSelector } from "@/store";
 
 import { ListActionsModal } from "../components/listActionsModal";

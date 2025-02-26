@@ -4,10 +4,10 @@ import Files from "react-files";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { nearSocialIpfsImageUpload } from "@/common/services/ipfs";
-import { Button, Spinner } from "@/common/ui/components";
-import { useToast } from "@/common/ui/hooks";
-import CameraIcon from "@/common/ui/svg/CameraIcon";
-import { cn } from "@/common/ui/utils";
+import { Button, Spinner } from "@/common/ui/layout/components";
+import { useToast } from "@/common/ui/layout/hooks";
+import CameraIcon from "@/common/ui/layout/svg/CameraIcon";
+import { cn } from "@/common/ui/layout/utils";
 
 import type { ProfileSetupInputs } from "../models/types";
 

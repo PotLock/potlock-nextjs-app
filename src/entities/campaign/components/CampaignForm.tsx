@@ -7,8 +7,8 @@ import { Campaign } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import { CampaignId } from "@/common/types";
-import { Button, Form, FormField } from "@/common/ui/components";
-import { TextAreaField, TextField } from "@/common/ui/form-fields";
+import { TextAreaField, TextField } from "@/common/ui/form/components";
+import { Button, Form, FormField } from "@/common/ui/layout/components";
 import { NearInputField } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";

@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
 import { ListRegistrationStatus, PotApplicationStatus, indexer } from "@/common/api/indexer";
-import { FormField, RuntimeErrorAlert } from "@/common/ui/components";
-import { CheckboxField, TextField } from "@/common/ui/form-fields";
-import { NearIcon } from "@/common/ui/svg";
+import { CheckboxField, TextField } from "@/common/ui/form/components";
+import { FormField, RuntimeErrorAlert } from "@/common/ui/layout/components";
+import { NearIcon } from "@/common/ui/layout/svg";
 import { AccountListItem } from "@/entities/_shared/account";
 
 import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
