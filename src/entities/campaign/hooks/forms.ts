@@ -3,6 +3,7 @@ import { useCallback, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
@@ -79,7 +80,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     });
   }, [values, self]);
 
-  const timeToMilliseconds = (time: string) => {
+  const timeToMilliseconds = (time: number) => {
     return new Date(time).getTime();
   };
 
@@ -152,7 +153,8 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-          timeToMilliseconds(values.start_ms) > Date.now() && {
+          !campaignId &&
+          timeToMilliseconds(values.start_ms) >= Date.now() && {
             start_ms: timeToMilliseconds(values.start_ms),
           }),
         ...(values.end_ms && {
