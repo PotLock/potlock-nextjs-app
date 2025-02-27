@@ -56,6 +56,7 @@ export const potSchema = object({
     .describe("Pot handle."),
 
   pot_description: string()
+    .min(POT_MIN_NAME_LENGTH, `Must be at least ${10} characters long.`)
     .max(
       POT_MAX_DESCRIPTION_LENGTH,
       `Cannot be longer than ${POT_MAX_DESCRIPTION_LENGTH} characters.`,

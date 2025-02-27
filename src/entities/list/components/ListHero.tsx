@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import { walletApi } from "@/common/blockchains/near-protocol/client";
-import { Button } from "@/common/ui/components";
+import { Button } from "@/common/ui/layout/components";
 import { useAllLists } from "@/entities/list/hooks/useAllLists";
 
 import { ListOverviewType } from "../types";

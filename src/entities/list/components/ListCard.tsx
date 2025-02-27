@@ -7,8 +7,8 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
-import { LayersIcon } from "@/common/ui/svg";
-import { LikeIcon } from "@/common/ui/svg/like";
+import { LayersIcon } from "@/common/ui/layout/svg";
+import { LikeIcon } from "@/common/ui/layout/svg/like";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";

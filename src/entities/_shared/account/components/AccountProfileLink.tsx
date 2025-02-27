@@ -5,8 +5,8 @@ import Link from "next/link";
 import { ETHEREUM_EXPLORER_ADDRESS_ENDPOINT_URL } from "@/common/constants";
 import { isEthereumAddress, truncate } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
-import { Badge } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Badge } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 

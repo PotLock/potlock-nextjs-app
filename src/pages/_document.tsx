@@ -23,10 +23,7 @@ export default function Document() {
         <link rel="preconnect" href="https://fonts.cdnfonts.com" crossOrigin="anonymous" />
       </Head>
 
-      <body
-        className="text-foreground"
-        style={DEBUG ? { background: "#000!important" } : undefined}
-      >
+      <body className="text-foreground">
         <Main />
         <NextScript />
       </body>

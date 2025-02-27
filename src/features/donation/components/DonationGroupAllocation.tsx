@@ -4,6 +4,7 @@ import { values } from "remeda";
 
 import { type PotId, indexer } from "@/common/api/indexer";
 import { yoctoNearToFloat } from "@/common/lib";
+import { TextField } from "@/common/ui/form/components";
 import {
   DialogDescription,
   DialogHeader,
@@ -17,8 +18,7 @@ import {
   RadioGroupItem,
   ScrollArea,
   Skeleton,
-} from "@/common/ui/components";
-import { TextField } from "@/common/ui/form-fields";
+} from "@/common/ui/layout/components";
 import { TokenSelector, TokenTotalValue, useToken } from "@/entities/_shared/token";
 
 import { DonationRecipientShares } from "./DonationRecipientShares";

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { NETWORK } from "@/common/_config";
 import { near } from "@/common/blockchains/near-protocol/client";
+import { futureTimestamp } from "@/common/lib";
 
 export const campaignFormSchema = z
   .object({
@@ -14,8 +15,8 @@ export const campaignFormSchema = z
     min_amount: z.number().optional(),
     max_amount: z.number().optional(),
     cover_image_url: z.string().optional(),
-    start_ms: z.string().min(1, "Start Time is Required"),
-    end_ms: z.string()?.optional(),
+    start_ms: futureTimestamp.describe("Campaign Start Date"),
+    end_ms: futureTimestamp.describe("Campaign End Date"),
     owner: z.string()?.optional(),
     recipient: z.string().refine(near.isAccountValid, {
       message: `Account does not exist on ${NETWORK}`,

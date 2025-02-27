@@ -30,8 +30,10 @@ export const useTokenUsdDisplayValue = ({
   return useMemo(() => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`), [value]);
 };
 
-export const useTokenAllowlist = () => {
-  const { data: refFinanceTokenAllowlist } = refExchangeContractHooks.useWhitelistedTokens();
+export const useTokenAllowlist = ({ enabled = true }: ConditionalActivation) => {
+  const { data: refFinanceTokenAllowlist } = refExchangeContractHooks.useWhitelistedTokens({
+    enabled,
+  });
 
   return useMemo(
     () => ({

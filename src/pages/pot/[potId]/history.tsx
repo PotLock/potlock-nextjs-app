@@ -3,7 +3,7 @@ import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
 import { votingContractHooks } from "@/common/contracts/core/voting";
-import { SearchBar } from "@/common/ui/components";
+import { SearchBar } from "@/common/ui/layout/components";
 import { VotingRoundVoteRow, useVotingRound, useVotingRoundResults } from "@/entities/voting-round";
 import { PotLayout } from "@/layout/pot/components/layout";
 

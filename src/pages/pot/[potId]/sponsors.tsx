@@ -5,7 +5,7 @@ import { styled } from "styled-components";
 
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
-import { Spinner } from "@/common/ui/components";
+import { Spinner } from "@/common/ui/layout/components";
 import { PotSponsorsBoard, PotSponsorsTable, useOrderedDonations } from "@/entities/pot";
 import { CustomDonationType } from "@/entities/pot/models/types";
 import { PotLayout } from "@/layout/pot/components/layout";

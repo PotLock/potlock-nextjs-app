@@ -1,19 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import { FieldErrors, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { isDeepEqual, keys, pick } from "remeda";
+import { SubmitHandler, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
-import { infer as FromSchema, ZodError } from "zod";
+import { infer as FromSchema } from "zod";
 
 import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/common/_config";
 import { ByPotId, type PotId } from "@/common/api/indexer";
 import { PotConfig, potContractHooks } from "@/common/contracts/core/pot";
 import { daysFloatToMilliseconds } from "@/common/lib";
 import { AccountId } from "@/common/types";
+import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { PotInputs } from "@/entities/pot";
 import { donationFeeBasisPointsToPercents } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useCoreState } from "@/store";
@@ -23,8 +21,8 @@ import {
   PotDeploymentSchema,
   PotSettings,
   PotSettingsSchema,
-  potDeploymentCrossFieldValidationTargets,
-  potSettingsCrossFieldValidationTargets,
+  potDeploymentDependentFields,
+  potSettingsDependentFields,
 } from "../model";
 import { potConfigToPotConfigInputs, potConfigToSettings } from "../utils/normalization";
 
@@ -46,11 +44,13 @@ export const usePotConfigurationEditorForm = ({
     potId: potId as PotId,
   });
 
-  type Values = FromSchema<typeof schema>;
-
   const {
     contractMetadata: { latestSourceCodeCommitHash },
   } = useCoreState();
+
+  const isHydrating = useMemo(() => isPotConfigLoading, [isPotConfigLoading]);
+
+  type Values = FromSchema<typeof schema>;
 
   const defaultValues = useMemo<Partial<Values>>(
     () => ({
@@ -83,75 +83,16 @@ export const usePotConfigurationEditorForm = ({
     [latestSourceCodeCommitHash, potConfig, viewer.accountId],
   );
 
-  const self = useForm<Values>({
-    resolver: zodResolver(schema),
+  const { form: self } = useEnhancedForm({
+    schema,
+    dependentFields: isNewPot ? potDeploymentDependentFields : potSettingsDependentFields,
     mode: "all",
     defaultValues,
+    followDefaultValues: !isNewPot && potConfig !== undefined && !isHydrating,
     resetOptions: { keepDirtyValues: false },
   });
 
   const values = useWatch(self);
-
-  const isHydrating = useMemo(() => isPotConfigLoading, [isPotConfigLoading]);
-
-  const isUnpopulated =
-    !isDeepEqual(defaultValues, pick(self.formState.defaultValues ?? {}, keys(defaultValues))) &&
-    !self.formState.isDirty;
-
-  useEffect(() => {
-    if (isNewPot && values.owner === undefined && viewer.hasWalletReady && viewer.isSignedIn) {
-      self.setValue("owner", viewer.accountId, { shouldValidate: true });
-      console.log("test??");
-    }
-
-    if (!isNewPot && potConfig !== undefined && isUnpopulated && !isHydrating) {
-      self.reset(defaultValues, { keepDirty: false, keepIsValid: false });
-    }
-  }, [
-    defaultValues,
-    isHydrating,
-    isNewPot,
-    isUnpopulated,
-    potConfig,
-    self,
-    values,
-    viewer,
-    viewer.accountId,
-    viewer.hasWalletReady,
-    viewer.isSignedIn,
-  ]);
-
-  const handleAdminsUpdate = useCallback(
-    (accountIds: AccountId[]) => self.setValue("admins", accountIds, { shouldDirty: true }),
-    [self],
-  );
-
-  const [crossFieldErrors, setCrossFieldErrors] = useState<FieldErrors<Values>>({});
-
-  useEffect(
-    () =>
-      void schema
-        .parseAsync(values as Values)
-        .then(() => setCrossFieldErrors({}))
-        .catch((error: ZodError) =>
-          setCrossFieldErrors(
-            error?.issues.reduce((schemaErrors, { code, message, path }) => {
-              const fieldPath = path.at(0);
-
-              return (isNewPot
-                ? potDeploymentCrossFieldValidationTargets
-                : potSettingsCrossFieldValidationTargets
-              ).includes(fieldPath as keyof PotInputs) &&
-                typeof fieldPath === "string" &&
-                code === "custom"
-                ? { ...schemaErrors, [fieldPath]: { message, type: code } }
-                : schemaErrors;
-            }, {}),
-          ),
-        ),
-
-    [isNewPot, schema, values],
-  );
 
   const isDisabled = useMemo(
     () =>
@@ -170,6 +111,11 @@ export const usePotConfigurationEditorForm = ({
     ],
   );
 
+  const handleAdminsUpdate = useCallback(
+    (accountIds: AccountId[]) => self.setValue("admins", accountIds, { shouldDirty: true }),
+    [self],
+  );
+
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) => {
       self.trigger();
@@ -184,21 +130,14 @@ export const usePotConfigurationEditorForm = ({
     [isNewPot, potId, router, self],
   );
 
-  const formWithCrossFieldErrors = useMemo(
-    () => ({
-      ...self,
-
-      formState: {
-        ...self.formState,
-        errors: { ...self.formState.errors, ...crossFieldErrors },
-      },
-    }),
-
-    [crossFieldErrors, self],
-  );
+  useEffect(() => {
+    if (isNewPot && values.owner === undefined && viewer.hasWalletReady && viewer.isSignedIn) {
+      self.setValue("owner", viewer.accountId, { shouldValidate: true });
+    }
+  }, [isNewPot, self, values.owner, viewer.accountId, viewer.hasWalletReady, viewer.isSignedIn]);
 
   return {
-    form: formWithCrossFieldErrors,
+    form: self,
     handleAdminsUpdate,
     isDisabled,
     isHydrating,

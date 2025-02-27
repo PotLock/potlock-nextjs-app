@@ -11,8 +11,8 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { AccountListItem } from "@/entities/_shared/account";
 import { TokenIcon, useToken } from "@/entities/_shared/token";
 

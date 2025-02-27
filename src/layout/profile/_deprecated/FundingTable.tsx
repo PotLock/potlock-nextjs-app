@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import { styled } from "styled-components";
 
-import { DeprecatedPagination } from "@/common/ui/components";
-import { Arrow } from "@/common/ui/svg";
+import { DeprecatedPagination } from "@/common/ui/layout/components";
+import { Arrow } from "@/common/ui/layout/svg";
 import { DonationInfo } from "@/layout/profile/_deprecated/accounts";
 import useDonationsSent from "@/layout/profile/_deprecated/useDonationsSent";
 

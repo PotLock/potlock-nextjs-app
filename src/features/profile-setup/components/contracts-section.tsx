@@ -11,9 +11,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/common/ui/components";
-import Delete from "@/common/ui/svg/Delete";
-import Edit from "@/common/ui/svg/Edit";
+} from "@/common/ui/layout/components";
+import Delete from "@/common/ui/layout/svg/Delete";
+import Edit from "@/common/ui/layout/svg/Edit";
 
 import { CustomInput, Label } from "./form-elements";
 import type { ProfileSetupInputs } from "../models/types";

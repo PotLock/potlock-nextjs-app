@@ -1,4 +1,4 @@
-import { PageWithBanner } from "@/common/ui/components";
+import { PageWithBanner } from "@/common/ui/layout/components";
 import { CreateListHero, ListFormDetails, useListDeploymentSuccessRedirect } from "@/entities/list";
 
 export default function Page() {

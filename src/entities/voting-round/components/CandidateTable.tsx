@@ -10,9 +10,9 @@ import {
   votingContractHooks,
 } from "@/common/contracts/core/voting";
 import { AccountId } from "@/common/types";
-import { Button, ScrollArea } from "@/common/ui/components";
-import { useToast } from "@/common/ui/hooks";
-import { cn } from "@/common/ui/utils";
+import { Button, ScrollArea } from "@/common/ui/layout/components";
+import { useToast } from "@/common/ui/layout/hooks";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { VotingRoundCandidateRow } from "./CandidateRow";

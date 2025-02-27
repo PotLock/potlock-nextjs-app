@@ -10,8 +10,8 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
   Textarea,
-} from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { ACCOUNT_CATEGORY_VARIANTS } from "@/entities/_shared/account";
 
 import { SubTitle } from "./styles";

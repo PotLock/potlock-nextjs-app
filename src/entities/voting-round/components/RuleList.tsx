@@ -10,8 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
   Separator,
-} from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+} from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 
 export type VotingRoundRuleListProps = ByPotId & {
   open: boolean;

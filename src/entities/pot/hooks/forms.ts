@@ -9,7 +9,7 @@ import { potContractClient } from "@/common/contracts/core/pot";
 import { challengeResolveSchema, challengeSchema } from "../models/schemas";
 import { ChallengeInputs, ChallengeResolveInputs } from "../models/types";
 
-export const useChallengeForm = ({ potDetail }: { potDetail: Pot; referrerId?: string }) => {
+export const useChallengeForm = ({ potDetail }: { potDetail: Pot }) => {
   const form = useForm<ChallengeInputs>({
     resolver: zodResolver(challengeSchema),
   });

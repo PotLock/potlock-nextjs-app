@@ -8,9 +8,9 @@ import remarkGfm from "remark-gfm";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { potContractHooks } from "@/common/contracts/core/pot";
-import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/components";
-import { VolunteerIcon } from "@/common/ui/svg";
-import { cn } from "@/common/ui/utils";
+import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/layout/components";
+import { VolunteerIcon } from "@/common/ui/layout/svg";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { TokenTotalValue } from "@/entities/_shared/token";
 import {
@@ -68,7 +68,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   );
 
   const referrerPotLink = viewer.isSignedIn
-    ? window.location.origin + window.location.pathname + `?referrerId=${viewer.accountId}`
+    ? window.location.origin + window.location.pathname + `?referrerAccountId=${viewer.accountId}`
     : null;
 
   const [description, linkedDocumentUrl] = useMemo(() => {

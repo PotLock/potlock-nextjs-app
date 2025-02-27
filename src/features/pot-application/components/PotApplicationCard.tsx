@@ -4,8 +4,8 @@ import { styled } from "styled-components";
 
 import { type ByPotId, PotApplication } from "@/common/api/indexer";
 import { daysAgo } from "@/common/lib";
-import { Button } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { usePotAuthorization } from "@/entities/pot";

@@ -4,7 +4,13 @@ import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
 
 import { CHAIN_OPTIONS } from "@/common/constants";
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/ui/components";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/common/ui/layout/components";
 
 import { AddChainSelector } from "./contracts-section";
 import { CustomInput } from "./form-elements";

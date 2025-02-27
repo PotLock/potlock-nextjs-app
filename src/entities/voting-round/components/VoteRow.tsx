@@ -6,8 +6,8 @@ import { Temporal } from "temporal-polyfill";
 
 import type { ByPotId } from "@/common/api/indexer";
 import type { Vote } from "@/common/contracts/core/voting";
-import { Skeleton } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Skeleton } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import {
   AccountHandle,
   AccountProfileLink,

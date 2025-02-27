@@ -8,7 +8,7 @@ import {
 } from "@/common/contracts/core/voting";
 import { isAccountId } from "@/common/lib";
 import { type AccountId, ByAccountId } from "@/common/types";
-import { useToast } from "@/common/ui/hooks";
+import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 
 export interface VotingRoundCandidateLookup extends ByElectionId {}

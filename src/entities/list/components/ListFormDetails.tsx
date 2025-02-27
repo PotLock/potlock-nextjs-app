@@ -15,8 +15,8 @@ import {
 } from "@/common/contracts/core/lists";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import type { ByListId } from "@/common/types";
-import { Button, Input, Spinner } from "@/common/ui/components";
-import { cn } from "@/common/ui/utils";
+import { Button, Input, Spinner } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
 import { dispatch } from "@/store";

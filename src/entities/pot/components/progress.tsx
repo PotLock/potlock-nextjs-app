@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-import { Progress, ProgressProps } from "@/common/ui/components";
+import { Progress, ProgressProps } from "@/common/ui/layout/components";
 
 import { PotLifecycleStage } from "../types";
 

@@ -25,7 +25,6 @@ export const usePotApplicationForm = ({
 }: {
   accountId: string;
   potDetail: Pot;
-  referrerId?: string;
   asDao: boolean;
 }) => {
   const form = useForm<PotApplicationInputs>({

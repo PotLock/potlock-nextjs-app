@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { Label, SearchBar, SortSelect, Switch } from "@/common/ui/components";
+import { Label, SearchBar, SortSelect, Switch } from "@/common/ui/layout/components";
 import { ListCard } from "@/entities/list/components/ListCard";
 import { useAllLists } from "@/entities/list/hooks/useAllLists";
 

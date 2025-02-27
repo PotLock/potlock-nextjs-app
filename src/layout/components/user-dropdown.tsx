@@ -14,7 +14,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
   Skeleton,
-} from "@/common/ui/components";
+} from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
 import { listRegistrationStatuses } from "@/entities/list";

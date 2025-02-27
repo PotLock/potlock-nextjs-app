@@ -1,6 +1,6 @@
-import { PageWithBanner } from "@/common/ui/components";
-import InfoIcon from "@/common/ui/svg/InfoIcon";
-import { cn } from "@/common/ui/utils";
+import { PageWithBanner } from "@/common/ui/layout/components";
+import InfoIcon from "@/common/ui/layout/svg/InfoIcon";
+import { cn } from "@/common/ui/layout/utils";
 import {
   PotConfigurationEditor,
   usePotDeploymentSuccessMiddleware,

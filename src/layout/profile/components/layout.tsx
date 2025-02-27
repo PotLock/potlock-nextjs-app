@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import type { AccountId } from "@/common/types";
-import { PageWithBanner } from "@/common/ui/components";
-import { TabOption } from "@/common/ui/types";
+import { PageWithBanner } from "@/common/ui/layout/components";
+import { TabOption } from "@/common/ui/layout/types";
 
 import { ProfileLayoutHeader } from "./header";
 import { ProfileLayoutHero } from "./hero";

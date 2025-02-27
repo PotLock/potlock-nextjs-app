@@ -4,7 +4,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { socialDbContractClient } from "@/common/contracts/social-db";
 import { AccountId } from "@/common/types";
-import { Button, Textarea } from "@/common/ui/components";
+import { Button, Textarea } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 
