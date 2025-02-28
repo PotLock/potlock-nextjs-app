@@ -98,7 +98,7 @@ const WelcomeBanner = () => {
                   >
                     {viewer.hasRegistrationSubmitted
                       ? "View Your Project"
-                      : "Register Your Project ( BOS App )"}
+                      : "Register Your Project (BOS App)"}
                   </Link>
                 </Button>
               )}

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
-import { IS_CLIENT } from "@/common/constants";
+import { DEBUG_ACCOUNT_ID, IS_CLIENT } from "@/common/constants";
 
 import { useWalletUserAdapter } from "./adapters";
 import { useWalletUserMetadataStore } from "./model";
@@ -35,8 +35,15 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const { referrerAccountId, setReferrerAccountId } = useWalletUserMetadataStore();
 
   const syncWalletState = useCallback(() => {
-    const isWalletSignedIn = nearProtocolClient.walletApi.walletSelector.isSignedIn();
-    const walletAccountId = nearProtocolClient.walletApi.accountId;
+    const isWalletSignedIn =
+      typeof DEBUG_ACCOUNT_ID === "string"
+        ? true
+        : nearProtocolClient.walletApi.walletSelector.isSignedIn();
+
+    const walletAccountId =
+      typeof DEBUG_ACCOUNT_ID === "string"
+        ? DEBUG_ACCOUNT_ID
+        : nearProtocolClient.walletApi.accountId;
 
     if (isWalletSignedIn !== isSignedIn || walletAccountId !== accountId) {
       setAccountState({ accountId: walletAccountId, isSignedIn: isWalletSignedIn });
