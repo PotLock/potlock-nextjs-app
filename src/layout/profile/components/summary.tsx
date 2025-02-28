@@ -180,7 +180,7 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
                   >
                     {FEATURE_REGISTRY.ProfileConfiguration.isEnabled
                       ? "Edit Profile"
-                      : "Edit Profile ( BOS App )"}
+                      : "Edit Profile on BOS"}
                   </Link>
                 </Button>
               </div>
