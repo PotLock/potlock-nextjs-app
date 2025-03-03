@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { Big } from "big.js";
 import { isNot, isStrictEqual, piped, prop } from "remeda";
 
 import { Pot, indexer } from "@/common/api/indexer";
 import { TOTAL_FEE_BASIS_POINTS } from "@/common/constants";
-import { intoShareValue } from "@/common/lib";
+import { deriveShare } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 import { useWalletUserSession } from "@/common/wallet";
 
@@ -23,7 +24,7 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
   ]);
 
   const recipientShareAmount = useMemo(
-    () => intoShareValue(amount, groupAllocationPlan.length),
+    () => deriveShare(amount, groupAllocationPlan.length),
     [amount, groupAllocationPlan.length],
   );
 
@@ -147,7 +148,8 @@ export const useDonationAllocationBreakdown = ({
   const protocolFeeBasisPoints = bypassProtocolFee ? 0 : protocolFeeInitialBasisPoints;
 
   const protocolFeeAmount =
-    protocolFeeFinalAmount ?? (totalAmountFloat * protocolFeeBasisPoints) / TOTAL_FEE_BASIS_POINTS;
+    protocolFeeFinalAmount ??
+    Big(totalAmountFloat).mul(protocolFeeBasisPoints).div(TOTAL_FEE_BASIS_POINTS).toNumber();
 
   const protocolFeePercent = donationFeeBasisPointsToPercents(protocolFeeInitialBasisPoints);
 

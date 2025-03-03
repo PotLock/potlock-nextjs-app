@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import { Big } from "big.js";
 import { SubmitHandler, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
 
@@ -47,9 +48,13 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       now.until(Temporal.Instant.from(matching_round_end)).total("milliseconds") > 0,
   );
 
-  const defaultPotAccountId = useMemo(
-    () => oldToRecent("matching_round_end", matchingPots).at(0)?.account,
-    [matchingPots],
+  const defaultMatchingPotAccountId = useMemo(
+    () =>
+      isSingleProjectDonation
+        ? undefined
+        : oldToRecent("matching_round_end", matchingPots).at(0)?.account,
+
+    [isSingleProjectDonation, matchingPots],
   );
 
   const defaultValues = useMemo<Partial<DonationInputs>>(
@@ -57,7 +62,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       amount: DONATION_MIN_NEAR_AMOUNT,
       tokenId: NATIVE_TOKEN_ID,
       recipientAccountId,
-      potAccountId: isPotDonation ? potAccountId : defaultPotAccountId,
+      potAccountId: isPotDonation ? potAccountId : defaultMatchingPotAccountId,
       listId,
       campaignId,
 
@@ -72,12 +77,12 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }),
 
     [
-      defaultPotAccountId,
+      campaignId,
+      defaultMatchingPotAccountId,
+      isCampaignDonation,
       isPotDonation,
       isSingleProjectDonation,
-      isCampaignDonation,
       listId,
-      campaignId,
       matchingPots.length,
       potAccountId,
       recipientAccountId,
@@ -99,10 +104,11 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const tokenId = values.tokenId ?? NATIVE_TOKEN_ID;
 
   const totalAmountFloat =
-    isSingleProjectDonation || isCampaignDonation
+    (isSingleProjectDonation || isCampaignDonation
       ? amount
-      : (values.groupAllocationPlan?.reduce((total, { amount }) => total + (amount ?? 0.0), 0.0) ??
-        0.0);
+      : values.groupAllocationPlan
+          ?.reduce((total, { amount }) => total.add(amount ?? 0), Big(0))
+          .toNumber()) ?? 0.0;
 
   const isDisabled = !self.formState.isValid || self.formState.isSubmitting;
 

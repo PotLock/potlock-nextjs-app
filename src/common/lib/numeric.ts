@@ -28,5 +28,9 @@ export const safePositiveNumber = preprocess(
     .transform((floatOrInt) => number().safeParse(floatOrInt).data ?? 0),
 );
 
-export const intoShareValue = (amount: number, numOfShares: number) =>
-  parseFloat(((amount ?? 0) / (numOfShares > 0 ? numOfShares : 1)).toFixed(4));
+export const deriveShare = (amount: number, numOfShares: number) =>
+  parseFloat(
+    Big(amount ?? 0)
+      .div(numOfShares > 0 ? numOfShares : 1)
+      .toFixed(4),
+  );
