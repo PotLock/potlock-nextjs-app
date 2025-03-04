@@ -110,7 +110,10 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
           ?.reduce((total, { amount }) => total.add(amount ?? 0), Big(0))
           .toNumber()) ?? 0.0;
 
-  const isDisabled = !self.formState.isValid || self.formState.isSubmitting;
+  const isDisabled = useMemo(
+    () => !self.formState.isValid || self.formState.isSubmitting,
+    [self.formState.isSubmitting, self.formState.isValid],
+  );
 
   const minAmountError = useMemo(
     () =>
