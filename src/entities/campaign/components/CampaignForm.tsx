@@ -25,7 +25,7 @@ export const CampaignForm = ({
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, watch, isValid } = useCampaignForm({
+  const { form, onChange, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
   });
 
@@ -46,7 +46,7 @@ export const CampaignForm = ({
         form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
       }
 
-      form.setValue("start_ms", existingData?.start_ms);
+      // form.setValue("start_ms", existingData?.start_ms);
 
       if (existingData?.end_ms) {
         form.setValue("end_ms", existingData?.end_ms);
@@ -167,7 +167,6 @@ export const CampaignForm = ({
                 className="appearance-none md:w-[42%]"
                 label="Target Amount"
                 required
-                onChange={(e) => field.onChange(Number(e.target.value))}
               />
             )}
           />
@@ -176,49 +175,42 @@ export const CampaignForm = ({
               control={form.control}
               name="min_amount"
               render={({ field }) => (
-                <NearInputField
-                  {...field}
-                  className="lg:w-90"
-                  label="Minimum Target Amount"
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                />
+                <NearInputField {...field} className="lg:w-90" label="Minimum Target Amount" />
               )}
             />
             <FormField
               control={form.control}
               name="max_amount"
               render={({ field }) => (
-                <NearInputField
-                  {...field}
-                  className="lg:w-90"
-                  label="Maximum Target Amount"
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                />
+                <NearInputField {...field} className="lg:w-90" label="Maximum Target Amount" />
               )}
             />
           </div>
           <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row">
-            <FormField
-              control={form.control}
-              name="start_ms"
-              render={({ field: { value, ...field } }) => (
-                <TextField
-                  {...field}
-                  required={!!watch("min_amount")}
-                  label="Start Date"
-                  value={
-                    typeof value === "number"
-                      ? Temporal.Instant.fromEpochMilliseconds(value)
-                          .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-                          .toPlainDateTime()
-                          .toString({ smallestUnit: "minute" })
-                      : undefined
-                  }
-                  classNames={{ root: "lg:w-90" }}
-                  type="datetime-local"
+            {existingData?.start_ms &&
+              existingData?.start_ms > Temporal.Now.instant().epochMilliseconds && (
+                <FormField
+                  control={form.control}
+                  name="start_ms"
+                  render={({ field: { value, ...field } }) => (
+                    <TextField
+                      {...field}
+                      required={!campaignId}
+                      label="Start Date"
+                      value={
+                        typeof value === "number"
+                          ? Temporal.Instant.fromEpochMilliseconds(value)
+                              .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                              .toPlainDateTime()
+                              .toString({ smallestUnit: "minute" })
+                          : undefined
+                      }
+                      classNames={{ root: "lg:w-90" }}
+                      type="datetime-local"
+                    />
+                  )}
                 />
               )}
-            />
             <FormField
               control={form.control}
               name="end_ms"
@@ -242,7 +234,7 @@ export const CampaignForm = ({
             />
           </div>
           <div className="my-10 flex flex-row-reverse justify-between">
-            <Button variant="standard-filled" disabled={!isValid} type="submit">
+            <Button variant="standard-filled" disabled={isDisabled} type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
           </div>

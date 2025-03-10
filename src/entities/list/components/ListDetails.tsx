@@ -8,7 +8,9 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
+import { PLATFORM_NAME } from "@/common/_config";
 import { List } from "@/common/api/indexer";
+import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import {
@@ -307,7 +309,11 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
                 )}
               </button>
               <div className="font-semibold">{listDetails && listDetails?.upvotes?.length}</div>
-              <SocialsShare variant="icon" />
+              <SocialsShare
+                shareText={`support this List on ${PLATFORM_NAME}  by donating  to Projects or 
+                sharing—every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
+                variant="icon"
+              />
             </div>
           </div>
         </div>

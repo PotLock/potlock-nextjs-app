@@ -34,7 +34,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   const isTimeUp = timeLeft?.includes("-");
 
   const statusText = useMemo(() => {
-    if (targetMet || isTimeUp) {
+    if ((targetMet && endDate) || isTimeUp) {
       return "ENDED";
     } else if (isStarted) {
       return "NOT STARTED";
