@@ -64,7 +64,7 @@ export const update_campaign = ({
 }: {
   args: CampaignFormFields & { campaign_id: CampaignId };
 }) => {
-  return contractApi.call("update_campaign", {
+  return contractApi.call<{}, Campaign>("update_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
     gas: "300000000000000",
@@ -72,7 +72,7 @@ export const update_campaign = ({
 };
 
 export const delete_campaign = ({ args }: { args: { campaign_id: CampaignId } }) => {
-  return contractApi.call("delete_campaign", {
+  return contractApi.call<{}, Campaign>("delete_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
     gas: "300000000000000",
@@ -80,7 +80,7 @@ export const delete_campaign = ({ args }: { args: { campaign_id: CampaignId } })
 };
 
 export const donate = (args: DirectCampaignDonationArgs, depositAmountYocto: string) =>
-  contractApi.call("donate", {
+  contractApi.call<{}, Campaign>("donate", {
     args,
     deposit: depositAmountYocto,
     gas: "300000000000000",
