@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
 
+export { PLATFORM_NAME };
+
 export const IS_CLIENT = typeof window !== "undefined";
 
 export const DEBUG = process.env.NEXT_PUBLIC_DEBUG === "true" ? true : false;

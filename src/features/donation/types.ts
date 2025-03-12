@@ -1,4 +1,5 @@
 import { ByPotId, PotId } from "@/common/api/indexer";
+import type { CampaignDonation } from "@/common/contracts/core/campaigns";
 import type {
   DirectBatchDonationItem,
   DirectDonation,
@@ -43,7 +44,7 @@ export type DonationGroupAllocationStrategyOption = {
 
 export type DonationState = {
   currentStep: DonationStep;
-  finalOutcome?: DirectDonation | PotDonation;
+  finalOutcome?: DirectDonation | PotDonation | CampaignDonation;
 };
 
 export interface WithTotalAmount {

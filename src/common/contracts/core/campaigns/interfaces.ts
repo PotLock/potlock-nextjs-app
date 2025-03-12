@@ -1,6 +1,6 @@
-import { AccountId, IndivisibleUnits } from "@/common/types";
+import { AccountId, IndivisibleUnits, type TokenId } from "@/common/types";
 
-export type CampaignFormFields = {
+export type CampaignInputs = {
   name: string;
   description?: string;
   cover_image_url?: string | null;
@@ -33,20 +33,25 @@ export type Campaign = {
   total_raised_amount: string;
 };
 
+/**
+ * https://github.com/PotLock/core/blob/6a44907c1beffcfaab7e7fbc0d50be12e897c5a8/contracts/campaigns/src/donations.rs#L51
+ */
 export interface CampaignDonation {
   id: number;
-  campaign_id: string;
-  donor_id: string;
-  recipient_id: string;
-  message?: string;
-  referrer_id?: string;
-  protocol_fee: string;
-  creator_fee?: string;
-  ft_id: string;
-  net_amount: string;
-  total_amount: string;
+  campaign_id: Campaign["id"];
+  donor_id: AccountId;
+  total_amount: IndivisibleUnits;
+  net_amount: IndivisibleUnits;
+  ft_id?: null | TokenId;
+  message?: null | string;
   donated_at_ms: number;
+  protocol_fee: IndivisibleUnits;
+  referrer_id?: null | AccountId;
+  referrer_fee: IndivisibleUnits;
+  creator_fee: IndivisibleUnits;
+  returned_at_ms?: null | number;
   is_in_escrow: boolean;
+  recipient_id: AccountId;
 }
 
 export type DirectCampaignDonationArgs = {
