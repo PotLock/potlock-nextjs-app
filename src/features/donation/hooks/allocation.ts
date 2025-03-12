@@ -23,8 +23,6 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
     "groupAllocationPlan",
   ]);
 
-  console.log(typeof amount, amount);
-
   const recipientShareAmount = useMemo(
     () => deriveShare(amount, groupAllocationPlan.length),
     [amount, groupAllocationPlan.length],

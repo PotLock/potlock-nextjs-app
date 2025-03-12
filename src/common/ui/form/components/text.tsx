@@ -1,4 +1,6 @@
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useCallback, useMemo } from "react";
+
+import { getDecimalSeparator } from "@/common/lib/numeric";
 
 import {
   FormControl,
@@ -43,6 +45,26 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ) => {
     const fieldProps = { disabled, ref, ...props };
     const { required } = props;
+
+    const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback(
+      (event) => {
+        if (props.type === "number") {
+          const isCommaDecimalSeparator = getDecimalSeparator() === ",";
+
+          // Disallow dot if decimal separator is comma
+          if (isCommaDecimalSeparator && event.key === ".") {
+            event.preventDefault();
+          }
+
+          // Disallow comma if decimal separator is dot
+          if (!isCommaDecimalSeparator && event.key === ",") {
+            event.preventDefault();
+          }
+        }
+      },
+
+      [props.type],
+    );
 
     const labelElement = useMemo(
       () =>
@@ -127,8 +149,10 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           <FormControl>
             <input
               {...fieldProps}
+              onKeyDown={handleKeyDown}
               className={cn(
                 "placeholder-text-muted-foreground h-10 w-full rounded-md border-none px-3 py-2.5",
+
                 {
                   "mr-2.5": appendixElement !== null,
 

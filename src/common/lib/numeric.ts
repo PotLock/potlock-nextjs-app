@@ -24,7 +24,7 @@ const normalizeCommaSeparatedFloatString = (input: string): string => {
 /**
  * Detects the decimal separator defined by the user agent locale
  */
-const getDecimalSeparator = () =>
+export const getDecimalSeparator = () =>
   Intl.NumberFormat(navigator.language ?? "en")
     .formatToParts(123_456.789)
     .find((part) => part.type === "decimal")?.value ?? ".";
@@ -78,7 +78,7 @@ export const isBigSource = (value: unknown | BigSource) => {
 };
 
 export const safePositiveNumber = preprocess(
-  (value) => parseFloat(value as string),
+  (value) => parseNumber(value as string),
 
   number({ message: "Must be a positive number." })
     .positive("Must be a positive number.")
