@@ -5,6 +5,65 @@ export type NumericComparatorKey = keyof Big.Big & ("lt" | "lte" | "gt" | "gte")
 
 export const NUMERIC_COMPARATOR_KEYS: NumericComparatorKey[] = ["lt", "lte", "gt", "gte"];
 
+const normalizeCommaSeparatedFloatString = (input: string): string => {
+  const hasComma = input.includes(",");
+  const hasDot = input.includes(".");
+
+  //? Both comma and dot present - replace dots with empty string and first comma with dot
+  if (hasComma && hasDot) {
+    return input.replace(/\./g, "").replace(",", ".");
+  }
+  //? Only comma present - replace comma with dot
+  else if (hasComma) {
+    return input.replace(",", ".");
+  }
+  //? No comma or only dots - return as is
+  else return input;
+};
+
+/**
+ * Detects the decimal separator defined by the user agent locale
+ */
+export const getDecimalSeparator = () =>
+  Intl.NumberFormat(navigator.language ?? "en")
+    .formatToParts(123_456.789)
+    .find((part) => part.type === "decimal")?.value ?? ".";
+
+/**
+ * Converts a numeric string value into Big.js BigNum instance,
+ * taking user agent locale into consideration for decimal separators.
+ * In cases where the input type may fluctuate in runtime between `string` and `number`,
+ * fallbacks to direct use of the Big.js constructor.
+ */
+export const parseBig = (input: string | number): Big => {
+  if (typeof input === "string") {
+    const safeInput = input || "0";
+    const decimalSeparator = getDecimalSeparator();
+    const isCommaDecimalSeparator = decimalSeparator === ",";
+
+    const normalizedInput = isCommaDecimalSeparator
+      ? normalizeCommaSeparatedFloatString(safeInput)
+      : safeInput;
+
+    try {
+      return new Big(normalizedInput);
+    } catch (error) {
+      console.error(`Unable to process ${input} as number.`);
+
+      return new Big(0);
+    }
+  } else {
+    return new Big(input ?? 0);
+  }
+};
+
+/**
+ * A locale-aware alternative to {@link parseFloat}.
+ * Uses {@link parseBig} to handle locale-specific formatting
+ * and mitigate floating point precision loss.
+ */
+export const parseNumber = (input: string): number => parseBig(input).toNumber();
+
 export const isBigSource = (value: unknown | BigSource) => {
   try {
     /** Attempt to create a new Big instance */
@@ -19,7 +78,7 @@ export const isBigSource = (value: unknown | BigSource) => {
 };
 
 export const safePositiveNumber = preprocess(
-  (value) => parseFloat(value as string),
+  (value) => parseNumber(value as string),
 
   number({ message: "Must be a positive number." })
     .positive("Must be a positive number.")
@@ -28,5 +87,9 @@ export const safePositiveNumber = preprocess(
     .transform((floatOrInt) => number().safeParse(floatOrInt).data ?? 0),
 );
 
-export const intoShareValue = (amount: number, numOfShares: number) =>
-  parseFloat(((amount ?? 0) / (numOfShares > 0 ? numOfShares : 1)).toFixed(4));
+export const deriveShare = (amount: number, numOfShares: number) =>
+  parseFloat(
+    parseBig(amount)
+      .div(numOfShares > 0 ? numOfShares : 1)
+      .toFixed(4, 0),
+  );
