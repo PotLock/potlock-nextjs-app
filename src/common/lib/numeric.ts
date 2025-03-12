@@ -10,25 +10,37 @@ export const NUMERIC_COMPARATOR_KEYS: NumericComparatorKey[] = ["lt", "lte", "gt
  */
 const getDecimalSeparator = () =>
   Intl.NumberFormat(navigator.language ?? "en")
-    .formatToParts(123_456.79)
+    .formatToParts(123_456.789)
     .find((part) => part.type === "decimal")?.value ?? ".";
 
 /**
  * Converts a numeric string value into Big.js BigNum instance,
- *  taking user agent locale into consideration,
- *  as different locales use different decimal separators
+ * taking user agent locale into consideration for decimal separators.
  */
 export const parseBig = (input: string): Big => {
-  const runtimeSafeInput = (input as string | undefined) || "0";
+  const safeInput = input || "0";
   const decimalSeparator = getDecimalSeparator();
   const isCommaDecimalSeparator = decimalSeparator === ",";
 
   const normalizedInput = isCommaDecimalSeparator
-    ? runtimeSafeInput.replace(/\./g, "").replace(",", ".")
-    : runtimeSafeInput;
+    ? safeInput.replace(/\./g, "").replace(",", ".")
+    : safeInput;
 
-  return new Big(normalizedInput);
+  try {
+    return new Big(normalizedInput);
+  } catch (error) {
+    console.error(`Unable to process ${input} as number.`);
+
+    return new Big(0);
+  }
 };
+
+/**
+ * A locale-aware alternative to {@link parseFloat}.
+ * Uses {@link parseBig} to handle locale-specific formatting
+ * and mitigate floating point precision loss.
+ */
+export const parseNumber = (input: string): number => parseBig(input).toNumber();
 
 export const isBigSource = (value: unknown | BigSource) => {
   try {
