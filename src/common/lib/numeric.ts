@@ -5,6 +5,22 @@ export type NumericComparatorKey = keyof Big.Big & ("lt" | "lte" | "gt" | "gte")
 
 export const NUMERIC_COMPARATOR_KEYS: NumericComparatorKey[] = ["lt", "lte", "gt", "gte"];
 
+const normalizeCommaSeparatedFloatString = (input: string): string => {
+  const hasComma = input.includes(",");
+  const hasDot = input.includes(".");
+
+  //? Both comma and dot present - replace dots with empty string and first comma with dot
+  if (hasComma && hasDot) {
+    return input.replace(/\./g, "").replace(",", ".");
+  }
+  //? Only comma present - replace comma with dot
+  else if (hasComma) {
+    return input.replace(",", ".");
+  }
+  //? No comma or only dots - return as is
+  else return input;
+};
+
 /**
  * Detects the decimal separator defined by the user agent locale
  */
@@ -16,22 +32,28 @@ const getDecimalSeparator = () =>
 /**
  * Converts a numeric string value into Big.js BigNum instance,
  * taking user agent locale into consideration for decimal separators.
+ * In cases where the input type may fluctuate in runtime between `string` and `number`,
+ * fallbacks to direct use of the Big.js constructor.
  */
-export const parseBig = (input: string): Big => {
-  const safeInput = input || "0";
-  const decimalSeparator = getDecimalSeparator();
-  const isCommaDecimalSeparator = decimalSeparator === ",";
+export const parseBig = (input: string | number): Big => {
+  if (typeof input === "string") {
+    const safeInput = input || "0";
+    const decimalSeparator = getDecimalSeparator();
+    const isCommaDecimalSeparator = decimalSeparator === ",";
 
-  const normalizedInput = isCommaDecimalSeparator
-    ? safeInput.replace(/\./g, "").replace(",", ".")
-    : safeInput;
+    const normalizedInput = isCommaDecimalSeparator
+      ? normalizeCommaSeparatedFloatString(safeInput)
+      : safeInput;
 
-  try {
-    return new Big(normalizedInput);
-  } catch (error) {
-    console.error(`Unable to process ${input} as number.`);
+    try {
+      return new Big(normalizedInput);
+    } catch (error) {
+      console.error(`Unable to process ${input} as number.`);
 
-    return new Big(0);
+      return new Big(0);
+    }
+  } else {
+    return new Big(input ?? 0);
   }
 };
 
@@ -67,7 +89,7 @@ export const safePositiveNumber = preprocess(
 
 export const deriveShare = (amount: number, numOfShares: number) =>
   parseFloat(
-    Big(amount ?? 0)
+    parseBig(amount)
       .div(numOfShares > 0 ? numOfShares : 1)
       .toFixed(4, 0),
   );
