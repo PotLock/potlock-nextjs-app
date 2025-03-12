@@ -20,7 +20,6 @@ import {
   Textarea,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
-import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenTotalValue } from "@/entities/_shared/token";
 
@@ -35,7 +34,6 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
   totalAmountFloat,
 }) => {
-  const viewer = useWalletUserSession();
   const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
 
@@ -77,7 +75,6 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     () => (
       <div className="flex flex-col items-start justify-between gap-1">
         <span className="prose font-600 text-neutral-600">{"Total amount"}</span>
-
         <TokenTotalValue tokenId={tokenId} amountFloat={totalAmountFloat} />
       </div>
     ),

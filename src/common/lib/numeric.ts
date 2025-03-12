@@ -32,5 +32,5 @@ export const deriveShare = (amount: number, numOfShares: number) =>
   parseFloat(
     Big(amount ?? 0)
       .div(numOfShares > 0 ? numOfShares : 1)
-      .toFixed(4),
+      .toFixed(4, 0),
   );
