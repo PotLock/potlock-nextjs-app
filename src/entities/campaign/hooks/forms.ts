@@ -6,7 +6,7 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
-import { floatToYoctoNear } from "@/common/lib";
+import { floatToYoctoNear, parseNumber } from "@/common/lib";
 import { CampaignId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
@@ -41,9 +41,9 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     const errors: Record<string, { message: string }> = {};
 
     // Convert string values to numbers for comparison
-    const minAmount = min_amount ? Number(min_amount) : null;
-    const maxAmount = max_amount ? Number(max_amount) : null;
-    const targetAmount = target_amount ? Number(target_amount) : null;
+    const minAmount = min_amount ? parseNumber(min_amount) : null;
+    const maxAmount = max_amount ? parseNumber(max_amount) : null;
+    const targetAmount = target_amount ? parseNumber(target_amount) : null;
 
     // Validate min_amount vs max_amount
     if (minAmount && maxAmount && minAmount > maxAmount) {
