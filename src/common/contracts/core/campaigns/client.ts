@@ -3,7 +3,7 @@ import { MemoryCache } from "@wpdas/naxios";
 import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { floatToYoctoNear } from "@/common/lib";
-import { AccountId, ByCampaignId, CampaignId } from "@/common/types";
+import { AccountId, CampaignId } from "@/common/types";
 
 import {
   Campaign,
@@ -72,7 +72,7 @@ export const update_campaign = ({
 };
 
 export const delete_campaign = ({ args }: { args: { campaign_id: CampaignId } }) => {
-  return contractApi.call<{}, Campaign>("delete_campaign", {
+  return contractApi.call<{}, void>("delete_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
     gas: "300000000000000",
@@ -80,7 +80,7 @@ export const delete_campaign = ({ args }: { args: { campaign_id: CampaignId } })
 };
 
 export const donate = (args: DirectCampaignDonationArgs, depositAmountYocto: string) =>
-  contractApi.call<{}, Campaign>("donate", {
+  contractApi.call<{}, CampaignDonation>("donate", {
     args,
     deposit: depositAmountYocto,
     gas: "300000000000000",

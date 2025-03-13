@@ -116,7 +116,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             {...{ campaignId }}
           />
           <SocialsShare
-            shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME}  by donating or 
+            shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME} by donating or 
                           sharing, every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
             variant="button"
           />
