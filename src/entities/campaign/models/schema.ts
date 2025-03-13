@@ -5,7 +5,7 @@ import { near } from "@/common/blockchains/near-protocol/client";
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 
 // Base schema with common fields
-const baseSchema = {
+const baseSchema = z.object({
   name: z
     .string()
     .min(3, "Name must be at least 3 characters")
@@ -17,12 +17,11 @@ const baseSchema = {
   cover_image_url: z.string().optional(),
   end_ms: futureTimestamp.describe("Campaign End Date"),
   owner: z.string()?.optional(),
-};
+});
 
 // Schema for creating new campaigns
-export const createCampaignSchema = z
-  .object({
-    ...baseSchema,
+export const createCampaignSchema = baseSchema
+  .extend({
     start_ms: futureTimestamp.describe("Campaign Start Date"),
     recipient: z.string().refine(near.isAccountValid, {
       message: `Account does not exist on ${NETWORK}`,
@@ -45,9 +44,8 @@ export const createCampaignSchema = z
   });
 
 // Schema for updating existing campaigns
-export const updateCampaignSchema = z
-  .object({
-    ...baseSchema,
+export const updateCampaignSchema = baseSchema
+  .extend({
     start_ms: futureTimestamp.optional().describe("Campaign Start Date"),
     recipient: z.string().optional(),
   })
