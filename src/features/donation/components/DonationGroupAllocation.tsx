@@ -137,7 +137,6 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
     <>
       <DialogHeader>
         {pot && <DialogTitle>{`Donation to Projects in ${pot.name}`}</DialogTitle>}
-
         {list && <DialogTitle>{`Donation to Projects in ${list.name}`}</DialogTitle>}
       </DialogHeader>
 

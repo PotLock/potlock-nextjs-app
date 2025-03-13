@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import type { WalletManager } from "@wpdas/naxios/dist/types/managers/wallet-manager";
 import { useRouter } from "next/router";
 
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
@@ -8,6 +9,11 @@ import { DEBUG_ACCOUNT_ID, IS_CLIENT } from "@/common/constants";
 import { useWalletUserAdapter } from "./adapters";
 import { useWalletUserMetadataStore } from "./model";
 import { isAccountId } from "../lib";
+
+//? There are edge cases where `walletSelector` is `undefined` in runtime for a brief moment
+const isWalletSelectorApiAvailable = () =>
+  (nearProtocolClient.walletApi.walletSelector as undefined | WalletManager["walletSelector"]) !==
+  undefined;
 
 type WalletProviderProps = {
   children: React.ReactNode;
@@ -35,18 +41,20 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const { referrerAccountId, setReferrerAccountId } = useWalletUserMetadataStore();
 
   const syncWalletState = useCallback(() => {
-    const isWalletSignedIn =
-      typeof DEBUG_ACCOUNT_ID === "string"
-        ? true
-        : nearProtocolClient.walletApi.walletSelector.isSignedIn();
+    if (isWalletSelectorApiAvailable()) {
+      const isWalletSignedIn =
+        typeof DEBUG_ACCOUNT_ID === "string"
+          ? true
+          : nearProtocolClient.walletApi.walletSelector.isSignedIn();
 
-    const walletAccountId =
-      typeof DEBUG_ACCOUNT_ID === "string"
-        ? DEBUG_ACCOUNT_ID
-        : nearProtocolClient.walletApi.accountId;
+      const walletAccountId =
+        typeof DEBUG_ACCOUNT_ID === "string"
+          ? DEBUG_ACCOUNT_ID
+          : nearProtocolClient.walletApi.accountId;
 
-    if (isWalletSignedIn !== isSignedIn || walletAccountId !== accountId) {
-      setAccountState({ accountId: walletAccountId, isSignedIn: isWalletSignedIn });
+      if (isWalletSignedIn !== isSignedIn || walletAccountId !== accountId) {
+        setAccountState({ accountId: walletAccountId, isSignedIn: isWalletSignedIn });
+      }
     }
   }, [accountId, isSignedIn, setAccountState]);
 
