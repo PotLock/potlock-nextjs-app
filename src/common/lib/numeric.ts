@@ -61,8 +61,10 @@ export const parseBig = (input: string | number): Big => {
  * A locale-aware alternative to {@link parseFloat}.
  * Uses {@link parseBig} to handle locale-specific formatting
  * and mitigate floating point precision loss.
+ *
+ * Also handles cases where the input type may fluctuate in runtime between `string` and `number`.
  */
-export const parseNumber = (input: string): number => parseBig(input).toNumber();
+export const parseNumber = (input: string | number): number => parseBig(input).toNumber();
 
 export const isBigSource = (value: unknown | BigSource) => {
   try {
