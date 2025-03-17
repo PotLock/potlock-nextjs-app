@@ -1,5 +1,7 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
+import { PLATFORM_NAME } from "@/common/_config";
+import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
@@ -113,7 +115,11 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             }
             {...{ campaignId }}
           />
-          <SocialsShare variant="button" />
+          <SocialsShare
+            shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME} by donating or 
+                          sharing, every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
+            variant="button"
+          />
         </div>
       </div>
     </div>

@@ -280,7 +280,7 @@ export const effects = (dispatch: AppDispatcher) => ({
 
       return void campaignsContractClient
         .donate(args, floatToYoctoNear(amount))
-        .then((result) => dispatch.donation.success(result as CampaignDonation))
+        .then((result) => dispatch.donation.success(result))
         .catch((error) => dispatch.donation.failure(error));
     } else if (isPotDonation && groupAllocationPlan !== undefined) {
       const batchTxDraft = donationInputsToBatchDonationDraft(inputs) as DonationPotBatchCallDraft;

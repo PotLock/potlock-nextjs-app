@@ -140,7 +140,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
               role="button"
               className="text-red-500"
             >
-              Edit Campaign
+              {openEditCampaign ? "Show Campaign Details" : "Edit Campaign"}
             </p>
           </div>
         )}
