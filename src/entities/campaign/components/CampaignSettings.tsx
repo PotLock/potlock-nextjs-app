@@ -121,29 +121,35 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
             </Link>
           </div>
         </div>
-        {viewer.isSignedIn && hasEscrowedDonations && (
-          <Button onClick={handleProcessEscrowedDonations}>Process Donation</Button>
-        )}
-
-        {viewer.isSignedIn &&
-          isDonationRefundsProcessed &&
-          campaign?.end_ms &&
-          campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-          Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
-            <Button onClick={handleDonationsRefund}>Process Donations Refund</Button>
+        <div className="flex flex-col-reverse gap-2 md:items-center md:gap-4">
+          {viewer.isSignedIn && hasEscrowedDonations && (
+            <Button variant="brand-outline" onClick={handleProcessEscrowedDonations}>
+              Process Donation
+            </Button>
           )}
 
-        {viewer.isSignedIn && viewer.accountId === campaign?.owner && (
-          <div>
-            <p
-              onClick={() => setOpenEditCampaign(!openEditCampaign)}
-              role="button"
-              className="text-red-500"
-            >
-              {openEditCampaign ? "Show Campaign Details" : "Edit Campaign"}
-            </p>
-          </div>
-        )}
+          {viewer.isSignedIn &&
+            isDonationRefundsProcessed &&
+            campaign?.end_ms &&
+            campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+            Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
+              <Button variant="brand-outline" onClick={handleDonationsRefund}>
+                Process Donations Refund
+              </Button>
+            )}
+
+          {viewer.isSignedIn && viewer.accountId === campaign?.owner && (
+            <div>
+              <p
+                onClick={() => setOpenEditCampaign(!openEditCampaign)}
+                role="button"
+                className="text-red-500"
+              >
+                {openEditCampaign ? "Show Campaign Details" : "Edit Campaign"}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {!openEditCampaign ? (

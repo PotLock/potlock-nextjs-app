@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { SearchBar, SortSelect } from "@/common/ui/layout/components";
+import { SearchBar, SortSelect, Spinner } from "@/common/ui/layout/components";
 
 import { CampaignCard } from "./CampaignCard";
+import { useAllCampaignLists } from "../hooks/useCampaigns";
 
-export const CampaignsList = ({ campaigns }: { campaigns: Campaign[] }) => {
+export const CampaignsList = () => {
   const [search, setSearch] = useState("");
   const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
 
+  const { buttons, campaigns, loading, currentTab } = useAllCampaignLists();
+
   const SORT_LIST_PROJECTS = [
-    { label: "Most recent", value: "recent" },
-    { label: "Least recent", value: "older" },
+    { label: "Newest", value: "recent" },
+    { label: "Oldest", value: "older" },
   ];
 
   const handleSort = (sortType: string) => {
@@ -42,11 +45,25 @@ export const CampaignsList = ({ campaigns }: { campaigns: Campaign[] }) => {
     setFilteredCampaigns(filtered);
   }, [search, campaigns]);
 
-  return (
+  return loading ? (
+    <div className="flex h-40 items-center justify-center">
+      <Spinner className="h-7 w-7" />
+    </div>
+  ) : (
     <div className="mt-5">
-      <div className="my-5 flex items-center gap-2">
-        <h1 className="text-[18px] font-semibold">All Campaigns</h1>
-        <p>{campaigns?.length}</p>
+      <div className="my flex items-center gap-3 md:gap-1">
+        {buttons.map(
+          ({ label, onClick, type, condition = true }) =>
+            condition && (
+              <button
+                key={type}
+                className={`border px-3 py-1 transition-all duration-200 ease-in-out ${currentTab === type ? "rounded-sm border-[#F8D3B0] bg-[#fff6ee]  text-[#EA6A25]" : "border-[#F7F7F7] bg-[#f6f6f7] text-black"}`}
+                onClick={onClick}
+              >
+                {label}
+              </button>
+            ),
+        )}
       </div>
       <div className="flex w-full items-center gap-4">
         <SearchBar

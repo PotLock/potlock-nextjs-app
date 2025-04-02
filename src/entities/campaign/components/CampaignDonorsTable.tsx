@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 
 import { CampaignDonation, campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { oldToRecent, yoctoNearToFloat } from "@/common/lib";
@@ -9,11 +10,13 @@ import type { ByCampaignId } from "@/common/types";
 import { DataTable } from "@/common/ui/layout/components";
 import { NearIcon } from "@/common/ui/layout/svg";
 import { AccountProfilePicture } from "@/entities/_shared/account";
+import { rootPathnames } from "@/pathnames";
 
 export type CampaignDonorsTableProps = ByCampaignId & {};
 
 export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campaignId }) => {
   const { data: donations } = campaignsContractHooks.useCampaignDonations({ campaignId });
+  console.log(donations);
 
   const sortedDonations = useMemo(() => {
     if (donations) {
@@ -26,10 +29,20 @@ export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campai
       header: "Donor",
       accessorKey: "donor_id",
       cell: ({ row }) => (
-        <div key={row.id} className="flex gap-2">
+        <Link
+          href={`${rootPathnames.PROFILE}/${row.original.donor_id}`}
+          target="_blank"
+          key={row.id}
+          className="address flex gap-2 hover:opacity-70"
+        >
           <AccountProfilePicture className="h-5 w-5" accountId={row.original.donor_id} />
           <span>{row.original.donor_id}</span>
-        </div>
+          {row.original?.returned_at_ms && (
+            <p className="rounded-full border-2 bg-red-600 px-2 text-[10px] font-bold text-white">
+              Refunded
+            </p>
+          )}
+        </Link>
       ),
     },
     {

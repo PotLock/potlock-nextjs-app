@@ -10,7 +10,7 @@ import {
   CarouselContent,
   PageError,
   PageWithBanner,
-  SplashScreen,
+  Spinner,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
@@ -80,11 +80,11 @@ export default function CampaignsPage() {
           "flex flex-col items-start justify-center overflow-hidden",
         )}
       >
-        <h3 className="font-500 bold mb-6 mt-0 text-lg tracking-[1.12px] text-[#DD3345]">
+        <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
           Igniting Campaigns for Impact
         </h3>
 
-        <h1 className="font-500 font-lora m-0 text-[40px] tracking-tight max-md:text-[36px]">
+        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
           Discover dynamic campaigns, Support transformative <br className="max-md:hidden" />{" "}
           initiatives, & Join a movement to fuel public goods.
         </h1>
@@ -109,13 +109,15 @@ export default function CampaignsPage() {
       )}
 
       {campaignsLoadingError === undefined && campaigns === undefined && isCampaignsListLoading && (
-        <SplashScreen className="h-100" />
+        <div className="flex h-40 items-center justify-center">
+          <Spinner className="h-7 w-7" />
+        </div>
       )}
 
       {campaignsLoadingError === undefined && campaigns !== undefined && (
         <>
           <FeaturedCampaigns data={campaigns} />
-          <CampaignsList campaigns={campaigns} />
+          <CampaignsList />
         </>
       )}
     </PageWithBanner>

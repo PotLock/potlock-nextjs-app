@@ -28,14 +28,42 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
 }) => {
   const progressPercentage = Math.min(100, Math.floor(Big(amount).div(target).mul(100).toNumber()));
 
-  const color = targetMet ? "#7FC41E" : amount < minAmount ? "#DD3345" : "#ECC113";
+  const color = (() => {
+    if (targetMet) {
+      return "#7FC41E";
+    } else if (amount < minAmount) {
+      return "#DD3345";
+    } else {
+      return "#ECC113";
+    }
+  })();
+
+  const baseColor = (() => {
+    if (targetMet) {
+      return "#E6F7E0";
+    } else if (amount < minAmount) {
+      return "#FEE6E5";
+    } else {
+      return "#FDF4D9";
+    }
+  })();
+
+  const minArrowColor = (() => {
+    if (targetMet) {
+      return "#7FC41E";
+    } else if (amount < minAmount) {
+      return "#FEE6E5";
+    } else {
+      return "#ECC113";
+    }
+  })();
 
   const timeLeft = endDate ? getTimePassed(endDate, false, true) : null;
   const isTimeUp = timeLeft?.includes("-");
 
   const statusText = useMemo(() => {
     if ((targetMet && endDate) || isTimeUp) {
-      return "ENDED";
+      return endDate ? `ENDED (${getTimePassed(endDate, false)} ago)` : "ENDED";
     } else if (isStarted) {
       return "NOT STARTED";
     } else if (timeLeft) {
@@ -72,12 +100,15 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
         message = "Goal was not Achieved";
       }
 
-      const messageColor =
-        amount < minAmount && !isEscrowBalanceEmpty
-          ? "#DD3345"
-          : targetMet || amount > minAmount
-            ? color
-            : "#DD3345";
+      const messageColor = (() => {
+        if (amount < minAmount && !isEscrowBalanceEmpty) {
+          return "#DD3345";
+        } else if (targetMet || amount > minAmount) {
+          return color;
+        } else {
+          return "#DD3345";
+        }
+      })();
 
       return (
         <div className="flex w-full items-center justify-between">
@@ -106,11 +137,24 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   return (
     <div className="flex w-full flex-col">
       <p className="mb-2 flex items-center font-semibold">{titleContent}</p>
-      <Progress value={progressPercentage} bgColor={color} />
-      <div className="mt-4 flex justify-between">
+      <div className="h-12 w-full">
+        <Progress
+          minArrowColor={minArrowColor}
+          baseColor={baseColor}
+          minAmount={`${minAmount} NEAR`}
+          minValuePercentage={
+            minAmount ? Math.floor(Big(minAmount).div(target).mul(100).toNumber()) : undefined
+          }
+          value={progressPercentage}
+          bgColor={color}
+        />
+      </div>
+      <div className="flex justify-between">
         <div className="flex items-center gap-1">
           <TimerIcon size={20} className="text-[#7B7B7B]" />
-          <p className="m-0 p-0 pt-[4px] text-[14px] font-semibold text-[#292929]">{statusText}</p>
+          <p className="m-0 p-0 pt-[4px] text-[14px] text-sm font-semibold text-[#292929]">
+            {statusText}
+          </p>
         </div>
         <div>
           <p className="font-semibold" style={{ color }}>
