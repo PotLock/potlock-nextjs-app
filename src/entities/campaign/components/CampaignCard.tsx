@@ -49,8 +49,8 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
               />
             </div>
           </div>
-          <div className="h-[120px]">
-            <p className="text-[16px]">{data.description ? truncate(data.description, 180) : ""}</p>
+          <div className="h-[110px]">
+            <p className="text-[16px]">{data.description ? truncate(data.description, 160) : ""}</p>
           </div>
           <CampaignProgressBar
             target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}

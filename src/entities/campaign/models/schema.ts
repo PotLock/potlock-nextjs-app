@@ -1,8 +1,25 @@
-import { z } from "zod";
+import { preprocess, z } from "zod";
 
 import { NETWORK } from "@/common/_config";
 import { near } from "@/common/blockchains/near-protocol/client";
-import { futureTimestamp, safePositiveNumber } from "@/common/lib";
+import { futureTimestamp, parseNumber } from "@/common/lib";
+
+export const safePositiveNumber = preprocess(
+  (value) => {
+    if (value === "" || value === null || value === undefined) {
+      // Treat empty strings, null, or undefined as undefined
+      return undefined;
+    }
+
+    if (typeof value === "string" || typeof value === "number") {
+      const parsed = parseNumber(value);
+      return isNaN(parsed) ? undefined : parsed;
+    }
+
+    return value;
+  },
+  z.union([z.number().positive("Must be a positive number.").finite().safe(), z.undefined()]),
+);
 
 // Base schema with common fields
 const baseSchema = z.object({
@@ -24,7 +41,7 @@ export const createCampaignSchema = baseSchema
   .extend({
     start_ms: futureTimestamp.describe("Campaign Start Date"),
     recipient: z.string().refine(near.isAccountValid, {
-      message: `Account does not exist on ${NETWORK}`,
+      message: `Invalid Account, must be a valid NEAR account`,
     }),
   })
   .superRefine((data, ctx) => {

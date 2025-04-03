@@ -81,7 +81,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         <p className="p-6">{campaign?.description}</p>
       </div>
       <div className="h-max w-full rounded-xl border border-[#DBDBDB] p-4 md:w-[27%]">
-        <div className="mb-5 border border-solid border-[#f4b37d] bg-[#fef6ee] p-4">
+        <div className="mb-5 rounded-xl border border-solid border-[#f4b37d] bg-[#fef6ee] p-4">
           <p className="text-[11px] font-semibold tracking-widest text-[#EA6A25]">
             TOTAL AMOUNT RAISED
           </p>

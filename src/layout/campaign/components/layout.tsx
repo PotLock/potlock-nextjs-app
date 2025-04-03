@@ -10,7 +10,7 @@ import { CampaignBanner } from "@/entities/campaign";
 
 const CAMPAIGN_TAB_ROUTES: TabOption[] = [
   {
-    label: "Leaderboard",
+    label: "Donation History",
     id: "leaderboard",
     href: "/leaderboard",
   },
