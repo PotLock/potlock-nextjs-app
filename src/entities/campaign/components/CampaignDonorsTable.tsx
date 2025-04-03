@@ -16,7 +16,6 @@ export type CampaignDonorsTableProps = ByCampaignId & {};
 
 export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campaignId }) => {
   const { data: donations } = campaignsContractHooks.useCampaignDonations({ campaignId });
-  console.log(donations);
 
   const sortedDonations = useMemo(() => {
     if (donations) {
