@@ -13,6 +13,7 @@ import {
 
 import { Button } from "../atoms/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../atoms/popover";
+import { useWalletUserSession } from "@/common/wallet";
 
 export const SocialsShare = ({
   shareContent,
@@ -24,13 +25,14 @@ export const SocialsShare = ({
   shareText: string;
 }) => {
   const [copied, setCopied] = useState(false);
+  const viewer = useWalletUserSession();
 
   const onCopy = useCallback(() => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, []);
 
-  const share = shareContent ?? window.location.href;
+  const share = shareContent ?? `${window.location.href}?referrerAccountId=${viewer?.accountId}`;
 
   return (
     <Popover>

@@ -1,4 +1,6 @@
+import { BadgeCheck, CircleAlert } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
 import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
@@ -6,13 +8,15 @@ import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
-import { SocialsShare, Spinner } from "@/common/ui/layout/components";
+import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { useNearToUsdWithFallback } from "@/entities/_shared/token/hooks/_deprecated";
 import { DonateToCampaignProjects } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
+import { useCampaignForm } from "../hooks/forms";
 
 export type CampaignBannerProps = ByCampaignId & {};
 
@@ -24,6 +28,29 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
   } = campaignsContractHooks.useCampaign({
     campaignId,
   });
+
+  const viewer = useWalletUserSession();
+
+  console.log(campaign)
+
+  const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
+    campaignId,
+    enabled:
+      !!campaign?.min_amount &&
+      Number(campaign?.total_raised_amount) >= Number(campaign?.min_amount),
+  });
+
+  const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
+    {
+      campaignId,
+      enabled:
+        !!campaign?.end_ms &&
+        campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+        Number(campaign?.total_raised_amount) < Number(campaign?.min_amount),
+    },
+  );
+
+  const { handleProcessEscrowedDonations, handleDonationsRefund } = useCampaignForm({ campaignId });
 
   const usdInfo = useNearToUsdWithFallback(
     Number(yoctoNearToFloat((campaign?.total_raised_amount as string) || "0")),
@@ -108,18 +135,62 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           endDate={Number(campaign?.end_ms)}
         />
         <div className="mt-6">
-          <DonateToCampaignProjects
-            className="mb-4"
-            disabled={
-              isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
-            }
-            {...{ campaignId }}
-          />
-          <SocialsShare
-            shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME} by donating or 
-                          sharing, every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
-            variant="button"
-          />
+          {viewer.isSignedIn && hasEscrowedDonations && (
+            <div className="flex w-full flex-col gap-4">
+              <Button className="w-full" onClick={handleProcessEscrowedDonations}>
+                Process Payout
+              </Button>
+              <div className="border-1 flex items-start gap-2 rounded-lg border-green-500  bg-green-50 p-3">
+                <BadgeCheck className="h--12 w-12" />
+                <div className="m-0 p-0">
+                  <h2 className="mb-2 text-base font-medium">Campaign Successful</h2>
+                  <p className="text-sm font-normal leading-6">
+                    The Minimum Target of the Campaign has been successfully reach and the Donations
+                    can be processed.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          {viewer.isSignedIn &&
+            isDonationRefundsProcessed &&
+            campaign?.end_ms &&
+            campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+            Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
+              <div className="flex w-full flex-col gap-4">
+              <Button className="w-full" onClick={handleDonationsRefund}>
+                Refund Donations
+              </Button>
+              <div className="border-1 flex items-start gap-2 rounded-lg border-neutral-500  bg-neutral-50 p-3">
+                <CircleAlert className="h--12 w-12" />
+                <div className="m-0 p-0">
+                  <h2 className="mb-2 text-base font-medium">Campaign Ended</h2>
+                  <p className="text-sm font-normal leading-6">
+                  The campaign has finished and did not meet its minimum goal of 
+                  {yoctoNearToFloat(campaign?.min_amount as string)} NEAR. Initiate the Reverse 
+                  Process to refund donors.
+                  </p>
+                </div>
+              </div>
+              </div>
+            )}
+
+          {!hasEscrowedDonations && !isDonationRefundsProcessed && (
+            <>
+              <DonateToCampaignProjects
+                className="mb-4"
+                disabled={
+                  isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
+                }
+                {...{ campaignId }}
+              />
+
+              <SocialsShare
+                shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME} by donating or sharing, every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
+                variant="button"
+              />
+            </>
+          )}
         </div>
       </div>
     </div>
