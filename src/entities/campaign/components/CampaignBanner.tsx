@@ -31,7 +31,6 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
   const viewer = useWalletUserSession();
 
-
   const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
     campaignId,
     enabled:
