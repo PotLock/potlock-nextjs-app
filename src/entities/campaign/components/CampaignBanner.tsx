@@ -31,7 +31,6 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
   const viewer = useWalletUserSession();
 
-  console.log(campaign)
 
   const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
     campaignId,
@@ -158,20 +157,20 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
             Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
               <div className="flex w-full flex-col gap-4">
-              <Button className="w-full" onClick={handleDonationsRefund}>
-                Refund Donations
-              </Button>
-              <div className="border-1 flex items-start gap-2 rounded-lg border-neutral-500  bg-neutral-50 p-3">
-                <CircleAlert className="h--12 w-12" />
-                <div className="m-0 p-0">
-                  <h2 className="mb-2 text-base font-medium">Campaign Ended</h2>
-                  <p className="text-sm font-normal leading-6">
-                  The campaign has finished and did not meet its minimum goal of 
-                  {yoctoNearToFloat(campaign?.min_amount as string)} NEAR. Initiate the Reverse 
-                  Process to refund donors.
-                  </p>
+                <Button className="w-full" onClick={handleDonationsRefund}>
+                  Refund Donations
+                </Button>
+                <div className="border-1 flex items-start gap-2 rounded-lg border-neutral-500  bg-neutral-50 p-3">
+                  <CircleAlert className="h--12 w-12" />
+                  <div className="m-0 p-0">
+                    <h2 className="mb-2 text-base font-medium">Campaign Ended</h2>
+                    <p className="text-sm font-normal leading-6">
+                      The campaign has finished and did not meet its minimum goal of
+                      {yoctoNearToFloat(campaign?.min_amount as string)} NEAR. Initiate the Reverse
+                      Process to refund donors.
+                    </p>
+                  </div>
                 </div>
-              </div>
               </div>
             )}
 

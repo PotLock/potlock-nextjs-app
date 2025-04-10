@@ -10,10 +10,10 @@ import {
   TelegramShareIcon,
   TwitterShareIcon,
 } from "@/common/ui/layout/svg/Share";
+import { useWalletUserSession } from "@/common/wallet";
 
 import { Button } from "../atoms/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../atoms/popover";
-import { useWalletUserSession } from "@/common/wallet";
 
 export const SocialsShare = ({
   shareContent,
