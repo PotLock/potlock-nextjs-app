@@ -197,7 +197,11 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
           </div>
         </div>
       ) : (
-        <CampaignForm existingData={campaign} campaignId={campaignId} />
+        <CampaignForm
+          existingData={campaign}
+          closeEditCampaign={() => setOpenEditCampaign(false)}
+          campaignId={campaignId}
+        />
       )}
     </div>
   );

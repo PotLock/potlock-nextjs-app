@@ -11,6 +11,9 @@ export type CampaignInputs = {
   max_amount?: number;
   recipient?: AccountId;
   owner?: AccountId;
+  referral_fee_basis_points?: number;
+  creator_fee_basis_points?: number;
+  allow_fee_avoidance?: boolean;
 };
 
 export type Campaign = {
@@ -27,9 +30,9 @@ export type Campaign = {
   min_amount?: IndivisibleUnits;
   escrow_balance: IndivisibleUnits;
   max_amount?: IndivisibleUnits;
-  referralFeeBasisPoints?: number;
-  creatorFeeBasisPoints?: number;
-  allowFeeAvoidance?: boolean;
+  referral_fee_basis_points?: number;
+  creator_fee_basis_points?: number;
+  allow_fee_avoidance?: boolean;
   total_raised_amount: string;
 };
 
