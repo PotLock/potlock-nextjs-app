@@ -155,7 +155,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
       const args = {
         description: values.description || "",
         name: values.name || "",
-        target_amount: floatToYoctoNear(values.target_amount) as any,
+        target_amount: floatToYoctoNear(values.target_amount ?? 0) as any,
         cover_image_url: values.cover_image_url ?? null,
         ...(values.min_amount && !campaignId
           ? { min_amount: floatToYoctoNear(values.min_amount) as any }

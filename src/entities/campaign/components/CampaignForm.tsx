@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
+import { useRouter } from "next/router";
 import { Temporal } from "temporal-polyfill";
 
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
@@ -22,10 +23,11 @@ export const CampaignForm = ({
 }) => {
   const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
+  const { back } = useRouter();
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, watch, isDisabled } = useCampaignForm({
+  const { form, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
   });
 
@@ -46,8 +48,6 @@ export const CampaignForm = ({
         form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
       }
 
-      // form.setValue("start_ms", existingData?.start_ms);
-
       if (existingData?.end_ms) {
         form.setValue("end_ms", existingData?.end_ms);
       }
@@ -65,7 +65,6 @@ export const CampaignForm = ({
       if (res.ok) {
         const data = await res.json();
         setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
-        onChange("cover_image_url", `${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
         setLoadingImageUpload(false);
       }
 
@@ -79,7 +78,7 @@ export const CampaignForm = ({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            onSubmit(form.getValues());
+            onSubmit({ ...form.getValues(), cover_image_url: coverImage });
           }}
         >
           <div>
@@ -175,19 +174,52 @@ export const CampaignForm = ({
               control={form.control}
               name="min_amount"
               render={({ field }) => (
-                <NearInputField {...field} className="lg:w-90" label="Minimum Target Amount" />
+                <NearInputField
+                  {...field}
+                  className="lg:w-90"
+                  label="Minimum Target Amount"
+                  hint="Minimum Amount Required before the donations in the escrow account can be released"
+                />
               )}
             />
             <FormField
               control={form.control}
               name="max_amount"
               render={({ field }) => (
-                <NearInputField {...field} className="lg:w-90" label="Maximum Target Amount" />
+                <NearInputField
+                  {...field}
+                  className="lg:w-90"
+                  hint="Once the maximum target amount is reached, the campaign will be closed"
+                  label="Maximum Target Amount"
+                />
               )}
             />
           </div>
           <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row">
-            {existingData?.start_ms &&
+            {!campaignId ? (
+              <FormField
+                control={form.control}
+                name="start_ms"
+                render={({ field: { value, ...field } }) => (
+                  <TextField
+                    {...field}
+                    required={true}
+                    label="Start Date"
+                    value={
+                      typeof value === "number"
+                        ? Temporal.Instant.fromEpochMilliseconds(value)
+                            .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                            .toPlainDateTime()
+                            .toString({ smallestUnit: "minute" })
+                        : undefined
+                    }
+                    classNames={{ root: "lg:w-90" }}
+                    type="datetime-local"
+                  />
+                )}
+              />
+            ) : (
+              existingData?.start_ms &&
               existingData?.start_ms > Temporal.Now.instant().epochMilliseconds && (
                 <FormField
                   control={form.control}
@@ -195,7 +227,6 @@ export const CampaignForm = ({
                   render={({ field: { value, ...field } }) => (
                     <TextField
                       {...field}
-                      required={!campaignId}
                       label="Start Date"
                       value={
                         typeof value === "number"
@@ -210,7 +241,8 @@ export const CampaignForm = ({
                     />
                   )}
                 />
-              )}
+              )
+            )}
             <FormField
               control={form.control}
               name="end_ms"
@@ -219,6 +251,7 @@ export const CampaignForm = ({
                   {...field}
                   required={!!watch("min_amount")}
                   label="End Date"
+                  hint="This is Optional by default but when the Minimum Target Amount is set, the End Date is required"
                   value={
                     typeof value === "number"
                       ? Temporal.Instant.fromEpochMilliseconds(value)
@@ -236,6 +269,9 @@ export const CampaignForm = ({
           <div className="my-10 flex flex-row-reverse justify-between">
             <Button variant="standard-filled" disabled={isDisabled} type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
+            </Button>
+            <Button variant="standard-outline" onClick={back} type="button">
+              Cancel
             </Button>
           </div>
         </form>

@@ -57,7 +57,7 @@ export const update_campaign = ({
 };
 
 export const delete_campaign = ({ args }: { args: { campaign_id: CampaignId } }) => {
-  return contractApi.call<{}, Campaign>("delete_campaign", {
+  return contractApi.call<{}, void>("delete_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
     gas: FULL_TGAS,

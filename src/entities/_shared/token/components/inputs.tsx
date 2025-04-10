@@ -39,13 +39,13 @@ export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
         <FormControl>
           <TextField
             {...props}
+            type="number"
             appendix={usdAmountFloat || "$0.00"}
             disabled={disabled}
             step={0.01}
             classNames={{ root: className }}
             placeholder="0.00"
             inputExtension="NEAR"
-            type="number"
           />
         </FormControl>
       </FormItem>

@@ -24,15 +24,15 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
         href={`/campaign/${data.id}/leaderboard`}
         passHref
       >
-        <div className="h-293px relative md:h-[285px] md:w-[68%]">
+        <div className="h-293px relative md:h-[285px] md:w-[68%] md:rounded-xl">
           <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
             alt=""
-            className="inset-1 h-full w-full object-cover md:rounded"
+            className="inset-1 h-full w-full object-cover md:rounded-xl"
             width={500}
             height={300}
           />
-          <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
+          <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-70 md:rounded-xl"></div>{" "}
           <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
             <h1 className="text-[24px] font-bold text-white">{data.name}</h1>
             <div className="m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
@@ -62,7 +62,7 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
             amount={data?.total_raised_amount ? yoctoNearToFloat(data?.total_raised_amount) : 0}
             endDate={Number(data?.end_ms)}
           />
-          <p className="mt-4 text-start">
+          <p className="mt-4 text-start md:h-28">
             {data?.description ? truncate(data.description, 100) : ""}
           </p>
           <DonateToCampaignProjects
