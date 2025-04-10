@@ -1,18 +1,16 @@
 import { useState } from "react";
 
 import Link from "next/link";
-import { Temporal } from "temporal-polyfill";
 
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import type { ByCampaignId } from "@/common/types";
-import { Button, Skeleton, Spinner } from "@/common/ui/layout/components";
+import { Skeleton, Spinner } from "@/common/ui/layout/components";
 import { NearIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 import { CampaignForm } from "./CampaignForm";
-import { useCampaignForm } from "../hooks/forms";
 
 const formatTime = (timestamp: number) =>
   new Date(timestamp).toLocaleString("en-US", {
@@ -50,8 +48,6 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
   const viewer = useWalletUserSession();
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
 
-  const { handleProcessEscrowedDonations, handleDonationsRefund } = useCampaignForm({ campaignId });
-
   const {
     isLoading: isCampaignLoading,
     data: campaign,
@@ -59,23 +55,6 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
   } = campaignsContractHooks.useCampaign({
     campaignId,
   });
-
-  const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
-    campaignId,
-    enabled:
-      !!campaign?.min_amount &&
-      Number(campaign?.total_raised_amount) >= Number(campaign?.min_amount),
-  });
-
-  const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
-    {
-      campaignId,
-      enabled:
-        !!campaign?.end_ms &&
-        campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-        Number(campaign?.total_raised_amount) < Number(campaign?.min_amount),
-    },
-  );
 
   if (campaignLoadingError)
     return (
@@ -122,22 +101,6 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
           </div>
         </div>
         <div className="flex flex-col-reverse gap-2 md:items-center md:gap-4">
-          {viewer.isSignedIn && hasEscrowedDonations && (
-            <Button variant="brand-outline" onClick={handleProcessEscrowedDonations}>
-              Process Donation
-            </Button>
-          )}
-
-          {viewer.isSignedIn &&
-            isDonationRefundsProcessed &&
-            campaign?.end_ms &&
-            campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-            Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
-              <Button variant="brand-outline" onClick={handleDonationsRefund}>
-                Process Donations Refund
-              </Button>
-            )}
-
           {viewer.isSignedIn && viewer.accountId === campaign?.owner && (
             <div>
               <p
@@ -197,7 +160,11 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
           </div>
         </div>
       ) : (
-        <CampaignForm existingData={campaign} campaignId={campaignId} />
+        <CampaignForm
+          existingData={campaign}
+          closeEditCampaign={() => setOpenEditCampaign(false)}
+          campaignId={campaignId}
+        />
       )}
     </div>
   );

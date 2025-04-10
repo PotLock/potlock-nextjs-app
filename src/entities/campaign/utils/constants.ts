@@ -1,0 +1,1 @@
+export const CAMPAIGN_MAX_FEE_POINTS = 1000;

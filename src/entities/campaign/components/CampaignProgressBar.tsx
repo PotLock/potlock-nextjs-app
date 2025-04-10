@@ -89,15 +89,11 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
       let message;
 
       if (amount && !targetMet && amount < minAmount) {
-        message = isEscrowBalanceEmpty
-          ? "Donations have been refunded"
-          : "Donations are yet to be refunded";
+        message = isEscrowBalanceEmpty ? "Refunds Processed" : "Refunds Pending";
       } else if (amount && (targetMet || amount > minAmount)) {
-        message = isEscrowBalanceEmpty
-          ? "Donations have been paid out"
-          : "Donations are yet to be paid out";
+        message = isEscrowBalanceEmpty ? "Payout Processed" : "Payout Pending";
       } else {
-        message = "Goal was not Achieved";
+        message = "Goal Not Reached";
       }
 
       const messageColor = (() => {
