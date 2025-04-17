@@ -45,14 +45,12 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
         <Skeleton className="w-35 h-5" />
       )}
 
-      {token?.usdPrice ? (
+      {token?.usdPrice && (
         <span
           className={cn("prose line-height-none text-xl text-neutral-600", { "mt-0.7": !textOnly })}
         >
           {`~$ ${token.usdPrice.mul(amount).toFixed(2)}`}
         </span>
-      ) : (
-        <Skeleton className="w-35 h-5" />
       )}
     </div>
   );

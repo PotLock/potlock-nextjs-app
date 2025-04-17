@@ -92,6 +92,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             {campaign?.total_raised_amount && <h2 className="text-base">{usdInfo}</h2>}
           </div>
         </div>
+
         <CampaignProgressBar
           target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
           minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
@@ -107,6 +108,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           }
           endDate={Number(campaign?.end_ms)}
         />
+
         <div className="mt-6">
           <DonateToCampaignProjects
             className="mb-4"
@@ -115,6 +117,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             }
             {...{ campaignId }}
           />
+
           <SocialsShare
             shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME} by donating or 
                           sharing, every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
