@@ -6,8 +6,13 @@ import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { FULL_TGAS, NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { donationContractClient } from "@/common/contracts/core/donation";
-import type { FungibleTokenMetadata } from "@/common/contracts/tokens";
-import { bigNumToIndivisible, floatToIndivisible, indivisibleUnitsToBigNum } from "@/common/lib";
+import type { FungibleTokenMetadata, FungibleTokenStorageBalance } from "@/common/contracts/tokens";
+import {
+  bigNumToIndivisible,
+  floatToIndivisible,
+  indivisibleUnitsToBigNum,
+  indivisibleUnitsToFloat,
+} from "@/common/lib";
 import type { AccountId } from "@/common/types";
 
 import { DONATION_BASE_STORAGE_DEPOSIT_FLOAT } from "../../constants";
@@ -36,33 +41,34 @@ export const donationFtMulticall = async ({
   );
 
   const referrerStorageBalance = referrerAccountId
-    ? await tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
+    ? await tokenClient.view<{ account_id: AccountId }, FungibleTokenStorageBalance | null>(
         "storage_balance_of",
         { args: { account_id: referrerAccountId } },
       )
     : null;
 
+  // TODO: Reorganize into a promise chain
   const [
-    ftMetadata = null,
-    ftStorageBalanceBounds = null,
-    protocolFeeRecipientFtStorageBalance = null,
-    donationContractFtStorageBalance = null,
-    recipientFtStorageBalance = null,
+    ftMetadata,
+    ftStorageBalanceBounds,
+    protocolFeeRecipientFtStorageBalance,
+    donationContractFtStorageBalance,
+    recipientFtStorageBalance,
   ] = await Promise.all([
     tokenClient.view<{}, FungibleTokenMetadata>("ft_metadata"),
     tokenClient.view<{}, { min: string; max: string }>("storage_balance_bounds"),
 
-    tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
+    tokenClient.view<{ account_id: AccountId }, FungibleTokenStorageBalance | null>(
       "storage_balance_of",
       { args: { account_id: protocol_fee_recipient_account } },
     ),
 
-    tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
+    tokenClient.view<{ account_id: AccountId }, FungibleTokenStorageBalance | null>(
       "storage_balance_of",
       { args: { account_id: DONATION_CONTRACT_ACCOUNT_ID } },
     ),
 
-    tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
+    tokenClient.view<{ account_id: AccountId }, FungibleTokenStorageBalance | null>(
       "storage_balance_of",
       { args: { account_id: recipientAccountId } },
     ),
@@ -82,6 +88,8 @@ export const donationFtMulticall = async ({
     referrerStorageBalance === null
       ? null
       : indivisibleUnitsToBigNum(referrerStorageBalance.total, NATIVE_TOKEN_DECIMALS);
+
+  console.log("donationContractFtStorageBalance", donationContractFtStorageBalance);
 
   const donationContractFtStorageBalanceBig =
     donationContractFtStorageBalance === null
