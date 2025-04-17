@@ -34,7 +34,8 @@ import { rootPathnames } from "@/pathnames";
 import { DonationSummaryBreakdown } from "./breakdowns";
 import { DonationSybilWarning } from "./DonationSybilWarning";
 import { useDonationAllocationBreakdown } from "../hooks";
-import { WithDonationFormAPI, useDonationState } from "../models";
+import { WithDonationFormAPI } from "../models/schemas";
+import { useDonationState } from "../models/store";
 
 export type DonationSuccessProps = WithDonationFormAPI & {
   transactionHash?: string;

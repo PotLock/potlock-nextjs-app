@@ -1,6 +1,6 @@
 import { floatToYoctoNear } from "@/common/lib";
 
-import { type DonationSubmitParams } from "../models";
+import { type DonationSubmitParams } from "../models/schemas";
 import { DonationBatchCallDraft, DonationGroupAllocationStrategyEnum } from "../types";
 
 export const donationInputsToBatchDonationDraft = ({

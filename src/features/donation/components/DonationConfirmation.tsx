@@ -25,7 +25,7 @@ import { TokenTotalValue } from "@/entities/_shared/token";
 
 import { DonationGroupAllocationBreakdown, DonationSummaryBreakdown } from "./breakdowns";
 import { useDonationAllocationBreakdown } from "../hooks";
-import { WithDonationFormAPI } from "../models";
+import { WithDonationFormAPI } from "../models/schemas";
 import { WithTotalAmount } from "../types";
 
 export type DonationConfirmationProps = WithTotalAmount & WithDonationFormAPI & {};

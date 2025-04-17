@@ -12,7 +12,7 @@ import {
   useDonationEvenShareAllocation,
   useDonationManualShareAllocation,
 } from "../hooks";
-import { DonationAllocationInputs } from "../models";
+import { DonationAllocationInputs } from "../models/schemas";
 import { DonationGroupAllocationKey } from "../types";
 
 export type DonationRecipientSharesProps = DonationGroupAllocationKey &

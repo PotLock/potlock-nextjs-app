@@ -8,11 +8,12 @@ import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
+import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
-import { DonationInputs, donationDependentFields, donationSchema } from "../models";
+import { DonationInputs, donationDependentFields, donationSchema } from "../models/schemas";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
@@ -25,6 +26,7 @@ export type DonationFormParams = DonationAllocationKey & {
 };
 
 export const useDonationForm = ({ ...params }: DonationFormParams) => {
+  const { toast } = useToast();
   const viewer = useWalletUserSession();
   const now = Temporal.Now.instant();
   const isSingleProjectDonation = "accountId" in params;
@@ -124,15 +126,27 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     [amount, tokenId, viewer.hasWalletReady],
   );
 
+  const onSubmitError = useCallback(
+    (error: Error) =>
+      toast({
+        title: "Unable to submit donation",
+        description: error.message,
+        variant: "destructive",
+      }),
+
+    [toast],
+  );
+
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
     (inputs) =>
       dispatch.donation.submit({
         ...inputs,
         ...params,
         referrerAccountId: viewer?.referrerAccountId,
+        onError: onSubmitError,
       }),
 
-    [params, viewer?.referrerAccountId],
+    [onSubmitError, params, viewer?.referrerAccountId],
   );
 
   useEffect(() => {
