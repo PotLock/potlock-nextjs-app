@@ -69,11 +69,7 @@ export const envConfig: EnvConfig = {
     [FeatureId.DirectFtDonation]: {
       id: FeatureId.DirectFtDonation,
       name: "Direct FT donation",
-
-      /**
-       * The implementation is not finished yet
-       */
-      isEnabled: false,
+      isEnabled: true,
     },
 
     [FeatureId.DirectNativeTokenDonation]: {
