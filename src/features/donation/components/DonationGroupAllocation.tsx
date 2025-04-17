@@ -23,8 +23,11 @@ import { TokenSelector, TokenTotalValue, useToken } from "@/entities/_shared/tok
 
 import { DonationRecipientShares } from "./DonationRecipientShares";
 import { DonationSybilWarning } from "./DonationSybilWarning";
-import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
-import { DonationAllocationInputs, donationGroupAllocationStrategies } from "../models";
+import {
+  DONATION_GROUP_ALLOCATION_STRATEGIES,
+  DONATION_INSUFFICIENT_BALANCE_ERROR,
+} from "../constants";
+import { DonationAllocationInputs } from "../models/schemas";
 import {
   DonationGroupAllocationKey,
   DonationGroupAllocationStrategyEnum,
@@ -90,7 +93,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
 
             <FormControl>
               <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
-                {values(donationGroupAllocationStrategies).map(
+                {values(DONATION_GROUP_ALLOCATION_STRATEGIES).map(
                   ({ label, hint, hintIfDisabled, value }) => (
                     <FormItem key={value}>
                       <RadioGroupItem

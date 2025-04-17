@@ -10,7 +10,7 @@ import { deriveShare } from "@/common/lib";
 import { ByAccountId } from "@/common/types";
 import { useWalletUserSession } from "@/common/wallet";
 
-import { DonationInputs, DonationSubmitParams, WithDonationFormAPI } from "../models";
+import { DonationInputs, DonationSubmitParams, WithDonationFormAPI } from "../models/schemas";
 import { DonationBreakdown, DonationGroupAllocationStrategyEnum, WithTotalAmount } from "../types";
 import { donationFeeBasisPointsToPercents } from "../utils/converters";
 

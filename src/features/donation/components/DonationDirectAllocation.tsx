@@ -24,8 +24,12 @@ import {
 import { TokenSelector, useToken } from "@/entities/_shared/token";
 
 import { DonationSybilWarning } from "./DonationSybilWarning";
-import { DONATION_INSUFFICIENT_BALANCE_ERROR, DONATION_MIN_NEAR_AMOUNT } from "../constants";
-import { DonationAllocationInputs, donationAllocationStrategies } from "../models";
+import {
+  DONATION_ALLOCATION_STRATEGIES,
+  DONATION_INSUFFICIENT_BALANCE_ERROR,
+  DONATION_MIN_NEAR_AMOUNT,
+} from "../constants";
+import { DonationAllocationInputs } from "../models/schemas";
 import { DonationAllocationStrategyEnum } from "../types";
 import { DonationTokenBalance } from "./DonationTokenBalance";
 
@@ -98,7 +102,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
-                  {values(donationAllocationStrategies).map(
+                  {values(DONATION_ALLOCATION_STRATEGIES).map(
                     ({ label, hint, hintIfDisabled, value }) => {
                       const disabled =
                         value === DonationAllocationStrategyEnum.share && !hasMatchingPots;

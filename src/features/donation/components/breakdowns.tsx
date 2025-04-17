@@ -6,7 +6,7 @@ import { LabeledIcon } from "@/common/ui/layout/components";
 import { AccountListItem } from "@/entities/_shared/account";
 import { TokenIcon } from "@/entities/_shared/token";
 
-import { WithDonationFormAPI } from "../models";
+import { WithDonationFormAPI } from "../models/schemas";
 import { DonationBreakdown } from "../types";
 
 export type DonationGroupAllocationBreakdownProps = WithDonationFormAPI & {};

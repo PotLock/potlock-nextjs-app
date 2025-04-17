@@ -12,7 +12,7 @@ import { DonationDirectAllocation } from "./DonationDirectAllocation";
 import { DonationGroupAllocation } from "./DonationGroupAllocation";
 import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
 import { useDonationForm } from "../hooks";
-import { useDonationState } from "../models";
+import { useDonationState } from "../models/store";
 import { DonationAllocationKey } from "../types";
 
 export type DonationFlowProps = DonationAllocationKey &

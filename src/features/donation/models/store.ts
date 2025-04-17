@@ -7,55 +7,16 @@ import { type PotDonation } from "@/common/contracts/core/pot";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
+import { DonationStep } from "../types";
 import { effects } from "./effects";
-import {
-  DonationAllocationStrategy,
-  DonationAllocationStrategyEnum,
-  DonationAllocationStrategyOption,
-  DonationGroupAllocationStrategy,
-  DonationGroupAllocationStrategyEnum,
-  DonationGroupAllocationStrategyOption,
-  DonationState,
-  DonationStep,
-} from "../types";
-
-export * from "./schemas";
 
 export const donationModelKey = "donation";
 
 export const useDonationState = () => useGlobalStoreSelector(prop(donationModelKey));
 
-export const donationAllocationStrategies: Record<
-  DonationAllocationStrategy,
-  DonationAllocationStrategyOption
-> = {
-  full: {
-    label: "Direct donation",
-    value: DonationAllocationStrategyEnum.full,
-  },
-
-  share: {
-    label: "Quadratically matched donation",
-    hintIfDisabled: "(no pots available)",
-    value: DonationAllocationStrategyEnum.share,
-  },
-};
-
-export const donationGroupAllocationStrategies: Record<
-  DonationGroupAllocationStrategy,
-  DonationGroupAllocationStrategyOption
-> = {
-  evenly: {
-    label: "Evenly",
-    hint: "(Allocate funds evenly across multiple projects)",
-    value: DonationGroupAllocationStrategyEnum.evenly,
-  },
-
-  manually: {
-    label: "Manually",
-    hint: "(Specify amount for each project)",
-    value: DonationGroupAllocationStrategyEnum.manually,
-  },
+export type DonationState = {
+  currentStep: DonationStep;
+  finalOutcome?: DirectDonation | PotDonation | CampaignDonation;
 };
 
 const donationStateDefaults: DonationState = {

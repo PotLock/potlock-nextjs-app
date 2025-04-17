@@ -12,7 +12,7 @@ import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
-import { DonationInputs, donationDependentFields, donationSchema } from "../models";
+import { DonationInputs, donationDependentFields, donationSchema } from "../models/schemas";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,

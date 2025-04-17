@@ -8,4 +8,4 @@ export * from "./types";
 export * from "./utils/converters";
 export * from "./utils/validation";
 
-export { donationModel, donationModelKey } from "./models";
+export { donationModel, donationModelKey } from "./models/store";
