@@ -16,7 +16,7 @@ import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
-import { processFtDonation } from "./ft";
+import { donationFtMulticall } from "./ft";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
@@ -70,7 +70,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
           if (isFtDonation) {
-            return void processFtDonation({
+            return void donationFtMulticall({
               amount,
               recipientAccountId: params.accountId,
               referrerAccountId,

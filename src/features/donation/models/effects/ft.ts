@@ -18,7 +18,7 @@ type FtDonationInputs = { recipientAccountId: AccountId } & Pick<
   "amount" | "referrerAccountId" | "bypassProtocolFee" | "message" | "tokenId"
 >;
 
-export const processFtDonation = async ({
+export const donationFtMulticall = async ({
   amount,
   recipientAccountId,
   referrerAccountId,
