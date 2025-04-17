@@ -13,10 +13,10 @@ import type { AccountId } from "@/common/types";
 import { DONATION_BASE_STORAGE_DEPOSIT_FLOAT } from "../../constants";
 import type { DonationSubmitParams } from "../schemas";
 
-type FtDonationInputs = { recipientAccountId: AccountId } & Pick<
+type DonationFtMulticallInputs = Pick<
   DonationSubmitParams,
   "amount" | "referrerAccountId" | "bypassProtocolFee" | "message" | "tokenId"
->;
+> & { recipientAccountId: AccountId };
 
 export const donationFtMulticall = async ({
   amount,
@@ -25,7 +25,7 @@ export const donationFtMulticall = async ({
   bypassProtocolFee,
   message,
   tokenId,
-}: FtDonationInputs) => {
+}: DonationFtMulticallInputs) => {
   const { protocol_fee_recipient_account } = await donationContractClient.getConfig();
 
   const tokenClient = nearProtocolClient.naxiosInstance.contractApi({ contractId: tokenId });

@@ -44,8 +44,15 @@ const getTransactionStatus = ({
     params: { wait_until, ...params },
   });
 
+export type DonationSubmitCallbacks = {
+  onError: (error: Error) => void;
+};
+
 export const effects = (dispatch: AppDispatcher) => ({
-  submit: async (inputs: DonationAllocationKey & DonationSubmitParams): Promise<void> => {
+  submit: async ({
+    onError,
+    ...inputs
+  }: DonationAllocationKey & DonationSubmitParams & DonationSubmitCallbacks): Promise<void> => {
     const {
       amount,
       listId,
@@ -85,7 +92,10 @@ export const effects = (dispatch: AppDispatcher) => ({
                 // @ts-expect-error WIP
                 dispatch.donation.success(result);
               })
-              .catch((error) => dispatch.donation.failure(error));
+              .catch((error) => {
+                onError(error);
+                dispatch.donation.failure(error);
+              });
           } else {
             const args: DirectDonationArgs = {
               recipient_id: params.accountId,
@@ -145,6 +155,7 @@ export const effects = (dispatch: AppDispatcher) => ({
         inputs,
       ) as DonationDirectBatchCallDraft;
 
+      // TODO: Handle batch tx outcome
       return void donationContractClient.donateBatch(batchTxDraft.entries);
     } else {
       return void dispatch.donation.failure(new Error("Unable to determine donation type."));
