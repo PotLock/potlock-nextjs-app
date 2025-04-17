@@ -1,4 +1,4 @@
-import type { AccountId } from "./common/types";
+import type { AccountId, CampaignId } from "./common/types";
 
 export const rootPathnames = {
   CURRENT: "",
@@ -14,4 +14,5 @@ export const rootPathnames = {
   DONORS: "/donors",
   LIST: "/lists",
   CAMPAIGNS: "/campaigns",
+  CAMPAIGN: (campaignId: CampaignId) => `/campaign/${campaignId}`,
 };

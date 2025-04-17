@@ -5,6 +5,7 @@ import { values } from "remeda";
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { ByAccountId, ByCampaignId } from "@/common/types";
 import { SelectField, SelectFieldOption, TextField } from "@/common/ui/form/components";
 import {
@@ -62,10 +63,21 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
+  const { data: campaign } = campaignsContractHooks.useCampaign({
+    enabled: isCampaignDonation,
+    campaignId: campaignId ?? 0,
+  });
+
+  const minAmount = useMemo(
+    () => campaign?.min_amount ?? (tokenId === NATIVE_TOKEN_ID ? DONATION_MIN_NEAR_AMOUNT : 0.0),
+    [campaign?.min_amount, tokenId],
+  );
+
   const isFtSupportAvailable =
-    FEATURE_REGISTRY.DirectFtDonation.isEnabled &&
-    !isCampaignDonation &&
-    allocationStrategy === DonationAllocationStrategyEnum.full;
+    FEATURE_REGISTRY.FtDonation.isEnabled &&
+    (isCampaignDonation
+      ? campaign?.ftId !== NATIVE_TOKEN_ID
+      : allocationStrategy === DonationAllocationStrategyEnum.full);
 
   const totalAmountUsdValue =
     amount && token?.usdPrice ? `~$ ${token.usdPrice.mul(amount).toFixed(2)}` : null;
@@ -151,8 +163,8 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
       <DialogHeader>
         <DialogTitle>
           {isCampaignDonation
-            ? "Donate to Campaign"
-            : `Donation to ${recipient?.near_social_profile_data?.name ?? "project"}`}
+            ? `Donate to ${campaign?.name ? `${campaign.name} Campaign` : "Campaign"}`
+            : `Donate to ${recipient?.near_social_profile_data?.name ?? "Project"}`}
         </DialogTitle>
       </DialogHeader>
 
@@ -188,7 +200,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
               }
               type="number"
               placeholder="0.00"
-              min={tokenId === NATIVE_TOKEN_ID ? DONATION_MIN_NEAR_AMOUNT : 0.0}
+              min={minAmount}
               max={balanceFloat ?? undefined}
               step={0.01}
               appendix={totalAmountUsdValue}

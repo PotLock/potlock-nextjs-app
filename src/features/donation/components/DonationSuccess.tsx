@@ -13,6 +13,7 @@ import {
   NATIVE_TOKEN_ID,
   PLATFORM_TWITTER_ACCOUNT_ID,
 } from "@/common/constants";
+import { type CampaignDonation, campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import type { DirectDonation } from "@/common/contracts/core/donation";
 import type { PotDonation } from "@/common/contracts/core/pot";
 import { indivisibleUnitsToFloat, truncate } from "@/common/lib";
@@ -46,7 +47,13 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   const viewer = useWalletUserSession();
   const { finalOutcome } = useDonationState();
   const isResultLoading = finalOutcome === undefined;
+  const isCampaignDonation = finalOutcome !== undefined && "campaign_id" in finalOutcome;
   const [potId, recipientAccountIdFormValue] = form.watch(["potAccountId", "recipientAccountId"]);
+
+  const { data: campaign, isLoading: isCampaignLoading } = campaignsContractHooks.useCampaign({
+    enabled: isCampaignDonation,
+    campaignId: isCampaignDonation ? finalOutcome?.campaign_id : 0,
+  });
 
   const { data: pot } = indexer.usePot({
     enabled: potId !== undefined,
@@ -73,14 +80,17 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
 
   const tokenId = useMemo(
     () =>
-      "ft_id" in (finalOutcome ?? {}) ? (finalOutcome as DirectDonation).ft_id : NATIVE_TOKEN_ID,
+      "ft_id" in (finalOutcome ?? {})
+        ? ((finalOutcome as DirectDonation | CampaignDonation).ft_id ?? NATIVE_TOKEN_ID)
+        : NATIVE_TOKEN_ID,
 
     [finalOutcome],
   );
 
   const { isLoading: isTokenLoading, data: token } = useToken({ tokenId });
 
-  const isLoading = isResultLoading || isRecipientSocialProfileLoading || isTokenLoading;
+  const isLoading =
+    isResultLoading || isCampaignLoading || isRecipientSocialProfileLoading || isTokenLoading;
 
   const totalAmountFloat = indivisibleUnitsToFloat(
     finalOutcome?.total_amount ?? "0",
@@ -215,7 +225,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
         {isLoading || recipientAccountId === undefined ? (
           <Skeleton className="w-49 h-5" />
         ) : (
-          <p className="m-0 flex flex-col">
+          <p className="m-0 flex flex-col gap-1">
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
 
@@ -224,6 +234,12 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
                 classNames={{ name: "font-600" }}
               />
             </div>
+
+            {campaign?.name && (
+              <Link href={rootPathnames.CAMPAIGN(campaign.id)}>
+                <span className="text-center text-neutral-600">{`Via ${campaign.name} Campaign`}</span>
+              </Link>
+            )}
 
             {pot?.name && (
               <span className="text-center text-neutral-600">{`Via ${pot.name} Pot`}</span>
