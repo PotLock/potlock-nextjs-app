@@ -5,9 +5,9 @@ import { Big } from "big.js";
 import { isNot, isStrictEqual, piped, prop } from "remeda";
 
 import { Pot, indexer } from "@/common/api/indexer";
-import { TOTAL_FEE_BASIS_POINTS } from "@/common/constants";
+import { NATIVE_TOKEN_ID, TOTAL_FEE_BASIS_POINTS } from "@/common/constants";
 import { deriveShare } from "@/common/lib";
-import { ByAccountId } from "@/common/types";
+import { ByAccountId, type ByTokenId } from "@/common/types";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { DonationInputs, DonationSubmitParams, WithDonationFormAPI } from "../models/schemas";
@@ -116,6 +116,7 @@ export const useDonationManualShareAllocation = ({ form }: DonationShareAllocati
 };
 
 export type DonationAllocationParams = WithTotalAmount &
+  ByTokenId &
   Partial<
     Pick<DonationSubmitParams, "bypassProtocolFee" | "bypassChefFee" | "referrerAccountId">
   > & {
@@ -132,6 +133,7 @@ export const useDonationAllocationBreakdown = ({
   referralFeeFinalAmount,
   bypassProtocolFee = false,
   bypassChefFee = false,
+  tokenId,
 }: DonationAllocationParams): DonationBreakdown => {
   const viewer = useWalletUserSession();
   const { data: donationConfig } = indexer.useDonationConfig();
@@ -203,6 +205,8 @@ export const useDonationAllocationBreakdown = ({
 
   const projectAllocationPercent = donationFeeBasisPointsToPercents(projectAllocationBasisPoints);
 
+  const storageFeeApproximation = tokenId === NATIVE_TOKEN_ID ? "< 0.00001" : "≤ 0.03";
+
   return {
     projectAllocationAmount,
     projectAllocationPercent,
@@ -213,5 +217,6 @@ export const useDonationAllocationBreakdown = ({
     referralFeePercent,
     chefFeeAmount,
     chefFeePercent,
+    storageFeeApproximation,
   };
 };

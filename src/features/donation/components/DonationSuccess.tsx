@@ -114,6 +114,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     referrerAccountId: finalOutcome?.referrer_id ?? undefined,
     protocolFeeFinalAmount: protocolFeeAmountFloat,
     referralFeeFinalAmount: referralFeeFinalAmountFloat,
+    tokenId,
   });
 
   const twitterIntent = useMemo(() => {
