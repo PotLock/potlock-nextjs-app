@@ -1,13 +1,5 @@
 import axios from "axios";
-import type {
-  ExecutionOutcome,
-  ExecutionOutcomeWithId,
-  ExecutionOutcomeWithIdView,
-  ExecutionStatus,
-} from "near-api-js/lib/providers/provider";
 
-import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import type { InformativeSuccessfulExecutionOutcome } from "@/common/blockchains/near-protocol";
 import { RPC_NODE_URL, walletApi } from "@/common/blockchains/near-protocol/client";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import {
@@ -94,42 +86,7 @@ export const effects = (dispatch: AppDispatcher) => ({
               message,
               tokenId,
             })
-              .then((finalExecutionOutcomes = undefined) => {
-                const receipts = finalExecutionOutcomes
-                  ?.at(-1)
-                  ?.receipts_outcome.filter(
-                    ({ outcome: { executor_id, status } }) =>
-                      executor_id === DONATION_CONTRACT_ACCOUNT_ID &&
-                      "SuccessValue" in (status as ExecutionStatus) &&
-                      typeof (status as ExecutionStatus).SuccessValue === "string",
-                  )
-                  .map(({ outcome }) => {
-                    const receipt = atob(
-                      (outcome as InformativeSuccessfulExecutionOutcome).status.SuccessValue,
-                    );
-
-                    try {
-                      return JSON.parse(receipt) as DirectDonation;
-                    } catch {
-                      return null;
-                    }
-                  });
-
-                console.log("RECEIPTS", receipts);
-
-                const donationTxExecutionStatus = finalExecutionOutcomes
-                  ?.at(-1)
-                  ?.receipts_outcome.at(3)?.outcome.status;
-
-                const { SuccessValue: donationReceiptBase64 } = (donationTxExecutionStatus ??
-                  {}) as ExecutionStatus;
-
-                if (donationReceiptBase64 !== undefined) {
-                  dispatch.donation.success(
-                    JSON.parse(atob(donationReceiptBase64)) as DirectDonation,
-                  );
-                } else throw new Error("Unknown transaction execution result.");
-              })
+              .then(dispatch.donation.success)
               .catch((error) => {
                 onError(error);
                 dispatch.donation.failure(error);
