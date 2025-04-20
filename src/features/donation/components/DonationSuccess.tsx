@@ -108,7 +108,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const breakdown = useDonationAllocationBreakdown({
+  const allocationBreakdown = useDonationAllocationBreakdown({
     pot,
     totalAmountFloat,
     referrerAccountId: finalOutcome?.referrer_id ?? undefined,
@@ -221,7 +221,10 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
         {isLoading ? (
           <Skeleton className="h-7 w-44" />
         ) : (
-          <TokenTotalValue amountBigString={finalOutcome.total_amount} {...{ tokenId }} />
+          <TokenTotalValue
+            amountFloat={allocationBreakdown.projectAllocationAmount}
+            {...{ tokenId }}
+          />
         )}
 
         {isLoading || recipientAccountId === undefined ? (
@@ -265,7 +268,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
       {isLoading ? (
         <Skeleton className="h-28" />
       ) : (
-        <DonationSummaryBreakdown data={breakdown} {...{ tokenId }} />
+        <DonationSummaryBreakdown data={allocationBreakdown} {...{ tokenId }} />
       )}
 
       {potId && <DonationSybilWarning {...{ potId }} />}

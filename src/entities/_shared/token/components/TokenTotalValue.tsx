@@ -8,7 +8,7 @@ import { TokenIcon } from "./TokenIcon";
 import { useToken } from "../hooks/data";
 
 export type TokenTotalValueProps = ByTokenId &
-  ({ amountFloat: number } | { amountBigString: string }) & {
+  ({ amountFloat: number } | { amountIndivisible: string }) & {
     textOnly?: boolean;
     classNames?: { root?: string; amount?: string };
   };
@@ -25,7 +25,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
     "amountFloat" in props
       ? props.amountFloat
       : indivisibleUnitsToFloat(
-          props.amountBigString,
+          props.amountIndivisible,
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         );
 
