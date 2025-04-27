@@ -1,12 +1,15 @@
 import { ONE_YOCTO } from "@builddao/near-social-js";
-import type { Transaction } from "@wpdas/naxios";
 import { Big } from "big.js";
+import type { ExecutionStatus } from "near-api-js/lib/providers/provider";
 
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { nearProtocolClient } from "@/common/blockchains/near-protocol";
+import {
+  type InformativeSuccessfulExecutionOutcome,
+  nearProtocolClient,
+} from "@/common/blockchains/near-protocol";
 import { FULL_TGAS, NATIVE_TOKEN_DECIMALS } from "@/common/constants";
-import { donationContractClient } from "@/common/contracts/core/donation";
-import type { FungibleTokenMetadata } from "@/common/contracts/tokens";
+import { type DirectDonation, donationContractClient } from "@/common/contracts/core/donation";
+import type { FungibleTokenMetadata, FungibleTokenStorageBalance } from "@/common/contracts/tokens";
 import { bigNumToIndivisible, floatToIndivisible, indivisibleUnitsToBigNum } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 
@@ -25,194 +28,213 @@ export const donationFtMulticall = async ({
   bypassProtocolFee,
   message,
   tokenId,
-}: DonationFtMulticallInputs) => {
-  const { protocol_fee_recipient_account } = await donationContractClient.getConfig();
+}: DonationFtMulticallInputs): Promise<DirectDonation> => {
+  const { protocol_fee_recipient_account: protocolFeeRecipientAccountId } =
+    await donationContractClient.get_config();
 
   const tokenClient = nearProtocolClient.naxiosInstance.contractApi({ contractId: tokenId });
 
-  const requiredDepositNear = Big(DONATION_BASE_STORAGE_DEPOSIT_FLOAT).plus(
+  const donationContractStorageDeposit = Big(DONATION_BASE_STORAGE_DEPOSIT_FLOAT).plus(
     /* Additional 0.0001 NEAR per message character */
     Big(0.0001).mul(Big(message?.length ?? 0)),
   );
 
-  const referrerStorageBalance = referrerAccountId
-    ? await tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
-        "storage_balance_of",
-        { args: { account_id: referrerAccountId } },
-      )
+  const referrerStorageBalanceBig = referrerAccountId
+    ? await tokenClient
+        .view<
+          { account_id: AccountId },
+          FungibleTokenStorageBalance | null
+        >("storage_balance_of", { args: { account_id: referrerAccountId } })
+        .then((response) =>
+          indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
+        )
     : null;
 
-  const [
-    ftMetadata = null,
-    ftStorageBalanceBounds = null,
-    protocolFeeRecipientFtStorageBalance = null,
-    donationContractFtStorageBalance = null,
-    recipientFtStorageBalance = null,
-  ] = await Promise.all([
+  return Promise.all([
     tokenClient.view<{}, FungibleTokenMetadata>("ft_metadata"),
-    tokenClient.view<{}, { min: string; max: string }>("storage_balance_bounds"),
 
-    tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
-      "storage_balance_of",
-      { args: { account_id: protocol_fee_recipient_account } },
-    ),
-
-    tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
-      "storage_balance_of",
-      { args: { account_id: DONATION_CONTRACT_ACCOUNT_ID } },
-    ),
-
-    tokenClient.view<{ account_id: AccountId }, { total: string; available: string }>(
-      "storage_balance_of",
-      { args: { account_id: recipientAccountId } },
-    ),
-  ]);
-
-  const maxFtStorageBalanceBig =
-    ftStorageBalanceBounds === null
-      ? null
-      : indivisibleUnitsToBigNum(ftStorageBalanceBounds.max, NATIVE_TOKEN_DECIMALS);
-
-  const protocolFeeRecipientFtStorageBalanceBig =
-    protocolFeeRecipientFtStorageBalance === null
-      ? null
-      : indivisibleUnitsToBigNum(protocolFeeRecipientFtStorageBalance.total, NATIVE_TOKEN_DECIMALS);
-
-  const referrerStorageBalanceBig =
-    referrerStorageBalance === null
-      ? null
-      : indivisibleUnitsToBigNum(referrerStorageBalance.total, NATIVE_TOKEN_DECIMALS);
-
-  const donationContractFtStorageBalanceBig =
-    donationContractFtStorageBalance === null
-      ? null
-      : indivisibleUnitsToBigNum(donationContractFtStorageBalance.total, NATIVE_TOKEN_DECIMALS);
-
-  const recipientFtStorageBalanceBig =
-    recipientFtStorageBalance === null
-      ? null
-      : indivisibleUnitsToBigNum(recipientFtStorageBalance.total, NATIVE_TOKEN_DECIMALS);
-
-  const protocolFeeRecipientStorageDeposit =
-    !bypassProtocolFee &&
-    maxFtStorageBalanceBig !== null &&
-    protocolFeeRecipientFtStorageBalanceBig !== null &&
-    protocolFeeRecipientFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
-      ? bigNumToIndivisible(
-          maxFtStorageBalanceBig.minus(protocolFeeRecipientFtStorageBalanceBig),
-          NATIVE_TOKEN_DECIMALS,
-        )
-      : null;
-
-  const referrerStorageDeposit =
-    referrerAccountId &&
-    maxFtStorageBalanceBig !== null &&
-    referrerStorageBalanceBig !== null &&
-    referrerStorageBalanceBig.lt(maxFtStorageBalanceBig)
-      ? bigNumToIndivisible(
-          maxFtStorageBalanceBig.minus(referrerStorageBalanceBig),
-          NATIVE_TOKEN_DECIMALS,
-        )
-      : null;
-
-  const donationContractStorageDeposit =
-    maxFtStorageBalanceBig !== null &&
-    donationContractFtStorageBalanceBig !== null &&
-    donationContractFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
-      ? bigNumToIndivisible(
-          maxFtStorageBalanceBig.minus(donationContractFtStorageBalanceBig),
-          NATIVE_TOKEN_DECIMALS,
-        )
-      : null;
-
-  const ftContractStorageDeposit =
-    maxFtStorageBalanceBig !== null &&
-    recipientFtStorageBalanceBig !== null &&
-    recipientFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
-      ? bigNumToIndivisible(
-          maxFtStorageBalanceBig?.minus(recipientFtStorageBalanceBig),
-          NATIVE_TOKEN_DECIMALS,
-        )
-      : null;
-
-  const transactions: Transaction<object>[] = [
-    /**
-     *? FT storage balance replenishment for protocol fee recipient account
-     */
-    ...(protocolFeeRecipientStorageDeposit !== null
-      ? [
-          {
-            method: "storage_deposit",
-            args: { account_id: protocol_fee_recipient_account },
-            deposit: protocolFeeRecipientStorageDeposit,
-            gas: "100000000000000",
-          },
-        ]
-      : []),
+    tokenClient
+      .view<{}, { min: string; max: string }>("storage_balance_bounds")
+      .then(({ max }) => indivisibleUnitsToBigNum(max, NATIVE_TOKEN_DECIMALS)),
 
     /**
-     *? FT contract storage balance replenishment for referrer account
+     *? Checking the FT contract storage balance of the protocol fee recipient account
      */
-    ...(referrerStorageDeposit !== null
-      ? [
-          {
-            method: "storage_deposit",
-            args: { account_id: referrerAccountId },
-            deposit: referrerStorageDeposit,
-            gas: "100000000000000",
-          },
-        ]
-      : []),
+    tokenClient
+      .view<
+        { account_id: AccountId },
+        FungibleTokenStorageBalance | null
+      >("storage_balance_of", { args: { account_id: protocolFeeRecipientAccountId } })
+      .then((response) =>
+        indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
+      ),
 
     /**
-     *? FT contract storage balance replenishment for donation contract account
+     *? Checking the FT contract storage balance of the donation contract account
      */
-    ...(donationContractStorageDeposit !== null
-      ? [
-          {
-            method: "storage_deposit",
-            args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
-            deposit: donationContractStorageDeposit,
-            gas: "100000000000000",
-          },
-        ]
-      : []),
+    tokenClient
+      .view<
+        { account_id: AccountId },
+        FungibleTokenStorageBalance | null
+      >("storage_balance_of", { args: { account_id: DONATION_CONTRACT_ACCOUNT_ID } })
+      .then((response) =>
+        indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
+      ),
 
     /**
-     *? FT contract storage balance replenishment for donation recipient account
+     *? Checking the FT contract storage balance of the donation recipient account
      */
-    ...(ftContractStorageDeposit !== null
-      ? [
-          {
-            method: "storage_deposit",
-            args: { account_id: recipientAccountId },
-            deposit: ftContractStorageDeposit,
-            gas: "100000000000000",
+    tokenClient
+      .view<
+        { account_id: AccountId },
+        FungibleTokenStorageBalance | null
+      >("storage_balance_of", { args: { account_id: recipientAccountId } })
+      .then((response) =>
+        indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
+      ),
+  ])
+    .then(
+      ([
+        ftMetadata,
+        maxFtStorageBalanceBig,
+        protocolFeeRecipientFtStorageBalanceBig,
+        donationContractFtStorageBalanceBig,
+        recipientFtStorageBalanceBig,
+      ]) =>
+        donationContractClient
+          .storage_deposit(
+            bigNumToIndivisible(donationContractStorageDeposit, NATIVE_TOKEN_DECIMALS),
+          )
+          .then((_updatedDonationContractStorageBalance) =>
+            tokenClient.callMultiple([
+              /**
+               *? FT contract storage balance replenishment for the protocol fee recipient account
+               */
+              ...(!bypassProtocolFee &&
+              protocolFeeRecipientFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: protocolFeeRecipientAccountId },
+                      gas: "100000000000000",
+
+                      deposit: bigNumToIndivisible(
+                        maxFtStorageBalanceBig.minus(protocolFeeRecipientFtStorageBalanceBig),
+                        NATIVE_TOKEN_DECIMALS,
+                      ),
+                    },
+                  ]
+                : []),
+
+              /**
+               *? FT contract storage balance replenishment for the referrer account
+               */
+              ...(referrerStorageBalanceBig !== null &&
+              referrerStorageBalanceBig.lt(maxFtStorageBalanceBig)
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: referrerAccountId },
+                      gas: "100000000000000",
+
+                      deposit: bigNumToIndivisible(
+                        maxFtStorageBalanceBig.minus(referrerStorageBalanceBig),
+                        NATIVE_TOKEN_DECIMALS,
+                      ),
+                    },
+                  ]
+                : []),
+
+              /**
+               *? FT contract storage balance replenishment for the donation contract account
+               */
+              ...(donationContractFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
+                      gas: "100000000000000",
+
+                      deposit: bigNumToIndivisible(
+                        maxFtStorageBalanceBig.minus(donationContractFtStorageBalanceBig),
+                        NATIVE_TOKEN_DECIMALS,
+                      ),
+                    },
+                  ]
+                : []),
+
+              /**
+               *? FT contract storage balance replenishment for the donation recipient account
+               */
+              ...(recipientFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: recipientAccountId },
+                      gas: "100000000000000",
+
+                      deposit: bigNumToIndivisible(
+                        maxFtStorageBalanceBig.minus(recipientFtStorageBalanceBig),
+                        NATIVE_TOKEN_DECIMALS,
+                      ),
+                    },
+                  ]
+                : []),
+
+              {
+                method: "ft_transfer_call",
+
+                args: {
+                  receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
+                  amount: floatToIndivisible(amount, ftMetadata.decimals),
+
+                  msg: JSON.stringify({
+                    recipient_id: recipientAccountId,
+                    referrer_id: referrerAccountId || null,
+                    bypass_protocol_fee: bypassProtocolFee,
+                    message,
+                  }),
+                },
+
+                deposit: ONE_YOCTO,
+                gas: FULL_TGAS,
+              },
+            ]),
+          ),
+    )
+    .then((finalExecutionOutcomes = undefined) => {
+      const receipt: DirectDonation | undefined = finalExecutionOutcomes
+        ?.at(-1)
+        ?.receipts_outcome.filter(
+          ({ outcome: { executor_id, status } }) =>
+            executor_id === DONATION_CONTRACT_ACCOUNT_ID &&
+            "SuccessValue" in (status as ExecutionStatus) &&
+            typeof (status as ExecutionStatus).SuccessValue === "string",
+        )
+        .reduce(
+          (acc, { outcome }) => {
+            const decodedReceipt = atob(
+              (outcome as InformativeSuccessfulExecutionOutcome).status.SuccessValue,
+            );
+
+            /**
+             *? Checking for the donation receipt signature
+             */
+            if (decodedReceipt.includes(recipientAccountId)) {
+              try {
+                return [JSON.parse(decodedReceipt) as DirectDonation];
+              } catch {
+                return acc;
+              }
+            } else return acc;
           },
-        ]
-      : []),
 
-    {
-      method: "ft_transfer_call",
+          [] as DirectDonation[],
+        )
+        .at(0);
 
-      args: {
-        receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
-        amount: floatToIndivisible(amount, ftMetadata?.decimals ?? NATIVE_TOKEN_DECIMALS),
-
-        msg: JSON.stringify({
-          recipient_id: recipientAccountId,
-          referrer_id: referrerAccountId || null,
-          bypass_protocol_fee: bypassProtocolFee,
-          message,
-        }),
-      },
-
-      deposit: ONE_YOCTO,
-      gas: FULL_TGAS,
-    },
-  ];
-
-  return donationContractClient
-    .storage_deposit(bigNumToIndivisible(requiredDepositNear, NATIVE_TOKEN_DECIMALS))
-    .then((_updatedStorageBalance) => tokenClient.callMultiple(transactions));
+      if (receipt !== undefined) {
+        return receipt;
+      } else throw new Error("Unable to determine transaction execution status.");
+    });
 };

@@ -3,6 +3,7 @@ import axios from "axios";
 import { RPC_NODE_URL, walletApi } from "@/common/blockchains/near-protocol/client";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import {
+  type CampaignDonation,
   type DirectCampaignDonationArgs,
   campaignsContractClient,
 } from "@/common/contracts/core/campaigns";
@@ -85,13 +86,7 @@ export const effects = (dispatch: AppDispatcher) => ({
               message,
               tokenId,
             })
-              .then((result) => {
-                console.log(result);
-
-                // TODO: resolve this
-                // @ts-expect-error WIP
-                dispatch.donation.success(result);
-              })
+              .then(dispatch.donation.success)
               .catch((error) => {
                 onError(error);
                 dispatch.donation.failure(error);
@@ -172,7 +167,7 @@ export const effects = (dispatch: AppDispatcher) => ({
 
       const donationData = JSON.parse(
         atob(data?.result?.receipts_outcome[3].outcome.status.SuccessValue),
-      ) as DirectDonation | PotDonation;
+      ) as DirectDonation | CampaignDonation | PotDonation;
 
       dispatch.donation.success(donationData);
     } else {

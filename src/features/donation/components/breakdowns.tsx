@@ -48,6 +48,7 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
     referralFeePercent,
     chefFeeAmount,
     chefFeePercent,
+    storageFeeApproximation,
   },
 
   ...props
@@ -83,7 +84,7 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
 
       {
         label: "On-Chain Storage",
-        amount: "< 0.00001",
+        amount: storageFeeApproximation,
         tokenId: NATIVE_TOKEN_ID,
       },
     ],
@@ -97,6 +98,7 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
       protocolFeePercent,
       referralFeeAmount,
       referralFeePercent,
+      storageFeeApproximation,
     ],
   );
 
@@ -116,7 +118,7 @@ export const DonationSummaryBreakdown: React.FC<DonationSummaryBreakdownProps> =
                 </span>
 
                 <LabeledIcon caption={amount} classNames={{ caption: "font-600" }}>
-                  <TokenIcon {...{ tokenId }} size="xs" />
+                  <TokenIcon {...{ tokenId }} size="xs" className="w-5" />
                 </LabeledIcon>
               </div>
             ),
