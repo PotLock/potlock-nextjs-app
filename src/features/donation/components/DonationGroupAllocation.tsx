@@ -135,9 +135,6 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
     } else return null;
   }, [listError, potError]);
 
-  // TODO: remove before release
-  console.log("minAmountError", props.minAmountError);
-
   return errorDetails ? (
     <ModalErrorBody {...errorDetails} />
   ) : (
@@ -187,9 +184,16 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
           />
         ) : (
           <div className="flex items-center justify-between">
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1">
               <span className="prose">{"Total allocated"}</span>
               <TokenTotalValue textOnly amountFloat={totalAmountFloat} {...{ tokenId }} />
+
+              {
+                // TODO: remove upon fixing https://github.com/PotLock/potlock-nextjs-app/issues/367
+                props.minAmountError && (
+                  <p className="text-destructive text-sm font-medium">{props.minAmountError}</p>
+                )
+              }
             </div>
 
             <DonationTokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />

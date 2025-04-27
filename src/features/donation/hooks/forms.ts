@@ -113,16 +113,12 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
           ?.reduce((total, { amount }) => total.add(amount ?? 0), Big(0))
           .toNumber()) ?? 0.0;
 
-  console.log("amount", amount, typeof amount);
-  console.log("totalAmountFloat", totalAmountFloat, typeof totalAmountFloat);
-  console.log(self.formState.errors);
-
   const isDisabled = useMemo(
     () => !self.formState.isValid || self.formState.isSubmitting,
     [self.formState.isSubmitting, self.formState.isValid],
   );
 
-  // TODO: figure out if each recipient of a group donation should have their own min amount
+  // TODO: Each pot donation share must be validated against `min_matching_pool_donation_amount`
   const minAmountError = useMemo(
     () =>
       !isDonationAmountSufficient({ amount, tokenId }) && viewer.hasWalletReady
