@@ -148,7 +148,7 @@ export default function ApplicationsTab() {
 
   useEffect(() => {
     if (error) {
-      console.log(error);
+      console.error(error);
     }
 
     console.log({ statusFilter });

@@ -181,8 +181,6 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
             args: { ...args, campaign_id: campaignId },
           })
           .then((updateValues) => {
-            console.log(updateValues);
-
             toast({
               title: `You’ve successfully updated this ${updateValues.name} Campaign`,
             });

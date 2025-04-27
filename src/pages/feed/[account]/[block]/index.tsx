@@ -77,7 +77,6 @@ export default function FeedAccountBlockPostPage() {
         remarkPlugins={[remarkGfm]}
         components={{
           a: ({ node, ...props }) => {
-            console.log(props);
             return (
               <a
                 {...props}

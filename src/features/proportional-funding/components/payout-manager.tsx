@@ -60,7 +60,7 @@ export const PFPayoutManager: React.FC<PFPayoutManagerProps> = ({ potId, onSubmi
         onSubmitSuccess();
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
 
         toast({
           variant: "destructive",

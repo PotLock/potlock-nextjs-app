@@ -69,7 +69,7 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         .initNear()
         .then(() => registerInit(true))
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           setError(error);
         });
     }
