@@ -13,6 +13,11 @@ export enum FeatureId {
   FtDonation = "FtDonation",
 
   /**
+   * Donation to a pot using fungible token.
+   */
+  PotFtDonation = "PotFtDonation",
+
+  /**
    * Donation to a single account using blockchain's native token.
    */
   DirectNativeTokenDonation = "DirectNativeTokenDonation",

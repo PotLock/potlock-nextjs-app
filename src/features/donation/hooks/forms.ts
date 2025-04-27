@@ -4,6 +4,7 @@ import { Big } from "big.js";
 import { SubmitHandler, useWatch } from "react-hook-form";
 import { Temporal } from "temporal-polyfill";
 
+import { FEATURE_REGISTRY } from "@/common/_config";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
@@ -75,7 +76,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
             ]
           : DonationAllocationStrategyEnum.share,
 
-      groupAllocationStrategy: DonationGroupAllocationStrategyEnum.evenly,
+      groupAllocationStrategy: DonationGroupAllocationStrategyEnum.even,
     }),
 
     [
@@ -117,6 +118,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     [self.formState.isSubmitting, self.formState.isValid],
   );
 
+  // TODO: Each pot donation share must be validated against `min_matching_pool_donation_amount`
   const minAmountError = useMemo(
     () =>
       !isDonationAmountSufficient({ amount, tokenId }) && viewer.hasWalletReady
@@ -150,13 +152,34 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   );
 
   useEffect(() => {
+    //? Ensure the correct token is selected
     if (
       (values.allocationStrategy === "full" && values.tokenId === undefined) ||
-      (values.allocationStrategy === "share" && values.tokenId !== NATIVE_TOKEN_ID)
+      (values.allocationStrategy === "share" && values.tokenId === undefined) ||
+      (values.allocationStrategy === "share" &&
+        !FEATURE_REGISTRY.PotFtDonation.isEnabled &&
+        values.tokenId !== NATIVE_TOKEN_ID)
     ) {
-      self.setValue("tokenId", NATIVE_TOKEN_ID, { shouldDirty: true, shouldTouch: true });
+      self.setValue("tokenId", NATIVE_TOKEN_ID, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     }
-  }, [self, values]);
+
+    //? Ensure `amount` is populated from `totalAmountFloat` when using manual share allocation
+    if (
+      values.allocationStrategy === "share" &&
+      values.groupAllocationStrategy === "manual" &&
+      values.amount !== totalAmountFloat
+    ) {
+      self.setValue("amount", totalAmountFloat, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+    }
+  }, [self, totalAmountFloat, values]);
 
   return {
     form: self,

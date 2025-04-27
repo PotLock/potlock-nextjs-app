@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { values } from "remeda";
 
+import { FEATURE_REGISTRY } from "@/common/_config";
 import { type PotId, indexer } from "@/common/api/indexer";
 import { yoctoNearToFloat } from "@/common/lib";
 import { TextField } from "@/common/ui/form/components";
@@ -147,7 +148,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
         {strategySelector}
         {potId && <DonationSybilWarning {...{ potId }} />}
 
-        {groupAllocationStrategy === DonationGroupAllocationStrategyEnum.evenly ? (
+        {groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even ? (
           <FormField
             control={form.control}
             name="amount"
@@ -162,11 +163,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
                     name="tokenId"
                     render={({ field: inputExtension }) => (
                       <TokenSelector
-                        /**
-                         *? INFO: pots only support NEAR donations, which is the default token
-                         *?  in this form already. Please make sure the last part stays that way.
-                         */
-                        disabled
+                        disabled={!FEATURE_REGISTRY.PotFtDonation.isEnabled}
                         defaultValue={inputExtension.value}
                         onValueChange={inputExtension.onChange}
                       />
@@ -187,10 +184,16 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
           />
         ) : (
           <div className="flex items-center justify-between">
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1">
               <span className="prose">{"Total allocated"}</span>
-
               <TokenTotalValue textOnly amountFloat={totalAmountFloat} {...{ tokenId }} />
+
+              {
+                // TODO: remove upon fixing https://github.com/PotLock/potlock-nextjs-app/issues/367
+                props.minAmountError && (
+                  <p className="text-destructive text-sm font-medium">{props.minAmountError}</p>
+                )
+              }
             </div>
 
             <DonationTokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />

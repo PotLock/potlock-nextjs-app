@@ -72,6 +72,12 @@ export const envConfig: EnvConfig = {
       isEnabled: true,
     },
 
+    [FeatureId.PotFtDonation]: {
+      id: FeatureId.PotFtDonation,
+      name: "Pot FT donations",
+      isEnabled: false,
+    },
+
     [FeatureId.DirectNativeTokenDonation]: {
       id: FeatureId.DirectNativeTokenDonation,
       name: "Direct native token donation",

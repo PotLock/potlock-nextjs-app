@@ -3,6 +3,9 @@ import { floatToYoctoNear } from "@/common/lib";
 import { type DonationSubmitParams } from "../models/schemas";
 import { DonationBatchCallDraft, DonationGroupAllocationStrategyEnum } from "../types";
 
+/**
+ *! HEADS UP! This function currently only supports pot and list donations!
+ */
 export const donationInputsToBatchDonationDraft = ({
   potAccountId,
   listId,
@@ -13,7 +16,7 @@ export const donationInputsToBatchDonationDraft = ({
   bypassChefFee,
 }: DonationSubmitParams): DonationBatchCallDraft => {
   const isDistributionManual =
-    groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manually;
+    groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual;
 
   // TODO: better definition for the return type
   // @ts-expect-error runtime issues are not anticipated

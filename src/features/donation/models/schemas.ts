@@ -22,6 +22,7 @@ import { isDonationAmountSufficient, isDonationMatchingPotSelected } from "../ut
 
 export const donationTokenSchema = literal(NATIVE_TOKEN_ID)
   .or(string().min(6))
+  //? Make sure the default donation token always corresponds to the native token
   .default(NATIVE_TOKEN_ID)
   .describe('Either "NEAR" or FT contract account id.');
 
@@ -59,7 +60,7 @@ export const donationSchema = object({
 
   groupAllocationStrategy: nativeEnum(DonationGroupAllocationStrategyEnum, {
     message: "Incorrect group allocation strategy.",
-  }).default(DonationGroupAllocationStrategyEnum.evenly),
+  }).default(DonationGroupAllocationStrategyEnum.even),
 
   groupAllocationPlan: array(object({ account_id: string(), amount: donationAmount.optional() }))
     .min(1, { message: "You have to select at least one recipient." })
@@ -73,12 +74,6 @@ export const donationSchema = object({
     path: ["potAccountId"],
   })
   .refine(isDonationAmountSufficient, {
-    // TODO: Check if this is still the case:
-    /**
-     *? NOTE: Due to an unknown issue,
-     *?  this message doesn't end up in react-hook-form's `formState.errors`.
-     *?  Please make sure it's always manually provided to the corresponding input field.
-     */
     message: DONATION_MIN_NEAR_AMOUNT_ERROR,
     path: ["amount"],
   });

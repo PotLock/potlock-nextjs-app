@@ -92,7 +92,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
             name="groupAllocationPlan"
             control={form.control}
             render={({ field: { value = [], ...field } }) =>
-              groupAllocationStrategy === "evenly" ? (
+              groupAllocationStrategy === "even" ? (
                 <CheckboxField
                   {...field}
                   checked={value.some(
