@@ -68,7 +68,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
   );
 
   const referrerPotLink = viewer.isSignedIn
-    ? window.location.origin + window.location.pathname + `?referrerId=${viewer.accountId}`
+    ? window.location.origin + window.location.pathname + `?referrerAccountId=${viewer.accountId}`
     : null;
 
   const [description, linkedDocumentUrl] = useMemo(() => {
@@ -197,7 +197,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
               <TokenTotalValue
                 textOnly
                 tokenId={NATIVE_TOKEN_ID}
-                amountBigString={pot.matching_pool_balance}
+                amountIndivisible={pot.matching_pool_balance}
               />
             ) : (
               <Skeleton className="w-34 h-5" />

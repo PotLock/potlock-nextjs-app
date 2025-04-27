@@ -36,7 +36,7 @@ const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
         <CopyToClipboard
           text={
             window.location.origin +
-            `${rootPathnames.PROFILE}/${accountId}?referrerId=${viewer.accountId}`
+            `${rootPathnames.PROFILE}/${accountId}?referrerAccountId=${viewer.accountId}`
           }
           onCopy={() => {
             setCopied(true);
@@ -180,7 +180,7 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
                   >
                     {FEATURE_REGISTRY.ProfileConfiguration.isEnabled
                       ? "Edit Profile"
-                      : "Edit Profile ( BOS App )"}
+                      : "Edit Profile on BOS"}
                   </Link>
                 </Button>
               </div>

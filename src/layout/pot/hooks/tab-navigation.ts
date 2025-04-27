@@ -1,3 +1,5 @@
+// TODO: Storage optimizations required
+
 import { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/router";
@@ -176,27 +178,40 @@ export const usePotLayoutTabNavigation = ({ potId }: ByPotId): PotLayoutTabNavig
 
   // Get active tab with proper type safety
   const activeTab =
-    Object.values(tabRegistry).find(
-      (tab): tab is PotLayoutTabOption => tab?.href === currentPath && !tab.isHidden,
-    ) ?? null;
+    Object.values(tabRegistry).find((tab): tab is PotLayoutTabOption => {
+      // Compare without query parameters
+      const currentPathBase = currentPath.split("?")[0];
+      return tab?.href === currentPathBase && !tab.isHidden;
+    }) ?? null;
 
   const navigateToTab = useCallback(
     (tag: PotLayoutTabTag) => {
       const targetTab = tabRegistry[tag];
+      const currentPathBase = currentPath.split("?")[0];
 
-      if (targetTab && !targetTab.isHidden) {
-        navigateToHref(targetTab.href);
+      // Only navigate if tab exists, is not hidden, and we're not already on the correct tab
+      if (targetTab && !targetTab.isHidden && currentPathBase !== targetTab.href) {
+        // Extract query parameters from current URL
+        const queryParams = currentPath.includes("?")
+          ? currentPath.substring(currentPath.indexOf("?"))
+          : "";
+
+        // Append query parameters to the target href
+        const targetHref = targetTab.href + queryParams;
+
+        navigateToHref(targetHref);
       }
     },
 
-    [navigateToHref, tabRegistry],
+    [navigateToHref, tabRegistry, currentPath],
   );
 
   // Handle navigation to default tab
   useEffect(() => {
     const rootPath = `${rootPathnames.pot}/${potId}`;
+    const currentPathBase = currentPath.split("?")[0];
 
-    if (potId !== undefined && (activeTab === null || currentPath === rootPath)) {
+    if (potId !== undefined && (activeTab === null || currentPathBase === rootPath)) {
       navigateToTab(defaultTabTag);
     }
   }, [activeTab, currentPath, defaultTabTag, navigateToTab, potId]);

@@ -1,5 +1,8 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
+import { useRouter } from "next/router";
+import { Temporal } from "temporal-polyfill";
+
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
@@ -11,12 +14,6 @@ import { NearInputField } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";
 
-const formatTimestampForInput = (timestamp: number) => {
-  if (!timestamp) return "";
-  const date = new Date(timestamp);
-  return date.toISOString().slice(0, 16);
-};
-
 export const CampaignForm = ({
   existingData,
   campaignId,
@@ -26,10 +23,11 @@ export const CampaignForm = ({
 }) => {
   const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
+  const { back } = useRouter();
 
   const isUpdate = campaignId !== undefined;
 
-  const { form, onChange, onSubmit, watch, isValid } = useCampaignForm({
+  const { form, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
   });
 
@@ -50,17 +48,11 @@ export const CampaignForm = ({
         form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
       }
 
-      form.setValue(
-        "start_ms",
-        existingData?.start_ms ? formatTimestampForInput(existingData?.start_ms) : "",
-      );
-
-      form.setValue(
-        "end_ms",
-        existingData?.end_ms ? formatTimestampForInput(existingData?.end_ms) : "",
-      );
+      if (existingData?.end_ms) {
+        form.setValue("end_ms", existingData?.end_ms);
+      }
     }
-  }, [isUpdate, existingData, form]);
+  }, [isUpdate, existingData]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
@@ -73,7 +65,6 @@ export const CampaignForm = ({
       if (res.ok) {
         const data = await res.json();
         setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
-        onChange("cover_image_url", `${IPFS_NEAR_SOCIAL_URL}${data.cid}`);
         setLoadingImageUpload(false);
       }
 
@@ -87,7 +78,7 @@ export const CampaignForm = ({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            onSubmit(form.getValues());
+            onSubmit({ ...form.getValues(), cover_image_url: coverImage });
           }}
         >
           <div>
@@ -175,7 +166,6 @@ export const CampaignForm = ({
                 className="appearance-none md:w-[42%]"
                 label="Target Amount"
                 required
-                onChange={(e) => field.onChange(Number(e.target.value))}
               />
             )}
           />
@@ -188,7 +178,7 @@ export const CampaignForm = ({
                   {...field}
                   className="lg:w-90"
                   label="Minimum Target Amount"
-                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  hint="Minimum Amount Required before the donations in the escrow account can be released"
                 />
               )}
             />
@@ -199,34 +189,77 @@ export const CampaignForm = ({
                 <NearInputField
                   {...field}
                   className="lg:w-90"
+                  hint="Once the maximum target amount is reached, the campaign will be closed"
                   label="Maximum Target Amount"
-                  onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               )}
             />
           </div>
           <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row">
-            <FormField
-              control={form.control}
-              name="start_ms"
-              render={({ field }) => (
-                <TextField
-                  label="Start Date"
-                  {...field}
-                  required
-                  classNames={{ root: "lg:w-90" }}
-                  type="datetime-local"
+            {!campaignId ? (
+              <FormField
+                control={form.control}
+                name="start_ms"
+                render={({ field: { value, ...field } }) => (
+                  <TextField
+                    {...field}
+                    required={true}
+                    label="Start Date"
+                    value={
+                      typeof value === "number"
+                        ? Temporal.Instant.fromEpochMilliseconds(value)
+                            .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                            .toPlainDateTime()
+                            .toString({ smallestUnit: "minute" })
+                        : undefined
+                    }
+                    classNames={{ root: "lg:w-90" }}
+                    type="datetime-local"
+                  />
+                )}
+              />
+            ) : (
+              existingData?.start_ms &&
+              existingData?.start_ms > Temporal.Now.instant().epochMilliseconds && (
+                <FormField
+                  control={form.control}
+                  name="start_ms"
+                  render={({ field: { value, ...field } }) => (
+                    <TextField
+                      {...field}
+                      label="Start Date"
+                      value={
+                        typeof value === "number"
+                          ? Temporal.Instant.fromEpochMilliseconds(value)
+                              .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                              .toPlainDateTime()
+                              .toString({ smallestUnit: "minute" })
+                          : undefined
+                      }
+                      classNames={{ root: "lg:w-90" }}
+                      type="datetime-local"
+                    />
+                  )}
                 />
-              )}
-            />
+              )
+            )}
             <FormField
               control={form.control}
               name="end_ms"
-              render={({ field }) => (
+              render={({ field: { value, ...field } }) => (
                 <TextField
+                  {...field}
                   required={!!watch("min_amount")}
                   label="End Date"
-                  {...field}
+                  hint="This is Optional by default but when the Minimum Target Amount is set, the End Date is required"
+                  value={
+                    typeof value === "number"
+                      ? Temporal.Instant.fromEpochMilliseconds(value)
+                          .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                          .toPlainDateTime()
+                          .toString({ smallestUnit: "minute" })
+                      : undefined
+                  }
                   classNames={{ root: "lg:w-90" }}
                   type="datetime-local"
                 />
@@ -234,8 +267,11 @@ export const CampaignForm = ({
             />
           </div>
           <div className="my-10 flex flex-row-reverse justify-between">
-            <Button variant="standard-filled" disabled={!isValid} type="submit">
+            <Button variant="standard-filled" disabled={isDisabled} type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
+            </Button>
+            <Button variant="standard-outline" onClick={back} type="button">
+              Cancel
             </Button>
           </div>
         </form>

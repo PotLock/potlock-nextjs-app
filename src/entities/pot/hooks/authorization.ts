@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 
 import { ByPotId } from "@/common/api/indexer";
-import { IS_UNDER_INSPECTION } from "@/common/constants";
 import { ApplicationStatus, potContractHooks } from "@/common/contracts/core/pot";
 import { isAccountId } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
@@ -54,22 +53,21 @@ export const usePotAuthorization = ({ potId, accountId }: ByPotId & Partial<ByAc
   );
 
   const isOwner = useMemo(
-    () => IS_UNDER_INSPECTION || (isValidAccountId && potConfig && accountId === potConfig.owner),
+    () => isValidAccountId && potConfig && accountId === potConfig.owner,
     [accountId, isValidAccountId, potConfig],
   );
 
   const isAdmin = useMemo(
     () =>
-      IS_UNDER_INSPECTION ||
-      (isValidAccountId &&
-        potConfig &&
-        potConfig.admins.find((adminAccountId) => accountId === adminAccountId)),
+      isValidAccountId &&
+      potConfig &&
+      potConfig.admins.find((adminAccountId) => accountId === adminAccountId),
 
     [accountId, isValidAccountId, potConfig],
   );
 
   const isChef = useMemo(
-    () => IS_UNDER_INSPECTION || (isValidAccountId && potConfig && accountId === potConfig.chef),
+    () => isValidAccountId && potConfig && accountId === potConfig.chef,
     [accountId, isValidAccountId, potConfig],
   );
 

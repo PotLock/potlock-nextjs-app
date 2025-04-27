@@ -1,5 +1,7 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
+import { PLATFORM_NAME } from "@/common/_config";
+import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
@@ -79,7 +81,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         <p className="p-6">{campaign?.description}</p>
       </div>
       <div className="h-max w-full rounded-xl border border-[#DBDBDB] p-4 md:w-[27%]">
-        <div className="mb-5 border border-solid border-[#f4b37d] bg-[#fef6ee] p-4">
+        <div className="mb-5 rounded-xl border border-solid border-[#f4b37d] bg-[#fef6ee] p-4">
           <p className="text-[11px] font-semibold tracking-widest text-[#EA6A25]">
             TOTAL AMOUNT RAISED
           </p>
@@ -90,6 +92,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             {campaign?.total_raised_amount && <h2 className="text-base">{usdInfo}</h2>}
           </div>
         </div>
+
         <CampaignProgressBar
           target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
           minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
@@ -105,6 +108,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           }
           endDate={Number(campaign?.end_ms)}
         />
+
         <div className="mt-6">
           <DonateToCampaignProjects
             className="mb-4"
@@ -113,7 +117,12 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             }
             {...{ campaignId }}
           />
-          <SocialsShare variant="button" />
+
+          <SocialsShare
+            shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME} by donating or 
+                          sharing, every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
+            variant="button"
+          />
         </div>
       </div>
     </div>

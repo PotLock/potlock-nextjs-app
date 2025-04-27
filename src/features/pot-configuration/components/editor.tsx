@@ -192,7 +192,6 @@ export const PotConfigurationEditor: React.FC<PotConfigurationEditorProps> = ({
                 <Alert compact variant="neutral">
                   <InfoIcon width={18} height={18} />
                   <AlertTitle>{"Protocol fee is 2%"}</AlertTitle>
-
                   <AlertDescription inline>{"This fee is fixed by the platform"}</AlertDescription>
                 </Alert>
 

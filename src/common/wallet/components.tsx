@@ -1,13 +1,19 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
+import type { WalletManager } from "@wpdas/naxios/dist/types/managers/wallet-manager";
 import { useRouter } from "next/router";
 
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
-import { IS_CLIENT } from "@/common/constants";
+import { DEBUG_ACCOUNT_ID, IS_CLIENT } from "@/common/constants";
 
 import { useWalletUserAdapter } from "./adapters";
 import { useWalletUserMetadataStore } from "./model";
 import { isAccountId } from "../lib";
+
+//? There are edge cases where `walletSelector` is `undefined` in runtime for a brief moment
+const isWalletSelectorApiAvailable = () =>
+  (nearProtocolClient.walletApi.walletSelector as undefined | WalletManager["walletSelector"]) !==
+  undefined;
 
 type WalletProviderProps = {
   children: React.ReactNode;
@@ -17,8 +23,17 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const router = useRouter();
 
   const trackedQueryParams = router.query as {
+    /**
+     * Backward compatibility for deprecated parameter name
+     */
+    referrerId?: string;
     referrerAccountId?: string;
   };
+
+  const referrerAccountIdUrlParameter = useMemo(
+    () => trackedQueryParams.referrerAccountId || trackedQueryParams.referrerId,
+    [trackedQueryParams.referrerAccountId, trackedQueryParams.referrerId],
+  );
 
   const { registerInit, setAccountState, setError, isReady, isSignedIn, accountId, error } =
     useWalletUserAdapter();
@@ -26,11 +41,20 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const { referrerAccountId, setReferrerAccountId } = useWalletUserMetadataStore();
 
   const syncWalletState = useCallback(() => {
-    const isWalletSignedIn = nearProtocolClient.walletApi.walletSelector.isSignedIn();
-    const walletAccountId = nearProtocolClient.walletApi.accountId;
+    if (isWalletSelectorApiAvailable()) {
+      const isWalletSignedIn =
+        typeof DEBUG_ACCOUNT_ID === "string"
+          ? true
+          : nearProtocolClient.walletApi.walletSelector.isSignedIn();
 
-    if (isWalletSignedIn !== isSignedIn || walletAccountId !== accountId) {
-      setAccountState({ accountId: walletAccountId, isSignedIn: isWalletSignedIn });
+      const walletAccountId =
+        typeof DEBUG_ACCOUNT_ID === "string"
+          ? DEBUG_ACCOUNT_ID
+          : nearProtocolClient.walletApi.accountId;
+
+      if (isWalletSignedIn !== isSignedIn || walletAccountId !== accountId) {
+        setAccountState({ accountId: walletAccountId, isSignedIn: isWalletSignedIn });
+      }
     }
   }, [accountId, isSignedIn, setAccountState]);
 
@@ -80,13 +104,22 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     if (
       isReady &&
       isSignedIn &&
-      isAccountId(trackedQueryParams.referrerAccountId) &&
-      trackedQueryParams.referrerAccountId !== referrerAccountId &&
-      trackedQueryParams.referrerAccountId !== accountId
+      isAccountId(referrerAccountIdUrlParameter) &&
+      referrerAccountIdUrlParameter !== referrerAccountId &&
+      referrerAccountIdUrlParameter !== accountId
     ) {
-      setReferrerAccountId(trackedQueryParams.referrerAccountId);
+      setReferrerAccountId(referrerAccountIdUrlParameter);
+      // TODO: Cleanup the query parameter once it's recorded using useRouteQuery instead of useRouter
     }
-  }, [accountId, isReady, isSignedIn, referrerAccountId, setReferrerAccountId, trackedQueryParams]);
+  }, [
+    accountId,
+    isReady,
+    isSignedIn,
+    referrerAccountId,
+    referrerAccountIdUrlParameter,
+    setReferrerAccountId,
+    trackedQueryParams,
+  ]);
 
   return children;
 };

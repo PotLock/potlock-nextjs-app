@@ -17,9 +17,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "../atoms/popover";
 export const SocialsShare = ({
   shareContent,
   variant = "icon",
+  shareText,
 }: {
   shareContent?: string;
   variant: "button" | "icon";
+  shareText: string;
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -58,7 +60,7 @@ export const SocialsShare = ({
               className="flex h-[48px] w-[48px] items-center justify-center rounded border border-[#DBDBDB] bg-[#F7F7F7]"
               onClick={() =>
                 window.open(
-                  `https://twitter.com/intent/tweet?url=${share}&text=Check this out on POTLOCK @potlock_`,
+                  `https://twitter.com/intent/tweet?url=${share}&text=${shareText}`,
                   "_blank",
                 )
               }

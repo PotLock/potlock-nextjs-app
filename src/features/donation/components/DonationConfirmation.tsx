@@ -20,13 +20,12 @@ import {
   Textarea,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
-import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenTotalValue } from "@/entities/_shared/token";
 
 import { DonationGroupAllocationBreakdown, DonationSummaryBreakdown } from "./breakdowns";
 import { useDonationAllocationBreakdown } from "../hooks";
-import { WithDonationFormAPI } from "../models";
+import { WithDonationFormAPI } from "../models/schemas";
 import { WithTotalAmount } from "../types";
 
 export type DonationConfirmationProps = WithTotalAmount & WithDonationFormAPI & {};
@@ -35,7 +34,6 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
   form,
   totalAmountFloat,
 }) => {
-  const viewer = useWalletUserSession();
   const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
 
@@ -54,11 +52,12 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     potId: potAccountId as PotId,
   });
 
-  const breakdown = useDonationAllocationBreakdown({
+  const allocationBreakdown = useDonationAllocationBreakdown({
     pot,
     bypassProtocolFee,
     bypassChefFee,
     totalAmountFloat,
+    tokenId,
   });
 
   const onAddNoteClick = useCallback(() => {
@@ -71,13 +70,10 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     form.resetField("message");
   }, [form]);
 
-  const { protocolFeeRecipientAccountId, protocolFeePercent, chefFeePercent } = breakdown;
-
   const totalAmount = useMemo(
     () => (
       <div className="flex flex-col items-start justify-between gap-1">
         <span className="prose font-600 text-neutral-600">{"Total amount"}</span>
-
         <TokenTotalValue tokenId={tokenId} amountFloat={totalAmountFloat} />
       </div>
     ),
@@ -108,10 +104,10 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           </Accordion>
         )}
 
-        <DonationSummaryBreakdown data={breakdown} {...{ tokenId }} />
+        <DonationSummaryBreakdown data={allocationBreakdown} {...{ tokenId }} />
 
         <div className="flex flex-col gap-2">
-          {protocolFeePercent > 0 && (
+          {allocationBreakdown.protocolFeePercent > 0 && (
             <FormField
               control={form.control}
               name="bypassProtocolFee"
@@ -121,10 +117,14 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   onCheckedChange={field.onChange}
                   label={
                     <>
-                      <span className="prose">{`Remove ${protocolFeePercent}% Protocol Fees`}</span>
+                      <span className="prose">
+                        {`Remove ${allocationBreakdown.protocolFeePercent}% Protocol Fee`}
+                      </span>
 
-                      {protocolFeeRecipientAccountId && (
-                        <AccountProfileLink accountId={protocolFeeRecipientAccountId} />
+                      {allocationBreakdown.protocolFeeRecipientAccountId && (
+                        <AccountProfileLink
+                          accountId={allocationBreakdown.protocolFeeRecipientAccountId}
+                        />
                       )}
                     </>
                   }
@@ -133,7 +133,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
             />
           )}
 
-          {potAccountId && chefFeePercent > 0 && (
+          {potAccountId && allocationBreakdown.chefFeePercent > 0 && (
             <FormField
               control={form.control}
               name="bypassChefFee"
@@ -143,8 +143,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
                   onCheckedChange={field.onChange}
                   label={
                     <>
-                      <span>{`Remove ${chefFeePercent}% Chef Fees`}</span>
-
+                      <span>{`Remove ${allocationBreakdown.chefFeePercent}% Chef Fee`}</span>
                       {pot?.chef?.id && <AccountProfileLink accountId={pot?.chef?.id} />}
                     </>
                   }

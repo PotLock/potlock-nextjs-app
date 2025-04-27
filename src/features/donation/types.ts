@@ -1,10 +1,9 @@
 import { ByPotId, PotId } from "@/common/api/indexer";
 import type {
   DirectBatchDonationItem,
-  DirectDonation,
   DirectFTBatchDonationItem,
 } from "@/common/contracts/core/donation";
-import type { PotBatchDonationItem, PotDonation } from "@/common/contracts/core/pot";
+import type { PotBatchDonationItem } from "@/common/contracts/core/pot";
 import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
 export type DonationGroupAllocationKey = ByPotId | ByListId | ByCampaignId;
@@ -41,11 +40,6 @@ export type DonationGroupAllocationStrategyOption = {
   hintIfDisabled?: string;
 };
 
-export type DonationState = {
-  currentStep: DonationStep;
-  finalOutcome?: DirectDonation | PotDonation;
-};
-
 export interface WithTotalAmount {
   totalAmountFloat: number;
 }
@@ -60,6 +54,7 @@ export type DonationBreakdown = {
   referralFeePercent: number;
   chefFeeAmount: number;
   chefFeePercent: number;
+  storageFeeApproximation: string;
 };
 
 export type DonationDirectBatchCallDraft = {

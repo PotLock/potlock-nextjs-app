@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
@@ -6,35 +6,47 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
-import { floatToYoctoNear } from "@/common/lib";
+import { floatToYoctoNear, parseNumber } from "@/common/lib";
 import { CampaignId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
-import { campaignFormSchema } from "../models/schema";
+import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
 
 export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => {
   const viewer = useWalletUserSession();
   const router = useRouter();
 
-  type Values = FromSchema<typeof campaignFormSchema>;
+  const schema = campaignId ? updateCampaignSchema : createCampaignSchema;
+
+  type Values = FromSchema<typeof schema>;
 
   const self = useForm<Values>({
-    resolver: zodResolver(campaignFormSchema),
+    resolver: zodResolver(schema),
     mode: "onChange",
     resetOptions: { keepDirtyValues: false },
   });
 
   const values = useWatch(self);
 
+  const isDisabled = useMemo(
+    () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
+    [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
+  );
+
   useEffect(() => {
     const { min_amount, max_amount, target_amount } = values;
     const errors: Record<string, { message: string }> = {};
 
+    // Convert string values to numbers for comparison
+    const minAmount = min_amount ? parseNumber(min_amount) : null;
+    const maxAmount = max_amount ? parseNumber(max_amount) : null;
+    const targetAmount = target_amount ? parseNumber(target_amount) : null;
+
     // Validate min_amount vs max_amount
-    if (min_amount && max_amount && min_amount > max_amount) {
+    if (minAmount && maxAmount && minAmount > maxAmount) {
       errors.min_amount = {
         message: "Minimum amount cannot be greater than maximum amount",
       };
@@ -45,7 +57,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     }
 
     // Validate target_amount vs max_amount
-    if (target_amount && max_amount && target_amount > max_amount) {
+    if (targetAmount && maxAmount && targetAmount > maxAmount) {
       errors.target_amount = {
         message: "Target amount cannot be greater than maximum amount",
       };
@@ -56,7 +68,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     }
 
     // Validate min_amount vs target_amount
-    if (min_amount && target_amount && min_amount > target_amount) {
+    if (minAmount && targetAmount && minAmount > targetAmount) {
       errors.min_amount = {
         message: "Minimum amount cannot be greater than target amount",
       };
@@ -79,7 +91,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     });
   }, [values, self]);
 
-  const timeToMilliseconds = (time: string) => {
+  const timeToMilliseconds = (time: number) => {
     return new Date(time).getTime();
   };
 
@@ -143,7 +155,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
       const args = {
         description: values.description || "",
         name: values.name || "",
-        target_amount: floatToYoctoNear(values.target_amount) as any,
+        target_amount: floatToYoctoNear(values.target_amount ?? 0) as any,
         cover_image_url: values.cover_image_url ?? null,
         ...(values.min_amount && !campaignId
           ? { min_amount: floatToYoctoNear(values.min_amount) as any }
@@ -152,7 +164,8 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           max_amount: floatToYoctoNear(values.max_amount) as any,
         }),
         ...(values.start_ms &&
-          timeToMilliseconds(values.start_ms) > Date.now() && {
+          !campaignId &&
+          timeToMilliseconds(values.start_ms) >= Date.now() && {
             start_ms: timeToMilliseconds(values.start_ms),
           }),
         ...(values.end_ms && {
@@ -167,9 +180,11 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           .update_campaign({
             args: { ...args, campaign_id: campaignId },
           })
-          .then(() => {
+          .then((updateValues) => {
+            console.log(updateValues);
+
             toast({
-              title: `You’ve successfully updated this Campaign`,
+              title: `You’ve successfully updated this ${updateValues.name} Campaign`,
             });
           })
           .catch((error) => {
@@ -218,8 +233,8 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
   );
 
   const onChange = async (field: keyof Values, value: string) => {
-    self.setValue(field, value); // Update field value
-    await self.trigger(); // Trigger validation
+    self.setValue(field, value);
+    await self.trigger();
   };
 
   return {
@@ -234,7 +249,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     values,
     watch: self.watch,
     onChange,
-    isValid: Object.keys(self.formState.errors).length === 0,
+    isDisabled,
     handleDeleteCampaign,
     handleProcessEscrowedDonations,
     handleDonationsRefund,

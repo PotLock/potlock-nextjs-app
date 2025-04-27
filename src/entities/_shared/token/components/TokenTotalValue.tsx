@@ -8,7 +8,7 @@ import { TokenIcon } from "./TokenIcon";
 import { useToken } from "../hooks/data";
 
 export type TokenTotalValueProps = ByTokenId &
-  ({ amountFloat: number } | { amountBigString: string }) & {
+  ({ amountFloat: number } | { amountIndivisible: string }) & {
     textOnly?: boolean;
     classNames?: { root?: string; amount?: string };
   };
@@ -25,7 +25,7 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
     "amountFloat" in props
       ? props.amountFloat
       : indivisibleUnitsToFloat(
-          props.amountBigString,
+          props.amountIndivisible,
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         );
 
@@ -45,14 +45,12 @@ export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
         <Skeleton className="w-35 h-5" />
       )}
 
-      {token?.usdPrice ? (
+      {token?.usdPrice && (
         <span
           className={cn("prose line-height-none text-xl text-neutral-600", { "mt-0.7": !textOnly })}
         >
           {`~$ ${token.usdPrice.mul(amount).toFixed(2)}`}
         </span>
-      ) : (
-        <Skeleton className="w-35 h-5" />
       )}
     </div>
   );

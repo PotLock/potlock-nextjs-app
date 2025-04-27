@@ -19,7 +19,7 @@ export const envConfig: EnvConfig = {
     },
 
     campaigns: {
-      contract: { accountId: "campaignstest2.potlock.testnet" },
+      contract: { accountId: "v1.campaign.potlock.testnet" },
     },
 
     lists: {
@@ -66,14 +66,10 @@ export const envConfig: EnvConfig = {
       isEnabled: true,
     },
 
-    [FeatureId.DirectFtDonation]: {
-      id: FeatureId.DirectFtDonation,
-      name: "Direct FT donation",
-
-      /**
-       * The implementation is not finished yet
-       */
-      isEnabled: false,
+    [FeatureId.FtDonation]: {
+      id: FeatureId.FtDonation,
+      name: "Non-pot FT donations",
+      isEnabled: true,
     },
 
     [FeatureId.DirectNativeTokenDonation]: {

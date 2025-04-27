@@ -9,7 +9,7 @@ export type WalletUserDaoRepresentativeParams =
   | { isDaoRepresentative: true; daoAccountId: AccountId };
 
 export type WalletUserMetadata = {
-  referrerAccountId?: string;
+  referrerAccountId?: AccountId;
 };
 
 export type WalletUserSession = WalletUserMetadata &
@@ -51,7 +51,7 @@ export type WalletUserSession = WalletUserMetadata &
   );
 
 interface WalletUserMetadataState extends WalletUserMetadata {
-  setReferrerAccountId: (recipientAccountId: string | undefined) => void;
+  setReferrerAccountId: (accountId: AccountId | undefined) => void;
   reset: () => void;
 }
 

@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
 
+export { PLATFORM_NAME };
+
 export const IS_CLIENT = typeof window !== "undefined";
 
 export const DEBUG = process.env.NEXT_PUBLIC_DEBUG === "true" ? true : false;
@@ -13,8 +15,7 @@ export const DEBUG = process.env.NEXT_PUBLIC_DEBUG === "true" ? true : false;
 /**
  * Unlocks authorization, useful for validation and permission control testing
  */
-export const IS_UNDER_INSPECTION =
-  process.env.NEXT_PUBLIC_IS_UNDER_INSPECTION === "true" ? true : false;
+export const DEBUG_ACCOUNT_ID = process.env.NEXT_PUBLIC_DEBUG_VIEW_AS || null;
 
 export const ICONS_ASSET_ENDPOINT_URL = "/assets/icons";
 export const IMAGES_ASSET_ENDPOINT_URL = "/assets/images";
