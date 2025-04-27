@@ -30,7 +30,7 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
 
   useEffect(() => {
     if (
-      groupAllocationStrategy === DonationGroupAllocationStrategyEnum.evenly &&
+      groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even &&
       groupAllocationPlan.some(piped(prop("amount"), isNot(isStrictEqual(recipientShareAmount))))
     ) {
       form.setValue(

@@ -27,8 +27,8 @@ export type DonationAllocationStrategyOption = {
 };
 
 export enum DonationGroupAllocationStrategyEnum {
-  evenly = "evenly",
-  manually = "manually",
+  even = "even",
+  manual = "manual",
 }
 
 export type DonationGroupAllocationStrategy = keyof typeof DonationGroupAllocationStrategyEnum;

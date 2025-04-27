@@ -92,7 +92,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
             name="groupAllocationPlan"
             control={form.control}
             render={({ field: { value = [], ...field } }) =>
-              groupAllocationStrategy === "evenly" ? (
+              groupAllocationStrategy === "even" ? (
                 <CheckboxField
                   {...field}
                   checked={value.some(
@@ -115,6 +115,9 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
                     value.find((recipient) => recipient.account_id === accountId)?.amount
                   }
                   onChange={handleManualShareAllocation({ accountId })}
+                  onKeyDown={(e) => {
+                    // form.trigger("amount");
+                  }}
                   appendix={<NearIcon width={24} height={24} />}
                   customErrorMessage={
                     isBalanceSufficient ? null : DONATION_INSUFFICIENT_BALANCE_ERROR

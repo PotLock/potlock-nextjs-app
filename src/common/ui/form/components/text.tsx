@@ -60,10 +60,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           if (!isCommaDecimalSeparator && event.key === ",") {
             event.preventDefault();
           }
+
+          props.onKeyDown?.(event);
         }
       },
 
-      [props.type],
+      [props],
     );
 
     const labelElement = useMemo(
