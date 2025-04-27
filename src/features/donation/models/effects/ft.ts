@@ -30,7 +30,7 @@ export const donationFtMulticall = async ({
   tokenId,
 }: DonationFtMulticallInputs): Promise<DirectDonation> => {
   const { protocol_fee_recipient_account: protocolFeeRecipientAccountId } =
-    await donationContractClient.getConfig();
+    await donationContractClient.get_config();
 
   const tokenClient = nearProtocolClient.naxiosInstance.contractApi({ contractId: tokenId });
 
