@@ -31,6 +31,7 @@ export const DONATION_ALLOCATION_STRATEGIES: Record<
 
   share: {
     label: "Quadratically matched donation",
+    hint: "(recommended)",
     hintIfDisabled: "(no pots available)",
     value: DonationAllocationStrategyEnum.share,
   },
