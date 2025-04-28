@@ -1,0 +1,1 @@
+export const TOTAL_FEE_BASIS_POINTS = 10_000;

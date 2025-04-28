@@ -5,14 +5,15 @@ import { Big } from "big.js";
 import { isNot, isStrictEqual, piped, prop } from "remeda";
 
 import { Pot, indexer } from "@/common/api/indexer";
-import { NATIVE_TOKEN_ID, TOTAL_FEE_BASIS_POINTS } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { TOTAL_FEE_BASIS_POINTS } from "@/common/contracts/core/constants";
+import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { deriveShare } from "@/common/lib";
 import { ByAccountId, type ByTokenId } from "@/common/types";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { DonationInputs, DonationSubmitParams, WithDonationFormAPI } from "../models/schemas";
 import { DonationBreakdown, DonationGroupAllocationStrategyEnum, WithTotalAmount } from "../types";
-import { donationFeeBasisPointsToPercents } from "../utils/converters";
 
 export type DonationShareAllocationDeps = WithDonationFormAPI;
 
@@ -154,7 +155,7 @@ export const useDonationAllocationBreakdown = ({
     protocolFeeFinalAmount ??
     totalAmountBig.times(protocolFeeBasisPoints).div(TOTAL_FEE_BASIS_POINTS).toNumber();
 
-  const protocolFeePercent = donationFeeBasisPointsToPercents(protocolFeeInitialBasisPoints);
+  const protocolFeePercent = feeBasisPointsToPercents(protocolFeeInitialBasisPoints);
 
   const protocolFeeRecipientAccountId = donationConfig?.protocol_fee_recipient_account;
 
@@ -173,7 +174,7 @@ export const useDonationAllocationBreakdown = ({
     referralFeeFinalAmount ??
     totalAmountBig.times(referralFeeBasisPoints).div(TOTAL_FEE_BASIS_POINTS).toNumber();
 
-  const referralFeePercent = donationFeeBasisPointsToPercents(referralFeeBasisPoints);
+  const referralFeePercent = feeBasisPointsToPercents(referralFeeBasisPoints);
 
   /**
    *? Chef fee:
@@ -189,7 +190,7 @@ export const useDonationAllocationBreakdown = ({
     .div(TOTAL_FEE_BASIS_POINTS)
     .toNumber();
 
-  const chefFeePercent = donationFeeBasisPointsToPercents(chefFeeInitialBasisPoints);
+  const chefFeePercent = feeBasisPointsToPercents(chefFeeInitialBasisPoints);
 
   /**
    *? Project allocation:
@@ -203,7 +204,7 @@ export const useDonationAllocationBreakdown = ({
     .div(TOTAL_FEE_BASIS_POINTS)
     .toNumber();
 
-  const projectAllocationPercent = donationFeeBasisPointsToPercents(projectAllocationBasisPoints);
+  const projectAllocationPercent = feeBasisPointsToPercents(projectAllocationBasisPoints);
 
   const storageFeeApproximation = tokenId === NATIVE_TOKEN_ID ? "< 0.00001" : "≤ 0.03";
 

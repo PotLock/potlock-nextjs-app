@@ -110,7 +110,6 @@ export const CHAIN_OPTIONS: Record<string, { isEVM: boolean }> = {
   Metis: { isEVM: true },
 };
 
-export const TOTAL_FEE_BASIS_POINTS = 10_000;
 export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
 export const NATIVE_TOKEN_ID = "near";
 export const NATIVE_TOKEN_DECIMALS = NEAR_NOMINATION_EXP;

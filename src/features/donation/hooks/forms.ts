@@ -2,15 +2,17 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { Big } from "big.js";
 import { SubmitHandler, useWatch } from "react-hook-form";
+import { once } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
-import { PotApplicationStatus, indexer } from "@/common/api/indexer";
+import { type Pot, PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
+import { extractMatchingPots } from "@/entities/pot";
 import { dispatch } from "@/store";
 
 import { DONATION_MIN_NEAR_AMOUNT, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
@@ -29,7 +31,6 @@ export type DonationFormParams = DonationAllocationKey & {
 export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const { toast } = useToast();
   const viewer = useWalletUserSession();
-  const now = Temporal.Now.instant();
 
   //? Conditional parameters depending on donation scenario
   const isSingleRecipientDonation = "accountId" in params;
@@ -39,38 +40,17 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const isListDonation = "listId" in params;
   const listIdFormParam = isListDonation ? params.listId : undefined;
 
-  const { data: recipientActivePots = [] } = indexer.useAccountActivePots({
-    enabled: isSingleRecipientDonation,
-    accountId: recipientAccountIdFormParam ?? "noop",
-    status: PotApplicationStatus.Approved,
-    page_size: 999,
-  });
-
-  const matchingPots = recipientActivePots.filter(
-    ({ matching_round_start, matching_round_end }) =>
-      now.since(Temporal.Instant.from(matching_round_start)).total("milliseconds") > 0 &&
-      now.until(Temporal.Instant.from(matching_round_end)).total("milliseconds") > 0,
-  );
-
-  const defaultMatchingPotAccountId = useMemo(
-    () => oldToRecent("matching_round_end", matchingPots).at(0)?.account,
-    [matchingPots],
-  );
-
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       amount: DONATION_MIN_NEAR_AMOUNT,
       tokenId: NATIVE_TOKEN_ID,
       recipientAccountId: recipientAccountIdFormParam,
-      potAccountId: isSingleRecipientDonation ? defaultMatchingPotAccountId : undefined,
       listId: listIdFormParam,
       campaignId: campaignIdFormParam,
 
       allocationStrategy:
         isSingleRecipientDonation || isCampaignDonation
-          ? DonationAllocationStrategyEnum[
-              !isCampaignDonation && matchingPots.length > 0 ? "share" : "full"
-            ]
+          ? DonationAllocationStrategyEnum.full
           : DonationAllocationStrategyEnum.share,
 
       groupAllocationStrategy: DonationGroupAllocationStrategyEnum.even,
@@ -78,11 +58,9 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
 
     [
       campaignIdFormParam,
-      defaultMatchingPotAccountId,
       isCampaignDonation,
       isSingleRecipientDonation,
       listIdFormParam,
-      matchingPots.length,
       recipientAccountIdFormParam,
     ],
   );
@@ -92,12 +70,53 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     dependentFields: donationDependentFields,
     mode: "all",
     defaultValues,
-    followDefaultValues: true,
     resetOptions: { keepDirtyValues: false },
   });
 
   //? For internal use only!
   const values = useWatch({ control: self.control });
+
+  /**
+   * Selects the first available matching pot
+   */
+  const setFirstMatchingPot = useCallback(
+    (activePots: Pot[] | undefined) => {
+      console.log(activePots);
+
+      if (activePots !== undefined) {
+        const defaultMatchingPotAccountId = extractMatchingPots(activePots).at(0)?.account;
+
+        console.log("defaultMatchingPotAccountId", defaultMatchingPotAccountId);
+
+        if (
+          isSingleRecipientDonation &&
+          defaultMatchingPotAccountId !== undefined &&
+          values.potAccountId === undefined &&
+          values.allocationStrategy !== DonationAllocationStrategyEnum.share
+        ) {
+          self.setValue("potAccountId", defaultMatchingPotAccountId);
+          self.setValue("allocationStrategy", DonationAllocationStrategyEnum.share);
+          console.log("Setting allocation strategy to share");
+        }
+      }
+    },
+
+    [isSingleRecipientDonation, values.potAccountId, values.allocationStrategy, self],
+  );
+
+  const { data: recipientActivePots = [] } = indexer.useAccountActivePots({
+    enabled: isSingleRecipientDonation,
+    accountId: recipientAccountIdFormParam ?? "noop",
+    status: PotApplicationStatus.Approved,
+    page_size: 999,
+    onSuccess: setFirstMatchingPot,
+  });
+
+  const matchingPots = useMemo(
+    () => extractMatchingPots(recipientActivePots),
+    [recipientActivePots],
+  );
+
   const amount = values.amount ?? 0;
   const tokenId = values.tokenId ?? NATIVE_TOKEN_ID;
 
@@ -146,8 +165,8 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     [onSubmitError, params, viewer?.referrerAccountId],
   );
 
+  //? Ensure the correct token is selected
   useEffect(() => {
-    //? Ensure the correct token is selected
     if (
       (values.allocationStrategy === "full" && values.tokenId === undefined) ||
       (values.allocationStrategy === "share" && values.tokenId === undefined) ||
@@ -161,8 +180,10 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         shouldValidate: true,
       });
     }
+  }, [self, values.allocationStrategy, values.tokenId]);
 
-    //? Ensure `amount` is populated from `totalAmountFloat` when using manual share allocation
+  //? Ensure `amount` is populated from `totalAmountFloat` when using manual share allocation
+  useEffect(() => {
     if (
       values.allocationStrategy === "share" &&
       values.groupAllocationStrategy === "manual" &&
@@ -174,7 +195,13 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         shouldValidate: true,
       });
     }
-  }, [self, totalAmountFloat, values]);
+  }, [
+    self,
+    totalAmountFloat,
+    values.allocationStrategy,
+    values.amount,
+    values.groupAllocationStrategy,
+  ]);
 
   return {
     form: self,

@@ -1,6 +1,12 @@
 import { Big, BigSource } from "big.js";
 import { number, preprocess } from "zod";
 
+export const basisPointsToPercents = (basisPoints: number, totalBasisPoints: number) =>
+  basisPoints / (totalBasisPoints / 100);
+
+export const percentsToBasisPoints = (percentage: number, totalBasisPoints: number) =>
+  percentage * (totalBasisPoints / 100);
+
 export type NumericComparatorKey = keyof Big.Big & ("lt" | "lte" | "gt" | "gte");
 
 export const NUMERIC_COMPARATOR_KEYS: NumericComparatorKey[] = ["lt", "lte", "gt", "gte"];
@@ -88,6 +94,18 @@ export const safePositiveNumber = preprocess(
     .safe()
     .transform((floatOrInt) => number().safeParse(floatOrInt).data ?? 0),
 );
+
+/**
+ * An integer percentage between 0 and 100
+ */
+export const integerCappedPercentage = preprocess(
+  (value) => (typeof value === "string" ? safePositiveNumber.parse(value) : value),
+  safePositiveNumber,
+)
+  .refine((percents) => percents < 100, { message: "Must be less than 100%." })
+  .refine((percents) => Number.isInteger(percents), {
+    message: "Fractional percentage is not supported.",
+  });
 
 export const deriveShare = (amount: number, numOfShares: number) =>
   parseFloat(

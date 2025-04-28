@@ -1,3 +1,5 @@
+import type { AxiosResponse } from "axios";
+
 import { isAccountId, isEthereumAddress } from "@/common/lib";
 import { ByAccountId, ByListId, type ConditionalActivation } from "@/common/types";
 
@@ -57,11 +59,22 @@ export const useAccount = ({ accountId, enabled = true }: ByAccountId & Conditio
 export const useAccountActivePots = ({
   accountId,
   enabled = true,
+  onSuccess,
   ...params
-}: ByAccountId & generatedClient.V1AccountsActivePotsRetrieveParams & ConditionalActivation) => {
+}: ByAccountId &
+  generatedClient.V1AccountsActivePotsRetrieveParams &
+  ConditionalActivation & {
+    onSuccess?: (data: generatedClient.Pot[] | undefined) => void;
+  }) => {
+  const handleSuccessResults =
+    onSuccess === undefined
+      ? undefined
+      : (data: AxiosResponse<generatedClient.PaginatedPotsResponse, unknown>) =>
+          onSuccess(data.data.results);
+
   const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(accountId, params, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled },
+    swr: { enabled, onSuccess: handleSuccessResults },
   });
 
   return { ...queryResult, data: queryResult.data?.data.results };

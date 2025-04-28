@@ -7,12 +7,11 @@ import {
   nativeEnum,
   number,
   object,
-  preprocess,
   string,
 } from "zod";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { safePositiveNumber } from "@/common/lib";
+import { integerCappedPercentage, safePositiveNumber } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { TokenAvailableBalance } from "@/entities/_shared/token";
 
@@ -26,24 +25,17 @@ export const donationTokenSchema = literal(NATIVE_TOKEN_ID)
   .default(NATIVE_TOKEN_ID)
   .describe('Either "NEAR" or FT contract account id.');
 
-export const donationAmount = safePositiveNumber;
+const donationAmount = safePositiveNumber;
 
 /**
- * # Heads up!
+ * Heads up!
  *
  * The donation fee is stored in basis points, but the schema expects it to be a percentage.
  *
  * Thus make sure to convert it to percents before passing to the form
  *  and convert it back to basis points before passing to the contract.
  */
-export const donationFee = preprocess(
-  (value) => (typeof value === "string" ? safePositiveNumber.parse(value) : value),
-  safePositiveNumber,
-)
-  .refine((percents) => percents < 100, { message: "Fee must be less than 100%." })
-  .refine((percents) => Number.isInteger(percents), {
-    message: "Fractional percentage is not supported.",
-  });
+export const donationFee = integerCappedPercentage;
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,
