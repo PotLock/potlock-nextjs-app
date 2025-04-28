@@ -21,9 +21,9 @@ import {
   RadioGroupItem,
   Skeleton,
 } from "@/common/ui/layout/components";
-import { TokenSelector, useToken } from "@/entities/_shared/token";
+import { TokenBalance, TokenSelector, useToken } from "@/entities/_shared/token";
 
-import { DonationSybilWarning } from "./DonationSybilWarning";
+import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import {
   DONATION_ALLOCATION_STRATEGIES,
   DONATION_INSUFFICIENT_BALANCE_ERROR,
@@ -31,13 +31,14 @@ import {
 } from "../constants";
 import { DonationAllocationInputs } from "../models/schemas";
 import { DonationAllocationStrategyEnum } from "../types";
-import { DonationTokenBalance } from "./DonationTokenBalance";
 
-export type DonationDirectAllocationProps = Partial<ByAccountId> &
+export type DonationSingleRecipientAllocationProps = Partial<ByAccountId> &
   Partial<ByCampaignId> &
   DonationAllocationInputs & { matchingPots?: Pot[] };
 
-export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> = ({
+export const DonationSingleRecipientAllocation: React.FC<
+  DonationSingleRecipientAllocationProps
+> = ({
   form,
   isBalanceSufficient,
   minAmountError,
@@ -176,7 +177,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
         {strategySelector}
 
         {allocationStrategy === DonationAllocationStrategyEnum.share && potAccountId && (
-          <DonationSybilWarning potId={potAccountId} />
+          <DonationHumanVerificationAlert potId={potAccountId} />
         )}
 
         {potSelector}
@@ -188,7 +189,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
             <TextField
               label="Amount"
               {...field}
-              labelExtension={<DonationTokenBalance {...{ tokenId }} />}
+              labelExtension={<TokenBalance {...{ tokenId }} />}
               inputExtension={
                 <FormField
                   control={form.control}

@@ -18,11 +18,11 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { TokenTotalValue, useToken } from "@/entities/_shared/token";
+import { TokenValueSummary, useToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";
 
-import { DonationSummaryBreakdown } from "./breakdowns";
-import { DonationSybilWarning } from "./DonationSybilWarning";
+import { DonationHumanVerificationAlert } from "./human-verification-alert";
+import { DonationSummary } from "./summary";
 import { useDonationAllocationBreakdown } from "../hooks";
 import { DonationXShareButton } from "./single-recipient-success-share";
 import { WithDonationFormAPI } from "../models/schemas";
@@ -136,7 +136,7 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
         {isLoading ? (
           <Skeleton className="h-7 w-44" />
         ) : (
-          <TokenTotalValue
+          <TokenValueSummary
             amountFloat={allocationBreakdown.projectAllocationAmount}
             {...{ tokenId }}
           />
@@ -183,10 +183,10 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
       {isLoading ? (
         <Skeleton className="h-28" />
       ) : (
-        <DonationSummaryBreakdown data={allocationBreakdown} {...{ tokenId }} />
+        <DonationSummary data={allocationBreakdown} {...{ tokenId }} />
       )}
 
-      {potId && <DonationSybilWarning {...{ potId }} />}
+      {potId && <DonationHumanVerificationAlert {...{ potId }} />}
 
       {transactionHash && (
         <LabeledIcon

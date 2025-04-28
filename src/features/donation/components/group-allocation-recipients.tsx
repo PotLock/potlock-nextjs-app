@@ -15,16 +15,13 @@ import {
 import { DonationAllocationInputs } from "../models/schemas";
 import { DonationGroupAllocationKey } from "../types";
 
-export type DonationRecipientSharesProps = DonationGroupAllocationKey &
+export type DonationGroupAllocationRecipientsProps = DonationGroupAllocationKey &
   Omit<DonationAllocationInputs, "minAmountError"> &
   DonationShareAllocationDeps & {};
 
-export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = ({
-  balanceFloat,
-  isBalanceSufficient,
-  form,
-  ...props
-}) => {
+export const DonationGroupAllocationRecipients: React.FC<
+  DonationGroupAllocationRecipientsProps
+> = ({ balanceFloat, isBalanceSufficient, form, ...props }) => {
   const potId = "potId" in props ? props.potId : undefined;
   const listId = "listId" in props ? props.listId : undefined;
 

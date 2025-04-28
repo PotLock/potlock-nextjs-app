@@ -20,10 +20,10 @@ import {
   ScrollArea,
   Skeleton,
 } from "@/common/ui/layout/components";
-import { TokenSelector, TokenTotalValue, useToken } from "@/entities/_shared/token";
+import { TokenBalance, TokenSelector, TokenValueSummary, useToken } from "@/entities/_shared/token";
 
-import { DonationRecipientShares } from "./DonationRecipientShares";
-import { DonationSybilWarning } from "./DonationSybilWarning";
+import { DonationGroupAllocationRecipients } from "./group-allocation-recipients";
+import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import {
   DONATION_GROUP_ALLOCATION_STRATEGIES,
   DONATION_INSUFFICIENT_BALANCE_ERROR,
@@ -34,7 +34,6 @@ import {
   DonationGroupAllocationStrategyEnum,
   WithTotalAmount,
 } from "../types";
-import { DonationTokenBalance } from "./DonationTokenBalance";
 
 export type DonationGroupAllocationProps = WithTotalAmount &
   DonationGroupAllocationKey &
@@ -146,7 +145,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
 
       <DialogDescription>
         {strategySelector}
-        {potId && <DonationSybilWarning {...{ potId }} />}
+        {potId && <DonationHumanVerificationAlert {...{ potId }} />}
 
         {groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even ? (
           <FormField
@@ -156,7 +155,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
               <TextField
                 label="Amount"
                 {...field}
-                labelExtension={<DonationTokenBalance {...{ tokenId }} />}
+                labelExtension={<TokenBalance {...{ tokenId }} />}
                 inputExtension={
                   <FormField
                     control={form.control}
@@ -186,7 +185,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <span className="prose">{"Total allocated"}</span>
-              <TokenTotalValue textOnly amountFloat={totalAmountFloat} {...{ tokenId }} />
+              <TokenValueSummary textOnly amountFloat={totalAmountFloat} {...{ tokenId }} />
 
               {
                 // TODO: remove upon fixing https://github.com/PotLock/potlock-nextjs-app/issues/367
@@ -196,7 +195,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
               }
             </div>
 
-            <DonationTokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />
+            <TokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />
           </div>
         )}
       </DialogDescription>
@@ -204,14 +203,14 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
       <ScrollArea className="h-49 w-full">
         <div className="flex w-full flex-col items-center gap-0.5">
           {isPotDonation && (
-            <DonationRecipientShares
+            <DonationGroupAllocationRecipients
               {...{ balanceFloat, isBalanceSufficient, form }}
               potId={props.potId}
             />
           )}
 
           {isListDonation && (
-            <DonationRecipientShares
+            <DonationGroupAllocationRecipients
               {...{ balanceFloat, isBalanceSufficient, form }}
               listId={listId}
             />

@@ -17,9 +17,9 @@ import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 import { dispatch } from "@/store";
 
-import { DonationConfirmation } from "./DonationConfirmation";
-import { DonationDirectAllocation } from "./DonationDirectAllocation";
-import { DonationGroupAllocation } from "./DonationGroupAllocation";
+import { DonationGroupAllocation } from "./group-allocation";
+import { DonationModalConfirmationScreen } from "./modal-confirmation-screen";
+import { DonationSingleRecipientAllocation } from "./single-recipient-allocation";
 import { DonationSuccess, DonationSuccessProps } from "./single-recipient-success";
 import { useDonationForm } from "../hooks";
 import { useDonationState } from "../models/store";
@@ -92,14 +92,14 @@ const DonationModalContent: React.FC<DonationModalContentProps> = ({
     switch (currentStep) {
       case "allocation": {
         if ("accountId" in allocationScreenProps || "campaignId" in allocationScreenProps) {
-          return <DonationDirectAllocation {...allocationScreenProps} />;
+          return <DonationSingleRecipientAllocation {...allocationScreenProps} />;
         } else if ("potId" in allocationScreenProps || "listId" in allocationScreenProps) {
           return <DonationGroupAllocation {...allocationScreenProps} />;
         } else return defaultErrorScreen;
       }
 
       case "confirmation":
-        return <DonationConfirmation {...confirmationScreenProps} />;
+        return <DonationModalConfirmationScreen {...confirmationScreenProps} />;
 
       case "success":
         return <DonationSuccess {...successScreenProps} />;

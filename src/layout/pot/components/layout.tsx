@@ -7,7 +7,7 @@ import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { ChallengeModal } from "@/entities/pot";
-import { DonationSybilWarning } from "@/features/donation";
+import { DonationHumanVerificationAlert } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
 import { PotApplicationModal } from "@/features/pot-application";
 import { PFPayoutJustificationPublicationAction } from "@/features/proportional-funding";
@@ -106,7 +106,10 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           />
         )}
 
-        <DonationSybilWarning classNames={{ root: "w-full mb-4 md:mb-8" }} {...{ potId }} />
+        <DonationHumanVerificationAlert
+          classNames={{ root: "w-full mb-4 md:mb-8" }}
+          {...{ potId }}
+        />
       </div>
 
       <div className="mb-6 flex w-full flex-row flex-wrap gap-2 md:mb-12">

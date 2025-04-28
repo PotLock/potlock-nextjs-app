@@ -6,13 +6,13 @@ import { Alert, AlertDescription, AlertTitle, Button } from "@/common/ui/layout/
 import { WarningIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
 
-export type DonationSybilWarningProps = ByPotId & {
+export type DonationHumanVerificationAlertProps = ByPotId & {
   classNames?: {
     root?: string;
   };
 };
 
-export const DonationSybilWarning: React.FC<DonationSybilWarningProps> = ({
+export const DonationHumanVerificationAlert: React.FC<DonationHumanVerificationAlertProps> = ({
   potId,
   classNames,
 }) => {
