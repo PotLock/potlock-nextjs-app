@@ -1,7 +1,17 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
-import { isBigSource } from "@/common/lib";
-import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/layout/components";
+import { create, useModal } from "@ebay/nice-modal-react";
+
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
+import { isBigSource, useRouteQuery } from "@/common/lib";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  Form,
+  ModalErrorBody,
+} from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
@@ -10,17 +20,17 @@ import { dispatch } from "@/store";
 import { DonationConfirmation } from "./DonationConfirmation";
 import { DonationDirectAllocation } from "./DonationDirectAllocation";
 import { DonationGroupAllocation } from "./DonationGroupAllocation";
-import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
+import { DonationSuccess, DonationSuccessProps } from "./single-recipient-success";
 import { useDonationForm } from "../hooks";
 import { useDonationState } from "../models/store";
 import { DonationAllocationKey } from "../types";
 
-export type DonationFlowProps = DonationAllocationKey &
+type DonationModalContentProps = DonationAllocationKey &
   Pick<DonationSuccessProps, "transactionHash"> & {
     closeModal: VoidFunction;
   };
 
-export const DonationFlow: React.FC<DonationFlowProps> = ({
+const DonationModalContent: React.FC<DonationModalContentProps> = ({
   transactionHash,
   closeModal,
   ...props
@@ -127,3 +137,92 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
     </Form>
   );
 };
+
+export type DonationModalProps = DonationAllocationKey &
+  Pick<DonationModalContentProps, "transactionHash"> & {};
+
+export const DonationModal = create((props: DonationModalProps) => {
+  const viewer = useWalletUserSession();
+  const self = useModal();
+  const isSingleProjectDonation = "accountId" in props;
+  const isPotDonation = "potId" in props;
+  const isListDonation = "listId" in props;
+  const isCampaignDonation = "campaignId" in props;
+  const { currentStep } = useDonationState();
+  const { setSearchParams } = useRouteQuery();
+
+  const close = useCallback(() => {
+    self.hide();
+    dispatch.donation.reset();
+    self.remove();
+
+    setSearchParams({
+      donateTo: null,
+      donateToPot: null,
+      donateToList: null,
+      donateToCampaign: null,
+      transactionHashes: null,
+    });
+  }, [self, setSearchParams]);
+
+  const onSignInClick = useCallback(() => {
+    nearProtocolClient.walletApi.signInModal();
+    close();
+  }, [close]);
+
+  const isKnownDonationType =
+    !isSingleProjectDonation && !isPotDonation && !isListDonation && !isCampaignDonation;
+
+  return (
+    <Dialog open={self.visible}>
+      <DialogContent
+        className={cn({
+          "max-w-130": currentStep !== "success",
+          "max-w-120": currentStep === "success",
+        })}
+        contrastActions={currentStep === "success"}
+        onBackClick={
+          currentStep !== "allocation" && currentStep !== "success"
+            ? dispatch.donation.previousStep
+            : undefined
+        }
+        onCloseClick={close}
+      >
+        {!viewer.isSignedIn ? (
+          <ModalErrorBody
+            heading="Donation"
+            title="Authentication required"
+            callToAction={
+              <div un-flex="~" un-items="center" un-justify="center" un-gap="2" un-text="primary">
+                <span className="prose" un-text="lg">
+                  {"Please"}
+                </span>
+
+                <Button
+                  font="semibold"
+                  variant="standard-filled"
+                  onClick={onSignInClick}
+                  className="border-none bg-[#342823] shadow-none"
+                >
+                  {"Sign In"}
+                </Button>
+
+                <span className="prose" un-text="lg">
+                  {"to continue."}
+                </span>
+              </div>
+            }
+          />
+        ) : (
+          <>
+            {isKnownDonationType ? (
+              <ModalErrorBody heading="Donation" title="Unable to determine donation type." />
+            ) : (
+              <DonationModalContent closeModal={close} {...props} />
+            )}
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+});

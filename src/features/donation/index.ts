@@ -1,6 +1,6 @@
 export * from "./constants";
 export * from "./components/breakdowns";
-export * from "./components/buttons";
+export * from "./components/user-entrypoints";
 export * from "./components/DonationSybilWarning";
 export * from "./hooks";
 export * from "./models/schemas";

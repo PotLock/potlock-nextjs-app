@@ -66,6 +66,8 @@ export const APP_METADATA: Metadata & {
   },
 };
 
+export const X_INTENT_URL_BASE = "https://twitter.com/intent/tweet?text=";
+
 export const CHAIN_OPTIONS: Record<string, { isEVM: boolean }> = {
   NEAR: { isEVM: false },
   Solana: { isEVM: false },

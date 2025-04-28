@@ -6,7 +6,7 @@ import { useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
-import { DonationModal } from "../components/DonationModal";
+import { DonationModal } from "../components/modal";
 import { DonationAllocationKey } from "../types";
 
 export * from "./allocation";
