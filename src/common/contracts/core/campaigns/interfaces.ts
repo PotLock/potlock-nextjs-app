@@ -54,7 +54,7 @@ export interface CampaignDonation {
   recipient_id: AccountId;
 }
 
-export type DirectCampaignDonationArgs = {
+export type CampaignDonationArgs = {
   campaign_id: number;
   message?: string;
   referrer_id?: string;

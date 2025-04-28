@@ -30,17 +30,18 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const { toast } = useToast();
   const viewer = useWalletUserSession();
   const now = Temporal.Now.instant();
-  const isSingleProjectDonation = "accountId" in params;
-  const isPotDonation = "potId" in params;
-  const isListDonation = "listId" in params;
+
+  //? Conditional parameters depending on donation scenario
+  const isSingleRecipientDonation = "accountId" in params;
+  const recipientAccountIdFormParam = isSingleRecipientDonation ? params.accountId : undefined;
   const isCampaignDonation = "campaignId" in params;
-  const potAccountId = isPotDonation ? params.potId : undefined;
-  const listId = isListDonation ? params.listId : undefined;
-  const campaignId = isCampaignDonation ? params.campaignId : undefined;
-  const recipientAccountId = isSingleProjectDonation ? params.accountId : undefined;
+  const campaignIdFormParam = isCampaignDonation ? params.campaignId : undefined;
+  const isListDonation = "listId" in params;
+  const listIdFormParam = isListDonation ? params.listId : undefined;
 
   const { data: recipientActivePots = [] } = indexer.useAccountActivePots({
-    accountId: recipientAccountId,
+    enabled: isSingleRecipientDonation,
+    accountId: recipientAccountIdFormParam ?? "noop",
     status: PotApplicationStatus.Approved,
     page_size: 999,
   });
@@ -52,25 +53,21 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   );
 
   const defaultMatchingPotAccountId = useMemo(
-    () =>
-      isSingleProjectDonation
-        ? undefined
-        : oldToRecent("matching_round_end", matchingPots).at(0)?.account,
-
-    [isSingleProjectDonation, matchingPots],
+    () => oldToRecent("matching_round_end", matchingPots).at(0)?.account,
+    [matchingPots],
   );
 
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       amount: DONATION_MIN_NEAR_AMOUNT,
       tokenId: NATIVE_TOKEN_ID,
-      recipientAccountId,
-      potAccountId: isPotDonation ? potAccountId : defaultMatchingPotAccountId,
-      listId,
-      campaignId,
+      recipientAccountId: recipientAccountIdFormParam,
+      potAccountId: isSingleRecipientDonation ? defaultMatchingPotAccountId : undefined,
+      listId: listIdFormParam,
+      campaignId: campaignIdFormParam,
 
       allocationStrategy:
-        isSingleProjectDonation || isCampaignDonation
+        isSingleRecipientDonation || isCampaignDonation
           ? DonationAllocationStrategyEnum[
               !isCampaignDonation && matchingPots.length > 0 ? "share" : "full"
             ]
@@ -80,15 +77,13 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }),
 
     [
-      campaignId,
+      campaignIdFormParam,
       defaultMatchingPotAccountId,
       isCampaignDonation,
-      isPotDonation,
-      isSingleProjectDonation,
-      listId,
+      isSingleRecipientDonation,
+      listIdFormParam,
       matchingPots.length,
-      potAccountId,
-      recipientAccountId,
+      recipientAccountIdFormParam,
     ],
   );
 
@@ -107,7 +102,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const tokenId = values.tokenId ?? NATIVE_TOKEN_ID;
 
   const totalAmountFloat =
-    (isSingleProjectDonation || isCampaignDonation
+    (isSingleRecipientDonation || isCampaignDonation
       ? amount
       : values.groupAllocationPlan
           ?.reduce((total, { amount }) => total.add(amount ?? 0), Big(0))

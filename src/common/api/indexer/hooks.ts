@@ -56,11 +56,12 @@ export const useAccount = ({ accountId, enabled = true }: ByAccountId & Conditio
  */
 export const useAccountActivePots = ({
   accountId,
+  enabled = true,
   ...params
-}: Partial<ByAccountId> & generatedClient.V1AccountsActivePotsRetrieveParams) => {
-  const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(accountId ?? "noop", params, {
+}: ByAccountId & generatedClient.V1AccountsActivePotsRetrieveParams & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(accountId, params, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled: Boolean(accountId) },
+    swr: { enabled },
   });
 
   return { ...queryResult, data: queryResult.data?.data.results };
