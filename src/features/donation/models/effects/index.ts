@@ -18,13 +18,13 @@ import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
 import { donationFtMulticall } from "./ft";
+import { donationInputsToBatchDonationDraft } from "./normalization";
 import {
   DonationAllocationKey,
   DonationAllocationStrategyEnum,
   DonationDirectBatchCallDraft,
   DonationPotBatchCallDraft,
 } from "../../types";
-import { donationInputsToBatchDonationDraft } from "../../utils/normalization";
 import { type DonationSubmitParams } from "../schemas";
 
 /**

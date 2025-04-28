@@ -1,8 +1,9 @@
 import { floatToYoctoNear } from "@/common/lib";
 
-import { type DonationSubmitParams } from "../models/schemas";
-import { DonationBatchCallDraft, DonationGroupAllocationStrategyEnum } from "../types";
+import { DonationBatchCallDraft, DonationGroupAllocationStrategyEnum } from "../../types";
+import { type DonationSubmitParams } from "../schemas";
 
+// TODO: Split into two different functions for pot and list donations and convert them into effects
 /**
  *! HEADS UP! This function currently only supports pot and list donations!
  */
