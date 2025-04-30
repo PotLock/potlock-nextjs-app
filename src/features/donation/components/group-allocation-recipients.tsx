@@ -1,34 +1,44 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+
+import { findIndex, isStrictEqual, piped, prop } from "remeda";
 
 import { ListRegistrationStatus, PotApplicationStatus, indexer } from "@/common/api/indexer";
+import type { AccountId } from "@/common/types";
 import { CheckboxField, TextField } from "@/common/ui/form/components";
 import { FormField, RuntimeErrorAlert } from "@/common/ui/layout/components";
 import { NearIcon } from "@/common/ui/layout/svg";
-import { AccountListItem } from "@/entities/_shared/account";
+import { useWalletUserSession } from "@/common/wallet";
+import { AccountListItem, useToken } from "@/entities/_shared";
 
-import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import {
   DonationShareAllocationDeps,
   useDonationEvenShareAllocation,
   useDonationManualShareAllocation,
-} from "../hooks";
+} from "../hooks/allocation";
 import { DonationAllocationInputs } from "../models/schemas";
 import { DonationGroupAllocationKey } from "../types";
 
-export type DonationRecipientSharesProps = DonationGroupAllocationKey &
+export type DonationGroupAllocationRecipientsProps = DonationGroupAllocationKey &
   Omit<DonationAllocationInputs, "minAmountError"> &
   DonationShareAllocationDeps & {};
 
-export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = ({
-  balanceFloat,
-  isBalanceSufficient,
-  form,
-  ...props
-}) => {
+export const DonationGroupAllocationRecipients: React.FC<
+  DonationGroupAllocationRecipientsProps
+> = ({ form, ...props }) => {
+  const viewer = useWalletUserSession();
   const potId = "potId" in props ? props.potId : undefined;
   const listId = "listId" in props ? props.listId : undefined;
 
-  const [groupAllocationStrategy] = form.watch(["groupAllocationStrategy"]);
+  const [tokenId, groupAllocationStrategy, groupAllocationPlan] = form.watch([
+    "tokenId",
+    "groupAllocationStrategy",
+    "groupAllocationPlan",
+  ]);
+
+  const { data: token } = useToken({
+    tokenId,
+    balanceCheckAccountId: viewer?.accountId,
+  });
 
   const { data: potApplications, error: potApplicationsError } = indexer.usePotApplications({
     potId,
@@ -77,6 +87,13 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
     [listRegistrations, potApplications],
   );
 
+  const getAllocationPlanIndex = useCallback(
+    (accountId: AccountId): number =>
+      findIndex(groupAllocationPlan ?? [], piped(prop("account_id"), isStrictEqual(accountId))),
+
+    [groupAllocationPlan],
+  );
+
   return errorDetails ? (
     <div className="w-full p-4">
       <RuntimeErrorAlert {...errorDetails} />
@@ -90,6 +107,8 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
         secondarySlot={
           <FormField
             name="groupAllocationPlan"
+            // TODO: Use precise field value targeting:
+            // name={`groupAllocationPlan.${getAllocationPlanIndex(accountId)}.amount`}
             control={form.control}
             render={({ field: { value = [], ...field } }) =>
               groupAllocationStrategy === "even" ? (
@@ -99,9 +118,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
                     (recipient) =>
                       recipient.account_id === accountId && recipient.amount !== undefined,
                   )}
-                  onCheckedChange={handleEvenShareAllocation({
-                    accountId,
-                  })}
+                  onCheckedChange={handleEvenShareAllocation({ accountId })}
                 />
               ) : (
                 <TextField
@@ -109,16 +126,13 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
                   type="number"
                   placeholder="0.00"
                   min={0}
-                  max={balanceFloat ?? undefined}
+                  max={token?.balanceFloat ?? undefined}
                   step={0.01}
                   defaultValue={
                     value.find((recipient) => recipient.account_id === accountId)?.amount
                   }
                   onChange={handleManualShareAllocation({ accountId })}
                   appendix={<NearIcon width={24} height={24} />}
-                  customErrorMessage={
-                    isBalanceSufficient ? null : DONATION_INSUFFICIENT_BALANCE_ERROR
-                  }
                   classNames={{ fieldRoot: "w-32" }}
                 />
               )

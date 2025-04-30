@@ -21,7 +21,7 @@ import {
   AccountProfileTags,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { useDonation } from "@/features/donation";
+import { useDonationUserFlow } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
@@ -122,7 +122,7 @@ export type ProfileLayoutSummaryProps = ByAccountId & {};
 export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ accountId }) => {
   const viewer = useWalletUserSession();
   const isOwner = viewer?.accountId === accountId;
-  const { openDonationModal } = useDonation({ accountId });
+  const { openDonationModal } = useDonationUserFlow({ accountId });
   const { isLoading: isProfileDataLoading, profile } = useAccountSocialProfile({ accountId });
 
   // TODO: For optimization, request and use an indexer endpoint that serves as a proxy for the corresponding function call

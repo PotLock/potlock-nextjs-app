@@ -9,12 +9,12 @@ import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
-import { DonationFlow, DonationFlowProps } from "./DonationFlow";
 import { useDonationState } from "../models/store";
 import { DonationAllocationKey } from "../types";
+import { DonationModalContent, type DonationModalContentProps } from "./modal-content";
 
 export type DonationModalProps = DonationAllocationKey &
-  Pick<DonationFlowProps, "transactionHash"> & {};
+  Pick<DonationModalContentProps, "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
   const viewer = useWalletUserSession();
@@ -93,7 +93,7 @@ export const DonationModal = create((props: DonationModalProps) => {
             {isKnownDonationType ? (
               <ModalErrorBody heading="Donation" title="Unable to determine donation type." />
             ) : (
-              <DonationFlow closeModal={close} {...props} />
+              <DonationModalContent closeModal={close} {...props} />
             )}
           </>
         )}

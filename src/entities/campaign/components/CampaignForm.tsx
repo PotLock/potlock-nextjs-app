@@ -33,8 +33,8 @@ export const CampaignForm = ({
 
   useEffect(() => {
     if (isUpdate && existingData) {
-      setCoverImage(existingData?.cover_image_url);
-      form.setValue("cover_image_url", existingData?.cover_image_url);
+      setCoverImage(existingData?.cover_image_url ?? undefined);
+      form.setValue("cover_image_url", existingData?.cover_image_url ?? undefined);
       form.setValue("recipient", existingData?.recipient);
       form.setValue("name", existingData?.name);
       form.setValue("description", existingData.description);
@@ -52,7 +52,7 @@ export const CampaignForm = ({
         form.setValue("end_ms", existingData?.end_ms);
       }
     }
-  }, [isUpdate, existingData]);
+  }, [isUpdate, existingData, form]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;

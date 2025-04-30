@@ -1,68 +1,29 @@
 import { useMemo } from "react";
 
-import { isBigSource } from "@/common/lib";
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
-import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared/token";
 import { dispatch } from "@/store";
 
-import { DonationConfirmation } from "./DonationConfirmation";
-import { DonationDirectAllocation } from "./DonationDirectAllocation";
-import { DonationGroupAllocation } from "./DonationGroupAllocation";
-import { DonationSuccess, DonationSuccessProps } from "./DonationSuccess";
-import { useDonationForm } from "../hooks";
+import { DonationGroupAllocation } from "./group-allocation";
+import { DonationModalConfirmationScreen } from "./modal-confirmation-screen";
+import { DonationSingleRecipientAllocation } from "./single-recipient-allocation";
+import { DonationSuccess, DonationSuccessProps } from "./single-recipient-success";
+import { useDonationForm } from "../hooks/form";
 import { useDonationState } from "../models/store";
 import { DonationAllocationKey } from "../types";
 
-export type DonationFlowProps = DonationAllocationKey &
+export type DonationModalContentProps = DonationAllocationKey &
   Pick<DonationSuccessProps, "transactionHash"> & {
     closeModal: VoidFunction;
   };
 
-export const DonationFlow: React.FC<DonationFlowProps> = ({
+export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   transactionHash,
   closeModal,
   ...props
 }) => {
-  const viewer = useWalletUserSession();
   const { currentStep } = useDonationState();
-
-  const { form, matchingPots, minAmountError, isDisabled, onSubmit, totalAmountFloat } =
-    useDonationForm(props);
-
-  const [tokenId] = form.watch(["tokenId"]);
-
-  const { data: token } = useToken({
-    tokenId,
-    balanceCheckAccountId: viewer?.accountId,
-  });
-
-  const isBalanceSufficient = isBigSource(totalAmountFloat)
-    ? (token?.balance?.gt(totalAmountFloat) ?? false)
-    : false;
-
-  const allocationScreenProps = useMemo(
-    () => ({
-      form,
-      isBalanceSufficient,
-      minAmountError,
-      balanceFloat: token?.balanceFloat ?? 0.0,
-      totalAmountFloat,
-      matchingPots,
-      ...props,
-    }),
-
-    [
-      token?.balanceFloat,
-      form,
-      isBalanceSufficient,
-      matchingPots,
-      minAmountError,
-      props,
-      totalAmountFloat,
-    ],
-  );
+  const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat } = useDonationForm(props);
 
   const confirmationScreenProps = useMemo(
     () => ({ form, totalAmountFloat }),
@@ -81,15 +42,15 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
 
     switch (currentStep) {
       case "allocation": {
-        if ("accountId" in allocationScreenProps || "campaignId" in allocationScreenProps) {
-          return <DonationDirectAllocation {...allocationScreenProps} />;
-        } else if ("potId" in allocationScreenProps || "listId" in allocationScreenProps) {
-          return <DonationGroupAllocation {...allocationScreenProps} />;
+        if ("accountId" in props || "campaignId" in props) {
+          return <DonationSingleRecipientAllocation form={form} {...{ matchingPots, ...props }} />;
+        } else if ("potId" in props || "listId" in props) {
+          return <DonationGroupAllocation form={form} {...{ totalAmountFloat, ...props }} />;
         } else return defaultErrorScreen;
       }
 
       case "confirmation":
-        return <DonationConfirmation {...confirmationScreenProps} />;
+        return <DonationModalConfirmationScreen {...confirmationScreenProps} />;
 
       case "success":
         return <DonationSuccess {...successScreenProps} />;
@@ -97,7 +58,15 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
       default:
         return defaultErrorScreen;
     }
-  }, [allocationScreenProps, confirmationScreenProps, currentStep, successScreenProps]);
+  }, [
+    confirmationScreenProps,
+    currentStep,
+    form,
+    matchingPots,
+    props,
+    successScreenProps,
+    totalAmountFloat,
+  ]);
 
   return (
     <Form {...form}>
@@ -116,7 +85,7 @@ export const DonationFlow: React.FC<DonationFlowProps> = ({
               type="button"
               variant="brand-filled"
               onClick={currentStep === "confirmation" ? onSubmit : dispatch.donation.nextStep}
-              disabled={isDisabled || !isBalanceSufficient}
+              disabled={isDisabled}
               className={cn({ "w-full": currentStep === "confirmation" })}
             >
               {currentStep === "confirmation" ? "Confirm donation" : "Proceed to donate"}

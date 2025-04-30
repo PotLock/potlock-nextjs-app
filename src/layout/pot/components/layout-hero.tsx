@@ -12,7 +12,7 @@ import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/la
 import { VolunteerIcon } from "@/common/ui/layout/svg";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { TokenTotalValue } from "@/entities/_shared/token";
+import { TokenValueSummary } from "@/entities/_shared/token";
 import {
   PotDonationStats,
   PotLifecycleStageTagEnum,
@@ -194,7 +194,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
             </span>
 
             {pot ? (
-              <TokenTotalValue
+              <TokenValueSummary
                 textOnly
                 tokenId={NATIVE_TOKEN_ID}
                 amountIndivisible={pot.matching_pool_balance}

@@ -1,13 +1,13 @@
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 
-import { DONATION_MIN_NEAR_AMOUNT } from "../constants";
+import { DONATION_DEFAULT_MIN_AMOUNT_FLOAT } from "../constants";
 import { DonationAllocationStrategy, DonationAllocationStrategyEnum } from "../types";
 
 export type DonationAmountValidationInputs = ByTokenId & { amount: number };
 
 export const isDonationAmountSufficient = ({ tokenId, amount }: DonationAmountValidationInputs) =>
-  tokenId === NATIVE_TOKEN_ID ? amount >= DONATION_MIN_NEAR_AMOUNT : amount > 0.0;
+  tokenId === NATIVE_TOKEN_ID ? amount >= DONATION_DEFAULT_MIN_AMOUNT_FLOAT : amount > 0.0;
 
 export type DonationMatchingPotValidationInputs = {
   allocationStrategy: DonationAllocationStrategy;
