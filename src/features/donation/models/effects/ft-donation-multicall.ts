@@ -16,19 +16,19 @@ import type { AccountId } from "@/common/types";
 import { DONATION_BASE_STORAGE_DEPOSIT_FLOAT } from "../../constants";
 import type { DonationSubmitParams } from "../schemas";
 
-type DonationFtMulticallInputs = Pick<
+type FtDonationMulticallInputs = Pick<
   DonationSubmitParams,
   "amount" | "referrerAccountId" | "bypassProtocolFee" | "message" | "tokenId"
 > & { recipientAccountId: AccountId };
 
-export const donationFtMulticall = async ({
+export const ftDonationMulticall = async ({
   amount,
   recipientAccountId,
   referrerAccountId,
   bypassProtocolFee,
   message,
   tokenId,
-}: DonationFtMulticallInputs): Promise<DirectDonation> => {
+}: FtDonationMulticallInputs): Promise<DirectDonation> => {
   const { protocol_fee_recipient_account: protocolFeeRecipientAccountId } =
     await donationContractClient.get_config();
 

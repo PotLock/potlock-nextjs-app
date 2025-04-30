@@ -21,16 +21,17 @@ import {
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { TokenTotalValue } from "@/entities/_shared/token";
+import { TokenValueSummary } from "@/entities/_shared/token";
 
-import { DonationGroupAllocationBreakdown, DonationSummaryBreakdown } from "./breakdowns";
-import { useDonationAllocationBreakdown } from "../hooks";
+import { DonationSummary } from "./summary";
+import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
 import { WithDonationFormAPI } from "../models/schemas";
 import { WithTotalAmount } from "../types";
+import { DonationGroupAllocationBreakdown } from "./group-allocation-breakdown";
 
-export type DonationConfirmationProps = WithTotalAmount & WithDonationFormAPI & {};
+export type DonationModalConfirmationScreenProps = WithTotalAmount & WithDonationFormAPI & {};
 
-export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
+export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmationScreenProps> = ({
   form,
   totalAmountFloat,
 }) => {
@@ -74,7 +75,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
     () => (
       <div className="flex flex-col items-start justify-between gap-1">
         <span className="prose font-600 text-neutral-600">{"Total amount"}</span>
-        <TokenTotalValue tokenId={tokenId} amountFloat={totalAmountFloat} />
+        <TokenValueSummary tokenId={tokenId} amountFloat={totalAmountFloat} />
       </div>
     ),
 
@@ -104,7 +105,7 @@ export const DonationConfirmation: React.FC<DonationConfirmationProps> = ({
           </Accordion>
         )}
 
-        <DonationSummaryBreakdown data={allocationBreakdown} {...{ tokenId }} />
+        <DonationSummary data={allocationBreakdown} {...{ tokenId }} />
 
         <div className="flex flex-col gap-2">
           {allocationBreakdown.protocolFeePercent > 0 && (

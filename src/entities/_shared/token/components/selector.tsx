@@ -31,7 +31,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
 
   return (
     // TODO: Move FormField wrapper from target parent layouts to here
-    //? But do not forget to account for ability to use this component without forms
+    //* But do not forget to account for ability to use this component without forms
 
     <SelectField
       embedded

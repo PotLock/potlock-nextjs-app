@@ -21,31 +21,23 @@ import {
   RadioGroupItem,
   Skeleton,
 } from "@/common/ui/layout/components";
-import { TokenSelector, useToken } from "@/entities/_shared/token";
+import { useWalletUserSession } from "@/common/wallet";
+import { TokenBalance, TokenSelector, useToken } from "@/entities/_shared/token";
 
-import { DonationSybilWarning } from "./DonationSybilWarning";
-import {
-  DONATION_ALLOCATION_STRATEGIES,
-  DONATION_INSUFFICIENT_BALANCE_ERROR,
-  DONATION_MIN_NEAR_AMOUNT,
-} from "../constants";
+import { DonationHumanVerificationAlert } from "./human-verification-alert";
+import { DONATION_ALLOCATION_STRATEGIES } from "../constants";
 import { DonationAllocationInputs } from "../models/schemas";
 import { DonationAllocationStrategyEnum } from "../types";
-import { DonationTokenBalance } from "./DonationTokenBalance";
 
-export type DonationDirectAllocationProps = Partial<ByAccountId> &
+export type DonationSingleRecipientAllocationProps = Partial<ByAccountId> &
   Partial<ByCampaignId> &
   DonationAllocationInputs & { matchingPots?: Pot[] };
 
-export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> = ({
-  form,
-  isBalanceSufficient,
-  minAmountError,
-  accountId,
-  balanceFloat,
-  matchingPots,
-  campaignId,
-}) => {
+export const DonationSingleRecipientAllocation: React.FC<
+  DonationSingleRecipientAllocationProps
+> = ({ form, accountId, matchingPots, campaignId }) => {
+  const viewer = useWalletUserSession();
+
   const [amount, tokenId, allocationStrategy, potAccountId] = form.watch([
     "amount",
     "tokenId",
@@ -53,7 +45,10 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     "potAccountId",
   ]);
 
-  const { data: token } = useToken({ tokenId });
+  const { data: token } = useToken({
+    tokenId,
+    balanceCheckAccountId: viewer?.accountId,
+  });
 
   const {
     isLoading: isRecipientDataLoading,
@@ -71,11 +66,6 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
     enabled: isCampaignDonation,
     campaignId: campaignId ?? 0,
   });
-
-  const minAmount = useMemo(
-    () => campaign?.min_amount ?? (tokenId === NATIVE_TOKEN_ID ? DONATION_MIN_NEAR_AMOUNT : 0.0),
-    [campaign?.min_amount, tokenId],
-  );
 
   const isFtSupportAvailable =
     FEATURE_REGISTRY.FtDonation.isEnabled &&
@@ -176,7 +166,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
         {strategySelector}
 
         {allocationStrategy === DonationAllocationStrategyEnum.share && potAccountId && (
-          <DonationSybilWarning potId={potAccountId} />
+          <DonationHumanVerificationAlert potId={potAccountId} />
         )}
 
         {potSelector}
@@ -188,7 +178,7 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
             <TextField
               label="Amount"
               {...field}
-              labelExtension={<DonationTokenBalance {...{ tokenId }} />}
+              labelExtension={<TokenBalance {...{ tokenId }} />}
               inputExtension={
                 <FormField
                   control={form.control}
@@ -204,13 +194,10 @@ export const DonationDirectAllocation: React.FC<DonationDirectAllocationProps> =
               }
               type="number"
               placeholder="0.00"
-              min={minAmount}
-              max={balanceFloat ?? undefined}
+              min={0}
+              max={token?.balanceFloat ?? undefined}
               step={0.01}
               appendix={totalAmountUsdValue}
-              customErrorMessage={
-                isBalanceSufficient ? minAmountError : DONATION_INSUFFICIENT_BALANCE_ERROR
-              }
             />
           )}
         />

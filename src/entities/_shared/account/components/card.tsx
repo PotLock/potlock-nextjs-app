@@ -29,8 +29,8 @@ export type AccountCardProps = ByAccountId & {
 
 export const AccountCard = ({ accountId, snapshot, actions }: AccountCardProps) => {
   const { isLoading: isAccountLoading, data: account = snapshot } = indexer.useAccount({
-    //? If snapshot is provided, the account data is already loaded on a higher level
-    //? Only needed as long as the indexer API is not GraphQL with structural sharing
+    //* If snapshot is provided, the account data is already loaded on a higher level
+    //* Only needed as long as the indexer API is not GraphQL with structural sharing
     enabled: snapshot === undefined,
     accountId,
   });

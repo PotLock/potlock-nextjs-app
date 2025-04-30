@@ -11,7 +11,6 @@ export type NearInputFieldProps = InputFieldProps & {
   label: string;
   labelExtension?: React.ReactNode;
   hint?: string;
-  customErrorMessage?: string | null;
 };
 
 export const NearInputField = forwardRef<HTMLInputElement, NearInputFieldProps>(
