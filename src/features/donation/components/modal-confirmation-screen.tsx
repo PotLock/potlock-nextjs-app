@@ -24,7 +24,7 @@ import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenValueSummary } from "@/entities/_shared/token";
 
 import { DonationSummary } from "./summary";
-import { useDonationAllocationBreakdown } from "../hooks";
+import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
 import { WithDonationFormAPI } from "../models/schemas";
 import { WithTotalAmount } from "../types";
 import { DonationGroupAllocationBreakdown } from "./group-allocation-breakdown";

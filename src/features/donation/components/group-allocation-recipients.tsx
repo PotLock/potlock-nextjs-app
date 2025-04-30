@@ -1,6 +1,9 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+
+import { findIndex, isStrictEqual, piped, prop } from "remeda";
 
 import { ListRegistrationStatus, PotApplicationStatus, indexer } from "@/common/api/indexer";
+import type { AccountId } from "@/common/types";
 import { CheckboxField, TextField } from "@/common/ui/form/components";
 import { FormField, RuntimeErrorAlert } from "@/common/ui/layout/components";
 import { NearIcon } from "@/common/ui/layout/svg";
@@ -11,7 +14,7 @@ import {
   DonationShareAllocationDeps,
   useDonationEvenShareAllocation,
   useDonationManualShareAllocation,
-} from "../hooks";
+} from "../hooks/allocation";
 import { DonationAllocationInputs } from "../models/schemas";
 import { DonationGroupAllocationKey } from "../types";
 
@@ -21,11 +24,14 @@ export type DonationGroupAllocationRecipientsProps = DonationGroupAllocationKey 
 
 export const DonationGroupAllocationRecipients: React.FC<
   DonationGroupAllocationRecipientsProps
-> = ({ balanceFloat, isBalanceSufficient, form, ...props }) => {
+> = ({ balanceFloat, form, ...props }) => {
   const potId = "potId" in props ? props.potId : undefined;
   const listId = "listId" in props ? props.listId : undefined;
 
-  const [groupAllocationStrategy] = form.watch(["groupAllocationStrategy"]);
+  const [groupAllocationStrategy, groupAllocationPlan] = form.watch([
+    "groupAllocationStrategy",
+    "groupAllocationPlan",
+  ]);
 
   const { data: potApplications, error: potApplicationsError } = indexer.usePotApplications({
     potId,
@@ -74,6 +80,13 @@ export const DonationGroupAllocationRecipients: React.FC<
     [listRegistrations, potApplications],
   );
 
+  const getAllocationPlanIndex = useCallback(
+    (accountId: AccountId): number =>
+      findIndex(groupAllocationPlan ?? [], piped(prop("account_id"), isStrictEqual(accountId))),
+
+    [groupAllocationPlan],
+  );
+
   return errorDetails ? (
     <div className="w-full p-4">
       <RuntimeErrorAlert {...errorDetails} />
@@ -87,6 +100,8 @@ export const DonationGroupAllocationRecipients: React.FC<
         secondarySlot={
           <FormField
             name="groupAllocationPlan"
+            // TODO: Use precise field value targeting:
+            // name={`groupAllocationPlan.${getAllocationPlanIndex(accountId)}.amount`}
             control={form.control}
             render={({ field: { value = [], ...field } }) =>
               groupAllocationStrategy === "even" ? (
@@ -96,16 +111,13 @@ export const DonationGroupAllocationRecipients: React.FC<
                     (recipient) =>
                       recipient.account_id === accountId && recipient.amount !== undefined,
                   )}
-                  onCheckedChange={handleEvenShareAllocation({
-                    accountId,
-                  })}
+                  onCheckedChange={handleEvenShareAllocation({ accountId })}
                 />
               ) : (
                 <TextField
                   {...field}
                   type="number"
                   placeholder="0.00"
-                  min={0}
                   max={balanceFloat ?? undefined}
                   step={0.01}
                   defaultValue={
@@ -113,9 +125,6 @@ export const DonationGroupAllocationRecipients: React.FC<
                   }
                   onChange={handleManualShareAllocation({ accountId })}
                   appendix={<NearIcon width={24} height={24} />}
-                  customErrorMessage={
-                    isBalanceSufficient ? null : DONATION_INSUFFICIENT_BALANCE_ERROR
-                  }
                   classNames={{ fieldRoot: "w-32" }}
                 />
               )

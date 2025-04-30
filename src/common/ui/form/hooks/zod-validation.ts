@@ -16,6 +16,8 @@ export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
    * Array of field names that should be validated when other fields change
    */
   dependentFields: Array<keyof FromSchema<TSchema>>;
+
+  injectedEffect?: (form: UseFormReturn<FromSchema<TSchema>>) => void;
 };
 
 /**
@@ -52,12 +54,15 @@ export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
   form,
   schema,
   dependentFields,
+  injectedEffect,
 }: FormCrossFieldZodValidationParams<TSchema>) => {
   type Inputs = FromSchema<TSchema>;
 
   const values = useWatch({ control: form.control });
 
   useEffect(() => {
+    injectedEffect?.(form);
+
     if (dependentFields.length > 0) {
       schema.parseAsync(values).catch((error?: ZodError) =>
         error?.issues.forEach(({ code, message, path }) => {
@@ -73,5 +78,5 @@ export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
         }),
       );
     }
-  }, [schema, form, values, dependentFields]);
+  }, [schema, form, values, dependentFields, injectedEffect]);
 };

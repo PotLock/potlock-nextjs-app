@@ -219,10 +219,10 @@ export const usePotPayouts = ({
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_retrieve
  */
-export const useList = ({ listId }: Partial<ByListId>) => {
-  const queryResult = generatedClient.useV1ListsRetrieve2(listId ?? 0, {
+export const useList = ({ listId, enabled = true }: ByListId & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1ListsRetrieve2(listId, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled: Boolean(listId), refreshInterval: 3000 },
+    swr: { enabled, refreshInterval: 3000 },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

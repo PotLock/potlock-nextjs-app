@@ -3,8 +3,7 @@ import { useCallback, useMemo } from "react";
 import { values } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
-import { type PotId, indexer } from "@/common/api/indexer";
-import { yoctoNearToFloat } from "@/common/lib";
+import { indexer } from "@/common/api/indexer";
 import { TextField } from "@/common/ui/form/components";
 import {
   DialogDescription,
@@ -24,10 +23,7 @@ import { TokenBalance, TokenSelector, TokenValueSummary, useToken } from "@/enti
 
 import { DonationGroupAllocationRecipients } from "./group-allocation-recipients";
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
-import {
-  DONATION_GROUP_ALLOCATION_STRATEGIES,
-  DONATION_INSUFFICIENT_BALANCE_ERROR,
-} from "../constants";
+import { DONATION_GROUP_ALLOCATION_STRATEGIES } from "../constants";
 import { DonationAllocationInputs } from "../models/schemas";
 import {
   DonationGroupAllocationKey,
@@ -41,33 +37,31 @@ export type DonationGroupAllocationProps = WithTotalAmount &
 
 export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = ({
   form,
-  isBalanceSufficient,
   balanceFloat,
   totalAmountFloat,
   ...props
 }) => {
   const isPotDonation = "potId" in props;
-  const potId = isPotDonation ? props.potId : undefined;
+  const potIdFormParam = isPotDonation ? props.potId : undefined;
+  const isListDonation = "listId" in props;
+  const listIdFormParam = isListDonation ? props.listId : undefined;
 
-  const [tokenId, listId, groupAllocationStrategy] = form.watch([
-    "tokenId",
-    "listId",
-    "groupAllocationStrategy",
-  ]);
+  const [tokenId, groupAllocationStrategy] = form.watch(["tokenId", "groupAllocationStrategy"]);
+  const amountError = useMemo(() => form.formState.errors.amount, [form.formState.errors.amount]);
 
-  const isListDonation = listId !== undefined;
   const { data: token } = useToken({ tokenId });
 
   const {
     isLoading: isPotLoading,
     data: pot,
     error: potError,
-  } = indexer.usePot({
-    enabled: potId !== undefined,
-    potId: potId as PotId,
-  });
+  } = indexer.usePot({ enabled: isPotDonation, potId: potIdFormParam ?? "noop" });
 
-  const { data: list, isLoading: isListLoading, error: listError } = indexer.useList({ listId });
+  const {
+    data: list,
+    isLoading: isListLoading,
+    error: listError,
+  } = indexer.useList({ enabled: isListDonation, listId: listIdFormParam ?? 0 });
 
   const totalAmountUsdValue = token?.usdPrice
     ? `~$ ${token.usdPrice.mul(totalAmountFloat).toFixed(2)}`
@@ -145,7 +139,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
 
       <DialogDescription>
         {strategySelector}
-        {potId && <DonationHumanVerificationAlert {...{ potId }} />}
+        {isPotDonation && <DonationHumanVerificationAlert potId={props.potId} />}
 
         {groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even ? (
           <FormField
@@ -171,13 +165,10 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
                 }
                 type="number"
                 placeholder="0.00"
-                min={yoctoNearToFloat(pot?.min_matching_pool_donation_amount ?? "0")}
+                min={0}
                 max={balanceFloat ?? undefined}
                 step={0.01}
                 appendix={totalAmountUsdValue}
-                customErrorMessage={
-                  isBalanceSufficient ? null : DONATION_INSUFFICIENT_BALANCE_ERROR
-                }
               />
             )}
           />
@@ -187,12 +178,11 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
               <span className="prose">{"Total allocated"}</span>
               <TokenValueSummary textOnly amountFloat={totalAmountFloat} {...{ tokenId }} />
 
-              {
-                // TODO: remove upon fixing https://github.com/PotLock/potlock-nextjs-app/issues/367
-                props.minAmountError && (
-                  <p className="text-destructive text-sm font-medium">{props.minAmountError}</p>
-                )
-              }
+              {amountError && (
+                <p className="text-destructive text-sm font-medium">
+                  {amountError.message ?? "Invalid amount."}
+                </p>
+              )}
             </div>
 
             <TokenBalance {...{ tokenId }} classNames={{ amount: "text-base" }} />
@@ -203,17 +193,11 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
       <ScrollArea className="h-49 w-full">
         <div className="flex w-full flex-col items-center gap-0.5">
           {isPotDonation && (
-            <DonationGroupAllocationRecipients
-              {...{ balanceFloat, isBalanceSufficient, form }}
-              potId={props.potId}
-            />
+            <DonationGroupAllocationRecipients potId={props.potId} {...{ balanceFloat, form }} />
           )}
 
           {isListDonation && (
-            <DonationGroupAllocationRecipients
-              {...{ balanceFloat, isBalanceSufficient, form }}
-              listId={listId}
-            />
+            <DonationGroupAllocationRecipients listId={props.listId} {...{ balanceFloat, form }} />
           )}
         </div>
       </ScrollArea>

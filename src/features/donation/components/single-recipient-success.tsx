@@ -22,9 +22,9 @@ import { TokenValueSummary, useToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
-import { DonationSummary } from "./summary";
-import { useDonationAllocationBreakdown } from "../hooks";
 import { DonationXShareButton } from "./single-recipient-success-share";
+import { DonationSummary } from "./summary";
+import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
 import { WithDonationFormAPI } from "../models/schemas";
 import { useDonationState } from "../models/store";
 

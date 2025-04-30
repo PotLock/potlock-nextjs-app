@@ -24,11 +24,7 @@ import {
 import { TokenBalance, TokenSelector, useToken } from "@/entities/_shared/token";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
-import {
-  DONATION_ALLOCATION_STRATEGIES,
-  DONATION_INSUFFICIENT_BALANCE_ERROR,
-  DONATION_MIN_NEAR_AMOUNT,
-} from "../constants";
+import { DONATION_ALLOCATION_STRATEGIES, DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import { DonationAllocationInputs } from "../models/schemas";
 import { DonationAllocationStrategyEnum } from "../types";
 
@@ -38,15 +34,7 @@ export type DonationSingleRecipientAllocationProps = Partial<ByAccountId> &
 
 export const DonationSingleRecipientAllocation: React.FC<
   DonationSingleRecipientAllocationProps
-> = ({
-  form,
-  isBalanceSufficient,
-  minAmountError,
-  accountId,
-  balanceFloat,
-  matchingPots,
-  campaignId,
-}) => {
+> = ({ form, accountId, balanceFloat, matchingPots, campaignId }) => {
   const [amount, tokenId, allocationStrategy, potAccountId] = form.watch([
     "amount",
     "tokenId",
@@ -72,11 +60,6 @@ export const DonationSingleRecipientAllocation: React.FC<
     enabled: isCampaignDonation,
     campaignId: campaignId ?? 0,
   });
-
-  const minAmount = useMemo(
-    () => campaign?.min_amount ?? (tokenId === NATIVE_TOKEN_ID ? DONATION_MIN_NEAR_AMOUNT : 0.0),
-    [campaign?.min_amount, tokenId],
-  );
 
   const isFtSupportAvailable =
     FEATURE_REGISTRY.FtDonation.isEnabled &&
@@ -205,13 +188,10 @@ export const DonationSingleRecipientAllocation: React.FC<
               }
               type="number"
               placeholder="0.00"
-              min={minAmount}
+              min={0}
               max={balanceFloat ?? undefined}
               step={0.01}
               appendix={totalAmountUsdValue}
-              customErrorMessage={
-                isBalanceSufficient ? minAmountError : DONATION_INSUFFICIENT_BALANCE_ERROR
-              }
             />
           )}
         />

@@ -15,15 +15,15 @@ const normalizeCommaSeparatedFloatString = (input: string): string => {
   const hasComma = input.includes(",");
   const hasDot = input.includes(".");
 
-  //? Both comma and dot present - replace dots with empty string and first comma with dot
+  //* Both comma and dot present - replace dots with empty string and first comma with dot
   if (hasComma && hasDot) {
     return input.replace(/\./g, "").replace(",", ".");
   }
-  //? Only comma present - replace comma with dot
+  //* Only comma present - replace comma with dot
   else if (hasComma) {
     return input.replace(",", ".");
   }
-  //? No comma or only dots - return as is
+  //* No comma or only dots - return as is
   else return input;
 };
 

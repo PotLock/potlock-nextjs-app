@@ -15,13 +15,13 @@ import { integerCappedPercentage, safePositiveNumber } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { TokenAvailableBalance } from "@/entities/_shared/token";
 
-import { DONATION_MAX_MESSAGE_LENGTH, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
+import { DONATION_DEFAULT_MIN_AMOUNT_FLOAT, DONATION_MAX_MESSAGE_LENGTH } from "../constants";
 import { DonationAllocationStrategyEnum, DonationGroupAllocationStrategyEnum } from "../types";
 import { isDonationAmountSufficient, isDonationMatchingPotSelected } from "../utils/validation";
 
 export const donationTokenSchema = literal(NATIVE_TOKEN_ID)
   .or(string().min(6))
-  //? Make sure the default donation token always corresponds to the native token
+  //* Make sure the default donation token always corresponds to the native token
   .default(NATIVE_TOKEN_ID)
   .describe('Either "NEAR" or FT contract account id.');
 
@@ -62,12 +62,16 @@ export const donationSchema = object({
   bypassChefFee: boolean().default(false),
 })
   .refine(isDonationMatchingPotSelected, {
-    message: "Pot is not selected.",
     path: ["potAccountId"],
+    message: "Pot is not selected.",
   })
+  // TODO: Remove this branch as it'll be handled inside of the form hook (WIP)
   .refine(isDonationAmountSufficient, {
-    message: DONATION_MIN_NEAR_AMOUNT_ERROR,
     path: ["amount"],
+
+    message: `The minimum donation amount is ${
+      DONATION_DEFAULT_MIN_AMOUNT_FLOAT
+    } ${NATIVE_TOKEN_ID.toUpperCase()}.`,
   });
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
@@ -85,7 +89,4 @@ export interface WithDonationFormAPI {
 }
 
 export type DonationAllocationInputs = WithDonationFormAPI &
-  Pick<TokenAvailableBalance, "balanceFloat"> & {
-    isBalanceSufficient: boolean;
-    minAmountError: string | null;
-  };
+  Pick<TokenAvailableBalance, "balanceFloat"> & {};

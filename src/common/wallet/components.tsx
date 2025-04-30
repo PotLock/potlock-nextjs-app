@@ -10,7 +10,7 @@ import { useWalletUserAdapter } from "./adapters";
 import { useWalletUserMetadataStore } from "./model";
 import { isAccountId } from "../lib";
 
-//? There are edge cases where `walletSelector` is `undefined` in runtime for a brief moment
+//* There are edge cases where `walletSelector` is `undefined` in runtime for a brief moment
 const isWalletSelectorApiAvailable = () =>
   (nearProtocolClient.walletApi.walletSelector as undefined | WalletManager["walletSelector"]) !==
   undefined;

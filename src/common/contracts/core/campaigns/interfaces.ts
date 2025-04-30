@@ -17,18 +17,18 @@ export type Campaign = {
   id: number;
   name: string;
   description: string;
-  cover_image_url?: string;
+  cover_image_url?: null | string;
   recipient: AccountId;
   owner: AccountId;
   start_ms: number;
-  end_ms?: number | null;
-  ftId?: AccountId;
+  end_ms?: null | number;
+  ftId?: null | TokenId;
   target_amount: IndivisibleUnits;
-  min_amount?: IndivisibleUnits;
+  min_amount?: null | IndivisibleUnits;
   escrow_balance: IndivisibleUnits;
-  max_amount?: IndivisibleUnits;
-  referralFeeBasisPoints?: number;
-  creatorFeeBasisPoints?: number;
+  max_amount?: null | IndivisibleUnits;
+  referralFeeBasisPoints?: null | number;
+  creatorFeeBasisPoints?: null | number;
   allowFeeAvoidance?: boolean;
   total_raised_amount: string;
 };
@@ -56,8 +56,8 @@ export interface CampaignDonation {
 
 export type CampaignDonationArgs = {
   campaign_id: number;
-  message?: string;
-  referrer_id?: string;
-  bypass_protocol_fee?: boolean;
-  bypass_creator_fee?: boolean;
+  message?: null | string;
+  referrer_id?: null | string;
+  bypass_protocol_fee?: null | boolean;
+  bypass_creator_fee?: null | boolean;
 };
