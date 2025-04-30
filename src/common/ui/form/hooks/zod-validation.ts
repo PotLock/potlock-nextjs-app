@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { type Path, type UseFormReturn, useWatch } from "react-hook-form";
+import { type ErrorOption, type Path, type UseFormReturn, useWatch } from "react-hook-form";
 import type { infer as FromSchema, ZodError, ZodSchema } from "zod";
 
 export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
@@ -16,7 +16,13 @@ export type FormCrossFieldZodValidationParams<TSchema extends ZodSchema> = {
    * Array of field names that should be validated when other fields change
    */
   dependentFields: Array<keyof FromSchema<TSchema>>;
-
+  /**
+   * Additional custom errors to set on the form
+   */
+  injectedErrors?: Partial<Record<keyof FromSchema<TSchema>, ErrorOption>>;
+  /**
+   * Custom effect to run on the form
+   */
   injectedEffect?: (form: UseFormReturn<FromSchema<TSchema>>) => void;
 };
 
@@ -54,15 +60,16 @@ export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
   form,
   schema,
   dependentFields,
+  injectedErrors,
   injectedEffect,
 }: FormCrossFieldZodValidationParams<TSchema>) => {
   type Inputs = FromSchema<TSchema>;
 
   const values = useWatch({ control: form.control });
 
-  useEffect(() => {
-    injectedEffect?.(form);
+  console.log("INJECTED ERRORS", injectedErrors);
 
+  useEffect(() => {
     if (dependentFields.length > 0) {
       schema.parseAsync(values).catch((error?: ZodError) =>
         error?.issues.forEach(({ code, message, path }) => {
@@ -78,5 +85,13 @@ export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
         }),
       );
     }
-  }, [schema, form, values, dependentFields, injectedEffect]);
+
+    if (injectedErrors !== undefined) {
+      Object.entries(injectedErrors).forEach(([field, error]) =>
+        form.setError(field as Path<Inputs>, error as ErrorOption),
+      );
+    }
+
+    injectedEffect?.(form);
+  }, [schema, form, values, dependentFields, injectedEffect, injectedErrors]);
 };

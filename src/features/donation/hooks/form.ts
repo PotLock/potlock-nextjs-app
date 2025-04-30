@@ -1,14 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Big } from "big.js";
-import { type ErrorOption, SubmitHandler, useWatch } from "react-hook-form";
-import { isNonNullish } from "remeda";
+import { type ErrorOption, SubmitHandler, type UseFormReturn, useWatch } from "react-hook-form";
+import { entries, isNonNullish } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
-import { indivisibleUnitsToFloat, safePositiveNumber } from "@/common/lib";
+import {
+  floatToIndivisible,
+  indivisibleUnitsToFloat,
+  safePositiveNumber,
+  safePositiveNumberOrZero,
+} from "@/common/lib";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
@@ -91,9 +96,11 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     ],
   );
 
-  const [injectedErrors, setInjectedErrors] = useState<Record<keyof DonationInputs, ErrorOption>[]>(
-    [],
-  );
+  const [customErrors, setCustomErrors] = useState<
+    Partial<Record<keyof DonationInputs, ErrorOption>>
+  >({});
+
+  console.log("CUSTOM ERRORS", customErrors);
 
   const { form: self } = useEnhancedForm({
     schema: donationSchema,
@@ -102,12 +109,17 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     defaultValues,
     resetOptions: { keepDirtyValues: false },
     followDefaultValues: true,
+    injectedErrors: customErrors,
   });
 
   //! For internal use only!
   const values = useWatch({ control: self.control });
-  const parsedAmount = useMemo(() => safePositiveNumber.parse(values.amount), [values.amount]);
   const isFtDonation = (values.tokenId ?? NATIVE_TOKEN_ID) !== NATIVE_TOKEN_ID;
+
+  const parsedAmount = useMemo(
+    () => safePositiveNumberOrZero.parse(values.amount),
+    [values.amount],
+  );
 
   const isSingleRecipientPotDonation =
     isSingleRecipientDonation &&
@@ -115,6 +127,9 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     values.potAccountId !== undefined;
 
   const { data: token } = useToken({ tokenId: values.tokenId ?? NATIVE_TOKEN_ID });
+
+  console.log("TOKEN", token);
+  console.log("tokenId", values.tokenId === NATIVE_TOKEN_ID);
 
   const { data: pot } = indexer.usePot({
     enabled: isGroupPotDonation || isSingleRecipientPotDonation,
@@ -188,23 +203,29 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   //* Handle complex amount validation
   useEffect(() => {
     if (viewer.hasWalletReady && values.amount !== undefined) {
-      if (token?.balance?.lt(totalAmountFloat)) {
-        self.setError("amount", { message: DONATION_INSUFFICIENT_BALANCE_ERROR });
+      console.log("BALANCE", token?.balance?.toNumber());
+
+      if (
+        token?.balance !== undefined &&
+        token.balance.lt(floatToIndivisible(totalAmountFloat, token.metadata.decimals))
+      ) {
+        setCustomErrors({ amount: { message: DONATION_INSUFFICIENT_BALANCE_ERROR } });
       } else if (
         values.allocationStrategy === DonationAllocationStrategyEnum.full &&
         minTotalAmountFloat !== undefined &&
         Big(parsedAmount).lt(minTotalAmountFloat)
       ) {
-        self.setError("amount", {
-          type: "custom",
-          message: `Amount cannot be less than ${minTotalAmountFloat} ${(isFtDonation
-            ? (token?.metadata.symbol ?? "tokens")
-            : NATIVE_TOKEN_ID
-          ).toUpperCase()}.`,
+        setCustomErrors({
+          amount: {
+            message: `Cannot be less than ${minTotalAmountFloat} ${(isFtDonation
+              ? (token?.metadata.symbol ?? "tokens")
+              : NATIVE_TOKEN_ID
+            ).toUpperCase()}.`,
+          },
         });
       } else if (values.allocationStrategy === DonationAllocationStrategyEnum.share) {
         // self.clearErrors("amount");
-      }
+      } else setCustomErrors({});
     }
   }, [
     isFtDonation,
@@ -212,6 +233,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     parsedAmount,
     self,
     token?.balance,
+    token?.metadata.decimals,
     token?.metadata.symbol,
     totalAmountFloat,
     values.allocationStrategy,
@@ -219,7 +241,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     viewer.hasWalletReady,
   ]);
 
-  console.log("AMOUNT ERRORS:", self.formState.errors.amount);
+  console.log("ERRORS", self.formState.errors.amount);
 
   const isDisabled = useMemo(
     () => !self.formState.isValid || self.formState.isSubmitting,

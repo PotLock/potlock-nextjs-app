@@ -1,6 +1,8 @@
 import { Big, BigSource } from "big.js";
 import { number, preprocess } from "zod";
 
+const INVALID_NUMBER_ERROR = "Invalid number.";
+
 export const basisPointsToPercents = (basisPoints: number, totalBasisPoints: number) =>
   basisPoints / (totalBasisPoints / 100);
 
@@ -90,8 +92,18 @@ export const safePositiveNumber = preprocess(
 
   number({ message: "Must be a positive number." })
     .positive("Must be a positive number.")
-    .finite()
-    .safe()
+    .finite(INVALID_NUMBER_ERROR)
+    .safe(INVALID_NUMBER_ERROR)
+    .transform((floatOrInt) => number().safeParse(floatOrInt).data ?? 0),
+);
+
+export const safePositiveNumberOrZero = preprocess(
+  (value) => parseNumber(value as string),
+
+  number({ message: "Must be a positive number or zero." })
+    .finite(INVALID_NUMBER_ERROR)
+    .safe(INVALID_NUMBER_ERROR)
+    .gte(0, "Must be a positive number or zero.")
     .transform((floatOrInt) => number().safeParse(floatOrInt).data ?? 0),
 );
 

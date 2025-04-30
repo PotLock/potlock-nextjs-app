@@ -60,23 +60,14 @@ export const donationSchema = object({
 
   bypassProtocolFee: boolean().default(false),
   bypassChefFee: boolean().default(false),
-})
-  .refine(isDonationMatchingPotSelected, {
-    path: ["potAccountId"],
-    message: "Pot is not selected.",
-  })
-  // TODO: Remove this branch as it'll be handled inside of the form hook (WIP)
-  .refine(isDonationAmountSufficient, {
-    path: ["amount"],
-
-    message: `The minimum donation amount is ${
-      DONATION_DEFAULT_MIN_AMOUNT_FLOAT
-    } ${NATIVE_TOKEN_ID.toUpperCase()}.`,
-  });
+}).refine(isDonationMatchingPotSelected, {
+  path: ["potAccountId"],
+  message: "Pot is not selected.",
+});
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
-export const donationDependentFields: (keyof DonationInputs)[] = ["amount", "potAccountId"];
+export const donationDependentFields: (keyof DonationInputs)[] = ["potAccountId"];
 
 export type DonationSubmitParams = DonationInputs & {
   referrerAccountId?: AccountId;

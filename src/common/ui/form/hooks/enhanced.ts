@@ -15,7 +15,10 @@ export type EnhancedFormProps<TSchema extends ZodSchema> = Omit<
   "resolver"
 > &
   Partial<
-    Pick<FormCrossFieldZodValidationParams<TSchema>, "dependentFields" | "injectedEffect">
+    Pick<
+      FormCrossFieldZodValidationParams<TSchema>,
+      "dependentFields" | "injectedEffect" | "injectedErrors"
+    >
   > & {
     schema: TSchema;
     /**
@@ -83,6 +86,7 @@ export type EnhancedFormBindings = {
 export const useEnhancedForm = <TSchema extends ZodSchema>({
   schema,
   dependentFields = [],
+  injectedErrors,
   injectedEffect,
   defaultValues,
   followDefaultValues = false,
@@ -96,7 +100,13 @@ export const useEnhancedForm = <TSchema extends ZodSchema>({
     defaultValues,
   });
 
-  useFormCrossFieldZodValidation({ form: self, schema, dependentFields, injectedEffect });
+  useFormCrossFieldZodValidation({
+    form: self,
+    schema,
+    dependentFields,
+    injectedErrors,
+    injectedEffect,
+  });
 
   const isUnpopulated =
     !isDeepEqual(
