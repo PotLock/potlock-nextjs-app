@@ -2,8 +2,6 @@ import { useMemo } from "react";
 
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
-import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared/token";
 import { dispatch } from "@/store";
 
 import { DonationGroupAllocation } from "./group-allocation";
@@ -24,26 +22,8 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   closeModal,
   ...props
 }) => {
-  const viewer = useWalletUserSession();
   const { currentStep } = useDonationState();
   const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat } = useDonationForm(props);
-  const [tokenId] = form.watch(["tokenId"]);
-
-  const { data: token } = useToken({
-    tokenId,
-    balanceCheckAccountId: viewer?.accountId,
-  });
-
-  const allocationScreenProps = useMemo(
-    () => ({
-      balanceFloat: token?.balanceFloat ?? 0.0,
-      totalAmountFloat,
-      matchingPots,
-      ...props,
-    }),
-
-    [token?.balanceFloat, matchingPots, props, totalAmountFloat],
-  );
 
   const confirmationScreenProps = useMemo(
     () => ({ form, totalAmountFloat }),
@@ -62,10 +42,10 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
 
     switch (currentStep) {
       case "allocation": {
-        if ("accountId" in allocationScreenProps || "campaignId" in allocationScreenProps) {
-          return <DonationSingleRecipientAllocation form={form} {...allocationScreenProps} />;
-        } else if ("potId" in allocationScreenProps || "listId" in allocationScreenProps) {
-          return <DonationGroupAllocation form={form} {...allocationScreenProps} />;
+        if ("accountId" in props || "campaignId" in props) {
+          return <DonationSingleRecipientAllocation form={form} {...{ matchingPots, ...props }} />;
+        } else if ("potId" in props || "listId" in props) {
+          return <DonationGroupAllocation form={form} {...{ totalAmountFloat, ...props }} />;
         } else return defaultErrorScreen;
       }
 
@@ -78,7 +58,15 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
       default:
         return defaultErrorScreen;
     }
-  }, [allocationScreenProps, confirmationScreenProps, currentStep, form, successScreenProps]);
+  }, [
+    confirmationScreenProps,
+    currentStep,
+    form,
+    matchingPots,
+    props,
+    successScreenProps,
+    totalAmountFloat,
+  ]);
 
   return (
     <Form {...form}>

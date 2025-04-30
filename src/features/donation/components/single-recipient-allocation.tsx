@@ -21,10 +21,11 @@ import {
   RadioGroupItem,
   Skeleton,
 } from "@/common/ui/layout/components";
+import { useWalletUserSession } from "@/common/wallet";
 import { TokenBalance, TokenSelector, useToken } from "@/entities/_shared/token";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
-import { DONATION_ALLOCATION_STRATEGIES, DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
+import { DONATION_ALLOCATION_STRATEGIES } from "../constants";
 import { DonationAllocationInputs } from "../models/schemas";
 import { DonationAllocationStrategyEnum } from "../types";
 
@@ -34,7 +35,9 @@ export type DonationSingleRecipientAllocationProps = Partial<ByAccountId> &
 
 export const DonationSingleRecipientAllocation: React.FC<
   DonationSingleRecipientAllocationProps
-> = ({ form, accountId, balanceFloat, matchingPots, campaignId }) => {
+> = ({ form, accountId, matchingPots, campaignId }) => {
+  const viewer = useWalletUserSession();
+
   const [amount, tokenId, allocationStrategy, potAccountId] = form.watch([
     "amount",
     "tokenId",
@@ -42,7 +45,10 @@ export const DonationSingleRecipientAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const { data: token } = useToken({ tokenId });
+  const { data: token } = useToken({
+    tokenId,
+    balanceCheckAccountId: viewer?.accountId,
+  });
 
   const {
     isLoading: isRecipientDataLoading,
@@ -189,7 +195,7 @@ export const DonationSingleRecipientAllocation: React.FC<
               type="number"
               placeholder="0.00"
               min={0}
-              max={balanceFloat ?? undefined}
+              max={token?.balanceFloat ?? undefined}
               step={0.01}
               appendix={totalAmountUsdValue}
             />

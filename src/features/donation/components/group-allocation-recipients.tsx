@@ -7,9 +7,9 @@ import type { AccountId } from "@/common/types";
 import { CheckboxField, TextField } from "@/common/ui/form/components";
 import { FormField, RuntimeErrorAlert } from "@/common/ui/layout/components";
 import { NearIcon } from "@/common/ui/layout/svg";
-import { AccountListItem } from "@/entities/_shared/account";
+import { useWalletUserSession } from "@/common/wallet";
+import { AccountListItem, useToken } from "@/entities/_shared";
 
-import { DONATION_INSUFFICIENT_BALANCE_ERROR } from "../constants";
 import {
   DonationShareAllocationDeps,
   useDonationEvenShareAllocation,
@@ -24,14 +24,21 @@ export type DonationGroupAllocationRecipientsProps = DonationGroupAllocationKey 
 
 export const DonationGroupAllocationRecipients: React.FC<
   DonationGroupAllocationRecipientsProps
-> = ({ balanceFloat, form, ...props }) => {
+> = ({ form, ...props }) => {
+  const viewer = useWalletUserSession();
   const potId = "potId" in props ? props.potId : undefined;
   const listId = "listId" in props ? props.listId : undefined;
 
-  const [groupAllocationStrategy, groupAllocationPlan] = form.watch([
+  const [tokenId, groupAllocationStrategy, groupAllocationPlan] = form.watch([
+    "tokenId",
     "groupAllocationStrategy",
     "groupAllocationPlan",
   ]);
+
+  const { data: token } = useToken({
+    tokenId,
+    balanceCheckAccountId: viewer?.accountId,
+  });
 
   const { data: potApplications, error: potApplicationsError } = indexer.usePotApplications({
     potId,
@@ -118,7 +125,8 @@ export const DonationGroupAllocationRecipients: React.FC<
                   {...field}
                   type="number"
                   placeholder="0.00"
-                  max={balanceFloat ?? undefined}
+                  min={0}
+                  max={token?.balanceFloat ?? undefined}
                   step={0.01}
                   defaultValue={
                     value.find((recipient) => recipient.account_id === accountId)?.amount

@@ -13,11 +13,10 @@ import {
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { integerCappedPercentage, safePositiveNumber } from "@/common/lib";
 import type { AccountId } from "@/common/types";
-import { TokenAvailableBalance } from "@/entities/_shared/token";
 
-import { DONATION_DEFAULT_MIN_AMOUNT_FLOAT, DONATION_MAX_MESSAGE_LENGTH } from "../constants";
+import { DONATION_MAX_MESSAGE_LENGTH } from "../constants";
 import { DonationAllocationStrategyEnum, DonationGroupAllocationStrategyEnum } from "../types";
-import { isDonationAmountSufficient, isDonationMatchingPotSelected } from "../utils/validation";
+import { isDonationMatchingPotSelected } from "../utils/validation";
 
 export const donationTokenSchema = literal(NATIVE_TOKEN_ID)
   .or(string().min(6))
@@ -79,5 +78,4 @@ export interface WithDonationFormAPI {
   form: DonationFormAPI;
 }
 
-export type DonationAllocationInputs = WithDonationFormAPI &
-  Pick<TokenAvailableBalance, "balanceFloat"> & {};
+export type DonationAllocationInputs = WithDonationFormAPI & {};

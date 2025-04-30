@@ -19,6 +19,7 @@ import {
   ScrollArea,
   Skeleton,
 } from "@/common/ui/layout/components";
+import { useWalletUserSession } from "@/common/wallet";
 import { TokenBalance, TokenSelector, TokenValueSummary, useToken } from "@/entities/_shared/token";
 
 import { DonationGroupAllocationRecipients } from "./group-allocation-recipients";
@@ -37,10 +38,10 @@ export type DonationGroupAllocationProps = WithTotalAmount &
 
 export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = ({
   form,
-  balanceFloat,
   totalAmountFloat,
   ...props
 }) => {
+  const viewer = useWalletUserSession();
   const isPotDonation = "potId" in props;
   const potIdFormParam = isPotDonation ? props.potId : undefined;
   const isListDonation = "listId" in props;
@@ -49,7 +50,10 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
   const [tokenId, groupAllocationStrategy] = form.watch(["tokenId", "groupAllocationStrategy"]);
   const amountError = useMemo(() => form.formState.errors.amount, [form.formState.errors.amount]);
 
-  const { data: token } = useToken({ tokenId });
+  const { data: token } = useToken({
+    tokenId,
+    balanceCheckAccountId: viewer?.accountId,
+  });
 
   const {
     isLoading: isPotLoading,
@@ -166,7 +170,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
                 type="number"
                 placeholder="0.00"
                 min={0}
-                max={balanceFloat ?? undefined}
+                max={token?.balanceFloat ?? undefined}
                 step={0.01}
                 appendix={totalAmountUsdValue}
               />
@@ -192,12 +196,10 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
 
       <ScrollArea className="h-49 w-full">
         <div className="flex w-full flex-col items-center gap-0.5">
-          {isPotDonation && (
-            <DonationGroupAllocationRecipients potId={props.potId} {...{ balanceFloat, form }} />
-          )}
+          {isPotDonation && <DonationGroupAllocationRecipients potId={props.potId} form={form} />}
 
           {isListDonation && (
-            <DonationGroupAllocationRecipients listId={props.listId} {...{ balanceFloat, form }} />
+            <DonationGroupAllocationRecipients listId={props.listId} form={form} />
           )}
         </div>
       </ScrollArea>

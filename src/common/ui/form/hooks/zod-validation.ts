@@ -67,8 +67,6 @@ export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
 
   const values = useWatch({ control: form.control });
 
-  console.log("INJECTED ERRORS", injectedErrors);
-
   useEffect(() => {
     if (dependentFields.length > 0) {
       schema.parseAsync(values).catch((error?: ZodError) =>
