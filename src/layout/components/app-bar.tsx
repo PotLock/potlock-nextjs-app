@@ -20,7 +20,7 @@ const links = [
   {
     label: "Campaigns",
     url: rootPathnames.CAMPAIGNS,
-    disabled: ["testnet", "staging"].includes(NETWORK),
+    disabled: !["testnet", "staging"].includes(NETWORK),
   },
 
   { label: "Feed", url: rootPathnames.FEED, disabled: false },
