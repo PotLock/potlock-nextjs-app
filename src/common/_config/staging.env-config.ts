@@ -19,7 +19,7 @@ export const envConfig: EnvConfig = {
     },
 
     campaigns: {
-      contract: { accountId: "campaigns.staging.potlock.near" },
+      contract: { accountId: "v1.campaigns.staging.potlock.near" },
     },
 
     lists: {
