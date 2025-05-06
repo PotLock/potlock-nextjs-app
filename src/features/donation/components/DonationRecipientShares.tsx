@@ -12,7 +12,7 @@ import {
   useDonationEvenShareAllocation,
   useDonationManualShareAllocation,
 } from "../hooks";
-import { DonationAllocationInputs } from "../models";
+import { DonationAllocationInputs } from "../models/schemas";
 import { DonationGroupAllocationKey } from "../types";
 
 export type DonationRecipientSharesProps = DonationGroupAllocationKey &
@@ -92,7 +92,7 @@ export const DonationRecipientShares: React.FC<DonationRecipientSharesProps> = (
             name="groupAllocationPlan"
             control={form.control}
             render={({ field: { value = [], ...field } }) =>
-              groupAllocationStrategy === "evenly" ? (
+              groupAllocationStrategy === "even" ? (
                 <CheckboxField
                   {...field}
                   checked={value.some(

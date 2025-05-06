@@ -10,7 +10,7 @@ import { useWalletUserSession } from "@/common/wallet";
 import { dispatch } from "@/store";
 
 import { DonationFlow, DonationFlowProps } from "./DonationFlow";
-import { useDonationState } from "../models";
+import { useDonationState } from "../models/store";
 import { DonationAllocationKey } from "../types";
 
 export type DonationModalProps = DonationAllocationKey &

@@ -14,8 +14,7 @@ const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
     balanceCheckAccountId: viewer?.accountId,
   });
 
-  // TODO: render as null if the user has zero balance
-  if (token) {
+  if (token && (token?.balanceFloat ?? 0) > 0) {
     return <SelectFieldOption value={tokenId}>{token.metadata.symbol}</SelectFieldOption>;
   } else return null;
 };
@@ -27,7 +26,7 @@ export type TokenSelectorProps = Pick<
 
 export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
   const { data: tokenAllowlist } = useTokenAllowlist({
-    enabled: FEATURE_REGISTRY.DirectFtDonation.isEnabled,
+    enabled: FEATURE_REGISTRY.FtDonation.isEnabled,
   });
 
   return (

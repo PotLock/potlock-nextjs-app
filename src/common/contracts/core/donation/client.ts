@@ -21,7 +21,7 @@ const contractApi = naxiosInstance.contractApi({
 /**
  * Get donate contract config
  */
-export const getConfig = () => contractApi.view<{}, DirectDonationConfig>("get_config");
+export const get_config = () => contractApi.view<{}, DirectDonationConfig>("get_config");
 
 /**
  * Get direct donations

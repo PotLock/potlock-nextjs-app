@@ -66,13 +66,15 @@ export const envConfig: EnvConfig = {
       isEnabled: true,
     },
 
-    [FeatureId.DirectFtDonation]: {
-      id: FeatureId.DirectFtDonation,
-      name: "Direct FT donation",
+    [FeatureId.FtDonation]: {
+      id: FeatureId.FtDonation,
+      name: "Non-pot FT donations",
+      isEnabled: true,
+    },
 
-      /**
-       * The implementation is not finished yet
-       */
+    [FeatureId.PotFtDonation]: {
+      id: FeatureId.PotFtDonation,
+      name: "Pot FT donations",
       isEnabled: false,
     },
 

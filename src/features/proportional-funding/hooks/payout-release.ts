@@ -25,7 +25,7 @@ export const usePFPayoutRelease = ({ potId, onSuccess, onError }: PFPayoutReleas
           onSuccess();
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           onError?.(error.message);
         })
         .finally(() => setIsSubmitting(false));

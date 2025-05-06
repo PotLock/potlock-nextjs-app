@@ -49,7 +49,7 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           toast({ title: "Image upload error", description: error });
         })
         .finally(() => bgImageStatus.set("ready"));
@@ -66,7 +66,7 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           toast({ title: "Image upload error", description: error });
         })
         .finally(() => profileImageStatus.set("ready"));

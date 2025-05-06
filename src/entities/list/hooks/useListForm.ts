@@ -96,16 +96,14 @@ export const useListForm = () => {
         contractId: LISTS_CONTRACT_ACCOUNT_ID,
       })
       .callMultiple(allTransactions)
-      .then((res) => {
-        console.log(res);
+      .then((_res) => {
+        dispatch.listEditor.updateListModalState({
+          header: "Account(s) Deleted From List Successfully",
+          description,
+          type: ListFormModalType.UNREGISTER,
+        });
       })
       .catch((err) => console.error(err));
-
-    dispatch.listEditor.updateListModalState({
-      header: "Account(s) Deleted From List Successfully",
-      description,
-      type: ListFormModalType.UNREGISTER,
-    });
   };
 
   const handleRemoveAdmin = (accounts: AccountGroupItem[]) => {

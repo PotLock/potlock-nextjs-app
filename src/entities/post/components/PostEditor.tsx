@@ -27,7 +27,7 @@ export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
         content: { text: postText, type: "md" },
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 

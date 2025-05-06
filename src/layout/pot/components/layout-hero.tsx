@@ -197,7 +197,7 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
               <TokenTotalValue
                 textOnly
                 tokenId={NATIVE_TOKEN_ID}
-                amountBigString={pot.matching_pool_balance}
+                amountIndivisible={pot.matching_pool_balance}
               />
             ) : (
               <Skeleton className="w-34 h-5" />
