@@ -72,7 +72,7 @@ export const donate = (args: DirectCampaignDonationArgs, depositAmountYocto: Ind
     callbackUrl: window.location.href,
   });
 
-export const get_campaigns = () => contractApi.view<{}, Campaign[]>("get_campaigns_sorted");
+export const get_campaigns = () => contractApi.view<{}, Campaign[]>("get_campaigns");
 
 export type GetCampaignsByOwnerArgs = {
   owner_id: AccountId;

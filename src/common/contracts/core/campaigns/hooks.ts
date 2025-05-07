@@ -6,7 +6,7 @@ import type { ByAccountId, ByCampaignId, ConditionalActivation } from "@/common/
 import * as contractClient from "./client";
 
 export const useCampaigns = ({ enabled = true }: ConditionalActivation | undefined = {}) =>
-  useSWR(["get_campaigns_sorted"], () =>
+  useSWR(["get_campaigns"], () =>
     !enabled || !IS_CLIENT ? undefined : contractClient.get_campaigns(),
   );
 
