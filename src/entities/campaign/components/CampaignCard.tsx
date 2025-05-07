@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
@@ -27,7 +27,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
     >
       <Link href={`/campaign/${data.id}/leaderboard`} passHref>
         <div className="relative h-[212px] w-full">
-          <Image
+          <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
             alt=""
             className="h-52 w-full rounded-t-lg object-cover hover:scale-150"
