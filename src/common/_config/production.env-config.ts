@@ -15,7 +15,7 @@ export const envConfig: EnvConfig = {
 
   core: {
     campaigns: {
-      contract: { accountId: "campaigns.staging.potlock.near" },
+      contract: { accountId: "v1.campaigns.staging.potlock.near" },
     },
 
     donation: {
