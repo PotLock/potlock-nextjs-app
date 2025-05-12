@@ -160,7 +160,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       isGroupDonation &&
       values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even
     ) {
-      return values.groupAllocationPlan !== undefined
+      return values.groupAllocationPlan !== undefined && values.groupAllocationPlan.length > 0
         ? parseFloat(
             Big(values.groupAllocationPlan.length)
               .times(minRecipientShareAmountFloat)
@@ -283,9 +283,19 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       //* Addressing group donation scenarios with manually distributed funds
       else if (
         values.allocationStrategy === DonationAllocationStrategyEnum.share &&
-        values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual
+        values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual &&
+        (values.groupAllocationPlan?.some(
+          ({ amount }) => amount !== undefined && amount < minRecipientShareAmountFloat,
+        ) ??
+          false)
       ) {
-        // TODO
+        setCustomErrors({
+          amount: {
+            message: `Each selected recipient must get at least ${
+              minRecipientShareAmountFloat
+            } ${(isFtDonation ? (token?.metadata.symbol ?? "") : NATIVE_TOKEN_ID).toUpperCase()}.`,
+          },
+        });
       }
 
       //* Resetting custom errors
@@ -293,6 +303,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }
   }, [
     isFtDonation,
+    minRecipientShareAmountFloat,
     minTotalAmountFloat,
     parsedAmount,
     self,
@@ -302,11 +313,13 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     totalAmountFloat,
     values.allocationStrategy,
     values.amount,
+    values.groupAllocationPlan,
     values.groupAllocationStrategy,
     viewer.hasWalletReady,
   ]);
 
   console.log("minTotalAmountFloat", minTotalAmountFloat);
+  console.log("groupAllocationPlan", values.groupAllocationPlan);
   console.log("ERRORS", self.formState.errors.amount);
 
   return {
@@ -316,6 +329,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     onSubmit: self.handleSubmit(onSubmit),
     matchingPots,
     minTotalAmountFloat,
+    minRecipientShareAmountFloat,
     // TODO: Likely not needed to be exposed anymore, try using `amount` everywhere
     // TODO: in the consuming code instead and remove this if no issues detected.
     totalAmountFloat,

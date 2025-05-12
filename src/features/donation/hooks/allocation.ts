@@ -1,13 +1,24 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { isNot, isStrictEqual, piped, prop } from "remeda";
+import { Big } from "big.js";
+import { findIndex, isNot, isStrictEqual, piped, prop } from "remeda";
 
 import { deriveShare } from "@/common/lib";
-import { ByAccountId } from "@/common/types";
+import { type AccountId, ByAccountId } from "@/common/types";
 
 import { DonationInputs, WithDonationFormAPI } from "../models/schemas";
 import { DonationGroupAllocationStrategyEnum } from "../types";
+
+export const useGetAllocationPlanIndex = (
+  groupAllocationPlan: DonationInputs["groupAllocationPlan"],
+) =>
+  useCallback(
+    (accountId: AccountId): number =>
+      findIndex(groupAllocationPlan ?? [], piped(prop("account_id"), isStrictEqual(accountId))),
+
+    [groupAllocationPlan],
+  );
 
 export type DonationShareAllocationDeps = WithDonationFormAPI;
 
@@ -42,23 +53,28 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
   }, [form, groupAllocationPlan, groupAllocationStrategy, recipientShareAmount]);
 
   return useCallback(
-    (recipient: ByAccountId) => {
-      const isAssigned = groupAllocationPlan.some(
-        ({ account_id }) => account_id === recipient.accountId,
+    (recipientCandidate: ByAccountId) => {
+      const wasRecipient = groupAllocationPlan.some(
+        ({ account_id }) => account_id === recipientCandidate.accountId,
       );
 
-      return (assign: CheckedState) => {
-        form.setValue(
-          "groupAllocationPlan",
+      return (checkedState: CheckedState) => {
+        const isRecipient = typeof checkedState === "boolean" && checkedState;
 
-          assign
-            ? groupAllocationPlan.concat(isAssigned ? [] : [{ account_id: recipient.accountId }])
-            : groupAllocationPlan.filter(
-                (recipientShare) => recipientShare.account_id !== recipient.accountId,
-              ),
+        if (isRecipient && !wasRecipient) {
+          form.setValue(
+            "groupAllocationPlan",
+            groupAllocationPlan.concat([{ account_id: recipientCandidate.accountId }]),
+          );
+        } else if (!isRecipient && wasRecipient) {
+          form.setValue(
+            "groupAllocationPlan",
 
-          { shouldDirty: true },
-        );
+            groupAllocationPlan.filter(
+              (recipientShare) => recipientShare.account_id !== recipientCandidate.accountId,
+            ),
+          );
+        }
       };
     },
 

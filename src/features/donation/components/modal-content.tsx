@@ -23,7 +23,15 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   ...props
 }) => {
   const { currentStep } = useDonationState();
-  const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat } = useDonationForm(props);
+
+  const {
+    form,
+    matchingPots,
+    isDisabled,
+    onSubmit,
+    minRecipientShareAmountFloat,
+    totalAmountFloat,
+  } = useDonationForm(props);
 
   const confirmationScreenProps = useMemo(
     () => ({ form, totalAmountFloat }),
@@ -45,7 +53,12 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
         if ("accountId" in props || "campaignId" in props) {
           return <DonationSingleRecipientAllocation form={form} {...{ matchingPots, ...props }} />;
         } else if ("potId" in props || "listId" in props) {
-          return <DonationGroupAllocation form={form} {...{ totalAmountFloat, ...props }} />;
+          return (
+            <DonationGroupAllocation
+              form={form}
+              {...{ minRecipientShareAmountFloat, totalAmountFloat, ...props }}
+            />
+          );
         } else return defaultErrorScreen;
       }
 
@@ -63,6 +76,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
     currentStep,
     form,
     matchingPots,
+    minRecipientShareAmountFloat,
     props,
     successScreenProps,
     totalAmountFloat,
