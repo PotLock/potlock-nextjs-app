@@ -70,7 +70,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       recipientAccountId: recipientAccountIdFormParam,
       campaignId: campaignIdFormParam,
       listId: listIdFormParam,
-      potAccountId: matchingPots.at(0)?.account,
+      potAccountId: matchingPots.at(0)?.account ?? groupDonationPotId,
 
       allocationStrategy:
         isSingleRecipientDonation || isCampaignDonation
@@ -78,12 +78,15 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
           : DonationAllocationStrategyEnum.share,
 
       groupAllocationStrategy: DonationGroupAllocationStrategyEnum.even,
+      groupAllocationPlan: isGroupDonation ? [] : undefined,
     }),
 
     [
       campaign?.ftId,
       campaignIdFormParam,
+      groupDonationPotId,
       isCampaignDonation,
+      isGroupDonation,
       isSingleRecipientDonation,
       listIdFormParam,
       matchingPots,
@@ -92,8 +95,8 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   );
 
   const [customErrors, setCustomErrors] = useState<
-    Partial<Record<keyof DonationInputs, ErrorOption>>
-  >({});
+    Partial<Record<keyof DonationInputs, ErrorOption>> | undefined
+  >(undefined);
 
   const { form: self } = useEnhancedForm({
     schema: donationSchema,
@@ -268,7 +271,8 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         Big(parsedAmount).lt(minTotalAmountFloat) &&
         (values.allocationStrategy === DonationAllocationStrategyEnum.full ||
           (values.allocationStrategy === DonationAllocationStrategyEnum.share &&
-            values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even))
+            values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even)) &&
+        customErrors === undefined
       ) {
         setCustomErrors({
           amount: {
@@ -287,7 +291,8 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         (values.groupAllocationPlan?.some(
           ({ amount }) => amount !== undefined && amount < minRecipientShareAmountFloat,
         ) ??
-          false)
+          false) &&
+        customErrors === undefined
       ) {
         setCustomErrors({
           amount: {
@@ -299,9 +304,13 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
       }
 
       //* Resetting custom errors
-      else setCustomErrors({});
+      else if (customErrors !== undefined) {
+        setCustomErrors(undefined);
+        //self.clearErrors("amount");
+      }
     }
   }, [
+    customErrors,
     isFtDonation,
     minRecipientShareAmountFloat,
     minTotalAmountFloat,
@@ -320,7 +329,9 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
 
   console.log("minTotalAmountFloat", minTotalAmountFloat);
   console.log("groupAllocationPlan", values.groupAllocationPlan);
-  console.log("ERRORS", self.formState.errors.amount);
+  console.log("ERRORS", self.formState.errors);
+  console.log("CUSTOM ERRORS", customErrors);
+  console.log("IS VALID", self.formState.isValid);
 
   return {
     form: self,
@@ -329,7 +340,6 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     onSubmit: self.handleSubmit(onSubmit),
     matchingPots,
     minTotalAmountFloat,
-    minRecipientShareAmountFloat,
     // TODO: Likely not needed to be exposed anymore, try using `amount` everywhere
     // TODO: in the consuming code instead and remove this if no issues detected.
     totalAmountFloat,

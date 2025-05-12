@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { Big } from "big.js";
 import { findIndex, isNot, isStrictEqual, piped, prop } from "remeda";
 
 import { deriveShare } from "@/common/lib";
@@ -47,7 +46,7 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
           amount: recipientShareAmount,
         })),
 
-        { shouldDirty: true },
+        { shouldValidate: true },
       );
     }
   }, [form, groupAllocationPlan, groupAllocationStrategy, recipientShareAmount]);
@@ -65,6 +64,7 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
           form.setValue(
             "groupAllocationPlan",
             groupAllocationPlan.concat([{ account_id: recipientCandidate.accountId }]),
+            { shouldValidate: true },
           );
         } else if (!isRecipient && wasRecipient) {
           form.setValue(
@@ -73,6 +73,8 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
             groupAllocationPlan.filter(
               (recipientShare) => recipientShare.account_id !== recipientCandidate.accountId,
             ),
+
+            { shouldValidate: true },
           );
         }
       };
@@ -86,9 +88,9 @@ export const useDonationManualShareAllocation = ({ form }: DonationShareAllocati
   const [groupAllocationPlan = []] = form.watch(["groupAllocationPlan"]);
 
   return useCallback(
-    (recipient: ByAccountId): React.ChangeEventHandler<HTMLInputElement> => {
+    (recipientCandidate: ByAccountId): React.ChangeEventHandler<HTMLInputElement> => {
       const hasAssignedShare = groupAllocationPlan.some(
-        ({ account_id }) => account_id === recipient.accountId,
+        ({ account_id }) => account_id === recipientCandidate.accountId,
       );
 
       return ({ target: { value } }) => {
@@ -100,7 +102,7 @@ export const useDonationManualShareAllocation = ({ form }: DonationShareAllocati
 
             groupAllocationPlan.reduce(
               (updatedShares = [], recipientShare) => {
-                if (recipientShare.account_id === recipient.accountId) {
+                if (recipientShare.account_id === recipientCandidate.accountId) {
                   return recipientShareAmount > 0
                     ? updatedShares.concat([{ ...recipientShare, amount: recipientShareAmount }])
                     : updatedShares;
@@ -115,7 +117,7 @@ export const useDonationManualShareAllocation = ({ form }: DonationShareAllocati
             "groupAllocationPlan",
 
             groupAllocationPlan.concat([
-              { account_id: recipient.accountId, amount: recipientShareAmount },
+              { account_id: recipientCandidate.accountId, amount: recipientShareAmount },
             ]),
           );
         }
