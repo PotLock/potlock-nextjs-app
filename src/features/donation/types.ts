@@ -1,14 +1,16 @@
 import { ByPotId, PotId } from "@/common/api/indexer";
+import type { CampaignDonation } from "@/common/contracts/core/campaigns";
 import type {
   DirectBatchDonationItem,
+  DirectDonation,
   DirectFTBatchDonationItem,
 } from "@/common/contracts/core/donation";
-import type { PotBatchDonationItem } from "@/common/contracts/core/pot";
+import type { PotBatchDonationItem, PotDonation } from "@/common/contracts/core/pot";
 import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
-export type DonationGroupAllocationKey = ByPotId | ByListId | ByCampaignId;
+export type DonationGroupAllocationKey = ByPotId | ByListId;
 
-export type DonationAllocationKey = ByAccountId | DonationGroupAllocationKey;
+export type DonationAllocationKey = ByAccountId | DonationGroupAllocationKey | ByCampaignId;
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
@@ -27,8 +29,8 @@ export type DonationAllocationStrategyOption = {
 };
 
 export enum DonationGroupAllocationStrategyEnum {
-  evenly = "evenly",
-  manually = "manually",
+  even = "even",
+  manual = "manual",
 }
 
 export type DonationGroupAllocationStrategy = keyof typeof DonationGroupAllocationStrategyEnum;
@@ -67,3 +69,7 @@ export type DonationPotBatchCallDraft = {
 };
 
 export type DonationBatchCallDraft = DonationPotBatchCallDraft | DonationDirectBatchCallDraft;
+
+export type SingleRecipientDonationReceipt = DirectDonation | PotDonation | CampaignDonation;
+
+export type GroupDonationReceipts = DirectDonation[] | PotDonation[];

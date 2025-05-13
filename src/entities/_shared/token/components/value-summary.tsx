@@ -4,16 +4,16 @@ import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 
-import { TokenIcon } from "./TokenIcon";
+import { TokenIcon } from "./icons";
 import { useToken } from "../hooks/data";
 
-export type TokenTotalValueProps = ByTokenId &
+export type TokenValueSummaryProps = ByTokenId &
   ({ amountFloat: number } | { amountIndivisible: string }) & {
     textOnly?: boolean;
     classNames?: { root?: string; amount?: string };
   };
 
-export const TokenTotalValue: React.FC<TokenTotalValueProps> = ({
+export const TokenValueSummary: React.FC<TokenValueSummaryProps> = ({
   tokenId,
   textOnly = false,
   classNames,

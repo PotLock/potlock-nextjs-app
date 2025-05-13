@@ -6,13 +6,9 @@ import { Account, Pot } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, PROVIDER_ID_DELIMITER } from "@/common/constants";
 import { PotConfig } from "@/common/contracts/core/pot";
 import { type ContractSourceMetadata, type PotArgs } from "@/common/contracts/core/pot-factory";
-import { floatToYoctoNear, timestamp, yoctoNearToFloat } from "@/common/lib";
+import { feeBasisPointsToPercents, feePercentsToBasisPoints } from "@/common/contracts/core/utils";
+import { floatToYoctoNear, safePositiveNumber, timestamp, yoctoNearToFloat } from "@/common/lib";
 import { PotInputs } from "@/entities/pot";
-import {
-  donationAmount,
-  donationFeeBasisPointsToPercents,
-  donationFeePercentsToBasisPoints,
-} from "@/features/donation";
 
 import { PotSettings } from "../model";
 import { PotConfigurationParameter, PotConfigurationParameterKey } from "../types";
@@ -46,9 +42,9 @@ export const potConfigToPotConfigInputs = ({
 }: PotConfig): Omit<PotInputs, "source_metadata"> => {
   return {
     ...evolve(potConfig, {
-      referral_fee_matching_pool_basis_points: donationFeeBasisPointsToPercents,
-      referral_fee_public_round_basis_points: donationFeeBasisPointsToPercents,
-      chef_fee_basis_points: donationFeeBasisPointsToPercents,
+      referral_fee_matching_pool_basis_points: feeBasisPointsToPercents,
+      referral_fee_public_round_basis_points: feeBasisPointsToPercents,
+      chef_fee_basis_points: feeBasisPointsToPercents,
 
       min_matching_pool_donation_amount: conditional(
         [isNonNullish, yoctoNearToFloat],
@@ -83,16 +79,16 @@ export const potInputsToPotArgs = ({
     },
 
     {
-      referral_fee_matching_pool_basis_points: donationFeePercentsToBasisPoints,
-      referral_fee_public_round_basis_points: donationFeePercentsToBasisPoints,
-      chef_fee_basis_points: donationFeePercentsToBasisPoints,
+      referral_fee_matching_pool_basis_points: feePercentsToBasisPoints,
+      referral_fee_public_round_basis_points: feePercentsToBasisPoints,
+      chef_fee_basis_points: feePercentsToBasisPoints,
       application_start_ms: timestamp.parse,
       application_end_ms: timestamp.parse,
       public_round_start_ms: timestamp.parse,
       public_round_end_ms: timestamp.parse,
 
       min_matching_pool_donation_amount: conditional(
-        [isNonNullish, piped(donationAmount.parse, floatToYoctoNear)],
+        [isNonNullish, piped(safePositiveNumber.parse, floatToYoctoNear)],
         conditional.defaultCase(() => undefined),
       ),
     },
@@ -110,7 +106,7 @@ export const potIndexedFieldToString = (
 
     case "number": {
       if (key.includes("fee")) {
-        return `${donationFeeBasisPointsToPercents(value)} %`;
+        return `${feeBasisPointsToPercents(value)} %`;
       } else return value === 0 ? null : value.toLocaleString();
     }
 

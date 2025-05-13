@@ -14,6 +14,6 @@ export const useSocialProfile = ({
       ? undefined
       : contractClient
           .getSocialProfile({ accountId: account_id })
-          //? Handling `null` response
+          //* Handling `null` response
           .then((response) => response ?? undefined),
   );

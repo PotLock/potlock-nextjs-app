@@ -64,8 +64,7 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
           votes: Array.from(selectedEntries.values()).map((accountId) => [accountId, 1]),
         })
         .then((outcome) => {
-          console.log(outcome);
-
+          // TODO: Implement in-depth outcome analysis instead
           if (outcome) {
             onBulkVoteSuccess();
             selectedEntries.clear();

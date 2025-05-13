@@ -6,12 +6,7 @@ import { FULL_TGAS } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, CampaignId, type IndivisibleUnits } from "@/common/types";
 
-import {
-  Campaign,
-  CampaignDonation,
-  CampaignInputs,
-  DirectCampaignDonationArgs,
-} from "./interfaces";
+import { Campaign, CampaignDonation, CampaignDonationArgs, CampaignInputs } from "./interfaces";
 
 const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
@@ -64,7 +59,7 @@ export const delete_campaign = ({ args }: { args: { campaign_id: CampaignId } })
   });
 };
 
-export const donate = (args: DirectCampaignDonationArgs, depositAmountYocto: IndivisibleUnits) =>
+export const donate = (args: CampaignDonationArgs, depositAmountYocto: IndivisibleUnits) =>
   contractApi.call<{}, CampaignDonation>("donate", {
     args,
     deposit: depositAmountYocto,

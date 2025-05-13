@@ -19,7 +19,7 @@ export const envConfig: EnvConfig = {
     },
 
     campaigns: {
-      contract: { accountId: "campaigns.staging.potlock.near" },
+      contract: { accountId: "v1.campaigns.staging.potlock.near" },
     },
 
     lists: {
@@ -72,6 +72,12 @@ export const envConfig: EnvConfig = {
       id: FeatureId.FtDonation,
       name: "Non-pot FT donations",
       isEnabled: true,
+    },
+
+    [FeatureId.PotFtDonation]: {
+      id: FeatureId.PotFtDonation,
+      name: "Pot FT donations",
+      isEnabled: false,
     },
 
     [FeatureId.DirectNativeTokenDonation]: {
