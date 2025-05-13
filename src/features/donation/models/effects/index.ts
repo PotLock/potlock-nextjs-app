@@ -92,8 +92,11 @@ export const effects = (dispatch: AppDispatcher) => ({
 
                 floatToYoctoNear(amount),
               )
-              .then((result) => dispatch.donation.success(result))
-              .catch((error) => dispatch.donation.failure(error));
+              .then(dispatch.donation.success)
+              .catch((error) => {
+                onError(error);
+                dispatch.donation.failure(error);
+              });
           }
         }
 
@@ -116,7 +119,10 @@ export const effects = (dispatch: AppDispatcher) => ({
                 floatToYoctoNear(amount),
               )
               .then(dispatch.donation.success)
-              .catch((error) => dispatch.donation.failure(error));
+              .catch((error) => {
+                onError(error);
+                dispatch.donation.failure(error);
+              });
           }
         }
       }
@@ -135,17 +141,26 @@ export const effects = (dispatch: AppDispatcher) => ({
 
             floatToYoctoNear(amount),
           )
-          .then((result) => dispatch.donation.success(result))
-          .catch((error) => dispatch.donation.failure(error));
+          .then(dispatch.donation.success)
+          .catch((error) => {
+            onError(error);
+            dispatch.donation.failure(error);
+          });
       }
     } else if (isGroupPotDonation && groupAllocationPlan !== undefined) {
       return void potGroupDonationMulticall({ ...inputs, potContractAccountId: params.potId })
         .then(dispatch.donation.success)
-        .catch(dispatch.donation.failure);
+        .catch((error) => {
+          onError(error);
+          dispatch.donation.failure(error);
+        });
     } else if (isListDonation && groupAllocationPlan !== undefined) {
       return void listDonationMulticall(inputs)
         .then(dispatch.donation.success)
-        .catch(dispatch.donation.failure);
+        .catch((error) => {
+          onError(error);
+          dispatch.donation.failure(error);
+        });
     } else {
       return void dispatch.donation.failure(new Error("Unable to determine donation type."));
     }
