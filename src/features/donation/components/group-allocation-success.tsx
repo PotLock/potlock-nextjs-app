@@ -221,7 +221,7 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
 
-              <div>
+              <div className="flex gap-2">
                 {recipientAccountIds.map(
                   (
                     recipientAccountId, // TODO: Finish the container limiting the number of displayed accounts

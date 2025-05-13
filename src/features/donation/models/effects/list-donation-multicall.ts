@@ -73,7 +73,7 @@ export const listDonationMulticall = ({
                */
               if (recipientAccountIds.some(decodedReceipt.includes)) {
                 try {
-                  return [JSON.parse(decodedReceipt) as DirectDonation];
+                  return [...acc, JSON.parse(decodedReceipt) as DirectDonation];
                 } catch {
                   return acc;
                 }

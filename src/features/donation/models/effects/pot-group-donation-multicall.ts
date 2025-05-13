@@ -56,37 +56,22 @@ export const potGroupDonationMulticall = ({
       ),
     )
     .then((finalExecutionOutcomes = undefined) => {
-      console.log("finalExecutionOutcomes", finalExecutionOutcomes);
-
       const receipts: PotDonation[] =
-        finalExecutionOutcomes
-          ?.at(-1)
-          ?.receipts_outcome.filter(
-            ({ outcome: { executor_id, status } }) =>
-              executor_id === potContractAccountId &&
-              "SuccessValue" in (status as ExecutionStatus) &&
-              typeof (status as ExecutionStatus).SuccessValue === "string",
-          )
-          .reduce(
-            (acc, { outcome }) => {
-              const decodedReceipt = atob(
-                (outcome as InformativeSuccessfulExecutionOutcome).status.SuccessValue,
-              );
+        finalExecutionOutcomes?.reduce(
+          (acc, { status }) => {
+            const decodedReceipt = atob(
+              (status as InformativeSuccessfulExecutionOutcome["status"]).SuccessValue,
+            );
 
-              /**
-               *? Checking for the donation receipt signature
-               */
-              if (recipientAccountIds.some(decodedReceipt.includes)) {
-                try {
-                  return [JSON.parse(decodedReceipt) as PotDonation];
-                } catch {
-                  return acc;
-                }
-              } else return acc;
-            },
+            try {
+              return [...acc, JSON.parse(decodedReceipt) as PotDonation];
+            } catch {
+              return acc;
+            }
+          },
 
-            [] as PotDonation[],
-          ) ?? [];
+          [] as PotDonation[],
+        ) ?? [];
 
       if (receipts.length > 0) {
         return receipts;
