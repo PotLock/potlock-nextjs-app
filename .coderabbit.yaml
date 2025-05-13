@@ -36,7 +36,7 @@ reviews:
     ignore_title_keywords: []
     labels: []
     drafts: false
-    base_branches: []
+    base_branches: ["staging"]
   finishing_touches:
     docstrings:
       enabled: true

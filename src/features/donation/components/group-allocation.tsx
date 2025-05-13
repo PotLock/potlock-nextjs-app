@@ -153,6 +153,9 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
               <TextField
                 label="Amount"
                 {...field}
+                onClick={undefined}
+                onBlur={undefined}
+                onFocus={undefined}
                 labelExtension={<TokenBalance {...{ tokenId }} />}
                 inputExtension={
                   <FormField

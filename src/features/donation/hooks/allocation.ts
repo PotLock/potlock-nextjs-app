@@ -46,7 +46,7 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
           amount: recipientShareAmount,
         })),
 
-        { shouldValidate: true },
+        { shouldValidate: true, shouldDirty: true },
       );
     }
   }, [form, groupAllocationPlan, groupAllocationStrategy, recipientShareAmount]);
@@ -64,7 +64,7 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
           form.setValue(
             "groupAllocationPlan",
             groupAllocationPlan.concat([{ account_id: recipientCandidate.accountId }]),
-            { shouldValidate: true },
+            { shouldValidate: true, shouldDirty: true },
           );
         } else if (!isRecipient && wasRecipient) {
           form.setValue(
@@ -74,7 +74,7 @@ export const useDonationEvenShareAllocation = ({ form }: DonationShareAllocation
               (recipientShare) => recipientShare.account_id !== recipientCandidate.accountId,
             ),
 
-            { shouldValidate: true },
+            { shouldValidate: true, shouldDirty: true },
           );
         }
       };
@@ -111,6 +111,8 @@ export const useDonationManualShareAllocation = ({ form }: DonationShareAllocati
 
               [] as DonationInputs["groupAllocationPlan"],
             ),
+
+            { shouldValidate: true, shouldDirty: true },
           );
         } else if (recipientShareAmount > 0) {
           form.setValue(
@@ -119,6 +121,8 @@ export const useDonationManualShareAllocation = ({ form }: DonationShareAllocati
             groupAllocationPlan.concat([
               { account_id: recipientCandidate.accountId, amount: recipientShareAmount },
             ]),
+
+            { shouldValidate: true, shouldDirty: true },
           );
         }
       };
