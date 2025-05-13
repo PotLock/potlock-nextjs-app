@@ -98,7 +98,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
             )}
 
             <Button
-              type="button"
+              type={currentStep === "confirmation" ? "submit" : "button"}
               variant="brand-filled"
               onClick={currentStep === "confirmation" ? onSubmit : dispatch.donation.nextStep}
               disabled={isDisabled}
