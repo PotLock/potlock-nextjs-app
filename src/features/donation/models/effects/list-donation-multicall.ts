@@ -54,34 +54,21 @@ export const listDonationMulticall = ({
       console.log("finalExecutionOutcomes", finalExecutionOutcomes);
 
       const receipts: DirectDonation[] =
-        finalExecutionOutcomes
-          ?.at(-1)
-          ?.receipts_outcome.filter(
-            ({ outcome: { executor_id, status } }) =>
-              executor_id === DONATION_CONTRACT_ACCOUNT_ID &&
-              "SuccessValue" in (status as ExecutionStatus) &&
-              typeof (status as ExecutionStatus).SuccessValue === "string",
-          )
-          .reduce(
-            (acc, { outcome }) => {
-              const decodedReceipt = atob(
-                (outcome as InformativeSuccessfulExecutionOutcome).status.SuccessValue,
-              );
+        finalExecutionOutcomes?.reduce(
+          (acc, { status }) => {
+            const decodedReceipt = atob(
+              (status as InformativeSuccessfulExecutionOutcome["status"]).SuccessValue,
+            );
 
-              /**
-               *? Checking for the donation receipt signature
-               */
-              if (recipientAccountIds.some(decodedReceipt.includes)) {
-                try {
-                  return [...acc, JSON.parse(decodedReceipt) as DirectDonation];
-                } catch {
-                  return acc;
-                }
-              } else return acc;
-            },
+            try {
+              return [...acc, JSON.parse(decodedReceipt) as DirectDonation];
+            } catch {
+              return acc;
+            }
+          },
 
-            [] as DirectDonation[],
-          ) ?? [];
+          [] as DirectDonation[],
+        ) ?? [];
 
       if (receipts.length > 0) {
         return receipts;
