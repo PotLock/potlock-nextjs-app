@@ -271,17 +271,18 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         Big(parsedAmount).lt(minTotalAmountFloat) &&
         (values.allocationStrategy === DonationAllocationStrategyEnum.full ||
           (values.allocationStrategy === DonationAllocationStrategyEnum.share &&
-            values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even)) &&
-        customErrors === undefined
+            values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even))
       ) {
-        setCustomErrors({
-          amount: {
-            message: `Cannot be less than ${minTotalAmountFloat} ${(isFtDonation
-              ? (token?.metadata.symbol ?? "")
-              : NATIVE_TOKEN_ID
-            ).toUpperCase()}.`,
-          },
-        });
+        if (customErrors?.amount === undefined) {
+          setCustomErrors({
+            amount: {
+              message: `Cannot be less than ${minTotalAmountFloat} ${(isFtDonation
+                ? (token?.metadata.symbol ?? "")
+                : NATIVE_TOKEN_ID
+              ).toUpperCase()}.`,
+            },
+          });
+        }
       }
 
       //* Addressing group donation scenarios with manually distributed funds
@@ -291,22 +292,23 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         (values.groupAllocationPlan?.some(
           ({ amount }) => amount !== undefined && amount < minRecipientShareAmountFloat,
         ) ??
-          false) &&
-        customErrors === undefined
+          false)
       ) {
-        setCustomErrors({
-          amount: {
-            message: `Each selected recipient must get at least ${
-              minRecipientShareAmountFloat
-            } ${(isFtDonation ? (token?.metadata.symbol ?? "") : NATIVE_TOKEN_ID).toUpperCase()}.`,
-          },
-        });
+        if (customErrors?.amount === undefined) {
+          setCustomErrors({
+            amount: {
+              message: `Each selected recipient must get at least ${
+                minRecipientShareAmountFloat
+              } ${(isFtDonation ? (token?.metadata.symbol ?? "") : NATIVE_TOKEN_ID).toUpperCase()}.`,
+            },
+          });
+        }
       }
 
-      //* Resetting custom errors
+      //* Resetting amount errors
       else if (customErrors !== undefined) {
         setCustomErrors(undefined);
-        //self.clearErrors("amount");
+        self.clearErrors("amount");
       }
     }
   }, [
