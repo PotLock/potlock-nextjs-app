@@ -86,7 +86,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
 
   return (
     <Form {...form}>
-      <form un-flex="~ col" un-h="full" {...{ onSubmit }}>
+      <form className="flex h-full flex-col" {...{ onSubmit }}>
         {currentScreen}
 
         {currentStep !== "success" && (
@@ -98,7 +98,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
             )}
 
             <Button
-              type={currentStep === "confirmation" ? "submit" : "button"}
+              type="button"
               variant="brand-filled"
               onClick={currentStep === "confirmation" ? onSubmit : dispatch.donation.nextStep}
               disabled={isDisabled}

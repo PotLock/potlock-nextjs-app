@@ -178,6 +178,9 @@ export const DonationSingleRecipientAllocation: React.FC<
             <TextField
               label="Amount"
               {...field}
+              onClick={undefined}
+              onBlur={undefined}
+              onFocus={undefined}
               labelExtension={<TokenBalance {...{ tokenId }} />}
               inputExtension={
                 <FormField
