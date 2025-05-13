@@ -65,9 +65,6 @@ export const ListCard = ({
     [dataForList?.owner],
   );
 
-  const NO_IMAGE =
-    "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
-
   return (
     <div
       onClick={handleRoute}
