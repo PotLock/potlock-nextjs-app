@@ -217,27 +217,43 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
         {isLoading || recipientAccountIds === null ? (
           <Skeleton className="w-49 h-5" />
         ) : (
-          <p className="m-0 flex flex-col gap-1">
-            <div className="flex gap-1">
-              <span className="prose">{"has been donated to"}</span>
+          <p className="m-0 flex flex-col items-center gap-2">
+            {recipientAccountIds.length > 1 && (
+              <span className="prose text-neutral-600">{"has been donated to"}</span>
+            )}
 
-              <div className="flex gap-2">
-                {recipientAccountIds.map(
-                  (
-                    recipientAccountId, // TODO: Finish the container limiting the number of displayed accounts
-                  ) => (
-                    <AccountProfileLink
-                      key={recipientAccountId}
-                      accountId={recipientAccountId}
-                      classNames={{ name: "font-600" }}
-                    />
+            <div className="flex flex-wrap justify-center gap-1">
+              {recipientAccountIds.length === 1 && (
+                <span className="prose text-neutral-600">{"has been donated to"}</span>
+              )}
+
+              <div className="flex gap-1">
+                {recipientAccountIds.map((recipientAccountId, idx) =>
+                  idx >= 2 ? null : (
+                    <span key={recipientAccountId} className="inline-flex">
+                      <AccountProfileLink
+                        accountId={recipientAccountId}
+                        classNames={{ name: "font-600" }}
+                      />
+
+                      {((recipientAccountIds.length === 2 && idx < 1) ||
+                        (recipientAccountIds.length > 2 && idx < 2)) && (
+                        <span className="prose text-neutral-600">{","}</span>
+                      )}
+                    </span>
                   ),
                 )}
               </div>
+
+              {recipientAccountIds.length > 2 && (
+                <span className="prose text-neutral-600">
+                  {`and ${recipientAccountIds.length - 2} others`}
+                </span>
+              )}
             </div>
 
             {list?.name && (
-              <span className="text-center text-neutral-600">{`From ${list.name} List`}</span>
+              <span className="text-center text-neutral-600">{`from ${list.name} List`}</span>
             )}
 
             {pot?.name && (
