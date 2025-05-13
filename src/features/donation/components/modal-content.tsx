@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";

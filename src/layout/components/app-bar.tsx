@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { NETWORK } from "@/common/_config";
+import { ENV_TAG } from "@/common/_config";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
@@ -20,6 +20,7 @@ const links = [
   {
     label: "Campaigns",
     url: rootPathnames.CAMPAIGNS,
+    disabled: ENV_TAG === "production",
   },
 
   { label: "Feed", url: rootPathnames.FEED, disabled: false },
