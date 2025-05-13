@@ -22,28 +22,57 @@ import { TokenValueSummary, useToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
-import { DonationXShareButton } from "./single-recipient-success-share";
+import { DonationSingleRecipientSuccessXShareButton } from "./single-recipient-success-share";
 import { DonationSummary } from "./summary";
 import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
 import { WithDonationFormAPI } from "../models/schemas";
-import { useDonationState } from "../models/store";
+import type { SingleRecipientDonationReceipt } from "../types";
 
-export type DonationSuccessProps = WithDonationFormAPI & {
+export type DonationSingleRecipientSuccessScreenProps = WithDonationFormAPI & {
+  receipt?: SingleRecipientDonationReceipt;
   transactionHash?: string;
   closeModal: VoidFunction;
 };
 
 const staticResultIndicatorClassName = "h-12 w-12 rounded-full shadow-[0px_0px_0px_6px_#FEE6E5]";
 
-export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationSuccessProps) => {
-  const { finalOutcome } = useDonationState();
-  const isResultLoading = finalOutcome === undefined;
-  const isCampaignDonation = finalOutcome !== undefined && "campaign_id" in finalOutcome;
+export const DonationSingleRecipientSuccessScreen: React.FC<
+  DonationSingleRecipientSuccessScreenProps
+> = ({ receipt, form, transactionHash, closeModal }) => {
+  const isResultLoading = receipt === undefined;
+  const isCampaignDonation = receipt !== undefined && "campaign_id" in receipt;
+  const isPotDonation = receipt !== undefined && "matching_pool" in receipt;
+  const isDirectDonation = !(isCampaignDonation || isPotDonation);
   const [potId, recipientAccountIdFormValue] = form.watch(["potAccountId", "recipientAccountId"]);
+
+  const campaignReceipt = isCampaignDonation
+    ? (receipt as CampaignDonation | undefined)
+    : undefined;
+
+  const potReceipt = isPotDonation ? (receipt as PotDonation | undefined) : undefined;
+  const directReceipt = isDirectDonation ? (receipt as DirectDonation | undefined) : undefined;
+
+  const recipientAccountId = useMemo(() => {
+    if (isCampaignDonation) {
+      return campaignReceipt?.recipient_id ?? recipientAccountIdFormValue;
+    } else if (isPotDonation) {
+      return potReceipt?.project_id ?? recipientAccountIdFormValue;
+    } else if (isDirectDonation) {
+      return directReceipt?.recipient_id ?? recipientAccountIdFormValue;
+    } else return recipientAccountIdFormValue;
+  }, [
+    campaignReceipt?.recipient_id,
+    directReceipt?.recipient_id,
+    isCampaignDonation,
+    isDirectDonation,
+    isPotDonation,
+    potReceipt?.project_id,
+    recipientAccountIdFormValue,
+  ]);
 
   const { data: campaign, isLoading: isCampaignLoading } = campaignsContractHooks.useCampaign({
     enabled: isCampaignDonation,
-    campaignId: isCampaignDonation ? finalOutcome?.campaign_id : 0,
+    campaignId: isCampaignDonation ? receipt?.campaign_id : 0,
   });
 
   const { data: pot } = indexer.usePot({
@@ -51,22 +80,13 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
     potId: potId as PotId,
   });
 
-  const recipientAccountId = useMemo(
-    () =>
-      ("recipient_id" in (finalOutcome ?? {})
-        ? (finalOutcome as DirectDonation).recipient_id
-        : (finalOutcome as PotDonation).project_id) ?? recipientAccountIdFormValue,
-
-    [finalOutcome, recipientAccountIdFormValue],
-  );
-
   const tokenId = useMemo(
     () =>
-      "ft_id" in (finalOutcome ?? {})
-        ? ((finalOutcome as DirectDonation | CampaignDonation).ft_id ?? NATIVE_TOKEN_ID)
+      isCampaignDonation || isDirectDonation
+        ? ((receipt as DirectDonation | CampaignDonation).ft_id ?? NATIVE_TOKEN_ID)
         : NATIVE_TOKEN_ID,
 
-    [finalOutcome],
+    [isCampaignDonation, isDirectDonation, receipt],
   );
 
   const { isLoading: isTokenLoading, data: token } = useToken({ tokenId });
@@ -74,24 +94,24 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
   const isLoading = isResultLoading || isCampaignLoading || isTokenLoading;
 
   const totalAmountFloat = indivisibleUnitsToFloat(
-    finalOutcome?.total_amount ?? "0",
+    receipt?.total_amount ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
   const protocolFeeAmountFloat = indivisibleUnitsToFloat(
-    finalOutcome?.protocol_fee ?? "0",
+    receipt?.protocol_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
   const referralFeeFinalAmountFloat = indivisibleUnitsToFloat(
-    finalOutcome?.referrer_fee ?? "0",
+    receipt?.referrer_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
   const allocationBreakdown = useDonationAllocationBreakdown({
     pot,
     totalAmountFloat,
-    referrerAccountId: finalOutcome?.referrer_id ?? undefined,
+    referrerAccountId: receipt?.referrer_id ?? undefined,
     protocolFeeFinalAmount: protocolFeeAmountFloat,
     referralFeeFinalAmount: referralFeeFinalAmountFloat,
     tokenId,
@@ -128,7 +148,9 @@ export const DonationSuccess = ({ form, transactionHash, closeModal }: DonationS
         {isResultLoading ? (
           <Skeleton className="w-41 h-4.5" />
         ) : (
-          recipientAccountId && <DonationXShareButton {...{ recipientAccountId }} />
+          recipientAccountId && (
+            <DonationSingleRecipientSuccessXShareButton {...{ recipientAccountId }} />
+          )
         )}
       </div>
 

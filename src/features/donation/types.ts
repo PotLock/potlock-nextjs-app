@@ -1,9 +1,11 @@
 import { ByPotId, PotId } from "@/common/api/indexer";
+import type { CampaignDonation } from "@/common/contracts/core/campaigns";
 import type {
   DirectBatchDonationItem,
+  DirectDonation,
   DirectFTBatchDonationItem,
 } from "@/common/contracts/core/donation";
-import type { PotBatchDonationItem } from "@/common/contracts/core/pot";
+import type { PotBatchDonationItem, PotDonation } from "@/common/contracts/core/pot";
 import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
 // TODO: Move ByCampaignId to DonationAllocationKey union as it's technically not a group donation
@@ -69,3 +71,7 @@ export type DonationPotBatchCallDraft = {
 };
 
 export type DonationBatchCallDraft = DonationPotBatchCallDraft | DonationDirectBatchCallDraft;
+
+export type SingleRecipientDonationReceipt = DirectDonation | PotDonation | CampaignDonation;
+
+export type GroupDonationReceipts = DirectDonation[] | PotDonation[];

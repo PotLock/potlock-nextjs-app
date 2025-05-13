@@ -140,13 +140,11 @@ export const effects = (dispatch: AppDispatcher) => ({
       }
     } else if (isGroupPotDonation && groupAllocationPlan !== undefined) {
       return void potGroupDonationMulticall({ ...inputs, potContractAccountId: params.potId })
-        // TODO: Handle outcome
-        .then(/* dispatch.donation.success */ console.log)
+        .then(dispatch.donation.success)
         .catch(dispatch.donation.failure);
     } else if (isListDonation && groupAllocationPlan !== undefined) {
       return void listDonationMulticall(inputs)
-        // TODO: Handle outcome
-        .then(/* dispatch.donation.success */ console.log)
+        .then(dispatch.donation.success)
         .catch(dispatch.donation.failure);
     } else {
       return void dispatch.donation.failure(new Error("Unable to determine donation type."));

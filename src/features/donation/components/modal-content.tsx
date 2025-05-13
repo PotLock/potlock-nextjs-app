@@ -7,13 +7,17 @@ import { dispatch } from "@/store";
 import { DonationGroupAllocation } from "./group-allocation";
 import { DonationModalConfirmationScreen } from "./modal-confirmation-screen";
 import { DonationSingleRecipientAllocation } from "./single-recipient-allocation";
-import { DonationSuccess, DonationSuccessProps } from "./single-recipient-success";
+import {
+  DonationSingleRecipientSuccessScreen,
+  DonationSingleRecipientSuccessScreenProps,
+} from "./single-recipient-success";
 import { useDonationForm } from "../hooks/form";
 import { useDonationState } from "../models/store";
-import { DonationAllocationKey } from "../types";
+import { DonationAllocationKey, type GroupDonationReceipts } from "../types";
+import { DonationGroupAllocationSuccessScreen } from "./group-allocation-success";
 
 export type DonationModalContentProps = DonationAllocationKey &
-  Pick<DonationSuccessProps, "transactionHash"> & {
+  Pick<DonationSingleRecipientSuccessScreenProps, "transactionHash"> & {
     closeModal: VoidFunction;
   };
 
@@ -22,9 +26,10 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   closeModal,
   ...props
 }) => {
-  const { currentStep } = useDonationState();
+  const { currentStep, finalOutcome } = useDonationState();
 
-  const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat } = useDonationForm(props);
+  const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat, isGroupDonation } =
+    useDonationForm(props);
 
   const confirmationScreenProps = useMemo(
     () => ({ form, totalAmountFloat }),
@@ -53,8 +58,16 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
       case "confirmation":
         return <DonationModalConfirmationScreen {...confirmationScreenProps} />;
 
-      case "success":
-        return <DonationSuccess {...successScreenProps} />;
+      case "success": {
+        return isGroupDonation ? (
+          <DonationGroupAllocationSuccessScreen
+            {...successScreenProps}
+            receipts={finalOutcome as GroupDonationReceipts}
+          />
+        ) : (
+          <DonationSingleRecipientSuccessScreen {...successScreenProps} />
+        );
+      }
 
       default:
         return defaultErrorScreen;
@@ -62,7 +75,9 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   }, [
     confirmationScreenProps,
     currentStep,
+    finalOutcome,
     form,
+    isGroupDonation,
     matchingPots,
     props,
     successScreenProps,

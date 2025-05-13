@@ -314,6 +314,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   }, [
     customErrors,
     isFtDonation,
+    isGroupDonation,
     minRecipientShareAmountFloat,
     minTotalAmountFloat,
     parsedAmount,
@@ -329,12 +330,6 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     viewer.hasWalletReady,
   ]);
 
-  console.log("minTotalAmountFloat", minTotalAmountFloat);
-  console.log("groupAllocationPlan", values.groupAllocationPlan);
-  console.log("ERRORS", self.formState.errors);
-  console.log("CUSTOM ERRORS", customErrors);
-  console.log("IS VALID", self.formState.isValid);
-
   return {
     form: self,
     defaultValues,
@@ -342,6 +337,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     onSubmit: self.handleSubmit(onSubmit),
     matchingPots,
     minTotalAmountFloat,
+    isGroupDonation,
     // TODO: Likely not needed to be exposed anymore, try using `amount` everywhere
     // TODO: in the consuming code instead and remove this if no issues detected.
     totalAmountFloat,

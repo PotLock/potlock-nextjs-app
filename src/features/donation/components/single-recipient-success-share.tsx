@@ -15,13 +15,13 @@ import { useWalletUserSession } from "@/common/wallet";
 import { useAccountSocialProfile } from "@/entities/_shared";
 import { rootPathnames } from "@/pathnames";
 
-export type DonationXShareButtonProps = {
+export type DonationSingleRecipientSuccessXShareButtonProps = {
   recipientAccountId: AccountId;
 };
 
-export const DonationXShareButton: React.FC<DonationXShareButtonProps> = ({
-  recipientAccountId,
-}) => {
+export const DonationSingleRecipientSuccessXShareButton: React.FC<
+  DonationSingleRecipientSuccessXShareButtonProps
+> = ({ recipientAccountId }) => {
   const viewer = useWalletUserSession();
 
   const { isLoading: isRecipientSocialProfileLoading, profile: recipientSocialProfile } =
