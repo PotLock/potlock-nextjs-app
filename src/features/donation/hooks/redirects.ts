@@ -5,7 +5,7 @@ import { useModal } from "@ebay/nice-modal-react";
 import { useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
-import { DonationModal } from "../components/DonationModal";
+import { DonationModal } from "../components/modal";
 
 export const useDonationSuccessWalletRedirect = () => {
   const donationModal = useModal(DonationModal);

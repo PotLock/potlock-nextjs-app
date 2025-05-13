@@ -8,11 +8,11 @@ import { infer as FromSchema } from "zod";
 import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/common/_config";
 import { ByPotId, type PotId } from "@/common/api/indexer";
 import { PotConfig, potContractHooks } from "@/common/contracts/core/pot";
+import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { daysFloatToMilliseconds } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { donationFeeBasisPointsToPercents } from "@/features/donation";
 import { rootPathnames } from "@/pathnames";
 import { dispatch, useCoreState } from "@/store";
 
@@ -62,8 +62,8 @@ export const usePotConfigurationEditorForm = ({
 
       owner: viewer.accountId,
       max_projects: 25,
-      referral_fee_matching_pool_basis_points: donationFeeBasisPointsToPercents(100),
-      referral_fee_public_round_basis_points: donationFeeBasisPointsToPercents(100),
+      referral_fee_matching_pool_basis_points: feeBasisPointsToPercents(100),
+      referral_fee_public_round_basis_points: feeBasisPointsToPercents(100),
 
       application_start_ms: Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(1),
       application_end_ms: Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(15),
@@ -74,7 +74,7 @@ export const usePotConfigurationEditorForm = ({
       public_round_end_ms:
         Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(29) + 60000,
 
-      chef_fee_basis_points: donationFeeBasisPointsToPercents(100),
+      chef_fee_basis_points: feeBasisPointsToPercents(100),
       isPgRegistrationRequired: true,
       isSybilResistanceEnabled: true,
       ...(potConfig === undefined ? {} : potConfigToPotConfigInputs(potConfig)),

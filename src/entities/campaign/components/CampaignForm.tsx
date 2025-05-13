@@ -63,7 +63,7 @@ export const CampaignForm = ({
         setAvoidFee(existingData.allow_fee_avoidance);
       }
     }
-  }, [isUpdate, existingData]);
+  }, [isUpdate, existingData, form]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;

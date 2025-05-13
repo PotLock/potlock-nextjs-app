@@ -4,7 +4,7 @@ import { type ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 
-import { useDonation } from "../hooks";
+import { useDonationUserFlow } from "../hooks/user-flow";
 
 export const DonateRandomly = () => {
   const {
@@ -18,7 +18,7 @@ export const DonateRandomly = () => {
 
   const randomProjectAccountId = randomPGRegistryEntry?.registrant.id;
 
-  const { openDonationModal: openRandomDonationModal } = useDonation({
+  const { openDonationModal: openRandomDonationModal } = useDonationUserFlow({
     accountId: randomProjectAccountId ?? "noop",
   });
 
@@ -41,7 +41,7 @@ export const DonateRandomly = () => {
 export type DonateToAccountButtonProps = ByAccountId & {};
 
 export const DonateToAccountButton: React.FC<DonateToAccountButtonProps> = ({ accountId }) => {
-  const { openDonationModal } = useDonation({ accountId });
+  const { openDonationModal } = useDonationUserFlow({ accountId });
 
   return (
     <Button className="w-full" variant="standard-outline" onClick={openDonationModal}>
@@ -53,7 +53,7 @@ export const DonateToAccountButton: React.FC<DonateToAccountButtonProps> = ({ ac
 export type DonateToPotProjectsProps = ByPotId & {};
 
 export const DonateToPotProjects: React.FC<DonateToPotProjectsProps> = ({ potId }) => {
-  const { openDonationModal } = useDonation({ potId });
+  const { openDonationModal } = useDonationUserFlow({ potId });
 
   return <Button onClick={openDonationModal}>{"Donate to Projects"}</Button>;
 };
@@ -61,7 +61,7 @@ export const DonateToPotProjects: React.FC<DonateToPotProjectsProps> = ({ potId 
 export type DonateToListProjectsProps = ByListId & {};
 
 export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({ listId }) => {
-  const { openDonationModal } = useDonation({ listId });
+  const { openDonationModal } = useDonationUserFlow({ listId });
 
   return <Button onClick={openDonationModal}>{"Donate to list"}</Button>;
 };
@@ -78,7 +78,7 @@ export const DonateToCampaignProjects: React.FC<DonationToCampaignProjectsProps>
   disabled,
   variant,
 }) => {
-  const { openDonationModal } = useDonation({ campaignId });
+  const { openDonationModal } = useDonationUserFlow({ campaignId });
   return (
     <Button
       variant={variant ?? "brand-filled"}

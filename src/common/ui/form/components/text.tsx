@@ -18,7 +18,6 @@ export type TextFieldProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "
   inputExtension?: React.ReactNode;
   appendix?: React.ReactNode;
   hint?: string;
-  customErrorMessage?: string | null;
 
   classNames?: {
     root?: string;
@@ -28,22 +27,7 @@ export type TextFieldProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "
 };
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
-  (
-    {
-      disabled,
-      label,
-      labelExtension,
-      inputExtension = null,
-      appendix,
-      hint,
-      customErrorMessage,
-      classNames,
-      ...props
-    },
-
-    ref,
-  ) => {
-    const fieldProps = { disabled, ref, ...props };
+  ({ label, labelExtension, inputExtension = null, appendix, hint, classNames, ...props }, ref) => {
     const { required } = props;
 
     const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback(
@@ -51,12 +35,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         if (props.type === "number") {
           const isCommaDecimalSeparator = getDecimalSeparator() === ",";
 
-          // Disallow dot if decimal separator is comma
+          //* Disallow dot if decimal separator is comma
           if (isCommaDecimalSeparator && event.key === ".") {
             event.preventDefault();
           }
 
-          // Disallow comma if decimal separator is dot
+          //* Disallow comma if decimal separator is dot
           if (!isCommaDecimalSeparator && event.key === ",") {
             event.preventDefault();
           }
@@ -130,9 +114,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       [appendix],
     );
 
+    // TODO: Move FormField wrapper from target parent layouts to here
     return (
-      // TODO: Move FormField wrapper from target parent layouts to here
-
       <FormItem className={classNames?.root}>
         {labelElement}
 
@@ -150,8 +133,6 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
           <FormControl>
             <input
-              {...fieldProps}
-              onKeyDown={handleKeyDown}
               className={cn(
                 "placeholder-text-muted-foreground h-10 w-full rounded-md border-none px-3 py-2.5",
 
@@ -165,6 +146,9 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
                     inputExtensionElement !== null && appendixElement !== null,
                 },
               )}
+              ref={ref}
+              {...props}
+              onKeyDown={handleKeyDown}
             />
           </FormControl>
 
@@ -172,7 +156,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         </div>
 
         {hint && <FormDescription>{hint}</FormDescription>}
-        <FormMessage>{customErrorMessage}</FormMessage>
+        <FormMessage />
       </FormItem>
     );
   },

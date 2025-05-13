@@ -6,11 +6,11 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema } from "zod";
 
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
+import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
 import { floatToYoctoNear, parseNumber } from "@/common/lib";
 import { CampaignId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { donationFeePercentsToBasisPoints } from "@/features/donation";
 import { dispatch } from "@/store";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
@@ -168,14 +168,10 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           allow_fee_avoidance: values.allow_fee_avoidance,
         }),
         ...(values?.referral_fee_basis_points && {
-          referral_fee_basis_points: donationFeePercentsToBasisPoints(
-            values.referral_fee_basis_points,
-          ),
+          referral_fee_basis_points: feePercentsToBasisPoints(values.referral_fee_basis_points),
         }),
         ...(values?.creator_fee_basis_points && {
-          creator_fee_basis_points: donationFeePercentsToBasisPoints(
-            values.creator_fee_basis_points,
-          ),
+          creator_fee_basis_points: feePercentsToBasisPoints(values.creator_fee_basis_points),
         }),
         ...(values.start_ms &&
           !campaignId &&
