@@ -8,11 +8,9 @@ import type {
 import type { PotBatchDonationItem, PotDonation } from "@/common/contracts/core/pot";
 import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 
-// TODO: Move ByCampaignId to DonationAllocationKey union as it's technically not a group donation
-//!      And don't forget to ensure all type consumers are properly aligned with the change!
-export type DonationGroupAllocationKey = ByPotId | ByListId | ByCampaignId;
+export type DonationGroupAllocationKey = ByPotId | ByListId;
 
-export type DonationAllocationKey = ByAccountId | DonationGroupAllocationKey;
+export type DonationAllocationKey = ByAccountId | DonationGroupAllocationKey | ByCampaignId;
 
 export type DonationStep = "allocation" | "confirmation" | "success";
 
