@@ -1,7 +1,3 @@
-import type { ExecutionStatus } from "near-api-js/lib/providers/provider";
-import { prop } from "remeda";
-
-import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import type { InformativeSuccessfulExecutionOutcome } from "@/common/blockchains/near-protocol";
 import {
   type DirectBatchDonationItem,
@@ -26,8 +22,6 @@ export const listDonationMulticall = ({
 }: ListDonationMulticallInputs): Promise<DirectDonation[]> => {
   const isDistributionManual =
     groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual;
-
-  const recipientAccountIds = groupAllocationPlan.map(prop("account_id"));
 
   return donationContractClient
     .donateBatch(

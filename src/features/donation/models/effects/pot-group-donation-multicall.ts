@@ -1,6 +1,3 @@
-import type { ExecutionStatus } from "near-api-js/lib/providers/provider";
-import { prop } from "remeda";
-
 import type { InformativeSuccessfulExecutionOutcome } from "@/common/blockchains/near-protocol";
 import { type PotDonation, potContractClient } from "@/common/contracts/core/pot";
 import { floatToYoctoNear } from "@/common/lib";
@@ -28,8 +25,6 @@ export const potGroupDonationMulticall = ({
 }: PotDonationMulticallInputs) => {
   const isDistributionManual =
     groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual;
-
-  const recipientAccountIds = groupAllocationPlan.map(prop("account_id"));
 
   return potContractClient
     .donateBatch(
