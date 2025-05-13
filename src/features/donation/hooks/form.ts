@@ -285,7 +285,6 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
 
         if (customErrors?.amount?.message !== errorMessage || self.formState.isValid) {
           setCustomErrors({ amount: { message: errorMessage } });
-          console.log(minTotalAmountFloat, errorMessage, self.formState.errors, customErrors);
         }
       }
 
