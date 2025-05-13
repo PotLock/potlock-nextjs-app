@@ -15,11 +15,10 @@ export type TextAreaFieldProps = TextareaProps & {
   label: string;
   labelExtension?: React.ReactNode;
   hint?: string;
-  customErrorMessage?: string | null;
 };
 
 export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
-  ({ disabled, label, labelExtension, hint, customErrorMessage, ...props }, ref) => {
+  ({ disabled, label, labelExtension, hint, ...props }, ref) => {
     const fieldProps = { disabled, ref, ...props };
     const { maxLength, value } = props;
     const currentLength = typeof value === "string" ? value?.length : 0;
@@ -51,7 +50,7 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>
         </FormControl>
 
         <div className="flex justify-between">
-          <FormMessage>{customErrorMessage}</FormMessage>
+          <FormMessage />
 
           <FormDescription className="ml-a">
             {hint && <span>{hint}</span>}

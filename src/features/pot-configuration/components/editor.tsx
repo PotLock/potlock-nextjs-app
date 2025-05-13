@@ -26,7 +26,7 @@ import InfoIcon from "@/common/ui/layout/svg/InfoIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountGroup } from "@/entities/_shared/account";
 import { POT_MAX_DESCRIPTION_LENGTH } from "@/entities/pot";
-import { DONATION_MIN_NEAR_AMOUNT } from "@/features/donation";
+import { DONATION_DEFAULT_MIN_AMOUNT_FLOAT } from "@/features/donation";
 
 import { PotConfigurationPreview } from "./preview";
 import { POT_EDITOR_FIELDS } from "../constants";
@@ -312,7 +312,7 @@ export const PotConfigurationEditor: React.FC<PotConfigurationEditorProps> = ({
                         }
                         type="number"
                         placeholder="0.00"
-                        min={DONATION_MIN_NEAR_AMOUNT}
+                        min={DONATION_DEFAULT_MIN_AMOUNT_FLOAT}
                         step={0.01}
                         required
                         classNames={{ root: "lg:w-50% w-full" }}

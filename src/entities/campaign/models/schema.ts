@@ -1,8 +1,8 @@
 import { preprocess, z } from "zod";
 
 import { near } from "@/common/blockchains/near-protocol/client";
-import { futureTimestamp } from "@/common/lib";
-import { donationFee, donationFeeBasisPointsToPercents } from "@/features/donation";
+import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
+import { futureTimestamp, integerCappedPercentage } from "@/common/lib";
 
 import { CAMPAIGN_MAX_FEE_POINTS } from "../utils/constants";
 import { isCampaignFeeValid } from "../utils/validation";
@@ -52,15 +52,15 @@ const baseSchema = z.object({
   end_ms: futureTimestamp.optional().describe("Campaign End Date"),
   owner: z.string().optional(),
   allow_fee_avoidance: z.boolean().optional().default(false),
-  referral_fee_basis_points: donationFee
+  referral_fee_basis_points: integerCappedPercentage
     .optional()
     .refine((value) => value === undefined || isCampaignFeeValid(value), {
-      message: `Cannot exceed ${donationFeeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
+      message: `Cannot exceed ${feeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
     }),
-  creator_fee_basis_points: donationFee
+  creator_fee_basis_points: integerCappedPercentage
     .optional()
     .refine((value) => value === undefined || isCampaignFeeValid(value), {
-      message: `Cannot exceed ${donationFeeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
+      message: `Cannot exceed ${feeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
     }),
 });
 

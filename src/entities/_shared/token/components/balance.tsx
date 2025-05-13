@@ -4,14 +4,11 @@ import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared/token";
 
-export type DonationTokenBalanceProps = ByTokenId & {
+export type TokenBalanceProps = ByTokenId & {
   classNames?: { root?: string; amount?: string };
 };
 
-export const DonationTokenBalance: React.FC<DonationTokenBalanceProps> = ({
-  tokenId,
-  classNames,
-}) => {
+export const TokenBalance: React.FC<TokenBalanceProps> = ({ tokenId, classNames }) => {
   const viewer = useWalletUserSession();
 
   const { data: token, error: tokenError } = useToken({
