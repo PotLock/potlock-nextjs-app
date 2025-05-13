@@ -85,11 +85,21 @@ export const useFormCrossFieldZodValidation = <TSchema extends ZodSchema>({
     }
 
     if (injectedErrors !== undefined) {
-      Object.entries(injectedErrors).forEach(([field, error]) =>
-        form.setError(field as Path<Inputs>, error as ErrorOption),
-      );
+      Object.entries(injectedErrors).forEach(([field, error]) => {
+        if (form.formState.errors[field]?.message !== error?.message) {
+          form.setError(field as Path<Inputs>, error as ErrorOption);
+        }
+      });
     }
 
     injectedEffect?.(form);
-  }, [schema, form, values, dependentFields, injectedEffect, injectedErrors]);
+  }, [
+    schema,
+    form,
+    form.formState.errors,
+    values,
+    dependentFields,
+    injectedEffect,
+    injectedErrors,
+  ]);
 };

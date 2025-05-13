@@ -101,7 +101,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const { form: self } = useEnhancedForm({
     schema: donationSchema,
     dependentFields: donationDependentFields,
-    mode: "all",
+    mode: "onChange",
     defaultValues,
     resetOptions: { keepDirtyValues: false },
     followDefaultValues: true,
@@ -197,8 +197,8 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
           .toNumber()) ?? 0.0;
 
   const isDisabled = useMemo(
-    () => !self.formState.isValid || self.formState.isSubmitting,
-    [self.formState.isSubmitting, self.formState.isValid],
+    () => !self.formState.isValid || customErrors !== undefined || self.formState.isSubmitting,
+    [customErrors, self.formState.isSubmitting, self.formState.isValid],
   );
 
   const onSubmitError = useCallback(
@@ -262,7 +262,12 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     if (viewer.hasWalletReady && values.amount !== undefined) {
       //* Checking for insufficient balance
       if (token?.balance !== undefined && token.balance.lt(totalAmountFloat)) {
-        setCustomErrors({ amount: { message: DONATION_INSUFFICIENT_BALANCE_ERROR } });
+        if (
+          customErrors?.amount?.message !== DONATION_INSUFFICIENT_BALANCE_ERROR ||
+          self.formState.isValid
+        ) {
+          setCustomErrors({ amount: { message: DONATION_INSUFFICIENT_BALANCE_ERROR } });
+        }
       }
 
       //* Addressing single-recipient and group donation scenarios with evenly distributed funds
@@ -273,15 +278,14 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
           (values.allocationStrategy === DonationAllocationStrategyEnum.share &&
             values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.even))
       ) {
-        if (customErrors?.amount === undefined) {
-          setCustomErrors({
-            amount: {
-              message: `Cannot be less than ${minTotalAmountFloat} ${(isFtDonation
-                ? (token?.metadata.symbol ?? "")
-                : NATIVE_TOKEN_ID
-              ).toUpperCase()}.`,
-            },
-          });
+        const errorMessage = `Cannot be less than ${minTotalAmountFloat} ${(isFtDonation
+          ? (token?.metadata.symbol ?? "")
+          : NATIVE_TOKEN_ID
+        ).toUpperCase()}.`;
+
+        if (customErrors?.amount?.message !== errorMessage || self.formState.isValid) {
+          setCustomErrors({ amount: { message: errorMessage } });
+          console.log(minTotalAmountFloat, errorMessage, self.formState.errors, customErrors);
         }
       }
 
@@ -294,14 +298,12 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         ) ??
           false)
       ) {
-        if (customErrors?.amount === undefined) {
-          setCustomErrors({
-            amount: {
-              message: `Each selected recipient must get at least ${
-                minRecipientShareAmountFloat
-              } ${(isFtDonation ? (token?.metadata.symbol ?? "") : NATIVE_TOKEN_ID).toUpperCase()}.`,
-            },
-          });
+        const errorMessage = `Each selected recipient must get at least ${
+          minRecipientShareAmountFloat
+        } ${(isFtDonation ? (token?.metadata.symbol ?? "") : NATIVE_TOKEN_ID).toUpperCase()}.`;
+
+        if (customErrors?.amount?.message !== errorMessage || self.formState.isValid) {
+          setCustomErrors({ amount: { message: errorMessage } });
         }
       }
 
@@ -319,6 +321,8 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     minTotalAmountFloat,
     parsedAmount,
     self,
+    self.formState.errors,
+    self.formState.isValid,
     token?.balance,
     token?.metadata.decimals,
     token?.metadata.symbol,

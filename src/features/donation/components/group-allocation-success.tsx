@@ -219,21 +219,32 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
         ) : (
           <p className="m-0 flex flex-col gap-1">
             <div className="flex gap-1">
-              <span className="prose">{"has been donated to"}</span>
+              <span className="prose text-neutral-600">{"has been donated to"}</span>
 
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 {recipientAccountIds.map(
                   (
                     recipientAccountId, // TODO: Finish the container limiting the number of displayed accounts
+                    idx,
                   ) => (
-                    <AccountProfileLink
-                      key={recipientAccountId}
-                      accountId={recipientAccountId}
-                      classNames={{ name: "font-600" }}
-                    />
+                    <span key={recipientAccountId} className="inline-flex">
+                      <AccountProfileLink
+                        accountId={recipientAccountId}
+                        classNames={{ name: "font-600" }}
+                      />
+
+                      {((recipientAccountIds.length === 2 && idx < 1) ||
+                        (recipientAccountIds.length > 2 && idx < 2)) && <span>{","}</span>}
+                    </span>
                   ),
                 )}
               </div>
+
+              {recipientAccountIds.length > 2 && (
+                <span className="prose text-neutral-600">
+                  {`and ${recipientAccountIds.length - 2} others`}
+                </span>
+              )}
             </div>
 
             {list?.name && (
