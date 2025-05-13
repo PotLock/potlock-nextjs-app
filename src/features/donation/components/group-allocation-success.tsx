@@ -79,8 +79,8 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
   } = useMemo(() => {
     const initialDerivedOutcome = { recipientAccountIds: [], totalAmountBig: Big(0) };
 
-    if (isListDonation) {
-      const intermediateDerivedOutcome = (receipts as DirectDonation[])?.reduce<DerivedOutcome>(
+    if (isListDonation && receipts !== undefined) {
+      const intermediateDerivedOutcome = (receipts as DirectDonation[]).reduce<DerivedOutcome>(
         (acc, receipt: DirectDonation) => ({
           recipientAccountIds: [...acc.recipientAccountIds, receipt.recipient_id],
 
@@ -109,8 +109,8 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         ),
       };
-    } else if (isPotDonation) {
-      const intermediateDerivedOutcome = (receipts as PotDonation[])?.reduce<DerivedOutcome>(
+    } else if (isPotDonation && receipts !== undefined) {
+      const intermediateDerivedOutcome = (receipts as PotDonation[]).reduce<DerivedOutcome>(
         (acc, receipt: PotDonation) => ({
           recipientAccountIds: [...acc.recipientAccountIds, receipt.project_id as AccountId],
 
