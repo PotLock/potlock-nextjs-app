@@ -13,6 +13,7 @@ type CampaignProgressBarProps = {
   minAmount: number;
   endDate?: number;
   isStarted: boolean;
+  startDate: number;
   targetMet: boolean;
   isEscrowBalanceEmpty: boolean;
 };
@@ -25,6 +26,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   isEscrowBalanceEmpty,
   targetMet,
   isStarted,
+  startDate,
 }) => {
   const progressPercentage = Math.min(100, Math.floor(Big(amount).div(target).mul(100).toNumber()));
 
@@ -65,7 +67,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
     if ((targetMet && endDate) || isTimeUp) {
       return endDate ? `ENDED (${getTimePassed(endDate, false)} ago)` : "ENDED";
     } else if (isStarted) {
-      return "NOT STARTED";
+      return `Starts in ${getTimePassed(startDate, false, true)}`;
     } else if (timeLeft) {
       return `${timeLeft} left`;
     } else {

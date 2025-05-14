@@ -55,6 +55,13 @@ export const CampaignForm = ({
         form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
       }
 
+      if (
+        existingData?.start_ms &&
+        existingData?.start_ms > Temporal.Now.instant().epochMilliseconds
+      ) {
+        form.setValue("start_ms", existingData?.start_ms);
+      }
+
       if (existingData?.end_ms) {
         form.setValue("end_ms", existingData?.end_ms);
       }
@@ -63,7 +70,7 @@ export const CampaignForm = ({
         setAvoidFee(existingData.allow_fee_avoidance);
       }
     }
-  }, [isUpdate, existingData, form]);
+  }, [isUpdate, existingData]);
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;

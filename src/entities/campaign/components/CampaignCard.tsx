@@ -53,6 +53,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             <p className="text-[16px]">{data.description ? truncate(data.description, 160) : ""}</p>
           </div>
           <CampaignProgressBar
+            startDate={Number(data?.start_ms)}
             target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}
             minAmount={data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0}
             targetMet={
