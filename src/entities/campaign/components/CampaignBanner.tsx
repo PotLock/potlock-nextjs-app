@@ -121,6 +121,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         <CampaignProgressBar
           target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
           minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
+          startDate={Number(campaign?.start_ms)}
           targetMet={
             !!campaign?.total_raised_amount &&
             yoctoNearToFloat(campaign?.total_raised_amount) >=

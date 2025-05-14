@@ -60,6 +60,7 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
             isStarted={isStarted}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
             amount={data?.total_raised_amount ? yoctoNearToFloat(data?.total_raised_amount) : 0}
+            startDate={data?.start_ms}
             endDate={Number(data?.end_ms)}
           />
           <p className="mt-4 text-start md:h-28">
