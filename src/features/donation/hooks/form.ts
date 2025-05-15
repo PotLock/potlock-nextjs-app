@@ -172,19 +172,12 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         : undefined;
     } else if (isSingleRecipientPotDonation) {
       return minRecipientShareAmountFloat;
-    } else if (isCampaignDonation && token !== undefined) {
-      return isNonNullish(campaign?.min_amount)
-        ? indivisibleUnitsToFloat(campaign.min_amount, token.metadata.decimals, 4)
-        : undefined;
     } else return isFtDonation ? undefined : DONATION_DEFAULT_MIN_AMOUNT_FLOAT;
   }, [
-    campaign?.min_amount,
-    isCampaignDonation,
     isFtDonation,
     isGroupDonation,
     isSingleRecipientPotDonation,
     minRecipientShareAmountFloat,
-    token,
     values.groupAllocationPlan,
     values.groupAllocationStrategy,
   ]);
