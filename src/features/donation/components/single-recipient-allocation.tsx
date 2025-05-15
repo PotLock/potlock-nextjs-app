@@ -194,6 +194,7 @@ export const DonationSingleRecipientAllocation: React.FC<
                   name="tokenId"
                   render={({ field: inputExtension }) => (
                     <TokenSelector
+                      hideZeroBalanceOptions
                       disabled={!isFtSelectorAvailable}
                       defaultValue={inputExtension.value}
                       onValueChange={inputExtension.onChange}
