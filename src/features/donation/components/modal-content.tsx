@@ -13,7 +13,11 @@ import {
 } from "./single-recipient-success";
 import { useDonationForm } from "../hooks/form";
 import { useDonationState } from "../models/store";
-import { DonationAllocationKey, type GroupDonationReceipts } from "../types";
+import {
+  DonationAllocationKey,
+  type GroupDonationReceipts,
+  type SingleRecipientDonationReceipt,
+} from "../types";
 import { DonationGroupAllocationSuccessScreen } from "./group-allocation-success";
 
 export type DonationModalContentProps = DonationAllocationKey &
@@ -65,7 +69,10 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
             receipts={finalOutcome as GroupDonationReceipts}
           />
         ) : (
-          <DonationSingleRecipientSuccessScreen {...successScreenProps} />
+          <DonationSingleRecipientSuccessScreen
+            {...successScreenProps}
+            receipt={finalOutcome as SingleRecipientDonationReceipt}
+          />
         );
       }
 
