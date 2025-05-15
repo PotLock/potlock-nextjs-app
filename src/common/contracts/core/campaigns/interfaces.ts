@@ -25,7 +25,7 @@ export type Campaign = {
   owner: AccountId;
   start_ms: number;
   end_ms?: null | number;
-  ftId?: null | TokenId;
+  ft_id?: null | TokenId;
   target_amount: IndivisibleUnits;
   min_amount?: null | IndivisibleUnits;
   escrow_balance: IndivisibleUnits;

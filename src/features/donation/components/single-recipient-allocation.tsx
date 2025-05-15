@@ -67,8 +67,6 @@ export const DonationSingleRecipientAllocation: React.FC<
     campaignId: campaignId ?? 0,
   });
 
-  console.log(campaign?.ftId);
-
   const isFtSelectorAvailable =
     FEATURE_REGISTRY.FtDonation.isEnabled &&
     (isCampaignDonation ? false : allocationStrategy === DonationAllocationStrategyEnum.full);

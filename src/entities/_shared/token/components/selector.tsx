@@ -31,23 +31,18 @@ const TokenSelectorOption: React.FC<TokenSelectorOptionProps> = ({
     balanceCheckAccountId: showBalance || skipIfZeroBalance ? viewer?.accountId : undefined,
   });
 
-  const isDisplayed = useMemo(() => {
-    if (skipIfZeroBalance) {
-      return (token?.balanceFloat ?? 0) > 0;
-    } else return true;
-  }, [skipIfZeroBalance, token?.balanceFloat]);
+  const isBalancePositive = useMemo(() => (token?.balanceFloat ?? 0) > 0, [token?.balanceFloat]);
 
-  if (token !== undefined && isDisplayed) {
+  if (token !== undefined && (skipIfZeroBalance ? isBalancePositive : true)) {
     return (
-      <SelectFieldOption
-        value={tokenId}
-        style={{ order: (token?.balanceFloat ?? 0) > 0 ? 1 : undefined }}
-      >
+      <SelectFieldOption value={tokenId} style={{ order: isBalancePositive ? 1 : undefined }}>
         <span className="inline-flex gap-2">
           <span>{token.metadata.symbol}</span>
 
-          {showBalance && (
-            <span className="text-muted-foreground">{`(${token.balanceFloat} available)`}</span>
+          {showBalance && token.balanceFloat !== undefined && (
+            <span className="text-muted-foreground selector-option-appendix">
+              {`(${token.balanceFloat} available)`}
+            </span>
           )}
         </span>
       </SelectFieldOption>
@@ -69,10 +64,6 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({
   const { data: tokenAllowlist } = useTokenAllowlist({
     enabled: FEATURE_REGISTRY.FtDonation.isEnabled,
   });
-
-  const selectedOption =
-    ("defaultValue" in props ? props.defaultValue : undefined) ??
-    ("value" in props ? props.value : undefined);
 
   return (
     // TODO: Move FormField wrapper from target parent layouts to here

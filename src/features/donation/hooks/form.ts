@@ -66,7 +66,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       amount: DONATION_DEFAULT_MIN_AMOUNT_FLOAT,
-      tokenId: campaign?.ftId ?? NATIVE_TOKEN_ID,
+      tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID,
       recipientAccountId: recipientAccountIdFormParam,
       campaignId: campaignIdFormParam,
       listId: listIdFormParam,
@@ -82,7 +82,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }),
 
     [
-      campaign?.ftId,
+      campaign?.ft_id,
       campaignIdFormParam,
       groupDonationPotId,
       isCampaignDonation,
@@ -226,8 +226,8 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
 
   //* Ensure the correct token is selected:
   useEffect(() => {
-    if (isCampaignDonation && isNonNullish(campaign?.ftId)) {
-      self.setValue("tokenId", campaign.ftId);
+    if (isCampaignDonation && isNonNullish(campaign?.ft_id) && values.tokenId !== campaign.ft_id) {
+      self.setValue("tokenId", campaign.ft_id);
     } else if (
       (values.allocationStrategy === "full" && values.tokenId === undefined) ||
       (values.allocationStrategy === "share" && values.tokenId === undefined) ||
@@ -237,7 +237,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     ) {
       self.setValue("tokenId", NATIVE_TOKEN_ID);
     }
-  }, [campaign?.ftId, isCampaignDonation, self, values.allocationStrategy, values.tokenId]);
+  }, [campaign?.ft_id, isCampaignDonation, self, values.allocationStrategy, values.tokenId]);
 
   //* Ensure `amount` is populated from `totalAmountFloat` when using manual share allocation:
   useEffect(() => {
