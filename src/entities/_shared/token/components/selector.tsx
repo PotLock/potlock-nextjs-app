@@ -1,12 +1,20 @@
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import type { ByTokenId } from "@/common/types";
-import { SelectField, SelectFieldOption, SelectFieldProps } from "@/common/ui/form/components";
+import {
+  type ControlledSelectFieldProps,
+  SelectField,
+  SelectFieldOption,
+  SelectFieldProps,
+  type UncontrolledSelectFieldProps,
+} from "@/common/ui/form/components";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { useToken, useTokenAllowlist } from "../hooks/data";
 
-const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
+type TokenSelectorOptionProps = ByTokenId & {};
+
+const TokenSelectorOption: React.FC<TokenSelectorOptionProps> = ({ tokenId }) => {
   const viewer = useWalletUserSession();
 
   const { data: token } = useToken({
@@ -14,15 +22,14 @@ const TokenSelectorOption: React.FC<ByTokenId> = ({ tokenId }) => {
     balanceCheckAccountId: viewer?.accountId,
   });
 
+  // TODO: make this optional
   if (token && (token?.balanceFloat ?? 0) > 0) {
     return <SelectFieldOption value={tokenId}>{token.metadata.symbol}</SelectFieldOption>;
   } else return null;
 };
 
-export type TokenSelectorProps = Pick<
-  SelectFieldProps,
-  "disabled" | "defaultValue" | "onValueChange"
-> & {};
+export type TokenSelectorProps = Pick<SelectFieldProps, "disabled"> &
+  (ControlledSelectFieldProps | UncontrolledSelectFieldProps) & {};
 
 export const TokenSelector: React.FC<TokenSelectorProps> = ({ ...props }) => {
   const { data: tokenAllowlist } = useTokenAllowlist({

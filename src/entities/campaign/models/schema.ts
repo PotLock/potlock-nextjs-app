@@ -1,6 +1,7 @@
-import { preprocess, z } from "zod";
+import { literal, preprocess, string, z } from "zod";
 
 import { near } from "@/common/blockchains/near-protocol/client";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 
@@ -52,6 +53,11 @@ export const integerCappedPercentage = preprocess((value) => {
     message: "Fractional percentage is not supported.",
   });
 
+const ftIdSchema = literal(NATIVE_TOKEN_ID)
+  .or(string().min(6))
+  .default(NATIVE_TOKEN_ID)
+  .describe('Either "NEAR" or FT contract account id.');
+
 // --- Base Schema ---
 const baseSchema = z.object({
   name: z
@@ -59,6 +65,7 @@ const baseSchema = z.object({
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must be less than 100 characters"),
   description: z.string().max(250, "Description must be less than 250 characters").optional(),
+  ft_id: ftIdSchema,
   target_amount: positiveNumberParser.describe("Target Amount of the campaign"),
   min_amount: positiveNumberParser.optional().describe("Minimum Amount of the Campaign"),
   max_amount: positiveNumberParser.optional().describe("Maximum Amount of the Campaign"),

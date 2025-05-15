@@ -21,15 +21,13 @@ import { useCampaignForm } from "../hooks/forms";
 export type CampaignBannerProps = ByCampaignId & {};
 
 export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) => {
+  const viewer = useWalletUserSession();
+
   const {
     isLoading: isCampaignLoading,
     data: campaign,
     error: campaignLoadingError,
-  } = campaignsContractHooks.useCampaign({
-    campaignId,
-  });
-
-  const viewer = useWalletUserSession();
+  } = campaignsContractHooks.useCampaign({ campaignId });
 
   const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
     campaignId,

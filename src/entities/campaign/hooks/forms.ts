@@ -5,12 +5,14 @@ import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { infer as FromSchema } from "zod";
 
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
 import { floatToYoctoNear, parseNumber } from "@/common/lib";
 import { CampaignId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
+import { useToken } from "@/entities/_shared";
 import { dispatch } from "@/store";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
@@ -27,14 +29,32 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
   const self = useForm<Values>({
     resolver: zodResolver(schema),
     mode: "all",
+    defaultValues: { ft_id: NATIVE_TOKEN_ID, target_amount: 0.01 },
     resetOptions: { keepDirtyValues: false },
   });
 
+  //! For internal use only!
   const values = useWatch(self);
 
+  const { isLoading: isTokenDataLoading, data: token } = useToken({
+    tokenId: values.ft_id ?? NATIVE_TOKEN_ID,
+  });
+
   const isDisabled = useMemo(
-    () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
-    [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
+    () =>
+      !self.formState.isDirty ||
+      !self.formState.isValid ||
+      self.formState.isSubmitting ||
+      (values.ft_id !== NATIVE_TOKEN_ID && !isTokenDataLoading && token === undefined),
+
+    [
+      isTokenDataLoading,
+      self.formState.isDirty,
+      self.formState.isSubmitting,
+      self.formState.isValid,
+      token,
+      values.ft_id,
+    ],
   );
 
   useEffect(() => {
@@ -151,11 +171,13 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
       });
   };
 
+  // TODO: Use token metadata to convert amounts
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) => {
       const args = {
         description: values.description || "",
         name: values.name || "",
+        ft_id: values.ft_id === NATIVE_TOKEN_ID ? null : values.ft_id,
         target_amount: floatToYoctoNear(values.target_amount ?? 0) as any,
         cover_image_url: values.cover_image_url ?? null,
         ...(values.min_amount && !campaignId
@@ -236,7 +258,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
         });
       }
     },
-    [campaignId, viewer.accountId],
+    [campaignId, router, viewer.accountId],
   );
 
   const onChange = async (field: keyof Values, value: string) => {
