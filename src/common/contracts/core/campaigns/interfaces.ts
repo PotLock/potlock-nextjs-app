@@ -6,9 +6,9 @@ export type CampaignInputs = {
   cover_image_url?: string | null;
   start_ms?: number | string;
   end_ms?: number | string;
-  target_amount: number;
-  min_amount?: number;
-  max_amount?: number;
+  target_amount: IndivisibleUnits;
+  min_amount?: null | IndivisibleUnits;
+  max_amount?: null | IndivisibleUnits;
   recipient?: AccountId;
   owner?: AccountId;
   referral_fee_basis_points?: number;
@@ -28,8 +28,8 @@ export type Campaign = {
   ft_id?: null | TokenId;
   target_amount: IndivisibleUnits;
   min_amount?: null | IndivisibleUnits;
-  escrow_balance: IndivisibleUnits;
   max_amount?: null | IndivisibleUnits;
+  escrow_balance: IndivisibleUnits;
   referral_fee_basis_points?: null | number;
   creator_fee_basis_points?: null | number;
   allow_fee_avoidance?: boolean;
