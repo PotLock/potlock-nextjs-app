@@ -26,7 +26,7 @@ import { TokenValueSummary } from "@/entities/_shared/token";
 import { DonationSummary } from "./summary";
 import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
 import { WithDonationFormAPI } from "../models/schemas";
-import { WithTotalAmount } from "../types";
+import { DonationAllocationStrategyEnum, WithTotalAmount } from "../types";
 import { DonationGroupAllocationBreakdown } from "./group-allocation-breakdown";
 
 export type DonationModalConfirmationScreenProps = WithTotalAmount & WithDonationFormAPI & {};
@@ -38,15 +38,15 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
   const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
 
-  const [tokenId, recipientAccountId, potAccountId, bypassProtocolFee, bypassChefFee] = form.watch([
+  const [tokenId, potAccountId, bypassProtocolFee, bypassChefFee, allocationStrategy] = form.watch([
     "tokenId",
-    "recipientAccountId",
     "potAccountId",
     "bypassProtocolFee",
     "bypassChefFee",
+    "allocationStrategy",
   ]);
 
-  const isSingleProjectDonation = typeof recipientAccountId === "string";
+  const isSingleRecipientDonation = allocationStrategy === DonationAllocationStrategyEnum.full;
 
   const { data: pot } = indexer.usePot({
     enabled: potAccountId !== undefined,
@@ -89,7 +89,7 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
       </DialogHeader>
 
       <DialogDescription>
-        {isSingleProjectDonation ? (
+        {isSingleRecipientDonation ? (
           totalAmount
         ) : (
           <Accordion collapsible type="single">
@@ -154,7 +154,7 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
           )}
         </div>
 
-        {isSingleProjectDonation && (
+        {isSingleRecipientDonation && (
           <FormField
             control={form.control}
             name="message"
