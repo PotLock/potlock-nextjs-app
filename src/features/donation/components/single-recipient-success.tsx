@@ -166,7 +166,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
         {isLoading || recipientAccountId === undefined ? (
           <Skeleton className="w-49 h-5" />
         ) : (
-          <p className="m-0 flex flex-col gap-1">
+          <p className="m-0 flex flex-col items-center gap-1">
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
 
