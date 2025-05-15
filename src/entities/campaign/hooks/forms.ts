@@ -174,8 +174,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           creator_fee_basis_points: feePercentsToBasisPoints(values.creator_fee_basis_points),
         }),
         ...(values.start_ms &&
-          !campaignId &&
-          timeToMilliseconds(values.start_ms) >= Date.now() && {
+          timeToMilliseconds(values.start_ms) > Date.now() && {
             start_ms: timeToMilliseconds(values.start_ms),
           }),
         ...(values.end_ms && {

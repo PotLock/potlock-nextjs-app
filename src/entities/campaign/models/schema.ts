@@ -2,7 +2,7 @@ import { preprocess, z } from "zod";
 
 import { near } from "@/common/blockchains/near-protocol/client";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
-import { futureTimestamp, integerCappedPercentage } from "@/common/lib";
+import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 
 import { CAMPAIGN_MAX_FEE_POINTS } from "../utils/constants";
 import { isCampaignFeeValid } from "../utils/validation";
@@ -37,6 +37,20 @@ const positiveNumberParser = preprocess(
     .safe()
     .optional(), // Make the final type optional
 );
+
+export const integerCappedPercentage = preprocess((value) => {
+  if (value === "" || value === null || value === undefined) {
+    return undefined;
+  }
+
+  return typeof value === "string" ? safePositiveNumber.parse(value) : value;
+}, safePositiveNumber.optional())
+  .refine((percents) => percents === undefined || percents < 100, {
+    message: "Must be less than 100%.",
+  })
+  .refine((percents) => percents === undefined || Number.isInteger(percents), {
+    message: "Fractional percentage is not supported.",
+  });
 
 // --- Base Schema ---
 const baseSchema = z.object({

@@ -1,9 +1,11 @@
 import { useState } from "react";
 
 import Link from "next/link";
+import { Temporal } from "temporal-polyfill";
 
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
+import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
 import { Skeleton, Spinner } from "@/common/ui/layout/components";
 import { NearIcon } from "@/common/ui/layout/svg";
@@ -17,7 +19,9 @@ const formatTime = (timestamp: number) =>
     year: "numeric",
     month: "long",
     day: "numeric",
-    timeZone: "UTC",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
   });
 
 const CampaignSettingsBarCard = ({
@@ -101,17 +105,19 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
           </div>
         </div>
         <div className="flex flex-col-reverse gap-2 md:items-center md:gap-4">
-          {viewer.isSignedIn && viewer.accountId === campaign?.owner && (
-            <div>
-              <p
-                onClick={() => setOpenEditCampaign(!openEditCampaign)}
-                role="button"
-                className="text-red-500"
-              >
-                {openEditCampaign ? "Show Campaign Details" : "Edit Campaign"}
-              </p>
-            </div>
-          )}
+          {viewer.isSignedIn &&
+            viewer.accountId === campaign?.owner &&
+            (!campaign?.end_ms || Temporal.Now.instant().epochMilliseconds < campaign.end_ms) && (
+              <div>
+                <p
+                  onClick={() => setOpenEditCampaign(!openEditCampaign)}
+                  role="button"
+                  className="text-red-500"
+                >
+                  {openEditCampaign ? "Show Campaign Details" : "Edit Campaign"}
+                </p>
+              </div>
+            )}
         </div>
       </div>
 
