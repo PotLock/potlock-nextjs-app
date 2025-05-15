@@ -80,14 +80,13 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
     potId: potId as PotId,
   });
 
-  const tokenId = useMemo(
-    () =>
-      isCampaignDonation || isDirectDonation
+  const tokenId = useMemo(() => {
+    if (isCampaignDonation || isDirectDonation) {
+      return receipt !== undefined
         ? ((receipt as DirectDonation | CampaignDonation).ft_id ?? NATIVE_TOKEN_ID)
-        : NATIVE_TOKEN_ID,
-
-    [isCampaignDonation, isDirectDonation, receipt],
-  );
+        : NATIVE_TOKEN_ID;
+    } else return NATIVE_TOKEN_ID;
+  }, [isCampaignDonation, isDirectDonation, receipt]);
 
   const { isLoading: isTokenLoading, data: token } = useToken({ tokenId });
 
