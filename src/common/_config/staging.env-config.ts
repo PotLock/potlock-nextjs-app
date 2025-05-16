@@ -31,7 +31,7 @@ export const envConfig: EnvConfig = {
     },
 
     sybil: {
-      app: { url: "https://staging.nada.bot" },
+      app: { url: "https://app.nada.bot" },
       contract: { accountId: "v1.nadabot.near" },
     },
 
