@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { safePositiveNumber } from "./common/lib";
 import { rootPathnames, routeSelectors } from "./pathnames";
-
-export const config = {
-  matcher: [`${rootPathnames.PROFILE}/:path*`, `${rootPathnames.CAMPAIGN}/:path*`],
-};
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -27,10 +22,16 @@ export async function middleware(request: NextRequest) {
       return NextResponse.rewrite(`${request.url}home`);
     }
   } else if (pathname.startsWith(`${rootPathnames.CAMPAIGN}/`)) {
-    const campaignIdOrZero = safePositiveNumber.catch(0).parse(pathname.split("/").at(-1));
+    try {
+      const campaignIdOrZero = parseInt(pathname.split("/").at(-1) ?? `${0}`, 10);
 
-    if (campaignIdOrZero !== 0) {
-      return NextResponse.redirect(routeSelectors.CAMPAIGN_BY_ID_LEADERBOARD(campaignIdOrZero));
+      if (typeof campaignIdOrZero === "number" && campaignIdOrZero !== 0) {
+        return NextResponse.rewrite(
+          new URL(routeSelectors.CAMPAIGN_BY_ID_LEADERBOARD(campaignIdOrZero), request.url),
+        );
+      }
+    } finally {
+      /* empty */
     }
   }
 
