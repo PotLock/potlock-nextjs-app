@@ -9,8 +9,7 @@ import { indivisibleUnitsToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByTokenId } from "@/common/types";
 import { Progress } from "@/common/ui/layout/components";
-import { NearIcon } from "@/common/ui/layout/svg";
-import { useToken } from "@/entities/_shared";
+import { TokenIcon, useToken } from "@/entities/_shared";
 
 export type CampaignProgressBarProps = ByTokenId & {
   target: Campaign["target_amount"];
@@ -32,7 +31,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   isStarted,
   startDate,
 }) => {
-  const { isLoading: isTokenDataLoading, data: token } = useToken({ tokenId });
+  const { data: token } = useToken({ tokenId });
 
   const raisedAmountFloat = useMemo(
     () => (token === undefined ? 0 : indivisibleUnitsToFloat(amount, token.metadata.decimals)),
@@ -118,17 +117,18 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
     }
   }, [isTargetMet, endDate, isTimeUp, isStarted, timeLeft, startDate]);
 
-  const nearDisplay = useMemo(
+  const amountDisplay = useMemo(
     () => (
-      <div className="inline-flex gap-1 text-sm">
-        <NearIcon className="m-0 mt-[2px] h-4 w-4" />
-        {raisedAmountFloat}
+      <div className="inline-flex items-center gap-1 text-sm">
+        <TokenIcon tokenId={tokenId} className="mt-[2px]" />
+        <span>{raisedAmountFloat}</span>
+
         <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
-          / {targetAmountFloat} NEAR
+          {`/ ${targetAmountFloat} ${token?.metadata.symbol ?? ""}`}
         </span>
       </div>
     ),
-    [raisedAmountFloat, targetAmountFloat],
+    [raisedAmountFloat, targetAmountFloat, token?.metadata.symbol, tokenId],
   );
 
   const titleContent = useMemo(() => {
@@ -156,37 +156,39 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
       return (
         <div className="flex w-full items-center justify-between">
           <span className={`text-sm font-semibold text-[${messageColor}]`}>{message}</span>
-          {nearDisplay}
+          {amountDisplay}
         </div>
       );
     } else if (isTargetMet) {
       return (
-        <div className="flex w-full items-center justify-between">
+        <div className="flex w-full items-center">
           <span className="text-sm font-semibold text-[#7FC41E]">Goal Achieved</span>
-          {nearDisplay}
+          {amountDisplay}
         </div>
       );
     } else {
       return (
-        <>
-          <NearIcon className="m-0 mr-1 h-4 w-4" />
-          {raisedAmountFloat}{" "}
+        <span className="inline-flex items-center justify-center gap-1">
+          <TokenIcon tokenId={tokenId} />
+          {raisedAmountFloat}
+
           <span className="m-0 p-0 pl-1 font-medium text-[#7B7B7B]">
-            {" "}
-            / {targetAmountFloat} NEAR Raised
+            {`/ ${targetAmountFloat} ${token?.metadata.symbol ?? ""} Raised`}
           </span>
-        </>
+        </span>
       );
     }
   }, [
+    amountDisplay,
     isTimeUp,
     isTargetMet,
     raisedAmountFloat,
     minAmountFLoat,
-    nearDisplay,
     isEscrowBalanceEmpty,
     color,
+    tokenId,
     targetAmountFloat,
+    token?.metadata.symbol,
   ]);
 
   return (
@@ -197,7 +199,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
         <Progress
           minArrowColor={minArrowColor}
           baseColor={baseColor}
-          minAmount={`${minAmountFLoat} NEAR`}
+          minAmount={`${minAmountFLoat} ${token?.metadata.symbol ?? ""}`}
           minValuePercentage={
             minAmountFLoat
               ? Math.floor(
