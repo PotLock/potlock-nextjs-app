@@ -53,10 +53,10 @@ export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campai
       header: "Amount",
       accessorKey: "total_amount",
       cell: ({ row }) => (
-        <div className="flex gap-1">
-          <TokenIcon tokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID} />
+        <div className="flex items-center gap-1">
+          <TokenIcon tokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID} className="pb-1.5" />
 
-          <span className="font-semibold">
+          <span className="line-height-loose font-semibold">
             {indivisibleUnitsToFloat(
               row.original.total_amount,
               token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,

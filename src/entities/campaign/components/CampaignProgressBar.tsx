@@ -120,7 +120,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   const amountDisplay = useMemo(
     () => (
       <div className="inline-flex items-center gap-1 text-sm">
-        <TokenIcon tokenId={tokenId} className="mt-[2px]" />
+        <TokenIcon tokenId={tokenId} />
         <span>{raisedAmountFloat}</span>
 
         <span className="m-0 p-0 pl-1 text-sm font-medium text-[#7B7B7B]">
