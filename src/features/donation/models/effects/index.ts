@@ -128,7 +128,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       }
     } else if (isCampaignDonation) {
       if (isFtDonation) {
-        // TODO: Implement FT donation for campaigns
+        // TODO: Implement FT donation multicall for campaigns
       } else {
         return void campaignsContractClient
           .donate(
