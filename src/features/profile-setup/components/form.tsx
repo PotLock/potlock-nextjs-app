@@ -264,7 +264,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
               <Button
                 variant="standard-outline"
                 onClick={() => {
-                  router.push(rootPathnames.PROJECTS_LIST);
+                  router.push(rootPathnames.PROJECTS);
                 }}
               >
                 {"Cancel"}

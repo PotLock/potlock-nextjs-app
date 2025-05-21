@@ -22,7 +22,7 @@ import {
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { useDonationUserFlow } from "@/features/donation";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames, routeSelectors } from "@/pathnames";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
   const viewer = useWalletUserSession();
@@ -173,7 +173,7 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
                   <Link
                     href={
                       FEATURE_REGISTRY.ProfileConfiguration.isEnabled
-                        ? rootPathnames.EDIT_PROFILE(accountId)
+                        ? routeSelectors.PROFILE_BY_ID_EDIT(accountId)
                         : `${APP_BOS_COUNTERPART_URL}/?tab=profile&accountId=${accountId}`
                     }
                     target={FEATURE_REGISTRY.ProfileConfiguration.isEnabled ? undefined : "_blank"}

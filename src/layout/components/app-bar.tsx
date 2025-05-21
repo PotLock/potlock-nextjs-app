@@ -15,7 +15,7 @@ import { rootPathnames } from "@/pathnames";
 import { UserDropdown } from "./user-dropdown";
 
 const links = [
-  { label: "Projects", url: rootPathnames.PROJECTS_LIST, disabled: false },
+  { label: "Projects", url: rootPathnames.PROJECTS, disabled: false },
   { label: "Pots", url: rootPathnames.POTS, disabled: false },
   {
     label: "Campaigns",
