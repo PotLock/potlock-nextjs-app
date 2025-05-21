@@ -123,7 +123,7 @@ export const challenge_payouts = ({
 
     deposit:
       parseNearAmount(calculateDepositByDataSize(args)) ??
-      parseNearAmount(`${(args.reason.length ?? 1) * 0.00003}`) ??
+      parseNearAmount(`${(args.reason.length || 1) * 0.00003}`) ??
       "0",
 
     gas: FULL_TGAS,
@@ -162,7 +162,7 @@ export const admin_update_payouts_challenge = ({
 
     deposit:
       parseNearAmount(calculateDepositByDataSize(args)) ??
-      parseNearAmount(`${(args.notes?.length ?? 1) * 0.00003}`) ??
+      parseNearAmount(`${(args.notes?.length || 1) * 0.00003}`) ??
       "0",
 
     gas: FULL_TGAS,

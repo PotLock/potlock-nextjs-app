@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
+import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
@@ -117,19 +117,13 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         </div>
 
         <CampaignProgressBar
-          target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
-          minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
+          tokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
+          amount={campaign?.total_raised_amount ?? `${0}`}
+          minAmount={campaign?.min_amount ?? `${0}`}
+          target={campaign?.target_amount ?? `${0}`}
           startDate={Number(campaign?.start_ms)}
-          targetMet={
-            !!campaign?.total_raised_amount &&
-            yoctoNearToFloat(campaign?.total_raised_amount) >=
-              yoctoNearToFloat(campaign?.target_amount)
-          }
           isStarted={isStarted}
           isEscrowBalanceEmpty={campaign?.escrow_balance === "0"}
-          amount={
-            campaign?.total_raised_amount ? yoctoNearToFloat(campaign?.total_raised_amount) : 0
-          }
           endDate={Number(campaign?.end_ms)}
         />
 

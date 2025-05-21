@@ -142,7 +142,7 @@ const usePagination = ({ totalCount, perPage, siblingCount, currentPage }: Pagin
 
 export const DeprecatedPagination = (props: Props) => {
   const { onPageChange, data, currentPage, perPage } = props;
-  const siblingCount = props.siblingCount ?? 1;
+  const siblingCount = props.siblingCount || 1;
   const showArrows = props.showArrows ?? false;
   const totalCount = data?.length;
 
