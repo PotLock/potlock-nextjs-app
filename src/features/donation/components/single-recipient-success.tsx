@@ -19,7 +19,7 @@ import {
 } from "@/common/ui/layout/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenValueSummary, useToken } from "@/entities/_shared/token";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames, routeSelectors } from "@/pathnames";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DonationSingleRecipientSuccessXShareButton } from "./single-recipient-success-share";
@@ -177,7 +177,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
             </div>
 
             {campaign?.name && (
-              <Link href={rootPathnames.CAMPAIGN(campaign.id)}>
+              <Link href={routeSelectors.CAMPAIGN_BY_ID(campaign.id)}>
                 <span className="text-center text-neutral-600">{`Via ${campaign.name} Campaign`}</span>
               </Link>
             )}
