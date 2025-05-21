@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
     try {
       const campaignIdOrZero = parseInt(pathname.split("/").at(-1) ?? `${0}`, 10);
 
-      if (typeof campaignIdOrZero === "number" && campaignIdOrZero !== 0) {
+      if (!isNaN(campaignIdOrZero) && campaignIdOrZero !== 0) {
         return NextResponse.rewrite(
           new URL(routeSelectors.CAMPAIGN_BY_ID_LEADERBOARD(campaignIdOrZero), request.url),
         );
