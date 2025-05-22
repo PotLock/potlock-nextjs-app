@@ -1,4 +1,4 @@
-import { BadgeCheck, CircleAlert } from "lucide-react";
+import { BadgeCheck, CircleAlert, CircleCheck } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Temporal } from "temporal-polyfill";
 
@@ -8,7 +8,8 @@ import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
-import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
+import { Badge, Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
+import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
@@ -77,29 +78,37 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             src={campaign?.cover_image_url || "/assets/images/list-gradient-3.png"}
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
-          <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
+          <div className="absolute bottom-0 z-40 flex w-full flex-col items-start gap-2 p-4">
             <h1 className="text-[24px] font-bold text-white">{campaign?.name}</h1>
 
             <div
               className={cn(
-                "text-foreground flex flex-col items-start gap-2 p-0 text-[12px] text-white",
-                "md:flex-row md:items-center md:text-[15px]",
+                "text-foreground flex flex-col-reverse gap-2 p-0 text-[12px] text-white md:items-center",
+                " w-full justify-between md:flex-row md:items-center md:text-[15px]",
               )}
             >
-              <div className="flex gap-1">
-                <p className="pr-1 font-semibold">FOR</p>
-                <AccountProfileLink
-                  classNames={{ root: "bg-transparent" }}
-                  accountId={campaign?.recipient as string}
-                />
+              <div className="flex flex-col items-start gap-2 p-0 md:flex-row">
+                <div className="flex gap-1">
+                  <p className="pr-1 font-semibold">FOR</p>
+                  <AccountProfileLink
+                    classNames={{ root: "bg-transparent" }}
+                    accountId={campaign?.recipient as string}
+                  />
+                </div>
+                <div className="hidden flex-col items-center bg-gray-800 md:flex">
+                  <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
+                </div>
+                <div className="flex gap-1">
+                  <p className="font-semibold">ORGANIZED BY</p>
+                  <AccountProfileLink accountId={campaign?.owner as string} />
+                </div>
               </div>
-              <div className="hidden flex-col items-center bg-gray-800 md:flex">
-                <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
-              </div>
-              <div className="flex gap-1">
-                <p className="font-semibold">ORGANIZED BY</p>
-                <AccountProfileLink accountId={campaign?.owner as string} />
-              </div>
+              {campaign?.owner === campaign?.recipient && (
+                <div className="flex  items-center gap-1">
+                  <BadgeIcon size={5} />
+                  <span className="m-0 font-bold">OFFICIAL</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

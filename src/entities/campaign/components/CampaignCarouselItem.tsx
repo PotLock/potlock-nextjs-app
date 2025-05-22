@@ -5,6 +5,7 @@ import { Campaign } from "@/common/contracts/core/campaigns";
 import { truncate, yoctoNearToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { CarouselItem } from "@/common/ui/layout/components";
+import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaignProjects } from "@/features/donation";
 
@@ -33,20 +34,28 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
             height={300}
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-70 md:rounded-xl"></div>{" "}
-          <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
-            <h1 className="text-[24px] font-bold text-white">{data.name}</h1>
-            <div className="m-0 flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
-              <div className="flex gap-1">
-                <p className="font-semibold">FOR</p>
-                <AccountProfileLink accountId={data.recipient as string} />
+          <div className="absolute bottom-0 z-40 flex w-full flex-col items-start gap-2 p-4">
+            <h1 className="text-lg font-bold text-white md:text-[24px]">{data.name}</h1>
+            <div className="m-0 flex w-full flex-col-reverse items-start justify-between gap-2 p-0 text-[12px] text-white md:flex-row md:items-center">
+              <div className=" flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
+                <div className="flex gap-1">
+                  <p className="font-semibold">FOR</p>
+                  <AccountProfileLink accountId={data.recipient as string} />
+                </div>
+                <div className="hidden flex-col items-center bg-gray-800 md:flex">
+                  <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
+                </div>
+                <div className="flex gap-1">
+                  <p className="font-semibold">ORGANIZED BY</p>
+                  <AccountProfileLink accountId={data.owner as string} />
+                </div>
               </div>
-              <div className="hidden flex-col items-center bg-gray-800 md:flex">
-                <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
-              </div>
-              <div className="flex gap-1">
-                <p className="font-semibold">ORGANIZED BY</p>
-                <AccountProfileLink accountId={data.owner as string} />
-              </div>
+              {data?.owner === data?.recipient && (
+                <div className="flex  items-center gap-1">
+                  <BadgeIcon size={5} />
+                  <span className="m-0 font-bold text-white">OFFICIAL</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
