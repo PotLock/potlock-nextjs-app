@@ -58,12 +58,12 @@ const WelcomeBanner = () => {
     >
       <div className="relative z-[1] flex flex-col justify-center px-5 py-12 md:px-10 md:py-16">
         <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
-          {"Transforming Funding for Public Goods"}
+          {"Opening funding up for anything"}
         </h3>
 
         <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
-          Discover impact projects, donate directly, &
-          <br className="hidden md:block" /> participate in funding rounds.
+          Discover ideas, projects, people, opportunities,
+          <br className="hidden md:block" /> and grant pools to fund.
         </h1>
 
         <div className="mt-6 flex items-center gap-4 text-sm max-md:flex-col md:mt-10 md:gap-8">
