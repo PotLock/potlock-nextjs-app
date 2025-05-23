@@ -67,6 +67,8 @@ export const DonationSingleRecipientAllocation: React.FC<
     campaignId: campaignId ?? 0,
   });
 
+  console.log(campaign);
+
   const isFtSelectorAvailable =
     FEATURE_REGISTRY.FtDonation.isEnabled &&
     (isCampaignDonation ? false : allocationStrategy === DonationAllocationStrategyEnum.full);
@@ -194,7 +196,7 @@ export const DonationSingleRecipientAllocation: React.FC<
                     <TokenSelector
                       hideZeroBalanceOptions
                       disabled={!isFtSelectorAvailable}
-                      defaultValue={inputExtension.value}
+                      defaultValue={campaign?.ft_id ?? inputExtension.value}
                       onValueChange={inputExtension.onChange}
                     />
                   )}

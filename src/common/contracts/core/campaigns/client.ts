@@ -6,12 +6,20 @@ import { FULL_TGAS } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, CampaignId, type IndivisibleUnits } from "@/common/types";
 
-import { Campaign, CampaignDonation, CampaignDonationArgs, CampaignInputs } from "./interfaces";
+import {
+  Campaign,
+  CampaignDonation,
+  CampaignDonationArgs,
+  CampaignInputs,
+  CampaignsContractConfig,
+} from "./interfaces";
 
 const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
   cache: new MemoryCache({ expirationTime: 10 }),
 });
+
+export const get_config = () => contractApi.view<{}, CampaignsContractConfig>("get_config");
 
 export const create_campaign = ({ args }: { args: CampaignInputs }) => {
   return contractApi.call("create_campaign", {
@@ -95,3 +103,10 @@ export const has_escrowed_donations_to_process = (args: GetCampaignArgs) =>
 
 export const can_process_refunds = (args: GetCampaignArgs) =>
   contractApi.view<typeof args, Campaign>("can_process_refunds", { args });
+
+export const storage_deposit = (depositAmountYocto: IndivisibleUnits) =>
+  contractApi.call<{}, IndivisibleUnits>("storage_deposit", {
+    deposit: depositAmountYocto,
+    args: {},
+    gas: "100000000000000",
+  });

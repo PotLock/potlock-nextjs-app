@@ -9,11 +9,12 @@ import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
-import { ftDonationMulticall } from "./ft-donation-multicall";
-import { listDonationMulticall } from "./list-donation-multicall";
+import { campaignFtDonationMulticall } from "./campaign-ft-donation";
+import { directFtDonationMulticall } from "./direct-ft-donation";
+import { groupListDonationMulticall } from "./group-list-donation";
 import { DonationAllocationKey, DonationAllocationStrategyEnum } from "../../types";
 import { type DonationSubmitParams } from "../schemas";
-import { potGroupDonationMulticall } from "./pot-group-donation-multicall";
+import { groupPotDonationMulticall } from "./group-pot-donation";
 
 /**
  * @deprecated use `nearRpc.txStatus()`
@@ -67,7 +68,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
           if (isFtDonation) {
-            return void ftDonationMulticall({
+            return void directFtDonationMulticall({
               recipientAccountId: params.accountId,
               message,
               referrerAccountId,
@@ -128,7 +129,16 @@ export const effects = (dispatch: AppDispatcher) => ({
       }
     } else if (isCampaignDonation) {
       if (isFtDonation) {
-        // TODO: Implement FT donation multicall for campaigns
+        return void campaignFtDonationMulticall({
+          amount,
+          campaignId,
+          referrerAccountId,
+          bypassProtocolFee,
+          // TODO: Functionality is not implemented, but might be required
+          bypassCreatorFee: false,
+          message,
+          tokenId,
+        });
       } else {
         return void campaignsContractClient
           .donate(
@@ -137,6 +147,8 @@ export const effects = (dispatch: AppDispatcher) => ({
               message,
               referrer_id: referrerAccountId,
               bypass_protocol_fee: bypassProtocolFee,
+              // TODO: Functionality is not implemented, but might be required
+              bypass_creator_fee: false,
             },
 
             floatToYoctoNear(amount),
@@ -148,14 +160,14 @@ export const effects = (dispatch: AppDispatcher) => ({
           });
       }
     } else if (isGroupPotDonation && groupAllocationPlan !== undefined) {
-      return void potGroupDonationMulticall({ ...inputs, potContractAccountId: params.potId })
+      return void groupPotDonationMulticall({ ...inputs, potContractAccountId: params.potId })
         .then(dispatch.donation.success)
         .catch((error) => {
           onError(error);
           dispatch.donation.failure(error);
         });
     } else if (isListDonation && groupAllocationPlan !== undefined) {
-      return void listDonationMulticall(inputs)
+      return void groupListDonationMulticall(inputs)
         .then(dispatch.donation.success)
         .catch((error) => {
           onError(error);

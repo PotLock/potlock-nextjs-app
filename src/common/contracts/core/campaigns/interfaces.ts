@@ -1,5 +1,16 @@
 import { AccountId, IndivisibleUnits, type TokenId } from "@/common/types";
 
+export type CampaignsContractConfig = {
+  owner: AccountId;
+  admins: AccountId[];
+  protocol_fee_basis_points: number;
+  protocol_fee_recipient_account: AccountId;
+  default_referral_fee_basis_points: number;
+  default_creator_fee_basis_points: number;
+  total_campaigns_count: number;
+  total_donations_count: number;
+};
+
 export type CampaignInputs = {
   name: string;
   description?: string;

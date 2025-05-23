@@ -2,35 +2,36 @@ import { ONE_YOCTO } from "@builddao/near-social-js";
 import { Big } from "big.js";
 import type { ExecutionStatus } from "near-api-js/lib/providers/provider";
 
-import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import {
   type InformativeSuccessfulExecutionOutcome,
   nearProtocolClient,
 } from "@/common/blockchains/near-protocol";
 import { FULL_TGAS, NATIVE_TOKEN_DECIMALS } from "@/common/constants";
-import { type DirectDonation, donationContractClient } from "@/common/contracts/core/donation";
+import { type CampaignDonation, campaignsContractClient } from "@/common/contracts/core/campaigns";
 import type { FungibleTokenMetadata, FungibleTokenStorageBalance } from "@/common/contracts/tokens";
 import { bigNumToIndivisible, floatToIndivisible, indivisibleUnitsToBigNum } from "@/common/lib";
-import type { AccountId } from "@/common/types";
+import type { AccountId, CampaignId } from "@/common/types";
 
 import { DONATION_BASE_STORAGE_DEPOSIT_FLOAT } from "../../constants";
 import type { DonationSubmitParams } from "../schemas";
 
-type FtDonationMulticallInputs = Pick<
+type CampaignFtDonationMulticallInputs = Pick<
   DonationSubmitParams,
   "amount" | "referrerAccountId" | "bypassProtocolFee" | "message" | "tokenId"
-> & { recipientAccountId: AccountId };
+> & { campaignId: CampaignId; bypassCreatorFee: boolean };
 
-export const ftDonationMulticall = async ({
+export const campaignFtDonationMulticall = async ({
   amount,
-  recipientAccountId,
+  campaignId,
   referrerAccountId,
   bypassProtocolFee,
+  bypassCreatorFee,
   message,
   tokenId,
-}: FtDonationMulticallInputs): Promise<DirectDonation> => {
+}: CampaignFtDonationMulticallInputs): Promise<CampaignDonation> => {
   const { protocol_fee_recipient_account: protocolFeeRecipientAccountId } =
-    await donationContractClient.get_config();
+    await campaignsContractClient.get_config();
 
   const tokenClient = nearProtocolClient.naxiosInstance.contractApi({ contractId: tokenId });
 
@@ -70,25 +71,13 @@ export const ftDonationMulticall = async ({
       ),
 
     /**
-     *? Checking the FT contract storage balance of the donation contract account
+     *? Checking the FT contract storage balance of the campaigns contract account
      */
     tokenClient
       .view<
         { account_id: AccountId },
         FungibleTokenStorageBalance | null
-      >("storage_balance_of", { args: { account_id: DONATION_CONTRACT_ACCOUNT_ID } })
-      .then((response) =>
-        indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
-      ),
-
-    /**
-     *? Checking the FT contract storage balance of the donation recipient account
-     */
-    tokenClient
-      .view<
-        { account_id: AccountId },
-        FungibleTokenStorageBalance | null
-      >("storage_balance_of", { args: { account_id: recipientAccountId } })
+      >("storage_balance_of", { args: { account_id: CAMPAIGNS_CONTRACT_ACCOUNT_ID } })
       .then((response) =>
         indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
       ),
@@ -99,9 +88,8 @@ export const ftDonationMulticall = async ({
         maxFtStorageBalanceBig,
         protocolFeeRecipientFtStorageBalanceBig,
         donationContractFtStorageBalanceBig,
-        recipientFtStorageBalanceBig,
       ]) =>
-        donationContractClient
+        campaignsContractClient
           .storage_deposit(
             bigNumToIndivisible(donationContractStorageDeposit, NATIVE_TOKEN_DECIMALS),
           )
@@ -152,7 +140,7 @@ export const ftDonationMulticall = async ({
                 ? [
                     {
                       method: "storage_deposit",
-                      args: { account_id: DONATION_CONTRACT_ACCOUNT_ID },
+                      args: { account_id: CAMPAIGNS_CONTRACT_ACCOUNT_ID },
                       gas: "100000000000000",
 
                       deposit: bigNumToIndivisible(
@@ -163,35 +151,18 @@ export const ftDonationMulticall = async ({
                   ]
                 : []),
 
-              /**
-               *? FT contract storage balance replenishment for the donation recipient account
-               */
-              ...(recipientFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
-                ? [
-                    {
-                      method: "storage_deposit",
-                      args: { account_id: recipientAccountId },
-                      gas: "100000000000000",
-
-                      deposit: bigNumToIndivisible(
-                        maxFtStorageBalanceBig.minus(recipientFtStorageBalanceBig),
-                        NATIVE_TOKEN_DECIMALS,
-                      ),
-                    },
-                  ]
-                : []),
-
               {
                 method: "ft_transfer_call",
 
                 args: {
-                  receiver_id: DONATION_CONTRACT_ACCOUNT_ID,
+                  receiver_id: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
                   amount: floatToIndivisible(amount, ftMetadata.decimals),
 
                   msg: JSON.stringify({
-                    recipient_id: recipientAccountId,
+                    campaign_id: campaignId,
                     referrer_id: referrerAccountId || null,
                     bypass_protocol_fee: bypassProtocolFee,
+                    bypass_creator_fee: bypassCreatorFee,
                     message,
                   }),
                 },
@@ -203,11 +174,11 @@ export const ftDonationMulticall = async ({
           ),
     )
     .then((finalExecutionOutcomes = undefined) => {
-      const receipt: DirectDonation | undefined = finalExecutionOutcomes
+      const receipt: CampaignDonation | undefined = finalExecutionOutcomes
         ?.at(-1)
         ?.receipts_outcome.filter(
           ({ outcome: { executor_id, status } }) =>
-            executor_id === DONATION_CONTRACT_ACCOUNT_ID &&
+            executor_id === CAMPAIGNS_CONTRACT_ACCOUNT_ID &&
             "SuccessValue" in (status as ExecutionStatus) &&
             typeof (status as ExecutionStatus).SuccessValue === "string",
         )
@@ -220,16 +191,16 @@ export const ftDonationMulticall = async ({
             /**
              *? Checking for the donation receipt signature
              */
-            if (decodedReceipt.includes(recipientAccountId)) {
+            if (decodedReceipt.includes(campaignId.toString())) {
               try {
-                return [JSON.parse(decodedReceipt) as DirectDonation];
+                return [JSON.parse(decodedReceipt) as CampaignDonation];
               } catch {
                 return acc;
               }
             } else return acc;
           },
 
-          [] as DirectDonation[],
+          [] as CampaignDonation[],
         )
         .at(0);
 
