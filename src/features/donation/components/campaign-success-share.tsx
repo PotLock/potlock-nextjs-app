@@ -42,9 +42,9 @@ export const DonationCampaignSuccessXShareButton: React.FC<
         }`;
 
     const text = encodeURIComponent(
-      `🎉 Just supported ${campaignName} and ${
-        recipientReference
-      } through @${PLATFORM_TWITTER_ACCOUNT_ID}!\n\n` + "Support the campaign here:\n",
+      `🎉 Just supported ${campaignName} and ${recipientReference} through @${
+        PLATFORM_TWITTER_ACCOUNT_ID
+      }!\n\n` + "Support the campaign here:",
     );
 
     const baseUrl = `${APP_DEFAULT_PUBLIC_URL}${routeSelectors.CAMPAIGN_BY_ID(campaignId)}`;
@@ -56,13 +56,7 @@ export const DonationCampaignSuccessXShareButton: React.FC<
     const encodedUrl = encodeURIComponent(fullUrl);
     const encodedRelation = encodeURIComponent(APP_DEFAULT_PUBLIC_URL);
 
-    return (
-      X_INTENT_URL_BASE +
-      text +
-      `&url=${encodedUrl}` +
-      `&related=${encodedRelation}` +
-      `&hashtags=${DEFAULT_SHARE_HASHTAGS.join(",")}`
-    );
+    return X_INTENT_URL_BASE + text + `&url=${encodedUrl}` + `&related=${encodedRelation}`;
   }, [
     campaignId,
     campaignName,
