@@ -19,11 +19,12 @@ import type { DonationSubmitParams } from "../schemas";
 type CampaignFtDonationMulticallInputs = Pick<
   DonationSubmitParams,
   "amount" | "referrerAccountId" | "bypassProtocolFee" | "message" | "tokenId"
-> & { campaignId: CampaignId; bypassCreatorFee: boolean };
+> & { campaignId: CampaignId; recipientAccountId: AccountId; bypassCreatorFee: boolean };
 
 export const campaignFtDonationMulticall = async ({
   amount,
   campaignId,
+  recipientAccountId,
   referrerAccountId,
   bypassProtocolFee,
   bypassCreatorFee,
@@ -81,6 +82,18 @@ export const campaignFtDonationMulticall = async ({
       .then((response) =>
         indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
       ),
+
+    /**
+     *? Checking the FT contract storage balance of the donation recipient account
+     */
+    tokenClient
+      .view<
+        { account_id: AccountId },
+        FungibleTokenStorageBalance | null
+      >("storage_balance_of", { args: { account_id: recipientAccountId } })
+      .then((response) =>
+        indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
+      ),
   ])
     .then(
       ([
@@ -88,6 +101,7 @@ export const campaignFtDonationMulticall = async ({
         maxFtStorageBalanceBig,
         protocolFeeRecipientFtStorageBalanceBig,
         donationContractFtStorageBalanceBig,
+        recipientFtStorageBalanceBig,
       ]) =>
         campaignsContractClient
           .storage_deposit(
@@ -145,6 +159,24 @@ export const campaignFtDonationMulticall = async ({
 
                       deposit: bigNumToIndivisible(
                         maxFtStorageBalanceBig.minus(donationContractFtStorageBalanceBig),
+                        NATIVE_TOKEN_DECIMALS,
+                      ),
+                    },
+                  ]
+                : []),
+
+              /**
+               *? FT contract storage balance replenishment for the donation recipient account
+               */
+              ...(recipientFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: recipientAccountId },
+                      gas: "100000000000000",
+
+                      deposit: bigNumToIndivisible(
+                        maxFtStorageBalanceBig.minus(recipientFtStorageBalanceBig),
                         NATIVE_TOKEN_DECIMALS,
                       ),
                     },

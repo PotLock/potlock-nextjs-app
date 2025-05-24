@@ -47,6 +47,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       amount,
       listId,
       campaignId,
+      campaignRecipientAccountId,
       potAccountId: singleRecipientMatchingPotId,
       allocationStrategy,
       groupAllocationPlan,
@@ -104,34 +105,41 @@ export const effects = (dispatch: AppDispatcher) => ({
         case DonationAllocationStrategyEnum.share: {
           if (singleRecipientMatchingPotId === undefined) {
             return void dispatch.donation.failure(new Error("No pot selected."));
-          } else {
-            return void potContractClient
-              .donate(
-                singleRecipientMatchingPotId,
-
-                {
-                  project_id: params.accountId,
-                  message,
-                  referrer_id: referrerAccountId,
-                  bypass_protocol_fee: bypassProtocolFee,
-                  custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
-                },
-
-                floatToYoctoNear(amount),
-              )
-              .then(dispatch.donation.success)
-              .catch((error) => {
-                onError(error);
-                dispatch.donation.failure(error);
-              });
           }
+
+          return void potContractClient
+            .donate(
+              singleRecipientMatchingPotId,
+
+              {
+                project_id: params.accountId,
+                message,
+                referrer_id: referrerAccountId,
+                bypass_protocol_fee: bypassProtocolFee,
+                custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
+              },
+
+              floatToYoctoNear(amount),
+            )
+            .then(dispatch.donation.success)
+            .catch((error) => {
+              onError(error);
+              dispatch.donation.failure(error);
+            });
         }
       }
     } else if (isCampaignDonation) {
       if (isFtDonation) {
+        if (campaignRecipientAccountId === undefined) {
+          return void dispatch.donation.failure(
+            new Error("Campaign recipient account id is not provided."),
+          );
+        }
+
         return void campaignFtDonationMulticall({
           amount,
           campaignId,
+          recipientAccountId: campaignRecipientAccountId,
           referrerAccountId,
           bypassProtocolFee,
           // TODO: Functionality is not implemented, but might be required

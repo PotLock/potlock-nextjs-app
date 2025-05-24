@@ -216,10 +216,11 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
         ...inputs,
         ...params,
         referrerAccountId: viewer?.referrerAccountId,
+        campaignRecipientAccountId: isCampaignDonation ? campaign?.recipient : undefined,
         onError: onSubmitError,
       }),
 
-    [onSubmitError, params, viewer?.referrerAccountId],
+    [campaign?.recipient, isCampaignDonation, onSubmitError, params, viewer?.referrerAccountId],
   );
 
   //* Ensure the correct token is selected:
