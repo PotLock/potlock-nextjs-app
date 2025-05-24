@@ -2,11 +2,12 @@ import { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 import { Info } from "lucide-react";
 import { useRouter } from "next/router";
+import { isNonNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { IPFS_NEAR_SOCIAL_URL, NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { parseNumber, yoctoNearToFloat } from "@/common/lib";
+import { indivisibleUnitsToFloat, parseNumber } from "@/common/lib";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
@@ -37,9 +38,58 @@ export const CampaignForm = ({
     campaignId,
   });
 
-  // TODO: Move into the form hook
+  const [ftId, targetAmount, minAmount, maxAmount] = form.watch([
+    "ft_id",
+    "target_amount",
+    "min_amount",
+    "max_amount",
+  ]);
+
+  const { data: token } = useToken({
+    tokenId: existingData?.ft_id ?? ftId ?? NATIVE_TOKEN_ID,
+    balanceCheckAccountId: walletUser?.accountId,
+  });
+
+  const targetAmountFloat = useMemo(() => {
+    if (token !== undefined && isNonNullish(existingData?.target_amount)) {
+      return indivisibleUnitsToFloat(existingData.target_amount, token.metadata.decimals);
+    } else return null;
+  }, [existingData, token]);
+
+  const minAmountFloat = useMemo(() => {
+    if (token !== undefined && isNonNullish(existingData?.min_amount)) {
+      return indivisibleUnitsToFloat(existingData.min_amount, token.metadata.decimals);
+    } else return null;
+  }, [existingData, token]);
+
+  const maxAmountFloat = useMemo(() => {
+    if (token !== undefined && isNonNullish(existingData?.max_amount)) {
+      return indivisibleUnitsToFloat(existingData.max_amount, token.metadata.decimals);
+    } else return null;
+  }, [existingData, token]);
+
+  // TODO: Use `useEnhancedForm` for form setup instead, this effect is called upon EVERY RENDER,
+  // TODO: which impacts UX and performance SUBSTANTIALLY!
   useEffect(() => {
     if (isUpdate && existingData) {
+      if (ftId !== (existingData.ft_id ?? NATIVE_TOKEN_ID)) {
+        form.setValue("ft_id", existingData?.ft_id ?? NATIVE_TOKEN_ID);
+      }
+
+      if (token !== undefined) {
+        if (targetAmountFloat !== null && targetAmount !== targetAmountFloat) {
+          form.setValue("target_amount", targetAmountFloat);
+        }
+
+        if (minAmountFloat !== null && minAmount !== minAmountFloat) {
+          form.setValue("min_amount", minAmountFloat);
+        }
+
+        if (maxAmountFloat !== null && maxAmount !== maxAmountFloat) {
+          form.setValue("max_amount", maxAmountFloat);
+        }
+      }
+
       if (existingData?.cover_image_url) {
         setCoverImage(existingData?.cover_image_url);
         form.setValue("cover_image_url", existingData?.cover_image_url);
@@ -48,15 +98,6 @@ export const CampaignForm = ({
       form.setValue("recipient", existingData?.recipient);
       form.setValue("name", existingData?.name);
       form.setValue("description", existingData.description);
-      form.setValue("target_amount", yoctoNearToFloat(existingData?.target_amount));
-
-      if (existingData.min_amount != undefined) {
-        form.setValue("min_amount", yoctoNearToFloat(existingData.min_amount));
-      }
-
-      if (existingData.max_amount != undefined) {
-        form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
-      }
 
       if (
         existingData?.start_ms &&
@@ -73,19 +114,19 @@ export const CampaignForm = ({
         setAvoidFee(existingData.allow_fee_avoidance);
       }
     }
-  }, [isUpdate, existingData, form]);
-
-  const [ftId, targetAmount, minAmount, maxAmount] = form.watch([
-    "ft_id",
-    "target_amount",
-    "min_amount",
-    "max_amount",
+  }, [
+    isUpdate,
+    existingData,
+    form,
+    ftId,
+    token,
+    targetAmountFloat,
+    targetAmount,
+    minAmountFloat,
+    minAmount,
+    maxAmountFloat,
+    maxAmount,
   ]);
-
-  const { data: token } = useToken({
-    tokenId: ftId ?? NATIVE_TOKEN_ID,
-    balanceCheckAccountId: walletUser?.accountId,
-  });
 
   const targetAmountUsdValue = useMemo(
     () =>
