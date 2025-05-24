@@ -5,6 +5,7 @@ import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaign } from "@/features/donation";
@@ -26,7 +27,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
         "transition-all duration-500 hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]",
       )}
     >
-      <Link href={`/campaign/${data.id}/leaderboard`} passHref>
+      <Link href={`/campaign/${data.id}`} passHref>
         <div className="relative h-[212px] w-full">
           <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
@@ -39,6 +40,12 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
           <h1 className="absolute bottom-0 px-6 py-3 text-[20px] font-semibold text-white">
             {data.name}
           </h1>
+          {data?.owner === data?.recipient && (
+            <div className="absolute right-2 top-2 flex  items-center gap-1">
+              <BadgeIcon size={5} />
+              <span className="m-0 font-bold text-white">OFFICIAL</span>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-4 px-6 py-6">

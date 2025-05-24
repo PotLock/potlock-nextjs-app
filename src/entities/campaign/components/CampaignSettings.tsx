@@ -108,7 +108,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
       <Spinner className="h-20 w-20" />
     </div>
   ) : (
-    <div className="w-full md:mx-3 md:w-[70%]">
+    <div className="w-full md:mx-3 md:w-[80%]">
       <div className="flex w-full flex-col justify-between gap-6 md:flex-row md:items-center md:gap-0">
         <div className="flex flex-wrap items-start justify-between gap-5 md:w-[40%] md:flex-row md:items-center">
           <div className="flex flex-col gap-2">
@@ -195,6 +195,14 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
                 maxAmountFLoat > 0 ? `${maxAmountFLoat} ${token?.metadata.symbol ?? ""}` : "N/A"
               }
               icon={maxAmountFLoat > 0 ? tokenIcon : null}
+            />
+            <CampaignSettingsBarCard
+              title="Referral fee"
+              value={`${campaign?.referral_fee_basis_points ? `${campaign?.referral_fee_basis_points / 100}%` : "N/A"}`}
+            />
+            <CampaignSettingsBarCard
+              title="Protocol fee"
+              value={`${campaign?.creator_fee_basis_points ? `${campaign?.creator_fee_basis_points / 100}%` : "N/A"}`}
             />
           </div>
         </div>
