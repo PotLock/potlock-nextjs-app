@@ -146,7 +146,12 @@ export const effects = (dispatch: AppDispatcher) => ({
           bypassCreatorFee: false,
           message,
           tokenId,
-        });
+        })
+          .then(dispatch.donation.success)
+          .catch((error) => {
+            onError(error);
+            dispatch.donation.failure(error);
+          });
       } else {
         return void campaignsContractClient
           .donate(
