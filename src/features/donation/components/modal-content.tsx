@@ -11,7 +11,7 @@ import {
   DonationSingleRecipientSuccessScreen,
   DonationSingleRecipientSuccessScreenProps,
 } from "./single-recipient-success";
-import { useDonationForm } from "../hooks/form";
+import { type DonationFormParams, useDonationForm } from "../hooks/form";
 import { useDonationState } from "../models/store";
 import {
   DonationAllocationKey,
@@ -21,6 +21,7 @@ import {
 import { DonationGroupAllocationSuccessScreen } from "./group-allocation-success";
 
 export type DonationModalContentProps = DonationAllocationKey &
+  Pick<DonationFormParams, "cachedTokenId"> &
   Pick<DonationSingleRecipientSuccessScreenProps, "transactionHash"> & {
     closeModal: VoidFunction;
   };

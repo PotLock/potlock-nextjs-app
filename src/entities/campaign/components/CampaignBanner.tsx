@@ -16,7 +16,7 @@ import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { DonateToCampaignProjects } from "@/features/donation";
+import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 import { useCampaignForm } from "../hooks/forms";
@@ -202,11 +202,12 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
           {!hasEscrowedDonations && !isDonationRefundsProcessed && (
             <>
-              <DonateToCampaignProjects
-                className="mb-4"
+              <DonateToCampaign
+                cachedTokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
                 disabled={
                   isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
                 }
+                className="mb-4"
                 {...{ campaignId }}
               />
 

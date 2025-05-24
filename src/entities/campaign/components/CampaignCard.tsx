@@ -7,7 +7,7 @@ import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { DonateToCampaignProjects } from "@/features/donation";
+import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
@@ -68,7 +68,8 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             endDate={Number(data?.end_ms)}
           />
 
-          <DonateToCampaignProjects
+          <DonateToCampaign
+            cachedTokenId={data.ft_id ?? NATIVE_TOKEN_ID}
             campaignId={data.id}
             variant="standard-outline"
             disabled={isStarted || isEnded || data?.total_raised_amount === data?.max_amount}

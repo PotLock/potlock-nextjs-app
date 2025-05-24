@@ -6,10 +6,13 @@ import { useRouteQuery } from "@/common/lib";
 import { dispatch } from "@/store";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
-import { DonationModal } from "../components/modal";
+import { DonationModal, type DonationModalProps } from "../components/modal";
 import { DonationAllocationKey } from "../types";
 
-export const useDonationUserFlow = (props: DonationAllocationKey) => {
+export type DonationUserFlowProps = DonationAllocationKey &
+  Pick<DonationModalProps, "cachedTokenId"> & {};
+
+export const useDonationUserFlow = (props: DonationUserFlowProps) => {
   const modal = useModal(DonationModal);
   const { setSearchParams } = useRouteQuery();
 

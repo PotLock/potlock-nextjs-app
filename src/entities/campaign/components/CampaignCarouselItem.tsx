@@ -7,7 +7,7 @@ import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { CarouselItem } from "@/common/ui/layout/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { DonateToCampaignProjects } from "@/features/donation";
+import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
@@ -65,7 +65,8 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
           <p className="mt-4 text-start md:h-28">
             {data?.description ? truncate(data.description, 100) : ""}
           </p>
-          <DonateToCampaignProjects
+          <DonateToCampaign
+            cachedTokenId={data.ft_id ?? NATIVE_TOKEN_ID}
             campaignId={data.id}
             className="mt-4"
             disabled={isStarted || isEnded || data?.total_raised_amount === data?.max_amount}

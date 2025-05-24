@@ -9,6 +9,7 @@ import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat, safePositiveNumberOrZero } from "@/common/lib";
+import type { TokenId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
@@ -29,9 +30,12 @@ import {
 
 export type DonationFormParams = DonationAllocationKey & {
   referrerAccountId?: string;
+
+  //* Used when the token id is provided by the indexer
+  cachedTokenId?: TokenId;
 };
 
-export const useDonationForm = ({ ...params }: DonationFormParams) => {
+export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams) => {
   const { toast } = useToast();
   const viewer = useWalletUserSession();
 
@@ -66,7 +70,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       amount: DONATION_DEFAULT_MIN_AMOUNT_FLOAT,
-      tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID,
+      tokenId: cachedTokenId ?? campaign?.ft_id ?? NATIVE_TOKEN_ID,
       recipientAccountId: recipientAccountIdFormParam,
       campaignId: campaignIdFormParam,
       listId: listIdFormParam,
@@ -82,6 +86,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }),
 
     [
+      cachedTokenId,
       campaign?.ft_id,
       campaignIdFormParam,
       groupDonationPotId,

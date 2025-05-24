@@ -62,12 +62,10 @@ export const DonationSingleRecipientAllocation: React.FC<
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
-  const { data: campaign } = campaignsContractHooks.useCampaign({
+  const { isLoading: isCampaignDataLoading, data: campaign } = campaignsContractHooks.useCampaign({
     enabled: isCampaignDonation,
     campaignId: campaignId ?? 0,
   });
-
-  console.log(campaign);
 
   const isFtSelectorAvailable =
     FEATURE_REGISTRY.FtDonation.isEnabled &&
@@ -177,40 +175,44 @@ export const DonationSingleRecipientAllocation: React.FC<
 
         {potSelector}
 
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <TextField
-              label="Amount"
-              {...field}
-              onClick={undefined}
-              onBlur={undefined}
-              onFocus={undefined}
-              labelExtension={<TokenBalance {...{ tokenId }} />}
-              inputExtension={
-                <FormField
-                  control={form.control}
-                  name="tokenId"
-                  render={({ field: inputExtension }) => (
-                    <TokenSelector
-                      hideZeroBalanceOptions
-                      disabled={!isFtSelectorAvailable}
-                      defaultValue={campaign?.ft_id ?? inputExtension.value}
-                      onValueChange={inputExtension.onChange}
-                    />
-                  )}
-                />
-              }
-              type="number"
-              placeholder="0.00"
-              min={0}
-              max={token?.balanceFloat ?? undefined}
-              step={0.01}
-              appendix={totalAmountUsdValue}
-            />
-          )}
-        />
+        {isCampaignDonation && isCampaignDataLoading ? (
+          <Skeleton className="h-17.5 w-full" />
+        ) : (
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <TextField
+                label="Amount"
+                {...field}
+                onClick={undefined}
+                onBlur={undefined}
+                onFocus={undefined}
+                labelExtension={<TokenBalance {...{ tokenId }} />}
+                inputExtension={
+                  <FormField
+                    control={form.control}
+                    name="tokenId"
+                    render={({ field: inputExtension }) => (
+                      <TokenSelector
+                        hideZeroBalanceOptions
+                        disabled={!isFtSelectorAvailable}
+                        defaultValue={inputExtension.value}
+                        onValueChange={inputExtension.onChange}
+                      />
+                    )}
+                  />
+                }
+                type="number"
+                placeholder="0.00"
+                min={0}
+                max={token?.balanceFloat ?? undefined}
+                step={0.01}
+                appendix={totalAmountUsdValue}
+              />
+            )}
+          />
+        )}
       </DialogDescription>
     </>
   );
