@@ -35,7 +35,14 @@ const TokenSelectorOption: React.FC<TokenSelectorOptionProps> = ({
 
   if (token !== undefined && (skipIfZeroBalance ? isBalancePositive : true)) {
     return (
-      <SelectFieldOption value={tokenId} style={{ order: isBalancePositive ? 1 : undefined }}>
+      <SelectFieldOption
+        value={tokenId}
+        style={{
+          //* Making positive balance assets appear first on the list.
+          //! Keep in mind that `SelectLabel` has `order: 1`
+          order: isBalancePositive ? 2 : 3,
+        }}
+      >
         <span className="inline-flex gap-2">
           <span>{token.metadata.symbol}</span>
 
