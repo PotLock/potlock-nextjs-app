@@ -117,6 +117,14 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
     tokenId,
   });
 
+  const donationLinkUrl = useMemo(() => {
+    if (isCampaignDonation) {
+      return routeSelectors.CAMPAIGN_BY_ID_LEADERBOARD(receipt.campaign_id);
+    } else if (recipientAccountId !== undefined) {
+      return routeSelectors.PROFILE_BY_ID_FUNDING_RAISED(recipientAccountId);
+    } else return null;
+  }, [isCampaignDonation, recipientAccountId, receipt]);
+
   return !isResultLoading && recipientAccountId === undefined ? (
     <ModalErrorBody heading="Donation" title="Unable to load recipient data!" />
   ) : (
@@ -207,14 +215,10 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
           </p>
         )}
 
-        {isLoading || recipientAccountId === undefined ? (
+        {isLoading || donationLinkUrl === null ? (
           <Skeleton className="w-23.5 h-5" />
         ) : (
-          <Link
-            href={`${rootPathnames.PROFILE}/${recipientAccountId}/funding-raised`}
-            onClick={closeModal}
-            className="font-500 text-red-600"
-          >
+          <Link href={donationLinkUrl} onClick={closeModal} className="font-500 text-red-600">
             {"View donation"}
           </Link>
         )}
