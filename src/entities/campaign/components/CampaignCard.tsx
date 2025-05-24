@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { truncate, yoctoNearToFloat } from "@/common/lib";
+import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { DonateToCampaignProjects } from "@/features/donation";
+import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
@@ -21,7 +22,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
   return (
     <div
       className={cn(
-        "h-144 cursor-pointer rounded-lg  ease-in-out ",
+        "min-h-144 cursor-pointer rounded-lg ease-in-out ",
         "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_2px_2px_-1px_rgba(5,5,5,0.08),0px_3px_5px_0px_rgba(5,5,5,0.08)] ",
         "transition-all duration-500 hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]",
       )}
@@ -46,9 +47,11 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             </div>
           )}
         </div>
+
         <div className="flex flex-col gap-4 px-6 py-6">
           <div className="flex gap-0 font-semibold">
             <p className="mr-2 font-semibold text-[#656565]">FOR</p>
+
             <div onClick={(e) => e.stopPropagation()}>
               <AccountProfileLink
                 classNames={{ root: "bg-transparent", avatar: "h-5 w-5", name: "text-sm" }}
@@ -60,19 +63,20 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
           <div className="h-[110px]">
             <p className="text-[16px]">{data.description ? truncate(data.description, 160) : ""}</p>
           </div>
+
           <CampaignProgressBar
+            tokenId={data.ft_id ?? NATIVE_TOKEN_ID}
             startDate={Number(data?.start_ms)}
-            target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}
-            minAmount={data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0}
-            targetMet={
-              yoctoNearToFloat(data?.total_raised_amount) >= yoctoNearToFloat(data?.target_amount)
-            }
+            amount={data?.total_raised_amount ?? `${0}`}
+            minAmount={data?.min_amount ?? `${0}`}
+            target={data?.target_amount ?? `${0}`}
             isStarted={isStarted}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
-            amount={data?.total_raised_amount ? yoctoNearToFloat(data?.total_raised_amount) : 0}
             endDate={Number(data?.end_ms)}
           />
-          <DonateToCampaignProjects
+
+          <DonateToCampaign
+            cachedTokenId={data.ft_id ?? NATIVE_TOKEN_ID}
             campaignId={data.id}
             variant="standard-outline"
             disabled={isStarted || isEnded || data?.total_raised_amount === data?.max_amount}

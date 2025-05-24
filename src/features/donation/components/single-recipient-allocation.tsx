@@ -4,8 +4,8 @@ import { values } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
-import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import { parseNumber } from "@/common/lib";
 import { ByAccountId, ByCampaignId } from "@/common/types";
 import { SelectField, SelectFieldOption, TextField } from "@/common/ui/form/components";
 import {
@@ -36,7 +36,7 @@ export type DonationSingleRecipientAllocationProps = Partial<ByAccountId> &
 export const DonationSingleRecipientAllocation: React.FC<
   DonationSingleRecipientAllocationProps
 > = ({ form, accountId, matchingPots, campaignId }) => {
-  const viewer = useWalletUserSession();
+  const walletUser = useWalletUserSession();
 
   const [amount, tokenId, allocationStrategy, potAccountId] = form.watch([
     "amount",
@@ -47,7 +47,7 @@ export const DonationSingleRecipientAllocation: React.FC<
 
   const { data: token } = useToken({
     tokenId,
-    balanceCheckAccountId: viewer?.accountId,
+    balanceCheckAccountId: walletUser?.accountId,
   });
 
   const {
@@ -62,19 +62,23 @@ export const DonationSingleRecipientAllocation: React.FC<
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
-  const { data: campaign } = campaignsContractHooks.useCampaign({
+  const { isLoading: isCampaignDataLoading, data: campaign } = campaignsContractHooks.useCampaign({
     enabled: isCampaignDonation,
     campaignId: campaignId ?? 0,
   });
 
-  const isFtSupportAvailable =
+  const isFtSelectorAvailable =
     FEATURE_REGISTRY.FtDonation.isEnabled &&
-    (isCampaignDonation
-      ? campaign?.ftId !== NATIVE_TOKEN_ID
-      : allocationStrategy === DonationAllocationStrategyEnum.full);
+    (isCampaignDonation ? false : allocationStrategy === DonationAllocationStrategyEnum.full);
 
-  const totalAmountUsdValue =
-    amount && token?.usdPrice ? `~$ ${token.usdPrice.mul(amount).toFixed(2)}` : null;
+  const totalAmountUsdValue = useMemo(
+    () =>
+      token?.usdPrice === undefined
+        ? null
+        : `~$ ${token.usdPrice.mul(parseNumber(amount ?? 0)).toFixed(2)}`,
+
+    [amount, token?.usdPrice],
+  );
 
   const strategySelector = useMemo(
     () =>
@@ -171,39 +175,44 @@ export const DonationSingleRecipientAllocation: React.FC<
 
         {potSelector}
 
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <TextField
-              label="Amount"
-              {...field}
-              onClick={undefined}
-              onBlur={undefined}
-              onFocus={undefined}
-              labelExtension={<TokenBalance {...{ tokenId }} />}
-              inputExtension={
-                <FormField
-                  control={form.control}
-                  name="tokenId"
-                  render={({ field: inputExtension }) => (
-                    <TokenSelector
-                      disabled={!isFtSupportAvailable}
-                      defaultValue={inputExtension.value}
-                      onValueChange={inputExtension.onChange}
-                    />
-                  )}
-                />
-              }
-              type="number"
-              placeholder="0.00"
-              min={0}
-              max={token?.balanceFloat ?? undefined}
-              step={0.01}
-              appendix={totalAmountUsdValue}
-            />
-          )}
-        />
+        {isCampaignDonation && isCampaignDataLoading ? (
+          <Skeleton className="h-17.5 w-full" />
+        ) : (
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <TextField
+                label="Amount"
+                {...field}
+                onClick={undefined}
+                onBlur={undefined}
+                onFocus={undefined}
+                labelExtension={<TokenBalance {...{ tokenId }} />}
+                inputExtension={
+                  <FormField
+                    control={form.control}
+                    name="tokenId"
+                    render={({ field: inputExtension }) => (
+                      <TokenSelector
+                        hideZeroBalanceOptions
+                        disabled={!isFtSelectorAvailable}
+                        defaultValue={inputExtension.value}
+                        onValueChange={inputExtension.onChange}
+                      />
+                    )}
+                  />
+                }
+                type="number"
+                placeholder="0.00"
+                min={0}
+                max={token?.balanceFloat ?? undefined}
+                step={0.01}
+                appendix={totalAmountUsdValue}
+              />
+            )}
+          />
+        )}
       </DialogDescription>
     </>
   );

@@ -1,14 +1,25 @@
 import { AccountId, IndivisibleUnits, type TokenId } from "@/common/types";
 
+export type CampaignsContractConfig = {
+  owner: AccountId;
+  admins: AccountId[];
+  protocol_fee_basis_points: number;
+  protocol_fee_recipient_account: AccountId;
+  default_referral_fee_basis_points: number;
+  default_creator_fee_basis_points: number;
+  total_campaigns_count: number;
+  total_donations_count: number;
+};
+
 export type CampaignInputs = {
   name: string;
   description?: string;
   cover_image_url?: string | null;
   start_ms?: number | string;
   end_ms?: number | string;
-  target_amount: number;
-  min_amount?: number;
-  max_amount?: number;
+  target_amount: IndivisibleUnits;
+  min_amount?: null | IndivisibleUnits;
+  max_amount?: null | IndivisibleUnits;
   recipient?: AccountId;
   owner?: AccountId;
   referral_fee_basis_points?: number;
@@ -25,11 +36,11 @@ export type Campaign = {
   owner: AccountId;
   start_ms: number;
   end_ms?: null | number;
-  ftId?: null | TokenId;
+  ft_id?: null | TokenId;
   target_amount: IndivisibleUnits;
   min_amount?: null | IndivisibleUnits;
-  escrow_balance: IndivisibleUnits;
   max_amount?: null | IndivisibleUnits;
+  escrow_balance: IndivisibleUnits;
   referral_fee_basis_points?: null | number;
   creator_fee_basis_points?: null | number;
   allow_fee_avoidance?: boolean;

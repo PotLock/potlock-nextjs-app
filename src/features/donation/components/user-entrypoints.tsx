@@ -4,7 +4,7 @@ import { type ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 
-import { useDonationUserFlow } from "../hooks/user-flow";
+import { type DonationUserFlowProps, useDonationUserFlow } from "../hooks/user-flow";
 
 export const DonateRandomly = () => {
   const {
@@ -66,19 +66,22 @@ export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({ list
   return <Button onClick={openDonationModal}>{"Donate to list"}</Button>;
 };
 
-export type DonationToCampaignProjectsProps = ByCampaignId & {
-  className?: string;
-  disabled: boolean;
-  variant?: "standard-outline";
-};
+export type DonationToCampaignProps = ByCampaignId &
+  Pick<DonationUserFlowProps, "cachedTokenId"> & {
+    className?: string;
+    disabled: boolean;
+    variant?: "standard-outline";
+  };
 
-export const DonateToCampaignProjects: React.FC<DonationToCampaignProjectsProps> = ({
+export const DonateToCampaign: React.FC<DonationToCampaignProps> = ({
+  cachedTokenId,
   campaignId,
   className,
   disabled,
   variant,
 }) => {
-  const { openDonationModal } = useDonationUserFlow({ campaignId });
+  const { openDonationModal } = useDonationUserFlow({ campaignId, cachedTokenId });
+
   return (
     <Button
       variant={variant ?? "brand-filled"}

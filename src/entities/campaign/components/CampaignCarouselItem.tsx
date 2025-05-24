@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { truncate, yoctoNearToFloat } from "@/common/lib";
+import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { CarouselItem } from "@/common/ui/layout/components";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { DonateToCampaignProjects } from "@/features/donation";
+import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
@@ -61,21 +62,20 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
         </div>
         <div className="flex w-full flex-col items-start p-4 md:w-[28%] md:p-0">
           <CampaignProgressBar
-            target={data?.target_amount ? yoctoNearToFloat(data?.target_amount) : 0}
-            minAmount={data?.min_amount ? yoctoNearToFloat(data?.min_amount) : 0}
-            targetMet={
-              yoctoNearToFloat(data?.total_raised_amount) >= yoctoNearToFloat(data?.target_amount)
-            }
+            tokenId={data.ft_id ?? NATIVE_TOKEN_ID}
+            amount={data?.total_raised_amount ?? `${0}`}
+            minAmount={data?.min_amount ?? `${0}`}
+            target={data?.target_amount ?? `${0}`}
             isStarted={isStarted}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
-            amount={data?.total_raised_amount ? yoctoNearToFloat(data?.total_raised_amount) : 0}
             startDate={data?.start_ms}
             endDate={Number(data?.end_ms)}
           />
           <p className="mt-4 text-start md:h-28">
             {data?.description ? truncate(data.description, 100) : ""}
           </p>
-          <DonateToCampaignProjects
+          <DonateToCampaign
+            cachedTokenId={data.ft_id ?? NATIVE_TOKEN_ID}
             campaignId={data.id}
             className="mt-4"
             disabled={isStarted || isEnded || data?.total_raised_amount === data?.max_amount}

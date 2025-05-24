@@ -1,20 +1,23 @@
-import { BadgeCheck, CircleAlert, CircleCheck } from "lucide-react";
+import { useMemo } from "react";
+
+import { BadgeCheck, CircleAlert } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { isNonNullish, isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
+import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
-import { yoctoNearToFloat } from "@/common/lib";
+import { indivisibleUnitsToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
-import { Badge, Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
+import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
+import { useToken } from "@/entities/_shared";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { useNearToUsdWithFallback } from "@/entities/_shared/token/hooks/_deprecated";
-import { DonateToCampaignProjects } from "@/features/donation";
+import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 import { useCampaignForm } from "../hooks/forms";
@@ -22,21 +25,37 @@ import { useCampaignForm } from "../hooks/forms";
 export type CampaignBannerProps = ByCampaignId & {};
 
 export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) => {
+  const viewer = useWalletUserSession();
+
   const {
     isLoading: isCampaignLoading,
     data: campaign,
     error: campaignLoadingError,
-  } = campaignsContractHooks.useCampaign({
-    campaignId,
-  });
+  } = campaignsContractHooks.useCampaign({ campaignId });
 
-  const viewer = useWalletUserSession();
+  const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+
+  const raisedAmountFloat = useMemo(
+    () =>
+      token === undefined || campaign === undefined
+        ? 0
+        : indivisibleUnitsToFloat(campaign.total_raised_amount, token.metadata.decimals),
+
+    [campaign, token],
+  );
+
+  const minAmountFLoat = useMemo(
+    () =>
+      token === undefined || isNullish(campaign?.min_amount)
+        ? 0
+        : indivisibleUnitsToFloat(campaign.min_amount, token.metadata.decimals),
+
+    [campaign?.min_amount, token],
+  );
 
   const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
     campaignId,
-    enabled:
-      !!campaign?.min_amount &&
-      Number(campaign?.total_raised_amount) >= Number(campaign?.min_amount),
+    enabled: isNonNullish(campaign?.min_amount) && raisedAmountFloat >= minAmountFLoat,
   });
 
   const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
@@ -45,14 +64,19 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
       enabled:
         !!campaign?.end_ms &&
         campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-        Number(campaign?.total_raised_amount) < Number(campaign?.min_amount),
+        raisedAmountFloat < minAmountFLoat,
     },
   );
 
   const { handleProcessEscrowedDonations, handleDonationsRefund } = useCampaignForm({ campaignId });
 
-  const usdInfo = useNearToUsdWithFallback(
-    Number(yoctoNearToFloat((campaign?.total_raised_amount as string) || "0")),
+  const raisedAmountUsdApproximation = useMemo(
+    () =>
+      token?.usdPrice === undefined
+        ? null
+        : `~$${token.usdPrice.times(raisedAmountFloat).toFixed(2)}`,
+
+    [raisedAmountFloat, token?.usdPrice],
   );
 
   if (campaignLoadingError) {
@@ -121,26 +145,23 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           </p>
           <div className="flex items-baseline">
             <h1 className="text-xl font-semibold">
-              {yoctoNearToFloat(campaign?.total_raised_amount || "0")} NEAR
+              {`${raisedAmountFloat} ${token?.metadata.symbol ?? ""}`}
             </h1>
-            {campaign?.total_raised_amount && <h2 className="text-base">{usdInfo}</h2>}
+
+            {raisedAmountUsdApproximation && (
+              <h2 className="text-base">{raisedAmountUsdApproximation}</h2>
+            )}
           </div>
         </div>
 
         <CampaignProgressBar
-          target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
-          minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
+          tokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
+          amount={campaign?.total_raised_amount ?? `${0}`}
+          minAmount={campaign?.min_amount ?? `${0}`}
+          target={campaign?.target_amount ?? `${0}`}
           startDate={Number(campaign?.start_ms)}
-          targetMet={
-            !!campaign?.total_raised_amount &&
-            yoctoNearToFloat(campaign?.total_raised_amount) >=
-              yoctoNearToFloat(campaign?.target_amount)
-          }
           isStarted={isStarted}
           isEscrowBalanceEmpty={campaign?.escrow_balance === "0"}
-          amount={
-            campaign?.total_raised_amount ? yoctoNearToFloat(campaign?.total_raised_amount) : 0
-          }
           endDate={Number(campaign?.end_ms)}
         />
 
@@ -166,7 +187,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             isDonationRefundsProcessed &&
             campaign?.end_ms &&
             campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-            Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
+            raisedAmountFloat < minAmountFLoat && (
               <div className="flex w-full flex-col gap-4">
                 <Button className="w-full" onClick={handleDonationsRefund}>
                   Refund Donations
@@ -175,10 +196,13 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
                   <CircleAlert className="h--12 w-12" />
                   <div className="m-0 p-0">
                     <h2 className="mb-2 text-base font-medium">Campaign Ended</h2>
+
                     <p className="text-sm font-normal leading-6">
-                      The campaign has finished and did not meet its minimum goal of
-                      {yoctoNearToFloat(campaign?.min_amount as string)} NEAR. Initiate the Reverse
-                      Process to refund donors.
+                      {`The campaign has finished and did not meet its minimum goal of ${
+                        minAmountFLoat
+                      } ${
+                        token?.metadata.symbol ?? ""
+                      }. Initiate the Reverse Process to refund donors.`}
                     </p>
                   </div>
                 </div>
@@ -187,16 +211,21 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
           {!hasEscrowedDonations && !isDonationRefundsProcessed && (
             <>
-              <DonateToCampaignProjects
-                className="mb-4"
+              <DonateToCampaign
+                cachedTokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
                 disabled={
                   isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
                 }
+                className="mb-4"
                 {...{ campaignId }}
               />
 
               <SocialsShare
-                shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME} by donating or sharing, every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
+                shareText={`Support ${campaign?.name} Campaign on ${
+                  PLATFORM_NAME
+                } by donating or sharing, every contribution Counts! ${
+                  PLATFORM_TWITTER_ACCOUNT_ID
+                }`}
                 variant="button"
               />
             </>

@@ -14,7 +14,7 @@ import { DonationAllocationKey } from "../types";
 import { DonationModalContent, type DonationModalContentProps } from "./modal-content";
 
 export type DonationModalProps = DonationAllocationKey &
-  Pick<DonationModalContentProps, "transactionHash"> & {};
+  Pick<DonationModalContentProps, "cachedTokenId" | "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
   const viewer = useWalletUserSession();

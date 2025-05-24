@@ -9,26 +9,9 @@ import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_IDS } from "@/common/constants";
 import { refExchangeContractHooks } from "@/common/contracts/ref-finance";
 import { ftContractHooks } from "@/common/contracts/tokens";
 import { indivisibleUnitsToBigNum, indivisibleUnitsToFloat, isAccountId } from "@/common/lib";
-import { formatWithCommas } from "@/common/lib/formatWithCommas";
-import type { AccountId, ByTokenId, ConditionalActivation } from "@/common/types";
+import type { AccountId, ConditionalActivation } from "@/common/types";
 
 import { type TokenQuery, type TokenQueryResult } from "../types";
-
-/**
- * @deprecated Use `usdPrice` Big number from `useToken({ tokenId: ... })`
- */
-export const useTokenUsdDisplayValue = ({
-  amountFloat,
-  tokenId,
-}: ByTokenId & {
-  amountFloat: number;
-}): string | null => {
-  const { data: token } = useToken({ tokenId });
-
-  const value = token ? parseFloat(token.usdPrice?.mul(amountFloat).toFixed(2) ?? "0") : 0;
-
-  return useMemo(() => (isNaN(value) ? null : `~$ ${formatWithCommas(value.toString())}`), [value]);
-};
 
 export const useTokenAllowlist = ({ enabled = true }: ConditionalActivation) => {
   const { data: refFinanceTokenAllowlist } = refExchangeContractHooks.useWhitelistedTokens({
