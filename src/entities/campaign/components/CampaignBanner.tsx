@@ -1,19 +1,23 @@
+import { useMemo } from "react";
+
 import { BadgeCheck, CircleAlert } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { isNonNullish, isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
+import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
-import { yoctoNearToFloat } from "@/common/lib";
+import { indivisibleUnitsToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
 import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
+import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
+import { useToken } from "@/entities/_shared";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { useNearToUsdWithFallback } from "@/entities/_shared/token/hooks/_deprecated";
-import { DonateToCampaignProjects } from "@/features/donation";
+import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 import { useCampaignForm } from "../hooks/forms";
@@ -21,21 +25,37 @@ import { useCampaignForm } from "../hooks/forms";
 export type CampaignBannerProps = ByCampaignId & {};
 
 export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) => {
+  const viewer = useWalletUserSession();
+
   const {
     isLoading: isCampaignLoading,
     data: campaign,
     error: campaignLoadingError,
-  } = campaignsContractHooks.useCampaign({
-    campaignId,
-  });
+  } = campaignsContractHooks.useCampaign({ campaignId });
 
-  const viewer = useWalletUserSession();
+  const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+
+  const raisedAmountFloat = useMemo(
+    () =>
+      token === undefined || campaign === undefined
+        ? 0
+        : indivisibleUnitsToFloat(campaign.total_raised_amount, token.metadata.decimals),
+
+    [campaign, token],
+  );
+
+  const minAmountFLoat = useMemo(
+    () =>
+      token === undefined || isNullish(campaign?.min_amount)
+        ? 0
+        : indivisibleUnitsToFloat(campaign.min_amount, token.metadata.decimals),
+
+    [campaign?.min_amount, token],
+  );
 
   const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
     campaignId,
-    enabled:
-      !!campaign?.min_amount &&
-      Number(campaign?.total_raised_amount) >= Number(campaign?.min_amount),
+    enabled: isNonNullish(campaign?.min_amount) && raisedAmountFloat >= minAmountFLoat,
   });
 
   const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
@@ -44,14 +64,19 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
       enabled:
         !!campaign?.end_ms &&
         campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-        Number(campaign?.total_raised_amount) < Number(campaign?.min_amount),
+        raisedAmountFloat < minAmountFLoat,
     },
   );
 
   const { handleProcessEscrowedDonations, handleDonationsRefund } = useCampaignForm({ campaignId });
 
-  const usdInfo = useNearToUsdWithFallback(
-    Number(yoctoNearToFloat((campaign?.total_raised_amount as string) || "0")),
+  const raisedAmountUsdApproximation = useMemo(
+    () =>
+      token?.usdPrice === undefined
+        ? null
+        : `~$${token.usdPrice.times(raisedAmountFloat).toFixed(2)}`,
+
+    [raisedAmountFloat, token?.usdPrice],
   );
 
   if (campaignLoadingError) {
@@ -77,29 +102,37 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             src={campaign?.cover_image_url || "/assets/images/list-gradient-3.png"}
           />
           <div className="absolute inset-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>{" "}
-          <div className="absolute bottom-0 z-40 flex flex-col items-start gap-2 p-4">
+          <div className="absolute bottom-0 z-40 flex w-full flex-col items-start gap-2 p-4">
             <h1 className="text-[24px] font-bold text-white">{campaign?.name}</h1>
 
             <div
               className={cn(
-                "text-foreground flex flex-col items-start gap-2 p-0 text-[12px] text-white",
-                "md:flex-row md:items-center md:text-[15px]",
+                "text-foreground flex flex-col-reverse gap-2 p-0 text-[12px] text-white md:items-center",
+                " w-full justify-between md:flex-row md:items-center md:text-[15px]",
               )}
             >
-              <div className="flex gap-1">
-                <p className="pr-1 font-semibold">FOR</p>
-                <AccountProfileLink
-                  classNames={{ root: "bg-transparent" }}
-                  accountId={campaign?.recipient as string}
-                />
+              <div className="flex flex-col items-start gap-2 p-0 md:flex-row">
+                <div className="flex gap-1">
+                  <p className="pr-1 font-semibold">FOR</p>
+                  <AccountProfileLink
+                    classNames={{ root: "bg-transparent" }}
+                    accountId={campaign?.recipient as string}
+                  />
+                </div>
+                <div className="hidden flex-col items-center bg-gray-800 md:flex">
+                  <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
+                </div>
+                <div className="flex gap-1">
+                  <p className="font-semibold">ORGANIZED BY</p>
+                  <AccountProfileLink accountId={campaign?.owner as string} />
+                </div>
               </div>
-              <div className="hidden flex-col items-center bg-gray-800 md:flex">
-                <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
-              </div>
-              <div className="flex gap-1">
-                <p className="font-semibold">ORGANIZED BY</p>
-                <AccountProfileLink accountId={campaign?.owner as string} />
-              </div>
+              {campaign?.owner === campaign?.recipient && (
+                <div className="flex  items-center gap-1">
+                  <BadgeIcon size={5} />
+                  <span className="m-0 font-bold">OFFICIAL</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -112,25 +145,23 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           </p>
           <div className="flex items-baseline">
             <h1 className="text-xl font-semibold">
-              {yoctoNearToFloat(campaign?.total_raised_amount || "0")} NEAR
+              {`${raisedAmountFloat} ${token?.metadata.symbol ?? ""}`}
             </h1>
-            {campaign?.total_raised_amount && <h2 className="text-base">{usdInfo}</h2>}
+
+            {raisedAmountUsdApproximation && (
+              <h2 className="text-base">{raisedAmountUsdApproximation}</h2>
+            )}
           </div>
         </div>
 
         <CampaignProgressBar
-          target={campaign?.target_amount ? yoctoNearToFloat(campaign?.target_amount) : 0}
-          minAmount={campaign?.min_amount ? yoctoNearToFloat(campaign?.min_amount) : 0}
-          targetMet={
-            !!campaign?.total_raised_amount &&
-            yoctoNearToFloat(campaign?.total_raised_amount) >=
-              yoctoNearToFloat(campaign?.target_amount)
-          }
+          tokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
+          amount={campaign?.total_raised_amount ?? `${0}`}
+          minAmount={campaign?.min_amount ?? `${0}`}
+          target={campaign?.target_amount ?? `${0}`}
+          startDate={Number(campaign?.start_ms)}
           isStarted={isStarted}
           isEscrowBalanceEmpty={campaign?.escrow_balance === "0"}
-          amount={
-            campaign?.total_raised_amount ? yoctoNearToFloat(campaign?.total_raised_amount) : 0
-          }
           endDate={Number(campaign?.end_ms)}
         />
 
@@ -156,7 +187,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             isDonationRefundsProcessed &&
             campaign?.end_ms &&
             campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-            Number(campaign?.total_raised_amount) < Number(campaign?.min_amount) && (
+            raisedAmountFloat < minAmountFLoat && (
               <div className="flex w-full flex-col gap-4">
                 <Button className="w-full" onClick={handleDonationsRefund}>
                   Refund Donations
@@ -165,10 +196,13 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
                   <CircleAlert className="h--12 w-12" />
                   <div className="m-0 p-0">
                     <h2 className="mb-2 text-base font-medium">Campaign Ended</h2>
+
                     <p className="text-sm font-normal leading-6">
-                      The campaign has finished and did not meet its minimum goal of
-                      {yoctoNearToFloat(campaign?.min_amount as string)} NEAR. Initiate the Reverse
-                      Process to refund donors.
+                      {`The campaign has finished and did not meet its minimum goal of ${
+                        minAmountFLoat
+                      } ${
+                        token?.metadata.symbol ?? ""
+                      }. Initiate the Reverse Process to refund donors.`}
                     </p>
                   </div>
                 </div>
@@ -177,16 +211,21 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
           {!hasEscrowedDonations && !isDonationRefundsProcessed && (
             <>
-              <DonateToCampaignProjects
-                className="mb-4"
+              <DonateToCampaign
+                cachedTokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
                 disabled={
                   isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
                 }
+                className="mb-4"
                 {...{ campaignId }}
               />
 
               <SocialsShare
-                shareText={`Support ${campaign?.name} Campaign on ${PLATFORM_NAME} by donating or sharing, every contribution Counts! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
+                shareText={`Support ${campaign?.name} Campaign on ${
+                  PLATFORM_NAME
+                } by donating or sharing, every contribution Counts! ${
+                  PLATFORM_TWITTER_ACCOUNT_ID
+                }`}
                 variant="button"
               />
             </>

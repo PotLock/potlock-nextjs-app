@@ -19,7 +19,7 @@ import {
 } from "@/common/ui/layout/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenValueSummary, useToken } from "@/entities/_shared/token";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames, routeSelectors } from "@/pathnames";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DonationSingleRecipientSuccessXShareButton } from "./single-recipient-success-share";
@@ -27,6 +27,7 @@ import { DonationSummary } from "./summary";
 import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
 import { WithDonationFormAPI } from "../models/schemas";
 import type { SingleRecipientDonationReceipt } from "../types";
+import { DonationCampaignSuccessXShareButton } from "./campaign-success-share";
 
 export type DonationSingleRecipientSuccessScreenProps = WithDonationFormAPI & {
   receipt?: SingleRecipientDonationReceipt;
@@ -80,14 +81,13 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
     potId: potId as PotId,
   });
 
-  const tokenId = useMemo(
-    () =>
-      isCampaignDonation || isDirectDonation
+  const tokenId = useMemo(() => {
+    if (isCampaignDonation || isDirectDonation) {
+      return receipt !== undefined
         ? ((receipt as DirectDonation | CampaignDonation).ft_id ?? NATIVE_TOKEN_ID)
-        : NATIVE_TOKEN_ID,
-
-    [isCampaignDonation, isDirectDonation, receipt],
-  );
+        : NATIVE_TOKEN_ID;
+    } else return NATIVE_TOKEN_ID;
+  }, [isCampaignDonation, isDirectDonation, receipt]);
 
   const { isLoading: isTokenLoading, data: token } = useToken({ tokenId });
 
@@ -148,9 +148,27 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
         {isResultLoading ? (
           <Skeleton className="w-41 h-4.5" />
         ) : (
-          recipientAccountId && (
-            <DonationSingleRecipientSuccessXShareButton {...{ recipientAccountId }} />
-          )
+          <>
+            {isCampaignDonation ? (
+              <>
+                {campaign !== undefined && (
+                  <DonationCampaignSuccessXShareButton
+                    campaignId={campaign.id}
+                    campaignName={campaign.name}
+                    recipientAccountId={campaign.recipient}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                {recipientAccountId && (
+                  <DonationSingleRecipientSuccessXShareButton
+                    recipientAccountId={recipientAccountId}
+                  />
+                )}
+              </>
+            )}
+          </>
         )}
       </div>
 
@@ -167,7 +185,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
         {isLoading || recipientAccountId === undefined ? (
           <Skeleton className="w-49 h-5" />
         ) : (
-          <p className="m-0 flex flex-col gap-1">
+          <p className="m-0 flex flex-col items-center gap-1">
             <div className="flex gap-1">
               <span className="prose">{"has been donated to"}</span>
 
@@ -178,7 +196,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
             </div>
 
             {campaign?.name && (
-              <Link href={rootPathnames.CAMPAIGN(campaign.id)}>
+              <Link href={routeSelectors.CAMPAIGN_BY_ID(campaign.id)}>
                 <span className="text-center text-neutral-600">{`Via ${campaign.name} Campaign`}</span>
               </Link>
             )}

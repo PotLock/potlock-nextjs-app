@@ -13,6 +13,7 @@ import {
   Spinner,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
 
 const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
@@ -72,6 +73,8 @@ export default function CampaignsPage() {
     error: campaignsLoadingError,
   } = campaignsContractHooks.useCampaigns();
 
+  const viewer = useWalletUserSession();
+
   return (
     <PageWithBanner>
       <div
@@ -90,9 +93,11 @@ export default function CampaignsPage() {
         </h1>
 
         <div className="flex gap-4">
-          <Button asChild className="mt-4" variant="brand-filled">
-            <Link href="/campaign/create">{"Start Campaign"}</Link>
-          </Button>
+          {viewer.isSignedIn && (
+            <Button asChild className="mt-4" variant="brand-filled">
+              <Link href="/campaign/create">{"Start Campaign"}</Link>
+            </Button>
+          )}
           <Button variant="brand-tonal" asChild className="mt-4">
             <Link target="_blank" href="https://potlock.org/learn-campaigns">
               {"Learn More"}

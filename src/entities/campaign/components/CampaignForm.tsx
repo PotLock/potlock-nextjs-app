@@ -1,17 +1,18 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 import { Info } from "lucide-react";
 import { useRouter } from "next/router";
 import { Temporal } from "temporal-polyfill";
 
-import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { IPFS_NEAR_SOCIAL_URL, NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { yoctoNearToFloat } from "@/common/lib";
+import { parseNumber, yoctoNearToFloat } from "@/common/lib";
 import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
-import { NearInputField } from "@/entities/_shared";
+import { useWalletUserSession } from "@/common/wallet";
+import { TokenSelector, useToken } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";
 
@@ -24,6 +25,7 @@ export const CampaignForm = ({
   campaignId?: CampaignId;
   closeEditCampaign?: () => void;
 }) => {
+  const walletUser = useWalletUserSession();
   const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [avoidFee, setAvoidFee] = useState<boolean>(false);
   const [loadingImageUpload, setLoadingImageUpload] = useState(false);
@@ -35,6 +37,7 @@ export const CampaignForm = ({
     campaignId,
   });
 
+  // TODO: Move into the form hook
   useEffect(() => {
     if (isUpdate && existingData) {
       if (existingData?.cover_image_url) {
@@ -55,6 +58,13 @@ export const CampaignForm = ({
         form.setValue("max_amount", yoctoNearToFloat(existingData.max_amount));
       }
 
+      if (
+        existingData?.start_ms &&
+        existingData?.start_ms > Temporal.Now.instant().epochMilliseconds
+      ) {
+        form.setValue("start_ms", existingData?.start_ms);
+      }
+
       if (existingData?.end_ms) {
         form.setValue("end_ms", existingData?.end_ms);
       }
@@ -64,6 +74,45 @@ export const CampaignForm = ({
       }
     }
   }, [isUpdate, existingData, form]);
+
+  const [ftId, targetAmount, minAmount, maxAmount] = form.watch([
+    "ft_id",
+    "target_amount",
+    "min_amount",
+    "max_amount",
+  ]);
+
+  const { data: token } = useToken({
+    tokenId: ftId ?? NATIVE_TOKEN_ID,
+    balanceCheckAccountId: walletUser?.accountId,
+  });
+
+  const targetAmountUsdValue = useMemo(
+    () =>
+      token?.usdPrice === undefined
+        ? null
+        : `~$ ${token.usdPrice.mul(parseNumber(targetAmount ?? 0)).toFixed(2)}`,
+
+    [targetAmount, token?.usdPrice],
+  );
+
+  const minAmountUsdValue = useMemo(
+    () =>
+      token?.usdPrice === undefined
+        ? null
+        : `~$ ${token.usdPrice.mul(parseNumber(minAmount ?? 0)).toFixed(2)}`,
+
+    [minAmount, token?.usdPrice],
+  );
+
+  const maxAmountUsdValue = useMemo(
+    () =>
+      token?.usdPrice === undefined
+        ? null
+        : `~$ ${token.usdPrice.mul(parseNumber(maxAmount ?? 0)).toFixed(2)}`,
+
+    [maxAmount, token?.usdPrice],
+  );
 
   const handleCoverImageChange = async (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
@@ -83,10 +132,23 @@ export const CampaignForm = ({
     }
   };
 
+  const selectedTokenIndicator = useMemo(
+    () => (
+      <FormField
+        control={form.control}
+        name="ft_id"
+        render={() => <TokenSelector disabled value={ftId} />}
+      />
+    ),
+
+    [form.control, ftId],
+  );
+
   return (
     <div className=" mx-auto my-2 max-w-[896px] p-6  font-sans md:w-full md:rounded-[16px] md:p-5">
       <div className="flex w-full flex-row items-start gap-3 rounded-md bg-[#FEF6EE] p-4">
         <Info size={18} />
+
         <div className="m-0">
           <h2 className="m-0 text-base font-medium">Campaign Duration Types</h2>
           <ul className="ml-4 list-disc text-xs leading-normal md:text-sm md:leading-6">
@@ -94,10 +156,12 @@ export const CampaignForm = ({
               <strong>Continuous Campaign:</strong> No minimum amount and no end date—runs
               indefinitely.
             </li>
+
             <li>
               <strong> Goal-based Campaign:</strong> Requires a minimum amount and ends once the
               goal is achieved. If goal is not met, donations are refunded.
             </li>
+
             <li>
               <strong>Time-limited Campaign:</strong> Has a specified end date—concludes on the set
               date.
@@ -105,6 +169,7 @@ export const CampaignForm = ({
           </ul>
         </div>
       </div>
+
       <Form {...form}>
         <form
           onSubmit={(e) => {
@@ -121,6 +186,7 @@ export const CampaignForm = ({
             <h3 className="mb-2 mt-10 text-xl font-semibold">
               Upload Campaign Image <span className="font-normal text-gray-500">(Optional)</span>
             </h3>
+
             <div
               className="relative flex h-[320px] w-full items-center justify-center rounded-md bg-gray-100"
               style={{
@@ -136,6 +202,7 @@ export const CampaignForm = ({
                 onChange={handleCoverImageChange}
                 className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               />
+
               <button
                 type="button"
                 onClick={() => document.getElementById("uploadCoverImage")?.click()}
@@ -148,6 +215,7 @@ export const CampaignForm = ({
               </button>
             </div>
           </div>
+
           <div className="mb-8 mt-8 flex w-full flex-col justify-between md:flex-row md:flex-row">
             <FormField
               control={form.control}
@@ -163,6 +231,7 @@ export const CampaignForm = ({
                 />
               )}
             />
+
             <FormField
               control={form.control}
               name="name"
@@ -178,6 +247,7 @@ export const CampaignForm = ({
               )}
             />
           </div>
+
           <FormField
             control={form.control}
             name="description"
@@ -193,44 +263,79 @@ export const CampaignForm = ({
               />
             )}
           />
+
           <FormField
             control={form.control}
             name="target_amount"
             render={({ field }) => (
-              <NearInputField
-                {...field}
-                className="appearance-none md:w-[42%]"
+              <TextField
                 label="Target Amount"
+                {...field}
+                inputExtension={
+                  <FormField
+                    control={form.control}
+                    name="ft_id"
+                    render={({ field: inputExtension }) => (
+                      <TokenSelector
+                        defaultValue={inputExtension.value}
+                        onValueChange={inputExtension.onChange}
+                      />
+                    )}
+                  />
+                }
                 required
+                type="number"
+                placeholder="0.00"
+                min={0}
+                step={0.01}
+                appendix={targetAmountUsdValue}
+                classNames={{ fieldRoot: "md:w-[42%]" }}
               />
             )}
           />
-          <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row md:gap-4">
+
+          <div className="mt-8 flex w-full min-w-full flex-col justify-between gap-8 md:flex-row md:gap-4">
             <FormField
               control={form.control}
               name="min_amount"
               render={({ field }) => (
-                <NearInputField
-                  {...field}
-                  className="lg:w-90 mb-8 md:mb-0"
+                <TextField
                   label="Minimum Target Amount"
                   hint="Minimum amount required before the collected donations can be accessed or utilized"
+                  {...field}
+                  labelExtension="(optional)"
+                  inputExtension={selectedTokenIndicator}
+                  type="number"
+                  placeholder="0.00"
+                  min={0}
+                  step={0.01}
+                  appendix={minAmountUsdValue}
+                  classNames={{ root: "lg:w-90" }}
                 />
               )}
             />
+
             <FormField
               control={form.control}
               name="max_amount"
               render={({ field }) => (
-                <NearInputField
-                  {...field}
-                  className="lg:w-90"
-                  hint="Once the maximum target amount is reached, the campaign automatically ends"
+                <TextField
                   label="Maximum Target Amount"
+                  hint="Once the maximum target amount is reached, the campaign automatically ends"
+                  {...field}
+                  labelExtension="(optional)"
+                  inputExtension={selectedTokenIndicator}
+                  type="number"
+                  placeholder="0.00"
+                  min={0}
+                  step={0.01}
+                  appendix={maxAmountUsdValue}
+                  classNames={{ root: "lg:w-90" }}
                 />
               )}
             />
           </div>
+
           <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row md:gap-4">
             {!campaignId ? (
               <FormField
@@ -279,6 +384,7 @@ export const CampaignForm = ({
                 />
               )
             )}
+
             <FormField
               control={form.control}
               name="end_ms"
@@ -302,6 +408,7 @@ export const CampaignForm = ({
               )}
             />
           </div>
+
           {!campaignId && (
             <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row md:gap-4">
               <FormField
@@ -320,6 +427,7 @@ export const CampaignForm = ({
                   />
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="creator_fee_basis_points"
@@ -338,19 +446,23 @@ export const CampaignForm = ({
               />
             </div>
           )}
+
           <div className="border-1 mt-8 flex w-full items-center justify-between rounded-lg border-[#E2E8F0] bg-[#F7F7F7] p-4">
             <div>
               <h2 className="text-base font-medium">Bypass Fees</h2>
+
               <p className="text-sm font-normal leading-6 text-[#7B7B7B] ">
                 If enabled, donors may be able to bypass certain fees
               </p>
             </div>
             <Switch checked={avoidFee} onClick={() => setAvoidFee(!avoidFee)} id="allow-fee" />
           </div>
+
           <div className="my-10 flex flex-row-reverse justify-between">
             <Button variant="standard-filled" disabled={isDisabled} type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
+
             <Button
               variant="standard-outline"
               onClick={() => (campaignId ? closeEditCampaign?.() : back())}

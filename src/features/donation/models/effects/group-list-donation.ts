@@ -1,35 +1,30 @@
 import type { InformativeSuccessfulExecutionOutcome } from "@/common/blockchains/near-protocol";
-import { type PotDonation, potContractClient } from "@/common/contracts/core/pot";
+import {
+  type DirectBatchDonationItem,
+  type DirectDonation,
+  donationContractClient,
+} from "@/common/contracts/core/donation";
 import { floatToYoctoNear } from "@/common/lib";
-import type { AccountId } from "@/common/types";
 
-import { DonationBatchCallDraft, DonationGroupAllocationStrategyEnum } from "../../types";
+import { DonationGroupAllocationStrategyEnum } from "../../types";
 import { type DonationSubmitParams } from "../schemas";
 
-type PotDonationMulticallInputs = Pick<
+type GroupListDonationMulticallInputs = Pick<
   DonationSubmitParams,
-  | "bypassChefFee"
-  | "bypassProtocolFee"
-  | "groupAllocationStrategy"
-  | "groupAllocationPlan"
-  | "referrerAccountId"
-> & { potContractAccountId: AccountId };
+  "groupAllocationStrategy" | "groupAllocationPlan" | "referrerAccountId" | "bypassProtocolFee"
+> & {};
 
-export const potGroupDonationMulticall = ({
-  potContractAccountId,
-  bypassChefFee,
-  bypassProtocolFee,
+export const groupListDonationMulticall = ({
   groupAllocationStrategy,
   groupAllocationPlan = [],
   referrerAccountId,
-}: PotDonationMulticallInputs) => {
+  bypassProtocolFee,
+}: GroupListDonationMulticallInputs): Promise<DirectDonation[]> => {
   const isDistributionManual =
     groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual;
 
-  return potContractClient
+  return donationContractClient
     .donateBatch(
-      potContractAccountId,
-
       groupAllocationPlan.reduce(
         (txs, { account_id, amount: donationAmount = 0 }) =>
           isDistributionManual && donationAmount === 0
@@ -37,21 +32,22 @@ export const potGroupDonationMulticall = ({
             : txs.concat([
                 {
                   args: {
-                    project_id: account_id,
+                    recipient_id: account_id,
                     referrer_id: referrerAccountId,
                     bypass_protocol_fee: bypassProtocolFee,
-                    ...(bypassChefFee ? { custom_chef_fee_basis_points: 0 } : {}),
                   },
 
                   amountYoctoNear: floatToYoctoNear(donationAmount),
                 },
               ]),
 
-        [] as DonationBatchCallDraft["entries"],
+        [] as DirectBatchDonationItem[],
       ),
     )
     .then((finalExecutionOutcomes = undefined) => {
-      const receipts: PotDonation[] =
+      console.log("finalExecutionOutcomes", finalExecutionOutcomes);
+
+      const receipts: DirectDonation[] =
         finalExecutionOutcomes?.reduce(
           (acc, { status }) => {
             const decodedReceipt = atob(
@@ -59,13 +55,13 @@ export const potGroupDonationMulticall = ({
             );
 
             try {
-              return [...acc, JSON.parse(decodedReceipt) as PotDonation];
+              return [...acc, JSON.parse(decodedReceipt) as DirectDonation];
             } catch {
               return acc;
             }
           },
 
-          [] as PotDonation[],
+          [] as DirectDonation[],
         ) ?? [];
 
       if (receipts.length > 0) {

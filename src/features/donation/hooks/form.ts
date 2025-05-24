@@ -9,6 +9,7 @@ import { PotApplicationStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat, safePositiveNumberOrZero } from "@/common/lib";
+import type { TokenId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
@@ -29,9 +30,12 @@ import {
 
 export type DonationFormParams = DonationAllocationKey & {
   referrerAccountId?: string;
+
+  //* Used when the token id is provided by the indexer
+  cachedTokenId?: TokenId;
 };
 
-export const useDonationForm = ({ ...params }: DonationFormParams) => {
+export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams) => {
   const { toast } = useToast();
   const viewer = useWalletUserSession();
 
@@ -66,7 +70,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
   const defaultValues = useMemo<Partial<DonationInputs>>(
     () => ({
       amount: DONATION_DEFAULT_MIN_AMOUNT_FLOAT,
-      tokenId: campaign?.ftId ?? NATIVE_TOKEN_ID,
+      tokenId: cachedTokenId ?? campaign?.ft_id ?? NATIVE_TOKEN_ID,
       recipientAccountId: recipientAccountIdFormParam,
       campaignId: campaignIdFormParam,
       listId: listIdFormParam,
@@ -82,7 +86,8 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     }),
 
     [
-      campaign?.ftId,
+      cachedTokenId,
+      campaign?.ft_id,
       campaignIdFormParam,
       groupDonationPotId,
       isCampaignDonation,
@@ -172,19 +177,12 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         : undefined;
     } else if (isSingleRecipientPotDonation) {
       return minRecipientShareAmountFloat;
-    } else if (isCampaignDonation && token !== undefined) {
-      return isNonNullish(campaign?.min_amount)
-        ? indivisibleUnitsToFloat(campaign.min_amount, token.metadata.decimals, 4)
-        : undefined;
     } else return isFtDonation ? undefined : DONATION_DEFAULT_MIN_AMOUNT_FLOAT;
   }, [
-    campaign?.min_amount,
-    isCampaignDonation,
     isFtDonation,
     isGroupDonation,
     isSingleRecipientPotDonation,
     minRecipientShareAmountFloat,
-    token,
     values.groupAllocationPlan,
     values.groupAllocationStrategy,
   ]);
@@ -218,16 +216,17 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
         ...inputs,
         ...params,
         referrerAccountId: viewer?.referrerAccountId,
+        campaignRecipientAccountId: isCampaignDonation ? campaign?.recipient : undefined,
         onError: onSubmitError,
       }),
 
-    [onSubmitError, params, viewer?.referrerAccountId],
+    [campaign?.recipient, isCampaignDonation, onSubmitError, params, viewer?.referrerAccountId],
   );
 
   //* Ensure the correct token is selected:
   useEffect(() => {
-    if (isCampaignDonation && isNonNullish(campaign?.ftId)) {
-      self.setValue("tokenId", campaign.ftId);
+    if (isCampaignDonation && isNonNullish(campaign?.ft_id) && values.tokenId !== campaign.ft_id) {
+      self.setValue("tokenId", campaign.ft_id);
     } else if (
       (values.allocationStrategy === "full" && values.tokenId === undefined) ||
       (values.allocationStrategy === "share" && values.tokenId === undefined) ||
@@ -237,7 +236,7 @@ export const useDonationForm = ({ ...params }: DonationFormParams) => {
     ) {
       self.setValue("tokenId", NATIVE_TOKEN_ID);
     }
-  }, [campaign?.ftId, isCampaignDonation, self, values.allocationStrategy, values.tokenId]);
+  }, [campaign?.ft_id, isCampaignDonation, self, values.allocationStrategy, values.tokenId]);
 
   //* Ensure `amount` is populated from `totalAmountFloat` when using manual share allocation:
   useEffect(() => {

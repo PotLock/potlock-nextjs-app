@@ -76,12 +76,14 @@ export const potInputsToPotArgs = ({
       sybil_wrapper_provider: isSybilResistanceEnabled
         ? SYBIL_CONTRACT_ACCOUNT_ID + PROVIDER_ID_DELIMITER + "is_human"
         : undefined,
+
+      referral_fee_matching_pool_basis_points:
+        potInputs.referral_fee_matching_pool_basis_points ?? 0,
+      referral_fee_public_round_basis_points: potInputs.referral_fee_public_round_basis_points ?? 0,
+      chef_fee_basis_points: potInputs.chef_fee_basis_points ?? 0,
     },
 
     {
-      referral_fee_matching_pool_basis_points: feePercentsToBasisPoints,
-      referral_fee_public_round_basis_points: feePercentsToBasisPoints,
-      chef_fee_basis_points: feePercentsToBasisPoints,
       application_start_ms: timestamp.parse,
       application_end_ms: timestamp.parse,
       public_round_start_ms: timestamp.parse,

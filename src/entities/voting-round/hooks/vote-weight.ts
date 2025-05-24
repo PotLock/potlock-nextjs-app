@@ -55,7 +55,7 @@ export const useVotingRoundVoterVoteWeight = ({ accountId, potId }: VotingRoundV
               ? accumulatedWeight.add(
                   Big(rule.amplificationPercent)
                     .div(100)
-                    .mul(votingRoundConfig.basicWeight ?? 1),
+                    .mul(votingRoundConfig.basicWeight || 1),
                 )
               : accumulatedWeight,
 

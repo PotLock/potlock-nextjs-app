@@ -1,8 +1,9 @@
-import { preprocess, z } from "zod";
+import { literal, preprocess, string, z } from "zod";
 
 import { near } from "@/common/blockchains/near-protocol/client";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
-import { futureTimestamp, integerCappedPercentage } from "@/common/lib";
+import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 
 import { CAMPAIGN_MAX_FEE_POINTS } from "../utils/constants";
 import { isCampaignFeeValid } from "../utils/validation";
@@ -38,6 +39,25 @@ const positiveNumberParser = preprocess(
     .optional(), // Make the final type optional
 );
 
+export const integerCappedPercentage = preprocess((value) => {
+  if (value === "" || value === null || value === undefined) {
+    return undefined;
+  }
+
+  return typeof value === "string" ? safePositiveNumber.parse(value) : value;
+}, safePositiveNumber.optional())
+  .refine((percents) => percents === undefined || percents < 100, {
+    message: "Must be less than 100%.",
+  })
+  .refine((percents) => percents === undefined || Number.isInteger(percents), {
+    message: "Fractional percentage is not supported.",
+  });
+
+const ftIdSchema = literal(NATIVE_TOKEN_ID)
+  .or(string().min(6))
+  .default(NATIVE_TOKEN_ID)
+  .describe('Either "NEAR" or FT contract account id.');
+
 // --- Base Schema ---
 const baseSchema = z.object({
   name: z
@@ -45,6 +65,7 @@ const baseSchema = z.object({
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must be less than 100 characters"),
   description: z.string().max(250, "Description must be less than 250 characters").optional(),
+  ft_id: ftIdSchema,
   target_amount: positiveNumberParser.describe("Target Amount of the campaign"),
   min_amount: positiveNumberParser.optional().describe("Minimum Amount of the Campaign"),
   max_amount: positiveNumberParser.optional().describe("Maximum Amount of the Campaign"),

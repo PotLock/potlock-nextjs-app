@@ -182,17 +182,22 @@ export default defineConfig({
           from { height: 0 }
           to { height: var(--radix-accordion-content-height) }
         }
+
         @keyframes accordion-up {
           from { height: var(--radix-accordion-content-height) }
           to { height: 0 }
         }
+
         @keyframes beacon {
           0%, 100% { transform: scale(1) }
           50% { transform: scale(1.3) }
         }
+
         .animate-accordion-down { animation: accordion-down 0.2s ease-out }
         .animate-accordion-up { animation: accordion-up 0.2s ease-out }
         .animate-beacon { animation: beacon 1.5s infinite }
+
+        [role="combobox"] .selector-option-appendix { display: none }
       `,
     },
   ],

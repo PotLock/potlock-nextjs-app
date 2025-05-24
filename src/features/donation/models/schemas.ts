@@ -70,6 +70,7 @@ export const donationDependentFields: (keyof DonationInputs)[] = ["potAccountId"
 
 export type DonationSubmitParams = DonationInputs & {
   referrerAccountId?: AccountId;
+  campaignRecipientAccountId?: AccountId;
 };
 
 export type DonationFormAPI = UseFormReturn<DonationInputs>;

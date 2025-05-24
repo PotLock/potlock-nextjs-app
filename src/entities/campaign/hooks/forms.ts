@@ -3,14 +3,15 @@ import { useCallback, useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { infer as FromSchema } from "zod";
 
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
-import { floatToYoctoNear, parseNumber } from "@/common/lib";
-import { CampaignId } from "@/common/types";
+import { floatToIndivisible, parseNumber } from "@/common/lib";
+import { CampaignId, type FromSchema } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
+import { useToken } from "@/entities/_shared";
 import { dispatch } from "@/store";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
@@ -19,35 +20,62 @@ import { CampaignEnumType } from "../types";
 export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => {
   const viewer = useWalletUserSession();
   const router = useRouter();
-
-  const schema = campaignId ? updateCampaignSchema : createCampaignSchema;
+  const isNewCampaign = campaignId === undefined;
+  const schema = isNewCampaign ? createCampaignSchema : updateCampaignSchema;
 
   type Values = FromSchema<typeof schema>;
 
   const self = useForm<Values>({
     resolver: zodResolver(schema),
     mode: "all",
+    defaultValues: { ft_id: NATIVE_TOKEN_ID, target_amount: 0.01 },
     resetOptions: { keepDirtyValues: false },
   });
 
+  //! For internal use only!
   const values = useWatch(self);
 
+  const parsedTargetAmount = useMemo(
+    () => (values.target_amount ? parseNumber(values.target_amount) : null),
+    [values.target_amount],
+  );
+
+  const parsedMinAmount = useMemo(
+    () => (values.min_amount ? parseNumber(values.min_amount) : null),
+    [values.min_amount],
+  );
+
+  const parsedMaxAmount = useMemo(
+    () => (values.max_amount ? parseNumber(values.max_amount) : null),
+    [values.max_amount],
+  );
+
+  const { isLoading: isTokenDataLoading, data: token } = useToken({
+    tokenId: values.ft_id ?? NATIVE_TOKEN_ID,
+  });
+
   const isDisabled = useMemo(
-    () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
-    [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
+    () =>
+      !self.formState.isDirty ||
+      !self.formState.isValid ||
+      self.formState.isSubmitting ||
+      (values.ft_id !== NATIVE_TOKEN_ID && !isTokenDataLoading && token === undefined),
+
+    [
+      isTokenDataLoading,
+      self.formState.isDirty,
+      self.formState.isSubmitting,
+      self.formState.isValid,
+      token,
+      values.ft_id,
+    ],
   );
 
   useEffect(() => {
-    const { min_amount, max_amount, target_amount } = values;
     const errors: Record<string, { message: string }> = {};
 
-    // Convert string values to numbers for comparison
-    const minAmount = min_amount ? parseNumber(min_amount) : null;
-    const maxAmount = max_amount ? parseNumber(max_amount) : null;
-    const targetAmount = target_amount ? parseNumber(target_amount) : null;
-
     // Validate min_amount vs max_amount
-    if (minAmount && maxAmount && minAmount > maxAmount) {
+    if (parsedMinAmount && parsedMaxAmount && parsedMinAmount > parsedMaxAmount) {
       errors.min_amount = {
         message: "Minimum amount cannot be greater than maximum amount",
       };
@@ -58,7 +86,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     }
 
     // Validate target_amount vs max_amount
-    if (targetAmount && maxAmount && targetAmount > maxAmount) {
+    if (parsedTargetAmount && parsedMaxAmount && parsedTargetAmount > parsedMaxAmount) {
       errors.target_amount = {
         message: "Target amount cannot be greater than maximum amount",
       };
@@ -69,7 +97,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     }
 
     // Validate min_amount vs target_amount
-    if (minAmount && targetAmount && minAmount > targetAmount) {
+    if (parsedMinAmount && parsedTargetAmount && parsedMinAmount > parsedTargetAmount) {
       errors.min_amount = {
         message: "Minimum amount cannot be greater than target amount",
       };
@@ -90,80 +118,101 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     Object.entries(errors).forEach(([field, error]) => {
       self.setError(field as keyof Values, error);
     });
-  }, [values, self]);
+  }, [values, self, parsedMinAmount, parsedMaxAmount, parsedTargetAmount]);
 
   const timeToMilliseconds = (time: number) => {
     return new Date(time).getTime();
   };
 
   const handleDeleteCampaign = () => {
-    if (!campaignId) return;
-    campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
+    if (!isNewCampaign) {
+      campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
 
-    dispatch.campaignEditor.updateCampaignModalState({
-      header: `Campaign Deleted Successfully`,
-      description: "You can now proceed to close this window",
-      type: CampaignEnumType.DELETE_CAMPAIGN,
-    });
+      dispatch.campaignEditor.updateCampaignModalState({
+        header: `Campaign Deleted Successfully`,
+        description: "You can now proceed to close this window",
+        type: CampaignEnumType.DELETE_CAMPAIGN,
+      });
+    }
   };
 
   const handleProcessEscrowedDonations = () => {
-    if (!campaignId) return;
+    if (!isNewCampaign) {
+      campaignsContractClient
+        .process_escrowed_donations_batch({
+          args: { campaign_id: campaignId },
+        })
+        .then(() => {
+          return toast({
+            title: "Successfully processed escrowed donations",
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to process escrowed donations:", error);
 
-    campaignsContractClient
-      .process_escrowed_donations_batch({
-        args: { campaign_id: campaignId },
-      })
-      .then(() => {
-        return toast({
-          title: "Successfully processed escrowed donations",
+          toast({
+            title: "Failed to process escrowed donations. Please try again later.",
+            variant: "destructive",
+          });
         });
-      })
-      .catch((error) => {
-        console.error("Failed to process escrowed donations:", error);
-
-        toast({
-          title: "Failed to process escrowed donations. Please try again later.",
-          variant: "destructive",
-        });
-      });
+    }
   };
 
   const handleDonationsRefund = () => {
-    if (!campaignId) return;
+    if (!isNewCampaign) {
+      campaignsContractClient
+        .process_refunds_batch({
+          args: { campaign_id: campaignId },
+        })
+        .then(() => {
+          return toast({
+            title: "Successfully processed donation refunds",
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to process donation refunds:", error);
 
-    campaignsContractClient
-      .process_refunds_batch({
-        args: { campaign_id: campaignId },
-      })
-      .then(() => {
-        return toast({
-          title: "Successfully processed donation refunds",
+          toast({
+            title: "Failed to process donation refunds. Please try again later.",
+            variant: "destructive",
+          });
         });
-      })
-      .catch((error) => {
-        console.error("Failed to process donation refunds:", error);
-
-        toast({
-          title: "Failed to process donation refunds. Please try again later.",
-          variant: "destructive",
-        });
-      });
+    }
   };
 
+  // TODO: Use token metadata to convert amounts
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) => {
       const args = {
         description: values.description || "",
         name: values.name || "",
-        target_amount: floatToYoctoNear(values.target_amount ?? 0) as any,
+        ft_id: values.ft_id === NATIVE_TOKEN_ID ? null : values.ft_id,
+
+        target_amount: floatToIndivisible(
+          parseNumber(values.target_amount ?? 0),
+          token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+        ),
+
         cover_image_url: values.cover_image_url ?? null,
-        ...(values.min_amount && !campaignId
-          ? { min_amount: floatToYoctoNear(values.min_amount) as any }
+
+        ...(isNewCampaign && parsedMinAmount !== null
+          ? {
+              min_amount: floatToIndivisible(
+                parsedMinAmount,
+                token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+              ),
+            }
           : {}),
-        ...(values.max_amount && {
-          max_amount: floatToYoctoNear(values.max_amount) as any,
-        }),
+
+        ...(parsedMaxAmount !== null
+          ? {
+              max_amount: floatToIndivisible(
+                parsedMaxAmount,
+                token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+              ),
+            }
+          : {}),
+
         ...(values?.allow_fee_avoidance && {
           allow_fee_avoidance: values.allow_fee_avoidance,
         }),
@@ -174,8 +223,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           creator_fee_basis_points: feePercentsToBasisPoints(values.creator_fee_basis_points),
         }),
         ...(values.start_ms &&
-          !campaignId &&
-          timeToMilliseconds(values.start_ms) >= Date.now() && {
+          timeToMilliseconds(values.start_ms) > Date.now() && {
             start_ms: timeToMilliseconds(values.start_ms),
           }),
         ...(values.end_ms && {
@@ -237,7 +285,15 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
         });
       }
     },
-    [campaignId, viewer.accountId],
+    [
+      campaignId,
+      isNewCampaign,
+      parsedMaxAmount,
+      parsedMinAmount,
+      router,
+      token?.metadata.decimals,
+      viewer.accountId,
+    ],
   );
 
   const onChange = async (field: keyof Values, value: string) => {
@@ -246,13 +302,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
   };
 
   return {
-    form: {
-      ...self,
-      formState: {
-        ...self.formState,
-        errors: { ...self.formState.errors },
-      },
-    },
+    form: self,
     onSubmit,
     values,
     watch: self.watch,

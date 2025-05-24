@@ -9,11 +9,12 @@ import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
 import { AppDispatcher } from "@/store";
 
-import { ftDonationMulticall } from "./ft-donation-multicall";
-import { listDonationMulticall } from "./list-donation-multicall";
+import { campaignFtDonationMulticall } from "./campaign-ft-donation";
+import { directFtDonationMulticall } from "./direct-ft-donation";
+import { groupListDonationMulticall } from "./group-list-donation";
 import { DonationAllocationKey, DonationAllocationStrategyEnum } from "../../types";
 import { type DonationSubmitParams } from "../schemas";
-import { potGroupDonationMulticall } from "./pot-group-donation-multicall";
+import { groupPotDonationMulticall } from "./group-pot-donation";
 
 /**
  * @deprecated use `nearRpc.txStatus()`
@@ -46,6 +47,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       amount,
       listId,
       campaignId,
+      campaignRecipientAccountId,
       potAccountId: singleRecipientMatchingPotId,
       allocationStrategy,
       groupAllocationPlan,
@@ -67,7 +69,7 @@ export const effects = (dispatch: AppDispatcher) => ({
       switch (allocationStrategy) {
         case DonationAllocationStrategyEnum.full: {
           if (isFtDonation) {
-            return void ftDonationMulticall({
+            return void directFtDonationMulticall({
               recipientAccountId: params.accountId,
               message,
               referrerAccountId,
@@ -103,32 +105,53 @@ export const effects = (dispatch: AppDispatcher) => ({
         case DonationAllocationStrategyEnum.share: {
           if (singleRecipientMatchingPotId === undefined) {
             return void dispatch.donation.failure(new Error("No pot selected."));
-          } else {
-            return void potContractClient
-              .donate(
-                singleRecipientMatchingPotId,
-
-                {
-                  project_id: params.accountId,
-                  message,
-                  referrer_id: referrerAccountId,
-                  bypass_protocol_fee: bypassProtocolFee,
-                  custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
-                },
-
-                floatToYoctoNear(amount),
-              )
-              .then(dispatch.donation.success)
-              .catch((error) => {
-                onError(error);
-                dispatch.donation.failure(error);
-              });
           }
+
+          return void potContractClient
+            .donate(
+              singleRecipientMatchingPotId,
+
+              {
+                project_id: params.accountId,
+                message,
+                referrer_id: referrerAccountId,
+                bypass_protocol_fee: bypassProtocolFee,
+                custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
+              },
+
+              floatToYoctoNear(amount),
+            )
+            .then(dispatch.donation.success)
+            .catch((error) => {
+              onError(error);
+              dispatch.donation.failure(error);
+            });
         }
       }
     } else if (isCampaignDonation) {
       if (isFtDonation) {
-        // TODO: Implement FT donation for campaigns
+        if (campaignRecipientAccountId === undefined) {
+          return void dispatch.donation.failure(
+            new Error("Campaign recipient account id is not provided."),
+          );
+        }
+
+        return void campaignFtDonationMulticall({
+          amount,
+          campaignId,
+          recipientAccountId: campaignRecipientAccountId,
+          referrerAccountId,
+          bypassProtocolFee,
+          // TODO: Functionality is not implemented, but might be required
+          bypassCreatorFee: false,
+          message,
+          tokenId,
+        })
+          .then(dispatch.donation.success)
+          .catch((error) => {
+            onError(error);
+            dispatch.donation.failure(error);
+          });
       } else {
         return void campaignsContractClient
           .donate(
@@ -137,6 +160,8 @@ export const effects = (dispatch: AppDispatcher) => ({
               message,
               referrer_id: referrerAccountId,
               bypass_protocol_fee: bypassProtocolFee,
+              // TODO: Functionality is not implemented, but might be required
+              bypass_creator_fee: false,
             },
 
             floatToYoctoNear(amount),
@@ -148,14 +173,14 @@ export const effects = (dispatch: AppDispatcher) => ({
           });
       }
     } else if (isGroupPotDonation && groupAllocationPlan !== undefined) {
-      return void potGroupDonationMulticall({ ...inputs, potContractAccountId: params.potId })
+      return void groupPotDonationMulticall({ ...inputs, potContractAccountId: params.potId })
         .then(dispatch.donation.success)
         .catch((error) => {
           onError(error);
           dispatch.donation.failure(error);
         });
     } else if (isListDonation && groupAllocationPlan !== undefined) {
-      return void listDonationMulticall(inputs)
+      return void groupListDonationMulticall(inputs)
         .then(dispatch.donation.success)
         .catch((error) => {
           onError(error);

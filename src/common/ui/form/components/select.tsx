@@ -17,20 +17,25 @@ import {
 
 export const SelectFieldOption = SelectItem;
 
-export type SelectFieldProps = Pick<
+export type ControlledSelectFieldProps = Pick<
   React.ComponentProps<typeof Select>,
-  "disabled" | "defaultValue" | "onValueChange" | "children"
-> & {
-  embedded?: boolean;
-  label: string;
-  placeholder?: string;
-  description?: string;
+  "defaultValue" | "onValueChange"
+>;
 
-  classes?: {
-    root?: string;
-    trigger?: string;
+export type UncontrolledSelectFieldProps = Pick<React.ComponentProps<typeof Select>, "value">;
+
+export type SelectFieldProps = Pick<React.ComponentProps<typeof Select>, "disabled" | "children"> &
+  (ControlledSelectFieldProps | UncontrolledSelectFieldProps) & {
+    embedded?: boolean;
+    label: string;
+    placeholder?: string;
+    description?: string;
+
+    classes?: {
+      root?: string;
+      trigger?: string;
+    };
   };
-};
 
 export const SelectField: React.FC<SelectFieldProps> = ({
   embedded = false,
