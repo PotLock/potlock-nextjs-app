@@ -27,6 +27,7 @@ import { DonationSummary } from "./summary";
 import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
 import { WithDonationFormAPI } from "../models/schemas";
 import type { SingleRecipientDonationReceipt } from "../types";
+import { DonationCampaignSuccessXShareButton } from "./campaign-success-share";
 
 export type DonationSingleRecipientSuccessScreenProps = WithDonationFormAPI & {
   receipt?: SingleRecipientDonationReceipt;
@@ -147,9 +148,27 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
         {isResultLoading ? (
           <Skeleton className="w-41 h-4.5" />
         ) : (
-          recipientAccountId && (
-            <DonationSingleRecipientSuccessXShareButton {...{ recipientAccountId }} />
-          )
+          <>
+            {isCampaignDonation ? (
+              <>
+                {campaign !== undefined && (
+                  <DonationCampaignSuccessXShareButton
+                    campaignId={campaign.id}
+                    campaignName={campaign.name}
+                    recipientAccountId={campaign.recipient}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                {recipientAccountId && (
+                  <DonationSingleRecipientSuccessXShareButton
+                    recipientAccountId={recipientAccountId}
+                  />
+                )}
+              </>
+            )}
+          </>
         )}
       </div>
 

@@ -155,7 +155,9 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
 
       return (
         <div className="flex w-full items-center justify-between">
-          <span className={`text-sm font-semibold text-[${messageColor}]`}>{message}</span>
+          <span className="text-sm font-semibold" style={{ color: messageColor }}>
+            {message}
+          </span>
           {amountDisplay}
         </div>
       );
