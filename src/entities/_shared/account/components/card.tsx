@@ -51,7 +51,8 @@ export const AccountCard = ({ accountId, snapshot, actions }: AccountCardProps) 
       ) : (
         <div
           className={cn(
-            "transition-duration-300 max-w-105 mx-auto flex h-full w-full flex-col",
+            "transition-duration-300 max-w-105 mx-auto flex h-full flex-col md:w-full",
+            "md:min-w-105 w-80",
             "bg-card overflow-hidden rounded-md transition-all",
           )}
           style={{ boxShadow: rootBoxShadow }}

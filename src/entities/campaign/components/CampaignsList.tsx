@@ -75,9 +75,9 @@ export const CampaignsList = () => {
       <div className="w-full">
         {filteredCampaigns.length ? (
           <div className="my-10 grid gap-2 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-            {filteredCampaigns.map((campaign) => (
-              <CampaignCard key={campaign.id} data={campaign} />
-            ))}
+            {filteredCampaigns
+              ?.filter((campaign) => campaign?.id !== 14)
+              .map((campaign) => <CampaignCard key={campaign.id} data={campaign} />)}
           </div>
         ) : (
           <div className="min-h-100 flex w-full flex-col items-center justify-center">
