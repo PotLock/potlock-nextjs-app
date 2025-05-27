@@ -22,7 +22,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
   return (
     <div
       className={cn(
-        "min-h-144 cursor-pointer rounded-lg ease-in-out ",
+        "min-h-144 max-w-105 w-full cursor-pointer rounded-lg ease-in-out md:max-w-full ",
         "shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_2px_2px_-1px_rgba(5,5,5,0.08),0px_3px_5px_0px_rgba(5,5,5,0.08)] ",
         "transition-all duration-500 hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]",
       )}
