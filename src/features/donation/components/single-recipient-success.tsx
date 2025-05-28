@@ -71,12 +71,12 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
     recipientAccountIdFormValue,
   ]);
 
-  const { data: campaign, isLoading: isCampaignLoading } = campaignsContractHooks.useCampaign({
+  const { isLoading: isCampaignLoading, data: campaign } = campaignsContractHooks.useCampaign({
     enabled: isCampaignDonation,
     campaignId: isCampaignDonation ? receipt?.campaign_id : 0,
   });
 
-  const { data: pot } = indexer.usePot({
+  const { isLoading: isPotLoading, data: pot } = indexer.usePot({
     enabled: potId !== undefined,
     potId: potId as PotId,
   });
@@ -91,7 +91,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
 
   const { isLoading: isTokenLoading, data: token } = useToken({ tokenId });
 
-  const isLoading = isResultLoading || isCampaignLoading || isTokenLoading;
+  const isLoading = isResultLoading || isCampaignLoading || isPotLoading || isTokenLoading;
 
   const totalAmountFloat = indivisibleUnitsToFloat(
     receipt?.total_amount ?? "0",
@@ -109,7 +109,8 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
   );
 
   const allocationBreakdown = useDonationAllocationBreakdown({
-    pot,
+    campaign,
+    potCache: pot,
     totalAmountFloat,
     referrerAccountId: receipt?.referrer_id ?? undefined,
     protocolFeeFinalAmount: protocolFeeAmountFloat,

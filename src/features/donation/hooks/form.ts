@@ -83,6 +83,7 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
 
       groupAllocationStrategy: DonationGroupAllocationStrategyEnum.even,
       groupAllocationPlan: isGroupDonation ? [] : undefined,
+      bypassCuratorFee: false,
     }),
 
     [

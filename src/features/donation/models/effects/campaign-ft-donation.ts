@@ -7,7 +7,7 @@ import {
   type InformativeSuccessfulExecutionOutcome,
   nearProtocolClient,
 } from "@/common/blockchains/near-protocol";
-import { FULL_TGAS, NATIVE_TOKEN_DECIMALS } from "@/common/constants";
+import { FULL_TGAS, NATIVE_TOKEN_DECIMALS, NOOP_BALANCE_VIEW } from "@/common/constants";
 import { type CampaignDonation, campaignsContractClient } from "@/common/contracts/core/campaigns";
 import type { FungibleTokenMetadata, FungibleTokenStorageBalance } from "@/common/contracts/tokens";
 import { bigNumToIndivisible, floatToIndivisible, indivisibleUnitsToBigNum } from "@/common/lib";
@@ -19,12 +19,18 @@ import type { DonationSubmitParams } from "../schemas";
 type CampaignFtDonationMulticallInputs = Pick<
   DonationSubmitParams,
   "amount" | "referrerAccountId" | "bypassProtocolFee" | "message" | "tokenId"
-> & { campaignId: CampaignId; recipientAccountId: AccountId; bypassCreatorFee: boolean };
+> & {
+  campaignId: CampaignId;
+  recipientAccountId: AccountId;
+  creatorAccountId: AccountId;
+  bypassCreatorFee: boolean;
+};
 
 export const campaignFtDonationMulticall = async ({
   amount,
   campaignId,
   recipientAccountId,
+  creatorAccountId,
   referrerAccountId,
   bypassProtocolFee,
   bypassCreatorFee,
@@ -62,14 +68,16 @@ export const campaignFtDonationMulticall = async ({
     /**
      *? Checking the FT contract storage balance of the protocol fee recipient account
      */
-    tokenClient
-      .view<
-        { account_id: AccountId },
-        FungibleTokenStorageBalance | null
-      >("storage_balance_of", { args: { account_id: protocolFeeRecipientAccountId } })
-      .then((response) =>
-        indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
-      ),
+    bypassProtocolFee
+      ? NOOP_BALANCE_VIEW
+      : tokenClient
+          .view<
+            { account_id: AccountId },
+            FungibleTokenStorageBalance | null
+          >("storage_balance_of", { args: { account_id: protocolFeeRecipientAccountId } })
+          .then((response) =>
+            indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
+          ),
 
     /**
      *? Checking the FT contract storage balance of the campaigns contract account
@@ -82,6 +90,20 @@ export const campaignFtDonationMulticall = async ({
       .then((response) =>
         indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
       ),
+
+    /**
+     *? Checking the FT contract storage balance of the campaign creator account
+     */
+    bypassCreatorFee
+      ? NOOP_BALANCE_VIEW
+      : tokenClient
+          .view<
+            { account_id: AccountId },
+            FungibleTokenStorageBalance | null
+          >("storage_balance_of", { args: { account_id: creatorAccountId } })
+          .then((response) =>
+            indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
+          ),
 
     /**
      *? Checking the FT contract storage balance of the donation recipient account
@@ -101,6 +123,7 @@ export const campaignFtDonationMulticall = async ({
         maxFtStorageBalanceBig,
         protocolFeeRecipientFtStorageBalanceBig,
         donationContractFtStorageBalanceBig,
+        creatorFtStorageBalanceBig,
         recipientFtStorageBalanceBig,
       ]) =>
         campaignsContractClient
@@ -159,6 +182,24 @@ export const campaignFtDonationMulticall = async ({
 
                       deposit: bigNumToIndivisible(
                         maxFtStorageBalanceBig.minus(donationContractFtStorageBalanceBig),
+                        NATIVE_TOKEN_DECIMALS,
+                      ),
+                    },
+                  ]
+                : []),
+
+              /**
+               *? FT contract storage balance replenishment for the campaign creator account
+               */
+              ...(!bypassCreatorFee && creatorFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
+                ? [
+                    {
+                      method: "storage_deposit",
+                      args: { account_id: creatorAccountId },
+                      gas: "100000000000000",
+
+                      deposit: bigNumToIndivisible(
+                        maxFtStorageBalanceBig.minus(creatorFtStorageBalanceBig),
                         NATIVE_TOKEN_DECIMALS,
                       ),
                     },

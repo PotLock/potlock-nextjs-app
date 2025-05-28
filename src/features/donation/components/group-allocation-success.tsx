@@ -157,7 +157,7 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
   ]);
 
   const allocationBreakdown = useDonationAllocationBreakdown({
-    pot,
+    potCache: pot,
     totalAmountFloat: totalAmountBig.toNumber(),
     referrerAccountId,
     protocolFeeFinalAmount: protocolFeeAmountFloat,

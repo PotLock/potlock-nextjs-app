@@ -56,6 +56,8 @@ export type DonationBreakdown = {
   referralFeePercent: number;
   chefFeeAmount: number;
   chefFeePercent: number;
+  campaignCreatorFeeAmount: number;
+  campaignCreatorFeePercent: number;
   storageFeeApproximation: string;
 };
 
