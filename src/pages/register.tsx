@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
@@ -23,7 +23,7 @@ export default function RegisterPage() {
     mutate: refetchListRegistrations,
   } = indexer.useAccountListRegistrations({
     enabled: viewer.isSignedIn,
-    accountId: viewer.accountId ?? "noop",
+    accountId: viewer.accountId ?? NOOP_STRING,
   });
 
   const hasRegistrationSubmitted = useMemo(

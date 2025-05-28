@@ -3,6 +3,7 @@ import { useCallback, useId, useMemo, useState } from "react";
 import { Pencil } from "lucide-react";
 
 import { type PotId, indexer } from "@/common/api/indexer";
+import { NOOP_STRING } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import type { CampaignId } from "@/common/types";
 import { CheckboxField } from "@/common/ui/form/components";
@@ -67,7 +68,7 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
 
   const { data: pot } = indexer.usePot({
     enabled: isPotDonation,
-    potId: potAccountId ?? "noop",
+    potId: potAccountId ?? NOOP_STRING,
   });
 
   const allocationBreakdown = useDonationAllocationBreakdown({

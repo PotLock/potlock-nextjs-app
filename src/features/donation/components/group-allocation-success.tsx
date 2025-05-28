@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID, NOOP_STRING } from "@/common/constants";
 import type { DirectDonation } from "@/common/contracts/core/donation";
 import type { PotDonation } from "@/common/contracts/core/pot";
 import { indivisibleUnitsToFloat, truncate } from "@/common/lib";
@@ -49,7 +49,7 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
 
   const { data: pot } = indexer.usePot({
     enabled: isPotDonation,
-    potId: potId ?? "noop",
+    potId: potId ?? NOOP_STRING,
   });
 
   const { data: list } = indexer.useList({

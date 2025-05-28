@@ -6,7 +6,7 @@ import { isNonNullish } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { PotApplicationStatus, indexer } from "@/common/api/indexer";
-import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID, NOOP_STRING } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat, safePositiveNumberOrZero } from "@/common/lib";
 import type { TokenId } from "@/common/types";
@@ -57,7 +57,7 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
 
   const { data: recipientActivePots = [] } = indexer.useAccountActivePots({
     enabled: isSingleRecipientDonation,
-    accountId: recipientAccountIdFormParam ?? "noop",
+    accountId: recipientAccountIdFormParam ?? NOOP_STRING,
     status: PotApplicationStatus.Approved,
     page_size: 999,
   });
@@ -135,7 +135,7 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
 
   const { data: pot } = indexer.usePot({
     enabled: isGroupPotDonation || isSingleRecipientPotDonation,
-    potId: groupDonationPotId ?? values.potAccountId ?? "noop",
+    potId: groupDonationPotId ?? values.potAccountId ?? NOOP_STRING,
   });
 
   /**

@@ -1,5 +1,5 @@
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { type ByAccountId, ByCampaignId, ByListId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
@@ -19,7 +19,7 @@ export const DonateRandomly = () => {
   const randomProjectAccountId = randomPGRegistryEntry?.registrant.id;
 
   const { openDonationModal: openRandomDonationModal } = useDonationUserFlow({
-    accountId: randomProjectAccountId ?? "noop",
+    accountId: randomProjectAccountId ?? NOOP_STRING,
   });
 
   const onDonateRandomlyClick = (event: React.MouseEvent) => {
