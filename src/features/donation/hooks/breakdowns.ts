@@ -114,7 +114,7 @@ export const useDonationAllocationBreakdown = ({
     .minus(protocolFeeBasisPoints)
     .minus(referralFeeBasisPoints)
     .minus(chefFeeBasisPoints)
-    .minus(campaignCreatorFeeAmount)
+    .minus(campaignCreatorFeeBasisPoints)
     .toNumber();
 
   const projectAllocationAmount = totalAmountBig
