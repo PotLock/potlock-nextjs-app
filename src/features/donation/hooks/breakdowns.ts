@@ -2,6 +2,7 @@ import { Big } from "big.js";
 
 import { Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
+import type { Campaign } from "@/common/contracts/core/campaigns";
 import { TOTAL_FEE_BASIS_POINTS } from "@/common/contracts/core/constants";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { type ByTokenId } from "@/common/types";
@@ -13,9 +14,10 @@ import { DonationBreakdown, WithTotalAmount } from "../types";
 export type DonationAllocationParams = WithTotalAmount &
   ByTokenId &
   Partial<
-    Pick<DonationSubmitParams, "bypassProtocolFee" | "bypassChefFee" | "referrerAccountId">
+    Pick<DonationSubmitParams, "bypassProtocolFee" | "bypassCuratorFee" | "referrerAccountId">
   > & {
-    pot?: Pot;
+    campaign?: Campaign;
+    potCache?: Pot;
     protocolFeeFinalAmount?: number;
     referralFeeFinalAmount?: number;
   };
@@ -23,22 +25,23 @@ export type DonationAllocationParams = WithTotalAmount &
 export const useDonationAllocationBreakdown = ({
   referrerAccountId,
   totalAmountFloat,
-  pot,
+  campaign,
+  potCache,
   protocolFeeFinalAmount,
   referralFeeFinalAmount,
   bypassProtocolFee = false,
-  bypassChefFee = false,
+  bypassCuratorFee = false,
   tokenId,
 }: DonationAllocationParams): DonationBreakdown => {
   const viewer = useWalletUserSession();
   const { data: donationConfig } = indexer.useDonationConfig();
   const totalAmountBig = Big(totalAmountFloat);
 
-  // TODO: (non-critical)
-  //* Recalculate basis points if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
+  // TODO: (non-critical) Recalculate basis points
+  // TODO: if `protocolFeeFinalAmount` and `referralFeeFinalAmount` are provided
 
   /**
-   *? Protocol fee:
+   ** Protocol fee:
    */
 
   const protocolFeeInitialBasisPoints = donationConfig?.protocol_fee_basis_points ?? 0;
@@ -54,15 +57,17 @@ export const useDonationAllocationBreakdown = ({
   const protocolFeeRecipientAccountId = donationConfig?.protocol_fee_recipient_account;
 
   /**
-   *? Referral fee:
+   ** Referral fee:
    */
 
-  const initialReferralFeeBasisPoints = donationConfig?.referral_fee_basis_points ?? 0;
+  const referralFeeInitialBasisPoints =
+    campaign?.referral_fee_basis_points ??
+    potCache?.referral_fee_public_round_basis_points ??
+    donationConfig?.referral_fee_basis_points ??
+    0;
 
   const referralFeeBasisPoints =
-    (viewer.referrerAccountId ?? referrerAccountId)
-      ? (pot?.referral_fee_public_round_basis_points ?? initialReferralFeeBasisPoints)
-      : 0;
+    (viewer.referrerAccountId ?? referrerAccountId) ? referralFeeInitialBasisPoints : 0;
 
   const referralFeeAmount =
     referralFeeFinalAmount ??
@@ -71,13 +76,13 @@ export const useDonationAllocationBreakdown = ({
   const referralFeePercent = feeBasisPointsToPercents(referralFeeBasisPoints);
 
   /**
-   *? Chef fee:
+   ** Chef fee:
    */
 
   const chefFeeInitialBasisPoints =
-    typeof pot?.chef?.id === "string" ? (pot?.chef_fee_basis_points ?? 0) : 0;
+    typeof potCache?.chef?.id === "string" ? (potCache?.chef_fee_basis_points ?? 0) : 0;
 
-  const chefFeeBasisPoints = bypassChefFee ? 0 : chefFeeInitialBasisPoints;
+  const chefFeeBasisPoints = bypassCuratorFee ? 0 : chefFeeInitialBasisPoints;
 
   const chefFeeAmount = totalAmountBig
     .times(chefFeeBasisPoints)
@@ -87,11 +92,30 @@ export const useDonationAllocationBreakdown = ({
   const chefFeePercent = feeBasisPointsToPercents(chefFeeInitialBasisPoints);
 
   /**
-   *? Project allocation:
+   ** Campaign creator fee:
    */
 
-  const projectAllocationBasisPoints =
-    TOTAL_FEE_BASIS_POINTS - protocolFeeBasisPoints - chefFeeBasisPoints - referralFeeBasisPoints;
+  const campaignCreatorFeeInitialBasisPoints = campaign?.creator_fee_basis_points ?? 0;
+
+  const campaignCreatorFeeBasisPoints = bypassCuratorFee ? 0 : campaignCreatorFeeInitialBasisPoints;
+
+  const campaignCreatorFeeAmount = totalAmountBig
+    .times(campaignCreatorFeeBasisPoints)
+    .div(TOTAL_FEE_BASIS_POINTS)
+    .toNumber();
+
+  const campaignCreatorFeePercent = feeBasisPointsToPercents(campaignCreatorFeeInitialBasisPoints);
+
+  /**
+   ** Project allocation:
+   */
+
+  const projectAllocationBasisPoints = Big(TOTAL_FEE_BASIS_POINTS)
+    .minus(protocolFeeBasisPoints)
+    .minus(referralFeeBasisPoints)
+    .minus(chefFeeBasisPoints)
+    .minus(campaignCreatorFeeBasisPoints)
+    .toNumber();
 
   const projectAllocationAmount = totalAmountBig
     .times(projectAllocationBasisPoints)
@@ -112,6 +136,8 @@ export const useDonationAllocationBreakdown = ({
     referralFeePercent,
     chefFeeAmount,
     chefFeePercent,
+    campaignCreatorFeeAmount,
+    campaignCreatorFeePercent,
     storageFeeApproximation,
   };
 };

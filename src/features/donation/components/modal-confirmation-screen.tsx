@@ -3,6 +3,9 @@ import { useCallback, useId, useMemo, useState } from "react";
 import { Pencil } from "lucide-react";
 
 import { type PotId, indexer } from "@/common/api/indexer";
+import { NOOP_STRING } from "@/common/constants";
+import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import type { CampaignId } from "@/common/types";
 import { CheckboxField } from "@/common/ui/form/components";
 import {
   Accordion,
@@ -29,34 +32,50 @@ import { WithDonationFormAPI } from "../models/schemas";
 import { DonationAllocationStrategyEnum, WithTotalAmount } from "../types";
 import { DonationGroupAllocationBreakdown } from "./group-allocation-breakdown";
 
-export type DonationModalConfirmationScreenProps = WithTotalAmount & WithDonationFormAPI & {};
+export type DonationModalConfirmationScreenProps = WithTotalAmount &
+  WithDonationFormAPI & {
+    /**
+     * `null` for non-campaign donations, otherwise the campaign ID
+     */
+    campaignId: null | CampaignId;
+  };
 
 export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmationScreenProps> = ({
   form,
   totalAmountFloat,
+  campaignId,
 }) => {
   const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
 
-  const [tokenId, potAccountId, bypassProtocolFee, bypassChefFee, allocationStrategy] = form.watch([
-    "tokenId",
-    "potAccountId",
-    "bypassProtocolFee",
-    "bypassChefFee",
-    "allocationStrategy",
-  ]);
+  const [tokenId, potAccountId, bypassProtocolFee, bypassCuratorFee, allocationStrategy] =
+    form.watch([
+      "tokenId",
+      "potAccountId",
+      "bypassProtocolFee",
+      "bypassCuratorFee",
+      "allocationStrategy",
+    ]);
 
   const isSingleRecipientDonation = allocationStrategy === DonationAllocationStrategyEnum.full;
+  const isCampaignDonation = campaignId !== null;
+  const isPotDonation = potAccountId !== undefined;
+
+  const { data: campaign } = campaignsContractHooks.useCampaign({
+    enabled: isCampaignDonation,
+    campaignId: isCampaignDonation ? campaignId : 0,
+  });
 
   const { data: pot } = indexer.usePot({
-    enabled: potAccountId !== undefined,
-    potId: potAccountId as PotId,
+    enabled: isPotDonation,
+    potId: potAccountId ?? NOOP_STRING,
   });
 
   const allocationBreakdown = useDonationAllocationBreakdown({
-    pot,
+    campaign,
+    potCache: pot,
     bypassProtocolFee,
-    bypassChefFee,
+    bypassCuratorFee,
     totalAmountFloat,
     tokenId,
   });
@@ -134,10 +153,10 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
             />
           )}
 
-          {potAccountId && allocationBreakdown.chefFeePercent > 0 && (
+          {isPotDonation && allocationBreakdown.chefFeePercent > 0 && (
             <FormField
               control={form.control}
-              name="bypassChefFee"
+              name="bypassCuratorFee"
               render={({ field }) => (
                 <CheckboxField
                   checked={field.value}
@@ -145,13 +164,37 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
                   label={
                     <>
                       <span>{`Remove ${allocationBreakdown.chefFeePercent}% Chef Fee`}</span>
-                      {pot?.chef?.id && <AccountProfileLink accountId={pot?.chef?.id} />}
+                      {pot?.chef?.id && <AccountProfileLink accountId={pot.chef.id} />}
                     </>
                   }
                 />
               )}
             />
           )}
+
+          {isCampaignDonation &&
+            campaign?.allow_fee_avoidance &&
+            allocationBreakdown.campaignCreatorFeePercent > 0 && (
+              <FormField
+                control={form.control}
+                name="bypassCuratorFee"
+                render={({ field }) => (
+                  <CheckboxField
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    label={
+                      <>
+                        <span>
+                          {`Remove ${allocationBreakdown.campaignCreatorFeePercent}% Creator Fee`}
+                        </span>
+
+                        {campaign?.owner && <AccountProfileLink accountId={campaign.owner} />}
+                      </>
+                    }
+                  />
+                )}
+              />
+            )}
         </div>
 
         {isSingleRecipientDonation && (

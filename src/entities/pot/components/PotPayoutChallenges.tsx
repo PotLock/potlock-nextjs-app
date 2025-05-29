@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Pot } from "@/common/api/indexer";
+import { NOOP_STRING } from "@/common/constants";
 import { Challenge as ChallengeType, potContractHooks } from "@/common/contracts/core/pot";
 import getTimePassed from "@/common/lib/getTimePassed";
 import AdminIcon from "@/common/ui/layout/svg/AdminIcon";
@@ -31,7 +32,7 @@ export const PotPayoutChallenges = ({
   const { isLoading: isChallengeListLoading, data: challenges } =
     potContractHooks.usePayoutChallenges({
       enabled: potDetail?.account !== undefined,
-      potId: potDetail?.account ?? "noop",
+      potId: potDetail?.account ?? NOOP_STRING,
     });
 
   const [tab, setTab] = useState<string>("UNRESOLVED");

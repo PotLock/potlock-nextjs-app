@@ -4,6 +4,7 @@ import { values } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot, indexer } from "@/common/api/indexer";
+import { NOOP_STRING } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { parseNumber } from "@/common/lib";
 import { ByAccountId, ByCampaignId } from "@/common/types";
@@ -56,7 +57,7 @@ export const DonationSingleRecipientAllocation: React.FC<
     error: recipientDataError,
   } = indexer.useAccount({
     enabled: accountId !== undefined,
-    accountId: accountId ?? "noop",
+    accountId: accountId ?? NOOP_STRING,
   });
 
   const hasMatchingPots = (matchingPots?.length ?? 0) > 0;

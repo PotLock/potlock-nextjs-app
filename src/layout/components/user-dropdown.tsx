@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
+import { NOOP_STRING } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import {
   Button,
@@ -27,7 +28,7 @@ export const UserDropdown = () => {
 
   const { profile } = useAccountSocialProfile({
     enabled: viewer.isSignedIn,
-    accountId: viewer.accountId ?? "noop",
+    accountId: viewer.accountId ?? NOOP_STRING,
   });
 
   const logoutHandler = useCallback(() => {
