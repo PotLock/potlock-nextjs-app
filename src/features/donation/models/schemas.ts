@@ -58,6 +58,7 @@ export const donationSchema = object({
     .optional(),
 
   bypassProtocolFee: boolean().default(false),
+  bypassReferralFee: boolean().default(false),
   bypassCuratorFee: boolean().default(false).describe("Bypass pot chef or campaign creator fee."),
 }).refine(isDonationMatchingPotSelected, {
   path: ["potAccountId"],

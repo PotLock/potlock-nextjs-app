@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
-import { FormSubmitHandler, useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
@@ -22,21 +22,21 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
 
   const [inProgress, setInProgress] = useState(false);
 
-  const onSubmit: FormSubmitHandler<MatchingPoolContributionInputs> = useCallback(
+  const onSubmit: SubmitHandler<MatchingPoolContributionInputs> = useCallback(
     async (formData) => {
       const args = {
-        message: formData.data.message,
+        message: formData.message,
         matching_pool: true,
-        referrer_id: viewer.referrerAccountId,
-        bypass_protocol_fee: formData.data.bypassProtocolFee,
-        custom_chef_fee_basis_points: formData.data.bypassChefFee ? 0 : undefined,
+        referrer_id: formData.bypassReferralFee ? undefined : viewer.referrerAccountId,
+        bypass_protocol_fee: formData.bypassProtocolFee,
+        custom_chef_fee_basis_points: formData.bypassChefFee ? 0 : undefined,
       };
 
       // if it is a DAO, we need to convert transactions to DAO function call proposals
       const daoAction = {
         method_name: "donate",
         gas: FIFTY_TGAS,
-        deposit: parseNearAmount(formData.data.amountNEAR.toString()) || "0",
+        deposit: parseNearAmount(formData.amountNEAR.toString()) || "0",
         args: Buffer.from(JSON.stringify(args), "utf-8").toString("base64"),
       };
 
@@ -75,7 +75,7 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
         } else {
           await naxiosInstance.contractApi({ contractId: potDetail.account }).call("donate", {
             args,
-            deposit: parseNearAmount(formData.data.amountNEAR.toString()) || "0",
+            deposit: parseNearAmount(formData.amountNEAR.toString()) || "0",
             gas: ONE_TGAS.mul(100).toString(),
             callbackUrl,
           });

@@ -19,7 +19,7 @@ import {
 } from "@/common/ui/layout/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenValueSummary, useToken } from "@/entities/_shared/token";
-import { rootPathnames, routeSelectors } from "@/pathnames";
+import { routeSelectors } from "@/pathnames";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DonationSingleRecipientSuccessXShareButton } from "./single-recipient-success-share";
@@ -103,7 +103,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
-  const referralFeeFinalAmountFloat = indivisibleUnitsToFloat(
+  const referralFeeAmountFloat = indivisibleUnitsToFloat(
     receipt?.referrer_fee ?? "0",
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
@@ -114,7 +114,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
     totalAmountFloat,
     referrerAccountId: receipt?.referrer_id ?? undefined,
     protocolFeeFinalAmount: protocolFeeAmountFloat,
-    referralFeeFinalAmount: referralFeeFinalAmountFloat,
+    referralFeeFinalAmount: referralFeeAmountFloat,
     tokenId,
   });
 

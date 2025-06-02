@@ -17,7 +17,7 @@ export const indivisibleUnitsToFloat = (
   amount: IndivisibleUnits,
   decimals: number,
   fracDigits?: number,
-) => parseFloat(indivisibleUnitsToBigNum(amount, decimals).toFixed(fracDigits ?? 2, 3));
+) => parseFloat(indivisibleUnitsToBigNum(amount, decimals).toFixed(fracDigits ?? 4, 3));
 
 export const floatToIndivisible = (amountFloat: number, decimals: number) =>
   Big(amountFloat).mul(Big(10).pow(decimals)).toFixed().toString();
