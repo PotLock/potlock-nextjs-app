@@ -7,7 +7,7 @@ import {
   type InformativeSuccessfulExecutionOutcome,
   nearProtocolClient,
 } from "@/common/blockchains/near-protocol";
-import { FULL_TGAS, NATIVE_TOKEN_DECIMALS } from "@/common/constants";
+import { FULL_TGAS, NATIVE_TOKEN_DECIMALS, NOOP_BALANCE_VIEW } from "@/common/constants";
 import { type DirectDonation, donationContractClient } from "@/common/contracts/core/donation";
 import type { FungibleTokenMetadata, FungibleTokenStorageBalance } from "@/common/contracts/tokens";
 import { bigNumToIndivisible, floatToIndivisible, indivisibleUnitsToBigNum } from "@/common/lib";
@@ -60,14 +60,16 @@ export const directFtDonationMulticall = async ({
     /**
      *? Checking the FT contract storage balance of the protocol fee recipient account
      */
-    tokenClient
-      .view<
-        { account_id: AccountId },
-        FungibleTokenStorageBalance | null
-      >("storage_balance_of", { args: { account_id: protocolFeeRecipientAccountId } })
-      .then((response) =>
-        indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
-      ),
+    bypassProtocolFee
+      ? NOOP_BALANCE_VIEW
+      : tokenClient
+          .view<
+            { account_id: AccountId },
+            FungibleTokenStorageBalance | null
+          >("storage_balance_of", { args: { account_id: protocolFeeRecipientAccountId } })
+          .then((response) =>
+            indivisibleUnitsToBigNum(response?.total ?? String(0), NATIVE_TOKEN_DECIMALS),
+          ),
 
     /**
      *? Checking the FT contract storage balance of the donation contract account

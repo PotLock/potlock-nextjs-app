@@ -155,6 +155,10 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
   { label: "Least recent", value: "older" },
 ];
 
+export const NOOP_STRING = "noop";
+
+export const NOOP_BALANCE_VIEW = new Promise<Big.Big>((resolve) => resolve(Big(0)));
+
 /**
  * @deprecated Use `useTokenAllowlist` hooks instead
  */

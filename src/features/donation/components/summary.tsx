@@ -21,6 +21,8 @@ export const DonationSummary: React.FC<DonationSummaryProps> = ({
     referralFeePercent,
     chefFeeAmount,
     chefFeePercent,
+    campaignCreatorFeeAmount,
+    campaignCreatorFeePercent,
     storageFeeApproximation,
   },
 
@@ -29,27 +31,34 @@ export const DonationSummary: React.FC<DonationSummaryProps> = ({
   const entries = useMemo(
     () => [
       {
-        label: "Project allocation",
+        label: "Project Allocation",
         amount: projectAllocationAmount,
         percentage: projectAllocationPercent,
       },
 
       {
-        label: "Protocol fees",
+        label: "Protocol Fee",
         amount: protocolFeeAmount,
         percentage: protocolFeePercent,
         isVisible: protocolFeeAmount > 0,
       },
 
       {
-        label: "Chef fees",
+        label: "Chef Fee",
         amount: chefFeeAmount,
         percentage: chefFeePercent,
         isVisible: chefFeeAmount > 0,
       },
 
       {
-        label: "Referral fees",
+        label: "Creator Fee",
+        amount: campaignCreatorFeeAmount,
+        percentage: campaignCreatorFeePercent,
+        isVisible: campaignCreatorFeeAmount > 0,
+      },
+
+      {
+        label: "Referral Fee",
         amount: referralFeeAmount,
         percentage: referralFeePercent,
         isVisible: referralFeeAmount > 0,
@@ -63,6 +72,8 @@ export const DonationSummary: React.FC<DonationSummaryProps> = ({
     ],
 
     [
+      campaignCreatorFeeAmount,
+      campaignCreatorFeePercent,
       chefFeeAmount,
       chefFeePercent,
       projectAllocationAmount,

@@ -36,11 +36,6 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat, isGroupDonation } =
     useDonationForm(props);
 
-  const confirmationScreenProps = useMemo(
-    () => ({ form, totalAmountFloat }),
-    [form, totalAmountFloat],
-  );
-
   const successScreenProps = useMemo(
     () => ({ form, transactionHash, closeModal }),
     [closeModal, form, transactionHash],
@@ -54,14 +49,24 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
     switch (currentStep) {
       case "allocation": {
         if ("accountId" in props || "campaignId" in props) {
-          return <DonationSingleRecipientAllocation form={form} {...{ matchingPots, ...props }} />;
+          return (
+            <DonationSingleRecipientAllocation form={form} matchingPots={matchingPots} {...props} />
+          );
         } else if ("potId" in props || "listId" in props) {
-          return <DonationGroupAllocation form={form} {...{ totalAmountFloat, ...props }} />;
+          return (
+            <DonationGroupAllocation form={form} totalAmountFloat={totalAmountFloat} {...props} />
+          );
         } else return defaultErrorScreen;
       }
 
       case "confirmation":
-        return <DonationModalConfirmationScreen {...confirmationScreenProps} />;
+        return (
+          <DonationModalConfirmationScreen
+            form={form}
+            totalAmountFloat={totalAmountFloat}
+            campaignId={"campaignId" in props ? props.campaignId : null}
+          />
+        );
 
       case "success": {
         return isGroupDonation ? (
@@ -81,7 +86,6 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
         return defaultErrorScreen;
     }
   }, [
-    confirmationScreenProps,
     currentStep,
     finalOutcome,
     form,

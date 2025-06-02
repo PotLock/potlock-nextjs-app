@@ -24,7 +24,10 @@ export type ControlledSelectFieldProps = Pick<
 
 export type UncontrolledSelectFieldProps = Pick<React.ComponentProps<typeof Select>, "value">;
 
-export type SelectFieldProps = Pick<React.ComponentProps<typeof Select>, "disabled" | "children"> &
+export type SelectFieldProps = Pick<
+  React.ComponentProps<typeof Select>,
+  "disabled" | "open" | "children"
+> &
   (ControlledSelectFieldProps | UncontrolledSelectFieldProps) & {
     embedded?: boolean;
     label: string;
@@ -46,6 +49,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   children,
   ...props
 }) => {
+  // TODO: Use `VirtualScroll` for the token list!
+
   const body = useMemo(
     () => (
       <>
@@ -57,8 +62,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({
           </FormControl>
 
           <SelectContent>
-            <SelectGroup>
-              {embedded && <SelectLabel>{label}</SelectLabel>}
+            <SelectGroup className="flex flex-col">
+              {embedded && <SelectLabel className="order-1">{label}</SelectLabel>}
               {children}
             </SelectGroup>
           </SelectContent>

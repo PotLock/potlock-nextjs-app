@@ -4,6 +4,7 @@ import { values } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
+import { NOOP_STRING } from "@/common/constants";
 import { TextField } from "@/common/ui/form/components";
 import {
   DialogDescription,
@@ -59,7 +60,10 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
     isLoading: isPotLoading,
     data: pot,
     error: potError,
-  } = indexer.usePot({ enabled: isPotDonation, potId: potIdFormParam ?? "noop" });
+  } = indexer.usePot({
+    enabled: isPotDonation,
+    potId: potIdFormParam ?? NOOP_STRING,
+  });
 
   const {
     data: list,

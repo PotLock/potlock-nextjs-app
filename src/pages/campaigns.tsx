@@ -39,7 +39,7 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
       <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
         <div className=" flex items-center gap-4 ">
           <h1 className=" text-[18px] font-semibold ">Featured Campaigns</h1>
-          <p className="text-[18px]">{current + 1}/3</p>
+          <p className="text-[18px]">{current + 1}/8</p>
         </div>
         <div className="flex gap-4">
           <img
@@ -59,7 +59,9 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
       <Carousel opts={{ loop: true }} setApi={setApi}>
         <CarouselContent>
           {data?.length &&
-            data?.slice(0, 3)?.map((data) => <CampaignCarouselItem key={data.id} data={data} />)}
+            data
+              ?.filter((data) => [13, 12, 11, 10, 9, 7, 6, 3].includes(data?.id))
+              ?.map((data) => <CampaignCarouselItem key={data.id} data={data} />)}
         </CarouselContent>
       </Carousel>
     </div>
@@ -99,7 +101,7 @@ export default function CampaignsPage() {
             </Button>
           )}
           <Button variant="brand-tonal" asChild className="mt-4">
-            <Link target="_blank" href="https://potlock.org/learn-campaigns">
+            <Link target="_blank" href="https://docs.potlock.io/user-guides/campaigns">
               {"Learn More"}
             </Link>
           </Button>

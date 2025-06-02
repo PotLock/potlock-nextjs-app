@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
 
+import { NOOP_STRING } from "@/common/constants";
 import { isAccountId, isEthereumAddress } from "@/common/lib";
 import { ByAccountId, ByListId, type ConditionalActivation } from "@/common/types";
 
@@ -106,7 +107,7 @@ export const useAccountPotApplications = ({
   ...params
 }: Partial<ByAccountId> & generatedClient.V1AccountsPotApplicationsRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsPotApplicationsRetrieve(
-    accountId ?? "noop",
+    accountId ?? NOOP_STRING,
     params,
     { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
@@ -133,7 +134,7 @@ export const usePotApplications = ({
   potId,
   ...params
 }: Partial<ByPotId> & generatedClient.V1PotsApplicationsRetrieveParams) => {
-  const queryResult = generatedClient.useV1PotsApplicationsRetrieve(potId ?? "noop", params, {
+  const queryResult = generatedClient.useV1PotsApplicationsRetrieve(potId ?? NOOP_STRING, params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId) },
   });
@@ -208,7 +209,7 @@ export const usePotPayouts = ({
   potId,
   ...params
 }: Partial<ByPotId> & generatedClient.V1PotsPayoutsRetrieveParams) => {
-  const queryResult = generatedClient.useV1PotsPayoutsRetrieve(potId ?? "noop", params, {
+  const queryResult = generatedClient.useV1PotsPayoutsRetrieve(potId ?? NOOP_STRING, params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId), refreshInterval: 3000 },
   });

@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   APP_DEFAULT_PUBLIC_URL,
   DEFAULT_SHARE_HASHTAGS,
+  NOOP_STRING,
   PLATFORM_TWITTER_ACCOUNT_ID,
   X_INTENT_URL_BASE,
 } from "@/common/constants";
@@ -27,7 +28,7 @@ export const DonationSingleRecipientSuccessXShareButton: React.FC<
   const { isLoading: isRecipientSocialProfileLoading, profile: recipientSocialProfile } =
     useAccountSocialProfile({
       enabled: recipientAccountId !== undefined,
-      accountId: recipientAccountId ?? "noop",
+      accountId: recipientAccountId ?? NOOP_STRING,
     });
 
   const intent = useMemo(() => {
