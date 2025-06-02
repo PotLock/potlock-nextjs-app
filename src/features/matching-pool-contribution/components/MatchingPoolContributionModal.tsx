@@ -1,4 +1,4 @@
-import { Form } from "react-hook-form";
+import { isNullish } from "remeda";
 
 import { Pot } from "@/common/api/indexer";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  Form,
   FormField,
   Input,
   Spinner,
@@ -62,13 +63,17 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
     potDetail.referral_fee_matching_pool_basis_points,
   );
 
-  const chefFeeAmountNear = formValues.bypassChefFee
+  const chefFeeInitialAmountNear = isNullish(potDetail.chef)
     ? 0
     : (formValues.amountNEAR * potDetail.chef_fee_basis_points) / 10_000 || 0;
 
-  const referralFeeAmountNear = viewer.referrerAccountId
+  const chefFeeAmountNear = formValues.bypassChefFee ? 0 : chefFeeInitialAmountNear;
+
+  const referralFeeInitialAmountNear = viewer.referrerAccountId
     ? (formValues.amountNEAR * potDetail.referral_fee_matching_pool_basis_points) / 10_000 || 0
     : 0;
+
+  const referralFeeAmountNear = formValues.bypassReferralFee ? 0 : referralFeeInitialAmountNear;
 
   const netDonationAmountNear =
     formValues.amountNEAR - protocolFeeAmountNear - chefFeeAmountNear - referralFeeAmountNear;
@@ -80,8 +85,8 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
           <DialogTitle>Fund Matching Pool</DialogTitle>
         </DialogHeader>
 
-        <Form {...form} onSubmit={onSubmit}>
-          <div className="flex flex-col p-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col p-6">
             {/*NEAR Input */}
             <p className="my-2 break-words text-[16px] font-normal leading-[20px] text-[#525252]">
               Enter matching pool contribution amount in NEAR{" "}
@@ -120,7 +125,7 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
               )}
             />
 
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 flex items-center">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="bypass"
@@ -235,7 +240,7 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
                 </span>
               )}
             </Button>
-          </div>
+          </form>
         </Form>
       </DialogContent>
     </Dialog>
