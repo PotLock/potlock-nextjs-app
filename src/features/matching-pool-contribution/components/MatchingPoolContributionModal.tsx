@@ -1,7 +1,9 @@
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
+import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { useProtocolConfig, yoctoNearToFloat } from "@/common/lib";
+import { CheckboxField } from "@/common/ui/form/components";
 import {
   Button,
   Checkbox,
@@ -14,6 +16,7 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 
@@ -25,6 +28,7 @@ export type MatchingPoolContributionModalProps = {
   onCloseClick?: () => void;
 };
 
+// TODO: Refactor to use the same components as the pot and donation forms
 export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionModalProps> = ({
   open,
   onCloseClick,
@@ -54,16 +58,20 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
     ? 0
     : (formValues.amountNEAR * (protocolConfig?.basis_points || 0)) / 10_000 || 0;
 
+  const referrerFeePercentage = feeBasisPointsToPercents(
+    potDetail.referral_fee_matching_pool_basis_points,
+  );
+
   const chefFeeAmountNear = formValues.bypassChefFee
     ? 0
     : (formValues.amountNEAR * potDetail.chef_fee_basis_points) / 10_000 || 0;
 
-  const referrerFeeAmountNear = viewer.referrerAccountId
+  const referralFeeAmountNear = viewer.referrerAccountId
     ? (formValues.amountNEAR * potDetail.referral_fee_matching_pool_basis_points) / 10_000 || 0
     : 0;
 
   const netDonationAmountNear =
-    formValues.amountNEAR - protocolFeeAmountNear - chefFeeAmountNear - referrerFeeAmountNear;
+    formValues.amountNEAR - protocolFeeAmountNear - chefFeeAmountNear - referralFeeAmountNear;
 
   return (
     <Dialog open={open}>
@@ -112,7 +120,6 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
               )}
             />
 
-            {/* Bypass checkbox */}
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -127,12 +134,36 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
                   htmlFor="bypass"
                   className="color-[#2e2e2e] break-words text-[12px] text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Bypass {bypassProtocolPercentage}% protocol fee to
+                  Bypass {bypassProtocolPercentage}% Protocol Fee to
                 </label>
               </div>
 
               {protocolConfig && <AccountProfileLink accountId={protocolConfig.account_id} />}
             </div>
+
+            {referrerFeePercentage > 0 && (
+              <FormField
+                control={form.control}
+                name="bypassReferralFee"
+                render={({ field }) => (
+                  <CheckboxField
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    label={
+                      <>
+                        <span className="prose">
+                          {`Bypass ${referrerFeePercentage}% Referrer Fee to`}
+                        </span>
+
+                        {viewer.referrerAccountId && (
+                          <AccountProfileLink accountId={viewer.referrerAccountId} />
+                        )}
+                      </>
+                    }
+                  />
+                )}
+              />
+            )}
 
             {/* Bypass Chef Fee */}
             {potDetail.chef && potDetail.chef_fee_basis_points > 0 && (
@@ -150,7 +181,7 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
                     htmlFor="bypassChef"
                     className="color-[#2e2e2e] break-words text-[12px] text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Bypass {bypassChefFeePercentage}% chef fee to
+                    Bypass {bypassChefFeePercentage}% Chef Fee to
                   </label>
                 </div>
 
@@ -160,20 +191,20 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
 
             {/* Protocol Fee */}
             <p className="mt-3 flex flex-row items-center break-words text-[14px] font-normal leading-[20px] text-[#292929]">
-              Protocol fee: {protocolFeeAmountNear} NEAR
+              Protocol Fee: {protocolFeeAmountNear} NEAR
             </p>
 
             {/* Chef Fee */}
             {potDetail.chef && potDetail.chef_fee_basis_points > 0 && (
               <p className="mt-3 flex flex-row items-center break-words text-[14px] font-normal leading-[20px] text-[#292929]">
-                Chef fee: {chefFeeAmountNear} NEAR
+                Chef Fee: {chefFeeAmountNear} NEAR
               </p>
             )}
 
             {/* Referrer Fee */}
             {viewer.referrerAccountId && (
               <p className="mt-3 flex flex-row items-center break-words text-[14px] font-normal leading-[20px] text-[#292929]">
-                Referrer fee: {referrerFeeAmountNear} NEAR
+                Referrer Fee: {referralFeeAmountNear} NEAR
               </p>
             )}
 
@@ -197,8 +228,9 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
                   </span>
 
                   <span>
-                    {`${formValues.amountNEAR || 0} ${potDetail.base_currency?.toUpperCase()}` +
-                      " to matching pool"}
+                    {`${
+                      formValues.amountNEAR || 0
+                    } ${potDetail.base_currency?.toUpperCase()} to matching pool`}
                   </span>
                 </span>
               )}
