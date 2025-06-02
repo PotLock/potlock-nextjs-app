@@ -50,14 +50,21 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
   const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
 
-  const [tokenId, potAccountId, bypassProtocolFee, bypassCuratorFee, allocationStrategy] =
-    form.watch([
-      "tokenId",
-      "potAccountId",
-      "bypassProtocolFee",
-      "bypassCuratorFee",
-      "allocationStrategy",
-    ]);
+  const [
+    tokenId,
+    potAccountId,
+    bypassProtocolFee,
+    bypassReferralFee,
+    bypassCuratorFee,
+    allocationStrategy,
+  ] = form.watch([
+    "tokenId",
+    "potAccountId",
+    "bypassProtocolFee",
+    "bypassReferralFee",
+    "bypassCuratorFee",
+    "allocationStrategy",
+  ]);
 
   const isSingleRecipientDonation = allocationStrategy === DonationAllocationStrategyEnum.full;
   const isCampaignDonation = campaignId !== null;
@@ -81,7 +88,9 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
   const allocationBreakdown = useDonationAllocationBreakdown({
     campaign,
     potCache: pot,
+    referrerAccountId: walletUser?.accountId,
     bypassProtocolFee,
+    bypassReferralFee,
     bypassCuratorFee,
     totalAmountFloat,
     tokenId,

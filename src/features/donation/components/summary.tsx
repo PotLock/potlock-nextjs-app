@@ -44,7 +44,7 @@ export const DonationSummary: React.FC<DonationSummaryProps> = ({
       },
 
       {
-        label: "Referral Fee",
+        label: "Referrer Fee",
         amount: referralFeeAmount,
         percentage: referralFeePercent,
         isVisible: referralFeeAmount > 0,
