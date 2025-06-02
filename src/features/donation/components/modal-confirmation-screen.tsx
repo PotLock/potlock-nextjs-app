@@ -90,7 +90,7 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
   const allocationBreakdown = useDonationAllocationBreakdown({
     campaign,
     potCache: pot,
-    referrerAccountId: walletUser?.accountId,
+    referrerAccountId: walletUser.referrerAccountId,
     bypassProtocolFee,
     bypassReferralFee,
     bypassCuratorFee,
