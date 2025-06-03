@@ -80,12 +80,10 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
     potId: potAccountId ?? NOOP_STRING,
   });
 
-  //! TODO: REPLACE WITH TEH FOLLOWING!
-  // const isFeeBypassAllowed = useMemo(
-  //   () => (isCampaignDonation ? (campaign?.allow_fee_avoidance ?? false) : true),
-  //   [campaign?.allow_fee_avoidance, isCampaignDonation],
-  // );
-  const isFeeBypassAllowed = true;
+  const isFeeBypassAllowed = useMemo(
+    () => (isCampaignDonation ? (campaign?.allow_fee_avoidance ?? false) : true),
+    [campaign?.allow_fee_avoidance, isCampaignDonation],
+  );
 
   const allocationBreakdown = useDonationAllocationBreakdown({
     campaign,
