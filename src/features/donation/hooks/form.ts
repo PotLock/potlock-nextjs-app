@@ -214,6 +214,8 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     [toast],
   );
 
+  console.log(campaign?.recipient);
+
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
     (inputs) =>
       dispatch.donation.submit({
@@ -221,11 +223,19 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
         ...params,
 
         referrerAccountId: inputs.bypassReferralFee ? undefined : viewer?.referrerAccountId,
+        campaignCreatorAccountId: isCampaignDonation ? campaign?.owner : undefined,
         campaignRecipientAccountId: isCampaignDonation ? campaign?.recipient : undefined,
         onError: onSubmitError,
       }),
 
-    [campaign?.recipient, isCampaignDonation, onSubmitError, params, viewer?.referrerAccountId],
+    [
+      campaign?.owner,
+      campaign?.recipient,
+      isCampaignDonation,
+      onSubmitError,
+      params,
+      viewer?.referrerAccountId,
+    ],
   );
 
   //* Ensure the correct token is selected:
