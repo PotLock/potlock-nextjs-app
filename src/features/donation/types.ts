@@ -6,7 +6,7 @@ import type {
   DirectFTBatchDonationItem,
 } from "@/common/contracts/core/donation";
 import type { PotBatchDonationItem, PotDonation } from "@/common/contracts/core/pot";
-import { ByAccountId, ByCampaignId, ByListId } from "@/common/types";
+import { type ByAccountId, type ByCampaignId, type ByListId } from "@/common/types";
 
 export type DonationGroupAllocationKey = ByPotId | ByListId;
 
@@ -45,21 +45,6 @@ export type DonationGroupAllocationStrategyOption = {
 export interface WithTotalAmount {
   totalAmountFloat: number;
 }
-
-export type DonationBreakdown = {
-  projectAllocationAmount: number;
-  projectAllocationPercent: number;
-  protocolFeeAmount: number;
-  protocolFeePercent: number;
-  protocolFeeRecipientAccountId?: string;
-  referralFeeAmount: number;
-  referralFeePercent: number;
-  chefFeeAmount: number;
-  chefFeePercent: number;
-  campaignCreatorFeeAmount: number;
-  campaignCreatorFeePercent: number;
-  storageFeeApproximation: string;
-};
 
 export type DonationDirectBatchCallDraft = {
   entries: DirectFTBatchDonationItem[] | DirectBatchDonationItem[];

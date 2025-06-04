@@ -63,17 +63,17 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
     potDetail.referral_fee_matching_pool_basis_points,
   );
 
-  const chefFeeInitialAmountNear = isNullish(potDetail.chef)
+  const chefFeeContractAmountNear = isNullish(potDetail.chef)
     ? 0
     : (formValues.amountNEAR * potDetail.chef_fee_basis_points) / 10_000 || 0;
 
-  const chefFeeAmountNear = formValues.bypassChefFee ? 0 : chefFeeInitialAmountNear;
+  const chefFeeAmountNear = formValues.bypassChefFee ? 0 : chefFeeContractAmountNear;
 
-  const referralFeeInitialAmountNear = viewer.referrerAccountId
+  const referralFeeContractAmountNear = viewer.referrerAccountId
     ? (formValues.amountNEAR * potDetail.referral_fee_matching_pool_basis_points) / 10_000 || 0
     : 0;
 
-  const referralFeeAmountNear = formValues.bypassReferralFee ? 0 : referralFeeInitialAmountNear;
+  const referralFeeAmountNear = formValues.bypassReferralFee ? 0 : referralFeeContractAmountNear;
 
   const netDonationAmountNear =
     formValues.amountNEAR - protocolFeeAmountNear - chefFeeAmountNear - referralFeeAmountNear;

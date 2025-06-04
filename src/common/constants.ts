@@ -140,6 +140,8 @@ export const NO_DEPOSIT_TGAS = "0";
 export const MIN_PROPOSAL_DEPOSIT_FALLBACK = "100000000000000000000000"; // 0.1N
 export const ONE_TGAS = Big(1_000_000_000_000);
 
+export const DEFAULT_STORAGE_FEE_APPROXIMATION = "≤ 0.03";
+
 // IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
 export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";

@@ -24,7 +24,7 @@ import { routeSelectors } from "@/pathnames";
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DonationSingleRecipientSuccessXShareButton } from "./single-recipient-success-share";
 import { DonationSummary } from "./summary";
-import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
+import { useDonationAllocationBreakdown } from "../hooks/allocation";
 import { WithDonationFormAPI } from "../models/schemas";
 import type { SingleRecipientDonationReceipt } from "../types";
 import { DonationCampaignSuccessXShareButton } from "./campaign-success-share";
@@ -94,17 +94,22 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
   const isLoading = isResultLoading || isCampaignLoading || isPotLoading || isTokenLoading;
 
   const totalAmountFloat = indivisibleUnitsToFloat(
-    receipt?.total_amount ?? "0",
+    receipt?.total_amount ?? `${0}`,
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
   const protocolFeeAmountFloat = indivisibleUnitsToFloat(
-    receipt?.protocol_fee ?? "0",
+    receipt?.protocol_fee ?? `${0}`,
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
   const referralFeeAmountFloat = indivisibleUnitsToFloat(
-    receipt?.referrer_fee ?? "0",
+    receipt?.referrer_fee ?? `${0}`,
+    token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+  );
+
+  const curatorFeeAmountFloat = indivisibleUnitsToFloat(
+    campaignReceipt?.creator_fee ?? potReceipt?.chef_fee ?? `${0}`,
     token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
   );
 
@@ -113,9 +118,10 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
     potCache: pot,
     totalAmountFloat,
     referrerAccountId: receipt?.referrer_id ?? undefined,
-    protocolFeeFinalAmount: protocolFeeAmountFloat,
-    referralFeeFinalAmount: referralFeeAmountFloat,
-    tokenId,
+    isFinal: receipt !== undefined,
+    protocolFeeReceiptAmount: protocolFeeAmountFloat,
+    referralFeeReceiptAmount: referralFeeAmountFloat,
+    curatorFeeReceiptAmount: curatorFeeAmountFloat,
   });
 
   const donationLinkUrl = useMemo(() => {
@@ -185,10 +191,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
         {isLoading ? (
           <Skeleton className="h-7 w-44" />
         ) : (
-          <TokenValueSummary
-            amountFloat={allocationBreakdown.projectAllocationAmount}
-            {...{ tokenId }}
-          />
+          <TokenValueSummary amountFloat={totalAmountFloat} {...{ tokenId }} />
         )}
 
         {isLoading || recipientAccountId === undefined ? (
@@ -206,7 +209,9 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
 
             {campaign?.name && (
               <Link href={routeSelectors.CAMPAIGN_BY_ID(campaign.id)}>
-                <span className="text-center text-neutral-600">{`Via ${campaign.name} Campaign`}</span>
+                <span className="text-center text-neutral-600">
+                  {`Via ${campaign.name} Campaign`}
+                </span>
               </Link>
             )}
 
@@ -228,7 +233,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
       {isLoading ? (
         <Skeleton className="h-28" />
       ) : (
-        <DonationSummary data={allocationBreakdown} {...{ tokenId }} />
+        <DonationSummary allocation={allocationBreakdown} {...{ tokenId }} />
       )}
 
       {potId && <DonationHumanVerificationAlert {...{ potId }} />}

@@ -214,8 +214,6 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     [toast],
   );
 
-  console.log(campaign?.recipient);
-
   const onSubmit: SubmitHandler<DonationInputs> = useCallback(
     (inputs) =>
       dispatch.donation.submit({
