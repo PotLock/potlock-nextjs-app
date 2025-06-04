@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { BLOCKCHAIN_EXPLORER_TX_ENDPOINT_URL } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID, NOOP_STRING } from "@/common/constants";
 import type { DirectDonation } from "@/common/contracts/core/donation";
 import type { PotDonation } from "@/common/contracts/core/pot";
 import { indivisibleUnitsToFloat, truncate } from "@/common/lib";
@@ -25,7 +25,7 @@ import { rootPathnames } from "@/pathnames";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DonationSummary } from "./summary";
-import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
+import { useDonationAllocationBreakdown } from "../hooks/allocation";
 import { WithDonationFormAPI } from "../models/schemas";
 import type { GroupDonationReceipts } from "../types";
 import { DonationGroupAllocationSuccessXShareButton } from "./group-allocation-success-share";
@@ -49,7 +49,7 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
 
   const { data: pot } = indexer.usePot({
     enabled: isPotDonation,
-    potId: potId ?? "noop",
+    potId: potId ?? NOOP_STRING,
   });
 
   const { data: list } = indexer.useList({
@@ -157,12 +157,12 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
   ]);
 
   const allocationBreakdown = useDonationAllocationBreakdown({
-    pot,
+    potCache: pot,
     totalAmountFloat: totalAmountBig.toNumber(),
     referrerAccountId,
-    protocolFeeFinalAmount: protocolFeeAmountFloat,
-    referralFeeFinalAmount: referralFeeAmountFloat,
-    tokenId,
+    isFinal: receipts !== undefined,
+    protocolFeeReceiptAmount: protocolFeeAmountFloat,
+    referralFeeReceiptAmount: referralFeeAmountFloat,
   });
 
   const isLoading = isResultLoading || isTokenLoading;
@@ -208,10 +208,7 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
         {isLoading ? (
           <Skeleton className="h-7 w-44" />
         ) : (
-          <TokenValueSummary
-            amountFloat={allocationBreakdown.projectAllocationAmount}
-            {...{ tokenId }}
-          />
+          <TokenValueSummary amountFloat={allocationBreakdown.netAmount} {...{ tokenId }} />
         )}
 
         {isLoading || recipientAccountIds === null ? (
@@ -278,7 +275,7 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
       {isLoading ? (
         <Skeleton className="h-28" />
       ) : (
-        <DonationSummary data={allocationBreakdown} {...{ tokenId }} />
+        <DonationSummary allocation={allocationBreakdown} {...{ tokenId }} />
       )}
 
       {potId && <DonationHumanVerificationAlert {...{ potId }} />}

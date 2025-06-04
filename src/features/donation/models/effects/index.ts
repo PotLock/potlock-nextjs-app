@@ -48,12 +48,13 @@ export const effects = (dispatch: AppDispatcher) => ({
       listId,
       campaignId,
       campaignRecipientAccountId,
+      campaignCreatorAccountId,
       potAccountId: singleRecipientMatchingPotId,
       allocationStrategy,
       groupAllocationPlan,
       referrerAccountId,
       bypassProtocolFee,
-      bypassChefFee,
+      bypassCuratorFee,
       message,
       tokenId,
       ...params
@@ -116,7 +117,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                 message,
                 referrer_id: referrerAccountId,
                 bypass_protocol_fee: bypassProtocolFee,
-                custom_chef_fee_basis_points: bypassChefFee ? 0 : undefined,
+                custom_chef_fee_basis_points: bypassCuratorFee ? 0 : undefined,
               },
 
               floatToYoctoNear(amount),
@@ -136,14 +137,20 @@ export const effects = (dispatch: AppDispatcher) => ({
           );
         }
 
+        if (campaignCreatorAccountId === undefined) {
+          return void dispatch.donation.failure(
+            new Error("Campaign creator account id is not provided."),
+          );
+        }
+
         return void campaignFtDonationMulticall({
           amount,
           campaignId,
           recipientAccountId: campaignRecipientAccountId,
+          creatorAccountId: campaignCreatorAccountId,
           referrerAccountId,
           bypassProtocolFee,
-          // TODO: Functionality is not implemented, but might be required
-          bypassCreatorFee: false,
+          bypassCreatorFee: bypassCuratorFee,
           message,
           tokenId,
         })
@@ -160,8 +167,7 @@ export const effects = (dispatch: AppDispatcher) => ({
               message,
               referrer_id: referrerAccountId,
               bypass_protocol_fee: bypassProtocolFee,
-              // TODO: Functionality is not implemented, but might be required
-              bypass_creator_fee: false,
+              bypass_creator_fee: bypassCuratorFee,
             },
 
             floatToYoctoNear(amount),

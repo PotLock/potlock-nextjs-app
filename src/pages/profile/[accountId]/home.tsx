@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { isAccountId } from "@/common/lib";
 import type { AccountId } from "@/common/types";
@@ -40,7 +40,7 @@ export default function ProfileHomeTab() {
   const { data: isRegistered = false } = listsContractHooks.useIsRegistered({
     enabled: isAccountIdValid,
     listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
-    accountId: accountId ?? "noop",
+    accountId: accountId ?? NOOP_STRING,
   });
 
   return (

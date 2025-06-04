@@ -1,77 +1,66 @@
 import { useMemo } from "react";
 
-import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { DEFAULT_STORAGE_FEE_APPROXIMATION, NATIVE_TOKEN_ID } from "@/common/constants";
 import { ByTokenId } from "@/common/types";
 import { LabeledIcon } from "@/common/ui/layout/components";
 import { TokenIcon } from "@/entities/_shared/token";
 
-import { DonationBreakdown } from "../types";
+import type { DonationAllocationBreakdown } from "../hooks/allocation";
 
 export type DonationSummaryProps = ByTokenId & {
-  data: DonationBreakdown;
+  allocation: DonationAllocationBreakdown;
 };
 
 export const DonationSummary: React.FC<DonationSummaryProps> = ({
-  data: {
-    projectAllocationAmount,
-    projectAllocationPercent,
-    protocolFeeAmount,
-    protocolFeePercent,
-    referralFeeAmount,
-    referralFeePercent,
-    chefFeeAmount,
-    chefFeePercent,
-    storageFeeApproximation,
-  },
-
+  allocation: { protocolFee, referralFee, curatorFee, curatorTitle, netPercent, netAmount },
   ...props
 }) => {
   const entries = useMemo(
     () => [
       {
-        label: "Project allocation",
-        amount: projectAllocationAmount,
-        percentage: projectAllocationPercent,
+        label: "Recipient Allocation",
+        amount: netAmount,
+        percentage: netPercent,
       },
 
       {
-        label: "Protocol fees",
-        amount: protocolFeeAmount,
-        percentage: protocolFeePercent,
-        isVisible: protocolFeeAmount > 0,
+        label: "Protocol Fee",
+        percentage: protocolFee.percentage,
+        amount: protocolFee.amount,
+        isVisible: protocolFee.amount > 0,
       },
 
       {
-        label: "Chef fees",
-        amount: chefFeeAmount,
-        percentage: chefFeePercent,
-        isVisible: chefFeeAmount > 0,
+        label: "Referrer Fee",
+        percentage: referralFee.percentage,
+        amount: referralFee.amount,
+        isVisible: referralFee.amount > 0,
       },
 
       {
-        label: "Referral fees",
-        amount: referralFeeAmount,
-        percentage: referralFeePercent,
-        isVisible: referralFeeAmount > 0,
+        label: `${curatorTitle} Fee`,
+        percentage: curatorFee.percentage,
+        amount: curatorFee.amount,
+        isVisible: curatorFee.amount > 0,
       },
 
       {
         label: "On-Chain Storage",
-        amount: storageFeeApproximation,
+        amount: DEFAULT_STORAGE_FEE_APPROXIMATION,
         tokenId: NATIVE_TOKEN_ID,
       },
     ],
 
     [
-      chefFeeAmount,
-      chefFeePercent,
-      projectAllocationAmount,
-      projectAllocationPercent,
-      protocolFeeAmount,
-      protocolFeePercent,
-      referralFeeAmount,
-      referralFeePercent,
-      storageFeeApproximation,
+      curatorFee.amount,
+      curatorFee.percentage,
+      curatorTitle,
+      netAmount,
+      netPercent,
+      protocolFee.amount,
+      protocolFee.percentage,
+      referralFee.amount,
+      referralFee.percentage,
     ],
   );
 
@@ -83,7 +72,7 @@ export const DonationSummary: React.FC<DonationSummaryProps> = ({
 
       <div className="border-1 flex flex-col gap-3 rounded-lg border-neutral-300 p-4">
         {entries.map(
-          ({ isVisible = true, label, amount, percentage, tokenId = props.tokenId }) =>
+          ({ isVisible = true, label, percentage, amount, tokenId = props.tokenId }) =>
             isVisible && (
               <div className="flex h-5 items-center justify-between gap-4" key={label}>
                 <span className="prose mt-0.6">

@@ -121,7 +121,7 @@ export type ProfileLayoutSummaryProps = ByAccountId & {};
 
 export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ accountId }) => {
   const viewer = useWalletUserSession();
-  const isOwner = viewer?.accountId === accountId;
+  const isOwner = viewer.isSignedIn && viewer.accountId === accountId;
   const { openDonationModal } = useDonationUserFlow({ accountId });
   const { isLoading: isProfileDataLoading, profile } = useAccountSocialProfile({ accountId });
 

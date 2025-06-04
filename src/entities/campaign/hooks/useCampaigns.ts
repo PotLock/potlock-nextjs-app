@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { NOOP_STRING } from "@/common/constants";
 import { Campaign, campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { useWalletUserSession } from "@/common/wallet";
 
@@ -18,7 +19,7 @@ export const useAllCampaignLists = () => {
 
   const { data: ownerCampaigns, isLoading: loadingOwnerCampaigns } =
     campaignsContractHooks.useOwnedCampaigns({
-      accountId: viewer.accountId ?? "noop",
+      accountId: viewer.accountId ?? NOOP_STRING,
     });
 
   const fetchAllCampaigns = useCallback(() => {

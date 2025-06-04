@@ -58,7 +58,8 @@ export const donationSchema = object({
     .optional(),
 
   bypassProtocolFee: boolean().default(false),
-  bypassChefFee: boolean().default(false),
+  bypassReferralFee: boolean().default(false),
+  bypassCuratorFee: boolean().default(false).describe("Bypass pot chef or campaign creator fee."),
 }).refine(isDonationMatchingPotSelected, {
   path: ["potAccountId"],
   message: "Pot is not selected.",
@@ -71,6 +72,7 @@ export const donationDependentFields: (keyof DonationInputs)[] = ["potAccountId"
 export type DonationSubmitParams = DonationInputs & {
   referrerAccountId?: AccountId;
   campaignRecipientAccountId?: AccountId;
+  campaignCreatorAccountId?: AccountId;
 };
 
 export type DonationFormAPI = UseFormReturn<DonationInputs>;

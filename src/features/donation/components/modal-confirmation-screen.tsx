@@ -2,7 +2,10 @@ import { useCallback, useId, useMemo, useState } from "react";
 
 import { Pencil } from "lucide-react";
 
-import { type PotId, indexer } from "@/common/api/indexer";
+import { indexer } from "@/common/api/indexer";
+import { NOOP_STRING } from "@/common/constants";
+import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import type { CampaignId } from "@/common/types";
 import { CheckboxField } from "@/common/ui/form/components";
 import {
   Accordion,
@@ -20,45 +23,76 @@ import {
   Textarea,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenValueSummary } from "@/entities/_shared/token";
 
 import { DonationSummary } from "./summary";
-import { useDonationAllocationBreakdown } from "../hooks/breakdowns";
+import { useDonationAllocationBreakdown } from "../hooks/allocation";
 import { WithDonationFormAPI } from "../models/schemas";
 import { DonationAllocationStrategyEnum, WithTotalAmount } from "../types";
 import { DonationGroupAllocationBreakdown } from "./group-allocation-breakdown";
 
-export type DonationModalConfirmationScreenProps = WithTotalAmount & WithDonationFormAPI & {};
+export type DonationModalConfirmationScreenProps = WithTotalAmount &
+  WithDonationFormAPI & {
+    /**
+     * `null` for non-campaign donations, otherwise the campaign ID
+     */
+    campaignId: null | CampaignId;
+  };
 
 export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmationScreenProps> = ({
   form,
   totalAmountFloat,
+  campaignId,
 }) => {
+  const walletUser = useWalletUserSession();
   const detailedBreakdownAccordionId = useId();
   const [isMessageFieldVisible, setIsMessageFieldVisible] = useState(false);
 
-  const [tokenId, potAccountId, bypassProtocolFee, bypassChefFee, allocationStrategy] = form.watch([
+  const [
+    tokenId,
+    potAccountId,
+    bypassProtocolFee,
+    bypassReferralFee,
+    bypassCuratorFee,
+    allocationStrategy,
+  ] = form.watch([
     "tokenId",
     "potAccountId",
     "bypassProtocolFee",
-    "bypassChefFee",
+    "bypassReferralFee",
+    "bypassCuratorFee",
     "allocationStrategy",
   ]);
 
   const isSingleRecipientDonation = allocationStrategy === DonationAllocationStrategyEnum.full;
+  const isCampaignDonation = campaignId !== null;
+  const isPotDonation = potAccountId !== undefined;
 
-  const { data: pot } = indexer.usePot({
-    enabled: potAccountId !== undefined,
-    potId: potAccountId as PotId,
+  const { data: campaign } = campaignsContractHooks.useCampaign({
+    enabled: isCampaignDonation,
+    campaignId: isCampaignDonation ? campaignId : 0,
   });
 
+  const { data: pot } = indexer.usePot({
+    enabled: isPotDonation,
+    potId: potAccountId ?? NOOP_STRING,
+  });
+
+  const isFeeBypassAllowed = useMemo(
+    () => (isCampaignDonation ? (campaign?.allow_fee_avoidance ?? false) : true),
+    [campaign?.allow_fee_avoidance, isCampaignDonation],
+  );
+
   const allocationBreakdown = useDonationAllocationBreakdown({
-    pot,
+    campaign,
+    potCache: pot,
+    referrerAccountId: walletUser.referrerAccountId,
     bypassProtocolFee,
-    bypassChefFee,
+    bypassReferralFee,
+    bypassCuratorFee,
     totalAmountFloat,
-    tokenId,
   });
 
   const onAddNoteClick = useCallback(() => {
@@ -81,6 +115,8 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
 
     [tokenId, totalAmountFloat],
   );
+
+  const { protocolFee, referralFee, curatorFee, curatorTitle } = allocationBreakdown;
 
   return (
     <>
@@ -105,10 +141,10 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
           </Accordion>
         )}
 
-        <DonationSummary data={allocationBreakdown} {...{ tokenId }} />
+        <DonationSummary allocation={allocationBreakdown} {...{ tokenId }} />
 
         <div className="flex flex-col gap-2">
-          {allocationBreakdown.protocolFeePercent > 0 && (
+          {isFeeBypassAllowed && protocolFee.percentage > 0 && (
             <FormField
               control={form.control}
               name="bypassProtocolFee"
@@ -119,13 +155,11 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
                   label={
                     <>
                       <span className="prose">
-                        {`Remove ${allocationBreakdown.protocolFeePercent}% Protocol Fee`}
+                        {`Remove ${protocolFee.percentage}% Protocol Fee`}
                       </span>
 
-                      {allocationBreakdown.protocolFeeRecipientAccountId && (
-                        <AccountProfileLink
-                          accountId={allocationBreakdown.protocolFeeRecipientAccountId}
-                        />
+                      {protocolFee.recipientAccountId && (
+                        <AccountProfileLink accountId={protocolFee.recipientAccountId} />
                       )}
                     </>
                   }
@@ -134,24 +168,53 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
             />
           )}
 
-          {potAccountId && allocationBreakdown.chefFeePercent > 0 && (
+          {isFeeBypassAllowed && referralFee.percentage > 0 && (
             <FormField
               control={form.control}
-              name="bypassChefFee"
+              name="bypassReferralFee"
               render={({ field }) => (
                 <CheckboxField
                   checked={field.value}
                   onCheckedChange={field.onChange}
                   label={
                     <>
-                      <span>{`Remove ${allocationBreakdown.chefFeePercent}% Chef Fee`}</span>
-                      {pot?.chef?.id && <AccountProfileLink accountId={pot?.chef?.id} />}
+                      <span className="prose">
+                        {`Remove ${referralFee.percentage}% Referrer Fee`}
+                      </span>
+
+                      {referralFee.recipientAccountId && (
+                        <AccountProfileLink accountId={referralFee.recipientAccountId} />
+                      )}
                     </>
                   }
                 />
               )}
             />
           )}
+
+          {isFeeBypassAllowed &&
+            (isCampaignDonation || isPotDonation) &&
+            curatorFee.percentage > 0 && (
+              <FormField
+                control={form.control}
+                name="bypassCuratorFee"
+                render={({ field }) => (
+                  <CheckboxField
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    label={
+                      <>
+                        <span>{`Remove ${curatorFee.percentage}% ${curatorTitle} Fee`}</span>
+
+                        {curatorFee.recipientAccountId && (
+                          <AccountProfileLink accountId={curatorFee.recipientAccountId} />
+                        )}
+                      </>
+                    }
+                  />
+                )}
+              />
+            )}
         </div>
 
         {isSingleRecipientDonation && (

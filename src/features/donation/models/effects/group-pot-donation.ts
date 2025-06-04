@@ -8,7 +8,7 @@ import { type DonationSubmitParams } from "../schemas";
 
 type GroupPotDonationMulticallInputs = Pick<
   DonationSubmitParams,
-  | "bypassChefFee"
+  | "bypassCuratorFee"
   | "bypassProtocolFee"
   | "groupAllocationStrategy"
   | "groupAllocationPlan"
@@ -17,7 +17,7 @@ type GroupPotDonationMulticallInputs = Pick<
 
 export const groupPotDonationMulticall = ({
   potContractAccountId,
-  bypassChefFee,
+  bypassCuratorFee,
   bypassProtocolFee,
   groupAllocationStrategy,
   groupAllocationPlan = [],
@@ -40,7 +40,7 @@ export const groupPotDonationMulticall = ({
                     project_id: account_id,
                     referrer_id: referrerAccountId,
                     bypass_protocol_fee: bypassProtocolFee,
-                    ...(bypassChefFee ? { custom_chef_fee_basis_points: 0 } : {}),
+                    ...(bypassCuratorFee ? { custom_chef_fee_basis_points: 0 } : {}),
                   },
 
                   amountYoctoNear: floatToYoctoNear(donationAmount),

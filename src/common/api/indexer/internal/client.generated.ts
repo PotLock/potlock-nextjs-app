@@ -8,7 +8,9 @@
 import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import useSwr from "swr";
-import type { Key, SWRConfiguration } from "swr";
+import type { Arguments, Key, SWRConfiguration } from "swr";
+import useSWRMutation from "swr/mutation";
+import type { SWRMutationConfiguration } from "swr/mutation";
 
 export type V1RoundsApplicationsRetrieveParams = {
   /**
@@ -483,6 +485,13 @@ export interface Round {
    * @nullable
    */
   application_start?: string | null;
+  /**
+   * list for applicants
+   * @minimum -2147483648
+   * @maximum 2147483647
+   * @nullable
+   */
+  application_wl_list_id?: number | null;
   /** Projects Approved for round. */
   approved_projects: string[];
   /**
@@ -591,8 +600,8 @@ export interface Round {
   round_complete?: string | null;
   /** Use vault. */
   use_vault: boolean;
-  /** Use whitelist. */
-  use_whitelist: boolean;
+  /** Use whitelist for voting. */
+  use_whitelist_voting: boolean;
   /**
    * Vault total deposits.
    * @nullable
@@ -604,6 +613,13 @@ export interface Round {
   voting_end: string;
   /** Round voting start date. */
   voting_start: string;
+  /**
+   * list for voter whitelist
+   * @minimum -2147483648
+   * @maximum 2147483647
+   * @nullable
+   */
+  voting_wl_list_id?: number | null;
 }
 
 export interface RoundApplication {
@@ -639,6 +655,10 @@ export interface RoundApplication {
    * @nullable
    */
   updated_at?: string | null;
+}
+
+export interface ReclaimProofRequestConfig {
+  reclaimProofRequestConfig: string;
 }
 
 /**
@@ -703,7 +723,6 @@ export interface Project {
   on_chain_id: number;
   overview: string;
   owner: Account;
-  payout_address: Account;
   repositories?: ProjectRepository[];
   status: ProjectStatusEnum;
   /**
@@ -2708,6 +2727,50 @@ export const useV1ProjectsRetrieve = <TError = AxiosError<void>>(
   const swrFn = () => v1ProjectsRetrieve(params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export const v1ReclaimGenerateRequestCreate = (
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<ReclaimProofRequestConfig>> => {
+  return axios.post(`/api/v1/reclaim/generate-request`, undefined, options);
+};
+
+export const getV1ReclaimGenerateRequestCreateMutationFetcher = (options?: AxiosRequestConfig) => {
+  return (_: string, __: { arg: Arguments }): Promise<AxiosResponse<ReclaimProofRequestConfig>> => {
+    return v1ReclaimGenerateRequestCreate(options);
+  };
+};
+
+export const getV1ReclaimGenerateRequestCreateMutationKey = () =>
+  `/api/v1/reclaim/generate-request` as const;
+
+export type V1ReclaimGenerateRequestCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof v1ReclaimGenerateRequestCreate>>
+>;
+
+export type V1ReclaimGenerateRequestCreateMutationError = AxiosError<void>;
+
+export const useV1ReclaimGenerateRequestCreate = <TError = AxiosError<void>>(options?: {
+  swr?: SWRMutationConfiguration<
+    Awaited<ReturnType<typeof v1ReclaimGenerateRequestCreate>>,
+    TError,
+    string,
+    Arguments,
+    Awaited<ReturnType<typeof v1ReclaimGenerateRequestCreate>>
+  > & { swrKey?: string };
+  axios?: AxiosRequestConfig;
+}) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const swrKey = swrOptions?.swrKey ?? getV1ReclaimGenerateRequestCreateMutationKey();
+  const swrFn = getV1ReclaimGenerateRequestCreateMutationFetcher(axiosOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
