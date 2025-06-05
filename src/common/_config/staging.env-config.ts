@@ -65,7 +65,7 @@ export const envConfig: EnvConfig = {
     [FeatureId.ProfileConfiguration]: {
       id: FeatureId.ProfileConfiguration,
       name: "Profile configuration",
-      isEnabled: true,
+      isEnabled: false,
     },
 
     [FeatureId.FtDonation]: {
