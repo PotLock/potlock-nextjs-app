@@ -8,7 +8,7 @@ import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
 import { floatToIndivisible, parseNumber } from "@/common/lib";
-import { CampaignId, type FromSchema } from "@/common/types";
+import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared";
@@ -17,7 +17,11 @@ import { dispatch } from "@/store";
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
 
-export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => {
+export type CampaignFormParams = Partial<ByCampaignId> & {
+  ftId?: TokenId;
+};
+
+export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
   const viewer = useWalletUserSession();
   const router = useRouter();
   const isNewCampaign = campaignId === undefined;
@@ -28,7 +32,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
   const self = useForm<Values>({
     resolver: zodResolver(schema),
     mode: "all",
-    defaultValues: { ft_id: NATIVE_TOKEN_ID, target_amount: 0.01 },
+    defaultValues: { ft_id: ftId ?? NATIVE_TOKEN_ID, target_amount: 0.01 },
     resetOptions: { keepDirtyValues: false },
   });
 
@@ -186,7 +190,8 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
       const args = {
         description: values.description || "",
         name: values.name || "",
-        ft_id: values.ft_id === NATIVE_TOKEN_ID ? null : values.ft_id,
+
+        ...(isNewCampaign ? { ft_id: values.ft_id === NATIVE_TOKEN_ID ? null : values.ft_id } : {}),
 
         target_amount: floatToIndivisible(
           parseNumber(values.target_amount ?? 0),

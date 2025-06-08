@@ -36,6 +36,7 @@ export const CampaignForm = ({
 
   const { form, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
+    ftId: existingData?.ft_id ?? NATIVE_TOKEN_ID,
   });
 
   const [ftId, targetAmount, minAmount, maxAmount] = form.watch([
@@ -72,8 +73,8 @@ export const CampaignForm = ({
   // TODO: which impacts UX and performance SUBSTANTIALLY!
   useEffect(() => {
     if (isUpdate && existingData) {
-      if (ftId !== (existingData.ft_id ?? NATIVE_TOKEN_ID)) {
-        form.setValue("ft_id", existingData?.ft_id ?? NATIVE_TOKEN_ID);
+      if (isNonNullish(existingData.ft_id) && ftId !== existingData.ft_id) {
+        form.setValue("ft_id", existingData.ft_id);
       }
 
       if (token !== undefined) {
@@ -318,6 +319,7 @@ export const CampaignForm = ({
                     name="ft_id"
                     render={({ field: inputExtension }) => (
                       <TokenSelector
+                        disabled={isUpdate}
                         defaultValue={inputExtension.value}
                         onValueChange={inputExtension.onChange}
                       />

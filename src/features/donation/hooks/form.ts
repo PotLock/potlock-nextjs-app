@@ -83,6 +83,9 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
 
       groupAllocationStrategy: DonationGroupAllocationStrategyEnum.even,
       groupAllocationPlan: isGroupDonation ? [] : undefined,
+
+      bypassProtocolFee: false,
+      bypassReferralFee: false,
       bypassCuratorFee: false,
     }),
 
@@ -216,12 +219,21 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
       dispatch.donation.submit({
         ...inputs,
         ...params,
-        referrerAccountId: viewer?.referrerAccountId,
+
+        referrerAccountId: inputs.bypassReferralFee ? undefined : viewer?.referrerAccountId,
+        campaignCreatorAccountId: isCampaignDonation ? campaign?.owner : undefined,
         campaignRecipientAccountId: isCampaignDonation ? campaign?.recipient : undefined,
         onError: onSubmitError,
       }),
 
-    [campaign?.recipient, isCampaignDonation, onSubmitError, params, viewer?.referrerAccountId],
+    [
+      campaign?.owner,
+      campaign?.recipient,
+      isCampaignDonation,
+      onSubmitError,
+      params,
+      viewer?.referrerAccountId,
+    ],
   );
 
   //* Ensure the correct token is selected:

@@ -7,17 +7,14 @@ import { NearIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountListItem, useToken } from "@/entities/_shared";
 
-import {
-  DonationShareAllocationDeps,
-  useDonationEvenShareAllocation,
-  useDonationManualShareAllocation,
-} from "../hooks/allocation";
-import { DonationAllocationInputs } from "../models/schemas";
+import { useEvenGroupDonationDistribution } from "../hooks/even-distribution";
+import { useManualGroupDonationAllocation } from "../hooks/manual-allocation";
+import { DonationAllocationInputs, type WithDonationFormAPI } from "../models/schemas";
 import { DonationGroupAllocationKey } from "../types";
 
 export type DonationGroupAllocationRecipientsProps = DonationGroupAllocationKey &
   Omit<DonationAllocationInputs, "minAmountError"> &
-  DonationShareAllocationDeps & {};
+  WithDonationFormAPI & {};
 
 export const DonationGroupAllocationRecipients: React.FC<
   DonationGroupAllocationRecipientsProps
@@ -45,8 +42,8 @@ export const DonationGroupAllocationRecipients: React.FC<
     status: ListRegistrationStatus.Approved,
   });
 
-  const handleEvenShareAllocation = useDonationEvenShareAllocation({ form });
-  const handleManualShareAllocation = useDonationManualShareAllocation({ form });
+  const handleEvenShareAllocation = useEvenGroupDonationDistribution({ form });
+  const handleManualShareAllocation = useManualGroupDonationAllocation({ form });
 
   const recipientCandidateIds = useMemo(
     () =>
