@@ -63,7 +63,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
 
   const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
 
-  const minAmountFLoat = useMemo(
+  const minAmountFloat = useMemo(
     () =>
       token === undefined || isNullish(campaign?.min_amount)
         ? 0
@@ -72,7 +72,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
     [campaign?.min_amount, token],
   );
 
-  const maxAmountFLoat = useMemo(
+  const maxAmountFloat = useMemo(
     () =>
       token === undefined || isNullish(campaign?.max_amount)
         ? 0
@@ -185,17 +185,17 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
             <CampaignSettingsBarCard
               title="Minimum target"
               value={
-                minAmountFLoat > 0 ? `${minAmountFLoat} ${token?.metadata.symbol ?? ""}` : "N/A"
+                minAmountFloat > 0 ? `${minAmountFloat} ${token?.metadata.symbol ?? ""}` : "N/A"
               }
-              icon={minAmountFLoat > 0 ? tokenIcon : null}
+              icon={minAmountFloat > 0 ? tokenIcon : null}
             />
 
             <CampaignSettingsBarCard
               title="Maximum target"
               value={
-                maxAmountFLoat > 0 ? `${maxAmountFLoat} ${token?.metadata.symbol ?? ""}` : "N/A"
+                maxAmountFloat > 0 ? `${maxAmountFloat} ${token?.metadata.symbol ?? ""}` : "N/A"
               }
-              icon={maxAmountFLoat > 0 ? tokenIcon : null}
+              icon={maxAmountFloat > 0 ? tokenIcon : null}
             />
 
             <CampaignSettingsBarCard
