@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import Link from "next/link";
 import { isNullish } from "remeda";
@@ -13,7 +13,7 @@ import { useWalletUserSession } from "@/common/wallet";
 import { TokenIcon, useToken } from "@/entities/_shared";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
-import { CampaignForm } from "./CampaignForm";
+import { CampaignEditor } from "./editor";
 
 const formatTime = (timestamp: number) =>
   new Date(timestamp).toLocaleString("en-US", {
@@ -53,18 +53,17 @@ export type CampaignSettingsProps = ByCampaignId & {};
 export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }) => {
   const viewer = useWalletUserSession();
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
+  const closeEditor = useCallback(() => setOpenEditCampaign(false), []);
 
   const {
     isLoading: isCampaignLoading,
     data: campaign,
     error: campaignLoadingError,
-  } = campaignsContractHooks.useCampaign({
-    campaignId,
-  });
+  } = campaignsContractHooks.useCampaign({ campaignId });
 
   const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
 
-  const minAmountFLoat = useMemo(
+  const minAmountFloat = useMemo(
     () =>
       token === undefined || isNullish(campaign?.min_amount)
         ? 0
@@ -73,7 +72,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
     [campaign?.min_amount, token],
   );
 
-  const maxAmountFLoat = useMemo(
+  const maxAmountFloat = useMemo(
     () =>
       token === undefined || isNullish(campaign?.max_amount)
         ? 0
@@ -175,7 +174,9 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
             {campaign ? (
               <CampaignSettingsBarCard
                 title="Campaign duration"
-                value={`${formatTime(campaign.start_ms)} - ${campaign?.end_ms ? formatTime(campaign.end_ms) : "Ongoing"}`}
+                value={`${formatTime(
+                  campaign.start_ms,
+                )} - ${campaign?.end_ms ? formatTime(campaign.end_ms) : "Ongoing"}`}
               />
             ) : (
               <CampaignSettingsBarCardSkeleton />
@@ -184,34 +185,40 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
             <CampaignSettingsBarCard
               title="Minimum target"
               value={
-                minAmountFLoat > 0 ? `${minAmountFLoat} ${token?.metadata.symbol ?? ""}` : "N/A"
+                minAmountFloat > 0 ? `${minAmountFloat} ${token?.metadata.symbol ?? ""}` : "N/A"
               }
-              icon={minAmountFLoat > 0 ? tokenIcon : null}
+              icon={minAmountFloat > 0 ? tokenIcon : null}
             />
 
             <CampaignSettingsBarCard
               title="Maximum target"
               value={
-                maxAmountFLoat > 0 ? `${maxAmountFLoat} ${token?.metadata.symbol ?? ""}` : "N/A"
+                maxAmountFloat > 0 ? `${maxAmountFloat} ${token?.metadata.symbol ?? ""}` : "N/A"
               }
-              icon={maxAmountFLoat > 0 ? tokenIcon : null}
+              icon={maxAmountFloat > 0 ? tokenIcon : null}
             />
+
             <CampaignSettingsBarCard
               title="Referral fee"
-              value={`${campaign?.referral_fee_basis_points ? `${campaign?.referral_fee_basis_points / 100}%` : "N/A"}`}
+              value={`${
+                campaign?.referral_fee_basis_points
+                  ? `${campaign?.referral_fee_basis_points / 100}%`
+                  : "N/A"
+              }`}
             />
+
             <CampaignSettingsBarCard
               title="Protocol fee"
-              value={`${campaign?.creator_fee_basis_points ? `${campaign?.creator_fee_basis_points / 100}%` : "N/A"}`}
+              value={`${
+                campaign?.creator_fee_basis_points
+                  ? `${campaign?.creator_fee_basis_points / 100}%`
+                  : "N/A"
+              }`}
             />
           </div>
         </div>
       ) : (
-        <CampaignForm
-          existingData={campaign}
-          closeEditCampaign={() => setOpenEditCampaign(false)}
-          campaignId={campaignId}
-        />
+        <CampaignEditor existingData={campaign} campaignId={campaignId} close={closeEditor} />
       )}
     </div>
   );
