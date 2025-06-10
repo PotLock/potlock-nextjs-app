@@ -5,10 +5,9 @@ import { useRouter } from "next/router";
 import { isNonNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
-import { IPFS_NEAR_SOCIAL_URL, NATIVE_TOKEN_ID } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat, parseNumber } from "@/common/lib";
-import { nearSocialIpfsUpload } from "@/common/services/ipfs";
 import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
@@ -30,25 +29,24 @@ export const CampaignForm = ({
 }) => {
   const walletUser = useWalletUserSession();
   const { back } = useRouter();
-  const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
   const [avoidFee, setAvoidFee] = useState<boolean>(false);
-  const [loadingImageUpload, setLoadingImageUpload] = useState(false);
   const isUpdate = campaignId !== undefined;
 
-  const { handleFileInputChange, data } = pinataHooks.useFileUpload();
-
-  console.log(data);
-
-  const { form, onSubmit, watch, isDisabled } = useCampaignForm({
+  const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
     ftId: existingData?.ft_id ?? NATIVE_TOKEN_ID,
   });
 
-  const [ftId, targetAmount, minAmount, maxAmount] = form.watch([
+  const { handleFileInputChange, isPending: isBannerUploadPending } = pinataHooks.useFileUpload({
+    onSuccess: handleCoverImageUploadResult,
+  });
+
+  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl] = form.watch([
     "ft_id",
     "target_amount",
     "min_amount",
     "max_amount",
+    "cover_image_url",
   ]);
 
   const { data: token } = useToken({
@@ -97,8 +95,7 @@ export const CampaignForm = ({
       }
 
       if (existingData?.cover_image_url) {
-        setCoverImage(existingData?.cover_image_url);
-        form.setValue("cover_image_url", existingData?.cover_image_url);
+        form.setValue("cover_image_url", existingData.cover_image_url);
       }
 
       form.setValue("recipient", existingData?.recipient);
@@ -166,14 +163,6 @@ export const CampaignForm = ({
 
     if (target.files && target.files[0]) {
       const reader = new FileReader();
-      setLoadingImageUpload(true);
-      const res = await nearSocialIpfsUpload(target.files[0]);
-
-      if (res.ok) {
-        const data = await res.json();
-        setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
-        setLoadingImageUpload(false);
-      }
 
       reader.readAsDataURL(target.files[0]);
     }
@@ -225,7 +214,6 @@ export const CampaignForm = ({
 
             onSubmit({
               ...form.getValues(),
-              cover_image_url: coverImage,
               allow_fee_avoidance: avoidFee,
             });
           }}
@@ -242,7 +230,7 @@ export const CampaignForm = ({
                 "items-center justify-center rounded-md bg-gray-100",
               )}
               style={{
-                backgroundImage: `url(${coverImage})`,
+                backgroundImage: `url(${coverImageUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
@@ -251,7 +239,7 @@ export const CampaignForm = ({
                 type="file"
                 accept="image/*"
                 id="uploadCoverImage"
-                onChange={handleCoverImageChange}
+                onChange={handleFileInputChange}
                 className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               />
 
@@ -267,9 +255,9 @@ export const CampaignForm = ({
                 <span className="line-height-none pb-0.5">📷</span>
 
                 <span>
-                  {loadingImageUpload
+                  {isBannerUploadPending
                     ? "Uploading..."
-                    : `${coverImage ? "Update" : "Add"} cover photo`}
+                    : `${coverImageUrl ? "Change" : "Add"} cover image`}
                 </span>
               </button>
             </div>

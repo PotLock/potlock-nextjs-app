@@ -8,6 +8,7 @@ import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
 import { floatToIndivisible, parseNumber } from "@/common/lib";
+import type { FileUploadResult } from "@/common/services/pinata";
 import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
@@ -35,6 +36,11 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
     defaultValues: { ft_id: ftId ?? NATIVE_TOKEN_ID, target_amount: 0.01 },
     resetOptions: { keepDirtyValues: false },
   });
+
+  const handleCoverImageUploadResult = useCallback(
+    (result: FileUploadResult) => self.setValue("cover_image_url", result.url),
+    [self],
+  );
 
   //! For internal use only!
   const values = useWatch(self);
@@ -133,7 +139,7 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
       campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
 
       dispatch.campaignEditor.updateCampaignModalState({
-        header: `Campaign Deleted Successfully`,
+        header: "Campaign Deleted Successfully",
         description: "You can now proceed to close this window",
         type: CampaignEnumType.DELETE_CAMPAIGN,
       });
@@ -198,7 +204,11 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         ),
 
-        cover_image_url: values.cover_image_url ?? null,
+        ...(values.cover_image_url
+          ? {
+              cover_image_url: values.cover_image_url,
+            }
+          : {}),
 
         ...(isNewCampaign && parsedMinAmount !== null
           ? {
@@ -308,6 +318,7 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
 
   return {
     form: self,
+    handleCoverImageUploadResult,
     onSubmit,
     values,
     watch: self.watch,

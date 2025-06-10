@@ -58,12 +58,13 @@ const ftIdSchema = literal(NATIVE_TOKEN_ID)
   .default(NATIVE_TOKEN_ID)
   .describe('Either "NEAR" or FT contract account id.');
 
-// --- Base Schema ---
+//* Base schema
 const baseSchema = z.object({
   name: z
     .string()
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must be less than 100 characters"),
+
   description: z.string().max(250, "Description must be less than 250 characters").optional(),
   ft_id: ftIdSchema,
   target_amount: positiveNumberParser.describe("Target Amount of the campaign"),
@@ -73,11 +74,13 @@ const baseSchema = z.object({
   end_ms: futureTimestamp.optional().describe("Campaign End Date"),
   owner: z.string().optional(),
   allow_fee_avoidance: z.boolean().optional().default(false),
+
   referral_fee_basis_points: integerCappedPercentage
     .optional()
     .refine((value) => value === undefined || isCampaignFeeValid(value), {
       message: `Cannot exceed ${feeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
     }),
+
   creator_fee_basis_points: integerCappedPercentage
     .optional()
     .refine((value) => value === undefined || isCampaignFeeValid(value), {
@@ -85,7 +88,7 @@ const baseSchema = z.object({
     }),
 });
 
-// --- Create Schema ---
+//* Create schema
 export const createCampaignSchema = baseSchema
   .extend({
     start_ms: futureTimestamp.describe("Campaign Start Date"),
@@ -163,7 +166,7 @@ export const createCampaignSchema = baseSchema
     }
   });
 
-// --- Update Schema ---
+//* Update schema
 // Inherits baseSchema and its refinements implicitly if needed, but better to redefine extend + superRefine for clarity
 export const updateCampaignSchema = baseSchema.extend({
   // start_ms might not be updatable or optional for update, adjust as needed
