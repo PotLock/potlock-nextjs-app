@@ -13,6 +13,7 @@ import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared";
+import { routeSelectors } from "@/pathnames";
 import { dispatch } from "@/store";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
@@ -20,9 +21,10 @@ import { CampaignEnumType } from "../types";
 
 export type CampaignFormParams = Partial<ByCampaignId> & {
   ftId?: TokenId;
+  onUpdateSuccess?: () => void;
 };
 
-export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
+export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignFormParams) => {
   const viewer = useWalletUserSession();
   const router = useRouter();
   const isNewCampaign = campaignId === undefined;
@@ -38,7 +40,9 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
   });
 
   const handleCoverImageUploadResult = useCallback(
-    (result: FileUploadResult) => self.setValue("cover_image_url", result.url),
+    (result: FileUploadResult) =>
+      self.setValue("cover_image_url", result.url, { shouldValidate: true }),
+
     [self],
   );
 
@@ -253,10 +257,17 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
           .update_campaign({
             args: { ...args, campaign_id: campaignId },
           })
-          .then((updateValues) => {
+          .then(() => {
+            self.reset(values, { keepErrors: false });
+
             toast({
-              title: `You’ve successfully updated this ${updateValues.name} Campaign`,
+              title: `You’ve successfully updated this campaign`,
+
+              description:
+                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
             });
+
+            onUpdateSuccess?.();
           })
           .catch((error) => {
             console.error("Failed to update Campaign:", error);
@@ -266,22 +277,18 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
               variant: "destructive",
             });
           });
-
-        dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully updated this Campaign`,
-          description:
-            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
-          type: CampaignEnumType.UPDATE_CAMPAIGN,
-        });
       } else {
         campaignsContractClient
           .create_campaign({ args })
-          .then(() => {
+          .then((newCampaign) => {
             toast({
               title: `You’ve successfully created a campaign for ${values.name}.`,
+
+              description:
+                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
             });
 
-            router.push("/campaigns");
+            router.push(routeSelectors.CAMPAIGN_BY_ID(newCampaign.id));
           })
           .catch((error) => {
             console.error("Failed to create Campaign:", error);
@@ -291,21 +298,16 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
               variant: "destructive",
             });
           });
-
-        dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaign for ${values.name}.`,
-          description:
-            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
-          type: CampaignEnumType.CREATE_CAMPAIGN,
-        });
       }
     },
     [
       campaignId,
       isNewCampaign,
+      onUpdateSuccess,
       parsedMaxAmount,
       parsedMinAmount,
       router,
+      self,
       token?.metadata.decimals,
       viewer.accountId,
     ],

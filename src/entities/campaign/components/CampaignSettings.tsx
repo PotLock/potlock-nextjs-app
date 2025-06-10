@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import Link from "next/link";
 import { isNullish } from "remeda";
@@ -13,7 +13,7 @@ import { useWalletUserSession } from "@/common/wallet";
 import { TokenIcon, useToken } from "@/entities/_shared";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
-import { CampaignForm } from "./CampaignForm";
+import { CampaignEditor } from "./editor";
 
 const formatTime = (timestamp: number) =>
   new Date(timestamp).toLocaleString("en-US", {
@@ -53,14 +53,13 @@ export type CampaignSettingsProps = ByCampaignId & {};
 export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }) => {
   const viewer = useWalletUserSession();
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
+  const closeEditor = useCallback(() => setOpenEditCampaign(false), []);
 
   const {
     isLoading: isCampaignLoading,
     data: campaign,
     error: campaignLoadingError,
-  } = campaignsContractHooks.useCampaign({
-    campaignId,
-  });
+  } = campaignsContractHooks.useCampaign({ campaignId });
 
   const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
 
@@ -219,11 +218,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
           </div>
         </div>
       ) : (
-        <CampaignForm
-          existingData={campaign}
-          closeEditCampaign={() => setOpenEditCampaign(false)}
-          campaignId={campaignId}
-        />
+        <CampaignEditor existingData={campaign} campaignId={campaignId} close={closeEditor} />
       )}
     </div>
   );

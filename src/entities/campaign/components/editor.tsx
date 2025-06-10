@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Info } from "lucide-react";
 import { useRouter } from "next/router";
@@ -18,15 +18,13 @@ import { TokenSelector, useToken } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";
 
-export const CampaignForm = ({
-  existingData,
-  campaignId,
-  closeEditCampaign,
-}: {
+export type CampaignEditorProps = {
   existingData?: Campaign;
   campaignId?: CampaignId;
-  closeEditCampaign?: () => void;
-}) => {
+  close?: () => void;
+};
+
+export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEditorProps) => {
   const walletUser = useWalletUserSession();
   const { back } = useRouter();
   const [avoidFee, setAvoidFee] = useState<boolean>(false);
@@ -35,6 +33,7 @@ export const CampaignForm = ({
   const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
     ftId: existingData?.ft_id ?? NATIVE_TOKEN_ID,
+    onUpdateSuccess: close,
   });
 
   const { handleFileInputChange, isPending: isBannerUploadPending } = pinataHooks.useFileUpload({
@@ -157,16 +156,6 @@ export const CampaignForm = ({
 
     [maxAmount, token?.usdPrice],
   );
-
-  const handleCoverImageChange = async (e: ChangeEvent) => {
-    const target = e.target as HTMLInputElement;
-
-    if (target.files && target.files[0]) {
-      const reader = new FileReader();
-
-      reader.readAsDataURL(target.files[0]);
-    }
-  };
 
   const selectedTokenIndicator = useMemo(
     () => (
@@ -536,7 +525,7 @@ export const CampaignForm = ({
 
             <Button
               variant="standard-outline"
-              onClick={() => (campaignId ? closeEditCampaign?.() : back())}
+              onClick={() => (campaignId ? close?.() : back())}
               type="button"
             >
               Cancel
