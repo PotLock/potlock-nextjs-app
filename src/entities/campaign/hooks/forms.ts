@@ -8,10 +8,12 @@ import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
 import { floatToIndivisible, parseNumber } from "@/common/lib";
+import type { FileUploadResult } from "@/common/services/pinata";
 import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useToken } from "@/entities/_shared";
+import { routeSelectors } from "@/pathnames";
 import { dispatch } from "@/store";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
@@ -19,9 +21,10 @@ import { CampaignEnumType } from "../types";
 
 export type CampaignFormParams = Partial<ByCampaignId> & {
   ftId?: TokenId;
+  onUpdateSuccess?: () => void;
 };
 
-export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
+export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignFormParams) => {
   const viewer = useWalletUserSession();
   const router = useRouter();
   const isNewCampaign = campaignId === undefined;
@@ -35,6 +38,13 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
     defaultValues: { ft_id: ftId ?? NATIVE_TOKEN_ID, target_amount: 0.01 },
     resetOptions: { keepDirtyValues: false },
   });
+
+  const handleCoverImageUploadResult = useCallback(
+    (result: FileUploadResult) =>
+      self.setValue("cover_image_url", result.url, { shouldValidate: true }),
+
+    [self],
+  );
 
   //! For internal use only!
   const values = useWatch(self);
@@ -133,7 +143,7 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
       campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
 
       dispatch.campaignEditor.updateCampaignModalState({
-        header: `Campaign Deleted Successfully`,
+        header: "Campaign Deleted Successfully",
         description: "You can now proceed to close this window",
         type: CampaignEnumType.DELETE_CAMPAIGN,
       });
@@ -198,7 +208,11 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         ),
 
-        cover_image_url: values.cover_image_url ?? null,
+        ...(values.cover_image_url
+          ? {
+              cover_image_url: values.cover_image_url,
+            }
+          : {}),
 
         ...(isNewCampaign && parsedMinAmount !== null
           ? {
@@ -243,10 +257,17 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
           .update_campaign({
             args: { ...args, campaign_id: campaignId },
           })
-          .then((updateValues) => {
+          .then(() => {
+            self.reset(values, { keepErrors: false });
+
             toast({
-              title: `You’ve successfully updated this ${updateValues.name} Campaign`,
+              title: `You’ve successfully updated this campaign`,
+
+              description:
+                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
             });
+
+            onUpdateSuccess?.();
           })
           .catch((error) => {
             console.error("Failed to update Campaign:", error);
@@ -256,22 +277,18 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
               variant: "destructive",
             });
           });
-
-        dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully updated this Campaign`,
-          description:
-            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
-          type: CampaignEnumType.UPDATE_CAMPAIGN,
-        });
       } else {
         campaignsContractClient
           .create_campaign({ args })
-          .then(() => {
+          .then((newCampaign) => {
             toast({
               title: `You’ve successfully created a campaign for ${values.name}.`,
+
+              description:
+                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
             });
 
-            router.push("/campaigns");
+            router.push(routeSelectors.CAMPAIGN_BY_ID(newCampaign.id));
           })
           .catch((error) => {
             console.error("Failed to create Campaign:", error);
@@ -281,21 +298,16 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
               variant: "destructive",
             });
           });
-
-        dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaign for ${values.name}.`,
-          description:
-            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
-          type: CampaignEnumType.CREATE_CAMPAIGN,
-        });
       }
     },
     [
       campaignId,
       isNewCampaign,
+      onUpdateSuccess,
       parsedMaxAmount,
       parsedMinAmount,
       router,
+      self,
       token?.metadata.decimals,
       viewer.accountId,
     ],
@@ -308,6 +320,7 @@ export const useCampaignForm = ({ campaignId, ftId }: CampaignFormParams) => {
 
   return {
     form: self,
+    handleCoverImageUploadResult,
     onSubmit,
     values,
     watch: self.watch,

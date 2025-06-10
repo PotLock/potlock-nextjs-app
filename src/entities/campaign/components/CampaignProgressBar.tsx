@@ -38,7 +38,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
     [amount, token],
   );
 
-  const minAmountFLoat = useMemo(
+  const minAmountFloat = useMemo(
     () =>
       token === undefined || isNullish(minAmount)
         ? 0
@@ -75,32 +75,32 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   const color = useMemo(() => {
     if (isTargetMet) {
       return "#7FC41E";
-    } else if (raisedAmountFloat < minAmountFLoat) {
+    } else if (raisedAmountFloat < minAmountFloat) {
       return "#DD3345";
     } else {
       return "#ECC113";
     }
-  }, [raisedAmountFloat, minAmountFLoat, isTargetMet]);
+  }, [raisedAmountFloat, minAmountFloat, isTargetMet]);
 
   const baseColor = useMemo(() => {
     if (isTargetMet) {
       return "#E6F7E0";
-    } else if (raisedAmountFloat < minAmountFLoat) {
+    } else if (raisedAmountFloat < minAmountFloat) {
       return "#FEE6E5";
     } else {
       return "#FDF4D9";
     }
-  }, [raisedAmountFloat, minAmountFLoat, isTargetMet]);
+  }, [raisedAmountFloat, minAmountFloat, isTargetMet]);
 
   const minArrowColor = useMemo(() => {
     if (isTargetMet) {
       return "#7FC41E";
-    } else if (raisedAmountFloat < minAmountFLoat) {
+    } else if (raisedAmountFloat < minAmountFloat) {
       return "#FEE6E5";
     } else {
       return "#ECC113";
     }
-  }, [raisedAmountFloat, minAmountFLoat, isTargetMet]);
+  }, [raisedAmountFloat, minAmountFloat, isTargetMet]);
 
   const timeLeft = endDate ? getTimePassed(endDate, false, true) : null;
   const isTimeUp = timeLeft?.includes("-");
@@ -135,18 +135,18 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
     if (isTimeUp) {
       let message;
 
-      if (raisedAmountFloat && !isTargetMet && raisedAmountFloat < minAmountFLoat) {
+      if (raisedAmountFloat && !isTargetMet && raisedAmountFloat < minAmountFloat) {
         message = isEscrowBalanceEmpty ? "Refunds Processed" : "Refunds Pending";
-      } else if (raisedAmountFloat && (isTargetMet || raisedAmountFloat > minAmountFLoat)) {
+      } else if (raisedAmountFloat && (isTargetMet || raisedAmountFloat > minAmountFloat)) {
         message = isEscrowBalanceEmpty ? "Payout Processed" : "Payout Pending";
       } else {
         message = "Goal Not Reached";
       }
 
       const messageColor = (() => {
-        if (raisedAmountFloat < minAmountFLoat && !isEscrowBalanceEmpty) {
+        if (raisedAmountFloat < minAmountFloat && !isEscrowBalanceEmpty) {
           return "#DD3345";
-        } else if (isTargetMet || raisedAmountFloat > minAmountFLoat) {
+        } else if (isTargetMet || raisedAmountFloat > minAmountFloat) {
           return color;
         } else {
           return "#DD3345";
@@ -185,7 +185,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
     isTimeUp,
     isTargetMet,
     raisedAmountFloat,
-    minAmountFLoat,
+    minAmountFloat,
     isEscrowBalanceEmpty,
     color,
     tokenId,
@@ -201,11 +201,11 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
         <Progress
           minArrowColor={minArrowColor}
           baseColor={baseColor}
-          minAmount={`${minAmountFLoat} ${token?.metadata.symbol ?? ""}`}
+          minAmount={`${minAmountFloat} ${token?.metadata.symbol ?? ""}`}
           minValuePercentage={
-            minAmountFLoat
+            minAmountFloat
               ? Math.floor(
-                  Big(minAmountFLoat)
+                  Big(minAmountFloat)
                     .div(targetAmountFloat || 1)
                     .mul(100)
                     .toNumber(),

@@ -1,49 +1,51 @@
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Info } from "lucide-react";
 import { useRouter } from "next/router";
 import { isNonNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
-import { IPFS_NEAR_SOCIAL_URL, NATIVE_TOKEN_ID } from "@/common/constants";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat, parseNumber } from "@/common/lib";
-import { nearSocialIpfsUpload } from "@/common/services/ipfs";
+import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { TokenSelector, useToken } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";
 
-export const CampaignForm = ({
-  existingData,
-  campaignId,
-  closeEditCampaign,
-}: {
+export type CampaignEditorProps = {
   existingData?: Campaign;
   campaignId?: CampaignId;
-  closeEditCampaign?: () => void;
-}) => {
-  const walletUser = useWalletUserSession();
-  const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
-  const [avoidFee, setAvoidFee] = useState<boolean>(false);
-  const [loadingImageUpload, setLoadingImageUpload] = useState(false);
-  const { back } = useRouter();
+  close?: () => void;
+};
 
+export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEditorProps) => {
+  const walletUser = useWalletUserSession();
+  const { back } = useRouter();
+  const [avoidFee, setAvoidFee] = useState<boolean>(false);
   const isUpdate = campaignId !== undefined;
 
-  const { form, onSubmit, watch, isDisabled } = useCampaignForm({
+  const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
     ftId: existingData?.ft_id ?? NATIVE_TOKEN_ID,
+    onUpdateSuccess: close,
   });
 
-  const [ftId, targetAmount, minAmount, maxAmount] = form.watch([
+  const { handleFileInputChange, isPending: isBannerUploadPending } = pinataHooks.useFileUpload({
+    onSuccess: handleCoverImageUploadResult,
+  });
+
+  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl] = form.watch([
     "ft_id",
     "target_amount",
     "min_amount",
     "max_amount",
+    "cover_image_url",
   ]);
 
   const { data: token } = useToken({
@@ -92,8 +94,7 @@ export const CampaignForm = ({
       }
 
       if (existingData?.cover_image_url) {
-        setCoverImage(existingData?.cover_image_url);
-        form.setValue("cover_image_url", existingData?.cover_image_url);
+        form.setValue("cover_image_url", existingData.cover_image_url);
       }
 
       form.setValue("recipient", existingData?.recipient);
@@ -156,24 +157,6 @@ export const CampaignForm = ({
     [maxAmount, token?.usdPrice],
   );
 
-  const handleCoverImageChange = async (e: ChangeEvent) => {
-    const target = e.target as HTMLInputElement;
-
-    if (target.files && target.files[0]) {
-      const reader = new FileReader();
-      setLoadingImageUpload(true);
-      const res = await nearSocialIpfsUpload(target.files[0]);
-
-      if (res.ok) {
-        const data = await res.json();
-        setCoverImage(`${IPFS_NEAR_SOCIAL_URL}${data.cid}` as string);
-        setLoadingImageUpload(false);
-      }
-
-      reader.readAsDataURL(target.files[0]);
-    }
-  };
-
   const selectedTokenIndicator = useMemo(
     () => (
       <FormField
@@ -193,6 +176,7 @@ export const CampaignForm = ({
 
         <div className="m-0">
           <h2 className="m-0 text-base font-medium">Campaign Duration Types</h2>
+
           <ul className="ml-4 list-disc text-xs leading-normal md:text-sm md:leading-6">
             <li>
               <strong>Continuous Campaign:</strong> No minimum amount and no end date—runs
@@ -219,20 +203,23 @@ export const CampaignForm = ({
 
             onSubmit({
               ...form.getValues(),
-              cover_image_url: coverImage,
               allow_fee_avoidance: avoidFee,
             });
           }}
         >
-          <div>
+          <div className="mb-8">
             <h3 className="mb-2 mt-10 text-xl font-semibold">
-              Upload Campaign Image <span className="font-normal text-gray-500">(Optional)</span>
+              <span>{"Upload Campaign Image"}</span>
+              <span className="font-normal text-gray-500">{"(Optional)"}</span>
             </h3>
 
             <div
-              className="relative flex h-[320px] w-full items-center justify-center rounded-md bg-gray-100"
+              className={cn(
+                "relative flex h-[320px] w-full",
+                "items-center justify-center rounded-md bg-gray-100",
+              )}
               style={{
-                backgroundImage: `url(${coverImage})`,
+                backgroundImage: `url(${coverImageUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
@@ -241,24 +228,31 @@ export const CampaignForm = ({
                 type="file"
                 accept="image/*"
                 id="uploadCoverImage"
-                onChange={handleCoverImageChange}
+                onChange={handleFileInputChange}
                 className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               />
 
               <button
                 type="button"
                 onClick={() => document.getElementById("uploadCoverImage")?.click()}
-                className="bg-background absolute bottom-4 right-4 rounded-md border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
+                className={cn(
+                  "bg-background absolute bottom-4 right-4 inline-flex items-center gap-2",
+                  "rounded-md border border-gray-300 px-4 py-2",
+                  "text-gray-700 transition hover:bg-gray-50",
+                )}
               >
-                <span className="mr-2">📷</span>{" "}
-                {loadingImageUpload
-                  ? "Uploading..."
-                  : `${coverImage ? "Update" : "Add"} cover photo`}
+                <span className="line-height-none pb-0.5">📷</span>
+
+                <span>
+                  {isBannerUploadPending
+                    ? "Uploading..."
+                    : `${coverImageUrl ? "Change" : "Add"} cover image`}
+                </span>
               </button>
             </div>
           </div>
 
-          <div className="mb-8 mt-8 flex w-full flex-col justify-between md:flex-row md:flex-row">
+          <div className="mb-8 flex w-full flex-col justify-between md:flex-row md:flex-row">
             <FormField
               control={form.control}
               name="recipient"
@@ -337,14 +331,21 @@ export const CampaignForm = ({
             )}
           />
 
-          <div className="mt-8 flex w-full min-w-full flex-col justify-between gap-8 md:flex-row md:gap-4">
+          <div
+            className={cn(
+              "mt-8 flex w-full min-w-full",
+              "flex-col justify-between gap-8 md:flex-row md:gap-4",
+            )}
+          >
             <FormField
               control={form.control}
               name="min_amount"
               render={({ field }) => (
                 <TextField
                   label="Minimum Target Amount"
-                  hint="Minimum amount required before the collected donations can be accessed or utilized"
+                  hint={
+                    "Minimum amount required before the collected donations can be accessed or utilized"
+                  }
                   {...field}
                   labelExtension="(optional)"
                   inputExtension={selectedTokenIndicator}
@@ -379,7 +380,12 @@ export const CampaignForm = ({
             />
           </div>
 
-          <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row md:gap-4">
+          <div
+            className={cn(
+              "mt-8 flex w-full min-w-full",
+              "flex-col justify-between md:flex-row md:gap-4",
+            )}
+          >
             {!campaignId ? (
               <FormField
                 control={form.control}
@@ -453,7 +459,12 @@ export const CampaignForm = ({
           </div>
 
           {!campaignId && (
-            <div className="mt-8 flex w-full min-w-full flex-col justify-between md:flex-row md:gap-4">
+            <div
+              className={cn(
+                "mt-8 flex w-full min-w-full",
+                "flex-col justify-between md:flex-row md:gap-4",
+              )}
+            >
               <FormField
                 control={form.control}
                 name="referral_fee_basis_points"
@@ -490,7 +501,12 @@ export const CampaignForm = ({
             </div>
           )}
 
-          <div className="border-1 mt-8 flex w-full items-center justify-between rounded-lg border-[#E2E8F0] bg-[#F7F7F7] p-4">
+          <div
+            className={cn(
+              "border-1 mt-8 flex w-full items-center justify-between",
+              "rounded-lg border-[#E2E8F0] bg-[#F7F7F7] p-4",
+            )}
+          >
             <div>
               <h2 className="text-base font-medium">Bypass Fees</h2>
 
@@ -498,6 +514,7 @@ export const CampaignForm = ({
                 If enabled, donors may be able to bypass certain fees
               </p>
             </div>
+
             <Switch checked={avoidFee} onClick={() => setAvoidFee(!avoidFee)} id="allow-fee" />
           </div>
 
@@ -508,7 +525,7 @@ export const CampaignForm = ({
 
             <Button
               variant="standard-outline"
-              onClick={() => (campaignId ? closeEditCampaign?.() : back())}
+              onClick={() => (campaignId ? close?.() : back())}
               type="button"
             >
               Cancel
