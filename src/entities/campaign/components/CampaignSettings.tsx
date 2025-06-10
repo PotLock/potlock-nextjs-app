@@ -175,7 +175,9 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
             {campaign ? (
               <CampaignSettingsBarCard
                 title="Campaign duration"
-                value={`${formatTime(campaign.start_ms)} - ${campaign?.end_ms ? formatTime(campaign.end_ms) : "Ongoing"}`}
+                value={`${formatTime(
+                  campaign.start_ms,
+                )} - ${campaign?.end_ms ? formatTime(campaign.end_ms) : "Ongoing"}`}
               />
             ) : (
               <CampaignSettingsBarCardSkeleton />
@@ -196,13 +198,23 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
               }
               icon={maxAmountFLoat > 0 ? tokenIcon : null}
             />
+
             <CampaignSettingsBarCard
               title="Referral fee"
-              value={`${campaign?.referral_fee_basis_points ? `${campaign?.referral_fee_basis_points / 100}%` : "N/A"}`}
+              value={`${
+                campaign?.referral_fee_basis_points
+                  ? `${campaign?.referral_fee_basis_points / 100}%`
+                  : "N/A"
+              }`}
             />
+
             <CampaignSettingsBarCard
               title="Protocol fee"
-              value={`${campaign?.creator_fee_basis_points ? `${campaign?.creator_fee_basis_points / 100}%` : "N/A"}`}
+              value={`${
+                campaign?.creator_fee_basis_points
+                  ? `${campaign?.creator_fee_basis_points / 100}%`
+                  : "N/A"
+              }`}
             />
           </div>
         </div>
