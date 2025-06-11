@@ -95,10 +95,10 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
     [campaign?.ft_id],
   );
 
-  if (campaignLoadingError)
+  if (campaign === undefined && campaignLoadingError)
     return (
       <div className="flex w-full flex-col items-center justify-center">
-        <h1>This Campaign does not Exist</h1>
+        <h1>This Campaign does not exist</h1>
       </div>
     );
 
