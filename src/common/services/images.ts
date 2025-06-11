@@ -34,7 +34,7 @@ export const getImage = async ({ accountId, image, type, fallbackurl }: Props) =
   try {
     if (!socialImage && accountId) {
       const profile = await socialDbContractClient.getSocialProfile({ accountId });
-      if (!profile) return console.log("error fetching social profile");
+      if (!profile) return console.error("error fetching social profile");
 
       socialImage = profile[type || "image"];
     }
@@ -114,7 +114,6 @@ export const getImage = async ({ accountId, image, type, fallbackurl }: Props) =
         : "/assets/images/profile-banner.png";
     }
   } catch (err) {
-    console.log("error fetching image ", err);
     return (fallbackurl ?? type === "image")
       ? "/assets/images/profile-image.png"
       : "/assets/images/profile-banner.png";
