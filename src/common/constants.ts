@@ -2,6 +2,7 @@ import { Big } from "big.js";
 import { utils } from "near-api-js";
 import { NEAR_NOMINATION_EXP } from "near-api-js/lib/utils/format";
 import { Metadata } from "next";
+import type { SWRConfiguration } from "swr";
 
 import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
@@ -160,6 +161,12 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
 export const NOOP_STRING = "noop";
 
 export const NOOP_BALANCE_VIEW = new Promise<Big.Big>((resolve) => resolve(Big(0)));
+
+export const CONTRACT_SWR_CONFIG: SWRConfiguration = {
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+};
 
 /**
  * @deprecated Use `useTokenAllowlist` hooks instead

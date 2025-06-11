@@ -16,7 +16,6 @@ import {
 
 const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
-  cache: new MemoryCache({ expirationTime: 10 }),
 });
 
 export const get_config = () => contractApi.view<{}, CampaignsContractConfig>("get_config");

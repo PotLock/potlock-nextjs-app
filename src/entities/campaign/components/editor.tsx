@@ -74,7 +74,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   // TODO: Use `useEnhancedForm` for form setup instead, this effect is called upon EVERY RENDER,
   // TODO: which impacts UX and performance SUBSTANTIALLY!
   useEffect(() => {
-    if (isUpdate && existingData) {
+    if (isUpdate && existingData && !form.formState.isDirty) {
       if (isNonNullish(existingData.ft_id) && ftId !== existingData.ft_id) {
         form.setValue("ft_id", existingData.ft_id);
       }
