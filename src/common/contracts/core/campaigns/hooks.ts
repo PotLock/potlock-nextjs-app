@@ -4,10 +4,13 @@ import { IS_CLIENT } from "@/common/constants";
 import type { ByAccountId, ByCampaignId, ConditionalActivation } from "@/common/types";
 
 import * as contractClient from "./client";
+import { CONTRACT_SWR_CONFIG } from "../../constants";
 
 export const useCampaigns = ({ enabled = true }: ConditionalActivation | undefined = {}) =>
-  useSWR(["get_campaigns"], () =>
-    !enabled || !IS_CLIENT ? undefined : contractClient.get_campaigns(),
+  useSWR(
+    ["get_campaigns"],
+    () => (!enabled || !IS_CLIENT ? undefined : contractClient.get_campaigns()),
+    CONTRACT_SWR_CONFIG,
   );
 
 export const useOwnedCampaigns = ({
@@ -17,17 +20,27 @@ export const useOwnedCampaigns = ({
 }: ByAccountId &
   Omit<contractClient.GetCampaignsByOwnerArgs, "owner_id"> &
   ConditionalActivation) =>
-  useSWR(["useOwnedCampaigns", accountId, params], ([_queryKeyHead, accountIdKey, paramsKey]) =>
-    !enabled || !IS_CLIENT
-      ? undefined
-      : contractClient.get_campaigns_by_owner({ owner_id: accountIdKey, ...paramsKey }),
+  useSWR(
+    ["useOwnedCampaigns", accountId, params],
+
+    ([_queryKeyHead, accountIdKey, paramsKey]) =>
+      !enabled || !IS_CLIENT
+        ? undefined
+        : contractClient.get_campaigns_by_owner({ owner_id: accountIdKey, ...paramsKey }),
+
+    CONTRACT_SWR_CONFIG,
   );
 
 export const useCampaign = ({ enabled = true, campaignId }: ByCampaignId & ConditionalActivation) =>
-  useSWR(["useCampaign", campaignId], ([_queryKeyHead, campaignIdKey]) =>
-    !enabled || !IS_CLIENT
-      ? undefined
-      : contractClient.get_campaign({ campaign_id: campaignIdKey }),
+  useSWR(
+    ["useCampaign", campaignId],
+
+    ([_queryKeyHead, campaignIdKey]) =>
+      !enabled || !IS_CLIENT
+        ? undefined
+        : contractClient.get_campaign({ campaign_id: campaignIdKey }),
+
+    CONTRACT_SWR_CONFIG,
   );
 
 export const useCampaignDonations = ({
@@ -37,10 +50,13 @@ export const useCampaignDonations = ({
 }: ByCampaignId & Omit<contractClient.GetCampaignArgs, "campaign_id"> & ConditionalActivation) =>
   useSWR(
     ["useCampaignDonations", campaignId, params],
+
     ([_queryKeyHead, campaignIdKey, paramsKey]) =>
       !enabled || !IS_CLIENT
         ? undefined
         : contractClient.get_donations_for_campaign({ campaign_id: campaignIdKey, ...paramsKey }),
+
+    CONTRACT_SWR_CONFIG,
   );
 
 export const useHasEscrowedDonationsToProcess = ({
@@ -50,6 +66,7 @@ export const useHasEscrowedDonationsToProcess = ({
 }: ByCampaignId & ConditionalActivation) =>
   useSWR(
     ["useHasEscrowedDonationsToProcess", campaignId, params],
+
     ([_queryKeyHead, campaignIdKey, paramsKey]) =>
       !enabled || !IS_CLIENT
         ? undefined
@@ -57,6 +74,8 @@ export const useHasEscrowedDonationsToProcess = ({
             campaign_id: campaignIdKey,
             ...paramsKey,
           }),
+
+    CONTRACT_SWR_CONFIG,
   );
 
 export const useIsDonationRefundsProcessed = ({
@@ -66,6 +85,7 @@ export const useIsDonationRefundsProcessed = ({
 }: ByCampaignId & ConditionalActivation) =>
   useSWR(
     ["isDonationsRefundsProcessed", campaignId, params],
+
     ([_queryKeyHead, campaignIdKey, paramsKey]) =>
       !enabled || !IS_CLIENT
         ? undefined
@@ -73,4 +93,6 @@ export const useIsDonationRefundsProcessed = ({
             campaign_id: campaignIdKey,
             ...paramsKey,
           }),
+
+    CONTRACT_SWR_CONFIG,
   );
