@@ -1,7 +1,12 @@
 import type { AccountView } from "near-api-js/lib/providers/provider";
 import useSWR from "swr";
 
-import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ICON_URL, NATIVE_TOKEN_ID } from "@/common/constants";
+import {
+  CONTRACT_SWR_CONFIG,
+  NATIVE_TOKEN_DECIMALS,
+  NATIVE_TOKEN_ICON_URL,
+  NATIVE_TOKEN_ID,
+} from "@/common/constants";
 import type { ByAccountId, WithDisabled } from "@/common/types";
 
 import { nearRpc } from "./client";
@@ -26,6 +31,8 @@ export const useNativeTokenMetadata = ({ disabled = false }: WithDisabled) =>
           decimals: NATIVE_TOKEN_DECIMALS,
         }),
       ),
+
+    CONTRACT_SWR_CONFIG,
   );
 
 export const useViewAccount = ({ disabled = false, ...params }: ByAccountId & WithDisabled) =>
@@ -40,4 +47,6 @@ export const useViewAccount = ({ disabled = false, ...params }: ByAccountId & Wi
           finality: "final",
         })
         .catch(() => undefined),
+
+    CONTRACT_SWR_CONFIG,
   );

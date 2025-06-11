@@ -1,10 +1,9 @@
 import useSWR from "swr";
 
-import { IS_CLIENT } from "@/common/constants";
+import { CONTRACT_SWR_CONFIG, IS_CLIENT } from "@/common/constants";
 import type { ByAccountId, ByCampaignId, ConditionalActivation } from "@/common/types";
 
 import * as contractClient from "./client";
-import { CONTRACT_SWR_CONFIG } from "../../constants";
 
 export const useCampaigns = ({ enabled = true }: ConditionalActivation | undefined = {}) =>
   useSWR(

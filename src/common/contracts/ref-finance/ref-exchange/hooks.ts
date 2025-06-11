@@ -1,10 +1,9 @@
 import useSWR from "swr";
 
-import { IS_CLIENT } from "@/common/constants";
+import { CONTRACT_SWR_CONFIG, IS_CLIENT } from "@/common/constants";
 import type { ConditionalActivation } from "@/common/types";
 
 import * as client from "./client";
-import { CONTRACT_SWR_CONFIG } from "../../constants";
 
 export const useWhitelistedTokens = ({ enabled = true }: ConditionalActivation | undefined = {}) =>
   useSWR(
