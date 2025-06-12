@@ -22,6 +22,9 @@ export const routeSelectors = {
   CAMPAIGN_BY_ID_LEADERBOARD: (campaignId: CampaignId) =>
     [rootPathnames.CAMPAIGN, campaignId, "leaderboard"].join("/"),
 
+  CAMPAIGN_BY_ID_SETTINGS: (campaignId: CampaignId) =>
+    [rootPathnames.CAMPAIGN, campaignId, "settings"].join("/"),
+
   PROFILE_BY_ID: (accountId: AccountId) => [rootPathnames.PROFILE, accountId].join("/"),
 
   PROFILE_BY_ID_EDIT: (accountId: AccountId) =>

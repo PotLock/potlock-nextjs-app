@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 import { pick } from "remeda";
@@ -79,9 +79,6 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
   });
 
   const values = form.watch();
-
-  console.log("Form values:", values);
-  console.log("Errors:", form.formState.errors, "isValid", form.formState.isValid);
 
   const onCategoriesChange = useCallback(
     (categories: string[]) => updateCategories(categories),

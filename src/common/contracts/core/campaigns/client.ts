@@ -16,59 +16,51 @@ import {
 
 const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
-  cache: new MemoryCache({ expirationTime: 10 }),
 });
 
 export const get_config = () => contractApi.view<{}, CampaignsContractConfig>("get_config");
 
-export const create_campaign = ({ args }: { args: CampaignInputs }) => {
-  return contractApi.call("create_campaign", {
+export type CreateCampaignParams = { args: CampaignInputs };
+
+export const create_campaign = ({ args }: CreateCampaignParams) =>
+  contractApi.call<CreateCampaignParams["args"], Campaign>("create_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
     gas: FULL_TGAS,
   });
-};
 
-export const process_escrowed_donations_batch = ({
-  args,
-}: {
-  args: { campaign_id: CampaignId };
-}) => {
-  return contractApi.call("process_escrowed_donations_batch", {
+export const process_escrowed_donations_batch = ({ args }: { args: { campaign_id: CampaignId } }) =>
+  contractApi.call("process_escrowed_donations_batch", {
     args,
     gas: FULL_TGAS,
   });
-};
 
-export const process_refunds_batch = ({ args }: { args: { campaign_id: CampaignId } }) => {
-  return contractApi.call("process_refunds_batch", {
+export const process_refunds_batch = ({ args }: { args: { campaign_id: CampaignId } }) =>
+  contractApi.call("process_refunds_batch", {
     args,
     gas: FULL_TGAS,
   });
-};
 
-export const update_campaign = ({
-  args,
-}: {
-  args: CampaignInputs & { campaign_id: CampaignId };
-}) => {
-  return contractApi.call<{}, Campaign>("update_campaign", {
+export type UpdateCampaignParams = { args: CampaignInputs & { campaign_id: CampaignId } };
+
+export const update_campaign = ({ args }: UpdateCampaignParams) =>
+  contractApi.call<UpdateCampaignParams["args"], Campaign>("update_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
     gas: FULL_TGAS,
   });
-};
 
-export const delete_campaign = ({ args }: { args: { campaign_id: CampaignId } }) => {
-  return contractApi.call<{}, void>("delete_campaign", {
+export type DeleteCampaignParams = { args: { campaign_id: CampaignId } };
+
+export const delete_campaign = ({ args }: DeleteCampaignParams) =>
+  contractApi.call<DeleteCampaignParams["args"], void>("delete_campaign", {
     args,
     deposit: floatToYoctoNear(0.021),
     gas: FULL_TGAS,
   });
-};
 
 export const donate = (args: CampaignDonationArgs, depositAmountYocto: IndivisibleUnits) =>
-  contractApi.call<{}, CampaignDonation>("donate", {
+  contractApi.call<CampaignDonationArgs, CampaignDonation>("donate", {
     args,
     deposit: depositAmountYocto,
     gas: FULL_TGAS,

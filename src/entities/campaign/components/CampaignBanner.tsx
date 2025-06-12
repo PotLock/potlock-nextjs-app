@@ -44,7 +44,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     [campaign, token],
   );
 
-  const minAmountFLoat = useMemo(
+  const minAmountFloat = useMemo(
     () =>
       token === undefined || isNullish(campaign?.min_amount)
         ? 0
@@ -55,7 +55,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
   const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
     campaignId,
-    enabled: isNonNullish(campaign?.min_amount) && raisedAmountFloat >= minAmountFLoat,
+    enabled: isNonNullish(campaign?.min_amount) && raisedAmountFloat >= minAmountFloat,
   });
 
   const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
@@ -64,7 +64,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
       enabled:
         !!campaign?.end_ms &&
         campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-        raisedAmountFloat < minAmountFLoat,
+        raisedAmountFloat < minAmountFloat,
     },
   );
 
@@ -187,7 +187,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             isDonationRefundsProcessed &&
             campaign?.end_ms &&
             campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-            raisedAmountFloat < minAmountFLoat && (
+            raisedAmountFloat < minAmountFloat && (
               <div className="flex w-full flex-col gap-4">
                 <Button className="w-full" onClick={handleDonationsRefund}>
                   Refund Donations
@@ -199,7 +199,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
                     <p className="text-sm font-normal leading-6">
                       {`The campaign has finished and did not meet its minimum goal of ${
-                        minAmountFLoat
+                        minAmountFloat
                       } ${
                         token?.metadata.symbol ?? ""
                       }. Initiate the Reverse Process to refund donors.`}

@@ -1,6 +1,6 @@
 import useSWR from "swr";
 
-import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { CONTRACT_SWR_CONFIG, NATIVE_TOKEN_ID } from "@/common/constants";
 import type { WithDisabled } from "@/common/types";
 
 import { client } from "./client";
@@ -17,4 +17,6 @@ export const useNativeTokenUsdPrice = (
         .then((response: { data: { [key: string]: { usd: number } } }) =>
           response.data[tokenId].usd.toString(),
         ),
+
+    CONTRACT_SWR_CONFIG,
   );

@@ -151,8 +151,6 @@ export default function ApplicationsTab() {
     if (error) {
       console.error(error);
     }
-
-    console.log({ statusFilter });
   }, [statusFilter, error]);
 
   return (
