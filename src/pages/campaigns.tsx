@@ -89,9 +89,27 @@ export default function CampaignsPage() {
           Igniting Campaigns for Impact
         </h3>
 
-        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
-          Discover dynamic campaigns, Support transformative <br className="max-md:hidden" />{" "}
-          initiatives, & Join a movement to fuel public goods.
+        <h1
+          className={cn(
+            "gap--0.1 inline-flex flex-col",
+            "font-lora m-0 text-4xl font-medium",
+            "leading-none tracking-tight md:text-[40px]",
+          )}
+        >
+          <span className="font-lora">{"Discover dynamic campaigns, Support transformative"}</span>
+
+          <span className="font-lora">
+            {"initiatives, & Join a movement to fuel public goods."}
+          </span>
+
+          <br />
+          <span className="font-lora">{"Fund Ideas, People, Projects"}</span>
+
+          <span className="font-lora">
+            {"The fastest way to raise for an ideas, caused, bounties, features."}
+          </span>
+
+          <span className="font-lora">{"Donate to cause, share and earn referral fees."}</span>
         </h1>
 
         <div className="flex gap-4">
