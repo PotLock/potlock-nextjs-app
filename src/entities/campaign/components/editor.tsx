@@ -21,6 +21,7 @@ import { useCampaignForm } from "../hooks/forms";
 export type CampaignEditorProps = {
   existingData?: Campaign;
   campaignId?: CampaignId;
+
   close?: () => void;
 };
 
