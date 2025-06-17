@@ -82,16 +82,23 @@ export default function CampaignsPage() {
       <div
         className={cn(
           "md:p-18 min-h-100 bg-hero relative w-full",
-          "flex flex-col items-start justify-center overflow-hidden",
+          "flex flex-col items-start justify-center gap-4 overflow-hidden",
         )}
       >
-        <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
-          Igniting Campaigns for Impact
-        </h3>
+        <h3 className="text-base font-semibold text-[#dd3345]">{"Fund Ideas, People, Projects"}</h3>
 
-        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
-          Discover dynamic campaigns, Support transformative <br className="max-md:hidden" />{" "}
-          initiatives, & Join a movement to fuel public goods.
+        <h1
+          className={cn(
+            "gap--0.1 inline-flex flex-col",
+            "font-lora m-0 text-4xl font-medium",
+            "leading-none tracking-tight md:text-[40px]",
+          )}
+        >
+          <span className="font-lora">
+            {"The fastest way to raise fo ideas, causes, bounties, features."}
+          </span>
+
+          <span className="font-lora">{"Donate to a cause, share & earn referral fees."}</span>
         </h1>
 
         <div className="flex gap-4">

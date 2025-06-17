@@ -45,8 +45,6 @@ export const groupListDonationMulticall = ({
       ),
     )
     .then((finalExecutionOutcomes = undefined) => {
-      console.log("finalExecutionOutcomes", finalExecutionOutcomes);
-
       const receipts: DirectDonation[] =
         finalExecutionOutcomes?.reduce(
           (acc, { status }) => {
