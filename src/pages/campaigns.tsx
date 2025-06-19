@@ -95,7 +95,7 @@ export default function CampaignsPage() {
           )}
         >
           <span className="font-lora">
-            {"The fastest way to raise fo ideas, causes, bounties, features."}
+            {"The fastest way to raise for ideas, causes, bounties, features."}
           </span>
 
           <span className="font-lora">{"Donate to a cause, share & earn referral fees."}</span>
