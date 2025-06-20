@@ -20,6 +20,7 @@ export default function RegisterPage() {
   const {
     isLoading: isAccountListRegistrationDataLoading,
     data: listRegistrations,
+    error: listRegistrationsError,
     mutate: refetchListRegistrations,
   } = indexer.useAccountListRegistrations({
     enabled: viewer.isSignedIn,
@@ -86,7 +87,9 @@ export default function RegisterPage() {
 
       {viewer.hasWalletReady && viewer.isSignedIn ? (
         <>
-          {listRegistrations === undefined ? (
+          {listRegistrations === undefined &&
+          listRegistrationsError === undefined &&
+          isAccountListRegistrationDataLoading ? (
             <Alert className="mt-10">
               <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
               <AlertTitle>{"Checking Account"}</AlertTitle>
