@@ -1,7 +1,5 @@
 import { array, object, string } from "zod";
 
-import { AccountCategory } from "@/entities/_shared/account";
-
 export const addFundingSourceSchema = object({
   investorName: string({
     required_error: "Please enter the investor name.",

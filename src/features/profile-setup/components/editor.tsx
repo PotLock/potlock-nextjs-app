@@ -3,25 +3,16 @@ import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { pick } from "remeda";
 
+import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField } from "@/common/ui/layout/components";
 import PlusIcon from "@/common/ui/layout/svg/PlusIcon";
-import {
-  ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
-  ACCOUNT_PROFILE_LINKTREE_KEYS,
-  AccountGroup,
-} from "@/entities/_shared/account";
+import { ACCOUNT_PROFILE_LINKTREE_KEYS, AccountGroup } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
 import { ProfileSetupFundingSourceModal } from "./AddFundingSourceModal";
 import { ProfileSetupSmartContractModal } from "./contract-modal";
 import { ProfileSetupSmartContractsSection } from "./contracts-section";
-import {
-  CustomInput,
-  CustomTextForm,
-  ProjectCategoryPicker,
-  Row,
-  SubHeader,
-} from "./editor-elements";
+import { CustomTextForm, ProjectCategoryPicker, Row, SubHeader } from "./editor-elements";
 import { ProfileSetupFundingSourcesTable } from "./funding-sources";
 import { ProfileSetupImageUpload } from "./image-upload";
 import { ProfileSetupLinktreeSection } from "./linktree-section";
@@ -128,12 +119,12 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
 
       <Form {...form}>
         <form {...{ onSubmit }}>
-          <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
+          <div className="max-w-224 m-auto flex w-full flex-col p-[3rem_0px] md:p-[4rem_0px]">
             <SubHeader title="Upload banner and profile Image" required />
 
             <ProfileSetupImageUpload
               backgroundImage={values.backgroundImage}
-              profileImage={values.profileImage ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
+              profileImage={values.profileImage}
               onBackgroundImageUploaded={updateBackgroundImage}
               onProfileImageUploaded={updateProfileImage}
             />
@@ -157,16 +148,17 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
 
             <Row>
               <FormField
-                control={form.control}
                 name="name"
+                control={form.control}
                 defaultValue={values.name}
                 render={({ field }) => (
-                  <CustomInput
-                    label="Project name *"
-                    inputProps={{
-                      placeholder: "Enter project name",
-                      ...field,
-                    }}
+                  <TextField
+                    label="Project name"
+                    required
+                    type="text"
+                    placeholder="Enter name"
+                    classNames={{ root: "w-full" }}
+                    {...field}
                   />
                 )}
               />
@@ -182,12 +174,12 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <CustomTextForm
-                    showHint
-                    label="Describe your project *"
+                  <TextAreaField
+                    label="Describe your project"
+                    required
                     placeholder="Type description"
-                    field={field}
-                    currentText={values.description}
+                    maxLength={250}
+                    {...field}
                   />
                 )}
               />
@@ -197,12 +189,12 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                   control={form.control}
                   name="publicGoodReason"
                   render={({ field }) => (
-                    <CustomTextForm
-                      showHint
+                    <TextAreaField
                       label="Why do you consider yourself a public good?"
+                      required
                       placeholder="Type the reason"
-                      field={field}
-                      currentText={values.publicGoodReason}
+                      maxLength={250}
+                      {...field}
                     />
                   )}
                 />
