@@ -6,7 +6,11 @@ import { pick } from "remeda";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField } from "@/common/ui/layout/components";
 import PlusIcon from "@/common/ui/layout/svg/PlusIcon";
-import { ACCOUNT_PROFILE_LINKTREE_KEYS, AccountGroup } from "@/entities/_shared/account";
+import {
+  ACCOUNT_PROFILE_LINKTREE_KEYS,
+  AccountCategory,
+  AccountGroup,
+} from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
 import { ProfileSetupFundingSourceModal } from "./AddFundingSourceModal";
@@ -184,7 +188,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                 )}
               />
 
-              {values.categories?.includes("Public Good") ? (
+              {values.categories?.includes(AccountCategory["Public Good"]) ? (
                 <FormField
                   control={form.control}
                   name="publicGoodReason"
@@ -227,7 +231,11 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
               </Button>
             </div>
 
-            {/* <SubHeader title="Repositories" required={values.isRepositoryRequired} className="mt-16" /> */}
+            <SubHeader
+              title="Open source repositories"
+              required={values.categories?.includes(AccountCategory["Open Source"])}
+              className="mt-16"
+            />
 
             <Row>
               <ProfileSetupRepositoriesSection
