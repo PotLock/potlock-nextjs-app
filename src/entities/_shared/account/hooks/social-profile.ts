@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 
+import { NOOP_STRING } from "@/common/constants";
 import { socialDbContractHooks } from "@/common/contracts/social-db";
+import { nftContractHooks } from "@/common/contracts/tokens";
 import type { ByAccountId, ConditionalActivation } from "@/common/types";
 
 import {
@@ -20,7 +22,7 @@ export const useAccountSocialProfile = ({
     error,
   } = socialDbContractHooks.useSocialProfile({ enabled, accountId });
 
-  const avatarNft = useMemo(
+  const avatarNftParams = useMemo(
     () =>
       data?.image !== undefined && typeof data.image !== "string" && "nft" in data.image
         ? (data.image.nft ?? null)
@@ -29,17 +31,26 @@ export const useAccountSocialProfile = ({
     [data?.image],
   );
 
-  const avatarSrc = useMemo(
-    () =>
-      (typeof data?.image === "string"
-        ? data?.image
-        : (data?.image?.url ??
-          (data?.image?.ipfs_cid
-            ? `https://ipfs.near.social/ipfs/${data?.image?.ipfs_cid}`
-            : null))) ?? ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
+  const { data: avatarNft } = nftContractHooks.useToken({
+    enabled: avatarNftParams !== null,
+    contractAccountId: avatarNftParams?.contractId ?? NOOP_STRING,
+    tokenId: avatarNftParams?.tokenId ?? NOOP_STRING,
+  });
 
-    [data?.image],
-  );
+  console.log("avatarNft", avatarNft);
+
+  const avatarSrc = useMemo(() => {
+    if (avatarNft !== undefined) {
+      return avatarNft.metadata.media;
+    } else if (typeof data?.image === "string") {
+      return data?.image;
+    } else {
+      return (
+        data?.image?.url ??
+        (data?.image?.ipfs_cid ? `https://ipfs.near.social/ipfs/${data?.image?.ipfs_cid}` : null)
+      );
+    }
+  }, [avatarNft, data?.image]);
 
   const backgroundNft = useMemo(
     () =>
@@ -54,12 +65,12 @@ export const useAccountSocialProfile = ({
 
   const backgroundSrc = useMemo(
     () =>
-      (typeof data?.backgroundImage === "string"
+      typeof data?.backgroundImage === "string"
         ? data?.backgroundImage
         : (data?.backgroundImage?.url ??
           (data?.backgroundImage?.ipfs_cid
             ? `https://ipfs.near.social/ipfs/${data?.backgroundImage?.ipfs_cid}`
-            : null))) ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+            : null)),
 
     [data?.backgroundImage],
   );
@@ -68,8 +79,8 @@ export const useAccountSocialProfile = ({
     isLoading,
     isValidating,
     profile: data ?? undefined,
-    avatarSrc,
-    backgroundSrc,
+    avatarSrc: avatarSrc ?? ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
+    backgroundSrc: backgroundSrc ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
     refetch,
     error,
   };
