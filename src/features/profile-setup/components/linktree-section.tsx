@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { extractFromUrl } from "@/common/lib";
 import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
 
-import { CustomInput } from "./form-elements";
+import { CustomInput } from "./editor-elements";
 import type { ProfileSetupInputs } from "../models/types";
 
 export type ProfileSetupLinktreeSectionProps = {

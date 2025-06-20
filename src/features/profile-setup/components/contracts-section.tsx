@@ -15,7 +15,7 @@ import {
 import Delete from "@/common/ui/layout/svg/Delete";
 import Edit from "@/common/ui/layout/svg/Edit";
 
-import { CustomInput, Label } from "./form-elements";
+import { CustomInput, Label } from "./editor-elements";
 import type { ProfileSetupInputs } from "../models/types";
 import validateEVMAddress from "../utils/validateEVMAddress";
 

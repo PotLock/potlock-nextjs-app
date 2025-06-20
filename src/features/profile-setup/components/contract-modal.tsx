@@ -13,7 +13,7 @@ import {
 } from "@/common/ui/layout/components";
 
 import { AddChainSelector } from "./contracts-section";
-import { CustomInput } from "./form-elements";
+import { CustomInput } from "./editor-elements";
 import type { ProfileSetupInputs } from "../models/types";
 import validateEVMAddress from "../utils/validateEVMAddress";
 

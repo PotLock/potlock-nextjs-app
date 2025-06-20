@@ -1,23 +1,13 @@
-import { useState } from "react";
-
 import Files from "react-files";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { nearSocialIpfsImageUpload } from "@/common/services/ipfs";
+import { type FileUploadResult, pinataHooks } from "@/common/services/pinata";
 import { Button, Spinner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import CameraIcon from "@/common/ui/layout/svg/CameraIcon";
 import { cn } from "@/common/ui/layout/utils";
 
 import type { ProfileSetupInputs } from "../models/types";
-
-type Status = "ready" | "loading";
-
-const useStatus = (initialStatus: Status = "ready") => {
-  const [current, set] = useState(initialStatus);
-
-  return { current, set };
-};
 
 export type ProfileSetupImageUploadProps = Pick<
   ProfileSetupInputs,
@@ -34,44 +24,22 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
   onProfileImageUploaded,
 }) => {
   const { toast } = useToast();
-  const bgImageStatus = useStatus();
-  const profileImageStatus = useStatus();
 
-  const onBgImageChange = async (files?: File[]) => {
-    if (files) {
-      bgImageStatus.set("loading");
-
-      nearSocialIpfsImageUpload(files)
-        .then((url) => {
-          if (url !== undefined) {
-            onBackgroundImageUploaded(url);
-            toast({ title: "Background image successfully uploaded" });
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          toast({ title: "Image upload error", description: error });
-        })
-        .finally(() => bgImageStatus.set("ready"));
-    }
+  const onAvatarUploadSuccess = (result: FileUploadResult) => {
+    toast({ title: "Profile image successfully uploaded" });
+    onProfileImageUploaded(result.url);
   };
 
-  const onAvatarImageChange = async (files?: File[]) => {
-    if (files) {
-      nearSocialIpfsImageUpload(files)
-        .then((url) => {
-          if (url !== undefined) {
-            onProfileImageUploaded(url);
-            toast({ title: "Profile image successfully uploaded" });
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          toast({ title: "Image upload error", description: error });
-        })
-        .finally(() => profileImageStatus.set("ready"));
-    }
+  const { handleFileBufferChange: handleAvatarFileBufferChange, isPending: isAvatarUploadPending } =
+    pinataHooks.useFileUpload({ onSuccess: onAvatarUploadSuccess });
+
+  const onCoverUploadSuccess = (result: FileUploadResult) => {
+    toast({ title: "Background image successfully uploaded" });
+    onBackgroundImageUploaded(result.url);
   };
+
+  const { handleFileBufferChange: handleCoverFileBufferChange, isPending: isCoverUploadPending } =
+    pinataHooks.useFileUpload({ onSuccess: onCoverUploadSuccess });
 
   return (
     <div className="mt-4 flex flex-col items-center">
@@ -84,28 +52,31 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
             className="h-full w-full object-cover"
           />
         )}
+
         <Button
           type="button"
           variant="standard-outline"
-          disabled={bgImageStatus.current === "loading"}
+          disabled={isCoverUploadPending}
           className={cn(
             "absolute bottom-[1.5rem] right-[1.5rem]",
             "max-md:h-[40px] max-md:w-[40px] max-md:rounded-[50%] max-md:p-0",
           )}
         >
           <CameraIcon width={18} />
-          {bgImageStatus.current === "ready" ? (
-            <p className="font-500 text-[14px] max-md:hidden">Add cover photo</p>
+
+          {isCoverUploadPending ? (
+            <Spinner className="w-4.5 h-4.5" />
           ) : (
-            <Spinner width={18} height={18} />
+            <p className="font-500 text-[14px] max-md:hidden">{"Add cover photo"}</p>
           )}
+
           <Files
+            clickable
             multiple={false}
             accepts={["image/*"]}
             minFileSize={1}
+            onChange={handleCoverFileBufferChange}
             className="z-1 absolute top-0 h-full w-full"
-            clickable
-            onChange={onBgImageChange}
           />
         </Button>
       </div>
@@ -125,31 +96,30 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
             className="h-full w-full rounded-[50%] object-cover"
           />
         )}
+
         <Button
           type="button"
           variant="standard-outline"
-          disabled={profileImageStatus.current === "loading"}
+          disabled={isAvatarUploadPending}
           className={
             "b-none absolute bottom-0 right-0 flex h-[40px] w-[40px] items-center rounded-[50%] p-0"
           }
           style={{
             boxShadow:
-              "0px 0px 0px 1px rgba(0, 0, 0, 0.22) inset, 0px -1px 0px 0px rgba(15, 15, 15, 0.15) inset, 0px 1px 2px -0.5px rgba(5, 5, 5, 0.08)",
+              "0px 0px 0px 1px rgba(0, 0, 0, 0.22) inset, " +
+              "0px -1px 0px 0px rgba(15, 15, 15, 0.15) inset, " +
+              "0px 1px 2px -0.5px rgba(5, 5, 5, 0.08)",
           }}
         >
-          {profileImageStatus.current === "ready" ? (
-            <CameraIcon width={18} />
-          ) : (
-            <Spinner width={18} height={18} />
-          )}
+          {isAvatarUploadPending ? <Spinner className="w-4.5 h-4.5" /> : <CameraIcon width={18} />}
 
           <Files
+            clickable
             multiple={false}
             accepts={["image/*"]}
             minFileSize={1}
+            onChange={handleAvatarFileBufferChange}
             className="z-1 absolute left-0 top-0 h-full w-full"
-            clickable
-            onChange={onAvatarImageChange}
           />
         </Button>
       </div>

@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { ProfileSetupForm } from "@/features/profile-setup";
+import { ProfileEditor } from "@/features/profile-setup";
 import { rootPathnames } from "@/pathnames";
 
 export default function RegisterPage() {
@@ -96,7 +96,7 @@ export default function RegisterPage() {
               <AlertDescription>{"Please, wait..."}</AlertDescription>
             </Alert>
           ) : (
-            <ProfileSetupForm
+            <ProfileEditor
               mode="register"
               accountId={viewer.accountId}
               isDaoRepresentative={viewer.isDaoRepresentative}

@@ -12,19 +12,19 @@ import { type ProfileSaveInputs, save } from "../models/effects";
 import { addFundingSourceSchema, profileSetupSchema } from "../models/schemas";
 import { AddFundingSourceInputs, ProfileSetupInputs } from "../models/types";
 
-export type ProfileSetupFormParams = ByAccountId &
+export type ProfileFormParams = ByAccountId &
   Pick<ProfileSaveInputs, "mode" | "isDaoRepresentative"> & {
     onSuccess: () => void;
     onFailure: (errorMessage: string) => void;
   };
 
-export const useProfileSetupForm = ({
+export const useProfileForm = ({
   mode,
   accountId,
   isDaoRepresentative,
   onSuccess,
   onFailure,
-}: ProfileSetupFormParams) => {
+}: ProfileFormParams) => {
   const {
     isLoading: isSocialProfileSnapshotLoading,
     profile: socialProfileSnapshot,

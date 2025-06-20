@@ -10,7 +10,7 @@ import {
   FormField,
 } from "@/common/ui/layout/components";
 
-import { CustomInput, CustomTextForm } from "./form-elements";
+import { CustomInput, CustomTextForm } from "./editor-elements";
 import { useAddFundingSourceForm } from "../hooks/forms";
 import { AddFundingSourceInputs, type ProfileSetupInputs } from "../models/types";
 

@@ -21,20 +21,20 @@ import {
   ProjectCategoryPicker,
   Row,
   SubHeader,
-} from "./form-elements";
+} from "./editor-elements";
 import { ProfileSetupFundingSourcesTable } from "./funding-sources";
 import { ProfileSetupImageUpload } from "./image-upload";
 import { ProfileSetupLinktreeSection } from "./linktree-section";
 import { ProfileSetupRepositoriesSection } from "./repositories-section";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
-import { type ProfileSetupFormParams, useProfileSetupForm } from "../hooks/forms";
+import { type ProfileFormParams, useProfileForm } from "../hooks/forms";
 
-export type ProfileSetupFormProps = Pick<
-  ProfileSetupFormParams,
+export type ProfileEditorProps = Pick<
+  ProfileFormParams,
   "mode" | "accountId" | "isDaoRepresentative" | "onSuccess" | "onFailure"
 > & {};
 
-export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
+export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   mode,
   accountId,
   isDaoRepresentative,
@@ -70,7 +70,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
     addRepository,
     updateRepositories,
     updateTeamMembers,
-  } = useProfileSetupForm({
+  } = useProfileForm({
     mode,
     accountId,
     isDaoRepresentative,
