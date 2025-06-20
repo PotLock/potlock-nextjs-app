@@ -20,6 +20,15 @@ export const useAccountSocialProfile = ({
     error,
   } = socialDbContractHooks.useSocialProfile({ enabled, accountId });
 
+  const avatarNft = useMemo(
+    () =>
+      data?.image !== undefined && typeof data.image !== "string" && "nft" in data.image
+        ? (data.image.nft ?? null)
+        : null,
+
+    [data?.image],
+  );
+
   const avatarSrc = useMemo(
     () =>
       (typeof data?.image === "string"
@@ -30,6 +39,17 @@ export const useAccountSocialProfile = ({
             : null))) ?? ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
 
     [data?.image],
+  );
+
+  const backgroundNft = useMemo(
+    () =>
+      data?.backgroundImage !== undefined &&
+      typeof data.backgroundImage !== "string" &&
+      "nft" in data.backgroundImage
+        ? (data.backgroundImage.nft ?? null)
+        : null,
+
+    [data?.backgroundImage],
   );
 
   const backgroundSrc = useMemo(

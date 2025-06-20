@@ -5,10 +5,8 @@
 import { createModel } from "@rematch/core";
 import { prop } from "remeda";
 
-import { NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social-db";
-import { getImage } from "@/common/services/images";
+import { NEARSocialUserProfile } from "@/common/contracts/social-db";
 import { ByAccountId } from "@/common/types";
-import { rootPathnames } from "@/pathnames";
 import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
@@ -16,29 +14,6 @@ import { AddFundingSourceInputs, ProfileSetupInputs } from "./types";
 
 export type SocialImagesInputs = ByAccountId & {
   socialData?: NEARSocialUserProfile | null;
-};
-
-const fetchSocialImages = async ({ socialData, accountId }: SocialImagesInputs) => {
-  let currentProfile: NEARSocialUserProfile | null | undefined = socialData;
-
-  if (!currentProfile) {
-    currentProfile = await socialDbContractClient.getSocialProfile({ accountId, useCache: false });
-  }
-
-  const image = getImage({ image: currentProfile?.image, type: "image" });
-
-  const backgroundImage = getImage({
-    image: currentProfile?.backgroundImage,
-    type: "backgroundImage",
-  });
-
-  const images = await Promise.all([image, backgroundImage]);
-
-  return {
-    image: images[0],
-    backgroundImage: images[1],
-    profile: currentProfile,
-  };
 };
 
 export const projectEditorModelKey = "projectEditor";
@@ -292,11 +267,11 @@ export const projectEditorModel = createModel<AppModel>()({
       //data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROFILE);
 
       // Get profile data & profile images
-      const projectProfileData = await fetchSocialImages({
-        accountId,
-      });
+      // const projectProfileData = await fetchSocialImages({
+      //   accountId,
+      // });
 
-      const { profile } = projectProfileData;
+      const { profile } = {};
 
       // No profile? End of process!
       if (!profile) {

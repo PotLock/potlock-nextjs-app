@@ -68,6 +68,8 @@ export const useProfileForm = ({
   //? For internal use only!
   const values = useWatch(self);
 
+  console.log(values);
+
   const teamMembersAccountGroup: AccountGroupItem[] = useMemo(
     () => values.teamMembers?.map(objOf("accountId")) ?? [],
     [values.teamMembers],
