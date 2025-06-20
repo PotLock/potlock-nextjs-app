@@ -1,6 +1,7 @@
 import { CSSProperties, useEffect, useState } from "react";
 
 import {
+  FormLabel,
   Input,
   InputProps,
   MultiSelector,
@@ -130,10 +131,10 @@ export const ProjectCategoryPicker = ({
   }, [value, onValuesChange]);
 
   return (
-    <MultiSelector values={value} onValuesChange={setValue} loop={false} className="w-full">
-      <Label>Select categories *</Label>
+    <MultiSelector values={value} onValuesChange={setValue} loop={false} className="w-full gap-2">
+      <FormLabel>Select categories *</FormLabel>
 
-      <MultiSelectorTrigger className="mt-[0.4rem] py-[.53rem]">
+      <MultiSelectorTrigger>
         <MultiSelectorInput placeholder="Choose category" />
       </MultiSelectorTrigger>
 
