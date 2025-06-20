@@ -1,10 +1,10 @@
 import Files from "react-files";
+import { MdOutlineAddAPhoto } from "react-icons/md";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { type FileUploadResult, pinataHooks } from "@/common/services/pinata";
 import { Button, Spinner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
-import CameraIcon from "@/common/ui/layout/svg/CameraIcon";
 import { cn } from "@/common/ui/layout/utils";
 
 import type { ProfileSetupInputs } from "../models/types";
@@ -62,7 +62,7 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
             "max-md:h-[40px] max-md:w-[40px] max-md:rounded-[50%] max-md:p-0",
           )}
         >
-          <CameraIcon width={18} />
+          <MdOutlineAddAPhoto className="color-neutral-500 w-4.5 h-4.5" />
 
           {isCoverUploadPending ? (
             <Spinner className="w-4.5 h-4.5" />
@@ -111,7 +111,11 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
               "0px 1px 2px -0.5px rgba(5, 5, 5, 0.08)",
           }}
         >
-          {isAvatarUploadPending ? <Spinner className="w-4.5 h-4.5" /> : <CameraIcon width={18} />}
+          {isAvatarUploadPending ? (
+            <Spinner className="w-4.5 h-4.5" />
+          ) : (
+            <MdOutlineAddAPhoto className="color-neutral-500 w-4.5 h-4.5" />
+          )}
 
           <Files
             clickable
