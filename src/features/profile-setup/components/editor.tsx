@@ -16,7 +16,7 @@ import { rootPathnames } from "@/pathnames";
 import { ProfileSetupFundingSourceModal } from "./AddFundingSourceModal";
 import { ProfileSetupSmartContractModal } from "./contract-modal";
 import { ProfileSetupSmartContractsSection } from "./contracts-section";
-import { CustomTextForm, ProjectCategoryPicker, Row, SubHeader } from "./editor-elements";
+import { ProjectCategoryPicker, Row, SubHeader } from "./editor-elements";
 import { ProfileSetupFundingSourcesTable } from "./funding-sources";
 import { ProfileSetupImageUpload } from "./image-upload";
 import { ProfileSetupLinktreeSection } from "./linktree-section";

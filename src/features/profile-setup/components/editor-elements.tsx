@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   FormLabel,
@@ -10,7 +10,6 @@ import {
   MultiSelectorItem,
   MultiSelectorList,
   MultiSelectorTrigger,
-  Textarea,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { ACCOUNT_CATEGORY_VARIANTS } from "@/entities/_shared/account";
@@ -40,29 +39,6 @@ export const Row = ({ children }: { children: React.ReactNode }) => (
   <div className="mt-6 grid grid-cols-2 gap-6 max-md:grid-cols-[100%]">{children}</div>
 );
 
-export const InputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex w-full flex-col items-start justify-start gap-[0.45em] p-0 text-[14px]">
-    {children}
-  </div>
-);
-
-export const Label = ({
-  children,
-  className,
-  style,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  style?: CSSProperties;
-}) => (
-  <p
-    className={cn(className, "font-500 line-height-[16px] color-neutral-900 break-words")}
-    style={{ marginTop: 0, marginBottom: 0, ...style }}
-  >
-    {children}
-  </p>
-);
-
 type CustomInputProps = {
   label: string;
   inputProps: InputProps;
@@ -80,11 +56,11 @@ export const CustomInput = ({
   prefix,
   prefixMinWidth,
 }: CustomInputProps) => (
-  <InputContainer>
-    <Label className={`m-0 ${className}`}>
+  <div className="flex w-full flex-col items-start justify-start gap-[0.45em] p-0 text-[14px]">
+    <FormLabel className={`m-0 ${className}`}>
       {label}
       {optional && <span className="font-400 ml-1 text-[14px] text-[#292929]">(optional)</span>}
-    </Label>
+    </FormLabel>
 
     {prefix ? (
       <div className="flex w-full items-center">
@@ -112,7 +88,7 @@ export const CustomInput = ({
     ) : (
       <Input {...inputProps} />
     )}
-  </InputContainer>
+  </div>
 );
 
 export const ProjectCategoryPicker = ({
@@ -148,45 +124,5 @@ export const ProjectCategoryPicker = ({
         </MultiSelectorList>
       </MultiSelectorContent>
     </MultiSelector>
-  );
-};
-
-type CustomTextFormProps = {
-  error?: string;
-  placeholder: string;
-  label: string;
-  field: {};
-  showHint?: boolean;
-  currentText?: string;
-  maxCharacters?: number;
-  className?: string;
-};
-
-export const CustomTextForm = ({
-  showHint,
-  error,
-  placeholder,
-  label,
-  field,
-  currentText,
-  maxCharacters = 500,
-  className,
-}: CustomTextFormProps) => {
-  return (
-    <div>
-      <Label style={{ marginBottom: 6 }} className={className}>
-        {label}
-      </Label>
-
-      <Textarea
-        className="resize-none"
-        placeholder={placeholder}
-        error={error}
-        currentText={currentText}
-        maxCharacters={maxCharacters}
-        showHint={showHint}
-        {...field}
-      />
-    </div>
   );
 };

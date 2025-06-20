@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { type CSSProperties, useCallback, useState } from "react";
 
 import { validateNearAddress } from "@wpdas/naxios";
 import { CircleAlert } from "lucide-react";
@@ -14,10 +14,28 @@ import {
 } from "@/common/ui/layout/components";
 import Delete from "@/common/ui/layout/svg/Delete";
 import Edit from "@/common/ui/layout/svg/Edit";
+import { cn } from "@/common/ui/layout/utils";
 
-import { CustomInput, Label } from "./editor-elements";
+import { CustomInput } from "./editor-elements";
 import type { ProfileSetupInputs } from "../models/types";
 import validateEVMAddress from "../utils/validateEVMAddress";
+
+const Label = ({
+  children,
+  className,
+  style,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  style?: CSSProperties;
+}) => (
+  <p
+    className={cn(className, "font-500 line-height-[16px] color-neutral-900 break-words")}
+    style={{ marginTop: 0, marginBottom: 0, ...style }}
+  >
+    {children}
+  </p>
+);
 
 type AddChainSelectorProps = {
   onChange: (value: string) => void;
