@@ -14,7 +14,7 @@ import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { TokenSelector, useToken } from "@/entities/_shared";
+import { TokenSelector, useFungibleToken } from "@/entities/_shared";
 
 import { useCampaignForm } from "../hooks/forms";
 
@@ -49,7 +49,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
     "cover_image_url",
   ]);
 
-  const { data: token } = useToken({
+  const { data: token } = useFungibleToken({
     tokenId: existingData?.ft_id ?? ftId ?? NATIVE_TOKEN_ID,
     balanceCheckAccountId: walletUser?.accountId,
   });

@@ -15,7 +15,7 @@ import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared";
+import { useFungibleToken } from "@/entities/_shared";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaign } from "@/features/donation";
 
@@ -33,7 +33,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     error: campaignLoadingError,
   } = campaignsContractHooks.useCampaign({ campaignId });
 
-  const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
 
   const raisedAmountFloat = useMemo(
     () =>

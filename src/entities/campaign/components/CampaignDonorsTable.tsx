@@ -9,7 +9,7 @@ import { indivisibleUnitsToFloat, oldToRecent } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
 import { DataTable } from "@/common/ui/layout/components";
-import { TokenIcon, useToken } from "@/entities/_shared";
+import { TokenIcon, useFungibleToken } from "@/entities/_shared";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
@@ -17,7 +17,7 @@ export type CampaignDonorsTableProps = ByCampaignId & {};
 
 export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campaignId }) => {
   const { data: campaign } = campaignsContractHooks.useCampaign({ campaignId });
-  const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
   const { data: donations } = campaignsContractHooks.useCampaignDonations({ campaignId });
 
   const sortedDonations = useMemo(() => {

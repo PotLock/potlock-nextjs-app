@@ -12,7 +12,7 @@ import {
 } from "@/common/ui/form/components";
 import { useWalletUserSession } from "@/common/wallet";
 
-import { useToken, useTokenAllowlist } from "../hooks/data";
+import { useFungibleToken, useFungibleTokenAllowlist } from "../hooks/fungible";
 
 type TokenSelectorOptionProps = ByTokenId & {
   showBalance?: boolean;
@@ -26,7 +26,7 @@ const TokenSelectorOption: React.FC<TokenSelectorOptionProps> = ({
 }) => {
   const viewer = useWalletUserSession();
 
-  const { data: token } = useToken({
+  const { data: token } = useFungibleToken({
     tokenId,
     balanceCheckAccountId: showBalance || skipIfZeroBalance ? viewer?.accountId : undefined,
   });
@@ -68,7 +68,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({
   hideZeroBalanceOptions = false,
   ...props
 }) => {
-  const { data: tokenAllowlist } = useTokenAllowlist({
+  const { data: tokenAllowlist } = useFungibleTokenAllowlist({
     enabled: FEATURE_REGISTRY.FtDonation.isEnabled,
   });
 

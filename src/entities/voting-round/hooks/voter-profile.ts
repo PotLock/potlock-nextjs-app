@@ -7,7 +7,7 @@ import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resi
 import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapool";
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 import { ByAccountId, type ConditionalActivation, TokenId } from "@/common/types";
-import { useToken } from "@/entities/_shared/token";
+import { useFungibleToken } from "@/entities/_shared/token";
 
 import { VoterProfile } from "../types";
 
@@ -34,7 +34,7 @@ export const useVoterProfile = ({
     [stakingContractAccountId, voterInfo?.voter_data.staking_token_id],
   );
 
-  const { data: stakingToken } = useToken({
+  const { data: stakingToken } = useFungibleToken({
     enabled: tokenId !== undefined,
     tokenId: tokenId as TokenId,
   });

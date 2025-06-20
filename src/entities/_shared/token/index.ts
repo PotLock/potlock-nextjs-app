@@ -5,4 +5,4 @@ export * from "./components/icons";
 export * from "./components/selector";
 export * from "./components/value-summary";
 
-export * from "./hooks/data";
+export * from "./hooks/fungible";

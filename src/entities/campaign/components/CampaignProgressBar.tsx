@@ -9,7 +9,7 @@ import { indivisibleUnitsToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByTokenId } from "@/common/types";
 import { Progress } from "@/common/ui/layout/components";
-import { TokenIcon, useToken } from "@/entities/_shared";
+import { TokenIcon, useFungibleToken } from "@/entities/_shared";
 
 export type CampaignProgressBarProps = ByTokenId & {
   target: Campaign["target_amount"];
@@ -31,7 +31,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   isStarted,
   startDate,
 }) => {
-  const { data: token } = useToken({ tokenId });
+  const { data: token } = useFungibleToken({ tokenId });
 
   const raisedAmountFloat = useMemo(
     () => (token === undefined ? 0 : indivisibleUnitsToFloat(amount, token.metadata.decimals)),
