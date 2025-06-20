@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import Files from "react-files";
 import { MdOutlineAddAPhoto } from "react-icons/md";
 import { LazyLoadImage } from "react-lazy-load-image-component";
@@ -25,25 +27,32 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
 }) => {
   const { toast } = useToast();
 
-  const onAvatarUploadSuccess = (result: FileUploadResult) => {
-    toast({ title: "Profile image successfully uploaded" });
-    onProfileImageUploaded(result.url);
-  };
+  const onAvatarUploadSuccess = useCallback(
+    (result: FileUploadResult) => {
+      toast({ title: "Profile image successfully uploaded" });
+      onProfileImageUploaded(result.url);
+    },
+
+    [onProfileImageUploaded, toast],
+  );
 
   const { handleFileBufferChange: handleAvatarFileBufferChange, isPending: isAvatarUploadPending } =
     pinataHooks.useFileUpload({ onSuccess: onAvatarUploadSuccess });
 
-  const onCoverUploadSuccess = (result: FileUploadResult) => {
-    toast({ title: "Background image successfully uploaded" });
-    onBackgroundImageUploaded(result.url);
-  };
+  const onCoverUploadSuccess = useCallback(
+    (result: FileUploadResult) => {
+      toast({ title: "Background image successfully uploaded" });
+      onBackgroundImageUploaded(result.url);
+    },
+
+    [onBackgroundImageUploaded, toast],
+  );
 
   const { handleFileBufferChange: handleCoverFileBufferChange, isPending: isCoverUploadPending } =
     pinataHooks.useFileUpload({ onSuccess: onCoverUploadSuccess });
 
   return (
     <div className="mt-4 flex flex-col items-center">
-      {/* BackgroundImage */}
       <div className="relative flex h-[280px] w-full rounded-[6px] bg-neutral-200">
         {backgroundImage && (
           <LazyLoadImage
@@ -81,7 +90,6 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
         </Button>
       </div>
 
-      {/* Profile Image */}
       <div
         className="relative h-[120px] w-[120px] rounded-full"
         style={{
