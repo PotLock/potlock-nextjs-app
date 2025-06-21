@@ -7,6 +7,7 @@ import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField } from "@/common/ui/layout/components";
 import PlusIcon from "@/common/ui/layout/svg/PlusIcon";
 import {
+  ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH,
   ACCOUNT_PROFILE_LINKTREE_KEYS,
   AccountCategory,
   AccountGroup,
@@ -185,8 +186,13 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                   <TextAreaField
                     label="Describe your project"
                     required
+                    labelExtension={
+                      <span className="line-height-none text-sm text-neutral-600">
+                        {"(markdown)"}
+                      </span>
+                    }
                     placeholder="Type description"
-                    maxLength={250}
+                    maxLength={ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH}
                     {...field}
                   />
                 )}
