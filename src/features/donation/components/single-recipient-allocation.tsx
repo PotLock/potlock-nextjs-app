@@ -23,7 +23,7 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
-import { TokenBalance, TokenSelector, useToken } from "@/entities/_shared/token";
+import { TokenBalance, TokenSelector, useFungibleToken } from "@/entities/_shared/token";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DONATION_ALLOCATION_STRATEGIES } from "../constants";
@@ -46,7 +46,7 @@ export const DonationSingleRecipientAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const { data: token } = useToken({
+  const { data: token } = useFungibleToken({
     tokenId,
     balanceCheckAccountId: walletUser?.accountId,
   });

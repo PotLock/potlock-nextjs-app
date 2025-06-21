@@ -5,7 +5,7 @@ import { AccountId } from "@/common/types";
 import { NearIcon } from "@/common/ui/layout/svg";
 import { cn } from "@/common/ui/layout/utils";
 
-import { useToken } from "../hooks/data";
+import { useFungibleToken } from "../hooks/fungible";
 
 type TokenIconSize = "xs" | "sm" | "md";
 
@@ -29,7 +29,7 @@ export type TokenIconProps = {
 };
 
 export const TokenIcon = ({ tokenId, className, size = "md" }: TokenIconProps) => {
-  const { data: token } = useToken({ tokenId });
+  const { data: token } = useFungibleToken({ tokenId });
   const { sizePx, rootClass, placeholderClass } = variants[size];
 
   return (

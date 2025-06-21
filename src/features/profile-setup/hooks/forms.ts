@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { objOf } from "remeda";
+import { objOf, pick } from "remeda";
 
 import type { ByAccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
@@ -12,24 +12,24 @@ import { type ProfileSaveInputs, save } from "../models/effects";
 import { addFundingSourceSchema, profileSetupSchema } from "../models/schemas";
 import { AddFundingSourceInputs, ProfileSetupInputs } from "../models/types";
 
-export type ProfileSetupFormParams = ByAccountId &
+export type ProfileFormParams = ByAccountId &
   Pick<ProfileSaveInputs, "mode" | "isDaoRepresentative"> & {
     onSuccess: () => void;
     onFailure: (errorMessage: string) => void;
   };
 
-export const useProfileSetupForm = ({
+export const useProfileForm = ({
   mode,
   accountId,
   isDaoRepresentative,
   onSuccess,
   onFailure,
-}: ProfileSetupFormParams) => {
+}: ProfileFormParams) => {
   const {
     isLoading: isSocialProfileSnapshotLoading,
     profile: socialProfileSnapshot,
-    avatarSrc,
-    backgroundSrc,
+    avatar,
+    cover,
     refetch: refetchSocialProfile,
   } = useAccountSocialProfile({ accountId });
 
@@ -37,24 +37,31 @@ export const useProfileSetupForm = ({
     () => ({
       name: socialProfileSnapshot?.name,
       description: socialProfileSnapshot?.description,
-      backgroundImage: backgroundSrc,
-      profileImage: avatarSrc,
+      profileImage: avatar.isNft ? undefined : avatar.url,
+      backgroundImage: cover.isNft ? undefined : cover.url,
       publicGoodReason: socialProfileSnapshot?.plPublicGoodReason,
 
-      teamMembers: socialProfileSnapshot?.plTeam
-        ? JSON.parse(socialProfileSnapshot.plTeam)
-        : undefined,
+      categories:
+        socialProfileSnapshot?.plCategories === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plCategories),
 
-      categories: socialProfileSnapshot?.plCategories
-        ? JSON.parse(socialProfileSnapshot.plCategories)
-        : undefined,
+      githubRepositories:
+        socialProfileSnapshot?.plGithubRepos === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plGithubRepos),
 
-      githubRepositories: socialProfileSnapshot?.plGithubRepos
-        ? JSON.parse(socialProfileSnapshot.plGithubRepos)
-        : undefined,
+      teamMembers:
+        socialProfileSnapshot?.plTeam === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plTeam),
+
+      ...(socialProfileSnapshot?.linktree === undefined
+        ? {}
+        : pick(socialProfileSnapshot.linktree, ["website", "twitter", "telegram", "github"])),
     }),
 
-    [avatarSrc, backgroundSrc, socialProfileSnapshot],
+    [avatar, cover, socialProfileSnapshot],
   );
 
   const { form: self } = useEnhancedForm({

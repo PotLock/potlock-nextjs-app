@@ -7,7 +7,7 @@ import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared/token";
+import { useFungibleToken } from "@/entities/_shared/token";
 import { usePotAuthorization } from "@/entities/pot";
 import { VotingRoundResultsTable, useVotingRoundResults } from "@/entities/voting-round";
 
@@ -23,7 +23,7 @@ export const PFPayoutManager: React.FC<PFPayoutManagerProps> = ({ potId, onSubmi
   const viewerAbilities = usePotAuthorization({ potId, accountId: viewer.accountId });
   const votingRoundResults = useVotingRoundResults({ potId });
 
-  const { isMetadataLoading: isTokenMetadataLoading, data: token } = useToken({
+  const { isMetadataLoading: isTokenMetadataLoading, data: token } = useFungibleToken({
     tokenId: NATIVE_TOKEN_ID,
   });
 

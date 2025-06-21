@@ -5,7 +5,7 @@ import { CheckboxField, TextField } from "@/common/ui/form/components";
 import { FormField, RuntimeErrorAlert } from "@/common/ui/layout/components";
 import { NearIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
-import { AccountListItem, useToken } from "@/entities/_shared";
+import { AccountListItem, useFungibleToken } from "@/entities/_shared";
 
 import { useEvenGroupDonationDistribution } from "../hooks/even-distribution";
 import { useManualGroupDonationAllocation } from "../hooks/manual-allocation";
@@ -24,7 +24,7 @@ export const DonationGroupAllocationRecipients: React.FC<
   const listId = "listId" in props ? props.listId : undefined;
   const [tokenId, groupAllocationStrategy] = form.watch(["tokenId", "groupAllocationStrategy"]);
 
-  const { data: token } = useToken({
+  const { data: token } = useFungibleToken({
     tokenId,
     balanceCheckAccountId: viewer?.accountId,
   });

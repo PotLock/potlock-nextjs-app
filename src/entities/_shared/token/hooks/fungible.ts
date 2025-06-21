@@ -13,7 +13,7 @@ import type { AccountId, ConditionalActivation } from "@/common/types";
 
 import { type TokenQuery, type TokenQueryResult } from "../types";
 
-export const useTokenAllowlist = ({ enabled = true }: ConditionalActivation) => {
+export const useFungibleTokenAllowlist = ({ enabled = true }: ConditionalActivation) => {
   const { data: refFinanceTokenAllowlist } = refExchangeContractHooks.useWhitelistedTokens({
     enabled,
   });
@@ -32,7 +32,7 @@ export const useTokenAllowlist = ({ enabled = true }: ConditionalActivation) => 
  *
  * When `balanceCheckAccountId` is provided, the balance of the token is also retrieved.
  */
-export const useToken = ({
+export const useFungibleToken = ({
   tokenId,
   balanceCheckAccountId,
   enabled = true,

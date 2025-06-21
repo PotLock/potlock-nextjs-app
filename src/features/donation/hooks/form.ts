@@ -13,7 +13,7 @@ import type { TokenId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared";
+import { useFungibleToken } from "@/entities/_shared";
 import { extractMatchingPots } from "@/entities/pot";
 import { dispatch } from "@/store";
 
@@ -131,7 +131,7 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     values.allocationStrategy === DonationAllocationStrategyEnum.share &&
     values.potAccountId !== undefined;
 
-  const { data: token } = useToken({
+  const { data: token } = useFungibleToken({
     tokenId: values.tokenId ?? NATIVE_TOKEN_ID,
     balanceCheckAccountId: viewer?.accountId,
   });

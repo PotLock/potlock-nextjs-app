@@ -3,38 +3,35 @@ import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { pick } from "remeda";
 
+import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField } from "@/common/ui/layout/components";
 import PlusIcon from "@/common/ui/layout/svg/PlusIcon";
 import {
-  ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+  ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH,
   ACCOUNT_PROFILE_LINKTREE_KEYS,
+  AccountCategory,
   AccountGroup,
+  useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
 import { ProfileSetupFundingSourceModal } from "./AddFundingSourceModal";
 import { ProfileSetupSmartContractModal } from "./contract-modal";
 import { ProfileSetupSmartContractsSection } from "./contracts-section";
-import {
-  CustomInput,
-  CustomTextForm,
-  ProjectCategoryPicker,
-  Row,
-  SubHeader,
-} from "./form-elements";
+import { ProjectCategoryPicker, Row, SubHeader } from "./editor-elements";
 import { ProfileSetupFundingSourcesTable } from "./funding-sources";
 import { ProfileSetupImageUpload } from "./image-upload";
 import { ProfileSetupLinktreeSection } from "./linktree-section";
 import { ProfileSetupRepositoriesSection } from "./repositories-section";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
-import { type ProfileSetupFormParams, useProfileSetupForm } from "../hooks/forms";
+import { type ProfileFormParams, useProfileForm } from "../hooks/forms";
 
-export type ProfileSetupFormProps = Pick<
-  ProfileSetupFormParams,
+export type ProfileEditorProps = Pick<
+  ProfileFormParams,
   "mode" | "accountId" | "isDaoRepresentative" | "onSuccess" | "onFailure"
 > & {};
 
-export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
+export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   mode,
   accountId,
   isDaoRepresentative,
@@ -42,22 +39,11 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
   onFailure,
 }) => {
   const router = useRouter();
+  const { avatar, cover } = useAccountSocialProfile({ accountId });
 
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
   const [editContractIndex, setEditContractIndex] = useState<number>();
-
-  const submitButtonLabel = useMemo(() => {
-    switch (mode) {
-      case "register": {
-        return isDaoRepresentative ? "Add proposal to create project" : "Create new project";
-      }
-
-      case "update": {
-        return isDaoRepresentative ? "Add proposal to update project" : "Update your project";
-      }
-    }
-  }, [isDaoRepresentative, mode]);
 
   const {
     form,
@@ -70,7 +56,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
     addRepository,
     updateRepositories,
     updateTeamMembers,
-  } = useProfileSetupForm({
+  } = useProfileForm({
     mode,
     accountId,
     isDaoRepresentative,
@@ -95,6 +81,18 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
     [updateRepositories],
   );
 
+  const submitButtonLabel = useMemo(() => {
+    switch (mode) {
+      case "register": {
+        return isDaoRepresentative ? "Add proposal to create project" : "Create new project";
+      }
+
+      case "update": {
+        return isDaoRepresentative ? "Add proposal to update project" : "Update your project";
+      }
+    }
+  }, [isDaoRepresentative, mode]);
+
   // TODO: Handle DAO representative case in a separate ticket after the initial release
   // // DAO Status - In Progress
   // if (
@@ -104,6 +102,8 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
   // ) {
   //   return <DAOInProgress />;
   // }
+
+  console.log("PROFILE EDITOR FORM VALUES:", values);
 
   return (
     <>
@@ -128,12 +128,12 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
 
       <Form {...form}>
         <form {...{ onSubmit }}>
-          <div className="m-auto flex w-full max-w-[816px] flex-col p-[3rem_0px] md:p-[4rem_0px]">
+          <div className="max-w-224 m-auto flex w-full flex-col p-[3rem_0px] md:p-[4rem_0px]">
             <SubHeader title="Upload banner and profile Image" required />
 
             <ProfileSetupImageUpload
-              backgroundImage={values.backgroundImage}
-              profileImage={values.profileImage ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
+              profileImage={values.profileImage ?? avatar.url}
+              backgroundImage={values.backgroundImage ?? cover.url}
               onBackgroundImageUploaded={updateBackgroundImage}
               onProfileImageUploaded={updateProfileImage}
             />
@@ -157,16 +157,17 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
 
             <Row>
               <FormField
-                control={form.control}
                 name="name"
+                control={form.control}
                 defaultValue={values.name}
                 render={({ field }) => (
-                  <CustomInput
-                    label="Project name *"
-                    inputProps={{
-                      placeholder: "Enter project name",
-                      ...field,
-                    }}
+                  <TextField
+                    label="Project name"
+                    required
+                    type="text"
+                    placeholder="Enter name"
+                    classNames={{ root: "w-full" }}
+                    {...field}
                   />
                 )}
               />
@@ -182,34 +183,39 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <CustomTextForm
-                    showHint
-                    label="Describe your project *"
+                  <TextAreaField
+                    label="Describe your project"
+                    required
+                    labelExtension={
+                      <span className="line-height-none text-sm text-neutral-600">
+                        {"(markdown)"}
+                      </span>
+                    }
                     placeholder="Type description"
-                    field={field}
-                    currentText={values.description}
+                    maxLength={ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH}
+                    {...field}
                   />
                 )}
               />
 
-              {values.categories?.includes("Public Good") ? (
+              {values.categories?.includes(AccountCategory["Public Good"]) ? (
                 <FormField
                   control={form.control}
                   name="publicGoodReason"
                   render={({ field }) => (
-                    <CustomTextForm
-                      showHint
+                    <TextAreaField
                       label="Why do you consider yourself a public good?"
+                      required
                       placeholder="Type the reason"
-                      field={field}
-                      currentText={values.publicGoodReason}
+                      maxLength={250}
+                      {...field}
                     />
                   )}
                 />
               ) : null}
             </Row>
 
-            <SubHeader title="Smart contracts" className="mt-16" />
+            {/* <SubHeader title="Smart contracts" className="mt-16" />
 
             <Row>
               <ProfileSetupSmartContractsSection
@@ -235,7 +241,11 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
               </Button>
             </div>
 
-            {/* <SubHeader title="Repositories" required={values.isRepositoryRequired} className="mt-16" /> */}
+            <SubHeader
+              title="Open source repositories"
+              required={values.categories?.includes(AccountCategory["Open Source"])}
+              className="mt-16"
+            />
 
             <Row>
               <ProfileSetupRepositoriesSection
@@ -249,7 +259,7 @@ export const ProfileSetupForm: React.FC<ProfileSetupFormProps> = ({
                 <PlusIcon width={12} height={12} />
                 <span>{"Add Repository"}</span>
               </Button>
-            </div>
+            </div> */}
 
             <SubHeader title="Social links" className="mt-16" />
 
