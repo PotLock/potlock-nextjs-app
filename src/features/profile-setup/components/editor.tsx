@@ -205,7 +205,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
               ) : null}
             </Row>
 
-            <SubHeader title="Smart contracts" className="mt-16" />
+            {/* <SubHeader title="Smart contracts" className="mt-16" />
 
             <Row>
               <ProfileSetupSmartContractsSection
@@ -249,7 +249,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                 <PlusIcon width={12} height={12} />
                 <span>{"Add Repository"}</span>
               </Button>
-            </div>
+            </div> */}
 
             <SubHeader title="Social links" className="mt-16" />
 

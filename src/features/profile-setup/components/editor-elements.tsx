@@ -57,7 +57,7 @@ export const CustomInput = ({
   prefixMinWidth,
 }: CustomInputProps) => (
   <div className="flex w-full flex-col items-start justify-start gap-[0.45em] p-0 text-[14px]">
-    <FormLabel className={`m-0 ${className}`}>
+    <FormLabel className={cn("m-0", className)}>
       {label}
       {optional && <span className="font-400 ml-1 text-[14px] text-[#292929]">(optional)</span>}
     </FormLabel>
@@ -108,7 +108,10 @@ export const ProjectCategoryPicker = ({
 
   return (
     <MultiSelector values={value} onValuesChange={setValue} loop={false} className="w-full gap-2">
-      <FormLabel>Select categories *</FormLabel>
+      <FormLabel className="inline-flex gap-1">
+        <span className="font-500">{"Select categories"}</span>
+        <span className="line-height-none text-destructive text-xl">{"*"}</span>
+      </FormLabel>
 
       <MultiSelectorTrigger>
         <MultiSelectorInput placeholder="Choose category" />
