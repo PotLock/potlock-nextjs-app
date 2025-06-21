@@ -38,11 +38,11 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   onFailure,
 }) => {
   const router = useRouter();
+  const { avatar, cover } = useAccountSocialProfile({ accountId });
+
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
   const [editContractIndex, setEditContractIndex] = useState<number>();
-
-  const { avatar, cover } = useAccountSocialProfile({ accountId });
 
   const {
     form,
@@ -101,6 +101,8 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   // ) {
   //   return <DAOInProgress />;
   // }
+
+  console.log("PROFILE EDITOR FORM VALUES:", values);
 
   return (
     <>

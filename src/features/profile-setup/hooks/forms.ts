@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { objOf } from "remeda";
+import { objOf, pick } from "remeda";
 
 import type { ByAccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
@@ -41,17 +41,24 @@ export const useProfileForm = ({
       backgroundImage: cover.isNft ? undefined : cover.url,
       publicGoodReason: socialProfileSnapshot?.plPublicGoodReason,
 
-      teamMembers: socialProfileSnapshot?.plTeam
-        ? JSON.parse(socialProfileSnapshot.plTeam)
-        : undefined,
+      categories:
+        socialProfileSnapshot?.plCategories === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plCategories),
 
-      categories: socialProfileSnapshot?.plCategories
-        ? JSON.parse(socialProfileSnapshot.plCategories)
-        : undefined,
+      githubRepositories:
+        socialProfileSnapshot?.plGithubRepos === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plGithubRepos),
 
-      githubRepositories: socialProfileSnapshot?.plGithubRepos
-        ? JSON.parse(socialProfileSnapshot.plGithubRepos)
-        : undefined,
+      teamMembers:
+        socialProfileSnapshot?.plTeam === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plTeam),
+
+      ...(socialProfileSnapshot?.linktree === undefined
+        ? {}
+        : pick(socialProfileSnapshot.linktree, ["website", "twitter", "telegram", "github"])),
     }),
 
     [avatar, cover, socialProfileSnapshot],

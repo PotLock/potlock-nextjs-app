@@ -3,11 +3,9 @@
 // TODO!: ONLY FOR THE REFERENCE, DO NOT IMPORT ANYTHING AND REMOVE THE MODULE BEFORE RELEASE
 
 import { createModel } from "@rematch/core";
-import { prop } from "remeda";
 
 import { NEARSocialUserProfile } from "@/common/contracts/social-db";
 import { ByAccountId } from "@/common/types";
-import { useGlobalStoreSelector } from "@/store";
 import { AppModel } from "@/store/models";
 
 import { AddFundingSourceInputs, ProfileSetupInputs } from "./types";
@@ -15,10 +13,6 @@ import { AddFundingSourceInputs, ProfileSetupInputs } from "./types";
 export type SocialImagesInputs = ByAccountId & {
   socialData?: NEARSocialUserProfile | null;
 };
-
-export const projectEditorModelKey = "projectEditor";
-
-export const useProjectEditorState = () => useGlobalStoreSelector(prop(projectEditorModelKey));
 
 type CheckStatus = "pending" | "done" | "sending";
 type FetchStatus = "pending" | "fetching" | "ready";
@@ -76,16 +70,15 @@ const initialState: ProjectEditorState = {
   github: "",
 };
 
-export const updateState = (previousState: {}, inputPayload: {}) => {
-  const keys = Object.keys(inputPayload);
-  const updatedState: any = previousState || {};
+function _loadProjectData() {
+  const data: Partial<ProjectEditorState> = {};
+  const { profile } = {};
 
-  keys.forEach((key) => {
-    updatedState[key] = (inputPayload as any)[key];
-  });
-
-  return updatedState;
-};
+  // Smart Contracts
+  if (profile?.plSmartContracts) data.smartContracts = JSON.parse(profile.plSmartContracts);
+  // Funding sources
+  if (profile?.plFundingSources) data.fundingSources = JSON.parse(profile.plFundingSources);
+}
 
 export const projectEditorModel = createModel<AppModel>()({
   state: initialState,
@@ -124,22 +117,6 @@ export const projectEditorModel = createModel<AppModel>()({
 
     setSubmissionError(state: ProjectEditorState, error: string) {
       state.submissionError = error;
-    },
-
-    updateDescription(state: ProjectEditorState, description: string) {
-      state.description = description;
-    },
-
-    updatePublicGoodReason(state: ProjectEditorState, publicGoodReason: string) {
-      state.publicGoodReason = publicGoodReason;
-    },
-
-    setAccountId(state: ProjectEditorState, accountId: string) {
-      state.accountId = accountId;
-    },
-
-    setProjectName(state: ProjectEditorState, name?: string) {
-      state.name = name || "";
     },
 
     setIsDao(state: ProjectEditorState, isDao: boolean) {
@@ -250,71 +227,4 @@ export const projectEditorModel = createModel<AppModel>()({
       return initialState;
     },
   },
-
-  effects: (dispatch) => ({
-    setBackgroundImage(backgroundUrl: string) {
-      dispatch.projectEditor.UPDATE_BACKGROUND_IMAGE(backgroundUrl);
-    },
-
-    setProfileImage(profileImageUrl: string) {
-      dispatch.projectEditor.UPDATE_PROFILE_IMAGE(profileImageUrl);
-    },
-
-    async loadProjectData(accountId: string) {
-      const data: Partial<ProjectEditorState> = {};
-
-      // Set the isEdit status
-      //data.isEdit = location.pathname.includes(rootPathnames.EDIT_PROFILE);
-
-      // Get profile data & profile images
-      // const projectProfileData = await fetchSocialImages({
-      //   accountId,
-      // });
-
-      const { profile } = {};
-
-      // No profile? End of process!
-      if (!profile) {
-        dispatch.projectEditor.checkPreviousProjectDataStatus("ready");
-        return;
-      }
-
-      // Bg
-      if (typeof projectProfileData.backgroundImage === "string")
-        data.backgroundImage = projectProfileData.backgroundImage;
-
-      // Avatar
-      if (typeof projectProfileData.image === "string")
-        data.profileImage = projectProfileData.image;
-
-      // Project's name
-      data.name = profile?.name;
-      // Team Members
-      if (profile?.plTeam) data.teamMembers = JSON.parse(profile.plTeam);
-      // Category
-      if (profile?.plCategories) data.categories = JSON.parse(profile.plCategories);
-      // Description
-      data.description = profile?.description;
-      // Reason
-      data.publicGoodReason = profile?.plPublicGoodReason;
-      // Smart Contracts
-      if (profile?.plSmartContracts) data.smartContracts = JSON.parse(profile.plSmartContracts);
-      // Funding sources
-      if (profile?.plFundingSources) data.fundingSources = JSON.parse(profile.plFundingSources);
-      // Repositories
-      if (profile?.plGithubRepos) data.githubRepositories = JSON.parse(profile.plGithubRepos);
-
-      // Social Links
-      if (profile?.linktree) {
-        data.website = profile.linktree.website;
-        data.twitter = profile.linktree.twitter;
-        data.telegram = profile.linktree.telegram;
-        data.github = profile.linktree.github;
-      }
-
-      // Set initial data
-      dispatch.projectEditor.SET_INITIAL_DATA(data);
-      dispatch.projectEditor.checkPreviousProjectDataStatus("ready");
-    },
-  }),
 });
