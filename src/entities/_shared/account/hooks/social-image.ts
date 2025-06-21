@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import { isNonNullish } from "remeda";
+
 import { NOOP_STRING } from "@/common/constants";
 import type { NEARSocialUserProfile } from "@/common/contracts/social-db";
 import { nftContractHooks } from "@/common/contracts/tokens";
@@ -9,7 +11,7 @@ export type UseAccountSocialImageParams = {
   fallbackUrl: string;
 };
 
-export const useAccountSocialImageUrl = ({ data, fallbackUrl }: UseAccountSocialImageParams) => {
+export const useAccountSocialImageSrc = ({ data, fallbackUrl }: UseAccountSocialImageParams) => {
   const nftParams = useMemo(
     () =>
       data !== undefined && typeof data !== "string" && "nft" in data ? (data.nft ?? null) : null,
@@ -32,7 +34,11 @@ export const useAccountSocialImageUrl = ({ data, fallbackUrl }: UseAccountSocial
   }, [data]);
 
   return useMemo(
-    () => nft?.metadata.media ?? rawImageSrc ?? fallbackUrl,
-    [fallbackUrl, nft?.metadata.media, rawImageSrc],
+    () => ({
+      url: nft?.metadata.media ?? rawImageSrc ?? fallbackUrl,
+      isNft: isNonNullish(nft),
+    }),
+
+    [fallbackUrl, nft, rawImageSrc],
   );
 };

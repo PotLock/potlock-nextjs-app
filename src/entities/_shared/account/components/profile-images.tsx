@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import { LazyLoadImage, LazyLoadImageProps } from "react-lazy-load-image-component";
 
 import { ByAccountId } from "@/common/types";
@@ -17,13 +15,18 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
   accountId,
   className,
 }) => {
-  const { isLoading, avatarSrc } = useAccountSocialProfile({ accountId });
+  const { isLoading, avatar } = useAccountSocialProfile({ accountId });
 
   return isLoading ? (
     <Skeleton className={cn("h-3 w-3 rounded-full", className)} />
   ) : (
     <Avatar className={cn("h-3 w-3", className)}>
-      <AvatarImage alt={`Profile picture of ${accountId}`} src={avatarSrc} width={40} height={40} />
+      <AvatarImage
+        alt={`Profile picture of ${accountId}`}
+        src={avatar.url}
+        width={40}
+        height={40}
+      />
     </Avatar>
   );
 };
@@ -33,24 +36,17 @@ export type AccountProfileCoverProps = ByAccountId &
     className?: string;
   };
 
+const contentClassName =
+  "h-full w-full object-cover transition-transform duration-500 ease-in-out hover:scale-110";
+
 export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
   accountId,
   height,
   className,
 }) => {
-  const { isLoading: isProfileDataLoading, backgroundSrc: src } = useAccountSocialProfile({
+  const { isLoading: isProfileDataLoading, cover } = useAccountSocialProfile({
     accountId,
   });
-
-  const contentClassName = useMemo(
-    () =>
-      cn(
-        "h-full w-full object-cover",
-        "transition-transform duration-500 ease-in-out hover:scale-110",
-      ),
-
-    [],
-  );
 
   return isProfileDataLoading ? (
     <Skeleton className={cn("w-full", className)} style={{ height, maxHeight: height }} />
@@ -59,9 +55,10 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
       <LazyLoadImage
         alt="Profile cover"
         placeholderSrc={ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
-        visibleByDefault={src === ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
+        visibleByDefault={cover.url === ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
+        src={cover.url}
         width="100%"
-        {...{ height, src }}
+        {...{ height }}
         wrapperClassName={contentClassName}
         className={contentClassName}
       />

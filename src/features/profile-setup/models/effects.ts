@@ -45,7 +45,7 @@ export const save = async ({
 
   const formattedInputs = profileSetupInputsToSocialDbFormat(inputs);
 
-  //? Derive diff from the preexisting social profile
+  //* Derive diff from the preexisting social profile
   const socialDbProfileUpdate: NEARSocialUserProfile = socialProfileSnapshot
     ? deepObjectDiff<NEARSocialUserProfile>(socialProfileSnapshot, formattedInputs)
     : formattedInputs;
@@ -56,7 +56,7 @@ export const save = async ({
         profile: socialDbProfileUpdate,
 
         /**
-         *? Auto Follow and Star Potlock
+         ** Auto Follow and Star Potlock
          */
 
         index: {
@@ -90,7 +90,6 @@ export const save = async ({
       depositFloat = Big(depositFloat).add(0.1).toString();
     }
 
-    // social.near
     const socialTransaction = buildTransaction("set", {
       receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
       args: socialArgs,
@@ -102,7 +101,6 @@ export const save = async ({
     // Submit registration to Public Goods Registry
     if (mode === "register") {
       transactions.push(
-        // lists.potlock.near
         buildTransaction("register_batch", {
           receiverId: LISTS_CONTRACT_ACCOUNT_ID,
           args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },

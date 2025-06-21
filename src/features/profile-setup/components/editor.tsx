@@ -10,6 +10,7 @@ import {
   ACCOUNT_PROFILE_LINKTREE_KEYS,
   AccountCategory,
   AccountGroup,
+  useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
@@ -37,22 +38,11 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   onFailure,
 }) => {
   const router = useRouter();
-
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
   const [editContractIndex, setEditContractIndex] = useState<number>();
 
-  const submitButtonLabel = useMemo(() => {
-    switch (mode) {
-      case "register": {
-        return isDaoRepresentative ? "Add proposal to create project" : "Create new project";
-      }
-
-      case "update": {
-        return isDaoRepresentative ? "Add proposal to update project" : "Update your project";
-      }
-    }
-  }, [isDaoRepresentative, mode]);
+  const { avatar, cover } = useAccountSocialProfile({ accountId });
 
   const {
     form,
@@ -89,6 +79,18 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
     (repositories: string[]) => updateRepositories(repositories),
     [updateRepositories],
   );
+
+  const submitButtonLabel = useMemo(() => {
+    switch (mode) {
+      case "register": {
+        return isDaoRepresentative ? "Add proposal to create project" : "Create new project";
+      }
+
+      case "update": {
+        return isDaoRepresentative ? "Add proposal to update project" : "Update your project";
+      }
+    }
+  }, [isDaoRepresentative, mode]);
 
   // TODO: Handle DAO representative case in a separate ticket after the initial release
   // // DAO Status - In Progress
@@ -127,8 +129,8 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             <SubHeader title="Upload banner and profile Image" required />
 
             <ProfileSetupImageUpload
-              backgroundImage={values.backgroundImage}
-              profileImage={values.profileImage}
+              profileImage={values.profileImage ?? avatar.url}
+              backgroundImage={values.backgroundImage ?? cover.url}
               onBackgroundImageUploaded={updateBackgroundImage}
               onProfileImageUploaded={updateProfileImage}
             />

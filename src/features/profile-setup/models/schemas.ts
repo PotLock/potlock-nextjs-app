@@ -40,8 +40,8 @@ export const profileSetupSchema = object({
       `Must be less than ${ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH} characters long`,
     ),
 
+  profileImage: string().min(3).optional(),
   backgroundImage: string().min(3).optional(),
-  profileImage: string().min(3),
   categories: array(string()).min(1),
 
   publicGoodReason: string()

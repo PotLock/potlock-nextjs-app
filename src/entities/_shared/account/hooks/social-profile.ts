@@ -5,7 +5,7 @@ import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
   ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
 } from "../constants";
-import { useAccountSocialImageUrl } from "./social-image";
+import { useAccountSocialImageSrc } from "./social-image";
 
 export const useAccountSocialProfile = ({
   accountId,
@@ -19,12 +19,12 @@ export const useAccountSocialProfile = ({
     error,
   } = socialDbContractHooks.useSocialProfile({ enabled, accountId });
 
-  const avatarSrc = useAccountSocialImageUrl({
+  const avatar = useAccountSocialImageSrc({
     data: data?.image,
     fallbackUrl: ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
   });
 
-  const backgroundSrc = useAccountSocialImageUrl({
+  const cover = useAccountSocialImageSrc({
     data: data?.backgroundImage,
     fallbackUrl: ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
   });
@@ -33,8 +33,8 @@ export const useAccountSocialProfile = ({
     isLoading,
     isValidating,
     profile: data ?? undefined,
-    avatarSrc: avatarSrc ?? ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
-    backgroundSrc: backgroundSrc,
+    avatar,
+    cover,
     refetch,
     error,
   };

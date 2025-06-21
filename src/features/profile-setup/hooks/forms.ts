@@ -28,8 +28,8 @@ export const useProfileForm = ({
   const {
     isLoading: isSocialProfileSnapshotLoading,
     profile: socialProfileSnapshot,
-    avatarSrc,
-    backgroundSrc,
+    avatar,
+    cover,
     refetch: refetchSocialProfile,
   } = useAccountSocialProfile({ accountId });
 
@@ -37,8 +37,8 @@ export const useProfileForm = ({
     () => ({
       name: socialProfileSnapshot?.name,
       description: socialProfileSnapshot?.description,
-      backgroundImage: backgroundSrc,
-      profileImage: avatarSrc,
+      profileImage: avatar.isNft ? undefined : avatar.url,
+      backgroundImage: cover.isNft ? undefined : cover.url,
       publicGoodReason: socialProfileSnapshot?.plPublicGoodReason,
 
       teamMembers: socialProfileSnapshot?.plTeam
@@ -54,7 +54,7 @@ export const useProfileForm = ({
         : undefined,
     }),
 
-    [avatarSrc, backgroundSrc, socialProfileSnapshot],
+    [avatar, cover, socialProfileSnapshot],
   );
 
   const { form: self } = useEnhancedForm({
