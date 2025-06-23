@@ -46,26 +46,36 @@ export const useProfileForm = ({
       backgroundImage: cover.isNft ? undefined : cover.url,
       publicGoodReason: socialProfileSnapshot?.plPublicGoodReason,
 
+      ...(socialProfileSnapshot?.linktree === undefined
+        ? {}
+        : stripLinktree(
+            pick(socialProfileSnapshot.linktree, ["twitter", "telegram", "github", "website"]),
+          )),
+
       categories:
         socialProfileSnapshot?.plCategories === undefined
           ? undefined
           : JSON.parse(socialProfileSnapshot.plCategories),
-
-      githubRepositories:
-        socialProfileSnapshot?.plGithubRepos === undefined
-          ? undefined
-          : JSON.parse(socialProfileSnapshot.plGithubRepos),
 
       teamMembers:
         socialProfileSnapshot?.plTeam === undefined
           ? undefined
           : JSON.parse(socialProfileSnapshot.plTeam),
 
-      ...(socialProfileSnapshot?.linktree === undefined
-        ? {}
-        : stripLinktree(
-            pick(socialProfileSnapshot.linktree, ["twitter", "telegram", "github", "website"]),
-          )),
+      smartContracts:
+        socialProfileSnapshot?.plSmartContracts === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plSmartContracts),
+
+      fundingSources:
+        socialProfileSnapshot?.plFundingSources === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plFundingSources),
+
+      githubRepositories:
+        socialProfileSnapshot?.plGithubRepos === undefined
+          ? undefined
+          : JSON.parse(socialProfileSnapshot.plGithubRepos),
     }),
 
     [avatar, cover, socialProfileSnapshot],
