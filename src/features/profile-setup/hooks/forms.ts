@@ -7,6 +7,7 @@ import { objOf, pick } from "remeda";
 import type { ByAccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { type AccountGroupItem, useAccountSocialProfile } from "@/entities/_shared/account";
+import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
 
 import { type ProfileSaveInputs, save } from "../models/effects";
 import { addFundingSourceSchema, profileSetupSchema } from "../models/schemas";

@@ -1,105 +1,92 @@
-import { useCallback, useState } from "react";
+import type { UseFormReturn } from "react-hook-form";
 
-import { extractFromUrl } from "@/common/lib";
-import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
+import { TextField } from "@/common/ui/form/components";
+import { FormField } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 
-import { CustomInput } from "./editor-elements";
 import type { ProfileSetupInputs } from "../models/types";
 
+const FieldInputExtension: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span
+    className={cn(
+      "color-neutral-600 w-30 flex h-full items-center px-4",
+      "rounded-s-md border-r border-neutral-300 bg-neutral-50 text-center",
+    )}
+  >
+    {children}
+  </span>
+);
+
 export type ProfileSetupLinktreeSectionProps = {
-  values: Pick<ProfileSetupInputs, "twitter" | "telegram" | "github" | "website">;
+  form: UseFormReturn<ProfileSetupInputs>;
 };
 
 export const ProfileSetupLinktreeSection: React.FC<ProfileSetupLinktreeSectionProps> = ({
-  values: { twitter, telegram, github, website },
-}) => {
-  const [twitterValue, setTwitterValue] = useState<string>(
-    twitter?.replace("https://x.com/", "") || "",
-  );
+  form,
+}) => (
+  <>
+    <FormField
+      control={form.control}
+      name="twitter"
+      render={({ field }) => (
+        <TextField
+          label="X (Formerly Twitter)"
+          labelExtension={<></>}
+          {...field}
+          inputExtension={<FieldInputExtension>{"x.com/"}</FieldInputExtension>}
+          type="text"
+          placeholder="x_handle"
+          classNames={{ inputExtension: "h-full" }}
+        />
+      )}
+    />
 
-  const [telegramValue, setTelegramValue] = useState<string>(
-    telegram?.replace("https://t.me/", "") || "",
-  );
+    <FormField
+      control={form.control}
+      name="telegram"
+      render={({ field }) => (
+        <TextField
+          label="Telegram"
+          labelExtension={<></>}
+          {...field}
+          inputExtension={<FieldInputExtension>{"t.me/"}</FieldInputExtension>}
+          type="text"
+          placeholder="telegram_handle"
+          classNames={{ inputExtension: "h-full" }}
+        />
+      )}
+    />
 
-  const [githubValue, setGithubValue] = useState<string>(
-    github?.replace("https://github.com/", "") || "",
-  );
+    <FormField
+      control={form.control}
+      name="github"
+      render={({ field }) => (
+        <TextField
+          label="Github"
+          labelExtension={<></>}
+          {...field}
+          inputExtension={<FieldInputExtension>{"github.com/"}</FieldInputExtension>}
+          type="text"
+          placeholder="github-username"
+          classNames={{ inputExtension: "h-full" }}
+        />
+      )}
+    />
 
-  const [websiteValue, setWebsiteValue] = useState<string>(website?.replace("https://", "") || "");
-
-  const onChangeHandler = useCallback((socialKey: string, value: string) => {
-    // dispatch.projectEditor.updateSocialLinks({ [socialKey]: value });
-  }, []);
-
-  return (
-    <>
-      <CustomInput
-        label="Twitter / X"
-        prefix="x.com/"
-        prefixMinWidth={110}
-        inputProps={{
-          value: twitterValue.replace("https://x.com/", ""),
-          placeholder: "",
-          onChange: (e) =>
-            setTwitterValue(
-              extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.twitter) || "",
-            ),
-          onBlur: (_) => {
-            onChangeHandler("twitter", twitterValue ? `https://x.com/${twitterValue}` : "");
-          },
-        }}
-      />
-
-      <CustomInput
-        label="Telegram"
-        prefix="t.me/"
-        prefixMinWidth={110}
-        inputProps={{
-          value: telegramValue.replace("https://t.me/", ""),
-          placeholder: "",
-          onChange: (e) =>
-            setTelegramValue(
-              extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.telegram) || "",
-            ),
-          onBlur: (_) => {
-            onChangeHandler("telegram", telegramValue ? `https://t.me/${telegramValue}` : "");
-          },
-        }}
-      />
-
-      <CustomInput
-        label="Github"
-        prefix="github.com/"
-        prefixMinWidth={110}
-        inputProps={{
-          value: githubValue.replace("https://github.com/", ""),
-          placeholder: "",
-          onChange: (e) =>
-            setGithubValue(
-              extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.github) || "",
-            ),
-          onBlur: (_) => {
-            onChangeHandler("github", githubValue ? `https://github.com/${githubValue}` : "");
-          },
-        }}
-      />
-
-      <CustomInput
-        label="Website"
-        prefix="https://"
-        prefixMinWidth={110}
-        inputProps={{
-          value: websiteValue.replace("https://", ""),
-          placeholder: "",
-          onChange: (e) =>
-            setWebsiteValue(
-              extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.website) || "",
-            ),
-          onBlur: (_) => {
-            onChangeHandler("website", websiteValue ? `https://${websiteValue}` : "");
-          },
-        }}
-      />
-    </>
-  );
-};
+    <FormField
+      control={form.control}
+      name="website"
+      render={({ field }) => (
+        <TextField
+          label="Website"
+          labelExtension={<></>}
+          {...field}
+          inputExtension={<FieldInputExtension>{"https://"}</FieldInputExtension>}
+          type="text"
+          placeholder="example.com"
+          classNames={{ inputExtension: "h-full" }}
+        />
+      )}
+    />
+  </>
+);

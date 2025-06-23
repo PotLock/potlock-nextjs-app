@@ -66,6 +66,8 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
 
   const values = form.watch();
 
+  const onCancelClick = useCallback(() => void router.push(rootPathnames.PROJECTS), [router]);
+
   const onCategoriesChange = useCallback(
     (categories: string[]) => updateCategories(categories),
     [updateCategories],
@@ -264,16 +266,11 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             <SubHeader title="Social links" className="mt-16" />
 
             <Row>
-              <ProfileSetupLinktreeSection values={pick(values, ACCOUNT_PROFILE_LINKTREE_KEYS)} />
+              <ProfileSetupLinktreeSection form={form} />
             </Row>
 
             <div className="mt-16 flex gap-4 self-end">
-              <Button
-                variant="standard-outline"
-                onClick={() => {
-                  router.push(rootPathnames.PROJECTS);
-                }}
-              >
+              <Button variant="standard-outline" onClick={onCancelClick}>
                 {"Cancel"}
               </Button>
 

@@ -22,6 +22,7 @@ export type TextFieldProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "
   classNames?: {
     root?: string;
     fieldRoot?: string;
+    inputExtension?: string;
     input?: string;
   };
 };
@@ -86,10 +87,10 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       () =>
         inputExtension ? (
           <div
-            un-border="rounded-l-md rounded-r-none"
-            un-flex="~"
-            un-items="center"
-            un-justify="center"
+            className={cn(
+              "flex items-center justify-center rounded-l-md rounded-r-none",
+              classNames?.inputExtension,
+            )}
           >
             {typeof inputExtension === "string" ? (
               <span className="prose pl-4 pr-2 text-neutral-500">{inputExtension}</span>
@@ -99,7 +100,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           </div>
         ) : null,
 
-      [inputExtension],
+      [classNames?.inputExtension, inputExtension],
     );
 
     const appendixElement = useMemo(
