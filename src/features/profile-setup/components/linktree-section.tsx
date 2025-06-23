@@ -10,7 +10,7 @@ const FieldInputExtension: React.FC<{ children: React.ReactNode }> = ({ children
   <span
     className={cn(
       "color-neutral-600 w-30 flex h-full items-center px-4",
-      "rounded-s-md border-r border-neutral-300 bg-neutral-50 text-center",
+      "rounded-s-md bg-neutral-50 text-center",
     )}
   >
     {children}

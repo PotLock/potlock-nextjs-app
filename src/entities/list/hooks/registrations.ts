@@ -3,7 +3,10 @@ import { useCallback, useMemo, useState } from "react";
 import { indexer } from "@/common/api/indexer";
 import { oldToRecent } from "@/common/lib";
 import { ByListId, ChronologicalSortOrder, ChronologicalSortOrderVariant } from "@/common/types";
-import { AccountCategory, type AccountListRegistrationStatusVariant } from "@/entities/_shared";
+import {
+  AccountCategory,
+  type AccountListRegistrationStatusVariant,
+} from "@/entities/_shared/account";
 
 export type ListRegistrationLookupParams = ByListId & {};
 

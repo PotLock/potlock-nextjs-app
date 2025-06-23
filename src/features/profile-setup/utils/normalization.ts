@@ -1,10 +1,19 @@
-import { pick } from "remeda";
+import { evolve, pick } from "remeda";
+
+import { getLinktreeLeafExtractor } from "@/entities/_shared/account";
 
 import type { ProfileSetupInputs } from "../models/types";
 
+export const stripLinktree = evolve({
+  twitter: getLinktreeLeafExtractor("twitter"),
+  telegram: getLinktreeLeafExtractor("telegram"),
+  github: getLinktreeLeafExtractor("github"),
+  website: getLinktreeLeafExtractor("website"),
+});
+
 export const profileSetupInputsToSocialDbFormat = (inputs: ProfileSetupInputs) => ({
   /**
-   *? Standard NEAR Social profile details
+   ** Standard NEAR Social profile details
    */
 
   ...pick(inputs, ["name", "description"]),

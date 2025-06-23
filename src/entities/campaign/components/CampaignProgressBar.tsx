@@ -9,7 +9,7 @@ import { indivisibleUnitsToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByTokenId } from "@/common/types";
 import { Progress } from "@/common/ui/layout/components";
-import { TokenIcon, useFungibleToken } from "@/entities/_shared";
+import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
 
 export type CampaignProgressBarProps = ByTokenId & {
   target: Campaign["target_amount"];

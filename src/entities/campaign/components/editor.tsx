@@ -14,7 +14,7 @@ import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { TokenSelector, useFungibleToken } from "@/entities/_shared";
+import { TokenSelector, useFungibleToken } from "@/entities/_shared/token";
 
 import { useCampaignForm } from "../hooks/forms";
 

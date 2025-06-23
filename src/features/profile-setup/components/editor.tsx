@@ -105,8 +105,6 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   //   return <DAOInProgress />;
   // }
 
-  console.log("PROFILE EDITOR FORM VALUES:", values);
-
   return (
     <>
       <ProfileSetupFundingSourceModal
@@ -131,8 +129,6 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
       <Form {...form}>
         <form {...{ onSubmit }}>
           <div className="max-w-224 m-auto flex w-full flex-col p-[3rem_0px] md:p-[4rem_0px]">
-            <SubHeader title="Upload banner and profile Image" required />
-
             <ProfileSetupImageUpload
               profileImage={values.profileImage ?? avatar.url}
               backgroundImage={values.backgroundImage ?? cover.url}

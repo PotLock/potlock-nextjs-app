@@ -2,16 +2,20 @@ import { useCallback, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { objOf, pick } from "remeda";
+import { evolve, objOf, pick } from "remeda";
 
 import type { ByAccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
-import { type AccountGroupItem, useAccountSocialProfile } from "@/entities/_shared/account";
-import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
+import {
+  type AccountGroupItem,
+  getLinktreeLeafExtractor,
+  useAccountSocialProfile,
+} from "@/entities/_shared/account";
 
 import { type ProfileSaveInputs, save } from "../models/effects";
 import { addFundingSourceSchema, profileSetupSchema } from "../models/schemas";
 import { AddFundingSourceInputs, ProfileSetupInputs } from "../models/types";
+import { stripLinktree } from "../utils/normalization";
 
 export type ProfileFormParams = ByAccountId &
   Pick<ProfileSaveInputs, "mode" | "isDaoRepresentative"> & {
@@ -59,7 +63,9 @@ export const useProfileForm = ({
 
       ...(socialProfileSnapshot?.linktree === undefined
         ? {}
-        : pick(socialProfileSnapshot.linktree, ["website", "twitter", "telegram", "github"])),
+        : stripLinktree(
+            pick(socialProfileSnapshot.linktree, ["twitter", "telegram", "github", "website"]),
+          )),
     }),
 
     [avatar, cover, socialProfileSnapshot],
@@ -75,6 +81,8 @@ export const useProfileForm = ({
 
   //? For internal use only!
   const values = useWatch(self);
+
+  console.log(stripLinktree(pick(values, ["twitter", "telegram", "github", "website"])));
 
   const teamMembersAccountGroup: AccountGroupItem[] = useMemo(
     () => values.teamMembers?.map(objOf("accountId")) ?? [],

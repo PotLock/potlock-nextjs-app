@@ -13,7 +13,7 @@ import type { TokenId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { useFungibleToken } from "@/entities/_shared";
+import { useFungibleToken } from "@/entities/_shared/token";
 import { extractMatchingPots } from "@/entities/pot";
 import { dispatch } from "@/store";
 

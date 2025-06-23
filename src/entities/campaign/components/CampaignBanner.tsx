@@ -15,8 +15,8 @@ import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { useFungibleToken } from "@/entities/_shared";
 import { AccountProfileLink } from "@/entities/_shared/account";
+import { useFungibleToken } from "@/entities/_shared/token";
 import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";

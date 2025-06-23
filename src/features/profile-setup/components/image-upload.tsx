@@ -52,7 +52,7 @@ export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = (
     pinataHooks.useFileUpload({ onSuccess: onCoverUploadSuccess });
 
   return (
-    <div className="mt-4 flex flex-col items-center">
+    <div className="flex flex-col items-center">
       <div className="relative flex h-[280px] w-full rounded-[6px] bg-neutral-200">
         {backgroundImage && (
           <LazyLoadImage

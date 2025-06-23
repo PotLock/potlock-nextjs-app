@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import {
   APP_DEFAULT_PUBLIC_URL,
-  DEFAULT_SHARE_HASHTAGS,
   PLATFORM_TWITTER_ACCOUNT_ID,
   X_INTENT_URL_BASE,
 } from "@/common/constants";
@@ -13,7 +12,7 @@ import type { AccountId, CampaignId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import TwitterSvg from "@/common/ui/layout/svg/twitter";
 import { useWalletUserSession } from "@/common/wallet";
-import { useAccountSocialProfile } from "@/entities/_shared";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { routeSelectors } from "@/pathnames";
 
 export type DonationCampaignSuccessXShareButtonProps = {

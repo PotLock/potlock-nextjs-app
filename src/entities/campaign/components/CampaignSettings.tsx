@@ -10,8 +10,8 @@ import { indivisibleUnitsToFloat } from "@/common/lib";
 import type { ByCampaignId } from "@/common/types";
 import { Skeleton, Spinner } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
-import { TokenIcon, useFungibleToken } from "@/entities/_shared";
 import { AccountProfilePicture } from "@/entities/_shared/account";
+import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
 
 import { CampaignEditor } from "./editor";
 

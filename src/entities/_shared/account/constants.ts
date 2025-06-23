@@ -28,9 +28,9 @@ export const ACCOUNT_PROFILE_LINKTREE_KEYS: AccountProfileLinktreeKey[] = [
 
 export const ACCOUNT_PROFILE_URL_PATTERNS: Record<AccountProfileLinktreeKey, RegExp> = {
   github: /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
-  twitter: /^(?:https?:\/\/)?(?:www\.)?x\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
-  telegram: /^(?:https?:\/\/)?(?:www\.)?t\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
-  website: /^(?:https?:\/\/)\/?$/,
+  twitter: /^(?:https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/([^/]+(?:\/[^/]+)?)\/?$/,
+  telegram: /^(?:https?:\/\/)?(?:www\.)?t\.me\/([^/]+(?:\/[^/]+)?)\/?$/,
+  website: /^(?:https?:\/\/)?([^/]+)$/,
 };
 
 export const ACCOUNT_CATEGORY_VARIANTS: AccountCategoryVariant[] = [

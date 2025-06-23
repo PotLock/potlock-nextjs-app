@@ -1,6 +1,6 @@
 import { array, object, string } from "zod";
 
-import { ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH } from "@/entities/_shared";
+import { ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH } from "@/entities/_shared/account";
 
 export const addFundingSourceSchema = object({
   investorName: string({
