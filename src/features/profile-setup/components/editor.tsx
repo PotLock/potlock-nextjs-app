@@ -8,7 +8,6 @@ import { Button, Form, FormField } from "@/common/ui/layout/components";
 import PlusIcon from "@/common/ui/layout/svg/PlusIcon";
 import {
   ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH,
-  ACCOUNT_PROFILE_LINKTREE_KEYS,
   AccountCategory,
   AccountGroup,
   useAccountSocialProfile,
@@ -65,8 +64,6 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   });
 
   const values = form.watch();
-
-  const onCancelClick = useCallback(() => void router.push(rootPathnames.PROJECTS), [router]);
 
   const onCategoriesChange = useCallback(
     (categories: string[]) => updateCategories(categories),
@@ -266,7 +263,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             </Row>
 
             <div className="mt-16 flex gap-4 self-end">
-              <Button variant="standard-outline" onClick={onCancelClick}>
+              <Button variant="standard-outline" onClick={router.back}>
                 {"Cancel"}
               </Button>
 
