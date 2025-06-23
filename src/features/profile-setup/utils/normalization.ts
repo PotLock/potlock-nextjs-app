@@ -1,5 +1,6 @@
-import { evolve, pick } from "remeda";
+import { evolve, pick, pipe } from "remeda";
 
+import { nullifyEmptyStrings } from "@/common/lib";
 import { getLinktreeLeafExtractor } from "@/entities/_shared/account";
 
 import type { ProfileSetupInputs } from "../models/types";
@@ -19,7 +20,13 @@ export const profileSetupInputsToSocialDbFormat = (inputs: ProfileSetupInputs) =
   ...pick(inputs, ["name", "description"]),
   ...(inputs.profileImage ? { image: inputs.profileImage } : {}),
   ...(inputs.backgroundImage ? { backgroundImage: inputs.backgroundImage } : {}),
-  linktree: pick(inputs, ["website", "twitter", "telegram", "github"]),
+
+  linktree: pipe(
+    inputs,
+    pick(["website", "twitter", "telegram", "github"]),
+    stripLinktree,
+    nullifyEmptyStrings,
+  ),
 
   /**
    ** POTLOCK-specific profile inputs
