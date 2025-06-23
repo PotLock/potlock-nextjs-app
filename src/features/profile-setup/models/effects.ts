@@ -55,26 +55,34 @@ export const save = async ({
       [accountId]: {
         profile: socialDbProfileUpdate,
 
-        /**
-         ** Auto Follow and Star Potlock
-         */
+        ...(mode === "register"
+          ? {
+              /**
+               ** Auto Follow and Star Potlock
+               */
 
-        index: {
-          star: {
-            key: { type: "social", path: `potlock.near/widget/Index` },
-            value: { type: "star" },
-          },
+              index: {
+                star: {
+                  key: { type: "social", path: `potlock.near/widget/Index` },
+                  value: { type: "star" },
+                },
 
-          notify: {
-            key: "potlock.near",
-            value: { type: "star", item: { type: "social", path: `potlock.near/widget/Index` } },
-          },
-        },
+                notify: {
+                  key: "potlock.near",
 
-        graph: {
-          star: { ["potlock.near"]: { widget: { Index: "" } } },
-          follow: { ["potlock.near"]: "" },
-        },
+                  value: {
+                    type: "star",
+                    item: { type: "social", path: `potlock.near/widget/Index` },
+                  },
+                },
+              },
+
+              graph: {
+                star: { ["potlock.near"]: { widget: { Index: "" } } },
+                follow: { ["potlock.near"]: "" },
+              },
+            }
+          : {}),
       },
     },
   };
