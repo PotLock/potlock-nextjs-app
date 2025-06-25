@@ -46,7 +46,7 @@ export const profileConfigurationSchema = object({
 
   publicGoodReason: string()
     .min(20, "Must contain at least 20 characters")
-    .max(500, "Must be less 500 characters long")
+    .max(500, "Must be less than 500 characters long")
     .optional(),
 
   website: string().optional(),
