@@ -15,14 +15,14 @@ import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import { deepObjectDiff } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 
-import type { ProfileSetupMode } from "../types";
-import type { ProfileSetupInputs } from "./types";
-import { profileSetupInputsToSocialDbFormat } from "../utils/normalization";
+import type { ProfileConfigurationMode } from "../types";
+import type { ProfileConfigurationInputs } from "./types";
+import { profileConfigurationInputsToSocialDbFormat } from "../utils/normalization";
 
 export type ProfileSaveInputs = ByAccountId & {
   isDaoRepresentative: boolean;
-  mode: ProfileSetupMode;
-  inputs: ProfileSetupInputs;
+  mode: ProfileConfigurationMode;
+  inputs: ProfileConfigurationInputs;
   socialProfileSnapshot: NEARSocialUserProfile | undefined;
 };
 
@@ -43,7 +43,7 @@ export const save = async ({
       ? "Create project on POTLOCK (2 steps: Register information on NEAR Social and register on POTLOCK)"
       : "Update project on POTLOCK (via NEAR Social)";
 
-  const formattedInputs = profileSetupInputsToSocialDbFormat(inputs);
+  const formattedInputs = profileConfigurationInputsToSocialDbFormat(inputs);
 
   //* Derive diff from the preexisting social profile
   const socialDbProfileUpdate: NEARSocialUserProfile = socialProfileSnapshot

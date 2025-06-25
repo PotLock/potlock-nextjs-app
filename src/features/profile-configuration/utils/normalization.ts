@@ -3,7 +3,7 @@ import { evolve, pick, pipe } from "remeda";
 import { nullifyEmptyStrings } from "@/common/lib";
 import { getLinktreeLeafExtractor } from "@/entities/_shared/account";
 
-import type { ProfileSetupInputs } from "../models/types";
+import type { ProfileConfigurationInputs } from "../models/types";
 
 export const stripLinktree = evolve({
   twitter: getLinktreeLeafExtractor("twitter"),
@@ -12,7 +12,7 @@ export const stripLinktree = evolve({
   website: getLinktreeLeafExtractor("website"),
 });
 
-export const profileSetupInputsToSocialDbFormat = (inputs: ProfileSetupInputs) => ({
+export const profileConfigurationInputsToSocialDbFormat = (inputs: ProfileConfigurationInputs) => ({
   /**
    ** Standard NEAR Social profile details
    */

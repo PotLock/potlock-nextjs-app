@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Button } from "@/common/ui/layout/components";
 
-export const ProfileSetupDaoProgress = () => {
+export const ProfileConfigurationDaoProgress = () => {
   const { daoProjectProposal, daoAddress } = {
     daoProjectProposal: { id: 0 },
     daoAddress: undefined,

@@ -4,7 +4,7 @@ import { extractFromUrl } from "@/common/lib";
 import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
 
 import { CustomInput } from "./editor-elements";
-import type { ProfileSetupInputs } from "../models/types";
+import type { ProfileConfigurationInputs } from "../models/types";
 
 const Repo = ({
   repo,
@@ -38,15 +38,14 @@ const Repo = ({
   );
 };
 
-export type ProfileSetupRepositoriesSectionProps = {
-  values: ProfileSetupInputs["githubRepositories"];
+export type ProfileConfigurationRepositoriesSectionProps = {
+  values: ProfileConfigurationInputs["githubRepositories"];
   onChange?: (repositories: string[]) => void;
 };
 
-export const ProfileSetupRepositoriesSection: React.FC<ProfileSetupRepositoriesSectionProps> = ({
-  values,
-  onChange,
-}) => {
+export const ProfileConfigurationRepositoriesSection: React.FC<
+  ProfileConfigurationRepositoriesSectionProps
+> = ({ values, onChange }) => {
   // const [repos, setRepos] = useState(repositories.length > 0 ? repositories : [""]);
 
   // useEffect(() => {

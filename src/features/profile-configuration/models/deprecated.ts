@@ -5,7 +5,7 @@
 import { NEARSocialUserProfile } from "@/common/contracts/social-db";
 import { ByAccountId } from "@/common/types";
 
-import { AddFundingSourceInputs, ProfileSetupInputs } from "./types";
+import { AddFundingSourceInputs, ProfileConfigurationInputs } from "./types";
 
 export type SocialImagesInputs = ByAccountId & {
   socialData?: NEARSocialUserProfile | null;
@@ -22,7 +22,7 @@ type ExtraTypes = {
   daoProjectProposal: Proposal | null;
 };
 
-export type ProjectEditorState = ProfileSetupInputs & ExtraTypes;
+export type ProjectEditorState = ProfileConfigurationInputs & ExtraTypes;
 
 /**
  * Create Project State

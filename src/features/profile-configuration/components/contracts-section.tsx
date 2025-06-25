@@ -17,7 +17,7 @@ import Edit from "@/common/ui/layout/svg/Edit";
 import { cn } from "@/common/ui/layout/utils";
 
 import { CustomInput } from "./editor-elements";
-import type { ProfileSetupInputs } from "../models/types";
+import type { ProfileConfigurationInputs } from "../models/types";
 import validateEVMAddress from "../utils/validateEVMAddress";
 
 const Label = ({
@@ -197,15 +197,15 @@ const SmartContract = ({
   );
 };
 
-export type ProfileSetupSmartContractsSectionProps = {
-  values: ProfileSetupInputs["smartContracts"];
+export type ProfileConfigurationSmartContractsSectionProps = {
+  values: ProfileConfigurationInputs["smartContracts"];
   onEditClickHandler: (contractIndex: number) => void;
 };
 
-export const ProfileSetupSmartContractsSection = ({
+export const ProfileConfigurationSmartContractsSection = ({
   values,
   onEditClickHandler,
-}: ProfileSetupSmartContractsSectionProps) => {
+}: ProfileConfigurationSmartContractsSectionProps) => {
   if (values && values.length > 0) {
     return (
       <>

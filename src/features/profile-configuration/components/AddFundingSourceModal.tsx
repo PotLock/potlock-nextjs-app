@@ -13,21 +13,18 @@ import {
 
 import { CustomInput } from "./editor-elements";
 import { useAddFundingSourceForm } from "../hooks/forms";
-import { AddFundingSourceInputs, type ProfileSetupInputs } from "../models/types";
+import { AddFundingSourceInputs, type ProfileConfigurationInputs } from "../models/types";
 
-export type ProfileSetupFundingSourceModalProps = {
-  data: ProfileSetupInputs["fundingSources"];
+export type ProfileConfigurationFundingSourceModalProps = {
+  data: ProfileConfigurationInputs["fundingSources"];
   open?: boolean;
   onCloseClick?: () => void;
   editFundingIndex?: number;
 };
 
-export const ProfileSetupFundingSourceModal: React.FC<ProfileSetupFundingSourceModalProps> = ({
-  data: fundingSources = [],
-  open,
-  onCloseClick,
-  editFundingIndex,
-}) => {
+export const ProfileConfigurationFundingSourceModal: React.FC<
+  ProfileConfigurationFundingSourceModalProps
+> = ({ data: fundingSources = [], open, onCloseClick, editFundingIndex }) => {
   const { form, errors } = useAddFundingSourceForm({
     defaultValues: {
       description: "",

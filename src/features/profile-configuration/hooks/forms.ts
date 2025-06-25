@@ -9,8 +9,8 @@ import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { type AccountGroupItem, useAccountSocialProfile } from "@/entities/_shared/account";
 
 import { type ProfileSaveInputs, save } from "../models/effects";
-import { addFundingSourceSchema, profileSetupSchema } from "../models/schemas";
-import { AddFundingSourceInputs, ProfileSetupInputs } from "../models/types";
+import { addFundingSourceSchema, profileConfigurationSchema } from "../models/schemas";
+import { AddFundingSourceInputs, ProfileConfigurationInputs } from "../models/types";
 import { stripLinktree } from "../utils/normalization";
 
 export type ProfileFormParams = ByAccountId &
@@ -34,7 +34,7 @@ export const useProfileForm = ({
     refetch: refetchSocialProfile,
   } = useAccountSocialProfile({ accountId });
 
-  const defaultValues: Partial<ProfileSetupInputs> = useMemo(
+  const defaultValues: Partial<ProfileConfigurationInputs> = useMemo(
     () => ({
       name: socialProfileSnapshot?.name,
       description: socialProfileSnapshot?.description,
@@ -78,7 +78,7 @@ export const useProfileForm = ({
   );
 
   const { form: self } = useEnhancedForm({
-    schema: profileSetupSchema,
+    schema: profileConfigurationSchema,
     mode: "all",
     defaultValues,
     followDefaultValues: socialProfileSnapshot !== undefined && !isSocialProfileSnapshotLoading,
@@ -132,7 +132,7 @@ export const useProfileForm = ({
     [self, values.githubRepositories],
   );
 
-  const onSubmit: SubmitHandler<ProfileSetupInputs> = useCallback(
+  const onSubmit: SubmitHandler<ProfileConfigurationInputs> = useCallback(
     (inputs) => {
       save({ accountId, isDaoRepresentative, mode, inputs, socialProfileSnapshot })
         .then((result) => {

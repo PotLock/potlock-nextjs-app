@@ -28,7 +28,7 @@ export const addFundingSourceSchema = object({
 
 // TODO: Add cross-field validation to make repositories required
 //! if one of the project categories is `AccountCategory["Open Source"]`
-export const profileSetupSchema = object({
+export const profileConfigurationSchema = object({
   name: string()
     .min(3, "Must be at least 3 characters long")
     .max(100, "Must be less than 100 characters long"),

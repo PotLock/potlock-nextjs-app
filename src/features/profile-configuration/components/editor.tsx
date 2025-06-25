@@ -14,14 +14,14 @@ import {
 } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
-import { ProfileSetupFundingSourceModal } from "./AddFundingSourceModal";
-import { ProfileSetupSmartContractModal } from "./contract-modal";
-import { ProfileSetupSmartContractsSection } from "./contracts-section";
+import { ProfileConfigurationFundingSourceModal } from "./AddFundingSourceModal";
+import { ProfileConfigurationSmartContractModal } from "./contract-modal";
+import { ProfileConfigurationSmartContractsSection } from "./contracts-section";
 import { ProjectCategoryPicker, Row, SubHeader } from "./editor-elements";
-import { ProfileSetupFundingSourcesTable } from "./funding-sources";
-import { ProfileSetupImageUpload } from "./image-upload";
-import { ProfileSetupLinktreeSection } from "./linktree-section";
-import { ProfileSetupRepositoriesSection } from "./repositories-section";
+import { ProfileConfigurationFundingSourcesTable } from "./funding-sources";
+import { ProfileConfigurationImageUpload } from "./image-upload";
+import { ProfileConfigurationLinktreeSection } from "./linktree-section";
+import { ProfileConfigurationRepositoriesSection } from "./repositories-section";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import { type ProfileFormParams, useProfileForm } from "../hooks/forms";
 
@@ -104,7 +104,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
 
   return (
     <>
-      <ProfileSetupFundingSourceModal
+      <ProfileConfigurationFundingSourceModal
         data={values.fundingSources}
         open={addFundingModalOpen}
         editFundingIndex={editFundingIndex}
@@ -114,7 +114,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
         }}
       />
 
-      <ProfileSetupSmartContractModal
+      <ProfileConfigurationSmartContractModal
         data={values.smartContracts}
         contractIndex={editContractIndex || 0}
         open={editContractIndex !== undefined}
@@ -126,7 +126,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
       <Form {...form}>
         <form {...{ onSubmit }}>
           <div className="max-w-224 m-auto flex w-full flex-col p-[3rem_0px] md:p-[4rem_0px]">
-            <ProfileSetupImageUpload
+            <ProfileConfigurationImageUpload
               profileImage={values.profileImage ?? avatar.url}
               backgroundImage={values.backgroundImage ?? cover.url}
               onBackgroundImageUploaded={updateBackgroundImage}
@@ -213,7 +213,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             {/* <SubHeader title="Smart contracts" className="mt-16" />
 
             <Row>
-              <ProfileSetupSmartContractsSection
+              <ProfileConfigurationSmartContractsSection
                 values={values.smartContracts}
                 onEditClickHandler={setEditContractIndex}
               />
@@ -221,7 +221,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
 
             <SubHeader title="Funding sources" className="mt-16" />
 
-            <ProfileSetupFundingSourcesTable
+            <ProfileConfigurationFundingSourcesTable
               values={values.fundingSources}
               onEditClick={(fundingIndex: number) => {
                 setEditFundingIndex(fundingIndex);
@@ -243,7 +243,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             />
 
             <Row>
-              <ProfileSetupRepositoriesSection
+              <ProfileConfigurationRepositoriesSection
                 values={values.githubRepositories}
                 onChange={onChangeRepositories}
               />
@@ -259,7 +259,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             <SubHeader title="Social links" className="mt-16" />
 
             <Row>
-              <ProfileSetupLinktreeSection form={form} />
+              <ProfileConfigurationLinktreeSection form={form} />
             </Row>
 
             <div className="mt-16 flex gap-4 self-end">

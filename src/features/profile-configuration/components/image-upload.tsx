@@ -9,17 +9,17 @@ import { Button, Spinner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 
-import type { ProfileSetupInputs } from "../models/types";
+import type { ProfileConfigurationInputs } from "../models/types";
 
-export type ProfileSetupImageUploadProps = Pick<
-  ProfileSetupInputs,
+export type ProfileConfigurationImageUploadProps = Pick<
+  ProfileConfigurationInputs,
   "backgroundImage" | "profileImage"
 > & {
   onBackgroundImageUploaded: (url: string) => void;
   onProfileImageUploaded: (url: string) => void;
 };
 
-export const ProfileSetupImageUpload: React.FC<ProfileSetupImageUploadProps> = ({
+export const ProfileConfigurationImageUpload: React.FC<ProfileConfigurationImageUploadProps> = ({
   backgroundImage,
   profileImage,
   onBackgroundImageUploaded,

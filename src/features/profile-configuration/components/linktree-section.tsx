@@ -4,7 +4,7 @@ import { TextField } from "@/common/ui/form/components";
 import { FormField } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 
-import type { ProfileSetupInputs } from "../models/types";
+import type { ProfileConfigurationInputs } from "../models/types";
 
 const FieldInputExtension: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span
@@ -17,13 +17,13 @@ const FieldInputExtension: React.FC<{ children: React.ReactNode }> = ({ children
   </span>
 );
 
-export type ProfileSetupLinktreeSectionProps = {
-  form: UseFormReturn<ProfileSetupInputs>;
+export type ProfileConfigurationLinktreeSectionProps = {
+  form: UseFormReturn<ProfileConfigurationInputs>;
 };
 
-export const ProfileSetupLinktreeSection: React.FC<ProfileSetupLinktreeSectionProps> = ({
-  form,
-}) => (
+export const ProfileConfigurationLinktreeSection: React.FC<
+  ProfileConfigurationLinktreeSectionProps
+> = ({ form }) => (
   <>
     <FormField
       control={form.control}
