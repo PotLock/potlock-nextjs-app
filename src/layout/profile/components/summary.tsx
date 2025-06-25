@@ -21,7 +21,7 @@ import {
   AccountProfileTags,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { DonateToAccountButton, useDonationUserFlow } from "@/features/donation";
+import { DonateToAccountButton } from "@/features/donation";
 import { rootPathnames, routeSelectors } from "@/pathnames";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {

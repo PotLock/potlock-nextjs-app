@@ -142,7 +142,7 @@ export const ListAccountCard = ({
               />
 
               <p className="mt-2 h-14 overflow-hidden text-sm text-gray-600">
-                {truncate(profile?.description as string, 150) ?? "N/A"}
+                {profile?.description !== undefined ? truncate(profile.description, 150) : null}
               </p>
 
               {/* Labels NOT sure if we need this */}
