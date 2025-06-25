@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 
+import { TextAreaField } from "@/common/ui/form/components";
 import {
   Button,
   Dialog,
@@ -10,23 +11,20 @@ import {
   FormField,
 } from "@/common/ui/layout/components";
 
-import { CustomInput, CustomTextForm } from "./form-elements";
+import { CustomInput } from "./editor-elements";
 import { useAddFundingSourceForm } from "../hooks/forms";
-import { AddFundingSourceInputs, type ProfileSetupInputs } from "../models/types";
+import { AddFundingSourceInputs, type ProfileConfigurationInputs } from "../models/types";
 
-export type ProfileSetupFundingSourceModalProps = {
-  data: ProfileSetupInputs["fundingSources"];
+export type ProfileConfigurationFundingSourceModalProps = {
+  data: ProfileConfigurationInputs["fundingSources"];
   open?: boolean;
   onCloseClick?: () => void;
   editFundingIndex?: number;
 };
 
-export const ProfileSetupFundingSourceModal: React.FC<ProfileSetupFundingSourceModalProps> = ({
-  data: fundingSources = [],
-  open,
-  onCloseClick,
-  editFundingIndex,
-}) => {
+export const ProfileConfigurationFundingSourceModal: React.FC<
+  ProfileConfigurationFundingSourceModalProps
+> = ({ data: fundingSources = [], open, onCloseClick, editFundingIndex }) => {
   const { form, errors } = useAddFundingSourceForm({
     defaultValues: {
       description: "",
@@ -140,12 +138,13 @@ export const ProfileSetupFundingSourceModal: React.FC<ProfileSetupFundingSourceM
               name="description"
               defaultValue={isEdit ? fundingSources[editFundingIndex].description : ""}
               render={({ field }) => (
-                <CustomTextForm
-                  className="pt-8"
+                <TextAreaField
                   label="Description"
+                  required
                   placeholder="Type description"
-                  error={errors.description?.message}
-                  field={field}
+                  maxLength={250}
+                  className="pt-8"
+                  {...field}
                 />
               )}
             />

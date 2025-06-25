@@ -12,7 +12,7 @@ import {
   AccountGithubReposList,
   AccountSmartContractsList,
   useAccountSocialProfile,
-} from "@/entities/_shared";
+} from "@/entities/_shared/account";
 import { ProfileLayout } from "@/layout/profile/components/layout";
 import { ProfileLayoutTeam } from "@/layout/profile/components/team";
 

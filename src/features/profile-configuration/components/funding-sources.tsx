@@ -5,7 +5,7 @@ import { styled } from "styled-components";
 import Delete from "@/common/ui/layout/svg/Delete";
 import Edit from "@/common/ui/layout/svg/Edit";
 
-import type { ProfileSetupInputs } from "../models/types";
+import type { ProfileConfigurationInputs } from "../models/types";
 
 // TODO: refactor by breaking into TailwindCSS classes
 export const Table = styled.div`
@@ -97,15 +97,14 @@ export const Table = styled.div`
   }
 `;
 
-export type ProfileSetupFundingSourcesTableProps = {
-  values: ProfileSetupInputs["fundingSources"];
+export type ProfileConfigurationFundingSourcesTableProps = {
+  values: ProfileConfigurationInputs["fundingSources"];
   onEditClick: (fundingIndex: number) => void;
 };
 
-export const ProfileSetupFundingSourcesTable: React.FC<ProfileSetupFundingSourcesTableProps> = ({
-  values,
-  onEditClick,
-}) => {
+export const ProfileConfigurationFundingSourcesTable: React.FC<
+  ProfileConfigurationFundingSourcesTableProps
+> = ({ values, onEditClick }) => {
   const onDeleteHandler = useCallback((fundingIndex: number) => {
     //dispatch.projectEditor.removeFundingSource(fundingIndex);
   }, []);

@@ -66,7 +66,7 @@ export const campaignFtDonationMulticall = async ({
       .then(({ max }) => indivisibleUnitsToBigNum(max, NATIVE_TOKEN_DECIMALS)),
 
     /**
-     *? Checking the FT contract storage balance of the protocol fee recipient account
+     ** Checking the FT contract storage balance of the protocol fee recipient account
      */
     bypassProtocolFee
       ? NOOP_BALANCE_VIEW
@@ -80,7 +80,7 @@ export const campaignFtDonationMulticall = async ({
           ),
 
     /**
-     *? Checking the FT contract storage balance of the campaigns contract account
+     ** Checking the FT contract storage balance of the campaigns contract account
      */
     tokenClient
       .view<
@@ -92,7 +92,7 @@ export const campaignFtDonationMulticall = async ({
       ),
 
     /**
-     *? Checking the FT contract storage balance of the campaign creator account
+     ** Checking the FT contract storage balance of the campaign creator account
      */
     bypassCreatorFee
       ? NOOP_BALANCE_VIEW
@@ -106,7 +106,7 @@ export const campaignFtDonationMulticall = async ({
           ),
 
     /**
-     *? Checking the FT contract storage balance of the donation recipient account
+     ** Checking the FT contract storage balance of the donation recipient account
      */
     tokenClient
       .view<
@@ -133,7 +133,7 @@ export const campaignFtDonationMulticall = async ({
           .then((_updatedDonationContractStorageBalance) =>
             tokenClient.callMultiple([
               /**
-               *? FT contract storage balance replenishment for the protocol fee recipient account
+               ** FT contract storage balance replenishment for the protocol fee recipient account
                */
               ...(!bypassProtocolFee &&
               protocolFeeRecipientFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
@@ -152,7 +152,7 @@ export const campaignFtDonationMulticall = async ({
                 : []),
 
               /**
-               *? FT contract storage balance replenishment for the referrer account
+               ** FT contract storage balance replenishment for the referrer account
                */
               ...(referrerStorageBalanceBig !== null &&
               referrerStorageBalanceBig.lt(maxFtStorageBalanceBig)
@@ -171,7 +171,7 @@ export const campaignFtDonationMulticall = async ({
                 : []),
 
               /**
-               *? FT contract storage balance replenishment for the donation contract account
+               ** FT contract storage balance replenishment for the donation contract account
                */
               ...(donationContractFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
                 ? [
@@ -189,7 +189,7 @@ export const campaignFtDonationMulticall = async ({
                 : []),
 
               /**
-               *? FT contract storage balance replenishment for the campaign creator account
+               ** FT contract storage balance replenishment for the campaign creator account
                */
               ...(!bypassCreatorFee && creatorFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
                 ? [
@@ -207,7 +207,7 @@ export const campaignFtDonationMulticall = async ({
                 : []),
 
               /**
-               *? FT contract storage balance replenishment for the donation recipient account
+               ** FT contract storage balance replenishment for the donation recipient account
                */
               ...(recipientFtStorageBalanceBig.lt(maxFtStorageBalanceBig)
                 ? [
@@ -262,7 +262,7 @@ export const campaignFtDonationMulticall = async ({
             );
 
             /**
-             *? Checking for the donation receipt signature
+             ** Checking for the donation receipt signature
              */
             if (decodedReceipt.includes(campaignId.toString())) {
               try {

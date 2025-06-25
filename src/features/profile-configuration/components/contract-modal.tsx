@@ -13,23 +13,20 @@ import {
 } from "@/common/ui/layout/components";
 
 import { AddChainSelector } from "./contracts-section";
-import { CustomInput } from "./form-elements";
-import type { ProfileSetupInputs } from "../models/types";
+import { CustomInput } from "./editor-elements";
+import type { ProfileConfigurationInputs } from "../models/types";
 import validateEVMAddress from "../utils/validateEVMAddress";
 
-export type ProfileSetupSmartContractModalProps = {
-  data: ProfileSetupInputs["smartContracts"];
+export type ProfileConfigurationSmartContractModalProps = {
+  data: ProfileConfigurationInputs["smartContracts"];
   open?: boolean;
   onCloseClick?: () => void;
   contractIndex: number;
 };
 
-export const ProfileSetupSmartContractModal: React.FC<ProfileSetupSmartContractModalProps> = ({
-  data = [],
-  open,
-  onCloseClick,
-  contractIndex,
-}) => {
+export const ProfileConfigurationSmartContractModal: React.FC<
+  ProfileConfigurationSmartContractModalProps
+> = ({ data = [], open, onCloseClick, contractIndex }) => {
   const [chain, setChain] = useState(
     data[contractIndex] && data[contractIndex][0] ? data[contractIndex][0] : "",
   );

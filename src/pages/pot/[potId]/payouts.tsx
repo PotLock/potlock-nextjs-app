@@ -28,7 +28,7 @@ import {
 import ArrowDown from "@/common/ui/layout/svg/ArrowDown";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
-import { TokenIcon, useToken } from "@/entities/_shared/token";
+import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
 import {
   PotLifecycleStageTagEnum,
   PotPayoutChallenges,
@@ -56,7 +56,7 @@ export default function PotPayoutsTab() {
   const potFeatures = usePotFeatureFlags({ potId });
   const potLifecycle = usePotLifecycle({ potId });
   const { data: potSnapshot, mutate: refetchPotSnapshot } = indexer.usePot({ potId });
-  const { data: token } = useToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({ tokenId: NATIVE_TOKEN_ID });
 
   const isFunctionalityAvailable = useMemo(
     () =>

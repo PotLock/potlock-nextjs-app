@@ -31,7 +31,7 @@ import {
   AccountHandle,
   AccountProfileCover,
   AccountProfilePicture,
-} from "@/entities/_shared";
+} from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 import { listRegistrationStatuses } from "../constants";

@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { ProfileSetupForm } from "@/features/profile-setup";
+import { ProfileEditor } from "@/features/profile-configuration";
 import { rootPathnames } from "@/pathnames";
 
 export default function EditProjectPage() {
@@ -101,7 +101,7 @@ export default function EditProjectPage() {
               <AlertDescription>{"Please, wait..."}</AlertDescription>
             </Alert>
           ) : (
-            <ProfileSetupForm
+            <ProfileEditor
               mode="update"
               accountId={viewer.accountId}
               isDaoRepresentative={viewer.isDaoRepresentative}

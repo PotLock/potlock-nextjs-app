@@ -1,5 +1,5 @@
 import type { AccountId } from "@/common/types";
-import type { TokenData } from "@/entities/_shared";
+import type { TokenData } from "@/entities/_shared/token";
 
 import type { VotingRoundVoterSummary, VotingRoundWinner } from "../types";
 

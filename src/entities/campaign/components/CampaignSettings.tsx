@@ -10,8 +10,8 @@ import { indivisibleUnitsToFloat } from "@/common/lib";
 import type { ByCampaignId } from "@/common/types";
 import { Skeleton, Spinner } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
-import { TokenIcon, useToken } from "@/entities/_shared";
 import { AccountProfilePicture } from "@/entities/_shared/account";
+import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
 
 import { CampaignEditor } from "./editor";
 
@@ -61,7 +61,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
     error: campaignLoadingError,
   } = campaignsContractHooks.useCampaign({ campaignId });
 
-  const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
 
   const minAmountFloat = useMemo(
     () =>

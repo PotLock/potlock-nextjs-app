@@ -45,7 +45,7 @@ export type AccountListRegistrationStatus = keyof typeof RegistrationStatus;
 export type AccountListRegistrationStatusVariant =
   | AccountListRegistrationStatus
   /**
-   *? INFO: Only needed for backward compatibility:
+   ** INFO: Only needed for backward compatibility:
    */
   | "All";
 

@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { ProfileSetupForm } from "@/features/profile-setup";
+import { ProfileEditor } from "@/features/profile-configuration";
 import { rootPathnames } from "@/pathnames";
 
 export default function RegisterPage() {
@@ -20,6 +20,7 @@ export default function RegisterPage() {
   const {
     isLoading: isAccountListRegistrationDataLoading,
     data: listRegistrations,
+    error: listRegistrationsError,
     mutate: refetchListRegistrations,
   } = indexer.useAccountListRegistrations({
     enabled: viewer.isSignedIn,
@@ -86,14 +87,16 @@ export default function RegisterPage() {
 
       {viewer.hasWalletReady && viewer.isSignedIn ? (
         <>
-          {listRegistrations === undefined ? (
+          {listRegistrations === undefined &&
+          listRegistrationsError === undefined &&
+          isAccountListRegistrationDataLoading ? (
             <Alert className="mt-10">
               <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
               <AlertTitle>{"Checking Account"}</AlertTitle>
               <AlertDescription>{"Please, wait..."}</AlertDescription>
             </Alert>
           ) : (
-            <ProfileSetupForm
+            <ProfileEditor
               mode="register"
               accountId={viewer.accountId}
               isDaoRepresentative={viewer.isDaoRepresentative}

@@ -93,7 +93,11 @@ export const useAccountListRegistrations = ({
   ConditionalActivation) => {
   const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(accountId, params, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled },
+
+    swr: {
+      enabled,
+      shouldRetryOnError: (err) => err.status !== 404,
+    },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

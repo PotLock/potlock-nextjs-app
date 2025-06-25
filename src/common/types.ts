@@ -43,6 +43,10 @@ export interface ByAccountId {
   accountId: AccountId;
 }
 
+export type ByContractAccountId = {
+  contractAccountId: AccountId;
+};
+
 export type ContractConfig = ByAccountId & {};
 
 export type EnvConfig = {
@@ -86,6 +90,10 @@ export type ClientConfig = { swr?: SWRConfiguration };
 export interface ConditionalActivation {
   enabled?: boolean;
 }
+
+export type LiveUpdateParams = {
+  live?: boolean;
+};
 
 export type ContractMetadata = {
   latestSourceCodeCommitHash: null | string;

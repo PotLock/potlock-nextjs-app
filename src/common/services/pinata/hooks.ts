@@ -46,15 +46,15 @@ export const useFileUpload = ({ onSuccess }: UseFileUploadParams | undefined = {
   );
 
   const handleFileInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      upload(e.target?.files?.[0]);
-    },
-
+    (e: React.ChangeEvent<HTMLInputElement>) => upload(e.target.files?.[0]),
     [upload],
   );
 
+  const handleFileBufferChange = useCallback((files?: File[]) => upload(files?.[0]), [upload]);
+
   return {
     handleFileInputChange,
+    handleFileBufferChange,
     isPending,
     data: data ?? undefined,
     error: error ?? undefined,

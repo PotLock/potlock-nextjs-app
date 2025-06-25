@@ -18,7 +18,7 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { TokenValueSummary, useToken } from "@/entities/_shared/token";
+import { TokenValueSummary, useFungibleToken } from "@/entities/_shared/token";
 import { routeSelectors } from "@/pathnames";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
@@ -89,7 +89,7 @@ export const DonationSingleRecipientSuccessScreen: React.FC<
     } else return NATIVE_TOKEN_ID;
   }, [isCampaignDonation, isDirectDonation, receipt]);
 
-  const { isLoading: isTokenLoading, data: token } = useToken({ tokenId });
+  const { isLoading: isTokenLoading, data: token } = useFungibleToken({ tokenId });
 
   const isLoading = isResultLoading || isCampaignLoading || isPotLoading || isTokenLoading;
 

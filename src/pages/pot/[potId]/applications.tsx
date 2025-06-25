@@ -14,7 +14,7 @@ import { FilterChip, SearchBar } from "@/common/ui/layout/components";
 import {
   type AccountPotApplicationStatusOption,
   type AccountPotApplicationStatusVariant,
-} from "@/entities/_shared";
+} from "@/entities/_shared/account";
 import {
   PotApplicationCard,
   PotApplicationCardSkeleton,
