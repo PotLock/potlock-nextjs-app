@@ -21,7 +21,7 @@ import {
   AccountProfileTags,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { useDonationUserFlow } from "@/features/donation";
+import { DonateToAccountButton, useDonationUserFlow } from "@/features/donation";
 import { rootPathnames, routeSelectors } from "@/pathnames";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
@@ -122,7 +122,6 @@ export type ProfileLayoutSummaryProps = ByAccountId & {};
 export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ accountId }) => {
   const viewer = useWalletUserSession();
   const isOwner = viewer.isSignedIn && viewer.accountId === accountId;
-  const { openDonationModal } = useDonationUserFlow({ accountId });
   const { isLoading: isProfileDataLoading, profile } = useAccountSocialProfile({ accountId });
 
   // TODO: For optimization, request and use an indexer endpoint that serves as a proxy for the corresponding function call
@@ -194,20 +193,20 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
         {/* Right */}
         {isRegistered ? (
           <Container>
-            <div className="donations-info">
-              <div className="amount">{`~$${fundingAccount?.total_donations_in_usd}`}</div>
+            {fundingAccount && (
+              <div className="donations-info">
+                <div className="amount">{`~$${fundingAccount.total_donations_in_usd}`}</div>
 
-              {fundingAccount?.donors_count && (
                 <div className="inline-flex gap-1 text-sm">
                   <span>{"Raised from"}</span>
                   <span className="font-600">{fundingAccount.donors_count}</span>
                   <span>{fundingAccount.donors_count === 1 ? "donor" : "donors"}</span>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="btn-wrapper">
-              <Button onClick={openDonationModal}>{"Donate"}</Button>
+              <DonateToAccountButton accountId={accountId} variant="brand-filled" />
               <AccountFollowButton {...{ accountId }} />
             </div>
           </Container>

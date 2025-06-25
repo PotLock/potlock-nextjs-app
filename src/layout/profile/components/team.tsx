@@ -42,7 +42,7 @@ export type ProfileLayoutTeamProps = {
 
 export const ProfileLayoutTeam: React.FC<ProfileLayoutTeamProps> = ({ profile }) => {
   const teamMemberAccountIds = useMemo(
-    () => (profile === undefined ? [] : extractProfileTeamMembers(profile)),
+    () => (profile === undefined ? [] : (extractProfileTeamMembers(profile) ?? [])),
     [profile],
   );
 
