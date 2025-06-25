@@ -12,6 +12,7 @@ export const TokenBalance: React.FC<TokenBalanceProps> = ({ tokenId, classNames 
   const viewer = useWalletUserSession();
 
   const { data: token, error: tokenError } = useFungibleToken({
+    live: true,
     balanceCheckAccountId: viewer?.accountId,
     tokenId,
   });

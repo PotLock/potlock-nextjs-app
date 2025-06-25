@@ -91,6 +91,10 @@ export interface ConditionalActivation {
   enabled?: boolean;
 }
 
+export type LiveUpdateParams = {
+  live?: boolean;
+};
+
 export type ContractMetadata = {
   latestSourceCodeCommitHash: null | string;
 };

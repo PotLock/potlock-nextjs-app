@@ -9,7 +9,7 @@ import { NATIVE_TOKEN_ID, PLATFORM_LISTED_TOKEN_IDS } from "@/common/constants";
 import { refExchangeContractHooks } from "@/common/contracts/ref-finance";
 import { ftContractHooks } from "@/common/contracts/tokens";
 import { indivisibleUnitsToBigNum, indivisibleUnitsToFloat, isAccountId } from "@/common/lib";
-import type { AccountId, ConditionalActivation } from "@/common/types";
+import type { AccountId, ConditionalActivation, LiveUpdateParams } from "@/common/types";
 
 import { type TokenQuery, type TokenQueryResult } from "../types";
 
@@ -36,7 +36,8 @@ export const useFungibleToken = ({
   tokenId,
   balanceCheckAccountId,
   enabled = true,
-}: TokenQuery & ConditionalActivation): TokenQueryResult => {
+  live = false,
+}: TokenQuery & ConditionalActivation & LiveUpdateParams): TokenQueryResult => {
   const isValidFtContractAccountId = isAccountId(tokenId);
   const isValidTokenId = tokenId === NATIVE_TOKEN_ID || isValidFtContractAccountId;
 
@@ -45,7 +46,7 @@ export const useFungibleToken = ({
     data: ntMetadata,
     error: ntMetadataError,
   } = nearProtocolHooks.useNativeTokenMetadata({
-    disabled: !enabled || tokenId !== NATIVE_TOKEN_ID,
+    enabled: enabled && tokenId === NATIVE_TOKEN_ID,
   });
 
   const {
@@ -61,7 +62,8 @@ export const useFungibleToken = ({
     data: accountSummary,
     error: accountSummaryError,
   } = nearProtocolHooks.useViewAccount({
-    disabled: !enabled || balanceCheckAccountId === undefined || tokenId !== NATIVE_TOKEN_ID,
+    enabled: enabled && balanceCheckAccountId !== undefined && tokenId === NATIVE_TOKEN_ID,
+    live,
     accountId: balanceCheckAccountId as AccountId,
   });
 
@@ -70,7 +72,7 @@ export const useFungibleToken = ({
     data: ftMetadata,
     error: ftMetadataError,
   } = ftContractHooks.useFtMetadata({
-    disabled: !enabled || !isValidFtContractAccountId,
+    enabled: enabled && isValidFtContractAccountId,
     tokenId,
   });
 
@@ -88,7 +90,8 @@ export const useFungibleToken = ({
     data: ftBalance,
     error: ftBalanceError,
   } = ftContractHooks.useFtBalanceOf({
-    disabled: balanceCheckAccountId === undefined || !isValidFtContractAccountId,
+    enabled: balanceCheckAccountId !== undefined && isValidFtContractAccountId,
+    live,
     accountId: balanceCheckAccountId as AccountId,
     tokenId,
   });
