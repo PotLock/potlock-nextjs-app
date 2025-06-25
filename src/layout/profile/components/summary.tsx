@@ -25,18 +25,18 @@ import { DonateToAccountButton } from "@/features/donation";
 import { rootPathnames, routeSelectors } from "@/pathnames";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
-  const viewer = useWalletUserSession();
+  const walletUser = useWalletUserSession();
   const [copied, setCopied] = useState(false);
 
   return (
     <div className="mt-4 flex flex-wrap gap-8">
       <AccountProfileLinktree {...{ accountId }} />
 
-      {viewer.isSignedIn && (
+      {walletUser.isSignedIn && (
         <CopyToClipboard
           text={
             window.location.origin +
-            `${rootPathnames.PROFILE}/${accountId}?referrerAccountId=${viewer.accountId}`
+            `${rootPathnames.PROFILE}/${accountId}?referrerAccountId=${walletUser.accountId}`
           }
           onCopy={() => {
             setCopied(true);
@@ -120,8 +120,8 @@ const Container = styled.div`
 export type ProfileLayoutSummaryProps = ByAccountId & {};
 
 export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ accountId }) => {
-  const viewer = useWalletUserSession();
-  const isOwner = viewer.isSignedIn && viewer.accountId === accountId;
+  const walletUser = useWalletUserSession();
+  const isOwner = walletUser.isSignedIn && walletUser.accountId === accountId;
   const { isLoading: isProfileDataLoading, profile } = useAccountSocialProfile({ accountId });
 
   // TODO: For optimization, request and use an indexer endpoint that serves as a proxy for the corresponding function call
@@ -169,18 +169,24 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             {isOwner && (
               <div className="ml-[auto] self-center">
                 <Button asChild variant="brand-tonal" className="ml-[auto]">
-                  <Link
-                    href={
-                      FEATURE_REGISTRY.ProfileConfiguration.isEnabled
-                        ? routeSelectors.PROFILE_BY_ID_EDIT(accountId)
-                        : `${APP_BOS_COUNTERPART_URL}/?tab=profile&accountId=${accountId}`
-                    }
-                    target={FEATURE_REGISTRY.ProfileConfiguration.isEnabled ? undefined : "_blank"}
-                  >
-                    {FEATURE_REGISTRY.ProfileConfiguration.isEnabled
-                      ? "Edit Profile"
-                      : "Edit Profile on BOS"}
-                  </Link>
+                  {walletUser.hasRegistrationSubmitted ? (
+                    <Link
+                      href={
+                        FEATURE_REGISTRY.ProfileConfiguration.isEnabled
+                          ? routeSelectors.PROFILE_BY_ID_EDIT(accountId)
+                          : `${APP_BOS_COUNTERPART_URL}/?tab=profile&accountId=${accountId}`
+                      }
+                      target={
+                        FEATURE_REGISTRY.ProfileConfiguration.isEnabled ? undefined : "_blank"
+                      }
+                    >
+                      {FEATURE_REGISTRY.ProfileConfiguration.isEnabled
+                        ? "Edit Profile"
+                        : "Edit Profile on BOS"}
+                    </Link>
+                  ) : (
+                    <Link href={rootPathnames.REGISTER}>{"Register"}</Link>
+                  )}
                 </Button>
               </div>
             )}
