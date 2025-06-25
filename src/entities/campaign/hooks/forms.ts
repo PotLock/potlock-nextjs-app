@@ -12,7 +12,7 @@ import type { FileUploadResult } from "@/common/services/pinata";
 import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared";
+import { useFungibleToken } from "@/entities/_shared/token";
 import { routeSelectors } from "@/pathnames";
 import { dispatch } from "@/store";
 
@@ -64,7 +64,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
     [values.max_amount],
   );
 
-  const { isLoading: isTokenDataLoading, data: token } = useToken({
+  const { isLoading: isTokenDataLoading, data: token } = useFungibleToken({
     tokenId: values.ft_id ?? NATIVE_TOKEN_ID,
   });
 

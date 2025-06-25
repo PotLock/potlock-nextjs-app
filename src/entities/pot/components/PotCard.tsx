@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ByPotId, Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { formatWithCommas } from "@/common/lib";
-import { useToken } from "@/entities/_shared/token";
+import { useFungibleToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";
 
 import { Indicator } from "./Indicator";
@@ -21,10 +21,10 @@ const yoctoNearToNear = (amountYoctoNear: string, abbreviate?: boolean) => {
 };
 
 /**
- * @deprecated Use {@link useToken} capabilities.
+ * @deprecated Use {@link useFungibleToken} capabilities.
  */
 export const useMatchingPoolBalance = ({ pot }: { pot?: Pot }) => {
-  const { data: nearToken } = useToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: nearToken } = useFungibleToken({ tokenId: NATIVE_TOKEN_ID });
 
   return useMemo(() => {
     if (pot) {

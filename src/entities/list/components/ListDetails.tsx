@@ -130,7 +130,7 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
         .catch((error) => console.error("Error upvoting:", error));
 
       dispatch.listEditor.handleListToast({
-        name: truncate(listDetails?.name, 15),
+        name: truncate(listDetails?.name ?? "", 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
@@ -139,7 +139,7 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
         .catch((error) => console.error("Error upvoting:", error));
 
       dispatch.listEditor.handleListToast({
-        name: truncate(listDetails?.name, 15),
+        name: truncate(listDetails?.name ?? "", 15),
         type: ListFormModalType.UPVOTE,
       });
     }

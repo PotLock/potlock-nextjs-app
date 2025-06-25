@@ -1,28 +1,40 @@
 import useSWR from "swr";
 
 import { CONTRACT_SWR_CONFIG, IS_CLIENT } from "@/common/constants";
-import type { ByAccountId, ByTokenId, WithDisabled } from "@/common/types";
+import type {
+  ByAccountId,
+  ByTokenId,
+  ConditionalActivation,
+  LiveUpdateParams,
+} from "@/common/types";
 
 import * as ftContractClient from "./client";
 
-// TODO: Use conventional `enabled` instead of `disabled`
-export const useFtMetadata = ({ disabled = false, ...params }: ByTokenId & WithDisabled) =>
+export const useFtMetadata = ({ enabled = true, ...params }: ByTokenId & ConditionalActivation) =>
   useSWR(
-    () => (disabled || !IS_CLIENT ? null : ["ft_metadata", params.tokenId]),
+    () => (!enabled || !IS_CLIENT ? null : ["ft_metadata", params.tokenId]),
     ([_queryKeyHead, tokenId]) => ftContractClient.ft_metadata({ tokenId }).catch(() => undefined),
     CONTRACT_SWR_CONFIG,
   );
 
-// TODO: Use conventional `enabled` instead of `disabled`
 export const useFtBalanceOf = ({
-  disabled = false,
+  enabled = true,
+  live = false,
   ...params
-}: ByAccountId & ByTokenId & WithDisabled) =>
+}: ByAccountId & ByTokenId & ConditionalActivation & LiveUpdateParams) =>
   useSWR(
-    () => (disabled || !IS_CLIENT ? null : ["ft_balance_of", params.accountId, params.tokenId]),
+    () => (!enabled || !IS_CLIENT ? null : ["ft_balance_of", params.accountId, params.tokenId]),
 
     ([_queryKeyHead, accountId, tokenId]) =>
       ftContractClient.ft_balance_of({ accountId, tokenId }).catch(() => undefined),
 
-    CONTRACT_SWR_CONFIG,
+    {
+      ...(live
+        ? {}
+        : {
+            revalidateIfStale: false,
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+          }),
+    },
   );

@@ -2,7 +2,7 @@ import { ByTokenId } from "@/common/types";
 import { Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared/token";
+import { useFungibleToken } from "@/entities/_shared/token";
 
 export type TokenBalanceProps = ByTokenId & {
   classNames?: { root?: string; amount?: string };
@@ -11,7 +11,8 @@ export type TokenBalanceProps = ByTokenId & {
 export const TokenBalance: React.FC<TokenBalanceProps> = ({ tokenId, classNames }) => {
   const viewer = useWalletUserSession();
 
-  const { data: token, error: tokenError } = useToken({
+  const { data: token, error: tokenError } = useFungibleToken({
+    live: true,
     balanceCheckAccountId: viewer?.accountId,
     tokenId,
   });

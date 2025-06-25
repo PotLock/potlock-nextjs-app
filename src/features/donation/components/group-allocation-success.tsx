@@ -20,7 +20,7 @@ import {
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import { TokenValueSummary, useToken } from "@/entities/_shared/token";
+import { TokenValueSummary, useFungibleToken } from "@/entities/_shared/token";
 import { rootPathnames } from "@/pathnames";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
@@ -63,7 +63,7 @@ export const DonationGroupAllocationSuccessScreen: React.FC<
     [],
   );
 
-  const { isLoading: isTokenLoading, data: token } = useToken({ tokenId });
+  const { isLoading: isTokenLoading, data: token } = useFungibleToken({ tokenId });
 
   type DerivedOutcome = {
     recipientAccountIds: AccountId[];
