@@ -1,6 +1,14 @@
 import { useMemo } from "react";
 
-import { Button, DialogFooter, Form, ModalErrorBody } from "@/common/ui/layout/components";
+import { FEATURE_REGISTRY } from "@/common/_config";
+import { donationContractHooks } from "@/common/contracts/core/donation";
+import {
+  Button,
+  DialogFooter,
+  Form,
+  ModalErrorBody,
+  Skeleton,
+} from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { dispatch } from "@/store";
 
@@ -32,6 +40,9 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   ...props
 }) => {
   const { currentStep, finalOutcome } = useDonationState();
+
+  const { isLoading: isDonationConfigLoading, data: donationConfig } =
+    donationContractHooks.useConfig();
 
   const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat, isGroupDonation } =
     useDonationForm(props);
@@ -104,20 +115,29 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
         {currentStep !== "success" && (
           <DialogFooter>
             {currentStep === "allocation" && (
-              <Button type="button" variant="brand-outline" color="black" disabled>
+              <Button
+                disabled={!FEATURE_REGISTRY.Cart.isEnabled}
+                type="button"
+                variant="brand-outline"
+                color="black"
+              >
                 {"Add to cart"}
               </Button>
             )}
 
-            <Button
-              type="button"
-              variant="brand-filled"
-              onClick={currentStep === "confirmation" ? onSubmit : dispatch.donation.nextStep}
-              disabled={isDisabled}
-              className={cn({ "w-full": currentStep === "confirmation" })}
-            >
-              {currentStep === "confirmation" ? "Confirm donation" : "Proceed to donate"}
-            </Button>
+            {donationConfig === undefined && isDonationConfigLoading ? (
+              <Skeleton className="w-38.5 h-10" />
+            ) : (
+              <Button
+                type="button"
+                variant="brand-filled"
+                onClick={currentStep === "confirmation" ? onSubmit : dispatch.donation.nextStep}
+                disabled={isDisabled}
+                className={cn({ "w-full": currentStep === "confirmation" })}
+              >
+                {currentStep === "confirmation" ? "Confirm donation" : "Proceed to donate"}
+              </Button>
+            )}
           </DialogFooter>
         )}
       </form>

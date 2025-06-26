@@ -172,7 +172,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
                     name="tokenId"
                     render={({ field: inputExtension }) => (
                       <TokenSelector
-                        hideZeroBalanceOptions
+                        hideBalances
                         disabled={isPotDonation ? !FEATURE_REGISTRY.PotFtDonation.isEnabled : true}
                         defaultValue={inputExtension.value}
                         onValueChange={inputExtension.onChange}

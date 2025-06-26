@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { styled } from "styled-components";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
@@ -67,56 +66,6 @@ const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
   );
 };
 
-// TODO: Refactor by breaking down into TailwindCSS classes
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-  gap: 24px;
-  border-radius: 10px;
-  border: 1px solid #f4b37d;
-  border-bottom-width: 3px;
-  background: #fef6ee;
-  margin-left: auto;
-  height: fit-content;
-  .donations-info {
-    display: flex;
-    gap: 4px;
-    flex-direction: column;
-    .amount {
-      font-weight: 500;
-      font-size: 2.5rem;
-      line-height: 1;
-      font-family: "Lora";
-    }
-  }
-  .btn-wrapper {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: space-between;
-    button {
-      padding: 10px 0;
-      width: 160px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-  @media only screen and (max-width: 480px) {
-    width: 100%;
-    .donations-info .amount {
-      font-size: 2rem;
-    }
-    .btn-wrapper {
-      > div,
-      button {
-        width: 100%;
-      }
-    }
-  }
-`;
-
 export type ProfileLayoutSummaryProps = ByAccountId & {};
 
 export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ accountId }) => {
@@ -124,7 +73,6 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
   const isOwner = walletUser.isSignedIn && walletUser.accountId === accountId;
   const { isLoading: isProfileDataLoading, profile } = useAccountSocialProfile({ accountId });
 
-  // TODO: For optimization, request and use an indexer endpoint that serves as a proxy for the corresponding function call
   const { data: isRegistered } = listsContractHooks.useIsRegistered({
     listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     accountId,
@@ -135,9 +83,10 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
     data: fundingAccount,
     error: fundingAccountDataError,
   } = indexer.useAccount({
-    enabled: isRegistered,
     accountId,
   });
+
+  console.log(fundingAccount, fundingAccountDataError);
 
   // TODO: Handle errors and loading state
   return (
@@ -192,35 +141,39 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             )}
           </div>
 
-          <AccountProfileTags {...{ accountId }} />
-          <Linktree {...{ accountId }} />
+          <AccountProfileTags accountId={accountId} />
+          <Linktree accountId={accountId} />
         </div>
 
-        {/* Right */}
-        {isRegistered ? (
-          <Container>
-            {fundingAccount && (
-              <div className="donations-info">
-                <div className="amount">{`~$${fundingAccount.total_donations_in_usd}`}</div>
-
-                <div className="inline-flex gap-1 text-sm">
-                  <span>{"Raised from"}</span>
-                  <span className="font-600">{fundingAccount.donors_count}</span>
-                  <span>{fundingAccount.donors_count === 1 ? "donor" : "donors"}</span>
-                </div>
+        <div
+          className={cn(
+            "ml-a border-1 bg-peach-50 flex h-fit flex-col gap-6 max-sm:w-full",
+            "rounded-xl border border-b-[3px] border-[#f4b37d] p-6",
+          )}
+        >
+          {fundingAccount !== undefined && (
+            <div className="flex flex-col gap-2">
+              <div
+                className={cn(
+                  "font-500 font-lora line-height-12 max-sm:line-height-10 text-10 max-sm:text-8",
+                )}
+              >
+                {`~$${fundingAccount.total_donations_in_usd}`}
               </div>
-            )}
 
-            <div className="btn-wrapper">
-              <DonateToAccountButton accountId={accountId} variant="brand-filled" />
-              <AccountFollowButton {...{ accountId }} />
+              <div className="inline-flex gap-1 text-sm">
+                <span>{"Raised from"}</span>
+                <span className="font-600">{fundingAccount.donors_count}</span>
+                <span>{fundingAccount.donors_count === 1 ? "donor" : "donors"}</span>
+              </div>
             </div>
-          </Container>
-        ) : (
-          <div>
-            <AccountFollowButton {...{ accountId }} className="w-[160px] py-[10px]" />
+          )}
+
+          <div className="flex justify-between gap-4">
+            <DonateToAccountButton accountId={accountId} variant="brand-filled" className="w-40" />
+            <AccountFollowButton accountId={accountId} className="w-40" />
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

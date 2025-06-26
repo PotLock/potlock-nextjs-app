@@ -32,7 +32,7 @@ export const useProfileForm = ({
     avatar,
     cover,
     refetch: refetchSocialProfile,
-  } = useAccountSocialProfile({ accountId });
+  } = useAccountSocialProfile({ accountId, live: true });
 
   const defaultValues: Partial<ProfileConfigurationInputs> = useMemo(
     () => ({

@@ -1,6 +1,6 @@
 import useSWR from "swr";
 
-import { CONTRACT_SWR_CONFIG, IS_CLIENT } from "@/common/constants";
+import { IS_CLIENT } from "@/common/constants";
 import type {
   ByAccountId,
   ByTokenId,
@@ -10,11 +10,25 @@ import type {
 
 import * as ftContractClient from "./client";
 
-export const useFtMetadata = ({ enabled = true, ...params }: ByTokenId & ConditionalActivation) =>
+export const useFtMetadata = ({
+  enabled = true,
+  live = false,
+  ...params
+}: ByTokenId & ConditionalActivation & LiveUpdateParams) =>
   useSWR(
     () => (!enabled || !IS_CLIENT ? null : ["ft_metadata", params.tokenId]),
     ([_queryKeyHead, tokenId]) => ftContractClient.ft_metadata({ tokenId }).catch(() => undefined),
-    CONTRACT_SWR_CONFIG,
+
+    {
+      ...(live
+        ? {}
+        : {
+            revalidateIfStale: false,
+            revalidateOnFocus: false,
+            revalidateOnMount: false,
+            revalidateOnReconnect: false,
+          }),
+    },
   );
 
 export const useFtBalanceOf = ({
@@ -34,6 +48,7 @@ export const useFtBalanceOf = ({
         : {
             revalidateIfStale: false,
             revalidateOnFocus: false,
+            revalidateOnMount: false,
             revalidateOnReconnect: false,
           }),
     },
