@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { styled } from "styled-components";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
@@ -67,23 +66,6 @@ const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
   );
 };
 
-// TODO: Refactor by breaking down into TailwindCSS classes
-const Container = styled.div`
-  .amount {
-    font-weight: 500;
-    font-size: 2.5rem;
-    line-height: 1;
-    font-family: "Lora";
-  }
-
-  @media only screen and (max-width: 480px) {
-    width: 100%;
-    .donations-info .amount {
-      font-size: 2rem;
-    }
-  }
-`;
-
 export type ProfileLayoutSummaryProps = ByAccountId & {};
 
 export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ accountId }) => {
@@ -101,9 +83,10 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
     data: fundingAccount,
     error: fundingAccountDataError,
   } = indexer.useAccount({
-    enabled: isRegistered,
     accountId,
   });
+
+  console.log(fundingAccount, fundingAccountDataError);
 
   // TODO: Handle errors and loading state
   return (
@@ -162,15 +145,21 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
           <Linktree accountId={accountId} />
         </div>
 
-        <Container
+        <div
           className={cn(
-            "ml-a border-1 bg-peach-50 flex h-fit flex-col gap-6",
+            "ml-a border-1 bg-peach-50 flex h-fit flex-col gap-6 max-sm:w-full",
             "rounded-xl border border-b-[3px] border-[#f4b37d] p-6",
           )}
         >
-          {fundingAccount && (
-            <div className="flex flex-col gap-1">
-              <div className="amount">{`~$${fundingAccount.total_donations_in_usd}`}</div>
+          {fundingAccount !== undefined && (
+            <div className="flex flex-col gap-2">
+              <div
+                className={cn(
+                  "font-500 font-lora line-height-12 max-sm:line-height-10 text-10 max-sm:text-8",
+                )}
+              >
+                {`~$${fundingAccount.total_donations_in_usd}`}
+              </div>
 
               <div className="inline-flex gap-1 text-sm">
                 <span>{"Raised from"}</span>
@@ -180,11 +169,11 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             </div>
           )}
 
-          <div className="flex justify-between gap-2">
+          <div className="flex justify-between gap-4">
             <DonateToAccountButton accountId={accountId} variant="brand-filled" className="w-40" />
             <AccountFollowButton accountId={accountId} className="w-40" />
           </div>
-        </Container>
+        </div>
       </div>
     </div>
   );
