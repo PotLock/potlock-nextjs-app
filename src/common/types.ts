@@ -26,6 +26,11 @@ export enum FeatureId {
    * As a User, I want to be able to register on the platform and update my profile details
    */
   ProfileConfiguration = "ProfileConfiguration",
+
+  /**
+   * As a User, I want to be able to add donations to my cart
+   */
+  Cart = "Cart",
 }
 
 export type FeatureFlags = { isEnabled: boolean };
