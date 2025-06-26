@@ -69,17 +69,6 @@ const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
 
 // TODO: Refactor by breaking down into TailwindCSS classes
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-  gap: 24px;
-  border-radius: 10px;
-  border: 1px solid #f4b37d;
-  border-bottom-width: 3px;
-  background: #fef6ee;
-  margin-left: auto;
-  height: fit-content;
-
   .amount {
     font-weight: 500;
     font-size: 2.5rem;
@@ -173,7 +162,12 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
           <Linktree accountId={accountId} />
         </div>
 
-        <Container>
+        <Container
+          className={cn(
+            "ml-a border-1 bg-peach-50 flex h-fit flex-col gap-6",
+            "rounded-xl border border-b-[3px] border-[#f4b37d] p-6",
+          )}
+        >
           {fundingAccount && (
             <div className="flex flex-col gap-1">
               <div className="amount">{`~$${fundingAccount.total_donations_in_usd}`}</div>
