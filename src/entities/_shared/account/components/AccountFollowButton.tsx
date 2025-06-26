@@ -19,20 +19,12 @@ export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
 
   const {
     isLoading: isFollowerListLoading,
-    isValidating: isFollowerListRevalidating,
     data: followerAccountIds,
     mutate: refetchFollowerAccountIds,
   } = nearSocialIndexerHooks.useFollowerAccountIds({ accountId });
 
-  const {
-    isLoading: isFollowListLoading,
-    isValidating: isFollowListRevalidating,
-    data: followedAccountIds,
-    mutate: refetchFollowedAccountIds,
-  } = nearSocialIndexerHooks.useFollowedAccountIds({ accountId });
-
-  const isSocialIndexLoading = isFollowerListLoading || isFollowListLoading;
-  const isSocialIndexRevalidating = isFollowerListRevalidating || isFollowListRevalidating;
+  const { data: followedAccountIds, mutate: refetchFollowedAccountIds } =
+    nearSocialIndexerHooks.useFollowedAccountIds({ accountId });
 
   const isFollowedByViewer = useMemo(
     () => (viewer.isSignedIn ? (followerAccountIds?.includes(viewer.accountId) ?? false) : false),
@@ -83,14 +75,13 @@ export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
 
   return !viewer.isSignedIn || viewer.accountId === accountId ? null : (
     <>
-      {isSocialIndexLoading ? (
-        <Skeleton className="h-10 w-20" />
+      {followerAccountIds === undefined && isFollowerListLoading ? (
+        <Skeleton className="h-10 w-40" />
       ) : (
         <Button
           variant="brand-outline"
           onClick={handleFollow}
-          disabled={isSocialIndexRevalidating}
-          className={cn("hover:text-foreground font-600 hover:bg-[#dd3345]", className)}
+          className={cn("font-600", className)}
         >
           {actionLabel}
         </Button>

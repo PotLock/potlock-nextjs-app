@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { values } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
-import { Pot, indexer } from "@/common/api/indexer";
+import { Pot } from "@/common/api/indexer";
 import { NOOP_STRING } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { parseNumber } from "@/common/lib";
@@ -23,7 +23,8 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
-import { TokenBalance, TokenSelector, useToken } from "@/entities/_shared/token";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
+import { TokenBalance, TokenSelector, useFungibleToken } from "@/entities/_shared/token";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DONATION_ALLOCATION_STRATEGIES } from "../constants";
@@ -46,16 +47,16 @@ export const DonationSingleRecipientAllocation: React.FC<
     "potAccountId",
   ]);
 
-  const { data: token } = useToken({
+  const { data: token } = useFungibleToken({
     tokenId,
     balanceCheckAccountId: walletUser?.accountId,
   });
 
   const {
-    isLoading: isRecipientDataLoading,
-    data: recipient,
-    error: recipientDataError,
-  } = indexer.useAccount({
+    isLoading: isRecipientProfileLoading,
+    profile: recipientProfile,
+    error: recipientProfileError,
+  } = useAccountSocialProfile({
     enabled: accountId !== undefined,
     accountId: accountId ?? NOOP_STRING,
   });
@@ -89,7 +90,7 @@ export const DonationSingleRecipientAllocation: React.FC<
           name="allocationStrategy"
           render={({ field }) => (
             <FormItem className="gap-3">
-              {isRecipientDataLoading ? (
+              {isRecipientProfileLoading ? (
                 <Skeleton className="w-59 h-3.5" />
               ) : (
                 <FormLabel className="font-600">{"How do you want to allocate funds?"}</FormLabel>
@@ -106,7 +107,7 @@ export const DonationSingleRecipientAllocation: React.FC<
                         <FormItem key={value}>
                           <RadioGroupItem
                             id={`donation-options-${value}`}
-                            isLoading={isRecipientDataLoading}
+                            isLoading={isRecipientProfileLoading}
                             checked={field.value === DonationAllocationStrategyEnum[value]}
                             hint={disabled ? hintIfDisabled : hint}
                             {...{ disabled, label, value }}
@@ -122,7 +123,7 @@ export const DonationSingleRecipientAllocation: React.FC<
         />
       ),
 
-    [form.control, hasMatchingPots, isCampaignDonation, isRecipientDataLoading],
+    [form.control, hasMatchingPots, isCampaignDonation, isRecipientProfileLoading],
   );
 
   const potSelector = useMemo(
@@ -151,11 +152,11 @@ export const DonationSingleRecipientAllocation: React.FC<
     [allocationStrategy, form.control, hasMatchingPots, matchingPots],
   );
 
-  return recipientDataError ? (
+  return recipientProfileError ? (
     <ModalErrorBody
       heading="Project donation"
       title="Unable to load recipient data!"
-      message={recipientDataError?.message}
+      message={recipientProfileError?.message}
     />
   ) : (
     <>
@@ -163,7 +164,7 @@ export const DonationSingleRecipientAllocation: React.FC<
         <DialogTitle>
           {isCampaignDonation
             ? `Donate to ${campaign?.name ? `${campaign.name} Campaign` : "Campaign"}`
-            : `Donate to ${recipient?.near_social_profile_data?.name ?? "Project"}`}
+            : `Donate to ${recipientProfile?.name ?? accountId}`}
         </DialogTitle>
       </DialogHeader>
 
@@ -196,7 +197,7 @@ export const DonationSingleRecipientAllocation: React.FC<
                     name="tokenId"
                     render={({ field: inputExtension }) => (
                       <TokenSelector
-                        hideZeroBalanceOptions
+                        hideBalances
                         disabled={!isFtSelectorAvailable}
                         defaultValue={inputExtension.value}
                         onValueChange={inputExtension.onChange}

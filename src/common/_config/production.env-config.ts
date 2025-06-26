@@ -65,7 +65,7 @@ export const envConfig: EnvConfig = {
     [FeatureId.ProfileConfiguration]: {
       id: FeatureId.ProfileConfiguration,
       name: "Profile configuration",
-      isEnabled: false,
+      isEnabled: true,
     },
 
     [FeatureId.FtDonation]: {
@@ -84,6 +84,12 @@ export const envConfig: EnvConfig = {
       id: FeatureId.DirectNativeTokenDonation,
       name: "Direct native token donation",
       isEnabled: true,
+    },
+
+    [FeatureId.Cart]: {
+      id: FeatureId.Cart,
+      name: "Cart",
+      isEnabled: false,
     },
   },
 };

@@ -169,7 +169,7 @@ export const CONTRACT_SWR_CONFIG: SWRConfiguration = {
 };
 
 /**
- * @deprecated Use `useTokenAllowlist` hooks instead
+ * @deprecated Use `useFungibleTokenAllowlist` hooks instead
  */
 export const SUPPORTED_FTS: Record<
   string,

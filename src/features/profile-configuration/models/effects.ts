@@ -15,14 +15,14 @@ import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 import { deepObjectDiff } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 
-import type { ProfileSetupMode } from "../types";
-import type { ProfileSetupInputs } from "./types";
-import { profileSetupInputsToSocialDbFormat } from "../utils/normalization";
+import type { ProfileConfigurationMode } from "../types";
+import type { ProfileConfigurationInputs } from "./types";
+import { profileConfigurationInputsToSocialDbFormat } from "../utils/normalization";
 
 export type ProfileSaveInputs = ByAccountId & {
   isDaoRepresentative: boolean;
-  mode: ProfileSetupMode;
-  inputs: ProfileSetupInputs;
+  mode: ProfileConfigurationMode;
+  inputs: ProfileConfigurationInputs;
   socialProfileSnapshot: NEARSocialUserProfile | undefined;
 };
 
@@ -43,9 +43,9 @@ export const save = async ({
       ? "Create project on POTLOCK (2 steps: Register information on NEAR Social and register on POTLOCK)"
       : "Update project on POTLOCK (via NEAR Social)";
 
-  const formattedInputs = profileSetupInputsToSocialDbFormat(inputs);
+  const formattedInputs = profileConfigurationInputsToSocialDbFormat(inputs);
 
-  //? Derive diff from the preexisting social profile
+  //* Derive diff from the preexisting social profile
   const socialDbProfileUpdate: NEARSocialUserProfile = socialProfileSnapshot
     ? deepObjectDiff<NEARSocialUserProfile>(socialProfileSnapshot, formattedInputs)
     : formattedInputs;
@@ -55,26 +55,34 @@ export const save = async ({
       [accountId]: {
         profile: socialDbProfileUpdate,
 
-        /**
-         *? Auto Follow and Star Potlock
-         */
+        ...(mode === "register"
+          ? {
+              /**
+               ** Auto Follow and Star Potlock
+               */
 
-        index: {
-          star: {
-            key: { type: "social", path: `potlock.near/widget/Index` },
-            value: { type: "star" },
-          },
+              index: {
+                star: {
+                  key: { type: "social", path: `potlock.near/widget/Index` },
+                  value: { type: "star" },
+                },
 
-          notify: {
-            key: "potlock.near",
-            value: { type: "star", item: { type: "social", path: `potlock.near/widget/Index` } },
-          },
-        },
+                notify: {
+                  key: "potlock.near",
 
-        graph: {
-          star: { ["potlock.near"]: { widget: { Index: "" } } },
-          follow: { ["potlock.near"]: "" },
-        },
+                  value: {
+                    type: "star",
+                    item: { type: "social", path: `potlock.near/widget/Index` },
+                  },
+                },
+              },
+
+              graph: {
+                star: { ["potlock.near"]: { widget: { Index: "" } } },
+                follow: { ["potlock.near"]: "" },
+              },
+            }
+          : {}),
       },
     },
   };
@@ -90,7 +98,6 @@ export const save = async ({
       depositFloat = Big(depositFloat).add(0.1).toString();
     }
 
-    // social.near
     const socialTransaction = buildTransaction("set", {
       receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
       args: socialArgs,
@@ -102,7 +109,6 @@ export const save = async ({
     // Submit registration to Public Goods Registry
     if (mode === "register") {
       transactions.push(
-        // lists.potlock.near
         buildTransaction("register_batch", {
           receiverId: LISTS_CONTRACT_ACCOUNT_ID,
           args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },

@@ -1,4 +1,4 @@
-import Big from "big.js";
+import { Big } from "big.js";
 import Link from "next/link";
 import { styled } from "styled-components";
 
@@ -103,7 +103,7 @@ export const DonationItem = ({
   // const name = truncate(isPot ? pot.id : donor.id, 15);
   const name = truncate(type === "received" ? donor.id : recipient.id, 15);
 
-  const { avatarSrc } = useAccountSocialProfile({
+  const { avatar } = useAccountSocialProfile({
     accountId: type === "received" ? donor.id : recipient.id,
   });
 
@@ -112,7 +112,7 @@ export const DonationItem = ({
       <FundingSrc>
         <div className="h-[3em] w-[3em]">
           <img
-            src={avatarSrc}
+            src={avatar.url}
             className="h-full w-full rounded-full object-cover align-middle"
             alt="Donor profile image"
           />

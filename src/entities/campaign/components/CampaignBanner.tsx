@@ -15,8 +15,8 @@ import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared";
 import { AccountProfileLink } from "@/entities/_shared/account";
+import { useFungibleToken } from "@/entities/_shared/token";
 import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
@@ -33,7 +33,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     error: campaignLoadingError,
   } = campaignsContractHooks.useCampaign({ campaignId });
 
-  const { data: token } = useToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
 
   const raisedAmountFloat = useMemo(
     () =>
@@ -107,28 +107,33 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
             <div
               className={cn(
-                "text-foreground flex flex-col-reverse gap-2 p-0 text-[12px] text-white md:items-center",
-                " w-full justify-between md:flex-row md:items-center md:text-[15px]",
+                "text-foreground flex flex-col-reverse gap-2 p-0",
+                "text-[12px] text-white md:text-[15px]",
+                "w-full justify-between md:flex-row md:items-center md:items-center",
               )}
             >
               <div className="flex flex-col items-start gap-2 p-0 md:flex-row">
                 <div className="flex gap-1">
                   <p className="pr-1 font-semibold">FOR</p>
+
                   <AccountProfileLink
                     classNames={{ root: "bg-transparent" }}
                     accountId={campaign?.recipient as string}
                   />
                 </div>
+
                 <div className="hidden flex-col items-center bg-gray-800 md:flex">
                   <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
                 </div>
+
                 <div className="flex gap-1">
                   <p className="font-semibold">ORGANIZED BY</p>
                   <AccountProfileLink accountId={campaign?.owner as string} />
                 </div>
               </div>
+
               {campaign?.owner === campaign?.recipient && (
-                <div className="flex  items-center gap-1">
+                <div className="flex items-center gap-1">
                   <BadgeIcon size={5} />
                   <span className="m-0 font-bold">OFFICIAL</span>
                 </div>
@@ -136,13 +141,16 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             </div>
           </div>
         </div>
+
         <p className="p-6">{campaign?.description}</p>
       </div>
+
       <div className="h-max w-full rounded-xl border border-[#DBDBDB] p-4 md:w-[27%]">
         <div className="mb-5 rounded-xl border border-solid border-[#f4b37d] bg-[#fef6ee] p-4">
           <p className="text-[11px] font-semibold tracking-widest text-[#EA6A25]">
-            TOTAL AMOUNT RAISED
+            {"TOTAL AMOUNT RAISED"}
           </p>
+
           <div className="flex items-baseline">
             <h1 className="text-xl font-semibold">
               {`${raisedAmountFloat} ${token?.metadata.symbol ?? ""}`}
@@ -169,12 +177,20 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           {viewer.isSignedIn && hasEscrowedDonations && (
             <div className="flex w-full flex-col gap-4">
               <Button className="w-full" onClick={handleProcessEscrowedDonations}>
-                Process Payout
+                {"Process Payout"}
               </Button>
-              <div className="border-1 flex items-start gap-2 rounded-lg border-green-500  bg-green-50 p-3">
+
+              <div
+                className={cn(
+                  "border-1 flex items-start gap-2",
+                  "rounded-lg border-green-500 bg-green-50 p-3",
+                )}
+              >
                 <BadgeCheck className="h--12 w-12" />
+
                 <div className="m-0 p-0">
                   <h2 className="mb-2 text-base font-medium">Campaign Successful</h2>
+
                   <p className="text-sm font-normal leading-6">
                     The Minimum Target of the Campaign has been successfully reach and the Donations
                     can be processed.
@@ -183,6 +199,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
               </div>
             </div>
           )}
+
           {viewer.isSignedIn &&
             isDonationRefundsProcessed &&
             campaign?.end_ms &&
@@ -190,10 +207,17 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
             raisedAmountFloat < minAmountFloat && (
               <div className="flex w-full flex-col gap-4">
                 <Button className="w-full" onClick={handleDonationsRefund}>
-                  Refund Donations
+                  {"Refund Donations"}
                 </Button>
-                <div className="border-1 flex items-start gap-2 rounded-lg border-neutral-500  bg-neutral-50 p-3">
+
+                <div
+                  className={cn(
+                    "border-1 flex items-start gap-2",
+                    "rounded-lg border-neutral-500 bg-neutral-50 p-3",
+                  )}
+                >
                   <CircleAlert className="h--12 w-12" />
+
                   <div className="m-0 p-0">
                     <h2 className="mb-2 text-base font-medium">Campaign Ended</h2>
 

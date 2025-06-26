@@ -21,7 +21,12 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
-import { TokenBalance, TokenSelector, TokenValueSummary, useToken } from "@/entities/_shared/token";
+import {
+  TokenBalance,
+  TokenSelector,
+  TokenValueSummary,
+  useFungibleToken,
+} from "@/entities/_shared/token";
 
 import { DonationGroupAllocationRecipients } from "./group-allocation-recipients";
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
@@ -51,7 +56,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
   const [tokenId, groupAllocationStrategy] = form.watch(["tokenId", "groupAllocationStrategy"]);
   const amountError = useMemo(() => form.formState.errors.amount, [form.formState.errors.amount]);
 
-  const { data: token } = useToken({
+  const { data: token } = useFungibleToken({
     tokenId,
     balanceCheckAccountId: viewer?.accountId,
   });
@@ -167,7 +172,7 @@ export const DonationGroupAllocation: React.FC<DonationGroupAllocationProps> = (
                     name="tokenId"
                     render={({ field: inputExtension }) => (
                       <TokenSelector
-                        hideZeroBalanceOptions
+                        hideBalances
                         disabled={isPotDonation ? !FEATURE_REGISTRY.PotFtDonation.isEnabled : true}
                         defaultValue={inputExtension.value}
                         onValueChange={inputExtension.onChange}

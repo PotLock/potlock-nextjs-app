@@ -1,7 +1,7 @@
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { type ByAccountId, ByCampaignId, ByListId } from "@/common/types";
-import { Button, Skeleton } from "@/common/ui/layout/components";
+import { Button, type ButtonProps, Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 
 import { type DonationUserFlowProps, useDonationUserFlow } from "../hooks/user-flow";
@@ -38,13 +38,22 @@ export const DonateRandomly = () => {
   );
 };
 
-export type DonateToAccountButtonProps = ByAccountId & {};
+export type DonateToAccountButtonProps = ByAccountId &
+  Pick<ButtonProps, "className" | "variant"> & {};
 
-export const DonateToAccountButton: React.FC<DonateToAccountButtonProps> = ({ accountId }) => {
+export const DonateToAccountButton: React.FC<DonateToAccountButtonProps> = ({
+  accountId,
+  variant: variantProp,
+  className,
+}) => {
   const { openDonationModal } = useDonationUserFlow({ accountId });
 
   return (
-    <Button className="w-full" variant="standard-outline" onClick={openDonationModal}>
+    <Button
+      variant={variantProp ?? "standard-outline"}
+      onClick={openDonationModal}
+      className={cn("w-full", className)}
+    >
       {"Donate"}
     </Button>
   );

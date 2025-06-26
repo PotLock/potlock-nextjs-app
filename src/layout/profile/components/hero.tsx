@@ -28,10 +28,10 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
   });
 
   return (
-    <section un-position="relative">
+    <section className="relative">
       <AccountProfileCover height={318} className="relative rounded-xl" {...{ accountId }} />
 
-      <div className="relative z-[6] flex -translate-y-2/4 items-end pl-2 md:pl-16">
+      <div className="z-6 relative flex -translate-y-2/4 items-end pl-2 md:pl-16">
         <div
           className={cn(
             "p-1.25 bg-background relative h-[120px] w-[120px] rounded-full",
@@ -44,7 +44,8 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
         {/* Status */}
         <div
           className={cn(
-            "relative z-[1] flex -translate-y-5 translate-x-[-25px] items-center gap-2 md:gap-6",
+            "z-1 relative flex -translate-y-5 translate-x-[-25px]",
+            "items-center gap-2 md:gap-6",
           )}
         >
           {pgRegistryRegistration || isHuman ? (

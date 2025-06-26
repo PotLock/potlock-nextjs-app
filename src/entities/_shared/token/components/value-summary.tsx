@@ -5,7 +5,7 @@ import { Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 
 import { TokenIcon } from "./icons";
-import { useToken } from "../hooks/data";
+import { useFungibleToken } from "../hooks/fungible";
 
 export type TokenValueSummaryProps = ByTokenId &
   ({ amountFloat: number } | { amountIndivisible: string }) & {
@@ -19,7 +19,7 @@ export const TokenValueSummary: React.FC<TokenValueSummaryProps> = ({
   classNames,
   ...props
 }) => {
-  const { data: token } = useToken({ tokenId });
+  const { data: token } = useFungibleToken({ tokenId });
 
   const amount =
     "amountFloat" in props
