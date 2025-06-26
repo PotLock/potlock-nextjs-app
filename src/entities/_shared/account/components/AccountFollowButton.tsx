@@ -87,7 +87,6 @@ export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
         <Button
           variant="brand-outline"
           onClick={handleFollow}
-          disabled={isSocialIndexRevalidating}
           className={cn("hover:text-foreground font-600 hover:bg-[#dd3345]", className)}
         >
           {actionLabel}

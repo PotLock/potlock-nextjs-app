@@ -1,5 +1,5 @@
 import { socialDbContractHooks } from "@/common/contracts/social-db";
-import type { ByAccountId, ConditionalActivation } from "@/common/types";
+import type { ByAccountId, ConditionalActivation, LiveUpdateParams } from "@/common/types";
 
 import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
@@ -10,14 +10,15 @@ import { useAccountSocialImageSrc } from "./social-image";
 export const useAccountSocialProfile = ({
   accountId,
   enabled = true,
-}: ByAccountId & ConditionalActivation) => {
+  live = false,
+}: ByAccountId & ConditionalActivation & LiveUpdateParams) => {
   const {
     isLoading,
     isValidating,
     data,
     mutate: refetch,
     error,
-  } = socialDbContractHooks.useSocialProfile({ enabled, accountId });
+  } = socialDbContractHooks.useSocialProfile({ enabled, live, accountId });
 
   const avatar = useAccountSocialImageSrc({
     data: data?.image,

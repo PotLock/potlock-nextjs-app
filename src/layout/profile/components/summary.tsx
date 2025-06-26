@@ -79,10 +79,12 @@ const Container = styled.div`
   background: #fef6ee;
   margin-left: auto;
   height: fit-content;
+
   .donations-info {
     display: flex;
     gap: 4px;
     flex-direction: column;
+
     .amount {
       font-weight: 500;
       font-size: 2.5rem;
@@ -90,10 +92,8 @@ const Container = styled.div`
       font-family: "Lora";
     }
   }
+
   .btn-wrapper {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: space-between;
     button {
       padding: 10px 0;
       width: 160px;
@@ -103,16 +103,11 @@ const Container = styled.div`
       align-items: center;
     }
   }
+
   @media only screen and (max-width: 480px) {
     width: 100%;
     .donations-info .amount {
       font-size: 2rem;
-    }
-    .btn-wrapper {
-      > div,
-      button {
-        width: 100%;
-      }
     }
   }
 `;
@@ -124,7 +119,6 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
   const isOwner = walletUser.isSignedIn && walletUser.accountId === accountId;
   const { isLoading: isProfileDataLoading, profile } = useAccountSocialProfile({ accountId });
 
-  // TODO: For optimization, request and use an indexer endpoint that serves as a proxy for the corresponding function call
   const { data: isRegistered } = listsContractHooks.useIsRegistered({
     listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     accountId,
@@ -209,9 +203,9 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             </div>
           )}
 
-          <div className="btn-wrapper">
+          <div className="btn-wrapper flex justify-between gap-2">
             <DonateToAccountButton accountId={accountId} variant="brand-filled" />
-            <AccountFollowButton {...{ accountId }} />
+            <AccountFollowButton accountId={accountId} />
           </div>
         </Container>
       </div>
