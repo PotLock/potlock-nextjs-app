@@ -80,26 +80,11 @@ const Container = styled.div`
   margin-left: auto;
   height: fit-content;
 
-  .donations-info {
-    display: flex;
-    gap: 4px;
-    flex-direction: column;
-
-    .amount {
-      font-weight: 500;
-      font-size: 2.5rem;
-      line-height: 1;
-      font-family: "Lora";
-    }
-  }
-
-  .btn-wrapper button {
-    padding: 10px 0;
-    width: 160px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+  .amount {
+    font-weight: 500;
+    font-size: 2.5rem;
+    line-height: 1;
+    font-family: "Lora";
   }
 
   @media only screen and (max-width: 480px) {
@@ -184,13 +169,13 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             )}
           </div>
 
-          <AccountProfileTags {...{ accountId }} />
-          <Linktree {...{ accountId }} />
+          <AccountProfileTags accountId={accountId} />
+          <Linktree accountId={accountId} />
         </div>
 
         <Container>
           {fundingAccount && (
-            <div className="donations-info">
+            <div className="flex flex-col gap-1">
               <div className="amount">{`~$${fundingAccount.total_donations_in_usd}`}</div>
 
               <div className="inline-flex gap-1 text-sm">
@@ -201,9 +186,9 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             </div>
           )}
 
-          <div className="btn-wrapper flex justify-between gap-2">
-            <DonateToAccountButton accountId={accountId} variant="brand-filled" />
-            <AccountFollowButton accountId={accountId} />
+          <div className="flex justify-between gap-2">
+            <DonateToAccountButton accountId={accountId} variant="brand-filled" className="w-40" />
+            <AccountFollowButton accountId={accountId} className="w-40" />
           </div>
         </Container>
       </div>
