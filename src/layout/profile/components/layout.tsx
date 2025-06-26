@@ -22,31 +22,37 @@ const tabRoutesProject = [
     id: "home",
     href: "/home",
   },
+
   {
     label: "Feed",
     id: "feed",
     href: "/feed",
   },
+
   {
     label: "Pots",
     id: "pots",
     href: "/pots",
   },
+
   {
     label: "Funding Raised",
     id: "funding",
     href: "/funding-raised",
   },
+
   {
     label: "Donations",
     id: "donations",
     href: "/donations",
   },
+
   {
     label: "Lists",
     id: "lists",
     href: "/lists",
   },
+
   {
     label: "Campaigns",
     id: "campaigns",
@@ -60,10 +66,17 @@ const tabRoutesProfile = [
     id: "home",
     href: "/home",
   },
+
   {
     label: "Donations",
     id: "donations",
     href: "/donations",
+  },
+
+  {
+    label: "Funding Raised",
+    id: "funding",
+    href: "/funding-raised",
   },
 ] as TabOption[];
 
