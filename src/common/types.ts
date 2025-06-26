@@ -161,10 +161,3 @@ export type BasicRequirement = {
 export type ClearanceCheckResult =
   | { requirements: BasicRequirement[]; isEveryRequirementSatisfied: boolean; error: null }
   | { requirements: null; isEveryRequirementSatisfied: false; error: Error };
-
-/**
- * @deprecated Use {@link ConditionalActivation}
- */
-export interface WithDisabled {
-  disabled?: boolean;
-}

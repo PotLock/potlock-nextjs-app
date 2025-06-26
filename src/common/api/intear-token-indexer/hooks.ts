@@ -1,4 +1,4 @@
-import { ByTokenId, type WithDisabled } from "@/common/types";
+import { ByTokenId, type ConditionalActivation, type LiveUpdateParams } from "@/common/types";
 
 import * as generatedClient from "./internal/client.generated";
 import { REQUEST_CONFIG } from "./internal/config";
@@ -6,7 +6,11 @@ import { REQUEST_CONFIG } from "./internal/config";
 /**
  * https://prices.intear.tech/swagger-ui/#/Token%20Prices/get_get_token_price
  */
-export const useTokenUsdPrice = ({ tokenId, disabled = false }: ByTokenId & WithDisabled) => {
+export const useTokenUsdPrice = ({
+  enabled = true,
+  live = false,
+  tokenId,
+}: ByTokenId & ConditionalActivation & LiveUpdateParams) => {
   const queryResult = generatedClient.useGetSuperPrecisePrice(
     { token_id: tokenId },
 
@@ -14,10 +18,16 @@ export const useTokenUsdPrice = ({ tokenId, disabled = false }: ByTokenId & With
       ...REQUEST_CONFIG,
 
       swr: {
-        enabled: !disabled,
+        enabled,
         shouldRetryOnError: (err) => err.status !== 404,
-        revalidateOnFocus: false,
-        revalidateIfStale: false,
+
+        ...(live
+          ? {}
+          : {
+              revalidateIfStale: false,
+              revalidateOnFocus: false,
+              revalidateOnReconnect: false,
+            }),
       },
     },
   );

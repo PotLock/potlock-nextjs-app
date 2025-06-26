@@ -93,15 +93,13 @@ const Container = styled.div`
     }
   }
 
-  .btn-wrapper {
-    button {
-      padding: 10px 0;
-      width: 160px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-    }
+  .btn-wrapper button {
+    padding: 10px 0;
+    width: 160px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
   }
 
   @media only screen and (max-width: 480px) {

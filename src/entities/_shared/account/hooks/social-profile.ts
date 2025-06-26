@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { socialDbContractHooks } from "@/common/contracts/social-db";
 import type { ByAccountId, ConditionalActivation, LiveUpdateParams } from "@/common/types";
 
@@ -13,12 +15,14 @@ export const useAccountSocialProfile = ({
   live = false,
 }: ByAccountId & ConditionalActivation & LiveUpdateParams) => {
   const {
-    isLoading,
+    isLoading: isRevalidating,
     isValidating,
     data,
     mutate: refetch,
     error,
   } = socialDbContractHooks.useSocialProfile({ enabled, live, accountId });
+
+  const isLoading = useMemo(() => data === undefined && isRevalidating, [data, isRevalidating]);
 
   const avatar = useAccountSocialImageSrc({
     data: data?.image,
