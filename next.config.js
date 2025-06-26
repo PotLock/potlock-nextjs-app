@@ -2,6 +2,16 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  async redirects() {
+    return [
+      {
+        source: "/((?!_next).*)js",
+        destination: "/404",
+        permanent: false,
+      },
+    ];
+  },
+
   images: {
     // allow external source without limiting it to specific domains
     remotePatterns: [
