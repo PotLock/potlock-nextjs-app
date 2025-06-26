@@ -25,13 +25,11 @@ export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
   } = nearSocialIndexerHooks.useFollowerAccountIds({ accountId });
 
   const {
-    isLoading: isFollowListLoading,
     isValidating: isFollowListRevalidating,
     data: followedAccountIds,
     mutate: refetchFollowedAccountIds,
   } = nearSocialIndexerHooks.useFollowedAccountIds({ accountId });
 
-  const isSocialIndexLoading = isFollowerListLoading || isFollowListLoading;
   const isSocialIndexRevalidating = isFollowerListRevalidating || isFollowListRevalidating;
 
   const isFollowedByViewer = useMemo(
@@ -83,8 +81,8 @@ export const AccountFollowButton: React.FC<AccountFollowButtonProps> = ({
 
   return !viewer.isSignedIn || viewer.accountId === accountId ? null : (
     <>
-      {isSocialIndexLoading ? (
-        <Skeleton className="h-10 w-20" />
+      {followerAccountIds === undefined && isFollowerListLoading ? (
+        <Skeleton className="h-10 w-40" />
       ) : (
         <Button
           variant="brand-outline"

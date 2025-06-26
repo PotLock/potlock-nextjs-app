@@ -196,31 +196,24 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
           <Linktree {...{ accountId }} />
         </div>
 
-        {/* Right */}
-        {isRegistered ? (
-          <Container>
-            {fundingAccount && (
-              <div className="donations-info">
-                <div className="amount">{`~$${fundingAccount.total_donations_in_usd}`}</div>
+        <Container>
+          {fundingAccount && (
+            <div className="donations-info">
+              <div className="amount">{`~$${fundingAccount.total_donations_in_usd}`}</div>
 
-                <div className="inline-flex gap-1 text-sm">
-                  <span>{"Raised from"}</span>
-                  <span className="font-600">{fundingAccount.donors_count}</span>
-                  <span>{fundingAccount.donors_count === 1 ? "donor" : "donors"}</span>
-                </div>
+              <div className="inline-flex gap-1 text-sm">
+                <span>{"Raised from"}</span>
+                <span className="font-600">{fundingAccount.donors_count}</span>
+                <span>{fundingAccount.donors_count === 1 ? "donor" : "donors"}</span>
               </div>
-            )}
-
-            <div className="btn-wrapper">
-              <DonateToAccountButton accountId={accountId} variant="brand-filled" />
-              <AccountFollowButton {...{ accountId }} />
             </div>
-          </Container>
-        ) : (
-          <div>
-            <AccountFollowButton {...{ accountId }} className="w-[160px] py-[10px]" />
+          )}
+
+          <div className="btn-wrapper">
+            <DonateToAccountButton accountId={accountId} variant="brand-filled" />
+            <AccountFollowButton {...{ accountId }} />
           </div>
-        )}
+        </Container>
       </div>
     </div>
   );
