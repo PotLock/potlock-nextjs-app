@@ -26,6 +26,7 @@ export const useTokenUsdPrice = ({
           : {
               revalidateIfStale: false,
               revalidateOnFocus: false,
+              revalidateOnMount: false,
               revalidateOnReconnect: false,
             }),
       },

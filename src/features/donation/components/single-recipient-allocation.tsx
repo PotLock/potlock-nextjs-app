@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { values } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
-import { Pot, indexer } from "@/common/api/indexer";
+import { Pot } from "@/common/api/indexer";
 import { NOOP_STRING } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { parseNumber } from "@/common/lib";

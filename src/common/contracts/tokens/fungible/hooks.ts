@@ -25,6 +25,7 @@ export const useFtMetadata = ({
         : {
             revalidateIfStale: false,
             revalidateOnFocus: false,
+            revalidateOnMount: false,
             revalidateOnReconnect: false,
           }),
     },
@@ -47,6 +48,7 @@ export const useFtBalanceOf = ({
         : {
             revalidateIfStale: false,
             revalidateOnFocus: false,
+            revalidateOnMount: false,
             revalidateOnReconnect: false,
           }),
     },

@@ -59,6 +59,7 @@ export const useViewAccount = ({
         : {
             revalidateIfStale: false,
             revalidateOnFocus: false,
+            revalidateOnMount: false,
             revalidateOnReconnect: false,
           }),
     },
