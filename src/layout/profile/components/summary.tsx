@@ -86,8 +86,6 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
     accountId,
   });
 
-  console.log(fundingAccount, fundingAccountDataError);
-
   // TODO: Handle errors and loading state
   return (
     <div
