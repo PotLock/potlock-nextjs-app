@@ -1,5 +1,5 @@
 import type { AccountView } from "near-api-js/lib/providers/provider";
-import useSWR from "swr";
+import useSWR, { type SWRResponse } from "swr";
 
 import {
   CONTRACT_SWR_CONFIG,
@@ -40,18 +40,16 @@ export const useViewAccount = ({
   enabled = true,
   live = false,
   ...params
-}: ByAccountId & ConditionalActivation & LiveUpdateParams) =>
+}: ByAccountId & ConditionalActivation & LiveUpdateParams): SWRResponse<AccountView, Error> =>
   useSWR(
     () => (!enabled || !IS_CLIENT ? null : ["view_account", params.accountId]),
 
     ([_queryKeyHead, accountId]) =>
-      nearRpc
-        .query<AccountView>({
-          request_type: "view_account",
-          account_id: accountId,
-          finality: "final",
-        })
-        .catch(() => undefined),
+      nearRpc.query<AccountView>({
+        request_type: "view_account",
+        account_id: accountId,
+        finality: "final",
+      }),
 
     {
       ...(live
