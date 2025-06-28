@@ -215,6 +215,10 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
                   : "N/A"
               }`}
             />
+            <CampaignSettingsBarCard
+              title="Fees Avoidance Allowed"
+              value={`${campaign?.allow_fee_avoidance ? "Yes" : "No"}`}
+            />
           </div>
         </div>
       ) : (
