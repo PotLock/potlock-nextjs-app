@@ -69,7 +69,7 @@ const WelcomeBanner = () => {
           {"Opening funding up for anything"}
         </h3>
 
-        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
+        <h1 className="lett font-lora m-0 text-4xl font-medium leading-[1.1] tracking-tight md:text-[40px]">
           Discover ideas, projects, people, opportunities,
           <br className="hidden md:block" /> and grant pools to fund.
         </h1>
