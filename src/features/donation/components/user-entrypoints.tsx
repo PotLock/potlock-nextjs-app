@@ -38,11 +38,13 @@ export const DonateRandomly = () => {
   );
 };
 
-export type DonateToAccountButtonProps = ByAccountId & Pick<ButtonProps, "variant"> & {};
+export type DonateToAccountButtonProps = ByAccountId &
+  Pick<ButtonProps, "className" | "variant"> & {};
 
 export const DonateToAccountButton: React.FC<DonateToAccountButtonProps> = ({
   accountId,
   variant: variantProp,
+  className,
 }) => {
   const { openDonationModal } = useDonationUserFlow({ accountId });
 
@@ -50,7 +52,7 @@ export const DonateToAccountButton: React.FC<DonateToAccountButtonProps> = ({
     <Button
       variant={variantProp ?? "standard-outline"}
       onClick={openDonationModal}
-      className="w-full"
+      className={cn("w-full", className)}
     >
       {"Donate"}
     </Button>

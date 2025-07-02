@@ -28,6 +28,7 @@ export const UserDropdown = () => {
 
   const { profile } = useAccountSocialProfile({
     enabled: viewer.isSignedIn,
+    live: true,
     accountId: viewer.accountId ?? NOOP_STRING,
   });
 

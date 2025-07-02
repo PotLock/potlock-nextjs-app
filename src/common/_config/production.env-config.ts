@@ -85,5 +85,11 @@ export const envConfig: EnvConfig = {
       name: "Direct native token donation",
       isEnabled: true,
     },
+
+    [FeatureId.Cart]: {
+      id: FeatureId.Cart,
+      name: "Cart",
+      isEnabled: false,
+    },
   },
 };

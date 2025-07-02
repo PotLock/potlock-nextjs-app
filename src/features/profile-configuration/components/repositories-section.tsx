@@ -1,10 +1,22 @@
 import { ChangeEvent, useState } from "react";
 
-import { extractFromUrl } from "@/common/lib";
 import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
 
 import { CustomInput } from "./editor-elements";
 import type { ProfileConfigurationInputs } from "../models/types";
+
+const extractFromUrl = (url: string, pattern: RegExp) => {
+  if (url) {
+    if (url.startsWith("/")) {
+      url = url.slice(1, url.length);
+    }
+
+    // Execute the regular expression on the URL
+    const match = url.match(pattern);
+    // If a match is found, return the extracted repository path; otherwise, return null
+    return match ? match[1] : url;
+  }
+};
 
 const Repo = ({
   repo,

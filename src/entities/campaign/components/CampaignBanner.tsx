@@ -142,7 +142,18 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           </div>
         </div>
 
-        <p className="p-6">{campaign?.description}</p>
+        <div
+          className="prose prose-sm max-w-none"
+          dangerouslySetInnerHTML={{
+            __html: campaign?.description ?? "",
+          }}
+          onClick={(event) => {
+            // Prevent navigation when clicking on links
+            if (event.target instanceof HTMLAnchorElement) {
+              event.stopPropagation();
+            }
+          }}
+        />
       </div>
 
       <div className="h-max w-full rounded-xl border border-[#DBDBDB] p-4 md:w-[27%]">

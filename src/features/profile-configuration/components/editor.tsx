@@ -38,7 +38,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   onFailure,
 }) => {
   const router = useRouter();
-  const { avatar, cover } = useAccountSocialProfile({ accountId });
+  const { avatar, cover } = useAccountSocialProfile({ accountId, live: true });
 
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();

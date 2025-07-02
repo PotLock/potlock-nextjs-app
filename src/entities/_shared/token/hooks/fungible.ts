@@ -54,7 +54,7 @@ export const useFungibleToken = ({
     data: oneTokenUsdPrice,
     error: usdPriceError,
   } = coingeckoHooks.useNativeTokenUsdPrice({
-    disabled: !enabled || tokenId !== NATIVE_TOKEN_ID,
+    enabled: enabled && tokenId === NATIVE_TOKEN_ID,
   });
 
   const {
@@ -73,6 +73,7 @@ export const useFungibleToken = ({
     error: ftMetadataError,
   } = ftContractHooks.useFtMetadata({
     enabled: enabled && isValidFtContractAccountId,
+    live,
     tokenId,
   });
 
@@ -81,7 +82,8 @@ export const useFungibleToken = ({
     data: oneFtUsdPrice,
     error: ftUsdPriceError,
   } = intearTokenIndexerHooks.useTokenUsdPrice({
-    disabled: !enabled || !isValidFtContractAccountId,
+    enabled: enabled && isValidFtContractAccountId,
+    live,
     tokenId,
   });
 

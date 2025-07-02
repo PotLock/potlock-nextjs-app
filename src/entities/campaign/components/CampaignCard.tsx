@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { truncate } from "@/common/lib";
+import { truncateHtml } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
@@ -60,8 +60,26 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             </div>
           </div>
 
-          <div className="h-[110px]">
-            <p className="text-[16px]">{data.description ? truncate(data.description, 160) : ""}</p>
+          <div className="h-[100px]">
+            <div
+              className="prose prose-sm max-w-none overflow-hidden"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+              dangerouslySetInnerHTML={{
+                __html: data.description ?? "",
+              }}
+              onClick={(event) => {
+                // Prevent navigation when clicking on links
+                if (event.target instanceof HTMLAnchorElement) {
+                  event.stopPropagation();
+                }
+              }}
+            />
           </div>
 
           <CampaignProgressBar

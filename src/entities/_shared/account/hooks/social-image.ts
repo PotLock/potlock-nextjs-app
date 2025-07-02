@@ -5,6 +5,7 @@ import { isNonNullish } from "remeda";
 import { NOOP_STRING } from "@/common/constants";
 import type { NEARSocialUserProfile } from "@/common/contracts/social-db";
 import { nftContractHooks } from "@/common/contracts/tokens";
+import { isValidHttpUrl } from "@/common/lib";
 
 export type UseAccountSocialImageParams = {
   data?: NEARSocialUserProfile["image"];
@@ -25,6 +26,14 @@ export const useAccountSocialImageSrc = ({ data, fallbackUrl }: UseAccountSocial
     tokenId: nftParams?.tokenId ?? NOOP_STRING,
   });
 
+  const nftMediaSrc = useMemo(() => {
+    if (isNonNullish(nft?.metadata.media)) {
+      return isValidHttpUrl(nft.metadata.media)
+        ? nft.metadata.media
+        : `https://ipfs.near.social/ipfs/${nft.metadata.media}`;
+    } else return null;
+  }, [nft]);
+
   const rawImageSrc = useMemo(() => {
     if (typeof data !== "string") {
       return (
@@ -35,10 +44,10 @@ export const useAccountSocialImageSrc = ({ data, fallbackUrl }: UseAccountSocial
 
   return useMemo(
     () => ({
-      url: nft?.metadata.media ?? rawImageSrc ?? fallbackUrl,
-      isNft: isNonNullish(nft),
+      url: nftMediaSrc ?? rawImageSrc ?? fallbackUrl,
+      isNft: nftMediaSrc !== null,
     }),
 
-    [fallbackUrl, nft, rawImageSrc],
+    [fallbackUrl, nftMediaSrc, rawImageSrc],
   );
 };

@@ -65,7 +65,7 @@ const baseSchema = z.object({
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must be less than 100 characters"),
 
-  description: z.string().max(250, "Description must be less than 250 characters").optional(),
+  description: z.string().max(500, "Description must be less than 250 characters").optional(),
   ft_id: ftIdSchema,
   target_amount: positiveNumberParser.describe("Target Amount of the campaign"),
   min_amount: positiveNumberParser.optional().describe("Minimum Amount of the Campaign"),
