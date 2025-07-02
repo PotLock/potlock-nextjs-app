@@ -18,6 +18,7 @@ export const useWalletUserSession = (): WalletUserSession => {
   const daoAccountId = actAsDao.defaultAddress;
   const isDaoAccountIdValid = useMemo(() => isAccountId(daoAccountId), [daoAccountId]);
   const isDaoRepresentative = actAsDao.toggle && isDaoAccountIdValid;
+  // TODO: Check DAO member permissions?
 
   const { isLoading: isHumanVerificationStatusLoading, data: isHuman } =
     sybilResistanceContractHooks.useIsHuman({
