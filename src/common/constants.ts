@@ -6,8 +6,9 @@ import type { SWRConfiguration } from "swr";
 
 import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
+import { version as FRAMEWORK_VERSION } from "../../package.json";
 
-export { PLATFORM_NAME };
+export { PLATFORM_NAME, FRAMEWORK_VERSION };
 
 export const IS_CLIENT = typeof window !== "undefined";
 
@@ -28,6 +29,7 @@ export const APP_BOS_COUNTERPART_URL = "https://bos.potlock.org";
 export const APP_METADATA: Metadata & {
   title: string;
   description: NonNullable<Metadata["description"]>;
+  other: { version: string };
   manifest: NonNullable<Metadata["manifest"]>;
 
   openGraph: {
@@ -43,6 +45,7 @@ export const APP_METADATA: Metadata & {
 } = {
   title: PLATFORM_NAME,
   description: "Bringing public goods funding to the table, built on NEAR",
+  other: { version: FRAMEWORK_VERSION },
   manifest: "/manifest.json",
 
   icons: {
@@ -197,3 +200,13 @@ export const SUPPORTED_FTS: Record<
         .toFixed(decimals || 2),
   },
 };
+
+console.info(`
+  ___  ___ _____ _    ___   ___ _  __
+ | _ \\/ _ \\_   _| |  / _ \\ / __| |/ /
+ |  _/ (_) || | | |_| (_) | (__| ' < 
+ |_|  \\___/ |_| |____\\___/ \\___|_|\\_\\
+                                     
+  version: ${FRAMEWORK_VERSION}
+
+`);
