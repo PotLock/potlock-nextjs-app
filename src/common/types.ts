@@ -6,43 +6,99 @@ import { Network } from "@wpdas/naxios";
 import { Account } from "near-api-js";
 import { SWRConfiguration } from "swr";
 
+export enum FeatureId {
+  /**
+   * Donation to a single account using fungible token.
+   */
+  FtDonation = "FtDonation",
+
+  /**
+   * Donation to a pot using fungible token.
+   */
+  PotFtDonation = "PotFtDonation",
+
+  /**
+   * Donation to a single account using blockchain's native token.
+   */
+  DirectNativeTokenDonation = "DirectNativeTokenDonation",
+
+  /**
+   * As a User, I want to be able to register on the platform and update my profile details
+   */
+  ProfileConfiguration = "ProfileConfiguration",
+
+  /**
+   * As a User, I want to be able to add donations to my cart
+   */
+  Cart = "Cart",
+}
+
+export type FeatureFlags = { isEnabled: boolean };
+
+export type Feature = FeatureFlags & {
+  id: FeatureId;
+  name: string;
+};
+
+export type FeatureRegistry = Record<FeatureId, Feature>;
+
 export type AccountId = Account["accountId"];
 
 export interface ByAccountId {
   accountId: AccountId;
 }
 
+export type ByContractAccountId = {
+  contractAccountId: AccountId;
+};
+
 export type ContractConfig = ByAccountId & {};
 
 export type EnvConfig = {
+  platformName: string;
   network: Network;
   contractMetadata: { version: string; repoUrl: string };
   indexer: { api: { endpointUrl: string } };
 
-  deFi?: {
-    refFinance?: {
+  core: {
+    campaigns: { contract: { accountId: string } };
+    donation: { contract: ContractConfig };
+    lists: { contract: ContractConfig };
+    potFactory: { contract: ContractConfig };
+    sybil: { app: { url: string }; contract: ContractConfig };
+    voting: { contract: ContractConfig };
+  };
+
+  social: { app: { url: string }; contract: ContractConfig };
+
+  deFi: {
+    metapool: {
+      liquidStakingContract: ContractConfig;
+    };
+
+    refFinance: {
       exchangeContract: ContractConfig;
     };
   };
 
-  campaigns: { contract: { accountId: string } };
-  donation: { contract: ContractConfig };
-  lists: { contract: ContractConfig };
-  potFactory: { contract: ContractConfig };
-  sybil: { app: { url: string }; contract: ContractConfig };
-  social: { app: { url: string }; contract: ContractConfig };
+  features: FeatureRegistry;
 };
 
 export type { infer as FromSchema } from "zod";
 
-export type UnionFromStringList<ListOfMembers extends string[]> =
-  ListOfMembers[number];
+export type UnionFromStringList<ListOfMembers extends string[]> = ListOfMembers[number];
+
+export type IndivisibleUnits = string;
 
 export type ClientConfig = { swr?: SWRConfiguration };
 
-export interface ConditionalExecution {
+export interface ConditionalActivation {
   enabled?: boolean;
 }
+
+export type LiveUpdateParams = {
+  live?: boolean;
+};
 
 export type ContractMetadata = {
   latestSourceCodeCommitHash: null | string;
@@ -53,11 +109,14 @@ export interface ByStringId {
 }
 
 /**
- * Either "NEAR" or FT contract account id.
+ * Either "near" or FT contract account id.
  */
 export type TokenId = "near" | AccountId;
 
 export interface ByTokenId {
+  /**
+   * Either "near" or FT contract account id.
+   */
   tokenId: TokenId;
 }
 
@@ -68,6 +127,7 @@ export interface ByListId {
 }
 
 export type CampaignId = number;
+
 export interface ByCampaignId {
   campaignId: CampaignId;
 }
@@ -89,12 +149,20 @@ export type TxExecutionStatus =
   | "EXECUTED"
   | "FINAL";
 
-export type FungibleTokenMetadata = {
-  spec: string;
-  name: string;
-  symbol: string;
-  icon: string | null;
-  reference: string | null;
-  reference_hash: string | null;
-  decimals: number;
+export enum ChronologicalSortOrder {
+  recent = "recent",
+  older = "older",
+}
+
+export type ChronologicalSortOrderVariant = keyof typeof ChronologicalSortOrder;
+
+export type BasicRequirement = {
+  title: string;
+  hasFulfillmentAssessmentInputs?: boolean;
+  isFulfillmentAssessmentPending?: boolean;
+  isSatisfied: boolean;
 };
+
+export type ClearanceCheckResult =
+  | { requirements: BasicRequirement[]; isEveryRequirementSatisfied: boolean; error: null }
+  | { requirements: null; isEveryRequirementSatisfied: false; error: Error };

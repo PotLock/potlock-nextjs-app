@@ -1,5 +1,7 @@
-import * as donationClient from "./client";
+import * as donationContractClient from "./client";
+import * as donationContractHooks from "./hooks";
 
-export * from "./interface.d";
+export type * from "./hooks";
+export * from "./interfaces";
 
-export { donationClient };
+export { donationContractClient, donationContractHooks };

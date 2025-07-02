@@ -1,7 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2022,
     "sourceType": "module"
   },
   "env": {
@@ -11,19 +11,75 @@
     "@typescript-eslint",
     "prettier",
     "import",
-    "testing-library"
+    "testing-library",
+    "@stylistic",
+    "no-iife"
   ],
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    // configuration for "import" plugin
     "plugin:import/recommended",
     "plugin:import/typescript",
     "plugin:prettier/recommended",
     "prettier"
   ],
   "rules": {
+    "no-iife/no-iife": "warn",
+    "@stylistic/padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-const"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-const",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-let"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-let",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-export"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-export",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-block-like"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-block-like",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-expression"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-expression",
+        "next": "*"
+      }
+    ],
+    "no-nested-ternary": "warn",
     "@next/next/no-img-element": "off",
     "camelcase": [
       "off",
@@ -34,6 +90,7 @@
     ],
     "@typescript-eslint/no-explicit-any": 1,
     "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/ban-ts-comment": "error",
     "prettier/prettier": [
       "error",
       {
@@ -55,9 +112,7 @@
         "allowSeparatedGroups": true
       }
     ],
-    // turn on errors for missing imports
     "import/no-unresolved": "error",
-    // "import/no-named-as-default-member": "off",
     "import/order": [
       "error",
       {
@@ -91,6 +146,9 @@
         }
       }
     ],
+    "import/no-default-export": [
+      "warn"
+    ],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
@@ -99,5 +157,39 @@
         "varsIgnorePattern": "^_"
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "./*"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": [
+        "./**/global.d.ts"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": [
+        "src/pages/**/*"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": [
+        "src/app/**/{page,layout,not-found}.tsx"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    }
+  ]
 }

@@ -1,209 +1,378 @@
-import { ReactElement, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
+import { MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
-import ArrowDown from "@/common/assets/svgs/ArrowDown";
-import { Payout } from "@/common/contracts/core";
-import { getPayouts } from "@/common/contracts/core/pot";
-import { yoctoNearToFloat } from "@/common/lib";
-import { AccountProfilePicture } from "@/modules/core";
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
+import { indivisibleUnitsToBigNum } from "@/common/lib";
 import {
-  PayoutsChallenges,
-  PotLayout,
-  useOrderedDonations,
-} from "@/modules/pot";
-import {
-  AlertSvg,
-  Container,
-  Header,
-  HeaderItem,
-  HeaderItemText,
-  InfoContainer,
-  MobileAmount,
-  Row,
-  RowItem,
-  RowText,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  LabeledIcon,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
   SearchBar,
-  SearchBarContainer,
-  SearchIcon,
-  TableContainer,
-  WarningText,
-} from "@/modules/pot/styles/payouts-styles";
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/common/ui/layout/components";
+import ArrowDown from "@/common/ui/layout/svg/ArrowDown";
+import { cn } from "@/common/ui/layout/utils";
+import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
+import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
+import {
+  PotLifecycleStageTagEnum,
+  PotPayoutChallenges,
+  usePotFeatureFlags,
+  usePotLifecycle,
+  usePotPayoutLookup,
+} from "@/entities/pot";
+import {
+  PFPayoutJustificationPublicationAction,
+  PfPayoutReleaseAction,
+} from "@/features/proportional-funding";
+import { PotLayout } from "@/layout/pot/components/layout";
+import { PotPayoutManager } from "@/layout/pot/components/payout-manager";
 
-const MAX_ACCOUNT_ID_DISPLAY_LENGTH = 10;
+const PayoutEntriesSkeleton: React.FC = () =>
+  Array.from({ length: 10 }).map((_, index) => (
+    <div key={index} className="mt-3 w-full">
+      <Skeleton className="h-10 w-full" />
+    </div>
+  ));
 
-const PayoutsTab = () => {
+export default function PotPayoutsTab() {
   const router = useRouter();
-  const { potId } = router.query as {
-    potId: string;
-  };
+  const { potId } = router.query as { potId: string };
+  const potFeatures = usePotFeatureFlags({ potId });
+  const potLifecycle = usePotLifecycle({ potId });
+  const { data: potSnapshot, mutate: refetchPotSnapshot } = indexer.usePot({ potId });
+  const { data: token } = useFungibleToken({ tokenId: NATIVE_TOKEN_ID });
 
-  const { data: potDetail } = indexer.usePot({ potId });
-  const { donations: allDonations } = useOrderedDonations(potId);
+  const isFunctionalityAvailable = useMemo(
+    () =>
+      potLifecycle.currentStage?.tag !== PotLifecycleStageTagEnum.Application &&
+      potLifecycle.currentStage?.tag !== PotLifecycleStageTagEnum.Matching,
 
-  const [allPayouts, setAllPayouts] = useState<Payout[]>([]);
-  const [filteredPayouts, setFilteredPayouts] = useState<Payout[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      const payouts = await getPayouts({ potId });
-      setAllPayouts(payouts);
-      setFilteredPayouts(payouts);
-    })();
-  }, [potId]);
-
-  const searchPayouts = (searchTerm: string) => {
-    // filter payouts that match the search term (donor_id, project_id)
-    const _filteredPayouts = allPayouts.filter((payout) => {
-      const { project_id } = payout;
-      const searchFields = [project_id];
-      return searchFields.some((field) =>
-        field.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    });
-    _filteredPayouts.sort((a: any, b: any) => {
-      // sort by matching pool allocation, highest to lowest
-      return b.amount - a.amount;
-    });
-    return _filteredPayouts;
-  };
-
-  return (
-    <Container>
-      {/* <FlaggedAccounts /> */}
-      <PayoutsChallenges potDetail={potDetail} />
-
-      {!potDetail?.all_paid_out && (
-        <InfoContainer>
-          <AlertSvg
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.25 4.25H8.75V5.75H7.25V4.25ZM7.25 7.25H8.75V11.75H7.25V7.25ZM8 0.5C3.86 0.5 0.5 3.86 0.5 8C0.5 12.14 3.86 15.5 8 15.5C12.14 15.5 15.5 12.14 15.5 8C15.5 3.86 12.14 0.5 8 0.5ZM8 14C4.6925 14 2 11.3075 2 8C2 4.6925 4.6925 2 8 2C11.3075 2 14 4.6925 14 8C14 11.3075 11.3075 14 8 14Z"
-              fill="#EE8949"
-            />
-          </AlertSvg>
-
-          <WarningText>
-            {potDetail?.cooldown_end
-              ? "These payouts have been set on the contract but have not been paid out yet."
-              : "These payouts are estimated amounts only and have not been set on the contract yet."}
-          </WarningText>
-        </InfoContainer>
-      )}
-      <TableContainer>
-        <Header>
-          <HeaderItem className="project">
-            <HeaderItemText>Project</HeaderItemText>
-          </HeaderItem>
-          <HeaderItem>
-            <HeaderItemText>Total Raised</HeaderItemText>
-          </HeaderItem>
-          <HeaderItem>
-            <HeaderItemText>Unique Donors</HeaderItemText>
-          </HeaderItem>
-          <HeaderItem>
-            <HeaderItemText>Pool Allocation</HeaderItemText>
-          </HeaderItem>
-        </Header>
-        <SearchBarContainer>
-          <SearchIcon>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15.7549 14.2549H14.9649L14.6849 13.9849C15.6649 12.8449 16.2549 11.3649 16.2549 9.75488C16.2549 6.16488 13.3449 3.25488 9.75488 3.25488C6.16488 3.25488 3.25488 6.16488 3.25488 9.75488C3.25488 13.3449 6.16488 16.2549 9.75488 16.2549C11.3649 16.2549 12.8449 15.6649 13.9849 14.6849L14.2549 14.9649V15.7549L19.2549 20.7449L20.7449 19.2549L15.7549 14.2549ZM9.75488 14.2549C7.26488 14.2549 5.25488 12.2449 5.25488 9.75488C5.25488 7.26488 7.26488 5.25488 9.75488 5.25488C12.2449 5.25488 14.2549 7.26488 14.2549 9.75488C14.2549 12.2449 12.2449 14.2549 9.75488 14.2549Z"
-                fill="#C7C7C7"
-              />
-            </svg>
-          </SearchIcon>
-          <SearchBar
-            placeholder="Search payouts"
-            onChange={({ target: { value } }) => {
-              const filteredPayouts = searchPayouts(value);
-              setFilteredPayouts(filteredPayouts);
-            }}
-          />
-        </SearchBarContainer>
-        {!filteredPayouts ? (
-          <div>Loading</div>
-        ) : filteredPayouts.length === 0 ? (
-          <Row style={{ padding: "12px" }}>No payouts to display</Row>
-        ) : (
-          filteredPayouts.map((payout, index) => {
-            const { project_id, amount } = payout;
-
-            const donationsForProject = allDonations.filter(
-              (donation) => donation.recipient?.id === project_id,
-            );
-            const uniqueDonors: Record<string, any> = {};
-            donationsForProject.forEach((donation) => {
-              if (!uniqueDonors[donation.donor.id]) {
-                uniqueDonors[donation.donor.id] = true;
-              }
-            });
-            const donorCount = Object.keys(uniqueDonors).length;
-            const totalAmount = donationsForProject
-              .reduce(
-                (previous, donation) =>
-                  previous + yoctoNearToFloat(donation.net_amount),
-                0,
-              )
-              .toFixed(2);
-
-            return (
-              <Row key={index}>
-                <RowItem className="project">
-                  <AccountProfilePicture
-                    accountId={project_id}
-                    className="h-[24px] w-[24px]"
-                  />
-                  <a
-                    href={`?tab=project&projectId=${project_id}`}
-                    target={"_blank"}
-                  >
-                    {project_id.length > MAX_ACCOUNT_ID_DISPLAY_LENGTH
-                      ? project_id.slice(0, MAX_ACCOUNT_ID_DISPLAY_LENGTH) +
-                        "..."
-                      : project_id}
-                  </a>
-                </RowItem>
-                {/* Total Raised */}
-                <RowItem className="amount">
-                  <RowText>{totalAmount}N</RowText>
-                </RowItem>
-                <input type="checkbox" className="toggle-check" />
-                <MobileAmount>
-                  <span>{totalAmount}N</span> raised from
-                  <span>{donorCount}</span> unique donors
-                </MobileAmount>
-                {/* Total Unique Donors */}
-                <RowItem className="donors">
-                  <RowText>{donorCount}</RowText>
-                </RowItem>
-                {/* Matching Pool Allocation */}
-                <RowItem>
-                  <RowText>
-                    {yoctoNearToFloat(amount)}N <span>Allocated</span>
-                  </RowText>
-                </RowItem>
-                <ArrowDown />
-              </Row>
-            );
-          })
-        )}
-      </TableContainer>
-    </Container>
+    [potLifecycle.currentStage?.tag],
   );
-};
 
-PayoutsTab.getLayout = function getLayout(page: ReactElement) {
+  const {
+    isPayoutListLoading,
+    setPayoutSearchTerm,
+    setPayoutPageNumber,
+    payouts,
+    refetchPayouts,
+    payoutPageNumber,
+    totalPayoutCount,
+  } = usePotPayoutLookup({ potId });
+
+  const isFunctionalityBlocked = useMemo(
+    () => !isPayoutListLoading && !isFunctionalityAvailable,
+    [isFunctionalityAvailable, isPayoutListLoading],
+  );
+
+  const [totalChallenges, setTotalChallenges] = useState<number>(0);
+  const [showChallenges, setShowChallenges] = useState<boolean>(false);
+
+  const pageNumberButtons = useMemo(() => {
+    const totalPages = Math.ceil(totalPayoutCount / 10);
+    const pages: (number | "ellipsis")[] = [];
+
+    if (totalPages <= 7) {
+      // Show all pages if total is 7 or less
+      pages.push(...Array.from({ length: totalPages }, (_, i) => i + 1));
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      if (payoutPageNumber <= 4) {
+        // Near start
+        pages.push(2, 3, 4, 5, "ellipsis", totalPages);
+      } else if (payoutPageNumber >= totalPages - 3) {
+        // Near end
+        pages.push(
+          "ellipsis",
+          totalPages - 4,
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages,
+        );
+      } else {
+        // Middle
+        pages.push(
+          "ellipsis",
+          payoutPageNumber - 1,
+          payoutPageNumber,
+          payoutPageNumber + 1,
+          "ellipsis",
+          totalPages,
+        );
+      }
+    }
+
+    return pages.map((page, i) => (
+      <PaginationItem key={i}>
+        {page === "ellipsis" ? (
+          <PaginationEllipsis />
+        ) : (
+          <PaginationLink
+            onClick={() => setPayoutPageNumber(page)}
+            className={cn({
+              "border-black font-bold": payoutPageNumber === page,
+            })}
+          >
+            {page}
+          </PaginationLink>
+        )}
+      </PaginationItem>
+    ));
+  }, [payoutPageNumber, setPayoutPageNumber, totalPayoutCount]);
+
+  const numberOfPages = useMemo(() => Math.ceil(totalPayoutCount / 10), [totalPayoutCount]);
+
+  return isFunctionalityBlocked ? (
+    <div className="h-100 flex w-full flex-col">
+      <Alert variant="neutral">
+        <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+        <AlertTitle>{"Not Available"}</AlertTitle>
+
+        <AlertDescription>
+          {"Payouts can only be processed after the matching period completion."}
+        </AlertDescription>
+      </Alert>
+    </div>
+  ) : (
+    <div
+      className={cn(
+        "m-0 flex w-full flex-col-reverse items-start justify-between gap-3",
+        "p-0 transition-all duration-500 ease-in-out md:flex-row",
+      )}
+    >
+      <div
+        className={cn(
+          "flex w-full flex-col items-center justify-between",
+          "p-0 transition-all duration-500 ease-in-out",
+          { "md:w-[65%]": showChallenges },
+        )}
+      >
+        <div className="mb-8 flex w-full flex-row justify-between">
+          <div className="flex w-full flex-wrap items-center justify-between">
+            <h2 className="text-xl font-semibold">
+              {payouts?.length ? "Payouts" : "Estimated Payouts"}
+            </h2>
+          </div>
+
+          {totalChallenges > 0 && (
+            <div
+              onClick={() => setShowChallenges(!showChallenges)}
+              className={cn(
+                "flex cursor-pointer flex-row items-center",
+                "transition-all duration-500 ease-in-out hover:opacity-60",
+              )}
+            >
+              <p className="text-sm font-medium">{showChallenges ? "Hide" : "Show"} Challenges</p>
+
+              <p
+                className={cn(
+                  "ml-1 flex h-5 w-5 items-center justify-center rounded-full",
+                  "bg-red-500 p-1 text-[12px] font-semibold text-white",
+                )}
+              >
+                {totalChallenges}
+              </p>
+
+              <ArrowDown
+                className={cn("ml-3 block transition-all duration-300 ease-in-out", {
+                  "md:rotate-265 rotate-180": showChallenges,
+                  "rotate-45 md:rotate-90": !showChallenges,
+                })}
+              />
+            </div>
+          )}
+        </div>
+
+        <div
+          className={cn(
+            "block w-full transition-all duration-500 ease-in-out",
+            "md:hidden md:w-[33%] md:max-w-[33%]",
+            { hidden: !showChallenges },
+          )}
+        >
+          <PotPayoutChallenges potDetail={potSnapshot} setTotalChallenges={setTotalChallenges} />
+        </div>
+
+        <div className="mb-16 flex w-full flex-col items-start gap-6">
+          {!potSnapshot?.all_paid_out && (
+            <>
+              {potFeatures.hasPFMechanism && (
+                <>
+                  <PFPayoutJustificationPublicationAction {...{ potId }} />
+                  <PfPayoutReleaseAction onSuccess={refetchPotSnapshot} {...{ potId }} />
+                </>
+              )}
+
+              <Alert variant="neutral">
+                <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+                <AlertTitle>{"Justification For Payout Changes"}</AlertTitle>
+
+                <AlertDescription className="flex flex-col gap-4">
+                  <span>
+                    {(payouts?.length ?? 0) > 0
+                      ? "These payouts have been set on the contract but have not been paid out yet."
+                      : "These payouts are estimated amounts only and have not been set on the contract yet."}
+                  </span>
+                </AlertDescription>
+              </Alert>
+            </>
+          )}
+
+          {(payouts?.length ?? 0) === 0 ? (
+            <PotPayoutManager onSubmitSuccess={refetchPayouts} {...{ potId }} />
+          ) : (
+            <>
+              <SearchBar
+                placeholder="Search Projects"
+                onChange={({ target: { value } }) => setPayoutSearchTerm(value)}
+              />
+
+              <div className="flex w-full flex-col flex-nowrap items-center overflow-x-auto">
+                <div className="flex w-full justify-between bg-neutral-50 text-xs text-neutral-500">
+                  <div className="mr-a inline-flex h-10 items-center justify-start gap-2 px-4 py-2">
+                    <span className="font-600 shrink grow basis-0 uppercase leading-none">
+                      {"Project"}
+                    </span>
+                  </div>
+
+                  <span className="flex h-10 items-center px-4 py-2">
+                    <span className="w-50 font-600 text-end uppercase leading-none">
+                      {"Pool Allocation"}
+                    </span>
+                  </span>
+                </div>
+
+                {isPayoutListLoading ? (
+                  <PayoutEntriesSkeleton />
+                ) : (
+                  <>
+                    {!isPayoutListLoading && (payouts?.length ?? 0) === 0 ? (
+                      <div
+                        className={cn(
+                          "relative flex w-full flex-row items-center justify-between gap-8",
+                          "p-3 md:flex-wrap md:gap-2",
+                        )}
+                      >
+                        {"No payouts to display"}
+                      </div>
+                    ) : (
+                      payouts?.map(({ id, recipient: { id: project_id }, amount }) => {
+                        const amountBig = indivisibleUnitsToBigNum(
+                          amount,
+                          token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+                        );
+
+                        return (
+                          <div
+                            key={id}
+                            className={cn(
+                              "relative flex w-full flex-row items-center justify-between",
+                              "gap-8 p-4 md:flex-wrap md:gap-2",
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                "flex w-[110px] flex-1 flex-row items-center justify-start gap-4",
+                                "transition duration-200 hover:no-underline",
+                              )}
+                            >
+                              <AccountProfilePicture
+                                accountId={project_id}
+                                className="h-[24px] w-[24px]"
+                              />
+
+                              <AccountHandle
+                                accountId={project_id}
+                                className="font-semibold text-gray-800 hover:text-red-600"
+                              />
+                            </div>
+
+                            <div className="inline-flex h-16 items-center overflow-hidden px-4 py-2 pr-0">
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <LabeledIcon
+                                    positioning="icon-text"
+                                    caption={`~ ${amountBig.toFixed(2)}`}
+                                    classNames={{ root: "w-50 justify-end", caption: "font-600" }}
+                                  >
+                                    {token && <TokenIcon size="xs" tokenId={token.tokenId} />}
+                                  </LabeledIcon>
+                                </TooltipTrigger>
+
+                                <TooltipContent>
+                                  <span className="font-600">
+                                    {`${amountBig.toNumber()} ${token?.metadata.symbol}`}
+                                  </span>
+                                </TooltipContent>
+                              </Tooltip>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </>
+                )}
+              </div>
+
+              {numberOfPages > 1 && (
+                <Pagination className="mt-6">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() => setPayoutPageNumber((prev) => Math.max(prev - 1, 1))}
+                      />
+                    </PaginationItem>
+
+                    {pageNumberButtons}
+
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={() =>
+                          setPayoutPageNumber((prev) =>
+                            Math.min(prev + 1, Math.ceil(totalPayoutCount / 10)),
+                          )
+                        }
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          showChallenges ? "md:block" : "hidden",
+          "hidden w-full transition-all duration-500 ease-in-out md:w-[33%]",
+        )}
+      >
+        <PotPayoutChallenges potDetail={potSnapshot} setTotalChallenges={setTotalChallenges} />
+      </div>
+    </div>
+  );
+}
+
+PotPayoutsTab.getLayout = function getLayout(page: React.ReactNode) {
   return <PotLayout>{page}</PotLayout>;
 };
-
-export default PayoutsTab;

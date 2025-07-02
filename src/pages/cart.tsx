@@ -1,4 +1,4 @@
-import { CartWidget } from "@/modules/cart";
+import { CartWidget } from "@/entities/cart";
 
 export default function CartPage() {
   return (

@@ -1,23 +1,26 @@
 import useSWR from "swr";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { ByTokenId } from "@/common/types";
+import type { ConditionalActivation } from "@/common/types";
 
-import { CLIENT_CONFIG, client } from "./client";
+import { client } from "./client";
 
-export const useTokenUsdPrice = ({ tokenId }: Partial<ByTokenId>) => {
-  const key = tokenId ? tokenId.toLowerCase() : null;
+export const useNativeTokenUsdPrice = (
+  { enabled = true }: ConditionalActivation | undefined = { enabled: true },
+) =>
+  useSWR(
+    () => (!enabled ? null : ["oneNativeTokenUsdPrice", NATIVE_TOKEN_ID.toLowerCase()]),
 
-  return useSWR(
-    tokenId === NATIVE_TOKEN_ID
-      ? `/simple/price?ids=${key}&vs_currencies=usd`
-      : `/simple/token_price?vs_currencies=usd&contract_addresses=${key}`,
+    ([_queryKeyHead, tokenId]) =>
+      client
+        .get(`/simple/price?ids=${tokenId}&vs_currencies=usd`)
+        .then((response: { data: { [key: string]: { usd: number } } }) =>
+          response.data[tokenId].usd.toString(),
+        ),
 
-    (url: string) =>
-      client.get(url).then((response) => response.data[key ?? "unknown"].usd),
-    { ...CLIENT_CONFIG.swr, enabled: key !== null },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    },
   );
-};
-
-export const useOneNearUsdPrice = () =>
-  useTokenUsdPrice({ tokenId: NATIVE_TOKEN_ID });

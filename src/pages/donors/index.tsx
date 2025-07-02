@@ -1,16 +1,15 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { Lora } from "next/font/google";
 import Image from "next/image";
 
-import { coingecko } from "@/common/api/coingecko";
-import { Account } from "@/common/api/indexer";
-import { useDonors } from "@/common/api/indexer/hooks";
-import { NearIcon } from "@/common/assets/svgs";
-import { daysAgo } from "@/common/lib";
-import { FilterChip, SearchBar, ToggleGroup } from "@/common/ui/components";
-import { AccountOption } from "@/modules/core";
-import { DonationLeaderboardEntry } from "@/modules/donation";
+import { coingeckoHooks } from "@/common/api/coingecko";
+import { Account, indexer } from "@/common/api/indexer";
+import { daysAgo, parseNumber } from "@/common/lib";
+import { FilterChip, SearchBar, ToggleGroup } from "@/common/ui/layout/components";
+import { NearIcon } from "@/common/ui/layout/svg";
+import { AccountListItem } from "@/entities/_shared/account";
+import { DonationLeaderboardEntry } from "@/features/donation";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -206,18 +205,20 @@ export default function LeaderboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchActivity, setSearchActivity] = useState("");
   const [timeFilter, setTimeFilter] = useState("All time");
-  const [selectedTab, setSelectedTab] = useState<
-    "donors" | "sponsors" | "activities"
-  >("activities");
+
+  const [selectedTab, setSelectedTab] = useState<"donors" | "sponsors" | "activities">(
+    "activities",
+  );
+
   const toggleTab = (tab: "donors" | "sponsors" | "activities") => {
     setSelectedTab(tab);
   };
 
-  const { data: donors } = useDonors({});
+  const { data: donors } = { data: [] }; // indexer.useDonors({});
 
   const sponsors: Participant[] = [];
-  const { data: priceOfOneNear } = coingecko.useOneNearUsdPrice();
-  const price = priceOfOneNear ?? 5.0;
+  const { data: priceOfOneNear } = coingeckoHooks.useNativeTokenUsdPrice();
+  const price = priceOfOneNear ? parseNumber(priceOfOneNear) : 0;
 
   console.log({ donors, priceOfOneNear });
 
@@ -237,19 +238,16 @@ export default function LeaderboardPage() {
     return idMatches || nameMatches;
   };
 
-  const renderLeaderboard = (
-    participants: Participant[],
-    type: "donor" | "sponsor",
-  ) => {
+  const renderLeaderboard = (participants: Participant[], type: "donor" | "sponsor") => {
     const data = type === "donor" ? [...(donors || [])] : [...participants];
 
     console.log("data now", data);
 
     return (
       <>
-        <div className="md:flex-row mx-auto flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pb-4 pt-10">
+        <div className="mx-auto flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pb-4 pt-10 md:flex-row">
           <SearchBar
-            className="md:w-40 text-gray-400"
+            className="text-gray-400 md:w-40"
             placeholder={`Search projects`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -258,9 +256,7 @@ export default function LeaderboardPage() {
             {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
               <FilterChip
                 key={filter}
-                variant={
-                  timeFilter === filter ? "brand-filled" : "brand-outline"
-                }
+                variant={timeFilter === filter ? "brand-filled" : "brand-outline"}
                 onClick={() => setTimeFilter(filter)}
                 className="text-sm"
               >
@@ -269,16 +265,14 @@ export default function LeaderboardPage() {
             ))}
           </div>
         </div>
-        <div className="pl-36px xl:overflow-x-unset h-300px md:w-full relative ml-[-36px]  w-full">
+        <div className="pl-36px xl:overflow-x-unset h-300px relative ml-[-36px] w-full  md:w-full">
           <div className="gap-20px absolute mb-8 grid w-full grid-flow-col overflow-x-scroll">
             {data
               ?.sort((a, b) => {
-                const aAmount = isAccount(a)
-                  ? a.total_donations_out_usd
-                  : a.amountUsd;
-                const bAmount = isAccount(b)
-                  ? b.total_donations_out_usd
-                  : b.amountUsd;
+                const aAmount = isAccount(a) ? a.total_donations_out_usd : a.amountUsd;
+
+                const bAmount = isAccount(b) ? b.total_donations_out_usd : b.amountUsd;
+
                 return bAmount - aAmount;
               })
               .slice(0, 3)
@@ -289,6 +283,7 @@ export default function LeaderboardPage() {
                       ? participant.id
                       : `${participant.id.substring(0, 16)}...${participant.id.substring(participant.id.length - 4)}`))
                   : participant.name;
+
                 return (
                   <DonationLeaderboardEntry
                     key={index}
@@ -298,8 +293,7 @@ export default function LeaderboardPage() {
                         ? (participant.near_social_profile_data?.image?.ipfs_cid
                             ? `https://ipfs.io/ipfs/${participant.near_social_profile_data?.image.ipfs_cid}`
                             : participant.near_social_profile_data?.image?.nft
-                              ? participant.near_social_profile_data?.image?.nft
-                                  ?.media
+                              ? participant.near_social_profile_data?.image?.nft?.media
                               : "https://picsum.photos/200/200/?blur") ||
                           "https://picsum.photos/200/200/?blur"
                         : participant.image
@@ -318,7 +312,7 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        <div className="md:block hidden rounded-2xl border border-gray-200  bg-white">
+        <div className="hidden rounded-2xl border border-gray-200 bg-white  md:block">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
@@ -360,8 +354,7 @@ export default function LeaderboardPage() {
                       </div>
                     </td>
                     <td className="ml-[-20px] whitespace-nowrap p-4">
-                      <AccountOption
-                        title="user Account"
+                      <AccountListItem
                         accountId={isAccount(donor) ? donor?.id : donor.name}
                         highlightOnHover={true}
                         isRounded={true}
@@ -384,17 +377,14 @@ export default function LeaderboardPage() {
                       </div>
                     </td>
                     <td className="fw-600 w-100px whitespace-nowrap p-4 text-right text-sm text-gray-950">
-                      ${" "}
-                      {isAccount(donor)
-                        ? donor.total_donations_out_usd
-                        : donor.amountUsd}
+                      $ {isAccount(donor) ? donor.total_donations_out_usd : donor.amountUsd}
                     </td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
-        <div className="p-16px md:hidden flex flex-col items-start gap-4">
+        <div className="p-16px flex flex-col items-start gap-4 md:hidden">
           {data?.map((participant, index) => (
             <div
               key={index}
@@ -408,8 +398,7 @@ export default function LeaderboardPage() {
                       isAccount(participant)
                         ? participant?.near_social_profile_data?.image?.ipfs_cid
                           ? `https://ipfs.near.social/ipfs/${participant.near_social_profile_data?.image?.ipfs_cid}`
-                          : participant.near_social_profile_data?.image?.url ||
-                            ""
+                          : participant.near_social_profile_data?.image?.url || ""
                         : participant.image
                     }
                     width={10}
@@ -423,16 +412,13 @@ export default function LeaderboardPage() {
                   <div className="ml-1">
                     <div className="font-500 text-sm text-gray-900">
                       {isAccount(participant)
-                        ? (participant?.near_social_profile_data?.name ??
-                          participant.id)
+                        ? (participant?.near_social_profile_data?.name ?? participant.id)
                         : participant.name}
                     </div>
                   </div>
                   <div className="whitespace-nowrap">
                     <div className="flex items-center">
-                      <span className="fw-50 text-sm text-gray-900">
-                        #{index + 1}
-                      </span>
+                      <span className="fw-50 text-sm text-gray-900">#{index + 1}</span>
                       {index === 4 ? (
                         <div className="ml-1 text-green-500" />
                       ) : (
@@ -485,22 +471,16 @@ export default function LeaderboardPage() {
 
   return (
     <div className="flex w-full flex-col">
-      <ToggleGroup
-        defaultValue="donors"
-        type="single"
-        className="mt-40px relative w-full"
-      >
-        <div className="mb-40px md:mb-64px md:overflow-x-auto absolute w-full overflow-x-scroll border-b border-t border-gray-200">
-          <div className="ml-20px md:ml-30px pt-16px md:w-fit grid grid-flow-col content-center items-center gap-x-4 px-4">
+      <ToggleGroup defaultValue="donors" type="single" className="mt-40px relative w-full">
+        <div className="mb-40px md:mb-64px absolute w-full overflow-x-scroll border-b border-t border-gray-200 md:overflow-x-auto">
+          <div className="ml-20px md:ml-30px pt-16px grid grid-flow-col content-center items-center gap-x-4 px-4 md:w-fit">
             {TABs.map((tab) => (
               <div
                 key={tab.name}
                 className={`py-10px px-16px text-#7B7B7B w-fit cursor-pointer text-center text-lg font-semibold ${
                   selectedTab === tab.name ? "border-b-2 border-black" : null
                 }`}
-                onClick={() =>
-                  toggleTab(tab.name as "donors" | "sponsors" | "activities")
-                }
+                onClick={() => toggleTab(tab.name as "donors" | "sponsors" | "activities")}
               >
                 <span
                   className={`inline whitespace-nowrap text-sm ${
@@ -522,19 +502,19 @@ export default function LeaderboardPage() {
         </div>
       </ToggleGroup>
       <div className="max-w-912px mx-auto flex w-full flex-col py-8">
-        <div className="md:py-16 md:px-0 mx-auto w-full flex-nowrap px-5 py-9">
+        <div className="mx-auto w-full flex-nowrap px-5 py-9 md:px-0 md:py-16">
           <div className="mx-auto w-full">
             {selectedTab === "activities" ? (
               <div className="w-full">
                 <h1
-                  className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
+                  className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
                 >
                   All Activities
                 </h1>
                 <>
-                  <div className="md:flex-row mx-auto flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pb-4 pt-10">
+                  <div className="mx-auto flex w-full flex-col flex-wrap justify-between gap-x-14 gap-y-4 pb-4 pt-10 md:flex-row">
                     <SearchBar
-                      className="md:w-40 text-gray-400"
+                      className="text-gray-400 md:w-40"
                       placeholder={`Search projects`}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -543,11 +523,7 @@ export default function LeaderboardPage() {
                       {["All time", "1Y", "30D", "1W", "1D"].map((filter) => (
                         <FilterChip
                           key={filter}
-                          variant={
-                            timeFilter === filter
-                              ? "brand-filled"
-                              : "brand-outline"
-                          }
+                          variant={timeFilter === filter ? "brand-filled" : "brand-outline"}
                           onClick={() => setTimeFilter(filter)}
                           className="text-sm"
                         >
@@ -572,7 +548,7 @@ export default function LeaderboardPage() {
                               height={10}
                             />
                             <h1
-                              className="w-100px md:w-fit md:overflow-visible truncate"
+                              className="w-100px truncate md:w-fit md:overflow-visible"
                               title={activity.sender}
                             >
                               {activity.sender}
@@ -585,9 +561,7 @@ export default function LeaderboardPage() {
                             <div>
                               <div className="gap-8px flex items-center text-sm text-gray-900">
                                 <NearIcon className="w-18px h-18px" />{" "}
-                                <span className="font-600 m-0 pt-[2px]">
-                                  {activity.amount}
-                                </span>
+                                <span className="font-600 m-0 pt-[2px]">{activity.amount}</span>
                               </div>
                             </div>
                             <div className="ml-4 text-sm text-gray-600">to</div>
@@ -603,7 +577,7 @@ export default function LeaderboardPage() {
                               height={10}
                             />
                             <h1
-                              className="w-100px md:w-fit md:overflow-visible truncate"
+                              className="w-100px truncate md:w-fit md:overflow-visible"
                               title={activity.receiver}
                             >
                               {activity.receiver}
@@ -623,7 +597,7 @@ export default function LeaderboardPage() {
             {selectedTab === "donors" ? (
               <div className="w-full">
                 <h1
-                  className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
+                  className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
                 >
                   Donor Leaderboard
                 </h1>
@@ -633,7 +607,7 @@ export default function LeaderboardPage() {
             {selectedTab === "sponsors" ? (
               <div className="w-full">
                 <h1
-                  className={`md:text-5xl md:leading-[40px] md:tracking-[-1.68px] font-lora text-3xl font-semibold tracking-[-1.12px] ${lora.variable}`}
+                  className={`font-lora text-3xl font-semibold tracking-[-1.12px] md:text-5xl md:leading-[40px] md:tracking-[-1.68px] ${lora.variable}`}
                 >
                   Sponsor Leaderboard
                 </h1>

@@ -1,14 +1,14 @@
-import { PageWithBanner } from "@/common/ui/components";
-import { CampaignForm } from "@/modules/campaigns/components/CampaignForm";
-import { useCampaignDeploymentRedirect } from "@/modules/campaigns/hooks/redirects";
+import { PageWithBanner } from "@/common/ui/layout/components";
+import { CampaignEditor, useCampaignCreateOrUpdateRedirect } from "@/entities/campaign";
 
 export default function CreateCampaign() {
-  useCampaignDeploymentRedirect();
+  useCampaignCreateOrUpdateRedirect();
+
   return (
     <PageWithBanner>
-      <div className="relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden bg-hero">
+      <div className="bg-hero relative flex min-h-[400px] w-full flex-col justify-center overflow-hidden">
         <div className="flex w-full items-center justify-center text-center">
-          <h1 className="font-500 md:text-[32px]  mb-6 mt-0 font-lora text-[24px]">
+          <h1 className="font-500 font-lora  mb-6 mt-0 text-[24px] md:text-[32px]">
             Create Your Campaign to{" "}
             <span className="font-500 font-lora text-[64px] leading-[72px] tracking-tighter">
               Make a Difference
@@ -17,7 +17,8 @@ export default function CreateCampaign() {
           </h1>
         </div>
       </div>
-      <CampaignForm />
+
+      <CampaignEditor />
     </PageWithBanner>
   );
 }

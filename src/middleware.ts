@@ -1,43 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { rootPathnames, routeSelectors } from "./pathnames";
+
 export async function middleware(request: NextRequest) {
-  // Redirect to login page if not authenticated
+  const { pathname } = request.nextUrl;
 
-  // PROFILE - INIT
-  const isProfilePage = request.nextUrl.pathname.startsWith("/profile/");
-  if (
-    isProfilePage &&
-    (request.nextUrl.pathname.endsWith(".near") ||
-      request.nextUrl.pathname.endsWith(".testnet"))
-  ) {
-    return NextResponse.rewrite(`${request.url}/home`);
-  }
-  if (
-    isProfilePage &&
-    (request.nextUrl.pathname.endsWith(".near/") ||
-      request.nextUrl.pathname.endsWith(".testnet/"))
-  ) {
-    return NextResponse.rewrite(`${request.url}home`);
-  }
-  // PROFILE - END
+  if (pathname.startsWith(`${rootPathnames.PROFILE}/`)) {
+    const lastPathnameSegment = pathname.split("/").at(-1) ?? "noop";
+    const isImplicitAccountId = /^[a-fA-F0-9]{64}$/.test(lastPathnameSegment);
 
-  // POT - INIT
-  const isPotPage = request.nextUrl.pathname.startsWith("/pot/");
-  if (
-    isPotPage &&
-    (request.nextUrl.pathname.endsWith(".near") ||
-      request.nextUrl.pathname.endsWith(".testnet"))
-  ) {
-    return NextResponse.rewrite(`${request.url}/projects`);
+    if (
+      isImplicitAccountId ||
+      lastPathnameSegment.endsWith(".near") ||
+      lastPathnameSegment.endsWith(".testnet")
+    ) {
+      return NextResponse.rewrite(`${request.url}/home`);
+    } else if (
+      lastPathnameSegment.endsWith(".near/") ||
+      lastPathnameSegment.endsWith(".testnet/")
+    ) {
+      return NextResponse.rewrite(`${request.url}home`);
+    }
+  } else if (pathname.startsWith(`${rootPathnames.CAMPAIGN}/`)) {
+    try {
+      const campaignIdOrZero = parseInt(pathname.split("/").at(-1) ?? `${0}`, 10);
+
+      if (!isNaN(campaignIdOrZero) && campaignIdOrZero !== 0) {
+        return NextResponse.rewrite(
+          new URL(routeSelectors.CAMPAIGN_BY_ID_LEADERBOARD(campaignIdOrZero), request.url),
+        );
+      }
+    } finally {
+      /* empty */
+    }
   }
-  if (
-    isPotPage &&
-    (request.nextUrl.pathname.endsWith(".near/") ||
-      request.nextUrl.pathname.endsWith(".testnet/"))
-  ) {
-    return NextResponse.rewrite(`${request.url}projects`);
-  }
-  // POT - END
 
   return NextResponse.next();
 }

@@ -1,10 +1,8 @@
-import React from "react";
-
-import { PageWithBanner } from "@/common/ui/components";
-import { CreateListHero } from "@/modules/lists/components/CreateListHero";
-import { ListFormDetails } from "@/modules/lists/components/ListFormDetails";
+import { PageWithBanner } from "@/common/ui/layout/components";
+import { CreateListHero, ListFormDetails, useListDeploymentSuccessRedirect } from "@/entities/list";
 
 export default function Page() {
+  useListDeploymentSuccessRedirect();
   return (
     <PageWithBanner>
       <CreateListHero onEditPage={false} />

@@ -1,51 +1,69 @@
 import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
+import { styled } from "styled-components";
 
 import { SUPPORTED_FTS } from "@/common/constants";
 import { formatWithCommas, yoctoNearToFloat } from "@/common/lib";
-import Spinner from "@/common/ui/components/Spinner";
-import {
-  PotLayout,
-  SponsorsBoard,
-  SponsorsTable,
-  useOrderedDonations,
-} from "@/modules/pot";
-import { CustomDonationType } from "@/modules/pot/models/types";
-import {
-  Container,
-  TableContainer,
-} from "@/modules/pot/styles/sponsors-styles";
+import { Spinner } from "@/common/ui/layout/components";
+import { PotSponsorsBoard, PotSponsorsTable, useOrderedDonations } from "@/entities/pot";
+import { CustomDonationType } from "@/entities/pot/models/types";
+import { PotLayout } from "@/layout/pot/components/layout";
+
+// TODO: refactor using tailwind!
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  @media screen and (min-width: 375px) and (max-width: 768px) {
+    width: 99%;
+  }
+  @media screen and (max-width: 390px) {
+    width: 98%;
+  }
+`;
+
+// TODO: refactor using tailwind!
+export const TableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 35px;
+  padding-bottom: 1rem;
+`;
 
 const SponsorsTab = () => {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
   };
 
   const { donations } = useOrderedDonations(potId, true);
-  const [sponsorshipDonations, setSponsorshipDonations] = useState<
-    CustomDonationType[]
-  >([]);
+  const [sponsorshipDonations, setSponsorshipDonations] = useState<CustomDonationType[]>([]);
 
   useEffect(() => {
     const sponsorshipDonations: Record<string, CustomDonationType> = {};
     let total = 0;
+
     donations.forEach((donation) => {
       const key = donation.donor.id || donation.pot.account;
       const tokenName = donation.token.name || donation.token.account || "NEAR";
+
       const nearAmount =
         tokenName.toUpperCase() === "NEAR"
           ? yoctoNearToFloat(donation.net_amount)
           : parseFloat(
               formatWithCommas(
-                SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(
-                  donation.net_amount,
-                ),
+                SUPPORTED_FTS[tokenName.toUpperCase()].fromIndivisible(donation.net_amount),
               ),
             );
 
       total += nearAmount;
+
       if (!sponsorshipDonations[key]) {
         sponsorshipDonations[key] = {
           amount: nearAmount,
@@ -60,17 +78,15 @@ const SponsorsTab = () => {
     const sponsorshipDonationsValues = Object.values(sponsorshipDonations).sort(
       (a: any, b: any) => b.amount - a.amount,
     );
-    const sponsorshipDonationsList = sponsorshipDonationsValues.map(
-      (donation) => {
-        return {
-          ...donation,
-          // add % share of total to each donation
-          percentage_share: ((donation.amount / total) * 100)
-            .toFixed(2)
-            .replace(/[.,]00$/, ""),
-        };
-      },
-    );
+
+    const sponsorshipDonationsList = sponsorshipDonationsValues.map((donation) => {
+      return {
+        ...donation,
+        // add % share of total to each donation
+        percentage_share: ((donation.amount / total) * 100).toFixed(2).replace(/[.,]00$/, ""),
+      };
+    });
+
     setSponsorshipDonations(sponsorshipDonationsList);
   }, [donations]);
 
@@ -83,10 +99,10 @@ const SponsorsTab = () => {
 
   return (
     <Container>
-      <SponsorsBoard donations={sponsorshipDonations.slice(0, 6)} />
+      <PotSponsorsBoard donations={sponsorshipDonations.slice(0, 6)} />
 
       <TableContainer>
-        <SponsorsTable sponsors={sponsorshipDonations} />
+        <PotSponsorsTable sponsors={sponsorshipDonations} />
       </TableContainer>
     </Container>
   );

@@ -1,121 +1,130 @@
-import { ByAccountId, ByListId } from "@/common/types";
+import type { AxiosResponse } from "axios";
 
-import { POTLOCK_REQUEST_CONFIG } from "./config";
-import { swrHooks } from "./generated";
-import {
-  ByPotId,
-  V1AccountsActivePotsRetrieveParams,
-  V1AccountsDonationsReceivedRetrieveParams,
-  V1AccountsDonationsSentRetrieveParams,
-  V1AccountsPotApplicationsRetrieveParams,
-  V1AccountsRetrieveParams,
-  V1AccountsUpvotedListsRetrieveParams,
-  V1DonateContractConfigRetrieveParams,
-  V1DonorsRetrieveParams,
-  V1ListsRandomRegistrationRetrieveParams,
-  V1ListsRegistrationsRetrieveParams,
-  V1ListsRetrieveParams,
-  V1PotsApplicationsRetrieveParams,
-  V1PotsRetrieveParams,
-} from "./types";
+import { NOOP_STRING } from "@/common/constants";
+import { isAccountId, isEthereumAddress } from "@/common/lib";
+import { ByAccountId, ByListId, type ConditionalActivation } from "@/common/types";
+
+import * as generatedClient from "./internal/client.generated";
+import { INDEXER_CLIENT_CONFIG } from "./internal/config";
+import { ByPotId } from "./types";
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_stats_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_stats_retrieve
  */
 export const useStats = () => {
-  const queryResult = swrHooks.useV1StatsRetrieve(POTLOCK_REQUEST_CONFIG);
+  const queryResult = generatedClient.useV1StatsRetrieve(INDEXER_CLIENT_CONFIG);
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- *
-https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donors_retrieve
- */
-
-export const useDonors = ({ ...params }: V1DonorsRetrieveParams) => {
-  const queryResult = swrHooks.useV1DonorsRetrieve(
-    params,
-    POTLOCK_REQUEST_CONFIG,
-  );
-  return { ...queryResult, data: queryResult.data?.data.results };
-};
-
-/**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_donate_contract_config_retrieve
  */
 export const useDonationConfig = (
-  params?: V1DonateContractConfigRetrieveParams,
+  params?: generatedClient.V1DonateContractConfigRetrieveParams,
 ) => {
-  const queryResult = swrHooks.useV1DonateContractConfigRetrieve(
+  const queryResult = generatedClient.useV1DonateContractConfigRetrieve(
     params,
-    POTLOCK_REQUEST_CONFIG,
+    INDEXER_CLIENT_CONFIG,
   );
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve
  */
-export const useAccounts = (params?: V1AccountsRetrieveParams) => {
-  const queryResult = swrHooks.useV1AccountsRetrieve(params, {
-    ...POTLOCK_REQUEST_CONFIG,
+export const useAccounts = (params?: generatedClient.V1AccountsRetrieveParams) => {
+  const queryResult = generatedClient.useV1AccountsRetrieve(params, {
+    ...INDEXER_CLIENT_CONFIG,
   });
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve_2
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_retrieve_2
  */
-export const useAccount = ({ accountId }: Partial<ByAccountId>) => {
-  const queryResult = swrHooks.useV1AccountsRetrieve2(accountId ?? "unknown", {
-    ...POTLOCK_REQUEST_CONFIG,
-    swr: { enabled: Boolean(accountId) },
+export const useAccount = ({ accountId, enabled = true }: ByAccountId & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1AccountsRetrieve2(accountId, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled: enabled && isAccountId(accountId) && !isEthereumAddress(accountId) },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_active_pots_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_active_pots_retrieve
  */
 export const useAccountActivePots = ({
   accountId,
+  enabled = true,
+  onSuccess,
   ...params
-}: Partial<ByAccountId> & V1AccountsActivePotsRetrieveParams) => {
-  const queryResult = swrHooks.useV1AccountsActivePotsRetrieve(
-    accountId ?? "unknown",
-    params,
-    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
-  );
+}: ByAccountId &
+  generatedClient.V1AccountsActivePotsRetrieveParams &
+  ConditionalActivation & {
+    onSuccess?: (data: generatedClient.Pot[] | undefined) => void;
+  }) => {
+  const handleSuccessResults =
+    onSuccess === undefined
+      ? undefined
+      : (data: AxiosResponse<generatedClient.PaginatedPotsResponse, unknown>) =>
+          onSuccess(data.data.results);
+
+  const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(accountId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled, onSuccess: handleSuccessResults },
+  });
 
   return { ...queryResult, data: queryResult.data?.data.results };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_pot_applications_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_list_registrations_retrieve
+ */
+export const useAccountListRegistrations = ({
+  enabled = true,
+  accountId,
+  ...params
+}: ByAccountId &
+  generatedClient.V1AccountsListRegistrationsRetrieveParams &
+  ConditionalActivation) => {
+  const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(accountId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+
+    swr: {
+      enabled,
+      shouldRetryOnError: (err) => err.status !== 404,
+    },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_pot_applications_retrieve
  */
 export const useAccountPotApplications = ({
   accountId,
   ...params
-}: Partial<ByAccountId> & V1AccountsPotApplicationsRetrieveParams) => {
-  const queryResult = swrHooks.useV1AccountsPotApplicationsRetrieve(
-    accountId ?? "unknown",
+}: Partial<ByAccountId> & generatedClient.V1AccountsPotApplicationsRetrieveParams) => {
+  const queryResult = generatedClient.useV1AccountsPotApplicationsRetrieve(
+    accountId ?? NOOP_STRING,
     params,
-    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(accountId) } },
+    { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve
  */
-export const usePots = (params?: V1PotsRetrieveParams) => {
-  const queryResult = swrHooks.useV1PotsRetrieve(params, {
-    ...POTLOCK_REQUEST_CONFIG,
+export const usePots = (params?: generatedClient.V1PotsRetrieveParams) => {
+  const queryResult = generatedClient.useV1PotsRetrieve(params, {
+    ...INDEXER_CLIENT_CONFIG,
     swr: { refreshInterval: 3000 },
   });
 
@@ -123,59 +132,89 @@ export const usePots = (params?: V1PotsRetrieveParams) => {
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_applications_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_applications_retrieve
  */
 export const usePotApplications = ({
   potId,
   ...params
-}: Partial<ByPotId> & V1PotsApplicationsRetrieveParams) => {
-  const queryResult = swrHooks.useV1PotsApplicationsRetrieve(
-    potId ?? "unknown",
-    params,
-    { ...POTLOCK_REQUEST_CONFIG, swr: { enabled: Boolean(potId) } },
-  );
+}: Partial<ByPotId> & generatedClient.V1PotsApplicationsRetrieveParams) => {
+  const queryResult = generatedClient.useV1PotsApplicationsRetrieve(potId ?? NOOP_STRING, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled: Boolean(potId) },
+  });
 
-  return { ...queryResult, data: queryResult.data?.data.results };
+  return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_received_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_received_retrieve
  */
 export const useAccountDonationsReceived = ({
   accountId,
   ...params
-}: ByAccountId & V1AccountsDonationsReceivedRetrieveParams) => {
-  const queryResult = swrHooks.useV1AccountsDonationsReceivedRetrieve(
+}: ByAccountId & generatedClient.V1AccountsDonationsReceivedRetrieveParams) => {
+  const queryResult = generatedClient.useV1AccountsDonationsReceivedRetrieve(
     accountId,
     params,
-    POTLOCK_REQUEST_CONFIG,
+    INDEXER_CLIENT_CONFIG,
   );
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_sent_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_donations_retrieve
+ */
+
+export const usePotDonations = ({
+  potId,
+  ...params
+}: ByPotId & generatedClient.V1PotsDonationsRetrieveParams) => {
+  const queryResult = generatedClient.useV1PotsDonationsRetrieve(potId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled: Boolean(potId) },
+  });
+
+  return {
+    ...queryResult,
+    data: queryResult.data?.data?.results as generatedClient.Donation[],
+  };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_donations_sent_retrieve
  */
 export const useAccountDonationsSent = ({
+  enabled = true,
   accountId,
   ...params
-}: ByAccountId & V1AccountsDonationsSentRetrieveParams) => {
-  const queryResult = swrHooks.useV1AccountsDonationsSentRetrieve(
-    accountId,
-    params,
-    POTLOCK_REQUEST_CONFIG,
-  );
+}: ByAccountId & generatedClient.V1AccountsDonationsSentRetrieveParams & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1AccountsDonationsSentRetrieve(accountId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve_2
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_pots_retrieve_2
  */
-export const usePot = ({ potId }: Partial<ByPotId>) => {
-  const queryResult = swrHooks.useV1PotsRetrieve2(potId ?? "unknown", {
-    ...POTLOCK_REQUEST_CONFIG,
+export const usePot = ({ potId, enabled = true }: ByPotId & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1PotsRetrieve2(potId, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled, refreshInterval: 3000 },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+export const usePotPayouts = ({
+  potId,
+  ...params
+}: Partial<ByPotId> & generatedClient.V1PotsPayoutsRetrieveParams) => {
+  const queryResult = generatedClient.useV1PotsPayoutsRetrieve(potId ?? NOOP_STRING, params, {
+    ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId), refreshInterval: 3000 },
   });
 
@@ -183,19 +222,19 @@ export const usePot = ({ potId }: Partial<ByPotId>) => {
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_retrieve
  */
-export const useList = ({ listId }: Partial<ByListId>) => {
-  const queryResult = swrHooks.useV1ListsRetrieve2(listId ?? 0, {
-    ...POTLOCK_REQUEST_CONFIG,
-    swr: { enabled: Boolean(listId), refreshInterval: 3000 },
+export const useList = ({ listId, enabled = true }: ByListId & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1ListsRetrieve2(listId, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled, refreshInterval: 3000 },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_random_registration_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_random_registration_retrieve
  *
  * Note: automatic refresh is disabled for optimization.
  *  Call `mutate()` for manual refresh.
@@ -203,13 +242,13 @@ export const useList = ({ listId }: Partial<ByListId>) => {
 export const useRandomListRegistration = ({
   listId,
   ...params
-}: ByListId & V1ListsRandomRegistrationRetrieveParams) => {
-  const queryResult = swrHooks.useV1ListsRandomRegistrationRetrieve(
+}: ByListId & generatedClient.V1ListsRandomRegistrationRetrieveParams) => {
+  const queryResult = generatedClient.useV1ListsRandomRegistrationRetrieve(
     listId,
     params,
 
     {
-      ...POTLOCK_REQUEST_CONFIG,
+      ...INDEXER_CLIENT_CONFIG,
       swr: { revalidateIfStale: false, revalidateOnFocus: false },
     },
   );
@@ -218,34 +257,28 @@ export const useRandomListRegistration = ({
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_registrations_retrieve
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_registrations_retrieve
  */
 export const useListRegistrations = ({
+  enabled = true,
   listId,
   ...params
-}: Partial<ByListId> & V1ListsRegistrationsRetrieveParams) => {
-  const queryResult = swrHooks.useV1ListsRegistrationsRetrieve(
-    listId ?? 0,
-    params,
+}: ByListId & generatedClient.V1ListsRegistrationsRetrieveParams & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1ListsRegistrationsRetrieve(listId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
 
-    {
-      ...POTLOCK_REQUEST_CONFIG,
-      swr: { enabled: Boolean(listId) },
-    },
-  );
-
-  return { ...queryResult, data: queryResult.data?.data.results };
+  return { ...queryResult, data: queryResult.data?.data };
 };
 
 /**
- * https://dev.potlock.io/api/schema/swagger-ui/#/v1/lists
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/lists
  */
 
-export const useLists = ({ ...params }: V1ListsRetrieveParams = {}) => {
-  const queryResult = swrHooks.useV1ListsRetrieve(
-    params,
-    POTLOCK_REQUEST_CONFIG,
-  );
+export const useLists = ({ ...params }: generatedClient.V1ListsRetrieveParams = {}) => {
+  const queryResult = generatedClient.useV1ListsRetrieve(params, INDEXER_CLIENT_CONFIG);
+
   return { ...queryResult, data: queryResult.data?.data };
 };
 
@@ -253,19 +286,47 @@ export const useLists = ({ ...params }: V1ListsRetrieveParams = {}) => {
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_accounts_upvoted_lists_retrieve
  */
 export const useAccountUpvotedLists = ({
+  enabled = true,
   accountId,
   ...params
-}: { accountId: string } & V1AccountsUpvotedListsRetrieveParams) => {
-  const queryResult = swrHooks.useV1AccountsUpvotedListsRetrieve(
-    accountId,
-    params,
-    {
-      ...POTLOCK_REQUEST_CONFIG,
-      swr: { enabled: Boolean(accountId) },
-    },
-  );
+}: ByAccountId & generatedClient.V1AccountsUpvotedListsRetrieveParams & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1AccountsUpvotedListsRetrieve(accountId, params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
+
   return {
     ...queryResult,
     data: queryResult.data?.data.results,
   };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_mpdao_voters_retrieve
+ */
+export const useMpdaoVoters = ({
+  enabled = true,
+  ...params
+}: generatedClient.V1MpdaoVotersRetrieveParams & ConditionalActivation = {}) => {
+  const queryResult = generatedClient.useV1MpdaoVotersRetrieve(params, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_mpdao_voters_retrieve_2
+ */
+export const useMpdaoVoter = ({
+  accountId,
+  enabled = true,
+}: ByAccountId & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1MpdaoVotersRetrieve2(accountId, {
+    ...INDEXER_CLIENT_CONFIG,
+    swr: { enabled },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
 };

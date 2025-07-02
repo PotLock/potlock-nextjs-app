@@ -1,10 +1,14 @@
 import { Temporal } from "temporal-polyfill";
 import { number, preprocess } from "zod";
 
+/**
+ * 86400000 milliseconds make 24 hours that make 24 * 60 minutes that make 24 * 60 * 60 seconds
+ */
+export const DAY_IN_MILLISECONDS: 86400000 = (24 * 60 * 60 * 1000) as 86400000;
+
 export const DATETIME_INCORRECT_FORMAT_ERROR = "Incorrect datetime";
 
-export const dropTimezoneIndicator = (value: string): string =>
-  value.slice(0, 16);
+export const dropTimezoneIndicator = (value: string): string => value.slice(0, 16);
 
 /**
  * Converts a value in milliseconds to the equivalent number of days.
@@ -43,9 +47,7 @@ export const daysToMilliseconds = (value: number | string | null): number => {
       days: typeof value === "string" ? parseInt(value) : (value ?? 0),
     }).total("milliseconds");
   } catch {
-    const error = new TypeError(
-      `Unable to convert \`${value}\` to milliseconds`,
-    );
+    const error = new TypeError(`Unable to convert \`${value}\` to milliseconds`);
 
     console.error(error);
     throw error;
@@ -53,24 +55,19 @@ export const daysToMilliseconds = (value: number | string | null): number => {
 };
 
 export const daysSinceTimestamp = (unixTimestampMs: number) =>
-  Temporal.Now.instant().since(
-    Temporal.Instant.fromEpochMilliseconds(unixTimestampMs),
-  ).days;
+  Temporal.Now.instant().since(Temporal.Instant.fromEpochMilliseconds(unixTimestampMs)).days;
 
 /**
- * Sorts a list of objects containing information about events in chronological order
- *  based on a given datetime property.
+ * Sorts a list of objects containing information about events
+ * in chronological order ( old to recent ) based on a given datetime property.
  */
-export const toChronologicalOrder = <T>(
+export const oldToRecent = <T>(
   propertyKey: keyof T,
   list: Array<T extends Record<string, string | number | unknown> ? T : T>,
 ) =>
   list?.length > 1
     ? list.toSorted((firstObject, secondObject) => {
-        const [firstValue, secondValue] = [
-          firstObject[propertyKey],
-          secondObject[propertyKey],
-        ];
+        const [firstValue, secondValue] = [firstObject[propertyKey], secondObject[propertyKey]];
 
         // TODO: Error handling if one of the values is neither a string nor a number
 
@@ -89,9 +86,8 @@ export const toChronologicalOrder = <T>(
 export const timestamp = preprocess(
   (value) =>
     typeof value === "string"
-      ? Temporal.PlainDateTime.from(value).toZonedDateTime(
-          Temporal.Now.timeZoneId(),
-        ).epochMilliseconds
+      ? Temporal.PlainDateTime.from(value).toZonedDateTime(Temporal.Now.timeZoneId())
+          .epochMilliseconds
       : value,
 
   number({ message: DATETIME_INCORRECT_FORMAT_ERROR })
@@ -106,3 +102,5 @@ export const futureTimestamp = timestamp.refine(
   (value) => value > Temporal.Now.instant().epochMilliseconds,
   { message: "Cannot be in the past" },
 );
+
+export const daysFloatToMilliseconds = (daysFloat: number) => daysFloat * DAY_IN_MILLISECONDS;

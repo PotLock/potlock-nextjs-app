@@ -1,9 +1,9 @@
 import { ReactElement } from "react";
 
-import { CampaignLayout } from "@/modules/campaigns/components";
+import { CampaignLayout } from "@/layout/campaign/components/layout";
 
 const CampaignHistory = () => {
-  return <div className="">Hello</div>;
+  return <div className="">WIP</div>;
 };
 
 CampaignHistory.getLayout = function getLayout(page: ReactElement) {

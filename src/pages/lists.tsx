@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-import { PageWithBanner } from "@/common/ui/components";
-import { ListHero, ListsOverview } from "@/modules/lists";
-import { useListDeploymentSuccessRedirect } from "@/modules/lists/hooks/redirects";
+import { PageWithBanner } from "@/common/ui/layout/components";
+import { ListHero, ListOverviewType, ListsOverview } from "@/entities/list";
+import { useListDeploymentSuccessRedirect } from "@/entities/list/hooks/redirects";
 
 export default function Page() {
   useListDeploymentSuccessRedirect();
-  const [currentListType, setCurrentListType] = useState<string>("All Lists");
+  const [currentListType, setCurrentListType] = useState<ListOverviewType>("ALL_LISTS");
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
 
   return (
@@ -16,7 +16,6 @@ export default function Page() {
           setCurrentListType={setCurrentListType}
           setFilteredRegistrations={setFilteredRegistrations}
         />
-
         <ListsOverview
           currentListType={currentListType}
           setCurrentListType={setCurrentListType}

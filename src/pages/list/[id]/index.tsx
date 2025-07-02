@@ -1,53 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { indexer } from "@/common/api/indexer";
+import { ListRegistration, indexer } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
-import { PageWithBanner } from "@/common/ui/components";
+import { PageWithBanner, Spinner } from "@/common/ui/layout/components";
 import {
   ListAccounts,
   ListDetails,
   SavedUsersType,
   useListDeploymentSuccessRedirect,
-} from "@/modules/lists";
-import { useListForm } from "@/modules/lists/hooks/useListForm";
+} from "@/entities/list";
+import { useListForm } from "@/entities/list/hooks/useListForm";
+import { RootLayout } from "@/layout/components/root-layout";
 
 export default function SingleList() {
   useListDeploymentSuccessRedirect();
-  const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([]);
   const [listDetails, setListDetails] = useState<any>(null);
+
   const [savedUsers, setSavedUsers] = useState<SavedUsersType>({
     accounts: [],
     admins: [],
   });
+
   const [status, setStatus] = useState<string>("all");
 
   const { admins, setAdmins } = useListForm();
 
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = router.query as { id: string };
+  const listId = parseInt(id);
+
   const { data, isLoading } = indexer.useListRegistrations({
-    listId: parseInt(id as string),
+    listId,
     page_size: 500,
     ...(status !== "all" && { status }),
   });
 
   const { data: listData, isLoading: loadingListData } = indexer.useList({
-    listId: parseInt(id as string),
+    listId,
   });
 
-  useEffect(() => {
-    setFilteredRegistrations(data ?? []);
+  const listRegistrations: ListRegistration[] = useMemo(() => {
+    return data?.results ?? [];
   }, [data]);
 
   useEffect(() => {
     if (loadingListData) return;
     setAdmins(listData?.admins?.map((admin) => admin?.id) as AccountId[]);
     setListDetails(listData);
+
     setSavedUsers({
       accounts:
-        data?.map((registration) => ({
+        data?.results.map((registration) => ({
           accountId: registration?.registrant?.id,
           registrationId: registration?.id,
         })) ?? [],
@@ -58,22 +63,32 @@ export default function SingleList() {
     });
   }, [loadingListData, isLoading, setAdmins, listData, data]);
 
-  return (
-    <PageWithBanner>
-      <ListDetails
-        admins={admins}
-        listDetails={listDetails}
-        savedUsers={savedUsers}
-        setAdmins={setAdmins}
-      />
-      <ListAccounts
-        listData={listData}
-        isLoading={isLoading}
-        loadingListData={loadingListData}
-        filteredRegistrations={filteredRegistrations}
-        setStatus={setStatus}
-        setFilteredRegistrations={setFilteredRegistrations}
-      />
-    </PageWithBanner>
+  return loadingListData ? (
+    <div className="flex h-[80vh] items-center justify-center">
+      <Spinner className="w-25 h-25" />
+    </div>
+  ) : (
+    <RootLayout
+      title={listDetails?.name ?? ""}
+      description={listDetails?.description ?? ""}
+      image={listDetails?.cover_image_url ?? ""}
+    >
+      <PageWithBanner>
+        <ListDetails
+          admins={admins}
+          listDetails={listDetails}
+          listId={listId}
+          savedUsers={savedUsers}
+          setAdmins={setAdmins}
+        />
+        <ListAccounts
+          listData={listData}
+          isLoading={isLoading}
+          loadingListData={loadingListData}
+          listRegistrations={listRegistrations}
+          setStatus={setStatus}
+        />
+      </PageWithBanner>
+    </RootLayout>
   );
 }

@@ -1,16 +1,17 @@
 import { ReactElement } from "react";
 
-import {
-  CampaignDonorsTable,
-  CampaignLayout,
-} from "@/modules/campaigns/components";
+import { useRouter } from "next/router";
 
-const CampaignLeaderBoard = () => {
-  return <CampaignDonorsTable />;
-};
+import { CampaignDonorsTable } from "@/entities/campaign";
+import { CampaignLayout } from "@/layout/campaign/components/layout";
 
-CampaignLeaderBoard.getLayout = function getLayout(page: ReactElement) {
+export default function CampaignLeaderboardPage() {
+  const router = useRouter();
+  const { campaignId } = router.query as { campaignId: string };
+
+  return <CampaignDonorsTable campaignId={parseInt(campaignId)} />;
+}
+
+CampaignLeaderboardPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
-
-export default CampaignLeaderBoard;

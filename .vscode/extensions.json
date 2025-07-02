@@ -5,6 +5,9 @@
     "streetsidesoftware.code-spell-checker",
     "gruntfuggly.todo-tree",
     "naumovs.color-highlight",
-    "usernamehw.errorlens"
+    "usernamehw.errorlens",
+    "eamodio.gitlens",
+    "dbaeumer.vscode-eslint",
+    "rambit.highlight-counter"
   ]
 }

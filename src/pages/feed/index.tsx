@@ -3,25 +3,25 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import InfiniteScrollWrapper from "react-infinite-scroll-component";
 
 import { indexer } from "@/common/api/indexer";
-import { fetchGlobalFeeds } from "@/common/api/near-social";
-import { POTLOCK_REGISTRY_LIST_ID } from "@/common/constants";
-import { cn } from "@/common/ui/utils";
-import { FeedCard } from "@/modules/profile";
+import { fetchGlobalFeeds } from "@/common/api/near-social-indexer";
+import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { cn } from "@/common/ui/layout/utils";
+import { PostCard } from "@/entities/post";
 
-export default function GlobalFeedsPage() {
+export default function FeedPage() {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const loadingRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(40);
 
-  const { data: registrations = [] } = indexer.useListRegistrations({
-    listId: POTLOCK_REGISTRY_LIST_ID,
+  const { data: registrations } = indexer.useListRegistrations({
+    listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
     page_size: 999,
   });
 
   const accountIds = useMemo(
-    () => registrations.map(({ registrant }) => registrant.id),
+    () => registrations?.results.map(({ registrant }) => registrant.id) ?? [],
     [registrations],
   );
 
@@ -40,7 +40,6 @@ export default function GlobalFeedsPage() {
   }, [accountIds]);
 
   const loadMorePosts = useCallback(async () => {
-    console.log(loadingMore);
     if (loadingMore) return; // Prevent multiple calls while loading
     setLoadingMore(true);
 
@@ -60,14 +59,14 @@ export default function GlobalFeedsPage() {
     () => (
       <div
         className={cn(
-          "md:flex-col md:px-[105px] md:py-[68px] rounded-3",
+          "rounded-3 md:flex-col md:px-[105px] md:py-[68px]",
           "flex flex-col-reverse items-center justify-between bg-[#f6f5f3] px-6 py-4",
         )}
       >
         <p
           className={cn(
-            "font-italic font-500 md:text-[22px] text-4 mb-4 max-w-[290px]",
-            "text-center font-lora text-[#292929]",
+            "font-italic font-500 text-4 mb-4 max-w-[290px] md:text-[22px]",
+            "font-lora text-center text-[#292929]",
           )}
         >
           {"No social posts available."}
@@ -101,7 +100,7 @@ export default function GlobalFeedsPage() {
           }
         >
           {feedPosts.map((post) => (
-            <FeedCard key={post.blockHeight} post={post} />
+            <PostCard key={post.blockHeight} post={post} />
           ))}
         </InfiniteScrollWrapper>
       )}

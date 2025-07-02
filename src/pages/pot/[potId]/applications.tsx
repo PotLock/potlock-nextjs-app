@@ -1,394 +1,230 @@
-// INFO: code partially refactored (original extracted from Além)
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { ReactElement, useCallback, useEffect, useState } from "react";
-
-import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import { entries } from "remeda";
+import { styled } from "styled-components";
 
-// info: not working
-// import { usePotApplications } from "@/common/api/potlock/hooks";
+import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
-import { SearchIcon } from "@/common/assets/svgs";
-import CheckIcon from "@/common/assets/svgs/CheckIcon";
-import { Application } from "@/common/contracts/core/interfaces/pot.interfaces";
-import * as potContract from "@/common/contracts/core/pot";
-import { daysAgo, truncate } from "@/common/lib";
-import { Button } from "@/common/ui/components";
+import { NOOP_STRING } from "@/common/constants";
+import { oldToRecent } from "@/common/lib";
+import type { AccountId } from "@/common/types";
+import { FilterChip, SearchBar } from "@/common/ui/layout/components";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/common/ui/components/tooltip";
-import { AccountProfilePicture } from "@/modules/core";
-import routesPath from "@/modules/core/routes";
-import { PotLayout, applicationsFiltersTags } from "@/modules/pot";
-import ApplicationReviewModal from "@/modules/pot/components/ApplicationReviewModal";
-import Dropdown from "@/modules/pot/components/Dropdown/Dropdown";
+  type AccountPotApplicationStatusOption,
+  type AccountPotApplicationStatusVariant,
+} from "@/entities/_shared/account";
 import {
-  ApplicationRow,
-  ApplicationsWrapper,
-  Container,
-  Dot,
-  DropdownLabel,
-  Filter,
-  SearchBar,
-  Status,
-} from "@/modules/pot/styles/application-styles";
-import useProfileData from "@/modules/profile/hooks/data";
-import { useTypedSelector } from "@/store";
+  PotApplicationCard,
+  PotApplicationCardSkeleton,
+  PotApplicationReviewModal,
+} from "@/features/pot-application";
+import { PotLayout } from "@/layout/pot/components/layout";
+import { useGlobalStoreSelector } from "@/store";
 
-const ApplicationsTab = () => {
+// TODO: Refactor using TailwindCSS classes
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  margin-bottom: 4rem;
+  flex-direction: column;
+  .dropdown {
+    display: none;
+  }
+  @media only screen and (max-width: 768px) {
+    gap: 1.5rem;
+    .dropdown {
+      display: flex;
+    }
+  }
+`;
+
+const ApplicationLookupPlaceholder = () =>
+  Array.from({ length: 6 }, (_, i) => <PotApplicationCardSkeleton key={i} />);
+
+// TODO: Apply optimizations
+export default function ApplicationsTab() {
   const router = useRouter();
+
   const { potId } = router.query as {
     potId: string;
     // transactionHashes: string;
   };
+
   const { data: potDetail } = usePot({ potId });
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [filteredApplications, setFilteredApplications] = useState<
-    Application[]
-  >([]);
-  const { actAsDao, accountId: _accountId } = useTypedSelector(
-    (state) => state.nav,
-  );
+  const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
   const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
   const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 
   const owner = potDetail?.owner?.id || "";
   const admins = potDetail?.admins.map((adm) => adm.id) || [];
   const chef = potDetail?.chef?.id || "";
+  const [statusFilter, setStatusFilter] = useState<AccountPotApplicationStatusVariant>("All");
+  const [pageNumber, setPageNumber] = useState(1);
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    // Fetch applications
-    (async () => {
-      const applicationsData = await potContract.getApplications({ potId });
-      setApplications(applicationsData);
-      setFilteredApplications(applicationsData);
-    })();
-  }, [potId]);
+  const {
+    isLoading: isApplicationListLoading,
+    error,
+    data: applications,
+    mutate: refetchApplications,
+  } = indexer.usePotApplications({
+    potId,
+    status: statusFilter === "All" ? undefined : statusFilter,
+    search: searchTerm,
+  });
 
-  // Handle update application status for web wallet
-  // INFO: Not needed. There's a global transaction successful modal. But leaving it here just in case
-  // useEffect(() => {
-  //   if (accountId && transactionHashes) {
-  //     getTransactionsFromHashes(transactionHashes, accountId).then(
-  //       (transactions) => {
-  //         const transaction = transactions[0].transaction;
-
-  //         const methodName = transaction.actions[0].FunctionCall.method_name;
-  //         const successVal = (transactions[0].status as FinalExecutionStatus)
-  //           ?.SuccessValue;
-  //         const result = JSON.parse(
-  //           Buffer.from(successVal!, "base64").toString("utf-8"),
-  //         );
-
-  //         if (methodName === "chef_set_application_status" && result) {
-  //           // TODO: Toast
-  //           // toast(result.status);
-  //         }
-  //       },
-  //     );
-  //   }
-  // }, [accountId, transactionHashes]);
+  const sortedResults = useMemo(() => {
+    const oldToRecentResults = oldToRecent("submitted_at", applications?.results ?? []);
+    return oldToRecentResults.toReversed();
+  }, [applications?.results]);
 
   // Admin - Edit Project
-  const [projectId, setProjectId] = useState("");
-  const [projectStatus, setProjectStatus] = useState<
-    "Approved" | "Rejected" | ""
-  >("");
+  const [selectedApplicantAccountId, setSelectedApplicantAccountId] = useState<AccountId | null>(
+    null,
+  );
 
-  const handleApproveApplication = (projectId: string) => {
-    setProjectId(projectId);
+  const [projectStatus, setProjectStatus] = useState<"Approved" | "Rejected" | "">("");
+
+  const handleApproveApplication = (accountId: AccountId) => {
+    setSelectedApplicantAccountId(accountId);
     setProjectStatus("Approved");
   };
 
-  const handleRejectApplication = (projectId: string) => {
-    setProjectId(projectId);
+  const handleRejectApplication = (accountId: AccountId) => {
+    setSelectedApplicantAccountId(accountId);
     setProjectStatus("Rejected");
   };
 
   const handleCloseModal = () => {
-    setProjectId("");
+    setSelectedApplicantAccountId(null);
     setProjectStatus("");
   };
 
-  const searchApplications = (searchTerm: string) => {
-    // filter applications that match the search term (message, project_id, review_notes or status)
-    const filteredApplications = applications?.filter((application) => {
-      const { message, project_id, review_notes, status } = application;
-      const searchFields = [message, project_id, review_notes, status];
-      return searchFields.some((field) =>
-        field
-          ? field.toLowerCase().includes(searchTerm.toLowerCase().trim())
-          : "",
-      );
-    });
-    return filteredApplications;
-  };
-
-  const getApplicationCount = useCallback(
-    (sortVal: string) => {
-      if (!applications) return;
-      return applications?.filter((application: any) => {
-        if (sortVal === "All") return true;
-        return application.status === sortVal;
-      })?.length;
-    },
-    [applications],
-  );
+  const onReviewSuccess = useCallback(() => {
+    refetchApplications();
+    handleCloseModal();
+  }, [refetchApplications]);
 
   const applicationsFilters: Record<
-    string,
-    { label: string; val: string; count?: number }
-  > = {
-    ALL: {
-      label: "All applications",
-      val: "ALL",
-      count: getApplicationCount("All")!,
-    },
-    PENDING: {
-      label: "Pending applications",
-      val: "PENDING",
+    AccountPotApplicationStatusVariant,
+    AccountPotApplicationStatusOption & { count?: number }
+  > = useMemo(() => {
+    const getApplicationCount = (status: AccountPotApplicationStatusVariant) =>
+      applications?.results.filter((application) => application.status === status).length ?? 0;
 
-      count: getApplicationCount("Pending")!,
-    },
-    APPROVED: {
-      label: "Approved applications",
-      val: "APPROVED",
-      count: getApplicationCount("Approved")!,
-    },
-    REJECTED: {
-      label: "Rejected applications",
-      val: "REJECTED",
-      count: getApplicationCount("Rejected")!,
-    },
-  };
+    return {
+      All: {
+        label: "All",
+        val: "All",
+        count: applications?.count,
+      },
 
-  const [searchTerm, setSearchTerm] = useState("");
+      Approved: {
+        label: "Approved",
+        val: "Approved",
+        count: getApplicationCount("Approved"),
+      },
 
-  const sortApplications = (key: string) => {
-    if (key === "ALL") {
-      return searchApplications(searchTerm);
+      Pending: {
+        label: "Pending",
+        val: "Pending",
+        count: getApplicationCount("Pending"),
+      },
+
+      Rejected: {
+        label: "Rejected",
+        val: "Rejected",
+        count: getApplicationCount("Rejected"),
+      },
+
+      InReview: {
+        label: "In Review",
+        val: "InReview",
+        count: getApplicationCount("InReview"),
+      },
+    };
+  }, [applications]);
+
+  useEffect(() => {
+    if (error) {
+      console.error(error);
     }
-    const filtered = applications?.filter((application: any) => {
-      return (
-        application.status === applicationsFilters[key].label.split(" ")[0]
-      );
-    });
-    return filtered;
-  };
-
-  const isChefOrGreater =
-    accountId === chef ||
-    admins.includes(accountId || "") ||
-    accountId === owner;
-
-  const [filterValue, setFilterValue] = useState("ALL");
-  const handleSort = (key: string) => {
-    const sorted = sortApplications(key);
-    setFilteredApplications(sorted);
-    setFilterValue(key);
-  };
-
-  const DropdownValue = () => {
-    const digit =
-      applicationsFilters[filterValue]?.count?.toString().length || 0;
-    return (
-      <DropdownLabel>
-        <div className="label">
-          {applicationsFilters[filterValue]?.label || ""}
-        </div>
-        <div
-          className="count"
-          style={{
-            width: `${24 + (digit - 1) * 6}px`,
-            height: `${24 + (digit - 1) * 6}px`,
-          }}
-        >
-          {applicationsFilters[filterValue]?.count || 0}
-        </div>
-      </DropdownLabel>
-    );
-  };
+  }, [statusFilter, error]);
 
   return (
-    <Container>
+    <Container className="w-full gap-6">
       {/* Modal */}
-      <ApplicationReviewModal
-        open={!!projectId}
-        potDetail={potDetail}
-        projectId={projectId}
-        projectStatus={projectStatus}
-        onCloseClick={handleCloseModal}
-      />
-
-      <div className="dropdown">
-        <Dropdown
-          {...{
-            sortVal: <DropdownValue />,
-            showCount: true,
-            sortList: Object.values(applicationsFilters),
-            menuStyle: { left: "auto", right: "auto" },
-            handleSortChange: ({ val }) => {
-              handleSort(val);
-            },
-          }}
+      {potDetail && (
+        <PotApplicationReviewModal
+          open={selectedApplicantAccountId !== null}
+          potDetail={potDetail}
+          projectId={selectedApplicantAccountId ?? NOOP_STRING}
+          projectStatus={projectStatus}
+          onCloseClick={handleCloseModal}
+          onSuccess={onReviewSuccess}
         />
-      </div>
-      <Filter>
-        {Object.keys(applicationsFilters).map((key) => (
-          <div
-            key={key}
-            className={`item ${filterValue === key ? "active" : ""}`}
-            onClick={() => handleSort(key)}
-          >
-            <CheckIcon width={14} height={12} />
+      )}
 
-            <div> {applicationsFilters[key].label}</div>
-            <div className="count">{applicationsFilters[key].count}</div>
-          </div>
-        ))}
-      </Filter>
-      <ApplicationsWrapper>
-        <SearchBar>
-          <SearchIcon />
-          <input
-            type="text"
-            placeholder="Search applications"
-            className="search-input"
-            onChange={(e) => {
-              const results = searchApplications(e.target.value);
-              setSearchTerm(e.target.value);
-              setFilteredApplications(results);
-            }}
+      <div className="flex gap-3">
+        {entries(applicationsFilters).map(([key, filter]) => (
+          <FilterChip
+            variant={statusFilter === key ? "brand-filled" : "brand-outline"}
+            onClick={() => setStatusFilter(filter.val)}
+            className="font-medium"
+            label={filter.label}
+            count={filter.count}
+            key={key}
           />
-        </SearchBar>
-        {filteredApplications.length ? (
-          filteredApplications.map((application) => {
-            return (
-              <ApplicationData
-                key={application.project_id}
-                applicationData={application}
-                isChefOrGreater={isChefOrGreater}
-                handleApproveApplication={handleApproveApplication}
-                handleRejectApplication={handleRejectApplication}
-              />
-            );
-          })
-        ) : (
-          <div style={{ padding: "1rem" }}>No applications to display</div>
+        ))}
+      </div>
+
+      <section className="flex w-full flex-col gap-6 rounded-[6px]">
+        <SearchBar
+          placeholder="Search Applications"
+          onChange={({ target }) => setSearchTerm(target.value.toLowerCase())}
+          defaultValue={searchTerm}
+        />
+
+        {potDetail && (
+          <div className="flex w-full flex-col flex-wrap justify-between gap-5 md:flex-row">
+            {!isApplicationListLoading ? (
+              sortedResults.map((application: PotApplication) => (
+                <PotApplicationCard
+                  key={application.id}
+                  applicationData={application}
+                  handleApproveApplication={handleApproveApplication}
+                  handleRejectApplication={handleRejectApplication}
+                  {...{ potId }}
+                />
+              ))
+            ) : (
+              <ApplicationLookupPlaceholder />
+            )}
+
+            {!sortedResults && (
+              <div className="min-h-140 flex w-full flex-col items-center justify-center">
+                <Image
+                  src="/assets/icons/no-list.svg"
+                  alt="No results found"
+                  width={200}
+                  height={200}
+                  className="h-50 w-50 mb-4"
+                />
+
+                <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
+                  <p className="w-100 font-lora text-center italic">{"No results found"}</p>
+                </div>
+              </div>
+            )}
+          </div>
         )}
-      </ApplicationsWrapper>
+      </section>
     </Container>
   );
-};
+}
 
-const ApplicationData = ({
-  applicationData,
-  isChefOrGreater,
-  handleApproveApplication,
-  handleRejectApplication,
-}: {
-  applicationData: Application;
-  isChefOrGreater: boolean;
-  handleApproveApplication: (projectId: string) => void;
-  handleRejectApplication: (projectId: string) => void;
-}) => {
-  const { project_id, status, message, review_notes, submitted_at } =
-    applicationData;
-  const { borderColor, color, icon, label, background } =
-    applicationsFiltersTags[status];
-  const { profile } = useProfileData(project_id, true, false);
-
-  return (
-    <ApplicationRow key={project_id}>
-      <input type="checkbox" className="toggle-check" />
-      <div className="header">
-        <div className="header-info">
-          <AccountProfilePicture
-            accountId={project_id}
-            className="profile-image"
-          />
-          {profile?.name && (
-            <div className="name">{truncate(profile?.name, 15)}</div>
-          )}
-
-          {/* Tooltip */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Link
-                  className="address"
-                  href={`${routesPath.PROJECT}/${project_id}`}
-                  target="_blank"
-                >
-                  {truncate(project_id, 15)}
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>{project_id}</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <Dot />
-          <div className="date">{daysAgo(submitted_at)}</div>
-        </div>
-        <Status
-          style={{
-            borderColor,
-            color,
-            background,
-          }}
-        >
-          <div>{label}</div>
-          {icon}
-        </Status>
-        <svg
-          width="12"
-          height="8"
-          viewBox="0 0 12 8"
-          fill="none"
-          className="arrow"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6 0.294922L0 6.29492L1.41 7.70492L6 3.12492L10.59 7.70492L12 6.29492L6 0.294922Z"
-            fill="#7B7B7B"
-          />
-        </svg>
-      </div>
-      <div className="content">
-        <div className="message">{message}</div>
-        {review_notes && (
-          <div className="notes">
-            <div className="title">Admin notes:</div>
-            <div>{review_notes}</div>
-          </div>
-        )}
-        {isChefOrGreater && (
-          <>
-            {status !== "Approved" && (
-              <Button
-                variant="tonal-filled"
-                onClick={() => handleApproveApplication(project_id)}
-              >
-                Approve
-              </Button>
-            )}
-            {status !== "Rejected" && (
-              <Button onClick={() => handleRejectApplication(project_id)}>
-                Reject
-              </Button>
-            )}
-          </>
-        )}
-      </div>
-    </ApplicationRow>
-  );
-};
-
-ApplicationsTab.getLayout = function getLayout(page: ReactElement) {
+ApplicationsTab.getLayout = function getLayout(page: React.ReactNode) {
   return <PotLayout>{page}</PotLayout>;
 };
-
-export default ApplicationsTab;

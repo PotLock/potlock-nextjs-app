@@ -1,6 +1,7 @@
-import { EnvConfig } from "@/common/types";
+import { EnvConfig, FeatureId } from "@/common/types";
 
 export const envConfig: EnvConfig = {
+  platformName: "POTLOCK",
   network: "mainnet" as const,
 
   contractMetadata: {
@@ -8,25 +9,37 @@ export const envConfig: EnvConfig = {
     repoUrl: "https://github.com/PotLock/core",
   },
 
-  donation: {
-    contract: { accountId: "donate.staging.potlock.near" },
+  indexer: {
+    api: { endpointUrl: "https://api.potlock.io" },
   },
 
-  campaigns: {
-    contract: { accountId: "campaigns.staging.potlock.near" },
-  },
+  core: {
+    donation: {
+      contract: { accountId: "donate.potlock.near" },
+    },
 
-  lists: {
-    contract: { accountId: "lists.staging.potlock.near" },
-  },
+    campaigns: {
+      contract: { accountId: "v1.campaigns.staging.potlock.near" },
+    },
 
-  potFactory: {
-    contract: { accountId: "potfactory.staging.potlock.near" },
-  },
+    lists: {
+      contract: { accountId: "lists.potlock.near" },
+    },
 
-  sybil: {
-    app: { url: "https://staging.nada.bot" },
-    contract: { accountId: "v2new.staging.nadabot.near" },
+    potFactory: {
+      contract: { accountId: "v1.potfactory.potlock.near" },
+    },
+
+    sybil: {
+      app: { url: "https://app.nada.bot" },
+      contract: { accountId: "v1.nadabot.near" },
+    },
+
+    voting: {
+      // TODO: Figure out a way to store pot-associated voting contract instances on backend / chain
+      //! Be careful when refactoring this
+      contract: { accountId: "mpdao.vote.potlock.near" },
+    },
   },
 
   social: {
@@ -34,7 +47,57 @@ export const envConfig: EnvConfig = {
     contract: { accountId: "social.near" },
   },
 
-  indexer: {
-    api: { endpointUrl: "https://dev.potlock.io" },
+  deFi: {
+    metapool: {
+      liquidStakingContract: {
+        accountId: "meta-pool.near",
+      },
+    },
+
+    refFinance: {
+      exchangeContract: {
+        accountId: "v2.ref-finance.near",
+      },
+    },
+  },
+
+  features: {
+    [FeatureId.ProfileConfiguration]: {
+      id: FeatureId.ProfileConfiguration,
+      name: "Profile configuration",
+      isEnabled: true,
+    },
+
+    [FeatureId.FtDonation]: {
+      id: FeatureId.FtDonation,
+      name: "Non-pot FT donations",
+      isEnabled: true,
+    },
+
+    [FeatureId.PotFtDonation]: {
+      id: FeatureId.PotFtDonation,
+      name: "Pot FT donations",
+      isEnabled: false,
+    },
+
+    [FeatureId.DirectNativeTokenDonation]: {
+      id: FeatureId.DirectNativeTokenDonation,
+      name: "Direct native token donation",
+      isEnabled: true,
+    },
+
+    [FeatureId.Cart]: {
+      id: FeatureId.Cart,
+      name: "Cart",
+      isEnabled: false,
+    },
   },
 };
+
+// KEYS MEANT FOR STAGING
+// 1. donate.staging.potlock.near
+// 2. v1.campaigns.staging.potlock.near
+// 3. lists.staging.potlock.near
+// 4. potfactory.staging.potlock.near
+// 5. v2new.staging.nadabot.near
+// 6. mpdao.vote.staging.potlock.near
