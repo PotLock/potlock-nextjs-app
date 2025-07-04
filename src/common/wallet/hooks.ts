@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { use, useMemo } from "react";
 
 import { prop } from "remeda";
 
@@ -18,7 +18,11 @@ export const useWalletUserSession = (): WalletUserSession => {
   const daoAccountId = actAsDao.defaultAddress;
   const isDaoAccountIdValid = useMemo(() => isAccountId(daoAccountId), [daoAccountId]);
   const isDaoRepresentative = actAsDao.toggle && isDaoAccountIdValid;
+
   // TODO: Check DAO member permissions?
+  const canSubmitDaoProposals = useMemo(() => {
+    return false;
+  }, []);
 
   const { isLoading: isHumanVerificationStatusLoading, data: isHuman } =
     sybilResistanceContractHooks.useIsHuman({
@@ -43,8 +47,8 @@ export const useWalletUserSession = (): WalletUserSession => {
         isSignedIn: true,
 
         ...(isDaoRepresentative
-          ? { isDaoRepresentative, daoAccountId }
-          : { isDaoRepresentative: false, daoAccountId: undefined }),
+          ? { isDaoRepresentative, daoAccountId, canSubmitDaoProposals }
+          : { isDaoRepresentative: false, daoAccountId: undefined, canSubmitDaoProposals: false }),
 
         isHuman: isHuman ?? false,
         isMetadataLoading,
@@ -62,6 +66,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         isDaoRepresentative: false,
         isHuman: false,
         isMetadataLoading: false,
+        canSubmitDaoProposals: false,
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,
@@ -76,6 +81,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         isDaoRepresentative: false,
         isHuman: false,
         isMetadataLoading: false,
+        canSubmitDaoProposals: false,
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,

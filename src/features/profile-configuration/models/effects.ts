@@ -11,7 +11,7 @@ import {
   PUBLIC_GOODS_REGISTRY_LIST_ID,
 } from "@/common/constants";
 import { type NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social-db";
-import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
+import { sputnikDaoClient } from "@/common/contracts/sputnik-dao";
 import { deepObjectDiff } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 
@@ -36,7 +36,7 @@ export const save = async ({
   // TODO: Should be passed as a separate parameter
   //! ( DAO Registration ticket, only AFTER wallet integration revamp! )
   const daoAccountId = accountId;
-  const daoPolicy = isDaoRepresentative ? await getDaoPolicy(accountId) : null;
+  const daoPolicy = isDaoRepresentative ? await sputnikDaoClient.get_policy({ accountId }) : null;
 
   const daoProposalDescription =
     mode === "register"

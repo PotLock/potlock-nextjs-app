@@ -22,6 +22,7 @@ export type WalletUserSession = WalletUserMetadata &
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
+        canSubmitDaoProposals: false;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
@@ -34,6 +35,7 @@ export type WalletUserSession = WalletUserMetadata &
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
+        canSubmitDaoProposals: false;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
@@ -44,6 +46,7 @@ export type WalletUserSession = WalletUserMetadata &
         isSignedIn: true;
         isHuman: boolean;
         isMetadataLoading: boolean;
+        canSubmitDaoProposals: boolean;
         registrationStatus?: RegistrationStatus;
         hasRegistrationSubmitted: boolean;
         hasRegistrationApproved: boolean;
