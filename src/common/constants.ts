@@ -6,9 +6,11 @@ import type { SWRConfiguration } from "swr";
 
 import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
-import { version as FRAMEWORK_VERSION } from "../../package.json";
+import workspacePackageManifest from "../../package.json";
 
-export { PLATFORM_NAME, FRAMEWORK_VERSION };
+export const FRAMEWORK_VERSION = workspacePackageManifest.version;
+
+export { PLATFORM_NAME };
 
 export const IS_CLIENT = typeof window !== "undefined";
 
