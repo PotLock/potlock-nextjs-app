@@ -9,7 +9,7 @@ import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
-import { sputnikDaoClient } from "@/common/contracts/sputnik-dao";
+import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
 
 import {
   PotApplicationInputs,

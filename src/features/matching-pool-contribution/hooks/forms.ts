@@ -7,7 +7,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
-import { sputnikDaoClient } from "@/common/contracts/sputnik-dao";
+import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { MatchingPoolContributionInputs, matchingPoolFundingSchema } from "../model/schemas";

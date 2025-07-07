@@ -11,7 +11,7 @@ import {
   PUBLIC_GOODS_REGISTRY_LIST_ID,
 } from "@/common/constants";
 import { type NEARSocialUserProfile, socialDbContractClient } from "@/common/contracts/social-db";
-import { sputnikDaoClient } from "@/common/contracts/sputnik-dao";
+import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
 import { deepObjectDiff } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 
