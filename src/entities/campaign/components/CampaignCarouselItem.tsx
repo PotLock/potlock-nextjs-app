@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { truncate } from "@/common/lib";
+import { truncate, truncateHtml } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { CarouselItem } from "@/common/ui/layout/components";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
@@ -72,7 +72,25 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
             endDate={Number(data?.end_ms)}
           />
           <p className="mt-4 text-start md:h-28">
-            {data?.description ? truncate(data.description, 100) : ""}
+            <div
+              className="prose prose-sm max-w-none overflow-hidden"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+              dangerouslySetInnerHTML={{
+                __html: data.description ?? "",
+              }}
+              onClick={(event) => {
+                // Prevent navigation when clicking on links
+                if (event.target instanceof HTMLAnchorElement) {
+                  event.stopPropagation();
+                }
+              }}
+            />
           </p>
           <DonateToCampaign
             cachedTokenId={data.ft_id ?? NATIVE_TOKEN_ID}

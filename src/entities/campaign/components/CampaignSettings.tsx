@@ -161,7 +161,18 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
         <div className="mt-8 w-full rounded-[12px] border border-solid border-[#DBDBDB] p-6">
           <div>
             <h1 className="mb-4 text-xl font-semibold">{campaign?.name}</h1>
-            <p className="text-[#292929]">{campaign?.description}</p>
+            <div
+              className="prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{
+                __html: campaign?.description ?? "",
+              }}
+              onClick={(event) => {
+                // Prevent navigation when clicking on links
+                if (event.target instanceof HTMLAnchorElement) {
+                  event.stopPropagation();
+                }
+              }}
+            />
           </div>
 
           <div className="mt-12 flex w-full flex-wrap items-center justify-between md:w-[80%]">
@@ -214,6 +225,10 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
                   ? `${campaign?.creator_fee_basis_points / 100}%`
                   : "N/A"
               }`}
+            />
+            <CampaignSettingsBarCard
+              title="Fees Avoidance Allowed"
+              value={`${campaign?.allow_fee_avoidance ? "Yes" : "No"}`}
             />
           </div>
         </div>

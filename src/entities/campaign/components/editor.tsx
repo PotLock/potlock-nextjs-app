@@ -10,7 +10,8 @@ import { Campaign } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat, parseNumber } from "@/common/lib";
 import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
-import { TextAreaField, TextField } from "@/common/ui/form/components";
+import { TextField } from "@/common/ui/form/components";
+import { RichTextEditor } from "@/common/ui/form/components/richtext";
 import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
@@ -41,12 +42,13 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
     onSuccess: handleCoverImageUploadResult,
   });
 
-  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl] = form.watch([
+  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl, description] = form.watch([
     "ft_id",
     "target_amount",
     "min_amount",
     "max_amount",
     "cover_image_url",
+    "description",
   ]);
 
   const { data: token } = useFungibleToken({
@@ -288,15 +290,14 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
           <FormField
             control={form.control}
             name="description"
-            render={({ field }) => (
-              <TextAreaField
-                {...field}
-                label="Campaign Description"
-                required
-                className="mt-8"
-                placeholder="Type description"
+            render={({ field: _field }) => (
+              <RichTextEditor
+                value={description}
+                onChange={(value) => form.setValue("description", value, { shouldValidate: true })}
                 maxLength={250}
-                rows={4}
+                label="Campaign Description"
+                error={form.formState.errors.description?.message}
+                className="mt-8"
               />
             )}
           />
@@ -443,7 +444,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                   {...field}
                   required={!!watch("min_amount")}
                   label="End Date"
-                  hint="If the minimum amount isn’t reached by the end date specified all donations will be refunded automatically."
+                  hint="If the minimum amount isn't reached by the end date specified all donations will be refunded automatically."
                   value={
                     typeof value === "number"
                       ? Temporal.Instant.fromEpochMilliseconds(value)
@@ -509,7 +510,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             )}
           >
             <div>
-              <h2 className="text-base font-medium">Bypass Fees</h2>
+              <h2 className="text-base font-medium">Fee Exemption</h2>
 
               <p className="text-sm font-normal leading-6 text-[#7B7B7B] ">
                 If enabled, donors may be able to bypass certain fees
