@@ -53,20 +53,17 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     [campaign?.min_amount, token],
   );
 
-  const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
-    campaignId,
-    enabled: isNonNullish(campaign?.min_amount) && raisedAmountFloat >= minAmountFloat,
-  });
-
-  const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
-    {
+  const { data: hasEscrowedDonations, isLoading: isHasEscrowedDonationsLoading } =
+    campaignsContractHooks.useHasEscrowedDonationsToProcess({
       campaignId,
-      enabled:
-        !!campaign?.end_ms &&
-        campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-        raisedAmountFloat < minAmountFloat,
-    },
-  );
+      enabled: true, // Always enable the hook
+    });
+
+  const { data: isDonationRefundsProcessed, isLoading: isDonationRefundsProcessedLoading } =
+    campaignsContractHooks.useIsDonationRefundsProcessed({
+      campaignId,
+      enabled: true, // Always enable the hook
+    });
 
   const { handleProcessEscrowedDonations, handleDonationsRefund } = useCampaignForm({ campaignId });
 
@@ -88,6 +85,10 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
   const isEnded = campaign?.end_ms
     ? getTimePassed(Number(campaign?.end_ms), false, true)?.includes("-")
     : false;
+
+  // Check if the hooks are still loading
+  const isProcessingHooksLoading =
+    isHasEscrowedDonationsLoading || isDonationRefundsProcessedLoading;
 
   return isCampaignLoading ? (
     <div className="flex h-40 items-center justify-center">
@@ -185,33 +186,38 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         />
 
         <div className="mt-6">
-          {viewer.isSignedIn && hasEscrowedDonations && (
-            <div className="flex w-full flex-col gap-4">
-              <Button className="w-full" onClick={handleProcessEscrowedDonations}>
-                {"Process Payout"}
-              </Button>
+          {viewer.isSignedIn &&
+            !isProcessingHooksLoading &&
+            hasEscrowedDonations &&
+            isNonNullish(campaign?.min_amount) &&
+            raisedAmountFloat >= minAmountFloat && (
+              <div className="flex w-full flex-col gap-4">
+                <Button className="w-full" onClick={handleProcessEscrowedDonations}>
+                  {"Process Payout"}
+                </Button>
 
-              <div
-                className={cn(
-                  "border-1 flex items-start gap-2",
-                  "rounded-lg border-green-500 bg-green-50 p-3",
-                )}
-              >
-                <BadgeCheck className="h--12 w-12" />
+                <div
+                  className={cn(
+                    "border-1 flex items-start gap-2",
+                    "rounded-lg border-green-500 bg-green-50 p-3",
+                  )}
+                >
+                  <BadgeCheck className="h--12 w-12" />
 
-                <div className="m-0 p-0">
-                  <h2 className="mb-2 text-base font-medium">Campaign Successful</h2>
+                  <div className="m-0 p-0">
+                    <h2 className="mb-2 text-base font-medium">Campaign Successful</h2>
 
-                  <p className="text-sm font-normal leading-6">
-                    The Minimum Target of the Campaign has been successfully reach and the Donations
-                    can be processed.
-                  </p>
+                    <p className="text-sm font-normal leading-6">
+                      The Minimum Target of the Campaign has been successfully reach and the
+                      Donations can be processed.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {viewer.isSignedIn &&
+            !isProcessingHooksLoading &&
             isDonationRefundsProcessed &&
             campaign?.end_ms &&
             campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
@@ -244,26 +250,39 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
               </div>
             )}
 
-          {!hasEscrowedDonations && !isDonationRefundsProcessed && (
-            <>
-              <DonateToCampaign
-                cachedTokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
-                disabled={
-                  isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
-                }
-                className="mb-4"
-                {...{ campaignId }}
-              />
+          {!isProcessingHooksLoading &&
+            (!hasEscrowedDonations ||
+              !isNonNullish(campaign?.min_amount) ||
+              raisedAmountFloat < minAmountFloat) &&
+            (!isDonationRefundsProcessed ||
+              !campaign?.end_ms ||
+              campaign?.end_ms >= Temporal.Now.instant().epochMilliseconds ||
+              raisedAmountFloat >= minAmountFloat) && (
+              <>
+                <DonateToCampaign
+                  cachedTokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
+                  disabled={
+                    isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
+                  }
+                  className="mb-4"
+                  {...{ campaignId }}
+                />
 
-              <SocialsShare
-                shareText={`Support ${campaign?.name} Campaign on ${
-                  PLATFORM_NAME
-                } by donating or sharing, every contribution Counts! ${
-                  PLATFORM_TWITTER_ACCOUNT_ID
-                }`}
-                variant="button"
-              />
-            </>
+                <SocialsShare
+                  shareText={`Support ${campaign?.name} Campaign on ${
+                    PLATFORM_NAME
+                  } by donating or sharing, every contribution Counts! ${
+                    PLATFORM_TWITTER_ACCOUNT_ID
+                  }`}
+                  variant="button"
+                />
+              </>
+            )}
+
+          {isProcessingHooksLoading && (
+            <div className="flex h-20 items-center justify-center">
+              <Spinner className="h-5 w-5" />
+            </div>
           )}
         </div>
       </div>
