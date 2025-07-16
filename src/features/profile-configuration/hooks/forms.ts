@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useWatch } from "react-hook-form";
 import { objOf, pick } from "remeda";
 
 import type { ByAccountId } from "@/common/types";
@@ -33,8 +33,6 @@ export const useProfileForm = ({
     cover,
     refetch: refetchSocialProfile,
   } = useAccountSocialProfile({ accountId, live: true });
-
-  console.log("socialProfileSnapshot", socialProfileSnapshot?.plSmartContracts);
 
   const defaultValues: Partial<ProfileConfigurationInputs> = useMemo(
     () => ({
@@ -283,16 +281,11 @@ export const useAddFundingSourceForm = (options: {
   defaultValues?: Partial<AddFundingSourceInputs>;
   onSuccess?: () => void;
 }) => {
-  const form = useForm<AddFundingSourceInputs>({
-    resolver: zodResolver(addFundingSourceSchema),
+  const { form } = useEnhancedForm({
+    schema: addFundingSourceSchema,
     mode: "onChange",
-    defaultValues: options.defaultValues ?? {
-      description: "",
-      investorName: "",
-      amountReceived: "",
-      denomination: "",
-      date: undefined,
-    },
+    defaultValues: options.defaultValues,
+    followDefaultValues: true,
   });
 
   const values = useWatch({ control: form.control });

@@ -73,16 +73,6 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
     [resetForm, onCloseClick, onAddFundingSource],
   );
 
-  useEffect(() => {
-    if (editFundingIndex !== undefined && fundingSources[editFundingIndex]) {
-      form.setValue("description", fundingSources[editFundingIndex].description ?? "");
-      form.setValue("investorName", fundingSources[editFundingIndex].investorName ?? "");
-      form.setValue("amountReceived", fundingSources[editFundingIndex].amountReceived ?? "");
-      form.setValue("denomination", fundingSources[editFundingIndex].denomination ?? "");
-      form.setValue("date", fundingSources[editFundingIndex].date ?? "");
-    }
-  }, [editFundingIndex, fundingSources, form]);
-
   const onSubmitEditedFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
       if (isEdit && editFundingIndex !== undefined && onUpdateFundingSource) {
