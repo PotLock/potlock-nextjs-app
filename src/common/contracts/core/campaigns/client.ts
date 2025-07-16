@@ -93,13 +93,13 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
     );
 
     return contractApi.callMultiple(transactions);
+  } else {
+    return contractApi.call<CreateCampaignParams["args"], Campaign>("create_campaign", {
+      args,
+      deposit: floatToYoctoNear(0.021),
+      gas: FULL_TGAS,
+    });
   }
-
-  return contractApi.call<CreateCampaignParams["args"], Campaign>("create_campaign", {
-    args,
-    deposit: floatToYoctoNear(0.021),
-    gas: FULL_TGAS,
-  });
 };
 
 export const process_escrowed_donations_batch = ({ args }: { args: { campaign_id: CampaignId } }) =>
