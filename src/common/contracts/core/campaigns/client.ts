@@ -1,4 +1,5 @@
 import { Transaction, buildTransaction, calculateDepositByDataSize } from "@wpdas/naxios";
+import Big from "big.js";
 
 import {
   CAMPAIGNS_CONTRACT_ACCOUNT_ID,
@@ -9,7 +10,7 @@ import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear, parseNearAmount } from "@/common/lib";
 import { AccountId, CampaignId, type IndivisibleUnits } from "@/common/types";
-import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "@/entities/_shared/account";
+import { ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC } from "@/entities/_shared/account";
 import { profileConfigurationInputsToSocialDbFormat } from "@/features/profile-configuration/utils/normalization";
 
 import {
@@ -38,10 +39,10 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
       name: project_name,
       description: project_description ?? "",
       categories: [], // Default category for new projects
-      profileImage: ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+      profileImage: ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
     });
 
-    const depositFloat = calculateDepositByDataSize(socialArgs);
+    const depositFloat = Big(calculateDepositByDataSize(socialArgs)).add(0.1).toString();
 
     const socialTransaction = buildTransaction("set", {
       receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,

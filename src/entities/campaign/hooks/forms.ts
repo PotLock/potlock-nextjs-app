@@ -285,30 +285,36 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
             });
           });
       } else {
-        campaignsContractClient.create_campaign({ args }).then((newCampaign) => {
-          toast({
-            title: `You’ve successfully created a campaign for ${values.name}.`,
+        campaignsContractClient
+          .create_campaign({ args })
+          .then((newCampaign) => {
+            toast({
+              title: `You’ve successfully created a campaign for ${values.name}.`,
 
-            description:
-              "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+              description:
+                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+            });
+
+            // Fix: Ensure newCampaign has an id before accessing it
+            console.log(newCampaign);
+
+            if (
+              newCampaign &&
+              typeof newCampaign === "object" &&
+              "id" in newCampaign &&
+              newCampaign.id
+            ) {
+              router.push(routeSelectors.CAMPAIGN_BY_ID((newCampaign as Campaign).id));
+            } else {
+              router.push(`/campaigns`);
+            }
+          })
+          .catch(() => {
+            toast({
+              title: "Failed to create Campaign.",
+              variant: "destructive",
+            });
           });
-
-          // Fix: Ensure newCampaign has an id before accessing it
-          console.log(newCampaign);
-          if (
-            newCampaign &&
-            typeof newCampaign === "object" &&
-            "id" in newCampaign &&
-            newCampaign.id
-          ) {
-            router.push(routeSelectors.CAMPAIGN_BY_ID((newCampaign as Campaign).id));
-          } else router.push(`/campaigns`);
-
-          toast({
-            title: "Failed to create Campaign.",
-            variant: "destructive",
-          });
-        });
       }
     },
     [
