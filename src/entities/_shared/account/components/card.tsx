@@ -58,11 +58,12 @@ export const AccountCard = ({ accountId, snapshot, actions }: AccountCardProps) 
           style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"
         >
-          <AccountProfileCover accountId={accountId} height={146} />
+          <AccountProfileCover live accountId={accountId} height={146} />
 
           {/* Content */}
           <div className="flex flex-1 flex-col gap-5 px-6 pb-6">
             <AccountProfilePicture
+              live
               accountId={accountId}
               className={cn(
                 "relative -mt-5 h-10 w-10 object-cover",

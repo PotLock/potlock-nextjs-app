@@ -78,19 +78,22 @@ type SmartContractProps = {
   index: number;
   isPreview?: boolean;
   onEditClickHandler?: (contractIndex: number) => void;
+  onRemoveHandler?: (contractIndex: number) => void;
+  onAddHandler?: (contract: [string, string]) => void;
 };
 
 const SmartContract = ({
   contractInfo,
   index,
   isPreview,
-  onEditClickHandler,
+  onRemoveHandler,
+  onAddHandler,
 }: SmartContractProps) => {
   const [chain, setChain] = useState(contractInfo[0]);
   const [address, setAddress] = useState(contractInfo[1]);
   const [error, setError] = useState("");
 
-  const onAddHandler = useCallback(() => {
+  const onAddHandlerClick = useCallback(() => {
     if (!chain) {
       setError("You must select a chain");
       return;
@@ -120,19 +123,24 @@ const SmartContract = ({
       // dispatch.projectEditor.addSmartContract([chain, address], index);
       setChain("");
       setAddress("");
-    }
-  }, [chain, address, index]);
 
-  const onRemoveHandler = useCallback(() => {
-    // dispatch.projectEditor.removeSmartContract(index);
-  }, [index]);
+      if (onAddHandler) {
+        onAddHandler([chain, address]);
+      }
+    }
+  }, [chain, address, index, onAddHandler]);
+
+  const onRemoveHandlerClick = useCallback(() => {
+    if (onRemoveHandler) {
+      onRemoveHandler(index);
+    }
+  }, [index, onRemoveHandler]);
 
   return (
     <>
       <div className="bg-neutral-3 h-[1px] w-full md:hidden" />
       <AddChainSelector
         defaultValue={chain}
-        disabled={isPreview}
         onChange={(value) => {
           setChain(value);
           setError("");
@@ -144,7 +152,6 @@ const SmartContract = ({
             label="Contract address"
             inputProps={{
               value: address,
-              disabled: isPreview,
               placeholder: "Enter address",
               onChange: (e) => {
                 setAddress(e.target.value);
@@ -152,7 +159,7 @@ const SmartContract = ({
               },
               onKeyDown: (e) => {
                 if (e.key === "Enter") {
-                  onAddHandler();
+                  onAddHandlerClick();
                 }
               },
             }}
@@ -160,25 +167,14 @@ const SmartContract = ({
           {isPreview ? (
             <>
               <div className="ml-4 self-end">
-                <button
-                  onClick={() => {
-                    if (onEditClickHandler) {
-                      onEditClickHandler(index);
-                    }
-                  }}
-                >
-                  <Edit />
-                </button>
-              </div>
-              <div className="ml-4 self-end">
-                <button onClick={onRemoveHandler}>
+                <button onClick={onRemoveHandlerClick}>
                   <Delete />
                 </button>
               </div>
             </>
           ) : (
             <div className="ml-4 self-end">
-              <Button onClick={onAddHandler} variant="standard-filled" disabled={!!error}>
+              <Button onClick={onAddHandlerClick} variant="standard-filled" disabled={!!error}>
                 Add
               </Button>
             </div>
@@ -199,28 +195,30 @@ const SmartContract = ({
 
 export type ProfileConfigurationSmartContractsSectionProps = {
   values: ProfileConfigurationInputs["smartContracts"];
-  onEditClickHandler: (contractIndex: number) => void;
+  onAddContract?: (contract: [string, string]) => void;
+  onRemoveContract?: (contractIndex: number) => void;
 };
 
 export const ProfileConfigurationSmartContractsSection = ({
   values,
-  onEditClickHandler,
+  onAddContract,
+  onRemoveContract,
 }: ProfileConfigurationSmartContractsSectionProps) => {
   if (values && values.length > 0) {
     return (
       <>
         {values.map((contractInfo, index) => (
           <SmartContract
-            key={`${contractInfo[0]}_${contractInfo[1]}`}
-            onEditClickHandler={onEditClickHandler}
+            key={`${contractInfo[0]}_${contractInfo[1]}_${index}`}
+            onRemoveHandler={onRemoveContract}
             contractInfo={contractInfo}
             index={index}
             isPreview
           />
         ))}
 
-        <SmartContract contractInfo={["", ""]} index={values.length} />
+        <SmartContract contractInfo={["", ""]} index={values.length} onAddHandler={onAddContract} />
       </>
     );
-  } else return <SmartContract contractInfo={["", ""]} index={0} />;
+  } else return <SmartContract contractInfo={["", ""]} index={0} onAddHandler={onAddContract} />;
 };

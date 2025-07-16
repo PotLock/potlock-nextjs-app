@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
-import { pick } from "remeda";
 
 import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { Button, Form, FormField } from "@/common/ui/layout/components";
@@ -15,7 +14,7 @@ import {
 import { rootPathnames } from "@/pathnames";
 
 import { ProfileConfigurationFundingSourceModal } from "./AddFundingSourceModal";
-import { ProfileConfigurationSmartContractModal } from "./contract-modal";
+// import { ProfileConfigurationSmartContractModal } from "./contract-modal";
 import { ProfileConfigurationSmartContractsSection } from "./contracts-section";
 import { ProjectCategoryPicker, Row, SubHeader } from "./editor-elements";
 import { ProfileConfigurationFundingSourcesTable } from "./funding-sources";
@@ -42,7 +41,6 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
 
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
-  const [editContractIndex, setEditContractIndex] = useState<number>();
 
   const {
     form,
@@ -53,8 +51,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
     updateBackgroundImage,
     updateProfileImage,
     addRepository,
-    updateRepositories,
+    removeRepository,
+    updateRepository,
     updateTeamMembers,
+    addFundingSource,
+    updateFundingSource,
+    removeFundingSource,
+    addSmartContract,
+    removeSmartContract,
   } = useProfileForm({
     mode,
     accountId,
@@ -75,10 +79,10 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
     [updateTeamMembers],
   );
 
-  const onChangeRepositories = useCallback(
-    (repositories: string[]) => updateRepositories(repositories),
-    [updateRepositories],
-  );
+  // const onChangeRepositories = useCallback(
+  //   (repositories: string[]) => updateRepositories(repositories),
+  //   [updateRepositories],
+  // );
 
   const submitButtonLabel = useMemo(() => {
     switch (mode) {
@@ -108,20 +112,22 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
         data={values.fundingSources}
         open={addFundingModalOpen}
         editFundingIndex={editFundingIndex}
+        onAddFundingSource={addFundingSource}
+        onUpdateFundingSource={updateFundingSource}
         onCloseClick={() => {
           setAddFundingModalOpen(false);
           setEditFundingIndex(undefined);
         }}
       />
 
-      <ProfileConfigurationSmartContractModal
+      {/* <ProfileConfigurationSmartContractModal
         data={values.smartContracts}
         contractIndex={editContractIndex || 0}
         open={editContractIndex !== undefined}
         onCloseClick={() => {
           setEditContractIndex(undefined);
         }}
-      />
+      /> */}
 
       <Form {...form}>
         <form {...{ onSubmit }}>
@@ -210,12 +216,13 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
               ) : null}
             </Row>
 
-            {/* <SubHeader title="Smart contracts" className="mt-16" />
+            <SubHeader title="Smart contracts" className="mt-16" />
 
             <Row>
               <ProfileConfigurationSmartContractsSection
                 values={values.smartContracts}
-                onEditClickHandler={setEditContractIndex}
+                onAddContract={addSmartContract}
+                onRemoveContract={removeSmartContract}
               />
             </Row>
 
@@ -227,6 +234,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                 setEditFundingIndex(fundingIndex);
                 setAddFundingModalOpen(true);
               }}
+              onDeleteClick={removeFundingSource}
             />
 
             <div className="mt-6">
@@ -245,7 +253,8 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             <Row>
               <ProfileConfigurationRepositoriesSection
                 values={values.githubRepositories}
-                onChange={onChangeRepositories}
+                onUpdate={updateRepository}
+                onRemove={removeRepository}
               />
             </Row>
 
@@ -254,7 +263,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                 <PlusIcon width={12} height={12} />
                 <span>{"Add Repository"}</span>
               </Button>
-            </div> */}
+            </div>
 
             <SubHeader title="Social links" className="mt-16" />
 

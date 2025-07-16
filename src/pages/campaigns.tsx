@@ -39,7 +39,7 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
       <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
         <div className=" flex items-center gap-4 ">
           <h1 className=" text-[18px] font-semibold ">Featured Campaigns</h1>
-          <p className="text-[18px]">{current + 1}/8</p>
+          <p className="text-[18px]">{current + 1}/6</p>
         </div>
         <div className="flex gap-4">
           <img
@@ -60,7 +60,7 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
         <CarouselContent>
           {data?.length &&
             data
-              ?.filter((data) => [13, 12, 11, 10, 9, 7, 6, 3].includes(data?.id))
+              ?.filter((data) => [52, 51, 45, 41, 44, 43].includes(data?.id))
               ?.map((data) => <CampaignCarouselItem key={data.id} data={data} />)}
         </CarouselContent>
       </Carousel>

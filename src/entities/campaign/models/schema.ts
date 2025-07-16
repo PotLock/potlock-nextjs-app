@@ -65,7 +65,7 @@ const baseSchema = z.object({
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must be less than 100 characters"),
 
-  description: z.string().max(250, "Description must be less than 250 characters").optional(),
+  description: z.string().max(500, "Description must be less than 500 characters").optional(),
   ft_id: ftIdSchema,
   target_amount: positiveNumberParser.describe("Target Amount of the campaign"),
   min_amount: positiveNumberParser.optional().describe("Minimum Amount of the Campaign"),
@@ -92,7 +92,8 @@ const baseSchema = z.object({
 export const createCampaignSchema = baseSchema
   .extend({
     start_ms: futureTimestamp.describe("Campaign Start Date"),
-
+    project_name: z.string().optional(),
+    project_description: z.string().optional(),
     recipient: z.string().min(1, "Recipient account is required").refine(near.isAccountValid, {
       message: `Invalid Account, must be a valid NEAR account`,
     }),

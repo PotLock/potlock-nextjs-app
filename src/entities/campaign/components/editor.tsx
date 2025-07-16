@@ -11,9 +11,14 @@ import { indivisibleUnitsToFloat, parseNumber } from "@/common/lib";
 import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
-import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
+import { RichTextEditor } from "@/common/ui/form/components/richtext";
+import { Button, Form, FormField, Switch, Textarea } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
+import {
+  ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH,
+  useAccountSocialProfile,
+} from "@/entities/_shared/account";
 import { TokenSelector, useFungibleToken } from "@/entities/_shared/token";
 
 import { useCampaignForm } from "../hooks/forms";
@@ -41,12 +46,17 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
     onSuccess: handleCoverImageUploadResult,
   });
 
-  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl] = form.watch([
+  const { profile, isLoading: isProfileLoading } = useAccountSocialProfile({
+    accountId: walletUser?.accountId ?? "",
+  });
+
+  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl, description] = form.watch([
     "ft_id",
     "target_amount",
     "min_amount",
     "max_amount",
     "cover_image_url",
+    "description",
   ]);
 
   const { data: token } = useFungibleToken({
@@ -208,7 +218,65 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             });
           }}
         >
-          <div className="mb-8">
+          <div className="mb-8 mt-8">
+            {!isUpdate && !isProfileLoading && !profile && walletUser?.accountId && (
+              <div className="mb-12 rounded-lg border border-neutral-200 bg-neutral-50 p-8">
+                <div className="mb-6">
+                  <div className="mb-3 flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                      <svg
+                        className="h-4 w-4 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="text-xl font-semibold text-neutral-900">Project Details</h2>
+                  </div>
+                  <p className="text-sm font-normal leading-6 text-neutral-600">
+                    Please note that you do not have a project yet, that is why you&apos;re required
+                    to input your project details now.
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="project_name"
+                    render={({ field }) => (
+                      <TextField
+                        label="Project Name"
+                        placeholder="Enter name"
+                        required
+                        type="text"
+                        classNames={{ root: "w-full" }}
+                        {...field}
+                      />
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="project_description"
+                    render={({ field }) => (
+                      <TextAreaField
+                        label="Describe your project"
+                        placeholder="Enter description"
+                        required
+                        maxLength={ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH}
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            )}
             <h3 className="mb-2 mt-10 text-xl font-semibold">
               <span>{"Upload Campaign Image"}</span>
               <span className="font-normal text-gray-500">{"(Optional)"}</span>
@@ -288,15 +356,14 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
           <FormField
             control={form.control}
             name="description"
-            render={({ field }) => (
-              <TextAreaField
-                {...field}
-                label="Campaign Description"
-                required
-                className="mt-8"
-                placeholder="Type description"
+            render={({ field: _field }) => (
+              <RichTextEditor
+                value={description}
+                onChange={(value) => form.setValue("description", value, { shouldValidate: true })}
                 maxLength={250}
-                rows={4}
+                label="Campaign Description"
+                error={form.formState.errors.description?.message}
+                className="mt-8"
               />
             )}
           />
@@ -443,7 +510,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                   {...field}
                   required={!!watch("min_amount")}
                   label="End Date"
-                  hint="If the minimum amount isn’t reached by the end date specified all donations will be refunded automatically."
+                  hint="If the minimum amount isn't reached by the end date specified all donations will be refunded automatically."
                   value={
                     typeof value === "number"
                       ? Temporal.Instant.fromEpochMilliseconds(value)
@@ -509,7 +576,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             )}
           >
             <div>
-              <h2 className="text-base font-medium">Bypass Fees</h2>
+              <h2 className="text-base font-medium">Fee Exemption</h2>
 
               <p className="text-sm font-normal leading-6 text-[#7B7B7B] ">
                 If enabled, donors may be able to bypass certain fees
