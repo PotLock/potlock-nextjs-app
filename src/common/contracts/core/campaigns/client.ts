@@ -1,10 +1,17 @@
-import { MemoryCache } from "@wpdas/naxios";
+import { Transaction, buildTransaction, calculateDepositByDataSize } from "@wpdas/naxios";
+import Big from "big.js";
 
-import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import {
+  CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+  LISTS_CONTRACT_ACCOUNT_ID,
+  SOCIAL_DB_CONTRACT_ACCOUNT_ID,
+} from "@/common/_config";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
-import { FULL_TGAS } from "@/common/constants";
-import { floatToYoctoNear } from "@/common/lib";
+import { FULL_TGAS, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { floatToYoctoNear, parseNearAmount } from "@/common/lib";
 import { AccountId, CampaignId, type IndivisibleUnits } from "@/common/types";
+import { ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC } from "@/entities/_shared/account";
+import { profileConfigurationInputsToSocialDbFormat } from "@/features/profile-configuration/utils/normalization";
 
 import {
   Campaign,
@@ -13,6 +20,7 @@ import {
   CampaignInputs,
   CampaignsContractConfig,
 } from "./interfaces";
+import { NEARSocialUserProfile } from "../../social-db";
 
 const contractApi = naxiosInstance.contractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
@@ -22,12 +30,77 @@ export const get_config = () => contractApi.view<{}, CampaignsContractConfig>("g
 
 export type CreateCampaignParams = { args: CampaignInputs };
 
-export const create_campaign = ({ args }: CreateCampaignParams) =>
-  contractApi.call<CreateCampaignParams["args"], Campaign>("create_campaign", {
-    args,
-    deposit: floatToYoctoNear(0.021),
-    gas: FULL_TGAS,
-  });
+export const create_campaign = ({ args }: CreateCampaignParams) => {
+  // If the project name is provided, we need to create a social profile for the project
+  if (args.project_name) {
+    const { project_name, project_description, ...rest } = args;
+
+    const socialArgs: NEARSocialUserProfile = profileConfigurationInputsToSocialDbFormat({
+      name: project_name,
+      description: project_description ?? "",
+      categories: [], // Default category for new projects
+      profileImage: ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
+    });
+
+    const depositFloat = Big(calculateDepositByDataSize(socialArgs)).add(0.1).toString();
+
+    const socialTransaction = buildTransaction("set", {
+      receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
+      args: {
+        data: {
+          [args.owner as AccountId]: {
+            profile: socialArgs,
+            index: {
+              star: {
+                key: { type: "social", path: `potlock.near/widget/Index` },
+                value: { type: "star" },
+              },
+              notify: {
+                key: "potlock.near",
+                value: {
+                  type: "star",
+                  item: { type: "social", path: `potlock.near/widget/Index` },
+                },
+              },
+            },
+            graph: {
+              star: { ["potlock.near"]: { widget: { Index: "" } } },
+              follow: { ["potlock.near"]: "" },
+            },
+          },
+        },
+      },
+      deposit: parseNearAmount(depositFloat)!, // Standard deposit for social profile
+    });
+
+    const transactions: Transaction<object>[] = [socialTransaction];
+
+    transactions.push(
+      buildTransaction("register_batch", {
+        receiverId: LISTS_CONTRACT_ACCOUNT_ID,
+        args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
+        deposit: parseNearAmount("0.05")!,
+        gas: FULL_TGAS,
+      }),
+    );
+
+    transactions.push(
+      buildTransaction("create_campaign", {
+        args: rest,
+        deposit: floatToYoctoNear(0.021),
+        gas: FULL_TGAS,
+      }),
+    );
+
+    return contractApi.callMultiple(transactions);
+  } else {
+    return contractApi.call<CreateCampaignParams["args"], Campaign>("create_campaign", {
+      args,
+      deposit: floatToYoctoNear(0.021),
+      gas: FULL_TGAS,
+    });
+  }
+};
 
 export const process_escrowed_donations_batch = ({ args }: { args: { campaign_id: CampaignId } }) =>
   contractApi.call("process_escrowed_donations_batch", {

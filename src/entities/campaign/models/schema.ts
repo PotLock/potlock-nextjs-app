@@ -92,7 +92,8 @@ const baseSchema = z.object({
 export const createCampaignSchema = baseSchema
   .extend({
     start_ms: futureTimestamp.describe("Campaign Start Date"),
-
+    project_name: z.string().optional(),
+    project_description: z.string().optional(),
     recipient: z.string().min(1, "Recipient account is required").refine(near.isAccountValid, {
       message: `Invalid Account, must be a valid NEAR account`,
     }),
