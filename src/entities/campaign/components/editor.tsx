@@ -34,6 +34,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   const walletUser = useWalletUserSession();
   const { back } = useRouter();
   const [avoidFee, setAvoidFee] = useState<boolean>(false);
+  const [recipientType, setRecipientType] = useState<"yourself" | "someone_else">("yourself");
   const isUpdate = campaignId !== undefined;
 
   const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled } = useCampaignForm({
@@ -41,6 +42,13 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
     ftId: existingData?.ft_id ?? NATIVE_TOKEN_ID,
     onUpdateSuccess: close,
   });
+
+  // Set initial recipient when component mounts (only for create mode)
+  useEffect(() => {
+    if (!isUpdate && recipientType === "yourself" && walletUser?.accountId) {
+      form.setValue("recipient", walletUser.accountId);
+    }
+  }, [recipientType, walletUser?.accountId, form, isUpdate]);
 
   const { handleFileInputChange, isPending: isBannerUploadPending } = pinataHooks.useFileUpload({
     onSuccess: handleCoverImageUploadResult,
@@ -219,64 +227,68 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
           }}
         >
           <div className="mb-8 mt-8">
-            {!isUpdate && !isProfileLoading && !profile && walletUser?.accountId && (
-              <div className="mb-12 rounded-lg border border-neutral-200 bg-neutral-50 p-8">
-                <div className="mb-6">
-                  <div className="mb-3 flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
-                      <svg
-                        className="h-4 w-4 text-blue-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
+            {!isUpdate &&
+              !isProfileLoading &&
+              !profile &&
+              walletUser?.accountId &&
+              walletUser?.accountId === form.getValues("recipient") && (
+                <div className="mb-12 rounded-lg border border-neutral-200 bg-neutral-50 p-8">
+                  <div className="mb-6">
+                    <div className="mb-3 flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                        <svg
+                          className="h-4 w-4 text-blue-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-semibold text-neutral-900">Project Details</h2>
                     </div>
-                    <h2 className="text-xl font-semibold text-neutral-900">Project Details</h2>
+                    <p className="text-sm font-normal leading-6 text-neutral-600">
+                      Please note that you do not have a project yet, that is why you&apos;re
+                      required to input your project details now.
+                    </p>
                   </div>
-                  <p className="text-sm font-normal leading-6 text-neutral-600">
-                    Please note that you do not have a project yet, that is why you&apos;re required
-                    to input your project details now.
-                  </p>
-                </div>
 
-                <div className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="project_name"
-                    render={({ field }) => (
-                      <TextField
-                        label="Project Name"
-                        placeholder="Enter name"
-                        required
-                        type="text"
-                        classNames={{ root: "w-full" }}
-                        {...field}
-                      />
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="project_description"
-                    render={({ field }) => (
-                      <TextAreaField
-                        label="Describe your project"
-                        placeholder="Enter description"
-                        required
-                        maxLength={ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH}
-                        {...field}
-                      />
-                    )}
-                  />
+                  <div className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="project_name"
+                      render={({ field }) => (
+                        <TextField
+                          label="Project Name"
+                          placeholder="Enter name"
+                          required
+                          type="text"
+                          classNames={{ root: "w-full" }}
+                          {...field}
+                        />
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="project_description"
+                      render={({ field }) => (
+                        <TextAreaField
+                          label="Describe your project"
+                          placeholder="Enter description"
+                          required
+                          maxLength={ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             <h3 className="mb-2 mt-10 text-xl font-semibold">
               <span>{"Upload Campaign Image"}</span>
               <span className="font-normal text-gray-500">{"(Optional)"}</span>
@@ -322,20 +334,105 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
           </div>
 
           <div className="mb-8 flex w-full flex-col justify-between md:flex-row md:flex-row">
-            <FormField
-              control={form.control}
-              name="recipient"
-              render={({ field }) => (
-                <TextField
-                  classNames={{ root: "md:w-[45%] mb-5 md:mb-0" }}
-                  label="Who are you raising this campaign for?"
-                  required
-                  placeholder="Enter Near ID (username.near)"
-                  type="text"
-                  {...field}
-                />
-              )}
-            />
+            {!isUpdate ? (
+              // Create mode - show recipient selection
+              <div className="mb-5 md:mb-0 md:w-[45%]">
+                <label className="mb-3 block text-sm font-medium text-gray-700">
+                  Who are you raising this campaign for?
+                </label>
+
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRecipientType("yourself");
+                      form.setValue("recipient", walletUser?.accountId || "");
+                    }}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg border px-4 py-3 transition-all",
+                      recipientType === "yourself"
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 bg-white hover:border-gray-400",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex h-6 w-6 items-center justify-center rounded-full",
+                        recipientType === "yourself" ? "bg-red-500" : "bg-gray-400",
+                      )}
+                    >
+                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <span className="font-medium">Yourself</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRecipientType("someone_else");
+                      form.setValue("recipient", "");
+                    }}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg border px-4 py-3 transition-all",
+                      recipientType === "someone_else"
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 bg-white hover:border-gray-400",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex h-6 w-6 items-center justify-center rounded-full",
+                        recipientType === "someone_else" ? "bg-red-500" : "bg-gray-400",
+                      )}
+                    >
+                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                      </svg>
+                    </div>
+                    <span className="font-medium">Someone else</span>
+                  </button>
+                </div>
+
+                {recipientType === "someone_else" && (
+                  <FormField
+                    control={form.control}
+                    name="recipient"
+                    render={({ field }) => (
+                      <TextField
+                        classNames={{ root: "mt-4 w-full" }}
+                        label=""
+                        required
+                        placeholder="Enter NEAR ID (username.near)"
+                        type="text"
+                        {...field}
+                      />
+                    )}
+                  />
+                )}
+              </div>
+            ) : (
+              // Update mode - show simple recipient field
+              <FormField
+                control={form.control}
+                name="recipient"
+                render={({ field }) => (
+                  <TextField
+                    classNames={{ root: "md:w-[45%] mb-5 md:mb-0" }}
+                    label="Recipient"
+                    required
+                    placeholder="Enter NEAR ID (username.near)"
+                    type="text"
+                    {...field}
+                  />
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
