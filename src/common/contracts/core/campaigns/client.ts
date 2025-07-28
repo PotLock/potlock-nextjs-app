@@ -50,27 +50,10 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
         data: {
           [args.owner as AccountId]: {
             profile: socialArgs,
-            index: {
-              star: {
-                key: { type: "social", path: `potlock.near/widget/Index` },
-                value: { type: "star" },
-              },
-              notify: {
-                key: "potlock.near",
-                value: {
-                  type: "star",
-                  item: { type: "social", path: `potlock.near/widget/Index` },
-                },
-              },
-            },
-            graph: {
-              star: { ["potlock.near"]: { widget: { Index: "" } } },
-              follow: { ["potlock.near"]: "" },
-            },
           },
         },
       },
-      deposit: parseNearAmount(depositFloat)!, // Standard deposit for social profile
+      deposit: parseNearAmount(depositFloat)!,
     });
 
     const transactions: Transaction<object>[] = [socialTransaction];
