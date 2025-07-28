@@ -32,7 +32,7 @@ export type CreateCampaignParams = { args: CampaignInputs };
 
 export const create_campaign = ({ args }: CreateCampaignParams) => {
   // If the project name is provided, we need to create a social profile for the project
-  if (args.project_name) {
+  if (args.project_name && args.recipient === args.owner) {
     const { project_name, project_description, ...rest } = args;
 
     const socialArgs: NEARSocialUserProfile = profileConfigurationInputsToSocialDbFormat({

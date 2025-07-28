@@ -40,7 +40,7 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
           <span
             className={cn(
               "font-500 text-nowrap",
-              (profile?.name ?? accountId).length > 20
+              (profile?.name ?? accountId)?.length > 20
                 ? "max-w-[140px] overflow-hidden text-ellipsis whitespace-nowrap"
                 : "w-fit",
               classNames?.name,
