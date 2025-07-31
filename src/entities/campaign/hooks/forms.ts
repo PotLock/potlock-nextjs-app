@@ -239,7 +239,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
             }
           : {}),
 
-        ...(values?.allow_fee_avoidance && {
+        ...(values?.allow_fee_avoidance !== undefined && {
           allow_fee_avoidance: values.allow_fee_avoidance,
         }),
         ...(values?.referral_fee_basis_points && {
