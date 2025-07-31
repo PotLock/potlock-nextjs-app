@@ -168,7 +168,7 @@ export const DonationModalConfirmationScreen: React.FC<DonationModalConfirmation
             />
           )}
 
-          {isFeeBypassAllowed && referralFee.percentage > 0 && (
+          {referralFee.percentage > 0 && (
             <FormField
               control={form.control}
               name="bypassReferralFee"
