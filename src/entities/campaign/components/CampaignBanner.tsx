@@ -6,9 +6,11 @@ import { isNonNullish, isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
+import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
+import { toTimestamp } from "@/common/lib/datetime";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
 import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
@@ -28,18 +30,18 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
   const viewer = useWalletUserSession();
 
   const {
-    isLoading: isCampaignLoading,
     data: campaign,
+    isLoading: isCampaignLoading,
     error: campaignLoadingError,
-  } = campaignsContractHooks.useCampaign({ campaignId });
+  } = indexer.useCampaign({ campaignId });
 
-  const { data: token } = useFungibleToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({ tokenId: campaign?.token.account ?? NATIVE_TOKEN_ID });
 
   const raisedAmountFloat = useMemo(
     () =>
       token === undefined || campaign === undefined
         ? 0
-        : indivisibleUnitsToFloat(campaign.total_raised_amount, token.metadata.decimals),
+        : indivisibleUnitsToFloat(campaign?.net_raised_amount ?? "0", token.metadata.decimals),
 
     [campaign, token],
   );
@@ -80,10 +82,10 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     return <h1>Error Loading Campaign</h1>;
   }
 
-  const isStarted = getTimePassed(Number(campaign?.start_ms), true)?.includes("-");
+  const isStarted = getTimePassed(toTimestamp(campaign?.start_at ?? 0), true)?.includes("-");
 
-  const isEnded = campaign?.end_ms
-    ? getTimePassed(Number(campaign?.end_ms), false, true)?.includes("-")
+  const isEnded = campaign?.end_at
+    ? getTimePassed(toTimestamp(campaign?.end_at), false, true)?.includes("-")
     : false;
 
   // Check if the hooks are still loading
@@ -119,7 +121,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
                   <AccountProfileLink
                     classNames={{ root: "bg-transparent" }}
-                    accountId={campaign?.recipient as string}
+                    accountId={campaign?.recipient?.id ?? ""}
                   />
                 </div>
 
@@ -128,8 +130,8 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
                 </div>
 
                 <div className="flex gap-1">
-                  <p className="font-semibold">ORGANIZED BY</p>
-                  <AccountProfileLink accountId={campaign?.owner as string} />
+                  <span className="font-semibold">ORGANIZED BY</span>
+                  <AccountProfileLink accountId={campaign?.owner?.id ?? ""} />
                 </div>
               </div>
 
@@ -144,7 +146,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         </div>
 
         <div
-          className="prose prose-sm max-w-none"
+          className="prose prose-sm max-w-none p-4"
           dangerouslySetInnerHTML={{
             __html: campaign?.description ?? "",
           }}
@@ -175,14 +177,15 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         </div>
 
         <CampaignProgressBar
-          tokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
-          amount={campaign?.total_raised_amount ?? `${0}`}
+          tokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
+          amount={campaign?.net_raised_amount ?? `${0}`}
+          isEnded={!campaign?.is_active}
           minAmount={campaign?.min_amount ?? `${0}`}
           target={campaign?.target_amount ?? `${0}`}
-          startDate={Number(campaign?.start_ms)}
+          startDate={toTimestamp(campaign?.start_at ?? 0)}
           isStarted={isStarted}
           isEscrowBalanceEmpty={campaign?.escrow_balance === "0"}
-          endDate={Number(campaign?.end_ms)}
+          endDate={toTimestamp(campaign?.end_at ?? 0)}
         />
 
         <div className="mt-6">
@@ -219,8 +222,8 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           {viewer.isSignedIn &&
             !isProcessingHooksLoading &&
             isDonationRefundsProcessed &&
-            campaign?.end_ms &&
-            campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+            campaign?.end_at &&
+            toTimestamp(campaign?.end_at ?? 0) < Temporal.Now.instant().epochMilliseconds &&
             raisedAmountFloat < minAmountFloat && (
               <div className="flex w-full flex-col gap-4">
                 <Button className="w-full" onClick={handleDonationsRefund}>
@@ -255,12 +258,12 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
               !isNonNullish(campaign?.min_amount) ||
               raisedAmountFloat < minAmountFloat) &&
             (!isDonationRefundsProcessed ||
-              !campaign?.end_ms ||
-              campaign?.end_ms >= Temporal.Now.instant().epochMilliseconds ||
+              !campaign?.end_at ||
+              toTimestamp(campaign?.end_at ?? 0) >= Temporal.Now.instant().epochMilliseconds ||
               raisedAmountFloat >= minAmountFloat) && (
               <>
                 <DonateToCampaign
-                  cachedTokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
+                  cachedTokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
                   disabled={
                     isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
                   }

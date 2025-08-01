@@ -5,9 +5,10 @@ import { useRouter } from "next/router";
 import { isNonNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
+import { Campaign } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Campaign } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat, parseNumber } from "@/common/lib";
+import { toTimestamp } from "@/common/lib/datetime";
 import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
@@ -39,7 +40,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
 
   const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
-    ftId: existingData?.ft_id ?? NATIVE_TOKEN_ID,
+    ftId: existingData?.token?.account ?? NATIVE_TOKEN_ID,
     onUpdateSuccess: close,
   });
 
@@ -68,7 +69,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   ]);
 
   const { data: token } = useFungibleToken({
-    tokenId: existingData?.ft_id ?? ftId ?? NATIVE_TOKEN_ID,
+    tokenId: existingData?.token?.account ?? ftId ?? NATIVE_TOKEN_ID,
     balanceCheckAccountId: walletUser?.accountId,
   });
 
@@ -94,8 +95,8 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   // TODO: which impacts UX and performance SUBSTANTIALLY!
   useEffect(() => {
     if (isUpdate && existingData && !form.formState.isDirty) {
-      if (isNonNullish(existingData.ft_id) && ftId !== existingData.ft_id) {
-        form.setValue("ft_id", existingData.ft_id);
+      if (isNonNullish(existingData.token?.account) && ftId !== existingData.token?.account) {
+        form.setValue("ft_id", existingData.token?.account);
       }
 
       if (token !== undefined) {
@@ -116,19 +117,19 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
         form.setValue("cover_image_url", existingData.cover_image_url);
       }
 
-      form.setValue("recipient", existingData?.recipient);
-      form.setValue("name", existingData?.name);
-      form.setValue("description", existingData.description);
+      form.setValue("recipient", existingData?.recipient?.id ?? "");
+      form.setValue("name", existingData?.name ?? "");
+      form.setValue("description", existingData?.description ?? "");
 
       if (
-        existingData?.start_ms &&
-        existingData?.start_ms > Temporal.Now.instant().epochMilliseconds
+        existingData?.start_at &&
+        toTimestamp(existingData?.start_at) > Temporal.Now.instant().epochMilliseconds
       ) {
-        form.setValue("start_ms", existingData?.start_ms);
+        form.setValue("start_ms", toTimestamp(existingData?.start_at));
       }
 
-      if (existingData?.end_ms) {
-        form.setValue("end_ms", existingData?.end_ms);
+      if (existingData?.end_at) {
+        form.setValue("end_ms", toTimestamp(existingData?.end_at));
       }
 
       if (existingData.allow_fee_avoidance) {
@@ -574,8 +575,8 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                 )}
               />
             ) : (
-              existingData?.start_ms &&
-              existingData?.start_ms > Temporal.Now.instant().epochMilliseconds && (
+              existingData?.start_at &&
+              toTimestamp(existingData?.start_at) > Temporal.Now.instant().epochMilliseconds && (
                 <FormField
                   control={form.control}
                   name="start_ms"

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { Campaign, campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import { Campaign, indexer } from "@/common/api/indexer";
 import {
   Button,
   Carousel,
@@ -60,8 +60,8 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
         <CarouselContent>
           {data?.length &&
             data
-              ?.filter((data) => [52, 51, 45, 41, 44, 43].includes(data?.id))
-              ?.map((data) => <CampaignCarouselItem key={data.id} data={data} />)}
+              ?.filter((data) => [52, 63, 62, 56, 51, 43].includes(data?.on_chain_id))
+              ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
         </CarouselContent>
       </Carousel>
     </div>
@@ -69,11 +69,11 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 };
 
 export default function CampaignsPage() {
-  const {
-    isLoading: isCampaignsListLoading,
-    data: campaigns,
-    error: campaignsLoadingError,
-  } = campaignsContractHooks.useCampaigns();
+  const { data, isLoading, error } = indexer.useCampaigns({
+    page: 1,
+    page_size: 200,
+    active: true,
+  });
 
   const viewer = useWalletUserSession();
 
@@ -115,22 +115,22 @@ export default function CampaignsPage() {
         </div>
       </div>
 
-      {campaignsLoadingError !== undefined && (
+      {error !== undefined && (
         <PageError
           title="Unable to load campaigns"
-          message={"message" in campaignsLoadingError ? campaignsLoadingError.message : undefined}
+          message={"message" in error ? error.message : undefined}
         />
       )}
 
-      {campaignsLoadingError === undefined && campaigns === undefined && isCampaignsListLoading && (
+      {error === undefined && data?.results === undefined && isLoading && (
         <div className="flex h-40 items-center justify-center">
           <Spinner className="h-7 w-7" />
         </div>
       )}
 
-      {campaignsLoadingError === undefined && campaigns !== undefined && (
+      {error === undefined && data?.results !== undefined && (
         <>
-          <FeaturedCampaigns data={campaigns} />
+          <FeaturedCampaigns data={data?.results} />
           <CampaignsList />
         </>
       )}
