@@ -3,7 +3,7 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { Campaign, indexer } from "@/common/api/indexer";
-import { NoResultsPlaceholder, PageError, SplashScreen } from "@/common/ui/layout/components";
+import { NoResultsPlaceholder, PageError, Spinner } from "@/common/ui/layout/components";
 import { CampaignCard } from "@/entities/campaign";
 import { ProfileLayout } from "@/layout/profile/components/layout";
 
@@ -27,7 +27,9 @@ export default function ProfileCampaignsTab() {
       )}
 
       {campaignsLoadingError === undefined && campaigns === undefined && isCampaignsListLoading && (
-        <SplashScreen className="h-100" />
+        <div className="flex h-40 items-center justify-center">
+          <Spinner className="h-7 w-7" />
+        </div>
       )}
 
       {campaignsLoadingError === undefined && campaigns !== undefined && (
