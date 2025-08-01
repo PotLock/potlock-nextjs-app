@@ -19,6 +19,7 @@ export type CampaignProgressBarProps = ByTokenId & {
   isStarted: boolean;
   startDate: number;
   isEscrowBalanceEmpty: boolean;
+  isEnded: boolean | string;
 };
 
 export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
@@ -27,6 +28,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   minAmount,
   amount,
   endDate,
+  isEnded,
   isEscrowBalanceEmpty,
   isStarted,
   startDate,
@@ -106,7 +108,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   const isTimeUp = timeLeft?.includes("-");
 
   const statusText = useMemo(() => {
-    if ((isTargetMet && endDate && endDate < Date.now()) || isTimeUp) {
+    if (isEnded) {
       return endDate ? `ENDED (${getTimePassed(endDate, false)} ago)` : "ENDED";
     } else if (isStarted) {
       return `Starts in ${getTimePassed(startDate, false, true)}`;
@@ -115,7 +117,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
     } else {
       return "ONGOING";
     }
-  }, [isTargetMet, endDate, isTimeUp, isStarted, timeLeft, startDate]);
+  }, [isEnded, endDate, isStarted, timeLeft, startDate]);
 
   const amountDisplay = useMemo(
     () => (
@@ -132,7 +134,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   );
 
   const titleContent = useMemo(() => {
-    if (isTimeUp) {
+    if (isEnded) {
       let message;
 
       if (raisedAmountFloat && !isTargetMet && raisedAmountFloat < minAmountFloat) {

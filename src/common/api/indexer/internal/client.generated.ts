@@ -236,6 +236,75 @@ export type V1DonateContractConfigRetrieveParams = {
   page_size?: number;
 };
 
+export type V1CampaignsDonationsRetrieveParams = {
+  /**
+   * Filter donations by donor account ID
+   */
+  donor?: string;
+  /**
+   * Exclude refunded donations (true/false)
+   */
+  exclude_refunded?: boolean;
+  /**
+   * Page number for pagination
+   */
+  page?: number;
+  /**
+   * Number of results per page
+   */
+  page_size?: number;
+};
+
+export type V1CampaignsRetrieveParams = {
+  /**
+   * Filter by active campaigns (true/false)
+   */
+  active?: boolean;
+  /**
+   * Filter campaigns by owner account ID
+   */
+  owner?: string;
+  /**
+   * Page number for pagination
+   */
+  page?: number;
+  /**
+   * Number of results per page
+   */
+  page_size?: number;
+  /**
+   * Filter campaigns by recipient account ID
+   */
+  recipient?: string;
+  /**
+   * Filter campaigns by token account ID
+   */
+  token?: string;
+};
+
+export type V1CampaignDonationsRetrieveParams = {
+  /**
+   * Filter donations by campaign ID
+   */
+  campaign_id?: number;
+  /**
+   * Filter donations by donor account ID
+   */
+  donor?: string;
+  /**
+   * Exclude refunded donations (true/false)
+   */
+  exclude_refunded?: boolean;
+  /**
+   * Page number for pagination
+   */
+  page?: number;
+  /**
+   * Number of results per page
+   */
+  page_size?: number;
+};
+
 export type V1AccountsUpvotedListsRetrieveParams = {
   /**
    * Page number for pagination
@@ -555,6 +624,8 @@ export interface Round {
    * @nullable
    */
   max_participants?: number | null;
+  /** Minimum deposit. */
+  minimum_deposit: string;
   /** Round name. */
   name: string;
   /**
@@ -1035,13 +1106,13 @@ export interface PaginatedMpdaoUsers {
   results: MpdaoVoterItem[];
 }
 
-export interface PaginatedListsResponse {
+export interface PaginatedListRegistrationsResponse {
   count: number;
   /** @nullable */
   next: string | null;
   /** @nullable */
   previous: string | null;
-  results: List[];
+  results: ListRegistration[];
 }
 
 export interface PaginatedDonationsResponse {
@@ -1053,6 +1124,24 @@ export interface PaginatedDonationsResponse {
   results: Donation[];
 }
 
+export interface PaginatedCampaignsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: Campaign[];
+}
+
+export interface PaginatedCampaignDonationsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: CampaignDonation[];
+}
+
 export interface PaginatedAccountsResponse {
   count: number;
   /** @nullable */
@@ -1060,25 +1149,6 @@ export interface PaginatedAccountsResponse {
   /** @nullable */
   previous: string | null;
   results: Account[];
-}
-
-export interface NearSocialProfileData {
-  backgroundImage?: Image;
-  description?: string;
-  image?: Image;
-  linktree?: Linktree;
-  name?: string;
-  /** JSON-stringified array of category strings */
-  plCategories?: string;
-  /** JSON-stringified array of funding source objects */
-  plFundingSources?: string;
-  /** JSON-stringified array of URLs */
-  plGithubRepos?: string;
-  plPublicGoodReason?: string;
-  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
-  plSmartContracts?: string;
-  /** JSON-stringified array of team member account ID strings */
-  plTeam?: string;
 }
 
 export interface Nft {
@@ -1092,13 +1162,6 @@ export interface Nft {
  * @nullable
  */
 export type MpdaoVoterItemAccountData = Account | null;
-
-export interface MpdaoVoterItem {
-  /** @nullable */
-  account_data: MpdaoVoterItemAccountData;
-  voter_data: MpdaoSnapshot;
-  voter_id: string;
-}
 
 export interface LockingPosition {
   amount: string;
@@ -1125,6 +1188,13 @@ export interface MpdaoSnapshot {
   voter_id: string;
   /** @nullable */
   voting_power: string | null;
+}
+
+export interface MpdaoVoterItem {
+  /** @nullable */
+  account_data: MpdaoVoterItemAccountData;
+  voter_data: MpdaoSnapshot;
+  voter_id: string;
 }
 
 export interface ListUpvote {
@@ -1177,15 +1247,6 @@ export interface ListRegistration {
   updated_at: string;
 }
 
-export interface PaginatedListRegistrationsResponse {
-  count: number;
-  /** @nullable */
-  next: string | null;
-  /** @nullable */
-  previous: string | null;
-  results: ListRegistration[];
-}
-
 export interface List {
   /** Admin only registrations. */
   admin_only_registrations: boolean;
@@ -1232,6 +1293,15 @@ export interface List {
   upvotes: ListUpvote[];
 }
 
+export interface PaginatedListsResponse {
+  count: number;
+  /** @nullable */
+  next: string | null;
+  /** @nullable */
+  previous: string | null;
+  results: List[];
+}
+
 export interface Linktree {
   github?: string;
   telegram?: string;
@@ -1243,6 +1313,25 @@ export interface Image {
   ipfs_cid?: string;
   nft?: Nft;
   url?: string;
+}
+
+export interface NearSocialProfileData {
+  backgroundImage?: Image;
+  description?: string;
+  image?: Image;
+  linktree?: Linktree;
+  name?: string;
+  /** JSON-stringified array of category strings */
+  plCategories?: string;
+  /** JSON-stringified array of funding source objects */
+  plFundingSources?: string;
+  /** JSON-stringified array of URLs */
+  plGithubRepos?: string;
+  plPublicGoodReason?: string;
+  /** JSON-stringified object with chain names as keys that map to nested objects of contract addresses */
+  plSmartContracts?: string;
+  /** JSON-stringified array of team member account ID strings */
+  plTeam?: string;
 }
 
 export interface DonationContractConfig {
@@ -1360,6 +1449,222 @@ export const DefaultRegistrationStatusEnum = {
   Graylisted: "Graylisted",
   Blacklisted: "Blacklisted",
 } as const;
+
+export interface CampaignDonation {
+  campaign: Campaign;
+  /**
+   * Creator fee.
+   * @maxLength 64
+   * @nullable
+   */
+  creator_fee?: string | null;
+  /**
+   * Creator fee in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  creator_fee_usd?: string | null;
+  /** Donation date. */
+  donated_at: string;
+  donor: Account;
+  /** Is Donation Escrowed. */
+  escrowed?: boolean;
+  /** Donation id. */
+  readonly id: number;
+  /**
+   * Donation message.
+   * @maxLength 1024
+   * @nullable
+   */
+  message?: string | null;
+  /**
+   * Net amount.
+   * @maxLength 64
+   */
+  net_amount: string;
+  /**
+   * Net amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  net_amount_usd?: string | null;
+  /**
+   * Campaign donation id in contract
+   * @minimum -2147483648
+   * @maximum 2147483647
+   */
+  on_chain_id: number;
+  /**
+   * Protocol fee.
+   * @maxLength 64
+   */
+  protocol_fee: string;
+  /**
+   * Protocol fee in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  protocol_fee_usd?: string | null;
+  referrer: Account;
+  /**
+   * Referrer fee.
+   * @maxLength 64
+   * @nullable
+   */
+  referrer_fee?: string | null;
+  /**
+   * Referrer fee in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  referrer_fee_usd?: string | null;
+  /**
+   * Donation returned date.
+   * @nullable
+   */
+  returned_at?: string | null;
+  token: Token;
+  /**
+   * Total amount.
+   * @maxLength 64
+   */
+  total_amount: string;
+  /**
+   * Total amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  total_amount_usd?: string | null;
+  /**
+   * Transaction hash.
+   * @maxLength 64
+   * @nullable
+   */
+  tx_hash?: string | null;
+}
+
+export interface CampaignContractConfig {
+  default_creator_fee_basis_points: number;
+  default_referral_fee_basis_points: number;
+  owner: string;
+  protocol_fee_basis_points: number;
+  protocol_fee_recipient_account: string;
+}
+
+export interface Campaign {
+  /** Allow fee avoidance. */
+  allow_fee_avoidance?: boolean;
+  /**
+   * Campaign cover image URL.
+   * @nullable
+   */
+  cover_image_url?: string | null;
+  /** Campaign creation date. */
+  created_at: string;
+  /**
+   * Creator fee basis points.
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  creator_fee_basis_points: number;
+  /**
+   * Campaign description.
+   * @nullable
+   */
+  description?: string | null;
+  /**
+   * Campaign end date.
+   * @nullable
+   */
+  end_at?: string | null;
+  /**
+   * Campaign escrow balance.
+   * @maxLength 64
+   */
+  escrow_balance?: string;
+  /**
+   * Escrow balance in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  escrow_balance_usd?: string | null;
+  readonly is_active: string;
+  /**
+   * Campaign maximum amount.
+   * @maxLength 64
+   * @nullable
+   */
+  max_amount?: string | null;
+  /**
+   * Maximum amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  max_amount_usd?: string | null;
+  /**
+   * Campaign minimum amount.
+   * @maxLength 64
+   * @nullable
+   */
+  min_amount?: string | null;
+  /**
+   * Minimum amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  min_amount_usd?: string | null;
+  /** Campaign name. */
+  name: string;
+  /**
+   * Campaign net raised amount.
+   * @maxLength 64
+   */
+  net_raised_amount?: string;
+  /**
+   * Net raised amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  net_raised_amount_usd?: string | null;
+  /**
+   * @minimum -9223372036854776000
+   * @maximum 9223372036854776000
+   */
+  on_chain_id: number;
+  owner: Account;
+  recipient: Account;
+  /**
+   * Referral fee basis points.
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  referral_fee_basis_points: number;
+  /** Campaign start date. */
+  start_at: string;
+  /**
+   * Campaign target amount.
+   * @maxLength 64
+   */
+  target_amount: string;
+  /**
+   * Target amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  target_amount_usd?: string | null;
+  token: Token;
+  /**
+   * Campaign total raised amount.
+   * @maxLength 64
+   */
+  total_raised_amount?: string;
+  /**
+   * Total raised amount in USD.
+   * @nullable
+   * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
+   */
+  total_raised_amount_usd?: string | null;
+}
 
 export interface ApplicationReview {
   /**
@@ -2004,6 +2309,246 @@ export const useV1AccountsUpvotedListsRetrieve = <TError = AxiosError<void>>(
     (() => (isEnabled ? getV1AccountsUpvotedListsRetrieveKey(accountId, params) : null));
 
   const swrFn = () => v1AccountsUpvotedListsRetrieve(accountId, params, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * Get campaign contract configuration
+ */
+export const v1CampaignContractConfigRetrieve = (
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<CampaignContractConfig>> => {
+  return axios.get(`/api/v1/campaign_contract_config`, options);
+};
+
+export const getV1CampaignContractConfigRetrieveKey = () =>
+  [`/api/v1/campaign_contract_config`] as const;
+
+export type V1CampaignContractConfigRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1CampaignContractConfigRetrieve>>
+>;
+
+export type V1CampaignContractConfigRetrieveQueryError = AxiosError<void>;
+
+export const useV1CampaignContractConfigRetrieve = <TError = AxiosError<void>>(options?: {
+  swr?: SWRConfiguration<Awaited<ReturnType<typeof v1CampaignContractConfigRetrieve>>, TError> & {
+    swrKey?: Key;
+    enabled?: boolean;
+  };
+  axios?: AxiosRequestConfig;
+}) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+
+  const swrKey =
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1CampaignContractConfigRetrieveKey() : null));
+
+  const swrFn = () => v1CampaignContractConfigRetrieve(axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * Get paginated list of all campaign donations with optional filters
+ */
+export const v1CampaignDonationsRetrieve = (
+  params?: V1CampaignDonationsRetrieveParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PaginatedCampaignDonationsResponse>> => {
+  return axios.get(`/api/v1/campaign_donations`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getV1CampaignDonationsRetrieveKey = (params?: V1CampaignDonationsRetrieveParams) =>
+  [`/api/v1/campaign_donations`, ...(params ? [params] : [])] as const;
+
+export type V1CampaignDonationsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1CampaignDonationsRetrieve>>
+>;
+
+export type V1CampaignDonationsRetrieveQueryError = AxiosError<unknown>;
+
+export const useV1CampaignDonationsRetrieve = <TError = AxiosError<unknown>>(
+  params?: V1CampaignDonationsRetrieveParams,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1CampaignDonationsRetrieve>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+
+  const swrKey =
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1CampaignDonationsRetrieveKey(params) : null));
+
+  const swrFn = () => v1CampaignDonationsRetrieve(params, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * Get paginated list of campaigns with optional filters
+ */
+export const v1CampaignsRetrieve = (
+  params?: V1CampaignsRetrieveParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PaginatedCampaignsResponse>> => {
+  return axios.get(`/api/v1/campaigns`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getV1CampaignsRetrieveKey = (params?: V1CampaignsRetrieveParams) =>
+  [`/api/v1/campaigns`, ...(params ? [params] : [])] as const;
+
+export type V1CampaignsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1CampaignsRetrieve>>
+>;
+
+export type V1CampaignsRetrieveQueryError = AxiosError<unknown>;
+
+export const useV1CampaignsRetrieve = <TError = AxiosError<unknown>>(
+  params?: V1CampaignsRetrieveParams,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1CampaignsRetrieve>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+
+  const swrKey =
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1CampaignsRetrieveKey(params) : null));
+
+  const swrFn = () => v1CampaignsRetrieve(params, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * Get campaign details by ID
+ */
+export const v1CampaignsRetrieve2 = (
+  campaignId: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<Campaign>> => {
+  return axios.get(`/api/v1/campaigns/${campaignId}`, options);
+};
+
+export const getV1CampaignsRetrieve2Key = (campaignId: number) =>
+  [`/api/v1/campaigns/${campaignId}`] as const;
+
+export type V1CampaignsRetrieve2QueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1CampaignsRetrieve2>>
+>;
+
+export type V1CampaignsRetrieve2QueryError = AxiosError<void>;
+
+export const useV1CampaignsRetrieve2 = <TError = AxiosError<void>>(
+  campaignId: number,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1CampaignsRetrieve2>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!campaignId;
+
+  const swrKey =
+    swrOptions?.swrKey ?? (() => (isEnabled ? getV1CampaignsRetrieve2Key(campaignId) : null));
+
+  const swrFn = () => v1CampaignsRetrieve2(campaignId, axiosOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * Get paginated list of donations for a specific campaign
+ */
+export const v1CampaignsDonationsRetrieve = (
+  campaignId: number,
+  params?: V1CampaignsDonationsRetrieveParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PaginatedCampaignDonationsResponse>> => {
+  return axios.get(`/api/v1/campaigns/${campaignId}/donations`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getV1CampaignsDonationsRetrieveKey = (
+  campaignId: number,
+  params?: V1CampaignsDonationsRetrieveParams,
+) => [`/api/v1/campaigns/${campaignId}/donations`, ...(params ? [params] : [])] as const;
+
+export type V1CampaignsDonationsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof v1CampaignsDonationsRetrieve>>
+>;
+
+export type V1CampaignsDonationsRetrieveQueryError = AxiosError<void>;
+
+export const useV1CampaignsDonationsRetrieve = <TError = AxiosError<void>>(
+  campaignId: number,
+  params?: V1CampaignsDonationsRetrieveParams,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof v1CampaignsDonationsRetrieve>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!campaignId;
+
+  const swrKey =
+    swrOptions?.swrKey ??
+    (() => (isEnabled ? getV1CampaignsDonationsRetrieveKey(campaignId, params) : null));
+
+  const swrFn = () => v1CampaignsDonationsRetrieve(campaignId, params, axiosOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions);
 

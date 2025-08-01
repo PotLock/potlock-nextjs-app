@@ -1,63 +1,52 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
+import { Campaign, indexer } from "@/common/api/indexer";
 import { NOOP_STRING } from "@/common/constants";
-import { Campaign, campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { useWalletUserSession } from "@/common/wallet";
 
 enum CampaignTab {
   ALL_CAMPAIGNS = "ALL_CAMPAIGNS",
+  ACTIVE_CAMPAIGNS = "ACTIVE_CAMPAIGNS",
   MY_CAMPAIGNS = "MY_CAMPAIGNS",
 }
 
 export const useAllCampaignLists = () => {
   const viewer = useWalletUserSession();
   const [currentTab, setCurrentTab] = useState<CampaignTab>(CampaignTab.ALL_CAMPAIGNS);
-  const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
 
-  const { data: allCampaigns, isLoading: isAllCampaignsLoading } =
-    campaignsContractHooks.useCampaigns();
+  const { data: campaigns, isLoading: isCampaignsLoading } = indexer.useCampaigns({
+    page: 1,
+    page_size: 300,
+    ...(currentTab === CampaignTab.MY_CAMPAIGNS && { owner: viewer.accountId ?? NOOP_STRING }),
+    ...(currentTab === CampaignTab.ACTIVE_CAMPAIGNS && { active: true }),
+  });
 
-  const { data: ownerCampaigns, isLoading: loadingOwnerCampaigns } =
-    campaignsContractHooks.useOwnedCampaigns({
-      accountId: viewer.accountId ?? NOOP_STRING,
-    });
-
-  const fetchAllCampaigns = useCallback(() => {
-    setCurrentTab(CampaignTab.ALL_CAMPAIGNS);
-    setFilteredCampaigns(allCampaigns || []);
-  }, [allCampaigns]);
-
-  const fetchMyCampaigns = useCallback(() => {
-    if (!viewer.isSignedIn) return;
-    setCurrentTab(CampaignTab.MY_CAMPAIGNS);
-    setFilteredCampaigns(ownerCampaigns || []);
-  }, [ownerCampaigns, viewer?.isSignedIn]);
-
-  useEffect(() => {
-    fetchAllCampaigns();
-  }, [fetchAllCampaigns]);
-
-  const actions = useMemo(
+  const buttons = useMemo(
     () => [
       {
         label: "All Campaigns",
         type: CampaignTab.ALL_CAMPAIGNS,
-        onClick: fetchAllCampaigns,
+        onClick: () => setCurrentTab(CampaignTab.ALL_CAMPAIGNS),
+      },
+      {
+        label: "Active Campaigns",
+        type: CampaignTab.ACTIVE_CAMPAIGNS,
+        onClick: () => setCurrentTab(CampaignTab.ACTIVE_CAMPAIGNS),
       },
       {
         label: "My Campaigns",
         type: CampaignTab.MY_CAMPAIGNS,
-        onClick: fetchMyCampaigns,
+        onClick: () => setCurrentTab(CampaignTab.MY_CAMPAIGNS),
         condition: viewer.isSignedIn,
       },
     ],
-    [fetchAllCampaigns, fetchMyCampaigns, viewer.isSignedIn],
+    [viewer.isSignedIn],
   );
 
   return {
-    buttons: actions,
+    buttons,
     currentTab,
-    campaigns: filteredCampaigns,
-    loading: isAllCampaignsLoading || loadingOwnerCampaigns,
+    campaigns: campaigns?.results || [],
+    loading: isCampaignsLoading,
   };
 };
