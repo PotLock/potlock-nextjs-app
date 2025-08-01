@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
+import { Campaign } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Campaign } from "@/common/contracts/core/campaigns";
 import { truncateHtml } from "@/common/lib";
+import { toTimestamp } from "@/common/lib/datetime";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
@@ -13,11 +14,7 @@ import { DonateToCampaign } from "@/features/donation";
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
 export const CampaignCard = ({ data }: { data: Campaign }) => {
-  const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
-
-  const isEnded = data?.end_ms
-    ? getTimePassed(Number(data?.end_ms), false, true)?.includes("-")
-    : false;
+  const isStarted = getTimePassed(toTimestamp(data.start_at), true)?.includes("-");
 
   return (
     <div
@@ -27,7 +24,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
         "transition-all duration-500 hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]",
       )}
     >
-      <Link href={`/campaign/${data.id}`} passHref>
+      <Link href={`/campaign/${data.on_chain_id}`} passHref>
         <div className="relative h-[212px] w-full">
           <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
@@ -55,7 +52,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             <div onClick={(e) => e.stopPropagation()}>
               <AccountProfileLink
                 classNames={{ root: "bg-transparent", avatar: "h-5 w-5", name: "text-sm" }}
-                accountId={data.recipient}
+                accountId={data.recipient.id}
               />
             </div>
           </div>
@@ -83,21 +80,22 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
           </div>
 
           <CampaignProgressBar
-            tokenId={data.ft_id ?? NATIVE_TOKEN_ID}
-            startDate={Number(data?.start_ms)}
-            amount={data?.total_raised_amount ?? `${0}`}
+            tokenId={data?.token?.account ?? NATIVE_TOKEN_ID}
+            startDate={toTimestamp(data?.start_at)}
+            amount={data?.net_raised_amount ?? `${0}`}
             minAmount={data?.min_amount ?? `${0}`}
             target={data?.target_amount ?? `${0}`}
             isStarted={isStarted}
+            isEnded={!data.is_active}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
-            endDate={Number(data?.end_ms)}
+            endDate={toTimestamp(data?.end_at ?? 0)}
           />
 
           <DonateToCampaign
-            cachedTokenId={data.ft_id ?? NATIVE_TOKEN_ID}
-            campaignId={data.id}
+            cachedTokenId={data?.token?.account ?? NATIVE_TOKEN_ID}
+            campaignId={data.on_chain_id}
             variant="standard-outline"
-            disabled={isStarted || isEnded || data?.total_raised_amount === data?.max_amount}
+            disabled={!data.is_active}
           />
         </div>
       </Link>
