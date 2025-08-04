@@ -72,7 +72,6 @@ export default function CampaignsPage() {
   const { data, isLoading, error } = indexer.useCampaigns({
     page: 1,
     page_size: 200,
-    active: true,
   });
 
   const viewer = useWalletUserSession();
