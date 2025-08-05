@@ -18,7 +18,7 @@ export const useAllCampaignLists = () => {
     page: 1,
     page_size: 300,
     ...(currentTab === CampaignTab.MY_CAMPAIGNS && { owner: viewer.accountId ?? NOOP_STRING }),
-    ...(currentTab === CampaignTab.ACTIVE_CAMPAIGNS && { active: true }),
+    ...(currentTab === CampaignTab.ACTIVE_CAMPAIGNS && { status: "active" }),
   });
 
   const buttons = useMemo(
