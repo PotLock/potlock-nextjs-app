@@ -6,6 +6,7 @@ import {
   setupEthereumWallets,
 } from "@near-wallet-selector/ethereum-wallets";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+import { setupIntearWallet } from "@near-wallet-selector/intear-wallet";
 import { setupLedger } from "@near-wallet-selector/ledger";
 import { setupMathWallet } from "@near-wallet-selector/math-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
@@ -41,6 +42,7 @@ export const naxiosInstance = new naxios({
     setupSender(),
     setupHereWallet(),
     setupMeteorWallet(),
+    setupIntearWallet(),
     setupLedger(),
     setupEthereumWallets({
       wagmiConfig: wagmiConfig as EthereumWalletsParams["wagmiConfig"],
