@@ -255,11 +255,18 @@ export type V1CampaignsDonationsRetrieveParams = {
   page_size?: number;
 };
 
+export type V1CampaignsRetrieveStatus =
+  (typeof V1CampaignsRetrieveStatus)[keyof typeof V1CampaignsRetrieveStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const V1CampaignsRetrieveStatus = {
+  active: "active",
+  ended: "ended",
+  unfufilled: "unfufilled",
+  upcoming: "upcoming",
+} as const;
+
 export type V1CampaignsRetrieveParams = {
-  /**
-   * Filter by active campaigns (true/false)
-   */
-  active?: boolean;
   /**
    * Filter campaigns by owner account ID
    */
@@ -276,6 +283,10 @@ export type V1CampaignsRetrieveParams = {
    * Filter campaigns by recipient account ID
    */
   recipient?: string;
+  /**
+   * Filter by active campaigns (true/false)
+   */
+  status?: V1CampaignsRetrieveStatus;
   /**
    * Filter campaigns by token account ID
    */
