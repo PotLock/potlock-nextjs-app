@@ -19,7 +19,7 @@ import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
 import { setupRamperWallet } from "@near-wallet-selector/ramper-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
-// import { setupUnityWallet } from "@near-wallet-selector/unity-wallet";
+import { setupUnityWallet } from "@near-wallet-selector/unity-wallet";
 import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
 import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import naxios from "@wpdas/naxios";
@@ -51,15 +51,15 @@ export const naxiosInstance = new naxios({
     }),
     setupNearMobileWallet(),
     setupNightly(),
-    // setupUnityWallet({
-    //   projectId: "unity-wallet",
-    //   metadata: {
-    //     name: "Potlock App",
-    //     description: "Bringing public goods funding to the table, built on NEAR",
-    //     url: "https://github.com/near/wallet-selector",
-    //     icons: ["https://avatars.githubusercontent.com/u/37784886"],
-    //   },
-    // }),
+    setupUnityWallet({
+      projectId: "af5fcece6005cfe70a5d5132ab354e65",
+      metadata: {
+        name: "Potlock App",
+        description: "Bringing public goods funding to the table, built on NEAR",
+        url: "https://github.com/near/wallet-selector",
+        icons: ["https://avatars.githubusercontent.com/u/37784886"],
+      },
+    }),
     setupBitgetWallet(),
     setupCoin98Wallet(),
     setupMathWallet(),

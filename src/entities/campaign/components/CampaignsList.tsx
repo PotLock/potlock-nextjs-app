@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Campaign } from "@/common/api/indexer";
-import { SearchBar, SortSelect, Spinner } from "@/common/ui/layout/components";
+import { Filter, SearchBar, SortSelect, Spinner } from "@/common/ui/layout/components";
 
 import { CampaignCard } from "./CampaignCard";
 import { useAllCampaignLists } from "../hooks/useCampaigns";
@@ -10,7 +10,7 @@ export const CampaignsList = () => {
   const [search, setSearch] = useState("");
   const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
 
-  const { buttons, campaigns, loading, currentTab } = useAllCampaignLists();
+  const { buttons, campaigns, loading, currentTab, tagsList } = useAllCampaignLists();
 
   const SORT_LIST_PROJECTS = [
     { label: "Newest", value: "recent" },
@@ -97,6 +97,7 @@ export const CampaignsList = () => {
           placeholder="Search Campaigns"
           onChange={(e) => setSearch(e.target.value.toLowerCase())}
         />
+        <Filter groups={tagsList} />
         <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
       </div>
       <div className="min-h-100 w-full">{content}</div>

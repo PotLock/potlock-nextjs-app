@@ -1,24 +1,27 @@
 import { useMemo, useState } from "react";
 
-import { Campaign, indexer } from "@/common/api/indexer";
+import { Campaign, V1CampaignsRetrieveStatus, indexer } from "@/common/api/indexer";
 import { NOOP_STRING } from "@/common/constants";
+import { Group, GroupType } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
+
+import { CAMPAIGN_STATUS_OPTIONS } from "../utils/constants";
 
 enum CampaignTab {
   ALL_CAMPAIGNS = "ALL_CAMPAIGNS",
-  ACTIVE_CAMPAIGNS = "ACTIVE_CAMPAIGNS",
   MY_CAMPAIGNS = "MY_CAMPAIGNS",
 }
 
 export const useAllCampaignLists = () => {
   const viewer = useWalletUserSession();
   const [currentTab, setCurrentTab] = useState<CampaignTab>(CampaignTab.ALL_CAMPAIGNS);
+  const [statusFilter, setsStatusFilter] = useState<string>("all");
 
   const { data: campaigns, isLoading: isCampaignsLoading } = indexer.useCampaigns({
     page: 1,
     page_size: 300,
     ...(currentTab === CampaignTab.MY_CAMPAIGNS && { owner: viewer.accountId ?? NOOP_STRING }),
-    ...(currentTab === CampaignTab.ACTIVE_CAMPAIGNS && { status: "active" }),
+    ...(statusFilter !== "all" && { status: statusFilter as V1CampaignsRetrieveStatus }),
   });
 
   const buttons = useMemo(
@@ -27,11 +30,6 @@ export const useAllCampaignLists = () => {
         label: "All Campaigns",
         type: CampaignTab.ALL_CAMPAIGNS,
         onClick: () => setCurrentTab(CampaignTab.ALL_CAMPAIGNS),
-      },
-      {
-        label: "Active Campaigns",
-        type: CampaignTab.ACTIVE_CAMPAIGNS,
-        onClick: () => setCurrentTab(CampaignTab.ACTIVE_CAMPAIGNS),
       },
       {
         label: "My Campaigns",
@@ -43,8 +41,23 @@ export const useAllCampaignLists = () => {
     [viewer.isSignedIn],
   );
 
+  const tagsList: Group<GroupType.single>[] = [
+    {
+      label: "Status",
+      options: CAMPAIGN_STATUS_OPTIONS,
+      type: GroupType.single,
+      props: {
+        value: statusFilter,
+        onValueChange: (value) => {
+          setsStatusFilter(value);
+        },
+      },
+    },
+  ];
+
   return {
     buttons,
+    tagsList,
     currentTab,
     campaigns: campaigns?.results || [],
     loading: isCampaignsLoading,
