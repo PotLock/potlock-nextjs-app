@@ -179,7 +179,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         <CampaignProgressBar
           tokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
           amount={campaign?.net_raised_amount ?? `${0}`}
-          isEnded={!campaign?.is_active}
+          isEnded={isEnded}
           minAmount={campaign?.min_amount ?? `${0}`}
           target={campaign?.target_amount ?? `${0}`}
           startDate={toTimestamp(campaign?.start_at ?? 0)}

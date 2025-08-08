@@ -16,6 +16,8 @@ import { CampaignProgressBar } from "./CampaignProgressBar";
 export const CampaignCard = ({ data }: { data: Campaign }) => {
   const isStarted = getTimePassed(toTimestamp(data.start_at), true)?.includes("-");
 
+  const isEnded = getTimePassed(toTimestamp(data.end_at ?? 0), false, true)?.includes("-");
+
   return (
     <div
       className={cn(
@@ -86,7 +88,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             minAmount={data?.min_amount ?? `${0}`}
             target={data?.target_amount ?? `${0}`}
             isStarted={isStarted}
-            isEnded={!data.is_active}
+            isEnded={isEnded}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
             endDate={toTimestamp(data?.end_at ?? 0)}
           />
