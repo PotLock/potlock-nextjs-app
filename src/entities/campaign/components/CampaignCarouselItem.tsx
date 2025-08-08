@@ -16,6 +16,10 @@ import { CampaignProgressBar } from "./CampaignProgressBar";
 export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
   const isStarted = getTimePassed(toTimestamp(data.start_at), true)?.includes("-");
 
+  const isEnded = data?.end_at
+    ? getTimePassed(toTimestamp(data?.end_at), false, true)?.includes("-")
+    : false;
+
   return (
     <CarouselItem key={data.on_chain_id}>
       <Link
@@ -64,7 +68,7 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
             minAmount={data?.min_amount ?? `${0}`}
             target={data?.target_amount ?? `${0}`}
             isStarted={isStarted}
-            isEnded={!data?.is_active}
+            isEnded={isEnded}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
             startDate={toTimestamp(data?.start_at)}
             endDate={toTimestamp(data?.end_at ?? 0)}
