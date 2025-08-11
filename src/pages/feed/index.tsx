@@ -106,9 +106,7 @@ export default function FeedPage() {
             ? Array.from({ length: 6 }).map((_, idx) => (
                 <PostCardSkeleton key={`initial-skel-${idx}`} />
               ))
-            : feedPosts.map((post) => (
-                <PostCard key={post.blockHeight} post={post} />
-              ))}
+            : feedPosts.map((post) => <PostCard key={post.blockHeight} post={post} />)}
         </InfiniteScrollWrapper>
       )}
     </div>

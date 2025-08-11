@@ -37,18 +37,21 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   const LEFT_PAD_PCT = 3; // match visual padding of the bar
   const RIGHT_PAD_PCT = 3;
 
-  const clampedMinPercent = rawMinPercent !== undefined
-    ? Math.max(LEFT_PAD_PCT, Math.min(100 - RIGHT_PAD_PCT, rawMinPercent))
-    : undefined;
+  const clampedMinPercent =
+    rawMinPercent !== undefined
+      ? Math.max(LEFT_PAD_PCT, Math.min(100 - RIGHT_PAD_PCT, rawMinPercent))
+      : undefined;
 
   // Prevent arrow from rendering visually ahead of progress when min has been reached.
   // Use a tiny delta so the arrow never appears to sit on the bar's advancing edge.
   const PASSED_DELTA = 0.5;
-  const minArrowPercent = clampedMinPercent !== undefined
-    ? (progressExact >= clampedMinPercent
+
+  const minArrowPercent =
+    clampedMinPercent !== undefined
+      ? progressExact >= clampedMinPercent
         ? Math.min(clampedMinPercent, Math.max(LEFT_PAD_PCT, progressExact - PASSED_DELTA))
-        : clampedMinPercent)
-    : undefined;
+        : clampedMinPercent
+      : undefined;
 
   const color = (() => {
     if (targetMet) {

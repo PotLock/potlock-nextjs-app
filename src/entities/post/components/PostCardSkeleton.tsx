@@ -29,5 +29,3 @@ export const PostCardSkeleton: React.FC = () => {
 };
 
 export default PostCardSkeleton;
-
-

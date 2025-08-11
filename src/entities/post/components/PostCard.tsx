@@ -53,7 +53,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
     <div
       onClick={handleCardClick}
       className={
-        "group relative mb-4 cursor-pointer rounded-2xl border border-neutral-200 bg-background/80 p-5 shadow-sm transition-all duration-200 hover:bg-background hover:shadow-md md:w-full"
+        "bg-background/80 hover:bg-background group relative mb-4 cursor-pointer rounded-2xl border border-neutral-200 p-5 shadow-sm transition-all duration-200 hover:shadow-md md:w-full"
       }
     >
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -100,7 +100,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
 
       <div className="mt-1 text-black">
         <Markdown
-          className="prose prose-sm max-w-none break-words text-neutral-900 leading-relaxed"
+          className="prose prose-sm max-w-none break-words leading-relaxed text-neutral-900"
           components={{
             a: ({ node, ...props }) => (
               <a
@@ -115,7 +115,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
             ),
             img: (node) => (
               <div className="mt-4 flex w-full items-center justify-center">
-                <img src={node.src} alt="" className="w-100 h-max max-h-[420px] rounded-lg object-contain shadow-sm" />
+                <img
+                  src={node.src}
+                  alt=""
+                  className="w-100 h-max max-h-[420px] rounded-lg object-contain shadow-sm"
+                />
               </div>
             ),
           }}
