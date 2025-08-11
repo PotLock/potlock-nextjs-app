@@ -26,7 +26,29 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   targetMet,
   isStarted,
 }) => {
-  const progressPercentage = Math.min(100, Math.floor(Big(amount).div(target).mul(100).toNumber()));
+  // Use integer percent for display/indicator (preserves existing UI), but also keep the precise value for geometry comparisons
+  const progressExact = amount ? Big(amount).div(target).mul(100).toNumber() : 0;
+  const progressPercentage = amount ? Math.min(100, Math.floor(progressExact)) : 0;
+
+  // Geometry: compute the minimum threshold percentage without rounding first
+  const rawMinPercent = minAmount ? Big(minAmount).div(target).mul(100).toNumber() : undefined;
+
+  // Keep arrow within visual padding so it never touches rounded corners
+  const LEFT_PAD_PCT = 3; // match visual padding of the bar
+  const RIGHT_PAD_PCT = 3;
+
+  const clampedMinPercent = rawMinPercent !== undefined
+    ? Math.max(LEFT_PAD_PCT, Math.min(100 - RIGHT_PAD_PCT, rawMinPercent))
+    : undefined;
+
+  // Prevent arrow from rendering visually ahead of progress when min has been reached.
+  // Use a tiny delta so the arrow never appears to sit on the bar's advancing edge.
+  const PASSED_DELTA = 0.5;
+  const minArrowPercent = clampedMinPercent !== undefined
+    ? (progressExact >= clampedMinPercent
+        ? Math.min(clampedMinPercent, Math.max(LEFT_PAD_PCT, progressExact - PASSED_DELTA))
+        : clampedMinPercent)
+    : undefined;
 
   const color = (() => {
     if (targetMet) {
@@ -138,9 +160,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
           minArrowColor={minArrowColor}
           baseColor={baseColor}
           minAmount={`${minAmount} NEAR`}
-          minValuePercentage={
-            minAmount ? Math.floor(Big(minAmount).div(target).mul(100).toNumber()) : undefined
-          }
+          minValuePercentage={minArrowPercent}
           value={progressPercentage}
           bgColor={color}
         />

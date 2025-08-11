@@ -53,25 +53,29 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
     <div
       onClick={handleCardClick}
       className={
-        "md:w-100 bg-background mb-4 cursor-pointer rounded-lg p-4 shadow-md transition duration-200 hover:bg-gray-100 hover:shadow-lg md:w-full"
+        "group relative mb-4 cursor-pointer rounded-2xl border border-neutral-200 bg-background/80 p-5 shadow-sm transition-all duration-200 hover:bg-background hover:shadow-md md:w-full"
       }
     >
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
           <div
             role="button"
             onClick={handleProfileClick}
-            className="flex items-center space-x-2 hover:underline"
+            className="flex items-center gap-2 hover:underline"
           >
-            <AccountProfilePicture accountId={post.accountId} className="h-4 w-4" />
-            <AccountHandle accountId={post.accountId} maxLength={16} className="text-neutral-950" />
+            <AccountProfilePicture accountId={post.accountId} className="h-8 w-8" />
+            <AccountHandle
+              accountId={post.accountId}
+              maxLength={16}
+              className="text-base font-semibold text-neutral-900"
+            />
           </div>
 
           <div className="flex items-center">
             {time && (
               <>
-                <span className="mx-2 text-gray-500">•</span> {/* Centered dot */}
-                <p className="text-sm text-gray-500"> {time}</p>
+                <span className="mx-2 text-gray-400">•</span>
+                <p className="text-xs text-gray-500">{time}</p>
               </>
             )}
           </div>
@@ -84,7 +88,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
                 background: potApplicationFiltersTags[status].background,
                 color: potApplicationFiltersTags[status].color,
               }}
-              className="border-1 flex items-center gap-2 rounded p-1 text-[13px] md:px-4 md:py-2 md:text-sm"
+              className="border-1 flex items-center gap-2 rounded-md px-2 py-1 text-[12px] md:px-3 md:py-1.5 md:text-sm"
             >
               {potApplicationFiltersTags[status].icon}
               {status}
@@ -94,13 +98,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
         </div>
       </div>
 
-      <div className="mt-2 text-black">
+      <div className="mt-1 text-black">
         <Markdown
+          className="prose prose-sm max-w-none break-words text-neutral-900 leading-relaxed"
           components={{
             a: ({ node, ...props }) => (
               <a
                 {...props}
-                className="text-blue-500 underline"
+                className="text-blue-600 underline hover:text-blue-700"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(event) => {
@@ -110,7 +115,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
             ),
             img: (node) => (
               <div className="mt-4 flex w-full items-center justify-center">
-                <img src={node.src} alt="" className="w-100 h-max object-contain" />
+                <img src={node.src} alt="" className="w-100 h-max max-h-[420px] rounded-lg object-contain shadow-sm" />
               </div>
             ),
           }}
@@ -121,7 +126,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
           <LazyLoadImage
             src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
             alt=""
-            className="w-100 h-max object-contain"
+            className="w-100 h-max max-h-[420px] rounded-lg object-contain shadow-sm"
             width={500}
             height={500}
           />

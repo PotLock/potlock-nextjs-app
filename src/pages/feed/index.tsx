@@ -6,7 +6,7 @@ import { indexer } from "@/common/api/indexer";
 import { fetchGlobalFeeds } from "@/common/api/near-social-indexer";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { cn } from "@/common/ui/layout/utils";
-import { PostCard } from "@/entities/post";
+import { PostCard, PostCardSkeleton } from "@/entities/post";
 
 export default function FeedPage() {
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
@@ -95,14 +95,20 @@ export default function FeedPage() {
           hasMore={true}
           next={loadMorePosts}
           loader={
-            <div ref={loadingRef} className="mt-4 min-h-12 text-center">
-              <div className="prose">{"Loading..."}</div>
+            <div ref={loadingRef} className="mt-4 space-y-4">
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <PostCardSkeleton key={`post-skel-${idx}`} />
+              ))}
             </div>
           }
         >
-          {feedPosts.map((post) => (
-            <PostCard key={post.blockHeight} post={post} />
-          ))}
+          {isLoading && feedPosts.length === 0
+            ? Array.from({ length: 6 }).map((_, idx) => (
+                <PostCardSkeleton key={`initial-skel-${idx}`} />
+              ))
+            : feedPosts.map((post) => (
+                <PostCard key={post.blockHeight} post={post} />
+              ))}
         </InfiniteScrollWrapper>
       )}
     </div>
