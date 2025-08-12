@@ -216,12 +216,14 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
             const rawMinPercent = (minAmountFloat / targetAmountFloat) * 100;
             const LEFT_PAD_PCT = 3;
             const RIGHT_PAD_PCT = 3;
+
             const clampedMinPercent = Math.max(
               LEFT_PAD_PCT,
               Math.min(100 - RIGHT_PAD_PCT, rawMinPercent),
             );
 
             const PASSED_DELTA = 0.5;
+
             const minArrowPercent =
               progressExact >= clampedMinPercent
                 ? Math.min(clampedMinPercent, Math.max(LEFT_PAD_PCT, progressExact - PASSED_DELTA))
