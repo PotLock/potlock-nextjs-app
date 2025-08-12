@@ -1,8 +1,9 @@
-import { preprocess, z } from "zod";
+import { literal, preprocess, string, z } from "zod";
 
 import { near } from "@/common/blockchains/near-protocol/client";
-import { futureTimestamp } from "@/common/lib";
-import { donationFee, donationFeeBasisPointsToPercents } from "@/features/donation";
+import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
+import { futureTimestamp, safePositiveNumber } from "@/common/lib";
 
 import { CAMPAIGN_MAX_FEE_POINTS } from "../utils/constants";
 import { isCampaignFeeValid } from "../utils/validation";
@@ -38,13 +39,34 @@ const positiveNumberParser = preprocess(
     .optional(), // Make the final type optional
 );
 
-// --- Base Schema ---
+export const integerCappedPercentage = preprocess((value) => {
+  if (value === "" || value === null || value === undefined) {
+    return undefined;
+  }
+
+  return typeof value === "string" ? safePositiveNumber.parse(value) : value;
+}, safePositiveNumber.optional())
+  .refine((percents) => percents === undefined || percents < 100, {
+    message: "Must be less than 100%.",
+  })
+  .refine((percents) => percents === undefined || Number.isInteger(percents), {
+    message: "Fractional percentage is not supported.",
+  });
+
+const ftIdSchema = literal(NATIVE_TOKEN_ID)
+  .or(string().min(6))
+  .default(NATIVE_TOKEN_ID)
+  .describe('Either "NEAR" or FT contract account id.');
+
+//* Base schema
 const baseSchema = z.object({
   name: z
     .string()
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must be less than 100 characters"),
-  description: z.string().max(250, "Description must be less than 250 characters").optional(),
+
+  description: z.string().max(500, "Description must be less than 500 characters").optional(),
+  ft_id: ftIdSchema,
   target_amount: positiveNumberParser.describe("Target Amount of the campaign"),
   min_amount: positiveNumberParser.optional().describe("Minimum Amount of the Campaign"),
   max_amount: positiveNumberParser.optional().describe("Maximum Amount of the Campaign"),
@@ -52,23 +74,26 @@ const baseSchema = z.object({
   end_ms: futureTimestamp.optional().describe("Campaign End Date"),
   owner: z.string().optional(),
   allow_fee_avoidance: z.boolean().optional().default(false),
-  referral_fee_basis_points: donationFee
+
+  referral_fee_basis_points: integerCappedPercentage
     .optional()
     .refine((value) => value === undefined || isCampaignFeeValid(value), {
-      message: `Cannot exceed ${donationFeeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
+      message: `Cannot exceed ${feeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
     }),
-  creator_fee_basis_points: donationFee
+
+  creator_fee_basis_points: integerCappedPercentage
     .optional()
     .refine((value) => value === undefined || isCampaignFeeValid(value), {
-      message: `Cannot exceed ${donationFeeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
+      message: `Cannot exceed ${feeBasisPointsToPercents(CAMPAIGN_MAX_FEE_POINTS)}%.`,
     }),
 });
 
-// --- Create Schema ---
+//* Create schema
 export const createCampaignSchema = baseSchema
   .extend({
     start_ms: futureTimestamp.describe("Campaign Start Date"),
-
+    project_name: z.string().optional(),
+    project_description: z.string().optional(),
     recipient: z.string().min(1, "Recipient account is required").refine(near.isAccountValid, {
       message: `Invalid Account, must be a valid NEAR account`,
     }),
@@ -142,7 +167,7 @@ export const createCampaignSchema = baseSchema
     }
   });
 
-// --- Update Schema ---
+//* Update schema
 // Inherits baseSchema and its refinements implicitly if needed, but better to redefine extend + superRefine for clarity
 export const updateCampaignSchema = baseSchema.extend({
   // start_ms might not be updatable or optional for update, adjust as needed

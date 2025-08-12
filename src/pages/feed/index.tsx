@@ -40,7 +40,6 @@ export default function FeedPage() {
   }, [accountIds]);
 
   const loadMorePosts = useCallback(async () => {
-    console.log(loadingMore);
     if (loadingMore) return; // Prevent multiple calls while loading
     setLoadingMore(true);
 

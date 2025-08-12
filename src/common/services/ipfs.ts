@@ -9,8 +9,6 @@ export const nearSocialIpfsUpload = async (body: BodyInit) =>
 
 export const nearSocialIpfsImageUpload = async (files: File[]) =>
   nearSocialIpfsUpload(files[0]).then((response) => {
-    console.log(response);
-
     if (response.ok) {
       return response
         .json()

@@ -2,9 +2,13 @@ import { Big } from "big.js";
 import { utils } from "near-api-js";
 import { NEAR_NOMINATION_EXP } from "near-api-js/lib/utils/format";
 import { Metadata } from "next";
+import type { SWRConfiguration } from "swr";
 
 import { NETWORK, PLATFORM_NAME } from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
+import workspacePackageManifest from "../../package.json";
+
+export const FRAMEWORK_VERSION = workspacePackageManifest.version;
 
 export { PLATFORM_NAME };
 
@@ -27,6 +31,7 @@ export const APP_BOS_COUNTERPART_URL = "https://bos.potlock.org";
 export const APP_METADATA: Metadata & {
   title: string;
   description: NonNullable<Metadata["description"]>;
+  other: { version: string };
   manifest: NonNullable<Metadata["manifest"]>;
 
   openGraph: {
@@ -42,6 +47,7 @@ export const APP_METADATA: Metadata & {
 } = {
   title: PLATFORM_NAME,
   description: "Bringing public goods funding to the table, built on NEAR",
+  other: { version: FRAMEWORK_VERSION },
   manifest: "/manifest.json",
 
   icons: {
@@ -65,6 +71,8 @@ export const APP_METADATA: Metadata & {
     card: "summary_large_image",
   },
 };
+
+export const X_INTENT_URL_BASE = "https://twitter.com/intent/tweet?text=";
 
 export const CHAIN_OPTIONS: Record<string, { isEVM: boolean }> = {
   NEAR: { isEVM: false },
@@ -108,7 +116,6 @@ export const CHAIN_OPTIONS: Record<string, { isEVM: boolean }> = {
   Metis: { isEVM: true },
 };
 
-export const TOTAL_FEE_BASIS_POINTS = 10_000;
 export const TOP_LEVEL_ROOT_ACCOUNT_ID = NETWORK === "mainnet" ? "near" : "testnet";
 export const NATIVE_TOKEN_ID = "near";
 export const NATIVE_TOKEN_DECIMALS = NEAR_NOMINATION_EXP;
@@ -139,6 +146,8 @@ export const NO_DEPOSIT_TGAS = "0";
 export const MIN_PROPOSAL_DEPOSIT_FALLBACK = "100000000000000000000000"; // 0.1N
 export const ONE_TGAS = Big(1_000_000_000_000);
 
+export const DEFAULT_STORAGE_FEE_APPROXIMATION = "≤ 0.03";
+
 // IPFS GATEWAY TO RENDER NEAR SOCIAL PROFILE IMAGE
 export const IPFS_NEAR_SOCIAL_THUMBNAIL_URL =
   "https://i.near.social/thumbnail/https://ipfs.near.social/ipfs/";
@@ -154,8 +163,18 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
   { label: "Least recent", value: "older" },
 ];
 
+export const NOOP_STRING = "noop";
+
+export const NOOP_BALANCE_VIEW = new Promise<Big.Big>((resolve) => resolve(Big(0)));
+
+export const CONTRACT_SWR_CONFIG: SWRConfiguration = {
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+};
+
 /**
- * @deprecated Use `useTokenAllowlist` hooks instead
+ * @deprecated Use `useFungibleTokenAllowlist` hooks instead
  */
 export const SUPPORTED_FTS: Record<
   string,
@@ -183,3 +202,13 @@ export const SUPPORTED_FTS: Record<
         .toFixed(decimals || 2),
   },
 };
+
+console.info(`
+  ___  ___ _____ _    ___   ___ _  __
+ | _ \\/ _ \\_   _| |  / _ \\ / __| |/ /
+ |  _/ (_) || | | |_| (_) | (__| ' < 
+ |_|  \\___/ |_| |____\\___/ \\___|_|\\_\\
+                                     
+  version: ${FRAMEWORK_VERSION}
+
+`);

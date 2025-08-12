@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
 
 import { indexer } from "@/common/api/indexer";
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { ProfileSetupForm } from "@/features/profile-setup";
+import { ProfileEditor } from "@/features/profile-configuration";
 import { rootPathnames } from "@/pathnames";
 
 export default function EditProjectPage() {
@@ -26,7 +26,7 @@ export default function EditProjectPage() {
   const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
     indexer.useAccountListRegistrations({
       enabled: viewer.hasWalletReady && isOwner,
-      accountId: viewer.accountId ?? "noop",
+      accountId: viewer.accountId ?? NOOP_STRING,
     });
 
   const hasRegistrationSubmitted = useMemo(
@@ -101,7 +101,7 @@ export default function EditProjectPage() {
               <AlertDescription>{"Please, wait..."}</AlertDescription>
             </Alert>
           ) : (
-            <ProfileSetupForm
+            <ProfileEditor
               mode="update"
               accountId={viewer.accountId}
               isDaoRepresentative={viewer.isDaoRepresentative}

@@ -3,6 +3,7 @@ import { MemoryCache } from "@wpdas/naxios";
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS } from "@/common/constants";
+import type { IndivisibleUnits } from "@/common/types";
 
 import {
   DirectBatchDonationItem,
@@ -26,13 +27,13 @@ export const get_config = () => contractApi.view<{}, DirectDonationConfig>("get_
 /**
  * Get direct donations
  */
-export const getDonations = (args: { fromIndex?: number; limit?: number }) =>
+export const get_donations = (args: { fromIndex?: number; limit?: number }) =>
   contractApi.view<typeof args, DirectDonation[]>("get_donations", { args });
 
 /**
  * Get donations for a recipient id
  */
-export const getDonationsForRecipient = (args: { recipient_id: string }) =>
+export const get_donations_for_recipient = (args: { recipient_id: string }) =>
   contractApi.view<typeof args, DirectDonation[]>("get_donations_for_recipient", { args });
 
 /**
@@ -43,7 +44,7 @@ export const get_donations_for_donor = (args: { donor_id: string }) =>
     args,
   });
 
-export const donate = (args: DirectDonationArgs, depositAmountYocto: string) =>
+export const donate = (args: DirectDonationArgs, depositAmountYocto: IndivisibleUnits) =>
   contractApi.call<typeof args, DirectDonation>("donate", {
     args,
     deposit: depositAmountYocto,
@@ -62,8 +63,8 @@ export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
     })),
   );
 
-export const storage_deposit = (depositAmountYocto: string) =>
-  contractApi.call<{}, string>("storage_deposit", {
+export const storage_deposit = (depositAmountYocto: IndivisibleUnits) =>
+  contractApi.call<{}, IndivisibleUnits>("storage_deposit", {
     deposit: depositAmountYocto,
     args: {},
     gas: "100000000000000",

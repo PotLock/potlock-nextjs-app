@@ -1,8 +1,8 @@
 export * from "./types";
 
-export * from "./components/inputs";
-export * from "./components/TokenIcon";
-export * from "./components/TokenSelector";
-export * from "./components/TokenTotalValue";
+export * from "./components/balance";
+export * from "./components/icons";
+export * from "./components/selector";
+export * from "./components/value-summary";
 
-export * from "./hooks/data";
+export * from "./hooks/fungible";

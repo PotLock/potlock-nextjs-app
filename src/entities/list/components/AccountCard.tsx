@@ -31,7 +31,7 @@ import {
   AccountHandle,
   AccountProfileCover,
   AccountProfilePicture,
-} from "@/entities/_shared";
+} from "@/entities/_shared/account";
 import { dispatch } from "@/store";
 
 import { listRegistrationStatuses } from "../constants";
@@ -142,7 +142,7 @@ export const ListAccountCard = ({
               />
 
               <p className="mt-2 h-14 overflow-hidden text-sm text-gray-600">
-                {truncate(profile?.description as string, 150) ?? "N/A"}
+                {profile?.description !== undefined ? truncate(profile.description, 150) : null}
               </p>
 
               {/* Labels NOT sure if we need this */}

@@ -14,7 +14,7 @@ import {
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountListItem } from "@/entities/_shared/account";
-import { TokenIcon, useToken } from "@/entities/_shared/token";
+import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
 
 import type { VotingRoundWinner } from "../types";
 
@@ -31,7 +31,7 @@ export const VotingRoundWinnerRow: React.FC<VotingRoundWinnerRowProps> = ({
   isSelected = false,
   onSelect,
 }) => {
-  const { data: token } = useToken({ tokenId: NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({ tokenId: NATIVE_TOKEN_ID });
 
   const onCheckTriggered = useCallback(
     (checked: CheckedState) => onSelect?.(accountId, Boolean(checked)),

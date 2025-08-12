@@ -8,7 +8,7 @@ import { potContractHooks } from "@/common/contracts/core/pot";
 import { type ElectionId, votingContractHooks } from "@/common/contracts/core/voting";
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 import type { ConditionalActivation } from "@/common/types";
-import { useToken } from "@/entities/_shared";
+import { useFungibleToken } from "@/entities/_shared/token";
 import { usePotFeatureFlags } from "@/entities/pot";
 
 import { useVotingRoundResultsStore } from "../model/results";
@@ -23,7 +23,7 @@ export const useVotingRoundResults = ({
   const { data: potConfig } = potContractHooks.useConfig({ enabled, potId });
   const { hasPFMechanism } = usePotFeatureFlags({ potId });
 
-  const { data: matchingPoolToken } = useToken({
+  const { data: matchingPoolToken } = useFungibleToken({
     enabled: potConfig !== undefined,
 
     tokenId:

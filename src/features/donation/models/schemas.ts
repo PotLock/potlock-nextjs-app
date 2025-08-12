@@ -7,43 +7,34 @@ import {
   nativeEnum,
   number,
   object,
-  preprocess,
   string,
 } from "zod";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { safePositiveNumber } from "@/common/lib";
+import { integerCappedPercentage, safePositiveNumber } from "@/common/lib";
 import type { AccountId } from "@/common/types";
-import { TokenAvailableBalance } from "@/entities/_shared/token";
 
-import { DONATION_MAX_MESSAGE_LENGTH, DONATION_MIN_NEAR_AMOUNT_ERROR } from "../constants";
+import { DONATION_MAX_MESSAGE_LENGTH } from "../constants";
 import { DonationAllocationStrategyEnum, DonationGroupAllocationStrategyEnum } from "../types";
-import { isDonationAmountSufficient, isDonationMatchingPotSelected } from "../utils/validation";
+import { isDonationMatchingPotSelected } from "../utils/validation";
 
 export const donationTokenSchema = literal(NATIVE_TOKEN_ID)
   .or(string().min(6))
-  //? Make sure the default donation token always corresponds to the native token
+  //* Make sure the default donation token always corresponds to the native token
   .default(NATIVE_TOKEN_ID)
   .describe('Either "NEAR" or FT contract account id.');
 
-export const donationAmount = safePositiveNumber;
+const donationAmount = safePositiveNumber;
 
 /**
- * # Heads up!
+ * Heads up!
  *
  * The donation fee is stored in basis points, but the schema expects it to be a percentage.
  *
  * Thus make sure to convert it to percents before passing to the form
  *  and convert it back to basis points before passing to the contract.
  */
-export const donationFee = preprocess(
-  (value) => (typeof value === "string" ? safePositiveNumber.parse(value) : value),
-  safePositiveNumber,
-)
-  .refine((percents) => percents < 100, { message: "Fee must be less than 100%." })
-  .refine((percents) => Number.isInteger(percents), {
-    message: "Fractional percentage is not supported.",
-  });
+export const donationFee = integerCappedPercentage;
 
 export const donationSchema = object({
   tokenId: donationTokenSchema,
@@ -67,23 +58,21 @@ export const donationSchema = object({
     .optional(),
 
   bypassProtocolFee: boolean().default(false),
-  bypassChefFee: boolean().default(false),
-})
-  .refine(isDonationMatchingPotSelected, {
-    message: "Pot is not selected.",
-    path: ["potAccountId"],
-  })
-  .refine(isDonationAmountSufficient, {
-    message: DONATION_MIN_NEAR_AMOUNT_ERROR,
-    path: ["amount"],
-  });
+  bypassReferralFee: boolean().default(false),
+  bypassCuratorFee: boolean().default(false).describe("Bypass pot chef or campaign creator fee."),
+}).refine(isDonationMatchingPotSelected, {
+  path: ["potAccountId"],
+  message: "Pot is not selected.",
+});
 
 export type DonationInputs = FromSchema<typeof donationSchema>;
 
-export const donationDependentFields: (keyof DonationInputs)[] = ["amount", "potAccountId"];
+export const donationDependentFields: (keyof DonationInputs)[] = ["potAccountId"];
 
 export type DonationSubmitParams = DonationInputs & {
   referrerAccountId?: AccountId;
+  campaignRecipientAccountId?: AccountId;
+  campaignCreatorAccountId?: AccountId;
 };
 
 export type DonationFormAPI = UseFormReturn<DonationInputs>;
@@ -92,8 +81,4 @@ export interface WithDonationFormAPI {
   form: DonationFormAPI;
 }
 
-export type DonationAllocationInputs = WithDonationFormAPI &
-  Pick<TokenAvailableBalance, "balanceFloat"> & {
-    isBalanceSufficient: boolean;
-    minAmountError: string | null;
-  };
+export type DonationAllocationInputs = WithDonationFormAPI & {};

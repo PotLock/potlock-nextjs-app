@@ -16,7 +16,7 @@ export const useDonationState = () => useGlobalStoreSelector(prop(donationModelK
 
 export type DonationState = {
   currentStep: DonationStep;
-  finalOutcome?: DirectDonation | PotDonation | CampaignDonation;
+  finalOutcome?: DirectDonation | PotDonation | CampaignDonation | DirectDonation[] | PotDonation[];
 };
 
 const donationStateDefaults: DonationState = {
@@ -54,7 +54,10 @@ export const donationModel = createModel<AppModel>()({
       }
     },
 
-    success(state, result: DirectDonation | PotDonation | CampaignDonation) {
+    success(
+      state,
+      result: DirectDonation | PotDonation | CampaignDonation | DirectDonation[] | PotDonation[],
+    ) {
       return { ...handleStep(state, "success"), finalOutcome: result };
     },
 

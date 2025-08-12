@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { NETWORK } from "@/common/_config";
+import { ENV_TAG } from "@/common/_config";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
@@ -15,11 +15,12 @@ import { rootPathnames } from "@/pathnames";
 import { UserDropdown } from "./user-dropdown";
 
 const links = [
-  { label: "Projects", url: rootPathnames.PROJECTS_LIST, disabled: false },
+  { label: "Projects", url: rootPathnames.PROJECTS, disabled: false },
   { label: "Pots", url: rootPathnames.POTS, disabled: false },
   {
     label: "Campaigns",
     url: rootPathnames.CAMPAIGNS,
+    disabled: ENV_TAG === "production",
   },
 
   { label: "Feed", url: rootPathnames.FEED, disabled: false },

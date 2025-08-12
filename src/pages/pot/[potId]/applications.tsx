@@ -7,13 +7,14 @@ import { styled } from "styled-components";
 
 import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
+import { NOOP_STRING } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { FilterChip, SearchBar } from "@/common/ui/layout/components";
 import {
   type AccountPotApplicationStatusOption,
   type AccountPotApplicationStatusVariant,
-} from "@/entities/_shared";
+} from "@/entities/_shared/account";
 import {
   PotApplicationCard,
   PotApplicationCardSkeleton,
@@ -150,8 +151,6 @@ export default function ApplicationsTab() {
     if (error) {
       console.error(error);
     }
-
-    console.log({ statusFilter });
   }, [statusFilter, error]);
 
   return (
@@ -161,7 +160,7 @@ export default function ApplicationsTab() {
         <PotApplicationReviewModal
           open={selectedApplicantAccountId !== null}
           potDetail={potDetail}
-          projectId={selectedApplicantAccountId ?? "noop"}
+          projectId={selectedApplicantAccountId ?? NOOP_STRING}
           projectStatus={projectStatus}
           onCloseClick={handleCloseModal}
           onSuccess={onReviewSuccess}

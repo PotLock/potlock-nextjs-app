@@ -30,7 +30,10 @@ export const ProfileLayoutHeader: React.FC<ProfileLayoutHeaderProps> = ({ accoun
   return isPgRegistryRegistrationLoading ||
     pgRegistryRegistration?.status === RegistrationStatus.Approved ? null : (
     <div
-      className="flex w-full flex-col items-center justify-center p-3 backdrop-blur-[150px]"
+      className={cn(
+        "z-7 h-11.5 mb--11.5 flex w-full flex-col items-center justify-center",
+        "rounded-t-xl p-3 backdrop-blur-[150px]",
+      )}
       style={{
         background: registrationStatus.background,
       }}

@@ -39,11 +39,23 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Backend ( Indexer API )
 
-Swagger docs: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
+### Test environment ( on testnet )
 
-**URI**: <http://ec2-100-27-57-47.compute-1.amazonaws.com/api/v1>
+**Swagger Docs**: <https://test-dev.potlock.io/api/schema/swagger-ui/#/>
 
-**Swagger UI**: <https://dev.potlock.io/api/schema/swagger-ui/#/>
+**Endpoint URL**: <https://test-dev.potlock.io>
+
+### Staging environment ( on mainnet )
+
+**Swagger docs**: <https://dev.potlock.io/api/schema/swagger-ui/#/>
+
+**Endpoint URL**: <https://dev.potlock.io>
+
+### Production environment ( on mainnet )
+
+**Swagger docs**: <https://api.potlock.io/api/schema/swagger-ui/#/>
+
+**Endpoint URL**: <https://api.potlock.io>
 
 ## Dependencies
 

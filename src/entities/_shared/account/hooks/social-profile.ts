@@ -1,55 +1,45 @@
 import { useMemo } from "react";
 
 import { socialDbContractHooks } from "@/common/contracts/social-db";
-import type { ByAccountId, ConditionalActivation } from "@/common/types";
+import type { ByAccountId, ConditionalActivation, LiveUpdateParams } from "@/common/types";
 
 import {
   ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
   ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
 } from "../constants";
+import { useAccountSocialImageSrc } from "./social-image";
 
 export const useAccountSocialProfile = ({
   accountId,
   enabled = true,
-}: ByAccountId & ConditionalActivation) => {
+  live = false,
+}: ByAccountId & ConditionalActivation & LiveUpdateParams) => {
   const {
-    isLoading,
+    isLoading: isRevalidating,
     isValidating,
     data,
     mutate: refetch,
     error,
-  } = socialDbContractHooks.useSocialProfile({ enabled, accountId });
+  } = socialDbContractHooks.useSocialProfile({ enabled, live, accountId });
 
-  const avatarSrc = useMemo(
-    () =>
-      (typeof data?.image === "string"
-        ? data?.image
-        : (data?.image?.url ??
-          (data?.image?.ipfs_cid
-            ? `https://ipfs.near.social/ipfs/${data?.image?.ipfs_cid}`
-            : null))) ?? ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
+  const isLoading = useMemo(() => data === undefined && isRevalidating, [data, isRevalidating]);
 
-    [data?.image],
-  );
+  const avatar = useAccountSocialImageSrc({
+    data: data?.image,
+    fallbackUrl: ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
+  });
 
-  const backgroundSrc = useMemo(
-    () =>
-      (typeof data?.backgroundImage === "string"
-        ? data?.backgroundImage
-        : (data?.backgroundImage?.url ??
-          (data?.backgroundImage?.ipfs_cid
-            ? `https://ipfs.near.social/ipfs/${data?.backgroundImage?.ipfs_cid}`
-            : null))) ?? ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
-
-    [data?.backgroundImage],
-  );
+  const cover = useAccountSocialImageSrc({
+    data: data?.backgroundImage,
+    fallbackUrl: ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+  });
 
   return {
     isLoading,
     isValidating,
     profile: data ?? undefined,
-    avatarSrc,
-    backgroundSrc,
+    avatar,
+    cover,
     refetch,
     error,
   };

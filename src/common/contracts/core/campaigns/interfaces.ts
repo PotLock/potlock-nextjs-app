@@ -1,37 +1,51 @@
 import { AccountId, IndivisibleUnits, type TokenId } from "@/common/types";
 
+export type CampaignsContractConfig = {
+  owner: AccountId;
+  admins: AccountId[];
+  protocol_fee_basis_points: number;
+  protocol_fee_recipient_account: AccountId;
+  default_referral_fee_basis_points: number;
+  default_creator_fee_basis_points: number;
+  total_campaigns_count: number;
+  total_donations_count: number;
+};
+
 export type CampaignInputs = {
   name: string;
   description?: string;
   cover_image_url?: string | null;
   start_ms?: number | string;
   end_ms?: number | string;
-  target_amount: number;
-  min_amount?: number;
-  max_amount?: number;
+  target_amount: IndivisibleUnits;
+  min_amount?: null | IndivisibleUnits;
+  max_amount?: null | IndivisibleUnits;
   recipient?: AccountId;
   owner?: AccountId;
   referral_fee_basis_points?: number;
   creator_fee_basis_points?: number;
   allow_fee_avoidance?: boolean;
+  project_name?: string;
+  project_description?: string;
+  project_banner_image_url?: string;
 };
 
 export type Campaign = {
   id: number;
   name: string;
   description: string;
-  cover_image_url?: string;
+  cover_image_url?: null | string;
   recipient: AccountId;
   owner: AccountId;
   start_ms: number;
-  end_ms?: number | null;
-  ftId?: AccountId;
+  end_ms?: null | number;
+  ft_id?: null | TokenId;
   target_amount: IndivisibleUnits;
-  min_amount?: IndivisibleUnits;
+  min_amount?: null | IndivisibleUnits;
+  max_amount?: null | IndivisibleUnits;
   escrow_balance: IndivisibleUnits;
-  max_amount?: IndivisibleUnits;
-  referral_fee_basis_points?: number;
-  creator_fee_basis_points?: number;
+  referral_fee_basis_points?: null | number;
+  creator_fee_basis_points?: null | number;
   allow_fee_avoidance?: boolean;
   total_raised_amount: string;
 };
@@ -57,10 +71,10 @@ export interface CampaignDonation {
   recipient_id: AccountId;
 }
 
-export type DirectCampaignDonationArgs = {
+export type CampaignDonationArgs = {
   campaign_id: number;
-  message?: string;
-  referrer_id?: string;
-  bypass_protocol_fee?: boolean;
-  bypass_creator_fee?: boolean;
+  message?: null | string;
+  referrer_id?: null | string;
+  bypass_protocol_fee?: null | boolean;
+  bypass_creator_fee?: null | boolean;
 };

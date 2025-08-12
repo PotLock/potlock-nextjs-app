@@ -1,5 +1,5 @@
 import { PageWithBanner } from "@/common/ui/layout/components";
-import { CampaignForm, useCampaignCreateOrUpdateRedirect } from "@/entities/campaign";
+import { CampaignEditor, useCampaignCreateOrUpdateRedirect } from "@/entities/campaign";
 
 export default function CreateCampaign() {
   useCampaignCreateOrUpdateRedirect();
@@ -18,7 +18,7 @@ export default function CreateCampaign() {
         </div>
       </div>
 
-      <CampaignForm />
+      <CampaignEditor />
     </PageWithBanner>
   );
 }

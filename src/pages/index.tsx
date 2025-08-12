@@ -1,10 +1,19 @@
+import { useEffect, useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import { FEATURE_REGISTRY, NETWORK } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { Button } from "@/common/ui/layout/components";
+import {
+  Button,
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  PageWithBanner,
+  Skeleton,
+} from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountCard } from "@/entities/_shared/account";
@@ -30,12 +39,22 @@ export const GeneralStats = () => {
     <div className="flex w-full flex-col gap-4">
       <div className="mt-4 flex flex-row flex-wrap items-center gap-4 px-2 py-0 md:gap-6 md:px-10">
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
-          {`$${stats?.total_donations_usd.toString()}`}
+          {stats?.total_donations_usd === undefined ? (
+            <Skeleton className="h-5.5 w-29" />
+          ) : (
+            <span>{`$${stats.total_donations_usd.toString()}`}</span>
+          )}
+
           <div className="text-sm font-normal text-[#656565]">Donated</div>
         </div>
 
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
-          {stats?.total_donations_count.toString()}
+          {stats?.total_donations_count === undefined ? (
+            <Skeleton className="h-5.5 w-29" />
+          ) : (
+            <span>{`$${stats.total_donations_count.toString()}`}</span>
+          )}
+
           <div className="text-sm font-normal text-[#656565]">Donations</div>
         </div>
       </div>
@@ -58,12 +77,12 @@ const WelcomeBanner = () => {
     >
       <div className="relative z-[1] flex flex-col justify-center px-5 py-12 md:px-10 md:py-16">
         <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
-          {"Transforming Funding for Public Goods"}
+          {"Opening funding up for anything"}
         </h3>
 
-        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
-          Discover impact projects, donate directly, &
-          <br className="hidden md:block" /> participate in funding rounds.
+        <h1 className="lett font-lora m-0 text-4xl font-medium leading-[1.1] tracking-tight md:text-[40px]">
+          Discover ideas, projects, people, opportunities,
+          <br className="hidden md:block" /> and grant pools to fund.
         </h1>
 
         <div className="mt-6 flex items-center gap-4 text-sm max-md:flex-col md:mt-10 md:gap-8">
@@ -111,29 +130,70 @@ const WelcomeBanner = () => {
 };
 
 export default function Home() {
-  return (
-    <main className="2xl-container flex flex-col items-center">
-      <div className="flex w-full flex-col md:px-10">
-        <WelcomeBanner />
-        <GeneralStats />
-      </div>
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
 
-      <div className="flex w-full flex-col gap-10 px-2 pt-10 md:px-10 md:pt-12">
+  useEffect(() => {
+    if (!api) return;
+
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [api]);
+
+  return (
+    <PageWithBanner>
+      <WelcomeBanner />
+      <GeneralStats />
+
+      <div className="flex w-full flex-col gap-4 px-2 pt-10 md:gap-10 md:px-10 md:pt-12">
         <div className="flex w-full flex-col gap-5">
-          <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
+          <div className="flex flex-row items-center justify-between text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             {"Featured projects"}
+            <div className="flex gap-6">
+              <img
+                src="/assets/icons/left-arrow.svg"
+                alt=""
+                onClick={() => api?.scrollTo(current - 1)}
+                className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
+              />
+              <img
+                src="/assets/icons/right-arrow.svg"
+                alt=""
+                onClick={() => api?.scrollTo(current + 1)}
+                className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="grid w-full grid-cols-1 gap-8 p-0.5 md:grid-cols-2 lg:grid-cols-3">
-          {FEATURED_PROJECT_ACCOUNT_IDS.map((projectAccountId) => (
-            <AccountCard
-              key={projectAccountId}
-              accountId={projectAccountId}
-              actions={<DonateToAccountButton accountId={projectAccountId} />}
-            />
-          ))}
-        </div>
+        <Carousel
+          opts={{
+            loop: true,
+            align: "start",
+            duration: 20,
+            dragFree: true,
+          }}
+          setApi={setApi}
+        >
+          <CarouselContent className="flex w-full flex-row gap-4 p-4">
+            {FEATURED_PROJECT_ACCOUNT_IDS.map((projectAccountId) => (
+              <AccountCard
+                key={projectAccountId}
+                accountId={projectAccountId}
+                actions={<DonateToAccountButton accountId={projectAccountId} />}
+              />
+            ))}
+          </CarouselContent>
+        </Carousel>
       </div>
 
       <ProjectDiscovery
@@ -154,6 +214,6 @@ export default function Home() {
           </div>
         }
       />
-    </main>
+    </PageWithBanner>
   );
 }

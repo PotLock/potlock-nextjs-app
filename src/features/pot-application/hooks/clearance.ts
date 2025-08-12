@@ -8,7 +8,7 @@ import { METAPOOL_MPDAO_VOTING_POWER_DECIMALS } from "@/common/contracts/metapoo
 import { indivisibleUnitsToBigNum } from "@/common/lib";
 import { type AccountId, ClearanceCheckResult } from "@/common/types";
 import { useWalletUserSession } from "@/common/wallet";
-import { useToken } from "@/entities/_shared/token";
+import { useFungibleToken } from "@/entities/_shared/token";
 
 import { POT_APPLICATION_REQUIREMENTS_MPDAO } from "../constants";
 
@@ -31,7 +31,7 @@ export const usePotApplicationUserClearance = ({
     accountId: viewer.accountId as AccountId,
   });
 
-  const { data: stakingToken } = useToken({
+  const { data: stakingToken } = useFungibleToken({
     balanceCheckAccountId: viewer.accountId,
     tokenId: staking.tokenId,
   });

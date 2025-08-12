@@ -18,32 +18,17 @@ export type TextFieldProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "
   inputExtension?: React.ReactNode;
   appendix?: React.ReactNode;
   hint?: string;
-  customErrorMessage?: string | null;
 
   classNames?: {
     root?: string;
     fieldRoot?: string;
+    inputExtension?: string;
     input?: string;
   };
 };
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
-  (
-    {
-      disabled,
-      label,
-      labelExtension,
-      inputExtension = null,
-      appendix,
-      hint,
-      customErrorMessage,
-      classNames,
-      ...props
-    },
-
-    ref,
-  ) => {
-    const fieldProps = { disabled, ref, ...props };
+  ({ label, labelExtension, inputExtension = null, appendix, hint, classNames, ...props }, ref) => {
     const { required } = props;
 
     const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback(
@@ -51,12 +36,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         if (props.type === "number") {
           const isCommaDecimalSeparator = getDecimalSeparator() === ",";
 
-          // Disallow dot if decimal separator is comma
+          //* Disallow dot if decimal separator is comma
           if (isCommaDecimalSeparator && event.key === ".") {
             event.preventDefault();
           }
 
-          // Disallow comma if decimal separator is dot
+          //* Disallow comma if decimal separator is dot
           if (!isCommaDecimalSeparator && event.key === ",") {
             event.preventDefault();
           }
@@ -74,7 +59,6 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           <div un-flex="~" un-justify="between" un-items="center" un-gap="2">
             <div un-flex="~" un-items="center" un-gap="1">
               {label && <FormLabel className="text-sm">{label}</FormLabel>}
-
               {required && <span className="line-height-none text-destructive text-xl">*</span>}
             </div>
 
@@ -103,10 +87,10 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       () =>
         inputExtension ? (
           <div
-            un-border="rounded-l-md rounded-r-none"
-            un-flex="~"
-            un-items="center"
-            un-justify="center"
+            className={cn(
+              "flex items-center justify-center rounded-l-md rounded-r-none",
+              classNames?.inputExtension,
+            )}
           >
             {typeof inputExtension === "string" ? (
               <span className="prose pl-4 pr-2 text-neutral-500">{inputExtension}</span>
@@ -116,7 +100,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           </div>
         ) : null,
 
-      [inputExtension],
+      [classNames?.inputExtension, inputExtension],
     );
 
     const appendixElement = useMemo(
@@ -130,9 +114,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       [appendix],
     );
 
+    // TODO: Move FormField wrapper from target parent layouts to here
     return (
-      // TODO: Move FormField wrapper from target parent layouts to here
-
       <FormItem className={classNames?.root}>
         {labelElement}
 
@@ -150,8 +133,6 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
           <FormControl>
             <input
-              {...fieldProps}
-              onKeyDown={handleKeyDown}
               className={cn(
                 "placeholder-text-muted-foreground h-10 w-full rounded-md border-none px-3 py-2.5",
 
@@ -165,6 +146,9 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
                     inputExtensionElement !== null && appendixElement !== null,
                 },
               )}
+              ref={ref}
+              {...props}
+              onKeyDown={handleKeyDown}
             />
           </FormControl>
 
@@ -172,7 +156,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         </div>
 
         {hint && <FormDescription>{hint}</FormDescription>}
-        <FormMessage>{customErrorMessage}</FormMessage>
+        <FormMessage />
       </FormItem>
     );
   },

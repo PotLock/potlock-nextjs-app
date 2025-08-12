@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { Campaign, campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import { Campaign, indexer } from "@/common/api/indexer";
 import {
   Button,
   Carousel,
@@ -13,6 +13,7 @@ import {
   Spinner,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
 
 const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
@@ -38,7 +39,7 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
       <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
         <div className=" flex items-center gap-4 ">
           <h1 className=" text-[18px] font-semibold ">Featured Campaigns</h1>
-          <p className="text-[18px]">{current + 1}/3</p>
+          <p className="text-[18px]">{current + 1}/6</p>
         </div>
         <div className="flex gap-4">
           <img
@@ -58,7 +59,9 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
       <Carousel opts={{ loop: true }} setApi={setApi}>
         <CarouselContent>
           {data?.length &&
-            data?.slice(0, 3)?.map((data) => <CampaignCarouselItem key={data.id} data={data} />)}
+            data
+              ?.filter((data) => [52, 63, 62, 56, 51, 43].includes(data?.on_chain_id))
+              ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
         </CarouselContent>
       </Carousel>
     </div>
@@ -66,57 +69,67 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 };
 
 export default function CampaignsPage() {
-  const {
-    isLoading: isCampaignsListLoading,
-    data: campaigns,
-    error: campaignsLoadingError,
-  } = campaignsContractHooks.useCampaigns();
+  const { data, isLoading, error } = indexer.useCampaigns({
+    page: 1,
+    page_size: 200,
+  });
+
+  const viewer = useWalletUserSession();
 
   return (
     <PageWithBanner>
       <div
         className={cn(
           "md:p-18 min-h-100 bg-hero relative w-full",
-          "flex flex-col items-start justify-center overflow-hidden",
+          "flex flex-col items-start justify-center gap-4 overflow-hidden",
         )}
       >
-        <h3 className="mb-3 mt-0 text-base font-semibold text-[#dd3345]">
-          Igniting Campaigns for Impact
-        </h3>
+        <h3 className="text-base font-semibold text-[#dd3345]">{"Fund Ideas, People, Projects"}</h3>
 
-        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
-          Discover dynamic campaigns, Support transformative <br className="max-md:hidden" />{" "}
-          initiatives, & Join a movement to fuel public goods.
+        <h1
+          className={cn(
+            "gap--0.1 inline-flex flex-col",
+            "font-lora m-0 text-4xl font-medium",
+            "leading-none tracking-tight md:text-[40px]",
+          )}
+        >
+          <span className="font-lora">
+            {"The fastest way to raise for ideas, causes, bounties, features."}
+          </span>
+
+          <span className="font-lora">{"Donate to a cause, share & earn referral fees."}</span>
         </h1>
 
         <div className="flex gap-4">
-          <Button asChild className="mt-4" variant="brand-filled">
-            <Link href="/campaign/create">{"Start Campaign"}</Link>
-          </Button>
+          {viewer.isSignedIn && (
+            <Button asChild className="mt-4" variant="brand-filled">
+              <Link href="/campaign/create">{"Start Campaign"}</Link>
+            </Button>
+          )}
           <Button variant="brand-tonal" asChild className="mt-4">
-            <Link target="_blank" href="https://potlock.org/learn-campaigns">
+            <Link target="_blank" href="https://docs.potlock.io/user-guides/campaigns">
               {"Learn More"}
             </Link>
           </Button>
         </div>
       </div>
 
-      {campaignsLoadingError !== undefined && (
+      {error !== undefined && (
         <PageError
           title="Unable to load campaigns"
-          message={"message" in campaignsLoadingError ? campaignsLoadingError.message : undefined}
+          message={"message" in error ? error.message : undefined}
         />
       )}
 
-      {campaignsLoadingError === undefined && campaigns === undefined && isCampaignsListLoading && (
+      {error === undefined && data?.results === undefined && isLoading && (
         <div className="flex h-40 items-center justify-center">
           <Spinner className="h-7 w-7" />
         </div>
       )}
 
-      {campaignsLoadingError === undefined && campaigns !== undefined && (
+      {error === undefined && data?.results !== undefined && (
         <>
-          <FeaturedCampaigns data={campaigns} />
+          <FeaturedCampaigns data={data?.results} />
           <CampaignsList />
         </>
       )}

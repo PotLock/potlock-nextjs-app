@@ -44,14 +44,14 @@ export const ListCard = ({
       listsContractClient.remove_upvote({ list_id: dataForList?.on_chain_id });
 
       dispatch.listEditor.handleListToast({
-        name: truncate(dataForList?.name, 15),
+        name: truncate(dataForList?.name ?? "", 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
       listsContractClient.upvote({ list_id: dataForList?.on_chain_id });
 
       dispatch.listEditor.handleListToast({
-        name: truncate(dataForList?.name, 15),
+        name: truncate(dataForList?.name ?? "", 15),
         type: ListFormModalType.UPVOTE,
       });
     }
@@ -111,7 +111,7 @@ export const ListCard = ({
               >
                 <AccountProfilePicture accountId={dataForList?.owner?.id} className="h-4 w-4" />
 
-                <p className="">{truncate(dataForList.owner?.id, 25)}</p>
+                <p className="">{truncate(dataForList.owner?.id ?? "", 25)}</p>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2">

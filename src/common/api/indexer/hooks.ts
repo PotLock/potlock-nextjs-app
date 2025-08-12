@@ -1,8 +1,11 @@
+import type { AxiosResponse } from "axios";
+
+import { NOOP_STRING } from "@/common/constants";
 import { isAccountId, isEthereumAddress } from "@/common/lib";
 import { ByAccountId, ByListId, type ConditionalActivation } from "@/common/types";
 
 import * as generatedClient from "./internal/client.generated";
-import { INDEXER_CLIENT_CONFIG } from "./internal/config";
+import { INDEXER_CLIENT_CONFIG, INDEXER_CLIENT_CONFIG_STAGING } from "./internal/config";
 import { ByPotId } from "./types";
 
 /**
@@ -56,11 +59,23 @@ export const useAccount = ({ accountId, enabled = true }: ByAccountId & Conditio
  */
 export const useAccountActivePots = ({
   accountId,
+  enabled = true,
+  onSuccess,
   ...params
-}: Partial<ByAccountId> & generatedClient.V1AccountsActivePotsRetrieveParams) => {
-  const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(accountId ?? "noop", params, {
+}: ByAccountId &
+  generatedClient.V1AccountsActivePotsRetrieveParams &
+  ConditionalActivation & {
+    onSuccess?: (data: generatedClient.Pot[] | undefined) => void;
+  }) => {
+  const handleSuccessResults =
+    onSuccess === undefined
+      ? undefined
+      : (data: AxiosResponse<generatedClient.PaginatedPotsResponse, unknown>) =>
+          onSuccess(data.data.results);
+
+  const queryResult = generatedClient.useV1AccountsActivePotsRetrieve(accountId, params, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled: Boolean(accountId) },
+    swr: { enabled, onSuccess: handleSuccessResults },
   });
 
   return { ...queryResult, data: queryResult.data?.data.results };
@@ -78,7 +93,11 @@ export const useAccountListRegistrations = ({
   ConditionalActivation) => {
   const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(accountId, params, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled },
+
+    swr: {
+      enabled,
+      shouldRetryOnError: (err) => err.status !== 404,
+    },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
@@ -92,7 +111,7 @@ export const useAccountPotApplications = ({
   ...params
 }: Partial<ByAccountId> & generatedClient.V1AccountsPotApplicationsRetrieveParams) => {
   const queryResult = generatedClient.useV1AccountsPotApplicationsRetrieve(
-    accountId ?? "noop",
+    accountId ?? NOOP_STRING,
     params,
     { ...INDEXER_CLIENT_CONFIG, swr: { enabled: Boolean(accountId) } },
   );
@@ -119,7 +138,7 @@ export const usePotApplications = ({
   potId,
   ...params
 }: Partial<ByPotId> & generatedClient.V1PotsApplicationsRetrieveParams) => {
-  const queryResult = generatedClient.useV1PotsApplicationsRetrieve(potId ?? "noop", params, {
+  const queryResult = generatedClient.useV1PotsApplicationsRetrieve(potId ?? NOOP_STRING, params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId) },
   });
@@ -194,7 +213,7 @@ export const usePotPayouts = ({
   potId,
   ...params
 }: Partial<ByPotId> & generatedClient.V1PotsPayoutsRetrieveParams) => {
-  const queryResult = generatedClient.useV1PotsPayoutsRetrieve(potId ?? "noop", params, {
+  const queryResult = generatedClient.useV1PotsPayoutsRetrieve(potId ?? NOOP_STRING, params, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled: Boolean(potId), refreshInterval: 3000 },
   });
@@ -205,10 +224,10 @@ export const usePotPayouts = ({
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_lists_retrieve
  */
-export const useList = ({ listId }: Partial<ByListId>) => {
-  const queryResult = generatedClient.useV1ListsRetrieve2(listId ?? 0, {
+export const useList = ({ listId, enabled = true }: ByListId & ConditionalActivation) => {
+  const queryResult = generatedClient.useV1ListsRetrieve2(listId, {
     ...INDEXER_CLIENT_CONFIG,
-    swr: { enabled: Boolean(listId), refreshInterval: 3000 },
+    swr: { enabled, refreshInterval: 3000 },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
@@ -307,6 +326,25 @@ export const useMpdaoVoter = ({
   const queryResult = generatedClient.useV1MpdaoVotersRetrieve2(accountId, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_campaigns_retrieve
+ */
+
+export const useCampaigns = ({ ...params }: generatedClient.V1CampaignsRetrieveParams = {}) => {
+  const queryResult = generatedClient.useV1CampaignsRetrieve(params, INDEXER_CLIENT_CONFIG_STAGING);
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+export const useCampaign = ({ campaignId }: { campaignId: number }) => {
+  const queryResult = generatedClient.useV1CampaignsRetrieve2(campaignId, {
+    ...INDEXER_CLIENT_CONFIG_STAGING,
+    swr: { enabled: true },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

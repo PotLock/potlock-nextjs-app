@@ -29,8 +29,8 @@ export type AccountCardProps = ByAccountId & {
 
 export const AccountCard = ({ accountId, snapshot, actions }: AccountCardProps) => {
   const { isLoading: isAccountLoading, data: account = snapshot } = indexer.useAccount({
-    //? If snapshot is provided, the account data is already loaded on a higher level
-    //? Only needed as long as the indexer API is not GraphQL with structural sharing
+    //* If snapshot is provided, the account data is already loaded on a higher level
+    //* Only needed as long as the indexer API is not GraphQL with structural sharing
     enabled: snapshot === undefined,
     accountId,
   });
@@ -51,17 +51,19 @@ export const AccountCard = ({ accountId, snapshot, actions }: AccountCardProps) 
       ) : (
         <div
           className={cn(
-            "transition-duration-300 max-w-105 mx-auto flex h-full w-full flex-col",
+            "transition-duration-300 max-w-105 mx-auto flex h-full flex-col md:w-full",
+            "md:min-w-105 w-80",
             "bg-card overflow-hidden rounded-md transition-all",
           )}
           style={{ boxShadow: rootBoxShadow }}
           data-testid="project-card"
         >
-          <AccountProfileCover accountId={accountId} height={146} />
+          <AccountProfileCover live accountId={accountId} height={146} />
 
           {/* Content */}
           <div className="flex flex-1 flex-col gap-5 px-6 pb-6">
             <AccountProfilePicture
+              live
               accountId={accountId}
               className={cn(
                 "relative -mt-5 h-10 w-10 object-cover",

@@ -21,6 +21,8 @@ export * from "./hooks/social-profile";
 
 export * from "./model/schemas";
 
+export * from "./utils/linktree";
+
 //! Only exported for backward compatibility
 // TODO!: Stop using the model component directly and use the `AccountGroup` integrated flow instead
 export * from "./components/AccountGroupEditModal";

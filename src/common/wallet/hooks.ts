@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { prop } from "remeda";
 
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
 import { isAccountId } from "@/common/lib";
@@ -22,14 +22,14 @@ export const useWalletUserSession = (): WalletUserSession => {
   const { isLoading: isHumanVerificationStatusLoading, data: isHuman } =
     sybilResistanceContractHooks.useIsHuman({
       enabled: wallet.isSignedIn,
-      accountId: wallet.accountId ?? "noop",
+      accountId: wallet.accountId ?? NOOP_STRING,
     });
 
   const { isLoading: isRegistrationLoading, data: registration } =
     listsContractHooks.useRegistration({
       enabled: wallet.isSignedIn,
       listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
-      accountId: (isDaoRepresentative ? daoAccountId : wallet.accountId) ?? "noop",
+      accountId: (isDaoRepresentative ? daoAccountId : wallet.accountId) ?? NOOP_STRING,
     });
 
   const isMetadataLoading = isHumanVerificationStatusLoading || isRegistrationLoading;

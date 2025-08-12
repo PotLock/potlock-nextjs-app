@@ -1,8 +1,8 @@
 import { infer as FromSchema, array, boolean, object, string, z } from "zod";
 
-import { futureTimestamp, safePositiveNumber } from "@/common/lib";
+import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
+import { futureTimestamp, integerCappedPercentage, safePositiveNumber } from "@/common/lib";
 import { validAccountIdOrNothing } from "@/entities/_shared/account";
-import { donationAmount, donationFee, donationFeeBasisPointsToPercents } from "@/features/donation";
 
 import {
   POT_MAX_APPROVED_PROJECTS,
@@ -75,7 +75,7 @@ export const potSchema = object({
   public_round_start_ms: futureTimestamp.describe("Matching round start date."),
   public_round_end_ms: futureTimestamp.describe("Matching round end date."),
 
-  min_matching_pool_donation_amount: donationAmount.describe("Minimum donation amount."),
+  min_matching_pool_donation_amount: safePositiveNumber.describe("Minimum donation amount."),
 
   registry_provider: string().optional().describe("Registry provider's account id."),
 
@@ -89,25 +89,25 @@ export const potSchema = object({
     .optional()
     .describe("Whether the projects must have Nadabot verification."),
 
-  referral_fee_matching_pool_basis_points: donationFee
+  referral_fee_matching_pool_basis_points: integerCappedPercentage
     .refine(isPotMatchingPoolReferralFeeValid, {
-      message: `Cannot exceed ${donationFeeBasisPointsToPercents(
+      message: `Cannot exceed ${feeBasisPointsToPercents(
         POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS,
       )}%.`,
     })
     .describe("Matching pool referral fee in basis points."),
 
-  referral_fee_public_round_basis_points: donationFee
+  referral_fee_public_round_basis_points: integerCappedPercentage
     .refine(isPotPublicRoundReferralFeeValid, {
-      message: `Cannot exceed ${donationFeeBasisPointsToPercents(
+      message: `Cannot exceed ${feeBasisPointsToPercents(
         POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS,
       )}%.`,
     })
     .describe("Public round referral fee in basis points."),
 
-  chef_fee_basis_points: donationFee
+  chef_fee_basis_points: integerCappedPercentage
     .refine(isPotChefFeeValid, {
-      message: `Cannot exceed ${donationFeeBasisPointsToPercents(POT_MAX_CHEF_FEE_BASIS_POINTS)}%.`,
+      message: `Cannot exceed ${feeBasisPointsToPercents(POT_MAX_CHEF_FEE_BASIS_POINTS)}%.`,
     })
     .describe("Chef fee in basis points."),
 });

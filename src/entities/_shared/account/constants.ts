@@ -1,4 +1,3 @@
-import { IMAGES_ASSET_ENDPOINT_URL } from "@/common/constants";
 import { RegistrationStatus } from "@/common/contracts/core/lists";
 
 import {
@@ -8,9 +7,17 @@ import {
   type AccountProfileLinktreeKey,
 } from "./types";
 
-export const ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-image.png`;
+export const ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH = 1500;
 
-export const ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-banner.png`;
+// export const ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-image.jpg`;
+
+export const ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC =
+  "https://potlock.mypinata.cloud/ipfs/bafkreidmfead5arjheqrsvarqfqhofwwlguw2kb5rlhgcmvdd4d7wkh43u";
+
+// export const ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC = `${IMAGES_ASSET_ENDPOINT_URL}/profile-banner.png`;
+
+export const ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC =
+  "https://potlock.mypinata.cloud/ipfs/bafkreidcescdtqwteqtqtoluujf6z52cbmphjrd6bghxa6667n4djkznqa";
 
 export const ACCOUNT_PROFILE_LINKTREE_KEYS: AccountProfileLinktreeKey[] = [
   "github",
@@ -21,9 +28,9 @@ export const ACCOUNT_PROFILE_LINKTREE_KEYS: AccountProfileLinktreeKey[] = [
 
 export const ACCOUNT_PROFILE_URL_PATTERNS: Record<AccountProfileLinktreeKey, RegExp> = {
   github: /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
-  twitter: /^(?:https?:\/\/)?(?:www\.)?x\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
-  telegram: /^(?:https?:\/\/)?(?:www\.)?t\.com\/([^/]+(?:\/[^/]+)?)\/?$/,
-  website: /^(?:https?:\/\/)\/?$/,
+  twitter: /^(?:https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/([^/]+(?:\/[^/]+)?)\/?$/,
+  telegram: /^(?:https?:\/\/)?(?:www\.)?t\.me\/([^/]+(?:\/[^/]+)?)\/?$/,
+  website: /^(?:https?:\/\/)?([^/]+)$/,
 };
 
 export const ACCOUNT_CATEGORY_VARIANTS: AccountCategoryVariant[] = [

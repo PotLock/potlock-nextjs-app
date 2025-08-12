@@ -1,66 +1,39 @@
-/* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 import Link from "next/link";
 
 import { NEARSocialUserProfile } from "@/common/contracts/social-db";
-import type { AccountId } from "@/common/types";
+import type { AccountId, ByAccountId } from "@/common/types";
+import { cn } from "@/common/ui/layout/utils";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { routeSelectors } from "@/pathnames";
 
-const getProfileTeamMembersData = (profileData?: NEARSocialUserProfile) => {
-  if (!profileData) return [];
-
-  const team = profileData.plTeam
-    ? JSON.parse(profileData.plTeam)
-    : profileData.team
-      ? Object.entries(profileData.team)
-          .filter(([_, v]) => v !== null)
-          .map(([k, _]) => k)
-      : [];
-
-  return team;
+const extractProfileTeamMembers = (profileData: NEARSocialUserProfile) => {
+  if (profileData.plTeam !== undefined) {
+    return JSON.parse(profileData.plTeam);
+  } else if (profileData.team !== undefined) {
+    return Object.entries(profileData.team)
+      .filter(([_, v]) => v !== null)
+      .map(([k, _]) => k);
+  } else return undefined;
 };
 
-const NoTeam = () => <p className="m-0 flex w-full flex-col">No team members to display</p>;
-
-const TeamAvatar = ({ teamMemberId }: { teamMemberId: AccountId }) => {
-  const { avatarSrc } = useAccountSocialProfile({ accountId: teamMemberId });
+const TeamMemberAvatar = ({ accountId }: ByAccountId) => {
+  const { avatar } = useAccountSocialProfile({ accountId });
 
   return (
     <div className="h-[160px] w-[160px] md:h-[180px] md:w-[180px]">
       <img
+        alt={`@${accountId}'s profile`}
         sizes="(max-width: 768px) 100vw"
-        className="grayscale-100 h-full w-full rounded-[6px] object-cover transition-all hover:grayscale-0"
-        src={avatarSrc}
-        alt={`Profile @${teamMemberId}`}
+        src={avatar.url}
+        className={cn(
+          "grayscale-100 h-full w-full rounded-[6px]",
+          "object-cover transition-all hover:grayscale-0",
+        )}
       />
     </div>
   );
-};
-
-const Members = ({ team }: { team?: string[] }) => {
-  if (!team || team.length === 0) return "";
-
-  const members = team.map((teamMember) => {
-    const match = teamMember.match(/.near/i);
-
-    if (match && match.length > 0) {
-      return (
-        <Link
-          key={teamMember}
-          className="hover:decoration-none flex cursor-pointer flex-col justify-start gap-2"
-          href={`${rootPathnames.PROFILE}/${teamMember}`}
-          target="_blank"
-        >
-          <TeamAvatar teamMemberId={teamMember} />
-          <p className="font-400 text-base text-[#2e2e2e]">@{teamMember}</p>
-        </Link>
-      );
-    }
-  });
-
-  return members;
 };
 
 export type ProfileLayoutTeamProps = {
@@ -68,13 +41,10 @@ export type ProfileLayoutTeamProps = {
 };
 
 export const ProfileLayoutTeam: React.FC<ProfileLayoutTeamProps> = ({ profile }) => {
-  const [team, setTeam] = useState(getProfileTeamMembersData(profile));
-
-  useEffect(() => {
-    if (profile) {
-      setTeam(getProfileTeamMembersData(profile));
-    }
-  }, [profile]);
+  const teamMemberAccountIds = useMemo(
+    () => (profile === undefined ? [] : (extractProfileTeamMembers(profile) ?? [])),
+    [profile],
+  );
 
   return (
     <div className="mt-8 flex flex-col items-start justify-start md:flex-row">
@@ -83,9 +53,22 @@ export const ProfileLayoutTeam: React.FC<ProfileLayoutTeamProps> = ({ profile })
       </div>
 
       <div className="flex w-full">
-        {/* Team Members Container */}
         <div className="flex flex-wrap items-center justify-start gap-8">
-          {team.length > 0 ? <Members team={team} /> : <NoTeam />}
+          {teamMemberAccountIds.length > 0 ? (
+            teamMemberAccountIds.map((accountId: AccountId) => (
+              <Link
+                key={accountId}
+                target="_blank"
+                href={routeSelectors.PROFILE_BY_ID(accountId)}
+                className="hover:decoration-none flex cursor-pointer flex-col justify-start gap-2"
+              >
+                <TeamMemberAvatar accountId={accountId} />
+                <p className="font-400 text-base text-[#2e2e2e]">@{accountId}</p>
+              </Link>
+            ))
+          ) : (
+            <p className="m-0 flex w-full flex-col">{"No team members to display"}</p>
+          )}
         </div>
       </div>
     </div>
