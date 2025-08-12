@@ -165,7 +165,13 @@ export const ProjectDiscovery: React.FC<ProjectDiscoveryProps> = ({
 
       <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {listRegistrations.length === 0 ? (
-          <>{isPending ? <ListRegistrationLookupPlaceholder /> : (noResultsPlaceholder ?? null)}</>
+          isPending ? (
+            <ListRegistrationLookupPlaceholder />
+          ) : (
+            <div className="col-span-full flex items-center justify-center py-16">
+              {noResultsPlaceholder ?? null}
+            </div>
+          )
         ) : (
           listRegistrations.map(({ id, registrant: registrantAccount }) => (
             <AccountCard
