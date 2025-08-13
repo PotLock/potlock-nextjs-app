@@ -24,7 +24,7 @@ const links = [
   },
 
   { label: "Feed", url: rootPathnames.FEED, disabled: false },
-  // { label: "Donors", url: rootPathnames.DONORS, disabled: false },
+  { label: "Donors", url: rootPathnames.DONORS, disabled: false },
 
   {
     label: "Lists",
