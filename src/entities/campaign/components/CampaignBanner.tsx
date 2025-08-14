@@ -6,7 +6,7 @@ import { isNonNullish, isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { indexer, V1CampaignsRetrieveStatus } from "@/common/api/indexer";
+import { V1CampaignsRetrieveStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
@@ -179,7 +179,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         <CampaignProgressBar
           tokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
           amount={campaign?.net_raised_amount ?? `${0}`}
-          status={campaign?.status as V1CampaignsRetrieveStatus}  
+          status={campaign?.status as V1CampaignsRetrieveStatus}
           minAmount={campaign?.min_amount ?? `${0}`}
           target={campaign?.target_amount ?? `${0}`}
           startDate={toTimestamp(campaign?.start_at ?? 0)}

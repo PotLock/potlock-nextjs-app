@@ -12,7 +12,6 @@ import { DonateToCampaign } from "@/features/donation";
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
 export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
-
   return (
     <CarouselItem key={data.on_chain_id}>
       <Link

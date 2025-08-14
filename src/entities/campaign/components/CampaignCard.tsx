@@ -18,7 +18,6 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
 
   const isEnded = getTimePassed(toTimestamp(data.end_at ?? 0), false, true)?.includes("-");
 
-
   return (
     <div
       className={cn(

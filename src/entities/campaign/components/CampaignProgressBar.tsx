@@ -4,13 +4,13 @@ import { Big } from "big.js";
 import { TimerIcon } from "lucide-react";
 import { isNullish } from "remeda";
 
+import { V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import type { Campaign } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByTokenId } from "@/common/types";
 import { Progress } from "@/common/ui/layout/components";
 import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
-import { V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 
 export type CampaignProgressBarProps = ByTokenId & {
   target: Campaign["target_amount"];
