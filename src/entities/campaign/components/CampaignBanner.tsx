@@ -6,7 +6,7 @@ import { isNonNullish, isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { indexer } from "@/common/api/indexer";
+import { indexer, V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
@@ -179,11 +179,10 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         <CampaignProgressBar
           tokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
           amount={campaign?.net_raised_amount ?? `${0}`}
-          isEnded={isEnded}
+          status={campaign?.status as V1CampaignsRetrieveStatus}  
           minAmount={campaign?.min_amount ?? `${0}`}
           target={campaign?.target_amount ?? `${0}`}
           startDate={toTimestamp(campaign?.start_at ?? 0)}
-          isStarted={isStarted}
           isEscrowBalanceEmpty={campaign?.escrow_balance === "0"}
           endDate={toTimestamp(campaign?.end_at ?? 0)}
         />
@@ -264,9 +263,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
               <>
                 <DonateToCampaign
                   cachedTokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
-                  disabled={
-                    isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
-                  }
+                  disabled={campaign?.status !== "active"}
                   className="mb-4"
                   {...{ campaignId }}
                 />

@@ -1599,7 +1599,6 @@ export interface Campaign {
    * @pattern ^-?\d{0,18}(?:\.\d{0,2})?$
    */
   escrow_balance_usd?: string | null;
-  readonly is_active: string;
   /**
    * Campaign maximum amount.
    * @maxLength 64
@@ -1652,6 +1651,7 @@ export interface Campaign {
   referral_fee_basis_points: number;
   /** Campaign start date. */
   start_at: string;
+  readonly status: string;
   /**
    * Campaign target amount.
    * @maxLength 64
