@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { Campaign } from "@/common/api/indexer";
+import { Campaign, V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncateHtml } from "@/common/lib";
 import { toTimestamp } from "@/common/lib/datetime";
@@ -87,8 +87,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             amount={data?.net_raised_amount ?? `${0}`}
             minAmount={data?.min_amount ?? `${0}`}
             target={data?.target_amount ?? `${0}`}
-            isStarted={isStarted}
-            isEnded={isEnded}
+            status={data.status as V1CampaignsRetrieveStatus}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
             endDate={toTimestamp(data?.end_at ?? 0)}
           />
@@ -97,7 +96,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
             cachedTokenId={data?.token?.account ?? NATIVE_TOKEN_ID}
             campaignId={data.on_chain_id}
             variant="standard-outline"
-            disabled={!data.is_active}
+            disabled={data.status !== "active"}
           />
         </div>
       </Link>

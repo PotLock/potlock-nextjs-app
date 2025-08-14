@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { Campaign } from "@/common/api/indexer";
+import { Campaign, V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { truncate, truncateHtml } from "@/common/lib";
 import { toTimestamp } from "@/common/lib/datetime";
-import getTimePassed from "@/common/lib/getTimePassed";
 import { CarouselItem } from "@/common/ui/layout/components";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { AccountProfileLink } from "@/entities/_shared/account";
@@ -14,12 +12,6 @@ import { DonateToCampaign } from "@/features/donation";
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
 export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
-  const isStarted = getTimePassed(toTimestamp(data.start_at), true)?.includes("-");
-
-  const isEnded = data?.end_at
-    ? getTimePassed(toTimestamp(data?.end_at), false, true)?.includes("-")
-    : false;
-
   return (
     <CarouselItem key={data.on_chain_id}>
       <Link
@@ -67,8 +59,7 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
             amount={data?.net_raised_amount ?? `${0}`}
             minAmount={data?.min_amount ?? `${0}`}
             target={data?.target_amount ?? `${0}`}
-            isStarted={isStarted}
-            isEnded={isEnded}
+            status={data.status as V1CampaignsRetrieveStatus}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
             startDate={toTimestamp(data?.start_at)}
             endDate={toTimestamp(data?.end_at ?? 0)}
@@ -98,7 +89,7 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
             cachedTokenId={data?.token?.account ?? NATIVE_TOKEN_ID}
             campaignId={data.on_chain_id}
             className="mt-4"
-            disabled={!data.is_active}
+            disabled={data.status !== "active"}
           />
         </div>
       </Link>

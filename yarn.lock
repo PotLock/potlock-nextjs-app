@@ -3032,6 +3032,17 @@
     js-sha256 "0.9.0"
     rxjs "7.8.1"
 
+"@near-wallet-selector/core@9.3.0":
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/@near-wallet-selector/core/-/core-9.3.0.tgz#f1d3a11d546098edc04f54d5b4f251e908486344"
+  integrity sha512-urGHLFym9l8GnXtdN/SHgNG6XMC0u0Dpuso7j7PkzDZC6Y5Qhtrwe/QLt6nQAsA2RQA5IL3jEoI4/gmF4Axw0w==
+  dependencies:
+    "@near-js/signers" "2.1.0"
+    borsh "2.0.0"
+    events "3.3.0"
+    js-sha256 "0.9.0"
+    rxjs "7.8.1"
+
 "@near-wallet-selector/ethereum-wallets@^8.10.2":
   version "8.10.2"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/ethereum-wallets/-/ethereum-wallets-8.10.2.tgz#f26e3e6cd38630f406707f2faadedcad7372737f"
@@ -3216,12 +3227,12 @@
     is-mobile "4.0.0"
     near-api-js "4.0.3"
 
-"@near-wallet-selector/unity-wallet@^9.2.0":
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/@near-wallet-selector/unity-wallet/-/unity-wallet-9.2.0.tgz#a6e0cd3745daedab5118acd3f3ff0e64445ae697"
-  integrity sha512-iPBCBmhAfCRV73nHrKn8P6i+D13OQNvyISAca7SWJe9CpTVQFtQ+tqDtVcsIMSRPlz/CFRU5Obq1NkVaOgiE5w==
+"@near-wallet-selector/unity-wallet@9.3.0":
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/@near-wallet-selector/unity-wallet/-/unity-wallet-9.3.0.tgz#5349e9c6972652b100c647852b46f74b8e24b641"
+  integrity sha512-N4LBkxF+oP4yYEFIDxgySsk0Et64z+iC4ePNVvrcTxWq/mDCaqNR5u0xMLKpFQOcSkxItD12z+CjFT3+mfLfNw==
   dependencies:
-    "@near-wallet-selector/core" "9.2.0"
+    "@near-wallet-selector/core" "9.3.0"
     "@near-wallet-selector/wallet-connect" "*"
     "@walletconnect/types" "2.21.0"
 

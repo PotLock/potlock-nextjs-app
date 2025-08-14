@@ -4,6 +4,7 @@ import { Big } from "big.js";
 import { TimerIcon } from "lucide-react";
 import { isNullish } from "remeda";
 
+import { V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import type { Campaign } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
@@ -16,10 +17,9 @@ export type CampaignProgressBarProps = ByTokenId & {
   amount: Campaign["total_raised_amount"];
   minAmount: Campaign["min_amount"];
   endDate?: number;
-  isStarted: boolean;
   startDate: number;
   isEscrowBalanceEmpty: boolean;
-  isEnded: boolean | string;
+  status: V1CampaignsRetrieveStatus;
 };
 
 export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
@@ -28,9 +28,8 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   minAmount,
   amount,
   endDate,
-  isEnded,
+  status,
   isEscrowBalanceEmpty,
-  isStarted,
   startDate,
 }) => {
   const { data: token } = useFungibleToken({ tokenId });
@@ -114,16 +113,16 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   // const isTimeUp = timeLeft?.includes("-");
 
   const statusText = useMemo(() => {
-    if (isEnded && endDate) {
+    if (status === "ended" && endDate) {
       return endDate ? `ENDED (${getTimePassed(endDate, false)} ago)` : "ENDED";
-    } else if (isStarted) {
+    } else if (status === "upcoming") {
       return `Starts in ${getTimePassed(startDate, false, true)}`;
     } else if (timeLeft) {
       return `${timeLeft} left`;
     } else {
       return "ONGOING";
     }
-  }, [isEnded, endDate, isStarted, timeLeft, startDate]);
+  }, [status, endDate, timeLeft, startDate]);
 
   const amountDisplay = useMemo(
     () => (
@@ -140,7 +139,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   );
 
   const titleContent = useMemo(() => {
-    if (isEnded) {
+    if (status === "ended") {
       let message;
 
       if (raisedAmountFloat && !isTargetMet && raisedAmountFloat < minAmountFloat) {
