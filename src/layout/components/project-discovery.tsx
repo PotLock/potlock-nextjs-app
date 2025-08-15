@@ -138,7 +138,7 @@ export const ProjectDiscovery: React.FC<ProjectDiscoveryProps> = ({
   const numberOfPages = useMemo(() => Math.ceil(totalCount / 30), [totalCount]);
 
   return (
-    <div className="flex w-full flex-col px-2 py-10 md:px-10 md:py-12">
+    <div className="flex w-full flex-col px-2 py-10 md:py-12">
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           <span>{"All projects"}</span>
