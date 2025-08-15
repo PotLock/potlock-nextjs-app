@@ -335,8 +335,14 @@ export const useMpdaoVoter = ({
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_campaigns_retrieve
  */
 
-export const useCampaigns = ({ ...params }: generatedClient.V1CampaignsRetrieveParams = {}) => {
-  const queryResult = generatedClient.useV1CampaignsRetrieve(params, INDEXER_CLIENT_CONFIG_STAGING);
+export const useCampaigns = ({
+  enabled = true,
+  ...params
+}: generatedClient.V1CampaignsRetrieveParams & ConditionalActivation = {}) => {
+  const queryResult = generatedClient.useV1CampaignsRetrieve(params, {
+    ...INDEXER_CLIENT_CONFIG_STAGING,
+    swr: { enabled },
+  });
 
   return { ...queryResult, data: queryResult.data?.data };
 };

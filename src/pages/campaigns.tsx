@@ -16,7 +16,7 @@ import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
 
-const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
+export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -60,7 +60,7 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
         <CarouselContent>
           {data?.length &&
             data
-              ?.filter((data) => [52, 63, 62, 56, 51, 43].includes(data?.on_chain_id))
+              ?.filter((data) => [52, 63, 62, 56, 51, 45].includes(data?.on_chain_id))
               ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
         </CarouselContent>
       </Carousel>
