@@ -20,6 +20,7 @@ import { AccountCard } from "@/entities/_shared/account";
 import { DonateRandomly, DonateToAccountButton } from "@/features/donation";
 import { ProjectDiscovery } from "@/layout/components/project-discovery";
 import { rootPathnames } from "@/pathnames";
+
 import { FeaturedCampaigns } from "./campaigns";
 
 export const FEATURED_PROJECT_ACCOUNT_IDS =
@@ -133,6 +134,7 @@ const WelcomeBanner = () => {
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+
   const { data: campaigns } = indexer.useCampaigns({
     enabled: ENV_TAG !== "production",
   });

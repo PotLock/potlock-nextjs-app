@@ -38,7 +38,7 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
     <div className="mt-8 w-full p-0 ">
       <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
         <div className=" flex items-center gap-4 ">
-          <h1 className=" text-[18px] font-semibold ">Featured Campaigns</h1>
+          <h1 className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">Featured Campaigns</h1>
           <p className="text-[18px]">{current + 1}/6</p>
         </div>
         <div className="flex gap-4">
