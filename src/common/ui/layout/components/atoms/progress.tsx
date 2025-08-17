@@ -65,6 +65,7 @@ export const Progress = forwardRef<
             className={`absolute ${isHovered ? "bottom-[-39px]" : "bottom-[-44px]"} flex transform flex-col items-center transition-all duration-200`}
             style={{
               left: `${clampedMinValuePercentage}%`, // Shift arrow on hover
+              transform: `translateX(-50%)`, // Center arrow horizontally on the exact percentage
             }}
           >
             <svg

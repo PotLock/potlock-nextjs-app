@@ -6,6 +6,7 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
+import type { Campaign } from "@/common/contracts/core/campaigns/interfaces";
 import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
 import { floatToIndivisible, parseNumber } from "@/common/lib";
 import type { FileUploadResult } from "@/common/services/pinata";
@@ -30,7 +31,10 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
   const isNewCampaign = campaignId === undefined;
   const schema = isNewCampaign ? createCampaignSchema : updateCampaignSchema;
 
-  type Values = FromSchema<typeof schema>;
+  type Values = FromSchema<typeof schema> & {
+    project_name?: string;
+    project_description?: string;
+  };
 
   const self = useForm<Values>({
     resolver: zodResolver(schema),
@@ -207,7 +211,10 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           parseNumber(values.target_amount ?? 0),
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         ),
-
+        ...(isNewCampaign && values.project_name ? { project_name: values.project_name } : {}),
+        ...(isNewCampaign && values.project_description
+          ? { project_description: values.project_description }
+          : {}),
         ...(values.cover_image_url
           ? {
               cover_image_url: values.cover_image_url,
@@ -232,7 +239,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
             }
           : {}),
 
-        ...(values?.allow_fee_avoidance && {
+        ...(values?.allow_fee_avoidance !== undefined && {
           allow_fee_avoidance: values.allow_fee_avoidance,
         }),
         ...(values?.referral_fee_basis_points && {
@@ -288,11 +295,21 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
                 "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
             });
 
-            router.push(routeSelectors.CAMPAIGN_BY_ID(newCampaign.id));
-          })
-          .catch((error) => {
-            console.error("Failed to create Campaign:", error);
+            // Fix: Ensure newCampaign has an id before accessing it
+            console.log(newCampaign);
 
+            if (
+              newCampaign &&
+              typeof newCampaign === "object" &&
+              "id" in newCampaign &&
+              newCampaign.id
+            ) {
+              router.push(routeSelectors.CAMPAIGN_BY_ID((newCampaign as Campaign).id));
+            } else {
+              router.push(`/campaigns`);
+            }
+          })
+          .catch(() => {
             toast({
               title: "Failed to create Campaign.",
               variant: "destructive",
