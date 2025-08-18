@@ -26,11 +26,11 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
         "transition-all duration-500 hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]",
       )}
     >
-      <Link href={`/campaign/${data.on_chain_id}`} passHref>
+      <Link href={`/campaign/${data.on_chain_id}/leaderboard`} passHref prefetch>
         <div className="relative h-[212px] w-full">
           <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
-            alt=""
+            alt="Campaign cover"
             className="h-52 w-full rounded-t-lg object-cover hover:scale-150"
             width={500}
             height={500}

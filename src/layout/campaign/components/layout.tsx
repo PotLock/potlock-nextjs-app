@@ -3,12 +3,10 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { TabOption } from "@/common/ui/layout/types";
 import { cn } from "@/common/ui/layout/utils";
 import { CampaignBanner } from "@/entities/campaign";
-import { RootLayout } from "@/layout/components/root-layout";
 
 const CAMPAIGN_TAB_ROUTES: TabOption[] = [
   {
@@ -16,9 +14,6 @@ const CAMPAIGN_TAB_ROUTES: TabOption[] = [
     id: "leaderboard",
     href: "/leaderboard",
   },
-
-  // { label: "History", id: "history", href: "/history" },
-
   { label: "Settings", id: "settings", href: "/settings" },
 ];
 
@@ -53,6 +48,7 @@ const Tabs = ({ options, selectedTab, onSelect, asLink }: Props) => {
               return (
                 <Link
                   href={`/campaign/${campaignId}${option.href}`}
+                  prefetch
                   key={option.id}
                   className={`font-500 border-b-solid transition-duration-300 whitespace-nowrap border-b-[2px] px-4 py-[10px] text-sm text-[#7b7b7b] transition-all hover:border-b-[#292929] hover:text-[#292929] ${selected ? "border-b-[#292929] text-[#292929]" : "border-b-[transparent]"}`}
                   onClick={() => {
@@ -95,8 +91,6 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   const { campaignId } = router.query as { campaignId: string };
   const tabs = CAMPAIGN_TAB_ROUTES;
 
-  const { data: campaign } = indexer.useCampaign({ campaignId: Number(campaignId) });
-
   const [selectedTab, setSelectedTab] = useState(
     tabs.find((tab) => router.pathname.includes(tab.href)) || tabs[0],
   );
@@ -107,23 +101,18 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   );
 
   return (
-    <RootLayout
-      title={campaign?.name ?? "Campaign"}
-      description={campaign?.description ?? "Support this campaign on Potlock."}
-    >
-      <PageWithBanner>
-        <div className="md:p-8">
-          <CampaignBanner campaignId={parseInt(campaignId)} />
-        </div>
+    <PageWithBanner>
+      <div className="md:p-8">
+        <CampaignBanner campaignId={parseInt(campaignId)} />
+      </div>
 
-        <Tabs
-          asLink
-          options={tabs}
-          selectedTab={selectedTab.id}
-          onSelect={(tabId: string) => handleSelectedTab(tabId)}
-        />
-        <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
-      </PageWithBanner>
-    </RootLayout>
+      <Tabs
+        asLink
+        options={tabs}
+        selectedTab={selectedTab.id}
+        onSelect={(tabId: string) => handleSelectedTab(tabId)}
+      />
+      <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
+    </PageWithBanner>
   );
 };

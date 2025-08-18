@@ -18,11 +18,12 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
         className="flex w-full flex-col items-start justify-between gap-4 md:flex-row"
         href={`/campaign/${data.on_chain_id}/leaderboard`}
         passHref
+        prefetch
       >
         <div className="h-293px relative md:h-[285px] md:w-[68%] md:rounded-xl">
           <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
-            alt=""
+            alt="Campaign cover"
             className="inset-1 h-full w-full object-cover md:rounded-xl"
             width={500}
             height={300}

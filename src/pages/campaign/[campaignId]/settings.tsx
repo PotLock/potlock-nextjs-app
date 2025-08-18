@@ -4,6 +4,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import { APP_METADATA } from "@/common/constants";
+import { stripHtml } from "@/common/lib";
 import { CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
@@ -33,7 +34,7 @@ CampaignSettingsPage.getLayout = function getLayout(page: ReactElement) {
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
     // Fetch campaigns to get IDs for pre-generation
-    const res = await fetch("https://dev.potlock.io/api/v1/campaigns?limit=100");
+    const res = await fetch("https://dev.potlock.io/api/v1/campaigns?limit=50");
     if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
     const campaigns = await res.json();
 
@@ -69,8 +70,9 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
     const campaign = await res.json();
 
     const seoTitle = campaign?.name ?? "Campaign";
-    const seoDescription = campaign?.description ?? "Support this campaign on Potlock.";
-    const seoImage = campaign?.image ?? APP_METADATA.openGraph.images.url;
+    const seoDescription = stripHtml(campaign?.description) ?? "Support this campaign on Potlock.";
+    // Use cover_image_url field which is the correct field for campaign images
+    const seoImage = campaign?.cover_image_url ?? APP_METADATA.openGraph.images.url;
 
     return {
       props: { seoTitle, seoDescription, seoImage },
