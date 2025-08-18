@@ -38,7 +38,7 @@ export const RootLayout: React.FC<RootLayoutProps> = ({ title, description, imag
         <meta name="robots" content="index, follow" />
 
         <title>{`${title} | ${APP_METADATA.title}`}</title>
-        <meta name="description" content={description} />
+        <meta name="description" content={description ?? APP_METADATA.description} />
         {/* Canonical URL - points to preferred domain */}
         <link rel="canonical" href={canonicalUrl} />
 
@@ -47,8 +47,8 @@ export const RootLayout: React.FC<RootLayoutProps> = ({ title, description, imag
 
         {/* Open Graph */}
         <meta property="og:site_name" content={APP_METADATA.title} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
+        <meta property="og:title" content={title ?? APP_METADATA.title} />
+        <meta property="og:description" content={description ?? APP_METADATA.description} />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content={APP_METADATA.openGraph.type} />
         <meta property="og:image" content={image ?? APP_METADATA.openGraph.images.url} />
@@ -57,7 +57,7 @@ export const RootLayout: React.FC<RootLayoutProps> = ({ title, description, imag
         <meta name="twitter:card" content={APP_METADATA.twitter.card} />
         <meta name="twitter:site" content={APP_METADATA.twitter?.site} />
         <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
+        <meta name="twitter:description" content={description ?? APP_METADATA.description} />
         <meta name="twitter:image" content={image ?? APP_METADATA.openGraph.images.url} />
 
         <meta name="apple-mobile-web-app-title" content={APP_METADATA.title} />

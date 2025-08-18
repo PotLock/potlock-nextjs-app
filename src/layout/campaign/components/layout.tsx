@@ -3,10 +3,12 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { TabOption } from "@/common/ui/layout/types";
 import { cn } from "@/common/ui/layout/utils";
 import { CampaignBanner } from "@/entities/campaign";
+import { RootLayout } from "@/layout/components/root-layout";
 
 const CAMPAIGN_TAB_ROUTES: TabOption[] = [
   {
@@ -93,6 +95,8 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   const { campaignId } = router.query as { campaignId: string };
   const tabs = CAMPAIGN_TAB_ROUTES;
 
+  const { data: campaign } = indexer.useCampaign({ campaignId: Number(campaignId) });
+
   const [selectedTab, setSelectedTab] = useState(
     tabs.find((tab) => router.pathname.includes(tab.href)) || tabs[0],
   );
@@ -103,18 +107,23 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   );
 
   return (
-    <PageWithBanner>
-      <div className="md:p-8">
-        <CampaignBanner campaignId={parseInt(campaignId)} />
-      </div>
+    <RootLayout
+      title={campaign?.name ?? "Campaign"}
+      description={campaign?.description ?? "Support this campaign on Potlock."}
+    >
+      <PageWithBanner>
+        <div className="md:p-8">
+          <CampaignBanner campaignId={parseInt(campaignId)} />
+        </div>
 
-      <Tabs
-        asLink
-        options={tabs}
-        selectedTab={selectedTab.id}
-        onSelect={(tabId: string) => handleSelectedTab(tabId)}
-      />
-      <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
-    </PageWithBanner>
+        <Tabs
+          asLink
+          options={tabs}
+          selectedTab={selectedTab.id}
+          onSelect={(tabId: string) => handleSelectedTab(tabId)}
+        />
+        <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
+      </PageWithBanner>
+    </RootLayout>
   );
 };
