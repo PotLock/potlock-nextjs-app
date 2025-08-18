@@ -1,11 +1,11 @@
 import { ReactElement } from "react";
 
-import type { GetStaticProps, GetStaticPaths } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
+import { APP_METADATA } from "@/common/constants";
 import { CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
-import { APP_METADATA } from "@/common/constants";
 import { RootLayout } from "@/layout/components/root-layout";
 
 type SeoProps = {
@@ -36,11 +36,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const res = await fetch("https://dev.potlock.io/api/v1/campaigns?limit=100");
     if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
     const campaigns = await res.json();
-    
+
     // Generate paths for the first 50 campaigns (most recent/active)
-    const paths = campaigns.data?.map((campaign: any) => ({
-      params: { campaignId: campaign.on_chain_id.toString() },
-    })) || [];
+    const paths =
+      campaigns.data?.map((campaign: any) => ({
+        params: { campaignId: campaign.on_chain_id.toString() },
+      })) || [];
 
     return {
       paths,
@@ -59,8 +60,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
   try {
     const campaignId = params?.campaignId as string;
-    
-    const res = await fetch(`https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`);
+
+    const res = await fetch(
+      `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
+    );
+
     if (!res.ok) throw new Error(`Failed to fetch campaign: ${res.status}`);
     const campaign = await res.json();
 
