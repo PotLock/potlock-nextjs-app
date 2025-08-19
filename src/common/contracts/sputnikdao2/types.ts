@@ -1,14 +1,14 @@
 import type { AccountId, IndivisibleUnits } from "@/common/types";
 
-// pub enum WeightOrRatio {
-//     Weight(U128),
-//     Ratio(u64, u64),
-// }
+type Weight = {
+  Weight: IndivisibleUnits;
+};
 
-export enum WeightOrRatio {
-  Weight = "Weight",
-  Ratio = "Ratio",
-}
+type Ratio = {
+  Ratio: [number, number];
+};
+
+export type WeightOrRatio = Weight | Ratio;
 
 /**
  * How the voting policy votes get weigthed.
@@ -31,31 +31,15 @@ export type VotePolicy = {
   threshold: WeightOrRatio;
 };
 
-// pub enum RoleKind {
-//     /// Matches everyone, who is not matched by other roles.
-//     Everyone,
-//     /// Member greater or equal than given balance. Can use `1` as non-zero balance.
-//     Member(U128),
-//     /// Set of accounts.
-//     Group(HashSet<AccountId>),
-// }
+type MemberRole = {
+  Member: IndivisibleUnits;
+};
 
-export enum RoleKind {
-  /**
-   * Matches everyone, who is not matched by other roles.
-   */
-  Everyone = "Everyone",
+type GroupRole = {
+  Group: [AccountId];
+};
 
-  /**
-   * Member greater or equal than given balance. Can use `1` as non-zero balance.
-   */
-  Member = "Member",
-
-  /**
-   * Set of accounts.
-   */
-  Group = "Group",
-}
+export type RoleKind = "Everyone" | MemberRole | GroupRole;
 
 export type RolePermission = {
   name: string;

@@ -89,6 +89,7 @@ export const useWalletUserSession = (): WalletUserSession => {
       };
     }
   }, [
+    canSubmitDaoProposals,
     daoAccountId,
     isDaoRepresentative,
     isHuman,
