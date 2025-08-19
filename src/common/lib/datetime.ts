@@ -117,3 +117,16 @@ export const toTimestamp = (dateValue: string | number): number => {
 
   return new Date(dateValue).getTime();
 };
+
+export const stripHtml = (html: string | null | undefined): string => {
+  if (!html) {
+    return "";
+  }
+
+  try {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent || doc.body.innerText || "";
+  } catch (e) {
+    return html.replace(/<[^>]*>/g, "");
+  }
+};
