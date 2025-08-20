@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import { ICONS_ASSET_ENDPOINT_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
+import type { AccountId } from "@/common/types";
 import { TextField } from "@/common/ui/form/components";
 import {
   Accordion,
@@ -24,7 +25,11 @@ import { cn } from "@/common/ui/layout/utils";
 import { useDaoListingForm } from "../hooks/dao-listing-form";
 import { useWalletDaoAuthStore } from "../model/dao-auth";
 
-export const WalletUserDaoMenu = () => {
+export type WalletDaoAuthMenuProps = {
+  userAccountId: AccountId;
+};
+
+export const WalletDaoAuthMenu = ({ userAccountId }: WalletDaoAuthMenuProps) => {
   const { toast } = useToast();
 
   const { listedAccountIds, delistDao, tryActivate, deactivate, isActive, activeAccountId } =
@@ -33,7 +38,6 @@ export const WalletUserDaoMenu = () => {
   const [isExpanded, setIsExpanded] = useState(isActive);
   const [isAddressInputActive, setIsAddressInputActive] = useState(false);
   const { form, isSubmitDisabled, onSubmit: onDaoListingSubmit } = useDaoListingForm();
-
   const onAddDaoClick = useCallback(() => setIsAddressInputActive(true), []);
 
   const onSwitch = useCallback(
@@ -50,16 +54,17 @@ export const WalletUserDaoMenu = () => {
   );
 
   const handleActivate = useCallback(
-    (accountIdIndex: number) =>
+    (listedDaoAccountIdIndex: number) =>
       tryActivate({
-        accountIdIndex,
+        userAccountId,
+        listingIndex: listedDaoAccountIdIndex,
 
         onError: (error: Error) => {
           toast({ title: "Error", description: error.message, variant: "destructive" });
         },
       }),
 
-    [toast, tryActivate],
+    [toast, tryActivate, userAccountId],
   );
 
   return (

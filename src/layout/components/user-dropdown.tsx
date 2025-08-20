@@ -14,7 +14,7 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
-import { WalletUserDaoMenu } from "@/common/wallet/components/dao-menu";
+import { WalletDaoAuthMenu } from "@/common/wallet/components/dao-auth-menu";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
 import { listRegistrationStatuses } from "@/entities/list";
 import { rootPathnames } from "@/pathnames";
@@ -75,7 +75,7 @@ export const UserDropdown = () => {
             </div>
           </DropdownMenuLabel>
 
-          <WalletUserDaoMenu />
+          {walletUser.isSignedIn && <WalletDaoAuthMenu userAccountId={walletUser.accountId} />}
 
           <div className="rounded-md border border-[#DBDBDB]">
             {walletUser.accountId && (

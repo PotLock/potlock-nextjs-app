@@ -15,11 +15,17 @@ type WalletDaoAuth = { listedAccountIds: AccountId[] } & (
     }
 );
 
+type TryActivateParams = {
+  userAccountId: AccountId;
+  listingIndex: number;
+  onError: (err: Error) => void;
+};
+
 type WalletDaoAuthState = WalletDaoAuth & {
   reset: () => void;
   listDao: (accountId: AccountId) => void;
   delistDao: (accountId: AccountId) => void;
-  tryActivate: (params: { accountIdIndex: number; onError: (err: Error) => void }) => void;
+  tryActivate: (params: TryActivateParams) => void;
   deactivate: VoidFunction;
 };
 
@@ -51,15 +57,14 @@ export const useWalletDaoAuthStore = create<WalletDaoAuthState>()(
         }
       },
 
-      tryActivate: ({ accountIdIndex, onError }) => {
-        const daoAccountId = get().listedAccountIds.at(accountIdIndex);
+      tryActivate: ({ userAccountId, listingIndex, onError }) => {
+        const daoAccountId = get().listedAccountIds.at(listingIndex);
 
         if (daoAccountId === undefined) {
           onError(new Error("The account ID is not listed."));
         } else {
           sputnikDaoQueries
-            // TODO: Pass `walletUser.accountId`
-            .getPermissions({ daoAccountId, accountId: "TODO" })
+            .getPermissions({ daoAccountId, accountId: userAccountId })
             .then(({ canSubmitProposals }) => {
               if (canSubmitProposals) {
                 set({ isActive: true, activeAccountId: daoAccountId });
