@@ -1,10 +1,7 @@
-import { useCallback } from "react";
-
 import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { NOOP_STRING } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import {
@@ -23,42 +20,38 @@ import { listRegistrationStatuses } from "@/entities/list";
 import { rootPathnames } from "@/pathnames";
 
 export const UserDropdown = () => {
-  const viewer = useWalletUserSession();
+  const walletUser = useWalletUserSession();
 
   const { profile } = useAccountSocialProfile({
-    enabled: viewer.isSignedIn,
+    enabled: walletUser.isSignedIn,
     live: true,
-    accountId: viewer.accountId ?? NOOP_STRING,
+    accountId: walletUser.accountId ?? NOOP_STRING,
   });
-
-  const logoutHandler = useCallback(() => {
-    nearProtocolClient.walletApi.wallet?.signOut();
-  }, []);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="h-8 w-8 rounded-full">
-        {viewer.isSignedIn ? (
-          <AccountProfilePicture accountId={viewer.accountId} className="h-full w-full" />
+        {walletUser.isSignedIn ? (
+          <AccountProfilePicture accountId={walletUser.accountId} className="h-full w-full" />
         ) : (
           <Skeleton className="h-full w-full rounded-full" />
         )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-72 p-0">
-        {viewer.registrationStatus && (
+        {walletUser.registrationStatus && (
           <DropdownMenuLabel
             className="flex items-center justify-between px-4 py-2"
             style={{
-              color: listRegistrationStatuses[viewer.registrationStatus].color,
-              background: listRegistrationStatuses[viewer.registrationStatus].background,
+              color: listRegistrationStatuses[walletUser.registrationStatus].color,
+              background: listRegistrationStatuses[walletUser.registrationStatus].background,
             }}
           >
-            {viewer.registrationStatus}
+            {walletUser.registrationStatus}
 
             <LazyLoadImage
               alt="Registration status icon"
-              src={listRegistrationStatuses[viewer.registrationStatus].icon}
+              src={listRegistrationStatuses[walletUser.registrationStatus].icon}
               width={18}
               height={18}
             />
@@ -67,15 +60,17 @@ export const UserDropdown = () => {
 
         <div className="flex flex-col gap-6 p-4">
           <DropdownMenuLabel className="flex gap-2 p-0">
-            {viewer.accountId && (
-              <AccountProfilePicture accountId={viewer.accountId} className="h-10 w-10" />
+            {walletUser.accountId && (
+              <AccountProfilePicture accountId={walletUser.accountId} className="h-10 w-10" />
             )}
 
             <div className="flex flex-col">
               {profile?.name && <p className="font-semibold">{truncate(profile.name, 30)}</p>}
 
-              {viewer.accountId && (
-                <p className="prose color-[#656565] text-xs">{truncate(viewer.accountId, 30)}</p>
+              {walletUser.accountId && (
+                <p className="prose color-[#656565] text-xs">
+                  {truncate(walletUser.accountId, 30)}
+                </p>
               )}
             </div>
           </DropdownMenuLabel>
@@ -83,10 +78,10 @@ export const UserDropdown = () => {
           <DaoAuthForm />
 
           <div className="rounded-md border border-[#DBDBDB]">
-            {viewer.accountId && (
-              <Link href={`${rootPathnames.PROFILE}/${viewer.accountId}`}>
+            {walletUser.accountId && (
+              <Link href={`${rootPathnames.PROFILE}/${walletUser.accountId}`}>
                 <DropdownMenuItem className="px-3 py-2.5 font-medium">
-                  {viewer.hasRegistrationApproved ? "My Project" : "My Profile"}
+                  {walletUser.hasRegistrationApproved ? "My Project" : "My Profile"}
                 </DropdownMenuItem>
               </Link>
             )}
@@ -100,7 +95,7 @@ export const UserDropdown = () => {
         </div>
 
         <Button
-          onClick={logoutHandler}
+          onClick={walletUser.logout}
           variant="brand-plain"
           className="w-full justify-start bg-[#F7F7F7] px-4 py-3"
         >

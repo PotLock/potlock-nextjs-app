@@ -20,9 +20,10 @@ type WalletDaoAuth = { listedAccountIds: AccountId[] } & (
 
 type WalletDaoAuthState = WalletDaoAuth & {
   reset: () => void;
-  listAccountId: (accountId: AccountId) => void;
-  delistAccountId: (accountId: AccountId) => void;
+  listDao: (accountId: AccountId) => void;
+  delistDao: (accountId: AccountId) => void;
   tryActivate: (params: { accountIdIndex: number; onError: (err: Error) => void }) => void;
+  deactivate: VoidFunction;
 };
 
 const initialState: WalletDaoAuth = {
@@ -38,7 +39,7 @@ export const useWalletDaoAuthStore = create<WalletDaoAuthState>()(
       ...initialState,
       reset: () => set(initialState),
 
-      listAccountId: (accountId: AccountId) => {
+      listDao: (accountId: AccountId) => {
         const listedAccountIds = get().listedAccountIds;
 
         if (!listedAccountIds.includes(accountId)) {
@@ -46,7 +47,7 @@ export const useWalletDaoAuthStore = create<WalletDaoAuthState>()(
         }
       },
 
-      delistAccountId: (accountId: AccountId) => {
+      delistDao: (accountId: AccountId) => {
         const listedAccountIds = get().listedAccountIds;
 
         if (listedAccountIds.includes(accountId)) {
@@ -77,6 +78,8 @@ export const useWalletDaoAuthStore = create<WalletDaoAuthState>()(
           onError(error);
         }
       },
+
+      deactivate: () => set({ isActive: false, activeAccountId: null, error: null }),
     }),
 
     { name: "wallet-dao-auth" },

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { ChallengeModal } from "@/entities/pot";
 import { DonationHumanVerificationAlert } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
@@ -24,6 +25,7 @@ export type PotLayoutProps = {
 
 export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const router = useRouter();
+  const walletUser = useWalletUserSession();
 
   const { potId, ...query } = router.query as {
     potId: string;
@@ -68,7 +70,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      {pot && (
+      {walletUser.isSignedIn && pot && (
         <>
           <MatchingPoolContributionModal
             potDetail={pot}
@@ -77,9 +79,13 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           />
 
           <PotApplicationModal
-            potDetail={pot}
             open={applyModalOpen}
             onCloseClick={() => setApplyModalOpen(false)}
+            applicantAccountId={
+              walletUser.isDaoRepresentative ? walletUser.daoAccountId : walletUser.accountId
+            }
+            daoMode={walletUser.isDaoRepresentative}
+            potDetail={pot}
           />
 
           <ChallengeModal

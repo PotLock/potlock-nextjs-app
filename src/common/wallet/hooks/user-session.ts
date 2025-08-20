@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
@@ -29,6 +30,12 @@ export const useWalletUserSession = (): WalletUserSession => {
 
   const isMetadataLoading = isHumanVerificationStatusLoading || isRegistrationLoading;
 
+  const logout = useCallback(() => {
+    nearProtocolClient.walletApi.wallet?.signOut();
+    wallet.reset();
+    daoAuth.reset();
+  }, [daoAuth, wallet]);
+
   return useMemo(() => {
     if (wallet.isReady && wallet.isSignedIn && wallet.accountId) {
       return {
@@ -49,6 +56,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
         registrationStatus: registration?.status,
         referrerAccountId: isAccountId(referrerAccountId) ? referrerAccountId : undefined,
+        logout,
       };
     } else if (wallet.isReady && !wallet.isSignedIn) {
       return {
@@ -63,6 +71,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationApproved: false,
         registrationStatus: undefined,
         referrerAccountId: undefined,
+        logout,
       };
     } else {
       return {
@@ -77,6 +86,7 @@ export const useWalletUserSession = (): WalletUserSession => {
         hasRegistrationApproved: false,
         registrationStatus: undefined,
         referrerAccountId: undefined,
+        logout,
       };
     }
   }, [
@@ -84,6 +94,7 @@ export const useWalletUserSession = (): WalletUserSession => {
     daoAuth.isActive,
     isHuman,
     isMetadataLoading,
+    logout,
     referrerAccountId,
     registration,
     wallet.accountId,

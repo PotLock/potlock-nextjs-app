@@ -1,18 +1,19 @@
-import { FocusEvent, FormEvent, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Box, Plus, Trash } from "lucide-react";
 import Image from "next/image";
 
 import { truncate } from "@/common/lib";
+import { TextField } from "@/common/ui/form/components";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   Button,
-  Checkbox,
   DropdownMenuLabel,
-  Input,
+  Form,
+  FormField,
   Label,
   Switch,
 } from "@/common/ui/layout/components";
@@ -25,25 +26,14 @@ import { useWalletDaoAuthStore } from "../model/dao-auth";
 export const DaoAuthForm = () => {
   const { toast } = useToast();
 
-  const {
-    listedAccountIds,
-    listAccountId,
-    delistAccountId,
-    tryActivate,
-    isActive,
-    activeAccountId,
-    error,
-  } = useWalletDaoAuthStore();
+  const { listedAccountIds, delistDao, tryActivate, isActive, activeAccountId } =
+    useWalletDaoAuthStore();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpanded = () => setIsExpanded((isTrue) => !isTrue);
   const [isAddressInputActive, setIsAddressInputActive] = useState(false);
 
-  const { form, onSubmit: onDaoListingSubmit } = useDaoListingForm();
-
-  // TODO: Convert into a form
-  const [daoAddress, setDaoAddress] = useState("");
-  const [daoError, setDaoError] = useState("");
+  const { form, isSubmitDisabled, onSubmit: onDaoListingSubmit } = useDaoListingForm();
 
   const onActivationError = (error: Error) => {
     toast({
@@ -53,6 +43,8 @@ export const DaoAuthForm = () => {
     });
   };
 
+  const onAddDaoClick = useCallback(() => setIsAddressInputActive(true), []);
+
   return (
     <DropdownMenuLabel className="flex flex-col items-start gap-2">
       <div className="flex w-full items-center justify-between">
@@ -61,20 +53,13 @@ export const DaoAuthForm = () => {
           <Image src="/assets/icons/info-icon.svg" width={18} height={18} alt="info" />
         </Label>
 
-        <Switch
-          checked={isExpanded}
-          onClick={() => {
-            toggleExpanded();
-            setIsAddressInputActive(false);
-            setDaoError("");
-          }}
-        />
+        <Switch checked={isExpanded} onClick={toggleExpanded} />
       </div>
 
       {isExpanded && (
         <>
           <Accordion className="flex w-full flex-col gap-2" type="single" collapsible>
-            {listedAccountIds.map((accountId: string, idx: number) => {
+            {listedAccountIds.map((accountId: string, accountIndex: number) => {
               const isActiveAccountId = accountId === activeAccountId;
 
               return (
@@ -105,28 +90,29 @@ export const DaoAuthForm = () => {
                       })}
                     />
 
-                    {truncate(accountId, 22)}
+                    <span>{truncate(accountId, 22)}</span>
                   </AccordionTrigger>
 
-                  <AccordionContent className="flex flex-row items-center gap-2 px-3 py-[10px]">
-                    <Checkbox
-                      id={`${accountId}-dao-default`}
-                      checked={isActiveAccountId}
-                      onCheckedChange={() =>
-                        tryActivate({ accountIdIndex: idx, onError: onActivationError })
-                      }
-                      className="h-6 w-6 border-neutral-400"
-                    />
+                  <AccordionContent className="items-between flex flex-row gap-2 px-3 py-2.5">
+                    {!isActiveAccountId && (
+                      <Button
+                        onClick={() =>
+                          tryActivate({ accountIdIndex: accountIndex, onError: onActivationError })
+                        }
+                      >
+                        {"Activate"}
+                      </Button>
+                    )}
 
-                    <Button className="ml-auto" variant={"standard-plain"} asChild>
-                      <div>
-                        <Trash
-                          width={14}
-                          onClick={() => delistAccountId(accountId)}
-                          strokeWidth={3}
-                          className="color-neutral-400"
-                        />
-                      </div>
+                    <Button variant={"standard-plain"}>
+                      <Trash
+                        width={14}
+                        onClick={() => delistDao(accountId)}
+                        strokeWidth={3}
+                        className="color-neutral-400"
+                      />
+
+                      <span>{"Remove"}</span>
                     </Button>
                   </AccordionContent>
                 </AccordionItem>
@@ -135,19 +121,29 @@ export const DaoAuthForm = () => {
           </Accordion>
 
           {isAddressInputActive || listedAccountIds.length === 0 ? (
-            <form className="flex w-full" onSubmit={onDaoListingSubmit}>
-              <label>DAO Address</label>
-              <Input onChange={(e) => setDaoAddress(e.target.value)} error={daoError} />
+            <Form {...form}>
+              <form className="flex w-full" onSubmit={onDaoListingSubmit}>
+                <FormField
+                  name="accountId"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      label="DAO Address"
+                      type="text"
+                      hint={form.formState.isValidating ? "Validating..." : ""}
+                      classNames={{ root: "w-full" }}
+                      {...field}
+                    />
+                  )}
+                />
 
-              <button type="submit" className="h-0 w-0 opacity-0">
-                {"Submit"}
-              </button>
-            </form>
+                <Button type="submit" disabled={isSubmitDisabled}>
+                  {"Submit"}
+                </Button>
+              </form>
+            </Form>
           ) : (
-            <Button
-              onClick={() => setIsAddressInputActive(!isAddressInputActive)}
-              variant="standard-plain"
-            >
+            <Button onClick={onAddDaoClick} variant="standard-plain">
               <Plus className="color-neutral-400" size={14} />
               <span>{`Add ${listedAccountIds.length === 0 ? "" : "another"} DAO`}</span>
             </Button>

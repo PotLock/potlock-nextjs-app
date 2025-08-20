@@ -12,8 +12,7 @@ type WalletUserMetadata = {
   referrerAccountId?: AccountId;
 };
 
-export type WalletUserSession = WalletUserMetadata &
-  (
+export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & (
     | {
         hasWalletReady: false;
         accountId: undefined;
