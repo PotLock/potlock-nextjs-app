@@ -1,9 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { sputnikDaoQueries } from "@/common/contracts/sputnikdao2";
 import type { AccountId } from "@/common/types";
-
-import { validateUserInDao } from "../utils/validation";
 
 type WalletDaoAuth = { listedAccountIds: AccountId[] } & (
   | {
@@ -58,12 +57,11 @@ export const useWalletDaoAuthStore = create<WalletDaoAuthState>()(
         if (daoAccountId === undefined) {
           onError(new Error("The account ID is not listed."));
         } else {
-          // TODO: Permission check
-          const valid = false;
-
-          validateUserInDao(daoAccountId, "TODO")
-            .then(() => {
-              if (valid) {
+          sputnikDaoQueries
+            // TODO: Pass `walletUser.accountId`
+            .getPermissions({ daoAccountId, accountId: "TODO" })
+            .then(({ canSubmitProposals }) => {
+              if (canSubmitProposals) {
                 set({ isActive: true, activeAccountId: daoAccountId });
               } else {
                 onError(new Error("Insufficient DAO permissions."));

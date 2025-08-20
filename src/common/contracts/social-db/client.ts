@@ -164,18 +164,6 @@ export const getSocialData = async <R>({ path }: { path: string }) => {
   }
 };
 
-export const getPolicy = async () => {
-  try {
-    const response = await nearSocialDbContractApi.view<any, { proposal_bond: string }>(
-      "get_policy",
-    );
-
-    return response;
-  } catch (e) {
-    console.error("getPolicy:", e);
-  }
-};
-
 export const setSocialData = async ({ data }: { data: Record<string, any> }) => {
   try {
     const response = await nearSocialDbContractApi.call("set", {
