@@ -43,8 +43,4 @@ export const useDispatch = () => useReduxDispatch<AppDispatcher>();
 
 export const useGlobalStoreSelector: TypedUseSelectorHook<AppState> = useSelector;
 
-export const resetStore = () => {
-  dispatch.nav.RESET();
-};
-
 export const useCoreState = () => useGlobalStoreSelector(prop("core"));

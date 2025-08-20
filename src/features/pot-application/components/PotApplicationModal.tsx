@@ -11,7 +11,7 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/layout/components";
-import { useGlobalStoreSelector } from "@/store";
+import { useWalletUserSession } from "@/common/wallet";
 
 import { usePotApplicationForm } from "../hooks/forms";
 
@@ -26,15 +26,14 @@ export const PotApplicationModal: React.FC<PotApplicationModalProps> = ({
   onCloseClick,
   potDetail,
 }) => {
-  const { actAsDao, accountId } = useGlobalStoreSelector((state) => state.nav);
-
-  // AccountID (Address)
-  const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
+  const walletUser = useWalletUserSession();
 
   // Form settings
   const { form, errors, onSubmit, inProgress } = usePotApplicationForm({
-    accountId: asDao ? actAsDao.defaultAddress : accountId,
-    asDao,
+    // FIXME
+    // @ts-expect-error TODO
+    accountId: walletUser.isDaoRepresentative ? walletUser.daoAccountId : walletUser.accountId,
+    asDao: walletUser.isDaoRepresentative,
     potDetail,
   });
 
@@ -75,7 +74,11 @@ export const PotApplicationModal: React.FC<PotApplicationModalProps> = ({
               {inProgress ? (
                 <Spinner />
               ) : (
-                <>{asDao ? "Propose to Send Application" : "Send application"}</>
+                <>
+                  {walletUser.isDaoRepresentative
+                    ? "Propose to Send Application"
+                    : "Send application"}
+                </>
               )}
             </Button>
           </div>
