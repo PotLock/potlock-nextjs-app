@@ -19,6 +19,7 @@ import {
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 
+import { useDaoListingForm } from "../hooks/dao-listing-form";
 import { useWalletDaoAuthStore } from "../model/dao-auth";
 
 export const DaoAuthForm = () => {
@@ -38,13 +39,11 @@ export const DaoAuthForm = () => {
   const toggleExpanded = () => setIsExpanded((isTrue) => !isTrue);
   const [isAddressInputActive, setIsAddressInputActive] = useState(false);
 
+  const { form, onSubmit: onDaoListingSubmit } = useDaoListingForm();
+
   // TODO: Convert into a form
   const [daoAddress, setDaoAddress] = useState("");
   const [daoError, setDaoError] = useState("");
-
-  const handleSubmitAccountId = () => {
-    listAccountId(daoAddress);
-  };
 
   const onActivationError = (error: Error) => {
     toast({
@@ -136,7 +135,7 @@ export const DaoAuthForm = () => {
           </Accordion>
 
           {isAddressInputActive || listedAccountIds.length === 0 ? (
-            <form className="flex w-full" onSubmit={handleSubmitAccountId}>
+            <form className="flex w-full" onSubmit={onDaoListingSubmit}>
               <label>DAO Address</label>
               <Input onChange={(e) => setDaoAddress(e.target.value)} error={daoError} />
 

@@ -1,28 +1,18 @@
 import { useMemo } from "react";
 
-import { prop } from "remeda";
-
 import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
 import { isAccountId } from "@/common/lib";
-import { useGlobalStoreSelector } from "@/store";
 
-import { useWalletUserAdapter } from "./adapters";
-import { type WalletUserSession, useWalletUserMetadataStore } from "./model/user-session";
+import { useWalletUserAdapter } from "../adapters";
+import { useWalletDaoAuthStore } from "../model/dao-auth";
+import { type WalletUserSession, useWalletUserMetadataStore } from "../model/user-session";
 
 export const useWalletUserSession = (): WalletUserSession => {
   const wallet = useWalletUserAdapter();
   const { referrerAccountId } = useWalletUserMetadataStore();
-  const { actAsDao } = useGlobalStoreSelector(prop("nav"));
-  const daoAccountId = actAsDao.defaultAddress;
-  const isDaoAccountIdValid = useMemo(() => isAccountId(daoAccountId), [daoAccountId]);
-  const isDaoRepresentative = actAsDao.toggle && isDaoAccountIdValid;
-
-  // TODO: Check DAO member permissions?
-  const canSubmitDaoProposals = useMemo(() => {
-    return false;
-  }, []);
+  const daoAuth = useWalletDaoAuthStore();
 
   const { isLoading: isHumanVerificationStatusLoading, data: isHuman } =
     sybilResistanceContractHooks.useIsHuman({
@@ -34,7 +24,7 @@ export const useWalletUserSession = (): WalletUserSession => {
     listsContractHooks.useRegistration({
       enabled: wallet.isSignedIn,
       listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
-      accountId: (isDaoRepresentative ? daoAccountId : wallet.accountId) ?? NOOP_STRING,
+      accountId: (daoAuth.isActive ? daoAuth.activeAccountId : wallet.accountId) ?? NOOP_STRING,
     });
 
   const isMetadataLoading = isHumanVerificationStatusLoading || isRegistrationLoading;
@@ -46,9 +36,12 @@ export const useWalletUserSession = (): WalletUserSession => {
         accountId: wallet.accountId,
         isSignedIn: true,
 
-        ...(isDaoRepresentative
-          ? { isDaoRepresentative, daoAccountId, canSubmitDaoProposals }
-          : { isDaoRepresentative: false, daoAccountId: undefined, canSubmitDaoProposals: false }),
+        ...(daoAuth.isActive
+          ? {
+              isDaoRepresentative: true,
+              daoAccountId: daoAuth.activeAccountId,
+            }
+          : { isDaoRepresentative: false, daoAccountId: undefined }),
 
         isHuman: isHuman ?? false,
         isMetadataLoading,
@@ -66,7 +59,6 @@ export const useWalletUserSession = (): WalletUserSession => {
         isDaoRepresentative: false,
         isHuman: false,
         isMetadataLoading: false,
-        canSubmitDaoProposals: false,
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,
@@ -81,7 +73,6 @@ export const useWalletUserSession = (): WalletUserSession => {
         isDaoRepresentative: false,
         isHuman: false,
         isMetadataLoading: false,
-        canSubmitDaoProposals: false,
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
         registrationStatus: undefined,
@@ -89,9 +80,8 @@ export const useWalletUserSession = (): WalletUserSession => {
       };
     }
   }, [
-    canSubmitDaoProposals,
-    daoAccountId,
-    isDaoRepresentative,
+    daoAuth.activeAccountId,
+    daoAuth.isActive,
     isHuman,
     isMetadataLoading,
     referrerAccountId,

@@ -19,7 +19,7 @@ export * from "./components/smart-contracts";
 export * from "./hooks/power";
 export * from "./hooks/social-profile";
 
-export * from "./model/schemas";
+export * from "./model/effects";
 
 export * from "./utils/linktree";
 

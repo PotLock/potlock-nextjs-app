@@ -153,6 +153,7 @@ export const useListForm = () => {
   const handleChangeTransferOwnerField = async (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setTransferAccountField(value);
+    // FIXME: //! Create a form with a field validated by nearProtocolSchemas.validAccountId instead!
     const data = await validateAccountId(value);
     setTransferAccountError(data);
   };

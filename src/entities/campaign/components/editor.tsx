@@ -404,13 +404,14 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                   <FormField
                     control={form.control}
                     name="recipient"
-                    render={({ field }) => (
+                    render={({ field: { value, ...field } }) => (
                       <TextField
-                        classNames={{ root: "mt-4 w-full" }}
                         label=""
                         required
                         placeholder="Enter NEAR ID (username.near)"
                         type="text"
+                        value={value ?? undefined}
+                        classNames={{ root: "mt-4 w-full" }}
                         {...field}
                       />
                     )}
@@ -422,13 +423,14 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
               <FormField
                 control={form.control}
                 name="recipient"
-                render={({ field }) => (
+                render={({ field: { value, ...field } }) => (
                   <TextField
-                    classNames={{ root: "md:w-[45%] mb-5 md:mb-0" }}
                     label="Recipient"
                     required
                     placeholder="Enter NEAR ID (username.near)"
                     type="text"
+                    value={value ?? undefined}
+                    classNames={{ root: "md:w-[45%] mb-5 md:mb-0" }}
                     {...field}
                   />
                 )}

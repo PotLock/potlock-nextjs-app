@@ -256,7 +256,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           end_ms: timeToMilliseconds(values.end_ms),
         }),
         ...(campaignId ? {} : { owner: viewer.accountId as string }),
-        ...(campaignId ? {} : { recipient: values.recipient }),
+        ...(campaignId ? {} : { recipient: values.recipient ?? undefined }),
       };
 
       if (campaignId) {

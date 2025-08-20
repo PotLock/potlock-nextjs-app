@@ -1,3 +1,3 @@
-export * from "./components/dao-auth-form";
-export * from "./components/providers";
-export * from "./hooks";
+export { DaoAuthForm } from "./components/dao-auth-form";
+export { WalletUserSessionProvider } from "./components/providers";
+export { useWalletUserSession } from "./hooks/user-session";
