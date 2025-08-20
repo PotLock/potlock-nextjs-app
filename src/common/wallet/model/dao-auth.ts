@@ -9,12 +9,10 @@ type WalletDaoAuth = { listedAccountIds: AccountId[] } & (
   | {
       isActive: false;
       activeAccountId: null;
-      error: Error | null;
     }
   | {
       isActive: true;
       activeAccountId: AccountId;
-      error: null;
     }
 );
 
@@ -30,7 +28,6 @@ const initialState: WalletDaoAuth = {
   listedAccountIds: [],
   isActive: false,
   activeAccountId: null,
-  error: null,
 };
 
 export const useWalletDaoAuthStore = create<WalletDaoAuthState>()(
@@ -58,28 +55,28 @@ export const useWalletDaoAuthStore = create<WalletDaoAuthState>()(
       tryActivate: ({ accountIdIndex, onError }) => {
         const daoAccountId = get().listedAccountIds.at(accountIdIndex);
 
-        // TODO: Permission check
-        const valid = daoAccountId !== undefined && false;
-
-        if (valid) {
-          set({
-            isActive: true,
-            activeAccountId: daoAccountId,
-            error: null,
-          });
+        if (daoAccountId === undefined) {
+          onError(new Error("The account ID is not listed."));
         } else {
-          const error = new Error(
-            daoAccountId === undefined
-              ? "The account ID is not listed."
-              : "Insufficient DAO permissions.",
-          );
+          // TODO: Permission check
+          const valid = false;
 
-          set({ isActive: false, activeAccountId: null, error });
-          onError(error);
+          validateUserInDao(daoAccountId, "TODO")
+            .then(() => {
+              if (valid) {
+                set({ isActive: true, activeAccountId: daoAccountId });
+              } else {
+                onError(new Error("Insufficient DAO permissions."));
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+              onError(new Error("Unable to check your DAO permissions."));
+            });
         }
       },
 
-      deactivate: () => set({ isActive: false, activeAccountId: null, error: null }),
+      deactivate: () => set({ isActive: false, activeAccountId: null }),
     }),
 
     { name: "wallet-dao-auth" },

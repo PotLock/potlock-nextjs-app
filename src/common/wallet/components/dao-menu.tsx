@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { Box, Plus, Trash } from "lucide-react";
 import Image from "next/image";
 
+import { ICONS_ASSET_ENDPOINT_URL } from "@/common/constants";
 import { truncate } from "@/common/lib";
 import { TextField } from "@/common/ui/form/components";
 import {
@@ -23,37 +24,59 @@ import { cn } from "@/common/ui/layout/utils";
 import { useDaoListingForm } from "../hooks/dao-listing-form";
 import { useWalletDaoAuthStore } from "../model/dao-auth";
 
-export const DaoAuthForm = () => {
+export const WalletUserDaoMenu = () => {
   const { toast } = useToast();
 
-  const { listedAccountIds, delistDao, tryActivate, isActive, activeAccountId } =
+  const { listedAccountIds, delistDao, tryActivate, deactivate, isActive, activeAccountId } =
     useWalletDaoAuthStore();
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggleExpanded = () => setIsExpanded((isTrue) => !isTrue);
+  const [isExpanded, setIsExpanded] = useState(isActive);
   const [isAddressInputActive, setIsAddressInputActive] = useState(false);
-
   const { form, isSubmitDisabled, onSubmit: onDaoListingSubmit } = useDaoListingForm();
 
-  const onActivationError = (error: Error) => {
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-  };
-
   const onAddDaoClick = useCallback(() => setIsAddressInputActive(true), []);
+
+  const onSwitch = useCallback(
+    (checked: boolean) => {
+      if (checked) {
+        setIsExpanded(true);
+      } else {
+        setIsExpanded(false);
+        deactivate();
+      }
+    },
+
+    [deactivate],
+  );
+
+  const handleActivate = useCallback(
+    (accountIdIndex: number) =>
+      tryActivate({
+        accountIdIndex,
+
+        onError: (error: Error) => {
+          toast({ title: "Error", description: error.message, variant: "destructive" });
+        },
+      }),
+
+    [toast, tryActivate],
+  );
 
   return (
     <DropdownMenuLabel className="flex flex-col items-start gap-2">
       <div className="flex w-full items-center justify-between">
         <Label htmlFor="act-dao" className="flex items-center gap-2">
           <span>{"Act as DAO"}</span>
-          <Image src="/assets/icons/info-icon.svg" width={18} height={18} alt="info" />
+
+          <Image
+            alt="info"
+            src={ICONS_ASSET_ENDPOINT_URL + "/info-icon.svg"}
+            width={18}
+            height={18}
+          />
         </Label>
 
-        <Switch checked={isExpanded} onClick={toggleExpanded} />
+        <Switch checked={isExpanded} onCheckedChange={onSwitch} />
       </div>
 
       {isExpanded && (
@@ -95,13 +118,7 @@ export const DaoAuthForm = () => {
 
                   <AccordionContent className="items-between flex flex-row gap-2 px-3 py-2.5">
                     {!isActiveAccountId && (
-                      <Button
-                        onClick={() =>
-                          tryActivate({ accountIdIndex: accountIndex, onError: onActivationError })
-                        }
-                      >
-                        {"Activate"}
-                      </Button>
+                      <Button onClick={() => handleActivate(accountIndex)}>{"Activate"}</Button>
                     )}
 
                     <Button variant={"standard-plain"}>

@@ -46,17 +46,7 @@ function doesUserHaveDaoFunctionCallProposalPermissions(accountId: string, polic
   return allowed;
 }
 
-const checkIfDaoAddress = (address: string): boolean => {
-  return address.endsWith(
-    process.env.NEXT_PUBLIC_NETWORK ? "sputnik-dao.near" : "sputnik-dao.testnet", // TODO: not sure about this one
-  );
-};
-
 export const validateUserInDao = async (daoAddress: string, accountId: string) => {
-  const isValidAddress = checkIfDaoAddress(daoAddress);
-
-  if (!isValidAddress) return "Please enter a valid DAO address.";
-
   const daoContractApi = naxiosInstance.contractApi({
     contractId: daoAddress,
   });
@@ -68,17 +58,3 @@ export const validateUserInDao = async (daoAddress: string, accountId: string) =
   if (!hasPermission) return "The user does not have permission on this DAO.";
   return "";
 };
-
-export function updateList(list: string[], item: string): string[] {
-  const index = list.indexOf(item);
-
-  if (index === -1) {
-    // Item does not exist, add it
-    list.push(item);
-  } else {
-    // Item exists, remove it
-    list.splice(index, 1);
-  }
-
-  return list;
-}
