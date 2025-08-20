@@ -4,7 +4,7 @@ import { prop } from "remeda";
 import { type CampaignDonation } from "@/common/contracts/core/campaigns";
 import type { DirectDonation } from "@/common/contracts/core/donation";
 import { type PotDonation } from "@/common/contracts/core/pot";
-import { useGlobalStoreSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store/hooks";
 import { type AppModel } from "@/store/models";
 
 import { DonationStep } from "../types";

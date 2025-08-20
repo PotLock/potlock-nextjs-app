@@ -10,12 +10,13 @@ import { listsContractClient } from "@/common/contracts/core/lists";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { AccountGroupItem, validateAccountId } from "@/entities/_shared/account";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { ListFormModalType } from "../types";
 
 export const useListForm = () => {
   const { push, query } = useRouter();
+  const dispatch = useDispatch();
   const [transferAccountField, setTransferAccountField] = useState<string>("");
   const [transferAccountError, setTransferAccountError] = useState<string | undefined>("");
 

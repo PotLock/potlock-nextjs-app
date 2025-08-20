@@ -15,7 +15,7 @@ import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useFungibleToken } from "@/entities/_shared/token";
 import { routeSelectors } from "@/pathnames";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
@@ -26,6 +26,7 @@ export type CampaignFormParams = Partial<ByCampaignId> & {
 };
 
 export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignFormParams) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const router = useRouter();
   const isNewCampaign = campaignId === undefined;

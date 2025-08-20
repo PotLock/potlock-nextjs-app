@@ -2,7 +2,7 @@ import { createModel } from "@rematch/core";
 import { mergeAll, prop } from "remeda";
 
 import { Campaign } from "@/common/contracts/core/campaigns";
-import { useGlobalStoreSelector } from "@/store";
+import { useGlobalStoreSelector } from "@/store/hooks";
 import { type AppModel } from "@/store/models";
 
 import { CampaignEditorState, CampaignEnumType } from "../types";

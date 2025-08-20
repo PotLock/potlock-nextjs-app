@@ -1,7 +1,7 @@
 import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
-import { AppDispatcher } from "@/store";
+import { type AppDispatcher } from "@/store";
 
 import { CampaignEnumType } from "../types";
 
