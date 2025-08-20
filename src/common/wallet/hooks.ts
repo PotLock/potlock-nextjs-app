@@ -1,4 +1,4 @@
-import { use, useMemo } from "react";
+import { useMemo } from "react";
 
 import { prop } from "remeda";
 
@@ -9,7 +9,7 @@ import { isAccountId } from "@/common/lib";
 import { useGlobalStoreSelector } from "@/store";
 
 import { useWalletUserAdapter } from "./adapters";
-import { type WalletUserSession, useWalletUserMetadataStore } from "./model";
+import { type WalletUserSession, useWalletUserMetadataStore } from "./model/user-session";
 
 export const useWalletUserSession = (): WalletUserSession => {
   const wallet = useWalletUserAdapter();

@@ -6,8 +6,6 @@ import { listEditorModel } from "@/entities/list";
 import { donationModel, donationModelKey } from "@/features/donation";
 import { potConfigurationModel, potConfigurationModelKey } from "@/features/pot-configuration";
 
-import { navModel } from "./nav-model";
-
 interface CoreState {
   contractMetadata: ContractMetadata;
 }
@@ -52,16 +50,17 @@ export const coreModel = createModel<AppModel>()({
 export interface AppModel extends Models<AppModel> {
   core: typeof coreModel;
   [donationModelKey]: typeof donationModel;
-  nav: typeof navModel;
   [potConfigurationModelKey]: typeof potConfigurationModel;
   listEditor: typeof listEditorModel;
   campaignEditor: typeof campaignEditorModel;
 }
 
+/**
+ * @deprecated, use Zustand for stores instead
+ */
 export const models: AppModel = {
   core: coreModel,
   [donationModelKey]: donationModel,
-  nav: navModel,
   listEditor: listEditorModel,
   campaignEditor: campaignEditorModel,
   [potConfigurationModelKey]: potConfigurationModel,

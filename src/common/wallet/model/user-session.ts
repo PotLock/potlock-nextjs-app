@@ -4,11 +4,11 @@ import { persist } from "zustand/middleware";
 import type { RegistrationStatus } from "@/common/contracts/core/lists";
 import { AccountId } from "@/common/types";
 
-export type WalletUserDaoRepresentativeParams =
+type WalletUserDaoRepresentativeParams =
   | { isDaoRepresentative: false; daoAccountId: undefined }
   | { isDaoRepresentative: true; daoAccountId: AccountId };
 
-export type WalletUserMetadata = {
+type WalletUserMetadata = {
   referrerAccountId?: AccountId;
 };
 
@@ -66,8 +66,6 @@ export const useWalletUserMetadataStore = create<WalletUserMetadataState>()(
       reset: () => set({ referrerAccountId: undefined }),
     }),
 
-    {
-      name: "wallet-user-metadata",
-    },
+    { name: "wallet-user-metadata" },
   ),
 );

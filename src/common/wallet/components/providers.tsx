@@ -5,10 +5,10 @@ import { useRouter } from "next/router";
 
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { DEBUG_ACCOUNT_ID, IS_CLIENT } from "@/common/constants";
+import { isAccountId } from "@/common/lib";
 
-import { useWalletUserAdapter } from "./adapters";
-import { useWalletUserMetadataStore } from "./model";
-import { isAccountId } from "../lib";
+import { useWalletUserAdapter } from "../adapters";
+import { useWalletUserMetadataStore } from "../model/user-session";
 
 //* There are edge cases where `walletSelector` is `undefined` in runtime for a brief moment
 const isWalletSelectorApiAvailable = () =>

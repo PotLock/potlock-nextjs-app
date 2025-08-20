@@ -17,11 +17,10 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
+import { DaoAuthForm } from "@/common/wallet/components/dao-auth-form";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
 import { listRegistrationStatuses } from "@/entities/list";
 import { rootPathnames } from "@/pathnames";
-
-import { DaoAuth } from "./dao-auth";
 
 export const UserDropdown = () => {
   const viewer = useWalletUserSession();
@@ -81,7 +80,7 @@ export const UserDropdown = () => {
             </div>
           </DropdownMenuLabel>
 
-          <DaoAuth />
+          <DaoAuthForm />
 
           <div className="rounded-md border border-[#DBDBDB]">
             {viewer.accountId && (
