@@ -6,7 +6,7 @@ import { TypedUseSelectorHook, useDispatch as useReduxDispatch, useSelector } fr
 import storage from "redux-persist/lib/storage";
 import { prop } from "remeda";
 
-import { AppModel, models } from "./models";
+import { type AppModel, models } from "./models";
 
 type FullModel = ExtraModelsFromLoading<AppModel, { type: "full" }>;
 

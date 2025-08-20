@@ -5,7 +5,7 @@ import { type CampaignDonation } from "@/common/contracts/core/campaigns";
 import type { DirectDonation } from "@/common/contracts/core/donation";
 import { type PotDonation } from "@/common/contracts/core/pot";
 import { useGlobalStoreSelector } from "@/store";
-import { AppModel } from "@/store/models";
+import { type AppModel } from "@/store/models";
 
 import { DonationStep } from "../types";
 import { effects } from "./effects";

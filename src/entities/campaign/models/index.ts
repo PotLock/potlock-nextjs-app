@@ -3,7 +3,7 @@ import { mergeAll, prop } from "remeda";
 
 import { Campaign } from "@/common/contracts/core/campaigns";
 import { useGlobalStoreSelector } from "@/store";
-import { AppModel } from "@/store/models";
+import { type AppModel } from "@/store/models";
 
 import { CampaignEditorState, CampaignEnumType } from "../types";
 import { effects } from "./effects";

@@ -16,6 +16,14 @@ const initialState: CoreState = {
   },
 };
 
+export interface AppModel extends Models<AppModel> {
+  core: typeof coreModel;
+  [donationModelKey]: typeof donationModel;
+  [potConfigurationModelKey]: typeof potConfigurationModel;
+  listEditor: typeof listEditorModel;
+  campaignEditor: typeof campaignEditorModel;
+}
+
 export const coreModel = createModel<AppModel>()({
   state: initialState,
 
@@ -31,7 +39,7 @@ export const coreModel = createModel<AppModel>()({
   },
 
   effects: (dispatch) => ({
-    async init() {
+    async init(_: void) {
       const latestContractSourceCodeCommitHash = await fetch(
         "https://api.github.com/repos/PotLock/core/commits",
       );
@@ -46,14 +54,6 @@ export const coreModel = createModel<AppModel>()({
     },
   }),
 });
-
-export interface AppModel extends Models<AppModel> {
-  core: typeof coreModel;
-  [donationModelKey]: typeof donationModel;
-  [potConfigurationModelKey]: typeof potConfigurationModel;
-  listEditor: typeof listEditorModel;
-  campaignEditor: typeof campaignEditorModel;
-}
 
 /**
  * @deprecated, use Zustand for stores instead
