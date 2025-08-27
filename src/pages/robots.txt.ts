@@ -8,7 +8,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const primary = `${proto}://${host}`.replace(/\/$/, "");
 
   // Hardcoded alternate domains
-  const hardcodedAlternates = ["https://staging.alpha.potlock.io"];
+  const hardcodedAlternates = [
+    "https://staging.alpha.potlock.io",
+    "https://staging.alpha.potlock.xyz",
+  ];
 
   const bases = Array.from(
     new Set([primary, ...hardcodedAlternates.map((u) => u.replace(/\/$/, ""))]),
