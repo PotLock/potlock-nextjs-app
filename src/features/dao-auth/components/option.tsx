@@ -1,4 +1,5 @@
-import { DeleteIcon } from "lucide-react";
+import { ArrowUpRightFromSquare, DeleteIcon } from "lucide-react";
+import Link from "next/link";
 
 import type { ByAccountId } from "@/common/types";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountListItem } from "@/entities/_shared/account";
+import { rootPathnames } from "@/pathnames";
 
 export type DaoAuthOptionProps = ByAccountId & {
   isActive: boolean;
@@ -34,42 +36,48 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
       <AccordionTrigger
         hiddenChevron
         className={cn(
-          "hover:decoration-none flex items-center justify-start gap-2 px-3 py-2.5",
-
-          {
-            "color-[#0B7A74]": isActive,
-            "color-neutral-600": !isActive,
-          },
+          "flex items-center justify-start gap-2 px-3 py-2.5",
+          "hover:decoration-none hover:bg-[#FEF6EE]",
+          { "bg-[#FEF6EE]": isActive },
         )}
       >
         <AccountListItem
-          disableHandleSummaryPopup
-          disableNameSummaryPopup
-          highlightOnHover
           accountId={accountId}
+          disableAvatarSummaryPopup
+          disableHandleSummaryPopup
+          disableLinks
+          disableNameSummaryPopup
           maxTextLength={32}
-          classNames={{
-            root: cn({
-              "color-[#33DDCB]": isActive,
-              "color-neutral-600": !isActive,
-            }),
-          }}
+          classNames={{ root: "rounded-md" }}
         />
       </AccordionTrigger>
 
-      <AccordionContent className="flex flex-row justify-between gap-2 px-3 py-2.5">
-        {!isActive && <Button onClick={onActivateClick}>{"Activate"}</Button>}
+      <AccordionContent className="flex flex-col items-center gap-2 px-3 py-2.5">
+        {isActive ? null : (
+          <Button asChild variant="standard-plain">
+            <Link target="_blank" href={`${rootPathnames.PROFILE}/${accountId}`}>
+              <span className="inline-flex gap-2">
+                <span>{"Open profile"}</span>
+                <ArrowUpRightFromSquare size={14} />
+              </span>
+            </Link>
+          </Button>
+        )}
 
-        <Button variant="standard-plain">
-          <DeleteIcon
-            width={14}
-            onClick={onRemoveClick}
-            strokeWidth={3}
-            className="color-neutral-400"
-          />
+        <div className="flex w-full flex-row justify-between gap-2">
+          {!isActive && <Button onClick={onActivateClick}>{"Activate"}</Button>}
 
-          <span>{"Remove"}</span>
-        </Button>
+          <Button variant="standard-plain">
+            <DeleteIcon
+              width={14}
+              onClick={onRemoveClick}
+              strokeWidth={3}
+              className="color-neutral-400"
+            />
+
+            <span>{"Remove"}</span>
+          </Button>
+        </div>
       </AccordionContent>
     </AccordionItem>
   );

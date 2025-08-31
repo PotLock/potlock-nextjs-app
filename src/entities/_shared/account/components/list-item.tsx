@@ -14,7 +14,9 @@ export type AccountListItemProps = ByAccountId & {
   statusElement?: React.ReactNode;
   hideStatusOnDesktop?: boolean;
   hideStatusOnMobile?: boolean;
+  disableAvatarSummaryPopup?: boolean;
   disableHandleSummaryPopup?: boolean;
+  disableLinks?: boolean;
   disableNameSummaryPopup?: boolean;
   maxTextLength?: AccountHandleProps["maxLength"];
   primarySlot?: React.ReactNode;
@@ -36,7 +38,9 @@ export const AccountListItem = ({
   statusElement,
   hideStatusOnDesktop = false,
   hideStatusOnMobile = false,
+  disableAvatarSummaryPopup = false,
   disableHandleSummaryPopup = false,
+  disableLinks = false,
   disableNameSummaryPopup = false,
   maxTextLength,
   primarySlot,
@@ -49,7 +53,7 @@ export const AccountListItem = ({
 
   const avatarElement = useMemo(
     () => (
-      <AccountSummaryPopup {...{ accountId }}>
+      <AccountSummaryPopup disabled={disableAvatarSummaryPopup} {...{ accountId }}>
         <div className="flex h-fit min-h-fit w-fit min-w-fit">
           <AccountProfilePicture
             className={cn("h-10 min-h-10 w-10 min-w-10", classNames?.avatar)}
@@ -59,7 +63,7 @@ export const AccountListItem = ({
       </AccountSummaryPopup>
     ),
 
-    [accountId, classNames?.avatar],
+    [accountId, classNames?.avatar, disableAvatarSummaryPopup],
   );
 
   return isThumbnail ? (
@@ -87,6 +91,7 @@ export const AccountListItem = ({
           >
             <AccountHandle
               accountId={accountId}
+              asLink={!disableLinks}
               asName
               disabledSummaryPopup={disableNameSummaryPopup}
               maxLength={maxTextLength ?? 38}
@@ -103,6 +108,7 @@ export const AccountListItem = ({
           <div className="max-w-100 flex w-full flex-col gap-1.5">
             <AccountHandle
               accountId={accountId}
+              asLink={!disableLinks}
               disabledSummaryPopup={disableHandleSummaryPopup}
               maxLength={maxTextLength}
               href={href}
