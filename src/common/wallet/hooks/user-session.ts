@@ -15,6 +15,8 @@ export const useWalletUserSession = (): WalletUserSession => {
   const { referrerAccountId } = useWalletUserMetadataStore();
   const daoAuth = useWalletDaoStore();
 
+  console.log(daoAuth);
+
   const { isLoading: isHumanVerificationStatusLoading, data: isHuman } =
     sybilResistanceContractHooks.useIsHuman({
       enabled: wallet.isSignedIn,

@@ -7,7 +7,7 @@ import { isNearAccountValid } from "../utils/validations";
 const primitive = string().min(5, "Account ID is too short");
 
 export const validAccountId = primitive.refine(isNearAccountValid, {
-  message: `Account does not exist on ${NETWORK}`,
+  message: `Account doesn't exist on ${NETWORK}`,
 });
 
 export const validAccountIdOrNothing = primitive
@@ -17,5 +17,5 @@ export const validAccountIdOrNothing = primitive
     async (accountId) =>
       typeof accountId === "string" ? await isNearAccountValid(accountId) : true,
 
-    { message: `Account does not exist on ${NETWORK}` },
+    { message: `Account doesn't exist on ${NETWORK}` },
   );

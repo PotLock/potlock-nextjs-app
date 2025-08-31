@@ -1,9 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { Info, Plus } from "lucide-react";
-import Image from "next/image";
 
-import { ICONS_ASSET_ENDPOINT_URL } from "@/common/constants";
 import type { AccountId } from "@/common/types";
 import { TextField } from "@/common/ui/form/components";
 import {
@@ -12,7 +10,6 @@ import {
   DropdownMenuLabel,
   Form,
   FormField,
-  Label,
   LabeledIcon,
   Switch,
 } from "@/common/ui/layout/components";
@@ -36,6 +33,11 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
   const [isAddressInputActive, setIsAddressInputActive] = useState(false);
   const { form, onSubmit: onDaoListingSubmit } = useDaoListingForm();
   const onAddDaoClick = useCallback(() => setIsAddressInputActive(true), []);
+
+  const onAddDaoCancelClick = useCallback(() => {
+    form.reset();
+    setIsAddressInputActive(false);
+  }, [form]);
 
   const onSwitch = useCallback(
     (checked: boolean) => {
@@ -95,7 +97,10 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
 
           {isAddressInputActive || listedAccountIds.length === 0 ? (
             <Form {...form}>
-              <form className="flex w-full" onSubmit={onDaoListingSubmit}>
+              <form
+                className="flex w-full flex-col gap-3 rounded-md border border-neutral-200 p-3"
+                onSubmit={onDaoListingSubmit}
+              >
                 <FormField
                   name="accountId"
                   control={form.control}
@@ -104,12 +109,25 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
                       required
                       label="DAO Address"
                       type="text"
-                      hint={form.formState.isValidating ? "Validating..." : "Press Enter to submit"}
+                      hint={
+                        form.formState.errors.accountId === undefined
+                          ? `${form.formState.isValidating ? "Validating..." : "Press Enter to submit"}`
+                          : undefined
+                      }
                       classNames={{ root: "w-full" }}
                       {...field}
                     />
                   )}
                 />
+
+                <Button
+                  type="reset"
+                  variant="brand-outline"
+                  onClick={onAddDaoCancelClick}
+                  className="w-full"
+                >
+                  <span>{"Cancel"}</span>
+                </Button>
               </form>
             </Form>
           ) : (
