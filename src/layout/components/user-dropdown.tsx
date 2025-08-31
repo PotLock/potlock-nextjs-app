@@ -75,7 +75,7 @@ export const UserDropdown = () => {
             </div>
           </DropdownMenuLabel>
 
-          {walletUser.isSignedIn && <DaoAuthMenu userAccountId={walletUser.accountId} />}
+          {walletUser.isSignedIn && <DaoAuthMenu memberAccountId={walletUser.accountId} />}
 
           <div className="rounded-md border border-[#DBDBDB]">
             {walletUser.accountId && (

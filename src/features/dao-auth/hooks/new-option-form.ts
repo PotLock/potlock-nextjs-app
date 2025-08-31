@@ -5,19 +5,34 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 
 import { useWalletDaoStore } from "@/common/wallet";
 
-import { type DaoAuthOptionInputs, getDaoAuthOptionSchema } from "../model/schemas";
+import {
+  type DaoAuthOptionInputs,
+  type DaoAuthOptionSchemaParams,
+  getDaoAuthOptionSchema,
+} from "../model/schemas";
 
-export type DaoAuthNewOptionFormParams = { onSubmit?: VoidFunction };
+export type DaoAuthNewOptionFormParams = Pick<DaoAuthOptionSchemaParams, "memberAccountId"> & {
+  onSubmit?: VoidFunction;
+};
 
-export const useDaoAuthNewOptionForm = ({ onSubmit }: DaoAuthNewOptionFormParams) => {
+export const useDaoAuthNewOptionForm = ({
+  memberAccountId,
+  onSubmit,
+}: DaoAuthNewOptionFormParams) => {
   const { listedAccountIds, listDao } = useWalletDaoStore();
-  const schema = useMemo(() => getDaoAuthOptionSchema(listedAccountIds), [listedAccountIds]);
+
+  const schema = useMemo(
+    () => getDaoAuthOptionSchema({ listedAccountIds, memberAccountId }),
+    [listedAccountIds, memberAccountId],
+  );
 
   const self = useForm<DaoAuthOptionInputs>({
     resolver: zodResolver(schema),
     mode: "onSubmit",
     resetOptions: { keepValues: false },
   });
+
+  console.log(self.formState.errors);
 
   const isSubmitDisabled = useMemo(
     () => self.formState.isSubmitting || self.formState.isValidating || !self.formState.isDirty,

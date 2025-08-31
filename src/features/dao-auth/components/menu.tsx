@@ -27,10 +27,10 @@ import { useDaoAuthNewOptionForm } from "../hooks/new-option-form";
 const LISTING_FORM_ACCORDION_ID = "add-dao-address";
 
 export type DaoAuthMenuProps = {
-  userAccountId: AccountId;
+  memberAccountId: AccountId;
 };
 
-export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
+export const DaoAuthMenu = ({ memberAccountId }: DaoAuthMenuProps) => {
   const { toast } = useToast();
 
   const {
@@ -73,29 +73,28 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
     handleReset,
     handleSubmit: handleNewOptionSubmit,
   } = useDaoAuthNewOptionForm({
+    memberAccountId,
     onSubmit: resetAccordionValue,
   });
 
   const handleActivateOption = useCallback(
-    (listedDaoAccountIdIndex: number) =>
+    (optionIndex: number) =>
       tryActivate({
-        userAccountId,
-        listingIndex: listedDaoAccountIdIndex,
+        memberAccountId,
+        optionIndex,
 
         onError: (error: Error) => {
           toast({ title: "Error", description: error.message, variant: "destructive" });
         },
       }),
 
-    [toast, tryActivate, userAccountId],
+    [memberAccountId, toast, tryActivate],
   );
 
   const handleAddOptionCancel = useCallback(() => {
     handleReset();
     resetAccordionValue();
   }, [handleReset, resetAccordionValue]);
-
-  console.log("activeAccordionValue", activeAccordionValue);
 
   return (
     <DropdownMenuLabel className="flex flex-col items-center gap-2 p-0">
@@ -157,7 +156,7 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
                         required
                         label="DAO Address"
                         type="text"
-                        //hint={newOptionForm.formState.isValidating ? "Validating..." : undefined}
+                        hint={newOptionForm.formState.isValidating ? "Validating..." : undefined}
                         classNames={{ root: "w-full" }}
                         {...field}
                       />
