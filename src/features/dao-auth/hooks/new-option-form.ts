@@ -3,15 +3,16 @@ import { useCallback, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
-import { useWalletDaoStore } from "../../../common/wallet/model/dao";
-import { type DaoListingInputs, getDaoListingSchema } from "../model/schemas";
+import { useWalletDaoStore } from "@/common/wallet";
 
-export const useDaoListingForm = () => {
+import { type DaoAuthOptionInputs, getDaoAuthOptionSchema } from "../model/schemas";
+
+export const useDaoAuthNewOptionForm = () => {
   const { listedAccountIds, listDao } = useWalletDaoStore();
 
-  const schema = useMemo(() => getDaoListingSchema(listedAccountIds), [listedAccountIds]);
+  const schema = useMemo(() => getDaoAuthOptionSchema(listedAccountIds), [listedAccountIds]);
 
-  const self = useForm<DaoListingInputs>({
+  const self = useForm<DaoAuthOptionInputs>({
     resolver: zodResolver(schema),
     mode: "onSubmit",
   });
@@ -21,7 +22,7 @@ export const useDaoListingForm = () => {
     [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValidating],
   );
 
-  const onSubmit: SubmitHandler<DaoListingInputs> = useCallback(
+  const onSubmit: SubmitHandler<DaoAuthOptionInputs> = useCallback(
     ({ accountId }) => {
       listDao(accountId);
       self.reset();

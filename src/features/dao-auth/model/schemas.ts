@@ -3,11 +3,11 @@ import { object } from "zod";
 import { nearProtocolSchemas } from "@/common/blockchains/near-protocol";
 import type { AccountId, FromSchema } from "@/common/types";
 
-export const getDaoListingSchema = (listedAccountIds: AccountId[]) =>
+export const getDaoAuthOptionSchema = (listedAccountIds: AccountId[]) =>
   object({
     accountId: nearProtocolSchemas.validAccountId,
   }).refine(({ accountId }) => !listedAccountIds.includes(accountId), {
     message: "Account is already listed",
   });
 
-export type DaoListingInputs = FromSchema<ReturnType<typeof getDaoListingSchema>>;
+export type DaoAuthOptionInputs = FromSchema<ReturnType<typeof getDaoAuthOptionSchema>>;
