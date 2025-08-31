@@ -7,14 +7,16 @@ import { useWalletDaoStore } from "@/common/wallet";
 
 import { type DaoAuthOptionInputs, getDaoAuthOptionSchema } from "../model/schemas";
 
-export const useDaoAuthNewOptionForm = () => {
-  const { listedAccountIds, listDao } = useWalletDaoStore();
+export type DaoAuthNewOptionFormParams = { onSubmit?: VoidFunction };
 
+export const useDaoAuthNewOptionForm = ({ onSubmit }: DaoAuthNewOptionFormParams) => {
+  const { listedAccountIds, listDao } = useWalletDaoStore();
   const schema = useMemo(() => getDaoAuthOptionSchema(listedAccountIds), [listedAccountIds]);
 
   const self = useForm<DaoAuthOptionInputs>({
     resolver: zodResolver(schema),
     mode: "onSubmit",
+    resetOptions: { keepValues: false },
   });
 
   const isSubmitDisabled = useMemo(
@@ -22,18 +24,22 @@ export const useDaoAuthNewOptionForm = () => {
     [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValidating],
   );
 
-  const onSubmit: SubmitHandler<DaoAuthOptionInputs> = useCallback(
+  const handleReset = useCallback(() => self.reset(), [self]);
+
+  const submitHandler: SubmitHandler<DaoAuthOptionInputs> = useCallback(
     ({ accountId }) => {
       listDao(accountId);
       self.reset();
+      onSubmit?.();
     },
 
-    [listDao, self],
+    [listDao, onSubmit, self],
   );
 
   return {
     form: self,
     isSubmitDisabled,
-    onSubmit: self.handleSubmit(onSubmit),
+    handleReset,
+    handleSubmit: self.handleSubmit(submitHandler),
   };
 };

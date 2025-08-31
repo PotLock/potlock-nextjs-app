@@ -1,3 +1,7 @@
+export type EmptyString = `${""}`;
+
+export const EMPTY_STRING: EmptyString = "";
+
 export const truncate = (value: string, maxLength: number) => {
   if (value?.length ?? 0 <= maxLength) {
     return value;

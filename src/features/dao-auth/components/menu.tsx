@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { Info, Plus } from "lucide-react";
 
+import { EMPTY_STRING, type EmptyString } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { TextField } from "@/common/ui/form/components";
 import {
@@ -17,6 +18,7 @@ import {
   Switch,
 } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletDaoStore } from "@/common/wallet";
 
 import { DaoAuthOption } from "./option";
@@ -31,23 +33,16 @@ export type DaoAuthMenuProps = {
 export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
   const { toast } = useToast();
 
-  const { listedAccountIds, delistDao, tryActivate, deactivate, isActive, activeAccountId } =
-    useWalletDaoStore();
+  const {
+    listedAccountIds: options,
+    delistDao,
+    tryActivate,
+    deactivate,
+    isActive,
+    activeAccountId,
+  } = useWalletDaoStore();
 
   const [isExpanded, setIsExpanded] = useState(isActive);
-  const [activeAccordionValue, setActiveAccordionValue] = useState<string>("");
-  const { form: newOptionForm, onSubmit: onDaoAuthOptionSubmit } = useDaoAuthNewOptionForm();
-
-  const isNewOptionFormActive = useMemo(
-    () => activeAccordionValue === LISTING_FORM_ACCORDION_ID,
-    [activeAccordionValue],
-  );
-
-  console.log("activeAccordionValue", activeAccordionValue);
-
-  const handleAddOptionCancel = useCallback(() => {
-    newOptionForm.reset();
-  }, [newOptionForm]);
 
   const onSwitch = useCallback(
     (checked: boolean) => {
@@ -62,7 +57,26 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
     [deactivate],
   );
 
-  const handleActivate = useCallback(
+  const [activeAccordionValue, setActiveAccordionValue] = useState<EmptyString | string>(
+    options.length === 0 ? LISTING_FORM_ACCORDION_ID : EMPTY_STRING,
+  );
+
+  const isNewOptionFormActive = useMemo(
+    () => activeAccordionValue === LISTING_FORM_ACCORDION_ID,
+    [activeAccordionValue],
+  );
+
+  const resetAccordionValue = useCallback(() => setActiveAccordionValue(EMPTY_STRING), []);
+
+  const {
+    form: newOptionForm,
+    handleReset,
+    handleSubmit: handleNewOptionSubmit,
+  } = useDaoAuthNewOptionForm({
+    onSubmit: resetAccordionValue,
+  });
+
+  const handleActivateOption = useCallback(
     (listedDaoAccountIdIndex: number) =>
       tryActivate({
         userAccountId,
@@ -75,6 +89,13 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
 
     [toast, tryActivate, userAccountId],
   );
+
+  const handleAddOptionCancel = useCallback(() => {
+    handleReset();
+    resetAccordionValue();
+  }, [handleReset, resetAccordionValue]);
+
+  console.log("activeAccordionValue", activeAccordionValue);
 
   return (
     <DropdownMenuLabel className="flex flex-col items-center gap-2 p-0">
@@ -95,16 +116,16 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
         <Accordion
           type="single"
           collapsible
-          defaultValue={listedAccountIds.length === 0 ? LISTING_FORM_ACCORDION_ID : undefined}
+          value={activeAccordionValue}
           onValueChange={setActiveAccordionValue}
           className="flex w-full flex-col gap-2"
         >
-          {listedAccountIds.map((optionAccountId: string, accountIndex: number) => (
+          {options.map((optionAccountId: string, accountIndex: number) => (
             <DaoAuthOption
               key={optionAccountId}
               accountId={optionAccountId}
               isActive={optionAccountId === activeAccountId}
-              onActivateClick={() => handleActivate(accountIndex)}
+              onActivateClick={() => handleActivateOption(accountIndex)}
               onRemoveClick={() => delistDao(optionAccountId)}
             />
           ))}
@@ -115,23 +136,19 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
           >
             <AccordionTrigger
               hiddenChevron
-              onClick={isNewOptionFormActive ? handleAddOptionCancel : undefined}
-              rootClassName="order-1"
-              className="justify-center gap-2"
+              className={cn("justify-center gap-2", { hidden: isNewOptionFormActive })}
             >
-              {isNewOptionFormActive ? (
-                "Cancel"
-              ) : (
-                <>
-                  <Plus className="color-neutral-400" size={14} />
-                  <span>{`Add ${listedAccountIds.length === 0 ? "" : "another"} DAO`}</span>
-                </>
-              )}
+              <Plus className="color-neutral-400" size={14} />
+              <span>{`Add ${options.length === 0 ? "" : "another"} DAO`}</span>
             </AccordionTrigger>
 
-            <AccordionContent className="order-0 flex flex-col pb-0">
+            <AccordionContent className="flex flex-col pb-0">
               <Form {...newOptionForm}>
-                <form className="flex w-full flex-col gap-3 p-3" onSubmit={onDaoAuthOptionSubmit}>
+                <form
+                  className="flex w-full flex-col gap-3 p-3"
+                  onSubmit={handleNewOptionSubmit}
+                  onReset={handleAddOptionCancel}
+                >
                   <FormField
                     name="accountId"
                     control={newOptionForm.control}
@@ -140,24 +157,20 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
                         required
                         label="DAO Address"
                         type="text"
-                        hint={
-                          newOptionForm.formState.errors.accountId === undefined
-                            ? `${
-                                newOptionForm.formState.isValidating
-                                  ? "Validating..."
-                                  : "Press Enter to submit"
-                              }`
-                            : undefined
-                        }
+                        //hint={newOptionForm.formState.isValidating ? "Validating..." : undefined}
                         classNames={{ root: "w-full" }}
                         {...field}
                       />
                     )}
                   />
 
-                  <Button type="reset" variant="brand-outline" className="w-full">
-                    <span>{"Cancel"}</span>
-                  </Button>
+                  <div className="flex flex-nowrap justify-between gap-2">
+                    <Button type="submit">{"Submit"}</Button>
+
+                    <Button type="reset" variant="brand-outline">
+                      <span>{"Cancel"}</span>
+                    </Button>
+                  </div>
                 </form>
               </Form>
             </AccordionContent>
