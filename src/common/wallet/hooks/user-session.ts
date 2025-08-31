@@ -6,14 +6,14 @@ import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/
 import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
 import { isAccountId } from "@/common/lib";
 
-import { useWalletUserAdapter } from "../adapters";
-import { useWalletDaoAuthStore } from "../model/dao-auth";
+import { useWalletDaoStore } from "../model/dao";
 import { type WalletUserSession, useWalletUserMetadataStore } from "../model/user-session";
+import { useWalletUserAdapter } from "../user-adapter";
 
 export const useWalletUserSession = (): WalletUserSession => {
   const wallet = useWalletUserAdapter();
   const { referrerAccountId } = useWalletUserMetadataStore();
-  const daoAuth = useWalletDaoAuthStore();
+  const daoAuth = useWalletDaoStore();
 
   const { isLoading: isHumanVerificationStatusLoading, data: isHuman } =
     sybilResistanceContractHooks.useIsHuman({

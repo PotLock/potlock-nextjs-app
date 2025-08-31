@@ -1,17 +1,13 @@
 import { useCallback, useState } from "react";
 
-import { Box, Plus, Trash } from "lucide-react";
+import { Plus } from "lucide-react";
 import Image from "next/image";
 
 import { ICONS_ASSET_ENDPOINT_URL } from "@/common/constants";
-import { truncate } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { TextField } from "@/common/ui/form/components";
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   Button,
   DropdownMenuLabel,
   Form,
@@ -20,20 +16,20 @@ import {
   Switch,
 } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
-import { cn } from "@/common/ui/layout/utils";
+import { useWalletDaoStore } from "@/common/wallet";
 
-import { useDaoListingForm } from "../hooks/dao-listing-form";
-import { useWalletDaoAuthStore } from "../model/dao-auth";
+import { DaoAuthOption } from "./option";
+import { useDaoListingForm } from "../hooks/forms";
 
-export type WalletDaoAuthMenuProps = {
+export type DaoAuthMenuProps = {
   userAccountId: AccountId;
 };
 
-export const WalletDaoAuthMenu = ({ userAccountId }: WalletDaoAuthMenuProps) => {
+export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
   const { toast } = useToast();
 
   const { listedAccountIds, delistDao, tryActivate, deactivate, isActive, activeAccountId } =
-    useWalletDaoAuthStore();
+    useWalletDaoStore();
 
   const [isExpanded, setIsExpanded] = useState(isActive);
   const [isAddressInputActive, setIsAddressInputActive] = useState(false);
@@ -87,59 +83,15 @@ export const WalletDaoAuthMenu = ({ userAccountId }: WalletDaoAuthMenuProps) => 
       {isExpanded && (
         <>
           <Accordion className="flex w-full flex-col gap-2" type="single" collapsible>
-            {listedAccountIds.map((accountId: string, accountIndex: number) => {
-              const isActiveAccountId = accountId === activeAccountId;
-
-              return (
-                <AccordionItem
-                  key={accountId}
-                  value={accountId}
-                  className={cn("rounded-md border", {
-                    "border-[#33DDCB]": isActiveAccountId,
-                    "border-neutral-200": !isActiveAccountId,
-                  })}
-                >
-                  <AccordionTrigger
-                    hiddenChevron
-                    className={cn(
-                      "flex items-center justify-start gap-2 px-3 py-2.5",
-
-                      {
-                        "color-[#0B7A74]": isActiveAccountId,
-                        "color-neutral-600": !isActiveAccountId,
-                      },
-                    )}
-                  >
-                    <Box
-                      size={16}
-                      className={cn({
-                        "color-[#33DDCB]": isActiveAccountId,
-                        "color-neutral-600": !isActiveAccountId,
-                      })}
-                    />
-
-                    <span>{truncate(accountId, 22)}</span>
-                  </AccordionTrigger>
-
-                  <AccordionContent className="items-between flex flex-row gap-2 px-3 py-2.5">
-                    {!isActiveAccountId && (
-                      <Button onClick={() => handleActivate(accountIndex)}>{"Activate"}</Button>
-                    )}
-
-                    <Button variant={"standard-plain"}>
-                      <Trash
-                        width={14}
-                        onClick={() => delistDao(accountId)}
-                        strokeWidth={3}
-                        className="color-neutral-400"
-                      />
-
-                      <span>{"Remove"}</span>
-                    </Button>
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
+            {listedAccountIds.map((optionAccountId: string, accountIndex: number) => (
+              <DaoAuthOption
+                key={optionAccountId}
+                accountId={optionAccountId}
+                isActive={optionAccountId === activeAccountId}
+                onActivateClick={() => handleActivate(accountIndex)}
+                onRemoveClick={() => delistDao(optionAccountId)}
+              />
+            ))}
           </Accordion>
 
           {isAddressInputActive || listedAccountIds.length === 0 ? (
@@ -150,18 +102,15 @@ export const WalletDaoAuthMenu = ({ userAccountId }: WalletDaoAuthMenuProps) => 
                   control={form.control}
                   render={({ field }) => (
                     <TextField
+                      required
                       label="DAO Address"
                       type="text"
-                      hint={form.formState.isValidating ? "Validating..." : ""}
+                      hint={form.formState.isValidating ? "Validating..." : "Press Enter to submit"}
                       classNames={{ root: "w-full" }}
                       {...field}
                     />
                   )}
                 />
-
-                <Button type="submit" disabled={isSubmitDisabled}>
-                  {"Submit"}
-                </Button>
               </form>
             </Form>
           ) : (

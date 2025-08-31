@@ -8,7 +8,7 @@ import type { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/layout/utils";
 import { rootPathnames } from "@/pathnames";
 
-import { AccountSummaryPopup } from "./AccountSummaryPopup";
+import { AccountSummaryPopup } from "./summary-popup";
 import { useAccountSocialProfile } from "../hooks/social-profile";
 
 export type AccountHandleProps = ByAccountId & {

@@ -35,7 +35,7 @@ const initialState: WalletDaoAuth = {
   activeAccountId: null,
 };
 
-export const useWalletDaoAuthStore = create<WalletDaoAuthState>()(
+export const useWalletDaoStore = create<WalletDaoAuthState>()(
   persist(
     (set, get) => ({
       ...initialState,

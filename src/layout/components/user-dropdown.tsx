@@ -14,9 +14,9 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
-import { WalletDaoAuthMenu } from "@/common/wallet/components/dao-auth-menu";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
 import { listRegistrationStatuses } from "@/entities/list";
+import { DaoAuthMenu } from "@/features/dao-auth";
 import { rootPathnames } from "@/pathnames";
 
 export const UserDropdown = () => {
@@ -38,7 +38,7 @@ export const UserDropdown = () => {
         )}
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-72 p-0">
+      <DropdownMenuContent align="end" className="w-80 p-0">
         {walletUser.registrationStatus && (
           <DropdownMenuLabel
             className="flex items-center justify-between px-4 py-2"
@@ -75,7 +75,7 @@ export const UserDropdown = () => {
             </div>
           </DropdownMenuLabel>
 
-          {walletUser.isSignedIn && <WalletDaoAuthMenu userAccountId={walletUser.accountId} />}
+          {walletUser.isSignedIn && <DaoAuthMenu userAccountId={walletUser.accountId} />}
 
           <div className="rounded-md border border-[#DBDBDB]">
             {walletUser.accountId && (

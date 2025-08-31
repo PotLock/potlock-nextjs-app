@@ -1,13 +1,11 @@
 import { useCallback, useMemo } from "react";
 
-import { truncate } from "@/common/lib";
 import { AccountId, ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/layout/utils";
 
-import { AccountHandle } from "./AccountHandle";
-import { AccountSummaryPopup } from "./AccountSummaryPopup";
+import { AccountHandle, type AccountHandleProps } from "./handle";
 import { AccountProfilePicture } from "./profile-images";
-import { useAccountSocialProfile } from "../hooks/social-profile";
+import { AccountSummaryPopup } from "./summary-popup";
 
 export type AccountListItemProps = ByAccountId & {
   isRounded?: boolean;
@@ -17,6 +15,8 @@ export type AccountListItemProps = ByAccountId & {
   hideStatusOnDesktop?: boolean;
   hideStatusOnMobile?: boolean;
   disableHandleSummaryPopup?: boolean;
+  disableNameSummaryPopup?: boolean;
+  maxTextLength?: AccountHandleProps["maxLength"];
   primarySlot?: React.ReactNode;
   secondarySlot?: React.ReactNode;
   href?: string;
@@ -37,6 +37,8 @@ export const AccountListItem = ({
   hideStatusOnDesktop = false,
   hideStatusOnMobile = false,
   disableHandleSummaryPopup = false,
+  disableNameSummaryPopup = false,
+  maxTextLength,
   primarySlot,
   secondarySlot,
   href,
@@ -44,7 +46,6 @@ export const AccountListItem = ({
   classNames,
 }: AccountListItemProps) => {
   const handleClick = useCallback((): void => void onClick?.(accountId), [accountId, onClick]);
-  const { profile } = useAccountSocialProfile({ accountId });
 
   const avatarElement = useMemo(
     () => (
@@ -84,9 +85,13 @@ export const AccountListItem = ({
               "max-w-150": Boolean(statusElement),
             })}
           >
-            <AccountSummaryPopup {...{ accountId }}>
-              <span className="w-fit">{truncate(profile?.name ?? accountId, 38)}</span>
-            </AccountSummaryPopup>
+            <AccountHandle
+              accountId={accountId}
+              asName
+              disabledSummaryPopup={disableNameSummaryPopup}
+              maxLength={maxTextLength ?? 38}
+              className="font-normal"
+            />
 
             {statusElement && (
               <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
@@ -97,8 +102,9 @@ export const AccountListItem = ({
 
           <div className="max-w-100 flex w-full flex-col gap-1.5">
             <AccountHandle
-              disabledSummaryPopup={disableHandleSummaryPopup}
               accountId={accountId}
+              disabledSummaryPopup={disableHandleSummaryPopup}
+              maxLength={maxTextLength}
               href={href}
             />
 
