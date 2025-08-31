@@ -64,7 +64,7 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
   );
 
   return (
-    <DropdownMenuLabel className="flex flex-col items-start gap-2">
+    <DropdownMenuLabel className="flex flex-col items-center gap-2 p-0">
       <div className="flex w-full items-center justify-between">
         <Label htmlFor="act-dao" className="flex items-center gap-2">
           <span>{"Act as DAO"}</span>

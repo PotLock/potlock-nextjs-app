@@ -1,4 +1,6 @@
-import { ArrowUpRightFromSquare, DeleteIcon } from "lucide-react";
+import { useMemo } from "react";
+
+import { ArrowUpRightFromSquare } from "lucide-react";
 import Link from "next/link";
 
 import type { ByAccountId } from "@/common/types";
@@ -24,11 +26,26 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
   onActivateClick,
   onRemoveClick,
 }) => {
+  const profileLink = useMemo(
+    () => (
+      <Button asChild variant="standard-plain">
+        <Link target="_blank" href={`${rootPathnames.PROFILE}/${accountId}`}>
+          <span className="inline-flex flex-nowrap gap-2">
+            <span>{"Open Profile"}</span>
+            <ArrowUpRightFromSquare size={14} className="color-neutral-400" />
+          </span>
+        </Link>
+      </Button>
+    ),
+
+    [accountId],
+  );
+
   return (
     <AccordionItem
       key={accountId}
       value={accountId}
-      className={cn("rounded-md border", {
+      className={cn("border-1 rounded-md border", {
         "border-[#33DDCB]": isActive,
         "border-neutral-200": !isActive,
       })}
@@ -36,7 +53,7 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
       <AccordionTrigger
         hiddenChevron
         className={cn(
-          "flex items-center justify-start gap-2 px-3 py-2.5",
+          "flex items-center justify-start gap-2 rounded-sm px-3 py-2.5",
           "hover:decoration-none hover:bg-[#FEF6EE]",
           { "bg-[#FEF6EE]": isActive },
         )}
@@ -48,33 +65,17 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
           disableLinks
           disableNameSummaryPopup
           maxTextLength={32}
-          classNames={{ root: "rounded-md" }}
+          classNames={{ root: "rounded-sm" }}
         />
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col items-center gap-2 px-3 py-2.5">
-        {isActive ? null : (
-          <Button asChild variant="standard-plain">
-            <Link target="_blank" href={`${rootPathnames.PROFILE}/${accountId}`}>
-              <span className="inline-flex gap-2">
-                <span>{"Open profile"}</span>
-                <ArrowUpRightFromSquare size={14} />
-              </span>
-            </Link>
-          </Button>
-        )}
+        {isActive ? null : profileLink}
 
         <div className="flex w-full flex-row justify-between gap-2">
-          {!isActive && <Button onClick={onActivateClick}>{"Activate"}</Button>}
+          {isActive ? profileLink : <Button onClick={onActivateClick}>{"Activate"}</Button>}
 
-          <Button variant="standard-plain">
-            <DeleteIcon
-              width={14}
-              onClick={onRemoveClick}
-              strokeWidth={3}
-              className="color-neutral-400"
-            />
-
+          <Button variant="standard-plain" onClick={onRemoveClick} className="text-destructive">
             <span>{"Remove"}</span>
           </Button>
         </div>
