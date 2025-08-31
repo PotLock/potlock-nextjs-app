@@ -50,10 +50,12 @@ export const useWalletDaoStore = create<WalletDaoAuthState>()(
       },
 
       delistDao: (accountId: AccountId) => {
-        const listedAccountIds = get().listedAccountIds;
+        if (get().listedAccountIds.includes(accountId)) {
+          set({ listedAccountIds: get().listedAccountIds.filter((id) => id !== accountId) });
+        }
 
-        if (listedAccountIds.includes(accountId)) {
-          set({ listedAccountIds: listedAccountIds.filter((id) => id !== accountId) });
+        if (get().listedAccountIds.length === 0) {
+          set(initialState);
         }
       },
 

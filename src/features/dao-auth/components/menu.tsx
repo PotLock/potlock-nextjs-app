@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import { Plus } from "lucide-react";
+import { Info, Plus } from "lucide-react";
 import Image from "next/image";
 
 import { ICONS_ASSET_ENDPOINT_URL } from "@/common/constants";
@@ -13,6 +13,7 @@ import {
   Form,
   FormField,
   Label,
+  LabeledIcon,
   Switch,
 } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
@@ -33,7 +34,7 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
 
   const [isExpanded, setIsExpanded] = useState(isActive);
   const [isAddressInputActive, setIsAddressInputActive] = useState(false);
-  const { form, isSubmitDisabled, onSubmit: onDaoListingSubmit } = useDaoListingForm();
+  const { form, onSubmit: onDaoListingSubmit } = useDaoListingForm();
   const onAddDaoClick = useCallback(() => setIsAddressInputActive(true), []);
 
   const onSwitch = useCallback(
@@ -66,23 +67,21 @@ export const DaoAuthMenu = ({ userAccountId }: DaoAuthMenuProps) => {
   return (
     <DropdownMenuLabel className="flex flex-col items-center gap-2 p-0">
       <div className="flex w-full items-center justify-between">
-        <Label htmlFor="act-dao" className="flex items-center gap-2">
-          <span>{"Act as DAO"}</span>
+        <LabeledIcon
+          bold
+          caption="Act as a DAO"
+          positioning="text-icon"
+          htmlFor="act-as-dao-switch"
+        >
+          <Info size={16} />
+        </LabeledIcon>
 
-          <Image
-            alt="info"
-            src={ICONS_ASSET_ENDPOINT_URL + "/info-icon.svg"}
-            width={18}
-            height={18}
-          />
-        </Label>
-
-        <Switch checked={isExpanded} onCheckedChange={onSwitch} />
+        <Switch id="act-as-dao-switch" checked={isExpanded} onCheckedChange={onSwitch} />
       </div>
 
       {isExpanded && (
         <>
-          <Accordion className="flex w-full flex-col gap-2" type="single" collapsible>
+          <Accordion type="single" collapsible className="flex w-full flex-col gap-2">
             {listedAccountIds.map((optionAccountId: string, accountIndex: number) => (
               <DaoAuthOption
                 key={optionAccountId}

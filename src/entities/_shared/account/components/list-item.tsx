@@ -6,6 +6,7 @@ import { cn } from "@/common/ui/layout/utils";
 import { AccountHandle, type AccountHandleProps } from "./handle";
 import { AccountProfilePicture } from "./profile-images";
 import { AccountSummaryPopup } from "./summary-popup";
+import { useAccountSocialProfile } from "../hooks/social-profile";
 
 export type AccountListItemProps = ByAccountId & {
   isRounded?: boolean;
@@ -49,6 +50,7 @@ export const AccountListItem = ({
   onClick,
   classNames,
 }: AccountListItemProps) => {
+  const { profile } = useAccountSocialProfile({ accountId });
   const handleClick = useCallback((): void => void onClick?.(accountId), [accountId, onClick]);
 
   const avatarElement = useMemo(
@@ -89,14 +91,16 @@ export const AccountListItem = ({
               "max-w-150": Boolean(statusElement),
             })}
           >
-            <AccountHandle
-              accountId={accountId}
-              asLink={!disableLinks}
-              asName
-              disabledSummaryPopup={disableNameSummaryPopup}
-              maxLength={maxTextLength ?? 38}
-              className="font-normal"
-            />
+            {profile?.name === undefined ? null : (
+              <AccountHandle
+                accountId={accountId}
+                asLink={!disableLinks}
+                asName
+                disabledSummaryPopup={disableNameSummaryPopup}
+                maxLength={maxTextLength ?? 38}
+                className="font-normal"
+              />
+            )}
 
             {statusElement && (
               <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>

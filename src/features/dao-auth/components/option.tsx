@@ -43,19 +43,17 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
 
   return (
     <AccordionItem
-      key={accountId}
       value={accountId}
-      className={cn("border-1 rounded-md border", {
-        "border-[#33DDCB]": isActive,
-        "border-neutral-200": !isActive,
-      })}
+      className={cn(
+        "border-1 rounded-md border border-neutral-200 data-[state=closed]:hover:bg-[#FEF6EE]",
+        { "border-primary": isActive },
+      )}
     >
       <AccordionTrigger
         hiddenChevron
         className={cn(
           "flex items-center justify-start gap-2 rounded-sm px-3 py-2.5",
-          "hover:decoration-none hover:bg-[#FEF6EE]",
-          { "bg-[#FEF6EE]": isActive },
+          "hover:decoration-none",
         )}
       >
         <AccountListItem
@@ -65,20 +63,26 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
           disableLinks
           disableNameSummaryPopup
           maxTextLength={32}
-          classNames={{ root: "rounded-sm" }}
+          classNames={{ root: "rounded-sm py-0" }}
         />
       </AccordionTrigger>
 
-      <AccordionContent className="flex flex-col items-center gap-2 px-3 py-2.5">
-        {isActive ? null : profileLink}
-
+      <AccordionContent className="flex flex-col items-center gap-2 pb-0">
         <div className="flex w-full flex-row justify-between gap-2">
-          {isActive ? profileLink : <Button onClick={onActivateClick}>{"Activate"}</Button>}
+          {profileLink}
 
           <Button variant="standard-plain" onClick={onRemoveClick} className="text-destructive">
             <span>{"Remove"}</span>
           </Button>
         </div>
+
+        {isActive ? null : (
+          <div className="w-full px-4 pb-4">
+            <Button onClick={onActivateClick} className="w-full">
+              {"Activate"}
+            </Button>
+          </div>
+        )}
       </AccordionContent>
     </AccordionItem>
   );
