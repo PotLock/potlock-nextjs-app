@@ -16,8 +16,6 @@ export const getPermissions = ({
   accountId,
 }: GetPermissionsInputs): Promise<GetPermissionsResult> =>
   get_policy({ accountId: daoAccountId }).then((policy) => {
-    console.log(policy);
-
     const roles = policy.roles.filter((role) => {
       switch (role.kind) {
         case "Everyone": {

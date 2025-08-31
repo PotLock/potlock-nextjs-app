@@ -32,8 +32,6 @@ export const useDaoAuthNewOptionForm = ({
     resetOptions: { keepValues: false },
   });
 
-  console.log(self.formState.errors);
-
   const isSubmitDisabled = useMemo(
     () => self.formState.isSubmitting || self.formState.isValidating || !self.formState.isDirty,
     [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValidating],
