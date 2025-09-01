@@ -7,7 +7,7 @@ import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { DEBUG_ACCOUNT_ID, IS_CLIENT } from "@/common/constants";
 import { isAccountId } from "@/common/lib";
 
-import { useWalletUserMetadataStore } from "../model/user-session";
+import { useWalletUserMetadataStore } from "../model/user";
 import { useWalletUserAdapter } from "../user-adapter";
 
 //* There are edge cases where `walletSelector` is `undefined` in runtime for a brief moment

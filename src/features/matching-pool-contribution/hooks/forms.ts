@@ -65,16 +65,14 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
         setInProgress(true);
 
         if (viewer.isDaoRepresentative) {
-          const daoPolicy = await sputnikDaoClient.get_policy({ accountId: viewer.daoAccountId });
+          const daoPolicy = await sputnikDaoClient.get_policy({ accountId: viewer.accountId });
 
-          await naxiosInstance
-            .contractApi({ contractId: viewer.daoAccountId })
-            .call("add_proposal", {
-              args: daoTransactionArgs,
-              deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
-              gas: FULL_TGAS,
-              callbackUrl,
-            });
+          await naxiosInstance.contractApi({ contractId: viewer.accountId }).call("add_proposal", {
+            args: daoTransactionArgs,
+            deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
+            gas: FULL_TGAS,
+            callbackUrl,
+          });
         } else {
           await naxiosInstance.contractApi({ contractId: potDetail.account }).call("donate", {
             args,
@@ -93,7 +91,7 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
     [
       potDetail.account,
       potDetail.name,
-      viewer.daoAccountId,
+      viewer.accountId,
       viewer.isDaoRepresentative,
       viewer.referrerAccountId,
     ],

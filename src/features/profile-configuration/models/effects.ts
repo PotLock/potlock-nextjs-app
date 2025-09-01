@@ -27,15 +27,12 @@ export type ProfileSaveInputs = ByAccountId & {
 };
 
 export const save = async ({
-  isDaoRepresentative,
   accountId,
+  isDaoRepresentative,
   mode,
   inputs,
   socialProfileSnapshot,
 }: ProfileSaveInputs) => {
-  // TODO: Should be passed as a separate parameter
-  //! ( DAO Registration ticket, only AFTER wallet integration revamp! )
-  const daoAccountId = accountId;
   const daoPolicy = isDaoRepresentative ? await sputnikDaoClient.get_policy({ accountId }) : null;
 
   const daoProposalDescription =
@@ -121,7 +118,6 @@ export const save = async ({
     const callbackUrl = window.location.href;
 
     try {
-      // if it is a DAO, we need to convert transactions to DAO function call proposals
       if (isDaoRepresentative) {
         await naxiosInstance.contractApi().callMultiple(
           transactions.map((tx) => {
@@ -133,7 +129,7 @@ export const save = async ({
             };
 
             return {
-              receiverId: daoAccountId,
+              receiverId: accountId,
               method: "add_proposal",
 
               args: {

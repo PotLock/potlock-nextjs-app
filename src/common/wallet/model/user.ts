@@ -4,10 +4,6 @@ import { persist } from "zustand/middleware";
 import type { RegistrationStatus } from "@/common/contracts/core/lists";
 import { AccountId } from "@/common/types";
 
-type WalletUserDaoRepresentativeParams =
-  | { isDaoRepresentative: false; daoAccountId: undefined }
-  | { isDaoRepresentative: true; daoAccountId: AccountId };
-
 type WalletUserMetadata = {
   referrerAccountId?: AccountId;
 };
@@ -15,38 +11,40 @@ type WalletUserMetadata = {
 export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & (
     | {
         hasWalletReady: false;
-        accountId: undefined;
-        daoAccountId: undefined;
         isSignedIn: false;
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
+        signerAccountID: undefined;
+        accountId: undefined;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
       }
     | {
         hasWalletReady: true;
-        accountId: undefined;
-        daoAccountId: undefined;
         isSignedIn: false;
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
+        signerAccountID: undefined;
+        accountId: undefined;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
       }
-    | (WalletUserDaoRepresentativeParams & {
+    | {
         hasWalletReady: true;
-        accountId: AccountId;
         isSignedIn: true;
+        isDaoRepresentative: boolean;
         isHuman: boolean;
         isMetadataLoading: boolean;
+        signerAccountID: AccountId;
+        accountId: AccountId;
         registrationStatus?: RegistrationStatus;
         hasRegistrationSubmitted: boolean;
         hasRegistrationApproved: boolean;
-      })
+      }
   );
 
 interface WalletUserMetadataState extends WalletUserMetadata {

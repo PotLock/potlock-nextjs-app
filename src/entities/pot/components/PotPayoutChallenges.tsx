@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Link from "next/link";
 
@@ -25,10 +25,6 @@ export const PotPayoutChallenges = ({
 }) => {
   const walletUser = useWalletUserSession();
 
-  const viewerAccountId = walletUser.isDaoRepresentative
-    ? walletUser.daoAccountId
-    : walletUser.accountId;
-
   const { isLoading: isChallengeListLoading, data: challenges } =
     potContractHooks.usePayoutChallenges({
       enabled: potDetail?.account !== undefined,
@@ -39,9 +35,14 @@ export const PotPayoutChallenges = ({
   const [filteredChallenges, setFilteredChallenges] = useState<ChallengeType[]>([]);
   const [adminModalChallengerId, setAdminModalChallengerId] = useState("");
 
-  const userIsAdminOrGreater =
-    potDetail?.admins.find(({ id }) => id === viewerAccountId) !== undefined ||
-    potDetail?.owner.id === viewerAccountId;
+  const userIsAdminOrGreater = useMemo(
+    () =>
+      walletUser.isSignedIn &&
+      (potDetail?.admins.find(({ id }) => id === walletUser.accountId) !== undefined ||
+        potDetail?.owner.id === walletUser.accountId),
+
+    [potDetail?.admins, potDetail?.owner.id, walletUser.accountId, walletUser.isSignedIn],
+  );
 
   // TODO: Use `useMemo` for filtered results derived according to `tab` instead!
   useEffect(() => {

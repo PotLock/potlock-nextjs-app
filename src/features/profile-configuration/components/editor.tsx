@@ -11,7 +11,6 @@ import {
   AccountGroup,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
 
 import { ProfileConfigurationFundingSourceModal } from "./AddFundingSourceModal";
 // import { ProfileConfigurationSmartContractModal } from "./contract-modal";

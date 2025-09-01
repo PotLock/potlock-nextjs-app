@@ -81,9 +81,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           <PotApplicationModal
             open={applyModalOpen}
             onCloseClick={() => setApplyModalOpen(false)}
-            applicantAccountId={
-              walletUser.isDaoRepresentative ? walletUser.daoAccountId : walletUser.accountId
-            }
+            applicantAccountId={walletUser.accountId}
             daoMode={walletUser.isDaoRepresentative}
             potDetail={pot}
           />
