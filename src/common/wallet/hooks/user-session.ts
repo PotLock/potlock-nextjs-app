@@ -41,8 +41,6 @@ export const useWalletUserSession = (): WalletUserSession => {
     daoAuth.reset();
   }, [daoAuth, wallet]);
 
-  console.log(daoAuth);
-
   return useMemo(() => {
     if (wallet.isReady && wallet.isSignedIn && wallet.accountId && activeAccountId !== undefined) {
       return {
