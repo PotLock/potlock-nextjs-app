@@ -20,7 +20,6 @@ const links = [
   {
     label: "Campaigns",
     url: rootPathnames.CAMPAIGNS,
-    disabled: ENV_TAG === "production",
   },
 
   { label: "Feed", url: rootPathnames.FEED, disabled: false },

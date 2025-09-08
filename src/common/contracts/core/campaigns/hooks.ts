@@ -95,3 +95,8 @@ export const useIsDonationRefundsProcessed = ({
 
     CONTRACT_SWR_CONFIG,
   );
+
+export const useConfig = ({ enabled = true }: ConditionalActivation | undefined = {}) =>
+  useSWR(["campaigns_config"], ([_queryKeyHead]) =>
+    !enabled || !IS_CLIENT ? undefined : contractClient.get_config(),
+  );
