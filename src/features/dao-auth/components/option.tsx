@@ -62,6 +62,7 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
           disableHandleSummaryPopup
           disableLinks
           disableNameSummaryPopup
+          hiddenHandlePrefix
           maxTextLength={32}
           classNames={{ root: "rounded-sm py-0" }}
         />

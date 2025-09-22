@@ -8,28 +8,29 @@ import { AccountProfilePicture } from "./profile-images";
 import { AccountSummaryPopup } from "./summary-popup";
 import { useAccountSocialProfile } from "../hooks/social-profile";
 
-export type AccountListItemProps = ByAccountId & {
-  isRounded?: boolean;
-  isThumbnail?: boolean;
-  highlightOnHover?: boolean;
-  statusElement?: React.ReactNode;
-  hideStatusOnDesktop?: boolean;
-  hideStatusOnMobile?: boolean;
-  disableAvatarSummaryPopup?: boolean;
-  disableHandleSummaryPopup?: boolean;
-  disableLinks?: boolean;
-  disableNameSummaryPopup?: boolean;
-  maxTextLength?: AccountHandleProps["maxLength"];
-  primarySlot?: React.ReactNode;
-  secondarySlot?: React.ReactNode;
-  href?: string;
-  onClick?: (accountId: AccountId) => void;
+export type AccountListItemProps = ByAccountId &
+  Pick<AccountHandleProps, "hiddenHandlePrefix"> & {
+    isRounded?: boolean;
+    isThumbnail?: boolean;
+    highlightOnHover?: boolean;
+    statusElement?: React.ReactNode;
+    hiddenStatusOnDesktop?: boolean;
+    hiddenStatusOnMobile?: boolean;
+    disableAvatarSummaryPopup?: boolean;
+    disableHandleSummaryPopup?: boolean;
+    disableLinks?: boolean;
+    disableNameSummaryPopup?: boolean;
+    maxTextLength?: AccountHandleProps["maxLength"];
+    primarySlot?: React.ReactNode;
+    secondarySlot?: React.ReactNode;
+    href?: string;
+    onClick?: (accountId: AccountId) => void;
 
-  classNames?: {
-    root?: string;
-    avatar?: string;
+    classNames?: {
+      root?: string;
+      avatar?: string;
+    };
   };
-};
 
 export const AccountListItem = ({
   isRounded = false,
@@ -37,8 +38,9 @@ export const AccountListItem = ({
   highlightOnHover = false,
   accountId,
   statusElement,
-  hideStatusOnDesktop = false,
-  hideStatusOnMobile = false,
+  hiddenHandlePrefix: isHandlePrefixHidden = false,
+  hiddenStatusOnDesktop = false,
+  hiddenStatusOnMobile = false,
   disableAvatarSummaryPopup = false,
   disableHandleSummaryPopup = false,
   disableLinks = false,
@@ -103,7 +105,7 @@ export const AccountListItem = ({
             )}
 
             {statusElement && (
-              <div className={cn("hidden md:block", { "md:hidden": hideStatusOnDesktop })}>
+              <div className={cn("hidden md:block", { "md:hidden": hiddenStatusOnDesktop })}>
                 {statusElement}
               </div>
             )}
@@ -114,12 +116,13 @@ export const AccountListItem = ({
               accountId={accountId}
               asLink={!disableLinks}
               disabledSummaryPopup={disableHandleSummaryPopup}
+              hiddenHandlePrefix={isHandlePrefixHidden}
               maxLength={maxTextLength}
               href={href}
             />
 
             {statusElement && (
-              <span className={cn("md:hidden", { hidden: hideStatusOnMobile })}>
+              <span className={cn("md:hidden", { hidden: hiddenStatusOnMobile })}>
                 {statusElement}
               </span>
             )}

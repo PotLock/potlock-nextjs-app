@@ -60,19 +60,21 @@ export const UserDropdown = () => {
 
         <div className="flex flex-col gap-6 p-4">
           <DropdownMenuLabel className="flex gap-2 p-0">
-            {walletUser.accountId && (
+            {walletUser.isSignedIn && (
               <AccountProfilePicture accountId={walletUser.accountId} className="h-10 w-10" />
             )}
 
-            <div className="flex flex-col">
-              {profile?.name && <p className="font-semibold">{truncate(profile.name, 30)}</p>}
+            {walletUser.isSignedIn && (
+              <div className="flex flex-col">
+                {profile?.name && <p className="font-semibold">{truncate(profile.name, 30)}</p>}
 
-              {walletUser.accountId && (
-                <p className="prose color-[#656565] text-xs">
-                  {truncate(walletUser.accountId, 30)}
-                </p>
-              )}
-            </div>
+                {walletUser.accountId && (
+                  <span className="color-[#656565] text-xs">
+                    {truncate(walletUser.accountId, 30)}
+                  </span>
+                )}
+              </div>
+            )}
           </DropdownMenuLabel>
 
           {walletUser.isSignedIn && <DaoAuthMenu memberAccountId={walletUser.signerAccountID} />}

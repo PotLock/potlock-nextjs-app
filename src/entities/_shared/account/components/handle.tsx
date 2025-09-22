@@ -17,6 +17,7 @@ export type AccountHandleProps = ByAccountId & {
   asLink?: boolean;
   asName?: boolean;
   disabledSummaryPopup?: boolean;
+  hiddenHandlePrefix?: boolean;
   className?: string;
 };
 
@@ -26,7 +27,8 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
   href,
   asName = false,
   asLink = true,
-  disabledSummaryPopup = false,
+  disabledSummaryPopup: isSummaryPopupDisabled = false,
+  hiddenHandlePrefix: isHandlePrefixHidden = false,
   className,
 }) => {
   const linkHref = useMemo(() => {
@@ -39,17 +41,19 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
 
   const { profile } = useAccountSocialProfile({ enabled: asName, accountId });
 
+  console.log(truncate(accountId, maxLength));
+
   const content = useMemo(
     () =>
       asName && profile?.name
         ? truncate(profile?.name, maxLength)
-        : `@${truncate(accountId, maxLength)}`,
+        : `${isHandlePrefixHidden ? "" : "@"}${truncate(accountId, maxLength)}`,
 
-    [accountId, asName, maxLength, profile?.name],
+    [accountId, asName, isHandlePrefixHidden, maxLength, profile?.name],
   );
 
   return (
-    <AccountSummaryPopup disabled={disabledSummaryPopup} {...{ accountId }}>
+    <AccountSummaryPopup disabled={isSummaryPopupDisabled} {...{ accountId }}>
       {linkHref === null ? (
         <span className="w-fit">{content}</span>
       ) : (
