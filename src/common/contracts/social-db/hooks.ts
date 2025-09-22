@@ -27,7 +27,6 @@ export const useSocialProfile = ({
         : {
             revalidateIfStale: false,
             revalidateOnFocus: false,
-            revalidateOnMount: false,
             revalidateOnReconnect: false,
           }),
     },
