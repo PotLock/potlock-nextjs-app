@@ -1,7 +1,7 @@
 {
   "name": "@potlock/frontend",
   "description": "Decentralized funding stack for public goods",
-  "version": "2.1.1",
+  "version": "2.2.1",
   "packageManager": "yarn@1.22.22",
   "private": true,
   "type": "module",

@@ -14,7 +14,11 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
-import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
+import {
+  AccountHandle,
+  AccountProfilePicture,
+  useAccountSocialProfile,
+} from "@/entities/_shared/account";
 import { listRegistrationStatuses } from "@/entities/list";
 import { DaoAuthMenu } from "@/features/dao-auth";
 import { rootPathnames } from "@/pathnames";
@@ -66,13 +70,23 @@ export const UserDropdown = () => {
 
             {walletUser.isSignedIn && (
               <div className="flex flex-col">
-                {profile?.name && <p className="font-semibold">{truncate(profile.name, 30)}</p>}
+                <>
+                  {profile?.name && (
+                    <AccountHandle
+                      accountId={walletUser.accountId}
+                      asLink={false}
+                      asName
+                      disabledSummaryPopup
+                      hiddenHandlePrefix
+                      maxLength={32}
+                      className="font-semibold"
+                    />
+                  )}
 
-                {walletUser.accountId && (
-                  <span className="color-[#656565] text-xs">
-                    {truncate(walletUser.accountId, 30)}
+                  <span className="color-neutral-600 text-xs">
+                    {truncate(walletUser.accountId, 32)}
                   </span>
-                )}
+                </>
               </div>
             )}
           </DropdownMenuLabel>

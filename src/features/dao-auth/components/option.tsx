@@ -64,7 +64,10 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
           disableNameSummaryPopup
           hiddenHandlePrefix
           maxTextLength={32}
-          classNames={{ root: "rounded-sm py-0" }}
+          classNames={{
+            root: "rounded-sm py-0",
+            name: "font-semibold",
+          }}
         />
       </AccordionTrigger>
 

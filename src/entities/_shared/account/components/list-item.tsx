@@ -29,6 +29,8 @@ export type AccountListItemProps = ByAccountId &
     classNames?: {
       root?: string;
       avatar?: string;
+      name?: string;
+      handle?: string;
     };
   };
 
@@ -100,7 +102,7 @@ export const AccountListItem = ({
                 asName
                 disabledSummaryPopup={disableNameSummaryPopup}
                 maxLength={maxTextLength ?? 38}
-                className="font-normal"
+                className={cn("font-normal", classNames?.name)}
               />
             )}
 
@@ -117,8 +119,12 @@ export const AccountListItem = ({
               asLink={!disableLinks}
               disabledSummaryPopup={disableHandleSummaryPopup}
               hiddenHandlePrefix={isHandlePrefixHidden}
-              maxLength={maxTextLength}
+              maxLength={maxTextLength ?? 38}
               href={href}
+              className={cn(
+                { "color-neutral-600 text-xs": profile?.name !== undefined },
+                classNames?.handle,
+              )}
             />
 
             {statusElement && (

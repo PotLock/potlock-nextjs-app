@@ -41,13 +41,15 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
 
   const { profile } = useAccountSocialProfile({ enabled: asName, accountId });
 
-  console.log(truncate(accountId, maxLength));
+  const { content, isTruncated } = useMemo(
+    () => ({
+      content:
+        asName && profile?.name
+          ? truncate(profile?.name, maxLength)
+          : `${isHandlePrefixHidden ? "" : "@"}${truncate(accountId, maxLength)}`,
 
-  const content = useMemo(
-    () =>
-      asName && profile?.name
-        ? truncate(profile?.name, maxLength)
-        : `${isHandlePrefixHidden ? "" : "@"}${truncate(accountId, maxLength)}`,
+      isTruncated: (profile?.name ?? accountId).length > maxLength,
+    }),
 
     [accountId, asName, isHandlePrefixHidden, maxLength, profile?.name],
   );
@@ -55,11 +57,17 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
   return (
     <AccountSummaryPopup disabled={isSummaryPopupDisabled} {...{ accountId }}>
       {linkHref === null ? (
-        <span className="w-fit">{content}</span>
+        <span
+          title={isSummaryPopupDisabled && isTruncated ? accountId : undefined}
+          className={cn("w-fit", className)}
+        >
+          {content}
+        </span>
       ) : (
         <Link
           href={linkHref}
           target="blank"
+          title={isSummaryPopupDisabled && isTruncated ? accountId : undefined}
           className={cn(
             "underline-neutral-500 underline-opacity-20 underline-offset-4",
             "hover:underline-opacity-100",
@@ -69,6 +77,7 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
               "hover:underline-solid font-semibold leading-normal hover:underline": asName,
               "hover:underline-solid underline-dotted text-neutral-500 underline": !asName,
             },
+
             className,
           )}
         >
