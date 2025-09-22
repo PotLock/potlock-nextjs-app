@@ -4,6 +4,7 @@ import { Big } from "big.js";
 import { TimerIcon } from "lucide-react";
 import { isNullish } from "remeda";
 
+import { V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import type { Campaign } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
@@ -16,9 +17,9 @@ export type CampaignProgressBarProps = ByTokenId & {
   amount: Campaign["total_raised_amount"];
   minAmount: Campaign["min_amount"];
   endDate?: number;
-  isStarted: boolean;
   startDate: number;
   isEscrowBalanceEmpty: boolean;
+  status: V1CampaignsRetrieveStatus;
 };
 
 export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
@@ -27,8 +28,8 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   minAmount,
   amount,
   endDate,
+  status,
   isEscrowBalanceEmpty,
-  isStarted,
   startDate,
 }) => {
   const { data: token } = useFungibleToken({ tokenId });
@@ -54,6 +55,12 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
 
   const isTargetMet = useMemo(
     () => raisedAmountFloat !== 0 && raisedAmountFloat >= targetAmountFloat,
+    [raisedAmountFloat, targetAmountFloat],
+  );
+
+  // Exact progress used for geometry; rounded percentage used for indicator value
+  const progressExact = useMemo(
+    () => (targetAmountFloat ? (raisedAmountFloat / targetAmountFloat) * 100 : 0),
     [raisedAmountFloat, targetAmountFloat],
   );
 
@@ -103,19 +110,19 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   }, [raisedAmountFloat, minAmountFloat, isTargetMet]);
 
   const timeLeft = endDate ? getTimePassed(endDate, false, true) : null;
-  const isTimeUp = timeLeft?.includes("-");
+  // const isTimeUp = timeLeft?.includes("-");
 
   const statusText = useMemo(() => {
-    if ((isTargetMet && endDate && endDate < Date.now()) || isTimeUp) {
+    if (status === "ended" && endDate) {
       return endDate ? `ENDED (${getTimePassed(endDate, false)} ago)` : "ENDED";
-    } else if (isStarted) {
+    } else if (status === "upcoming") {
       return `Starts in ${getTimePassed(startDate, false, true)}`;
     } else if (timeLeft) {
       return `${timeLeft} left`;
     } else {
       return "ONGOING";
     }
-  }, [isTargetMet, endDate, isTimeUp, isStarted, timeLeft, startDate]);
+  }, [status, endDate, timeLeft, startDate]);
 
   const amountDisplay = useMemo(
     () => (
@@ -132,7 +139,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
   );
 
   const titleContent = useMemo(() => {
-    if (isTimeUp) {
+    if (status === "ended") {
       let message;
 
       if (raisedAmountFloat && !isTargetMet && raisedAmountFloat < minAmountFloat) {
@@ -182,7 +189,6 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
     }
   }, [
     amountDisplay,
-    isTimeUp,
     isTargetMet,
     raisedAmountFloat,
     minAmountFloat,
@@ -202,16 +208,28 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
           minArrowColor={minArrowColor}
           baseColor={baseColor}
           minAmount={`${minAmountFloat} ${token?.metadata.symbol ?? ""}`}
-          minValuePercentage={
-            minAmountFloat
-              ? Math.floor(
-                  Big(minAmountFloat)
-                    .div(targetAmountFloat || 1)
-                    .mul(100)
-                    .toNumber(),
-                )
-              : undefined
-          }
+          minValuePercentage={((): number | undefined => {
+            if (!minAmountFloat || !targetAmountFloat) return undefined;
+
+            // Compute geometric min arrow position
+            const rawMinPercent = (minAmountFloat / targetAmountFloat) * 100;
+            const LEFT_PAD_PCT = 3;
+            const RIGHT_PAD_PCT = 3;
+
+            const clampedMinPercent = Math.max(
+              LEFT_PAD_PCT,
+              Math.min(100 - RIGHT_PAD_PCT, rawMinPercent),
+            );
+
+            const PASSED_DELTA = 0.5;
+
+            const minArrowPercent =
+              progressExact >= clampedMinPercent
+                ? Math.min(clampedMinPercent, Math.max(LEFT_PAD_PCT, progressExact - PASSED_DELTA))
+                : clampedMinPercent;
+
+            return minArrowPercent;
+          })()}
           value={progressPercentage}
           bgColor={color}
         />

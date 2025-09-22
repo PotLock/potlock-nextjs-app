@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useWatch } from "react-hook-form";
 import { objOf, pick } from "remeda";
 
 import type { ByAccountId } from "@/common/types";
@@ -41,7 +41,6 @@ export const useProfileForm = ({
       profileImage: avatar.isNft ? undefined : avatar.url,
       backgroundImage: cover.isNft ? undefined : cover.url,
       publicGoodReason: socialProfileSnapshot?.plPublicGoodReason,
-
       ...(socialProfileSnapshot?.linktree === undefined
         ? {}
         : stripLinktree(
@@ -132,6 +131,100 @@ export const useProfileForm = ({
     [self, values.githubRepositories],
   );
 
+  const removeRepository = useCallback(
+    (index: number) => {
+      const updatedRepos = [...(values.githubRepositories ?? [])];
+      updatedRepos.splice(index, 1);
+      self.setValue("githubRepositories", updatedRepos, { shouldValidate: true });
+    },
+    [self, values.githubRepositories],
+  );
+
+  const updateRepository = useCallback(
+    (index: number, value: string) => {
+      const updatedRepos = [...(values.githubRepositories ?? [])];
+      updatedRepos[index] = value;
+      self.setValue("githubRepositories", updatedRepos, { shouldValidate: true });
+    },
+    [self, values.githubRepositories],
+  );
+
+  const addFundingSource = useCallback(
+    (fundingSource: AddFundingSourceInputs) => {
+      const currentSources = values.fundingSources ?? [];
+
+      // Filter out any invalid entries and add the new one
+      const validSources = currentSources.filter(
+        (source) =>
+          source.investorName && source.description && source.amountReceived && source.denomination,
+      ) as AddFundingSourceInputs[];
+
+      const updatedSources = [...validSources, fundingSource];
+      self.setValue("fundingSources", updatedSources, { shouldValidate: true });
+    },
+    [self, values.fundingSources],
+  );
+
+  const updateFundingSource = useCallback(
+    (index: number, fundingSource: AddFundingSourceInputs) => {
+      const currentSources = values.fundingSources ?? [];
+
+      // Filter out any invalid entries
+      const validSources = currentSources.filter(
+        (source) =>
+          source.investorName && source.description && source.amountReceived && source.denomination,
+      ) as AddFundingSourceInputs[];
+
+      const updatedSources = [...validSources];
+      updatedSources[index] = fundingSource;
+      self.setValue("fundingSources", updatedSources, { shouldValidate: true });
+    },
+    [self, values.fundingSources],
+  );
+
+  const removeFundingSource = useCallback(
+    (index: number) => {
+      const currentSources = values.fundingSources ?? [];
+
+      // Filter out any invalid entries
+      const validSources = currentSources.filter(
+        (source) =>
+          source.investorName && source.description && source.amountReceived && source.denomination,
+      ) as AddFundingSourceInputs[];
+
+      const updatedSources = [...validSources];
+      updatedSources.splice(index, 1);
+      self.setValue("fundingSources", updatedSources, { shouldValidate: true });
+    },
+    [self, values.fundingSources],
+  );
+
+  const addSmartContract = useCallback(
+    (contract: [string, string]) => {
+      const updatedContracts = [...(values.smartContracts ?? []), contract];
+      self.setValue("smartContracts", updatedContracts, { shouldValidate: true });
+    },
+    [self, values.smartContracts],
+  );
+
+  const updateSmartContract = useCallback(
+    (index: number, contract: [string, string]) => {
+      const updatedContracts = [...(values.smartContracts ?? [])];
+      updatedContracts[index] = contract;
+      self.setValue("smartContracts", updatedContracts, { shouldValidate: true });
+    },
+    [self, values.smartContracts],
+  );
+
+  const removeSmartContract = useCallback(
+    (index: number) => {
+      const updatedContracts = [...(values.smartContracts ?? [])];
+      updatedContracts.splice(index, 1);
+      self.setValue("smartContracts", updatedContracts, { shouldValidate: true });
+    },
+    [self, values.smartContracts],
+  );
+
   const onSubmit: SubmitHandler<ProfileConfigurationInputs> = useCallback(
     (inputs) => {
       save({ accountId, isDaoRepresentative, mode, inputs, socialProfileSnapshot })
@@ -169,8 +262,16 @@ export const useProfileForm = ({
     updateCategories,
     updateProfileImage,
     addRepository,
+    removeRepository,
+    updateRepository,
     updateRepositories,
     updateTeamMembers,
+    addFundingSource,
+    updateFundingSource,
+    removeFundingSource,
+    addSmartContract,
+    updateSmartContract,
+    removeSmartContract,
     onSubmit: self.handleSubmit(onSubmit),
     resetForm: self.reset,
   };
@@ -180,16 +281,11 @@ export const useAddFundingSourceForm = (options: {
   defaultValues?: Partial<AddFundingSourceInputs>;
   onSuccess?: () => void;
 }) => {
-  const form = useForm<AddFundingSourceInputs>({
-    resolver: zodResolver(addFundingSourceSchema),
+  const { form } = useEnhancedForm({
+    schema: addFundingSourceSchema,
     mode: "onChange",
-    defaultValues: {
-      description: "",
-      investorName: "",
-      amountReceived: "",
-      denomination: "",
-      date: undefined,
-    },
+    defaultValues: options.defaultValues,
+    followDefaultValues: true,
   });
 
   const values = useWatch({ control: form.control });

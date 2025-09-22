@@ -25,6 +25,9 @@ export type CampaignInputs = {
   referral_fee_basis_points?: number;
   creator_fee_basis_points?: number;
   allow_fee_avoidance?: boolean;
+  project_name?: string;
+  project_description?: string;
+  project_banner_image_url?: string;
 };
 
 export type Campaign = {
