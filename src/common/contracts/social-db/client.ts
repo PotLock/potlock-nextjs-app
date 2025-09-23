@@ -211,7 +211,7 @@ export const createPost = async ({
       .contractApi()
       .callMultiple([buildContract])
       .then((data) => {
-        console.log(data);
+        console.info(data);
       })
       .catch((error) => {
         console.error(error);

@@ -59,7 +59,7 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
       return {
         content: isName
           ? truncate(profile?.name as string, maxLength)
-          : `${isHandlePrefixHidden ? "" : "@"}${truncate(accountId, maxLength)}`,
+          : truncate(`${(isHandlePrefixHidden ? "" : "@") + accountId}`, maxLength),
 
         isTruncated,
       };

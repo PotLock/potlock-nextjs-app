@@ -33,20 +33,16 @@ export const UserDropdown = () => {
     accountId: walletUser.accountId ?? NOOP_STRING,
   });
 
-  return (
+  return !walletUser.isSignedIn ? null : (
     <DropdownMenu>
       <DropdownMenuTrigger className="h-8 w-8 rounded-full">
-        {walletUser.isSignedIn ? (
-          <AccountProfilePicture accountId={walletUser.accountId} className="h-full w-full" />
-        ) : (
-          <Skeleton className="h-full w-full rounded-full" />
-        )}
+        <AccountProfilePicture accountId={walletUser.accountId} className="h-full w-full" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-80 p-0">
         {walletUser.registrationStatus && (
-          <DropdownMenuLabel
-            className="flex items-center justify-between px-4 py-2"
+          <div
+            className="flex items-center justify-between px-4 py-2 text-sm font-semibold"
             style={{
               color: listRegistrationStatuses[walletUser.registrationStatus].color,
               background: listRegistrationStatuses[walletUser.registrationStatus].background,
@@ -60,54 +56,47 @@ export const UserDropdown = () => {
               width={18}
               height={18}
             />
-          </DropdownMenuLabel>
+          </div>
         )}
 
         <div className="flex flex-col gap-6 p-4">
           <DropdownMenuLabel className="flex gap-2 p-0">
-            {walletUser.isSignedIn && (
+            <>
               <AccountProfilePicture accountId={walletUser.accountId} className="h-10 w-10" />
-            )}
 
-            {walletUser.isSignedIn && (
               <div className="flex flex-col">
-                <>
-                  {profile?.name && (
-                    <AccountHandle
-                      accountId={walletUser.accountId}
-                      asLink={false}
-                      asName
-                      disabledSummaryPopup
-                      maxLength={null}
-                      className="font-semibold"
-                    />
-                  )}
-
+                {profile?.name && (
                   <AccountHandle
                     accountId={walletUser.accountId}
                     asLink={false}
+                    asName
                     disabledSummaryPopup
-                    hiddenHandlePrefix
                     maxLength={null}
-                    className={cn({
-                      "color-neutral-600 text-xs": profile?.name !== undefined,
-                    })}
+                    className="font-semibold"
                   />
-                </>
+                )}
+
+                <AccountHandle
+                  accountId={walletUser.accountId}
+                  asLink={false}
+                  disabledSummaryPopup
+                  maxLength={null}
+                  className={cn({
+                    "color-neutral-600 text-xs": profile?.name !== undefined,
+                  })}
+                />
               </div>
-            )}
+            </>
           </DropdownMenuLabel>
 
-          {walletUser.isSignedIn && <DaoAuthMenu memberAccountId={walletUser.signerAccountID} />}
+          <DaoAuthMenu memberAccountId={walletUser.signerAccountID} />
 
           <div className="rounded-md border border-[#DBDBDB]">
-            {walletUser.accountId && (
-              <Link href={`${rootPathnames.PROFILE}/${walletUser.accountId}`}>
-                <DropdownMenuItem className="px-3 py-2.5 font-medium">
-                  {walletUser.hasRegistrationApproved ? "My Project" : "My Profile"}
-                </DropdownMenuItem>
-              </Link>
-            )}
+            <Link href={`${rootPathnames.PROFILE}/${walletUser.accountId}`}>
+              <DropdownMenuItem className="px-3 py-2.5 font-medium">
+                {walletUser.hasRegistrationApproved ? "My Project" : "My Profile"}
+              </DropdownMenuItem>
+            </Link>
 
             <Link href={`https://near.social/mob.near/widget/NotificationFeed`} target="_blank">
               <DropdownMenuItem className="px-3 py-2.5 font-medium">
