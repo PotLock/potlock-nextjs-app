@@ -24,6 +24,7 @@ import { useWalletDaoStore } from "@/common/wallet";
 import { DaoAuthOption } from "./option";
 import { useDaoAuthNewOptionForm } from "../hooks/new-option-form";
 
+const SWITCH_ELEMENT_ID = "dao-auth-switch";
 const LISTING_FORM_ACCORDION_ID = "add-dao-address";
 
 export type DaoAuthMenuProps = {
@@ -58,7 +59,7 @@ export const DaoAuthMenu = ({ memberAccountId }: DaoAuthMenuProps) => {
   );
 
   const [activeAccordionValue, setActiveAccordionValue] = useState<EmptyString | string>(
-    options.length === 0 ? LISTING_FORM_ACCORDION_ID : EMPTY_STRING,
+    options.length === 0 ? LISTING_FORM_ACCORDION_ID : (activeAccountId ?? EMPTY_STRING),
   );
 
   const isNewOptionFormActive = useMemo(
@@ -103,12 +104,12 @@ export const DaoAuthMenu = ({ memberAccountId }: DaoAuthMenuProps) => {
           bold
           caption="Act as a DAO"
           positioning="text-icon"
-          htmlFor="act-as-dao-switch"
+          htmlFor={SWITCH_ELEMENT_ID}
         >
           <Info size={16} />
         </LabeledIcon>
 
-        <Switch id="act-as-dao-switch" checked={isExpanded} onCheckedChange={onSwitch} />
+        <Switch id={SWITCH_ELEMENT_ID} checked={isExpanded} onCheckedChange={onSwitch} />
       </div>
 
       {isExpanded && (

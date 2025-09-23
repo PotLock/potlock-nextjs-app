@@ -110,17 +110,17 @@ export const UserMenu: React.FC = () => {
             <DaoAuthMenu memberAccountId={walletUser.signerAccountId} />
 
             <div className="rounded-md border border-[#DBDBDB]">
-              <Link href={`${rootPathnames.PROFILE}/${walletUser.accountId}`}>
-                <DropdownMenuItem className="px-3 py-2.5 font-medium">
-                  {walletUser.hasRegistrationApproved ? "My Project" : "My Profile"}
-                </DropdownMenuItem>
-              </Link>
+              <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
+                <Link href={`${rootPathnames.PROFILE}/${walletUser.accountId}`}>
+                  {`${walletUser.isDaoRepresentative ? "DAO" : "My"} Profile`}
+                </Link>
+              </DropdownMenuItem>
 
-              <Link href={`https://near.social/mob.near/widget/NotificationFeed`} target="_blank">
-                <DropdownMenuItem className="px-3 py-2.5 font-medium">
+              <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
+                <Link href={`https://near.social/mob.near/widget/NotificationFeed`} target="_blank">
                   {"Notifications"}
-                </DropdownMenuItem>
-              </Link>
+                </Link>
+              </DropdownMenuItem>
             </div>
           </div>
 
