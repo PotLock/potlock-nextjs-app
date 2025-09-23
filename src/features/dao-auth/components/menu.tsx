@@ -126,7 +126,7 @@ export const DaoAuthMenu = ({ memberAccountId }: DaoAuthMenuProps) => {
               accountId={optionAccountId}
               isActive={optionAccountId === activeAccountId}
               onActivateClick={() => handleActivateOption(accountIndex)}
-              onRemoveClick={() => delistDao(optionAccountId)}
+              handleRemove={() => delistDao(optionAccountId)}
             />
           ))}
 

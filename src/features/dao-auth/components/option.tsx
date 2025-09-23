@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { ArrowUpRightFromSquare } from "lucide-react";
 import Link from "next/link";
@@ -17,15 +17,27 @@ import { rootPathnames } from "@/pathnames";
 export type DaoAuthOptionProps = ByAccountId & {
   isActive: boolean;
   onActivateClick: VoidFunction;
-  onRemoveClick: VoidFunction;
+  handleRemove: VoidFunction;
 };
 
 export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
   accountId,
   isActive,
   onActivateClick,
-  onRemoveClick,
+  handleRemove,
 }) => {
+  const [isRemovalDialogOpen, setIsRemovalDialogOpen] = useState(false);
+
+  const onRemoveClick = useCallback(() => {
+    if (isRemovalDialogOpen) {
+      handleRemove();
+    } else {
+      setIsRemovalDialogOpen(true);
+    }
+  }, [handleRemove, isRemovalDialogOpen]);
+
+  const onCancelRemoveClick = useCallback(() => setIsRemovalDialogOpen(false), []);
+
   const profileLink = useMemo(
     () => (
       <Button asChild variant="standard-plain">
@@ -71,21 +83,35 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col items-center gap-2 pb-0">
-        <div className="flex w-full flex-row justify-between gap-2">
-          {profileLink}
+        {isRemovalDialogOpen ? <span className="">{"Are you sure?"}</span> : null}
 
-          <Button variant="standard-plain" onClick={onRemoveClick} className="text-destructive">
+        <div
+          className={cn("flex w-full flex-row justify-between gap-2", {
+            "px-4 pb-4": isRemovalDialogOpen,
+          })}
+        >
+          {isRemovalDialogOpen ? null : profileLink}
+
+          <Button
+            variant={isRemovalDialogOpen ? undefined : "standard-plain"}
+            onClick={onRemoveClick}
+            className={cn({ "text-destructive": !isRemovalDialogOpen })}
+          >
             <span>{"Remove"}</span>
           </Button>
+
+          {isRemovalDialogOpen && (
+            <Button variant="brand-outline" onClick={onCancelRemoveClick}>
+              <span>{"Cancel"}</span>
+            </Button>
+          )}
         </div>
 
-        {isActive ? null : (
-          <div className="w-full px-4 pb-4">
-            <Button onClick={onActivateClick} className="w-full">
-              {"Activate"}
-            </Button>
-          </div>
-        )}
+        <div className={cn("w-full px-4 pb-4", { hidden: isActive || isRemovalDialogOpen })}>
+          <Button onClick={onActivateClick} className="w-full">
+            {"Activate"}
+          </Button>
+        </div>
       </AccordionContent>
     </AccordionItem>
   );
