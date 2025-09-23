@@ -54,7 +54,7 @@ export const UserMenu: React.FC = () => {
           <AccountProfilePicture accountId={walletUser.accountId} className="h-full w-full" />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className="w-80 p-0">
+        <DropdownMenuContent align="end" className="md:w-100 max-w-100 w-screen p-0">
           {walletUser.registrationStatus && (
             <div
               className="flex items-center justify-between px-4 py-2 text-sm font-semibold"
