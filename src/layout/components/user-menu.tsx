@@ -111,8 +111,8 @@ export const UserMenu: React.FC = () => {
 
             <div className="rounded-md border border-[#DBDBDB]">
               <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
-                <Link href={`${rootPathnames.PROFILE}/${walletUser.accountId}`}>
-                  {`${walletUser.isDaoRepresentative ? "DAO" : "My"} Profile`}
+                <Link href={`${rootPathnames.PROFILE}/${walletUser.signerAccountId}`}>
+                  {"My Profile"}
                 </Link>
               </DropdownMenuItem>
 

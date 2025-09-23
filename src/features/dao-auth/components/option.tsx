@@ -31,7 +31,7 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
       <Button asChild variant="standard-plain">
         <Link target="_blank" href={`${rootPathnames.PROFILE}/${accountId}`}>
           <span className="inline-flex flex-nowrap gap-2">
-            <span>{"Open Profile"}</span>
+            <span>{"DAO Profile"}</span>
             <ArrowUpRightFromSquare size={14} className="color-neutral-400" />
           </span>
         </Link>
