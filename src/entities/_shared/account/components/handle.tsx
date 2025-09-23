@@ -13,7 +13,12 @@ import { useAccountSocialProfile } from "../hooks/social-profile";
 
 export type AccountHandleProps = ByAccountId & {
   href?: string;
-  maxLength?: number;
+
+  /**
+   * Maximum content length. `null` disables truncation.
+   */
+  maxLength?: number | null;
+
   asLink?: boolean;
   asName?: boolean;
   disabledSummaryPopup?: boolean;
@@ -41,18 +46,25 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
 
   const { profile } = useAccountSocialProfile({ enabled: asName, accountId });
 
-  const { content, isTruncated } = useMemo(
-    () => ({
-      content:
-        asName && profile?.name
-          ? truncate(profile?.name, maxLength)
+  const { content, isTruncated } = useMemo(() => {
+    const isName = asName && profile?.name;
+    const isTruncated = maxLength !== null && (profile?.name ?? accountId).length > maxLength;
+
+    if (maxLength === null) {
+      return {
+        content: isName ? profile.name : `${isHandlePrefixHidden ? "" : "@"}${accountId}`,
+        isTruncated,
+      };
+    } else {
+      return {
+        content: isName
+          ? truncate(profile?.name as string, maxLength)
           : `${isHandlePrefixHidden ? "" : "@"}${truncate(accountId, maxLength)}`,
 
-      isTruncated: (profile?.name ?? accountId).length > maxLength,
-    }),
-
-    [accountId, asName, isHandlePrefixHidden, maxLength, profile?.name],
-  );
+        isTruncated,
+      };
+    }
+  }, [accountId, asName, isHandlePrefixHidden, maxLength, profile?.name]);
 
   return (
     <AccountSummaryPopup disabled={isSummaryPopupDisabled} {...{ accountId }}>

@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
   Skeleton,
 } from "@/common/ui/layout/components";
+import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import {
   AccountHandle,
@@ -77,15 +78,21 @@ export const UserDropdown = () => {
                       asLink={false}
                       asName
                       disabledSummaryPopup
-                      hiddenHandlePrefix
-                      maxLength={32}
+                      maxLength={null}
                       className="font-semibold"
                     />
                   )}
 
-                  <span className="color-neutral-600 text-xs">
-                    {truncate(walletUser.accountId, 32)}
-                  </span>
+                  <AccountHandle
+                    accountId={walletUser.accountId}
+                    asLink={false}
+                    disabledSummaryPopup
+                    hiddenHandlePrefix
+                    maxLength={null}
+                    className={cn({
+                      "color-neutral-600 text-xs": profile?.name !== undefined,
+                    })}
+                  />
                 </>
               </div>
             )}
