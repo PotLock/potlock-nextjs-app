@@ -15,7 +15,7 @@ export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & 
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
-        signerAccountID: undefined;
+        signerAccountId: undefined;
         accountId: undefined;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
@@ -27,7 +27,7 @@ export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & 
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
-        signerAccountID: undefined;
+        signerAccountId: undefined;
         accountId: undefined;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
@@ -39,7 +39,7 @@ export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & 
         isDaoRepresentative: boolean;
         isHuman: boolean;
         isMetadataLoading: boolean;
-        signerAccountID: AccountId;
+        signerAccountId: AccountId;
         accountId: AccountId;
         registrationStatus?: RegistrationStatus;
         hasRegistrationSubmitted: boolean;

@@ -31,7 +31,7 @@ export const UserMenu: React.FC = () => {
   const { profile } = useAccountSocialProfile({
     enabled: walletUser.isSignedIn,
     live: true,
-    accountId: walletUser.accountId ?? NOOP_STRING,
+    accountId: walletUser.signerAccountId ?? NOOP_STRING,
   });
 
   const onSignInClick = useCallback(() => {
@@ -77,12 +77,15 @@ export const UserMenu: React.FC = () => {
           <div className="flex flex-col gap-6 p-4">
             <DropdownMenuLabel className="flex flex-col gap-2 p-0">
               <div className="flex gap-2">
-                <AccountProfilePicture accountId={walletUser.accountId} className="h-10 w-10" />
+                <AccountProfilePicture
+                  accountId={walletUser.signerAccountId}
+                  className="h-10 w-10"
+                />
 
                 <div className="flex flex-col">
                   {profile?.name && (
                     <AccountHandle
-                      accountId={walletUser.accountId}
+                      accountId={walletUser.signerAccountId}
                       asLink={false}
                       asName
                       disabledSummaryPopup
@@ -92,7 +95,7 @@ export const UserMenu: React.FC = () => {
                   )}
 
                   <AccountHandle
-                    accountId={walletUser.accountId}
+                    accountId={walletUser.signerAccountId}
                     asLink={false}
                     disabledSummaryPopup
                     maxLength={null}
@@ -104,7 +107,7 @@ export const UserMenu: React.FC = () => {
               </div>
             </DropdownMenuLabel>
 
-            <DaoAuthMenu memberAccountId={walletUser.signerAccountID} />
+            <DaoAuthMenu memberAccountId={walletUser.signerAccountId} />
 
             <div className="rounded-md border border-[#DBDBDB]">
               <Link href={`${rootPathnames.PROFILE}/${walletUser.accountId}`}>
