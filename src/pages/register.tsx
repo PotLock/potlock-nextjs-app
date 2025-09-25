@@ -10,10 +10,10 @@ import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { ProfileEditor } from "@/features/profile-configuration";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames, routeSelectors } from "@/pathnames";
 
 export default function RegisterPage() {
-  const viewer = useWalletUserSession();
+  const walletUser = useWalletUserSession();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -23,16 +23,15 @@ export default function RegisterPage() {
     error: listRegistrationsError,
     mutate: refetchListRegistrations,
   } = indexer.useAccountListRegistrations({
-    enabled: viewer.isSignedIn,
-    accountId: viewer.accountId ?? NOOP_STRING,
+    enabled: walletUser.isSignedIn,
+    accountId: walletUser.accountId ?? NOOP_STRING,
   });
 
   const hasRegistrationSubmitted = useMemo(
     () =>
       !isAccountListRegistrationDataLoading &&
       listRegistrations !== undefined &&
-      listRegistrations.results.find(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID) !==
-        undefined,
+      listRegistrations.results.some(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID),
 
     [isAccountListRegistrationDataLoading, listRegistrations],
   );
@@ -40,32 +39,40 @@ export default function RegisterPage() {
   const onSuccess = useCallback(() => {
     toast({ title: "Success!", description: "You have successfully submitted your registration." });
 
-    setTimeout(
-      () =>
-        refetchListRegistrations().finally(() =>
-          router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`),
-        ),
+    if (walletUser.isSignedIn) {
+      setTimeout(
+        () =>
+          refetchListRegistrations().finally(() =>
+            router.push(routeSelectors.PROFILE_BY_ID(walletUser.accountId)),
+          ),
 
-      3000,
-    );
-  }, [refetchListRegistrations, router, toast, viewer.accountId]);
+        3000,
+      );
+    }
+  }, [refetchListRegistrations, router, toast, walletUser.accountId, walletUser.isSignedIn]);
 
   const onFailure = useCallback(
-    (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
+    (errorMessage: string) =>
+      toast({ variant: "destructive", title: "Error", description: errorMessage }),
+
     [toast],
   );
 
   useEffect(() => {
-    if (viewer.isSignedIn && !isAccountListRegistrationDataLoading && hasRegistrationSubmitted) {
-      router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`);
+    if (
+      walletUser.isSignedIn &&
+      !isAccountListRegistrationDataLoading &&
+      hasRegistrationSubmitted
+    ) {
+      router.push(`${rootPathnames.PROFILE}/${walletUser.accountId}`);
     }
   }, [
     hasRegistrationSubmitted,
     isAccountListRegistrationDataLoading,
     listRegistrations,
     router,
-    viewer.accountId,
-    viewer.isSignedIn,
+    walletUser.accountId,
+    walletUser.isSignedIn,
   ]);
 
   return (
@@ -85,7 +92,7 @@ export default function RegisterPage() {
         </h2>
       </section>
 
-      {viewer.hasWalletReady && viewer.isSignedIn ? (
+      {walletUser.hasWalletReady && walletUser.isSignedIn ? (
         <>
           {listRegistrations === undefined &&
           listRegistrationsError === undefined &&
@@ -98,15 +105,15 @@ export default function RegisterPage() {
           ) : (
             <ProfileEditor
               mode="register"
-              accountId={viewer.accountId}
-              isDaoRepresentative={viewer.isDaoRepresentative}
+              accountId={walletUser.accountId}
+              isDaoRepresentative={walletUser.isDaoRepresentative}
               {...{ onSuccess, onFailure }}
             />
           )}
         </>
       ) : (
         <>
-          {viewer.hasWalletReady ? (
+          {walletUser.hasWalletReady ? (
             <Alert variant="destructive" className="mt-10">
               <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
               <AlertTitle>{"Not Signed In"}</AlertTitle>

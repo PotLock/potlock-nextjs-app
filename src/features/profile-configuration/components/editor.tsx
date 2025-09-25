@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
+import { isDefined } from "remeda";
 
+import { SOCIAL_PLATFORM_NAME } from "@/common/_config";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
-import { Button, Form, FormField } from "@/common/ui/layout/components";
+import { Button, Form, FormField, RuntimeErrorAlert } from "@/common/ui/layout/components";
 import PlusIcon from "@/common/ui/layout/svg/PlusIcon";
 import {
   ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH,
@@ -36,7 +38,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   onFailure,
 }) => {
   const router = useRouter();
-  const { avatar, cover } = useAccountSocialProfile({ accountId, live: true });
+  const { avatar, cover, error } = useAccountSocialProfile({ accountId, live: true });
 
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
@@ -86,11 +88,11 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   const submitButtonLabel = useMemo(() => {
     switch (mode) {
       case "register": {
-        return isDaoRepresentative ? "Add proposal to create project" : "Create new project";
+        return isDaoRepresentative ? "Submit registration proposal" : "Create new project";
       }
 
       case "update": {
-        return isDaoRepresentative ? "Add proposal to update project" : "Update your project";
+        return isDaoRepresentative ? "Submit profile update proposal" : "Update your project";
       }
     }
   }, [isDaoRepresentative, mode]);
@@ -105,7 +107,9 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   //   return <DAOInProgress />;
   // }
 
-  return (
+  return isDefined(error) ? (
+    <RuntimeErrorAlert message={`Unable to retrieve ${SOCIAL_PLATFORM_NAME} profile`} />
+  ) : (
     <>
       <ProfileConfigurationFundingSourceModal
         data={values.fundingSources}

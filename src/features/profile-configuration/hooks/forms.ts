@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { SubmitHandler, useWatch } from "react-hook-form";
-import { objOf, pick } from "remeda";
+import { isDefined, objOf, pick } from "remeda";
 
+import { SOCIAL_PLATFORM_NAME } from "@/common/_config";
 import type { ByAccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { type AccountGroupItem, useAccountSocialProfile } from "@/entities/_shared/account";
@@ -31,6 +32,7 @@ export const useProfileForm = ({
     avatar,
     cover,
     refetch: refetchSocialProfile,
+    error: socialProfileSnapshotError,
   } = useAccountSocialProfile({ accountId, live: true });
 
   const defaultValues: Partial<ProfileConfigurationInputs> = useMemo(
@@ -226,18 +228,25 @@ export const useProfileForm = ({
 
   const onSubmit: SubmitHandler<ProfileConfigurationInputs> = useCallback(
     (inputs) => {
-      save({ accountId, isDaoRepresentative, mode, inputs, socialProfileSnapshot })
-        .then((result) => {
-          if (result.success) {
-            refetchSocialProfile().then(() => self.reset(defaultValues));
-            onSuccess();
-          } else {
-            onFailure(result.error);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      if (isDefined(socialProfileSnapshotError)) {
+        console.error(socialProfileSnapshotError);
+        onFailure(`Unable to retrieve ${SOCIAL_PLATFORM_NAME} profile`);
+      } else {
+        save({ accountId, isDaoRepresentative, mode, inputs, socialProfileSnapshot })
+          .then(({ success, error }) => {
+            if (success) {
+              refetchSocialProfile().then(() => self.reset(defaultValues));
+              onSuccess();
+            } else {
+              onFailure(error ?? "Unknown error");
+              console.error(error);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            onFailure(error ?? "Unknown error");
+          });
+      }
     },
 
     [
@@ -250,6 +259,7 @@ export const useProfileForm = ({
       refetchSocialProfile,
       self,
       socialProfileSnapshot,
+      socialProfileSnapshotError,
     ],
   );
 
