@@ -1,4 +1,5 @@
 export * from "./constants";
+export * from "./components/DonationLeaderboardEntry";
 export * from "./components/summary";
 export * from "./components/human-verification-alert";
 export * from "./components/user-entrypoints";
