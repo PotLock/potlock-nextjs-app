@@ -115,7 +115,7 @@ export const save = async ({
             directTransactions.map((tx) => {
               const action = {
                 method_name: tx.method,
-                gas: FIFTY_TGAS,
+                gas: tx.gas ?? FIFTY_TGAS,
                 deposit: tx.deposit || "0",
                 args: Buffer.from(JSON.stringify(tx.args), "utf-8").toString("base64"),
               };

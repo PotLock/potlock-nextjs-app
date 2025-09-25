@@ -12,6 +12,7 @@ import { useWalletUserSession } from "@/common/wallet";
 import { ProfileEditor } from "@/features/profile-configuration";
 import { rootPathnames, routeSelectors } from "@/pathnames";
 
+// TODO: Detect existing DAO proposal and display informational message about pending approval
 export default function RegisterPage() {
   const walletUser = useWalletUserSession();
   const router = useRouter();

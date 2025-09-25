@@ -55,17 +55,15 @@ export default function EditProjectPage() {
   );
 
   useEffect(() => {
-    if (
+    if (walletUser.hasWalletReady && walletUser.isSignedIn && !isOwner) {
+      toast({ variant: "destructive", title: `You are not the owner of ${accountId}.` });
+      router.push(routeSelectors.PROFILE_BY_ID(accountId));
+    } else if (
       walletUser.isSignedIn &&
       !isAccountListRegistrationDataLoading &&
       !hasRegistrationSubmitted
     ) {
       router.push(rootPathnames.REGISTER);
-    }
-
-    if (walletUser.hasWalletReady && walletUser.isSignedIn && !isOwner) {
-      toast({ variant: "destructive", title: `You are not the owner of ${accountId}.` });
-      router.push(`${rootPathnames.PROFILE}/${accountId}`);
     }
   }, [
     accountId,
