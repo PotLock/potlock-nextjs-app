@@ -36,7 +36,7 @@ type MemberRole = {
 };
 
 type GroupRole = {
-  Group: [AccountId];
+  Group: AccountId[];
 };
 
 export type RoleKind = "Everyone" | MemberRole | GroupRole;
