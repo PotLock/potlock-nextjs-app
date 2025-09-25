@@ -38,7 +38,7 @@ export const usePotConfigurationEditorForm = ({
   ...props
 }: PotConfigurationEditorFormArgs) => {
   const viewer = useWalletUserSession();
-  const { dispatch } = useDispatch<AppDispatcher>();
+  const dispatch = useDispatch<AppDispatcher>();
   const router = useRouter();
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = potId === undefined;

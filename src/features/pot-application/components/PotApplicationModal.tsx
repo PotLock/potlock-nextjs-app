@@ -1,3 +1,4 @@
+// TODO!: Import from the UI kit instead and adjust the layout accordingly
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";

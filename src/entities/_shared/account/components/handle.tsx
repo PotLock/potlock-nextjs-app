@@ -78,7 +78,7 @@ export const AccountHandle: React.FC<AccountHandleProps> = ({
       ) : (
         <Link
           href={linkHref}
-          target="blank"
+          target="_blank"
           title={isSummaryPopupDisabled && isTruncated ? accountId : undefined}
           className={cn(
             "underline-neutral-500 underline-opacity-20 underline-offset-4",

@@ -13,7 +13,7 @@ import { ListFormModalType } from "../types";
 
 export const useListDeploymentSuccessRedirect = () => {
   const { toast } = useToast();
-  const { dispatch } = useDispatch<AppDispatcher>();
+  const dispatch = useDispatch<AppDispatcher>();
 
   const resultModal = useModal(ListActionsModal);
 
@@ -58,6 +58,7 @@ export const useListDeploymentSuccessRedirect = () => {
       });
     }
   }, [
+    dispatch.listEditor,
     isTransactionOutcomeDetected,
     listValues.name,
     listValues.type,
