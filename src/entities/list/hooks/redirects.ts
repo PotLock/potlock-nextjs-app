@@ -46,8 +46,8 @@ export const useListDeploymentSuccessRedirect = () => {
         className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
 
         title: `${listValues.name} has been ${
-          listValues.type === ListFormModalType.UPVOTE ? "added" : "removed"
-        } to your favorites`,
+          listValues.type === ListFormModalType.UPVOTE ? "added to" : "removed from"
+        } your favorites`,
       });
 
       setSearchParams({ transactionHashes: null });

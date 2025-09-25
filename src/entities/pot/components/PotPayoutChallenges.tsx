@@ -38,7 +38,7 @@ export const PotPayoutChallenges = ({
   const userIsAdminOrGreater = useMemo(
     () =>
       walletUser.isSignedIn &&
-      (potDetail?.admins.find(({ id }) => id === walletUser.accountId) !== undefined ||
+      (potDetail?.admins.some(({ id }) => id === walletUser.accountId) ||
         potDetail?.owner.id === walletUser.accountId),
 
     [potDetail?.admins, potDetail?.owner.id, walletUser.accountId, walletUser.isSignedIn],
