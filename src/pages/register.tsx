@@ -15,8 +15,10 @@ import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { DaoRegistrationPendingStatus } from "@/entities/dao";
-import { ProfileEditor } from "@/features/profile-configuration";
+import {
+  ProfileConfigurationDaoProposalOverview,
+  ProfileEditor,
+} from "@/features/profile-configuration";
 import { rootPathnames, routeSelectors } from "@/pathnames";
 
 export default function RegisterPage() {
@@ -188,7 +190,7 @@ export default function RegisterPage() {
           ) : (
             <>
               {isDaoRegistrationApprovalPending ? (
-                <DaoRegistrationPendingStatus
+                <ProfileConfigurationDaoProposalOverview
                   daoAccountId={walletUser.accountId}
                   proposals={unresolvedDaoRegistrationProposals}
                 />
