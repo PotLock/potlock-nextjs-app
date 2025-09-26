@@ -12,6 +12,7 @@ export type DaoRegistrationPendingStatusProps = {
   proposals: ProposalOutput[];
 };
 
+// TODO
 export const DaoRegistrationPendingStatus: React.FC<DaoRegistrationPendingStatusProps> = ({
   daoAccountId,
   proposals,
@@ -25,13 +26,7 @@ export const DaoRegistrationPendingStatus: React.FC<DaoRegistrationPendingStatus
 
   return (
     <div className="max-h-xl flex h-screen w-full flex-col items-center justify-center gap-4 px-4 py-8">
-      <h1 className="prose font-600 text-center">
-        {`Your DAO has one or more unresolved ${PLATFORM_NAME} registration proposals.`}
-      </h1>
-
-      <h5 className="prose text-center">{"Please come back once they are acted upon."}</h5>
-
-      <p className="text-center italic">
+      <p className="prose text-center text-xs italic">
         {`Note that the ${
           PLATFORM_NAME
         } registration process for DAOs consists of 2 steps submitted as separate proposals: ${

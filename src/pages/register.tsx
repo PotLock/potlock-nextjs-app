@@ -19,7 +19,6 @@ import { DaoRegistrationPendingStatus } from "@/entities/dao";
 import { ProfileEditor } from "@/features/profile-configuration";
 import { rootPathnames, routeSelectors } from "@/pathnames";
 
-// TODO: Detect existing DAO proposal and display informational message about pending approval
 export default function RegisterPage() {
   const walletUser = useWalletUserSession();
   const router = useRouter();
@@ -44,13 +43,16 @@ export default function RegisterPage() {
     [isAccountListRegistrationDataLoading, listRegistrations],
   );
 
-  const { isLoading: isRecentDaoProposalListLoading, data: recentDaoProposals } =
-    sputnikDaoHooks.useProposals({
-      enabled: walletUser.isDaoRepresentative,
-      accountId: walletUser.accountId ?? NOOP_STRING,
-      from_index: 0,
-      limit: 10,
-    });
+  const {
+    isLoading: isRecentDaoProposalListLoading,
+    data: recentDaoProposals,
+    mutate: refetchRecentDaoProposals,
+  } = sputnikDaoHooks.useProposals({
+    enabled: walletUser.isDaoRepresentative,
+    accountId: walletUser.accountId ?? NOOP_STRING,
+    from_index: 0,
+    limit: 10,
+  });
 
   const unresolvedDaoRegistrationProposals = useMemo(
     () =>
@@ -73,22 +75,37 @@ export default function RegisterPage() {
     [recentDaoProposals],
   );
 
-  console.log("unresolved", unresolvedDaoRegistrationProposals);
+  const isDaoRegistrationApprovalPending = useMemo(
+    () => unresolvedDaoRegistrationProposals.length > 0,
+    [unresolvedDaoRegistrationProposals.length],
+  );
 
   const onSuccess = useCallback(() => {
     toast({ title: "Success!", description: "You have successfully submitted your registration." });
 
     if (walletUser.isSignedIn) {
-      setTimeout(
-        () =>
-          refetchListRegistrations().finally(() =>
-            router.push(routeSelectors.PROFILE_BY_ID(walletUser.accountId)),
-          ),
+      if (walletUser.isDaoRepresentative) {
+        refetchRecentDaoProposals();
+      } else {
+        setTimeout(
+          () =>
+            refetchListRegistrations().finally(() =>
+              router.push(routeSelectors.PROFILE_BY_ID(walletUser.accountId)),
+            ),
 
-        3000,
-      );
+          2500,
+        );
+      }
     }
-  }, [refetchListRegistrations, router, toast, walletUser.accountId, walletUser.isSignedIn]);
+  }, [
+    refetchListRegistrations,
+    refetchRecentDaoProposals,
+    router,
+    toast,
+    walletUser.accountId,
+    walletUser.isDaoRepresentative,
+    walletUser.isSignedIn,
+  ]);
 
   const onFailure = useCallback(
     (errorMessage: string) =>
@@ -142,11 +159,18 @@ export default function RegisterPage() {
         )}
       >
         <h1 className="prose font-500 font-lora text-[32px] leading-[120%] md:text-[40px]">
-          {"Register New Project"}
+          {isDaoRegistrationApprovalPending
+            ? "Awaiting registration approval..."
+            : "Register New Project"}
         </h1>
 
         <h2 className="prose max-w-[600px] text-center md:text-lg">
-          {"Create a profile for your project to receive donations and qualify for funding rounds."}
+          {isDaoRegistrationApprovalPending
+            ? `Your DAO has one or more unresolved ${
+                PLATFORM_NAME
+              } registration proposals. Please come back once they are acted upon.`
+            : `Create a profile for your project to receive donations \
+                and qualify for funding rounds.`}
         </h2>
       </section>
 
@@ -163,7 +187,7 @@ export default function RegisterPage() {
             </Alert>
           ) : (
             <>
-              {unresolvedDaoRegistrationProposals.length > 0 ? (
+              {isDaoRegistrationApprovalPending ? (
                 <DaoRegistrationPendingStatus
                   daoAccountId={walletUser.accountId}
                   proposals={unresolvedDaoRegistrationProposals}

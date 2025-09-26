@@ -78,6 +78,25 @@ export default function EditProjectPage() {
     walletUser.isSignedIn,
   ]);
 
+  const noopMessage = useMemo(
+    () =>
+      walletUser.hasWalletReady ? (
+        <Alert variant="destructive" className="mt-10">
+          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Not Signed In"}</AlertTitle>
+          <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
+        </Alert>
+      ) : (
+        <Alert className="mt-10">
+          <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Checking Account"}</AlertTitle>
+          <AlertDescription>{"Please, wait..."}</AlertDescription>
+        </Alert>
+      ),
+
+    [walletUser.hasWalletReady],
+  );
+
   return (
     <PageWithBanner>
       <section
@@ -113,21 +132,7 @@ export default function EditProjectPage() {
           )}
         </>
       ) : (
-        <>
-          {walletUser.hasWalletReady ? (
-            <Alert variant="destructive" className="mt-10">
-              <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Not Signed In"}</AlertTitle>
-              <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
-            </Alert>
-          ) : (
-            <Alert className="mt-10">
-              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Checking Account"}</AlertTitle>
-              <AlertDescription>{"Please, wait..."}</AlertDescription>
-            </Alert>
-          )}
-        </>
+        noopMessage
       )}
     </PageWithBanner>
   );
