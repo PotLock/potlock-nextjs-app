@@ -107,7 +107,7 @@ export default function EditProjectPage() {
             <ProfileEditor
               mode="update"
               accountId={walletUser.accountId}
-              isDaoRepresentative={walletUser.isDaoRepresentative}
+              isDao={walletUser.isDaoRepresentative}
               {...{ onSuccess, onFailure }}
             />
           )}

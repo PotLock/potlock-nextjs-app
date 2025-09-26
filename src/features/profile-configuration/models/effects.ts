@@ -27,7 +27,7 @@ import type { ProfileConfigurationInputs } from "./types";
 import { profileConfigurationInputsToSocialDbFormat } from "../utils/normalization";
 
 export type ProfileSaveInputs = ByAccountId & {
-  isDaoRepresentative: boolean;
+  isDao: boolean;
   mode: ProfileConfigurationMode;
   inputs: ProfileConfigurationInputs;
   socialProfileSnapshot: NEARSocialUserProfile | undefined;
@@ -39,7 +39,7 @@ const REGISTRATION_SOCIAL_DB_GRAPH_UPDATE = {
 
 export const save = async ({
   accountId,
-  isDaoRepresentative,
+  isDao,
   mode,
   inputs,
   socialProfileSnapshot,
@@ -95,7 +95,7 @@ export const save = async ({
 
   const callbackUrl = window.location.href;
 
-  if (!isDaoRepresentative) {
+  if (!isDao) {
     return nearProtocolClient.naxiosInstance
       .contractApi()
       .callMultiple(directTransactions, callbackUrl)

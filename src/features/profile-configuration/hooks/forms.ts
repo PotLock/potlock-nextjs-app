@@ -14,7 +14,7 @@ import { AddFundingSourceInputs, ProfileConfigurationInputs } from "../models/ty
 import { stripLinktree } from "../utils/normalization";
 
 export type ProfileFormParams = ByAccountId &
-  Pick<ProfileSaveInputs, "mode" | "isDaoRepresentative"> & {
+  Pick<ProfileSaveInputs, "mode" | "isDao"> & {
     onSuccess: () => void;
     onFailure: (errorMessage: string) => void;
   };
@@ -22,7 +22,7 @@ export type ProfileFormParams = ByAccountId &
 export const useProfileForm = ({
   mode,
   accountId,
-  isDaoRepresentative,
+  isDao,
   onSuccess,
   onFailure,
 }: ProfileFormParams) => {
@@ -232,7 +232,7 @@ export const useProfileForm = ({
         console.error(socialProfileSnapshotError);
         onFailure(`Unable to retrieve ${SOCIAL_PLATFORM_NAME} profile`);
       } else {
-        save({ accountId, isDaoRepresentative, mode, inputs, socialProfileSnapshot })
+        save({ accountId, isDao, mode, inputs, socialProfileSnapshot })
           .then(({ success, error }) => {
             if (success) {
               refetchSocialProfile().then(() => self.reset(defaultValues));
@@ -252,7 +252,7 @@ export const useProfileForm = ({
     [
       accountId,
       defaultValues,
-      isDaoRepresentative,
+      isDao,
       mode,
       onFailure,
       onSuccess,

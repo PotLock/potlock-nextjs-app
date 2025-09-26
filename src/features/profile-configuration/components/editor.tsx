@@ -27,19 +27,18 @@ import { type ProfileFormParams, useProfileForm } from "../hooks/forms";
 
 export type ProfileEditorProps = Pick<
   ProfileFormParams,
-  "mode" | "accountId" | "isDaoRepresentative" | "onSuccess" | "onFailure"
+  "mode" | "accountId" | "isDao" | "onSuccess" | "onFailure"
 > & {};
 
 export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   mode,
   accountId,
-  isDaoRepresentative,
+  isDao = false,
   onSuccess,
   onFailure,
 }) => {
   const router = useRouter();
   const { avatar, cover, error } = useAccountSocialProfile({ accountId, live: true });
-
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
 
@@ -63,7 +62,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   } = useProfileForm({
     mode,
     accountId,
-    isDaoRepresentative,
+    isDao,
     onSuccess,
     onFailure,
   });
@@ -80,22 +79,17 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
     [updateTeamMembers],
   );
 
-  // const onChangeRepositories = useCallback(
-  //   (repositories: string[]) => updateRepositories(repositories),
-  //   [updateRepositories],
-  // );
-
   const submitButtonLabel = useMemo(() => {
     switch (mode) {
       case "register": {
-        return isDaoRepresentative ? "Submit registration proposal" : "Create new project";
+        return isDao ? "Submit registration proposal" : "Create new project";
       }
 
       case "update": {
-        return isDaoRepresentative ? "Submit profile update proposal" : "Update your project";
+        return isDao ? "Submit profile update proposal" : "Update your project";
       }
     }
-  }, [isDaoRepresentative, mode]);
+  }, [isDao, mode]);
 
   // TODO: Handle DAO representative case in a separate ticket after the initial release
   // // DAO Status - In Progress
@@ -154,7 +148,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             </LowerBannerContainer>
 
             <SubHeader
-              title={isDaoRepresentative ? "Project details (DAO)" : "Project details"}
+              title={isDao ? "Project details (DAO)" : "Project details"}
               required
               className="mt-16"
             />
