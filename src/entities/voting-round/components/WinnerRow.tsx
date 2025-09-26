@@ -40,7 +40,7 @@ export const VotingRoundWinnerRow: React.FC<VotingRoundWinnerRowProps> = ({
 
   return (
     <AccountListItem
-      hideStatusOnDesktop
+      hiddenStatusOnDesktop
       classNames={{
         root: cn("px-4 rounded-none", {
           "bg-neutral-50": isSelected,

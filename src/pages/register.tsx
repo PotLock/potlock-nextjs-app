@@ -3,17 +3,26 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
 
+import {
+  LISTS_CONTRACT_ACCOUNT_ID,
+  PLATFORM_NAME,
+  SOCIAL_DB_CONTRACT_ACCOUNT_ID,
+} from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { ProposalStatus, sputnikDaoHooks } from "@/common/contracts/sputnikdao2";
 import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { ProfileEditor } from "@/features/profile-configuration";
-import { rootPathnames } from "@/pathnames";
+import {
+  ProfileConfigurationDaoProposalOverview,
+  ProfileEditor,
+} from "@/features/profile-configuration";
+import { rootPathnames, routeSelectors } from "@/pathnames";
 
 export default function RegisterPage() {
-  const viewer = useWalletUserSession();
+  const walletUser = useWalletUserSession();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -23,50 +32,125 @@ export default function RegisterPage() {
     error: listRegistrationsError,
     mutate: refetchListRegistrations,
   } = indexer.useAccountListRegistrations({
-    enabled: viewer.isSignedIn,
-    accountId: viewer.accountId ?? NOOP_STRING,
+    enabled: walletUser.isSignedIn,
+    accountId: walletUser.accountId ?? NOOP_STRING,
   });
 
   const hasRegistrationSubmitted = useMemo(
     () =>
       !isAccountListRegistrationDataLoading &&
       listRegistrations !== undefined &&
-      listRegistrations.results.find(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID) !==
-        undefined,
+      listRegistrations.results.some(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID),
 
     [isAccountListRegistrationDataLoading, listRegistrations],
+  );
+
+  const {
+    isLoading: isRecentDaoProposalListLoading,
+    data: recentDaoProposals,
+    mutate: refetchRecentDaoProposals,
+  } = sputnikDaoHooks.useProposals({
+    enabled: walletUser.isDaoRepresentative,
+    accountId: walletUser.accountId ?? NOOP_STRING,
+    from_index: 0,
+    limit: 10,
+  });
+
+  const unresolvedDaoRegistrationProposals = useMemo(
+    () =>
+      recentDaoProposals?.filter(({ description, kind, status }) => {
+        if (
+          typeof kind === "object" &&
+          "FunctionCall" in kind &&
+          status === ProposalStatus.InProgress
+        ) {
+          const { receiver_id, actions } = kind.FunctionCall;
+
+          return (
+            (receiver_id === LISTS_CONTRACT_ACCOUNT_ID &&
+              actions.some(({ method_name }) => method_name === "register_batch")) ||
+            (receiver_id === SOCIAL_DB_CONTRACT_ACCOUNT_ID && description.includes(PLATFORM_NAME))
+          );
+        } else return false;
+      }) ?? [],
+
+    [recentDaoProposals],
+  );
+
+  const isDaoRegistrationApprovalPending = useMemo(
+    () => unresolvedDaoRegistrationProposals.length > 0,
+    [unresolvedDaoRegistrationProposals.length],
   );
 
   const onSuccess = useCallback(() => {
     toast({ title: "Success!", description: "You have successfully submitted your registration." });
 
-    setTimeout(
-      () =>
-        refetchListRegistrations().finally(() =>
-          router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`),
-        ),
+    if (walletUser.isSignedIn) {
+      if (walletUser.isDaoRepresentative) {
+        refetchRecentDaoProposals();
+      } else {
+        setTimeout(
+          () =>
+            refetchListRegistrations().finally(() =>
+              router.push(routeSelectors.PROFILE_BY_ID(walletUser.accountId)),
+            ),
 
-      3000,
-    );
-  }, [refetchListRegistrations, router, toast, viewer.accountId]);
+          2500,
+        );
+      }
+    }
+  }, [
+    refetchListRegistrations,
+    refetchRecentDaoProposals,
+    router,
+    toast,
+    walletUser.accountId,
+    walletUser.isDaoRepresentative,
+    walletUser.isSignedIn,
+  ]);
 
   const onFailure = useCallback(
-    (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
+    (errorMessage: string) =>
+      toast({ variant: "destructive", title: "Error", description: errorMessage }),
+
     [toast],
   );
 
   useEffect(() => {
-    if (viewer.isSignedIn && !isAccountListRegistrationDataLoading && hasRegistrationSubmitted) {
-      router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`);
+    if (
+      walletUser.isSignedIn &&
+      !isAccountListRegistrationDataLoading &&
+      hasRegistrationSubmitted
+    ) {
+      router.push(`${rootPathnames.PROFILE}/${walletUser.accountId}`);
     }
   }, [
     hasRegistrationSubmitted,
     isAccountListRegistrationDataLoading,
     listRegistrations,
     router,
-    viewer.accountId,
-    viewer.isSignedIn,
+    walletUser.accountId,
+    walletUser.isSignedIn,
   ]);
+
+  const noopMessage = useMemo(
+    () =>
+      walletUser.hasWalletReady ? (
+        <Alert variant="destructive" className="mt-10">
+          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Not Signed In"}</AlertTitle>
+          <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
+        </Alert>
+      ) : (
+        <Alert className="mt-10">
+          <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Checking Account"}</AlertTitle>
+          <AlertDescription>{"Please, wait..."}</AlertDescription>
+        </Alert>
+      ),
+
+    [walletUser.hasWalletReady],
+  );
 
   return (
     <PageWithBanner>
@@ -77,49 +161,52 @@ export default function RegisterPage() {
         )}
       >
         <h1 className="prose font-500 font-lora text-[32px] leading-[120%] md:text-[40px]">
-          {"Register New Project"}
+          {isDaoRegistrationApprovalPending
+            ? "Awaiting registration approval..."
+            : "Register New Project"}
         </h1>
 
         <h2 className="prose max-w-[600px] text-center md:text-lg">
-          {"Create a profile for your project to receive donations and qualify for funding rounds."}
+          {isDaoRegistrationApprovalPending
+            ? `Your DAO has one or more unresolved ${
+                PLATFORM_NAME
+              } registration proposals. Please come back once they are acted upon.`
+            : `Create a profile for your project to receive donations \
+                and qualify for funding rounds.`}
         </h2>
       </section>
 
-      {viewer.hasWalletReady && viewer.isSignedIn ? (
+      {walletUser.hasWalletReady && walletUser.isSignedIn ? (
         <>
-          {listRegistrations === undefined &&
-          listRegistrationsError === undefined &&
-          isAccountListRegistrationDataLoading ? (
+          {(listRegistrations === undefined &&
+            listRegistrationsError === undefined &&
+            isAccountListRegistrationDataLoading) ||
+          (recentDaoProposals === undefined && isRecentDaoProposalListLoading) ? (
             <Alert className="mt-10">
               <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
               <AlertTitle>{"Checking Account"}</AlertTitle>
               <AlertDescription>{"Please, wait..."}</AlertDescription>
             </Alert>
           ) : (
-            <ProfileEditor
-              mode="register"
-              accountId={viewer.accountId}
-              isDaoRepresentative={viewer.isDaoRepresentative}
-              {...{ onSuccess, onFailure }}
-            />
+            <>
+              {isDaoRegistrationApprovalPending ? (
+                <ProfileConfigurationDaoProposalOverview
+                  daoAccountId={walletUser.accountId}
+                  proposals={unresolvedDaoRegistrationProposals}
+                />
+              ) : (
+                <ProfileEditor
+                  mode="register"
+                  accountId={walletUser.accountId}
+                  isDao={walletUser.isDaoRepresentative}
+                  {...{ onSuccess, onFailure }}
+                />
+              )}
+            </>
           )}
         </>
       ) : (
-        <>
-          {viewer.hasWalletReady ? (
-            <Alert variant="destructive" className="mt-10">
-              <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Not Signed In"}</AlertTitle>
-              <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
-            </Alert>
-          ) : (
-            <Alert className="mt-10">
-              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Checking Account"}</AlertTitle>
-              <AlertDescription>{"Please, wait..."}</AlertDescription>
-            </Alert>
-          )}
-        </>
+        noopMessage
       )}
     </PageWithBanner>
   );

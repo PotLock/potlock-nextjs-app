@@ -22,7 +22,7 @@ import { Toaster } from "@/common/ui/layout/components/molecules/toaster";
 import { cn } from "@/common/ui/layout/utils";
 import { WalletUserSessionProvider } from "@/common/wallet";
 import { AppBar } from "@/layout/components/app-bar";
-import { dispatch, store } from "@/store";
+import { store } from "@/store";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -39,7 +39,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function RootLayout({ Component, pageProps }: AppPropsWithLayout) {
-  useEffect(() => void dispatch.core.init(), []);
+  useEffect(() => void store.dispatch.core.init(), []);
 
   const getLayout = Component.getLayout ?? ((page) => page);
 

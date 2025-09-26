@@ -1,91 +1,99 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
-import { prop } from "remeda";
-
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { RegistrationStatus, listsContractHooks } from "@/common/contracts/core/lists";
 import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
 import { isAccountId } from "@/common/lib";
-import { useGlobalStoreSelector } from "@/store";
 
-import { useWalletUserAdapter } from "./adapters";
-import { type WalletUserSession, useWalletUserMetadataStore } from "./model";
+import { useWalletDaoStore } from "../model/dao";
+import { type WalletUserSession, useWalletUserMetadataStore } from "../model/user";
+import { useWalletUserAdapter } from "../user-adapter";
 
 export const useWalletUserSession = (): WalletUserSession => {
   const wallet = useWalletUserAdapter();
   const { referrerAccountId } = useWalletUserMetadataStore();
-  const { actAsDao } = useGlobalStoreSelector(prop("nav"));
-  const daoAccountId = actAsDao.defaultAddress;
-  const isDaoAccountIdValid = useMemo(() => isAccountId(daoAccountId), [daoAccountId]);
-  const isDaoRepresentative = actAsDao.toggle && isDaoAccountIdValid;
+  const daoAuth = useWalletDaoStore();
+
+  const activeAccountId = useMemo(
+    () => (daoAuth.isActive ? daoAuth.activeAccountId : wallet.accountId),
+    [daoAuth.activeAccountId, daoAuth.isActive, wallet.accountId],
+  );
 
   const { isLoading: isHumanVerificationStatusLoading, data: isHuman } =
     sybilResistanceContractHooks.useIsHuman({
-      enabled: wallet.isSignedIn,
-      accountId: wallet.accountId ?? NOOP_STRING,
+      enabled: activeAccountId !== undefined,
+      accountId: activeAccountId ?? NOOP_STRING,
     });
 
   const { isLoading: isRegistrationLoading, data: registration } =
     listsContractHooks.useRegistration({
-      enabled: wallet.isSignedIn,
+      enabled: activeAccountId !== undefined,
+      accountId: activeAccountId ?? NOOP_STRING,
       listId: PUBLIC_GOODS_REGISTRY_LIST_ID,
-      accountId: (isDaoRepresentative ? daoAccountId : wallet.accountId) ?? NOOP_STRING,
     });
 
   const isMetadataLoading = isHumanVerificationStatusLoading || isRegistrationLoading;
 
+  const logout = useCallback(() => {
+    nearProtocolClient.walletApi.wallet?.signOut();
+    wallet.reset();
+    daoAuth.reset();
+  }, [daoAuth, wallet]);
+
   return useMemo(() => {
-    if (wallet.isReady && wallet.isSignedIn && wallet.accountId) {
+    if (wallet.isReady && wallet.isSignedIn && wallet.accountId && activeAccountId !== undefined) {
       return {
         hasWalletReady: true,
-        accountId: wallet.accountId,
         isSignedIn: true,
-
-        ...(isDaoRepresentative
-          ? { isDaoRepresentative, daoAccountId }
-          : { isDaoRepresentative: false, daoAccountId: undefined }),
-
+        isDaoRepresentative: daoAuth.isActive,
         isHuman: isHuman ?? false,
         isMetadataLoading,
         hasRegistrationSubmitted: registration !== undefined,
         hasRegistrationApproved: registration?.status === RegistrationStatus.Approved,
+        signerAccountId: wallet.accountId,
+        accountId: activeAccountId,
         registrationStatus: registration?.status,
         referrerAccountId: isAccountId(referrerAccountId) ? referrerAccountId : undefined,
+        logout,
       };
     } else if (wallet.isReady && !wallet.isSignedIn) {
       return {
         hasWalletReady: true,
-        accountId: undefined,
-        daoAccountId: undefined,
         isSignedIn: false,
         isDaoRepresentative: false,
         isHuman: false,
         isMetadataLoading: false,
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
+        signerAccountId: undefined,
+        accountId: undefined,
         registrationStatus: undefined,
         referrerAccountId: undefined,
+        logout,
       };
     } else {
       return {
         hasWalletReady: false,
-        accountId: undefined,
-        daoAccountId: undefined,
         isSignedIn: false,
         isDaoRepresentative: false,
         isHuman: false,
         isMetadataLoading: false,
         hasRegistrationSubmitted: false,
         hasRegistrationApproved: false,
+        signerAccountId: undefined,
+        accountId: undefined,
         registrationStatus: undefined,
         referrerAccountId: undefined,
+        logout,
       };
     }
   }, [
-    daoAccountId,
-    isDaoRepresentative,
+    activeAccountId,
+    daoAuth.isActive,
     isHuman,
     isMetadataLoading,
+    logout,
     referrerAccountId,
     registration,
     wallet.accountId,

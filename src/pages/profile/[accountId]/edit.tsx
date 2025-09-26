@@ -10,43 +10,44 @@ import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { ProfileEditor } from "@/features/profile-configuration";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames, routeSelectors } from "@/pathnames";
 
 export default function EditProjectPage() {
   const router = useRouter();
   const { accountId } = router.query as { accountId: string };
-  const viewer = useWalletUserSession();
+  const walletUser = useWalletUserSession();
   const { toast } = useToast();
 
   const isOwner = useMemo(
-    () => viewer.hasWalletReady && viewer.isSignedIn && accountId === viewer.accountId,
-    [accountId, viewer.accountId, viewer.hasWalletReady, viewer.isSignedIn],
+    () => walletUser.hasWalletReady && walletUser.isSignedIn && accountId === walletUser.accountId,
+    [accountId, walletUser.accountId, walletUser.hasWalletReady, walletUser.isSignedIn],
   );
 
   const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
     indexer.useAccountListRegistrations({
-      enabled: viewer.hasWalletReady && isOwner,
-      accountId: viewer.accountId ?? NOOP_STRING,
+      enabled: walletUser.hasWalletReady && isOwner,
+      accountId: walletUser.accountId ?? NOOP_STRING,
     });
 
   const hasRegistrationSubmitted = useMemo(
     () =>
       !isAccountListRegistrationDataLoading &&
       listRegistrations !== undefined &&
-      listRegistrations.results.find(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID) !==
-        undefined,
+      listRegistrations.results.some(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID),
 
     [isAccountListRegistrationDataLoading, listRegistrations],
   );
 
   const onSuccess = useCallback(() => {
-    setTimeout(() => router.push(`${rootPathnames.PROFILE}/${viewer.accountId}`), 3000);
-
     toast({
       title: "Success!",
       description: "You have successfully updated your profile.",
     });
-  }, [router, toast, viewer.accountId]);
+
+    if (walletUser.isSignedIn) {
+      setTimeout(() => router.push(routeSelectors.PROFILE_BY_ID(walletUser.accountId)), 3000);
+    }
+  }, [router, toast, walletUser.accountId, walletUser.isSignedIn]);
 
   const onFailure = useCallback(
     (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
@@ -54,13 +55,15 @@ export default function EditProjectPage() {
   );
 
   useEffect(() => {
-    if (viewer.isSignedIn && !isAccountListRegistrationDataLoading && !hasRegistrationSubmitted) {
-      router.push(rootPathnames.REGISTER);
-    }
-
-    if (viewer.hasWalletReady && viewer.isSignedIn && !isOwner) {
+    if (walletUser.hasWalletReady && walletUser.isSignedIn && !isOwner) {
       toast({ variant: "destructive", title: `You are not the owner of ${accountId}.` });
-      router.push(`${rootPathnames.PROFILE}/${accountId}`);
+      router.push(routeSelectors.PROFILE_BY_ID(accountId));
+    } else if (
+      walletUser.isSignedIn &&
+      !isAccountListRegistrationDataLoading &&
+      !hasRegistrationSubmitted
+    ) {
+      router.push(rootPathnames.REGISTER);
     }
   }, [
     accountId,
@@ -70,10 +73,29 @@ export default function EditProjectPage() {
     listRegistrations,
     router,
     toast,
-    viewer.accountId,
-    viewer.hasWalletReady,
-    viewer.isSignedIn,
+    walletUser.accountId,
+    walletUser.hasWalletReady,
+    walletUser.isSignedIn,
   ]);
+
+  const noopMessage = useMemo(
+    () =>
+      walletUser.hasWalletReady ? (
+        <Alert variant="destructive" className="mt-10">
+          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Not Signed In"}</AlertTitle>
+          <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
+        </Alert>
+      ) : (
+        <Alert className="mt-10">
+          <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
+          <AlertTitle>{"Checking Account"}</AlertTitle>
+          <AlertDescription>{"Please, wait..."}</AlertDescription>
+        </Alert>
+      ),
+
+    [walletUser.hasWalletReady],
+  );
 
   return (
     <PageWithBanner>
@@ -92,7 +114,7 @@ export default function EditProjectPage() {
         </h2>
       </section>
 
-      {viewer.hasWalletReady && viewer.isSignedIn ? (
+      {walletUser.hasWalletReady && walletUser.isSignedIn ? (
         <>
           {listRegistrations === undefined ? (
             <Alert className="mt-10">
@@ -103,28 +125,14 @@ export default function EditProjectPage() {
           ) : (
             <ProfileEditor
               mode="update"
-              accountId={viewer.accountId}
-              isDaoRepresentative={viewer.isDaoRepresentative}
+              accountId={walletUser.accountId}
+              isDao={walletUser.isDaoRepresentative}
               {...{ onSuccess, onFailure }}
             />
           )}
         </>
       ) : (
-        <>
-          {viewer.hasWalletReady ? (
-            <Alert variant="destructive" className="mt-10">
-              <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Not Signed In"}</AlertTitle>
-              <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
-            </Alert>
-          ) : (
-            <Alert className="mt-10">
-              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Checking Account"}</AlertTitle>
-              <AlertDescription>{"Please, wait..."}</AlertDescription>
-            </Alert>
-          )}
-        </>
+        noopMessage
       )}
     </PageWithBanner>
   );

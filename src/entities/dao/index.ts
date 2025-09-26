@@ -1,1 +1,1 @@
-export * from "./utils/validation";
+export * from "./utils/proposals";

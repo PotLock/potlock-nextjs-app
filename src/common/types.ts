@@ -61,7 +61,8 @@ export type EnvConfig = {
   indexer: { api: { endpointUrl: string } };
 
   core: {
-    campaigns: { contract: { accountId: string } };
+    namespaceRoot: { contract: ContractConfig };
+    campaigns: { contract: ContractConfig };
     donation: { contract: ContractConfig };
     lists: { contract: ContractConfig };
     potFactory: { contract: ContractConfig };
@@ -69,7 +70,7 @@ export type EnvConfig = {
     voting: { contract: ContractConfig };
   };
 
-  social: { app: { url: string }; contract: ContractConfig };
+  social: { platformName: string; app: { url: string }; contract: ContractConfig };
 
   deFi: {
     metapool: {

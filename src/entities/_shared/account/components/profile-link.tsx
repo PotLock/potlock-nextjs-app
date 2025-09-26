@@ -10,7 +10,7 @@ import { cn } from "@/common/ui/layout/utils";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
 import { rootPathnames } from "@/pathnames";
 
-import { AccountSummaryPopup } from "./AccountSummaryPopup";
+import { AccountSummaryPopup } from "./summary-popup";
 
 export type AccountProfileLinkProps = ByAccountId & {
   classNames?: { root?: string; avatar?: string; name?: string };

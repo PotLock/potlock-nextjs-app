@@ -4,50 +4,47 @@ import { persist } from "zustand/middleware";
 import type { RegistrationStatus } from "@/common/contracts/core/lists";
 import { AccountId } from "@/common/types";
 
-export type WalletUserDaoRepresentativeParams =
-  | { isDaoRepresentative: false; daoAccountId: undefined }
-  | { isDaoRepresentative: true; daoAccountId: AccountId };
-
-export type WalletUserMetadata = {
+type WalletUserMetadata = {
   referrerAccountId?: AccountId;
 };
 
-export type WalletUserSession = WalletUserMetadata &
-  (
+export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & (
     | {
         hasWalletReady: false;
-        accountId: undefined;
-        daoAccountId: undefined;
         isSignedIn: false;
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
+        signerAccountId: undefined;
+        accountId: undefined;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
       }
     | {
         hasWalletReady: true;
-        accountId: undefined;
-        daoAccountId: undefined;
         isSignedIn: false;
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
+        signerAccountId: undefined;
+        accountId: undefined;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
       }
-    | (WalletUserDaoRepresentativeParams & {
+    | {
         hasWalletReady: true;
-        accountId: AccountId;
         isSignedIn: true;
+        isDaoRepresentative: boolean;
         isHuman: boolean;
         isMetadataLoading: boolean;
+        signerAccountId: AccountId;
+        accountId: AccountId;
         registrationStatus?: RegistrationStatus;
         hasRegistrationSubmitted: boolean;
         hasRegistrationApproved: boolean;
-      })
+      }
   );
 
 interface WalletUserMetadataState extends WalletUserMetadata {
@@ -63,8 +60,6 @@ export const useWalletUserMetadataStore = create<WalletUserMetadataState>()(
       reset: () => set({ referrerAccountId: undefined }),
     }),
 
-    {
-      name: "wallet-user-metadata",
-    },
+    { name: "wallet-user-metadata" },
   ),
 );

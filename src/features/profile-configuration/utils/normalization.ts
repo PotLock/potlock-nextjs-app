@@ -1,4 +1,4 @@
-import { evolve, pick, pipe } from "remeda";
+import { evolve, isDefined, pick, pipe, values } from "remeda";
 
 import { nullifyEmptyStrings } from "@/common/lib";
 import { getLinktreeLeafExtractor } from "@/entities/_shared/account";
@@ -26,6 +26,7 @@ export const profileConfigurationInputsToSocialDbFormat = (inputs: ProfileConfig
     pick(["website", "twitter", "telegram", "github"]),
     stripLinktree,
     nullifyEmptyStrings,
+    (linktreeInputs) => (values(linktreeInputs).some(isDefined) ? linktreeInputs : undefined),
   ),
 
   /**

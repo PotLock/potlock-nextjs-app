@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { useRouter } from "next/router";
+import { isDefined } from "remeda";
 
+import { SOCIAL_PLATFORM_NAME } from "@/common/_config";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
-import { Button, Form, FormField } from "@/common/ui/layout/components";
+import { Button, Form, FormField, RuntimeErrorAlert } from "@/common/ui/layout/components";
 import PlusIcon from "@/common/ui/layout/svg/PlusIcon";
 import {
   ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH,
@@ -11,7 +13,6 @@ import {
   AccountGroup,
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
 
 import { ProfileConfigurationFundingSourceModal } from "./AddFundingSourceModal";
 // import { ProfileConfigurationSmartContractModal } from "./contract-modal";
@@ -26,19 +27,18 @@ import { type ProfileFormParams, useProfileForm } from "../hooks/forms";
 
 export type ProfileEditorProps = Pick<
   ProfileFormParams,
-  "mode" | "accountId" | "isDaoRepresentative" | "onSuccess" | "onFailure"
+  "mode" | "accountId" | "isDao" | "onSuccess" | "onFailure"
 > & {};
 
 export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   mode,
   accountId,
-  isDaoRepresentative,
+  isDao = false,
   onSuccess,
   onFailure,
 }) => {
   const router = useRouter();
-  const { avatar, cover } = useAccountSocialProfile({ accountId, live: true });
-
+  const { avatar, cover, error } = useAccountSocialProfile({ accountId, live: true });
   const [addFundingModalOpen, setAddFundingModalOpen] = useState(false);
   const [editFundingIndex, setEditFundingIndex] = useState<number>();
 
@@ -62,7 +62,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   } = useProfileForm({
     mode,
     accountId,
-    isDaoRepresentative,
+    isDao,
     onSuccess,
     onFailure,
   });
@@ -79,22 +79,17 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
     [updateTeamMembers],
   );
 
-  // const onChangeRepositories = useCallback(
-  //   (repositories: string[]) => updateRepositories(repositories),
-  //   [updateRepositories],
-  // );
-
   const submitButtonLabel = useMemo(() => {
     switch (mode) {
       case "register": {
-        return isDaoRepresentative ? "Add proposal to create project" : "Create new project";
+        return isDao ? "Submit registration proposal" : "Create new project";
       }
 
       case "update": {
-        return isDaoRepresentative ? "Add proposal to update project" : "Update your project";
+        return isDao ? "Submit profile update proposal" : "Update your project";
       }
     }
-  }, [isDaoRepresentative, mode]);
+  }, [isDao, mode]);
 
   // TODO: Handle DAO representative case in a separate ticket after the initial release
   // // DAO Status - In Progress
@@ -106,7 +101,9 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   //   return <DAOInProgress />;
   // }
 
-  return (
+  return isDefined(error) ? (
+    <RuntimeErrorAlert message={`Unable to retrieve ${SOCIAL_PLATFORM_NAME} profile`} />
+  ) : (
     <>
       <ProfileConfigurationFundingSourceModal
         data={values.fundingSources}
@@ -151,7 +148,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             </LowerBannerContainer>
 
             <SubHeader
-              title={isDaoRepresentative ? "Project details (DAO)" : "Project details"}
+              title={isDao ? "Project details (DAO)" : "Project details"}
               required
               className="mt-16"
             />

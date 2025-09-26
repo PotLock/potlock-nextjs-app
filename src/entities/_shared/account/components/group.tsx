@@ -12,7 +12,7 @@ import {
   AccountProfilePicture,
 } from "@/entities/_shared/account";
 
-import { AccountGroupEditModal, AccountGroupEditModalProps } from "./AccountGroupEditModal";
+import { AccountGroupEditModal, AccountGroupEditModalProps } from "./group-edit-modal";
 
 export type AccountGroupProps = Pick<AccountListItemProps, "classNames"> &
   (

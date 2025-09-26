@@ -23,11 +23,9 @@ import { setupUnityWallet } from "@near-wallet-selector/unity-wallet";
 import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
 import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import naxios from "@wpdas/naxios";
-import { AccountView } from "near-api-js/lib/providers/provider";
 
 import { NETWORK, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { FULL_TGAS } from "@/common/constants";
-import { AccountId } from "@/common/types";
 
 import { wagmiConfig, web3Modal } from "./web3modal";
 
@@ -88,17 +86,3 @@ export const walletApi = naxiosInstance.walletApi();
  * NEAR JsonRpcProvider
  */
 export const nearRpc = naxiosInstance.rpcApi();
-
-export const near = {
-  isAccountValid: async (account_id: AccountId) =>
-    account_id.length > 4
-      ? await nearRpc
-          .query<AccountView>({
-            request_type: "view_account",
-            finality: "final",
-            account_id,
-          })
-          .then(Boolean)
-          .catch(() => false)
-      : false,
-};

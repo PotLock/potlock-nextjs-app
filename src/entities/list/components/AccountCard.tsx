@@ -32,7 +32,7 @@ import {
   AccountProfileCover,
   AccountProfilePicture,
 } from "@/entities/_shared/account";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { listRegistrationStatuses } from "../constants";
 import { ListFormModalType } from "../types";
@@ -49,6 +49,8 @@ export const ListAccountCard = ({
   dataForList: ListRegistration;
   accountsWithAccess: string[];
 }) => {
+  const dispatch = useDispatch();
+
   const [registrationStatus, setRegistrationStatus] = useState<RegistrationStatus>(
     RegistrationStatus.Pending,
   );

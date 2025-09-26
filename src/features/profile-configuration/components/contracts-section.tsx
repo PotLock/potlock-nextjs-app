@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from "@/common/ui/layout/components";
 import Delete from "@/common/ui/layout/svg/Delete";
-import Edit from "@/common/ui/layout/svg/Edit";
 import { cn } from "@/common/ui/layout/utils";
 
 import { CustomInput } from "./editor-elements";
