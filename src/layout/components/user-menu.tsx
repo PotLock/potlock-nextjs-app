@@ -23,7 +23,7 @@ import {
 } from "@/entities/_shared/account";
 import { listRegistrationStatuses } from "@/entities/list";
 import { DaoAuthMenu } from "@/features/dao-auth";
-import { rootPathnames } from "@/pathnames";
+import { routeSelectors } from "@/pathnames";
 
 export const UserMenu: React.FC = () => {
   const walletUser = useWalletUserSession();
@@ -111,10 +111,18 @@ export const UserMenu: React.FC = () => {
 
             <div className="rounded-md border border-[#DBDBDB]">
               <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
-                <Link href={`${rootPathnames.PROFILE}/${walletUser.signerAccountId}`}>
+                <Link href={routeSelectors.PROFILE_BY_ID(walletUser.signerAccountId)}>
                   {"My Profile"}
                 </Link>
               </DropdownMenuItem>
+
+              {walletUser.isDaoRepresentative && (
+                <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
+                  <Link href={routeSelectors.PROFILE_BY_ID(walletUser.accountId)}>
+                    {"DAO Profile"}
+                  </Link>
+                </DropdownMenuItem>
+              )}
 
               <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
                 <Link href={`https://near.social/mob.near/widget/NotificationFeed`} target="_blank">

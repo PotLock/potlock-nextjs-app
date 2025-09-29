@@ -24,8 +24,8 @@ export const ProfileConfigurationDaoProposalOverview: React.FC<
   });
 
   return (
-    <div className="max-h-xl flex h-screen w-full flex-col items-center gap-8 p-4 md:p-8">
-      <Alert variant="warning" className="max-w-5xl">
+    <div className="flex w-full flex-col items-center gap-8">
+      <Alert variant="warning" className="w-full">
         <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
         <AlertTitle>{"Important Notice"}</AlertTitle>
 
@@ -44,7 +44,7 @@ export const ProfileConfigurationDaoProposalOverview: React.FC<
         </AlertDescription>
       </Alert>
 
-      <div className="flex w-full justify-center gap-3">
+      <div className="flex w-full flex-col justify-center gap-4">
         <Button asChild variant="standard-filled">
           <Link target="_blank" href={proposalHref}>
             {"View Proposal"}

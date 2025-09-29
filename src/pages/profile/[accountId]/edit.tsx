@@ -1,15 +1,11 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/router";
-import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
 
-import { indexer } from "@/common/api/indexer";
-import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
-import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/layout/components";
+import { PageWithBanner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
-import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { ProfileEditor } from "@/features/profile-configuration";
+import { ProfileConfigurationUserPanel } from "@/features/profile-configuration";
 import { rootPathnames, routeSelectors } from "@/pathnames";
 
 export default function EditProjectPage() {
@@ -18,27 +14,7 @@ export default function EditProjectPage() {
   const walletUser = useWalletUserSession();
   const { toast } = useToast();
 
-  const isOwner = useMemo(
-    () => walletUser.hasWalletReady && walletUser.isSignedIn && accountId === walletUser.accountId,
-    [accountId, walletUser.accountId, walletUser.hasWalletReady, walletUser.isSignedIn],
-  );
-
-  const { isLoading: isAccountListRegistrationDataLoading, data: listRegistrations } =
-    indexer.useAccountListRegistrations({
-      enabled: walletUser.hasWalletReady && isOwner,
-      accountId: walletUser.accountId ?? NOOP_STRING,
-    });
-
-  const hasRegistrationSubmitted = useMemo(
-    () =>
-      !isAccountListRegistrationDataLoading &&
-      listRegistrations !== undefined &&
-      listRegistrations.results.some(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID),
-
-    [isAccountListRegistrationDataLoading, listRegistrations],
-  );
-
-  const onSuccess = useCallback(() => {
+  const onProfileUpdateSuccess = useCallback(() => {
     toast({
       title: "Success!",
       description: "You have successfully updated your profile.",
@@ -49,91 +25,41 @@ export default function EditProjectPage() {
     }
   }, [router, toast, walletUser.accountId, walletUser.isSignedIn]);
 
-  const onFailure = useCallback(
+  const onProfileUpdateFailure = useCallback(
     (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
     [toast],
   );
 
   useEffect(() => {
-    if (walletUser.hasWalletReady && walletUser.isSignedIn && !isOwner) {
+    if (walletUser.hasWalletReady && walletUser.isSignedIn && accountId !== walletUser.accountId) {
       toast({ variant: "destructive", title: `You are not the owner of ${accountId}.` });
       router.push(routeSelectors.PROFILE_BY_ID(accountId));
     } else if (
       walletUser.isSignedIn &&
-      !isAccountListRegistrationDataLoading &&
-      !hasRegistrationSubmitted
+      !walletUser.isMetadataLoading &&
+      !walletUser.hasRegistrationSubmitted
     ) {
       router.push(rootPathnames.REGISTER);
     }
   }, [
     accountId,
-    hasRegistrationSubmitted,
-    isAccountListRegistrationDataLoading,
-    isOwner,
-    listRegistrations,
     router,
     toast,
     walletUser.accountId,
+    walletUser.hasRegistrationSubmitted,
     walletUser.hasWalletReady,
+    walletUser.isMetadataLoading,
     walletUser.isSignedIn,
   ]);
 
-  const noopMessage = useMemo(
-    () =>
-      walletUser.hasWalletReady ? (
-        <Alert variant="destructive" className="mt-10">
-          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-          <AlertTitle>{"Not Signed In"}</AlertTitle>
-          <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
-        </Alert>
-      ) : (
-        <Alert className="mt-10">
-          <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
-          <AlertTitle>{"Checking Account"}</AlertTitle>
-          <AlertDescription>{"Please, wait..."}</AlertDescription>
-        </Alert>
-      ),
-
-    [walletUser.hasWalletReady],
-  );
-
   return (
-    <PageWithBanner>
-      <section
-        className={cn(
-          "flex w-full flex-col items-center gap-8 md:px-10 md:py-16",
-          "2xl-rounded-lg bg-hero border-[#f8d3b0] px-5 py-12",
-        )}
-      >
-        <h1 className="prose font-500 font-lora text-[32px] leading-[120%] md:text-[40px]">
-          {"Edit Project"}
-        </h1>
-
-        <h2 className="prose max-w-[600px] text-center md:text-lg">
-          {"Create a profile for your project to receive donations and qualify for funding rounds."}
-        </h2>
-      </section>
-
-      {walletUser.hasWalletReady && walletUser.isSignedIn ? (
-        <>
-          {listRegistrations === undefined ? (
-            <Alert className="mt-10">
-              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Checking Account"}</AlertTitle>
-              <AlertDescription>{"Please, wait..."}</AlertDescription>
-            </Alert>
-          ) : (
-            <ProfileEditor
-              mode="update"
-              accountId={walletUser.accountId}
-              isDao={walletUser.isDaoRepresentative}
-              {...{ onSuccess, onFailure }}
-            />
-          )}
-        </>
-      ) : (
-        noopMessage
-      )}
+    <PageWithBanner className="items-center">
+      <ProfileConfigurationUserPanel
+        mode="update"
+        onSuccess={onProfileUpdateSuccess}
+        onFailure={onProfileUpdateFailure}
+        className="max-w-5xl"
+      />
     </PageWithBanner>
   );
 }

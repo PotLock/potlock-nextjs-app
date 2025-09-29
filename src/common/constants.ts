@@ -170,6 +170,8 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
 
 export const NOOP_STRING = "noop";
 
+export const NOOP_FUNCTION: VoidFunction = () => void null;
+
 export const NOOP_BALANCE_VIEW = new Promise<Big.Big>((resolve) => resolve(Big(0)));
 
 export const CONTRACT_SWR_CONFIG: SWRConfiguration = {

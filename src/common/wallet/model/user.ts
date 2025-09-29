@@ -20,6 +20,7 @@ export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & 
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
+        refetchRegistrationStatus: undefined;
       }
     | {
         hasWalletReady: true;
@@ -32,18 +33,36 @@ export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & 
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
+        refetchRegistrationStatus: undefined;
       }
     | {
         hasWalletReady: true;
         isSignedIn: true;
+
+        /**
+         * Whether DAO authentication is enabled for a DAO
+         * which the user has proposal creation privileges in.
+         */
         isDaoRepresentative: boolean;
+
         isHuman: boolean;
         isMetadataLoading: boolean;
+
+        /**
+         * The account ID provided by the currently connected wallet instance.
+         */
         signerAccountId: AccountId;
+
+        /**
+         * If `.isDaoRepresentative` is `true`, then the account ID of the currently selected DAO.
+         * Otherwise, the account ID provided by the currently connected wallet instance.
+         */
         accountId: AccountId;
+
         registrationStatus?: RegistrationStatus;
         hasRegistrationSubmitted: boolean;
         hasRegistrationApproved: boolean;
+        refetchRegistrationStatus: VoidFunction;
       }
   );
 

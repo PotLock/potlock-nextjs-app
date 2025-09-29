@@ -1,49 +1,25 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter } from "next/router";
-import { MdOutlineHourglassTop, MdOutlineInfo } from "react-icons/md";
 
 import {
   LISTS_CONTRACT_ACCOUNT_ID,
   PLATFORM_NAME,
   SOCIAL_DB_CONTRACT_ACCOUNT_ID,
 } from "@/common/_config";
-import { indexer } from "@/common/api/indexer";
-import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { NOOP_STRING } from "@/common/constants";
 import { ProposalStatus, sputnikDaoHooks } from "@/common/contracts/sputnikdao2";
-import { Alert, AlertDescription, AlertTitle, PageWithBanner } from "@/common/ui/layout/components";
+import { PageWithBanner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import {
-  ProfileConfigurationDaoProposalOverview,
-  ProfileEditor,
-} from "@/features/profile-configuration";
+import { ProfileConfigurationUserPanel } from "@/features/profile-configuration";
 import { rootPathnames, routeSelectors } from "@/pathnames";
 
 export default function RegisterPage() {
   const walletUser = useWalletUserSession();
   const router = useRouter();
   const { toast } = useToast();
-
-  const {
-    isLoading: isAccountListRegistrationDataLoading,
-    data: listRegistrations,
-    error: listRegistrationsError,
-    mutate: refetchListRegistrations,
-  } = indexer.useAccountListRegistrations({
-    enabled: walletUser.isSignedIn,
-    accountId: walletUser.accountId ?? NOOP_STRING,
-  });
-
-  const hasRegistrationSubmitted = useMemo(
-    () =>
-      !isAccountListRegistrationDataLoading &&
-      listRegistrations !== undefined &&
-      listRegistrations.results.some(({ list_id }) => list_id === PUBLIC_GOODS_REGISTRY_LIST_ID),
-
-    [isAccountListRegistrationDataLoading, listRegistrations],
-  );
 
   const {
     isLoading: isRecentDaoProposalListLoading,
@@ -82,7 +58,7 @@ export default function RegisterPage() {
     [unresolvedDaoRegistrationProposals.length],
   );
 
-  const onSuccess = useCallback(() => {
+  const onRegistrationSuccess = useCallback(() => {
     toast({ title: "Success!", description: "You have successfully submitted your registration." });
 
     if (walletUser.isSignedIn) {
@@ -90,26 +66,18 @@ export default function RegisterPage() {
         refetchRecentDaoProposals();
       } else {
         setTimeout(
-          () =>
-            refetchListRegistrations().finally(() =>
-              router.push(routeSelectors.PROFILE_BY_ID(walletUser.accountId)),
-            ),
+          () => {
+            walletUser.refetchRegistrationStatus();
+            router.push(routeSelectors.PROFILE_BY_ID(walletUser.accountId));
+          },
 
           2500,
         );
       }
     }
-  }, [
-    refetchListRegistrations,
-    refetchRecentDaoProposals,
-    router,
-    toast,
-    walletUser.accountId,
-    walletUser.isDaoRepresentative,
-    walletUser.isSignedIn,
-  ]);
+  }, [refetchRecentDaoProposals, router, toast, walletUser]);
 
-  const onFailure = useCallback(
+  const onRegistrationFailure = useCallback(
     (errorMessage: string) =>
       toast({ variant: "destructive", title: "Error", description: errorMessage }),
 
@@ -119,42 +87,22 @@ export default function RegisterPage() {
   useEffect(() => {
     if (
       walletUser.isSignedIn &&
-      !isAccountListRegistrationDataLoading &&
-      hasRegistrationSubmitted
+      !walletUser.isMetadataLoading &&
+      walletUser.hasRegistrationSubmitted
     ) {
       router.push(`${rootPathnames.PROFILE}/${walletUser.accountId}`);
     }
   }, [
-    hasRegistrationSubmitted,
-    isAccountListRegistrationDataLoading,
-    listRegistrations,
     router,
     walletUser.accountId,
+    walletUser.hasRegistrationSubmitted,
+    walletUser.isMetadataLoading,
     walletUser.isSignedIn,
   ]);
 
-  const noopMessage = useMemo(
-    () =>
-      walletUser.hasWalletReady ? (
-        <Alert variant="destructive" className="mt-10">
-          <MdOutlineInfo className="color-neutral-400 h-6 w-6" />
-          <AlertTitle>{"Not Signed In"}</AlertTitle>
-          <AlertDescription>{"Please connect your wallet to continue"}</AlertDescription>
-        </Alert>
-      ) : (
-        <Alert className="mt-10">
-          <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
-          <AlertTitle>{"Checking Account"}</AlertTitle>
-          <AlertDescription>{"Please, wait..."}</AlertDescription>
-        </Alert>
-      ),
-
-    [walletUser.hasWalletReady],
-  );
-
   return (
-    <PageWithBanner>
-      <section
+    <PageWithBanner className="items-center">
+      <header
         className={cn(
           "flex w-full flex-col items-center gap-8 md:px-10 md:py-16",
           "2xl-rounded-lg bg-hero border-[#f8d3b0] px-5 py-12",
@@ -174,40 +122,14 @@ export default function RegisterPage() {
             : `Create a profile for your project to receive donations \
                 and qualify for funding rounds.`}
         </h2>
-      </section>
+      </header>
 
-      {walletUser.hasWalletReady && walletUser.isSignedIn ? (
-        <>
-          {(listRegistrations === undefined &&
-            listRegistrationsError === undefined &&
-            isAccountListRegistrationDataLoading) ||
-          (recentDaoProposals === undefined && isRecentDaoProposalListLoading) ? (
-            <Alert className="mt-10">
-              <MdOutlineHourglassTop className="color-neutral-400 h-6 w-6" />
-              <AlertTitle>{"Checking Account"}</AlertTitle>
-              <AlertDescription>{"Please, wait..."}</AlertDescription>
-            </Alert>
-          ) : (
-            <>
-              {isDaoRegistrationApprovalPending ? (
-                <ProfileConfigurationDaoProposalOverview
-                  daoAccountId={walletUser.accountId}
-                  proposals={unresolvedDaoRegistrationProposals}
-                />
-              ) : (
-                <ProfileEditor
-                  mode="register"
-                  accountId={walletUser.accountId}
-                  isDao={walletUser.isDaoRepresentative}
-                  {...{ onSuccess, onFailure }}
-                />
-              )}
-            </>
-          )}
-        </>
-      ) : (
-        noopMessage
-      )}
+      <ProfileConfigurationUserPanel
+        mode="register"
+        onSuccess={onRegistrationSuccess}
+        onFailure={onRegistrationFailure}
+        className="md:max-w-6xl"
+      />
     </PageWithBanner>
   );
 }
