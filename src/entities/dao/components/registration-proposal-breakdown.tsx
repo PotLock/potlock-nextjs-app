@@ -55,7 +55,11 @@ export const DaoRegistrationProposalBreakdown: React.FC<DaoRegistrationProposalB
             <span>{description}</span>
 
             <Button asChild variant="brand-outline" className="ml-a">
-              <Link target="_blank" href={getDaoProposalViewUrl({ daoAccountId, proposalId: id })}>
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href={getDaoProposalViewUrl({ daoAccountId, proposalId: id })}
+              >
                 <span className="inline-flex flex-nowrap gap-2">
                   <span>{"Open"}</span>
                   <ArrowUpRightFromSquare size={14} className="color-neutral-400" />
@@ -67,7 +71,11 @@ export const DaoRegistrationProposalBreakdown: React.FC<DaoRegistrationProposalB
       </div>
 
       <Button asChild variant="brand-tonal">
-        <Link target="_blank" href={getDaoProposalsViewUrl({ daoAccountId })}>
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href={getDaoProposalsViewUrl({ daoAccountId })}
+        >
           <span className="inline-flex flex-nowrap gap-2">
             <span> {"See All Proposals"}</span>
             <ArrowUpRightFromSquare size={14} className="color-neutral-400" />
