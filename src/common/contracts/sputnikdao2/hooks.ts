@@ -14,13 +14,13 @@ export const useProposals = ({
   accountId,
   ...params
 }: ConditionalActivation & ByAccountId & contractClient.GetProposalsArgs) =>
-  useSWR(["get_proposals", accountId, params], ([_queryKeyHead, accountIdKey, paramsKey]) =>
-    !enabled || !IS_CLIENT
-      ? undefined
-      : contractClient.get_proposals({
-          accountId: accountIdKey,
-          args: pick(paramsKey, ["from_index", "limit"]),
-        }),
+  useSWR(
+    enabled && IS_CLIENT ? ["get_proposals", accountId, params] : null,
+    ([_queryKeyHead, accountIdKey, paramsKey]) =>
+      contractClient.get_proposals({
+        accountId: accountIdKey,
+        args: pick(paramsKey, ["from_index", "limit"]),
+      }),
   );
 
 type DaoProposalLookupParams = ByAccountId &
