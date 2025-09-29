@@ -21,7 +21,7 @@ import {
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { TokenValueSummary, useFungibleToken } from "@/entities/_shared/token";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DonationSummary } from "./summary";

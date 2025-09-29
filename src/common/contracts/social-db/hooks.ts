@@ -11,15 +11,13 @@ export const useSocialProfile = ({
   accountId,
 }: ByAccountId & ConditionalActivation & LiveUpdateParams) =>
   useSWR(
-    ["useSocialProfile", accountId],
+    enabled && IS_CLIENT ? ["useSocialProfile", accountId] : null,
 
     ([_queryKeyHead, account_id]) =>
-      !enabled || !IS_CLIENT
-        ? undefined
-        : contractClient
-            .getSocialProfile({ accountId: account_id })
-            //* Handling `null` response
-            .then((response) => response ?? undefined),
+      contractClient
+        .getSocialProfile({ accountId: account_id })
+        //* Handling `null` response
+        .then((response) => response ?? undefined),
 
     {
       ...(live

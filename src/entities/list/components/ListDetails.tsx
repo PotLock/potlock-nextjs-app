@@ -29,7 +29,7 @@ import {
   AccountProfilePicture,
 } from "@/entities/_shared/account";
 import { DonateToListProjects } from "@/features/donation";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { ApplyToListModal } from "./ApplyToListModal";
 import { ListConfirmationModal } from "./ListConfirmationModals";
@@ -46,6 +46,7 @@ interface ListDetailsType {
 }
 
 export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDetailsType) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const { push } = useRouter();
 

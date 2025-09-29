@@ -3,8 +3,8 @@ import { merge, mergeAll, prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
-import { useGlobalStoreSelector } from "@/store";
-import { AppModel } from "@/store/models";
+import { useGlobalStoreSelector } from "@/store/hooks";
+import { type AppModel } from "@/store/models";
 
 import { effects } from "./effects";
 import { ListEditorState, ListFormModalType } from "../types";

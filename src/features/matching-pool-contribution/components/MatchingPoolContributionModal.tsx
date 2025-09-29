@@ -17,7 +17,6 @@ import {
   Spinner,
   Textarea,
 } from "@/common/ui/layout/components";
-import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 

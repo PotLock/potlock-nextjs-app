@@ -42,7 +42,7 @@ export const useViewAccount = ({
   ...params
 }: ByAccountId & ConditionalActivation & LiveUpdateParams): SWRResponse<AccountView, Error> =>
   useSWR(
-    () => (!enabled || !IS_CLIENT ? null : ["view_account", params.accountId]),
+    () => (enabled && IS_CLIENT ? ["view_account", params.accountId] : null),
 
     ([_queryKeyHead, accountId]) =>
       nearRpc.query<AccountView>({

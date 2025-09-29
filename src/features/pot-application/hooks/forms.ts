@@ -9,7 +9,7 @@ import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
-import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
+import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
 
 import {
   PotApplicationInputs,
@@ -77,7 +77,7 @@ export const usePotApplicationForm = ({
 
         if (asDao) {
           // If Dao, get dao policy
-          const daoPolicy = await getDaoPolicy(accountId);
+          const daoPolicy = await sputnikDaoClient.get_policy({ accountId });
 
           await naxiosInstance
             .contractApi({ contractId: accountId }) // INFO: In this case, the accountId has daoAddress value

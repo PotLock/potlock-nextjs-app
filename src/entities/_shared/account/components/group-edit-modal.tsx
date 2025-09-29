@@ -7,6 +7,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { prop } from "remeda";
 import { object } from "zod";
 
+import { nearProtocolSchemas } from "@/common/blockchains/near-protocol";
 import { AccountId, ByAccountId } from "@/common/types";
 import { TextField } from "@/common/ui/form/components";
 import {
@@ -23,7 +24,7 @@ import {
   ScrollBar,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
-import { AccountGroupItem, AccountListItem, validAccountId } from "@/entities/_shared/account";
+import { AccountGroupItem, AccountListItem } from "@/entities/_shared/account";
 
 export type AccountGroupEditModalProps = {
   title: string;
@@ -79,7 +80,7 @@ export const AccountGroupEditModal = create(
     const form = useForm<ByAccountId>({
       resolver: zodResolver(
         object({
-          accountId: validAccountId.refine(
+          accountId: nearProtocolSchemas.validAccountId.refine(
             (accountId) => !accountIds.includes(accountId),
             "Account with this ID is already listed",
           ),

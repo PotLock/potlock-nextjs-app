@@ -8,7 +8,7 @@ import getTimePassed from "@/common/lib/getTimePassed";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { TokenIcon } from "@/entities/_shared/token";
 import { DonationInfo } from "@/layout/profile/_deprecated/accounts";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 // TODO: refactor by breaking into TailwindCSS classes
 const FundingSrc = styled.div`

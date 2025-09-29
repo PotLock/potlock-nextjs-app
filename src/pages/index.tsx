@@ -19,7 +19,7 @@ import { useWalletUserSession } from "@/common/wallet";
 import { AccountCard } from "@/entities/_shared/account";
 import { DonateRandomly, DonateToAccountButton } from "@/features/donation";
 import { ProjectDiscovery } from "@/layout/components/project-discovery";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { FeaturedCampaigns } from "./campaigns";
 

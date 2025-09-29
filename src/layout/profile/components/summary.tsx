@@ -21,7 +21,7 @@ import {
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { DonateToAccountButton } from "@/features/donation";
-import { rootPathnames, routeSelectors } from "@/pathnames";
+import { rootPathnames, routeSelectors } from "@/navigation";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
   const walletUser = useWalletUserSession();

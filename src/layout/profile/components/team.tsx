@@ -6,7 +6,7 @@ import { NEARSocialUserProfile } from "@/common/contracts/social-db";
 import type { AccountId, ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/layout/utils";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import { routeSelectors } from "@/pathnames";
+import { routeSelectors } from "@/navigation";
 
 const extractProfileTeamMembers = (profileData: NEARSocialUserProfile) => {
   if (profileData.plTeam !== undefined) {

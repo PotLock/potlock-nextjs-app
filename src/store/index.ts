@@ -2,11 +2,9 @@ import { RematchDispatch, RematchRootState, init } from "@rematch/core";
 import immerPlugin from "@rematch/immer";
 import loadingPlugin, { ExtraModelsFromLoading } from "@rematch/loading";
 import persistPlugin from "@rematch/persist";
-import { TypedUseSelectorHook, useDispatch as useReduxDispatch, useSelector } from "react-redux";
 import storage from "redux-persist/lib/storage";
-import { prop } from "remeda";
 
-import { AppModel, models } from "./models";
+import { type AppModel, models } from "./models";
 
 type FullModel = ExtraModelsFromLoading<AppModel, { type: "full" }>;
 
@@ -36,15 +34,3 @@ export const store = init<AppModel, FullModel>({
 export type Store = typeof store;
 export type AppDispatcher = RematchDispatch<AppModel>;
 export type AppState = RematchRootState<AppModel, FullModel>;
-
-export const { dispatch } = store;
-
-export const useDispatch = () => useReduxDispatch<AppDispatcher>();
-
-export const useGlobalStoreSelector: TypedUseSelectorHook<AppState> = useSelector;
-
-export const resetStore = () => {
-  dispatch.nav.RESET();
-};
-
-export const useCoreState = () => useGlobalStoreSelector(prop("core"));

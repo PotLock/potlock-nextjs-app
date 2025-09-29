@@ -16,7 +16,7 @@ export const useFtMetadata = ({
   ...params
 }: ByTokenId & ConditionalActivation & LiveUpdateParams) =>
   useSWR(
-    () => (!enabled || !IS_CLIENT ? null : ["ft_metadata", params.tokenId]),
+    () => (enabled && IS_CLIENT ? ["ft_metadata", params.tokenId] : null),
     ([_queryKeyHead, tokenId]) => ftContractClient.ft_metadata({ tokenId }).catch(() => undefined),
 
     {
@@ -37,7 +37,7 @@ export const useFtBalanceOf = ({
   ...params
 }: ByAccountId & ByTokenId & ConditionalActivation & LiveUpdateParams) =>
   useSWR(
-    () => (!enabled || !IS_CLIENT ? null : ["ft_balance_of", params.accountId, params.tokenId]),
+    () => (enabled && IS_CLIENT ? ["ft_balance_of", params.accountId, params.tokenId] : null),
 
     ([_queryKeyHead, accountId, tokenId]) =>
       ftContractClient.ft_balance_of({ accountId, tokenId }).catch(() => undefined),
