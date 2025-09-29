@@ -80,7 +80,7 @@ export default function RegisterPage() {
 
         <h2 className="prose max-w-[600px] text-center md:text-lg">
           {!walletUser.hasRegistrationSubmitted && daoRegistrationProposal.isSubmitted
-            ? `Your DAO has one or more unresolved ${
+            ? `Your DAO has unresolved ${
                 PLATFORM_NAME
               } registration proposals. Please come back once they are acted upon.`
             : `Create a profile for your project to receive donations \
