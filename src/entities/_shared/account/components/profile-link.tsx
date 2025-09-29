@@ -8,7 +8,7 @@ import { ByAccountId } from "@/common/types";
 import { Badge } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { AccountSummaryPopup } from "./summary-popup";
 

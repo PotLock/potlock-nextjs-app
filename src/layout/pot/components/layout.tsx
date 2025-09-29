@@ -13,7 +13,7 @@ import { MatchingPoolContributionModal } from "@/features/matching-pool-contribu
 import { PotApplicationModal } from "@/features/pot-application";
 import { PFPayoutJustificationPublicationAction } from "@/features/proportional-funding";
 import { SuccessModal } from "@/layout/pot/_deprecated/SuccessModal";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { PotLayoutHero } from "./layout-hero";
 import { ErrorModal } from "../_deprecated/ErrorModal";

@@ -11,7 +11,7 @@ import { CheckedIcon } from "@/common/ui/layout/svg/CheckedIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { ChallengeResolveModal } from "./ChallengeResolveModal";
 

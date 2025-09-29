@@ -1,69 +1,33 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
-import {
-  LISTS_CONTRACT_ACCOUNT_ID,
-  PLATFORM_NAME,
-  SOCIAL_DB_CONTRACT_ACCOUNT_ID,
-} from "@/common/_config";
+import { PLATFORM_NAME } from "@/common/_config";
 import { NOOP_STRING } from "@/common/constants";
-import { ProposalStatus, sputnikDaoHooks } from "@/common/contracts/sputnikdao2";
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
+import { useDaoRegistrationProposalStatus } from "@/entities/dao";
 import { ProfileConfigurationUserPanel } from "@/features/profile-configuration";
-import { rootPathnames, routeSelectors } from "@/pathnames";
+import { routeSelectors } from "@/navigation";
 
 export default function RegisterPage() {
   const walletUser = useWalletUserSession();
   const router = useRouter();
   const { toast } = useToast();
 
-  const {
-    isLoading: isRecentDaoProposalListLoading,
-    data: recentDaoProposals,
-    mutate: refetchRecentDaoProposals,
-  } = sputnikDaoHooks.useProposals({
+  const daoRegistrationProposal = useDaoRegistrationProposalStatus({
     enabled: walletUser.isDaoRepresentative,
     accountId: walletUser.accountId ?? NOOP_STRING,
-    from_index: 0,
-    limit: 10,
   });
-
-  const unresolvedDaoRegistrationProposals = useMemo(
-    () =>
-      recentDaoProposals?.filter(({ description, kind, status }) => {
-        if (
-          typeof kind === "object" &&
-          "FunctionCall" in kind &&
-          status === ProposalStatus.InProgress
-        ) {
-          const { receiver_id, actions } = kind.FunctionCall;
-
-          return (
-            (receiver_id === LISTS_CONTRACT_ACCOUNT_ID &&
-              actions.some(({ method_name }) => method_name === "register_batch")) ||
-            (receiver_id === SOCIAL_DB_CONTRACT_ACCOUNT_ID && description.includes(PLATFORM_NAME))
-          );
-        } else return false;
-      }) ?? [],
-
-    [recentDaoProposals],
-  );
-
-  const isDaoRegistrationApprovalPending = useMemo(
-    () => unresolvedDaoRegistrationProposals.length > 0,
-    [unresolvedDaoRegistrationProposals.length],
-  );
 
   const onRegistrationSuccess = useCallback(() => {
     toast({ title: "Success!", description: "You have successfully submitted your registration." });
 
     if (walletUser.isSignedIn) {
       if (walletUser.isDaoRepresentative) {
-        refetchRecentDaoProposals();
+        daoRegistrationProposal.refetch();
       } else {
         setTimeout(
           () => {
@@ -75,7 +39,7 @@ export default function RegisterPage() {
         );
       }
     }
-  }, [refetchRecentDaoProposals, router, toast, walletUser]);
+  }, [daoRegistrationProposal, router, toast, walletUser]);
 
   const onRegistrationFailure = useCallback(
     (errorMessage: string) =>
@@ -90,7 +54,7 @@ export default function RegisterPage() {
       !walletUser.isMetadataLoading &&
       walletUser.hasRegistrationSubmitted
     ) {
-      router.push(`${rootPathnames.PROFILE}/${walletUser.accountId}`);
+      router.push(routeSelectors.PROFILE_BY_ID(walletUser.accountId));
     }
   }, [
     router,
@@ -109,13 +73,13 @@ export default function RegisterPage() {
         )}
       >
         <h1 className="prose font-500 font-lora text-[32px] leading-[120%] md:text-[40px]">
-          {isDaoRegistrationApprovalPending
-            ? "Awaiting registration approval..."
+          {!walletUser.hasRegistrationSubmitted && daoRegistrationProposal.isSubmitted
+            ? "Awaiting registration proposal approval..."
             : "Register New Project"}
         </h1>
 
         <h2 className="prose max-w-[600px] text-center md:text-lg">
-          {isDaoRegistrationApprovalPending
+          {!walletUser.hasRegistrationSubmitted && daoRegistrationProposal.isSubmitted
             ? `Your DAO has one or more unresolved ${
                 PLATFORM_NAME
               } registration proposals. Please come back once they are acted upon.`

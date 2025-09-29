@@ -14,7 +14,7 @@ import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useFungibleToken } from "@/entities/_shared/token";
-import { routeSelectors } from "@/pathnames";
+import { routeSelectors } from "@/navigation";
 import { useDispatch } from "@/store/hooks";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";

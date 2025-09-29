@@ -15,7 +15,7 @@ import { daysFloatToMilliseconds } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 import { type AppDispatcher } from "@/store";
 import { useGlobalStoreSelector } from "@/store/hooks";
 

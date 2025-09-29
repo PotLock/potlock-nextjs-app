@@ -1,7 +1,12 @@
 import useSWR from "swr";
 
 import { IS_CLIENT } from "@/common/constants";
-import type { ByAccountId, ByListId, ConditionalActivation } from "@/common/types";
+import type {
+  ByAccountId,
+  ByListId,
+  ConditionalActivation,
+  LiveUpdateParams,
+} from "@/common/types";
 
 import * as contractClient from "./client";
 
@@ -46,11 +51,22 @@ export const useRegistrations = ({
 
 export const useRegistration = ({
   enabled = true,
+  live = false,
   accountId,
   listId,
-}: ByAccountId & ByListId & ConditionalActivation) =>
-  useSWR(["useRegistration", accountId, listId], ([_queryKeyHead, accountIdKey, listIdKey]) =>
-    !enabled || !IS_CLIENT
-      ? undefined
-      : contractClient.getRegistration({ registrant_id: accountIdKey, list_id: listIdKey }),
+}: ByAccountId & ByListId & ConditionalActivation & LiveUpdateParams) =>
+  useSWR(
+    ["useRegistration", accountId, listId],
+    ([_queryKeyHead, accountIdKey, listIdKey]) =>
+      !enabled || !IS_CLIENT
+        ? undefined
+        : contractClient.getRegistration({ registrant_id: accountIdKey, list_id: listIdKey }),
+
+    live
+      ? {}
+      : {
+          revalidateIfStale: false,
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+        },
   );

@@ -13,7 +13,7 @@ import {
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountHandle, AccountListItem } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 export type DaoAuthOptionProps = ByAccountId & {
   isActive: boolean;

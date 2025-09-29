@@ -126,14 +126,28 @@ export const save = async ({
 
                 args: {
                   proposal: {
-                    description:
-                      tx.receiverId === SOCIAL_DB_CONTRACT_ACCOUNT_ID
-                        ? `Update profile on ${
-                            SOCIAL_PLATFORM_NAME
-                          } (required for registration on ${PLATFORM_NAME})`
-                        : `${
-                            mode === "register" ? "Submit registration request" : "Update profile"
-                          } on ${PLATFORM_NAME}`,
+                    ...(tx.receiverId === SOCIAL_DB_CONTRACT_ACCOUNT_ID
+                      ? {
+                          //! Make sure to always include `PLATFORM_NAME`
+                          //! in the description of the social profile update proposal!
+                          description:
+                            mode === "register"
+                              ? `${PLATFORM_NAME} Registration Step 1: Update DAO profile on ${
+                                  SOCIAL_PLATFORM_NAME
+                                }`
+                              : `Update DAO profile on ${
+                                  SOCIAL_PLATFORM_NAME
+                                } via ${PLATFORM_NAME}`,
+                        }
+                      : {}),
+
+                    ...(tx.receiverId === LISTS_CONTRACT_ACCOUNT_ID
+                      ? {
+                          description: `${
+                            PLATFORM_NAME
+                          } Registration Step 2: Submit DAO listing application`,
+                        }
+                      : {}),
 
                     kind: { FunctionCall: { receiver_id: tx.receiverId, actions: [action] } },
                   },

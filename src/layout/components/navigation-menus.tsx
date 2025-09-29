@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { cn } from "@/common/ui/layout/utils";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { MAIN_NAVIGATION_LINKS } from "../constants";
 

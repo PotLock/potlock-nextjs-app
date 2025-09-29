@@ -23,7 +23,7 @@ import {
 } from "@/entities/_shared/account";
 import { listRegistrationStatuses } from "@/entities/list";
 import { DaoAuthMenu } from "@/features/dao-auth";
-import { routeSelectors } from "@/pathnames";
+import { routeSelectors } from "@/navigation";
 
 export const UserMenu: React.FC = () => {
   const walletUser = useWalletUserSession();

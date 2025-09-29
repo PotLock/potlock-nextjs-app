@@ -6,7 +6,7 @@ import { ETHEREUM_EXPLORER_ADDRESS_ENDPOINT_URL } from "@/common/constants";
 import { isEthereumAddress, truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 import { cn } from "@/common/ui/layout/utils";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { AccountSummaryPopup } from "./summary-popup";
 import { useAccountSocialProfile } from "../hooks/social-profile";

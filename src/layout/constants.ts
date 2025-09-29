@@ -1,4 +1,4 @@
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 export const MAIN_NAVIGATION_LINKS = [
   { label: "Projects", url: rootPathnames.PROJECTS, disabled: false },
