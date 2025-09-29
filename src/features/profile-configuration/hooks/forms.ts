@@ -232,7 +232,7 @@ export const useProfileForm = ({
         console.error(socialProfileSnapshotError);
         onFailure(`Unable to retrieve ${SOCIAL_PLATFORM_NAME} profile`);
       } else {
-        save({ accountId, isDao, mode, inputs, socialProfileSnapshot })
+        return save({ accountId, isDao, mode, inputs, socialProfileSnapshot })
           .then(({ success, error }) => {
             if (success) {
               refetchSocialProfile().then(() => self.reset(defaultValues));
@@ -244,7 +244,7 @@ export const useProfileForm = ({
           })
           .catch((error) => {
             console.error(error);
-            onFailure(error ?? "Unknown error");
+            onFailure((error as Error)?.message ?? "Unknown error");
           });
       }
     },
