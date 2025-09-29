@@ -27,7 +27,7 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
   onActivateClick,
   handleRemove,
 }) => {
-  const rootElementRef = useRef(null);
+  const rootElementRef = useRef<HTMLDivElement>(null);
   const [isRemovalDialogOpen, setIsRemovalDialogOpen] = useState(false);
 
   const onRemoveClick = useCallback(() => {
@@ -45,10 +45,14 @@ export const DaoAuthOption: React.FC<DaoAuthOptionProps> = ({
   const profileLink = useMemo(
     () => (
       <Button asChild variant="standard-plain">
-        <Link target="_blank" href={`${rootPathnames.PROFILE}/${accountId}`}>
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`${rootPathnames.PROFILE}/${accountId}`}
+        >
           <span className="inline-flex flex-nowrap gap-2">
             <span>{"DAO Profile"}</span>
-            <ArrowUpRightFromSquare size={14} className="color-neutral-400" />
+            <ArrowUpRightFromSquare size={14} className="color-neutral-400" aria-hidden="true" />
           </span>
         </Link>
       </Button>

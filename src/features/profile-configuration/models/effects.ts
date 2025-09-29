@@ -95,7 +95,9 @@ export const save = async ({
 
   const callbackUrl = window.location.href;
 
-  if (!isDao) {
+  if (directTransactions.length === 0) {
+    return { success: false, error: "No transactions to submit." };
+  } else if (!isDao) {
     return nearProtocolClient.naxiosInstance
       .contractApi()
       .callMultiple(directTransactions, callbackUrl)
@@ -170,7 +172,7 @@ export const save = async ({
       .catch((err) => {
         console.error(err);
 
-        return { success: false, error: "Unable retrieve DAO proposal bond." };
+        return { success: false, error: "Unable to retrieve DAO proposal bond." };
       });
   }
 };
