@@ -11,8 +11,11 @@ import type {
 import * as contractClient from "./client";
 
 export const useList = ({ enabled = true, listId }: ByListId & ConditionalActivation) =>
-  useSWR(enabled && IS_CLIENT ? ["useList", listId] : null, ([_queryKeyHead, listIdKey]) =>
-    contractClient.get_list({ list_id: listIdKey }),
+  useSWR(
+    () => (enabled ? ["useList", listId] : null),
+
+    ([_queryKeyHead, listIdKey]) =>
+      !IS_CLIENT ? undefined : contractClient.get_list({ list_id: listIdKey }),
   );
 
 export const useIsRegistered = ({
@@ -25,9 +28,16 @@ export const useIsRegistered = ({
   Pick<contractClient.IsRegisteredArgs, "required_status"> &
   ConditionalActivation) =>
   useSWR(
-    enabled && IS_CLIENT ? ["useIsRegistered", accountId, listId, params] : null,
+    () => (enabled ? ["useIsRegistered", accountId, listId, params] : null),
+
     ([_queryKeyHead, accountIdKey, listIdKey, paramsKey]) =>
-      contractClient.is_registered({ account_id: accountIdKey, list_id: listIdKey, ...paramsKey }),
+      !IS_CLIENT
+        ? undefined
+        : contractClient.is_registered({
+            account_id: accountIdKey,
+            list_id: listIdKey,
+            ...paramsKey,
+          }),
   );
 
 export const useRegistrations = ({
@@ -38,9 +48,12 @@ export const useRegistrations = ({
   Omit<contractClient.GetRegistrationsForListArgs, "list_id"> &
   ConditionalActivation) =>
   useSWR(
-    enabled && IS_CLIENT ? ["useRegistrations", listId, params] : null,
+    () => (enabled ? ["useRegistrations", listId, params] : null),
+
     ([_queryKeyHead, listIdKey, paramsKey]) =>
-      contractClient.get_registrations_for_list({ list_id: listIdKey, ...paramsKey }),
+      !IS_CLIENT
+        ? undefined
+        : contractClient.get_registrations_for_list({ list_id: listIdKey, ...paramsKey }),
   );
 
 export const useRegistration = ({
@@ -50,9 +63,12 @@ export const useRegistration = ({
   listId,
 }: ByAccountId & ByListId & ConditionalActivation & LiveUpdateParams) =>
   useSWR(
-    enabled && IS_CLIENT ? ["useRegistration", accountId, listId] : null,
+    () => (enabled ? ["useRegistration", accountId, listId] : null),
+
     ([_queryKeyHead, accountIdKey, listIdKey]) =>
-      contractClient.getRegistration({ registrant_id: accountIdKey, list_id: listIdKey }),
+      !IS_CLIENT
+        ? undefined
+        : contractClient.getRegistration({ registrant_id: accountIdKey, list_id: listIdKey }),
 
     live
       ? {}

@@ -7,7 +7,7 @@ import * as client from "./client";
 
 export const useWhitelistedTokens = ({ enabled = true }: ConditionalActivation | undefined = {}) =>
   useSWR(
-    enabled && IS_CLIENT ? ["get_whitelisted_tokens"] : null,
-    () => client.get_whitelisted_tokens(),
+    () => (enabled ? ["get_whitelisted_tokens"] : null),
+    () => (!IS_CLIENT ? undefined : client.get_whitelisted_tokens()),
     CONTRACT_SWR_CONFIG,
   );

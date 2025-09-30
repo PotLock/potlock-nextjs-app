@@ -40,16 +40,21 @@ export const useViewAccount = ({
   enabled = true,
   live = false,
   ...params
-}: ByAccountId & ConditionalActivation & LiveUpdateParams): SWRResponse<AccountView, Error> =>
+}: ByAccountId & ConditionalActivation & LiveUpdateParams): SWRResponse<
+  AccountView | undefined,
+  Error
+> =>
   useSWR(
-    () => (enabled && IS_CLIENT ? ["view_account", params.accountId] : null),
+    () => (enabled ? ["view_account", params.accountId] : null),
 
     ([_queryKeyHead, accountId]) =>
-      nearRpc.query<AccountView>({
-        request_type: "view_account",
-        account_id: accountId,
-        finality: "final",
-      }),
+      !IS_CLIENT
+        ? undefined
+        : nearRpc.query<AccountView>({
+            request_type: "view_account",
+            account_id: accountId,
+            finality: "final",
+          }),
 
     {
       ...(live

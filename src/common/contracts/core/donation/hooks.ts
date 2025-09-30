@@ -6,6 +6,7 @@ import type { ConditionalActivation } from "@/common/types";
 import * as contractClient from "./client";
 
 export const useConfig = ({ enabled = true }: ConditionalActivation | undefined = {}) =>
-  useSWR(enabled && IS_CLIENT ? ["get_config"] : null, ([_queryKeyHead]) =>
-    contractClient.get_config(),
+  useSWR(
+    () => (enabled ? ["get_config"] : null),
+    ([_queryKeyHead]) => (!IS_CLIENT ? undefined : contractClient.get_config()),
   );

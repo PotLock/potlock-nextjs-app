@@ -12,13 +12,14 @@ export const useToken = ({
   tokenId,
 }: NonFungibleTokenLookupParams & ConditionalActivation) =>
   useSWR(
-    () =>
-      enabled && IS_CLIENT ? ["nftContractClient.nft_token", contractAccountId, tokenId] : null,
+    () => (enabled ? ["nftContractClient.nft_token", contractAccountId, tokenId] : null),
 
     ([_queryKeyHead, account_id, token_id]) =>
-      nftContractClient
-        .nft_token({ contractAccountId: account_id, tokenId: token_id })
-        .catch(() => undefined),
+      IS_CLIENT
+        ? nftContractClient
+            .nft_token({ contractAccountId: account_id, tokenId: token_id })
+            .catch(() => undefined)
+        : undefined,
 
     CONTRACT_SWR_CONFIG,
   );
