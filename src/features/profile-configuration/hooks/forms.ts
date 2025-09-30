@@ -85,8 +85,8 @@ export const useProfileForm = ({
     resetOptions: { keepDirty: false, keepTouched: false },
   });
 
-  //? For internal use only!
-  const values = useWatch(self);
+  //* For internal use only!
+  const values = useWatch({ control: self.control });
 
   const teamMembersAccountGroup: AccountGroupItem[] = useMemo(
     () => values.teamMembers?.map(objOf("accountId")) ?? [],
@@ -94,8 +94,12 @@ export const useProfileForm = ({
   );
 
   const isDisabled = useMemo(
-    () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
-    [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
+    () =>
+      (mode === "register" ? false : !self.formState.isDirty) ||
+      !self.formState.isValid ||
+      self.formState.isSubmitting,
+
+    [mode, self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
   );
 
   const updateBackgroundImage = useCallback(
