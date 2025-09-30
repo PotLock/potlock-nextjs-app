@@ -40,6 +40,7 @@ export const useWalletUserSession = (): WalletUserSession => {
     mutate: refetchIndexedListRegistrations,
   } = indexer.useAccountListRegistrations({
     enabled: activeAccountId !== undefined,
+    live: true,
     accountId: activeAccountId ?? NOOP_STRING,
   });
 

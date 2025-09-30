@@ -15,6 +15,7 @@ import {
   FIFTY_TGAS,
   FULL_TGAS,
   MIN_PROPOSAL_DEPOSIT_FALLBACK,
+  ONE_TGAS,
   PUBLIC_GOODS_REGISTRY_LIST_ID,
 } from "@/common/constants";
 import { type NEARSocialUserProfile } from "@/common/contracts/social-db";
@@ -88,7 +89,7 @@ export const save = async ({
         receiverId: LISTS_CONTRACT_ACCOUNT_ID,
         args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
         deposit: parseNearAmount("0.05") ?? undefined,
-        gas: FULL_TGAS,
+        gas: ONE_TGAS.times(250).toFixed(),
       }),
     );
   }
