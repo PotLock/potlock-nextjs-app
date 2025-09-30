@@ -34,7 +34,6 @@ export const PotApplicationModal: React.FC<PotApplicationModalProps> = ({
 }) => {
   const walletUser = useWalletUserSession();
 
-  // Form settings
   const { form, errors, onSubmit, inProgress } = usePotApplicationForm({
     accountId: applicantAccountId,
     asDao: daoMode,
