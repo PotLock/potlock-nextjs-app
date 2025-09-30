@@ -17,11 +17,14 @@ export default function EditProjectPage() {
   const onProfileUpdateSuccess = useCallback(() => {
     toast({
       title: "Success!",
-      description: "You have successfully updated your profile.",
+
+      description: walletUser.isDaoRepresentative
+        ? "DAO profile update proposal has been submitted."
+        : "Your profile has been updated.",
     });
 
     setTimeout(() => router.push(routeSelectors.PROFILE_BY_ID(accountId)), 3000);
-  }, [accountId, router, toast]);
+  }, [accountId, router, toast, walletUser.isDaoRepresentative]);
 
   const onProfileUpdateFailure = useCallback(
     (errorMessage: string) =>
