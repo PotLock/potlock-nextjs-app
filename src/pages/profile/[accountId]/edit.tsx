@@ -24,7 +24,9 @@ export default function EditProjectPage() {
   }, [accountId, router, toast]);
 
   const onProfileUpdateFailure = useCallback(
-    (errorMessage: string) => toast({ title: "Error", description: errorMessage }),
+    (errorMessage: string) =>
+      toast({ title: "Error", description: errorMessage, variant: "destructive" }),
+
     [toast],
   );
 

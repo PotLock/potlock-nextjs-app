@@ -65,7 +65,9 @@ export const useWalletUserSession = (): WalletUserSession => {
 
   const isMetadataLoading =
     (isHuman === undefined && isHumanVerificationStatusLoading) ||
-    (indexedListRegistrations === undefined && isIndexedListRegistrationDataLoading) ||
+    (indexedListRegistrations === undefined &&
+      indexedListRegistrationsError === undefined &&
+      isIndexedListRegistrationDataLoading) ||
     (registration === undefined && isRegistrationLoading);
 
   const hasRegistrationSubmitted = useMemo(
