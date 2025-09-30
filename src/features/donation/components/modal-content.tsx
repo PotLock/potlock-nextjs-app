@@ -10,7 +10,7 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { DonationGroupAllocation } from "./group-allocation";
 import { DonationModalConfirmationScreen } from "./modal-confirmation-screen";
@@ -39,6 +39,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   closeModal,
   ...props
 }) => {
+  const dispatch = useDispatch();
   const { currentStep, finalOutcome } = useDonationState();
 
   const { isLoading: isDonationConfigLoading, data: donationConfig } =

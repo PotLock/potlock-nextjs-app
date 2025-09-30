@@ -1,1 +1,1 @@
-export * from "./components/editor";
+export { ProfileConfigurationUserPanel } from "./components/user-panel";

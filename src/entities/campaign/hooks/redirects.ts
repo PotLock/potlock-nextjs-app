@@ -3,11 +3,12 @@ import { useEffect } from "react";
 import { useModal } from "@ebay/nice-modal-react";
 
 import { useRouteQuery } from "@/common/lib";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { CampaignFinishModal } from "../components/CampaignFinishModal";
 
 export const useCampaignCreateOrUpdateRedirect = () => {
+  const dispatch = useDispatch();
   const resultModal = useModal(CampaignFinishModal);
 
   const {
@@ -28,5 +29,11 @@ export const useCampaignCreateOrUpdateRedirect = () => {
         setSearchParams({ transactionHashes: null });
       });
     }
-  }, [isTransactionOutcomeDetected, transactionHash, setSearchParams, resultModal]);
+  }, [
+    isTransactionOutcomeDetected,
+    transactionHash,
+    setSearchParams,
+    resultModal,
+    dispatch.campaignEditor,
+  ]);
 };

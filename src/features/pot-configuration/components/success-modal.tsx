@@ -11,7 +11,7 @@ import {
   DialogDescription,
 } from "@/common/ui/layout/components";
 import { ChefHatIcon } from "@/common/ui/layout/svg";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { PotDeploymentError } from "./error";
 import { usePotConfigurationState } from "../model";

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { rootPathnames, routeSelectors } from "./pathnames";
+import { rootPathnames, routeSelectors } from "./navigation";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

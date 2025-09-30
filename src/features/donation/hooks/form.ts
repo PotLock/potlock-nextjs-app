@@ -15,7 +15,7 @@ import { useToast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useFungibleToken } from "@/entities/_shared/token";
 import { extractMatchingPots } from "@/entities/pot";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import {
   DONATION_DEFAULT_MIN_AMOUNT_FLOAT,
@@ -36,6 +36,7 @@ export type DonationFormParams = DonationAllocationKey & {
 };
 
 export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams) => {
+  const dispatch = useDispatch();
   const { toast } = useToast();
   const viewer = useWalletUserSession();
 

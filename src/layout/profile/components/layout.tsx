@@ -10,7 +10,7 @@ import type { AccountId } from "@/common/types";
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { TabOption } from "@/common/ui/layout/types";
 import { cn } from "@/common/ui/layout/utils";
-import { routeSelectors } from "@/pathnames";
+import { routeSelectors } from "@/navigation";
 
 import { ProfileLayoutHeader } from "./header";
 import { ProfileLayoutHero } from "./hero";

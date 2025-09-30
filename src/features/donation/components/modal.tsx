@@ -7,7 +7,7 @@ import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { useDonationState } from "../models/store";
 import { DonationAllocationKey } from "../types";
@@ -17,6 +17,7 @@ export type DonationModalProps = DonationAllocationKey &
   Pick<DonationModalContentProps, "cachedTokenId" | "transactionHash"> & {};
 
 export const DonationModal = create((props: DonationModalProps) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const self = useModal();
   const isSingleProjectDonation = "accountId" in props;
@@ -38,7 +39,7 @@ export const DonationModal = create((props: DonationModalProps) => {
       donateToCampaign: null,
       transactionHashes: null,
     });
-  }, [self, setSearchParams]);
+  }, [dispatch.donation, self, setSearchParams]);
 
   const onSignInClick = useCallback(() => {
     nearProtocolClient.walletApi.signInModal();

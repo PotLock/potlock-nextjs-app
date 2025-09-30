@@ -14,9 +14,6 @@ const CAMPAIGN_TAB_ROUTES: TabOption[] = [
     id: "leaderboard",
     href: "/leaderboard",
   },
-
-  // { label: "History", id: "history", href: "/history" },
-
   { label: "Settings", id: "settings", href: "/settings" },
 ];
 
@@ -51,6 +48,7 @@ const Tabs = ({ options, selectedTab, onSelect, asLink }: Props) => {
               return (
                 <Link
                   href={`/campaign/${campaignId}${option.href}`}
+                  prefetch
                   key={option.id}
                   className={`font-500 border-b-solid transition-duration-300 whitespace-nowrap border-b-[2px] px-4 py-[10px] text-sm text-[#7b7b7b] transition-all hover:border-b-[#292929] hover:text-[#292929] ${selected ? "border-b-[#292929] text-[#292929]" : "border-b-[transparent]"}`}
                   onClick={() => {
