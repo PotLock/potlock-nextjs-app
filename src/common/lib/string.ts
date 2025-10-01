@@ -36,5 +36,10 @@ export const isValidHttpUrl = (value: string) => {
   }
 };
 
-export const utf8StringToBase64 = (value: string): string =>
-  Buffer.from(value, "utf8").toString("base64");
+export const utf8StringToBase64 = (value: string): string => {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(value);
+  const binary = bytes.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+
+  return btoa(binary);
+};

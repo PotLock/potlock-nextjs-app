@@ -64,9 +64,12 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
     toast({
       title: "Error!",
+
       description: `Unable to submit ${
         walletUser.isDaoRepresentative ? "application proposal" : "application"
       }, please try again.`,
+
+      variant: "destructive",
     });
   }, [toast, walletUser.isDaoRepresentative]);
 
