@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/layout/components";
+import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { ChallengeModal } from "@/entities/pot";
@@ -25,6 +26,7 @@ export type PotLayoutProps = {
 
 export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const router = useRouter();
+  const { toast } = useToast();
   const walletUser = useWalletUserSession();
 
   const { potId, ...query } = router.query as {
@@ -33,10 +35,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
     errorMessage?: string;
   };
 
-  const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
-  const { data: pot } = indexer.usePot({ potId });
-
-  // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
   const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
   const [fundModalOpen, setFundModalOpen] = useState(false);
@@ -46,12 +44,41 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
   const openChallengeModal = useCallback(() => setChallengeModalOpen(true), []);
 
+  const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
+  const { data: pot } = indexer.usePot({ potId });
+
+  const onApplicationSuccess = useCallback(() => {
+    setApplyModalOpen(false);
+
+    toast({
+      title: "Success!",
+
+      description: `Your ${
+        walletUser.isDaoRepresentative ? "application proposal" : "application"
+      } has been submitted.`,
+    });
+  }, [toast, walletUser.isDaoRepresentative]);
+
+  const onApplicationFailure = useCallback(() => {
+    setApplyModalOpen(false);
+
+    toast({
+      title: "Error!",
+
+      description: `Unable to submit ${
+        walletUser.isDaoRepresentative ? "application proposal" : "application"
+      }, please try again.`,
+
+      variant: "destructive",
+    });
+  }, [toast, walletUser.isDaoRepresentative]);
+
   return (
     <PageWithBanner>
       {/**
-       * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
-       * //! AND MUST BE REPLACED WITH A SIMPLE TOAST CALL
-       * //! THIS IS THE EXACT ROOT CAUSE OF THE POT TRANSACTION CONFIRMATION BUGS
+       * // FIXME:
+       * //! THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
+       * //! AND MUST BE REPLACED WITH AN INDIVIDUAL TOAST CALL FOR EACH USE CASE
        */}
       <SuccessModal
         successMessage="Transaction sent successfully"
@@ -60,9 +87,9 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
       />
 
       {/**
-       * // TODO!: THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
-       * //! AND MUST BE REPLACED WITH A SIMPLE TOAST CALL
-       * //! THIS IS THE EXACT ROOT CAUSE OF THE POT TRANSACTION CONFIRMATION BUGS
+       * // FIXME:
+       * //! THIS MODAL IS NOT SUPPOSED TO BE REUSABLE
+       * //! AND MUST BE REPLACED WITH AN INDIVIDUAL TOAST CALL FOR EACH USE CASE
        */}
       <ErrorModal
         errorMessage={decodeURIComponent(query.errorMessage || "")}
@@ -80,10 +107,12 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
 
           <PotApplicationModal
             open={applyModalOpen}
-            onCloseClick={() => setApplyModalOpen(false)}
             applicantAccountId={walletUser.accountId}
             daoMode={walletUser.isDaoRepresentative}
-            potDetail={pot}
+            potConfig={pot}
+            onCloseClick={() => setApplyModalOpen(false)}
+            onSuccess={onApplicationSuccess}
+            onFailure={onApplicationFailure}
           />
 
           <ChallengeModal
