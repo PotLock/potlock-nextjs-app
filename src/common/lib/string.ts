@@ -35,3 +35,6 @@ export const isValidHttpUrl = (value: string) => {
     return false;
   }
 };
+
+export const utf8StringToBase64 = (value: string): string =>
+  Buffer.from(value, "utf8").toString("base64");

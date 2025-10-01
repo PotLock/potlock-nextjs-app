@@ -20,7 +20,7 @@ import {
 } from "@/common/constants";
 import { type NEARSocialUserProfile } from "@/common/contracts/social-db";
 import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
-import { deepObjectDiff } from "@/common/lib";
+import { deepObjectDiff, objectToBase64Json } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
 
 import type { ProfileConfigurationMode } from "../types";
@@ -120,7 +120,7 @@ export const save = async ({
                 method_name: tx.method,
                 gas: tx.gas ?? FIFTY_TGAS,
                 deposit: tx.deposit || "0",
-                args: Buffer.from(JSON.stringify(tx.args), "utf-8").toString("base64"),
+                args: objectToBase64Json(tx.args ?? {}),
               };
 
               return {
