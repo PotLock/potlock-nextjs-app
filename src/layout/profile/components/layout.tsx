@@ -113,7 +113,7 @@ const Tabs: React.FC<ProfileLayoutTabPanelProps> = ({ options, selectedTab, onSe
             if (asLink) {
               return (
                 <Link
-                  href={`/profile/${accountId}${option.href}`}
+                  href={`/profile/${accountId}${option.href}${queryString}`}
                   key={option.id}
                   className={cn(
                     "font-500 border-b-solid transition-duration-300 whitespace-nowrap",
