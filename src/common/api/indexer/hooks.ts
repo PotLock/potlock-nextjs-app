@@ -2,10 +2,15 @@ import type { AxiosResponse } from "axios";
 
 import { NOOP_STRING } from "@/common/constants";
 import { isAccountId, isEthereumAddress } from "@/common/lib";
-import { ByAccountId, ByListId, type ConditionalActivation } from "@/common/types";
+import {
+  ByAccountId,
+  ByListId,
+  type ConditionalActivation,
+  type LiveUpdateParams,
+} from "@/common/types";
 
 import * as generatedClient from "./internal/client.generated";
-import { INDEXER_CLIENT_CONFIG } from "./internal/config";
+import { INDEXER_CLIENT_CONFIG, INDEXER_CLIENT_CONFIG_STAGING } from "./internal/config";
 import { ByPotId } from "./types";
 
 /**
@@ -86,18 +91,27 @@ export const useAccountActivePots = ({
  */
 export const useAccountListRegistrations = ({
   enabled = true,
+  live = false,
   accountId,
   ...params
 }: ByAccountId &
   generatedClient.V1AccountsListRegistrationsRetrieveParams &
-  ConditionalActivation) => {
+  ConditionalActivation &
+  LiveUpdateParams) => {
   const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(accountId, params, {
     ...INDEXER_CLIENT_CONFIG,
 
-    swr: {
-      enabled,
-      shouldRetryOnError: (err) => err.status !== 404,
-    },
+    swr: live
+      ? {
+          enabled,
+        }
+      : {
+          enabled,
+          shouldRetryOnError: (err) => err.status !== 404,
+          revalidateIfStale: false,
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+        },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
@@ -326,6 +340,31 @@ export const useMpdaoVoter = ({
   const queryResult = generatedClient.useV1MpdaoVotersRetrieve2(accountId, {
     ...INDEXER_CLIENT_CONFIG,
     swr: { enabled },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_campaigns_retrieve
+ */
+
+export const useCampaigns = ({
+  enabled = true,
+  ...params
+}: generatedClient.V1CampaignsRetrieveParams & ConditionalActivation = {}) => {
+  const queryResult = generatedClient.useV1CampaignsRetrieve(params, {
+    ...INDEXER_CLIENT_CONFIG_STAGING,
+    swr: { enabled },
+  });
+
+  return { ...queryResult, data: queryResult.data?.data };
+};
+
+export const useCampaign = ({ campaignId }: { campaignId: number }) => {
+  const queryResult = generatedClient.useV1CampaignsRetrieve2(campaignId, {
+    ...INDEXER_CLIENT_CONFIG_STAGING,
+    swr: { enabled: true },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

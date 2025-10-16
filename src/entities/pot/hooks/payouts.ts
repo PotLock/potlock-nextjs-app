@@ -4,11 +4,16 @@ import { ByPotId, indexer } from "@/common/api/indexer";
 
 export type PotPayoutLookupParams = ByPotId & {
   pageSize?: number;
+  initialSearchTerm?: string;
 };
 
-export const usePotPayoutLookup = ({ potId, pageSize = 10 }: PotPayoutLookupParams) => {
+export const usePotPayoutLookup = ({
+  potId,
+  pageSize = 10,
+  initialSearchTerm = "",
+}: PotPayoutLookupParams) => {
   const [pageNumber, setPageNumber] = useState(1);
-  const [searchTerm, setSearchTerm] = useState<string | undefined>("");
+  const [searchTerm, setSearchTerm] = useState<string>(initialSearchTerm);
 
   const {
     isLoading,

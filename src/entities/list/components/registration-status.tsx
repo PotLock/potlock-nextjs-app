@@ -1,7 +1,7 @@
 import { RegistrationStatus } from "@/common/contracts/core/lists";
 
 export const listRegistrationStatusIcons: Record<
-  RegistrationStatus,
+  RegistrationStatus | "Unregistered",
   { icon: React.ReactNode; color: string }
 > = {
   Approved: {

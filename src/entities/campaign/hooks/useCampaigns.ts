@@ -1,8 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
+import { Campaign, V1CampaignsRetrieveStatus, indexer } from "@/common/api/indexer";
 import { NOOP_STRING } from "@/common/constants";
-import { Campaign, campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import { Group, GroupType } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
+
+import { CAMPAIGN_STATUS_OPTIONS } from "../utils/constants";
 
 enum CampaignTab {
   ALL_CAMPAIGNS = "ALL_CAMPAIGNS",
@@ -12,52 +15,51 @@ enum CampaignTab {
 export const useAllCampaignLists = () => {
   const viewer = useWalletUserSession();
   const [currentTab, setCurrentTab] = useState<CampaignTab>(CampaignTab.ALL_CAMPAIGNS);
-  const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
+  const [statusFilter, setsStatusFilter] = useState<string>("all");
 
-  const { data: allCampaigns, isLoading: isAllCampaignsLoading } =
-    campaignsContractHooks.useCampaigns();
+  const { data: campaigns, isLoading: isCampaignsLoading } = indexer.useCampaigns({
+    page: 1,
+    page_size: 300,
+    ...(currentTab === CampaignTab.MY_CAMPAIGNS && { owner: viewer.accountId ?? NOOP_STRING }),
+    ...(statusFilter !== "all" && { status: statusFilter as V1CampaignsRetrieveStatus }),
+  });
 
-  const { data: ownerCampaigns, isLoading: loadingOwnerCampaigns } =
-    campaignsContractHooks.useOwnedCampaigns({
-      accountId: viewer.accountId ?? NOOP_STRING,
-    });
-
-  const fetchAllCampaigns = useCallback(() => {
-    setCurrentTab(CampaignTab.ALL_CAMPAIGNS);
-    setFilteredCampaigns(allCampaigns || []);
-  }, [allCampaigns]);
-
-  const fetchMyCampaigns = useCallback(() => {
-    if (!viewer.isSignedIn) return;
-    setCurrentTab(CampaignTab.MY_CAMPAIGNS);
-    setFilteredCampaigns(ownerCampaigns || []);
-  }, [ownerCampaigns, viewer?.isSignedIn]);
-
-  useEffect(() => {
-    fetchAllCampaigns();
-  }, [fetchAllCampaigns]);
-
-  const actions = useMemo(
+  const buttons = useMemo(
     () => [
       {
         label: "All Campaigns",
         type: CampaignTab.ALL_CAMPAIGNS,
-        onClick: fetchAllCampaigns,
+        onClick: () => setCurrentTab(CampaignTab.ALL_CAMPAIGNS),
       },
       {
         label: "My Campaigns",
         type: CampaignTab.MY_CAMPAIGNS,
-        onClick: fetchMyCampaigns,
+        onClick: () => setCurrentTab(CampaignTab.MY_CAMPAIGNS),
         condition: viewer.isSignedIn,
       },
     ],
-    [fetchAllCampaigns, fetchMyCampaigns, viewer.isSignedIn],
+    [viewer.isSignedIn],
   );
 
+  const tagsList: Group<GroupType.single>[] = [
+    {
+      label: "Status",
+      options: CAMPAIGN_STATUS_OPTIONS,
+      type: GroupType.single,
+      props: {
+        value: statusFilter,
+        onValueChange: (value) => {
+          setsStatusFilter(value);
+        },
+      },
+    },
+  ];
+
   return {
-    buttons: actions,
+    buttons,
+    tagsList,
     currentTab,
-    campaigns: filteredCampaigns,
-    loading: isAllCampaignsLoading || loadingOwnerCampaigns,
+    campaigns: campaigns?.results || [],
+    loading: isCampaignsLoading,
   };
 };
