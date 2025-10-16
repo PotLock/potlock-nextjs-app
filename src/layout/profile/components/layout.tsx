@@ -91,6 +91,7 @@ const Tabs: React.FC<ProfileLayoutTabPanelProps> = ({ options, selectedTab, onSe
   const router = useRouter();
   const { accountId } = router.query as { accountId: AccountId };
   const _selectedTab = selectedTab || options[0].id;
+
   const queryString = (() => {
     const asPath = router.asPath;
     const qIndex = asPath.indexOf("?");
@@ -190,7 +191,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    console.log("accountView", accountView);
     if (!isAccountViewLoading && accountView === undefined && accountViewError !== undefined) {
       router.replace("/404", { pathname: routeSelectors.PROFILE_BY_ID("404") });
     } else {
