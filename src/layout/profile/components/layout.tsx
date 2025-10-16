@@ -92,6 +92,12 @@ const Tabs: React.FC<ProfileLayoutTabPanelProps> = ({ options, selectedTab, onSe
   const { accountId } = router.query as { accountId: AccountId };
   const _selectedTab = selectedTab || options[0].id;
 
+  const queryString = (() => {
+    const asPath = router.asPath;
+    const qIndex = asPath.indexOf("?");
+    return qIndex >= 0 ? asPath.substring(qIndex) : "";
+  })();
+
   return (
     <div className="mb-[46px] flex w-full flex-row flex-wrap gap-2">
       <div className="w-full px-[1rem]  md:px-[4.5rem]">
