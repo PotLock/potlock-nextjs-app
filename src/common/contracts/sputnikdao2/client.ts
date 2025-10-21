@@ -1,7 +1,8 @@
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
-import type { ByAccountId } from "@/common/types";
+import { FULL_TGAS } from "@/common/constants";
+import type { ByAccountId, IndivisibleUnits } from "@/common/types";
 
-import type { Policy, ProposalOutput } from "./types";
+import type { Policy, ProposalId, ProposalInput, ProposalOutput } from "./types";
 
 export const get_policy = ({ accountId }: ByAccountId) =>
   nearProtocolClient.naxiosInstance
@@ -20,3 +21,24 @@ export const get_proposals = ({ accountId, args }: ByAccountId & { args: GetProp
   nearProtocolClient.naxiosInstance
     .contractApi({ contractId: accountId })
     .view<typeof args, ProposalOutput[]>("get_proposals", { args });
+
+export type AddProposalArgs = {
+  proposal: ProposalInput;
+};
+
+export const add_proposal = ({
+  accountId,
+  proposalBond,
+  callbackUrl = window.location.href,
+  args,
+}: ByAccountId & { proposalBond: IndivisibleUnits; callbackUrl?: string } & {
+  args: AddProposalArgs;
+}) =>
+  nearProtocolClient.naxiosInstance
+    .contractApi({ contractId: accountId })
+    .call<typeof args, ProposalId>("add_proposal", {
+      args,
+      deposit: proposalBond,
+      gas: FULL_TGAS,
+      callbackUrl,
+    });
