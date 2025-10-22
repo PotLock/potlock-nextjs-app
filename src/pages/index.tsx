@@ -159,11 +159,9 @@ export default function Home() {
     <PageWithBanner>
       <WelcomeBanner />
       <GeneralStats />
-      {ENV_TAG !== "production" && (
         <div className="mt-8 w-full p-0">
           <FeaturedCampaigns data={campaigns?.results ?? []} />
         </div>
-      )}
       <div className="flex w-full flex-col gap-4 px-2 pt-10 md:gap-10 md:pt-12">
         <div className="flex w-full flex-col gap-5">
           <div className="flex flex-row items-center justify-between text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
