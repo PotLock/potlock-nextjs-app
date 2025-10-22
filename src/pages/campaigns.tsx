@@ -62,7 +62,7 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
         <CarouselContent>
           {data?.length &&
             data
-              ?.filter((data) => [86, 85, 84, 81,52, 45].includes(data?.on_chain_id))
+              ?.filter((data) => [86, 85, 84, 81, 52, 45].includes(data?.on_chain_id))
               ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
         </CarouselContent>
       </Carousel>
