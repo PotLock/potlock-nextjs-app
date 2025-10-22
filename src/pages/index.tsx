@@ -135,9 +135,7 @@ export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
-  const { data: campaigns } = indexer.useCampaigns({
-    enabled: ENV_TAG !== "production",
-  });
+  const { data: campaigns } = indexer.useCampaigns();
 
   useEffect(() => {
     if (!api) return;
