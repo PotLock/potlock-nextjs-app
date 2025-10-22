@@ -7,7 +7,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
-import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
+import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { MatchingPoolContributionInputs, matchingPoolFundingSchema } from "../model/schemas";
@@ -43,7 +43,10 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
       const daoTransactionArgs = {
         proposal: {
           proposal: {
-            description: `Contribute to matching pool for ${potDetail.name} pot (${potDetail.account}) on POTLOCK`,
+            description: `Contribute to matching pool for ${
+              potDetail.name
+            } pot (${potDetail.account}) on POTLOCK`,
+
             kind: {
               FunctionCall: {
                 receiver_id: potDetail.account,
@@ -62,16 +65,14 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
         setInProgress(true);
 
         if (viewer.isDaoRepresentative) {
-          const daoPolicy = await getDaoPolicy(viewer.daoAccountId);
+          const daoPolicy = await sputnikDaoClient.get_policy({ accountId: viewer.accountId });
 
-          await naxiosInstance
-            .contractApi({ contractId: viewer.daoAccountId })
-            .call("add_proposal", {
-              args: daoTransactionArgs,
-              deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
-              gas: FULL_TGAS,
-              callbackUrl,
-            });
+          await naxiosInstance.contractApi({ contractId: viewer.accountId }).call("add_proposal", {
+            args: daoTransactionArgs,
+            deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
+            gas: FULL_TGAS,
+            callbackUrl,
+          });
         } else {
           await naxiosInstance.contractApi({ contractId: potDetail.account }).call("donate", {
             args,
@@ -90,7 +91,7 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
     [
       potDetail.account,
       potDetail.name,
-      viewer.daoAccountId,
+      viewer.accountId,
       viewer.isDaoRepresentative,
       viewer.referrerAccountId,
     ],

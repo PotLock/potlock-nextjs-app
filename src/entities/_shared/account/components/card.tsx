@@ -12,7 +12,7 @@ import {
   AccountProfilePicture,
   type AccountSnapshot,
 } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { AccountCardSkeleton } from "./card-skeleton";
 

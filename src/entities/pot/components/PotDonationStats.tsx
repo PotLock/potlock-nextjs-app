@@ -7,7 +7,7 @@ import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Toggle } from "@/common/ui/layout/svg";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { useFungibleToken } from "@/entities/_shared/token";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { Container, Row } from "./styled";
 import { JoinDonation, useOrderedDonations } from "../hooks/useOrderedDonations";

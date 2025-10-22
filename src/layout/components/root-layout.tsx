@@ -20,7 +20,9 @@ export const RootLayout: React.FC<RootLayoutProps> = ({ title, description, imag
     "https://alpha.potlock.com",
     "https://alpha.potlock.io",
     "https://potlock-next-app.vercel.app",
-    "https://alpha.potlock.xyz",
+    "https://app.potlock.xyz",
+    "https://app.potlock.org",
+    "https://staging.alpha.potlock.org",
   ];
 
   const paths = domains.map((domain) => `${domain}${asPath}`);

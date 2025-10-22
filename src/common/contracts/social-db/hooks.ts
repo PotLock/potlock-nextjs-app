@@ -11,10 +11,10 @@ export const useSocialProfile = ({
   accountId,
 }: ByAccountId & ConditionalActivation & LiveUpdateParams) =>
   useSWR(
-    ["useSocialProfile", accountId],
+    () => (enabled ? ["useSocialProfile", accountId] : null),
 
     ([_queryKeyHead, account_id]) =>
-      !enabled || !IS_CLIENT
+      !IS_CLIENT
         ? undefined
         : contractClient
             .getSocialProfile({ accountId: account_id })
@@ -27,7 +27,6 @@ export const useSocialProfile = ({
         : {
             revalidateIfStale: false,
             revalidateOnFocus: false,
-            revalidateOnMount: false,
             revalidateOnReconnect: false,
           }),
     },

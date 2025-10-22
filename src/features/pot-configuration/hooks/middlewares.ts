@@ -3,11 +3,12 @@ import { useEffect } from "react";
 import { useModal } from "@ebay/nice-modal-react";
 
 import { useRouteQuery } from "@/common/lib";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { PotDeploymentModal } from "../components/success-modal";
 
 export const usePotDeploymentSuccessMiddleware = () => {
+  const dispatch = useDispatch();
   const resultModal = useModal(PotDeploymentModal);
 
   const {
@@ -32,7 +33,13 @@ export const usePotDeploymentSuccessMiddleware = () => {
         setSearchParams({ transactionHashes: null });
       });
     }
-  }, [isTransactionOutcomeDetected, resultModal, setSearchParams, transactionHash]);
+  }, [
+    dispatch.potConfiguration,
+    isTransactionOutcomeDetected,
+    resultModal,
+    setSearchParams,
+    transactionHash,
+  ]);
 };
 
 // TODO: https://github.com/PotLock/potlock-nextjs-app/issues/86

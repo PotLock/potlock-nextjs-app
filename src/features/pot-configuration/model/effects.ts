@@ -8,7 +8,7 @@ import {
   type PotDeploymentResult,
   potFactoryContractClient,
 } from "@/common/contracts/core/pot-factory";
-import { AppDispatcher } from "@/store";
+import { type AppDispatcher } from "@/store";
 
 import { PotDeploymentInputs, PotSettings } from "./schemas";
 import { potInputsToPotArgs } from "../utils/normalization";

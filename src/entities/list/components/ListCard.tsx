@@ -11,7 +11,7 @@ import { LayersIcon } from "@/common/ui/layout/svg";
 import { LikeIcon } from "@/common/ui/layout/svg/like";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { ListFormModalType } from "../types";
 
@@ -24,6 +24,7 @@ export const ListCard = ({
   background?: string;
   backdrop: string;
 }) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const [isUpvoted, setIsUpvoted] = useState(false);
   const { push } = useRouter();

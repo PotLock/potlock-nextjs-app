@@ -20,6 +20,7 @@ const initialWalletUserAdapterState: WalletUserAdapterState = {
 };
 
 type WalletUserAdapterStore = WalletUserAdapterState & {
+  reset: () => void;
   registerInit: (isReady: boolean) => void;
   setAccountState: (state: WalletUserAccountState) => void;
   setError: (error: unknown) => void;
@@ -27,6 +28,7 @@ type WalletUserAdapterStore = WalletUserAdapterState & {
 
 export const useWalletUserAdapter = create<WalletUserAdapterStore>((set) => ({
   ...initialWalletUserAdapterState,
+  reset: () => set(initialWalletUserAdapterState),
   registerInit: (isReady: boolean) => set(isReady ? { isReady } : initialWalletUserAdapterState),
   setAccountState: (newAccountState: WalletUserAccountState) => set(newAccountState),
   setError: (error: unknown) => set({ error }),

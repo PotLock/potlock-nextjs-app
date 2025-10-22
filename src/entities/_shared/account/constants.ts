@@ -56,7 +56,7 @@ export const ACCOUNT_CATEGORY_OPTIONS: AccountCategoryOption[] = [
 ];
 
 export const ACCOUNT_REGISTRATION_STATUSES: Record<
-  RegistrationStatus,
+  RegistrationStatus | "Unregistered",
   {
     background: string;
     text: string;

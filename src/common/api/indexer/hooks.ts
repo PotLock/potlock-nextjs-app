@@ -2,7 +2,12 @@ import type { AxiosResponse } from "axios";
 
 import { NOOP_STRING } from "@/common/constants";
 import { isAccountId, isEthereumAddress } from "@/common/lib";
-import { ByAccountId, ByListId, type ConditionalActivation } from "@/common/types";
+import {
+  ByAccountId,
+  ByListId,
+  type ConditionalActivation,
+  type LiveUpdateParams,
+} from "@/common/types";
 
 import * as generatedClient from "./internal/client.generated";
 import { INDEXER_CLIENT_CONFIG, INDEXER_CLIENT_CONFIG_STAGING } from "./internal/config";
@@ -86,18 +91,27 @@ export const useAccountActivePots = ({
  */
 export const useAccountListRegistrations = ({
   enabled = true,
+  live = false,
   accountId,
   ...params
 }: ByAccountId &
   generatedClient.V1AccountsListRegistrationsRetrieveParams &
-  ConditionalActivation) => {
+  ConditionalActivation &
+  LiveUpdateParams) => {
   const queryResult = generatedClient.useV1AccountsListRegistrationsRetrieve(accountId, params, {
     ...INDEXER_CLIENT_CONFIG,
 
-    swr: {
-      enabled,
-      shouldRetryOnError: (err) => err.status !== 404,
-    },
+    swr: live
+      ? {
+          enabled,
+        }
+      : {
+          enabled,
+          shouldRetryOnError: (err) => err.status !== 404,
+          revalidateIfStale: false,
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+        },
   });
 
   return { ...queryResult, data: queryResult.data?.data };

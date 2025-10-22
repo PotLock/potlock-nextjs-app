@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useWatch } from "react-hook-form";
-import { objOf, pick } from "remeda";
+import { isDefined, objOf, pick } from "remeda";
 
+import { SOCIAL_PLATFORM_NAME } from "@/common/_config";
 import type { ByAccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { type AccountGroupItem, useAccountSocialProfile } from "@/entities/_shared/account";
@@ -14,7 +14,7 @@ import { AddFundingSourceInputs, ProfileConfigurationInputs } from "../models/ty
 import { stripLinktree } from "../utils/normalization";
 
 export type ProfileFormParams = ByAccountId &
-  Pick<ProfileSaveInputs, "mode" | "isDaoRepresentative"> & {
+  Pick<ProfileSaveInputs, "mode" | "isDao"> & {
     onSuccess: () => void;
     onFailure: (errorMessage: string) => void;
   };
@@ -22,7 +22,7 @@ export type ProfileFormParams = ByAccountId &
 export const useProfileForm = ({
   mode,
   accountId,
-  isDaoRepresentative,
+  isDao,
   onSuccess,
   onFailure,
 }: ProfileFormParams) => {
@@ -32,6 +32,7 @@ export const useProfileForm = ({
     avatar,
     cover,
     refetch: refetchSocialProfile,
+    error: socialProfileSnapshotError,
   } = useAccountSocialProfile({ accountId, live: true });
 
   const defaultValues: Partial<ProfileConfigurationInputs> = useMemo(
@@ -84,8 +85,8 @@ export const useProfileForm = ({
     resetOptions: { keepDirty: false, keepTouched: false },
   });
 
-  //? For internal use only!
-  const values = useWatch(self);
+  //* For internal use only!
+  const values = useWatch({ control: self.control });
 
   const teamMembersAccountGroup: AccountGroupItem[] = useMemo(
     () => values.teamMembers?.map(objOf("accountId")) ?? [],
@@ -93,8 +94,12 @@ export const useProfileForm = ({
   );
 
   const isDisabled = useMemo(
-    () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
-    [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
+    () =>
+      (mode === "register" ? false : !self.formState.isDirty) ||
+      !self.formState.isValid ||
+      self.formState.isSubmitting,
+
+    [mode, self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
   );
 
   const updateBackgroundImage = useCallback(
@@ -227,30 +232,38 @@ export const useProfileForm = ({
 
   const onSubmit: SubmitHandler<ProfileConfigurationInputs> = useCallback(
     (inputs) => {
-      save({ accountId, isDaoRepresentative, mode, inputs, socialProfileSnapshot })
-        .then((result) => {
-          if (result.success) {
-            refetchSocialProfile().then(() => self.reset(defaultValues));
-            onSuccess();
-          } else {
-            onFailure(result.error);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      if (isDefined(socialProfileSnapshotError)) {
+        console.error(socialProfileSnapshotError);
+        onFailure(`Unable to retrieve ${SOCIAL_PLATFORM_NAME} profile`);
+      } else {
+        return save({ accountId, isDao, mode, inputs, socialProfileSnapshot })
+          .then(({ success, error }) => {
+            if (success) {
+              refetchSocialProfile().then(() => self.reset(defaultValues));
+              onSuccess();
+            } else {
+              onFailure(error ?? "Unknown error");
+              console.error(error);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            onFailure((error as Error)?.message ?? "Unknown error");
+          });
+      }
     },
 
     [
       accountId,
       defaultValues,
-      isDaoRepresentative,
+      isDao,
       mode,
       onFailure,
       onSuccess,
       refetchSocialProfile,
       self,
       socialProfileSnapshot,
+      socialProfileSnapshotError,
     ],
   );
 
