@@ -231,6 +231,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             {!isUpdate &&
               !isProfileLoading &&
               !profile &&
+              process.env.NEXT_PUBLIC_ENV !== "test" &&
               walletUser?.accountId &&
               walletUser?.accountId === form.getValues("recipient") && (
                 <div className="mb-12 rounded-lg border border-neutral-200 bg-neutral-50 p-8">
