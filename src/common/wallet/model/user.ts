@@ -4,50 +4,66 @@ import { persist } from "zustand/middleware";
 import type { RegistrationStatus } from "@/common/contracts/core/lists";
 import { AccountId } from "@/common/types";
 
-export type WalletUserDaoRepresentativeParams =
-  | { isDaoRepresentative: false; daoAccountId: undefined }
-  | { isDaoRepresentative: true; daoAccountId: AccountId };
-
-export type WalletUserMetadata = {
+type WalletUserMetadata = {
   referrerAccountId?: AccountId;
 };
 
-export type WalletUserSession = WalletUserMetadata &
-  (
+export type WalletUserSession = WalletUserMetadata & { logout: VoidFunction } & (
     | {
         hasWalletReady: false;
-        accountId: undefined;
-        daoAccountId: undefined;
         isSignedIn: false;
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
+        signerAccountId: undefined;
+        accountId: undefined;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
+        refetchRegistrationStatus: undefined;
       }
     | {
         hasWalletReady: true;
-        accountId: undefined;
-        daoAccountId: undefined;
         isSignedIn: false;
         isDaoRepresentative: false;
         isHuman: false;
         isMetadataLoading: false;
+        signerAccountId: undefined;
+        accountId: undefined;
         registrationStatus: undefined;
         hasRegistrationSubmitted: false;
         hasRegistrationApproved: false;
+        refetchRegistrationStatus: undefined;
       }
-    | (WalletUserDaoRepresentativeParams & {
+    | {
         hasWalletReady: true;
-        accountId: AccountId;
         isSignedIn: true;
+
+        /**
+         * Whether DAO authentication is enabled for a DAO
+         * which the user has proposal creation privileges in.
+         */
+        isDaoRepresentative: boolean;
+
         isHuman: boolean;
         isMetadataLoading: boolean;
+
+        /**
+         * The account ID provided by the currently connected wallet instance.
+         */
+        signerAccountId: AccountId;
+
+        /**
+         * If `.isDaoRepresentative` is `true`, then the account ID of the currently selected DAO.
+         * Otherwise, the account ID provided by the currently connected wallet instance.
+         */
+        accountId: AccountId;
+
         registrationStatus?: RegistrationStatus;
         hasRegistrationSubmitted: boolean;
         hasRegistrationApproved: boolean;
-      })
+        refetchRegistrationStatus: VoidFunction;
+      }
   );
 
 interface WalletUserMetadataState extends WalletUserMetadata {
@@ -63,8 +79,6 @@ export const useWalletUserMetadataStore = create<WalletUserMetadataState>()(
       reset: () => set({ referrerAccountId: undefined }),
     }),
 
-    {
-      name: "wallet-user-metadata",
-    },
+    { name: "wallet-user-metadata" },
   ),
 );

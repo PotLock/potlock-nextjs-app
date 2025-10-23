@@ -4,10 +4,18 @@ import { NEAR_NOMINATION_EXP } from "near-api-js/lib/utils/format";
 import { Metadata } from "next";
 import type { SWRConfiguration } from "swr";
 
-import { NETWORK, PLATFORM_NAME } from "./_config";
+import {
+  NAMESPACE_ROOT_CONTRACT_ACCOUNT_ID,
+  NETWORK,
+  PLATFORM_NAME,
+  SOCIAL_PLATFORM_NAME,
+} from "./_config";
 import { ChronologicalSortOrderVariant, type TokenId } from "./types";
+import workspacePackageManifest from "../../package.json";
 
-export { PLATFORM_NAME };
+export const FRAMEWORK_VERSION = workspacePackageManifest.version;
+
+export { NAMESPACE_ROOT_CONTRACT_ACCOUNT_ID, PLATFORM_NAME, SOCIAL_PLATFORM_NAME };
 
 export const IS_CLIENT = typeof window !== "undefined";
 
@@ -28,6 +36,7 @@ export const APP_BOS_COUNTERPART_URL = "https://bos.potlock.org";
 export const APP_METADATA: Metadata & {
   title: string;
   description: NonNullable<Metadata["description"]>;
+  other: { version: string };
   manifest: NonNullable<Metadata["manifest"]>;
 
   openGraph: {
@@ -43,6 +52,7 @@ export const APP_METADATA: Metadata & {
 } = {
   title: PLATFORM_NAME,
   description: "Bringing public goods funding to the table, built on NEAR",
+  other: { version: FRAMEWORK_VERSION },
   manifest: "/manifest.json",
 
   icons: {
@@ -160,6 +170,8 @@ export const CHRONOLOGICAL_SORT_OPTIONS: {
 
 export const NOOP_STRING = "noop";
 
+export const NOOP_FUNCTION: VoidFunction = () => void null;
+
 export const NOOP_BALANCE_VIEW = new Promise<Big.Big>((resolve) => resolve(Big(0)));
 
 export const CONTRACT_SWR_CONFIG: SWRConfiguration = {
@@ -197,3 +209,13 @@ export const SUPPORTED_FTS: Record<
         .toFixed(decimals || 2),
   },
 };
+
+console.info(`
+  ___  ___ _____ _    ___   ___ _  __
+ | _ \\/ _ \\_   _| |  / _ \\ / __| |/ /
+ |  _/ (_) || | | |_| (_) | (__| ' < 
+ |_|  \\___/ |_| |____\\___/ \\___|_|\\_\\
+                                     
+  version: ${FRAMEWORK_VERSION}
+
+`);

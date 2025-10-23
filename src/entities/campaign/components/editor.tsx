@@ -5,15 +5,21 @@ import { useRouter } from "next/router";
 import { isNonNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
+import { Campaign } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Campaign } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat, parseNumber } from "@/common/lib";
+import { toTimestamp } from "@/common/lib/datetime";
 import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
-import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
+import { RichTextEditor } from "@/common/ui/form/components/richtext";
+import { Button, Form, FormField, Switch, Textarea } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
+import {
+  ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH,
+  useAccountSocialProfile,
+} from "@/entities/_shared/account";
 import { TokenSelector, useFungibleToken } from "@/entities/_shared/token";
 
 import { useCampaignForm } from "../hooks/forms";
@@ -29,28 +35,41 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   const walletUser = useWalletUserSession();
   const { back } = useRouter();
   const [avoidFee, setAvoidFee] = useState<boolean>(false);
+  const [recipientType, setRecipientType] = useState<"yourself" | "someone_else">("yourself");
   const isUpdate = campaignId !== undefined;
 
   const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled } = useCampaignForm({
     campaignId,
-    ftId: existingData?.ft_id ?? NATIVE_TOKEN_ID,
+    ftId: existingData?.token?.account ?? NATIVE_TOKEN_ID,
     onUpdateSuccess: close,
   });
+
+  // Set initial recipient when component mounts (only for create mode)
+  useEffect(() => {
+    if (!isUpdate && recipientType === "yourself" && walletUser?.accountId) {
+      form.setValue("recipient", walletUser.accountId);
+    }
+  }, [recipientType, walletUser?.accountId, form, isUpdate]);
 
   const { handleFileInputChange, isPending: isBannerUploadPending } = pinataHooks.useFileUpload({
     onSuccess: handleCoverImageUploadResult,
   });
 
-  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl] = form.watch([
+  const { profile, isLoading: isProfileLoading } = useAccountSocialProfile({
+    accountId: walletUser?.accountId ?? "",
+  });
+
+  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl, description] = form.watch([
     "ft_id",
     "target_amount",
     "min_amount",
     "max_amount",
     "cover_image_url",
+    "description",
   ]);
 
   const { data: token } = useFungibleToken({
-    tokenId: existingData?.ft_id ?? ftId ?? NATIVE_TOKEN_ID,
+    tokenId: existingData?.token?.account ?? ftId ?? NATIVE_TOKEN_ID,
     balanceCheckAccountId: walletUser?.accountId,
   });
 
@@ -76,8 +95,8 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   // TODO: which impacts UX and performance SUBSTANTIALLY!
   useEffect(() => {
     if (isUpdate && existingData && !form.formState.isDirty) {
-      if (isNonNullish(existingData.ft_id) && ftId !== existingData.ft_id) {
-        form.setValue("ft_id", existingData.ft_id);
+      if (isNonNullish(existingData.token?.account) && ftId !== existingData.token?.account) {
+        form.setValue("ft_id", existingData.token?.account);
       }
 
       if (token !== undefined) {
@@ -98,19 +117,19 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
         form.setValue("cover_image_url", existingData.cover_image_url);
       }
 
-      form.setValue("recipient", existingData?.recipient);
-      form.setValue("name", existingData?.name);
-      form.setValue("description", existingData.description);
+      form.setValue("recipient", existingData?.recipient?.id ?? "");
+      form.setValue("name", existingData?.name ?? "");
+      form.setValue("description", existingData?.description ?? "");
 
       if (
-        existingData?.start_ms &&
-        existingData?.start_ms > Temporal.Now.instant().epochMilliseconds
+        existingData?.start_at &&
+        toTimestamp(existingData?.start_at) > Temporal.Now.instant().epochMilliseconds
       ) {
-        form.setValue("start_ms", existingData?.start_ms);
+        form.setValue("start_ms", toTimestamp(existingData?.start_at));
       }
 
-      if (existingData?.end_ms) {
-        form.setValue("end_ms", existingData?.end_ms);
+      if (existingData?.end_at) {
+        form.setValue("end_ms", toTimestamp(existingData?.end_at));
       }
 
       if (existingData.allow_fee_avoidance) {
@@ -208,7 +227,70 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             });
           }}
         >
-          <div className="mb-8">
+          <div className="mb-8 mt-8">
+            {!isUpdate &&
+              !isProfileLoading &&
+              !profile &&
+              process.env.NEXT_PUBLIC_ENV !== "test" &&
+              walletUser?.accountId &&
+              walletUser?.accountId === form.getValues("recipient") && (
+                <div className="mb-12 rounded-lg border border-neutral-200 bg-neutral-50 p-8">
+                  <div className="mb-6">
+                    <div className="mb-3 flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                        <svg
+                          className="h-4 w-4 text-blue-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-semibold text-neutral-900">Project Details</h2>
+                    </div>
+                    <p className="text-sm font-normal leading-6 text-neutral-600">
+                      Please note that you do not have a project yet, that is why you&apos;re
+                      required to input your project details now.
+                    </p>
+                  </div>
+
+                  <div className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="project_name"
+                      render={({ field }) => (
+                        <TextField
+                          label="Project Name"
+                          placeholder="Enter name"
+                          required
+                          type="text"
+                          classNames={{ root: "w-full" }}
+                          {...field}
+                        />
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="project_description"
+                      render={({ field }) => (
+                        <TextAreaField
+                          label="Describe your project"
+                          placeholder="Enter description"
+                          required
+                          maxLength={ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
             <h3 className="mb-2 mt-10 text-xl font-semibold">
               <span>{"Upload Campaign Image"}</span>
               <span className="font-normal text-gray-500">{"(Optional)"}</span>
@@ -254,20 +336,107 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
           </div>
 
           <div className="mb-8 flex w-full flex-col justify-between md:flex-row md:flex-row">
-            <FormField
-              control={form.control}
-              name="recipient"
-              render={({ field }) => (
-                <TextField
-                  classNames={{ root: "md:w-[45%] mb-5 md:mb-0" }}
-                  label="Who are you raising this campaign for?"
-                  required
-                  placeholder="Enter Near ID (username.near)"
-                  type="text"
-                  {...field}
-                />
-              )}
-            />
+            {!isUpdate ? (
+              // Create mode - show recipient selection
+              <div className="mb-5 md:mb-0 md:w-[45%]">
+                <label className="mb-3 block text-sm font-medium text-gray-700">
+                  Who are you raising this campaign for?
+                </label>
+
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRecipientType("yourself");
+                      form.setValue("recipient", walletUser?.accountId || "");
+                    }}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg border px-4 py-3 transition-all",
+                      recipientType === "yourself"
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 bg-white hover:border-gray-400",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex h-6 w-6 items-center justify-center rounded-full",
+                        recipientType === "yourself" ? "bg-red-500" : "bg-gray-400",
+                      )}
+                    >
+                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <span className="font-medium">Yourself</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRecipientType("someone_else");
+                      form.setValue("recipient", "");
+                    }}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg border px-4 py-3 transition-all",
+                      recipientType === "someone_else"
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 bg-white hover:border-gray-400",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex h-6 w-6 items-center justify-center rounded-full",
+                        recipientType === "someone_else" ? "bg-red-500" : "bg-gray-400",
+                      )}
+                    >
+                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                      </svg>
+                    </div>
+                    <span className="font-medium">Someone else</span>
+                  </button>
+                </div>
+
+                {recipientType === "someone_else" && (
+                  <FormField
+                    control={form.control}
+                    name="recipient"
+                    render={({ field: { value, ...field } }) => (
+                      <TextField
+                        label=""
+                        required
+                        placeholder="Enter NEAR ID (username.near)"
+                        type="text"
+                        value={value ?? undefined}
+                        classNames={{ root: "mt-4 w-full" }}
+                        {...field}
+                      />
+                    )}
+                  />
+                )}
+              </div>
+            ) : (
+              // Update mode - show simple recipient field
+              <FormField
+                control={form.control}
+                name="recipient"
+                render={({ field: { value, ...field } }) => (
+                  <TextField
+                    label="Recipient"
+                    required
+                    placeholder="Enter NEAR ID (username.near)"
+                    type="text"
+                    value={value ?? undefined}
+                    classNames={{ root: "md:w-[45%] mb-5 md:mb-0" }}
+                    {...field}
+                  />
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
@@ -288,15 +457,14 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
           <FormField
             control={form.control}
             name="description"
-            render={({ field }) => (
-              <TextAreaField
-                {...field}
-                label="Campaign Description"
-                required
-                className="mt-8"
-                placeholder="Type description"
+            render={({ field: _field }) => (
+              <RichTextEditor
+                value={description}
+                onChange={(value) => form.setValue("description", value, { shouldValidate: true })}
                 maxLength={250}
-                rows={4}
+                label="Campaign Description"
+                error={form.formState.errors.description?.message}
+                className="mt-8"
               />
             )}
           />
@@ -410,8 +578,8 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                 )}
               />
             ) : (
-              existingData?.start_ms &&
-              existingData?.start_ms > Temporal.Now.instant().epochMilliseconds && (
+              existingData?.start_at &&
+              toTimestamp(existingData?.start_at) > Temporal.Now.instant().epochMilliseconds && (
                 <FormField
                   control={form.control}
                   name="start_ms"
@@ -443,7 +611,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                   {...field}
                   required={!!watch("min_amount")}
                   label="End Date"
-                  hint="If the minimum amount isn’t reached by the end date specified all donations will be refunded automatically."
+                  hint="If the minimum amount isn't reached by the end date specified all donations will be refunded automatically."
                   value={
                     typeof value === "number"
                       ? Temporal.Instant.fromEpochMilliseconds(value)
@@ -509,7 +677,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             )}
           >
             <div>
-              <h2 className="text-base font-medium">Bypass Fees</h2>
+              <h2 className="text-base font-medium">Fee Exemption</h2>
 
               <p className="text-sm font-normal leading-6 text-[#7B7B7B] ">
                 If enabled, donors may be able to bypass certain fees

@@ -8,9 +8,9 @@ import { ByAccountId } from "@/common/types";
 import { Badge } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountProfilePicture, useAccountSocialProfile } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
-import { AccountSummaryPopup } from "./AccountSummaryPopup";
+import { AccountSummaryPopup } from "./summary-popup";
 
 export type AccountProfileLinkProps = ByAccountId & {
   classNames?: { root?: string; avatar?: string; name?: string };
@@ -37,8 +37,17 @@ export const AccountProfileLink: React.FC<AccountProfileLinkProps> = ({
         <Badge variant="secondary" className="flex w-fit max-w-80 items-center gap-2">
           <AccountProfilePicture {...{ accountId }} className={cn("h-4 w-4", classNames?.avatar)} />
 
-          <span className={cn("font-500 w-fit text-nowrap", classNames?.name)}>
-            {truncate(profile?.name ?? accountId, 32)}
+          <span
+            className={cn(
+              "font-500 text-nowrap",
+              (profile?.name ?? accountId)?.length > 20
+                ? "max-w-[140px] overflow-hidden text-ellipsis whitespace-nowrap"
+                : "w-fit",
+              classNames?.name,
+            )}
+            title={profile?.name ?? accountId}
+          >
+            {profile?.name ?? accountId}
           </span>
         </Badge>
       </Link>

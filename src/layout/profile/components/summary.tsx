@@ -9,7 +9,7 @@ import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
-import { Button, ClipboardCopyButton } from "@/common/ui/layout/components";
+import { Button, ClipboardCopyButton, Spinner } from "@/common/ui/layout/components";
 import CheckIcon from "@/common/ui/layout/svg/CheckIcon";
 import ReferrerIcon from "@/common/ui/layout/svg/ReferrerIcon";
 import { cn } from "@/common/ui/layout/utils";
@@ -21,7 +21,7 @@ import {
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { DonateToAccountButton } from "@/features/donation";
-import { rootPathnames, routeSelectors } from "@/pathnames";
+import { rootPathnames, routeSelectors } from "@/navigation";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
   const walletUser = useWalletUserSession();
@@ -86,6 +86,14 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
     accountId,
   });
 
+  if (isProfileDataLoading) {
+    return (
+      <div className="flex h-40 items-center justify-center">
+        <Spinner className="h-7 w-7" />
+      </div>
+    );
+  }
+
   // TODO: Handle errors and loading state
   return (
     <div
@@ -99,9 +107,7 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
           <div className="flex w-full flex-wrap gap-4">
             <div className="flex flex-col gap-4">
               <h2 className="font-500 line-height-none font-lora mb-1 text-[40px] text-[#2e2e2e]">
-                {isProfileDataLoading
-                  ? "Loading account data..."
-                  : truncate(profile?.name ?? accountId, 36)}
+                {truncate(profile?.name ?? accountId, 36)}
               </h2>
 
               <div className="flex flex-row content-start items-center gap-2">

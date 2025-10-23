@@ -6,6 +6,7 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
+import type { Campaign } from "@/common/contracts/core/campaigns/interfaces";
 import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
 import { floatToIndivisible, parseNumber } from "@/common/lib";
 import type { FileUploadResult } from "@/common/services/pinata";
@@ -13,8 +14,8 @@ import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useFungibleToken } from "@/entities/_shared/token";
-import { routeSelectors } from "@/pathnames";
-import { dispatch } from "@/store";
+import { routeSelectors } from "@/navigation";
+import { useDispatch } from "@/store/hooks";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
@@ -25,12 +26,16 @@ export type CampaignFormParams = Partial<ByCampaignId> & {
 };
 
 export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignFormParams) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const router = useRouter();
   const isNewCampaign = campaignId === undefined;
   const schema = isNewCampaign ? createCampaignSchema : updateCampaignSchema;
 
-  type Values = FromSchema<typeof schema>;
+  type Values = FromSchema<typeof schema> & {
+    project_name?: string;
+    project_description?: string;
+  };
 
   const self = useForm<Values>({
     resolver: zodResolver(schema),
@@ -138,6 +143,22 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
     return new Date(time).getTime();
   };
 
+  const formatFullDateTime = (timestampMs: number) => {
+    const date = new Date(timestampMs);
+    const day = date.getDate();
+
+    let suffix = "th";
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
+    return `${day}${suffix} ${month} ${year}, ${time}`;
+  };
+
   const handleDeleteCampaign = () => {
     if (!isNewCampaign) {
       campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
@@ -207,7 +228,10 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           parseNumber(values.target_amount ?? 0),
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         ),
-
+        ...(isNewCampaign && values.project_name ? { project_name: values.project_name } : {}),
+        ...(isNewCampaign && values.project_description
+          ? { project_description: values.project_description }
+          : {}),
         ...(values.cover_image_url
           ? {
               cover_image_url: values.cover_image_url,
@@ -232,7 +256,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
             }
           : {}),
 
-        ...(values?.allow_fee_avoidance && {
+        ...(values?.allow_fee_avoidance !== undefined && {
           allow_fee_avoidance: values.allow_fee_avoidance,
         }),
         ...(values?.referral_fee_basis_points && {
@@ -249,7 +273,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           end_ms: timeToMilliseconds(values.end_ms),
         }),
         ...(campaignId ? {} : { owner: viewer.accountId as string }),
-        ...(campaignId ? {} : { recipient: values.recipient }),
+        ...(campaignId ? {} : { recipient: values.recipient ?? undefined }),
       };
 
       if (campaignId) {
@@ -262,9 +286,15 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
 
             toast({
               title: `You’ve successfully updated this campaign`,
+              description: (() => {
+                const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
 
-              description:
-                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+                if (startMs && startMs > Date.now()) {
+                  return `Campaign starts on ${formatFullDateTime(startMs)}.`;
+                }
+
+                return "Campaign is live.";
+              })(),
             });
 
             onUpdateSuccess?.();
@@ -283,16 +313,32 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           .then((newCampaign) => {
             toast({
               title: `You’ve successfully created a campaign for ${values.name}.`,
+              description: (() => {
+                const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
 
-              description:
-                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+                if (startMs && startMs > Date.now()) {
+                  return `Campaign starts on ${formatFullDateTime(startMs)}.`;
+                }
+
+                return "Campaign is live.";
+              })(),
             });
 
-            router.push(routeSelectors.CAMPAIGN_BY_ID(newCampaign.id));
-          })
-          .catch((error) => {
-            console.error("Failed to create Campaign:", error);
+            // Fix: Ensure newCampaign has an id before accessing it
+            console.log(newCampaign);
 
+            if (
+              newCampaign &&
+              typeof newCampaign === "object" &&
+              "id" in newCampaign &&
+              newCampaign.id
+            ) {
+              router.push(routeSelectors.CAMPAIGN_BY_ID((newCampaign as Campaign).id));
+            } else {
+              router.push(`/campaigns`);
+            }
+          })
+          .catch(() => {
             toast({
               title: "Failed to create Campaign.",
               variant: "destructive",

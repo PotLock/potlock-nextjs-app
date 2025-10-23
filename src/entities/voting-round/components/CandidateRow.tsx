@@ -45,7 +45,7 @@ export const VotingRoundCandidateRow: React.FC<VotingRoundCandidateRowProps> = (
   return (
     <AccountListItem
       highlightOnHover
-      hideStatusOnDesktop
+      hiddenStatusOnDesktop
       classNames={{
         root: cn("px-4 rounded-lg", {
           "bg-neutral-50": isSelected,

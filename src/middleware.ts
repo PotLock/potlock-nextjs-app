@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { rootPathnames, routeSelectors } from "./pathnames";
+import { rootPathnames, routeSelectors } from "./navigation";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -14,12 +14,16 @@ export async function middleware(request: NextRequest) {
       lastPathnameSegment.endsWith(".near") ||
       lastPathnameSegment.endsWith(".testnet")
     ) {
-      return NextResponse.rewrite(`${request.url}/home`);
+      const url = new URL(request.url);
+      url.pathname = `${url.pathname.replace(/\/$/, "")}/home`;
+      return NextResponse.rewrite(url);
     } else if (
       lastPathnameSegment.endsWith(".near/") ||
       lastPathnameSegment.endsWith(".testnet/")
     ) {
-      return NextResponse.rewrite(`${request.url}home`);
+      const url = new URL(request.url);
+      url.pathname = `${url.pathname}home`;
+      return NextResponse.rewrite(url);
     }
   } else if (pathname.startsWith(`${rootPathnames.CAMPAIGN}/`)) {
     try {
