@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
 
+import { envConfig } from "@/common/_config/production.env-config";
 import { NOOP_STRING } from "@/common/constants";
 import { isAccountId, isEthereumAddress } from "@/common/lib";
 import {
@@ -12,6 +13,9 @@ import {
 import * as generatedClient from "./internal/client.generated";
 import { INDEXER_CLIENT_CONFIG, INDEXER_CLIENT_CONFIG_STAGING } from "./internal/config";
 import { ByPotId } from "./types";
+
+const currentNetworkConfig =
+  process.env.NEXT_PUBLIC_ENV === "test" ? INDEXER_CLIENT_CONFIG : INDEXER_CLIENT_CONFIG_STAGING;
 
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_stats_retrieve
@@ -354,7 +358,7 @@ export const useCampaigns = ({
   ...params
 }: generatedClient.V1CampaignsRetrieveParams & ConditionalActivation = {}) => {
   const queryResult = generatedClient.useV1CampaignsRetrieve(params, {
-    ...INDEXER_CLIENT_CONFIG_STAGING,
+    ...currentNetworkConfig,
     swr: { enabled },
   });
 
@@ -363,7 +367,7 @@ export const useCampaigns = ({
 
 export const useCampaign = ({ campaignId }: { campaignId: number }) => {
   const queryResult = generatedClient.useV1CampaignsRetrieve2(campaignId, {
-    ...INDEXER_CLIENT_CONFIG_STAGING,
+    ...currentNetworkConfig,
     swr: { enabled: true },
   });
 
