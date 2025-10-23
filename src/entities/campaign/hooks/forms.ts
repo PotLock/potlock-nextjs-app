@@ -142,6 +142,22 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
     return new Date(time).getTime();
   };
 
+  const formatFullDateTime = (timestampMs: number) => {
+    const date = new Date(timestampMs);
+    const day = date.getDate();
+
+    let suffix = "th";
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
+    return `${day}${suffix} ${month} ${year}, ${time}`;
+  };
+
   const handleDeleteCampaign = () => {
     if (!isNewCampaign) {
       campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
@@ -269,9 +285,15 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
 
             toast({
               title: `You’ve successfully updated this campaign`,
+              description: (() => {
+                const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
 
-              description:
-                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+                if (startMs && startMs > Date.now()) {
+                  return `Campaign starts on ${formatFullDateTime(startMs)}.`;
+                }
+
+                return "Campaign is live.";
+              })(),
             });
 
             onUpdateSuccess?.();
@@ -290,9 +312,15 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           .then((newCampaign) => {
             toast({
               title: `You’ve successfully created a campaign for ${values.name}.`,
+              description: (() => {
+                const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
 
-              description:
-                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+                if (startMs && startMs > Date.now()) {
+                  return `Campaign starts on ${formatFullDateTime(startMs)}.`;
+                }
+
+                return "Campaign is live.";
+              })(),
             });
 
             // Fix: Ensure newCampaign has an id before accessing it
