@@ -87,7 +87,7 @@ export type ActionCall = {
   args: string;
 
   deposit: IndivisibleUnits;
-  gas: number;
+  gas: IndivisibleUnits;
 };
 
 export enum ProposalStatus {
@@ -148,6 +148,11 @@ export enum Vote {
   Reject = 1,
   Remove = 2,
 }
+
+export type ProposalInput = {
+  description: string;
+  kind: ProposalKind;
+};
 
 export type Proposal = {
   proposer: AccountId;

@@ -72,7 +72,7 @@ export type DonateToListProjectsProps = ByListId & {};
 export const DonateToListProjects: React.FC<DonateToListProjectsProps> = ({ listId }) => {
   const { openDonationModal } = useDonationUserFlow({ listId });
 
-  return <Button onClick={openDonationModal}>{"Donate to list"}</Button>;
+  return <Button onClick={openDonationModal}>{"Donate to Projects"}</Button>;
 };
 
 export type DonationToCampaignProps = ByCampaignId &

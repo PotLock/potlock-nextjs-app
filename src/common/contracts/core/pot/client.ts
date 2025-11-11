@@ -1,9 +1,10 @@
 import { calculateDepositByDataSize } from "@wpdas/naxios";
+import { Big } from "big.js";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { type ByPotId, PotId } from "@/common/api/indexer";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
-import { FULL_TGAS, ONE_HUNDREDTH_NEAR } from "@/common/constants";
+import { FULL_TGAS, ONE_HUNDREDTH_NEAR, ONE_TGAS } from "@/common/constants";
 import type { AccountId } from "@/common/types";
 
 import {
@@ -18,6 +19,7 @@ import {
   PotDonationArgs,
   UpdatePotArgs,
 } from "./interfaces";
+import { calculateCallDeposit } from "./utils";
 
 export const contractApi = (potId: string) =>
   nearProtocolClient.naxiosInstance.contractApi({
@@ -106,6 +108,22 @@ export const get_payouts = async (args: { potId: string }) =>
   });
 
 // WRITE METHODS
+
+export type ApplyArgs = {
+  message?: string;
+};
+
+export const apply = ({
+  potId,
+  args,
+  callbackUrl = window.location.href,
+}: ByPotId & { args: ApplyArgs; callbackUrl?: string }) =>
+  contractApi(potId).call<typeof args, Application>("apply", {
+    args,
+    deposit: calculateCallDeposit({ functionName: "apply", args }),
+    gas: ONE_TGAS.mul(100).toString(),
+    callbackUrl,
+  });
 
 export type ChallengePayoutsArgs = {
   reason: string;
