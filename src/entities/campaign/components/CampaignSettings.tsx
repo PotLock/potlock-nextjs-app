@@ -4,9 +4,11 @@ import Link from "next/link";
 import { isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
+import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
+import { toTimestamp } from "@/common/lib/datetime";
 import type { ByCampaignId } from "@/common/types";
 import { Skeleton, Spinner } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
@@ -15,8 +17,9 @@ import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
 
 import { CampaignEditor } from "./editor";
 
-const formatTime = (timestamp: number) =>
-  new Date(timestamp).toLocaleString("en-US", {
+const formatTime = (dateValue: string | number) => {
+  const date = typeof dateValue === "string" ? new Date(dateValue) : new Date(dateValue);
+  return date.toLocaleString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -24,6 +27,7 @@ const formatTime = (timestamp: number) =>
     minute: "2-digit",
     hour12: true,
   });
+};
 
 const CampaignSettingsBarCard = ({
   title,
@@ -56,12 +60,14 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
   const closeEditor = useCallback(() => setOpenEditCampaign(false), []);
 
   const {
-    isLoading: isCampaignLoading,
     data: campaign,
+    isLoading: isCampaignLoading,
     error: campaignLoadingError,
-  } = campaignsContractHooks.useCampaign({ campaignId });
+  } = indexer.useCampaign({ campaignId });
 
-  const { data: token } = useFungibleToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({
+    tokenId: campaign?.token?.account ?? NATIVE_TOKEN_ID,
+  });
 
   const minAmountFloat = useMemo(
     () =>
@@ -91,8 +97,8 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
   );
 
   const tokenIcon = useMemo(
-    () => <TokenIcon tokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID} />,
-    [campaign?.ft_id],
+    () => <TokenIcon tokenId={campaign?.token?.account ?? NATIVE_TOKEN_ID} />,
+    [campaign?.token?.account],
   );
 
   if (campaign === undefined && campaignLoadingError)
@@ -115,11 +121,11 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
 
             <Link
               target="_blank"
-              href={`/profile/${campaign?.owner}`}
+              href={`/profile/${campaign?.owner?.id}`}
               className="flex items-center gap-2"
             >
-              <AccountProfilePicture accountId={campaign?.owner as string} className="h-6 w-6" />
-              <p className="font-medium">{campaign?.owner}</p>
+              <AccountProfilePicture accountId={campaign?.owner?.id ?? ""} className="h-6 w-6" />
+              <p className="font-medium">{campaign?.owner?.id}</p>
             </Link>
           </div>
 
@@ -128,22 +134,23 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
 
             <Link
               target="_blank"
-              href={`/profile/${campaign?.recipient}`}
+              href={`/profile/${campaign?.recipient?.id}`}
               className="flex items-center gap-2"
             >
               <AccountProfilePicture
-                accountId={campaign?.recipient as string}
+                accountId={campaign?.recipient?.id ?? ""}
                 className="h-6 w-6"
               />
-              <p className="font-medium">{campaign?.recipient}</p>
+              <p className="font-medium">{campaign?.recipient?.id}</p>
             </Link>
           </div>
         </div>
 
         <div className="flex flex-col-reverse gap-2 md:items-center md:gap-4">
           {viewer.isSignedIn &&
-            viewer.accountId === campaign?.owner &&
-            (!campaign?.end_ms || Temporal.Now.instant().epochMilliseconds < campaign.end_ms) && (
+            viewer.accountId === campaign?.owner?.id &&
+            (!campaign?.end_at ||
+              Temporal.Now.instant().epochMilliseconds < toTimestamp(campaign.end_at)) && (
               <div>
                 <p
                   onClick={() => setOpenEditCampaign(!openEditCampaign)}
@@ -161,7 +168,18 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
         <div className="mt-8 w-full rounded-[12px] border border-solid border-[#DBDBDB] p-6">
           <div>
             <h1 className="mb-4 text-xl font-semibold">{campaign?.name}</h1>
-            <p className="text-[#292929]">{campaign?.description}</p>
+            <div
+              className="prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{
+                __html: campaign?.description ?? "",
+              }}
+              onClick={(event) => {
+                // Prevent navigation when clicking on links
+                if (event.target instanceof HTMLAnchorElement) {
+                  event.stopPropagation();
+                }
+              }}
+            />
           </div>
 
           <div className="mt-12 flex w-full flex-wrap items-center justify-between md:w-[80%]">
@@ -175,8 +193,8 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
               <CampaignSettingsBarCard
                 title="Campaign duration"
                 value={`${formatTime(
-                  campaign.start_ms,
-                )} - ${campaign?.end_ms ? formatTime(campaign.end_ms) : "Ongoing"}`}
+                  campaign.start_at,
+                )} - ${campaign?.end_at ? formatTime(campaign.end_at) : "Ongoing"}`}
               />
             ) : (
               <CampaignSettingsBarCardSkeleton />
@@ -214,6 +232,10 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
                   ? `${campaign?.creator_fee_basis_points / 100}%`
                   : "N/A"
               }`}
+            />
+            <CampaignSettingsBarCard
+              title="Fees Avoidance Allowed"
+              value={`${campaign?.allow_fee_avoidance ? "Yes" : "No"}`}
             />
           </div>
         </div>

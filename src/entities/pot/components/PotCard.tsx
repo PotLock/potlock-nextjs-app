@@ -7,7 +7,7 @@ import { ByPotId, Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { formatWithCommas } from "@/common/lib";
 import { useFungibleToken } from "@/entities/_shared/token";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { Indicator } from "./Indicator";
 import { PotTag } from "./PotTag";

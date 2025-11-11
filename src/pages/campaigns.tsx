@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { Campaign, campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import { Campaign, indexer } from "@/common/api/indexer";
 import {
   Button,
   Carousel,
@@ -16,7 +16,7 @@ import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
 
-const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
+export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -38,8 +38,10 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
     <div className="mt-8 w-full p-0 ">
       <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
         <div className=" flex items-center gap-4 ">
-          <h1 className=" text-[18px] font-semibold ">Featured Campaigns</h1>
-          <p className="text-[18px]">{current + 1}/8</p>
+          <h1 className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
+            Featured Campaigns
+          </h1>
+          <p className="text-[18px]">{current + 1}/3</p>
         </div>
         <div className="flex gap-4">
           <img
@@ -60,8 +62,8 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
         <CarouselContent>
           {data?.length &&
             data
-              ?.filter((data) => [13, 12, 11, 10, 9, 7, 6, 3].includes(data?.id))
-              ?.map((data) => <CampaignCarouselItem key={data.id} data={data} />)}
+              ?.filter((data) => [91, 85, 81].includes(data?.on_chain_id))
+              ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
         </CarouselContent>
       </Carousel>
     </div>
@@ -69,11 +71,10 @@ const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
 };
 
 export default function CampaignsPage() {
-  const {
-    isLoading: isCampaignsListLoading,
-    data: campaigns,
-    error: campaignsLoadingError,
-  } = campaignsContractHooks.useCampaigns();
+  const { data, isLoading, error } = indexer.useCampaigns({
+    page: 1,
+    page_size: 200,
+  });
 
   const viewer = useWalletUserSession();
 
@@ -115,22 +116,22 @@ export default function CampaignsPage() {
         </div>
       </div>
 
-      {campaignsLoadingError !== undefined && (
+      {error !== undefined && (
         <PageError
           title="Unable to load campaigns"
-          message={"message" in campaignsLoadingError ? campaignsLoadingError.message : undefined}
+          message={"message" in error ? error.message : undefined}
         />
       )}
 
-      {campaignsLoadingError === undefined && campaigns === undefined && isCampaignsListLoading && (
+      {error === undefined && data?.results === undefined && isLoading && (
         <div className="flex h-40 items-center justify-center">
           <Spinner className="h-7 w-7" />
         </div>
       )}
 
-      {campaignsLoadingError === undefined && campaigns !== undefined && (
+      {error === undefined && data?.results !== undefined && (
         <>
-          <FeaturedCampaigns data={campaigns} />
+          <FeaturedCampaigns data={data?.results} />
           <CampaignsList />
         </>
       )}

@@ -53,12 +53,12 @@ export const ProfileConfigurationImageUpload: React.FC<ProfileConfigurationImage
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative flex h-[280px] w-full rounded-[6px] bg-neutral-200">
+      <div className="relative flex h-[280px] w-full bg-neutral-200 xl:rounded-lg">
         {backgroundImage && (
           <LazyLoadImage
             alt="Profile Background"
             src={backgroundImage}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover xl:rounded-lg"
           />
         )}
 

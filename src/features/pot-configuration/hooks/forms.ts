@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter } from "next/router";
 import { SubmitHandler, useWatch } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { prop } from "remeda";
 import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
@@ -13,8 +15,9 @@ import { daysFloatToMilliseconds } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { useEnhancedForm } from "@/common/ui/form/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { rootPathnames } from "@/pathnames";
-import { dispatch, useCoreState } from "@/store";
+import { rootPathnames } from "@/navigation";
+import { type AppDispatcher } from "@/store";
+import { useGlobalStoreSelector } from "@/store/hooks";
 
 import {
   PotDeploymentInputs,
@@ -35,6 +38,7 @@ export const usePotConfigurationEditorForm = ({
   ...props
 }: PotConfigurationEditorFormArgs) => {
   const viewer = useWalletUserSession();
+  const dispatch = useDispatch<AppDispatcher>();
   const router = useRouter();
   const potId = "potId" in props ? props.potId : undefined;
   const isNewPot = potId === undefined;
@@ -46,7 +50,7 @@ export const usePotConfigurationEditorForm = ({
 
   const {
     contractMetadata: { latestSourceCodeCommitHash },
-  } = useCoreState();
+  } = useGlobalStoreSelector(prop("core"));
 
   const isHydrating = useMemo(() => isPotConfigLoading, [isPotConfigLoading]);
 
@@ -127,7 +131,7 @@ export const usePotConfigurationEditorForm = ({
       });
     },
 
-    [isNewPot, potId, router, self],
+    [dispatch.potConfiguration, isNewPot, potId, router, self],
   );
 
   useEffect(() => {

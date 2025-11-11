@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
+import { Campaign, V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Campaign } from "@/common/contracts/core/campaigns";
-import { truncate } from "@/common/lib";
-import getTimePassed from "@/common/lib/getTimePassed";
+import { toTimestamp } from "@/common/lib/datetime";
 import { CarouselItem } from "@/common/ui/layout/components";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { AccountProfileLink } from "@/entities/_shared/account";
@@ -13,23 +12,18 @@ import { DonateToCampaign } from "@/features/donation";
 import { CampaignProgressBar } from "./CampaignProgressBar";
 
 export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
-  const isStarted = getTimePassed(Number(data.start_ms), true)?.includes("-");
-
-  const isEnded = data?.end_ms
-    ? getTimePassed(Number(data?.end_ms), false, true)?.includes("-")
-    : false;
-
   return (
-    <CarouselItem key={data.id}>
+    <CarouselItem key={data.on_chain_id}>
       <Link
         className="flex w-full flex-col items-start justify-between gap-4 md:flex-row"
-        href={`/campaign/${data.id}/leaderboard`}
+        href={`/campaign/${data.on_chain_id}/leaderboard`}
         passHref
+        prefetch
       >
         <div className="h-293px relative md:h-[285px] md:w-[68%] md:rounded-xl">
           <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
-            alt=""
+            alt="Campaign cover"
             className="inset-1 h-full w-full object-cover md:rounded-xl"
             width={500}
             height={300}
@@ -41,14 +35,14 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
               <div className=" flex flex-col items-start gap-2 p-0 text-[12px] text-white md:flex-row md:items-center md:text-[15px]">
                 <div className="flex gap-1">
                   <p className="font-semibold">FOR</p>
-                  <AccountProfileLink accountId={data.recipient as string} />
+                  <AccountProfileLink accountId={data.recipient.id} />
                 </div>
                 <div className="hidden flex-col items-center bg-gray-800 md:flex">
                   <span className="bg-background h-[18px] w-[2px] text-white" />{" "}
                 </div>
                 <div className="flex gap-1">
                   <p className="font-semibold">ORGANIZED BY</p>
-                  <AccountProfileLink accountId={data.owner as string} />
+                  <AccountProfileLink accountId={data.owner.id} />
                 </div>
               </div>
               {data?.owner === data?.recipient && (
@@ -62,23 +56,41 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
         </div>
         <div className="flex w-full flex-col items-start p-4 md:w-[28%] md:p-0">
           <CampaignProgressBar
-            tokenId={data.ft_id ?? NATIVE_TOKEN_ID}
-            amount={data?.total_raised_amount ?? `${0}`}
+            tokenId={data?.token?.account ?? NATIVE_TOKEN_ID}
+            amount={data?.net_raised_amount ?? `${0}`}
             minAmount={data?.min_amount ?? `${0}`}
             target={data?.target_amount ?? `${0}`}
-            isStarted={isStarted}
+            status={data.status as V1CampaignsRetrieveStatus}
             isEscrowBalanceEmpty={data?.escrow_balance === "0"}
-            startDate={data?.start_ms}
-            endDate={Number(data?.end_ms)}
+            startDate={toTimestamp(data?.start_at)}
+            endDate={toTimestamp(data?.end_at ?? 0)}
           />
           <p className="mt-4 text-start md:h-28">
-            {data?.description ? truncate(data.description, 100) : ""}
+            <div
+              className="prose prose-sm max-w-none overflow-hidden"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+              dangerouslySetInnerHTML={{
+                __html: data.description ?? "",
+              }}
+              onClick={(event) => {
+                // Prevent navigation when clicking on links
+                if (event.target instanceof HTMLAnchorElement) {
+                  event.stopPropagation();
+                }
+              }}
+            />
           </p>
           <DonateToCampaign
-            cachedTokenId={data.ft_id ?? NATIVE_TOKEN_ID}
-            campaignId={data.id}
+            cachedTokenId={data?.token?.account ?? NATIVE_TOKEN_ID}
+            campaignId={data.on_chain_id}
             className="mt-4"
-            disabled={isStarted || isEnded || data?.total_raised_amount === data?.max_amount}
+            disabled={data.status !== "active"}
           />
         </div>
       </Link>

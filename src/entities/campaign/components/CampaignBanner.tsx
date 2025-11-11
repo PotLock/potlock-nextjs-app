@@ -6,9 +6,11 @@ import { isNonNullish, isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
+import { V1CampaignsRetrieveStatus, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
+import { toTimestamp } from "@/common/lib/datetime";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
 import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
@@ -28,18 +30,18 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
   const viewer = useWalletUserSession();
 
   const {
-    isLoading: isCampaignLoading,
     data: campaign,
+    isLoading: isCampaignLoading,
     error: campaignLoadingError,
-  } = campaignsContractHooks.useCampaign({ campaignId });
+  } = indexer.useCampaign({ campaignId });
 
-  const { data: token } = useFungibleToken({ tokenId: campaign?.ft_id ?? NATIVE_TOKEN_ID });
+  const { data: token } = useFungibleToken({ tokenId: campaign?.token.account ?? NATIVE_TOKEN_ID });
 
   const raisedAmountFloat = useMemo(
     () =>
       token === undefined || campaign === undefined
         ? 0
-        : indivisibleUnitsToFloat(campaign.total_raised_amount, token.metadata.decimals),
+        : indivisibleUnitsToFloat(campaign?.net_raised_amount ?? "0", token.metadata.decimals),
 
     [campaign, token],
   );
@@ -53,20 +55,17 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     [campaign?.min_amount, token],
   );
 
-  const { data: hasEscrowedDonations } = campaignsContractHooks.useHasEscrowedDonationsToProcess({
-    campaignId,
-    enabled: isNonNullish(campaign?.min_amount) && raisedAmountFloat >= minAmountFloat,
-  });
-
-  const { data: isDonationRefundsProcessed } = campaignsContractHooks.useIsDonationRefundsProcessed(
-    {
+  const { data: hasEscrowedDonations, isLoading: isHasEscrowedDonationsLoading } =
+    campaignsContractHooks.useHasEscrowedDonationsToProcess({
       campaignId,
-      enabled:
-        !!campaign?.end_ms &&
-        campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
-        raisedAmountFloat < minAmountFloat,
-    },
-  );
+      enabled: true, // Always enable the hook
+    });
+
+  const { data: isDonationRefundsProcessed, isLoading: isDonationRefundsProcessedLoading } =
+    campaignsContractHooks.useIsDonationRefundsProcessed({
+      campaignId,
+      enabled: true, // Always enable the hook
+    });
 
   const { handleProcessEscrowedDonations, handleDonationsRefund } = useCampaignForm({ campaignId });
 
@@ -83,11 +82,15 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     return <h1>Error Loading Campaign</h1>;
   }
 
-  const isStarted = getTimePassed(Number(campaign?.start_ms), true)?.includes("-");
+  const isStarted = getTimePassed(toTimestamp(campaign?.start_at ?? 0), true)?.includes("-");
 
-  const isEnded = campaign?.end_ms
-    ? getTimePassed(Number(campaign?.end_ms), false, true)?.includes("-")
+  const isEnded = campaign?.end_at
+    ? getTimePassed(toTimestamp(campaign?.end_at), false, true)?.includes("-")
     : false;
+
+  // Check if the hooks are still loading
+  const isProcessingHooksLoading =
+    isHasEscrowedDonationsLoading || isDonationRefundsProcessedLoading;
 
   return isCampaignLoading ? (
     <div className="flex h-40 items-center justify-center">
@@ -118,7 +121,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
                   <AccountProfileLink
                     classNames={{ root: "bg-transparent" }}
-                    accountId={campaign?.recipient as string}
+                    accountId={campaign?.recipient?.id ?? ""}
                   />
                 </div>
 
@@ -127,8 +130,8 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
                 </div>
 
                 <div className="flex gap-1">
-                  <p className="font-semibold">ORGANIZED BY</p>
-                  <AccountProfileLink accountId={campaign?.owner as string} />
+                  <span className="font-semibold">ORGANIZED BY</span>
+                  <AccountProfileLink accountId={campaign?.owner?.id ?? ""} />
                 </div>
               </div>
 
@@ -142,7 +145,18 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
           </div>
         </div>
 
-        <p className="p-6">{campaign?.description}</p>
+        <div
+          className="prose prose-sm max-w-none p-4"
+          dangerouslySetInnerHTML={{
+            __html: campaign?.description ?? "",
+          }}
+          onClick={(event) => {
+            // Prevent navigation when clicking on links
+            if (event.target instanceof HTMLAnchorElement) {
+              event.stopPropagation();
+            }
+          }}
+        />
       </div>
 
       <div className="h-max w-full rounded-xl border border-[#DBDBDB] p-4 md:w-[27%]">
@@ -163,47 +177,52 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
         </div>
 
         <CampaignProgressBar
-          tokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
-          amount={campaign?.total_raised_amount ?? `${0}`}
+          tokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
+          amount={campaign?.net_raised_amount ?? `${0}`}
+          status={campaign?.status as V1CampaignsRetrieveStatus}
           minAmount={campaign?.min_amount ?? `${0}`}
           target={campaign?.target_amount ?? `${0}`}
-          startDate={Number(campaign?.start_ms)}
-          isStarted={isStarted}
+          startDate={toTimestamp(campaign?.start_at ?? 0)}
           isEscrowBalanceEmpty={campaign?.escrow_balance === "0"}
-          endDate={Number(campaign?.end_ms)}
+          endDate={toTimestamp(campaign?.end_at ?? 0)}
         />
 
         <div className="mt-6">
-          {viewer.isSignedIn && hasEscrowedDonations && (
-            <div className="flex w-full flex-col gap-4">
-              <Button className="w-full" onClick={handleProcessEscrowedDonations}>
-                {"Process Payout"}
-              </Button>
+          {viewer.isSignedIn &&
+            !isProcessingHooksLoading &&
+            hasEscrowedDonations &&
+            isNonNullish(campaign?.min_amount) &&
+            raisedAmountFloat >= minAmountFloat && (
+              <div className="flex w-full flex-col gap-4">
+                <Button className="w-full" onClick={handleProcessEscrowedDonations}>
+                  {"Process Payout"}
+                </Button>
 
-              <div
-                className={cn(
-                  "border-1 flex items-start gap-2",
-                  "rounded-lg border-green-500 bg-green-50 p-3",
-                )}
-              >
-                <BadgeCheck className="h--12 w-12" />
+                <div
+                  className={cn(
+                    "border-1 flex items-start gap-2",
+                    "rounded-lg border-green-500 bg-green-50 p-3",
+                  )}
+                >
+                  <BadgeCheck className="h--12 w-12" />
 
-                <div className="m-0 p-0">
-                  <h2 className="mb-2 text-base font-medium">Campaign Successful</h2>
+                  <div className="m-0 p-0">
+                    <h2 className="mb-2 text-base font-medium">Campaign Successful</h2>
 
-                  <p className="text-sm font-normal leading-6">
-                    The Minimum Target of the Campaign has been successfully reach and the Donations
-                    can be processed.
-                  </p>
+                    <p className="text-sm font-normal leading-6">
+                      The Minimum Target of the Campaign has been successfully reach and the
+                      Donations can be processed.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {viewer.isSignedIn &&
+            !isProcessingHooksLoading &&
             isDonationRefundsProcessed &&
-            campaign?.end_ms &&
-            campaign?.end_ms < Temporal.Now.instant().epochMilliseconds &&
+            campaign?.end_at &&
+            toTimestamp(campaign?.end_at ?? 0) < Temporal.Now.instant().epochMilliseconds &&
             raisedAmountFloat < minAmountFloat && (
               <div className="flex w-full flex-col gap-4">
                 <Button className="w-full" onClick={handleDonationsRefund}>
@@ -233,26 +252,37 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
               </div>
             )}
 
-          {!hasEscrowedDonations && !isDonationRefundsProcessed && (
-            <>
-              <DonateToCampaign
-                cachedTokenId={campaign?.ft_id ?? NATIVE_TOKEN_ID}
-                disabled={
-                  isStarted || isEnded || campaign?.total_raised_amount === campaign?.max_amount
-                }
-                className="mb-4"
-                {...{ campaignId }}
-              />
+          {!isProcessingHooksLoading &&
+            (!hasEscrowedDonations ||
+              !isNonNullish(campaign?.min_amount) ||
+              raisedAmountFloat < minAmountFloat) &&
+            (!isDonationRefundsProcessed ||
+              !campaign?.end_at ||
+              toTimestamp(campaign?.end_at ?? 0) >= Temporal.Now.instant().epochMilliseconds ||
+              raisedAmountFloat >= minAmountFloat) && (
+              <>
+                <DonateToCampaign
+                  cachedTokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
+                  disabled={campaign?.status !== "active"}
+                  className="mb-4"
+                  {...{ campaignId }}
+                />
 
-              <SocialsShare
-                shareText={`Support ${campaign?.name} Campaign on ${
-                  PLATFORM_NAME
-                } by donating or sharing, every contribution Counts! ${
-                  PLATFORM_TWITTER_ACCOUNT_ID
-                }`}
-                variant="button"
-              />
-            </>
+                <SocialsShare
+                  shareText={`Support ${campaign?.name} Campaign on ${
+                    PLATFORM_NAME
+                  } by donating or sharing, every contribution Counts! ${
+                    PLATFORM_TWITTER_ACCOUNT_ID
+                  }`}
+                  variant="button"
+                />
+              </>
+            )}
+
+          {isProcessingHooksLoading && (
+            <div className="flex h-20 items-center justify-center">
+              <Spinner className="h-5 w-5" />
+            </div>
           )}
         </div>
       </div>

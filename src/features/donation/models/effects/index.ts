@@ -7,7 +7,7 @@ import { type DirectDonation, donationContractClient } from "@/common/contracts/
 import { PotDonation, potContractClient } from "@/common/contracts/core/pot";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId, TxExecutionStatus } from "@/common/types";
-import { AppDispatcher } from "@/store";
+import { type AppDispatcher } from "@/store";
 
 import { campaignFtDonationMulticall } from "./campaign-ft-donation";
 import { directFtDonationMulticall } from "./direct-ft-donation";

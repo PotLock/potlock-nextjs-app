@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 import { TextAreaField } from "@/common/ui/form/components";
 import {
@@ -20,19 +20,31 @@ export type ProfileConfigurationFundingSourceModalProps = {
   open?: boolean;
   onCloseClick?: () => void;
   editFundingIndex?: number;
+  onAddFundingSource?: (fundingSource: AddFundingSourceInputs) => void;
+  onUpdateFundingSource?: (index: number, fundingSource: AddFundingSourceInputs) => void;
 };
 
 export const ProfileConfigurationFundingSourceModal: React.FC<
   ProfileConfigurationFundingSourceModalProps
-> = ({ data: fundingSources = [], open, onCloseClick, editFundingIndex }) => {
+> = ({
+  data: fundingSources = [],
+  open,
+  onCloseClick,
+  editFundingIndex,
+  onAddFundingSource,
+  onUpdateFundingSource,
+}) => {
   const { form, errors } = useAddFundingSourceForm({
-    defaultValues: {
-      description: "",
-      investorName: "",
-      amountReceived: "",
-      denomination: "",
-      date: "",
-    },
+    defaultValues:
+      editFundingIndex !== undefined && fundingSources[editFundingIndex]
+        ? fundingSources[editFundingIndex]
+        : {
+            description: "",
+            investorName: "",
+            amountReceived: "",
+            denomination: "",
+            date: "",
+          },
     onSuccess: () => {
       if (onCloseClick) {
         onCloseClick();
@@ -48,7 +60,9 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
 
   const onSubmitFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
-      // dispatch.projectEditor.addFundingSource(data);
+      if (onAddFundingSource) {
+        onAddFundingSource(data);
+      }
 
       if (onCloseClick) {
         onCloseClick();
@@ -56,17 +70,13 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
 
       resetForm();
     },
-    [resetForm, onCloseClick],
+    [resetForm, onCloseClick, onAddFundingSource],
   );
 
   const onSubmitEditedFundingSourceHandler = useCallback(
     (data: AddFundingSourceInputs) => {
-      if (isEdit && editFundingIndex !== undefined) {
-        // dispatch.projectEditor.updateFundingSource({
-        //   fundingSourceData: data,
-        //   index: editFundingIndex,
-        // });
-
+      if (isEdit && editFundingIndex !== undefined && onUpdateFundingSource) {
+        onUpdateFundingSource(editFundingIndex, data);
         resetForm();
       }
 
@@ -74,7 +84,7 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
         onCloseClick();
       }
     },
-    [editFundingIndex, isEdit, resetForm, onCloseClick],
+    [editFundingIndex, isEdit, resetForm, onCloseClick, onUpdateFundingSource],
   );
 
   const onCloseHandler = useCallback(() => {
@@ -102,7 +112,6 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
             <FormField
               control={form.control}
               name="investorName"
-              defaultValue={isEdit ? fundingSources[editFundingIndex].investorName : ""}
               render={({ field }) => (
                 <CustomInput
                   label="Name of investor"
@@ -118,7 +127,6 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
             <FormField
               control={form.control}
               name="date"
-              defaultValue={isEdit ? fundingSources[editFundingIndex].date : ""}
               render={({ field }) => (
                 <CustomInput
                   className="pt-8"
@@ -136,7 +144,6 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
             <FormField
               control={form.control}
               name="description"
-              defaultValue={isEdit ? fundingSources[editFundingIndex].description : ""}
               render={({ field }) => (
                 <TextAreaField
                   label="Description"
@@ -152,7 +159,6 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
             <FormField
               control={form.control}
               name="denomination"
-              defaultValue={isEdit ? fundingSources[editFundingIndex].denomination : ""}
               render={({ field }) => (
                 <CustomInput
                   className="pt-8"
@@ -168,7 +174,6 @@ export const ProfileConfigurationFundingSourceModal: React.FC<
             <FormField
               control={form.control}
               name="amountReceived"
-              defaultValue={isEdit ? fundingSources[editFundingIndex].amountReceived : ""}
               render={({ field }) => (
                 <CustomInput
                   className="pt-8"

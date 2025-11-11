@@ -14,7 +14,7 @@ import { Button, Skeleton } from "@/common/ui/layout/components";
 import TwitterSvg from "@/common/ui/layout/svg/twitter";
 import { useWalletUserSession } from "@/common/wallet";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 export type DonationSingleRecipientSuccessXShareButtonProps = {
   recipientAccountId: AccountId;

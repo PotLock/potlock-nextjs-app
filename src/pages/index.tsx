@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { FEATURE_REGISTRY, NETWORK } from "@/common/_config";
+import { ENV_TAG, FEATURE_REGISTRY, NETWORK } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
 import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import {
@@ -12,13 +12,16 @@ import {
   CarouselApi,
   CarouselContent,
   PageWithBanner,
+  Skeleton,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountCard } from "@/entities/_shared/account";
 import { DonateRandomly, DonateToAccountButton } from "@/features/donation";
 import { ProjectDiscovery } from "@/layout/components/project-discovery";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
+
+import { FeaturedCampaigns } from "./campaigns";
 
 export const FEATURED_PROJECT_ACCOUNT_IDS =
   NETWORK === "mainnet"
@@ -38,12 +41,22 @@ export const GeneralStats = () => {
     <div className="flex w-full flex-col gap-4">
       <div className="mt-4 flex flex-row flex-wrap items-center gap-4 px-2 py-0 md:gap-6 md:px-10">
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
-          {`$${stats?.total_donations_usd.toString()}`}
+          {stats?.total_donations_usd === undefined ? (
+            <Skeleton className="h-5.5 w-29" />
+          ) : (
+            <span>{`$${stats?.total_donations_usd?.toLocaleString()}`}</span>
+          )}
+
           <div className="text-sm font-normal text-[#656565]">Donated</div>
         </div>
 
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
-          {stats?.total_donations_count.toString()}
+          {stats?.total_donations_count === undefined ? (
+            <Skeleton className="h-5.5 w-29" />
+          ) : (
+            <span>{`${stats?.total_donations_count?.toLocaleString()}`}</span>
+          )}
+
           <div className="text-sm font-normal text-[#656565]">Donations</div>
         </div>
       </div>
@@ -69,7 +82,7 @@ const WelcomeBanner = () => {
           {"Opening funding up for anything"}
         </h3>
 
-        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
+        <h1 className="lett font-lora m-0 text-4xl font-medium leading-[1.1] tracking-tight md:text-[40px]">
           Discover ideas, projects, people, opportunities,
           <br className="hidden md:block" /> and grant pools to fund.
         </h1>
@@ -122,6 +135,8 @@ export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
+  const { data: campaigns } = indexer.useCampaigns();
+
   useEffect(() => {
     if (!api) return;
 
@@ -142,8 +157,10 @@ export default function Home() {
     <PageWithBanner>
       <WelcomeBanner />
       <GeneralStats />
-
-      <div className="flex w-full flex-col gap-4 px-2 pt-10 md:gap-10 md:px-10 md:pt-12">
+      <div className="mt-8 w-full p-0">
+        <FeaturedCampaigns data={campaigns?.results ?? []} />
+      </div>
+      <div className="flex w-full flex-col gap-4 px-2 pt-10 md:gap-10 md:pt-12">
         <div className="flex w-full flex-col gap-5">
           <div className="flex flex-row items-center justify-between text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             {"Featured projects"}

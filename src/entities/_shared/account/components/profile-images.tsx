@@ -1,21 +1,23 @@
 import { LazyLoadImage, LazyLoadImageProps } from "react-lazy-load-image-component";
 
-import { ByAccountId } from "@/common/types";
+import { ByAccountId, type LiveUpdateParams } from "@/common/types";
 import { Avatar, AvatarImage, Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 
 import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "../constants";
 import { useAccountSocialProfile } from "../hooks/social-profile";
 
-export type AccountProfilePictureProps = ByAccountId & {
-  className?: string;
-};
+export type AccountProfilePictureProps = ByAccountId &
+  LiveUpdateParams & {
+    className?: string;
+  };
 
 export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
+  live = false,
   accountId,
   className,
 }) => {
-  const { isLoading, avatar } = useAccountSocialProfile({ accountId });
+  const { isLoading, avatar } = useAccountSocialProfile({ live, accountId });
 
   return isLoading ? (
     <Skeleton className={cn("h-3 w-3 rounded-full", className)} />
@@ -32,7 +34,8 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
 };
 
 export type AccountProfileCoverProps = ByAccountId &
-  Required<Pick<LazyLoadImageProps, "height">> & {
+  Required<Pick<LazyLoadImageProps, "height">> &
+  LiveUpdateParams & {
     className?: string;
   };
 
@@ -40,11 +43,13 @@ const contentClassName =
   "h-full w-full object-cover transition-transform duration-500 ease-in-out hover:scale-110";
 
 export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
+  live = false,
   accountId,
   height,
   className,
 }) => {
   const { isLoading: isProfileDataLoading, cover } = useAccountSocialProfile({
+    live,
     accountId,
   });
 
