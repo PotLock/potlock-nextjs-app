@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { routeSelectors } from "@/navigation";
 import { Button } from "@/common/ui/layout/components";
+import { routeSelectors } from "@/navigation";
 
 interface CrossChainProcessingProps {
   campaignId: number;
@@ -476,17 +476,17 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
         </div>
         <div className="flex flex-1 flex-col gap-1">
           <div className="text-base font-semibold">Depositing</div>
-            {fundDonated ? (
-              <div className="text-sm text-gray-500">
-                Successfully deposited{" "}
-                {swapData?.swapDetails?.amountOutFormatted
-                  ? `${parseFloat(swapData.swapDetails.amountOutFormatted).toFixed(4)} NEAR`
-                  : amount}{" "}
-                to <strong className="font-semibold text-black">{campaignName}</strong>
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">Donate Pending.....</div>
-            )}
+          {fundDonated ? (
+            <div className="text-sm text-gray-500">
+              Successfully deposited{" "}
+              {swapData?.swapDetails?.amountOutFormatted
+                ? `${parseFloat(swapData.swapDetails.amountOutFormatted).toFixed(4)} NEAR`
+                : amount}{" "}
+              to <strong className="font-semibold text-black">{campaignName}</strong>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500">Donate Pending.....</div>
+          )}
         </div>
       </div>
 

@@ -33,10 +33,11 @@ export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campai
       cell: ({ row }) => {
         const donorId = row.original.donor_id;
         const isIntent = donorId.includes("potluck_intents.near");
-        const explorerUrl = isIntent 
+
+        const explorerUrl = isIntent
           ? `https://nearblocks.io/address/${donorId}`
           : `${rootPathnames.PROFILE}/${donorId}`;
-        
+
         const content = (
           <>
             <AccountProfilePicture className="h-5 w-5" accountId={donorId} />
@@ -55,7 +56,7 @@ export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campai
             )}
           </>
         );
-        
+
         return (
           <div key={row.id} className="address flex gap-2">
             <Link

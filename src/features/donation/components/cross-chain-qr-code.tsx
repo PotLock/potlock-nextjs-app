@@ -322,7 +322,8 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
             <>
               <div>
                 • You can send any amount equal to or greater than{" "}
-                <strong>{quoteData.minAmountInFormatted}</strong> (excluding network fees that will be deducted from your wallet). Amounts below the minimum will be refunded.
+                <strong>{quoteData.minAmountInFormatted}</strong> (excluding network fees that will
+                be deducted from your wallet). Amounts below the minimum will be refunded.
               </div>
               <div className="flex items-center gap-1">
                 • Recommended amount: <strong>{amount}</strong>

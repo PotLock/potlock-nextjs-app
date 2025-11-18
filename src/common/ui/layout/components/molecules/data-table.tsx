@@ -14,7 +14,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     getCoreRowModel: getCoreRowModel(),
   });
 
-
   return (
     <div className="rounded-md border">
       <Table>

@@ -51,7 +51,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   const { currentStep, finalOutcome } = useDonationState();
   const isTestEnv = process.env.NEXT_PUBLIC_ENV === "test";
   const [crossChainStep, setCrossChainStep] = useState<"amount" | "qr" | "processing" | null>(null);
-  
+
   // Helper to safely set crossChainStep only when not in test environment
   const setCrossChainStepSafe = (step: "amount" | "qr" | "processing" | null) => {
     if (!isTestEnv) {
@@ -131,7 +131,12 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
       case "confirmation":
         // Show cross-chain processing screen when user confirms they've sent funds
         // Only allow cross-chain steps when not in test environment
-        if (!isTestEnv && crossChainStep === "processing" && isCrossChainDonation && crossChainDonationData) {
+        if (
+          !isTestEnv &&
+          crossChainStep === "processing" &&
+          isCrossChainDonation &&
+          crossChainDonationData
+        ) {
           return (
             <>
               <DialogHeader>
@@ -188,7 +193,12 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
 
         // Show cross-chain QR code screen when user confirms donation
         // Only allow cross-chain steps when not in test environment
-        if (!isTestEnv && crossChainStep === "qr" && isCrossChainDonation && crossChainDonationData) {
+        if (
+          !isTestEnv &&
+          crossChainStep === "qr" &&
+          isCrossChainDonation &&
+          crossChainDonationData
+        ) {
           return (
             <>
               <DialogHeader>
@@ -241,7 +251,12 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
 
         // Show cross-chain amount entry instead of regular confirmation for cross-chain donations
         // Only allow cross-chain steps when not in test environment
-        if (!isTestEnv && crossChainStep === "amount" && isCrossChainDonation && selectedTokenData) {
+        if (
+          !isTestEnv &&
+          crossChainStep === "amount" &&
+          isCrossChainDonation &&
+          selectedTokenData
+        ) {
           return (
             <>
               <DialogHeader>

@@ -89,11 +89,7 @@ export const DonationSingleRecipientAllocation: React.FC<
 
   // Check if cross-chain donations are allowed (only for ongoing campaigns without end date)
   const isCrossChainAllowed = useMemo(() => {
-    return (
-      process.env.NEXT_PUBLIC_ENV !== "test" &&
-      isCampaignDonation &&
-      campaign?.end_ms == null
-    );
+    return process.env.NEXT_PUBLIC_ENV !== "test" && isCampaignDonation && campaign?.end_ms == null;
   }, [isCampaignDonation, campaign?.end_ms]);
 
   // Enable token selector for campaigns to allow cross-chain donations
