@@ -132,9 +132,17 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     values.allocationStrategy === DonationAllocationStrategyEnum.share &&
     values.potAccountId !== undefined;
 
+  // Check if tokenId is a cross-chain token (format: "blockchain:assetId")
+  const isCrossChainToken =
+    values.tokenId !== undefined &&
+    values.tokenId !== NATIVE_TOKEN_ID &&
+    values.tokenId.includes(":");
+
+  // Only fetch token data for NEAR tokens, not cross-chain tokens (to avoid balance loading errors)
   const { data: token } = useFungibleToken({
-    tokenId: values.tokenId ?? NATIVE_TOKEN_ID,
-    balanceCheckAccountId: viewer?.accountId,
+    tokenId: isCrossChainToken ? NATIVE_TOKEN_ID : (values.tokenId ?? NATIVE_TOKEN_ID),
+    balanceCheckAccountId: isCrossChainToken ? undefined : viewer?.accountId,
+    enabled: !isCrossChainToken,
   });
 
   const { data: pot } = indexer.usePot({
@@ -273,8 +281,13 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
   useEffect(() => {
     //* Only trigger with user input
     if (viewer.hasWalletReady && values.amount !== undefined) {
-      //* Checking for insufficient balance
-      if (token?.balance !== undefined && token.balance.lt(totalAmountFloat)) {
+      //* Skip balance validation for cross-chain tokens (we don't have balance info for other chains)
+      //* Checking for insufficient balance (only for NEAR tokens)
+      if (
+        !isCrossChainToken &&
+        token?.balance !== undefined &&
+        token.balance.lt(totalAmountFloat)
+      ) {
         if (
           customErrors?.amount?.message !== DONATION_INSUFFICIENT_BALANCE_ERROR ||
           self.formState.isValid
@@ -284,7 +297,9 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
       }
 
       //* Addressing single-recipient and group donation scenarios with evenly distributed funds
+      //* Skip minimum amount validation for cross-chain tokens (they don't have min requirements)
       else if (
+        !isCrossChainToken &&
         minTotalAmountFloat !== undefined &&
         Big(parsedAmount).lt(minTotalAmountFloat) &&
         (values.allocationStrategy === DonationAllocationStrategyEnum.full ||
@@ -302,7 +317,9 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
       }
 
       //* Addressing group donation scenarios with manually distributed funds
+      //* Skip minimum amount validation for cross-chain tokens
       else if (
+        !isCrossChainToken &&
         values.allocationStrategy === DonationAllocationStrategyEnum.share &&
         values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual &&
         (values.groupAllocationPlan?.some(
@@ -327,6 +344,7 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     }
   }, [
     customErrors,
+    isCrossChainToken,
     isFtDonation,
     isGroupDonation,
     minRecipientShareAmountFloat,
