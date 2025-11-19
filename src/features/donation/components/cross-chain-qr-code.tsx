@@ -279,11 +279,11 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
 
       {/* Deposit Address */}
       <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3">
-        <div className="flex flex-col flex-1 min-w-0">
+        <div className="flex min-w-0 flex-1 flex-col">
           <div className="text-sm font-semibold">
             Deposit Address ({capitalizeFirstLetter(blockchain)})
           </div>
-          <div className="text-sm text-gray-600 overflow-x-auto whitespace-nowrap">
+          <div className="overflow-x-auto whitespace-nowrap text-sm text-gray-600">
             {depositAddress}
           </div>
         </div>
@@ -354,8 +354,9 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
               </div>
               <div>
                 • You can send any amount equal to or greater than{" "}
-                <strong>{Number(quoteData.minAmountInFormatted)?.toFixed(4)}</strong> (excluding network fees that will
-                be deducted from your wallet). Amounts below the minimum will be refunded.
+                <strong>{Number(quoteData.minAmountInFormatted)?.toFixed(4)}</strong> (excluding
+                network fees that will be deducted from your wallet). Amounts below the minimum will
+                be refunded.
               </div>
             </>
           ) : (

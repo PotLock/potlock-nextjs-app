@@ -181,9 +181,11 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
   };
 
   const isDisabled = useMemo(() => {
-    return senderAddress.trim() === "" ||
-    !formAmount ||
-    (price > 0 && nearPrice > 0 && (parseFloat(formAmount.toString()) * price) / nearPrice < 0.1);
+    return (
+      senderAddress.trim() === "" ||
+      !formAmount ||
+      (price > 0 && nearPrice > 0 && (parseFloat(formAmount.toString()) * price) / nearPrice < 0.1)
+    );
   }, [senderAddress, formAmount, price, nearPrice]);
 
   function capitalizeAll(str: string): string {
@@ -274,19 +276,19 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
             </div>
             <div className="text-sm text-gray-700">
               You are donating with{" "}
-              <strong>{selectedBlockchain ? capitalizeAll(selectedBlockchain) : "Solana"}</strong> assets. If this
-              campaign doesn&rsquo;t reach its minimum funding goal, your donation will be
-              redirected to <strong>Potlock Food Bank wallets</strong> (auto distribution wallet) to
-              support other campaigns as we can&rsquo;t support refunds with intents.
+              <strong>{selectedBlockchain ? capitalizeAll(selectedBlockchain) : "Solana"}</strong>{" "}
+              assets. If this campaign doesn&rsquo;t reach its minimum funding goal, your donation
+              will be redirected to <strong>Potlock Food Bank wallets</strong> (auto distribution
+              wallet) to support other campaigns as we can&rsquo;t support refunds with intents.
             </div>
           </div>
         </div>
       </div>
-{isDisabled && (
-  <div className="text-sm text-red-500">
-    Please enter a valid amount greater than 0.1 NEAR.
-  </div>
-)}
+      {isDisabled && (
+        <div className="text-sm text-red-500">
+          Please enter a valid amount greater than 0.1 NEAR.
+        </div>
+      )}
       {/* Action Button */}
       <div className="mt-4 flex gap-3">
         <Button

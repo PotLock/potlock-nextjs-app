@@ -55,6 +55,7 @@ const getTokenAvatarSrc = (blockchain?: string, tokenSymbol?: string): string =>
   const tokenAvatar = tokenSymbol
     ? tokenAvatars.find((a) => a.name.toLowerCase() === tokenSymbol.toLowerCase())
     : null;
+
   const blockchainAvatar = blockchain
     ? tokenAvatars.find((a) => a.name.toLowerCase() === blockchain.toLowerCase())
     : null;
@@ -94,6 +95,7 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
   // Supported blockchains based on available addresses
   const supportedBlockchains = useMemo(() => {
     const nonEvmChains = ["btc", "zec", "ton", "doge", "sol", "near", "xrp", "sui"];
+
     const evmChains = [
       "evm",
       "eth",
@@ -107,6 +109,7 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
       "avax",
       "op",
     ];
+
     return new Set([...nonEvmChains, ...evmChains].map((chain) => chain.toLowerCase()));
   }, []);
 
@@ -137,10 +140,10 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
     // Only include tokens from supported blockchains
     tokens.forEach((token) => {
       const normalizedBlockchain = token.blockchain.toLowerCase();
-      
+
       // Check if blockchain is supported (handle variations like "ethereum" -> "eth", "arbitrum" -> "arb")
       let isSupported = supportedBlockchains.has(normalizedBlockchain);
-      
+
       if (!isSupported) {
         // Handle common variations
         const blockchainVariations: Record<string, string[]> = {
@@ -154,8 +157,9 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
           tron: ["tron"],
           bsc: ["evm"], // BSC is EVM-compatible
         };
-        
+
         const variations = blockchainVariations[normalizedBlockchain];
+
         if (variations) {
           isSupported = variations.some((variant) => supportedBlockchains.has(variant));
         }
@@ -187,13 +191,14 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
       (option) =>
         option.label.toLowerCase().includes(query) ||
         option.tokenData.symbol.toLowerCase().includes(query) ||
-        option.blockchain.toLowerCase().includes(query)
+        option.blockchain.toLowerCase().includes(query),
     );
   }, [tokenOptions, searchQuery]);
 
   // Get current selected value
   const currentValue =
     "defaultValue" in props ? props.defaultValue : "value" in props ? props.value : undefined;
+
   const selectedOption = tokenOptions.find((opt) => opt.value === currentValue);
 
   const handleValueChange = (value: string) => {
@@ -252,14 +257,17 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
           disabled={props.disabled}
           className={cn(
             "bg-background ring-offset-background placeholder:text-muted-foreground focus:ring-ring mr-2px flex h-full min-w-[140px] items-center justify-between gap-2 rounded-r-none py-2 pl-3 pr-2 text-sm shadow-[0px_0px_0px_1px_#00000038_inset,0px_-1px_1px_0px_#00000038_inset] focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50",
-            props.disabled && "cursor-not-allowed opacity-50"
+            props.disabled && "cursor-not-allowed opacity-50",
           )}
         >
           <span className="line-clamp-1 flex items-center gap-2">
             {selectedOption ? (
               <>
                 <img
-                  src={getTokenAvatarSrc(selectedOption.blockchain, selectedOption.tokenData.symbol)}
+                  src={getTokenAvatarSrc(
+                    selectedOption.blockchain,
+                    selectedOption.tokenData.symbol,
+                  )}
                   alt={selectedOption.tokenData.symbol}
                   className="h-5 w-5 rounded-full object-cover"
                 />
@@ -272,14 +280,18 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
           <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0" align="start" onInteractOutside={(e) => e.preventDefault()}>
+      <PopoverContent
+        className="w-[300px] p-0"
+        align="start"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <Command className="!overflow-visible" shouldFilter={false}>
           <CommandInput
             placeholder="Search tokens..."
             value={searchQuery}
             onValueChange={setSearchQuery}
           />
-          <CommandList 
+          <CommandList
             className="max-h-[300px] overflow-y-auto overflow-x-hidden"
             onWheel={(e) => {
               // Allow scrolling to work
@@ -296,7 +308,7 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
                     onSelect={() => {
                       handleValueChange(option.value);
                     }}
-                    className="!cursor-pointer !pointer-events-auto flex items-center gap-2 aria-selected:bg-[#FEF6EE] hover:bg-[#FEF6EE] hover:opacity-100 data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 opacity-100"
+                    className="!pointer-events-auto flex !cursor-pointer items-center gap-2 opacity-100 hover:bg-[#FEF6EE] hover:opacity-100 aria-selected:bg-[#FEF6EE] data-[disabled]:pointer-events-auto data-[disabled]:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleValueChange(option.value);
@@ -305,11 +317,11 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
                     <img
                       src={getTokenAvatarSrc(option.blockchain, option.tokenData.symbol)}
                       alt={option.tokenData.symbol}
-                      className="h-5 w-5 rounded-full object-cover shrink-0 pointer-events-none"
+                      className="pointer-events-none h-5 w-5 shrink-0 rounded-full object-cover"
                     />
-                    <span className="flex-1 pointer-events-none">{option.label}</span>
+                    <span className="pointer-events-none flex-1">{option.label}</span>
                     {currentValue === option.value && (
-                      <Check className="h-4 w-4 text-green-500 shrink-0 pointer-events-none" />
+                      <Check className="pointer-events-none h-4 w-4 shrink-0 text-green-500" />
                     )}
                   </CommandItem>
                 ))}

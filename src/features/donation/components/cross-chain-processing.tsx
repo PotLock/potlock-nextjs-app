@@ -166,7 +166,6 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
           }
 
           const donateData = await donateResponse.json();
-          console.log("Donation response:", donateData);
 
           setFundDonated(true);
           // Don't automatically navigate - wait for user to click "View Success" button
