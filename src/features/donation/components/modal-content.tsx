@@ -185,6 +185,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                   onBack={() => {
                     setCrossChainStepSafe("qr");
                   }}
+                  onFinish={closeModal}
                 />
               </DialogDescription>
             </>

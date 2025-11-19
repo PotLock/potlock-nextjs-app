@@ -23,6 +23,7 @@ interface CrossChainProcessingProps {
   ) => void;
   onClose: () => void;
   onBack: () => void;
+  onFinish: () => void;
 }
 
 export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
@@ -37,6 +38,7 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
   onProceed,
   onClose,
   onBack,
+  onFinish,
 }) => {
   const router = useRouter();
   const [fundReceived, setFundReceived] = useState<boolean | null>(false);
@@ -505,10 +507,11 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
             onClick={() => {
               // Navigate to leaderboard page
               router.push(routeSelectors.CAMPAIGN_BY_ID_LEADERBOARD(campaignId));
+              onFinish();
             }}
             className="w-full"
           >
-            View Success
+            View Transaction
           </Button>
         ) : (
           <Button

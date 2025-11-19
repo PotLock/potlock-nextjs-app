@@ -279,11 +279,13 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
 
       {/* Deposit Address */}
       <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3">
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-1 min-w-0">
           <div className="text-sm font-semibold">
             Deposit Address ({capitalizeFirstLetter(blockchain)})
           </div>
-          <div className="text-sm text-gray-600">{depositAddress}</div>
+          <div className="text-sm text-gray-600 overflow-x-auto whitespace-nowrap">
+            {depositAddress}
+          </div>
         </div>
         <button
           type="button"
@@ -320,11 +322,6 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
         <div className="space-y-2 text-sm text-gray-700">
           {quoteData?.minAmountInFormatted ? (
             <>
-              <div>
-                • You can send any amount equal to or greater than{" "}
-                <strong>{quoteData.minAmountInFormatted}</strong> (excluding network fees that will
-                be deducted from your wallet). Amounts below the minimum will be refunded.
-              </div>
               <div className="flex items-center gap-1">
                 • Recommended amount: <strong>{amount}</strong>
                 {isCopiedAmount ? (
@@ -353,7 +350,12 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
                     </svg>
                   </button>
                 )}{" "}
-                (minimum: {quoteData.minAmountInFormatted})
+                (minimum: {Number(quoteData.minAmountInFormatted)?.toFixed(4)})
+              </div>
+              <div>
+                • You can send any amount equal to or greater than{" "}
+                <strong>{Number(quoteData.minAmountInFormatted)?.toFixed(4)}</strong> (excluding network fees that will
+                be deducted from your wallet). Amounts below the minimum will be refunded.
               </div>
             </>
           ) : (
