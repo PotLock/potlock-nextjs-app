@@ -40,6 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       {},
       8000, // 8 second timeout
     );
+
     if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
     const campaigns = await res.json();
 
@@ -88,14 +89,16 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
           notFound: true,
         };
       }
+
       throw new Error(`Failed to fetch campaign: ${res.status}`);
     }
 
     const campaign = await res.json();
 
     const seoTitle = campaign?.name ?? `Campaign ${campaignId}`;
-    const seoDescription =
-      stripHtml(campaign?.description) || "Support this campaign on Potlock.";
+
+    const seoDescription = stripHtml(campaign?.description) || "Support this campaign on Potlock.";
+
     // Use cover_image_url field which is the correct field for campaign images
     const seoImage = campaign?.cover_image_url ?? APP_METADATA.openGraph.images.url;
 
@@ -106,7 +109,7 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
     };
   } catch (error) {
     console.error("Error generating static props:", error);
-    
+
     // Return fallback props instead of throwing error to prevent 500
     // This allows the page to render with default SEO data
     return {
