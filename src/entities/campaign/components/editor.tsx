@@ -688,7 +688,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
           </div>
 
           <div className="my-10 flex flex-row-reverse justify-between">
-            <Button variant="standard-filled" disabled={isDisabled} type="submit">
+            <Button variant="brand-filled" disabled={isDisabled} type="submit">
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
 
