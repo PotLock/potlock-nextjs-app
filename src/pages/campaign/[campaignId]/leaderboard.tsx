@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import { APP_METADATA } from "@/common/constants";
 import { stripHtml } from "@/common/lib/datetime";
+import { fetchWithTimeout } from "@/common/lib/fetch-with-timeout";
 import { CampaignDonorsTable } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
@@ -33,8 +34,13 @@ CampaignLeaderboardPage.getLayout = function getLayout(page: ReactElement) {
 // Pre-generate the most popular campaigns at build time
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    // Fetch campaigns to get IDs for pre-generation
-    const res = await fetch("https://dev.potlock.io/api/v1/campaigns?limit=50");
+    // Fetch campaigns to get IDs for pre-generation with timeout
+    const res = await fetchWithTimeout(
+      "https://dev.potlock.io/api/v1/campaigns?limit=50",
+      {},
+      8000, // 8 second timeout
+    );
+
     if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
     const campaigns = await res.json();
 
@@ -50,6 +56,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     };
   } catch (error) {
     console.error("Error generating static paths:", error);
+    // Return empty paths but still allow blocking fallback for on-demand generation
     return {
       paths: [],
       fallback: "blocking",
@@ -62,15 +69,36 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
   try {
     const campaignId = params?.campaignId as string;
 
-    const res = await fetch(
+    if (!campaignId) {
+      return {
+        notFound: true,
+      };
+    }
+
+    // Fetch with timeout to prevent server timeouts
+    const res = await fetchWithTimeout(
       `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
+      {},
+      8000, // 8 second timeout
     );
 
-    if (!res.ok) throw new Error(`Failed to fetch campaign: ${res.status}`);
+    if (!res.ok) {
+      // If campaign not found, return 404 instead of erroring
+      if (res.status === 404) {
+        return {
+          notFound: true,
+        };
+      }
+
+      throw new Error(`Failed to fetch campaign: ${res.status}`);
+    }
+
     const campaign = await res.json();
 
-    const seoTitle = campaign?.name ?? "Campaign";
+    const seoTitle = campaign?.name ?? `Campaign ${campaignId}`;
+
     const seoDescription = stripHtml(campaign?.description) || "Support this campaign on Potlock.";
+
     // Use cover_image_url field which is the correct field for campaign images
     const seoImage = campaign?.cover_image_url ?? APP_METADATA.openGraph.images.url;
 
@@ -81,13 +109,17 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
     };
   } catch (error) {
     console.error("Error generating static props:", error);
+
+    // Return fallback props instead of throwing error to prevent 500
+    // This allows the page to render with default SEO data
     return {
       props: {
-        seoTitle: APP_METADATA.title,
+        seoTitle: `Campaign ${params?.campaignId || ""}`,
         seoDescription: APP_METADATA.description,
         seoImage: APP_METADATA.openGraph.images.url,
       },
-      revalidate: 300,
+      // Shorter revalidate for error cases to retry sooner
+      revalidate: 60,
     };
   }
 };
