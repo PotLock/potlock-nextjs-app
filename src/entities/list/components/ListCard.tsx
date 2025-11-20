@@ -11,7 +11,7 @@ import { LayersIcon } from "@/common/ui/layout/svg";
 import { LikeIcon } from "@/common/ui/layout/svg/like";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { ListFormModalType } from "../types";
 
@@ -24,6 +24,7 @@ export const ListCard = ({
   background?: string;
   backdrop: string;
 }) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const [isUpvoted, setIsUpvoted] = useState(false);
   const { push } = useRouter();
@@ -44,14 +45,14 @@ export const ListCard = ({
       listsContractClient.remove_upvote({ list_id: dataForList?.on_chain_id });
 
       dispatch.listEditor.handleListToast({
-        name: truncate(dataForList?.name, 15),
+        name: truncate(dataForList?.name ?? "", 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
       listsContractClient.upvote({ list_id: dataForList?.on_chain_id });
 
       dispatch.listEditor.handleListToast({
-        name: truncate(dataForList?.name, 15),
+        name: truncate(dataForList?.name ?? "", 15),
         type: ListFormModalType.UPVOTE,
       });
     }
@@ -64,9 +65,6 @@ export const ListCard = ({
     },
     [dataForList?.owner],
   );
-
-  const NO_IMAGE =
-    "https://i.near.social/magic/large/https://near.social/magic/img/account/null.near";
 
   return (
     <div
@@ -114,7 +112,7 @@ export const ListCard = ({
               >
                 <AccountProfilePicture accountId={dataForList?.owner?.id} className="h-4 w-4" />
 
-                <p className="">{truncate(dataForList.owner?.id, 25)}</p>
+                <p className="">{truncate(dataForList.owner?.id ?? "", 25)}</p>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2">

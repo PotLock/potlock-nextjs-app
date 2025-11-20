@@ -11,7 +11,7 @@ import { useAccountSocialProfile } from "@/entities/_shared/account";
 export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
   const viewer = useWalletUserSession();
 
-  const { avatarSrc } = useAccountSocialProfile({
+  const { avatar } = useAccountSocialProfile({
     enabled: viewer.isSignedIn,
     accountId: viewer.accountId as AccountId,
   });
@@ -27,7 +27,7 @@ export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
         content: { text: postText, type: "md" },
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
@@ -36,8 +36,8 @@ export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
       <form onSubmit={handleCreatePost}>
         <div className="flex items-start gap-2 rounded-2xl border-none p-6 shadow-lg">
           <LazyLoadImage
-            alt=""
-            src={avatarSrc}
+            alt="Your avatar"
+            src={avatar.url}
             width={50}
             height={50}
             className=" mx-1 h-8 w-8 rounded-[50%]"

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 import { Button, DialogContent, DialogDescription } from "@/common/ui/layout/components";
 import SuccessRedIcon from "@/common/ui/layout/svg/success-red-icon";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { useCampaignActionState } from "../models";
 import { SuccessCampaignModal } from "./SuccessCampaignModal";
@@ -15,6 +15,7 @@ import { CampaignEnumType } from "../types";
 export const CampaignFinishModal = create(() => {
   const self = useModal();
   const { push } = useRouter();
+  const dispatch = useDispatch();
 
   const {
     type,

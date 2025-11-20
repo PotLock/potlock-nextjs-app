@@ -3,10 +3,10 @@ import { Big } from "big.js";
 import { coingeckoHooks } from "@/common/api/coingecko";
 import { formatWithCommas } from "@/common/lib";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useToken } from "@/entities/_shared/token";
+import { useFungibleToken } from "@/entities/_shared/token";
 
 /**
- * @deprecated Use `data.usdPrice` from {@link useToken}({ tokenId: NATIVE_TOKEN_ID })
+ * @deprecated Use `data.usdPrice` from {@link useFungibleToken}({ tokenId: NATIVE_TOKEN_ID })
  */
 export const useNearToUsdWithFallback = (amountNear: number, abbreviate?: boolean) => {
   const { data: oneNearTokenUsdPrice } = coingeckoHooks.useNativeTokenUsdPrice();

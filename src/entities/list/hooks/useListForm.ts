@@ -10,12 +10,13 @@ import { listsContractClient } from "@/common/contracts/core/lists";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 import { AccountGroupItem, validateAccountId } from "@/entities/_shared/account";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { ListFormModalType } from "../types";
 
 export const useListForm = () => {
   const { push, query } = useRouter();
+  const dispatch = useDispatch();
   const [transferAccountField, setTransferAccountField] = useState<string>("");
   const [transferAccountError, setTransferAccountError] = useState<string | undefined>("");
 
@@ -96,16 +97,14 @@ export const useListForm = () => {
         contractId: LISTS_CONTRACT_ACCOUNT_ID,
       })
       .callMultiple(allTransactions)
-      .then((res) => {
-        console.log(res);
+      .then((_res) => {
+        dispatch.listEditor.updateListModalState({
+          header: "Account(s) Deleted From List Successfully",
+          description,
+          type: ListFormModalType.UNREGISTER,
+        });
       })
       .catch((err) => console.error(err));
-
-    dispatch.listEditor.updateListModalState({
-      header: "Account(s) Deleted From List Successfully",
-      description,
-      type: ListFormModalType.UNREGISTER,
-    });
   };
 
   const handleRemoveAdmin = (accounts: AccountGroupItem[]) => {
@@ -155,6 +154,7 @@ export const useListForm = () => {
   const handleChangeTransferOwnerField = async (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setTransferAccountField(value);
+    // FIXME: //! Create a form with a field validated by nearProtocolSchemas.validAccountId instead!
     const data = await validateAccountId(value);
     setTransferAccountError(data);
   };

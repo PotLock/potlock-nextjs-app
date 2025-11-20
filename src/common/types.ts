@@ -10,7 +10,12 @@ export enum FeatureId {
   /**
    * Donation to a single account using fungible token.
    */
-  DirectFtDonation = "DirectFtDonation",
+  FtDonation = "FtDonation",
+
+  /**
+   * Donation to a pot using fungible token.
+   */
+  PotFtDonation = "PotFtDonation",
 
   /**
    * Donation to a single account using blockchain's native token.
@@ -21,6 +26,11 @@ export enum FeatureId {
    * As a User, I want to be able to register on the platform and update my profile details
    */
   ProfileConfiguration = "ProfileConfiguration",
+
+  /**
+   * As a User, I want to be able to add donations to my cart
+   */
+  Cart = "Cart",
 }
 
 export type FeatureFlags = { isEnabled: boolean };
@@ -38,6 +48,10 @@ export interface ByAccountId {
   accountId: AccountId;
 }
 
+export type ByContractAccountId = {
+  contractAccountId: AccountId;
+};
+
 export type ContractConfig = ByAccountId & {};
 
 export type EnvConfig = {
@@ -47,7 +61,8 @@ export type EnvConfig = {
   indexer: { api: { endpointUrl: string } };
 
   core: {
-    campaigns: { contract: { accountId: string } };
+    namespaceRoot: { contract: ContractConfig };
+    campaigns: { contract: ContractConfig };
     donation: { contract: ContractConfig };
     lists: { contract: ContractConfig };
     potFactory: { contract: ContractConfig };
@@ -55,7 +70,7 @@ export type EnvConfig = {
     voting: { contract: ContractConfig };
   };
 
-  social: { app: { url: string }; contract: ContractConfig };
+  social: { platformName: string; app: { url: string }; contract: ContractConfig };
 
   deFi: {
     metapool: {
@@ -81,6 +96,10 @@ export type ClientConfig = { swr?: SWRConfiguration };
 export interface ConditionalActivation {
   enabled?: boolean;
 }
+
+export type LiveUpdateParams = {
+  live?: boolean;
+};
 
 export type ContractMetadata = {
   latestSourceCodeCommitHash: null | string;
@@ -148,10 +167,3 @@ export type BasicRequirement = {
 export type ClearanceCheckResult =
   | { requirements: BasicRequirement[]; isEveryRequirementSatisfied: boolean; error: null }
   | { requirements: null; isEveryRequirementSatisfied: false; error: Error };
-
-/**
- * @deprecated Use {@link ConditionalActivation}
- */
-export interface WithDisabled {
-  disabled?: boolean;
-}

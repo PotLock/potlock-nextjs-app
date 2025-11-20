@@ -31,8 +31,8 @@ import {
   AccountHandle,
   AccountProfileCover,
   AccountProfilePicture,
-} from "@/entities/_shared";
-import { dispatch } from "@/store";
+} from "@/entities/_shared/account";
+import { useDispatch } from "@/store/hooks";
 
 import { listRegistrationStatuses } from "../constants";
 import { ListFormModalType } from "../types";
@@ -49,6 +49,8 @@ export const ListAccountCard = ({
   dataForList: ListRegistration;
   accountsWithAccess: string[];
 }) => {
+  const dispatch = useDispatch();
+
   const [registrationStatus, setRegistrationStatus] = useState<RegistrationStatus>(
     RegistrationStatus.Pending,
   );
@@ -142,7 +144,7 @@ export const ListAccountCard = ({
               />
 
               <p className="mt-2 h-14 overflow-hidden text-sm text-gray-600">
-                {truncate(profile?.description as string, 150) ?? "N/A"}
+                {profile?.description !== undefined ? truncate(profile.description, 150) : null}
               </p>
 
               {/* Labels NOT sure if we need this */}

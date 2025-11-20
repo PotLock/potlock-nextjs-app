@@ -14,8 +14,12 @@ export const envConfig: EnvConfig = {
   },
 
   core: {
+    namespaceRoot: {
+      contract: { accountId: "potlock.near" },
+    },
+
     campaigns: {
-      contract: { accountId: "campaigns.staging.potlock.near" },
+      contract: { accountId: "v1.campaigns.staging.potlock.near" },
     },
 
     donation: {
@@ -43,6 +47,7 @@ export const envConfig: EnvConfig = {
   },
 
   social: {
+    platformName: "NEAR Social",
     app: { url: "https://near.social" },
     contract: { accountId: "social.near" },
   },
@@ -65,16 +70,18 @@ export const envConfig: EnvConfig = {
     [FeatureId.ProfileConfiguration]: {
       id: FeatureId.ProfileConfiguration,
       name: "Profile configuration",
-      isEnabled: false,
+      isEnabled: true,
     },
 
-    [FeatureId.DirectFtDonation]: {
-      id: FeatureId.DirectFtDonation,
-      name: "Direct FT donation",
+    [FeatureId.FtDonation]: {
+      id: FeatureId.FtDonation,
+      name: "Non-pot FT donations",
+      isEnabled: true,
+    },
 
-      /**
-       * The implementation is not finished yet
-       */
+    [FeatureId.PotFtDonation]: {
+      id: FeatureId.PotFtDonation,
+      name: "Pot FT donations",
       isEnabled: false,
     },
 
@@ -82,6 +89,12 @@ export const envConfig: EnvConfig = {
       id: FeatureId.DirectNativeTokenDonation,
       name: "Direct native token donation",
       isEnabled: true,
+    },
+
+    [FeatureId.Cart]: {
+      id: FeatureId.Cart,
+      name: "Cart",
+      isEnabled: false,
     },
   },
 };

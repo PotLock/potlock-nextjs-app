@@ -3,50 +3,98 @@ import { useCallback, useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { infer as FromSchema } from "zod";
 
+import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
-import { floatToYoctoNear, parseNumber } from "@/common/lib";
-import { CampaignId } from "@/common/types";
+import type { Campaign } from "@/common/contracts/core/campaigns/interfaces";
+import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
+import { floatToIndivisible, parseNumber } from "@/common/lib";
+import type { FileUploadResult } from "@/common/services/pinata";
+import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types";
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
-import { dispatch } from "@/store";
+import { useFungibleToken } from "@/entities/_shared/token";
+import { routeSelectors } from "@/navigation";
+import { useDispatch } from "@/store/hooks";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
 
-export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => {
+export type CampaignFormParams = Partial<ByCampaignId> & {
+  ftId?: TokenId;
+  onUpdateSuccess?: () => void;
+};
+
+export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignFormParams) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const router = useRouter();
+  const isNewCampaign = campaignId === undefined;
+  const schema = isNewCampaign ? createCampaignSchema : updateCampaignSchema;
 
-  const schema = campaignId ? updateCampaignSchema : createCampaignSchema;
-
-  type Values = FromSchema<typeof schema>;
+  type Values = FromSchema<typeof schema> & {
+    project_name?: string;
+    project_description?: string;
+  };
 
   const self = useForm<Values>({
     resolver: zodResolver(schema),
-    mode: "onChange",
+    mode: "all",
+    defaultValues: { ft_id: ftId ?? NATIVE_TOKEN_ID, target_amount: 0.01 },
     resetOptions: { keepDirtyValues: false },
   });
 
+  const handleCoverImageUploadResult = useCallback(
+    (result: FileUploadResult) =>
+      self.setValue("cover_image_url", result.url, { shouldValidate: true }),
+
+    [self],
+  );
+
+  //! For internal use only!
   const values = useWatch(self);
 
+  const parsedTargetAmount = useMemo(
+    () => (values.target_amount ? parseNumber(values.target_amount) : null),
+    [values.target_amount],
+  );
+
+  const parsedMinAmount = useMemo(
+    () => (values.min_amount ? parseNumber(values.min_amount) : null),
+    [values.min_amount],
+  );
+
+  const parsedMaxAmount = useMemo(
+    () => (values.max_amount ? parseNumber(values.max_amount) : null),
+    [values.max_amount],
+  );
+
+  const { isLoading: isTokenDataLoading, data: token } = useFungibleToken({
+    tokenId: values.ft_id ?? NATIVE_TOKEN_ID,
+  });
+
   const isDisabled = useMemo(
-    () => !self.formState.isDirty || !self.formState.isValid || self.formState.isSubmitting,
-    [self.formState.isDirty, self.formState.isSubmitting, self.formState.isValid],
+    () =>
+      !self.formState.isDirty ||
+      !self.formState.isValid ||
+      self.formState.isSubmitting ||
+      (values.ft_id !== NATIVE_TOKEN_ID && !isTokenDataLoading && token === undefined),
+
+    [
+      isTokenDataLoading,
+      self.formState.isDirty,
+      self.formState.isSubmitting,
+      self.formState.isValid,
+      token,
+      values.ft_id,
+    ],
   );
 
   useEffect(() => {
-    const { min_amount, max_amount, target_amount } = values;
     const errors: Record<string, { message: string }> = {};
 
-    // Convert string values to numbers for comparison
-    const minAmount = min_amount ? parseNumber(min_amount) : null;
-    const maxAmount = max_amount ? parseNumber(max_amount) : null;
-    const targetAmount = target_amount ? parseNumber(target_amount) : null;
-
     // Validate min_amount vs max_amount
-    if (minAmount && maxAmount && minAmount > maxAmount) {
+    if (parsedMinAmount && parsedMaxAmount && parsedMinAmount > parsedMaxAmount) {
       errors.min_amount = {
         message: "Minimum amount cannot be greater than maximum amount",
       };
@@ -57,7 +105,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     }
 
     // Validate target_amount vs max_amount
-    if (targetAmount && maxAmount && targetAmount > maxAmount) {
+    if (parsedTargetAmount && parsedMaxAmount && parsedTargetAmount > parsedMaxAmount) {
       errors.target_amount = {
         message: "Target amount cannot be greater than maximum amount",
       };
@@ -68,7 +116,7 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     }
 
     // Validate min_amount vs target_amount
-    if (minAmount && targetAmount && minAmount > targetAmount) {
+    if (parsedMinAmount && parsedTargetAmount && parsedMinAmount > parsedTargetAmount) {
       errors.min_amount = {
         message: "Minimum amount cannot be greater than target amount",
       };
@@ -89,90 +137,143 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
     Object.entries(errors).forEach(([field, error]) => {
       self.setError(field as keyof Values, error);
     });
-  }, [values, self]);
+  }, [values, self, parsedMinAmount, parsedMaxAmount, parsedTargetAmount]);
 
   const timeToMilliseconds = (time: number) => {
     return new Date(time).getTime();
   };
 
-  const handleDeleteCampaign = () => {
-    if (!campaignId) return;
-    campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
+  const formatFullDateTime = (timestampMs: number) => {
+    const date = new Date(timestampMs);
+    const day = date.getDate();
 
-    dispatch.campaignEditor.updateCampaignModalState({
-      header: `Campaign Deleted Successfully`,
-      description: "You can now proceed to close this window",
-      type: CampaignEnumType.DELETE_CAMPAIGN,
-    });
+    let suffix = "th";
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
+    return `${day}${suffix} ${month} ${year}, ${time}`;
+  };
+
+  const handleDeleteCampaign = () => {
+    if (!isNewCampaign) {
+      campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
+
+      dispatch.campaignEditor.updateCampaignModalState({
+        header: "Campaign Deleted Successfully",
+        description: "You can now proceed to close this window",
+        type: CampaignEnumType.DELETE_CAMPAIGN,
+      });
+    }
   };
 
   const handleProcessEscrowedDonations = () => {
-    if (!campaignId) return;
+    if (!isNewCampaign) {
+      campaignsContractClient
+        .process_escrowed_donations_batch({
+          args: { campaign_id: campaignId },
+        })
+        .then(() => {
+          return toast({
+            title: "Successfully processed escrowed donations",
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to process escrowed donations:", error);
 
-    campaignsContractClient
-      .process_escrowed_donations_batch({
-        args: { campaign_id: campaignId },
-      })
-      .then(() => {
-        return toast({
-          title: "Successfully processed escrowed donations",
+          toast({
+            title: "Failed to process escrowed donations. Please try again later.",
+            variant: "destructive",
+          });
         });
-      })
-      .catch((error) => {
-        console.error("Failed to process escrowed donations:", error);
-
-        toast({
-          title: "Failed to process escrowed donations. Please try again later.",
-          variant: "destructive",
-        });
-      });
+    }
   };
 
   const handleDonationsRefund = () => {
-    if (!campaignId) return;
+    if (!isNewCampaign) {
+      campaignsContractClient
+        .process_refunds_batch({
+          args: { campaign_id: campaignId },
+        })
+        .then(() => {
+          return toast({
+            title: "Successfully processed donation refunds",
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to process donation refunds:", error);
 
-    campaignsContractClient
-      .process_refunds_batch({
-        args: { campaign_id: campaignId },
-      })
-      .then(() => {
-        return toast({
-          title: "Successfully processed donation refunds",
+          toast({
+            title: "Failed to process donation refunds. Please try again later.",
+            variant: "destructive",
+          });
         });
-      })
-      .catch((error) => {
-        console.error("Failed to process donation refunds:", error);
-
-        toast({
-          title: "Failed to process donation refunds. Please try again later.",
-          variant: "destructive",
-        });
-      });
+    }
   };
 
+  // TODO: Use token metadata to convert amounts
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) => {
       const args = {
         description: values.description || "",
         name: values.name || "",
-        target_amount: floatToYoctoNear(values.target_amount ?? 0) as any,
-        cover_image_url: values.cover_image_url ?? null,
-        ...(values.min_amount && !campaignId
-          ? { min_amount: floatToYoctoNear(values.min_amount) as any }
+
+        ...(isNewCampaign ? { ft_id: values.ft_id === NATIVE_TOKEN_ID ? null : values.ft_id } : {}),
+
+        target_amount: floatToIndivisible(
+          parseNumber(values.target_amount ?? 0),
+          token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+        ),
+        ...(isNewCampaign && values.project_name ? { project_name: values.project_name } : {}),
+        ...(isNewCampaign && values.project_description
+          ? { project_description: values.project_description }
           : {}),
-        ...(values.max_amount && {
-          max_amount: floatToYoctoNear(values.max_amount) as any,
+        ...(values.cover_image_url
+          ? {
+              cover_image_url: values.cover_image_url,
+            }
+          : {}),
+
+        ...(isNewCampaign && parsedMinAmount !== null
+          ? {
+              min_amount: floatToIndivisible(
+                parsedMinAmount,
+                token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+              ),
+            }
+          : {}),
+
+        ...(parsedMaxAmount !== null
+          ? {
+              max_amount: floatToIndivisible(
+                parsedMaxAmount,
+                token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
+              ),
+            }
+          : {}),
+
+        ...(values?.allow_fee_avoidance !== undefined && {
+          allow_fee_avoidance: values.allow_fee_avoidance,
+        }),
+        ...(values?.referral_fee_basis_points && {
+          referral_fee_basis_points: feePercentsToBasisPoints(values.referral_fee_basis_points),
+        }),
+        ...(values?.creator_fee_basis_points && {
+          creator_fee_basis_points: feePercentsToBasisPoints(values.creator_fee_basis_points),
         }),
         ...(values.start_ms &&
-          !campaignId &&
-          timeToMilliseconds(values.start_ms) >= Date.now() && {
+          timeToMilliseconds(values.start_ms) > Date.now() && {
             start_ms: timeToMilliseconds(values.start_ms),
           }),
         ...(values.end_ms && {
           end_ms: timeToMilliseconds(values.end_ms),
         }),
         ...(campaignId ? {} : { owner: viewer.accountId as string }),
-        ...(campaignId ? {} : { recipient: values.recipient }),
+        ...(campaignId ? {} : { recipient: values.recipient ?? undefined }),
       };
 
       if (campaignId) {
@@ -180,12 +281,23 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
           .update_campaign({
             args: { ...args, campaign_id: campaignId },
           })
-          .then((updateValues) => {
-            console.log(updateValues);
+          .then(() => {
+            self.reset(values, { keepErrors: false });
 
             toast({
-              title: `You’ve successfully updated this ${updateValues.name} Campaign`,
+              title: `You’ve successfully updated this campaign`,
+              description: (() => {
+                const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
+
+                if (startMs && startMs > Date.now()) {
+                  return `Campaign starts on ${formatFullDateTime(startMs)}.`;
+                }
+
+                return "Campaign is live.";
+              })(),
             });
+
+            onUpdateSuccess?.();
           })
           .catch((error) => {
             console.error("Failed to update Campaign:", error);
@@ -195,41 +307,56 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
               variant: "destructive",
             });
           });
-
-        dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully updated this Campaign`,
-          description:
-            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
-          type: CampaignEnumType.UPDATE_CAMPAIGN,
-        });
       } else {
         campaignsContractClient
           .create_campaign({ args })
-          .then(() => {
+          .then((newCampaign) => {
             toast({
               title: `You’ve successfully created a campaign for ${values.name}.`,
+              description: (() => {
+                const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
+
+                if (startMs && startMs > Date.now()) {
+                  return `Campaign starts on ${formatFullDateTime(startMs)}.`;
+                }
+
+                return "Campaign is live.";
+              })(),
             });
 
-            router.push("/campaigns");
-          })
-          .catch((error) => {
-            console.error("Failed to create Campaign:", error);
+            // Fix: Ensure newCampaign has an id before accessing it
+            console.log(newCampaign);
 
+            if (
+              newCampaign &&
+              typeof newCampaign === "object" &&
+              "id" in newCampaign &&
+              newCampaign.id
+            ) {
+              router.push(routeSelectors.CAMPAIGN_BY_ID((newCampaign as Campaign).id));
+            } else {
+              router.push(`/campaigns`);
+            }
+          })
+          .catch(() => {
             toast({
               title: "Failed to create Campaign.",
               variant: "destructive",
             });
           });
-
-        dispatch.campaignEditor.updateCampaignModalState({
-          header: `You’ve successfully created a campaign for ${values.name}.`,
-          description:
-            "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
-          type: CampaignEnumType.CREATE_CAMPAIGN,
-        });
       }
     },
-    [campaignId, viewer.accountId],
+    [
+      campaignId,
+      isNewCampaign,
+      onUpdateSuccess,
+      parsedMaxAmount,
+      parsedMinAmount,
+      router,
+      self,
+      token?.metadata.decimals,
+      viewer.accountId,
+    ],
   );
 
   const onChange = async (field: keyof Values, value: string) => {
@@ -238,13 +365,8 @@ export const useCampaignForm = ({ campaignId }: { campaignId?: CampaignId }) => 
   };
 
   return {
-    form: {
-      ...self,
-      formState: {
-        ...self.formState,
-        errors: { ...self.formState.errors },
-      },
-    },
+    form: self,
+    handleCoverImageUploadResult,
     onSubmit,
     values,
     watch: self.watch,

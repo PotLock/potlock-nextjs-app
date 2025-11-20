@@ -1,4 +1,4 @@
-import { MemoryCache, calculateDepositByDataSize } from "@wpdas/naxios";
+import { calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 import { type ByPotId, PotId } from "@/common/api/indexer";
@@ -22,7 +22,6 @@ import {
 export const contractApi = (potId: string) =>
   nearProtocolClient.naxiosInstance.contractApi({
     contractId: potId,
-    cache: new MemoryCache({ expirationTime: 10 }),
   });
 
 // READ METHODS

@@ -10,39 +10,44 @@ export const envConfig: EnvConfig = {
   },
 
   indexer: {
-    api: { endpointUrl: "https://dev.potlock.io" },
+    api: { endpointUrl: "https://api.potlock.io" },
   },
 
   core: {
+    namespaceRoot: {
+      contract: { accountId: "potlock.near" },
+    },
+
     donation: {
-      contract: { accountId: "donate.staging.potlock.near" },
+      contract: { accountId: "donate.potlock.near" },
     },
 
     campaigns: {
-      contract: { accountId: "campaigns.staging.potlock.near" },
+      contract: { accountId: "v1.campaigns.staging.potlock.near" },
     },
 
     lists: {
-      contract: { accountId: "lists.staging.potlock.near" },
+      contract: { accountId: "lists.potlock.near" },
     },
 
     potFactory: {
-      contract: { accountId: "potfactory.staging.potlock.near" },
+      contract: { accountId: "v1.potfactory.potlock.near" },
     },
 
     sybil: {
-      app: { url: "https://staging.nada.bot" },
-      contract: { accountId: "v2new.staging.nadabot.near" },
+      app: { url: "https://app.nada.bot" },
+      contract: { accountId: "v1.nadabot.near" },
     },
 
     voting: {
       // TODO: Figure out a way to store pot-associated voting contract instances on backend / chain
       //! Be careful when refactoring this
-      contract: { accountId: "mpdao.vote.staging.potlock.near" },
+      contract: { accountId: "mpdao.vote.potlock.near" },
     },
   },
 
   social: {
+    platformName: "NEAR Social",
     app: { url: "https://near.social" },
     contract: { accountId: "social.near" },
   },
@@ -68,13 +73,15 @@ export const envConfig: EnvConfig = {
       isEnabled: true,
     },
 
-    [FeatureId.DirectFtDonation]: {
-      id: FeatureId.DirectFtDonation,
-      name: "Direct FT donation",
+    [FeatureId.FtDonation]: {
+      id: FeatureId.FtDonation,
+      name: "Non-pot FT donations",
+      isEnabled: true,
+    },
 
-      /**
-       * The implementation is not finished yet
-       */
+    [FeatureId.PotFtDonation]: {
+      id: FeatureId.PotFtDonation,
+      name: "Pot FT donations",
       isEnabled: false,
     },
 
@@ -83,5 +90,19 @@ export const envConfig: EnvConfig = {
       name: "Direct native token donation",
       isEnabled: true,
     },
+
+    [FeatureId.Cart]: {
+      id: FeatureId.Cart,
+      name: "Cart",
+      isEnabled: false,
+    },
   },
 };
+
+// KEYS MEANT FOR STAGING
+// 1. donate.staging.potlock.near
+// 2. v1.campaigns.staging.potlock.near
+// 3. lists.staging.potlock.near
+// 4. potfactory.staging.potlock.near
+// 5. v2new.staging.nadabot.near
+// 6. mpdao.vote.staging.potlock.near

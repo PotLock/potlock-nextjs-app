@@ -146,36 +146,6 @@ export const getAccount = async (input: { accountId: string }) => {
   return response;
 };
 
-export const getSocialData = async <R>({ path }: { path: string }) => {
-  try {
-    const response = await nearSocialDbContractApi.view<any, R>("keys", {
-      args: {
-        keys: [path],
-        options: {
-          return_type: "BlockHeight",
-          values_only: true,
-        },
-      },
-    });
-
-    return response;
-  } catch (e) {
-    console.error("getSocialData:", e);
-  }
-};
-
-export const getPolicy = async () => {
-  try {
-    const response = await nearSocialDbContractApi.view<any, { proposal_bond: string }>(
-      "get_policy",
-    );
-
-    return response;
-  } catch (e) {
-    console.error("getPolicy:", e);
-  }
-};
-
 export const setSocialData = async ({ data }: { data: Record<string, any> }) => {
   try {
     const response = await nearSocialDbContractApi.call("set", {
@@ -223,7 +193,7 @@ export const createPost = async ({
       .contractApi()
       .callMultiple([buildContract])
       .then((data) => {
-        console.log(data);
+        console.info(data);
       })
       .catch((error) => {
         console.error(error);

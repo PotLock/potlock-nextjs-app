@@ -85,7 +85,7 @@ export const getVoteWeight = (
       weight = weight.add(
         Big(rule.amplificationPercent)
           .div(100)
-          .mul(basicWeight ?? 1),
+          .mul(basicWeight || 1),
       );
     }
   });

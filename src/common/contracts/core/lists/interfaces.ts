@@ -1,10 +1,9 @@
 export enum RegistrationStatus {
+  Pending = "Pending",
   Approved = "Approved",
   Rejected = "Rejected",
-  Pending = "Pending",
   Graylisted = "Graylisted",
   Blacklisted = "Blacklisted",
-  Unregistered = "Unregistered",
 }
 
 export type ListId = number;

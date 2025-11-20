@@ -6,6 +6,7 @@ import {
   setupEthereumWallets,
 } from "@near-wallet-selector/ethereum-wallets";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+import { setupIntearWallet } from "@near-wallet-selector/intear-wallet";
 import { setupLedger } from "@near-wallet-selector/ledger";
 import { setupMathWallet } from "@near-wallet-selector/math-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
@@ -18,14 +19,13 @@ import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
 import { setupRamperWallet } from "@near-wallet-selector/ramper-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
+import { setupUnityWallet } from "@near-wallet-selector/unity-wallet";
 import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
 import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import naxios from "@wpdas/naxios";
-import { AccountView } from "near-api-js/lib/providers/provider";
 
 import { NETWORK, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { FULL_TGAS } from "@/common/constants";
-import { AccountId } from "@/common/types";
 
 import { wagmiConfig, web3Modal } from "./web3modal";
 
@@ -40,6 +40,7 @@ export const naxiosInstance = new naxios({
     setupSender(),
     setupHereWallet(),
     setupMeteorWallet(),
+    setupIntearWallet(),
     setupLedger(),
     setupEthereumWallets({
       wagmiConfig: wagmiConfig as EthereumWalletsParams["wagmiConfig"],
@@ -48,6 +49,15 @@ export const naxiosInstance = new naxios({
     }),
     setupNearMobileWallet(),
     setupNightly(),
+    setupUnityWallet({
+      projectId: "af5fcece6005cfe70a5d5132ab354e65",
+      metadata: {
+        name: "Potlock App",
+        description: "Bringing public goods funding to the table, built on NEAR",
+        url: "https://github.com/near/wallet-selector",
+        icons: ["https://avatars.githubusercontent.com/u/37784886"],
+      },
+    }),
     setupBitgetWallet(),
     setupCoin98Wallet(),
     setupMathWallet(),
@@ -76,17 +86,3 @@ export const walletApi = naxiosInstance.walletApi();
  * NEAR JsonRpcProvider
  */
 export const nearRpc = naxiosInstance.rpcApi();
-
-export const near = {
-  isAccountValid: async (account_id: AccountId) =>
-    account_id.length > 4
-      ? await nearRpc
-          .query<AccountView>({
-            request_type: "view_account",
-            finality: "final",
-            account_id,
-          })
-          .then(Boolean)
-          .catch(() => false)
-      : false,
-};

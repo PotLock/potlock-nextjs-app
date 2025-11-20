@@ -5,7 +5,7 @@ import { Donation } from "@/common/api/indexer";
 import { truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import NearIcon from "./NearIcon";
 import { FundingSrc } from "./styled";
@@ -56,7 +56,7 @@ export const PotDonationEntry = ({
     >
       <FundingSrc>
         <img
-          src={donorProfile.avatarSrc}
+          src={donorProfile.avatar.url}
           className="h-[24px] w-[24px] rounded-full object-cover align-middle"
           alt="Donor profile image"
         />
@@ -68,7 +68,7 @@ export const PotDonationEntry = ({
       </FundingSrc>
       <FundingSrc>
         <img
-          src={recipientProfile.avatarSrc}
+          src={recipientProfile.avatar.url}
           className="h-[24px] w-[24px] rounded-full object-cover align-middle"
           alt="Recipient profile image"
         />

@@ -54,7 +54,7 @@ const buttonVariants = cva(
         ),
 
         "standard-plain": cn(
-          "p-0 hover:text-[color:var(--neutral-500)]",
+          "focus:shadow-none hover:text-[color:var(--neutral-500)]",
           "disabled:text-[#a6a6a6] disabled:shadow-[0px_0px_0px_1px_rgba(15,15,15,0.15)_inset] disabled:bg-[var(--neutral-100)]",
         ),
 

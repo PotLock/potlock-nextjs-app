@@ -1,15 +1,15 @@
 import useSWR from "swr";
 
 import { NATIVE_TOKEN_ID } from "@/common/constants";
-import type { WithDisabled } from "@/common/types";
+import type { ConditionalActivation } from "@/common/types";
 
 import { client } from "./client";
 
 export const useNativeTokenUsdPrice = (
-  { disabled }: WithDisabled | undefined = { disabled: false },
+  { enabled = true }: ConditionalActivation | undefined = { enabled: true },
 ) =>
   useSWR(
-    () => (disabled ? null : ["oneNativeTokenUsdPrice", NATIVE_TOKEN_ID.toLowerCase()]),
+    () => (!enabled ? null : ["oneNativeTokenUsdPrice", NATIVE_TOKEN_ID.toLowerCase()]),
 
     ([_queryKeyHead, tokenId]) =>
       client
@@ -17,4 +17,10 @@ export const useNativeTokenUsdPrice = (
         .then((response: { data: { [key: string]: { usd: number } } }) =>
           response.data[tokenId].usd.toString(),
         ),
+
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    },
   );

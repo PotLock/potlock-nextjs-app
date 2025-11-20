@@ -65,7 +65,8 @@ const MultiSelector = ({
         onValueChange([...value, val]);
       }
     },
-    [value],
+
+    [onValueChange, value],
   );
 
   // TODO : change from else if use to switch case statement
@@ -114,7 +115,8 @@ const MultiSelector = ({
         }
       }
     },
-    [value, inputValue, activeIndex, loop],
+
+    [value, dir, activeIndex, loop, inputValue.length, onValueChange],
   );
 
   return (
@@ -132,7 +134,7 @@ const MultiSelector = ({
     >
       <Command
         onKeyDown={handleKeyDown}
-        className={cn("flex flex-col space-y-2 overflow-visible bg-transparent", className)}
+        className={cn("flex flex-col overflow-visible bg-transparent", className)}
         dir={dir}
         {...props}
       >
@@ -155,8 +157,7 @@ const MultiSelectorTrigger = forwardRef<HTMLDivElement, React.HTMLAttributes<HTM
       <div
         ref={ref}
         className={cn(
-          "border-muted bg-background flex flex-wrap gap-1 rounded-lg border p-1 py-2",
-          "shadow-[0px_0px_0px_1px_#00000038_inset,0px_-1px_1px_0px_#00000038_inset]",
+          "bg-background flex flex-wrap gap-1 rounded-md border border-neutral-300 p-2",
           className,
         )}
         {...props}
@@ -237,7 +238,10 @@ const MultiSelectorList = forwardRef<
     <CommandList
       ref={ref}
       className={cn(
-        "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg border-muted bg-background absolute top-0 z-10 flex w-full flex-col gap-2 rounded-md border p-2 shadow-md transition-colors",
+        "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground",
+        "dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg border-muted bg-background",
+        "absolute top-0 z-10 flex w-full flex-col gap-2",
+        "rounded-md border p-2 shadow-md transition-colors",
         className,
       )}
     >

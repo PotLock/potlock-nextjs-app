@@ -6,13 +6,14 @@ import { useRouter } from "next/router";
 import { indexer } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
+import { useWalletUserSession } from "@/common/wallet";
 import { ChallengeModal } from "@/entities/pot";
-import { DonationSybilWarning } from "@/features/donation";
+import { DonationHumanVerificationAlert } from "@/features/donation";
 import { MatchingPoolContributionModal } from "@/features/matching-pool-contribution";
 import { PotApplicationModal } from "@/features/pot-application";
 import { PFPayoutJustificationPublicationAction } from "@/features/proportional-funding";
 import { SuccessModal } from "@/layout/pot/_deprecated/SuccessModal";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { PotLayoutHero } from "./layout-hero";
 import { ErrorModal } from "../_deprecated/ErrorModal";
@@ -24,6 +25,7 @@ export type PotLayoutProps = {
 
 export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const router = useRouter();
+  const walletUser = useWalletUserSession();
 
   const { potId, ...query } = router.query as {
     potId: string;
@@ -68,7 +70,7 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
         onCloseClick={() => setErrorModalOpen(false)}
       />
 
-      {pot && (
+      {walletUser.isSignedIn && pot && (
         <>
           <MatchingPoolContributionModal
             potDetail={pot}
@@ -77,9 +79,11 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           />
 
           <PotApplicationModal
-            potDetail={pot}
             open={applyModalOpen}
             onCloseClick={() => setApplyModalOpen(false)}
+            applicantAccountId={walletUser.accountId}
+            daoMode={walletUser.isDaoRepresentative}
+            potDetail={pot}
           />
 
           <ChallengeModal
@@ -106,7 +110,10 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
           />
         )}
 
-        <DonationSybilWarning classNames={{ root: "w-full mb-4 md:mb-8" }} {...{ potId }} />
+        <DonationHumanVerificationAlert
+          classNames={{ root: "w-full mb-4 md:mb-8" }}
+          {...{ potId }}
+        />
       </div>
 
       <div className="mb-6 flex w-full flex-row flex-wrap gap-2 md:mb-12">

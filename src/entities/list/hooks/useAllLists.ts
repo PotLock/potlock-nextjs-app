@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { List, indexer } from "@/common/api/indexer";
+import { NOOP_STRING } from "@/common/constants";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { ListOverviewType } from "../types";
@@ -29,7 +30,7 @@ export const useAllLists = (
 
   const { data: myFavourites } = indexer.useAccountUpvotedLists({
     enabled: viewer.isSignedIn,
-    accountId: viewer.accountId ?? "noop",
+    accountId: viewer.accountId ?? NOOP_STRING,
   });
 
   const fetchAllLists = useCallback(() => {

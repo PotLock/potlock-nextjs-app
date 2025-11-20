@@ -1,3 +1,5 @@
+import { mapValues } from "remeda";
+
 type DeepPartial<T> = T extends object
   ? {
       [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
@@ -44,3 +46,9 @@ export const deepObjectDiff = <T extends Record<string, any>>(
 
   return findDiff(objOriginal, objUpdated, diff);
 };
+
+export const nullifyEmptyStrings = mapValues((value: string | unknown) => {
+  if (typeof value === "string" && value.length === 0) {
+    return null;
+  } else return value;
+});

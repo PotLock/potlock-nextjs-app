@@ -4,6 +4,8 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 
 import { ScrollArea } from "../atoms/scroll-area";
 
+const DEFAULT_ITEM_HEIGHT = 40;
+
 export type VirtualScrollProps<T> = {
   items: T[];
   ItemComponent: React.FC<{ data: T }>;
@@ -24,10 +26,10 @@ export const VirtualScroll = <T extends object>({
   const rowVirtualizer = useVirtualizer({
     count: items.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 40,
+    estimateSize: () => DEFAULT_ITEM_HEIGHT,
 
     // Get the actual rendered height of the element
-    measureElement: (element) => element?.getBoundingClientRect().height || 40,
+    measureElement: (element) => element?.getBoundingClientRect().height || DEFAULT_ITEM_HEIGHT,
 
     // Pre-render items above and below for smoother scrolling
     overscan: 5,

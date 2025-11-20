@@ -1,6 +1,14 @@
 import { Big, BigSource } from "big.js";
 import { number, preprocess } from "zod";
 
+const INVALID_NUMBER_ERROR = "Invalid number.";
+
+export const basisPointsToPercents = (basisPoints: number, totalBasisPoints: number) =>
+  basisPoints / (totalBasisPoints / 100);
+
+export const percentsToBasisPoints = (percentage: number, totalBasisPoints: number) =>
+  percentage * (totalBasisPoints / 100);
+
 export type NumericComparatorKey = keyof Big.Big & ("lt" | "lte" | "gt" | "gte");
 
 export const NUMERIC_COMPARATOR_KEYS: NumericComparatorKey[] = ["lt", "lte", "gt", "gte"];
@@ -9,15 +17,15 @@ const normalizeCommaSeparatedFloatString = (input: string): string => {
   const hasComma = input.includes(",");
   const hasDot = input.includes(".");
 
-  //? Both comma and dot present - replace dots with empty string and first comma with dot
+  //* Both comma and dot present - replace dots with empty string and first comma with dot
   if (hasComma && hasDot) {
     return input.replace(/\./g, "").replace(",", ".");
   }
-  //? Only comma present - replace comma with dot
+  //* Only comma present - replace comma with dot
   else if (hasComma) {
     return input.replace(",", ".");
   }
-  //? No comma or only dots - return as is
+  //* No comma or only dots - return as is
   else return input;
 };
 
@@ -84,10 +92,32 @@ export const safePositiveNumber = preprocess(
 
   number({ message: "Must be a positive number." })
     .positive("Must be a positive number.")
-    .finite()
-    .safe()
+    .finite(INVALID_NUMBER_ERROR)
+    .safe(INVALID_NUMBER_ERROR)
     .transform((floatOrInt) => number().safeParse(floatOrInt).data ?? 0),
 );
+
+export const safePositiveNumberOrZero = preprocess(
+  (value) => parseNumber(value as string),
+
+  number({ message: "Must be a positive number or zero." })
+    .finite(INVALID_NUMBER_ERROR)
+    .safe(INVALID_NUMBER_ERROR)
+    .gte(0, "Must be a positive number or zero.")
+    .transform((floatOrInt) => number().safeParse(floatOrInt).data ?? 0),
+);
+
+/**
+ * An integer percentage between 0 and 100
+ */
+export const integerCappedPercentage = preprocess(
+  (value) => (typeof value === "string" ? safePositiveNumber.parse(value) : value),
+  safePositiveNumber,
+)
+  .refine((percents) => percents < 100, { message: "Must be less than 100%." })
+  .refine((percents) => Number.isInteger(percents), {
+    message: "Fractional percentage is not supported.",
+  });
 
 export const deriveShare = (amount: number, numOfShares: number) =>
   parseFloat(

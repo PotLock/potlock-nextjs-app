@@ -11,7 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 import { ByPotId } from "@/common/api/indexer";
 import { LayoutTabOption } from "@/common/ui/layout/types";
 import { usePotFeatureFlags } from "@/entities/pot";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 export enum PotLayoutTabTag {
   Projects = "Projects",

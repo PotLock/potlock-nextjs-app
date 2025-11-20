@@ -7,20 +7,20 @@ import { styled } from "styled-components";
 
 import { PotApplication, indexer } from "@/common/api/indexer";
 import { usePot } from "@/common/api/indexer/hooks";
+import { NOOP_STRING } from "@/common/constants";
 import { oldToRecent } from "@/common/lib";
 import type { AccountId } from "@/common/types";
 import { FilterChip, SearchBar } from "@/common/ui/layout/components";
 import {
   type AccountPotApplicationStatusOption,
   type AccountPotApplicationStatusVariant,
-} from "@/entities/_shared";
+} from "@/entities/_shared/account";
 import {
   PotApplicationCard,
   PotApplicationCardSkeleton,
   PotApplicationReviewModal,
 } from "@/features/pot-application";
 import { PotLayout } from "@/layout/pot/components/layout";
-import { useGlobalStoreSelector } from "@/store";
 
 // TODO: Refactor using TailwindCSS classes
 const Container = styled.div`
@@ -52,9 +52,6 @@ export default function ApplicationsTab() {
   };
 
   const { data: potDetail } = usePot({ potId });
-  const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
-  const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
-  const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 
   const owner = potDetail?.owner?.id || "";
   const admins = potDetail?.admins.map((adm) => adm.id) || [];
@@ -148,10 +145,8 @@ export default function ApplicationsTab() {
 
   useEffect(() => {
     if (error) {
-      console.log(error);
+      console.error(error);
     }
-
-    console.log({ statusFilter });
   }, [statusFilter, error]);
 
   return (
@@ -161,7 +156,7 @@ export default function ApplicationsTab() {
         <PotApplicationReviewModal
           open={selectedApplicantAccountId !== null}
           potDetail={potDetail}
-          projectId={selectedApplicantAccountId ?? "noop"}
+          projectId={selectedApplicantAccountId ?? NOOP_STRING}
           projectStatus={projectStatus}
           onCloseClick={handleCloseModal}
           onSuccess={onReviewSuccess}

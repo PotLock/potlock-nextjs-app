@@ -1,4 +1,4 @@
-import { donationFeeBasisPointsToPercents } from "@/features/donation";
+import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 
 import {
   POT_MAX_APPROVED_PROJECTS,
@@ -37,10 +37,10 @@ export const isPotMaxProjectsValid = (max_projects: number) =>
   max_projects <= POT_MAX_APPROVED_PROJECTS;
 
 export const isPotMatchingPoolReferralFeeValid = (percents: number) =>
-  percents <= donationFeeBasisPointsToPercents(POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS);
+  percents <= feeBasisPointsToPercents(POT_MAX_REFERRAL_FEE_MATCHING_POOL_BASIS_POINTS);
 
 export const isPotPublicRoundReferralFeeValid = (percents: number) =>
-  percents <= donationFeeBasisPointsToPercents(POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS);
+  percents <= feeBasisPointsToPercents(POT_MAX_REFERRAL_FEE_PUBLIC_ROUND_BASIS_POINTS);
 
 export const isPotChefFeeValid = (percents: number) =>
-  percents <= donationFeeBasisPointsToPercents(POT_MAX_CHEF_FEE_BASIS_POINTS);
+  percents <= feeBasisPointsToPercents(POT_MAX_CHEF_FEE_BASIS_POINTS);

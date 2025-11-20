@@ -15,5 +15,6 @@ export * from "./hooks/feature-flags";
 export * from "./hooks/lifecycle";
 export * from "./hooks/authorization";
 export * from "./hooks/useOrderedDonations";
-export * from "./utils/validation";
 export * from "./hooks/payouts";
+export * from "./utils/validation";
+export { extractMatchingPots } from "./utils/filters";

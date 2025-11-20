@@ -12,7 +12,8 @@
     "prettier",
     "import",
     "testing-library",
-    "@stylistic"
+    "@stylistic",
+    "no-iife"
   ],
   "extends": [
     "next/core-web-vitals",
@@ -24,6 +25,7 @@
     "prettier"
   ],
   "rules": {
+    "no-iife/no-iife": "warn",
     "@stylistic/padding-line-between-statements": [
       "error",
       {

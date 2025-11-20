@@ -7,3 +7,5 @@ export type FungibleTokenMetadata = {
   reference_hash: string | null;
   decimals: number;
 };
+
+export type FungibleTokenStorageBalance = { total: string; available: string };

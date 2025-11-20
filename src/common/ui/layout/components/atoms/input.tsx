@@ -11,6 +11,9 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 const errorClasses =
   "shadow-[0px_0px_0px_2px_#ED464F_inset,0px_0px_0px_4px_rgba(252,207,207,0.50)]";
 
+/**
+ * @deprecated use TextField or any other corresponding form field component instead
+ */
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, error, ...props }, ref) => {
     return (
