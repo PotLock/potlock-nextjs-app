@@ -8,6 +8,7 @@ import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
+import { objectToBase64Json } from "@/common/lib";
 import { useWalletUserSession } from "@/common/wallet";
 
 import { MatchingPoolContributionInputs, matchingPoolFundingSchema } from "../model/schemas";
@@ -37,7 +38,7 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
         method_name: "donate",
         gas: FIFTY_TGAS,
         deposit: parseNearAmount(formData.amountNEAR.toString()) || "0",
-        args: Buffer.from(JSON.stringify(args), "utf-8").toString("base64"),
+        args: objectToBase64Json(args),
       };
 
       const daoTransactionArgs = {

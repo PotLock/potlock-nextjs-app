@@ -1,5 +1,7 @@
 import { mapValues } from "remeda";
 
+import { utf8StringToBase64 } from "./string";
+
 type DeepPartial<T> = T extends object
   ? {
       [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
@@ -52,3 +54,6 @@ export const nullifyEmptyStrings = mapValues((value: string | unknown) => {
     return null;
   } else return value;
 });
+
+export const objectToBase64Json = (obj: object | Record<string, unknown>): string =>
+  utf8StringToBase64(JSON.stringify(obj));
