@@ -43,15 +43,8 @@ function capitalizeAll(str: string): string {
   }
 }
 
-export const CrossChainTokenAvatar: React.FC<CrossChainTokenAvatarProps> = ({
-  blockchain,
-  tokenSymbol,
-  className = "",
-}) => {
-  if (!blockchain && !tokenSymbol) {
-    return null;
-  }
-
+// Export utility function to get token avatar image URL
+export function getTokenAvatarSrc(blockchain?: string, tokenSymbol?: string): string {
   // First try to find token avatar by symbol
   const tokenAvatar = tokenSymbol
     ? tokenAvatars.find((a) => a.name.toLowerCase() === tokenSymbol.toLowerCase())
@@ -63,10 +56,23 @@ export const CrossChainTokenAvatar: React.FC<CrossChainTokenAvatarProps> = ({
     : null;
 
   // Use token avatar if available, otherwise use blockchain avatar, otherwise use default
-  const avatarSrc =
+  return (
     tokenAvatar?.src ||
     blockchainAvatar?.src ||
-    "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar22.jpeg";
+    "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar22.jpeg"
+  );
+}
+
+export const CrossChainTokenAvatar: React.FC<CrossChainTokenAvatarProps> = ({
+  blockchain,
+  tokenSymbol,
+  className = "",
+}) => {
+  if (!blockchain && !tokenSymbol) {
+    return null;
+  }
+
+  const avatarSrc = getTokenAvatarSrc(blockchain, tokenSymbol);
 
   const displayName = tokenSymbol
     ? capitalizeAll(tokenSymbol)

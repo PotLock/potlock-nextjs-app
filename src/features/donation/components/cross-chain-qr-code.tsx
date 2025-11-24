@@ -254,12 +254,16 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
               value={depositAddress}
               size={175}
               level="H"
-              imageSettings={{
-                src: tokenImage,
-                height: 50,
-                width: 50,
-                excavate: true,
-              }}
+              {...(tokenImage
+                ? {
+                    imageSettings: {
+                      src: tokenImage,
+                      height: 50,
+                      width: 50,
+                      excavate: true,
+                    },
+                  }
+                : {})}
               bgColor="#ffffff"
               fgColor="#000000"
             />
@@ -399,10 +403,6 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
           )}
           <div>• Only send from a wallet you control.</div>
           <div>• This address is only valid for this specific donation.</div>
-          <div>
-            • If this campaign doesn&rsquo;t meet its funding goal, your donation will be redirected
-            to <strong>POTLOCK&rsquo;s Community Fund</strong> instead of being refunded.
-          </div>
         </div>
       </div>
 
