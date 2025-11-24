@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { Button } from "@/common/ui/layout/components";
 
+import { getTokenAvatarSrc } from "./cross-chain-token-avatar";
 import type { DonationFormAPI } from "../models/schemas";
 
 interface CrossChainAmountEntryProps {
@@ -167,6 +168,7 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
 
   const handleProceed = () => {
     if (validateForm()) {
+      const tokenImage = getTokenAvatarSrc(selectedBlockchain, selectedTokenData?.symbol);
       onProceed(
         `${(donationAmount + totalFeeSelectedCurrency).toFixed(4)} ${selectedTokenData?.symbol || "USDC"}`,
         networkFeeSelectedCurrency.toFixed(4),
@@ -174,7 +176,7 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
         parseInt(decimals) || 0,
         tokenID,
         senderAddress,
-        "",
+        tokenImage,
         amountDeposit,
       );
     }
