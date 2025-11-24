@@ -402,7 +402,7 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
             </>
           )}
           <div>• Only send from a wallet you control.</div>
-          <div>• This address is only valid for this specific donation.</div>  
+          <div>• This address is only valid for this specific donation.</div>
         </div>
       </div>
 

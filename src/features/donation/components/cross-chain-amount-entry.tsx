@@ -169,6 +169,7 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
   const handleProceed = () => {
     if (validateForm()) {
       const tokenImage = getTokenAvatarSrc(selectedBlockchain, selectedTokenData?.symbol);
+
       onProceed(
         `${(donationAmount + totalFeeSelectedCurrency).toFixed(4)} ${selectedTokenData?.symbol || "USDC"}`,
         networkFeeSelectedCurrency.toFixed(4),
