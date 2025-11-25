@@ -38,18 +38,12 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   const [recipientType, setRecipientType] = useState<"yourself" | "someone_else">("yourself");
   const isUpdate = campaignId !== undefined;
 
-  const {
-    form,
-    handleCoverImageUploadResult,
-    onSubmit,
-    watch,
-    isDisabled,
-    handleDeleteCampaign,
-  } = useCampaignForm({
-    campaignId,
-    ftId: existingData?.token?.account ?? NATIVE_TOKEN_ID,
-    onUpdateSuccess: close,
-  });
+  const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled, handleDeleteCampaign } =
+    useCampaignForm({
+      campaignId,
+      ftId: existingData?.token?.account ?? NATIVE_TOKEN_ID,
+      onUpdateSuccess: close,
+    });
 
   // Set initial recipient when component mounts (only for create mode)
   useEffect(() => {
@@ -221,8 +215,8 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             </li>
 
             <li>
-              <strong>Campaign Deletion:</strong> Campaigns can only be deleted before they start. Once
-              a campaign has started, it cannot be deleted.
+              <strong>Campaign Deletion:</strong> Campaigns can only be deleted before they start.
+              Once a campaign has started, it cannot be deleted.
             </li>
           </ul>
         </div>
