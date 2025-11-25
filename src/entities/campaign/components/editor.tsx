@@ -38,11 +38,12 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   const [recipientType, setRecipientType] = useState<"yourself" | "someone_else">("yourself");
   const isUpdate = campaignId !== undefined;
 
-  const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled } = useCampaignForm({
-    campaignId,
-    ftId: existingData?.token?.account ?? NATIVE_TOKEN_ID,
-    onUpdateSuccess: close,
-  });
+  const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled, handleDeleteCampaign } =
+    useCampaignForm({
+      campaignId,
+      ftId: existingData?.token?.account ?? NATIVE_TOKEN_ID,
+      onUpdateSuccess: close,
+    });
 
   // Set initial recipient when component mounts (only for create mode)
   useEffect(() => {
@@ -211,6 +212,11 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             <li>
               <strong>Time-limited Campaign:</strong> Has a specified end date—concludes on the set
               date.
+            </li>
+
+            <li>
+              <strong>Campaign Deletion:</strong> Campaigns can only be deleted before they start.
+              Once a campaign has started, it cannot be deleted.
             </li>
           </ul>
         </div>
@@ -692,13 +698,28 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
               {isUpdate ? "Update" : "Create"} Campaign
             </Button>
 
-            <Button
-              variant="standard-outline"
-              onClick={() => (campaignId ? close?.() : back())}
-              type="button"
-            >
-              Cancel
-            </Button>
+            <div className="flex gap-3">
+              {isUpdate &&
+                existingData?.start_at &&
+                toTimestamp(existingData.start_at) > Temporal.Now.instant().epochMilliseconds && (
+                  <Button
+                    variant="standard-outline"
+                    onClick={handleDeleteCampaign}
+                    type="button"
+                    className="text-red-600 hover:bg-red-50"
+                  >
+                    Delete Campaign
+                  </Button>
+                )}
+
+              <Button
+                variant="standard-outline"
+                onClick={() => (campaignId ? close?.() : back())}
+                type="button"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </form>
       </Form>
