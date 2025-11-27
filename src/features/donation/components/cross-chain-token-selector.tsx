@@ -50,6 +50,7 @@ const getTokenAvatarSrc = (blockchain?: string, tokenSymbol?: string): string =>
     { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar20.png", name: "ton" },
     { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar21.png", name: "gnosis" },
     { src: "https://ik.imagekit.io/zjvk6l5gp/Avatar23.jpeg", name: "Bera" },
+    { src: "https://ik.imagekit.io/heuzdzbna/monad_logo.png", name: "Monad" },
   ];
 
   const tokenAvatar = tokenSymbol
@@ -108,6 +109,7 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
       "tron",
       "avax",
       "op",
+      "monad",
     ];
 
     return new Set([...nonEvmChains, ...evmChains].map((chain) => chain.toLowerCase()));

@@ -336,7 +336,7 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
                   {actualDepositedAmount &&
                   actualDepositedAmount !==
                     (swapData?.quoteResponse?.quote?.amountInFormatted || amount)
-                    ? `Received ${actualDepositedAmount} ${minAmountInFormatted ? `(minimum: ${Number(minAmountInFormatted)?.toFixed(4)})` : `(expected ${swapData?.quoteResponse?.quote?.amountInFormatted || amount})`}`
+                    ? `Received ${Number(actualDepositedAmount)?.toFixed(4)} ${minAmountInFormatted ? `(minimum: ${Number(minAmountInFormatted)?.toFixed(4)})` : `(expected ${swapData?.quoteResponse?.quote?.amountInFormatted || amount})`}`
                     : `Received ${Number(swapData?.quoteResponse?.quote?.amountInFormatted || amount)?.toFixed(4)} sent from your wallet`}
                 </div>
                 {swapData?.swapDetails?.nearTxHashes?.[0] && (
