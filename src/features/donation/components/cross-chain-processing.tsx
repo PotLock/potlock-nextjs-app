@@ -336,8 +336,8 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
                   {actualDepositedAmount &&
                   actualDepositedAmount !==
                     (swapData?.quoteResponse?.quote?.amountInFormatted || amount)
-                    ? `Received ${actualDepositedAmount} ${minAmountInFormatted ? `(minimum: ${minAmountInFormatted})` : `(expected ${swapData?.quoteResponse?.quote?.amountInFormatted || amount})`}`
-                    : `Received ${swapData?.quoteResponse?.quote?.amountInFormatted || amount} sent from your wallet`}
+                    ? `Received ${Number(actualDepositedAmount)?.toFixed(4)} ${minAmountInFormatted ? `(minimum: ${Number(minAmountInFormatted)?.toFixed(4)})` : `(expected ${swapData?.quoteResponse?.quote?.amountInFormatted || amount})`}`
+                    : `Received ${Number(swapData?.quoteResponse?.quote?.amountInFormatted || amount)?.toFixed(4)} sent from your wallet`}
                 </div>
                 {swapData?.swapDetails?.nearTxHashes?.[0] && (
                   <a
@@ -455,10 +455,10 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
                 actualDepositedAmount !==
                   (swapData?.quoteResponse?.quote?.amountInFormatted || amount) && (
                   <div className="text-xs italic text-gray-500">
-                    Note: You deposited {actualDepositedAmount}{" "}
+                    Note: You deposited {Number(actualDepositedAmount)?.toFixed(4)}{" "}
                     {minAmountInFormatted
-                      ? `(minimum: ${minAmountInFormatted})`
-                      : `(expected ${swapData?.quoteResponse?.quote?.amountInFormatted || amount})`}
+                      ? `(minimum: ${Number(minAmountInFormatted)?.toFixed(4)})`
+                      : `(expected ${Number(swapData?.quoteResponse?.quote?.amountInFormatted || amount)?.toFixed(4)})`}
                   </div>
                 )}
             </div>
