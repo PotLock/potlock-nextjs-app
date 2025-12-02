@@ -45,7 +45,7 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
                   <AccountProfileLink accountId={data.owner.id} />
                 </div>
               </div>
-              {data?.owner === data?.recipient && (
+              {data?.owner?.id === data?.recipient?.id && (
                 <div className="flex  items-center gap-1">
                   <BadgeIcon size={5} />
                   <span className="m-0 font-bold text-white">OFFICIAL</span>
