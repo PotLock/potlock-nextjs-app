@@ -2,7 +2,11 @@ import Link from "next/link";
 
 import { FEATURE_REGISTRY, PLATFORM_NAME } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import { APP_BOS_COUNTERPART_URL, PLATFORM_TWITTER_ACCOUNT_ID, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import {
+  APP_BOS_COUNTERPART_URL,
+  PLATFORM_TWITTER_ACCOUNT_ID,
+  PUBLIC_GOODS_REGISTRY_LIST_ID,
+} from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
@@ -38,7 +42,6 @@ const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
             shareText={`Check out this project on ${PLATFORM_NAME}! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
             variant="button"
           />
-         
         </div>
       )}
     </div>
