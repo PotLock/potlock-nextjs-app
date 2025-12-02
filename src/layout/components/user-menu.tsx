@@ -124,11 +124,11 @@ export const UserMenu: React.FC = () => {
                 </DropdownMenuItem>
               )}
 
-              <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
+              {/* <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
                 <Link href={`https://near.social/mob.near/widget/NotificationFeed`} target="_blank">
                   {"Notifications"}
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </div>
           </div>
 

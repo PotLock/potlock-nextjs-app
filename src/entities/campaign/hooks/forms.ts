@@ -159,15 +159,26 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
     return `${day}${suffix} ${month} ${year}, ${time}`;
   };
 
-  const handleDeleteCampaign = () => {
+  const handleDeleteCampaign = async () => {
     if (!isNewCampaign) {
-      campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
+      try {
+        await campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
 
-      dispatch.campaignEditor.updateCampaignModalState({
-        header: "Campaign Deleted Successfully",
-        description: "You can now proceed to close this window",
-        type: CampaignEnumType.DELETE_CAMPAIGN,
-      });
+        dispatch.campaignEditor.updateCampaignModalState({
+          header: "Campaign Deleted Successfully",
+          description: "You can now proceed to close this window",
+          type: CampaignEnumType.DELETE_CAMPAIGN,
+        });
+
+        router.push("/campaigns");
+      } catch (error) {
+        console.error("Failed to delete campaign:", error);
+
+        toast({
+          title: "Failed to delete campaign. Please try again later.",
+          variant: "destructive",
+        });
+      }
     }
   };
 

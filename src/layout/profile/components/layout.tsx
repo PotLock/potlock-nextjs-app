@@ -78,6 +78,17 @@ const tabRoutesProfile = [
     id: "funding",
     href: "/funding-raised",
   },
+  {
+    label: "Lists",
+    id: "lists",
+    href: "/lists",
+  },
+
+  {
+    label: "Campaigns",
+    id: "campaigns",
+    href: "/campaigns",
+  },
 ] as TabOption[];
 
 type ProfileLayoutTabPanelProps = {
