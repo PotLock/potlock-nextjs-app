@@ -39,7 +39,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
           <h1 className="absolute bottom-0 px-6 py-3 text-[20px] font-semibold text-white">
             {data.name}
           </h1>
-          {data?.owner === data?.recipient && (
+          {data?.owner?.id === data?.recipient?.id && (
             <div className="absolute right-2 top-2 flex  items-center gap-1">
               <BadgeIcon size={5} />
               <span className="m-0 font-bold text-white">OFFICIAL</span>

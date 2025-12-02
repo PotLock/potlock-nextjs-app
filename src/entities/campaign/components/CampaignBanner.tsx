@@ -135,7 +135,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
                 </div>
               </div>
 
-              {campaign?.owner === campaign?.recipient && (
+              {campaign?.owner?.id === campaign?.recipient?.id && (
                 <div className="flex items-center gap-1">
                   <BadgeIcon size={5} />
                   <span className="m-0 font-bold">OFFICIAL</span>
