@@ -5,6 +5,14 @@ import { rootPathnames, routeSelectors } from "./navigation";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Handle /en locale prefix - redirect to root path without locale
+  // if (pathname.startsWith("/en")) {
+  //   const pathWithoutLocale = pathname.replace(/^\/en/, "") || "/";
+  //   const url = new URL(request.url);
+  //   url.pathname = pathWithoutLocale;
+  //   return NextResponse.redirect(url);
+  // }
+
   if (pathname.startsWith(`${rootPathnames.PROFILE}/`)) {
     const lastPathnameSegment = pathname.split("/").at(-1) ?? "noop";
     const isImplicitAccountId = /^[a-fA-F0-9]{64}$/.test(lastPathnameSegment);

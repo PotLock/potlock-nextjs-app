@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
+import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { donationContractHooks } from "@/common/contracts/core/donation";
@@ -15,6 +16,7 @@ import {
   Skeleton,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
+import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { useDispatch } from "@/store/hooks";
 
 import { CrossChainAmountEntry } from "./cross-chain-amount-entry";
@@ -76,6 +78,9 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
     depositAddress?: string;
     minAmountIn?: string;
     minAmountInFormatted?: string;
+    bypassProtocolFee?: boolean;
+    bypassCreatorFee?: boolean;
+    bypassReferralFee?: boolean;
   } | null>(null);
 
   const { isLoading: isDonationConfigLoading, data: donationConfig } =
@@ -85,17 +90,34 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
     useDonationForm(props);
 
   const isCampaignDonation = "campaignId" in props;
+  const isPotDonation = "potId" in props;
+  const isAccountDonation = "accountId" in props;
   const tokenId = form.watch("tokenId");
+
+  const [bypassProtocolFee, bypassCuratorFee] = form.watch([
+    "bypassProtocolFee",
+    "bypassCuratorFee",
+  ]);
 
   const { data: campaign } = campaignsContractHooks.useCampaign({
     enabled: isCampaignDonation && "campaignId" in props,
     campaignId: isCampaignDonation && "campaignId" in props ? (props.campaignId ?? 0) : 0,
   });
 
+  const { data: pot } = indexer.usePot({
+    enabled: isPotDonation && "potId" in props,
+    potId: isPotDonation && "potId" in props ? props.potId : "",
+  });
+
+  const { profile: accountProfile } = useAccountSocialProfile({
+    accountId: isAccountDonation && "accountId" in props ? props.accountId : "",
+    enabled: isAccountDonation,
+  });
+
   const isCrossChainDonation =
     process.env.NEXT_PUBLIC_ENV !== "test" &&
-    isCampaignDonation &&
-    campaign?.end_ms == null && // Only allow for ongoing campaigns (no end date)
+    (isCampaignDonation || isPotDonation || isAccountDonation) &&
+    ((isCampaignDonation && campaign?.end_ms == null) || isPotDonation || isAccountDonation) && // Only allow for ongoing campaigns (no end date), pots, or account donations
     tokenId !== NATIVE_TOKEN_ID &&
     tokenId !== undefined &&
     tokenId.includes(":");
@@ -143,20 +165,43 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                 <DialogTitle>
                   {isCampaignDonation && campaign?.name
                     ? `Donate to ${campaign.name} Campaign`
-                    : "Donate to Campaign"}
+                    : isPotDonation && pot?.name
+                      ? `Donate to ${pot.name} Pot`
+                      : isAccountDonation && accountProfile?.name
+                        ? `Donate to ${accountProfile.name}`
+                        : "Donate"}
                 </DialogTitle>
               </DialogHeader>
               <DialogDescription>
                 <CrossChainProcessing
-                  campaignId={"campaignId" in props ? (props.campaignId ?? 0) : 0}
-                  campaignName={campaign?.name || "Campaign"}
+                  contractType={isCampaignDonation ? "campaign" : isPotDonation ? "pot" : "project"}
+                  campaignId={
+                    isCampaignDonation && "campaignId" in props ? props.campaignId : undefined
+                  }
+                  potId={isPotDonation && "potId" in props ? props.potId : undefined}
+                  accountId={
+                    isAccountDonation && "accountId" in props ? props.accountId : undefined
+                  }
+                  name={
+                    isCampaignDonation
+                      ? campaign?.name || "Campaign"
+                      : isPotDonation
+                        ? pot?.name || "Pot"
+                        : isAccountDonation
+                          ? accountProfile?.name ||
+                            ("accountId" in props ? props.accountId : "Account")
+                          : "Donation"
+                  }
                   amount={crossChainDonationData.amount}
                   depositAddress={crossChainDonationData.depositAddress || ""}
                   blockchain={crossChainDonationData.chain}
                   tokenImage={crossChainDonationData.tokenImage}
                   minAmountIn={crossChainDonationData.minAmountIn}
                   minAmountInFormatted={crossChainDonationData.minAmountInFormatted}
-                  onProceed={async (txHash, campaignName, amount, usdAmount, nearAmount) => {
+                  bypassProtocolFee={crossChainDonationData.bypassProtocolFee ?? bypassProtocolFee}
+                  bypassCreatorFee={crossChainDonationData.bypassCreatorFee ?? bypassCuratorFee}
+                  bypassReferralFee={crossChainDonationData.bypassReferralFee ?? false}
+                  onProceed={async (txHash, name, amount, usdAmount, nearAmount) => {
                     // Handle the transaction outcome and move to success screen
                     if (txHash) {
                       try {
@@ -206,13 +251,33 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                 <DialogTitle>
                   {isCampaignDonation && campaign?.name
                     ? `Donate to ${campaign.name} Campaign`
-                    : "Donate to Campaign"}
+                    : isPotDonation && pot?.name
+                      ? `Donate to ${pot.name} Pot`
+                      : isAccountDonation && accountProfile?.name
+                        ? `Donate to ${accountProfile.name}`
+                        : "Donate"}
                 </DialogTitle>
               </DialogHeader>
               <DialogDescription>
                 <CrossChainQRCode
-                  campaignId={"campaignId" in props ? (props.campaignId ?? 0) : 0}
-                  campaignName={campaign?.name || "Campaign"}
+                  contractType={isCampaignDonation ? "campaign" : isPotDonation ? "pot" : "project"}
+                  campaignId={
+                    isCampaignDonation && "campaignId" in props ? props.campaignId : undefined
+                  }
+                  potId={isPotDonation && "potId" in props ? props.potId : undefined}
+                  accountId={
+                    isAccountDonation && "accountId" in props ? props.accountId : undefined
+                  }
+                  name={
+                    isCampaignDonation
+                      ? campaign?.name || "Campaign"
+                      : isPotDonation
+                        ? pot?.name || "Pot"
+                        : isAccountDonation
+                          ? accountProfile?.name ||
+                            ("accountId" in props ? props.accountId : "Account")
+                          : "Donation"
+                  }
                   amount={crossChainDonationData.amount}
                   blockchain={crossChainDonationData.chain}
                   decimals={crossChainDonationData.decimals}
@@ -220,7 +285,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                   networkFee={crossChainDonationData.fee}
                   senderAddress={crossChainDonationData.senderAddress}
                   tokenImage={crossChainDonationData.tokenImage}
-                  onSentFunds={(amount, depositAddress, campaignId, walletBalance, quoteData) => {
+                  onSentFunds={(amount, depositAddress, id, walletBalance, quoteData) => {
                     setCrossChainDonationData((prev) =>
                       prev
                         ? {
@@ -264,13 +329,23 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                 <DialogTitle>
                   {isCampaignDonation && campaign?.name
                     ? `Donate to ${campaign.name} Campaign`
-                    : "Donate to Campaign"}
+                    : isPotDonation && pot?.name
+                      ? `Donate to ${pot.name} Pot`
+                      : isAccountDonation && accountProfile?.name
+                        ? `Donate to ${accountProfile.name}`
+                        : "Donate"}
                 </DialogTitle>
               </DialogHeader>
               <DialogDescription>
                 <CrossChainAmountEntry
                   form={form}
-                  campaignId={"campaignId" in props ? (props.campaignId ?? 0) : 0}
+                  campaignId={
+                    isCampaignDonation && "campaignId" in props ? props.campaignId : undefined
+                  }
+                  potId={isPotDonation && "potId" in props ? props.potId : undefined}
+                  accountId={
+                    isAccountDonation && "accountId" in props ? props.accountId : undefined
+                  }
                   selectedBlockchain={selectedTokenData.blockchain}
                   selectedTokenData={selectedTokenData.tokenData}
                   onProceed={(
@@ -282,6 +357,9 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                     senderAddress,
                     tokenImage,
                     amountDeposit,
+                    bypassProtocolFee,
+                    bypassCreatorFee,
+                    bypassReferralFee,
                   ) => {
                     setCrossChainDonationData({
                       amount,
@@ -292,6 +370,9 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                       senderAddress,
                       tokenImage,
                       amountDeposit,
+                      bypassProtocolFee,
+                      bypassCreatorFee,
+                      bypassReferralFee,
                     });
 
                     setCrossChainStepSafe("qr");
