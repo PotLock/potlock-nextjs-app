@@ -87,10 +87,21 @@ export const DonationSingleRecipientAllocation: React.FC<
     campaignId: campaignId ?? 0,
   });
 
-  // Check if cross-chain donations are allowed (only for ongoing campaigns without end date)
+  // Check if cross-chain donations are allowed
+  // - For campaigns: only ongoing campaigns without end date
+  // - For account donations: always allowed (no restrictions)
   const isCrossChainAllowed = useMemo(() => {
-    return process.env.NEXT_PUBLIC_ENV !== "test" && isCampaignDonation && campaign?.end_ms == null;
-  }, [isCampaignDonation, campaign?.end_ms]);
+    if (process.env.NEXT_PUBLIC_ENV === "test") {
+      return false;
+    }
+
+    if (isCampaignDonation) {
+      return campaign?.end_ms == null;
+    }
+
+    // Allow cross-chain for account donations (projects)
+    return accountId !== undefined;
+  }, [isCampaignDonation, campaign?.end_ms, accountId]);
 
   // Enable token selector for campaigns to allow cross-chain donations
   // For non-campaign donations, only enable if allocation strategy is full
@@ -279,7 +290,7 @@ export const DonationSingleRecipientAllocation: React.FC<
                     control={form.control}
                     name="tokenId"
                     render={({ field: inputExtension }) =>
-                      isCampaignDonation && isCrossChainAllowed ? (
+                      isCrossChainAllowed ? (
                         <CrossChainTokenSelector
                           disabled={!isFtSelectorAvailable}
                           defaultValue={inputExtension.value}
