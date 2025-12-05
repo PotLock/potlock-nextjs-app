@@ -3,20 +3,29 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Button } from "@/common/ui/layout/components";
-import { routeSelectors } from "@/navigation";
+import { rootPathnames, routeSelectors } from "@/navigation";
+import { useWalletUserSession } from "@/common/wallet";
+import type { PotId } from "@/common/api/indexer";
+import type { AccountId, CampaignId } from "@/common/types";
 
 interface CrossChainProcessingProps {
-  campaignId: number;
-  campaignName: string;
+  contractType: "campaign" | "pot" | "project";
+  campaignId?: CampaignId;
+  potId?: PotId;
+  accountId?: AccountId;
+  name: string;
   amount: string;
   depositAddress: string;
   blockchain: string;
   tokenImage: string;
   minAmountIn?: string;
   minAmountInFormatted?: string;
+  bypassProtocolFee?: boolean;
+  bypassCreatorFee?: boolean;
+  bypassReferralFee?: boolean;
   onProceed: (
     txHash: string,
-    campaignName: string,
+    name: string,
     amount: string,
     usdAmount: string,
     nearAmount: string,
@@ -27,20 +36,27 @@ interface CrossChainProcessingProps {
 }
 
 export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
+  contractType,
   campaignId,
-  campaignName,
+  potId,
+  accountId,
+  name,
   amount,
   depositAddress,
   blockchain,
   tokenImage,
   minAmountIn,
   minAmountInFormatted,
+  bypassProtocolFee = false,
+  bypassCreatorFee = false,
+  bypassReferralFee = false,
   onProceed,
   onClose,
   onBack,
   onFinish,
 }) => {
   const router = useRouter();
+  const walletUser = useWalletUserSession();
   const [fundReceived, setFundReceived] = useState<boolean | null>(false);
   const [fundReceivedFailed, setFundReceivedFailed] = useState<boolean | null>(false);
   const [fundConverted, setFundConverted] = useState<boolean | null>(false);
@@ -144,6 +160,39 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
             throw new Error("Swap details are incomplete - missing converted amount");
           }
 
+          // Map contractType to backend format: "campaign" -> "campaigns", "pot" -> "pot"
+          const backendContractType = contractType === "campaign" ? "campaigns" : contractType;
+
+          // Build request body based on contract type
+          const requestBody: Record<string, any> = {
+            username: donatorName,
+            deposit: nearedAmount, // Use actual converted amount
+            contractType: backendContractType,
+            bypass_protocol_fee: bypassProtocolFee,
+            walletID: null,
+          };
+
+          // Add referral ID if present and not bypassed
+          if (!bypassReferralFee && walletUser?.referrerAccountId) {
+            requestBody.referralID = walletUser.referrerAccountId;
+          }
+
+          // Add contract-specific fields
+          if (contractType === "campaign" && campaignId !== undefined) {
+            requestBody.campaign_id = String(campaignId);
+            // Only include bypass_creator_fee for campaigns
+            if (bypassCreatorFee !== undefined) {
+              requestBody.bypass_creator_fee = bypassCreatorFee;
+            }
+          } else if (contractType === "pot" && potId !== undefined) {
+            // Backend expects project_id for pots (not pot_id)
+            requestBody.project_id = potId;
+          } else if (contractType === "project" && accountId !== undefined) {
+            // Backend expects recipient_id for direct account donations
+            requestBody.recipient_id = accountId;
+          }
+
+
           const donateResponse = await fetch(
             "https://us-central1-almond-1b205.cloudfunctions.net/potluck/donate",
             {
@@ -151,12 +200,7 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({
-                username: donatorName,
-                deposit: nearedAmount, // Use actual converted amount
-                campaign_id: String(campaignId),
-                walletID: null,
-              }),
+              body: JSON.stringify(requestBody),
             },
           );
 
@@ -483,7 +527,7 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
               {swapData?.swapDetails?.amountOutFormatted
                 ? `${parseFloat(swapData.swapDetails.amountOutFormatted).toFixed(4)} NEAR`
                 : amount}{" "}
-              to <strong className="font-semibold text-black">{campaignName}</strong>
+              to <strong className="font-semibold text-black">{name}</strong>
             </div>
           ) : (
             <div className="text-sm text-gray-500">Donate Pending.....</div>
@@ -504,13 +548,19 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
             type="button"
             variant="brand-filled"
             onClick={() => {
-              // Navigate to leaderboard page
-              router.push(routeSelectors.CAMPAIGN_BY_ID_LEADERBOARD(campaignId));
+              // Navigate to appropriate page based on contract type
+              if (contractType === "campaign" && campaignId !== undefined) {
+                router.push(routeSelectors.CAMPAIGN_BY_ID_LEADERBOARD(campaignId));
+              } else if (contractType === "pot" && potId !== undefined) {
+                router.push(`${rootPathnames.pot}/${potId}`);
+              } else if (contractType === "project" && accountId !== undefined) {
+                router.push(routeSelectors.PROFILE_BY_ID(accountId));
+              }
               onFinish();
             }}
             className="w-full"
           >
-            View Transaction
+            View Donation
           </Button>
         ) : (
           <Button

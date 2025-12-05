@@ -1,14 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-import { NATIVE_TOKEN_ID } from "@/common/constants";
-import { Button } from "@/common/ui/layout/components";
+import { indexer } from "@/common/api/indexer";
+import { NATIVE_TOKEN_ID, NOOP_STRING } from "@/common/constants";
+import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import { CheckboxField } from "@/common/ui/form/components";
+import { Button, FormControl, FormField, FormItem, FormLabel } from "@/common/ui/layout/components";
+import { useWalletUserSession } from "@/common/wallet";
+import { AccountProfileLink } from "@/entities/_shared/account";
+import type { PotId } from "@/common/api/indexer";
+import type { AccountId, CampaignId } from "@/common/types";
 
 import { getTokenAvatarSrc } from "./cross-chain-token-avatar";
+import { useDonationAllocationBreakdown } from "../hooks/allocation";
 import type { DonationFormAPI } from "../models/schemas";
 
 interface CrossChainAmountEntryProps {
   form: DonationFormAPI;
-  campaignId: number;
+  campaignId?: CampaignId;
+  potId?: PotId;
+  accountId?: AccountId;
   selectedBlockchain?: string;
   selectedTokenData?: any;
   onProceed: (
@@ -20,6 +30,9 @@ interface CrossChainAmountEntryProps {
     senderAddress: string,
     tokenImage: string,
     amountDeposit: string,
+    bypassProtocolFee: boolean,
+    bypassCreatorFee: boolean,
+    bypassReferralFee: boolean,
   ) => void;
   onClose: () => void;
   onGoBack: () => void;
@@ -28,13 +41,17 @@ interface CrossChainAmountEntryProps {
 export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
   form,
   campaignId,
+  potId,
+  accountId,
   selectedBlockchain,
   selectedTokenData,
   onProceed,
   onClose,
   onGoBack,
 }) => {
+  const walletUser = useWalletUserSession();
   const formAmount = form.watch("amount");
+  const [bypassProtocolFee, bypassCuratorFee] = form.watch(["bypassProtocolFee", "bypassCuratorFee"]);
   const [price, setPrice] = useState(selectedTokenData?.price || 0);
   const [error, setError] = useState<string | null>(null);
   const [decimals, setDecimals] = useState(selectedTokenData?.decimals?.toString() || "");
@@ -42,6 +59,24 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
   const [amountDeposit, setamountDeposit] = useState("");
   const [senderAddress, setSenderAddress] = useState("");
   const [nearPrice, setNearPrice] = useState(0);
+
+  const isCampaignDonation = campaignId !== undefined;
+  const isPotDonation = potId !== undefined;
+
+  const { data: campaign } = campaignsContractHooks.useCampaign({
+    enabled: isCampaignDonation,
+    campaignId: isCampaignDonation ? campaignId : 0,
+  });
+
+  const { data: pot } = indexer.usePot({
+    enabled: isPotDonation,
+    potId: isPotDonation ? potId : NOOP_STRING,
+  });
+
+  const isFeeBypassAllowed = useMemo(
+    () => (isCampaignDonation ? (campaign?.allow_fee_avoidance ?? false) : true),
+    [campaign?.allow_fee_avoidance, isCampaignDonation],
+  );
 
   // Initialize sender address based on blockchain
   useEffect(() => {
@@ -126,19 +161,45 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
   const donationAmountInNear =
     price > 0 && nearPrice > 0 ? (donationAmount * price) / nearPrice : 0;
 
-  // Calculate protocol fee from NEAR amount (2.5% of NEAR donation)
-  const protocolFeeNear = donationAmountInNear * 0.025;
+  const [bypassReferralFee] = form.watch(["bypassReferralFee"]);
+
+  // Calculate fee breakdown using the same hook as regular donations
+  const allocationBreakdown = useDonationAllocationBreakdown({
+    campaign,
+    potCache: pot,
+    referrerAccountId: walletUser.referrerAccountId,
+    bypassProtocolFee,
+    bypassReferralFee,
+    bypassCuratorFee,
+    totalAmountFloat: donationAmountInNear,
+  });
+
+  // Calculate fees using allocation breakdown (respects bypass flags)
+  const { protocolFee, referralFee, curatorFee } = allocationBreakdown;
+  const protocolFeeNear = protocolFee.amount;
+  const referralFeeNear = referralFee.amount;
+  const curatorFeeNear = curatorFee.amount;
   const networkFeeNear = 0.08;
-  const totalFeeNear = protocolFeeNear + networkFeeNear;
+  const totalFeeNear = protocolFeeNear + referralFeeNear + curatorFeeNear + networkFeeNear;
 
   // Convert fees back to selected currency for display
   const protocolFeeSelectedCurrency =
     price > 0 && nearPrice > 0 ? (protocolFeeNear * nearPrice) / price : 0;
 
+  const referralFeeSelectedCurrency =
+    price > 0 && nearPrice > 0 ? (referralFeeNear * nearPrice) / price : 0;
+
+  const curatorFeeSelectedCurrency =
+    price > 0 && nearPrice > 0 ? (curatorFeeNear * nearPrice) / price : 0;
+
   const networkFeeSelectedCurrency =
     price > 0 && nearPrice > 0 ? (networkFeeNear * nearPrice) / price : 0;
 
-  const totalFeeSelectedCurrency = protocolFeeSelectedCurrency + networkFeeSelectedCurrency;
+  const totalFeeSelectedCurrency =
+    protocolFeeSelectedCurrency +
+    referralFeeSelectedCurrency +
+    curatorFeeSelectedCurrency +
+    networkFeeSelectedCurrency;
 
   // Calculate total donation amount in NEAR (donation + fees)
   const totalDonationInNear = donationAmountInNear + totalFeeNear;
@@ -180,6 +241,9 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
         senderAddress,
         tokenImage,
         amountDeposit,
+        bypassProtocolFee,
+        bypassCuratorFee,
+        bypassReferralFee,
       );
     }
   };
@@ -230,15 +294,61 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
           </div>
 
           {/* Protocol Fee */}
-          <div className="mb-2 flex justify-between text-sm">
-            <span>Protocol Fee (2.5%):</span>
-            <div className="text-right">
-              <div>
-                {protocolFeeSelectedCurrency.toFixed(4)} {selectedTokenData?.symbol || "USDC"}
+          {protocolFee.percentage > 0 && (
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Protocol Fee ({protocolFee.percentage}%)
+                {bypassProtocolFee && <span className="ml-1 text-gray-500">(Bypassed)</span>}
+              </span>
+              <div className="text-right">
+                <div>
+                  {bypassProtocolFee ? "0.0000" : protocolFeeSelectedCurrency.toFixed(4)}{" "}
+                  {selectedTokenData?.symbol || "USDC"}
+                </div>
+                <div className="text-xs text-gray-500">
+                  ≈ {bypassProtocolFee ? "0.0000" : protocolFeeNear.toFixed(4)} NEAR
+                </div>
               </div>
-              <div className="text-xs text-gray-500">≈ {protocolFeeNear.toFixed(4)} NEAR</div>
             </div>
-          </div>
+          )}
+
+          {/* Referral Fee */}
+          {referralFee.percentage > 0 && (
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Referral Fee ({referralFee.percentage}%)
+                {bypassReferralFee && <span className="ml-1 text-gray-500">(Bypassed)</span>}
+              </span>
+              <div className="text-right">
+                <div>
+                  {bypassReferralFee ? "0.0000" : referralFeeSelectedCurrency.toFixed(4)}{" "}
+                  {selectedTokenData?.symbol || "USDC"}
+                </div>
+                <div className="text-xs text-gray-500">
+                  ≈ {bypassReferralFee ? "0.0000" : referralFeeNear.toFixed(4)} NEAR
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Creator/Chef Fee (for campaigns and pots) */}
+          {curatorFee.percentage > 0 && (isCampaignDonation || isPotDonation) && (
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                {allocationBreakdown.curatorTitle} Fee ({curatorFee.percentage}%)
+                {bypassCuratorFee && <span className="ml-1 text-gray-500">(Bypassed)</span>}
+              </span>
+              <div className="text-right">
+                <div>
+                  {bypassCuratorFee ? "0.0000" : curatorFeeSelectedCurrency.toFixed(4)}{" "}
+                  {selectedTokenData?.symbol || "USDC"}
+                </div>
+                <div className="text-xs text-gray-500">
+                  ≈ {bypassCuratorFee ? "0.0000" : curatorFeeNear.toFixed(4)} NEAR
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Network Fee */}
           <div className="mb-2 flex justify-between text-sm">
@@ -264,6 +374,92 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Fee Bypass Options */}
+      {formAmount && parseFloat(formAmount.toString()) > 0 && price > 0 && nearPrice > 0 && (
+        <div className="flex flex-col gap-2">
+          {isFeeBypassAllowed && protocolFee.percentage > 0 && (
+            <FormField
+              control={form.control}
+              name="bypassProtocolFee"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                  <FormControl>
+                    <CheckboxField
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      label={
+                        <>
+                          <span className="prose">
+                            {`Remove ${protocolFee.percentage}% Protocol Fee`}
+                          </span>
+                          {protocolFee.recipientAccountId && (
+                            <AccountProfileLink accountId={protocolFee.recipientAccountId} />
+                          )}
+                        </>
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {referralFee.percentage > 0 && (
+            <FormField
+              control={form.control}
+              name="bypassReferralFee"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                  <FormControl>
+                    <CheckboxField
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      label={
+                        <>
+                          <span className="prose">
+                            {`Remove ${referralFee.percentage}% Referrer Fee`}
+                          </span>
+                          {referralFee.recipientAccountId && (
+                            <AccountProfileLink accountId={referralFee.recipientAccountId} />
+                          )}
+                        </>
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {isFeeBypassAllowed &&
+            isCampaignDonation &&
+            curatorFee.percentage > 0 && (
+              <FormField
+                control={form.control}
+                name="bypassCuratorFee"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                    <FormControl>
+                      <CheckboxField
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        label={
+                          <>
+                            <span>{`Remove ${curatorFee.percentage}% ${allocationBreakdown.curatorTitle} Fee`}</span>
+                            {curatorFee.recipientAccountId && (
+                              <AccountProfileLink accountId={curatorFee.recipientAccountId} />
+                            )}
+                          </>
+                        }
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
         </div>
       )}
 

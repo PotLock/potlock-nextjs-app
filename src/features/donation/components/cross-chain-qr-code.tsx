@@ -4,9 +4,15 @@ import { QRCodeSVG } from "qrcode.react";
 
 import { Button } from "@/common/ui/layout/components";
 
+import type { PotId } from "@/common/api/indexer";
+import type { AccountId, CampaignId } from "@/common/types";
+
 interface CrossChainQRCodeProps {
-  campaignId: number;
-  campaignName: string;
+  contractType: "campaign" | "pot" | "project";
+  campaignId?: CampaignId;
+  potId?: PotId;
+  accountId?: AccountId;
+  name: string;
   amount: string;
   blockchain: string;
   decimals: number;
@@ -17,7 +23,7 @@ interface CrossChainQRCodeProps {
   onSentFunds: (
     amount: string,
     depositAddress: string,
-    campaignId: number,
+    id: CampaignId | PotId,
     walletBalance: string,
     quoteData?: { minAmountIn?: string; minAmountInFormatted?: string },
   ) => void;
@@ -26,8 +32,11 @@ interface CrossChainQRCodeProps {
 }
 
 export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
+  contractType,
   campaignId,
-  campaignName,
+  potId,
+  accountId,
+  name,
   amount,
   blockchain,
   decimals,
@@ -425,7 +434,15 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
           variant="brand-filled"
           onClick={() => {
             if (depositAddress) {
-              onSentFunds(amount, depositAddress, campaignId, "", quoteData || undefined);
+              const id =
+                contractType === "campaign"
+                  ? campaignId
+                  : contractType === "pot"
+                    ? potId
+                    : accountId;
+              if (id !== undefined) {
+                onSentFunds(amount, depositAddress, id, "", quoteData || undefined);
+              }
             }
           }}
           disabled={!depositAddress || isLoadingAddress}
