@@ -2,10 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { QRCodeSVG } from "qrcode.react";
 
-import { Button } from "@/common/ui/layout/components";
-
 import type { PotId } from "@/common/api/indexer";
 import type { AccountId, CampaignId } from "@/common/types";
+import { Button } from "@/common/ui/layout/components";
 
 interface CrossChainQRCodeProps {
   contractType: "campaign" | "pot" | "project";
@@ -440,6 +439,7 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
                   : contractType === "pot"
                     ? potId
                     : accountId;
+
               if (id !== undefined) {
                 onSentFunds(amount, depositAddress, id, "", quoteData || undefined);
               }

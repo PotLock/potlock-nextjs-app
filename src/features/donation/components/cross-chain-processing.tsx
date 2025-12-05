@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { Button } from "@/common/ui/layout/components";
-import { rootPathnames, routeSelectors } from "@/navigation";
-import { useWalletUserSession } from "@/common/wallet";
 import type { PotId } from "@/common/api/indexer";
 import type { AccountId, CampaignId } from "@/common/types";
+import { Button } from "@/common/ui/layout/components";
+import { useWalletUserSession } from "@/common/wallet";
+import { rootPathnames, routeSelectors } from "@/navigation";
 
 interface CrossChainProcessingProps {
   contractType: "campaign" | "pot" | "project";
@@ -180,6 +180,7 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
           // Add contract-specific fields
           if (contractType === "campaign" && campaignId !== undefined) {
             requestBody.campaign_id = String(campaignId);
+
             // Only include bypass_creator_fee for campaigns
             if (bypassCreatorFee !== undefined) {
               requestBody.bypass_creator_fee = bypassCreatorFee;
@@ -191,7 +192,6 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
             // Backend expects recipient_id for direct account donations
             requestBody.recipient_id = accountId;
           }
-
 
           const donateResponse = await fetch(
             "https://us-central1-almond-1b205.cloudfunctions.net/potluck/donate",
@@ -556,6 +556,7 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
               } else if (contractType === "project" && accountId !== undefined) {
                 router.push(routeSelectors.PROFILE_BY_ID(accountId));
               }
+
               onFinish();
             }}
             className="w-full"

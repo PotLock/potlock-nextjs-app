@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { indexer } from "@/common/api/indexer";
+import type { PotId } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID, NOOP_STRING } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
+import type { AccountId, CampaignId } from "@/common/types";
 import { CheckboxField } from "@/common/ui/form/components";
 import { Button, FormControl, FormField, FormItem, FormLabel } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
-import type { PotId } from "@/common/api/indexer";
-import type { AccountId, CampaignId } from "@/common/types";
 
 import { getTokenAvatarSrc } from "./cross-chain-token-avatar";
 import { useDonationAllocationBreakdown } from "../hooks/allocation";
@@ -51,7 +51,12 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
 }) => {
   const walletUser = useWalletUserSession();
   const formAmount = form.watch("amount");
-  const [bypassProtocolFee, bypassCuratorFee] = form.watch(["bypassProtocolFee", "bypassCuratorFee"]);
+
+  const [bypassProtocolFee, bypassCuratorFee] = form.watch([
+    "bypassProtocolFee",
+    "bypassCuratorFee",
+  ]);
+
   const [price, setPrice] = useState(selectedTokenData?.price || 0);
   const [error, setError] = useState<string | null>(null);
   const [decimals, setDecimals] = useState(selectedTokenData?.decimals?.toString() || "");
@@ -434,32 +439,30 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
             />
           )}
 
-          {isFeeBypassAllowed &&
-            isCampaignDonation &&
-            curatorFee.percentage > 0 && (
-              <FormField
-                control={form.control}
-                name="bypassCuratorFee"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <CheckboxField
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        label={
-                          <>
-                            <span>{`Remove ${curatorFee.percentage}% ${allocationBreakdown.curatorTitle} Fee`}</span>
-                            {curatorFee.recipientAccountId && (
-                              <AccountProfileLink accountId={curatorFee.recipientAccountId} />
-                            )}
-                          </>
-                        }
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            )}
+          {isFeeBypassAllowed && isCampaignDonation && curatorFee.percentage > 0 && (
+            <FormField
+              control={form.control}
+              name="bypassCuratorFee"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                  <FormControl>
+                    <CheckboxField
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      label={
+                        <>
+                          <span>{`Remove ${curatorFee.percentage}% ${allocationBreakdown.curatorTitle} Fee`}</span>
+                          {curatorFee.recipientAccountId && (
+                            <AccountProfileLink accountId={curatorFee.recipientAccountId} />
+                          )}
+                        </>
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )}
         </div>
       )}
 

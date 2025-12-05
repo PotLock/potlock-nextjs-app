@@ -94,9 +94,11 @@ export const DonationSingleRecipientAllocation: React.FC<
     if (process.env.NEXT_PUBLIC_ENV === "test") {
       return false;
     }
+
     if (isCampaignDonation) {
       return campaign?.end_ms == null;
     }
+
     // Allow cross-chain for account donations (projects)
     return accountId !== undefined;
   }, [isCampaignDonation, campaign?.end_ms, accountId]);
