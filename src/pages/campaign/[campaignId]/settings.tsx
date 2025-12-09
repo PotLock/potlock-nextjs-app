@@ -94,6 +94,7 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
     }
 
     let campaign;
+
     try {
       campaign = await res.json();
     } catch (jsonError) {
