@@ -93,11 +93,17 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
       throw new Error(`Failed to fetch campaign: ${res.status}`);
     }
 
-    const campaign = await res.json();
+    let campaign;
+    try {
+      campaign = await res.json();
+    } catch (jsonError) {
+      console.error("Error parsing campaign JSON:", jsonError);
+      throw new Error("Invalid campaign data format");
+    }
 
     const seoTitle = campaign?.name ?? `Campaign ${campaignId}`;
 
-    const seoDescription = stripHtml(campaign?.description) || "Support this campaign on Potlock.";
+    const seoDescription = stripHtml(campaign?.description) ?? "Support this campaign on Potlock.";
 
     // Use cover_image_url field which is the correct field for campaign images
     const seoImage = campaign?.cover_image_url ?? APP_METADATA.openGraph.images.url;
