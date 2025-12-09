@@ -93,7 +93,14 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
       throw new Error(`Failed to fetch campaign: ${res.status}`);
     }
 
-    const campaign = await res.json();
+    let campaign;
+
+    try {
+      campaign = await res.json();
+    } catch (jsonError) {
+      console.error("Error parsing campaign JSON:", jsonError);
+      throw new Error("Invalid campaign data format");
+    }
 
     const seoTitle = campaign?.name ?? `Campaign ${campaignId}`;
 
