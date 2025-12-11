@@ -172,7 +172,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                         : "Donate"}
                 </DialogTitle>
               </DialogHeader>
-              <DialogDescription>
+              <DialogDescription className="max-h-[calc(100vh-180px)] overflow-y-auto">
                 <CrossChainProcessing
                   contractType={isCampaignDonation ? "campaign" : isPotDonation ? "pot" : "project"}
                   campaignId={
@@ -258,7 +258,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                         : "Donate"}
                 </DialogTitle>
               </DialogHeader>
-              <DialogDescription>
+              <DialogDescription className="max-h-[calc(100vh-180px)] overflow-y-auto">
                 <CrossChainQRCode
                   contractType={isCampaignDonation ? "campaign" : isPotDonation ? "pot" : "project"}
                   campaignId={
@@ -336,7 +336,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
                         : "Donate"}
                 </DialogTitle>
               </DialogHeader>
-              <DialogDescription>
+              <DialogDescription className="max-h-[calc(100vh-180px)] overflow-y-auto">
                 <CrossChainAmountEntry
                   form={form}
                   campaignId={

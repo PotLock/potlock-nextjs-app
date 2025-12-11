@@ -489,7 +489,8 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
       </div>
       {isDisabled && (
         <div className="text-sm text-red-500">
-          Please enter a valid amount greater than 0.1 NEAR.
+          Please enter a valid amount in {selectedTokenData?.symbol || "USDC"} greater than an
+          equivalent of 0.1 NEAR.
         </div>
       )}
       {/* Action Button */}
