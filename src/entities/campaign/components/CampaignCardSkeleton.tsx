@@ -55,4 +55,3 @@ export const CampaignCardSkeleton = () => {
     </div>
   );
 };
-

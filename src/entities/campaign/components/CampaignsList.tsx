@@ -22,14 +22,7 @@ export const CampaignsList = () => {
   const [search, setSearch] = useState("");
   const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
 
-  const {
-    buttons,
-    campaigns,
-    loading,
-    currentTab,
-    tagsList,
-    pagination,
-  } = useAllCampaignLists();
+  const { buttons, campaigns, loading, currentTab, tagsList, pagination } = useAllCampaignLists();
 
   const SORT_LIST_PROJECTS = [
     { label: "Newest", value: "recent" },
@@ -135,6 +128,7 @@ export const CampaignsList = () => {
                   <PaginationPrevious
                     onClick={(e) => {
                       e.preventDefault();
+
                       if (pagination.hasPreviousPage) {
                         pagination.setCurrentPage(pagination.currentPage - 1);
                         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -151,6 +145,7 @@ export const CampaignsList = () => {
                 {/* Page numbers */}
                 {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                   let pageNum: number;
+
                   if (pagination.totalPages <= 5) {
                     pageNum = i + 1;
                   } else if (pagination.currentPage <= 3) {
@@ -178,25 +173,25 @@ export const CampaignsList = () => {
                   );
                 })}
 
-                {pagination.totalPages > 5 && pagination.currentPage < pagination.totalPages - 2 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
+                {pagination.totalPages > 5 &&
+                  pagination.currentPage < pagination.totalPages - 2 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
 
                 <PaginationItem>
                   <PaginationNext
                     onClick={(e) => {
                       e.preventDefault();
+
                       if (pagination.hasNextPage) {
                         pagination.setCurrentPage(pagination.currentPage + 1);
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }
                     }}
                     className={
-                      !pagination.hasNextPage
-                        ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
+                      !pagination.hasNextPage ? "pointer-events-none opacity-50" : "cursor-pointer"
                     }
                   />
                 </PaginationItem>
