@@ -246,7 +246,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
 
         <div>
           <p className="font-semibold" style={{ color }}>
-            {progressPercentage}%
+            {progressExact > 100 ? "> 100%" : `${progressPercentage}%`}
           </p>
         </div>
       </div>

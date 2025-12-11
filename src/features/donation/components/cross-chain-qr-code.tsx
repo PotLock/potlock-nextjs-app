@@ -235,10 +235,10 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="mb-4 text-center">
-        <h3 className="mb-2 text-lg font-semibold">Scan QR Code to Donate</h3>
-        <p className="text-sm text-gray-600">
+    <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="mb-2 text-center sm:mb-4">
+        <h3 className="mb-1 text-base font-semibold sm:mb-2 sm:text-lg">Scan QR Code to Donate</h3>
+        <p className="text-xs text-gray-600 sm:text-sm">
           {quoteData?.minAmountInFormatted ? (
             <>
               Send <strong>{amount}</strong> excluding fees to the address below
@@ -252,29 +252,42 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
       </div>
 
       {/* QR Code */}
-      <div className="relative mb-4 flex justify-center">
+      <div className="relative mb-3 flex justify-center sm:mb-4">
         <div
-          className={`flex items-center justify-center rounded-lg border border-gray-300 p-6 ${isLoadingAddress ? "opacity-50 blur-sm" : ""}`}
-          style={{ width: "227px", height: "226px" }}
+          className={`flex items-center justify-center rounded-lg border border-gray-300 p-3 sm:p-6 ${isLoadingAddress ? "opacity-50 blur-sm" : ""}`}
+          style={{
+            width: "min(227px, calc(100vw - 80px))",
+            height: "min(226px, calc(100vw - 80px))",
+            maxWidth: "227px",
+            maxHeight: "226px",
+          }}
         >
           {depositAddress ? (
-            <QRCodeSVG
-              value={depositAddress}
-              size={175}
-              level="H"
-              {...(tokenImage
-                ? {
-                    imageSettings: {
-                      src: tokenImage,
-                      height: 50,
-                      width: 50,
-                      excavate: true,
-                    },
-                  }
-                : {})}
-              bgColor="#ffffff"
-              fgColor="#000000"
-            />
+            <div
+              className="max-h-full max-w-full"
+              style={{
+                width: "min(175px, calc(100vw - 120px))",
+                height: "min(175px, calc(100vw - 120px))",
+              }}
+            >
+              <QRCodeSVG
+                value={depositAddress}
+                size={175}
+                level="H"
+                {...(tokenImage
+                  ? {
+                      imageSettings: {
+                        src: tokenImage,
+                        height: 50,
+                        width: 50,
+                        excavate: true,
+                      },
+                    }
+                  : {})}
+                bgColor="#ffffff"
+                fgColor="#000000"
+              />
+            </div>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-gray-400">
               Loading...
@@ -290,12 +303,12 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
       </div>
 
       {/* Deposit Address */}
-      <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3">
+      <div className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2 sm:p-3">
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="text-sm font-semibold">
+          <div className="text-xs font-semibold sm:text-sm">
             Deposit Address ({capitalizeFirstLetter(blockchain)})
           </div>
-          <div className="overflow-x-auto whitespace-nowrap text-sm text-gray-600">
+          <div className="overflow-x-auto whitespace-nowrap text-xs text-gray-600 sm:text-sm">
             {depositAddress}
           </div>
         </div>
@@ -329,9 +342,9 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
       </div>
 
       {/* Important Notes */}
-      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-        <div className="mb-2 text-sm font-semibold">Heads up!</div>
-        <div className="space-y-2 text-sm text-gray-700">
+      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 sm:p-4">
+        <div className="mb-1 text-xs font-semibold sm:mb-2 sm:text-sm">Heads up!</div>
+        <div className="space-y-1.5 text-xs text-gray-700 sm:space-y-2 sm:text-sm">
           {quoteData?.minAmountInFormatted ? (
             <>
               <div className="flex items-center gap-1">
@@ -418,7 +431,7 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
       {error && <div className="text-sm text-red-500">{error}</div>}
 
       {/* Action Buttons */}
-      <div className="mt-4 flex gap-3">
+      <div className="mt-3 flex gap-2 sm:mt-4 sm:gap-3">
         <Button
           type="button"
           variant="brand-outline"
