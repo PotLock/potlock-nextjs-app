@@ -255,27 +255,38 @@ export const CrossChainQRCode: React.FC<CrossChainQRCodeProps> = ({
       <div className="relative mb-3 flex justify-center sm:mb-4">
         <div
           className={`flex items-center justify-center rounded-lg border border-gray-300 p-3 sm:p-6 ${isLoadingAddress ? "opacity-50 blur-sm" : ""}`}
-          style={{ width: "min(227px, calc(100vw - 80px))", height: "min(226px, calc(100vw - 80px))", maxWidth: "227px", maxHeight: "226px" }}
+          style={{
+            width: "min(227px, calc(100vw - 80px))",
+            height: "min(226px, calc(100vw - 80px))",
+            maxWidth: "227px",
+            maxHeight: "226px",
+          }}
         >
           {depositAddress ? (
-            <div className="max-w-full max-h-full" style={{ width: "min(175px, calc(100vw - 120px))", height: "min(175px, calc(100vw - 120px))" }}>
+            <div
+              className="max-h-full max-w-full"
+              style={{
+                width: "min(175px, calc(100vw - 120px))",
+                height: "min(175px, calc(100vw - 120px))",
+              }}
+            >
               <QRCodeSVG
                 value={depositAddress}
                 size={175}
                 level="H"
-              {...(tokenImage
-                ? {
-                    imageSettings: {
-                      src: tokenImage,
-                      height: 50,
-                      width: 50,
-                      excavate: true,
-                    },
-                  }
-                : {})}
-              bgColor="#ffffff"
-              fgColor="#000000"
-            />
+                {...(tokenImage
+                  ? {
+                      imageSettings: {
+                        src: tokenImage,
+                        height: 50,
+                        width: 50,
+                        excavate: true,
+                      },
+                    }
+                  : {})}
+                bgColor="#ffffff"
+                fgColor="#000000"
+              />
             </div>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-gray-400">
