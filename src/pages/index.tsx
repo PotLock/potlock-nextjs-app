@@ -26,11 +26,13 @@ import { FeaturedCampaigns } from "./campaigns";
 export const FEATURED_PROJECT_ACCOUNT_IDS =
   NETWORK === "mainnet"
     ? [
-        "v1.foodbank.near",
         "potlock.near",
         "yearofchef.near",
+        "nearcatalog.near",
+        "meteor-wallet.near",
         "indexers.intear.near",
         "nearblocks.near",
+        "fastnear.tg"
       ]
     : ["amichaeltest.testnet", "root.akaia.testnet", "yearofchef.testnet"];
 
@@ -158,7 +160,7 @@ export default function Home() {
       <WelcomeBanner />
       <GeneralStats />
       <div className="mt-8 w-full p-0">
-        <FeaturedCampaigns data={campaigns?.results ?? []} />
+        <FeaturedCampaigns data={campaigns?.results ?? []} showViewAll={true} />
       </div>
       <div className="flex w-full flex-col gap-4 px-2 pt-10 md:gap-10 md:pt-12">
         <div className="flex w-full flex-col gap-5">
