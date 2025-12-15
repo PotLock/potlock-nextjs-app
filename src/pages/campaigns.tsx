@@ -16,7 +16,13 @@ import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
 
-export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
+export const FeaturedCampaigns = ({
+  data,
+  showViewAll = false,
+}: {
+  data: Campaign[];
+  showViewAll?: boolean;
+}) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -43,26 +49,35 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
           </h1>
           <p className="text-[18px]">{current + 1}/3</p>
         </div>
-        <div className="flex gap-4">
-          <img
-            src="/assets/icons/left-arrow.svg"
-            alt=""
-            onClick={() => api?.scrollTo(current - 1)}
-            className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
-          />
-          <img
-            src="/assets/icons/right-arrow.svg"
-            alt=""
-            onClick={() => api?.scrollTo(current + 1)}
-            className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
-          />
+        <div className="flex items-center gap-4">
+          <div className="flex gap-4">
+            <img
+              src="/assets/icons/left-arrow.svg"
+              alt=""
+              onClick={() => api?.scrollTo(current - 1)}
+              className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
+            />
+            <img
+              src="/assets/icons/right-arrow.svg"
+              alt=""
+              onClick={() => api?.scrollTo(current + 1)}
+              className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
+            />
+          </div>
+          {showViewAll && (
+            <Button asChild variant="brand-tonal" className="h-8 bg-transparent text-xs">
+              <Link href="/campaigns" className="text-brand-primary">
+                VIEW ALL
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
       <Carousel opts={{ loop: true }} setApi={setApi}>
         <CarouselContent>
           {data?.length &&
             data
-              ?.filter((data) => [91, 85, 81].includes(data?.on_chain_id))
+              ?.filter((data) => [106, 101, 91].includes(data?.on_chain_id))
               ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
         </CarouselContent>
       </Carousel>
