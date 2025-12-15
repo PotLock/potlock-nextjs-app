@@ -16,7 +16,13 @@ import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
 
-export const FeaturedCampaigns = ({ data, showViewAll = false }: { data: Campaign[]; showViewAll?: boolean }) => {
+export const FeaturedCampaigns = ({
+  data,
+  showViewAll = false,
+}: {
+  data: Campaign[];
+  showViewAll?: boolean;
+}) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -60,7 +66,9 @@ export const FeaturedCampaigns = ({ data, showViewAll = false }: { data: Campaig
           </div>
           {showViewAll && (
             <Button asChild variant="brand-tonal" className="h-8 bg-transparent text-xs">
-              <Link href="/campaigns" className="text-brand-primary">VIEW ALL</Link>
+              <Link href="/campaigns" className="text-brand-primary">
+                VIEW ALL
+              </Link>
             </Button>
           )}
         </div>

@@ -32,7 +32,7 @@ export const FEATURED_PROJECT_ACCOUNT_IDS =
         "meteor-wallet.near",
         "indexers.intear.near",
         "nearblocks.near",
-        "fastnear.tg"
+        "fastnear.tg",
       ]
     : ["amichaeltest.testnet", "root.akaia.testnet", "yearofchef.testnet"];
 
