@@ -19,7 +19,7 @@ export const useAllCampaignLists = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Only paginate for ALL_CAMPAIGNS, use large page_size for MY_CAMPAIGNS
-  const pageSize = currentTab === CampaignTab.ALL_CAMPAIGNS ? 20 : 300;
+  const pageSize = currentTab === CampaignTab.ALL_CAMPAIGNS ? 21 : 300;
 
   const { data: campaignsData, isLoading: isCampaignsLoading } = indexer.useCampaigns({
     page: currentTab === CampaignTab.ALL_CAMPAIGNS ? currentPage : 1,
