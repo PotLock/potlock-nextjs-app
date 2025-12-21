@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Check, ChevronDown, Search } from "lucide-react";
 
@@ -51,6 +51,8 @@ const getTokenAvatarSrc = (blockchain?: string, tokenSymbol?: string): string =>
     { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar21.png", name: "gnosis" },
     { src: "https://ik.imagekit.io/zjvk6l5gp/Avatar23.jpeg", name: "Bera" },
     { src: "https://ik.imagekit.io/heuzdzbna/monad_logo.png", name: "Monad" },
+    { src: "https://ik.imagekit.io/heuzdzbna/strk.png", name: "Starknet" },
+
   ];
 
   const tokenAvatar = tokenSymbol
@@ -110,6 +112,7 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
       "avax",
       "op",
       "monad",
+      "starknet",
     ];
 
     return new Set([...nonEvmChains, ...evmChains].map((chain) => chain.toLowerCase()));
@@ -218,22 +221,40 @@ export const CrossChainTokenSelector: React.FC<CrossChainTokenSelectorProps> = (
     setSearchQuery("");
   };
 
+  // Track if we've already initialized to prevent infinite loops
+  const initializedDefaultValueRef = useRef<string | undefined>(undefined);
+  const onTokenChangeRef = useRef(onTokenChange);
+
+  // Keep the ref updated with the latest callback
+  useEffect(() => {
+    onTokenChangeRef.current = onTokenChange;
+  }, [onTokenChange]);
+
   // Call onTokenChange when component initializes with a defaultValue (e.g., when going back)
   useEffect(() => {
-    if (!loading && tokens.length > 0 && onTokenChange) {
+    if (!loading && tokens.length > 0 && onTokenChangeRef.current) {
       const defaultValue =
         "defaultValue" in props ? props.defaultValue : "value" in props ? props.value : undefined;
 
-      if (defaultValue && defaultValue !== NATIVE_TOKEN_ID && defaultValue.includes(":")) {
+      // Only call onTokenChange if:
+      // 1. defaultValue exists and is a cross-chain token
+      // 2. We haven't already initialized with this defaultValue
+      // 3. We can find the option in tokenOptions
+      if (
+        defaultValue &&
+        defaultValue !== NATIVE_TOKEN_ID &&
+        defaultValue.includes(":") &&
+        defaultValue !== initializedDefaultValueRef.current
+      ) {
         const option = tokenOptions.find((opt) => opt.value === defaultValue);
 
         if (option) {
-          onTokenChange(defaultValue, option.blockchain, option.tokenData);
+          initializedDefaultValueRef.current = defaultValue;
+          onTokenChangeRef.current(defaultValue, option.blockchain, option.tokenData);
         }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, tokens.length, onTokenChange]);
+  }, [loading, tokens.length, tokenOptions]);
 
   if (loading) {
     return (
