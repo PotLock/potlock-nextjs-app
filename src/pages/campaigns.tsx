@@ -42,8 +42,8 @@ export const FeaturedCampaigns = ({
 
   return (
     <div className="mt-8 w-full p-0 ">
-      <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
-        <div className=" flex items-center gap-4 ">
+      <div className="mb-4 flex w-full flex-col gap-4 p-2 md:flex-row md:items-center md:justify-between md:gap-0 md:p-0">
+        <div className="flex items-center gap-4">
           <h1 className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             Featured Campaigns
           </h1>
@@ -65,7 +65,7 @@ export const FeaturedCampaigns = ({
             />
           </div>
           {showViewAll && (
-            <Button asChild variant="brand-tonal" className="h-8 bg-transparent text-xs">
+            <Button asChild variant="brand-tonal" className="h-8 shrink-0 bg-transparent text-xs">
               <Link href="/campaigns" className="text-brand-primary">
                 VIEW ALL
               </Link>
