@@ -52,7 +52,6 @@ const getTokenAvatarSrc = (blockchain?: string, tokenSymbol?: string): string =>
     { src: "https://ik.imagekit.io/zjvk6l5gp/Avatar23.jpeg", name: "Bera" },
     { src: "https://ik.imagekit.io/heuzdzbna/monad_logo.png", name: "Monad" },
     { src: "https://ik.imagekit.io/heuzdzbna/strk.png", name: "Starknet" },
-
   ];
 
   const tokenAvatar = tokenSymbol

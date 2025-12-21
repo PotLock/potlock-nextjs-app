@@ -112,7 +112,7 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
         "avax",
         "op",
         "monad",
-        "starknet"
+        "starknet",
       ];
 
       const normalized = selectedBlockchain.toLowerCase();
