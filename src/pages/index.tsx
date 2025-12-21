@@ -40,7 +40,7 @@ export const FEATURED_PROJECT_ACCOUNT_IDS =
 
 export const PAST_FUNDING_ROUNDS_POT_IDS = [
   "ai.v1.potfactory.potlock.near",
-  "mpdao.v1.potfactory.potlock.near",
+  "build.v1.potfactory.potlock.near",
   "oss.v1.potfactory.potlock.near",
 ];
 

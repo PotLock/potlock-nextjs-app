@@ -32,6 +32,7 @@ const tokenAvatars: Array<{ src: string; name: string }> = [
   { src: "https://ik.imagekit.io/zjvk6l5gp/assets/Avatar21.png", name: "gnosis" },
   { src: "https://ik.imagekit.io/zjvk6l5gp/Avatar23.jpeg", name: "Bera" },
   { src: "https://ik.imagekit.io/heuzdzbna/monad_logo.png", name: "Monad" },
+  { src: "https://ik.imagekit.io/heuzdzbna/strk.png", name: "Starknet" },
 ];
 
 function capitalizeAll(str: string): string {
